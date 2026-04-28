@@ -28,6 +28,52 @@ class StressReadingPolicyTest {
     }
 
     @Test
+    fun tabletComposerContextHintUsesGuideAnchorAndSourceCount() {
+        val state = tabletDetailState(
+            guideTitle = "Pressure canning beans",
+            anchor = AnchorState(
+                key = "anchor",
+                id = "GD-BEANS",
+                title = "Processing times",
+                section = "Altitude adjustment",
+                snippet = "",
+                hasSource = true,
+            ),
+            sources = listOf(
+                SourceState("s1", "GD-BEANS", "Guide A", isAnchor = true, isSelected = true),
+                SourceState("s2", "GD-ALT", "Guide B", isAnchor = false, isSelected = false),
+            ),
+        )
+
+        assertEquals(
+            "Pressure canning beans - Altitude adjustment - 2 sources",
+            tabletComposerContextHint(state),
+        )
+    }
+
+    @Test
+    fun tabletComposerContextHintFallsBackToGuideIdAndEmptySourceLabel() {
+        val state = tabletDetailState(
+            guideId = "GD-FALLBACK",
+            guideTitle = " ",
+            anchor = AnchorState(
+                key = "anchor",
+                id = "GD-FALLBACK",
+                title = "Fallback anchor",
+                section = " ",
+                snippet = "",
+                hasSource = false,
+            ),
+            sources = emptyList(),
+        )
+
+        assertEquals(
+            "GD-FALLBACK - Fallback anchor - No sources",
+            tabletComposerContextHint(state),
+        )
+    }
+
+    @Test
     fun phoneLandscapePolicyCompactsComposerAndSuppressesSupportChrome() {
         val policy = phoneLandscapeStressReadingPolicy()
 
@@ -108,4 +154,37 @@ class StressReadingPolicyTest {
             assertTrue(policy.compactComposer)
         }
     }
+
+    private fun tabletDetailState(
+        guideId: String = "GD-TEST",
+        guideTitle: String = "Guide title",
+        anchor: AnchorState = AnchorState(
+            key = "anchor",
+            id = "GD-TEST",
+            title = "Anchor title",
+            section = "Anchor section",
+            snippet = "",
+            hasSource = true,
+        ),
+        sources: List<SourceState> = emptyList(),
+    ): TabletDetailState =
+        TabletDetailState(
+            guideId = guideId,
+            guideTitle = guideTitle,
+            meta = emptyList(),
+            turns = emptyList(),
+            sources = sources,
+            anchor = anchor,
+            xrefs = emptyList(),
+            composerText = "",
+            composerPlaceholder = "Ask a follow-up",
+            composerEnabled = true,
+            composerVisible = true,
+            composerShowRetry = false,
+            composerRetryLabel = "Retry",
+            pinVisible = false,
+            pinActive = false,
+            evidenceExpanded = false,
+            isLandscape = true,
+        )
 }

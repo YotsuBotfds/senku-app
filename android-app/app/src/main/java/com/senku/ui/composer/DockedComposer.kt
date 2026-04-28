@@ -44,13 +44,14 @@ import com.senku.ui.theme.SenkuAppTheme
 import com.senku.ui.theme.SenkuTheme
 import java.util.function.Consumer
 
-data class DockedComposerModel(
+data class DockedComposerModel @JvmOverloads constructor(
     val text: String,
     val hint: String,
     val enabled: Boolean,
     val showRetry: Boolean,
     val retryLabel: String,
     val compact: Boolean,
+    val contextHint: String = "",
 )
 
 class DockedComposerHostView @JvmOverloads constructor(
@@ -148,6 +149,8 @@ fun DockedComposer(
     val rowVerticalPadding = if (landscapePhoneBudgeted) 6.dp else 10.dp
     val sendButtonSize = if (landscapePhoneBudgeted) 38.dp else 40.dp
     val bottomSpacerHeight = if (landscapePhoneBudgeted) 0.dp else 2.dp
+    val hasSendText = model.enabled && model.text.trim().isNotEmpty()
+    val contextHint = model.contextHint.trim()
 
     LaunchedEffect(focusRequestTick, model.enabled) {
         if (focusRequestTick > 0 && model.enabled) {
@@ -165,6 +168,26 @@ fun DockedComposer(
             thickness = 1.dp,
             color = colors.hairlineStrong,
         )
+        if (contextHint.isNotEmpty()) {
+            Text(
+                text = contextHint,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(
+                        start = if (model.compact) 12.dp else 14.dp,
+                        top = 8.dp,
+                        end = if (model.compact) 12.dp else 14.dp,
+                    ),
+                style = typography.monoCaps.copy(
+                    fontSize = 10.sp,
+                    lineHeight = 13.sp,
+                    fontWeight = FontWeight.Medium,
+                ),
+                color = colors.ink3,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
+        }
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -225,7 +248,7 @@ fun DockedComposer(
                 ),
                 keyboardActions = KeyboardActions(
                     onSend = {
-                        if (model.enabled && model.text.trim().isNotEmpty()) {
+                        if (hasSendText) {
                             onSendClick()
                         }
                     }
@@ -256,11 +279,16 @@ fun DockedComposer(
 
             Surface(
                 modifier = Modifier.size(sendButtonSize),
-                color = if (model.enabled && model.text.trim().isNotEmpty()) colors.accent else colors.olive20,
-                contentColor = colors.paperInk,
+                color = if (hasSendText) colors.accent else colors.bg1,
+                contentColor = if (hasSendText) colors.paperInk else colors.accent.copy(alpha = 0.62f),
                 shape = CircleShape,
+                border = if (hasSendText) {
+                    null
+                } else {
+                    androidx.compose.foundation.BorderStroke(1.dp, colors.hairlineStrong)
+                },
                 onClick = {
-                    if (model.enabled && model.text.trim().isNotEmpty()) {
+                    if (hasSendText) {
                         onSendClick()
                     }
                 },
@@ -273,7 +301,7 @@ fun DockedComposer(
                             lineHeight = 18.sp,
                             fontWeight = FontWeight.SemiBold,
                         ),
-                        color = colors.paperInk,
+                        color = if (hasSendText) colors.paperInk else colors.accent.copy(alpha = 0.62f),
                     )
                 }
             }

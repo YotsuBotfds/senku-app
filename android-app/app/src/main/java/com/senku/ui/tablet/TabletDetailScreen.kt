@@ -130,6 +130,24 @@ internal fun tabletReadingLayoutPolicy(isLandscape: Boolean): TabletReadingLayou
         false -> tabletLandscapeReadingLayoutPolicy()
     }
 
+internal fun tabletComposerContextHint(state: TabletDetailState): String {
+    val guideLabel = state.guideTitle.trim()
+        .ifEmpty { state.guideId.trim() }
+        .ifEmpty { "Guide context" }
+    val anchorLabel = state.guideModeAnchorLabel.trim()
+        .ifEmpty { state.anchor.section.trim() }
+        .ifEmpty { state.anchor.title.trim() }
+    val sourceLabel = when (val count = state.sources.size) {
+        0 -> "No sources"
+        1 -> "1 source"
+        else -> "$count sources"
+    }
+
+    return listOf(guideLabel, anchorLabel, sourceLabel)
+        .filter { it.isNotBlank() }
+        .joinToString(" - ")
+}
+
 internal data class PhoneStressReadingPolicy(
     val compactComposer: Boolean,
     val suppressRetryChrome: Boolean,
@@ -395,6 +413,7 @@ private fun CenterPane(
                     showRetry = state.composerShowRetry,
                     retryLabel = state.composerRetryLabel,
                     compact = false,
+                    contextHint = tabletComposerContextHint(state),
                 ),
                 onTextChange = onComposerTextChange,
                 onSendClick = { onComposerSendClick(state.composerText) },
