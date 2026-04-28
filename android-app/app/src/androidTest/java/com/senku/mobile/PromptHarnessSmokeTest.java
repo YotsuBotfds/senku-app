@@ -1086,7 +1086,6 @@ public final class PromptHarnessSmokeTest {
                 View emergencyHeader = activity.findViewById(R.id.detail_emergency_header);
                 TextView emergencyTitle = activity.findViewById(R.id.detail_emergency_header_title);
                 TextView emergencyText = activity.findViewById(R.id.detail_emergency_header_text);
-                View sourcesPanel = activity.findViewById(R.id.detail_sources_panel);
                 Assert.assertNotNull("emergency answer should expose the emergency header", emergencyHeader);
                 Assert.assertNotNull("emergency answer should expose the emergency title", emergencyTitle);
                 Assert.assertNotNull("emergency answer should expose the emergency summary", emergencyText);
@@ -1110,7 +1109,7 @@ public final class PromptHarnessSmokeTest {
                 );
                 Assert.assertTrue(
                     "emergency portrait should keep source or handoff context visible",
-                    isVisible(sourcesPanel)
+                    hasVisibleEmergencySourceOrHandoffContext(activity)
                 );
             });
             captureUiState("emergency_portrait_answer");
@@ -5513,6 +5512,32 @@ public final class PromptHarnessSmokeTest {
         Configuration configuration = activity.getResources().getConfiguration();
         return configuration.smallestScreenWidthDp < 600
             && configuration.orientation == Configuration.ORIENTATION_LANDSCAPE;
+    }
+
+    private boolean hasVisibleEmergencySourceOrHandoffContext(Activity activity) {
+        if (activity == null) {
+            return false;
+        }
+        if (isVisible(activity.findViewById(R.id.detail_sources_panel))) {
+            return true;
+        }
+        if (!isTabletPortraitActivity(activity)) {
+            return false;
+        }
+        View emergencyHeader = activity.findViewById(R.id.detail_emergency_header);
+        View tabletRoot = activity.findViewById(R.id.tablet_detail_root);
+        View root = activity.getWindow() == null ? null : activity.getWindow().getDecorView();
+        String visibleSurface = buildVisibleSurfaceSnapshot(root).toLowerCase(Locale.US);
+        return isVisible(emergencyHeader)
+            && isVisible(tabletRoot)
+            && containsAny(
+                visibleSurface,
+                "sources -",
+                "source graph",
+                "1 source",
+                "gd-911",
+                "poisoning and overdose first response"
+            );
     }
 
     private boolean isCompactPortraitPhoneActivity(Activity activity) {

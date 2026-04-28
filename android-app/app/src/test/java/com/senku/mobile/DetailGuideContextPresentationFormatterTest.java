@@ -70,7 +70,7 @@ public final class DetailGuideContextPresentationFormatterTest {
             formatter.buildRelatedGuidePreviewRowBehaviorText(state)
         );
         assertEquals(
-            "Cross-reference",
+            "Selected linked guide",
             formatter.buildRelatedGuidePreviewTitleText(state)
         );
         assertEquals(
@@ -85,6 +85,30 @@ public final class DetailGuideContextPresentationFormatterTest {
         assertEquals(
             "No cross-reference text is available in this pack.",
             formatter.buildRelatedGuidePreviewEmptyText(state)
+        );
+    }
+
+    @Test
+    public void activeGuideContextKeepsSelectedLinkedGuideTitleForPhoneGuideMode() {
+        DetailGuideContextPresentationFormatter formatter =
+            new DetailGuideContextPresentationFormatter(null);
+        DetailGuideContextPresentationFormatter.State state = state(
+            false,
+            true,
+            true,
+            false,
+            "GD-215",
+            "Rainwater Catchment",
+            "",
+            "",
+            "",
+            "",
+            ""
+        );
+
+        assertEquals(
+            "Selected linked guide",
+            formatter.buildRelatedGuidePreviewTitleText(state)
         );
     }
 

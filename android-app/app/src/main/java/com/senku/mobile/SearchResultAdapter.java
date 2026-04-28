@@ -270,7 +270,7 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
         previewView.setOnClickListener(null);
         previewView.setClickable(false);
         previewView.setFocusable(false);
-        if (richTabletCard || stressCompactCard) {
+        if (stressCompactCard) {
             cue.setVisibility(View.GONE);
             return;
         }
@@ -293,7 +293,7 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
                 : buildCompactLinkedGuideCueLabel(preview, compactLinkedCue),
             guideColor
         );
-        cue.setAlpha(usePreviewLineAction ? 0.78f : 0.94f);
+        cue.setAlpha(usePreviewLineAction ? 0.78f : (richTabletCard ? 0.72f : 0.94f));
         cue.setContentDescription(
             usePreviewLineAction
                 ? buildLinkedGuideAvailableDescription(actionLabel)

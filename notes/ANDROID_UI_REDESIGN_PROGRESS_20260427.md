@@ -92,3 +92,34 @@ Tracker: `notes/ANDROID_UI_REDESIGN_WAVE6_PLAN_20260427.md`.
   visual comparison to the mocks is noisy until state inputs are aligned.
 
 Changed path: `notes/ANDROID_UI_REDESIGN_PROGRESS_20260427.md`.
+
+## Wave7 Closure - 2026-04-27 23:16 Local
+
+- Latest local state pack: `artifacts/ui_state_pack/20260427_231419`.
+- State-pack status: `pass`, 47 pass, 0 fail, 47 total, 0 platform ANRs.
+- Matrix health: homogeneous APK/model, no rotation mismatches.
+- APK SHA: `f2a2c0f3295a4a84a9c8f895273fcb7f95d2fc5b307d43f7ab3cad44525bc6a7`.
+- Model: `gemma-4-e2b-it-litert`.
+- Model SHA: `ea1102014465edeb14b517bf270f6751d036749e3c5f517a7ff802782cb92161`.
+
+Wave7 cleared the six Wave6/Wave7 pre-capture blockers:
+
+- Tablet portrait and landscape linked-guide handoff now pass with trusted
+  screenshots and dumps.
+- Phone portrait and landscape related-guide navigation now keep the selected
+  linked-guide preview title and pass with trusted screenshots and dumps.
+- Tablet portrait emergency now captures trusted emergency screenshots/dumps
+  by accepting the tablet Compose root plus live source context.
+- Phone landscape generative provenance no longer fails the visible provenance
+  wording assertion in the full pack.
+
+Validation run before the full pack:
+
+- `scripts/run_android_local_quality_gate.ps1` passed.
+- `:app:assembleDebug :app:assembleDebugAndroidTest` passed.
+- Focused smokes passed for tablet handoff, phone guide navigation, and tablet
+  emergency portrait.
+
+Remaining work is now visual parity rather than harness readiness: home/search
+content and density, answer/thread density, cream guide reader styling, and
+emergency content hierarchy against the target mocks.

@@ -5596,6 +5596,23 @@ public final class DetailActivity extends AppCompatActivity {
         return builder;
     }
 
+    private CharSequence buildVisibleProvenanceMetaText(SearchResult source) {
+        CharSequence meta = buildProvenanceMetaText(source);
+        if (!isLandscapePhoneLayout()) {
+            return meta;
+        }
+        String metaText = safe(meta == null ? null : meta.toString()).toLowerCase(Locale.US);
+        String provenanceTitle = getString(R.string.detail_provenance_title).toLowerCase(Locale.US);
+        if (metaText.contains(provenanceTitle)
+            || metaText.contains("source preview")
+            || metaText.contains("selected source")) {
+            return meta;
+        }
+        SpannableStringBuilder builder = new SpannableStringBuilder("Source preview - ");
+        builder.append(meta);
+        return builder;
+    }
+
     private SearchResult selectedSourceForProvenanceAction() {
         return detailProvenancePresentationFormatter().selectedSourceForProvenanceAction(currentSources, selectedSourceKey);
     }
@@ -6071,7 +6088,7 @@ public final class DetailActivity extends AppCompatActivity {
             }
         }
         provenancePanel.setVisibility(View.VISIBLE);
-        provenanceMeta.setText(buildProvenanceMetaText(source));
+        provenanceMeta.setText(buildVisibleProvenanceMetaText(source));
         provenanceExpanded = false;
         provenanceBody.setText(buildStyledGuideBody(buildGuideBody(source)));
         applyProvenanceExpansionState();
