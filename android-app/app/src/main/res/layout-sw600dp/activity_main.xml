@@ -280,7 +280,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:addStatesFromChildren="true"
-            android:background="@drawable/bg_search_shell"
+            android:background="@drawable/bg_manual_home_search"
             android:gravity="center_vertical"
             android:orientation="horizontal"
             android:padding="@dimen/home_search_shell_padding">
@@ -292,7 +292,7 @@
                 android:layout_weight="1"
                 android:background="@android:color/transparent"
                 android:contentDescription="@string/search_input_description"
-                android:drawableStart="@drawable/ic_search_target"
+                android:drawableStart="@drawable/ic_search_magnifier"
                 android:drawablePadding="8dp"
                 android:focusable="true"
                 android:focusableInTouchMode="true"
@@ -305,20 +305,20 @@
                 android:paddingTop="@dimen/home_search_input_padding_vertical"
                 android:paddingEnd="@dimen/home_search_input_padding_horizontal"
                 android:paddingBottom="@dimen/home_search_input_padding_vertical"
-                android:textColor="@color/senku_text_light"
-                android:textColorHint="@color/senku_text_muted_light" />
+                android:textColor="@color/senku_rev03_ink_0"
+                android:textColorHint="@color/senku_rev03_ink_2" />
 
         <Button
             android:id="@+id/search_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-                android:background="@drawable/bg_button_primary"
+                android:background="@drawable/bg_manual_home_row"
                 android:minWidth="0dp"
                 android:paddingStart="18dp"
                 android:paddingEnd="18dp"
             android:text="@string/external_review_home_search_button"
             android:textAllCaps="false"
-            android:textColor="@color/senku_text_dark" />
+            android:textColor="@color/senku_rev03_ink_0" />
     </LinearLayout>
 
     <HorizontalScrollView
@@ -341,7 +341,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-            android:background="@drawable/bg_home_nav_segment_shell"
+            android:background="@drawable/bg_manual_home_nav_shell"
             android:layout_marginTop="@dimen/home_block_gap"
             android:orientation="horizontal"
             android:padding="@dimen/home_nav_shell_padding">
@@ -351,10 +351,12 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:background="@drawable/bg_button_secondary"
+                android:background="@drawable/bg_manual_home_row"
+                android:drawableStart="@drawable/ic_home_library"
+                android:drawablePadding="8dp"
                 android:text="@string/browse_guides_button"
                 android:textAllCaps="false"
-                android:textColor="@color/senku_text_light" />
+                android:textColor="@color/senku_rev03_ink_0" />
 
         <Button
             android:id="@+id/ask_button"
@@ -362,10 +364,28 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/home_nav_segment_gap"
             android:layout_weight="1"
-            android:background="@drawable/bg_button_secondary"
+            android:background="@drawable/bg_manual_home_row"
+            android:drawableStart="@drawable/ic_home_ask"
+            android:drawablePadding="8dp"
             android:text="@string/ask_button"
             android:textAllCaps="false"
-            android:textColor="@color/senku_text_light" />
+            android:textColor="@color/senku_rev03_ink_0" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/home_nav_segment_gap"
+                android:layout_weight="1"
+                android:background="@drawable/bg_manual_home_row"
+                android:drawableStart="@drawable/ic_home_saved"
+                android:drawablePadding="8dp"
+                android:gravity="center"
+                android:minHeight="48dp"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp"
+                android:text="Saved"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textColor="@color/senku_rev03_ink_0" />
         </LinearLayout>
 
         <TextView

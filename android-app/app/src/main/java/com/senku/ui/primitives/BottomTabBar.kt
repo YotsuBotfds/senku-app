@@ -261,22 +261,26 @@ private fun BottomTabIcon(
         )
         when (destination) {
             BottomTabDestination.HOME -> {
-                val roof = Path().apply {
-                    moveTo(size.width * 0.16f, size.height * 0.48f)
-                    lineTo(size.width * 0.50f, size.height * 0.18f)
-                    lineTo(size.width * 0.84f, size.height * 0.48f)
-                }
-                drawPath(
-                    path = roof,
+                drawLine(
                     color = tint,
-                    style = stroke,
+                    start = Offset(size.width * 0.30f, size.height * 0.32f),
+                    end = Offset(size.width * 0.70f, size.height * 0.32f),
+                    strokeWidth = strokeWidth,
+                    cap = StrokeCap.Round,
                 )
-                drawRoundRect(
+                drawLine(
                     color = tint,
-                    topLeft = Offset(size.width * 0.24f, size.height * 0.48f),
-                    size = Size(size.width * 0.52f, size.height * 0.28f),
-                    cornerRadius = CornerRadius(size.width * 0.08f, size.width * 0.08f),
-                    style = stroke,
+                    start = Offset(size.width * 0.30f, size.height * 0.50f),
+                    end = Offset(size.width * 0.70f, size.height * 0.50f),
+                    strokeWidth = strokeWidth,
+                    cap = StrokeCap.Round,
+                )
+                drawLine(
+                    color = tint,
+                    start = Offset(size.width * 0.30f, size.height * 0.68f),
+                    end = Offset(size.width * 0.70f, size.height * 0.68f),
+                    strokeWidth = strokeWidth,
+                    cap = StrokeCap.Round,
                 )
             }
 
@@ -355,26 +359,18 @@ private fun BottomTabIcon(
             }
 
             BottomTabDestination.PINS -> {
-                drawRoundRect(
+                val bookmark = Path().apply {
+                    moveTo(size.width * 0.32f, size.height * 0.20f)
+                    lineTo(size.width * 0.68f, size.height * 0.20f)
+                    lineTo(size.width * 0.68f, size.height * 0.78f)
+                    lineTo(size.width * 0.50f, size.height * 0.64f)
+                    lineTo(size.width * 0.32f, size.height * 0.78f)
+                    close()
+                }
+                drawPath(
+                    path = bookmark,
                     color = tint,
-                    topLeft = Offset(size.width * 0.28f, size.height * 0.18f),
-                    size = Size(size.width * 0.44f, size.height * 0.26f),
-                    cornerRadius = CornerRadius(size.width * 0.12f, size.width * 0.12f),
                     style = stroke,
-                )
-                drawLine(
-                    color = tint,
-                    start = Offset(size.width * 0.50f, size.height * 0.44f),
-                    end = Offset(size.width * 0.50f, size.height * 0.82f),
-                    strokeWidth = strokeWidth,
-                    cap = StrokeCap.Round,
-                )
-                drawLine(
-                    color = tint,
-                    start = Offset(size.width * 0.38f, size.height * 0.64f),
-                    end = Offset(size.width * 0.50f, size.height * 0.82f),
-                    strokeWidth = strokeWidth,
-                    cap = StrokeCap.Round,
                 )
             }
         }

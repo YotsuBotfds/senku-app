@@ -57,6 +57,14 @@ class SearchResultCardHeuristicsTest {
             "Category: Fire",
             metadataLineForSearchResultCard("General", "unknown", "Fire"),
         )
+        assertEquals(
+            "",
+            metadataLineForSearchResultCard(" general ", " none ", " unknown "),
+        )
+        assertEquals(
+            "Window: Long Term",
+            metadataLineForSearchResultCard("none", "Long Term", "general"),
+        )
     }
 
     @Test

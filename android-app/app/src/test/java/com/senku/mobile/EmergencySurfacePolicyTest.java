@@ -183,6 +183,24 @@ public final class EmergencySurfacePolicyTest {
     }
 
     @Test
+    public void reviewedDeterministicFoundryBurnHazardEmergencyQualifies() {
+        EmergencySurfacePolicy.Decision decision = EmergencySurfacePolicy.evaluate(
+            input(
+                true,
+                "answer_card:foundry_casting_area_readiness_boundary",
+                "Workshop danger response",
+                "reviewed",
+                "high",
+                "high",
+                "deterministic_rule",
+                1
+            )
+        );
+
+        assertTrue(decision.eligible);
+    }
+
+    @Test
     public void reviewedDeterministicMeningitisEmergencyQualifies() {
         EmergencySurfacePolicy.Decision decision = EmergencySurfacePolicy.evaluate(
             input(
@@ -264,6 +282,44 @@ public final class EmergencySurfacePolicyTest {
                 true,
                 "answer_card:poisoning_prevention_cleaning_supplies_storage",
                 "First Aid & Emergency Response",
+                "reviewed",
+                "high",
+                "high",
+                "deterministic_rule",
+                1
+            )
+        );
+
+        assertFalse(decision.eligible);
+        assertEquals(EmergencySurfacePolicy.REASON_NOT_HIGH_RISK_EMERGENCY, decision.reason);
+    }
+
+    @Test
+    public void routineSunburnCareDoesNotQualifyAsBurnHazardEmergency() {
+        EmergencySurfacePolicy.Decision decision = EmergencySurfacePolicy.evaluate(
+            input(
+                true,
+                "answer_card:sunburn_sun_protection_boundary",
+                "First Aid & Emergency Response",
+                "reviewed",
+                "high",
+                "high",
+                "deterministic_rule",
+                1
+            )
+        );
+
+        assertFalse(decision.eligible);
+        assertEquals(EmergencySurfacePolicy.REASON_NOT_HIGH_RISK_EMERGENCY, decision.reason);
+    }
+
+    @Test
+    public void foundryReadinessWithoutEmergencyCategoryDoesNotQualify() {
+        EmergencySurfacePolicy.Decision decision = EmergencySurfacePolicy.evaluate(
+            input(
+                true,
+                "answer_card:foundry_casting_area_readiness_boundary",
+                "Workshop readiness",
                 "reviewed",
                 "high",
                 "high",

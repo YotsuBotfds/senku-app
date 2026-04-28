@@ -3,11 +3,14 @@ package com.senku.ui.tablet
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -23,18 +26,15 @@ import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.isTraversalGroup
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.traversalIndex
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.senku.mobile.R
-import com.senku.ui.evidence.EvidenceSnippet
-import com.senku.ui.evidence.EvidenceSnippetModel
 import com.senku.ui.evidence.EvidenceSourceModel
 import com.senku.ui.evidence.EvidenceSourceRowData
 import com.senku.ui.evidence.EvidenceSurfaceModel
-import com.senku.ui.evidence.XRefRow
-import com.senku.ui.evidence.XRefRowModel
 import com.senku.ui.evidence.toEvidenceSurfaceViewData
 import com.senku.ui.theme.SenkuTheme
 
@@ -83,11 +83,11 @@ fun EvidencePane(
 
     Column(
         modifier = modifier
-            .background(colors.bg0)
+            .background(colors.bg1)
             .fillMaxHeight()
             .verticalScroll(scrollState)
-            .padding(14.dp),
-        verticalArrangement = Arrangement.spacedBy(18.dp),
+            .padding(horizontal = 24.dp, vertical = 22.dp),
+        verticalArrangement = Arrangement.spacedBy(22.dp),
     ) {
         ActiveEvidenceSection(
             anchor = anchor,
@@ -236,13 +236,12 @@ private fun ActiveEvidenceSection(
         if (activeEvidence == null) {
             PlaceholderCard("No source evidence")
         } else {
-            EvidenceSnippet(
-                evidence = EvidenceSnippetModel(
-                    guideId = activeEvidence.guideId,
-                    title = activeEvidence.title,
-                    section = activeEvidence.section,
-                    snippet = activeEvidence.snippet,
-                ),
+            ManualEvidenceCard(
+                guideId = activeEvidence.guideId,
+                relation = "ANCHOR",
+                title = activeEvidence.title,
+                section = activeEvidence.section,
+                snippet = activeEvidence.snippet,
                 onClick = { onAnchorClick() },
                 titleMaxLines = titleMaxLines,
                 snippetMaxLines = snippetMaxLines,
@@ -339,7 +338,7 @@ private fun CrossReferenceSection(
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         SectionHeader(
-            title = "GUIDE CONNECTIONS · ${xrefs.size}",
+            title = "GUIDE CONNECTIONS - ${xrefs.size}",
             accessibilitySummary = buildSourceGraphAccessibilitySummary(
                 landmark = landmark,
                 emptyDescription = emptyDescription,
@@ -352,12 +351,98 @@ private fun CrossReferenceSection(
                 PlaceholderCard("No guide connections")
             } else {
                 xrefs.forEach { xref ->
-                    XRefRow(
-                        xRef = XRefRowModel(
-                            guideId = xref.id,
-                            title = xref.title,
-                        ),
+                    ManualEvidenceCard(
+                        guideId = xref.id,
+                        relation = "RELATED",
+                        title = xref.title,
+                        section = "",
+                        snippet = "",
                         onClick = { onXRefClick(xref.id) },
+                        titleMaxLines = 2,
+                        snippetMaxLines = 1,
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun ManualEvidenceCard(
+    guideId: String,
+    relation: String,
+    title: String,
+    section: String,
+    snippet: String,
+    onClick: () -> Unit,
+    titleMaxLines: Int,
+    snippetMaxLines: Int,
+) {
+    val colors = SenkuTheme.colors
+    val typography = SenkuTheme.typography
+
+    Surface(
+        modifier = Modifier.fillMaxWidth(),
+        color = colors.bg2,
+        contentColor = colors.ink0,
+        shape = RoundedCornerShape(0.dp),
+        border = androidx.compose.foundation.BorderStroke(1.dp, colors.hairlineStrong),
+        onClick = onClick,
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(end = 12.dp),
+            horizontalArrangement = Arrangement.spacedBy(14.dp),
+            verticalAlignment = Alignment.Top,
+        ) {
+            Box(
+                modifier = Modifier
+                    .width(3.dp)
+                    .height(96.dp)
+                    .background(colors.accent),
+            )
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(vertical = 14.dp),
+                verticalArrangement = Arrangement.spacedBy(7.dp),
+            ) {
+                Text(
+                    text = listOf(guideId.trim().ifEmpty { "GD-?" }, relation, section.trim())
+                        .filter { it.isNotEmpty() }
+                        .joinToString(" - "),
+                    style = typography.monoCaps.copy(
+                        fontSize = 10.sp,
+                        lineHeight = 13.sp,
+                        fontWeight = FontWeight.Medium,
+                    ),
+                    color = colors.accent,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                )
+                Text(
+                    text = title.trim().ifEmpty { "Source guide" },
+                    style = typography.uiBody.copy(
+                        fontSize = 15.sp,
+                        lineHeight = 19.sp,
+                        fontWeight = FontWeight.SemiBold,
+                    ),
+                    color = colors.ink0,
+                    maxLines = titleMaxLines.coerceAtLeast(1),
+                    overflow = TextOverflow.Ellipsis,
+                )
+                if (snippet.trim().isNotEmpty()) {
+                    Text(
+                        text = snippet.trim(),
+                        style = typography.smallBody.copy(
+                            fontSize = 13.sp,
+                            lineHeight = 18.sp,
+                            fontStyle = FontStyle.Italic,
+                        ),
+                        color = colors.ink2,
+                        maxLines = snippetMaxLines.coerceAtLeast(1),
+                        overflow = TextOverflow.Ellipsis,
                     )
                 }
             }
@@ -399,7 +484,7 @@ private fun PlaceholderCard(
         modifier = Modifier.fillMaxWidth(),
         color = colors.bg1,
         contentColor = colors.ink3,
-        shape = RoundedCornerShape(12.dp),
+        shape = RoundedCornerShape(0.dp),
         border = androidx.compose.foundation.BorderStroke(1.dp, colors.hairline),
     ) {
         Text(

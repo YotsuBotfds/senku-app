@@ -144,10 +144,11 @@ fun DockedComposer(
     val typography = SenkuTheme.typography
     var focused by remember { mutableStateOf(false) }
     val focusRequester = remember { FocusRequester() }
-    val fieldMinHeight = if (landscapePhoneBudgeted) 44.dp else 48.dp
-    val fieldVerticalPadding = if (landscapePhoneBudgeted) 10.dp else if (model.compact) 12.dp else 14.dp
-    val rowVerticalPadding = if (landscapePhoneBudgeted) 6.dp else 10.dp
-    val sendButtonSize = if (landscapePhoneBudgeted) 38.dp else 40.dp
+    val fieldMinHeight = if (landscapePhoneBudgeted) 40.dp else 44.dp
+    val fieldVerticalPadding = if (landscapePhoneBudgeted) 8.dp else if (model.compact) 10.dp else 12.dp
+    val rowVerticalPadding = if (landscapePhoneBudgeted) 6.dp else 8.dp
+    val actionSize = if (landscapePhoneBudgeted) 36.dp else 38.dp
+    val sendVerticalPadding = if (landscapePhoneBudgeted) 8.dp else 10.dp
     val bottomSpacerHeight = if (landscapePhoneBudgeted) 0.dp else 2.dp
     val hasSendText = model.enabled && model.text.trim().isNotEmpty()
     val contextHint = model.contextHint.trim()
@@ -174,9 +175,9 @@ fun DockedComposer(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(
-                        start = if (model.compact) 12.dp else 14.dp,
-                        top = 8.dp,
-                        end = if (model.compact) 12.dp else 14.dp,
+                        start = if (model.compact) 10.dp else 12.dp,
+                        top = 7.dp,
+                        end = if (model.compact) 10.dp else 12.dp,
                     ),
                 style = typography.monoCaps.copy(
                     fontSize = 10.sp,
@@ -191,15 +192,15 @@ fun DockedComposer(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = if (model.compact) 12.dp else 14.dp, vertical = rowVerticalPadding),
+                .padding(horizontal = if (model.compact) 10.dp else 12.dp, vertical = rowVerticalPadding),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(10.dp),
+            horizontalArrangement = Arrangement.spacedBy(9.dp),
         ) {
             if (model.showRetry && onRetryClick != null) {
                 Surface(
                     color = colors.bg2,
                     contentColor = colors.ink1,
-                    shape = RoundedCornerShape(999.dp),
+                    shape = RoundedCornerShape(10.dp),
                     border = androidx.compose.foundation.BorderStroke(1.dp, colors.hairlineStrong),
                     onClick = { if (model.enabled) onRetryClick() },
                 ) {
@@ -216,6 +217,27 @@ fun DockedComposer(
                 }
             }
 
+            Surface(
+                modifier = Modifier.size(actionSize),
+                color = colors.bg1,
+                contentColor = colors.ink2,
+                shape = CircleShape,
+                border = androidx.compose.foundation.BorderStroke(1.dp, colors.hairlineStrong),
+                onClick = { },
+            ) {
+                Box(contentAlignment = Alignment.Center) {
+                    Text(
+                        text = "+",
+                        style = typography.tag.copy(
+                            fontSize = 20.sp,
+                            lineHeight = 20.sp,
+                            fontWeight = FontWeight.Medium,
+                        ),
+                        color = colors.ink2,
+                    )
+                }
+            }
+
             BasicTextField(
                 value = model.text,
                 onValueChange = onTextChange,
@@ -225,11 +247,11 @@ fun DockedComposer(
                     .focusRequester(focusRequester)
                     .border(
                         width = 1.dp,
-                        color = if (focused) colors.accent.copy(alpha = 0.55f) else colors.hairlineStrong,
-                        shape = RoundedCornerShape(999.dp),
+                        color = if (focused) colors.accent.copy(alpha = 0.58f) else colors.hairlineStrong.copy(alpha = 0.45f),
+                        shape = RoundedCornerShape(10.dp),
                     )
-                    .background(colors.bg2, RoundedCornerShape(999.dp))
-                    .padding(horizontal = 16.dp, vertical = fieldVerticalPadding)
+                    .background(colors.bg1, RoundedCornerShape(10.dp))
+                    .padding(horizontal = 12.dp, vertical = fieldVerticalPadding)
                     .onFocusChanged {
                         focused = it.isFocused
                         onFocusChange?.invoke(it.isFocused)
@@ -278,15 +300,13 @@ fun DockedComposer(
             )
 
             Surface(
-                modifier = Modifier.size(sendButtonSize),
-                color = if (hasSendText) colors.accent else colors.bg1,
-                contentColor = if (hasSendText) colors.paperInk else colors.accent.copy(alpha = 0.62f),
-                shape = CircleShape,
-                border = if (hasSendText) {
-                    null
-                } else {
-                    androidx.compose.foundation.BorderStroke(1.dp, colors.hairlineStrong)
-                },
+                color = colors.bg1,
+                contentColor = if (hasSendText) colors.ink0 else colors.ink2,
+                shape = RoundedCornerShape(10.dp),
+                border = androidx.compose.foundation.BorderStroke(
+                    1.dp,
+                    if (hasSendText) colors.accent.copy(alpha = 0.72f) else colors.hairlineStrong,
+                ),
                 onClick = {
                     if (hasSendText) {
                         onSendClick()
@@ -295,13 +315,14 @@ fun DockedComposer(
             ) {
                 Box(contentAlignment = Alignment.Center) {
                     Text(
-                        text = ">",
+                        text = "Send",
+                        modifier = Modifier.padding(horizontal = 16.dp, vertical = sendVerticalPadding),
                         style = typography.tag.copy(
-                            fontSize = 18.sp,
-                            lineHeight = 18.sp,
+                            fontSize = 13.sp,
+                            lineHeight = 16.sp,
                             fontWeight = FontWeight.SemiBold,
                         ),
-                        color = if (hasSendText) colors.paperInk else colors.accent.copy(alpha = 0.62f),
+                        color = if (hasSendText) colors.ink0 else colors.ink2,
                     )
                 }
             }

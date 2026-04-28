@@ -51,6 +51,7 @@ public final class EmergencySurfacePolicy {
 
     private static boolean hasHighRiskEmergencyRule(String normalizedRuleId) {
         return isPoisoningEmergency(normalizedRuleId)
+            || isFoundryBurnHazardEmergency(normalizedRuleId)
             || normalizedRuleId.contains("choking")
             || normalizedRuleId.contains("sepsis")
             || normalizedRuleId.contains("meningitis")
@@ -68,6 +69,10 @@ public final class EmergencySurfacePolicy {
                 "exposure",
                 "inhalation"
             );
+    }
+
+    private static boolean isFoundryBurnHazardEmergency(String normalizedRuleId) {
+        return "answer_card:foundry_casting_area_readiness_boundary".equals(normalizedRuleId);
     }
 
     private static boolean hasEmergencyCategory(String normalizedCategory) {

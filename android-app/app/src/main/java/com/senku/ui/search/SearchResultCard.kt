@@ -2,14 +2,15 @@ package com.senku.ui.search
 
 import android.content.Context
 import androidx.annotation.ColorInt
-import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -86,46 +87,40 @@ fun SearchResultCard(
     modifier: Modifier = Modifier,
 ) {
     val colors = SenkuTheme.colors
-    val surfaceShape = RoundedCornerShape(14.dp)
     val laneColor = Color(model.laneColorArgb.toLong())
 
     Surface(
         modifier = modifier.fillMaxWidth(),
-        color = colors.paper,
-        contentColor = colors.paperInk,
-        shape = surfaceShape,
-        border = BorderStroke(1.dp, colors.paperInk.copy(alpha = 0.09f)),
+        color = colors.bg0,
+        contentColor = colors.ink0,
         tonalElevation = 0.dp,
-        shadowElevation = 3.dp,
+        shadowElevation = 0.dp,
         onClick = { onCardClick.run() },
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 12.dp, vertical = 11.dp),
-            verticalArrangement = Arrangement.spacedBy(5.dp),
+                .padding(horizontal = 24.dp, vertical = 18.dp),
+            verticalArrangement = Arrangement.spacedBy(7.dp),
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                RankTag(label = model.rankLabel)
-                Spacer(modifier = Modifier.width(8.dp))
                 Text(
                     text = model.guideIdLabel.trim().uppercase(Locale.US),
                     modifier = Modifier.weight(1f),
                     style = SenkuTheme.typography.monoCaps.copy(
-                        fontSize = 10.sp,
-                        lineHeight = 12.sp,
+                        fontSize = 11.sp,
+                        lineHeight = 14.sp,
                         fontWeight = FontWeight.Bold,
                     ),
-                    color = colors.paperInkMuted,
+                    color = colors.accent,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                 )
-                Spacer(modifier = Modifier.width(10.dp))
-                LaneTag(
-                    label = model.laneLabel,
+                ScoreTick(
+                    label = model.rankLabel,
                     color = laneColor,
                 )
             }
@@ -135,49 +130,36 @@ fun SearchResultCard(
                 style = SenkuTheme.typography.uiBody.copy(
                     fontSize = 15.sp,
                     lineHeight = 18.sp,
-                    fontWeight = FontWeight.SemiBold,
+                    fontWeight = FontWeight.Bold,
                 ),
-                color = colors.paperInk,
+                color = colors.ink0,
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis,
             )
 
-            if (model.metadataLine.isNotBlank()) {
+            val metadataLabel = compactMetadataLabel(model.metadataLine)
+            if (metadataLabel.isNotBlank()) {
                 Text(
-                    text = model.metadataLine.trim().uppercase(Locale.US),
-                    style = SenkuTheme.typography.monoCaps.copy(
-                        fontSize = 9.5.sp,
-                        lineHeight = 12.sp,
-                        fontWeight = FontWeight.Medium,
-                    ),
-                    color = colors.paperInkMuted,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                )
-            }
-
-            if (model.subtitle.isNotBlank()) {
-                Text(
-                    text = model.subtitle.trim(),
+                    text = metadataLabel,
                     style = SenkuTheme.typography.monoCaps.copy(
                         fontSize = 10.sp,
-                        lineHeight = 12.5.sp,
+                        lineHeight = 14.sp,
                         fontWeight = FontWeight.Medium,
                     ),
-                    color = colors.paperInkMuted,
+                    color = colors.ink2,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                 )
             }
 
             Text(
-                text = model.snippet.trim(),
+                text = resultSnippetLine(model.subtitle, model.snippet),
                 style = SenkuTheme.typography.smallBody.copy(
                     fontSize = 12.5.sp,
-                    lineHeight = 17.sp,
+                    lineHeight = 18.sp,
                     fontWeight = FontWeight.Normal,
                 ),
-                color = colors.paperInk.copy(alpha = 0.75f),
+                color = colors.ink1.copy(alpha = 0.78f),
                 maxLines = 3,
                 overflow = TextOverflow.Ellipsis,
             )
@@ -192,9 +174,8 @@ fun SearchResultCard(
                         ActionChip(
                             label = model.continueThreadLabel,
                             contentDescription = model.continueThreadContentDescription,
-                            backgroundColor = colors.accent.copy(alpha = 0.18f),
-                            borderColor = colors.accent.copy(alpha = 0.32f),
-                            textColor = colors.paperInk,
+                            backgroundColor = colors.bg2.copy(alpha = 0.74f),
+                            textColor = colors.ink0,
                             onClick = onContinueThreadClick,
                         )
                     }
@@ -203,63 +184,56 @@ fun SearchResultCard(
                             label = label,
                             contentDescription = model.linkedGuideContentDescription
                                 ?: relatedGuideContentDescription(),
-                            backgroundColor = colors.ink2.copy(alpha = 0.14f),
-                            borderColor = colors.ink2.copy(alpha = 0.28f),
-                            textColor = colors.paperInk,
+                            backgroundColor = colors.bg2.copy(alpha = 0.52f),
+                            textColor = colors.ink1,
                             onClick = onLinkedGuideClick,
                         )
                     }
                 }
             }
+
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(1.dp)
+                    .background(colors.hairlineStrong),
+            )
         }
     }
 }
 
 @Composable
-private fun LaneTag(
+private fun ScoreTick(
     label: String,
     color: Color,
 ) {
-    Surface(
-        color = color.copy(alpha = 0.13f),
-        contentColor = color,
-        shape = RoundedCornerShape(999.dp),
-        border = BorderStroke(1.dp, color.copy(alpha = 0.22f)),
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        Text(
-            text = label.trim().uppercase(Locale.US),
-            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
-            style = SenkuTheme.typography.monoCaps.copy(
-                fontSize = 9.sp,
-                lineHeight = 11.sp,
-                fontWeight = FontWeight.SemiBold,
-            ),
-            color = color,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-        )
-    }
-}
-
-@Composable
-private fun RankTag(label: String) {
-    val colors = SenkuTheme.colors
-    Surface(
-        color = colors.paperInk.copy(alpha = 0.08f),
-        contentColor = colors.paperInk,
-        shape = RoundedCornerShape(6.dp),
-        border = BorderStroke(1.dp, colors.paperInk.copy(alpha = 0.14f)),
-    ) {
+        Box(
+            modifier = Modifier
+                .width(42.dp)
+                .height(4.dp)
+                .background(color.copy(alpha = 0.30f), RoundedCornerShape(999.dp)),
+        ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth(0.72f)
+                    .height(4.dp)
+                    .background(SenkuTheme.colors.accent, RoundedCornerShape(999.dp)),
+            )
+        }
         Text(
             text = honestRankLabel(label),
-            modifier = Modifier.padding(horizontal = 7.dp, vertical = 4.dp),
             style = SenkuTheme.typography.monoCaps.copy(
-                fontSize = 10.sp,
-                lineHeight = 12.sp,
-                fontWeight = FontWeight.Bold,
+                fontSize = 11.sp,
+                lineHeight = 14.sp,
+                fontWeight = FontWeight.Medium,
             ),
-            color = colors.paperInk,
+            color = SenkuTheme.colors.ink1,
             maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
         )
     }
 }
@@ -269,7 +243,6 @@ private fun ActionChip(
     label: String,
     contentDescription: String,
     backgroundColor: Color,
-    borderColor: Color,
     textColor: Color,
     onClick: Runnable?,
 ) {
@@ -279,8 +252,7 @@ private fun ActionChip(
         },
         color = backgroundColor,
         contentColor = textColor,
-        shape = RoundedCornerShape(999.dp),
-        border = BorderStroke(1.dp, borderColor),
+        shape = RoundedCornerShape(6.dp),
         onClick = {
             onClick?.run()
         },
@@ -298,6 +270,44 @@ private fun ActionChip(
             overflow = TextOverflow.Ellipsis,
         )
     }
+}
+
+private fun compactMetadataLabel(metadataLine: String): String {
+    val cleaned = metadataLine.trim()
+    if (cleaned.isEmpty()) {
+        return ""
+    }
+    val valuesByKey = LinkedHashMap<String, String>()
+    for (token in cleaned.split("//")) {
+        val parts = token.trim().split(":", limit = 2)
+        if (parts.size == 2) {
+            val key = parts[0].trim().lowercase(Locale.US)
+            val value = parts[1].trim()
+            if (value.isNotEmpty()) {
+                valuesByKey[key] = value
+            }
+        }
+    }
+    if (valuesByKey.isEmpty()) {
+        return cleaned.uppercase(Locale.US)
+    }
+    val tokens = ArrayList<String>(3)
+    valuesByKey["role"]?.let { tokens.add(it.uppercase(Locale.US)) }
+    valuesByKey["category"]?.let { tokens.add(it.uppercase(Locale.US)) }
+    valuesByKey["window"]?.let { tokens.add("WINDOW ${it.uppercase(Locale.US)}") }
+    return tokens.joinToString("  \u00B7  ")
+}
+
+private fun resultSnippetLine(subtitle: String, snippet: String): String {
+    val cleanedSubtitle = subtitle.trim()
+    val cleanedSnippet = snippet.trim()
+    if (cleanedSubtitle.isEmpty() || cleanedSnippet.startsWith(cleanedSubtitle)) {
+        return cleanedSnippet
+    }
+    if (cleanedSnippet.isEmpty()) {
+        return cleanedSubtitle
+    }
+    return "$cleanedSubtitle: $cleanedSnippet"
 }
 
 fun buildWarmThreadGuideIds(context: Context): Set<String> {

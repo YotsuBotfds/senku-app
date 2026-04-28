@@ -256,7 +256,11 @@ fun TabletDetailScreen(
         color = colors.bg0,
         contentColor = colors.ink0,
     ) {
-        Row(modifier = Modifier.fillMaxSize()) {
+        Row(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(colors.bg0),
+        ) {
             ThreadRail(
                 turns = state.turns,
                 sources = state.sources,
@@ -284,15 +288,15 @@ fun TabletDetailScreen(
                     .background(colors.hairlineStrong),
             )
 
-            CenterPane(
+            DetailWorkspace(
                 state = state,
                 onTurnClick = onTurnClick,
                 onAnchorClick = onAnchorClick,
                 onComposerTextChange = onComposerTextChange,
                 onComposerSendClick = onComposerSendClick,
                 onRetryClick = onRetryClick,
-                onEvidenceToggleClick = onEvidenceToggleClick,
                 onXRefClick = onXRefClick,
+                evidencePaneTitle = evidencePaneTitle,
                 modifier = Modifier
                     .weight(1f)
                     .fillMaxHeight()
@@ -302,48 +306,23 @@ fun TabletDetailScreen(
                         traversalIndex = 1f
                     },
             )
-
-            if (state.isLandscape) {
-                Box(
-                    modifier = Modifier
-                        .width(1.dp)
-                        .fillMaxHeight()
-                        .background(colors.hairlineStrong),
-                )
-                EvidencePane(
-                    anchor = state.anchor,
-                    xrefs = state.xrefs,
-                    onAnchorClick = onAnchorClick,
-                    onXRefClick = onXRefClick,
-                    modifier = Modifier
-                        .width(tabletEvidenceVisibilityPolicy().evidencePaneWidthDp.dp)
-                        .fillMaxHeight()
-                        .semantics {
-                            paneTitle = evidencePaneTitle
-                            isTraversalGroup = true
-                            traversalIndex = 2f
-                        },
-                )
-            }
         }
     }
 }
 
 @Composable
-private fun CenterPane(
+private fun DetailWorkspace(
     state: TabletDetailState,
     onTurnClick: (String) -> Unit,
     onAnchorClick: () -> Unit,
     onComposerTextChange: (String) -> Unit,
     onComposerSendClick: (String) -> Unit,
     onRetryClick: () -> Unit,
-    onEvidenceToggleClick: () -> Unit,
     onXRefClick: (String) -> Unit,
+    evidencePaneTitle: String,
     modifier: Modifier = Modifier,
 ) {
     val colors = SenkuTheme.colors
-    val readingPolicy = tabletLandscapeReadingLayoutPolicy()
-    val scrollState = rememberScrollState()
 
     Column(
         modifier = modifier.background(colors.bg0),
@@ -358,50 +337,41 @@ private fun CenterPane(
             statusText = state.statusText,
         )
 
-        Box(
+        Row(
             modifier = Modifier
                 .weight(1f)
                 .fillMaxWidth(),
         ) {
-            Column(
+            CenterPane(
+                state = state,
+                onTurnClick = onTurnClick,
+                onAnchorClick = onAnchorClick,
                 modifier = Modifier
-                    .align(Alignment.TopCenter)
-                    .widthIn(max = readingPolicy.answerMaxWidthDp.dp)
-                    .fillMaxWidth()
-                    .verticalScroll(scrollState)
-                    .padding(horizontal = 20.dp, vertical = 14.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp),
-            ) {
-                if (state.turns.isEmpty()) {
-                    Text(
-                        text = "No conversation turns yet.",
-                        style = SenkuTheme.typography.smallBody,
-                        color = colors.ink3,
-                    )
-                } else {
-                    state.turns.forEach { turn ->
-                        ThreadTurnCard(
-                            turn = turn,
-                            canOpenProof = turn.isActive && state.anchor.hasSource,
-                            onFocusTurn = { onTurnClick(turn.id) },
-                            onOpenProof = onAnchorClick,
-                        )
-                    }
-                }
+                    .weight(1f)
+                    .fillMaxHeight(),
+            )
 
-                if (!state.isLandscape) {
-                    CollapsibleEvidencePane(
-                        anchor = state.anchor,
-                        xrefs = state.xrefs,
-                        expanded = state.evidenceExpanded,
-                        onToggleClick = onEvidenceToggleClick,
-                        onAnchorClick = onAnchorClick,
-                        onXRefClick = onXRefClick,
-                    )
-                }
+            Box(
+                modifier = Modifier
+                    .width(1.dp)
+                    .fillMaxHeight()
+                    .background(colors.hairlineStrong),
+            )
 
-                Spacer(modifier = Modifier.height(8.dp))
-            }
+            EvidencePane(
+                anchor = state.anchor,
+                xrefs = state.xrefs,
+                onAnchorClick = onAnchorClick,
+                onXRefClick = onXRefClick,
+                modifier = Modifier
+                    .width(tabletEvidenceVisibilityPolicy().evidencePaneWidthDp.dp)
+                    .fillMaxHeight()
+                    .semantics {
+                        paneTitle = evidencePaneTitle
+                        isTraversalGroup = true
+                        traversalIndex = 2f
+                    },
+            )
         }
 
         if (state.composerVisible) {
@@ -424,6 +394,51 @@ private fun CenterPane(
 }
 
 @Composable
+private fun CenterPane(
+    state: TabletDetailState,
+    onTurnClick: (String) -> Unit,
+    onAnchorClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val colors = SenkuTheme.colors
+    val readingPolicy = tabletReadingLayoutPolicy(state.isLandscape)
+    val scrollState = rememberScrollState()
+
+    Box(
+        modifier = modifier.background(colors.bg0),
+    ) {
+        Column(
+            modifier = Modifier
+                .align(Alignment.TopCenter)
+                .widthIn(max = readingPolicy.answerMaxWidthDp.dp)
+                .fillMaxWidth()
+                .verticalScroll(scrollState)
+                .padding(horizontal = 28.dp, vertical = 20.dp),
+            verticalArrangement = Arrangement.spacedBy(18.dp),
+        ) {
+            if (state.turns.isEmpty()) {
+                Text(
+                    text = "No conversation turns yet.",
+                    style = SenkuTheme.typography.smallBody,
+                    color = colors.ink3,
+                )
+            } else {
+                state.turns.forEach { turn ->
+                    ThreadTurnCard(
+                        turn = turn,
+                        canOpenProof = turn.isActive && state.anchor.hasSource,
+                        onFocusTurn = { onTurnClick(turn.id) },
+                        onOpenProof = onAnchorClick,
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(8.dp))
+        }
+    }
+}
+
+@Composable
 private fun TitleBar(
     guideId: String,
     guideTitle: String,
@@ -440,8 +455,9 @@ private fun TitleBar(
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 20.dp, vertical = 14.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp),
+            .background(colors.bg0)
+            .padding(horizontal = 28.dp, vertical = 16.dp),
+        verticalArrangement = Arrangement.spacedBy(9.dp),
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -463,8 +479,8 @@ private fun TitleBar(
                 text = guideTitle.trim().ifEmpty { "Guide evidence" },
                 modifier = Modifier.weight(1f),
                 style = typography.sectionTitle.copy(
-                    fontSize = 20.sp,
-                    lineHeight = 24.sp,
+                    fontSize = 18.sp,
+                    lineHeight = 23.sp,
                     fontWeight = FontWeight.SemiBold,
                 ),
                 color = colors.ink0,
@@ -575,13 +591,13 @@ private fun QuestionQuoteBlock(
     val colors = SenkuTheme.colors
     val typography = SenkuTheme.typography
     val borderColor = if (active) colors.accent.copy(alpha = 0.22f) else colors.accent.copy(alpha = 0.14f)
-    val backgroundColor = if (active) colors.accent.copy(alpha = 0.09f) else colors.accent.copy(alpha = 0.06f)
+    val backgroundColor = if (active) colors.bg2 else colors.bg1
 
     Surface(
         modifier = modifier.fillMaxWidth(),
         color = backgroundColor,
         contentColor = colors.ink0,
-        shape = RoundedCornerShape(10.dp),
+        shape = RoundedCornerShape(0.dp),
         border = androidx.compose.foundation.BorderStroke(1.dp, borderColor),
     ) {
         Row(

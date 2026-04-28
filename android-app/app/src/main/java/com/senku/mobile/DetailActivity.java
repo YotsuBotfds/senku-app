@@ -2059,7 +2059,7 @@ public final class DetailActivity extends AppCompatActivity {
                 clearProvenancePanel();
                 if (showUtilityRail()) {
                     sourcesPanel.setVisibility(View.VISIBLE);
-                    sourcesPanel.setBackgroundResource(R.drawable.bg_sources_stack_shell);
+                    sourcesPanel.setBackgroundResource(detailSourcesPanelBackground());
                     promoteSourcesPanelInUtilityRail();
                     if (sourcesSubtitle != null) {
                         sourcesSubtitle.setText(R.string.detail_external_review_sources_subtitle_none);
@@ -2072,7 +2072,7 @@ public final class DetailActivity extends AppCompatActivity {
 
             if (useCompactSourceSections()) {
                 sourcesPanel.setVisibility(View.VISIBLE);
-                sourcesPanel.setBackgroundResource(R.drawable.bg_sources_stack_shell);
+                sourcesPanel.setBackgroundResource(detailSourcesPanelBackground());
                 if (sourcesTitleText != null) {
                     sourcesTitleText.setText(buildCompactToggleTitle(R.string.detail_sources_title, portraitSourcesExpanded));
                 }
@@ -2092,7 +2092,7 @@ public final class DetailActivity extends AppCompatActivity {
                 sourcesPanel.setVisibility(View.GONE);
             } else {
                 sourcesPanel.setVisibility(View.VISIBLE);
-                sourcesPanel.setBackgroundResource(R.drawable.bg_sources_stack_shell);
+                sourcesPanel.setBackgroundResource(detailSourcesPanelBackground());
                 promoteSourcesPanelInUtilityRail();
             }
             boolean stationRail = shouldUseSourceProvenancePanel();
@@ -2104,7 +2104,7 @@ public final class DetailActivity extends AppCompatActivity {
                     detailSourcePresentationFormatter().buildEvidenceCard(source, i, i == 0 ? "anchor" : "related");
                 Button button = new Button(this);
                 button.setAllCaps(false);
-                button.setBackgroundResource(previewMode ? R.drawable.bg_source_link_selector : R.drawable.bg_source_link);
+                button.setBackgroundResource(detailSourceButtonBackground(previewMode));
                 button.setTextColor(getColor(R.color.senku_text_light));
                 button.setMinHeight(0);
                 button.setMinimumHeight(0);
@@ -5037,6 +5037,29 @@ public final class DetailActivity extends AppCompatActivity {
             && configuration.orientation == Configuration.ORIENTATION_LANDSCAPE;
     }
 
+    private boolean phoneXmlDetailLayoutActive() {
+        return isCompactPortraitPhoneLayout() || isLandscapePhoneLayout();
+    }
+
+    private int detailSourcesPanelBackground() {
+        return phoneXmlDetailLayoutActive()
+            ? R.drawable.bg_detail_sources_shell_flat
+            : R.drawable.bg_sources_stack_shell;
+    }
+
+    private int detailSourceButtonBackground(boolean previewMode) {
+        if (phoneXmlDetailLayoutActive()) {
+            return R.drawable.bg_detail_source_card_flat;
+        }
+        return previewMode ? R.drawable.bg_source_link_selector : R.drawable.bg_source_link;
+    }
+
+    private int detailSourceButtonSelectedBackground() {
+        return phoneXmlDetailLayoutActive()
+            ? R.drawable.bg_detail_source_card_selected
+            : R.drawable.bg_source_link_active;
+    }
+
     private boolean isTabletPortraitLayout() {
         Configuration configuration = getResources().getConfiguration();
         return configuration.smallestScreenWidthDp >= 600
@@ -5729,11 +5752,13 @@ public final class DetailActivity extends AppCompatActivity {
         if (selectedSourceButton != null) {
             selectedSourceButton.setSelected(false);
             selectedSourceButton.setTypeface(Typeface.DEFAULT);
+            selectedSourceButton.setBackgroundResource(detailSourceButtonBackground(shouldUseSourceProvenancePanel()));
         }
         selectedSourceButton = sourceButton;
         if (selectedSourceButton != null) {
             selectedSourceButton.setSelected(true);
             selectedSourceButton.setTypeface(Typeface.DEFAULT_BOLD);
+            selectedSourceButton.setBackgroundResource(detailSourceButtonSelectedBackground());
             Object tag = selectedSourceButton.getTag();
             if (tag instanceof String) {
                 selectedSourceKey = safe((String) tag);
@@ -6142,16 +6167,22 @@ public final class DetailActivity extends AppCompatActivity {
             return;
         }
         if (!answerMode) {
-            answerBubble.setBackgroundResource(R.drawable.bg_chat_answer);
+            answerBubble.setBackgroundResource(phoneXmlDetailLayoutActive()
+                ? R.drawable.bg_detail_answer_shell
+                : R.drawable.bg_chat_answer);
             bodyLabel.setBackgroundResource(R.drawable.bg_evidence_panel);
             return;
         }
         if (shouldUseSubduedAnswerCard()) {
-            answerBubble.setBackgroundResource(R.drawable.bg_chat_answer_low_confidence);
+            answerBubble.setBackgroundResource(phoneXmlDetailLayoutActive()
+                ? R.drawable.bg_detail_answer_shell
+                : R.drawable.bg_chat_answer_low_confidence);
             bodyLabel.setBackgroundResource(R.drawable.bg_helper_pill);
             return;
         }
-        answerBubble.setBackgroundResource(R.drawable.bg_chat_answer);
+        answerBubble.setBackgroundResource(phoneXmlDetailLayoutActive()
+            ? R.drawable.bg_detail_answer_shell
+            : R.drawable.bg_chat_answer);
         bodyLabel.setBackgroundResource(R.drawable.bg_evidence_panel);
     }
 

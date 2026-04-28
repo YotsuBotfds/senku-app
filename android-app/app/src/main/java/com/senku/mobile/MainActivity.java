@@ -3367,6 +3367,9 @@ public final class MainActivity extends AppCompatActivity {
         if (resultsList != null) {
             resultsList.setVisibility(!browseMode && hasResults ? View.VISIBLE : View.GONE);
         }
+        if (browseRail != null) {
+            browseRail.setVisibility(browseMode ? View.VISIBLE : View.GONE);
+        }
         if (developerPanel != null) {
             applyDeveloperToolsPanelVisibility(browseMode, hasResults);
         }

@@ -41,6 +41,50 @@ public final class MainPresentationFormatterTest {
     }
 
     @Test
+    public void compactResultsHeaderKeepsCountReadableWithoutQuery() {
+        MainPresentationFormatter formatter = new MainPresentationFormatter(null);
+        List<SearchResult> results = List.of(
+            new SearchResult("Water", "", "", ""),
+            new SearchResult("Fire", "", "", ""),
+            new SearchResult("Shelter", "", "", ""),
+            new SearchResult("Food", "", "", "")
+        );
+
+        assertEquals(
+            "Results (4)",
+            formatter.buildResultsHeader(
+                " ",
+                results,
+                true,
+                10,
+                true,
+                false,
+                false
+            )
+        );
+    }
+
+    @Test
+    public void compactResultsHeaderPreservesSessionMarker() {
+        MainPresentationFormatter formatter = new MainPresentationFormatter(null);
+        List<SearchResult> results = List.of(new SearchResult("Water", "", "", ""));
+
+        assertEquals(
+            "Results for \"solar still\" (1) + session",
+            formatter.buildResultsHeader(
+                "solar still",
+                results,
+                true,
+                10,
+                true,
+                false,
+                false,
+                true
+            )
+        );
+    }
+
+    @Test
     public void failureStateCopyUsesDignifiedUserFacingText() {
         MainPresentationFormatter formatter = new MainPresentationFormatter(null);
 

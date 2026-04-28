@@ -45,6 +45,21 @@ public final class SearchResultAdapterTest {
     }
 
     @Test
+    public void composeBridgeMetadataLineSuppressesPlaceholderTokens() {
+        assertEquals("", SearchResultAdapter.buildCardMetadataLineForTest("general", "none", "unknown"));
+        assertEquals(
+            "Window: Long Term",
+            SearchResultAdapter.buildCardMetadataLineForTest("none", "long-term", "general")
+        );
+    }
+
+    @Test
+    public void cleanDisplayTextStripsMarkdownBeforeTruncating() {
+        assertEquals("Boil water", SearchResultAdapter.cleanDisplayTextForTest(" **Boil** `water` ", 40));
+        assertEquals("Use clean\u2026", SearchResultAdapter.cleanDisplayTextForTest("Use clean containers", 10));
+    }
+
+    @Test
     public void linkedGuideBrowseHandoffDescriptionsUseConnectionLanguage() {
         assertEquals(
             "Guide connection available: GD-214 - Water Storage",

@@ -17,7 +17,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.HorizontalDivider
@@ -53,10 +52,10 @@ fun ThreadRail(
 
     Column(
         modifier = modifier
-            .background(colors.bg0)
+            .background(colors.bg1)
             .verticalScroll(scrollState)
-            .padding(horizontal = 14.dp, vertical = 14.dp),
-        verticalArrangement = Arrangement.spacedBy(14.dp),
+            .padding(horizontal = 18.dp, vertical = 18.dp),
+        verticalArrangement = Arrangement.spacedBy(20.dp),
     ) {
         Toolbar(
             pinVisible = pinVisible,
@@ -158,7 +157,7 @@ private fun RailSection(
         verticalArrangement = Arrangement.spacedBy(8.dp),
         content = {
             Text(
-                text = label + " · " + count,
+                text = label + " - " + count,
                 style = SenkuTheme.typography.monoCaps.copy(
                     fontSize = 10.sp,
                     lineHeight = 13.sp,
@@ -183,7 +182,7 @@ private fun ThreadTurnRow(
         Status.Pending -> colors.ink3
     }
     val background = if (turn.isActive) {
-        colors.accent.copy(alpha = 0.10f).compositeOver(colors.bg1)
+        colors.accent.copy(alpha = 0.10f).compositeOver(colors.bg2)
     } else {
         colors.bg1
     }
@@ -192,10 +191,10 @@ private fun ThreadTurnRow(
         modifier = Modifier.fillMaxWidth(),
         color = background,
         contentColor = colors.ink0,
-        shape = RoundedCornerShape(6.dp),
+        shape = RoundedCornerShape(0.dp),
         border = androidx.compose.foundation.BorderStroke(
             1.dp,
-            if (turn.isActive) colors.accent.copy(alpha = 0.26f) else colors.hairline,
+            if (turn.isActive) colors.accent.copy(alpha = 0.32f) else colors.hairline,
         ),
         onClick = onClick,
     ) {
@@ -209,7 +208,7 @@ private fun ThreadTurnRow(
             Box(
                 modifier = Modifier
                     .width(2.dp)
-                    .height(30.dp)
+                    .height(42.dp)
                     .background(if (turn.isActive) colors.accent else colors.hairlineStrong),
             )
             Column(
@@ -262,40 +261,56 @@ private fun SourcePill(
         modifier = Modifier.fillMaxWidth(),
         color = background,
         contentColor = colors.ink0,
-        shape = RoundedCornerShape(6.dp),
+        shape = RoundedCornerShape(0.dp),
         border = androidx.compose.foundation.BorderStroke(
             1.dp,
-            if (source.isSelected) colors.accent.copy(alpha = 0.28f) else colors.hairline,
+            when {
+                source.isSelected -> colors.accent.copy(alpha = 0.34f)
+                source.isAnchor -> colors.ok.copy(alpha = 0.30f)
+                else -> colors.hairline
+            },
         ),
         onClick = onClick,
     ) {
-        Column(
+        Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 8.dp, vertical = 6.dp),
-            verticalArrangement = Arrangement.spacedBy(4.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalAlignment = Alignment.Top,
         ) {
-            Text(
-                text = source.id.trim().ifEmpty { "GD-?" },
-                style = SenkuTheme.typography.monoCaps.copy(
-                    fontSize = 9.sp,
-                    lineHeight = 12.sp,
-                    fontWeight = FontWeight.Medium,
-                ),
-                color = idColor,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
+            Box(
+                modifier = Modifier
+                    .width(2.dp)
+                    .height(42.dp)
+                    .background(if (source.isSelected || source.isAnchor) idColor else colors.hairlineStrong),
             )
-            Text(
-                text = source.title.trim().ifEmpty { "Source guide" },
-                style = SenkuTheme.typography.smallBody.copy(
-                    fontSize = 11.5.sp,
-                    lineHeight = 15.5.sp,
-                ),
-                color = colors.ink1,
-                maxLines = 2,
-                overflow = TextOverflow.Ellipsis,
-            )
+            Column(
+                modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.spacedBy(4.dp),
+            ) {
+                Text(
+                    text = source.id.trim().ifEmpty { "GD-?" },
+                    style = SenkuTheme.typography.monoCaps.copy(
+                        fontSize = 9.sp,
+                        lineHeight = 12.sp,
+                        fontWeight = FontWeight.Medium,
+                    ),
+                    color = idColor,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                )
+                Text(
+                    text = source.title.trim().ifEmpty { "Source guide" },
+                    style = SenkuTheme.typography.smallBody.copy(
+                        fontSize = 11.5.sp,
+                        lineHeight = 15.5.sp,
+                    ),
+                    color = colors.ink1,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis,
+                )
+            }
         }
     }
 }
@@ -324,9 +339,9 @@ private fun RailActionButton(
         modifier = Modifier
             .size(36.dp)
             .clickable(onClick = onClick),
-        color = if (active) colors.ok.copy(alpha = 0.18f) else colors.bg1,
+        color = if (active) colors.ok.copy(alpha = 0.18f) else colors.bg0,
         contentColor = colors.ink0,
-        shape = CircleShape,
+        shape = RoundedCornerShape(6.dp),
         border = androidx.compose.foundation.BorderStroke(
             1.dp,
             if (active) colors.ok.copy(alpha = 0.5f) else colors.hairlineStrong,
