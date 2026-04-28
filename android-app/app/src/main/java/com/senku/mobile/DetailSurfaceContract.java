@@ -83,6 +83,22 @@ public final class DetailSurfaceContract {
         ELIGIBLE
     }
 
+    public enum SurfaceTreatment {
+        GUIDE_PAPER,
+        ANSWER_CANVAS
+    }
+
+    public enum ComposerEligibility {
+        INELIGIBLE,
+        ELIGIBLE
+    }
+
+    public enum ChromePlan {
+        GUIDE_PAPER_READER,
+        ANSWER_CANVAS_WITH_COMPOSER,
+        ANSWER_CANVAS_SUPPORT_ONLY
+    }
+
     public static final class Posture {
         public final Surface surface;
         public final TitleRole titleRole;
@@ -94,6 +110,9 @@ public final class DetailSurfaceContract {
         public final EvidenceRegionRole evidenceRegionRole;
         public final RelatedGuideRole relatedGuideRole;
         public final FollowUpEligibility followUpEligibility;
+        public final SurfaceTreatment surfaceTreatment;
+        public final ComposerEligibility composerEligibility;
+        public final ChromePlan chromePlan;
 
         private Posture(
             Surface surface,
@@ -105,7 +124,10 @@ public final class DetailSurfaceContract {
             PrimaryAction primaryAction,
             EvidenceRegionRole evidenceRegionRole,
             RelatedGuideRole relatedGuideRole,
-            FollowUpEligibility followUpEligibility
+            FollowUpEligibility followUpEligibility,
+            SurfaceTreatment surfaceTreatment,
+            ComposerEligibility composerEligibility,
+            ChromePlan chromePlan
         ) {
             this.surface = Objects.requireNonNull(surface);
             this.titleRole = Objects.requireNonNull(titleRole);
@@ -117,6 +139,9 @@ public final class DetailSurfaceContract {
             this.evidenceRegionRole = Objects.requireNonNull(evidenceRegionRole);
             this.relatedGuideRole = Objects.requireNonNull(relatedGuideRole);
             this.followUpEligibility = Objects.requireNonNull(followUpEligibility);
+            this.surfaceTreatment = Objects.requireNonNull(surfaceTreatment);
+            this.composerEligibility = Objects.requireNonNull(composerEligibility);
+            this.chromePlan = Objects.requireNonNull(chromePlan);
         }
     }
 
@@ -139,7 +164,10 @@ public final class DetailSurfaceContract {
             PrimaryAction.OPEN_GUIDE,
             EvidenceRegionRole.GUIDE_METADATA,
             handoff ? RelatedGuideRole.GUIDE_READER_HANDOFF_CONTEXT : RelatedGuideRole.GUIDE_READER_NAVIGATION,
-            FollowUpEligibility.INELIGIBLE
+            FollowUpEligibility.INELIGIBLE,
+            SurfaceTreatment.GUIDE_PAPER,
+            ComposerEligibility.INELIGIBLE,
+            ChromePlan.GUIDE_PAPER_READER
         );
     }
 
@@ -206,6 +234,26 @@ public final class DetailSurfaceContract {
             && posture.followUpEligibility == FollowUpEligibility.ELIGIBLE;
     }
 
+    public static boolean usesGuidePaperSurface(Posture posture) {
+        return posture != null
+            && posture.surface == Surface.GUIDE_READER
+            && posture.surfaceTreatment == SurfaceTreatment.GUIDE_PAPER
+            && posture.chromePlan == ChromePlan.GUIDE_PAPER_READER;
+    }
+
+    public static boolean usesAnswerCanvasSurface(Posture posture) {
+        return posture != null
+            && posture.surface == Surface.ANSWER_DETAIL
+            && posture.surfaceTreatment == SurfaceTreatment.ANSWER_CANVAS;
+    }
+
+    public static boolean isComposerEligible(Posture posture) {
+        return posture != null
+            && posture.surface == Surface.ANSWER_DETAIL
+            && posture.composerEligibility == ComposerEligibility.ELIGIBLE
+            && posture.chromePlan == ChromePlan.ANSWER_CANVAS_WITH_COMPOSER;
+    }
+
     public static boolean isAnswerEvidenceRegion(Posture posture) {
         return posture != null
             && posture.surface == Surface.ANSWER_DETAIL
@@ -235,7 +283,10 @@ public final class DetailSurfaceContract {
                     PrimaryAction.ASK_FOLLOW_UP,
                     EvidenceRegionRole.DETERMINISTIC_EVIDENCE,
                     RelatedGuideRole.ANSWER_SOURCE_CONNECTIONS,
-                    FollowUpEligibility.ELIGIBLE
+                    FollowUpEligibility.ELIGIBLE,
+                    SurfaceTreatment.ANSWER_CANVAS,
+                    ComposerEligibility.ELIGIBLE,
+                    ChromePlan.ANSWER_CANVAS_WITH_COMPOSER
                 );
             case ABSTAIN:
                 return new Posture(
@@ -248,7 +299,10 @@ public final class DetailSurfaceContract {
                     PrimaryAction.REVIEW_SUPPORTING_GUIDES,
                     EvidenceRegionRole.ABSTAIN_RATIONALE,
                     RelatedGuideRole.ANSWER_SUPPORTING_CHOICES,
-                    FollowUpEligibility.INELIGIBLE
+                    FollowUpEligibility.INELIGIBLE,
+                    SurfaceTreatment.ANSWER_CANVAS,
+                    ComposerEligibility.INELIGIBLE,
+                    ChromePlan.ANSWER_CANVAS_SUPPORT_ONLY
                 );
             case UNCERTAIN_FIT:
                 return new Posture(
@@ -261,7 +315,10 @@ public final class DetailSurfaceContract {
                     PrimaryAction.REVIEW_SUPPORTING_GUIDES,
                     EvidenceRegionRole.UNCERTAIN_FIT_RATIONALE,
                     RelatedGuideRole.ANSWER_SUPPORTING_CHOICES,
-                    FollowUpEligibility.INELIGIBLE
+                    FollowUpEligibility.INELIGIBLE,
+                    SurfaceTreatment.ANSWER_CANVAS,
+                    ComposerEligibility.INELIGIBLE,
+                    ChromePlan.ANSWER_CANVAS_SUPPORT_ONLY
                 );
             case GENERATED:
             default:
@@ -275,7 +332,10 @@ public final class DetailSurfaceContract {
                     PrimaryAction.ASK_FOLLOW_UP,
                     EvidenceRegionRole.ANSWER_EVIDENCE,
                     RelatedGuideRole.ANSWER_SOURCE_CONNECTIONS,
-                    FollowUpEligibility.ELIGIBLE
+                    FollowUpEligibility.ELIGIBLE,
+                    SurfaceTreatment.ANSWER_CANVAS,
+                    ComposerEligibility.ELIGIBLE,
+                    ChromePlan.ANSWER_CANVAS_WITH_COMPOSER
                 );
         }
     }

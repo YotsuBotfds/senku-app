@@ -18,6 +18,9 @@ public final class DetailSurfaceContractTest {
         );
         assertEquals(DetailSurfaceContract.FollowUpVisibility.HIDDEN, posture.followUpVisibility);
         assertEquals(DetailSurfaceContract.RelatedGuidePosture.GUIDE_NAVIGATION, posture.relatedGuidePosture);
+        assertEquals(DetailSurfaceContract.SurfaceTreatment.GUIDE_PAPER, posture.surfaceTreatment);
+        assertEquals(DetailSurfaceContract.ComposerEligibility.INELIGIBLE, posture.composerEligibility);
+        assertEquals(DetailSurfaceContract.ChromePlan.GUIDE_PAPER_READER, posture.chromePlan);
     }
 
     @Test
@@ -37,6 +40,9 @@ public final class DetailSurfaceContractTest {
             DetailSurfaceContract.RelatedGuidePosture.SOURCE_ANCHORED_CONNECTIONS,
             posture.relatedGuidePosture
         );
+        assertEquals(DetailSurfaceContract.SurfaceTreatment.ANSWER_CANVAS, posture.surfaceTreatment);
+        assertEquals(DetailSurfaceContract.ComposerEligibility.ELIGIBLE, posture.composerEligibility);
+        assertEquals(DetailSurfaceContract.ChromePlan.ANSWER_CANVAS_WITH_COMPOSER, posture.chromePlan);
     }
 
     @Test
@@ -74,6 +80,9 @@ public final class DetailSurfaceContractTest {
             DetailSurfaceContract.RelatedGuidePosture.SUPPORTING_GUIDE_CHOICES,
             posture.relatedGuidePosture
         );
+        assertEquals(DetailSurfaceContract.SurfaceTreatment.ANSWER_CANVAS, posture.surfaceTreatment);
+        assertEquals(DetailSurfaceContract.ComposerEligibility.INELIGIBLE, posture.composerEligibility);
+        assertEquals(DetailSurfaceContract.ChromePlan.ANSWER_CANVAS_SUPPORT_ONLY, posture.chromePlan);
     }
 
     @Test
@@ -111,6 +120,7 @@ public final class DetailSurfaceContractTest {
             DetailSurfaceContract.RelatedGuidePosture.GUIDE_HANDOFF_CONTEXT,
             posture.relatedGuidePosture
         );
+        assertEquals(DetailSurfaceContract.ChromePlan.GUIDE_PAPER_READER, posture.chromePlan);
     }
 
     @Test
@@ -196,6 +206,9 @@ public final class DetailSurfaceContractTest {
         assertEquals(true, DetailSurfaceContract.isCanonicalGuideReader(posture));
         assertEquals(false, DetailSurfaceContract.shouldShowAnswerEvidence(posture));
         assertEquals(false, DetailSurfaceContract.shouldShowAnswerFollowUp(posture));
+        assertEquals(true, DetailSurfaceContract.usesGuidePaperSurface(posture));
+        assertEquals(false, DetailSurfaceContract.usesAnswerCanvasSurface(posture));
+        assertEquals(false, DetailSurfaceContract.isComposerEligible(posture));
     }
 
     @Test
@@ -208,8 +221,12 @@ public final class DetailSurfaceContractTest {
         assertEquals(false, DetailSurfaceContract.isCanonicalGuideReader(generated));
         assertEquals(true, DetailSurfaceContract.shouldShowAnswerEvidence(generated));
         assertEquals(true, DetailSurfaceContract.shouldShowAnswerFollowUp(generated));
+        assertEquals(false, DetailSurfaceContract.usesGuidePaperSurface(generated));
+        assertEquals(true, DetailSurfaceContract.usesAnswerCanvasSurface(generated));
+        assertEquals(true, DetailSurfaceContract.isComposerEligible(generated));
         assertEquals(true, DetailSurfaceContract.shouldShowAnswerEvidence(deterministic));
         assertEquals(true, DetailSurfaceContract.shouldShowAnswerFollowUp(deterministic));
+        assertEquals(true, DetailSurfaceContract.isComposerEligible(deterministic));
     }
 
     @Test
@@ -221,8 +238,12 @@ public final class DetailSurfaceContractTest {
 
         assertEquals(true, DetailSurfaceContract.shouldShowAnswerEvidence(abstain));
         assertEquals(false, DetailSurfaceContract.shouldShowAnswerFollowUp(abstain));
+        assertEquals(true, DetailSurfaceContract.usesAnswerCanvasSurface(abstain));
+        assertEquals(false, DetailSurfaceContract.isComposerEligible(abstain));
         assertEquals(true, DetailSurfaceContract.shouldShowAnswerEvidence(uncertain));
         assertEquals(false, DetailSurfaceContract.shouldShowAnswerFollowUp(uncertain));
+        assertEquals(true, DetailSurfaceContract.usesAnswerCanvasSurface(uncertain));
+        assertEquals(false, DetailSurfaceContract.isComposerEligible(uncertain));
     }
 
     @Test
@@ -238,6 +259,9 @@ public final class DetailSurfaceContractTest {
             direct.relatedGuideRole
         );
         assertEquals(DetailSurfaceContract.FollowUpEligibility.INELIGIBLE, direct.followUpEligibility);
+        assertEquals(DetailSurfaceContract.SurfaceTreatment.GUIDE_PAPER, direct.surfaceTreatment);
+        assertEquals(DetailSurfaceContract.ComposerEligibility.INELIGIBLE, direct.composerEligibility);
+        assertEquals(DetailSurfaceContract.ChromePlan.GUIDE_PAPER_READER, direct.chromePlan);
         assertEquals(false, DetailSurfaceContract.isFollowUpEligible(direct));
         assertEquals(false, DetailSurfaceContract.isAnswerEvidenceRegion(direct));
         assertEquals(false, DetailSurfaceContract.usesAnswerRelatedGuideRole(direct));
@@ -269,6 +293,9 @@ public final class DetailSurfaceContractTest {
             generated.relatedGuideRole
         );
         assertEquals(DetailSurfaceContract.FollowUpEligibility.ELIGIBLE, generated.followUpEligibility);
+        assertEquals(DetailSurfaceContract.SurfaceTreatment.ANSWER_CANVAS, generated.surfaceTreatment);
+        assertEquals(DetailSurfaceContract.ComposerEligibility.ELIGIBLE, generated.composerEligibility);
+        assertEquals(DetailSurfaceContract.ChromePlan.ANSWER_CANVAS_WITH_COMPOSER, generated.chromePlan);
         assertEquals(true, DetailSurfaceContract.isFollowUpEligible(generated));
         assertEquals(true, DetailSurfaceContract.isAnswerEvidenceRegion(generated));
         assertEquals(true, DetailSurfaceContract.usesAnswerRelatedGuideRole(generated));
@@ -291,6 +318,9 @@ public final class DetailSurfaceContractTest {
             abstain.relatedGuideRole
         );
         assertEquals(DetailSurfaceContract.FollowUpEligibility.INELIGIBLE, abstain.followUpEligibility);
+        assertEquals(DetailSurfaceContract.SurfaceTreatment.ANSWER_CANVAS, abstain.surfaceTreatment);
+        assertEquals(DetailSurfaceContract.ComposerEligibility.INELIGIBLE, abstain.composerEligibility);
+        assertEquals(DetailSurfaceContract.ChromePlan.ANSWER_CANVAS_SUPPORT_ONLY, abstain.chromePlan);
         assertEquals(false, DetailSurfaceContract.isFollowUpEligible(abstain));
         assertEquals(true, DetailSurfaceContract.isAnswerEvidenceRegion(abstain));
         assertEquals(true, DetailSurfaceContract.usesAnswerRelatedGuideRole(abstain));
@@ -313,6 +343,9 @@ public final class DetailSurfaceContractTest {
         assertEquals(false, DetailSurfaceContract.shouldShowAnswerEvidence(null));
         assertEquals(false, DetailSurfaceContract.shouldShowAnswerFollowUp(null));
         assertEquals(false, DetailSurfaceContract.isFollowUpEligible(null));
+        assertEquals(false, DetailSurfaceContract.usesGuidePaperSurface(null));
+        assertEquals(false, DetailSurfaceContract.usesAnswerCanvasSurface(null));
+        assertEquals(false, DetailSurfaceContract.isComposerEligible(null));
         assertEquals(false, DetailSurfaceContract.isAnswerEvidenceRegion(null));
         assertEquals(false, DetailSurfaceContract.usesAnswerRelatedGuideRole(null));
     }
