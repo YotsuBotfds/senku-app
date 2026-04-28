@@ -2,25 +2,15 @@
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
     <item>
         <shape android:shape="rectangle">
-            <solid android:color="@color/senku_emergency_banner_bg" />
-            <corners android:radius="18dp" />
+            <solid android:color="@color/senku_surface_alert" />
         </shape>
     </item>
 
     <item
-        android:left="1dp"
-        android:top="1dp"
-        android:right="1dp"
-        android:bottom="1dp">
+        android:gravity="top"
+        android:height="3dp">
         <shape android:shape="rectangle">
-            <gradient
-                android:angle="270"
-                android:endColor="#00FFFFFF"
-                android:startColor="#12FFF7E8" />
-            <corners android:radius="17dp" />
-            <stroke
-                android:width="1dp"
-                android:color="#80C9B682" />
+            <solid android:color="@color/senku_rev03_danger" />
         </shape>
     </item>
 </layer-list>
