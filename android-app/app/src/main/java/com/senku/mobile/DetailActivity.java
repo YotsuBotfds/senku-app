@@ -1607,6 +1607,7 @@ public final class DetailActivity extends AppCompatActivity {
             bodyMirrorShell.setPadding(0, 0, 0, 0);
             bodyMirrorShell.setBackground(null);
             bodyMirrorShell.setAlpha(0.01f);
+            bodyView.setTextColor(getColor(R.color.senku_text_light));
             bodyView.setAlpha(0.01f);
         } else {
             params.width = ViewGroup.LayoutParams.MATCH_PARENT;
@@ -1614,8 +1615,9 @@ public final class DetailActivity extends AppCompatActivity {
             params.topMargin = dp(12);
             bodyMirrorShell.setLayoutParams(params);
             bodyMirrorShell.setPadding(dp(14), dp(12), dp(12), dp(12));
-            bodyMirrorShell.setBackgroundResource(R.drawable.bg_detail_warning_shell);
+            bodyMirrorShell.setBackgroundResource(R.drawable.bg_detail_guide_paper_shell);
             bodyMirrorShell.setAlpha(1f);
+            bodyView.setTextColor(getColor(R.color.senku_rev03_paper_ink));
             bodyView.setAlpha(1f);
         }
         bodyMirrorShell.setVisibility(View.VISIBLE);

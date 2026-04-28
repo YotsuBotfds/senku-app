@@ -96,7 +96,7 @@ final class DetailGuidePresentationFormatter {
         styled = new SpannableStringBuilder(displayBuilder.toString());
         String displayText = styled.toString();
         boolean insideAdmonitionBlock = false;
-        int admonitionAccent = color(R.color.senku_accent_warning);
+        int admonitionAccentColorRes = guideAdmonitionWarningColorResForLegacy();
         int cursor = 0;
         for (GuideBodyLine line : lines) {
             int lineStart = cursor;
@@ -112,9 +112,9 @@ final class DetailGuidePresentationFormatter {
                     styled.setSpan(new StyleSpan(Typeface.BOLD), lineStart, spanEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                     styled.setSpan(new TypefaceSpan("monospace"), lineStart, spanEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                     styled.setSpan(new RelativeSizeSpan(0.95f), lineStart, spanEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                    admonitionAccent = admonitionAccentColor(trimmed);
+                    admonitionAccentColorRes = admonitionAccentColorRes(trimmed);
                     styled.setSpan(
-                        new ForegroundColorSpan(admonitionAccent),
+                        new ForegroundColorSpan(color(admonitionAccentColorRes)),
                         lineStart,
                         spanEnd,
                         Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
@@ -122,19 +122,19 @@ final class DetailGuidePresentationFormatter {
                     boolean labelOnly = canonicalGuideAdmonitionLabel(trimmed).equals(trimmed);
                     if (labelOnly) {
                         styled.setSpan(
-                            new BackgroundColorSpan(admonitionBlockBackgroundColor(trimmed)),
+                            new BackgroundColorSpan(color(guideAdmonitionBackgroundColorResForLegacy())),
                             lineStart,
                             lineEnd,
                             Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
                         );
                     } else {
-                        applyGuideIndentedWarningLine(styled, lineStart, lineEnd, admonitionAccent);
+                        applyGuideIndentedWarningLine(styled, lineStart, lineEnd, admonitionAccentColorRes);
                     }
                     insideAdmonitionBlock = true;
                 } else if (trimmed.isEmpty()) {
                     insideAdmonitionBlock = false;
                 } else if (insideAdmonitionBlock) {
-                    applyGuideIndentedWarningLine(styled, lineStart, lineEnd, admonitionAccent);
+                    applyGuideIndentedWarningLine(styled, lineStart, lineEnd, admonitionAccentColorRes);
                 }
             }
             cursor = lineEnd + 1;
@@ -142,26 +142,47 @@ final class DetailGuidePresentationFormatter {
         return styled;
     }
 
-    private int admonitionAccentColor(String line) {
-        String normalized = safe(line).trim().toUpperCase(Locale.US);
-        if (normalized.startsWith("DANGER") || normalized.startsWith("DANGEROUS")) {
-            return color(R.color.senku_accent_alert);
-        }
-        if (normalized.startsWith("WARNING") || normalized.startsWith("CAUTION")) {
-            return color(R.color.senku_accent_warning);
-        }
-        return color(R.color.senku_accent_olive);
+    static int guideBodyTextColorResForLegacy() {
+        return R.color.senku_rev03_paper_ink;
     }
 
-    private int admonitionBlockBackgroundColor(String line) {
+    static int guideAnchorLabelColorResForLegacy() {
+        return R.color.senku_rev03_paper_ok;
+    }
+
+    static int guideAnchorValueColorResForLegacy() {
+        return R.color.senku_rev03_paper_ink_muted;
+    }
+
+    static int guideAdmonitionDangerColorResForLegacy() {
+        return R.color.senku_rev03_paper_danger;
+    }
+
+    static int guideAdmonitionWarningColorResForLegacy() {
+        return R.color.senku_rev03_paper_warn;
+    }
+
+    static int guideAdmonitionNoteColorResForLegacy() {
+        return R.color.senku_rev03_paper_ok;
+    }
+
+    static int guideAdmonitionBackgroundColorResForLegacy() {
+        return R.color.senku_rev03_paper;
+    }
+
+    static int admonitionAccentColorResForLegacy(String line) {
+        return admonitionAccentColorRes(line);
+    }
+
+    private static int admonitionAccentColorRes(String line) {
         String normalized = safe(line).trim().toUpperCase(Locale.US);
         if (normalized.startsWith("DANGER") || normalized.startsWith("DANGEROUS")) {
-            return color(R.color.senku_surface_alert);
+            return guideAdmonitionDangerColorResForLegacy();
         }
         if (normalized.startsWith("WARNING") || normalized.startsWith("CAUTION")) {
-            return color(R.color.senku_bg_olive_deep);
+            return guideAdmonitionWarningColorResForLegacy();
         }
-        return color(R.color.senku_bg_olive);
+        return guideAdmonitionNoteColorResForLegacy();
     }
 
     private GuideBodyLine toGuideBodyLine(String rawLine) {
@@ -197,7 +218,7 @@ final class DetailGuidePresentationFormatter {
         styled.setSpan(new TypefaceSpan("monospace"), lineStart, labelEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         styled.setSpan(new RelativeSizeSpan(0.9f), lineStart, labelEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         styled.setSpan(
-            new ForegroundColorSpan(color(R.color.senku_accent_olive)),
+            new ForegroundColorSpan(color(guideAnchorLabelColorResForLegacy())),
             lineStart,
             labelEnd,
             Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
@@ -205,7 +226,7 @@ final class DetailGuidePresentationFormatter {
         if (valueStart < lineEnd) {
             styled.setSpan(new StyleSpan(Typeface.BOLD), valueStart, lineEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             styled.setSpan(
-                new ForegroundColorSpan(color(R.color.senku_text_muted_light)),
+                new ForegroundColorSpan(color(guideAnchorValueColorResForLegacy())),
                 valueStart,
                 lineEnd,
                 Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
@@ -225,7 +246,7 @@ final class DetailGuidePresentationFormatter {
         SpannableStringBuilder styled,
         int lineStart,
         int lineEnd,
-        int accentColor
+        int accentColorRes
     ) {
         if (lineStart >= lineEnd) {
             return;
@@ -237,27 +258,21 @@ final class DetailGuidePresentationFormatter {
             Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
         );
         styled.setSpan(
-            new ForegroundColorSpan(color(R.color.senku_text_light)),
+            new ForegroundColorSpan(color(guideBodyTextColorResForLegacy())),
             lineStart,
             lineEnd,
             Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
         );
         styled.setSpan(
-            new BackgroundColorSpan(admonitionContinuationBackgroundColor(accentColor)),
+            new BackgroundColorSpan(color(admonitionContinuationBackgroundColorRes(accentColorRes))),
             lineStart,
             lineEnd,
             Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
         );
     }
 
-    private int admonitionContinuationBackgroundColor(int accentColor) {
-        if (accentColor == color(R.color.senku_accent_alert)) {
-            return color(R.color.senku_surface_alert);
-        }
-        if (accentColor == color(R.color.senku_accent_warning)) {
-            return color(R.color.senku_bg_surface);
-        }
-        return color(R.color.senku_bg_olive_deep);
+    private static int admonitionContinuationBackgroundColorRes(int accentColorRes) {
+        return guideAdmonitionBackgroundColorResForLegacy();
     }
 
     private static String sanitizeGuideBodyForDisplay(String body) {

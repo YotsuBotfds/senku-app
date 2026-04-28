@@ -44,4 +44,38 @@ public final class DetailGuidePresentationFormatterTest {
 
         assertEquals("Use covered jars\nRotate monthly.", DetailGuidePresentationFormatter.buildGuideBody(result));
     }
+
+    @Test
+    public void guideReaderSpanColorResourcesUsePaperSafeRev03Tokens() {
+        assertEquals(R.color.senku_rev03_paper_ink, DetailGuidePresentationFormatter.guideBodyTextColorResForLegacy());
+        assertEquals(R.color.senku_rev03_paper_ok, DetailGuidePresentationFormatter.guideAnchorLabelColorResForLegacy());
+        assertEquals(
+            R.color.senku_rev03_paper_ink_muted,
+            DetailGuidePresentationFormatter.guideAnchorValueColorResForLegacy()
+        );
+        assertEquals(
+            R.color.senku_rev03_paper,
+            DetailGuidePresentationFormatter.guideAdmonitionBackgroundColorResForLegacy()
+        );
+    }
+
+    @Test
+    public void guideAdmonitionSpanColorResourcesUsePaperSeverityTokens() {
+        assertEquals(
+            R.color.senku_rev03_paper_danger,
+            DetailGuidePresentationFormatter.admonitionAccentColorResForLegacy("DANGER: severe bleeding")
+        );
+        assertEquals(
+            R.color.senku_rev03_paper_warn,
+            DetailGuidePresentationFormatter.admonitionAccentColorResForLegacy("WARNING: use ventilation")
+        );
+        assertEquals(
+            R.color.senku_rev03_paper_warn,
+            DetailGuidePresentationFormatter.admonitionAccentColorResForLegacy("CAUTION: watch for cracks")
+        );
+        assertEquals(
+            R.color.senku_rev03_paper_ok,
+            DetailGuidePresentationFormatter.admonitionAccentColorResForLegacy("NOTE: store dry")
+        );
+    }
 }

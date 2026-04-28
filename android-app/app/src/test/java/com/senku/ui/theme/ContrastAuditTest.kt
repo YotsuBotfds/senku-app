@@ -84,6 +84,30 @@ class ContrastAuditTest {
             background = DefaultSenkuColors.paper.toSwatch(),
             minimum = 4.5,
         )
+        assertContrastAtLeast(
+            label = "guide reader body / paper shell",
+            foreground = xmlColors.getValue("senku_rev03_paper_ink"),
+            background = xmlColors.getValue("senku_rev03_paper"),
+            minimum = 7.0,
+        )
+        assertContrastAtLeast(
+            label = "guide reader anchor value / paper shell",
+            foreground = xmlColors.getValue("senku_rev03_paper_ink_muted"),
+            background = xmlColors.getValue("senku_rev03_paper"),
+            minimum = 4.5,
+        )
+        assertContrastAtLeast(
+            label = "guide reader warning accent / paper shell",
+            foreground = xmlColors.getValue("senku_rev03_paper_warn"),
+            background = xmlColors.getValue("senku_rev03_paper"),
+            minimum = 4.5,
+        )
+        assertContrastAtLeast(
+            label = "guide reader danger accent / paper shell",
+            foreground = xmlColors.getValue("senku_rev03_paper_danger"),
+            background = xmlColors.getValue("senku_rev03_paper"),
+            minimum = 4.5,
+        )
     }
 
     @Test
