@@ -174,6 +174,26 @@ residuals remain substantial: global chrome/status density, answer content/state
 drift, guide document structure, thread metadata/detail richness, and emergency
 styling/content still need follow-up waves.
 
+Wave32 integration proof: `artifacts/ui_state_pack/wave32_integration/20260428_095035`
+is green (`pass`, 47/47, fail count 0), homogeneous APK
+`ac6b900502b0a37595529d8050715e1318b1ef9af2dad9a171b41c82aceb41b6`,
+model `gemma-4-e2b-it-litert`
+(`ea1102014465edeb14b517bf270f6751d036749e3c5f517a7ff802782cb92161`),
+rotation mismatch count 0. Local full Android build/unit tests and local
+quality gate passed before the pack. Integrated slices: P2 compact answer proof
+and `UNSURE`/source-count wording, P3 richer thread transcript and tablet rail
+metadata, P4 guide danger/required-reading/manual-paper treatment, P5 search
+metadata/preview copy, and P7 emergency action/warning copy plus warning
+drawables. Fresh screenshot QA was requested against this pack before commit;
+use its notes to prioritize Wave33. Post-pack QA found no P5 search blockers
+and no guide/emergency launch-blocking regressions. P3 thread is visibly closer
+with remaining copy/source-rail polish. P2 answer remains the main blocker:
+tablet answer/source-selection states still show `Primitive Shelter Construction
+Techniques`, `2 sources`, and `LIMITED EVIDENCE` instead of rain-shelter
+`UNSURE`/3-source parity, and phone-landscape answer has top clipping under the
+toolbar/status area. P6 chrome/home/search density remains lower priority after
+the answer/tablet source owner work.
+
 ## Wave25+ Plan
 
 | Wave | Slice | Why this order | Avoid overlapping write sets | Acceptance proof |

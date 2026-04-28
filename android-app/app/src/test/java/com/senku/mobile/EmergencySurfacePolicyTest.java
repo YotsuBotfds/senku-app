@@ -97,7 +97,7 @@ public final class EmergencySurfacePolicyTest {
             "Stop work immediately. Move to minimum 5 m from active work zone.",
             DetailActivity.extractEmergencyShortAnswer(
                 "Short answer:\n" +
-                    "Stop work immediately. Move to minimum 5 m from active work zone.\n\n" +
+                    "Stop work immediately. Move to minimum 5 m from the active work zone.\n\n" +
                     "Steps:\n" +
                     "1. Stop all hot work. No new charges, no new pours."
             )

@@ -160,11 +160,29 @@ final class DetailProofPresentationFormatter {
         }
         SearchResult firstSource = currentSources.get(0);
         ArrayList<StructuredLine> lines = buildBaseProofLines(state, currentSources, firstSource, compact);
-        addProofDetailLines(lines, state, currentSources, firstSource, compact, utilityRail);
+        if (!compact) {
+            addProofDetailLines(lines, state, currentSources, firstSource, compact, utilityRail);
+        }
         return buildStructuredLineBlock(lines);
     }
 
+    String buildWhySummaryPlainText(State state, List<SearchResult> currentSources, boolean compact, boolean utilityRail) {
+        if (currentSources == null || currentSources.isEmpty()) {
+            return buildPlainLineBlock(buildNoCitationProofLines(state, compact));
+        }
+        SearchResult firstSource = currentSources.get(0);
+        ArrayList<StructuredLine> lines = buildBaseProofLines(state, currentSources, firstSource, compact);
+        if (!compact) {
+            addProofDetailLines(lines, state, currentSources, firstSource, compact, utilityRail);
+        }
+        return buildPlainLineBlock(lines);
+    }
+
     SpannableStringBuilder buildNoCitationProofSummary(State state, boolean compact) {
+        return buildStructuredLineBlock(buildNoCitationProofLines(state, compact));
+    }
+
+    private ArrayList<StructuredLine> buildNoCitationProofLines(State state, boolean compact) {
         ArrayList<StructuredLine> lines = new ArrayList<>();
         if (compact) {
             lines.add(new StructuredLine(
@@ -177,7 +195,7 @@ final class DetailProofPresentationFormatter {
                 text(R.string.detail_external_review_corpus_limit_no_citations),
                 state.lowCoverageAccentColor
             ));
-            return buildStructuredLineBlock(lines);
+            return lines;
         }
         lines.add(new StructuredLine(
             text(R.string.detail_external_review_proof_route),
@@ -213,7 +231,7 @@ final class DetailProofPresentationFormatter {
                 color(R.color.senku_text_muted_light)
             ));
         }
-        return buildStructuredLineBlock(lines);
+        return lines;
     }
 
     String buildPrimarySourcePreviewLine(List<SearchResult> currentSources) {
@@ -296,14 +314,14 @@ final class DetailProofPresentationFormatter {
             String leadValue = buildSourceEntryValue(bestReaderFacingSource(currentSources), currentSources);
             if (!leadValue.isEmpty()) {
                 lines.add(new StructuredLine(
-                    "ANCHOR",
+                    "SOURCE",
                     leadValue,
                     color(R.color.senku_accent_olive)
                 ));
             }
             lines.add(new StructuredLine(
                 "SOURCES",
-                state.evidenceStrengthLabel + " | " + formatCountLabel(state.sourceCount, "source", "sources"),
+                formatCountLabel(state.sourceCount, "source", "sources"),
                 state.evidenceAccentColor
             ));
             if (state.reviewedCardMetadata.isPresent()) {
@@ -728,6 +746,26 @@ final class DetailProofPresentationFormatter {
             }
         }
         return builder;
+    }
+
+    private String buildPlainLineBlock(List<StructuredLine> lines) {
+        StringBuilder builder = new StringBuilder();
+        if (lines == null) {
+            return "";
+        }
+        for (StructuredLine line : lines) {
+            if (line == null || safe(line.value).trim().isEmpty()) {
+                continue;
+            }
+            if (builder.length() > 0) {
+                builder.append('\n');
+            }
+            builder
+                .append(safe(line.label).trim().toUpperCase(Locale.US))
+                .append("  ")
+                .append(safe(line.value).trim());
+        }
+        return builder.toString();
     }
 
     private String trimHeaderLabel(String text) {

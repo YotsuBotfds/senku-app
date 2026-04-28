@@ -156,4 +156,66 @@ public final class DetailProofPresentationFormatterTest {
         assertEquals("[GD-345] Tarp & Cord Shelters", formatter.buildSourceEntryValue(sources.get(2), sources));
     }
 
+    @Test
+    public void compactWhySummaryUsesSourceLedArticleStackWithoutMatchDiagnostics() {
+        DetailProofPresentationFormatter formatter = new DetailProofPresentationFormatter(null);
+        List<SearchResult> sources = Arrays.asList(
+            new SearchResult(
+                "Abrasives Manufacturing",
+                "",
+                "Reviewed anchor context.",
+                "",
+                "GD-220",
+                "Abrasives Manufacturing",
+                "materials",
+                "hybrid"
+            ),
+            new SearchResult(
+                "Foundry & Metal Casting",
+                "",
+                "Pitch the ridgeline along prevailing wind.",
+                "",
+                "GD-132",
+                "Foundry & Metal Casting",
+                "metal",
+                "guide-focus"
+            ),
+            new SearchResult(
+                "Tarp & Cord Shelters",
+                "",
+                "A simple ridgeline shelter requires only tarp, cord, and two anchor points.",
+                "Pitch the low edge toward weather so rain sheds away from the sheltered area.",
+                "GD-345",
+                "Tarp & Cord Shelters",
+                "survival",
+                "guide-focus",
+                "topic",
+                "immediate",
+                "emergency_shelter",
+                "tarp,cord,rain_shelter,ridgeline"
+            )
+        );
+        DetailProofPresentationFormatter.State state = new DetailProofPresentationFormatter.State(
+            "generated",
+            1,
+            "this device",
+            "Uncertain",
+            3,
+            2,
+            "",
+            3,
+            true,
+            ReviewedCardMetadata.empty()
+        );
+
+        String visible = formatter.buildWhySummaryPlainText(state, sources, true, false);
+
+        assertEquals(
+            "SOURCE  [GD-345] Tarp & Cord Shelters\nSOURCES  3 sources",
+            visible
+        );
+        assertFalse(visible.contains("MATCH"));
+        assertFalse(visible.contains("FIT"));
+    }
+
 }

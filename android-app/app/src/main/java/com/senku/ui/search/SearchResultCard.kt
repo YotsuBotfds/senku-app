@@ -306,8 +306,8 @@ internal fun compactSearchResultMetadataLabel(metadataLine: String): String {
         return cleaned.uppercase(Locale.US)
     }
     val tokens = ArrayList<String>(3)
-    valuesByKey["role"]?.let { tokens.add(it.uppercase(Locale.US)) }
     valuesByKey["category"]?.let { tokens.add(it.uppercase(Locale.US)) }
+    valuesByKey["role"]?.let { tokens.add(it.uppercase(Locale.US)) }
     valuesByKey["window"]?.let { tokens.add("WINDOW ${it.uppercase(Locale.US)}") }
     return tokens.joinToString(" \u00B7 ")
 }
@@ -449,9 +449,9 @@ fun continueConversationContentDescription(guideId: String = ""): String {
 fun relatedGuideContentDescription(guideLabel: String = ""): String {
     val cleanedGuideLabel = guideLabel.trim()
     return if (cleanedGuideLabel.isEmpty()) {
-        "Open related guide"
+        "Open cross-reference guide"
     } else {
-        "Open related guide: $cleanedGuideLabel"
+        "Open cross-reference guide: $cleanedGuideLabel"
     }
 }
 

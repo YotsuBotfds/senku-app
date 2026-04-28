@@ -1,12 +1,16 @@
 package com.senku.mobile;
 
 import android.content.Context;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.style.BackgroundColorSpan;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.LeadingMarginSpan;
+import android.text.style.LineBackgroundSpan;
 import android.text.style.RelativeSizeSpan;
 import android.text.style.StyleSpan;
 import android.text.style.TypefaceSpan;
@@ -303,7 +307,7 @@ final class DetailGuidePresentationFormatter {
     ) {
         int labelEnd = Math.min(lineEnd, lineStart + safe(label).length());
         styled.setSpan(
-            new BackgroundColorSpan(color(guideAdmonitionBackgroundColorResForLegacy())),
+            new GuideInsetBackgroundSpan(admonitionInsetBackgroundColor(accentColorRes), 0),
             lineStart,
             lineEnd,
             Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
@@ -360,15 +364,25 @@ final class DetailGuidePresentationFormatter {
         );
         styled.setSpan(new RelativeSizeSpan(0.62f), lineStart, lineEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         styled.setSpan(
-            new BackgroundColorSpan(color(admonitionContinuationBackgroundColorRes(accentColorRes))),
+            new GuideInsetBackgroundSpan(admonitionInsetBackgroundColor(accentColorRes), dp(1)),
             lineStart,
             lineEnd,
             Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
         );
     }
 
-    private static int admonitionContinuationBackgroundColorRes(int accentColorRes) {
-        return guideAdmonitionBackgroundColorResForLegacy();
+    private int admonitionInsetBackgroundColor(int accentColorRes) {
+        return blendColors(color(guideAdmonitionBackgroundColorResForLegacy()), color(accentColorRes), 0.14f);
+    }
+
+    private static int blendColors(int baseColor, int overlayColor, float overlayRatio) {
+        float ratio = Math.max(0f, Math.min(1f, overlayRatio));
+        float inverse = 1f - ratio;
+        return Color.rgb(
+            Math.round(Color.red(baseColor) * inverse + Color.red(overlayColor) * ratio),
+            Math.round(Color.green(baseColor) * inverse + Color.green(overlayColor) * ratio),
+            Math.round(Color.blue(baseColor) * inverse + Color.blue(overlayColor) * ratio)
+        );
     }
 
     private static int guideAdmonitionPrefixEnd(String line) {
@@ -544,35 +558,24 @@ final class DetailGuidePresentationFormatter {
         }
         String[] lines = cleanedBody.split("\\n", -1);
         StringBuilder builder = new StringBuilder(cleanedBody.length() + requiredRows.length() + 16);
-        boolean replacedExistingRequiredReading = false;
-        boolean insertedBeforeFirstSection = false;
-        boolean insertedAfterOpeningAdmonition = false;
+        boolean insertedAfterOpeningSection = false;
+        int seenSections = 0;
         for (int i = 0; i < lines.length; i++) {
             String line = lines[i];
             String trimmed = line.trim();
             if (isRequiredReadingDisplayLine(trimmed)) {
-                if (!replacedExistingRequiredReading && !insertedBeforeFirstSection && !insertedAfterOpeningAdmonition) {
-                    appendLine(builder, requiredRows);
-                }
-                replacedExistingRequiredReading = true;
                 continue;
             }
-            if (!replacedExistingRequiredReading && !insertedBeforeFirstSection && GuideBodySanitizer.isGuideSectionDisplayLine(trimmed)) {
+            if (GuideBodySanitizer.isGuideSectionDisplayLine(trimmed)) {
+                seenSections++;
+            }
+            if (!insertedAfterOpeningSection && seenSections > 1) {
                 appendLine(builder, requiredRows);
-                insertedBeforeFirstSection = true;
-            } else if (!replacedExistingRequiredReading
-                && !insertedBeforeFirstSection
-                && !insertedAfterOpeningAdmonition
-                && i > 0
-                && trimmed.isEmpty()
-                && previousNonBlankLooksLikeOpeningAdmonition(lines, i)) {
-                appendLine(builder, requiredRows);
-                insertedAfterOpeningAdmonition = true;
-                continue;
+                insertedAfterOpeningSection = true;
             }
             appendLine(builder, line);
         }
-        if (!replacedExistingRequiredReading && !insertedBeforeFirstSection && !insertedAfterOpeningAdmonition) {
+        if (!insertedAfterOpeningSection) {
             appendLine(builder, requiredRows);
         }
         return builder.toString().trim();
@@ -667,19 +670,6 @@ final class DetailGuidePresentationFormatter {
         return safe(line).trim().toUpperCase(Locale.US).startsWith("REQUIRED READING");
     }
 
-    private static boolean previousNonBlankLooksLikeOpeningAdmonition(String[] lines, int blankIndex) {
-        for (int i = blankIndex - 1; i >= 0; i--) {
-            String trimmed = safe(lines[i]).trim();
-            if (trimmed.isEmpty()) {
-                continue;
-            }
-            return i > 0 && canonicalGuideAdmonitionLabelForLegacy(lines[i - 1]).length() > 0
-                || canonicalGuideAdmonitionLabelForLegacy(trimmed).length() > 0
-                || trimmed.matches("^(DANGER|WARNING|CAUTION|IMPORTANT|NOTE)\\s+\\u00b7\\s+.+$");
-        }
-        return false;
-    }
-
     private static void appendLine(StringBuilder builder, String line) {
         if (builder.length() > 0) {
             builder.append('\n');
@@ -730,5 +720,38 @@ final class DetailGuidePresentationFormatter {
 
     private static String safe(String text) {
         return text == null ? "" : text;
+    }
+
+    private static final class GuideInsetBackgroundSpan implements LineBackgroundSpan {
+        private final int color;
+        private final int verticalInsetPx;
+
+        GuideInsetBackgroundSpan(int color, int verticalInsetPx) {
+            this.color = color;
+            this.verticalInsetPx = Math.max(0, verticalInsetPx);
+        }
+
+        @Override
+        public void drawBackground(
+            Canvas canvas,
+            Paint paint,
+            int left,
+            int right,
+            int top,
+            int baseline,
+            int bottom,
+            CharSequence text,
+            int start,
+            int end,
+            int lineNumber
+        ) {
+            int previousColor = paint.getColor();
+            Paint.Style previousStyle = paint.getStyle();
+            paint.setColor(color);
+            paint.setStyle(Paint.Style.FILL);
+            canvas.drawRect(left, top + verticalInsetPx, right, bottom - verticalInsetPx, paint);
+            paint.setStyle(previousStyle);
+            paint.setColor(previousColor);
+        }
     }
 }

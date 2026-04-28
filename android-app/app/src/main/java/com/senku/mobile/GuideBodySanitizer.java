@@ -449,7 +449,6 @@ final class GuideBodySanitizer {
             ""
         );
         cleaned = cleaned.replaceFirst("(?i)^Use it only for\\s+", "Use this section only for ");
-        cleaned = cleaned.replaceFirst("(?i)\\s+Start with .*$", "");
         return cleaned.trim();
     }
 

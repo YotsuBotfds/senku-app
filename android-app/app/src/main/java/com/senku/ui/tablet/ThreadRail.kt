@@ -68,10 +68,37 @@ internal fun threadRailAnswerLabel(index: Int, guideMode: Boolean): String =
     if (guideMode) "REF $index" else "A$index"
 
 internal fun threadRailAnswerMetaLabel(index: Int, guideMode: Boolean, sourceCount: Int): String =
-    threadRailAnswerLabel(index, guideMode)
+    if (guideMode) {
+        threadRailAnswerLabel(index, guideMode)
+    } else {
+        "${threadRailAnswerLabel(index, guideMode)} \u00B7 ${threadRailTurnSourceLabel(sourceCount)}"
+    }
+
+internal fun threadRailAnswerConfidenceLabel(status: Status, active: Boolean): String =
+    when {
+        active || status == Status.Active -> "ACTIVE"
+        status == Status.Done -> "CONFIDENT"
+        status == Status.Pending -> "UNSURE"
+        else -> "READY"
+    }
 
 internal fun threadRailAnswerPreviewLabel(index: Int, guideMode: Boolean, answer: String): String =
     "${threadRailAnswerLabel(index, guideMode)} \u00B7 ${threadRailAnswerPreviewText(answer)}"
+
+internal fun threadRailAnswerPreviewLabel(
+    index: Int,
+    guideMode: Boolean,
+    answer: String,
+    sourceCount: Int,
+    status: Status,
+    active: Boolean,
+): String {
+    if (guideMode) {
+        return threadRailAnswerPreviewLabel(index, guideMode, answer)
+    }
+    return "${threadRailAnswerMetaLabel(index, guideMode, sourceCount)} \u00B7 " +
+        "${threadRailAnswerConfidenceLabel(status, active)} \u00B7 ${threadRailAnswerPreviewText(answer)}"
+}
 
 internal fun threadRailAnswerPreviewText(answer: String): String =
     threadRailAnswerLeadText(answer)
@@ -457,6 +484,9 @@ private fun ThreadTurnRow(
                         index = index,
                         guideMode = guideMode,
                         answer = turn.answer.short,
+                        sourceCount = turn.answer.sourceCount,
+                        status = turn.status,
+                        active = turn.isActive,
                     ),
                     style = SenkuTheme.typography.smallBody.copy(
                         fontSize = 10.sp,

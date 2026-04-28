@@ -33,9 +33,9 @@ class SearchResultCardHeuristicsTest {
 
     @Test
     fun relatedGuideContentDescription_readsAsLibraryCapability() {
-        assertEquals("Open related guide", relatedGuideContentDescription())
+        assertEquals("Open cross-reference guide", relatedGuideContentDescription())
         assertEquals(
-            "Open related guide: GD-214 - Boiling water",
+            "Open cross-reference guide: GD-214 - Boiling water",
             relatedGuideContentDescription(" GD-214 - Boiling water "),
         )
     }
@@ -70,7 +70,7 @@ class SearchResultCardHeuristicsTest {
     @Test
     fun compactSearchResultMetadataLabel_keepsDenseRowTokens() {
         assertEquals(
-            "SAFETY \u00B7 WATER \u00B7 WINDOW IMMEDIATE",
+            "WATER \u00B7 SAFETY \u00B7 WINDOW IMMEDIATE",
             compactSearchResultMetadataLabel("Role: Safety // Window: Immediate // Category: Water"),
         )
         assertEquals(

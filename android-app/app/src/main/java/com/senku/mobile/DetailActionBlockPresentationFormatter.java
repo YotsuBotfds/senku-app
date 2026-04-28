@@ -121,12 +121,12 @@ final class DetailActionBlockPresentationFormatter {
         LinearLayout headingRow = new LinearLayout(context);
         headingRow.setOrientation(LinearLayout.HORIZONTAL);
         headingRow.setGravity(android.view.Gravity.CENTER_VERTICAL);
-        headingRow.setPadding(0, 0, 0, dp(6));
+        headingRow.setPadding(0, 0, 0, dp(4));
 
         View rule = new View(context);
         rule.setBackgroundColor(context.getColor(R.color.senku_rev03_hairline_strong));
-        LinearLayout.LayoutParams ruleParams = new LinearLayout.LayoutParams(dp(24), dp(1));
-        ruleParams.rightMargin = dp(12);
+        LinearLayout.LayoutParams ruleParams = new LinearLayout.LayoutParams(dp(22), dp(1));
+        ruleParams.rightMargin = dp(10);
         headingRow.addView(rule, ruleParams);
 
         TextView heading = new TextView(context);
@@ -134,8 +134,8 @@ final class DetailActionBlockPresentationFormatter {
         heading.setTextAppearance(context, android.R.style.TextAppearance_Small);
         heading.setTextColor(context.getColor(R.color.senku_text_muted_light));
         heading.setTypeface(Typeface.MONOSPACE, Typeface.BOLD);
-        heading.setLetterSpacing(0.12f);
-        heading.setTextSize(11f);
+        heading.setLetterSpacing(0.10f);
+        heading.setTextSize(10f);
         heading.setIncludeFontPadding(false);
         headingRow.addView(heading, new LinearLayout.LayoutParams(
             ViewGroup.LayoutParams.WRAP_CONTENT,
@@ -224,7 +224,7 @@ final class DetailActionBlockPresentationFormatter {
 
         LinearLayout row = new LinearLayout(context);
         row.setOrientation(LinearLayout.HORIZONTAL);
-        row.setPadding(0, dp(7), 0, dp(7));
+        row.setPadding(0, dp(5), 0, dp(5));
         LinearLayout.LayoutParams rowParams = new LinearLayout.LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT,
             ViewGroup.LayoutParams.WRAP_CONTENT
@@ -239,29 +239,29 @@ final class DetailActionBlockPresentationFormatter {
         badge.setBackgroundResource(R.drawable.bg_emergency_action_badge);
         badge.setTypeface(Typeface.MONOSPACE, Typeface.BOLD);
         badge.setIncludeFontPadding(false);
-        row.addView(badge, new LinearLayout.LayoutParams(dp(20), dp(20)));
+        row.addView(badge, new LinearLayout.LayoutParams(dp(18), dp(18)));
 
         LinearLayout content = new LinearLayout(context);
         content.setOrientation(LinearLayout.VERTICAL);
-        content.setPadding(dp(10), dp(1), 0, 0);
+        content.setPadding(dp(9), 0, 0, 0);
 
         TextView title = new TextView(context);
         title.setText(styleEmergencyMinimumDistance(action.title));
         title.setTextAppearance(context, android.R.style.TextAppearance_Medium);
         title.setTextColor(context.getColor(R.color.senku_text_light));
         title.setTypeface(Typeface.DEFAULT_BOLD);
-        title.setTextSize(13f);
-        title.setLineSpacing(0f, 1.06f);
+        title.setTextSize(12.5f);
+        title.setLineSpacing(0f, 1.04f);
         title.setIncludeFontPadding(false);
 
         TextView detail = new TextView(context);
         detail.setText(styleEmergencyMinimumDistance(action.detail));
         detail.setTextAppearance(context, android.R.style.TextAppearance_Small);
         detail.setTextColor(context.getColor(R.color.senku_text_muted_light));
-        detail.setTextSize(12f);
-        detail.setLineSpacing(0f, 1.08f);
+        detail.setTextSize(11.5f);
+        detail.setLineSpacing(0f, 1.04f);
         detail.setIncludeFontPadding(false);
-        detail.setPadding(0, dp(2), 0, 0);
+        detail.setPadding(0, dp(1), 0, 0);
         detail.setVisibility(action.detail.isEmpty() ? View.GONE : View.VISIBLE);
 
         content.addView(title);
@@ -522,10 +522,6 @@ final class DetailActionBlockPresentationFormatter {
         start = lower.indexOf("minimum 5 meters");
         if (start >= 0) {
             return new SpanTarget(start, "minimum 5 meters");
-        }
-        start = lower.indexOf("5 m radius");
-        if (start >= 0) {
-            return new SpanTarget(start, "5 m radius");
         }
         return new SpanTarget(-1, "");
     }

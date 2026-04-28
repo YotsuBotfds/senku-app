@@ -261,7 +261,16 @@ public final class DetailActionBlockPresentationFormatterTest {
         assertTrue(DetailActionBlockPresentationFormatter.shouldStyleEmergencyMinimumDistance(
             "Move to minimum 5 meters from the active work zone."
         ));
-        assertTrue(DetailActionBlockPresentationFormatter.shouldStyleEmergencyMinimumDistance(
+    }
+
+    @Test
+    public void styleEmergencyMinimumDistanceLeavesActionDistanceRowsPlain() {
+        CharSequence styled = DetailActionBlockPresentationFormatter.styleEmergencyMinimumDistance(
+            "Clear the floor to 5 m radius."
+        );
+
+        assertEquals("Clear the floor to 5 m radius.", styled.toString());
+        assertTrue(!DetailActionBlockPresentationFormatter.shouldStyleEmergencyMinimumDistance(
             "Clear the floor to 5 m radius."
         ));
     }

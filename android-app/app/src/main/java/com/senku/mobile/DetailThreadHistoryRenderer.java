@@ -23,10 +23,10 @@ import java.util.regex.Pattern;
 final class DetailThreadHistoryRenderer {
     private static final Pattern SIMPLE_GUIDE_ID_PATTERN = Pattern.compile("GD-\\d{3}");
     private static final int QUESTION_MAX_LINES = 2;
-    private static final int ANSWER_MAX_LINES = 2;
+    private static final int ANSWER_MAX_LINES = 3;
     private static final int RAIL_ANSWER_MAX_LINES = 1;
     private static final int GUIDE_CHIP_LIMIT = 2;
-    private static final int THREAD_ANSWER_CHAR_LIMIT = 150;
+    private static final int THREAD_ANSWER_CHAR_LIMIT = 240;
     private static final int UTILITY_RAIL_ANSWER_CHAR_LIMIT = 96;
 
     static final class State {
@@ -224,7 +224,10 @@ final class DetailThreadHistoryRenderer {
             container.addView(turnRow);
             return;
         }
-        turnRow.addView(buildAnswerMetaRow(buildTurnLabel(turnNumber, false, turn, previousAnchorGuideId), ""));
+        turnRow.addView(buildAnswerMetaRow(
+            buildTurnLabel(turnNumber, false, turn, previousAnchorGuideId),
+            compactStatusLabel(statusForTurn(turn))
+        ));
         turnRow.addView(buildBodyLine(
             compactThreadAnswer(answerSummary, state.utilityRail, answerFormatter),
             false,
@@ -376,7 +379,7 @@ final class DetailThreadHistoryRenderer {
         int safeTurnNumber = Math.max(1, turnNumber);
         String time = timeForTurn(turn);
         if (userTurn) {
-            return "Q" + safeTurnNumber + time;
+            return "Q" + safeTurnNumber + time + " \u00B7 FIELD QUESTION";
         }
         String anchorGuideId = sessionFormatter.primaryGuideIdForTurn(turn);
         StringBuilder builder = new StringBuilder("A")
@@ -390,12 +393,8 @@ final class DetailThreadHistoryRenderer {
         String anchorLabel = compactAnchorLabel(guideLabels);
         if (!anchorLabel.isEmpty()) {
             builder.append(" \u00B7 ");
+            builder.append("ANCHOR ");
             builder.append(anchorLabel);
-        }
-        String status = compactStatusLabel(statusForTurn(turn));
-        if (!status.isEmpty()) {
-            builder.append(" \u00B7 ");
-            builder.append(status);
         }
         return builder.toString();
     }

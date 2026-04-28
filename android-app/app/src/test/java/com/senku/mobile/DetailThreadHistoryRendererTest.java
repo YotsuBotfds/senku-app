@@ -75,15 +75,15 @@ public final class DetailThreadHistoryRendererTest {
         );
 
         assertEquals(
-            "Q2",
+            "Q2 \u00B7 FIELD QUESTION",
             renderer.buildTurnLabel(2, true, turn("question", "GD-345", 0L), "")
         );
         assertEquals(
-            "A2 \u00B7 GD-345 \u00B7 UNSURE",
+            "A2 \u00B7 ANCHOR GD-345",
             renderer.buildTurnLabel(2, false, turn("answer", "GD-345", 0L), "GD-220")
         );
         assertEquals(
-            "A2 \u00B7 GD-345 \u00B7 UNSURE",
+            "A2 \u00B7 ANCHOR GD-345",
             renderer.buildTurnLabel(2, false, turn("answer", "GD-345", 0L), "GD-345")
         );
     }
@@ -99,11 +99,11 @@ public final class DetailThreadHistoryRendererTest {
         String expectedTime = new SimpleDateFormat("HH:mm", Locale.US).format(new Date(timestamp));
 
         assertEquals(
-            "Q1 \u00B7 " + expectedTime,
+            "Q1 \u00B7 " + expectedTime + " \u00B7 FIELD QUESTION",
             renderer.buildTurnLabel(1, true, turn("answer", "GD-220", timestamp), "")
         );
         assertEquals(
-            "A1 \u00B7 " + expectedTime + " \u00B7 GD-220 \u00B7 UNSURE",
+            "A1 \u00B7 " + expectedTime + " \u00B7 ANCHOR GD-220",
             renderer.buildTurnLabel(1, false, turn("answer", "GD-220", timestamp), "")
         );
     }
@@ -205,6 +205,17 @@ public final class DetailThreadHistoryRendererTest {
 
         assertTrue(compact.length() <= 96);
         assertTrue(compact.startsWith("A rain shelter answer"));
+    }
+
+    @Test
+    public void detailTranscriptAnswerPreviewAllowsFullerRhythm() {
+        String answer = "Drape the tarp evenly across the ridge with both edges hanging the same length. "
+            + "Tension the four corners with taut-line hitches; aim for the windward edge to sit closest to the ground.";
+
+        String compact = DetailThreadHistoryRenderer.compactThreadAnswer(answer, false, text -> text);
+
+        assertEquals(answer, compact);
+        assertTrue(compact.length() > 150);
     }
 
     @Test

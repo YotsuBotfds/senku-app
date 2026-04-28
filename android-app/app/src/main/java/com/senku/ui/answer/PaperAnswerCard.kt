@@ -439,7 +439,7 @@ private fun evidenceToneColor(
 internal fun compactEvidenceLabel(content: AnswerContent): String {
     return when (content.answerSurfaceLabel) {
         AnswerSurfaceLabel.DeterministicRule -> "RULE MATCH"
-        AnswerSurfaceLabel.LimitedFit -> "UNSURE FIT"
+        AnswerSurfaceLabel.LimitedFit -> "UNSURE"
         AnswerSurfaceLabel.Abstain -> "NO MATCH"
         AnswerSurfaceLabel.ReviewedCardEvidence -> sourceEvidenceLabel(content)
         AnswerSurfaceLabel.GeneratedEvidence,
@@ -483,7 +483,7 @@ internal fun buildFooterMeta(content: AnswerContent): String {
 }
 
 private fun sourceCountLabel(sourceCount: Int): String {
-    return if (sourceCount == 1) "Sources - 1" else "Sources - $sourceCount"
+    return if (sourceCount == 1) "1 SOURCE" else "$sourceCount SOURCES"
 }
 
 internal fun shouldShowUncertainFitNotice(content: AnswerContent): Boolean {

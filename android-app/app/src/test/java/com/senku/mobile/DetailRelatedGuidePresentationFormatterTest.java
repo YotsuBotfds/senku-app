@@ -76,14 +76,14 @@ public final class DetailRelatedGuidePresentationFormatterTest {
         DetailRelatedGuidePresentationFormatter formatter = new DetailRelatedGuidePresentationFormatter(null);
 
         assertEquals(
-            "Cross-reference \u00b7 2 linked guides \u00b7 required reading \u00b7 [GD-214] Water Storage.",
+            "2 linked guides \u00b7 required reading \u00b7 [GD-214] Water Storage.",
             formatter.buildAnswerModeRelatedGuidesSubtitle(
                 new DetailRelatedGuidePresentationFormatter.State(false, false, "", "", "[GD-214] Water Storage"),
                 2
             )
         );
         assertEquals(
-            "Cross-reference \u00b7 1 linked guide \u00b7 required reading \u00b7 GD-215 \u00b7 Rainwater Catchment.",
+            "1 linked guide \u00b7 required reading \u00b7 GD-215 \u00b7 Rainwater Catchment.",
             formatter.buildNonRailRelatedGuidesSubtitle(
                 new DetailRelatedGuidePresentationFormatter.State(
                     false,
@@ -102,7 +102,7 @@ public final class DetailRelatedGuidePresentationFormatterTest {
         DetailRelatedGuidePresentationFormatter formatter = new DetailRelatedGuidePresentationFormatter(null);
 
         assertEquals(
-            "Cross-reference \u00b7 6 linked guides \u00b7 opened from GD-220.",
+            "6 linked guides \u00b7 opened from GD-220.",
             formatter.buildStationRelatedGuidesSubtitle(
                 new DetailRelatedGuidePresentationFormatter.State(true, false, "GD-220", "", ""),
                 6
@@ -141,7 +141,7 @@ public final class DetailRelatedGuidePresentationFormatterTest {
         SearchResult guide = new SearchResult("Rainwater Catchment", "", "", "", "GD-215", "", "", "");
 
         assertEquals(
-            "Source guide links. Cross-reference \u00b7 2 linked guides \u00b7 required reading \u00b7 [GD-214] Water Storage.",
+            "Source guide links. 2 linked guides \u00b7 required reading \u00b7 [GD-214] Water Storage.",
             formatter.buildAnswerModeRelatedGuidesPanelContentDescription(state, 2)
         );
         assertEquals(

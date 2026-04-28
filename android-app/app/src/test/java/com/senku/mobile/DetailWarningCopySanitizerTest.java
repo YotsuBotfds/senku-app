@@ -64,4 +64,22 @@ public final class DetailWarningCopySanitizerTest {
 
         assertEquals("Use the reviewed card evidence. Keep GD-132 visible.", cleaned);
     }
+
+    @Test
+    public void sanitizeWarningResidualCopy_compactsEmergencyGd132ChromeCopy() {
+        String cleaned = DetailWarningCopySanitizer.sanitizeWarningResidualCopy(
+            "Stop work immediately. Move to minimum 5 m from the active work zone. "
+                + "Clear the floor to a 5 m radius. "
+                + "Doors and roll-up openings must be unobstructed. "
+                + "GD-132 \u00a71 is current owner."
+        );
+
+        assertEquals(
+            "Stop work immediately. Move to minimum 5 m from active work zone. "
+                + "Clear the floor to 5 m radius. "
+                + "Door and roll-up open and unobstructed. "
+                + "GD-132 lists current owner.",
+            cleaned
+        );
+    }
 }

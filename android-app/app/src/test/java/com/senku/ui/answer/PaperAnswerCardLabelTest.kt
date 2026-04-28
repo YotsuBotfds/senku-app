@@ -15,7 +15,7 @@ class PaperAnswerCardLabelTest {
             compactEvidenceLabel(answer(answerSurfaceLabel = AnswerSurfaceLabel.ReviewedCardEvidence)),
         )
         assertEquals(
-            "UNSURE FIT",
+            "UNSURE",
             compactEvidenceLabel(answer(answerSurfaceLabel = AnswerSurfaceLabel.LimitedFit)),
         )
         assertEquals(
@@ -62,7 +62,7 @@ class PaperAnswerCardLabelTest {
             elapsedSeconds = 0.8,
         )
 
-        assertEquals("Sources - 2 · 0.8S", buildFooterMeta(content))
+        assertEquals("2 SOURCES · 0.8S", buildFooterMeta(content))
     }
 
     @Test

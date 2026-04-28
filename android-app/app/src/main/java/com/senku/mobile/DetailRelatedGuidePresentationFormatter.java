@@ -34,8 +34,7 @@ final class DetailRelatedGuidePresentationFormatter {
     }
 
     String buildRelatedGuidesSubtitle(int count) {
-        return "Cross-reference \u00b7 "
-            + formatCountLabel(count, "linked guide", "linked guides")
+        return formatCountLabel(count, "linked guide", "linked guides")
             + " \u00b7 required reading.";
     }
 
@@ -44,8 +43,7 @@ final class DetailRelatedGuidePresentationFormatter {
         if (anchorLabel.isEmpty()) {
             anchorLabel = fallbackAnchorLabel();
         }
-        return "Cross-reference \u00b7 "
-            + formatCountLabel(count, "linked guide", "linked guides")
+        return formatCountLabel(count, "linked guide", "linked guides")
             + " \u00b7 opened from "
             + anchorLabel
             + ".";
@@ -85,8 +83,7 @@ final class DetailRelatedGuidePresentationFormatter {
         if (anchorLabel.isEmpty()) {
             anchorLabel = fallbackAnchorLabel();
         }
-        return "Cross-reference \u00b7 "
-            + formatCountLabel(count, "linked guide", "linked guides")
+        return formatCountLabel(count, "linked guide", "linked guides")
             + " \u00b7 required reading"
             + " \u00b7 "
             + anchorLabel
@@ -94,8 +91,7 @@ final class DetailRelatedGuidePresentationFormatter {
     }
 
     String buildAnswerModeRelatedGuidesSubtitle(State state, int count) {
-        return "Cross-reference \u00b7 "
-            + formatCountLabel(count, "linked guide", "linked guides")
+        return formatCountLabel(count, "linked guide", "linked guides")
             + " \u00b7 required reading"
             + " \u00b7 "
             + resolveSourceAnchorLabel(state)

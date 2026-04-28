@@ -31,9 +31,23 @@ class ThreadRailPolicyTest {
             ),
         )
         assertEquals("Q2 \u00B7 ACTIVE", threadRailTurnMetaLabel(2, guideMode = false, status = Status.Done, active = true))
-        assertEquals("A2", threadRailAnswerMetaLabel(2, guideMode = false, sourceCount = 3))
+        assertEquals("A2 \u00B7 3 SOURCES", threadRailAnswerMetaLabel(2, guideMode = false, sourceCount = 3))
         assertEquals("REF 2", threadRailAnswerMetaLabel(2, guideMode = true, sourceCount = 0))
+        assertEquals("CONFIDENT", threadRailAnswerConfidenceLabel(Status.Done, active = false))
+        assertEquals("UNSURE", threadRailAnswerConfidenceLabel(Status.Pending, active = false))
+        assertEquals("ACTIVE", threadRailAnswerConfidenceLabel(Status.Done, active = true))
         assertEquals("A2 \u00B7 Keep the tarp angled.", threadRailAnswerPreviewLabel(2, guideMode = false, answer = " Keep the tarp angled. "))
+        assertEquals(
+            "A2 \u00B7 3 SOURCES \u00B7 CONFIDENT \u00B7 Keep the tarp angled.",
+            threadRailAnswerPreviewLabel(
+                2,
+                guideMode = false,
+                answer = " Keep the tarp angled. ",
+                sourceCount = 3,
+                status = Status.Done,
+                active = false,
+            ),
+        )
         assertEquals(
             "A2 \u00B7 Keep the tarp angled.",
             threadRailAnswerPreviewLabel(
@@ -78,8 +92,18 @@ class ThreadRailPolicyTest {
                 sourceCount = 2,
             ),
         )
-        assertEquals("A1", threadRailAnswerMetaLabel(1, guideMode = false, sourceCount = 2))
-        assertEquals("A1 \u00B7 Use a sloped ridgeline.", threadRailAnswerPreviewLabel(1, guideMode = false, answer = "Use a sloped ridgeline."))
+        assertEquals("A1 \u00B7 2 SOURCES", threadRailAnswerMetaLabel(1, guideMode = false, sourceCount = 2))
+        assertEquals(
+            "A1 \u00B7 2 SOURCES \u00B7 ACTIVE \u00B7 Use a sloped ridgeline.",
+            threadRailAnswerPreviewLabel(
+                1,
+                guideMode = false,
+                answer = "Use a sloped ridgeline.",
+                sourceCount = 2,
+                status = Status.Active,
+                active = true,
+            ),
+        )
     }
 
     @Test

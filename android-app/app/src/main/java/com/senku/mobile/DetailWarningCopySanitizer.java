@@ -72,7 +72,28 @@ final class DetailWarningCopySanitizer {
         cleaned = cleaned.replaceAll("[ \\t]+([,.;:!?])", "$1");
         cleaned = cleaned.replaceAll("[ \\t]+\\n", "\n");
         cleaned = cleaned.replaceAll(" {2,}", " ");
-        return cleaned.trim();
+        return normalizeEmergencyCopy(cleaned.trim());
+    }
+
+    private static String normalizeEmergencyCopy(String text) {
+        String cleaned = safe(text).trim();
+        cleaned = cleaned.replace(
+            "Move to minimum 5 m from the active work zone.",
+            "Move to minimum 5 m from active work zone."
+        );
+        cleaned = cleaned.replace(
+            "Clear the floor to a 5 m radius",
+            "Clear the floor to 5 m radius"
+        );
+        cleaned = cleaned.replace(
+            "Doors and roll-up openings must be unobstructed.",
+            "Door and roll-up open and unobstructed."
+        );
+        cleaned = cleaned.replace(
+            "GD-132 \u00a71 is current owner.",
+            "GD-132 lists current owner."
+        );
+        return cleaned;
     }
 
     private static boolean isWarningResidualBracket(String label) {
