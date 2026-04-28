@@ -181,6 +181,12 @@ public final class MainActivityHomeChromeTest {
     }
 
     @Test
+    public void tabletManualCategoryFilterLabelsCarryCounts() {
+        assertEquals("Shelter (12)", MainActivity.manualHomeCategoryFilterLabelForTest("shelter", 12));
+        assertEquals("Water (4)", MainActivity.manualHomeCategoryFilterLabelForTest("water", 4));
+    }
+
+    @Test
     public void manualHomeCategoryShelfReservesTwoRowsWithoutClipping() {
         assertEquals(0, MainActivity.resolveManualHomeCategoryShelfMinimumHeightDp(0));
         assertEquals(54, MainActivity.resolveManualHomeCategoryShelfMinimumHeightDp(3));
@@ -249,6 +255,27 @@ public final class MainActivityHomeChromeTest {
 
         assertEquals(original, MainActivity.buildReviewSearchResultsForTest("water", true, original));
         assertEquals(original, MainActivity.buildReviewSearchResultsForTest("rain shelter", false, original));
+    }
+
+    @Test
+    public void tabletSearchPreviewUsesTargetCopyForFirstReviewResult() {
+        SearchResult result = MainActivity.buildReviewSearchResultsForTest(
+            "rain shelter",
+            true,
+            Arrays.asList(guideWithId("Survival Basics & First 72 Hours", "GD-023"))
+        ).get(0);
+
+        assertEquals("STARTER  \u00b7  17 SECTIONS", MainActivity.buildTabletPreviewMetaForTest(result));
+        assertTrue(MainActivity.buildTabletPreviewBodyForTest(result).startsWith("Day signaling vs. night signaling."));
+        assertTrue(MainActivity.buildTabletPreviewBodyForTest(result).contains("signal flares."));
+    }
+
+    @Test
+    public void tabletSearchPreviewDoesNotUseTargetCopyForNormalGuide() {
+        SearchResult result = guideWithId("Survival Basics & First 72 Hours", "GD-023");
+
+        assertEquals("SOURCE GUIDE", MainActivity.buildTabletPreviewMetaForTest(result));
+        assertEquals("Survival Basics & First 72 Hours snippet", MainActivity.buildTabletPreviewBodyForTest(result));
     }
 
     private static SearchResult guide(String title, String category, String topicTags) {

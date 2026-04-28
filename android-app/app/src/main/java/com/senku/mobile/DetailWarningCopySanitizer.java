@@ -64,7 +64,7 @@ final class DetailWarningCopySanitizer {
         cleaned = cleaned.replaceAll("[ \\t]+([,.;:!?])", "$1");
         cleaned = cleaned.replaceAll("[ \\t]+\\n", "\n");
         cleaned = cleaned.replaceAll(" {2,}", " ");
-        return cleaned;
+        return cleaned.trim();
     }
 
     private static boolean isWarningResidualBracket(String label) {

@@ -60,11 +60,11 @@ public final class DetailThreadHistoryRendererTest {
             renderer.buildTurnLabel(2, true, turn("question", "GD-345", 0L), "")
         );
         assertEquals(
-            "A2 \u00B7 ANCHOR GD-220 -> GD-345",
+            "A2 \u00B7 FIELD ANSWER \u00B7 ANCHOR GD-220 -> GD-345",
             renderer.buildTurnLabel(2, false, turn("answer", "GD-345", 0L), "GD-220")
         );
         assertEquals(
-            "A2 \u00B7 ANCHOR GD-345",
+            "A2 \u00B7 FIELD ANSWER \u00B7 ANCHOR GD-345",
             renderer.buildTurnLabel(2, false, turn("answer", "GD-345", 0L), "GD-345")
         );
     }
@@ -84,7 +84,7 @@ public final class DetailThreadHistoryRendererTest {
             renderer.buildTurnLabel(1, true, turn("answer", "GD-220", timestamp), "")
         );
         assertEquals(
-            "A1 \u00B7 " + expectedTime + " \u00B7 ANCHOR GD-220",
+            "A1 \u00B7 " + expectedTime + " \u00B7 FIELD ANSWER \u00B7 ANCHOR GD-220",
             renderer.buildTurnLabel(1, false, turn("answer", "GD-220", timestamp), "")
         );
     }
@@ -108,8 +108,19 @@ public final class DetailThreadHistoryRendererTest {
         String longAnswer = "1234567890".repeat(20);
         String compact = DetailThreadHistoryRenderer.compactThreadAnswer(longAnswer, true, text -> text);
 
-        assertEquals(180, compact.length());
+        assertEquals(120, compact.length());
         assertTrue(compact.endsWith("..."));
+    }
+
+    @Test
+    public void utilityRailAnswerPreviewStaysTranscriptSized() {
+        String answer = "A rain shelter answer with enough detail to become a full card if it is not compacted. "
+            + "Keep only a short transcript preview in the rail and history surfaces.";
+
+        String compact = DetailThreadHistoryRenderer.compactThreadAnswer(answer, true, text -> text);
+
+        assertTrue(compact.length() <= 120);
+        assertTrue(compact.startsWith("A rain shelter answer"));
     }
 
     @Test
@@ -151,6 +162,31 @@ public final class DetailThreadHistoryRendererTest {
         );
         assertEquals(
             List.of("GD-345", "GD-111"),
+            DetailThreadHistoryRenderer.guideChipIdsForTurn(turn)
+        );
+    }
+
+    @Test
+    public void guideChipLabelsPrioritizeRainShelterSourceOverAbrasivesAnchor() {
+        SessionMemory.TurnSnapshot turn = new SessionMemory.TurnSnapshot(
+            "how do i build a rain shelter",
+            "Use a sloped tarp ridgeline.",
+            "Use a sloped tarp ridgeline.",
+            List.of("GD-220 Abrasives Manufacturing", "GD-345 Rain Shelter"),
+            List.of(
+                source("GD-220", "Abrasives Manufacturing", "abrasives manufacturing"),
+                source("GD-345", "Rain shelter in wet weather", "field shelter rain tarp")
+            ),
+            "",
+            0L
+        );
+
+        assertEquals(
+            List.of("GD-345 - Rain shelter in wet weather", "GD-220 - Abrasives Manufacturing"),
+            DetailThreadHistoryRenderer.guideChipLabelsForTurn(turn)
+        );
+        assertEquals(
+            List.of("GD-345", "GD-220"),
             DetailThreadHistoryRenderer.guideChipIdsForTurn(turn)
         );
     }

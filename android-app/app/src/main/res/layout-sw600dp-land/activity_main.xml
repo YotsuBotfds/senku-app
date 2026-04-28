@@ -678,35 +678,59 @@
                         android:textColor="@color/senku_rev03_ink_2"
                         android:textStyle="bold" />
 
-                    <TextView
+                    <CheckBox
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="14dp"
-                        android:text="[ ] Shelter"
+                        android:buttonTint="@color/senku_rev03_accent"
+                        android:clickable="false"
+                        android:focusable="false"
+                        android:includeFontPadding="false"
+                        android:minWidth="0dp"
+                        android:minHeight="0dp"
+                        android:text="Shelter (12)"
                         android:textAppearance="?android:attr/textAppearanceSmall"
                         android:textColor="@color/senku_rev03_ink_0" />
 
-                    <TextView
+                    <CheckBox
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="11dp"
-                        android:text="[ ] Water"
+                        android:layout_marginTop="9dp"
+                        android:buttonTint="@color/senku_rev03_accent"
+                        android:clickable="false"
+                        android:focusable="false"
+                        android:includeFontPadding="false"
+                        android:minWidth="0dp"
+                        android:minHeight="0dp"
+                        android:text="Water (4)"
                         android:textAppearance="?android:attr/textAppearanceSmall"
                         android:textColor="@color/senku_rev03_ink_0" />
 
-                    <TextView
+                    <CheckBox
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="11dp"
-                        android:text="[ ] Fire"
+                        android:layout_marginTop="9dp"
+                        android:buttonTint="@color/senku_rev03_accent"
+                        android:clickable="false"
+                        android:focusable="false"
+                        android:includeFontPadding="false"
+                        android:minWidth="0dp"
+                        android:minHeight="0dp"
+                        android:text="Fire (3)"
                         android:textAppearance="?android:attr/textAppearanceSmall"
                         android:textColor="@color/senku_rev03_ink_0" />
 
-                    <TextView
+                    <CheckBox
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="11dp"
-                        android:text="[ ] Survival"
+                        android:layout_marginTop="9dp"
+                        android:buttonTint="@color/senku_rev03_accent"
+                        android:clickable="false"
+                        android:focusable="false"
+                        android:includeFontPadding="false"
+                        android:minWidth="0dp"
+                        android:minHeight="0dp"
+                        android:text="Survival (8)"
                         android:textAppearance="?android:attr/textAppearanceSmall"
                         android:textColor="@color/senku_rev03_ink_0" />
 
@@ -721,27 +745,59 @@
                         android:textColor="@color/senku_rev03_ink_2"
                         android:textStyle="bold" />
 
-                    <TextView
+                    <CheckBox
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="14dp"
-                        android:text="[ ] Immediate"
+                        android:buttonTint="@color/senku_rev03_accent"
+                        android:clickable="false"
+                        android:focusable="false"
+                        android:includeFontPadding="false"
+                        android:minWidth="0dp"
+                        android:minHeight="0dp"
+                        android:text="Immediate"
                         android:textAppearance="?android:attr/textAppearanceSmall"
                         android:textColor="@color/senku_rev03_ink_0" />
 
-                    <TextView
+                    <CheckBox
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="11dp"
-                        android:text="[ ] Short"
+                        android:layout_marginTop="9dp"
+                        android:buttonTint="@color/senku_rev03_accent"
+                        android:clickable="false"
+                        android:focusable="false"
+                        android:includeFontPadding="false"
+                        android:minWidth="0dp"
+                        android:minHeight="0dp"
+                        android:text="Short"
                         android:textAppearance="?android:attr/textAppearanceSmall"
                         android:textColor="@color/senku_rev03_ink_0" />
 
-                    <TextView
+                    <CheckBox
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="11dp"
-                        android:text="[ ] Long"
+                        android:layout_marginTop="9dp"
+                        android:buttonTint="@color/senku_rev03_accent"
+                        android:clickable="false"
+                        android:focusable="false"
+                        android:includeFontPadding="false"
+                        android:minWidth="0dp"
+                        android:minHeight="0dp"
+                        android:text="Long"
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:textColor="@color/senku_rev03_ink_0" />
+
+                    <CheckBox
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="9dp"
+                        android:buttonTint="@color/senku_rev03_accent"
+                        android:clickable="false"
+                        android:focusable="false"
+                        android:includeFontPadding="false"
+                        android:minWidth="0dp"
+                        android:minHeight="0dp"
+                        android:text="Mixed"
                         android:textAppearance="?android:attr/textAppearanceSmall"
                         android:textColor="@color/senku_rev03_ink_0" />
                 </LinearLayout>

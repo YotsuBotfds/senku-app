@@ -143,6 +143,31 @@ public final class DetailActionBlockPresentationFormatterTest {
         assertEquals("GD-132 lists current owner.", actions.get(1).detail);
     }
 
+    @Test
+    public void emergencyActionHeadingMatchesMockCopy() {
+        assertEquals(
+            "Immediate actions \u00b7 4",
+            DetailActionBlockPresentationFormatter.EMERGENCY_ACTION_HEADING_PREFIX + "4"
+        );
+    }
+
+    @Test
+    public void extractEmergencyActionSpecsCapsOnlyAtRenderContractButKeepsParsedActions() {
+        List<DetailActionBlockPresentationFormatter.EmergencyActionSpec> actions =
+            DetailActionBlockPresentationFormatter.extractEmergencyActionSpecs(
+                "Immediate actions:\n" +
+                    "1. Stop all hot work. No new charges, no new pours.\n" +
+                    "2. Clear the floor to 5 m radius. Move personnel upwind.\n" +
+                    "3. Confirm two paths of egress. Door and roll-up open and unobstructed.\n" +
+                    "4. Notify the area owner. GD-132 lists current owner.\n" +
+                    "5. Document the pause for handoff.",
+                text -> citationFormatter.stripInlineCitationText(text)
+            );
+
+        assertEquals(5, actions.size());
+        assertEquals("Document the pause for handoff", actions.get(4).title);
+    }
+
     private List<DetailActionBlockPresentationFormatter.ActionBlockSpec> extract(String formattedAnswerText) {
         return DetailActionBlockPresentationFormatter.extractHighRiskActionBlockSpecs(
             formattedAnswerText,

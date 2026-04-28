@@ -21,7 +21,7 @@ class ThreadRailPolicyTest {
     @Test
     fun threadRailTurnMetaLabelsStayTurnFirst() {
         assertEquals(
-            "Q2",
+            "Q2 \u00B7 FIELD QUESTION",
             threadRailTurnMetaLabel(
                 index = 2,
                 guideMode = false,
@@ -31,16 +31,47 @@ class ThreadRailPolicyTest {
             ),
         )
         assertEquals("Q2 \u00B7 ACTIVE", threadRailTurnMetaLabel(2, guideMode = false, status = Status.Done, active = true))
-        assertEquals("A2 \u00B7 3 SRC", threadRailAnswerMetaLabel(2, guideMode = false, sourceCount = 3))
-        assertEquals("REF 2 \u00B7 NO SRC", threadRailAnswerMetaLabel(2, guideMode = true, sourceCount = 0))
-        assertEquals("NO SRC", threadRailTurnSourceLabel(sourceCount = 0))
-        assertEquals("1 SRC", threadRailTurnSourceLabel(sourceCount = 1))
+        assertEquals("A2 \u00B7 3 SOURCES", threadRailAnswerMetaLabel(2, guideMode = false, sourceCount = 3))
+        assertEquals("REF 2 \u00B7 NO SOURCES", threadRailAnswerMetaLabel(2, guideMode = true, sourceCount = 0))
+        assertEquals("NO SOURCES", threadRailTurnSourceLabel(sourceCount = 0))
+        assertEquals("1 SOURCE", threadRailTurnSourceLabel(sourceCount = 1))
+        assertEquals("3 SOURCES", threadRailTurnSourceLabel(sourceCount = 3))
+    }
+
+    @Test
+    fun threadRailQuestionAnswerLabelsStayTranscriptShapedWithSourceContext() {
+        assertEquals(
+            "Q1 \u00B7 FIELD QUESTION",
+            threadRailTurnMetaLabel(
+                index = 1,
+                guideMode = false,
+                status = Status.Active,
+                active = true,
+                sourceCount = 2,
+            ),
+        )
+        assertEquals("A1 \u00B7 2 SOURCES", threadRailAnswerMetaLabel(1, guideMode = false, sourceCount = 2))
+    }
+
+    @Test
+    fun threadRailSourceLabelsPrioritizeRainShelterContextOverAbrasivesAnchorRole() {
+        val rainShelter = SourceState("rain", "GD-345", "Rain shelter in wet weather", isAnchor = false, isSelected = false)
+        val abrasivesAnchor = SourceState("abrasives", "GD-220", "Abrasives Manufacturing", isAnchor = true, isSelected = true)
+
+        assertEquals(3, threadRailSourceContextPriority(rainShelter))
+        assertEquals(0, threadRailSourceContextPriority(abrasivesAnchor))
+        assertEquals("GD-345 - RAIN SHELTER", threadRailSourceDisplayLabel(rainShelter, guideMode = true))
+        assertEquals("GD-220 - ANCHOR", threadRailSourceDisplayLabel(abrasivesAnchor, guideMode = true))
+        assertEquals(
+            listOf(rainShelter, abrasivesAnchor),
+            listOf(abrasivesAnchor, rainShelter).sortedByDescending { threadRailSourceContextPriority(it) },
+        )
     }
 
     @Test
     fun threadRailRowsReserveTranscriptScanningSpace() {
-        assertEquals(82, threadRailTurnRowMinHeightDp(active = false))
-        assertEquals(92, threadRailTurnRowMinHeightDp(active = true))
-        assertEquals(50, threadRailSourceRowMinHeightDp())
+        assertEquals(68, threadRailTurnRowMinHeightDp(active = false))
+        assertEquals(76, threadRailTurnRowMinHeightDp(active = true))
+        assertEquals(58, threadRailSourceRowMinHeightDp())
     }
 }

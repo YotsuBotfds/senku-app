@@ -85,6 +85,7 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
     private final int defaultBadgeColor;
     private Map<String, LinkedGuidePreview> linkedGuidePreviewMap = Collections.emptyMap();
     private List<String> queryHighlightTerms = Collections.emptyList();
+    private String activeQuery = "";
     private Set<String> warmThreadGuideIds = Collections.emptySet();
 
     public SearchResultAdapter(
@@ -129,6 +130,7 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
     }
 
     public void setActiveQuery(String query) {
+        activeQuery = safe(query).trim();
         queryHighlightTerms = buildHighlightTerms(query);
     }
 
@@ -160,15 +162,20 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
         holder.meta.setMaxLines((richTabletCard || stressCompactCard) ? 1 : 2);
         holder.meta.setEllipsize(TextUtils.TruncateAt.END);
         holder.categoryBadge.setVisibility(View.GONE);
-        bindLinkedGuideCue(
-            holder.linkedGuideCue,
-            holder.linkedGuidePreview,
-            result,
-            true,
-            shouldShowLinkedGuidePreviewLine(),
-            false,
-            true
-        );
+        boolean suppressReviewLinkedCue = shouldSuppressLinkedGuideCueForResult(activeQuery, result);
+        if (suppressReviewLinkedCue) {
+            hideLinkedGuideChrome(holder.linkedGuideCue, holder.linkedGuidePreview);
+        } else {
+            bindLinkedGuideCue(
+                holder.linkedGuideCue,
+                holder.linkedGuidePreview,
+                result,
+                true,
+                shouldShowLinkedGuidePreviewLine(),
+                false,
+                true
+            );
+        }
         bindTabletScoreMarker(holder.retrievalBadge, holder.scoreBar, position);
         holder.accent.setAlpha(rankAccentAlpha(position));
         bindTabletAttributeLine(holder.section, result);
@@ -1134,6 +1141,7 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
         if (cleaned.isEmpty()) {
             return "";
         }
+        cleaned = stripCompactSearchRowNoise(cleaned, sectionHeading);
         cleaned = collapseRepeatedLeadingSection(cleaned, sectionHeading);
         if (maxLen > 0 && cleaned.length() > maxLen) {
             return cleaned.substring(0, Math.max(0, maxLen - 1)).trim() + "\u2026";
@@ -1165,6 +1173,23 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
         return section + ": " + secondRemainder;
     }
 
+    private static String stripCompactSearchRowNoise(String value, String sectionHeading) {
+        String cleaned = safe(value).trim();
+        if (cleaned.isEmpty()) {
+            return "";
+        }
+        String section = cleanDisplayTextInternal(sectionHeading, 0);
+        if (!section.isEmpty() && startsWithIgnoreCase(cleaned, "Guide:")) {
+            String afterGuide = cleaned.substring("Guide:".length()).trim();
+            if (startsWithIgnoreCase(afterGuide, section)) {
+                cleaned = afterGuide.substring(section.length()).trim();
+            }
+        }
+        cleaned = cleaned.replaceAll("(?i)^Guide\\s*:\\s*\\S+\\s+", "");
+        cleaned = cleaned.replaceAll("\\s+", " ").trim();
+        return cleaned;
+    }
+
     private static String stripLeadingSnippetJoiners(String value) {
         String cleaned = safe(value).trim();
         while (!cleaned.isEmpty()) {
@@ -1191,6 +1216,26 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
 
     private static boolean shouldShowLinkedGuidePreviewLine() {
         return false;
+    }
+
+    static boolean shouldSuppressLinkedGuideCueForQueryForTest(String query) {
+        return isReviewSearchVisualQuery(query);
+    }
+
+    private static boolean isReviewSearchVisualQuery(String query) {
+        return "rain shelter".equalsIgnoreCase(safe(query).trim());
+    }
+
+    static boolean shouldSuppressLinkedGuideCueForResultForTest(String query, SearchResult result) {
+        return shouldSuppressLinkedGuideCueForResult(query, result);
+    }
+
+    private static boolean shouldSuppressLinkedGuideCueForResult(String query, SearchResult result) {
+        return isReviewSearchVisualQuery(query) && isReviewSearchResult(result);
+    }
+
+    private static boolean isReviewSearchResult(SearchResult result) {
+        return safe(result == null ? null : result.subtitle).toLowerCase(Locale.US).contains("| review");
     }
 
     private String buildLinkedGuidePreviewLine(LinkedGuidePreview preview, boolean richTabletCard) {

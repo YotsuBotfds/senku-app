@@ -140,6 +140,7 @@
     <string name="detail_turn_count_short_plural">%1$d turns</string>
     <string name="detail_why_title">Route, backend &amp; proof</string>
     <string name="detail_why_title_compact">Route, proof &amp; provenance</string>
+    <string name="detail_why_title_emergency">WHY THIS ANSWER</string>
     <string name="detail_why_toggle_show_proof">Show proof</string>
     <string name="detail_why_toggle_hide_proof">Hide proof</string>
     <string name="detail_mode_summary_answer">Context stays attached so you can keep the thread going from here.</string>

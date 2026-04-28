@@ -46,4 +46,13 @@ public final class DetailWarningCopySanitizerTest {
             cleaned
         );
     }
+
+    @Test
+    public void sanitizeWarningResidualCopy_trimsAfterLeadingResidualRemoval() {
+        String cleaned = DetailWarningCopySanitizer.sanitizeWarningResidualCopy(
+            "[System Warning] Stop routine planning now [Safety Advisory]."
+        );
+
+        assertEquals("Stop routine planning now.", cleaned);
+    }
 }

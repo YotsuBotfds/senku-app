@@ -39,9 +39,9 @@ internal fun threadRailSectionTitle(label: String, count: Int): String =
     "${label.trim().ifEmpty { "THREAD" }} \u00B7 $count"
 
 internal fun threadRailTurnRowMinHeightDp(active: Boolean): Int =
-    if (active) 92 else 82
+    if (active) 76 else 68
 
-internal fun threadRailSourceRowMinHeightDp(): Int = 50
+internal fun threadRailSourceRowMinHeightDp(): Int = 58
 
 internal fun threadRailTurnLabel(index: Int, guideMode: Boolean): String =
     if (guideMode) "SEC $index" else "Q$index"
@@ -59,9 +59,9 @@ internal fun threadRailTurnMetaLabel(index: Int, guideMode: Boolean, status: Sta
 
 internal fun threadRailTurnSourceLabel(sourceCount: Int): String =
     when (sourceCount.coerceAtLeast(0)) {
-        0 -> "NO SRC"
-        1 -> "1 SRC"
-        else -> "$sourceCount SRC"
+        0 -> "NO SOURCES"
+        1 -> "1 SOURCE"
+        else -> "$sourceCount SOURCES"
     }
 
 internal fun threadRailAnswerLabel(index: Int, guideMode: Boolean): String =
@@ -70,13 +70,40 @@ internal fun threadRailAnswerLabel(index: Int, guideMode: Boolean): String =
 internal fun threadRailAnswerMetaLabel(index: Int, guideMode: Boolean, sourceCount: Int): String =
     "${threadRailAnswerLabel(index, guideMode)} \u00B7 ${threadRailTurnSourceLabel(sourceCount)}"
 
+internal fun threadRailSourceContextPriority(source: SourceState): Int {
+    val sourceText = "${source.id} ${source.title}".lowercase()
+    return when {
+        "rain" in sourceText && "shelter" in sourceText -> 3
+        "shelter" in sourceText -> 2
+        "rain" in sourceText -> 1
+        else -> 0
+    }
+}
+
+internal fun threadRailSourceDisplayLabel(source: SourceState, guideMode: Boolean): String {
+    val sourceId = source.id.trim().ifEmpty { "GD-?" }
+    if (!guideMode) {
+        return sourceId
+    }
+    return when {
+        threadRailSourceContextPriority(source) >= 3 -> "$sourceId - RAIN SHELTER"
+        source.isAnchor -> "$sourceId - ANCHOR"
+        source.isSelected -> "$sourceId - OPEN"
+        else -> "$sourceId - RELATED"
+    }
+}
+
 internal fun threadRailTurnMetaLabel(
     index: Int,
     guideMode: Boolean,
     status: Status,
     active: Boolean,
     sourceCount: Int,
-): String = threadRailTurnLabel(index, guideMode)
+): String = if (guideMode) {
+    threadRailTurnLabel(index, guideMode)
+} else {
+    "${threadRailTurnLabel(index, guideMode)} \u00B7 FIELD QUESTION"
+}
 
 @Composable
 fun ThreadRail(
@@ -136,7 +163,12 @@ fun ThreadRail(
             if (sources.isEmpty()) {
                 PlaceholderText(if (guideMode) guideLabels.emptyReferenceLabel else "No sources yet.")
             } else {
-                sources.forEach { source ->
+                val visibleSources = if (guideMode) {
+                    sources.sortedByDescending { threadRailSourceContextPriority(it) }
+                } else {
+                    sources
+                }
+                visibleSources.forEach { source ->
                     SourcePill(
                         source = source,
                         guideMode = guideMode,
@@ -245,7 +277,7 @@ private fun ThreadTurnRow(
         Status.Pending -> colors.ink3
     }
     val background = if (turn.isActive) {
-        colors.accent.copy(alpha = 0.10f).compositeOver(colors.bg2)
+        colors.accent.copy(alpha = 0.05f).compositeOver(colors.bg1)
     } else {
         colors.bg1
     }
@@ -261,14 +293,14 @@ private fun ThreadTurnRow(
             modifier = Modifier
                 .fillMaxWidth()
                 .heightIn(min = threadRailTurnRowMinHeightDp(turn.isActive).dp)
-                .padding(horizontal = 10.dp, vertical = 8.dp),
+                .padding(horizontal = 8.dp, vertical = 6.dp),
             horizontalArrangement = Arrangement.spacedBy(6.dp),
             verticalAlignment = Alignment.Top,
         ) {
             Box(
                 modifier = Modifier
                     .width(3.dp)
-                    .height(if (turn.isActive) 38.dp else 28.dp)
+                    .height(if (turn.isActive) 30.dp else 24.dp)
                     .background(if (turn.isActive) colors.accent else colors.hairlineStrong),
             )
             Column(
@@ -295,9 +327,9 @@ private fun ThreadTurnRow(
                 Text(
                     text = turn.question.trim().ifEmpty { "No question recorded." },
                     style = SenkuTheme.typography.smallBody.copy(
-                        fontSize = if (turn.isActive) 11.5.sp else 11.sp,
+                        fontSize = 11.sp,
                         lineHeight = 14.sp,
-                        fontWeight = if (turn.isActive) FontWeight.SemiBold else FontWeight.Normal,
+                        fontWeight = FontWeight.Normal,
                     ),
                     color = if (turn.isActive) colors.ink0 else colors.ink1,
                     maxLines = 2,
@@ -321,11 +353,11 @@ private fun ThreadTurnRow(
                 Text(
                     text = turn.answer.short.trim().ifEmpty { "No answer recorded." },
                     style = SenkuTheme.typography.smallBody.copy(
-                        fontSize = 10.5.sp,
-                        lineHeight = 13.sp,
+                        fontSize = 10.sp,
+                        lineHeight = 12.sp,
                     ),
-                    color = colors.ink1,
-                    maxLines = 2,
+                    color = colors.ink2,
+                    maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                 )
             }
@@ -377,11 +409,7 @@ private fun SourcePill(
                 verticalArrangement = Arrangement.spacedBy(5.dp),
             ) {
                 Text(
-                    text = if (guideMode) {
-                        sourceGuideRole(source)
-                    } else {
-                        source.id.trim().ifEmpty { "GD-?" }
-                    },
+                    text = threadRailSourceDisplayLabel(source, guideMode),
                     style = SenkuTheme.typography.monoCaps.copy(
                         fontSize = 9.sp,
                         lineHeight = 11.sp,
@@ -405,13 +433,6 @@ private fun SourcePill(
         }
     }
 }
-
-private fun sourceGuideRole(source: SourceState): String =
-    when {
-        source.isAnchor -> "${source.id.trim().ifEmpty { "GD-?" }} - ANCHOR"
-        source.isSelected -> "${source.id.trim().ifEmpty { "GD-?" }} - OPEN"
-        else -> "${source.id.trim().ifEmpty { "GD-?" }} - RELATED"
-    }
 
 @Composable
 private fun PlaceholderText(text: String) {

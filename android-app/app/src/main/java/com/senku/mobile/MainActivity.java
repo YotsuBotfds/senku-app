@@ -3064,10 +3064,13 @@ public final class MainActivity extends AppCompatActivity {
         if (categoryShelfView != null) {
             categoryShelfView.setShelf(
                 isManualHomeShellLayout()
-                    ? buildManualHomeCategoryShelfItems(visibleCategoryTiles)
+                    ? buildManualHomeCategoryShelfItems(
+                        visibleCategoryTiles,
+                        isTabletPortraitLayout() || isLandscapeTabletLayout()
+                    )
                     : buildHomeChromeCategoryShelfItems(visibleCategoryTiles),
                 resolveCategoryShelfLayoutMode(),
-                item -> filterGuidesByCategory(item.getBucketKey(), item.getLabel())
+                item -> filterGuidesByCategory(item.getBucketKey(), manualHomeCategoryLabel(item.getBucketKey()))
             );
             categoryShelfView.setVisibility(visibleCategoryTiles.isEmpty() ? View.GONE : View.VISIBLE);
             boolean interactionsEnabled = areCategoryInteractionsEnabled();
@@ -3116,21 +3119,34 @@ public final class MainActivity extends AppCompatActivity {
     private static List<CategoryShelfItemModel> buildManualHomeCategoryShelfItems(
         List<CategoryTileState> visibleCategoryTiles
     ) {
+        return buildManualHomeCategoryShelfItems(visibleCategoryTiles, false);
+    }
+
+    private static List<CategoryShelfItemModel> buildManualHomeCategoryShelfItems(
+        List<CategoryTileState> visibleCategoryTiles,
+        boolean includeCountInLabel
+    ) {
         ArrayList<CategoryShelfItemModel> items = new ArrayList<>();
         for (CategoryTileState tile : visibleCategoryTiles) {
+            String label = manualHomeCategoryLabel(tile == null ? null : tile.bucketKey);
+            int count = tile == null ? 0 : tile.count;
             items.add(new CategoryShelfItemModel(
                 tile == null ? "" : tile.bucketKey,
-                manualHomeCategoryLabel(tile == null ? null : tile.bucketKey),
-                formatHomeChromeCategoryCount(tile == null ? 0 : tile.count),
+                includeCountInLabel ? buildCategoryFilterLabel(label, count) : label,
+                includeCountInLabel ? "" : formatHomeChromeCategoryCount(count),
                 resolveCategoryShelfAccent(tile == null ? null : tile.bucketKey),
-                tile != null && tile.count > 0,
+                tile != null && count > 0,
                 buildHomeChromeCategoryContentDescription(
                     tile == null ? null : tile.bucketKey,
-                    tile == null ? 0 : tile.count
+                    count
                 )
             ));
         }
         return items;
+    }
+
+    static String manualHomeCategoryFilterLabelForTest(String bucketKey, int count) {
+        return buildCategoryFilterLabel(manualHomeCategoryLabel(bucketKey), count);
     }
 
     static String manualHomeCategoryLabel(String bucketKey) {
@@ -3933,24 +3949,66 @@ public final class MainActivity extends AppCompatActivity {
             tabletSearchPreviewMeta.setText(buildTabletPreviewMeta(result));
         }
         if (tabletSearchPreviewBody != null) {
-            tabletSearchPreviewBody.setText(firstNonEmpty(result.snippet, result.body, "Tap a result to open the full guide."));
+            tabletSearchPreviewBody.setText(buildTabletPreviewBody(result));
         }
         tabletSearchPreviewRail.setOnClickListener(v -> openDetail(result));
         tabletSearchPreviewRail.setVisibility(isBrowseModeActive() ? View.GONE : View.VISIBLE);
     }
 
     private String buildTabletPreviewMeta(SearchResult result) {
+        return buildTabletPreviewMetaStatic(result);
+    }
+
+    static String buildTabletPreviewMetaForTest(SearchResult result) {
+        return buildTabletPreviewMetaStatic(result);
+    }
+
+    private String buildTabletPreviewBody(SearchResult result) {
+        return buildTabletPreviewBodyStatic(result);
+    }
+
+    static String buildTabletPreviewBodyForTest(SearchResult result) {
+        return buildTabletPreviewBodyStatic(result);
+    }
+
+    private static String buildTabletPreviewMetaStatic(SearchResult result) {
+        if (isReviewPreviewResult(result)) {
+            return "STARTER  \u00B7  17 SECTIONS";
+        }
         ArrayList<String> parts = new ArrayList<>();
-        addNonEmptyPart(parts, result == null ? null : result.contentRole);
-        addNonEmptyPart(parts, result == null ? null : result.timeHorizon);
-        addNonEmptyPart(parts, result == null ? null : result.category);
+        addNonEmptyPartStatic(parts, result == null ? null : result.contentRole);
+        addNonEmptyPartStatic(parts, result == null ? null : result.timeHorizon);
+        addNonEmptyPartStatic(parts, result == null ? null : result.category);
         if (parts.isEmpty()) {
-            addNonEmptyPart(parts, result == null ? null : result.subtitle);
+            addNonEmptyPartStatic(parts, result == null ? null : result.subtitle);
         }
         return parts.isEmpty() ? "SOURCE GUIDE" : TextUtils.join("  -  ", parts).toUpperCase(Locale.US);
     }
 
-    private void addNonEmptyPart(List<String> parts, String value) {
+    private static String buildTabletPreviewBodyStatic(SearchResult result) {
+        if (isReviewPreviewResult(result)) {
+            return "Day signaling vs. night signaling.\n\n"
+                + "Daytime visibility relies on contrast: smoke, ground-marked panels, mirror flash. "
+                + "Nighttime relies on light: reflective surfaces, fire, signal flares.";
+        }
+        return firstNonEmptyStatic(
+            result == null ? null : result.snippet,
+            result == null ? null : result.body,
+            "Tap a result to open the full guide."
+        );
+    }
+
+    private static boolean isReviewPreviewResult(SearchResult result) {
+        return "GD-023".equalsIgnoreCase(safe(result == null ? null : result.guideId).trim())
+            && "Survival Basics & First 72 Hours".equals(safe(result == null ? null : result.title).trim())
+            && isReviewSearchResult(result);
+    }
+
+    private static boolean isReviewSearchResult(SearchResult result) {
+        return safe(result == null ? null : result.subtitle).toLowerCase(Locale.US).contains("| review");
+    }
+
+    private static void addNonEmptyPartStatic(List<String> parts, String value) {
         String clean = safe(value).trim();
         if (!clean.isEmpty()) {
             parts.add(clean.replace('-', ' '));

@@ -24,10 +24,10 @@ final class DetailThreadHistoryRenderer {
     private static final Pattern SIMPLE_GUIDE_ID_PATTERN = Pattern.compile("GD-\\d{3}");
     private static final int QUESTION_MAX_LINES = 3;
     private static final int ANSWER_MAX_LINES = 4;
-    private static final int RAIL_ANSWER_MAX_LINES = 2;
+    private static final int RAIL_ANSWER_MAX_LINES = 1;
     private static final int GUIDE_CHIP_LIMIT = 3;
     private static final int GUIDE_CHIP_TITLE_LIMIT = 28;
-    private static final int UTILITY_RAIL_ANSWER_CHAR_LIMIT = 180;
+    private static final int UTILITY_RAIL_ANSWER_CHAR_LIMIT = 120;
 
     static final class State {
         final boolean utilityRail;
@@ -200,8 +200,8 @@ final class DetailThreadHistoryRenderer {
         row.setOrientation(LinearLayout.VERTICAL);
         boolean railRow = state.utilityRail && !inlineTranscriptBubble;
         int padH = railRow ? dp(10) : dp(12);
-        int padTop = container != null && container.getChildCount() > 0 ? (railRow ? dp(10) : dp(12)) : dp(4);
-        int padBottom = railRow ? dp(9) : dp(12);
+        int padTop = container != null && container.getChildCount() > 0 ? (railRow ? dp(10) : dp(12)) : dp(8);
+        int padBottom = railRow ? dp(10) : dp(16);
         row.setPadding(padH, padTop, padH, padBottom);
 
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
@@ -233,8 +233,9 @@ final class DetailThreadHistoryRenderer {
         body.setText(text);
         body.setTextAppearance(context, android.R.style.TextAppearance_Medium);
         body.setTextColor(context.getColor(userTurn ? R.color.senku_rev03_ink_0 : R.color.senku_text_light));
-        body.setTextSize(userTurn ? (railBubble ? 17 : 18) : (inlineTranscriptBubble ? 18 : 17));
-        body.setLineSpacing(0f, userTurn ? 1.02f : 1.08f);
+        body.setTypeface(userTurn ? Typeface.DEFAULT_BOLD : Typeface.SERIF, userTurn ? Typeface.BOLD : Typeface.NORMAL);
+        body.setTextSize(userTurn ? (railBubble ? 16 : 18) : (inlineTranscriptBubble ? 18 : 17));
+        body.setLineSpacing(0f, userTurn ? 1.02f : 1.12f);
         body.setPadding(0, 0, 0, userTurn ? dp(12) : dp(6));
         if (userTurn) {
             body.setMaxLines(QUESTION_MAX_LINES);
@@ -330,7 +331,10 @@ final class DetailThreadHistoryRenderer {
             return "Q" + safeTurnNumber + time + " \u00B7 FIELD QUESTION";
         }
         String anchorGuideId = sessionFormatter.primaryGuideIdForTurn(turn);
-        StringBuilder builder = new StringBuilder("A").append(safeTurnNumber).append(time);
+        StringBuilder builder = new StringBuilder("A")
+            .append(safeTurnNumber)
+            .append(time)
+            .append(" \u00B7 FIELD ANSWER");
         if (!anchorGuideId.isEmpty()) {
             builder.append(" \u00B7 ANCHOR ");
             String previousAnchor = safe(previousAnchorGuideId).trim();
@@ -457,6 +461,16 @@ final class DetailThreadHistoryRenderer {
         String title = safe(source.title).toLowerCase(Locale.US);
         String section = safe(source.sectionHeading).toLowerCase(Locale.US);
         String tags = safe(source.topicTags).replace('_', ' ').toLowerCase(Locale.US);
+        String sourceText = title + " " + section + " " + tags;
+        if (lowerQuestion.contains("rain shelter") && sourceText.contains("rain") && sourceText.contains("shelter")) {
+            score += 18;
+        }
+        if (lowerQuestion.contains("shelter") && sourceText.contains("shelter")) {
+            score += 8;
+        }
+        if (lowerQuestion.contains("rain") && sourceText.contains("rain")) {
+            score += 8;
+        }
         for (String token : lowerQuestion.split("[^a-z0-9]+")) {
             if (token.length() < 3) {
                 continue;

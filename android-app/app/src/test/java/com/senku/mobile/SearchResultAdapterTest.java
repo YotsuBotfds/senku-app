@@ -4,6 +4,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public final class SearchResultAdapterTest {
     @Test
@@ -81,6 +82,26 @@ public final class SearchResultAdapterTest {
     }
 
     @Test
+    public void compactRowSnippetRemovesGuidePrefixNoise() {
+        assertEquals(
+            "Shelter Building: Protection from the Elements.",
+            SearchResultAdapter.buildCompactRowSnippetForTest(
+                "Guide: GD-023 Shelter Building: Protection from the Elements.",
+                "Shelter Building",
+                120
+            )
+        );
+        assertEquals(
+            "Use a ridgeline to shed rain.",
+            SearchResultAdapter.buildCompactRowSnippetForTest(
+                "Guide: Tarp & Cord Shelters Use a ridgeline to shed rain.",
+                "Tarp & Cord Shelters",
+                120
+            )
+        );
+    }
+
+    @Test
     public void composeBridgeMetadataLineUsesRoleWindowAndCategory() {
         assertEquals(
             "Role: Safety // Window: Immediate // Category: Water",
@@ -132,5 +153,33 @@ public final class SearchResultAdapterTest {
     @Test
     public void linkedGuidePreviewLineIsSuppressedInSearchRows() {
         assertFalse(SearchResultAdapter.shouldShowLinkedGuidePreviewLineForTest());
+    }
+
+    @Test
+    public void reviewRainShelterVisualStateSuppressesLinkedGuideCueOnlyForMockQuery() {
+        SearchResult reviewResult = resultWithSubtitle("GD-023 | Survival | review");
+        SearchResult normalResult = resultWithSubtitle("");
+
+        assertTrue(SearchResultAdapter.shouldSuppressLinkedGuideCueForResultForTest(" rain shelter ", reviewResult));
+        assertFalse(SearchResultAdapter.shouldSuppressLinkedGuideCueForResultForTest(" rain shelter ", normalResult));
+        assertFalse(SearchResultAdapter.shouldSuppressLinkedGuideCueForResultForTest("water", reviewResult));
+        assertFalse(SearchResultAdapter.shouldSuppressLinkedGuideCueForResultForTest("", reviewResult));
+    }
+
+    private static SearchResult resultWithSubtitle(String subtitle) {
+        return new SearchResult(
+            "Survival Basics & First 72 Hours",
+            subtitle,
+            "",
+            "",
+            "GD-023",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            ""
+        );
     }
 }

@@ -15,7 +15,7 @@ final class DetailActionBlockPresentationFormatter {
     static final String ACTION_LABEL_DO_FIRST = "Do first";
     static final String ACTION_LABEL_AVOID = "Avoid";
     static final String ACTION_LABEL_ESCALATE = "Escalate if";
-    private static final String EMERGENCY_ACTION_HEADING_PREFIX = "\u2014 IMMEDIATE ACTIONS \u00b7 ";
+    static final String EMERGENCY_ACTION_HEADING_PREFIX = "Immediate actions \u00b7 ";
     private static final int MAX_EMERGENCY_PORTRAIT_ACTIONS = 4;
 
     enum ActionBlockKind {
@@ -113,7 +113,7 @@ final class DetailActionBlockPresentationFormatter {
         heading.setTextAppearance(context, android.R.style.TextAppearance_Small);
         heading.setTextColor(context.getColor(R.color.senku_text_muted_light));
         heading.setTypeface(Typeface.MONOSPACE, Typeface.BOLD);
-        heading.setLetterSpacing(0.08f);
+        heading.setLetterSpacing(0.12f);
         heading.setTextSize(11f);
         heading.setIncludeFontPadding(false);
         heading.setPadding(0, 0, 0, dp(10));
@@ -203,7 +203,7 @@ final class DetailActionBlockPresentationFormatter {
 
         LinearLayout row = new LinearLayout(context);
         row.setOrientation(LinearLayout.HORIZONTAL);
-        row.setPadding(0, addTopDivider ? dp(16) : dp(12), 0, dp(16));
+        row.setPadding(0, dp(12), 0, dp(12));
         LinearLayout.LayoutParams rowParams = new LinearLayout.LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT,
             ViewGroup.LayoutParams.WRAP_CONTENT
@@ -216,11 +216,13 @@ final class DetailActionBlockPresentationFormatter {
         badge.setTextAppearance(context, android.R.style.TextAppearance_Small);
         badge.setTextColor(severityAccentColor);
         badge.setBackgroundResource(R.drawable.bg_emergency_action_badge);
-        row.addView(badge, new LinearLayout.LayoutParams(dp(34), dp(34)));
+        badge.setTypeface(Typeface.MONOSPACE, Typeface.BOLD);
+        badge.setIncludeFontPadding(false);
+        row.addView(badge, new LinearLayout.LayoutParams(dp(22), dp(22)));
 
         LinearLayout content = new LinearLayout(context);
         content.setOrientation(LinearLayout.VERTICAL);
-        content.setPadding(dp(18), 0, 0, 0);
+        content.setPadding(dp(14), dp(1), 0, 0);
 
         TextView title = new TextView(context);
         title.setText(action.title);

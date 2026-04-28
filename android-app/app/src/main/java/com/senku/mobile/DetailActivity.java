@@ -90,9 +90,9 @@ public final class DetailActivity extends AppCompatActivity {
     private static final float STREAMING_FIRST_CHUNK_ALPHA = 0.88f;
     private static final long GENERATION_STALL_NOTICE_MS = 12000L;
     private static final long GENERATION_STALL_POLL_MS = 1000L;
-    private static final int TABLET_EMERGENCY_PORTRAIT_LEFT_MARGIN_DP = 44;
-    private static final int TABLET_EMERGENCY_PORTRAIT_RIGHT_MARGIN_DP = 56;
-    private static final int TABLET_EMERGENCY_PORTRAIT_TOP_MARGIN_DP = 44;
+    private static final int TABLET_EMERGENCY_PORTRAIT_LEFT_MARGIN_DP = 0;
+    private static final int TABLET_EMERGENCY_PORTRAIT_RIGHT_MARGIN_DP = 0;
+    private static final int TABLET_EMERGENCY_PORTRAIT_TOP_MARGIN_DP = 0;
     private static final int TABLET_EMERGENCY_LANDSCAPE_LEFT_MARGIN_DP = 336;
     private static final int TABLET_EMERGENCY_LANDSCAPE_RIGHT_MARGIN_DP = 24;
     private static final int TABLET_EMERGENCY_LANDSCAPE_TOP_MARGIN_DP = 16;
@@ -1224,7 +1224,7 @@ public final class DetailActivity extends AppCompatActivity {
                 selectedSourceKey = safe(sourceKey).trim();
                 syncTabletDetailScreen();
             },
-            () -> openSourceGuide(selectedTabletSourceForAction()),
+            this::handleTabletAnchorClick,
             guideId -> openCrossReferenceGuide(buildTabletXRefSearchResult(guideId), selectedTabletSourceForAction()),
             text -> {
                 tabletComposerText = safe(text);
@@ -1248,6 +1248,18 @@ public final class DetailActivity extends AppCompatActivity {
                     + " xrefs=" + state.getXrefs().size()
             );
         }
+    }
+
+    private void handleTabletAnchorClick() {
+        if (shouldKeepTabletAnchorClickInAnswerContext(answerMode)) {
+            showTabletAnswerSourceInPlace(selectedTabletSourceForAction());
+            return;
+        }
+        openSourceGuide(selectedTabletSourceForAction());
+    }
+
+    static boolean shouldKeepTabletAnchorClickInAnswerContext(boolean answerMode) {
+        return answerMode;
     }
 
     private void renderTabletEmergencyHeaderOverlay() {
@@ -1368,7 +1380,7 @@ public final class DetailActivity extends AppCompatActivity {
         tabletEmergencyProofOverlayPanel.setPadding(dp(14), dp(12), dp(14), dp(12));
 
         tabletEmergencyProofOverlayTitle = new TextView(this);
-        tabletEmergencyProofOverlayTitle.setText(R.string.detail_why_title);
+        tabletEmergencyProofOverlayTitle.setText(R.string.detail_why_title_emergency);
         tabletEmergencyProofOverlayTitle.setTextColor(getColor(R.color.senku_text_light));
         tabletEmergencyProofOverlayTitle.setTypeface(Typeface.MONOSPACE, Typeface.BOLD);
         tabletEmergencyProofOverlayTitle.setTextSize(11f);
@@ -1472,12 +1484,29 @@ public final class DetailActivity extends AppCompatActivity {
         return shouldUseTabletEmergencyFullHeightPage(answerMode, tabletPortrait, emergencySurfaceEligible);
     }
 
+    static boolean shouldHideTabletDetailRootBehindEmergencyOverlay(
+        boolean answerMode,
+        boolean tabletPortrait,
+        boolean emergencySurfaceEligible
+    ) {
+        return shouldUseTabletEmergencyFullHeightPage(answerMode, tabletPortrait, emergencySurfaceEligible);
+    }
+
     private boolean isTabletEmergencyFullHeightPage() {
         return shouldUseTabletEmergencyFullHeightPage(
             answerMode,
             isTabletPortraitLayout(),
-            isCurrentEmergencySurfaceEligible()
+            shouldShowEmergencyHeader()
         );
+    }
+
+    private void applyTabletEmergencyRootVisibility(boolean emergencyFullHeightPage) {
+        if (tabletDetailRoot == null) {
+            return;
+        }
+        tabletDetailRoot.setVisibility(View.VISIBLE);
+        tabletDetailRoot.setAlpha(1f);
+        tabletDetailRoot.setEnabled(!emergencyFullHeightPage);
     }
 
     private static AnchorState emptyTabletAnchorState() {
@@ -1526,6 +1555,7 @@ public final class DetailActivity extends AppCompatActivity {
         tabletEmergencyProofOverlayPanel = null;
         tabletEmergencyProofOverlayTitle = null;
         tabletEmergencyProofOverlayText = null;
+        applyTabletEmergencyRootVisibility(false);
     }
 
     private TabletDetailState buildTabletState() {
@@ -1567,14 +1597,11 @@ public final class DetailActivity extends AppCompatActivity {
         boolean pinActive = pinVisible && PinnedGuideStore.contains(this, resolvePinnableGuideId());
         boolean showRetry = (!tabletBusy && !safe(lastFailedQuery).isEmpty())
             || (tabletBusy && generationStallNoticeVisible && !safe(currentTitle).isEmpty());
-        boolean tabletEmergencyFullHeightPage = shouldSuppressTabletEmergencyStaleChrome(
-            answerMode,
-            isTabletPortraitLayout(),
-            isCurrentEmergencySurfaceEligible()
-        );
+        boolean tabletEmergencyFullHeightPage = isTabletEmergencyFullHeightPage();
+        SearchResult displaySource = resolveTabletDisplaySource(turnBindings, activeSource);
         return new TabletDetailState(
-            buildTabletGuideId(activeSource),
-            buildTabletGuideTitle(activeSource),
+            buildTabletGuideId(displaySource),
+            buildTabletGuideTitle(displaySource, turnBindings),
             buildRev03MetaStripItems(),
             turns,
             tabletEmergencyFullHeightPage ? Collections.emptyList() : sources,
@@ -1590,11 +1617,33 @@ public final class DetailActivity extends AppCompatActivity {
             pinActive,
             !tabletEmergencyFullHeightPage && tabletEvidenceExpanded,
             showUtilityRail(),
-            safe(currentGuideModeLabel),
-            safe(currentGuideModeSummary),
-            safe(currentGuideModeAnchorLabel),
+            buildTabletGuideModeLabel(activeSource),
+            buildTabletGuideModeSummary(activeSource),
+            buildTabletGuideModeAnchorLabel(activeSource),
             safe(tabletStatusText)
         );
+    }
+
+    private String buildTabletGuideModeLabel(SearchResult activeSource) {
+        if (answerMode) {
+            return "ANSWER";
+        }
+        return safe(currentGuideModeLabel);
+    }
+
+    private String buildTabletGuideModeSummary(SearchResult activeSource) {
+        if (answerMode) {
+            String guideId = safe(activeSource == null ? null : activeSource.guideId).trim();
+            return guideId.isEmpty() ? "Answer source selected" : "Answer source selected: " + guideId;
+        }
+        return safe(currentGuideModeSummary);
+    }
+
+    private String buildTabletGuideModeAnchorLabel(SearchResult activeSource) {
+        if (answerMode) {
+            return "Proof rail";
+        }
+        return safe(currentGuideModeAnchorLabel);
     }
 
     private ArrayList<TabletTurnBinding> buildTabletTurnBindings() {
@@ -1882,7 +1931,64 @@ public final class DetailActivity extends AppCompatActivity {
         return resolveDisplayGuideId();
     }
 
-    private String buildTabletGuideTitle(SearchResult activeSource) {
+    private SearchResult resolveTabletDisplaySource(
+        ArrayList<TabletTurnBinding> turnBindings,
+        SearchResult activeSource
+    ) {
+        if (!answerMode || turnBindings == null || turnBindings.size() <= 1) {
+            return activeSource;
+        }
+        SearchResult best = activeSource;
+        int bestScore = sourceThreadTopicScore(activeSource, turnBindings);
+        for (TabletTurnBinding turn : turnBindings) {
+            if (turn == null || turn.sources == null) {
+                continue;
+            }
+            for (SearchResult source : turn.sources) {
+                int score = sourceThreadTopicScore(source, turnBindings);
+                if (score > bestScore) {
+                    bestScore = score;
+                    best = source;
+                }
+            }
+        }
+        return best;
+    }
+
+    private static int sourceThreadTopicScore(SearchResult source, List<TabletTurnBinding> turnBindings) {
+        if (source == null || turnBindings == null || turnBindings.isEmpty()) {
+            return 0;
+        }
+        String haystack = (
+            safe(source.guideId) + " " +
+                safe(source.title) + " " +
+                safe(source.sectionHeading) + " " +
+                safe(source.category) + " " +
+                safe(source.structureType) + " " +
+                safe(source.topicTags)
+        ).replace('_', ' ').toLowerCase(Locale.US);
+        int score = 0;
+        for (TabletTurnBinding turn : turnBindings) {
+            String question = safe(turn == null ? null : turn.question).toLowerCase(Locale.US);
+            for (String token : question.split("[^a-z0-9]+")) {
+                if (token.length() < 3) {
+                    continue;
+                }
+                if (haystack.contains(token)) {
+                    score += ("shelter".equals(token) || "rain".equals(token) || "tarp".equals(token) || "cord".equals(token))
+                        ? 8
+                        : 2;
+                }
+            }
+        }
+        return score;
+    }
+
+    private String buildTabletGuideTitle(SearchResult activeSource, List<TabletTurnBinding> turnBindings) {
+        String threadTopic = buildTabletThreadTopicTitle(turnBindings);
+        if (answerMode && !threadTopic.isEmpty()) {
+            return threadTopic;
+        }
         String title = safe(activeSource == null ? null : activeSource.title).trim();
         if (!title.isEmpty()) {
             return title;
@@ -1896,10 +2002,36 @@ public final class DetailActivity extends AppCompatActivity {
         return "Guide evidence";
     }
 
+    private String buildTabletThreadTopicTitle(List<TabletTurnBinding> turnBindings) {
+        if (!answerMode || turnBindings == null || turnBindings.size() <= 1) {
+            return "";
+        }
+        for (TabletTurnBinding turn : turnBindings) {
+            String question = safe(turn == null ? null : turn.question).toLowerCase(Locale.US);
+            if (question.contains("rain") && question.contains("shelter")) {
+                return "Rain shelter - " + turnBindings.size() + " turns";
+            }
+            if (question.contains("shelter")) {
+                return "Shelter thread - " + turnBindings.size() + " turns";
+            }
+        }
+        return "Thread - " + turnBindings.size() + " turns";
+    }
+
     private SearchResult selectedTabletSourceForAction() {
         ArrayList<TabletTurnBinding> turnBindings = buildTabletTurnBindings();
         TabletTurnBinding activeTurn = resolveActiveTabletTurn(turnBindings);
         return resolveActiveTabletSource(activeTurn);
+    }
+
+    private void showTabletAnswerSourceInPlace(SearchResult source) {
+        if (!tabletComposeMode || !answerMode) {
+            return;
+        }
+        selectedSourceKey = buildSourceSelectionKey(source);
+        tabletEvidenceExpanded = true;
+        ensureTabletEvidenceSelection(source);
+        syncTabletDetailScreen();
     }
 
     private SearchResult buildTabletXRefSearchResult(String guideId) {

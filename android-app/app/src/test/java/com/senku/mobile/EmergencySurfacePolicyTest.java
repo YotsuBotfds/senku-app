@@ -109,9 +109,9 @@ public final class EmergencySurfacePolicyTest {
         DetailActivity.TabletEmergencyOverlayMargins margins =
             DetailActivity.resolveTabletEmergencyOverlayMarginsDp(true);
 
-        assertEquals(44, margins.left);
-        assertEquals(56, margins.right);
-        assertEquals(44, margins.top);
+        assertEquals(0, margins.left);
+        assertEquals(0, margins.right);
+        assertEquals(0, margins.top);
         assertEquals(
             android.view.ViewGroup.LayoutParams.MATCH_PARENT,
             DetailActivity.resolveTabletEmergencyOverlayHeight(true)
@@ -122,6 +122,7 @@ public final class EmergencySurfacePolicyTest {
     public void tabletPortraitEmergencySurfaceOwnsFullHeightPageChrome() {
         assertTrue(DetailActivity.shouldUseTabletEmergencyFullHeightPage(true, true, true));
         assertTrue(DetailActivity.shouldSuppressTabletEmergencyStaleChrome(true, true, true));
+        assertTrue(DetailActivity.shouldHideTabletDetailRootBehindEmergencyOverlay(true, true, true));
     }
 
     @Test
@@ -132,6 +133,15 @@ public final class EmergencySurfacePolicyTest {
         assertFalse(DetailActivity.shouldSuppressTabletEmergencyStaleChrome(true, false, true));
         assertFalse(DetailActivity.shouldSuppressTabletEmergencyStaleChrome(false, true, true));
         assertFalse(DetailActivity.shouldSuppressTabletEmergencyStaleChrome(true, true, false));
+        assertFalse(DetailActivity.shouldHideTabletDetailRootBehindEmergencyOverlay(true, false, true));
+        assertFalse(DetailActivity.shouldHideTabletDetailRootBehindEmergencyOverlay(false, true, true));
+        assertFalse(DetailActivity.shouldHideTabletDetailRootBehindEmergencyOverlay(true, true, false));
+    }
+
+    @Test
+    public void tabletAnswerAnchorClickStaysInAnswerContext() {
+        assertTrue(DetailActivity.shouldKeepTabletAnchorClickInAnswerContext(true));
+        assertFalse(DetailActivity.shouldKeepTabletAnchorClickInAnswerContext(false));
     }
 
     @Test
@@ -364,6 +374,25 @@ public final class EmergencySurfacePolicyTest {
             input(
                 true,
                 "answer_card:burn_hazard_general_shop_safety",
+                "Workshop danger response",
+                "reviewed",
+                "high",
+                "high",
+                "deterministic_rule",
+                1
+            )
+        );
+
+        assertFalse(decision.eligible);
+        assertEquals(EmergencySurfacePolicy.REASON_NOT_HIGH_RISK_EMERGENCY, decision.reason);
+    }
+
+    @Test
+    public void adjacentFoundryObservationCardDoesNotQualifyAsEmergencySurface() {
+        EmergencySurfacePolicy.Decision decision = EmergencySurfacePolicy.evaluate(
+            input(
+                true,
+                "answer_card:foundry_defects_observation_boundary",
                 "Workshop danger response",
                 "reviewed",
                 "high",
