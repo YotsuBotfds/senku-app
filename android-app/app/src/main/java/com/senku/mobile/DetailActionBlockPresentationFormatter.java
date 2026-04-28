@@ -2,6 +2,9 @@ package com.senku.mobile;
 
 import android.content.Context;
 import android.graphics.Typeface;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.style.UnderlineSpan;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
@@ -243,7 +246,7 @@ final class DetailActionBlockPresentationFormatter {
         content.setPadding(dp(12), dp(1), 0, 0);
 
         TextView title = new TextView(context);
-        title.setText(action.title);
+        title.setText(styleEmergencyMinimumDistance(action.title));
         title.setTextAppearance(context, android.R.style.TextAppearance_Medium);
         title.setTextColor(context.getColor(R.color.senku_text_light));
         title.setTypeface(Typeface.DEFAULT_BOLD);
@@ -252,7 +255,7 @@ final class DetailActionBlockPresentationFormatter {
         title.setIncludeFontPadding(false);
 
         TextView detail = new TextView(context);
-        detail.setText(action.detail);
+        detail.setText(styleEmergencyMinimumDistance(action.detail));
         detail.setTextAppearance(context, android.R.style.TextAppearance_Small);
         detail.setTextColor(context.getColor(R.color.senku_text_muted_light));
         detail.setTextSize(13f);
@@ -449,6 +452,7 @@ final class DetailActionBlockPresentationFormatter {
             || normalizedLine.startsWith("reviewed card")
             || normalizedLine.startsWith("source")
             || normalizedLine.startsWith("sources")
+            || normalizedLine.startsWith("guide connection")
             || normalizedLine.startsWith("emergency context");
     }
 
@@ -467,6 +471,23 @@ final class DetailActionBlockPresentationFormatter {
         cleaned = cleaned.replace(":::", "");
         cleaned = cleaned.replaceAll("\\s{2,}", " ").trim();
         return DetailWarningCopySanitizer.sanitizeWarningResidualCopy(cleaned);
+    }
+
+    static CharSequence styleEmergencyMinimumDistance(String text) {
+        String value = safe(text);
+        String lower = value.toLowerCase(Locale.US);
+        int start = lower.indexOf("minimum 5 m");
+        if (start < 0) {
+            return value;
+        }
+        SpannableString styled = new SpannableString(value);
+        styled.setSpan(
+            new UnderlineSpan(),
+            start,
+            start + "minimum 5 m".length(),
+            Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+        );
+        return styled;
     }
 
     private static String extractActionMarkerClause(String text, ActionBlockTextSanitizer sanitizer, String... markers) {

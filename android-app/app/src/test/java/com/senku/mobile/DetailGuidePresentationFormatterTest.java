@@ -24,7 +24,12 @@ public final class DetailGuidePresentationFormatterTest {
         );
 
         assertEquals(
-            "\u2014 \u00a7 1 \u00b7 STORAGE\n\n\u2014 \u00a7 2 \u00b7 SAFE STORAGE\nUse clean water.",
+            "FIELD MANUAL \u00b7 REV 04-27 \u00b7 PK 2\n"
+                + "Water\n"
+                + "GD-214 \u00b7 2 SECTIONS\n\n"
+                + "\u2014 \u00a7 1 \u00b7 STORAGE\n\n"
+                + "\u2014 \u00a7 2 \u00b7 SAFE STORAGE\n"
+                + "Use clean water.",
             DetailGuidePresentationFormatter.buildGuideBody(result)
         );
     }
@@ -43,7 +48,11 @@ public final class DetailGuidePresentationFormatterTest {
         );
 
         assertEquals(
-            "\u2014 \u00a7 1 \u00b7 STORAGE\nUse covered jars.",
+            "FIELD MANUAL \u00b7 REV 04-27 \u00b7 PK 2\n"
+                + "Water\n"
+                + "GD-214 \u00b7 1 SECTION\n\n"
+                + "\u2014 \u00a7 1 \u00b7 STORAGE\n"
+                + "Use covered jars.",
             DetailGuidePresentationFormatter.buildGuideBody(result)
         );
     }
@@ -61,7 +70,14 @@ public final class DetailGuidePresentationFormatterTest {
             "guide-focus"
         );
 
-        assertEquals("Use covered jars\nRotate monthly.", DetailGuidePresentationFormatter.buildGuideBody(result));
+        assertEquals(
+            "FIELD MANUAL \u00b7 REV 04-27 \u00b7 PK 2\n"
+                + "Water\n"
+                + "GD-214 \u00b7 1 SECTION\n\n"
+                + "Use covered jars\n"
+                + "Rotate monthly.",
+            DetailGuidePresentationFormatter.buildGuideBody(result)
+        );
     }
 
     @Test
@@ -177,6 +193,30 @@ public final class DetailGuidePresentationFormatterTest {
             "WARNING \u00b7 Crucible Safety\nNever use a cracked crucible.",
             GuideBodySanitizer.sanitizeGuideBodyForDisplay(
                 "::: warning\nCrucible Safety\n\nNever use a cracked crucible.\n:::"
+            )
+        );
+    }
+
+    @Test
+    public void guideBodySanitizerCompactsReviewedBoundaryOpeningForFirstViewport() {
+        assertEquals(
+            "DANGER \u00b7 EXTREME BURN HAZARD\n"
+                + "A single drop of water contacting molten metal causes a violent steam explosion. EVERY tool, mold, crucible, and surface that contacts molten metal must be completely dry.\n"
+                + "\u2014 \u00a7 1 \u00b7 AREA READINESS\n"
+                + "Reviewed Answer-Card Boundary\n"
+                + "Use it only for foundry-area readiness, visible hazard screening, material and source labeling, no-go triggers, access control, and expert or owner handoff. Start with the current activity status.",
+            GuideBodySanitizer.sanitizeGuideBodyForDisplay(
+                "::: danger\n"
+                    + "EXTREME BURN HAZARD: A single drop of water contacting molten metal causes a violent steam explosion. "
+                    + "EVERY tool, mold, crucible, and surface that contacts molten metal must be completely dry. "
+                    + "Inspect crucibles for cracks before every use. Never cast alone.\n"
+                    + ":::\n"
+                    + "Required Reading: Before attempting any procedures in this guide, read the Chemical Safety Guide in full.\n"
+                    + "## Section 1 Reviewed Answer-Card Boundary: Area readiness, hazard screen, and handoffs\n"
+                    + "This is the reviewed answer-card surface for GD-132. Use it only for foundry-area readiness, visible hazard screening, material and source labeling, no-go triggers, access control, and expert or owner handoff. Start with the current activity status.\n\n"
+                    + "For routine boundary screening, record the work area and owner.\n"
+                    + "## Section 2 Required Reading\n"
+                    + "Read linked guides."
             )
         );
     }

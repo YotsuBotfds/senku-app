@@ -11,12 +11,12 @@ files from this lane.
   - Home, Search, Answer, Guide, Thread: phone portrait, phone landscape,
     tablet portrait, tablet landscape.
   - Emergency: phone portrait and tablet portrait only.
-- Current proof pack: `artifacts/ui_state_pack/20260428_061705`.
+- Current proof pack: `artifacts/ui_state_pack/20260428_064105`.
   - Status `pass`, 47/47 states, homogeneous APK
-    `51eb9a8420c5eb6207e4760f863573522ebf68c8888ab346bb33c81f0b042c09`,
+    `70219cb602b5504ba49241c8c05fc7eee7e50d9b42e84c7a5b35c823bb754aea`,
     model `gemma-4-e2b-it-litert`, rotation mismatch count 0.
 - Baseline commit for Wave23+ planning: `9835ba7` (`disable github workflow
-  ci`) plus local Wave23 proof pack `20260428_061705`.
+  ci`) plus local Wave24 proof pack `20260428_064105`.
 - Reviewed anchors: `00a3adb` (`advance android mock parity wave20`),
   `7efcac0` (`advance android mock parity wave18`), and `343bfde`
   (`polish android mock parity wave18`).
@@ -40,7 +40,7 @@ files from this lane.
 ## Proof Path Rules
 
 - For every screenshot path below, the matching dump path is the same relative
-  path under `artifacts/ui_state_pack/20260428_061705/dumps/` with `.xml`
+  path under `artifacts/ui_state_pack/20260428_064105/dumps/` with `.xml`
   replacing `.png`.
 - Every worker must cite target mock(s), current screenshot(s), current dump(s),
   and remaining deltas split as content/data, layout/density, or behavior.
@@ -59,6 +59,11 @@ tablet rail tightening, Home density polish, and search row tightening. Visual
 parity is still not closed; the highest remaining visible drift is the phone
 answer proof/provenance block, guide first-viewport composition, and emergency
 chrome polish.
+
+Wave24 integration note: local proof `20260428_064105` is green after compact
+phone proof/provenance rows, guide masthead/sanitizer tightening, emergency
+copy/banner polish, and Home/Search density passes. Remaining visual work is
+mostly composition and distinct-mode ownership rather than smoke stability.
 
 | Wave | Claim | Screen deltas from current proof | Suggested owner files | Acceptance proof |
 | --- | --- | --- | --- | --- |
@@ -92,7 +97,7 @@ Owner: planner only.
 
 Acceptance:
 
-- Active proof pack remains `artifacts/ui_state_pack/20260428_061705`.
+- Active proof pack remains `artifacts/ui_state_pack/20260428_064105`.
 - This file stays aligned with reviewer findings and live `git status`.
 - No code, generated artifacts, target mocks, or protected handoff notes are
   edited from this lane.

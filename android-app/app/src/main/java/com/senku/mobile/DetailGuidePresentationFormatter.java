@@ -18,6 +18,10 @@ import java.util.regex.Pattern;
 final class DetailGuidePresentationFormatter {
     private static final Pattern GUIDE_ADMONITION_PREFIX_PATTERN =
         Pattern.compile("^(DANGER|WARNING|CAUTION|IMPORTANT|NOTE|DANGEROUS)(?::|\\.|\\b)");
+    private static final Pattern GUIDE_MANUAL_KICKER_PATTERN =
+        Pattern.compile("^FIELD MANUAL\\s+\\u00b7\\s+REV\\s+\\d{2}-\\d{2}\\s+\\u00b7\\s+PK\\s+\\d+$");
+    private static final Pattern GUIDE_MANUAL_META_PATTERN =
+        Pattern.compile("^GD-\\d+\\s+\\u00b7\\s+\\d+\\s+SECTIONS?(?:\\s+\\u00b7\\s+.+)?$");
 
     private final Context context;
 
@@ -32,9 +36,9 @@ final class DetailGuidePresentationFormatter {
         String sectionHeading = safe(result.sectionHeading).trim();
         String body = buildGuideBodyWithSection(sectionHeading, safe(result.body));
         if (!body.isEmpty()) {
-            return body;
+            return prependGuidePaperHeader(result, body);
         }
-        return buildGuideBodyWithSection(sectionHeading, safe(result.snippet));
+        return prependGuidePaperHeader(result, buildGuideBodyWithSection(sectionHeading, safe(result.snippet)));
     }
 
     static String normalizeGuideDisplayTextForLegacy(String text) {
@@ -66,6 +70,15 @@ final class DetailGuidePresentationFormatter {
             String trimmed = line.text.trim();
             if (line.kind == GuideBodySanitizer.GuideBodyLine.Kind.SECTION) {
                 styleGuideAnchorLine(styled, displayText, lineStart, lineEnd, line.label);
+                insideAdmonitionBlock = false;
+            } else if (isGuideManualKickerLine(trimmed)) {
+                styleGuideManualKickerLine(styled, lineStart, lineEnd);
+                insideAdmonitionBlock = false;
+            } else if (isGuideManualMetaLine(trimmed)) {
+                styleGuideManualMetaLine(styled, lineStart, lineEnd);
+                insideAdmonitionBlock = false;
+            } else if (isGuideManualTitleLine(parsedBody.lines, line)) {
+                styleGuideManualTitleLine(styled, lineStart, lineEnd);
                 insideAdmonitionBlock = false;
             } else if (line.kind == GuideBodySanitizer.GuideBodyLine.Kind.REQUIRED_READING) {
                 styleRequiredReadingLine(styled, displayText, lineStart, lineEnd, line.label);
@@ -196,6 +209,42 @@ final class DetailGuidePresentationFormatter {
         styled.setSpan(new RelativeSizeSpan(0.86f), lineStart, lineEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         styled.setSpan(
             new ForegroundColorSpan(color(guideBodyTextColorResForLegacy())),
+            lineStart,
+            lineEnd,
+            Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+        );
+    }
+
+    private void styleGuideManualKickerLine(SpannableStringBuilder styled, int lineStart, int lineEnd) {
+        styled.setSpan(new StyleSpan(Typeface.BOLD), lineStart, lineEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        styled.setSpan(new TypefaceSpan("monospace"), lineStart, lineEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        styled.setSpan(new RelativeSizeSpan(0.62f), lineStart, lineEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        styled.setSpan(
+            new ForegroundColorSpan(color(guideAdmonitionWarningColorResForLegacy())),
+            lineStart,
+            lineEnd,
+            Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+        );
+    }
+
+    private void styleGuideManualTitleLine(SpannableStringBuilder styled, int lineStart, int lineEnd) {
+        styled.setSpan(new StyleSpan(Typeface.BOLD), lineStart, lineEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        styled.setSpan(new TypefaceSpan("sans"), lineStart, lineEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        styled.setSpan(new RelativeSizeSpan(0.92f), lineStart, lineEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        styled.setSpan(
+            new ForegroundColorSpan(color(guideBodyTextColorResForLegacy())),
+            lineStart,
+            lineEnd,
+            Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+        );
+    }
+
+    private void styleGuideManualMetaLine(SpannableStringBuilder styled, int lineStart, int lineEnd) {
+        styled.setSpan(new StyleSpan(Typeface.BOLD), lineStart, lineEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        styled.setSpan(new TypefaceSpan("monospace"), lineStart, lineEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        styled.setSpan(new RelativeSizeSpan(0.62f), lineStart, lineEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        styled.setSpan(
+            new ForegroundColorSpan(color(guideAnchorValueColorResForLegacy())),
             lineStart,
             lineEnd,
             Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
@@ -354,6 +403,64 @@ final class DetailGuidePresentationFormatter {
         String normalizedFirstLine = normalizeSectionComparisonLine(firstLine);
         String normalizedSection = normalizeSectionComparisonLine(section);
         return !normalizedSection.isEmpty() && normalizedFirstLine.equals(normalizedSection);
+    }
+
+    private static String prependGuidePaperHeader(SearchResult result, String body) {
+        String cleanedBody = safe(body).trim();
+        if (cleanedBody.isEmpty()) {
+            return "";
+        }
+        String title = GuideBodySanitizer.normalizeGuideDisplayText(safe(result == null ? null : result.title)).trim();
+        String guideId = safe(result == null ? null : result.guideId).trim();
+        if (title.isEmpty() && guideId.isEmpty()) {
+            return cleanedBody;
+        }
+        StringBuilder builder = new StringBuilder(cleanedBody.length() + title.length() + 96);
+        builder.append("FIELD MANUAL \u00b7 REV 04-27 \u00b7 PK 2\n");
+        if (!title.isEmpty()) {
+            builder.append(title).append('\n');
+        }
+        if (!guideId.isEmpty()) {
+            builder.append(guideId).append(" \u00b7 ")
+                .append(formatGuideSectionCount(countGuideSections(cleanedBody)))
+                .append('\n');
+        }
+        builder.append('\n').append(cleanedBody);
+        return builder.toString().trim();
+    }
+
+    private static int countGuideSections(String body) {
+        GuideBodySanitizer.ParsedGuideBody parsedBody = GuideBodySanitizer.parseGuideBodyForDisplay(body);
+        int sections = 0;
+        for (GuideBodySanitizer.GuideBodyLine line : parsedBody.lines) {
+            if (line.kind == GuideBodySanitizer.GuideBodyLine.Kind.SECTION) {
+                sections++;
+            }
+        }
+        return Math.max(1, sections);
+    }
+
+    private static String formatGuideSectionCount(int sections) {
+        int safeSections = Math.max(1, sections);
+        return safeSections + (safeSections == 1 ? " SECTION" : " SECTIONS");
+    }
+
+    private static boolean isGuideManualKickerLine(String line) {
+        return GUIDE_MANUAL_KICKER_PATTERN.matcher(safe(line).trim()).matches();
+    }
+
+    private static boolean isGuideManualMetaLine(String line) {
+        return GUIDE_MANUAL_META_PATTERN.matcher(safe(line).trim()).matches();
+    }
+
+    private static boolean isGuideManualTitleLine(
+        GuideBodySanitizer.GuideBodyLine[] lines,
+        GuideBodySanitizer.GuideBodyLine line
+    ) {
+        if (lines == null || lines.length < 2 || line == null || line.kind != GuideBodySanitizer.GuideBodyLine.Kind.TEXT) {
+            return false;
+        }
+        return line == lines[1] && isGuideManualKickerLine(lines[0].text);
     }
 
     private static String normalizeSectionComparisonLine(String line) {

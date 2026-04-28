@@ -44,11 +44,11 @@ public final class SearchResultAdapterTest {
 
     @Test
     public void tabletRowsUseCompactScoreBarWidths() {
-        assertEquals(16, SearchResultAdapter.scoreBarWidthDpForPositionForTest(0));
-        assertEquals(13, SearchResultAdapter.scoreBarWidthDpForPositionForTest(1));
-        assertEquals(12, SearchResultAdapter.scoreBarWidthDpForPositionForTest(2));
-        assertEquals(10, SearchResultAdapter.scoreBarWidthDpForPositionForTest(3));
-        assertEquals(8, SearchResultAdapter.scoreBarWidthDpForPositionForTest(7));
+        assertEquals(20, SearchResultAdapter.scoreBarWidthDpForPositionForTest(0));
+        assertEquals(17, SearchResultAdapter.scoreBarWidthDpForPositionForTest(1));
+        assertEquals(15, SearchResultAdapter.scoreBarWidthDpForPositionForTest(2));
+        assertEquals(13, SearchResultAdapter.scoreBarWidthDpForPositionForTest(3));
+        assertEquals(10, SearchResultAdapter.scoreBarWidthDpForPositionForTest(7));
     }
 
     @Test

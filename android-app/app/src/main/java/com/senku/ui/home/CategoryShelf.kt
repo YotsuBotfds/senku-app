@@ -102,7 +102,7 @@ fun CategoryShelf(
     onCategorySelected: (CategoryShelfItemModel) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val verticalGap = 5.dp
+    val verticalGap = 4.dp
 
     Column(
         modifier = modifier.fillMaxWidth(),
@@ -113,7 +113,7 @@ fun CategoryShelf(
                 CategoryGrid(
                     items = items,
                     columns = 3,
-                    cardHeight = 58.dp,
+                    cardHeight = 54.dp,
                     selectionEnabled = selectionEnabled,
                     onCategorySelected = onCategorySelected,
                 )
@@ -123,7 +123,7 @@ fun CategoryShelf(
                 CategoryGrid(
                     items = items,
                     columns = 3,
-                    cardHeight = 54.dp,
+                    cardHeight = 50.dp,
                     selectionEnabled = selectionEnabled,
                     onCategorySelected = onCategorySelected,
                 )
@@ -150,7 +150,7 @@ private fun CategoryGrid(
     selectionEnabled: Boolean,
     onCategorySelected: (CategoryShelfItemModel) -> Unit,
 ) {
-    val gap = 5.dp
+    val gap = 4.dp
     items.chunked(columns).forEach { rowItems ->
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -182,7 +182,7 @@ private fun PhoneCategoryCard(
 ) {
     val colors = SenkuTheme.colors
     val corner = 3.dp
-    val horizontalPadding = 9.dp
+    val horizontalPadding = 8.dp
     val verticalPadding = 4.dp
     val enabled = selectionEnabled && item.enabled
     val accent = Color(item.accentColor)
@@ -269,7 +269,7 @@ private fun TabletCategoryRow(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(36.dp)
+                .height(34.dp)
                 .padding(
                     horizontal = dimensionResource(R.dimen.senku_rev03_space_8),
                 ),
@@ -286,8 +286,8 @@ private fun TabletCategoryRow(
                 text = item.label,
                 modifier = Modifier.weight(1f),
                 style = SenkuTheme.typography.uiBody.copy(
-                    fontSize = 13.sp,
-                    lineHeight = 17.sp,
+                    fontSize = 12.sp,
+                    lineHeight = 16.sp,
                     fontWeight = FontWeight.Medium,
                 ),
                 color = colors.ink0,

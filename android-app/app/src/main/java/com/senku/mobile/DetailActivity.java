@@ -2815,7 +2815,7 @@ public final class DetailActivity extends AppCompatActivity {
                 button.setOnClickListener(v -> {
                     if (stationRail || compactPreview) {
                         showSourceProvenancePanel(source, button);
-                        if (compactPreview) {
+                        if (shouldScrollToProvenanceOnCompactPreview(compactPreview, isCompactPortraitPhoneLayout())) {
                             scrollToFullProvenancePanel();
                         }
                         return;
@@ -3298,9 +3298,12 @@ public final class DetailActivity extends AppCompatActivity {
         boolean compactLandscapePhone = isLandscapePhoneLayout();
         boolean utilityRail = showUtilityRail();
         boolean compactContextSections = useCompactPortraitSections();
-        int whyPad = compactLandscapePhone ? dp(10) : (utilityRail ? dp(8) : dp(14));
+        boolean compactPortraitPhone = isCompactPortraitPhoneLayout() && answerMode && !isEmergencyPortraitSurface();
+        int whyPad = compactPortraitPhone ? dp(10) : (compactLandscapePhone ? dp(10) : (utilityRail ? dp(8) : dp(14)));
         whyPanel.setVisibility(View.VISIBLE);
-        whyPanel.setBackgroundResource(R.drawable.bg_evidence_panel);
+        whyPanel.setBackgroundResource(compactPortraitPhone
+            ? R.drawable.bg_detail_sources_shell_flat
+            : R.drawable.bg_evidence_panel);
         whyPanel.setPadding(whyPad, whyPad, whyPad, whyPad);
         if (whyTitleText != null) {
             whyTitleText.setVisibility(View.VISIBLE);
@@ -3313,10 +3316,21 @@ public final class DetailActivity extends AppCompatActivity {
             } else {
                 whyTitleText.setText(R.string.detail_why_title);
             }
-            whyTitleText.setBackgroundResource(
-                compactContextSections && !isEmergencyPortraitSurface()
+            int whyTitleBackground = compactPortraitPhone
+                ? android.R.color.transparent
+                : (compactContextSections && !isEmergencyPortraitSurface()
                     ? R.drawable.bg_why_toggle_compact
-                    : R.drawable.bg_sources_section_pill
+                    : R.drawable.bg_sources_section_pill);
+            whyTitleText.setBackgroundResource(whyTitleBackground);
+            whyTitleText.setTextSize(
+                TypedValue.COMPLEX_UNIT_SP,
+                compactPortraitPhone ? 13f : (compactLandscapePhone ? 14f : 16f)
+            );
+            whyTitleText.setPadding(
+                compactPortraitPhone ? 0 : dp(8),
+                compactPortraitPhone ? 0 : dp(4),
+                compactPortraitPhone ? 0 : dp(8),
+                compactPortraitPhone ? 0 : dp(4)
             );
             whyTitleText.setContentDescription(whyTitleText.getText());
         }
@@ -3340,6 +3354,7 @@ public final class DetailActivity extends AppCompatActivity {
             isCompactPortraitPhoneLayout()
         ));
         whyText.setEllipsize(collapseWhyText ? TextUtils.TruncateAt.END : null);
+        whyText.setVisibility(View.VISIBLE);
         if (compactLandscapePhone && !currentSources.isEmpty()) {
             whyPanel.setClickable(true);
             whyPanel.setFocusable(true);
@@ -6218,6 +6233,13 @@ public final class DetailActivity extends AppCompatActivity {
     }
 
     private String buildCompactWhyToggleTitle(boolean expanded) {
+        if (isCompactPortraitPhoneLayout()) {
+            return buildCompactPhoneProofRowTitle(
+                getEvidenceTrustSurfaceLabel(),
+                currentSources == null ? 0 : currentSources.size(),
+                expanded
+            );
+        }
         ArrayList<String> parts = new ArrayList<>();
         parts.add(getString(R.string.detail_why_title_compact));
         String trustSummary = buildCompactWhyTrustSummary();
@@ -6225,7 +6247,25 @@ public final class DetailActivity extends AppCompatActivity {
             parts.add(trustSummary);
         }
         parts.add(getString(expanded ? R.string.detail_why_toggle_hide_proof : R.string.detail_why_toggle_show_proof));
-        return TextUtils.join(" | ", parts);
+        return String.join(" | ", parts);
+    }
+
+    static String buildCompactPhoneProofRowTitle(String evidenceLabel, int sourceCount, boolean expanded) {
+        ArrayList<String> parts = new ArrayList<>();
+        parts.add("WHY THIS ANSWER");
+        String evidence = safe(evidenceLabel).trim();
+        if (!evidence.isEmpty()) {
+            parts.add(evidence);
+        }
+        if (sourceCount > 0) {
+            parts.add(sourceCount + " src");
+        }
+        parts.add(expanded ? "Hide" : "Show");
+        return String.join(" | ", parts);
+    }
+
+    static boolean shouldScrollToProvenanceOnCompactPreview(boolean compactPreview, boolean compactPortraitPhone) {
+        return compactPreview && !compactPortraitPhone;
     }
 
     static int resolveWhyTextMaxLines(

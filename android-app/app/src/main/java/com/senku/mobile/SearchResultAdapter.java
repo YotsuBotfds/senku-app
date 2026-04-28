@@ -153,7 +153,7 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
         boolean stressCompactCard = landscapePhoneCard && largeFontCard;
         holder.title.setText(formatDisplayText(
             result.title,
-            richTabletCard ? 96 : (landscapePhoneCard ? 82 : 76),
+            richTabletCard ? 104 : (landscapePhoneCard ? 88 : 82),
             2
         ));
         holder.title.setMaxLines((richTabletCard || landscapePhoneCard || stressCompactCard) ? 1 : 2);
@@ -181,7 +181,7 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
         bindTabletAttributeLine(holder.section, result);
         String snippet = buildCompactRowSnippet(
             result,
-            richTabletCard ? 118 : (landscapePhoneCard ? 150 : (smallPhonePortraitCard ? 118 : 220))
+            richTabletCard ? 132 : (landscapePhoneCard ? 162 : (smallPhonePortraitCard ? 146 : 220))
         );
         holder.snippet.setText(cleanDisplayText(snippet, 0));
         holder.snippet.setMaxLines((richTabletCard || landscapePhoneCard || stressCompactCard) ? 1 : (smallPhonePortraitCard ? 2 : 4));
@@ -213,7 +213,7 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
         LinearLayout row = new LinearLayout(context);
         row.setId(R.id.result_legacy_mirror);
         row.setOrientation(LinearLayout.VERTICAL);
-        row.setPadding(dp(3), dp(2), dp(3), 0);
+        row.setPadding(dp(3), dp(5), dp(3), 0);
         root.addView(row, new FrameLayout.LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT,
             ViewGroup.LayoutParams.WRAP_CONTENT
@@ -241,7 +241,7 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
         LinearLayout scoreCluster = new LinearLayout(context);
         scoreCluster.setOrientation(LinearLayout.HORIZONTAL);
         scoreCluster.setGravity(android.view.Gravity.CENTER_VERTICAL);
-        scoreCluster.setPadding(dp(4), 0, 0, 0);
+        scoreCluster.setPadding(dp(6), 0, 0, 0);
         head.addView(scoreCluster, new LinearLayout.LayoutParams(
             ViewGroup.LayoutParams.WRAP_CONTENT,
             ViewGroup.LayoutParams.WRAP_CONTENT
@@ -267,13 +267,13 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
         title.setId(R.id.result_title);
         title.setTextColor(ContextCompat.getColor(context, R.color.senku_text_light));
         title.setTypeface(Typeface.DEFAULT, Typeface.BOLD);
-        title.setTextSize(TypedValue.COMPLEX_UNIT_SP, 12);
-        title.setLineSpacing(0, 0.94f);
+        title.setTextSize(TypedValue.COMPLEX_UNIT_SP, 13);
+        title.setLineSpacing(0, 0.96f);
         LinearLayout.LayoutParams titleParams = new LinearLayout.LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT,
             ViewGroup.LayoutParams.WRAP_CONTENT
         );
-        titleParams.topMargin = dp(1);
+        titleParams.topMargin = dp(2);
         row.addView(title, titleParams);
 
         TextView section = buildMonoTextView(context, 8, 10, Typeface.NORMAL);
@@ -285,19 +285,19 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
             ViewGroup.LayoutParams.MATCH_PARENT,
             ViewGroup.LayoutParams.WRAP_CONTENT
         );
-        sectionParams.topMargin = dp(1);
+        sectionParams.topMargin = dp(2);
         row.addView(section, sectionParams);
 
         TextView snippet = new TextView(context);
         snippet.setId(R.id.result_snippet);
         snippet.setTextColor(ContextCompat.getColor(context, R.color.senku_text_muted_light));
         snippet.setTextSize(TypedValue.COMPLEX_UNIT_SP, 10);
-        snippet.setLineSpacing(0, 0.96f);
+        snippet.setLineSpacing(0, 1.02f);
         LinearLayout.LayoutParams snippetParams = new LinearLayout.LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT,
             ViewGroup.LayoutParams.WRAP_CONTENT
         );
-        snippetParams.topMargin = dp(1);
+        snippetParams.topMargin = dp(3);
         row.addView(snippet, snippetParams);
 
         LinearLayout chips = new LinearLayout(context);
@@ -341,7 +341,7 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
             ViewGroup.LayoutParams.MATCH_PARENT,
             1
         );
-        dividerParams.topMargin = dp(4);
+        dividerParams.topMargin = dp(8);
         row.addView(divider, dividerParams);
 
         ComposeView composeView = new ComposeView(context);
@@ -440,18 +440,18 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
 
     private static int scoreBarWidthDpForScore(int score) {
         if (score >= 90) {
-            return 16;
+            return 20;
         }
         if (score >= 75) {
-            return 13;
+            return 17;
         }
         if (score >= 70) {
-            return 12;
+            return 15;
         }
         if (score >= 60) {
-            return 10;
+            return 13;
         }
-        return 8;
+        return 10;
     }
 
     private GradientDrawable buildScoreBarDrawable(int score) {

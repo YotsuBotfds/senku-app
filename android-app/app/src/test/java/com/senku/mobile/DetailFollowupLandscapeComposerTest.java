@@ -159,6 +159,25 @@ public final class DetailFollowupLandscapeComposerTest {
     }
 
     @Test
+    public void phonePortraitProofRowUsesQuietCompactTitle() {
+        assertEquals(
+            "WHY THIS ANSWER | Limited evidence | 2 src | Show",
+            DetailActivity.buildCompactPhoneProofRowTitle("Limited evidence", 2, false)
+        );
+        assertEquals(
+            "WHY THIS ANSWER | Hide",
+            DetailActivity.buildCompactPhoneProofRowTitle("", 0, true)
+        );
+    }
+
+    @Test
+    public void phonePortraitSourceSelectionDoesNotJumpToProvenance() {
+        assertFalse(DetailActivity.shouldScrollToProvenanceOnCompactPreview(true, true));
+        assertTrue(DetailActivity.shouldScrollToProvenanceOnCompactPreview(true, false));
+        assertFalse(DetailActivity.shouldScrollToProvenanceOnCompactPreview(false, false));
+    }
+
+    @Test
     public void phonePortraitHeaderUsesShortAnswerLabel() {
         assertEquals(
             "Answer GD-345 - Rain shelter",

@@ -19,16 +19,16 @@
         android:visibility="gone" />
 
     <LinearLayout
-        android:layout_width="92dp"
+        android:layout_width="88dp"
         android:layout_height="match_parent"
         android:background="@color/senku_rev03_bg_0"
         android:gravity="center_horizontal"
         android:orientation="vertical"
-        android:paddingTop="34dp">
+        android:paddingTop="30dp">
 
         <TextView
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
             android:background="@drawable/bg_manual_home_nav_shell"
             android:gravity="center"
             android:includeFontPadding="false"
@@ -40,7 +40,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="34dp"
+            android:layout_marginTop="30dp"
             android:gravity="center"
             android:orientation="vertical">
 
@@ -67,7 +67,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="26dp"
+            android:layout_marginTop="22dp"
             android:gravity="center"
             android:orientation="vertical">
 
@@ -92,7 +92,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="26dp"
+            android:layout_marginTop="22dp"
             android:gravity="center"
             android:orientation="vertical">
 
@@ -129,11 +129,11 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="56dp"
+            android:layout_height="52dp"
             android:gravity="center_vertical"
             android:orientation="horizontal"
-            android:paddingStart="24dp"
-            android:paddingEnd="24dp">
+            android:paddingStart="22dp"
+            android:paddingEnd="22dp">
 
             <TextView
                 android:layout_width="0dp"
@@ -166,15 +166,15 @@
             android:layout_weight="1"
             android:clipToPadding="false"
             android:fillViewport="true"
-            android:paddingStart="22dp"
-            android:paddingEnd="22dp"
-            android:paddingBottom="24dp">
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp"
+            android:paddingBottom="20dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:paddingTop="18dp">
+                android:paddingTop="14dp">
 
                 <TextView
                     android:layout_width="match_parent"
@@ -196,8 +196,8 @@
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="36dp"
-                    android:layout_marginTop="18dp"
+                    android:layout_height="34dp"
+                    android:layout_marginTop="14dp"
                     android:background="@drawable/bg_tablet_home_status_bar"
                     android:gravity="center_vertical"
                     android:orientation="horizontal"
@@ -230,8 +230,8 @@
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="48dp"
-                    android:layout_marginTop="12dp"
+                    android:layout_height="44dp"
+                    android:layout_marginTop="10dp"
                     android:addStatesFromChildren="true"
                     android:background="@drawable/bg_tablet_home_search"
                     android:gravity="center_vertical"
@@ -240,8 +240,8 @@
                     android:paddingEnd="16dp">
 
                     <ImageView
-                        android:layout_width="28dp"
-                        android:layout_height="28dp"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
                         android:background="@drawable/bg_tablet_home_search_icon"
                         android:contentDescription="@string/search_input_description"
                         android:padding="7dp"
@@ -288,7 +288,7 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="18dp"
+                    android:layout_marginTop="14dp"
                     android:baselineAligned="false"
                     android:orientation="horizontal">
 
@@ -314,7 +314,7 @@
                             android:id="@+id/category_section_container"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="10dp"
+                            android:layout_marginTop="8dp"
                             android:orientation="vertical" />
                     </LinearLayout>
 
@@ -340,7 +340,7 @@
                             android:id="@+id/recent_threads_container"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="10dp"
+                            android:layout_marginTop="8dp"
                             android:orientation="vertical" />
                     </LinearLayout>
                 </LinearLayout>

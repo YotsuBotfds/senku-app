@@ -75,8 +75,8 @@ public final class MainActivity extends AppCompatActivity {
     private static final int MAX_RESULT_PREVIEW_BRIDGE_GUIDES = 4;
     private static final int RESULT_PREVIEW_BRIDGE_SIGNAL_LIMIT = 1;
     private static final int MANUAL_HOME_CATEGORY_COLUMNS = 3;
-    private static final int MANUAL_HOME_CATEGORY_CARD_HEIGHT_DP = 58;
-    private static final int MANUAL_HOME_CATEGORY_ROW_GAP_DP = 5;
+    private static final int MANUAL_HOME_CATEGORY_CARD_HEIGHT_DP = 54;
+    private static final int MANUAL_HOME_CATEGORY_ROW_GAP_DP = 4;
     private static final String REVIEW_SEARCH_QUERY = "rain shelter";
     private static final String REVIEW_SEARCH_LATENCY_LABEL = "12ms";
     private static final ReviewSearchResultSpec[] REVIEW_RAIN_SHELTER_RESULTS = {
@@ -2353,10 +2353,10 @@ public final class MainActivity extends AppCompatActivity {
         if (!isManualHomeShellLayout()) {
             return;
         }
-        setTopMargin(categorySectionHeader, isLandscapePhoneLayout() ? 9 : 12);
-        setTopMargin(categorySectionContainer, 6);
-        setTopMargin(recentThreadsSection, isLandscapePhoneLayout() ? 0 : 12);
-        setTopMargin(recentThreadsContainer, 6);
+        setTopMargin(categorySectionHeader, isLandscapePhoneLayout() ? 8 : 10);
+        setTopMargin(categorySectionContainer, 5);
+        setTopMargin(recentThreadsSection, isLandscapePhoneLayout() ? 0 : 10);
+        setTopMargin(recentThreadsContainer, 5);
         allowChildOverflow(categorySectionContainer);
         allowChildOverflow(recentThreadsSection);
         allowChildOverflow(recentThreadsContainer);

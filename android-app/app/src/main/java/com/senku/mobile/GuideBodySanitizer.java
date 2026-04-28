@@ -84,8 +84,15 @@ final class GuideBodySanitizer {
         String activeAdmonitionLabel = "";
         boolean firstAdmonitionContentLine = false;
         boolean pendingAdmonitionLabel = false;
+        boolean compactedOpeningDanger = false;
+        boolean insideReviewedBoundaryOpening = false;
+        boolean reviewedBoundaryOpeningTextAdded = false;
+        boolean truncateReviewedBoundaryOpening = false;
         int sectionOrdinal = 0;
         for (String rawLine : lines) {
+            if (truncateReviewedBoundaryOpening) {
+                break;
+            }
             String trimmed = safe(rawLine).trim();
             if (shouldSkipGuideDisplayLine(trimmed)) {
                 continue;
@@ -154,6 +161,11 @@ final class GuideBodySanitizer {
             }
             if (!displayLine.isEmpty()) {
                 if (sectionLine && !sectionValue.isEmpty()) {
+                    if (insideReviewedBoundaryOpening && reviewedBoundaryOpeningTextAdded) {
+                        truncateReviewedBoundaryOpening = true;
+                        break;
+                    }
+                    insideReviewedBoundaryOpening = false;
                     sectionOrdinal++;
                     SectionDisplayParts sectionParts = buildSectionDisplayParts(sectionOrdinal, sectionValue);
                     appendParsedLine(
@@ -166,6 +178,8 @@ final class GuideBodySanitizer {
                         )
                     );
                     if (!sectionParts.heading.isEmpty()) {
+                        insideReviewedBoundaryOpening = "Reviewed Answer-Card Boundary".equals(sectionParts.heading);
+                        reviewedBoundaryOpeningTextAdded = false;
                         appendParsedLine(
                             builder,
                             parsedLines,
@@ -177,17 +191,44 @@ final class GuideBodySanitizer {
                         );
                     }
                 } else if (requiredReadingLine) {
-                    appendParsedLine(
-                        builder,
-                        parsedLines,
-                        new GuideBodyLine(
-                            GuideBodyLine.Kind.REQUIRED_READING,
-                            formatRequiredReadingLine(displayLine),
-                            GUIDE_REQUIRED_READING_LABEL
-                        )
-                    );
+                    String requiredReadingDisplayLine = formatRequiredReadingLine(displayLine);
+                    if (!isVerboseGuidePrerequisite(requiredReadingDisplayLine)) {
+                        appendParsedLine(
+                            builder,
+                            parsedLines,
+                            new GuideBodyLine(
+                                GuideBodyLine.Kind.REQUIRED_READING,
+                                requiredReadingDisplayLine,
+                                GUIDE_REQUIRED_READING_LABEL
+                            )
+                        );
+                    }
                     pendingAdmonitionLabel = false;
                 } else {
+                    if (insideReviewedBoundaryOpening) {
+                        if (displayLine.isEmpty()) {
+                            if (reviewedBoundaryOpeningTextAdded) {
+                                truncateReviewedBoundaryOpening = true;
+                            }
+                            continue;
+                        }
+                        if (reviewedBoundaryOpeningTextAdded) {
+                            truncateReviewedBoundaryOpening = true;
+                            break;
+                        }
+                        displayLine = trimReviewedBoundaryOpeningBoilerplate(displayLine);
+                        if (displayLine.isEmpty()) {
+                            continue;
+                        }
+                        reviewedBoundaryOpeningTextAdded = true;
+                    }
+                    if (insideAdmonitionBlock
+                        && !compactedOpeningDanger
+                        && "DANGER".equals(activeAdmonitionLabel)
+                        && !displayLine.isEmpty()) {
+                        displayLine = compactOpeningDangerLine(displayLine);
+                        compactedOpeningDanger = true;
+                    }
                     appendParsedLine(
                         builder,
                         parsedLines,
@@ -399,6 +440,46 @@ final class GuideBodySanitizer {
         String detail = safe(matcher.group(1)).trim();
         detail = detail.replaceFirst("(?i)^required\\s+reading\\s*[:\\-\\u00b7]?\\s*", "").trim();
         return detail.isEmpty() ? GUIDE_REQUIRED_READING_LABEL : GUIDE_REQUIRED_READING_LABEL + " \u00b7 " + detail;
+    }
+
+    private static boolean isVerboseGuidePrerequisite(String line) {
+        String normalized = safe(line).trim().toLowerCase(QUERY_LOCALE);
+        return normalized.startsWith("required reading \u00b7 before attempting any procedures in this guide");
+    }
+
+    private static String trimReviewedBoundaryOpeningBoilerplate(String line) {
+        String cleaned = safe(line).trim();
+        cleaned = cleaned.replaceFirst(
+            "(?i)^This is the reviewed answer-card surface for\\s+GD-\\d+\\.\\s*",
+            ""
+        );
+        return cleaned.trim();
+    }
+
+    private static String compactOpeningDangerLine(String line) {
+        String cleaned = safe(line).trim();
+        if (cleaned.length() <= 220) {
+            return cleaned;
+        }
+        String[] sentences = cleaned.split("(?<=[.!?])\\s+");
+        if (sentences.length < 2) {
+            return cleaned;
+        }
+        StringBuilder builder = new StringBuilder();
+        for (String sentence : sentences) {
+            String candidate = safe(sentence).trim();
+            if (candidate.isEmpty()) {
+                continue;
+            }
+            if (builder.length() > 0) {
+                builder.append(' ');
+            }
+            builder.append(candidate);
+            if (builder.length() >= 130) {
+                break;
+            }
+        }
+        return builder.length() == 0 ? cleaned : builder.toString();
     }
 
     private static AdmonitionTitleSplit splitAdmonitionTitle(String line) {

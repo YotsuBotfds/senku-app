@@ -163,6 +163,25 @@ public final class DetailActionBlockPresentationFormatterTest {
     }
 
     @Test
+    public void extractEmergencyActionSpecsStopsBeforeGuideConnectionChrome() {
+        List<DetailActionBlockPresentationFormatter.EmergencyActionSpec> actions =
+            DetailActionBlockPresentationFormatter.extractEmergencyActionSpecs(
+                "Immediate actions:\n" +
+                    "1. Stop all hot work. No new charges, no new pours.\n" +
+                    "2. Clear the floor to 5 m radius. Move personnel upwind.\n\n" +
+                    "Guide connection | Show\n" +
+                    "1. Linked guide GD-132.\n\n" +
+                    "Route, backend & proof\n" +
+                    "1. Backend route reviewed_card_runtime.",
+                text -> citationFormatter.stripInlineCitationText(text)
+            );
+
+        assertEquals(2, actions.size());
+        assertEquals("Stop all hot work", actions.get(0).title);
+        assertEquals("Clear the floor to 5 m radius", actions.get(1).title);
+    }
+
+    @Test
     public void extractEmergencyActionSpecsNormalizesFoundryMockDetailCopy() {
         List<DetailActionBlockPresentationFormatter.EmergencyActionSpec> actions =
             DetailActionBlockPresentationFormatter.extractEmergencyActionSpecs(
@@ -185,6 +204,15 @@ public final class DetailActionBlockPresentationFormatterTest {
             "IMMEDIATE ACTIONS \u00b7 4",
             DetailActionBlockPresentationFormatter.EMERGENCY_ACTION_HEADING_PREFIX + "4"
         );
+    }
+
+    @Test
+    public void styleEmergencyMinimumDistanceLeavesNegativeControlPlain() {
+        CharSequence styled = DetailActionBlockPresentationFormatter.styleEmergencyMinimumDistance(
+            "Clear the floor to 5 m radius."
+        );
+
+        assertEquals("Clear the floor to 5 m radius.", styled.toString());
     }
 
     @Test

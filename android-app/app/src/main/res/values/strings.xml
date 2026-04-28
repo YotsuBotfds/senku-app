@@ -138,8 +138,8 @@
     <string name="detail_sources_count_short">%1$d src</string>
     <string name="detail_turn_count_short">%1$d turn</string>
     <string name="detail_turn_count_short_plural">%1$d turns</string>
-    <string name="detail_why_title">Route, backend &amp; proof</string>
-    <string name="detail_why_title_compact">Route, proof &amp; provenance</string>
+    <string name="detail_why_title">WHY THIS ANSWER</string>
+    <string name="detail_why_title_compact">WHY THIS ANSWER</string>
     <string name="detail_why_title_emergency">WHY THIS ANSWER</string>
     <string name="detail_why_toggle_show_proof">Show proof</string>
     <string name="detail_why_toggle_hide_proof">Hide proof</string>
