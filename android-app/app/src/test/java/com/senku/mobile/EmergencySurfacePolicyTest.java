@@ -112,6 +112,26 @@ public final class EmergencySurfacePolicyTest {
         assertEquals(44, margins.left);
         assertEquals(56, margins.right);
         assertEquals(44, margins.top);
+        assertEquals(
+            android.view.ViewGroup.LayoutParams.MATCH_PARENT,
+            DetailActivity.resolveTabletEmergencyOverlayHeight(true)
+        );
+    }
+
+    @Test
+    public void tabletPortraitEmergencySurfaceOwnsFullHeightPageChrome() {
+        assertTrue(DetailActivity.shouldUseTabletEmergencyFullHeightPage(true, true, true));
+        assertTrue(DetailActivity.shouldSuppressTabletEmergencyStaleChrome(true, true, true));
+    }
+
+    @Test
+    public void tabletEmergencyFullHeightDoesNotApplyToPhoneLandscapeOrNonEmergency() {
+        assertFalse(DetailActivity.shouldUseTabletEmergencyFullHeightPage(true, false, true));
+        assertFalse(DetailActivity.shouldUseTabletEmergencyFullHeightPage(false, true, true));
+        assertFalse(DetailActivity.shouldUseTabletEmergencyFullHeightPage(true, true, false));
+        assertFalse(DetailActivity.shouldSuppressTabletEmergencyStaleChrome(true, false, true));
+        assertFalse(DetailActivity.shouldSuppressTabletEmergencyStaleChrome(false, true, true));
+        assertFalse(DetailActivity.shouldSuppressTabletEmergencyStaleChrome(true, true, false));
     }
 
     @Test
@@ -122,6 +142,10 @@ public final class EmergencySurfacePolicyTest {
         assertEquals(336, margins.left);
         assertEquals(24, margins.right);
         assertEquals(16, margins.top);
+        assertEquals(
+            android.view.ViewGroup.LayoutParams.WRAP_CONTENT,
+            DetailActivity.resolveTabletEmergencyOverlayHeight(false)
+        );
     }
 
     @Test

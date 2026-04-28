@@ -165,7 +165,7 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
             holder.linkedGuidePreview,
             result,
             true,
-            true,
+            shouldShowLinkedGuidePreviewLine(),
             false,
             true
         );
@@ -210,7 +210,7 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
         LinearLayout row = new LinearLayout(context);
         row.setId(R.id.result_legacy_mirror);
         row.setOrientation(LinearLayout.VERTICAL);
-        row.setPadding(dp(5), dp(8), dp(5), 0);
+        row.setPadding(dp(5), dp(6), dp(5), 0);
         root.addView(row, new FrameLayout.LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT,
             ViewGroup.LayoutParams.WRAP_CONTENT
@@ -268,7 +268,7 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
             ViewGroup.LayoutParams.MATCH_PARENT,
             ViewGroup.LayoutParams.WRAP_CONTENT
         );
-        titleParams.topMargin = dp(4);
+        titleParams.topMargin = dp(3);
         row.addView(title, titleParams);
 
         TextView section = buildMonoTextView(context, 9, 12, Typeface.NORMAL);
@@ -278,7 +278,7 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
             ViewGroup.LayoutParams.MATCH_PARENT,
             ViewGroup.LayoutParams.WRAP_CONTENT
         );
-        sectionParams.topMargin = dp(4);
+        sectionParams.topMargin = dp(3);
         row.addView(section, sectionParams);
 
         TextView snippet = new TextView(context);
@@ -290,7 +290,7 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
             ViewGroup.LayoutParams.MATCH_PARENT,
             ViewGroup.LayoutParams.WRAP_CONTENT
         );
-        snippetParams.topMargin = dp(5);
+        snippetParams.topMargin = dp(3);
         row.addView(snippet, snippetParams);
 
         LinearLayout chips = new LinearLayout(context);
@@ -330,7 +330,7 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
             ViewGroup.LayoutParams.MATCH_PARENT,
             Math.max(1, dp(1))
         );
-        dividerParams.topMargin = dp(12);
+        dividerParams.topMargin = dp(9);
         row.addView(divider, dividerParams);
 
         ComposeView composeView = new ComposeView(context);
@@ -1183,6 +1183,14 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
 
     static String buildLinkedGuidePreviewLineForTest() {
         return buildLinkedGuidePreviewLineLabel();
+    }
+
+    static boolean shouldShowLinkedGuidePreviewLineForTest() {
+        return shouldShowLinkedGuidePreviewLine();
+    }
+
+    private static boolean shouldShowLinkedGuidePreviewLine() {
+        return false;
     }
 
     private String buildLinkedGuidePreviewLine(LinkedGuidePreview preview, boolean richTabletCard) {

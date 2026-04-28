@@ -14,12 +14,14 @@ class ThreadRailPolicyTest {
     fun threadRailTurnLabelsUseTranscriptQuestionIds() {
         assertEquals("Q2", threadRailTurnLabel(index = 2, guideMode = false))
         assertEquals("SEC 2", threadRailTurnLabel(index = 2, guideMode = true))
+        assertEquals("A2", threadRailAnswerLabel(index = 2, guideMode = false))
+        assertEquals("REF 2", threadRailAnswerLabel(index = 2, guideMode = true))
     }
 
     @Test
-    fun threadRailTurnMetaLabelsCarryStatusAndSourceDensity() {
+    fun threadRailTurnMetaLabelsStayTurnFirst() {
         assertEquals(
-            "Q2 \u00B7 ACTIVE \u00B7 3 SRC",
+            "Q2",
             threadRailTurnMetaLabel(
                 index = 2,
                 guideMode = false,
@@ -28,14 +30,17 @@ class ThreadRailPolicyTest {
                 sourceCount = 3,
             ),
         )
+        assertEquals("Q2 \u00B7 ACTIVE", threadRailTurnMetaLabel(2, guideMode = false, status = Status.Done, active = true))
+        assertEquals("A2 \u00B7 3 SRC", threadRailAnswerMetaLabel(2, guideMode = false, sourceCount = 3))
+        assertEquals("REF 2 \u00B7 NO SRC", threadRailAnswerMetaLabel(2, guideMode = true, sourceCount = 0))
         assertEquals("NO SRC", threadRailTurnSourceLabel(sourceCount = 0))
         assertEquals("1 SRC", threadRailTurnSourceLabel(sourceCount = 1))
     }
 
     @Test
     fun threadRailRowsReserveTranscriptScanningSpace() {
-        assertEquals(52, threadRailTurnRowMinHeightDp(active = false))
-        assertEquals(66, threadRailTurnRowMinHeightDp(active = true))
-        assertEquals(56, threadRailSourceRowMinHeightDp())
+        assertEquals(82, threadRailTurnRowMinHeightDp(active = false))
+        assertEquals(92, threadRailTurnRowMinHeightDp(active = true))
+        assertEquals(50, threadRailSourceRowMinHeightDp())
     }
 }

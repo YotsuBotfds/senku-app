@@ -132,6 +132,23 @@ public final class DetailFollowupLandscapeComposerTest {
     }
 
     @Test
+    public void phoneLandscapeHidesInlineSourcesWhenSideRailOwnsSources() {
+        assertTrue(DetailActivity.shouldHideInlineSourcesForAnswerLayout(true, false, false, true));
+        assertTrue(DetailActivity.shouldHideInlineSourcesForAnswerLayout(true, true, false, false));
+        assertTrue(DetailActivity.shouldHideInlineSourcesForAnswerLayout(true, false, true, false));
+        assertTrue(DetailActivity.shouldHideInlineSourcesForAnswerLayout(false, false, false, false));
+        assertFalse(DetailActivity.shouldHideInlineSourcesForAnswerLayout(true, false, false, false));
+    }
+
+    @Test
+    public void phonePortraitProofSummaryUsesTighterCollapsedBodyBudget() {
+        assertEquals(2, DetailActivity.resolveWhyTextMaxLines(false, true, true));
+        assertEquals(4, DetailActivity.resolveWhyTextMaxLines(false, true, false));
+        assertEquals(4, DetailActivity.resolveWhyTextMaxLines(true, true, true));
+        assertEquals(Integer.MAX_VALUE, DetailActivity.resolveWhyTextMaxLines(false, false, true));
+    }
+
+    @Test
     public void phonePortraitHeaderUsesShortAnswerLabel() {
         assertEquals(
             "Answer GD-345 - Rain shelter",

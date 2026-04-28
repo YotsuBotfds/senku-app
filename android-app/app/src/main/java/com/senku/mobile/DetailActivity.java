@@ -641,6 +641,11 @@ public final class DetailActivity extends AppCompatActivity {
         readIntent();
         if (tabletDetailRoot != null) {
             tabletComposeMode = true;
+            tabletDetailRoot.setImportantForAccessibility(
+                isTabletEmergencyFullHeightPage()
+                    ? View.IMPORTANT_FOR_ACCESSIBILITY_NO_HIDE_DESCENDANTS
+                    : View.IMPORTANT_FOR_ACCESSIBILITY_AUTO
+            );
             syncTabletDetailScreen();
             if (!maybeStartPendingGeneration()) {
                 maybeStartAutoFollowUp();
@@ -1198,6 +1203,11 @@ public final class DetailActivity extends AppCompatActivity {
         if (!tabletComposeMode || tabletDetailRoot == null || isFinishing() || isDestroyed()) {
             return;
         }
+        tabletDetailRoot.setImportantForAccessibility(
+            isTabletEmergencyFullHeightPage()
+                ? View.IMPORTANT_FOR_ACCESSIBILITY_NO_HIDE_DESCENDANTS
+                : View.IMPORTANT_FOR_ACCESSIBILITY_AUTO
+        );
         TabletDetailState state = buildTabletState();
         TabletDetailScreenKt.bindTabletDetailScreen(
             tabletDetailRoot,
@@ -1315,6 +1325,9 @@ public final class DetailActivity extends AppCompatActivity {
         overlay.setOrientation(LinearLayout.VERTICAL);
         overlay.setBackgroundResource(R.drawable.bg_emergency_banner);
         overlay.setContentDescription(getString(R.string.detail_emergency_header_title));
+        overlay.setClickable(true);
+        overlay.setFocusable(true);
+        overlay.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_YES);
 
         TextView title = new TextView(this);
         title.setId(R.id.detail_emergency_header_title);
@@ -1415,7 +1428,7 @@ public final class DetailActivity extends AppCompatActivity {
     private FrameLayout.LayoutParams tabletEmergencyHeaderOverlayParams() {
         FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT,
-            ViewGroup.LayoutParams.WRAP_CONTENT
+            resolveTabletEmergencyOverlayHeight(isTabletPortraitLayout())
         );
         TabletEmergencyOverlayMargins margins = resolveTabletEmergencyOverlayMarginsDp(isTabletPortraitLayout());
         params.leftMargin = dp(margins.left);
@@ -1437,6 +1450,38 @@ public final class DetailActivity extends AppCompatActivity {
             TABLET_EMERGENCY_LANDSCAPE_RIGHT_MARGIN_DP,
             TABLET_EMERGENCY_LANDSCAPE_TOP_MARGIN_DP
         );
+    }
+
+    static int resolveTabletEmergencyOverlayHeight(boolean tabletPortrait) {
+        return tabletPortrait ? ViewGroup.LayoutParams.MATCH_PARENT : ViewGroup.LayoutParams.WRAP_CONTENT;
+    }
+
+    static boolean shouldUseTabletEmergencyFullHeightPage(
+        boolean answerMode,
+        boolean tabletPortrait,
+        boolean emergencySurfaceEligible
+    ) {
+        return answerMode && tabletPortrait && emergencySurfaceEligible;
+    }
+
+    static boolean shouldSuppressTabletEmergencyStaleChrome(
+        boolean answerMode,
+        boolean tabletPortrait,
+        boolean emergencySurfaceEligible
+    ) {
+        return shouldUseTabletEmergencyFullHeightPage(answerMode, tabletPortrait, emergencySurfaceEligible);
+    }
+
+    private boolean isTabletEmergencyFullHeightPage() {
+        return shouldUseTabletEmergencyFullHeightPage(
+            answerMode,
+            isTabletPortraitLayout(),
+            isCurrentEmergencySurfaceEligible()
+        );
+    }
+
+    private static AnchorState emptyTabletAnchorState() {
+        return new AnchorState("", "", "", "", "", false);
     }
 
     private void renderTabletEmergencyOverlayActions() {
@@ -1464,7 +1509,7 @@ public final class DetailActivity extends AppCompatActivity {
             return;
         }
         tabletEmergencyProofOverlayPanel.setVisibility(View.VISIBLE);
-        tabletEmergencyProofOverlayText.setText(buildCompactWhyPanelSummary());
+        tabletEmergencyProofOverlayText.setText(buildEmergencyProofCardSummary());
         tabletEmergencyProofOverlayPanel.setContentDescription(tabletEmergencyProofOverlayText.getText());
     }
 
@@ -1522,23 +1567,28 @@ public final class DetailActivity extends AppCompatActivity {
         boolean pinActive = pinVisible && PinnedGuideStore.contains(this, resolvePinnableGuideId());
         boolean showRetry = (!tabletBusy && !safe(lastFailedQuery).isEmpty())
             || (tabletBusy && generationStallNoticeVisible && !safe(currentTitle).isEmpty());
+        boolean tabletEmergencyFullHeightPage = shouldSuppressTabletEmergencyStaleChrome(
+            answerMode,
+            isTabletPortraitLayout(),
+            isCurrentEmergencySurfaceEligible()
+        );
         return new TabletDetailState(
             buildTabletGuideId(activeSource),
             buildTabletGuideTitle(activeSource),
             buildRev03MetaStripItems(),
             turns,
-            sources,
-            buildTabletAnchorState(activeSource),
-            buildTabletXRefStates(),
-            tabletComposerText,
+            tabletEmergencyFullHeightPage ? Collections.emptyList() : sources,
+            tabletEmergencyFullHeightPage ? emptyTabletAnchorState() : buildTabletAnchorState(activeSource),
+            tabletEmergencyFullHeightPage ? Collections.emptyList() : buildTabletXRefStates(),
+            tabletEmergencyFullHeightPage ? "" : tabletComposerText,
             getString(R.string.detail_followup_hint),
-            !tabletBusy,
-            answerMode,
-            showRetry,
+            !tabletEmergencyFullHeightPage && !tabletBusy,
+            answerMode && !tabletEmergencyFullHeightPage,
+            !tabletEmergencyFullHeightPage && showRetry,
             getString(R.string.detail_followup_retry),
             pinVisible,
             pinActive,
-            tabletEvidenceExpanded,
+            !tabletEmergencyFullHeightPage && tabletEvidenceExpanded,
             showUtilityRail(),
             safe(currentGuideModeLabel),
             safe(currentGuideModeSummary),
@@ -2505,7 +2555,8 @@ public final class DetailActivity extends AppCompatActivity {
         List<SearchResult> inlineSources = sourcesForInlineVerification();
         boolean compactPhonePortrait = isCompactPortraitPhoneLayout();
         boolean compactPreview = shouldUseCompactSourceProvenancePreview();
-        if (!answerMode || inlineSources.isEmpty() || showUtilityRail()) {
+        boolean landscapePhoneSourceRail = shouldUseLandscapePhoneSourceRail(answerMode, isLandscapePhoneLayout());
+        if (shouldHideInlineSourcesForAnswerLayout(answerMode, inlineSources.isEmpty(), showUtilityRail(), landscapePhoneSourceRail)) {
             inlineSourcesScroll.setVisibility(View.GONE);
             return;
         }
@@ -2935,7 +2986,11 @@ public final class DetailActivity extends AppCompatActivity {
         boolean collapseWhyText = compactLandscapePhone
             || emergencyPortrait
             || (compactContextSections && !portraitWhyExpanded);
-        whyText.setMaxLines(emergencyPortrait ? 4 : (collapseWhyText ? 4 : Integer.MAX_VALUE));
+        whyText.setMaxLines(resolveWhyTextMaxLines(
+            emergencyPortrait,
+            collapseWhyText,
+            isCompactPortraitPhoneLayout()
+        ));
         whyText.setEllipsize(collapseWhyText ? TextUtils.TruncateAt.END : null);
         if (compactLandscapePhone && !currentSources.isEmpty()) {
             whyPanel.setClickable(true);
@@ -4440,6 +4495,8 @@ public final class DetailActivity extends AppCompatActivity {
         String guideId = safe(source.guideId).trim();
         String title = safe(source.title).trim();
         String section = safe(source.sectionHeading).trim();
+        DetailSourcePresentationFormatter.EvidenceCard evidenceCard =
+            detailSourcePresentationFormatter().buildEvidenceCard(source, 0, "anchor");
         String excerpt = firstNonEmpty(source.snippet, source.body).trim();
         excerpt = DetailWarningCopySanitizer.sanitizeWarningResidualCopy(excerpt)
             .replaceAll("\\s+", " ")
@@ -4449,9 +4506,12 @@ public final class DetailActivity extends AppCompatActivity {
         }
         SpannableStringBuilder builder = new SpannableStringBuilder();
         String lead = firstNonEmpty(guideId, "Source guide");
-        builder.append(lead.toUpperCase(Locale.US)).append("  ");
+        builder.append(lead.toUpperCase(Locale.US)).append("  \u00b7  ");
         int anchorStart = builder.length();
-        builder.append("ANCHOR");
+        builder.append(firstNonEmpty(evidenceCard.roleLabel, "ANCHOR"));
+        if (!safe(evidenceCard.matchLabel).isEmpty()) {
+            builder.append("  \u00b7  ").append(evidenceCard.matchLabel);
+        }
         builder.setSpan(
             new ForegroundColorSpan(getColor(R.color.senku_rev03_accent)),
             0,
@@ -5776,6 +5836,29 @@ public final class DetailActivity extends AppCompatActivity {
         }
         parts.add(getString(expanded ? R.string.detail_why_toggle_hide_proof : R.string.detail_why_toggle_show_proof));
         return TextUtils.join(" | ", parts);
+    }
+
+    static int resolveWhyTextMaxLines(
+        boolean emergencyPortrait,
+        boolean collapseWhyText,
+        boolean compactPortraitPhone
+    ) {
+        if (emergencyPortrait) {
+            return 4;
+        }
+        if (!collapseWhyText) {
+            return Integer.MAX_VALUE;
+        }
+        return compactPortraitPhone ? 2 : 4;
+    }
+
+    static boolean shouldHideInlineSourcesForAnswerLayout(
+        boolean answerMode,
+        boolean inlineSourcesEmpty,
+        boolean utilityRail,
+        boolean landscapePhoneSourceRail
+    ) {
+        return !answerMode || inlineSourcesEmpty || utilityRail || landscapePhoneSourceRail;
     }
 
     private String buildCompactWhyTrustSummary() {

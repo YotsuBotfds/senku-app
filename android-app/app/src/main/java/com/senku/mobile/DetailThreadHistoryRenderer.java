@@ -26,6 +26,7 @@ final class DetailThreadHistoryRenderer {
     private static final int ANSWER_MAX_LINES = 4;
     private static final int RAIL_ANSWER_MAX_LINES = 2;
     private static final int GUIDE_CHIP_LIMIT = 3;
+    private static final int GUIDE_CHIP_TITLE_LIMIT = 28;
     private static final int UTILITY_RAIL_ANSWER_CHAR_LIMIT = 180;
 
     static final class State {
@@ -134,7 +135,7 @@ final class DetailThreadHistoryRenderer {
             return 2;
         }
         if (state.wideLayout || state.utilityRail) {
-            return 1;
+            return 2;
         }
         return 2;
     }
@@ -183,9 +184,9 @@ final class DetailThreadHistoryRenderer {
             state.utilityRail && !inlineTranscriptBubble
         ));
 
-        List<String> guideIds = guideChipIdsForTurn(turn);
-        if (!guideIds.isEmpty()) {
-            turnRow.addView(buildGuideChipRow(guideIds));
+        List<String> guideLabels = guideChipLabelsForTurn(turn);
+        if (!guideLabels.isEmpty()) {
+            turnRow.addView(buildGuideChipRow(guideLabels));
         }
         container.addView(turnRow);
     }
@@ -378,8 +379,8 @@ final class DetailThreadHistoryRenderer {
 
     static List<String> guideIdsForTurn(SessionMemory.TurnSnapshot turn) {
         LinkedHashSet<String> guideIds = new LinkedHashSet<>();
-        if (turn != null && turn.sourceResults != null) {
-            for (SearchResult source : turn.sourceResults) {
+        if (turn != null) {
+            for (SearchResult source : prioritizedSourceResultsForTurn(turn)) {
                 String guideId = safe(source == null ? null : source.guideId).trim();
                 if (!guideId.isEmpty()) {
                     guideIds.add(guideId);
@@ -405,6 +406,85 @@ final class DetailThreadHistoryRenderer {
         return new ArrayList<>(guideIds.subList(0, GUIDE_CHIP_LIMIT));
     }
 
+    static List<String> guideChipLabelsForTurn(SessionMemory.TurnSnapshot turn) {
+        ArrayList<String> labels = new ArrayList<>();
+        LinkedHashSet<String> seenGuideIds = new LinkedHashSet<>();
+        if (turn != null) {
+            for (SearchResult source : prioritizedSourceResultsForTurn(turn)) {
+                String guideId = safe(source == null ? null : source.guideId).trim();
+                if (guideId.isEmpty() || !seenGuideIds.add(guideId)) {
+                    continue;
+                }
+                labels.add(compactGuideChipLabel(guideId, safe(source == null ? null : source.title)));
+                if (labels.size() >= GUIDE_CHIP_LIMIT) {
+                    return labels;
+                }
+            }
+        }
+        for (String guideId : guideIdsForTurn(turn)) {
+            if (!seenGuideIds.add(guideId)) {
+                continue;
+            }
+            labels.add(guideId);
+            if (labels.size() >= GUIDE_CHIP_LIMIT) {
+                break;
+            }
+        }
+        return labels;
+    }
+
+    private static List<SearchResult> prioritizedSourceResultsForTurn(SessionMemory.TurnSnapshot turn) {
+        if (turn == null || turn.sourceResults == null || turn.sourceResults.isEmpty()) {
+            return Collections.emptyList();
+        }
+        ArrayList<SearchResult> sources = new ArrayList<>(turn.sourceResults);
+        String question = safe(turn.question).toLowerCase(Locale.US);
+        if (question.isEmpty()) {
+            return sources;
+        }
+        sources.sort((left, right) -> Integer.compare(
+            sourceQuestionContextScore(right, question),
+            sourceQuestionContextScore(left, question)
+        ));
+        return sources;
+    }
+
+    private static int sourceQuestionContextScore(SearchResult source, String lowerQuestion) {
+        if (source == null || lowerQuestion.isEmpty()) {
+            return 0;
+        }
+        int score = 0;
+        String title = safe(source.title).toLowerCase(Locale.US);
+        String section = safe(source.sectionHeading).toLowerCase(Locale.US);
+        String tags = safe(source.topicTags).replace('_', ' ').toLowerCase(Locale.US);
+        for (String token : lowerQuestion.split("[^a-z0-9]+")) {
+            if (token.length() < 3) {
+                continue;
+            }
+            if (title.contains(token)) {
+                score += 4;
+            }
+            if (section.contains(token)) {
+                score += 3;
+            }
+            if (tags.contains(token)) {
+                score += 2;
+            }
+        }
+        return score;
+    }
+
+    private static String compactGuideChipLabel(String guideId, String title) {
+        String resolvedTitle = safe(title).trim();
+        if (resolvedTitle.isEmpty()) {
+            return guideId;
+        }
+        if (resolvedTitle.length() > GUIDE_CHIP_TITLE_LIMIT) {
+            resolvedTitle = resolvedTitle.substring(0, GUIDE_CHIP_TITLE_LIMIT - 3).trim() + "...";
+        }
+        return guideId + " - " + resolvedTitle;
+    }
+
     private static String statusForTurn(SessionMemory.TurnSnapshot turn) {
         if (turn == null) {
             return "";
@@ -423,7 +503,7 @@ final class DetailThreadHistoryRenderer {
         if (turn == null || turn.recordedAtEpochMs <= 0L) {
             return "";
         }
-        return " " + new SimpleDateFormat("HH:mm", Locale.US).format(new Date(turn.recordedAtEpochMs));
+        return " \u00B7 " + new SimpleDateFormat("HH:mm", Locale.US).format(new Date(turn.recordedAtEpochMs));
     }
 
     private static int statusColorRes(String status) {

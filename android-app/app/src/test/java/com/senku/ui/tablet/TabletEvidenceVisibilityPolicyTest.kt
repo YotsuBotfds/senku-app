@@ -165,16 +165,66 @@ class TabletEvidenceVisibilityPolicyTest {
     fun tabletGuideModeKeepsPortraitReaderSingleColumnAndLandscapeEvidenceRail() {
         assertFalse(
             tabletShouldShowEvidencePane(
-                state = stateWithSources(sourceCount = 1, isLandscape = false),
+                state = stateWithSources(sourceCount = 1, isLandscape = false, composerVisible = false),
                 guideMode = true,
             )
         )
         assertTrue(
             tabletShouldShowEvidencePane(
-                state = stateWithSources(sourceCount = 1, isLandscape = true),
+                state = stateWithSources(sourceCount = 1, isLandscape = true, composerVisible = false),
                 guideMode = true,
             )
         )
+    }
+
+    @Test
+    fun tabletAnswerModeWithSelectedSourceLabelsStaysAnswerArticleWithSourceRail() {
+        val state = stateWithSources(
+            sourceCount = 2,
+            isLandscape = true,
+            guideModeLabel = "SOURCE",
+            guideModeSummary = "Selected source: GD-2",
+            guideModeAnchorLabel = "Opened from answer source",
+            selectedSourceIndex = 2,
+        )
+
+        assertFalse(state.isGuideMode())
+        assertTrue(state.hasAnswerOwnedSourceSelection())
+        assertTrue(tabletShouldShowEvidencePane(state, guideMode = state.isGuideMode()))
+    }
+
+    @Test
+    fun tabletDirectAnswerSourceSelectionStaysAnswerOwnedWhenComposerHidden() {
+        val state = stateWithSources(
+            sourceCount = 2,
+            isLandscape = true,
+            composerVisible = false,
+            guideModeLabel = "GUIDE",
+            guideModeSummary = "Selected source: GD-132",
+            guideModeAnchorLabel = "Opened from answer source",
+            selectedSourceIndex = 2,
+        )
+
+        assertTrue(state.hasAnswerOwnedSourceSelection())
+        assertFalse(state.isGuideMode())
+        assertTrue(tabletShouldShowEvidencePane(state, guideMode = state.isGuideMode()))
+    }
+
+    @Test
+    fun tabletGuideReaderStillUsesGuideModeWhenComposerIsNotAnswerMode() {
+        val state = stateWithSources(
+            sourceCount = 1,
+            isLandscape = true,
+            composerVisible = false,
+            guideModeLabel = "GUIDE",
+            guideModeSummary = "Guide reader",
+            guideModeAnchorLabel = "Opened from GD-214",
+            showQuestion = false,
+        )
+
+        assertFalse(state.hasAnswerOwnedSourceSelection())
+        assertTrue(state.isGuideMode())
+        assertTrue(tabletShouldShowEvidencePane(state, guideMode = state.isGuideMode()))
     }
 
     private fun anchor(
@@ -195,6 +245,12 @@ class TabletEvidenceVisibilityPolicyTest {
         sourceCount: Int,
         evidenceExpanded: Boolean = false,
         isLandscape: Boolean,
+        composerVisible: Boolean = true,
+        guideModeLabel: String = "",
+        guideModeSummary: String = "",
+        guideModeAnchorLabel: String = "",
+        selectedSourceIndex: Int = 1,
+        showQuestion: Boolean = true,
     ): TabletDetailState {
         val sources = (1..sourceCount).map { index ->
             SourceState(
@@ -202,7 +258,7 @@ class TabletEvidenceVisibilityPolicyTest {
                 id = "GD-$index",
                 title = "Source $index",
                 isAnchor = index == 1,
-                isSelected = index == 1,
+                isSelected = index == selectedSourceIndex,
             )
         }
         return TabletDetailState(
@@ -222,6 +278,7 @@ class TabletEvidenceVisibilityPolicyTest {
                     ),
                     status = Status.Active,
                     isActive = true,
+                    showQuestion = showQuestion,
                 )
             ),
             sources = sources,
@@ -234,13 +291,16 @@ class TabletEvidenceVisibilityPolicyTest {
             composerText = "",
             composerPlaceholder = "",
             composerEnabled = true,
-            composerVisible = true,
+            composerVisible = composerVisible,
             composerShowRetry = false,
             composerRetryLabel = "Retry",
             pinVisible = false,
             pinActive = false,
             evidenceExpanded = evidenceExpanded,
             isLandscape = isLandscape,
+            guideModeLabel = guideModeLabel,
+            guideModeSummary = guideModeSummary,
+            guideModeAnchorLabel = guideModeAnchorLabel,
         )
     }
 }

@@ -3,6 +3,7 @@ package com.senku.mobile;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 
 public final class SearchResultAdapterTest {
     @Test
@@ -126,5 +127,10 @@ public final class SearchResultAdapterTest {
     @Test
     public void linkedGuidePreviewLineKeepsRowsCompact() {
         assertEquals("Guide", SearchResultAdapter.buildLinkedGuidePreviewLineForTest());
+    }
+
+    @Test
+    public void linkedGuidePreviewLineIsSuppressedInSearchRows() {
+        assertFalse(SearchResultAdapter.shouldShowLinkedGuidePreviewLineForTest());
     }
 }

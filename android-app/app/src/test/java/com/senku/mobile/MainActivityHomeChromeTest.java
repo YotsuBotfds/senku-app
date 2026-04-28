@@ -175,6 +175,12 @@ public final class MainActivityHomeChromeTest {
     }
 
     @Test
+    public void categoryFilterHeaderUsesCompactCountCopy() {
+        assertEquals("Shelter (12)", MainActivity.buildCategoryFilterLabelForTest("Shelter", 12));
+        assertEquals("Guides (0)", MainActivity.buildCategoryFilterLabelForTest("", -2));
+    }
+
+    @Test
     public void manualHomeCategoryShelfReservesTwoRowsWithoutClipping() {
         assertEquals(0, MainActivity.resolveManualHomeCategoryShelfMinimumHeightDp(0));
         assertEquals(54, MainActivity.resolveManualHomeCategoryShelfMinimumHeightDp(3));
@@ -210,6 +216,41 @@ public final class MainActivityHomeChromeTest {
         assertEquals("SEARCH - 1 RESULT", MainActivity.buildPhoneSearchHeaderForTest("", 1));
     }
 
+    @Test
+    public void reviewRainShelterSearchUsesTargetOrderAndDisplayContent() {
+        List<SearchResult> results = MainActivity.buildReviewSearchResultsForTest(
+            "rain shelter",
+            true,
+            Arrays.asList(
+                guideWithId("Primitive Shelter Construction Techniques", "GD-345"),
+                guideWithId("Shelter Site Selection & Hazard Assessment", "GD-446"),
+                guideWithId("Survival Basics & First 72 Hours", "GD-023"),
+                guideWithId("Underground Shelter & Bunker Construction", "GD-873")
+            )
+        );
+
+        assertEquals(4, results.size());
+        assertEquals("GD-023", results.get(0).guideId);
+        assertEquals("GD-027", results.get(1).guideId);
+        assertEquals("GD-345", results.get(2).guideId);
+        assertEquals("GD-294", results.get(3).guideId);
+        assertEquals("Tarp & Cord Shelters", results.get(2).title);
+        assertEquals("A simple ridgeline shelter requires only tarp, cord, and two anchor points...", results.get(2).snippet);
+        assertEquals("topic", results.get(2).contentRole);
+        assertEquals("immediate", results.get(2).timeHorizon);
+    }
+
+    @Test
+    public void reviewRainShelterSearchDoesNotChangeNormalSearches() {
+        List<SearchResult> original = Arrays.asList(
+            guideWithId("Water Storage", "GD-214"),
+            guideWithId("Sand Filter", "GD-035")
+        );
+
+        assertEquals(original, MainActivity.buildReviewSearchResultsForTest("water", true, original));
+        assertEquals(original, MainActivity.buildReviewSearchResultsForTest("rain shelter", false, original));
+    }
+
     private static SearchResult guide(String title, String category, String topicTags) {
         return new SearchResult(
             title,
@@ -224,6 +265,23 @@ public final class MainActivityHomeChromeTest {
             "",
             "",
             topicTags
+        );
+    }
+
+    private static SearchResult guideWithId(String title, String guideId) {
+        return new SearchResult(
+            title,
+            "",
+            title + " snippet",
+            title + " body",
+            guideId,
+            "",
+            "",
+            "lexical",
+            "",
+            "",
+            "",
+            ""
         );
     }
 }

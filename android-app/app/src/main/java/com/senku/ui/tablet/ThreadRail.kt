@@ -39,9 +39,9 @@ internal fun threadRailSectionTitle(label: String, count: Int): String =
     "${label.trim().ifEmpty { "THREAD" }} \u00B7 $count"
 
 internal fun threadRailTurnRowMinHeightDp(active: Boolean): Int =
-    if (active) 66 else 52
+    if (active) 92 else 82
 
-internal fun threadRailSourceRowMinHeightDp(): Int = 56
+internal fun threadRailSourceRowMinHeightDp(): Int = 50
 
 internal fun threadRailTurnLabel(index: Int, guideMode: Boolean): String =
     if (guideMode) "SEC $index" else "Q$index"
@@ -64,13 +64,19 @@ internal fun threadRailTurnSourceLabel(sourceCount: Int): String =
         else -> "$sourceCount SRC"
     }
 
+internal fun threadRailAnswerLabel(index: Int, guideMode: Boolean): String =
+    if (guideMode) "REF $index" else "A$index"
+
+internal fun threadRailAnswerMetaLabel(index: Int, guideMode: Boolean, sourceCount: Int): String =
+    "${threadRailAnswerLabel(index, guideMode)} \u00B7 ${threadRailTurnSourceLabel(sourceCount)}"
+
 internal fun threadRailTurnMetaLabel(
     index: Int,
     guideMode: Boolean,
     status: Status,
     active: Boolean,
     sourceCount: Int,
-): String = "${threadRailTurnMetaLabel(index, guideMode, status, active)} \u00B7 ${threadRailTurnSourceLabel(sourceCount)}"
+): String = threadRailTurnLabel(index, guideMode)
 
 @Composable
 fun ThreadRail(
@@ -255,19 +261,19 @@ private fun ThreadTurnRow(
             modifier = Modifier
                 .fillMaxWidth()
                 .heightIn(min = threadRailTurnRowMinHeightDp(turn.isActive).dp)
-                .padding(horizontal = 10.dp, vertical = 9.dp),
+                .padding(horizontal = 10.dp, vertical = 8.dp),
             horizontalArrangement = Arrangement.spacedBy(6.dp),
             verticalAlignment = Alignment.Top,
         ) {
             Box(
                 modifier = Modifier
                     .width(3.dp)
-                    .height(if (turn.isActive) 46.dp else 34.dp)
+                    .height(if (turn.isActive) 38.dp else 28.dp)
                     .background(if (turn.isActive) colors.accent else colors.hairlineStrong),
             )
             Column(
                 modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.spacedBy(5.dp),
+                verticalArrangement = Arrangement.spacedBy(4.dp),
             ) {
                 Text(
                     text = threadRailTurnMetaLabel(
@@ -289,8 +295,34 @@ private fun ThreadTurnRow(
                 Text(
                     text = turn.question.trim().ifEmpty { "No question recorded." },
                     style = SenkuTheme.typography.smallBody.copy(
-                        fontSize = 11.sp,
+                        fontSize = if (turn.isActive) 11.5.sp else 11.sp,
                         lineHeight = 14.sp,
+                        fontWeight = if (turn.isActive) FontWeight.SemiBold else FontWeight.Normal,
+                    ),
+                    color = if (turn.isActive) colors.ink0 else colors.ink1,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis,
+                )
+                Text(
+                    text = threadRailAnswerMetaLabel(
+                        index = index,
+                        guideMode = guideMode,
+                        sourceCount = turn.answer.sourceCount,
+                    ),
+                    style = SenkuTheme.typography.monoCaps.copy(
+                        fontSize = 9.sp,
+                        lineHeight = 11.sp,
+                        fontWeight = FontWeight.Medium,
+                    ),
+                    color = colors.ink2,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                )
+                Text(
+                    text = turn.answer.short.trim().ifEmpty { "No answer recorded." },
+                    style = SenkuTheme.typography.smallBody.copy(
+                        fontSize = 10.5.sp,
+                        lineHeight = 13.sp,
                     ),
                     color = colors.ink1,
                     maxLines = 2,

@@ -232,7 +232,7 @@ internal fun tabletDetailTypeScalePolicy(isLandscape: Boolean): TabletDetailType
     }
 
 internal fun tabletComposerContextHint(state: TabletDetailState): String {
-    val guideMode = state.isGuideMode()
+    val guideMode = state.hasGuideReaderContext()
     val turnLabel = when (val count = state.turns.size) {
         0 -> if (guideMode) "No sections" else "No turns"
         1 -> if (guideMode) "1 section" else "1 turn"
@@ -1264,6 +1264,24 @@ private fun AnswerInlineBlock(
 }
 
 internal fun TabletDetailState.isGuideMode(): Boolean =
+    !composerVisible && hasGuideReaderContext() && !hasAnswerOwnedSourceSelection()
+
+internal fun TabletDetailState.hasAnswerOwnedSourceSelection(): Boolean {
+    val selectedSource = sources.any { it.isSelected }
+    val answerTurnVisible = turns.any { it.showQuestion && it.answer.sourceCount > 0 }
+    if (!selectedSource || !answerTurnVisible) {
+        return false
+    }
+
+    val ownershipText = listOf(guideModeLabel, guideModeSummary, guideModeAnchorLabel)
+        .joinToString(" ")
+        .lowercase()
+    return ownershipText.contains("answer") ||
+        ownershipText.contains("source") ||
+        ownershipText.contains("proof")
+}
+
+private fun TabletDetailState.hasGuideReaderContext(): Boolean =
     guideModeLabel.isNotBlank() ||
         guideModeSummary.isNotBlank() ||
         guideModeAnchorLabel.isNotBlank()

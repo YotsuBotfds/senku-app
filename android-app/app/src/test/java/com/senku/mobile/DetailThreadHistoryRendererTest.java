@@ -3,7 +3,10 @@ package com.senku.mobile;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import org.junit.Test;
 
@@ -29,7 +32,7 @@ public final class DetailThreadHistoryRendererTest {
             720
         );
 
-        assertEquals(1, DetailThreadHistoryRenderer.visiblePriorTurnLimit(wide));
+        assertEquals(2, DetailThreadHistoryRenderer.visiblePriorTurnLimit(wide));
     }
 
     @Test
@@ -41,7 +44,7 @@ public final class DetailThreadHistoryRendererTest {
             360
         );
 
-        assertEquals(1, DetailThreadHistoryRenderer.visiblePriorTurnLimit(utilityRail));
+        assertEquals(2, DetailThreadHistoryRenderer.visiblePriorTurnLimit(utilityRail));
     }
 
     @Test
@@ -63,6 +66,26 @@ public final class DetailThreadHistoryRendererTest {
         assertEquals(
             "A2 \u00B7 ANCHOR GD-345",
             renderer.buildTurnLabel(2, false, turn("answer", "GD-345", 0L), "GD-345")
+        );
+    }
+
+    @Test
+    public void turnLabelsUseDotSeparatedTranscriptTime() {
+        DetailThreadHistoryRenderer renderer = new DetailThreadHistoryRenderer(
+            null,
+            new DetailSessionPresentationFormatter(null),
+            null
+        );
+        long timestamp = 15_660_000L;
+        String expectedTime = new SimpleDateFormat("HH:mm", Locale.US).format(new Date(timestamp));
+
+        assertEquals(
+            "Q1 \u00B7 " + expectedTime + " \u00B7 FIELD QUESTION",
+            renderer.buildTurnLabel(1, true, turn("answer", "GD-220", timestamp), "")
+        );
+        assertEquals(
+            "A1 \u00B7 " + expectedTime + " \u00B7 ANCHOR GD-220",
+            renderer.buildTurnLabel(1, false, turn("answer", "GD-220", timestamp), "")
         );
     }
 
@@ -107,6 +130,31 @@ public final class DetailThreadHistoryRendererTest {
         );
     }
 
+    @Test
+    public void guideChipLabelsKeepRainShelterContextInline() {
+        SessionMemory.TurnSnapshot turn = new SessionMemory.TurnSnapshot(
+            "how do i build a rain shelter",
+            "Use a sloped tarp ridgeline.",
+            "Use a sloped tarp ridgeline.",
+            List.of("GD-111", "GD-345"),
+            List.of(
+                source("GD-111", "General camp setup", "camp layout"),
+                source("GD-345", "Rain shelter", "tarp shelter rain")
+            ),
+            "",
+            0L
+        );
+
+        assertEquals(
+            List.of("GD-345 - Rain shelter", "GD-111 - General camp setup"),
+            DetailThreadHistoryRenderer.guideChipLabelsForTurn(turn)
+        );
+        assertEquals(
+            List.of("GD-345", "GD-111"),
+            DetailThreadHistoryRenderer.guideChipIdsForTurn(turn)
+        );
+    }
+
     private static SessionMemory.TurnSnapshot turn(String answer, String guideId, long recordedAtEpochMs) {
         return new SessionMemory.TurnSnapshot(
             "question",
@@ -121,5 +169,9 @@ public final class DetailThreadHistoryRendererTest {
 
     private static SearchResult source(String guideId) {
         return new SearchResult("Source " + guideId, "", "", "", guideId, "", "", "");
+    }
+
+    private static SearchResult source(String guideId, String title, String topicTags) {
+        return new SearchResult(title, "", "", "", guideId, "", "", "", "", "", "", topicTags);
     }
 }
