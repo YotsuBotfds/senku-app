@@ -127,6 +127,75 @@ class AnswerContentFactoryTest {
     }
 
     @Test
+    fun fromRenderedAnswer_splitsUncertainSupportAndTryBlocksOutOfPrimaryAnswer() {
+        val content = fromRenderedAnswer(
+            body = """
+                Senku found guides that may be relevant to "rain shelter", but this is not a confident fit.
+
+                Possibly relevant guides in the library:
+                - [GD-345] Tarp & Cord Shelters - shelter | title match
+                - [GD-294] Cave Shelter Systems - shelter | related context
+
+                Try:
+                - checking whether the guide matches the exact material or setting
+                - asking a narrower follow-up with the exact detail that is missing
+            """.trimIndent(),
+            sourceCount = 2,
+            host = "On-device",
+            elapsedSeconds = 0.8,
+            evidence = Evidence.None,
+            abstain = false,
+            uncertainFit = true,
+        )
+
+        assertEquals(
+            "Senku found guides that may be relevant to \"rain shelter\", but this is not a confident fit.",
+            content.short
+        )
+        assertEquals(
+            listOf(
+                "checking whether the guide matches the exact material or setting",
+                "asking a narrower follow-up with the exact detail that is missing",
+            ),
+            content.steps
+        )
+        assertEquals(null, content.limits)
+    }
+
+    @Test
+    fun fromRenderedAnswer_keepsUncertainEscalationAsLimits() {
+        val content = fromRenderedAnswer(
+            body = """
+                Senku found guides that may be relevant to "pacing", but this is not a confident fit.
+
+                If this could involve immediate danger, medical symptoms, violence, or inability to stay safe, contact local emergency services now.
+
+                Possibly relevant guides in the library:
+                - [GD-305] Barely Slept Pacing Notes - mental-health | related context
+
+                Try:
+                - treating the guides above as related context, not a final answer
+            """.trimIndent(),
+            sourceCount = 1,
+            host = "On-device",
+            elapsedSeconds = 0.8,
+            evidence = Evidence.None,
+            abstain = false,
+            uncertainFit = true,
+        )
+
+        assertEquals(
+            "Senku found guides that may be relevant to \"pacing\", but this is not a confident fit.",
+            content.short
+        )
+        assertEquals(
+            "If this could involve immediate danger, medical symptoms, violence, or inability to stay safe, contact local emergency services now.",
+            content.limits
+        )
+        assertEquals(listOf("treating the guides above as related context, not a final answer"), content.steps)
+    }
+
+    @Test
     fun inferAnswerSurface_doesNotMarkAnswerCardRuleWithoutSourcesAsReviewedEvidence() {
         val surface = inferAnswerSurface(
             mode = OfflineAnswerEngine.AnswerMode.CONFIDENT,

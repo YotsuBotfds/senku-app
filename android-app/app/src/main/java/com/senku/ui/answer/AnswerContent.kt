@@ -252,6 +252,8 @@ private fun stripEnvelope(body: String): String {
 }
 
 private fun parseStructured(body: String): ParsedAnswer {
+    parseSupportBlocks(body)?.let { return it }
+
     val lines = body.split('\n')
     val introLines = mutableListOf<String>()
     val shortLines = mutableListOf<String>()
@@ -292,6 +294,52 @@ private fun parseStructured(body: String): ParsedAnswer {
         short = fallbackShort,
         steps = resolvedSteps.ifEmpty { null },
         limits = resolvedLimits.ifBlank { null },
+    )
+}
+
+private fun parseSupportBlocks(body: String): ParsedAnswer? {
+    val lines = body.split('\n')
+    val introLines = mutableListOf<String>()
+    val tryLines = mutableListOf<String>()
+    var section = "intro"
+    var sawSupportBlock = false
+
+    for (line in lines) {
+        val trimmed = line.trim()
+        when {
+            trimmed.equals("Possibly relevant guides in the library:", ignoreCase = true) -> {
+                section = "support"
+                sawSupportBlock = true
+                continue
+            }
+            trimmed.equals("Try:", ignoreCase = true) -> {
+                section = "try"
+                sawSupportBlock = true
+                continue
+            }
+        }
+
+        when (section) {
+            "intro" -> introLines += line
+            "try" -> tryLines += line
+        }
+    }
+
+    if (!sawSupportBlock) {
+        return null
+    }
+
+    val introParagraphs = normalizeBlock(introLines)
+        .split(Regex("""\n\s*\n"""))
+        .map { it.trim() }
+        .filter { it.isNotEmpty() }
+    val short = introParagraphs.firstOrNull().orEmpty()
+    val limits = introParagraphs.drop(1).joinToString("\n\n").trim()
+
+    return ParsedAnswer(
+        short = short.ifBlank { normalizeBlock(introLines) },
+        steps = normalizeSteps(tryLines).ifEmpty { null },
+        limits = limits.ifBlank { null },
     )
 }
 

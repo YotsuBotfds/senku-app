@@ -42,6 +42,8 @@ import com.senku.mobile.R
 import com.senku.ui.answer.AnswerContent
 import com.senku.ui.answer.AnswerSurfaceLabel
 import com.senku.ui.answer.Evidence
+import com.senku.ui.answer.Mode as PaperAnswerMode
+import com.senku.ui.answer.PaperAnswerCard
 import com.senku.ui.answer.buildFooterMeta
 import com.senku.ui.answer.compactEvidenceLabel
 import com.senku.ui.composer.DockedComposer
@@ -395,6 +397,7 @@ fun TabletDetailScreen(
                 onComposerSendClick = onComposerSendClick,
                 onRetryClick = onRetryClick,
                 onXRefClick = onXRefClick,
+                onEvidenceToggleClick = onEvidenceToggleClick,
                 evidencePaneTitle = evidencePaneTitle,
                 modifier = Modifier
                     .weight(1f)
@@ -418,6 +421,7 @@ private fun DetailWorkspace(
     onComposerSendClick: (String) -> Unit,
     onRetryClick: () -> Unit,
     onXRefClick: (String) -> Unit,
+    onEvidenceToggleClick: () -> Unit,
     evidencePaneTitle: String,
     modifier: Modifier = Modifier,
 ) {
@@ -445,11 +449,12 @@ private fun DetailWorkspace(
                 .fillMaxWidth(),
         ) {
             val readingPolicy = tabletReadingLayoutPolicy(state.isLandscape)
-            val showEvidencePane = !guideMode || state.isLandscape
+            val showEvidencePane = tabletShouldShowEvidencePane(state, guideMode)
             CenterPane(
                 state = state,
                 onTurnClick = onTurnClick,
                 onAnchorClick = onAnchorClick,
+                onEvidenceToggleClick = onEvidenceToggleClick,
                 guideMode = guideMode,
                 modifier = Modifier
                     .weight(1f)
@@ -505,6 +510,7 @@ private fun CenterPane(
     state: TabletDetailState,
     onTurnClick: (String) -> Unit,
     onAnchorClick: () -> Unit,
+    onEvidenceToggleClick: () -> Unit,
     guideMode: Boolean,
     modifier: Modifier = Modifier,
 ) {
@@ -548,16 +554,186 @@ private fun CenterPane(
                     )
                 }
             } else {
-                ThreadTurnList(
+                AnswerReadingSurface(
                     state = state,
                     typeScalePolicy = typeScalePolicy,
-                    guideMode = false,
                     onTurnClick = onTurnClick,
-                    onAnchorClick = onAnchorClick,
+                    onShowProof = onEvidenceToggleClick,
                 )
                 Spacer(modifier = Modifier.height(8.dp))
             }
         }
+    }
+}
+
+@Composable
+private fun AnswerReadingSurface(
+    state: TabletDetailState,
+    typeScalePolicy: TabletDetailTypeScalePolicy,
+    onTurnClick: (String) -> Unit,
+    onShowProof: () -> Unit,
+) {
+    val activeTurn = state.turns.lastOrNull { it.isActive } ?: state.turns.lastOrNull()
+
+    if (activeTurn == null) {
+        Text(
+            text = "No conversation turns yet.",
+            modifier = Modifier.padding(vertical = 20.dp),
+            style = SenkuTheme.typography.smallBody,
+            color = SenkuTheme.colors.ink3,
+        )
+        return
+    }
+
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = if (state.isLandscape) 28.dp else 24.dp),
+        verticalArrangement = Arrangement.spacedBy(if (state.isLandscape) 20.dp else 18.dp),
+    ) {
+        PrimaryAnswerBlock(
+            turn = activeTurn,
+            turnIndex = state.turns.indexOf(activeTurn).coerceAtLeast(0) + 1,
+            typeScalePolicy = typeScalePolicy,
+            sourceCount = state.sources.size,
+            onShowProof = onShowProof,
+        )
+
+        val priorTurns = state.turns.filterNot { it.id == activeTurn.id }
+        if (priorTurns.isNotEmpty()) {
+            HorizontalDivider(
+                modifier = Modifier.fillMaxWidth(),
+                thickness = 1.dp,
+                color = SenkuTheme.colors.hairline,
+            )
+            Text(
+                text = "EARLIER TURNS - ${priorTurns.size}",
+                style = SenkuTheme.typography.monoCaps.copy(
+                    fontSize = 10.sp,
+                    lineHeight = 13.sp,
+                    fontWeight = FontWeight.Medium,
+                ),
+                color = SenkuTheme.colors.ink3,
+                maxLines = 1,
+            )
+            priorTurns.forEachIndexed { index, turn ->
+                SecondaryTurnBlock(
+                    turn = turn,
+                    turnIndex = index + 1,
+                    typeScalePolicy = typeScalePolicy,
+                    onFocusTurn = { onTurnClick(turn.id) },
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun PrimaryAnswerBlock(
+    turn: ThreadTurnState,
+    turnIndex: Int,
+    typeScalePolicy: TabletDetailTypeScalePolicy,
+    sourceCount: Int,
+    onShowProof: () -> Unit,
+) {
+    val colors = SenkuTheme.colors
+    val typography = SenkuTheme.typography
+    val content = turn.answer
+
+    Column(
+        modifier = Modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(14.dp),
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+            verticalAlignment = Alignment.Top,
+        ) {
+            Text(
+                text = "ANSWER - THIS DEVICE - $turnIndex TURN",
+                modifier = Modifier.weight(1f),
+                style = typography.monoCaps.copy(
+                    fontSize = 10.sp,
+                    lineHeight = 13.sp,
+                    fontWeight = FontWeight.Medium,
+                ),
+                color = colors.accent,
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis,
+            )
+            Text(
+                text = compactEvidenceLabel(content),
+                style = typography.monoCaps.copy(
+                    fontSize = 10.sp,
+                    lineHeight = 13.sp,
+                    fontWeight = FontWeight.Medium,
+                ),
+                color = answerEvidenceTone(content),
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
+        }
+
+        if (turn.showQuestion) {
+            Text(
+                text = turn.question.trim().ifEmpty { "No question text recorded." },
+                style = typography.sectionTitle.copy(
+                    fontSize = (typeScalePolicy.questionFontSizeSp + 9).sp,
+                    lineHeight = (typeScalePolicy.questionLineHeightSp + 11).sp,
+                    fontWeight = FontWeight.SemiBold,
+                    letterSpacing = 0.sp,
+                ),
+                color = colors.ink0,
+            )
+        }
+
+        Text(
+            text = buildPrimaryAnswerMeta(content = content, sourceCount = sourceCount),
+            style = typography.monoCaps.copy(
+                fontSize = 10.sp,
+                lineHeight = 13.sp,
+                fontWeight = FontWeight.Medium,
+            ),
+            color = colors.ink3,
+            maxLines = 2,
+            overflow = TextOverflow.Ellipsis,
+        )
+
+        PaperAnswerCard(
+            content = content,
+            mode = PaperAnswerMode.Dark,
+            showProofLabel = "View sources",
+            onShowProof = onShowProof,
+        )
+    }
+}
+
+@Composable
+private fun SecondaryTurnBlock(
+    turn: ThreadTurnState,
+    turnIndex: Int,
+    typeScalePolicy: TabletDetailTypeScalePolicy,
+    onFocusTurn: () -> Unit,
+) {
+    Surface(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(onClick = onFocusTurn),
+        color = SenkuTheme.colors.bg1,
+        contentColor = SenkuTheme.colors.ink0,
+        shape = RoundedCornerShape(4.dp),
+        border = BorderStroke(1.dp, SenkuTheme.colors.hairline),
+    ) {
+        ThreadTurnBlock(
+            turn = turn,
+            turnIndex = turnIndex,
+            typeScalePolicy = typeScalePolicy,
+            canOpenProof = false,
+            onFocusTurn = onFocusTurn,
+            onOpenProof = onFocusTurn,
+            guideMode = false,
+            modifier = Modifier.padding(horizontal = 12.dp),
+        )
     }
 }
 
@@ -1091,6 +1267,16 @@ internal fun TabletDetailState.isGuideMode(): Boolean =
         guideModeSummary.isNotBlank() ||
         guideModeAnchorLabel.isNotBlank()
 
+internal fun tabletShouldShowEvidencePane(
+    state: TabletDetailState,
+    guideMode: Boolean,
+): Boolean =
+    when {
+        guideMode -> state.isLandscape
+        state.evidenceExpanded -> true
+        else -> state.sources.any { it.isSelected && !it.isAnchor }
+    }
+
 private fun buildTitleSummary(
     guideTitle: String,
     turnCount: Int,
@@ -1106,6 +1292,21 @@ private fun answerAnchorLabel(content: AnswerContent): String =
         1 -> "ANCHOR"
         else -> "SOURCES ${content.sourceCount}"
     }
+
+private fun buildPrimaryAnswerMeta(
+    content: AnswerContent,
+    sourceCount: Int,
+): String {
+    val sourceLabel = when (val count = maxOf(sourceCount, content.sourceCount)) {
+        0 -> "NO SOURCES"
+        1 -> "1 SOURCE"
+        else -> "$count SOURCES"
+    }
+    return listOf(content.host.trim().ifEmpty { null }, sourceLabel)
+        .filterNotNull()
+        .joinToString(" - ")
+        .uppercase()
+}
 
 @Composable
 private fun answerEvidenceTone(content: AnswerContent) =

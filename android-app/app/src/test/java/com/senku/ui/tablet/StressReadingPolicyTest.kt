@@ -172,6 +172,51 @@ class StressReadingPolicyTest {
     }
 
     @Test
+    fun tabletAnswerModeHidesEvidencePaneByDefault() {
+        val state = tabletDetailState(
+            sources = listOf(
+                SourceState("s1", "GD-001", "Anchor guide", isAnchor = true, isSelected = true),
+                SourceState("s2", "GD-002", "Related guide", isAnchor = false, isSelected = false),
+            ),
+        )
+
+        assertFalse(tabletShouldShowEvidencePane(state, guideMode = false))
+    }
+
+    @Test
+    fun tabletAnswerModeShowsEvidencePaneWhenExpanded() {
+        val state = tabletDetailState(
+            evidenceExpanded = true,
+            sources = listOf(
+                SourceState("s1", "GD-001", "Anchor guide", isAnchor = true, isSelected = true),
+            ),
+        )
+
+        assertTrue(tabletShouldShowEvidencePane(state, guideMode = false))
+    }
+
+    @Test
+    fun tabletAnswerModeShowsEvidencePaneForExplicitRelatedSourceSelection() {
+        val state = tabletDetailState(
+            sources = listOf(
+                SourceState("s1", "GD-001", "Anchor guide", isAnchor = true, isSelected = false),
+                SourceState("s2", "GD-002", "Related guide", isAnchor = false, isSelected = true),
+            ),
+        )
+
+        assertTrue(tabletShouldShowEvidencePane(state, guideMode = false))
+    }
+
+    @Test
+    fun tabletGuideModeKeepsExistingLandscapeEvidenceBehavior() {
+        val landscapeState = tabletDetailState(isLandscape = true)
+        val portraitState = tabletDetailState(isLandscape = false)
+
+        assertTrue(tabletShouldShowEvidencePane(landscapeState, guideMode = true))
+        assertFalse(tabletShouldShowEvidencePane(portraitState, guideMode = true))
+    }
+
+    @Test
     fun phoneLandscapePolicyCompactsComposerAndSuppressesSupportChrome() {
         val policy = phoneLandscapeStressReadingPolicy()
 
@@ -268,6 +313,8 @@ class StressReadingPolicyTest {
         turns: List<ThreadTurnState> = emptyList(),
         guideModeLabel: String = "",
         guideModeAnchorLabel: String = "",
+        evidenceExpanded: Boolean = false,
+        isLandscape: Boolean = true,
     ): TabletDetailState =
         TabletDetailState(
             guideId = guideId,
@@ -285,8 +332,8 @@ class StressReadingPolicyTest {
             composerRetryLabel = "Retry",
             pinVisible = false,
             pinActive = false,
-            evidenceExpanded = false,
-            isLandscape = true,
+            evidenceExpanded = evidenceExpanded,
+            isLandscape = isLandscape,
             guideModeLabel = guideModeLabel,
             guideModeAnchorLabel = guideModeAnchorLabel,
         )

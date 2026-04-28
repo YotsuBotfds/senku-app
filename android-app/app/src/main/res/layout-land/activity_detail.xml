@@ -360,7 +360,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="6dp"
-                android:layout_weight="1.45"
+                android:layout_weight="1.65"
                 android:orientation="vertical">
 
             <LinearLayout
@@ -646,7 +646,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="14dp"
-                android:layout_weight="0.95"
+                android:layout_weight="0.75"
                 android:orientation="vertical">
 
             <LinearLayout

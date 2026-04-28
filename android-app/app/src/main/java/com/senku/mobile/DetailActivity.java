@@ -1181,6 +1181,8 @@ public final class DetailActivity extends AppCompatActivity {
                             detailScroll.scrollTo(0, 0);
                         }
                     });
+                } else {
+                    resetPhoneLandscapeAnswerScrollToHeader();
                 }
             });
         });
@@ -1385,10 +1387,10 @@ public final class DetailActivity extends AppCompatActivity {
 
     private void updateTabletEmergencyHeaderOverlayLayout(LinearLayout overlay) {
         overlay.setPadding(
-            isTabletPortraitLayout() ? dp(36) : dp(18),
-            isTabletPortraitLayout() ? dp(18) : dp(12),
-            isTabletPortraitLayout() ? dp(36) : dp(18),
-            isTabletPortraitLayout() ? dp(18) : dp(12)
+            isTabletPortraitLayout() ? dp(20) : dp(18),
+            isTabletPortraitLayout() ? dp(16) : dp(12),
+            isTabletPortraitLayout() ? dp(20) : dp(18),
+            isTabletPortraitLayout() ? dp(16) : dp(12)
         );
         ViewGroup.LayoutParams currentParams = overlay.getLayoutParams();
         if (currentParams instanceof FrameLayout.LayoutParams) {
@@ -1410,9 +1412,9 @@ public final class DetailActivity extends AppCompatActivity {
             ViewGroup.LayoutParams.WRAP_CONTENT
         );
         if (isTabletPortraitLayout()) {
-            params.leftMargin = dp(84);
-            params.rightMargin = dp(16);
-            params.topMargin = dp(132);
+            params.leftMargin = dp(148);
+            params.rightMargin = dp(212);
+            params.topMargin = dp(56);
         } else {
             params.leftMargin = dp(336);
             params.rightMargin = dp(24);
@@ -1860,7 +1862,7 @@ public final class DetailActivity extends AppCompatActivity {
             return;
         }
         ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) rawParams;
-        if (answerMode) {
+        if (shouldHideBodyMirrorForAnswerMode(answerMode)) {
             params.width = dp(1);
             params.height = dp(1);
             params.topMargin = 0;
@@ -1870,6 +1872,7 @@ public final class DetailActivity extends AppCompatActivity {
             bodyMirrorShell.setAlpha(0.01f);
             bodyView.setTextColor(getColor(R.color.senku_text_light));
             bodyView.setAlpha(0.01f);
+            bodyMirrorShell.setVisibility(View.GONE);
         } else {
             params.width = ViewGroup.LayoutParams.MATCH_PARENT;
             params.height = ViewGroup.LayoutParams.WRAP_CONTENT;
@@ -1880,8 +1883,8 @@ public final class DetailActivity extends AppCompatActivity {
             bodyMirrorShell.setAlpha(1f);
             bodyView.setTextColor(getColor(R.color.senku_rev03_paper_ink));
             bodyView.setAlpha(1f);
+            bodyMirrorShell.setVisibility(View.VISIBLE);
         }
-        bodyMirrorShell.setVisibility(View.VISIBLE);
     }
 
     private void renderAnswerCardSurface(boolean showStreamingCursor) {
@@ -3988,6 +3991,24 @@ public final class DetailActivity extends AppCompatActivity {
         }));
     }
 
+    private void resetPhoneLandscapeAnswerScrollToHeader() {
+        if (detailScroll == null || !shouldResetPhoneLandscapeAnswerScroll(answerMode, isLandscapePhoneLayout())) {
+            return;
+        }
+        detailScroll.scrollTo(0, 0);
+        detailScroll.post(() -> {
+            if (!isFinishing()
+                && !isDestroyed()
+                && shouldResetPhoneLandscapeAnswerScroll(answerMode, isLandscapePhoneLayout())) {
+                detailScroll.scrollTo(0, 0);
+            }
+        });
+    }
+
+    static boolean shouldResetPhoneLandscapeAnswerScroll(boolean answerMode, boolean landscapePhone) {
+        return answerMode && landscapePhone;
+    }
+
     private SessionMemory.TurnSnapshot currentTurnSnapshot() {
         return detailSessionPresentationFormatter().currentTurnSnapshot(
             currentTitle,
@@ -4594,6 +4615,10 @@ public final class DetailActivity extends AppCompatActivity {
 
     static boolean shouldUseLandscapePhoneSourceRail(boolean answerMode, boolean landscapePhone) {
         return answerMode && landscapePhone;
+    }
+
+    static boolean shouldHideBodyMirrorForAnswerMode(boolean answerMode) {
+        return answerMode;
     }
 
     static boolean shouldUseSideThreadPanel(

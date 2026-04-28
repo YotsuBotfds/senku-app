@@ -162,6 +162,19 @@ public final class DetailFollowupLandscapeComposerTest {
     }
 
     @Test
+    public void phoneLandscapeAnswerResetsToHeaderAfterRender() {
+        assertTrue(DetailActivity.shouldResetPhoneLandscapeAnswerScroll(true, true));
+        assertFalse(DetailActivity.shouldResetPhoneLandscapeAnswerScroll(false, true));
+        assertFalse(DetailActivity.shouldResetPhoneLandscapeAnswerScroll(true, false));
+    }
+
+    @Test
+    public void answerModeSuppressesLegacyBodyMirror() {
+        assertTrue(DetailActivity.shouldHideBodyMirrorForAnswerMode(true));
+        assertFalse(DetailActivity.shouldHideBodyMirrorForAnswerMode(false));
+    }
+
+    @Test
     public void phonePortraitSourceCardLabelCarriesMetaTitleAndQuote() {
         DetailSourcePresentationFormatter.EvidenceCard card =
             new DetailSourcePresentationFormatter.EvidenceCard(
