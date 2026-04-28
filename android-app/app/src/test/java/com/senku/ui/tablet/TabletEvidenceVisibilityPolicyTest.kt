@@ -229,6 +229,27 @@ class TabletEvidenceVisibilityPolicyTest {
     }
 
     @Test
+    fun tabletDetailModeLabelsSeparateAnswerThreadAndGuideChrome() {
+        assertEquals("ANSWER", tabletTitleBarModeLabel(TabletDetailMode.Answer))
+        assertEquals("THREAD", tabletTitleBarModeLabel(TabletDetailMode.Thread))
+        assertEquals("GUIDE", tabletTitleBarModeLabel(TabletDetailMode.Guide))
+    }
+
+    @Test
+    fun tabletThreadModeKeepsEvidenceSupportWithoutBecomingGuideReader() {
+        val state = stateWithSources(
+            sourceCount = 2,
+            isLandscape = true,
+            detailMode = TabletDetailMode.Thread,
+        )
+
+        assertTrue(state.isThreadMode())
+        assertFalse(state.isGuideMode())
+        assertTrue(state.isAnswerOrThreadMode())
+        assertTrue(tabletShouldShowEvidencePane(state, guideMode = state.isGuideMode()))
+    }
+
+    @Test
     fun tabletSourceGraphDropsClearedSourceFallbackAnchor() {
         val anchor = AnchorState(
             key = "field-note",

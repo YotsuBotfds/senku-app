@@ -108,6 +108,39 @@ public final class DetailActionBlockPresentationFormatterTest {
     }
 
     @Test
+    public void extractEmergencyActionSpecsRequiresActionSectionBeforeNumberedRows() {
+        List<DetailActionBlockPresentationFormatter.EmergencyActionSpec> actions =
+            DetailActionBlockPresentationFormatter.extractEmergencyActionSpecs(
+                "Short answer:\n" +
+                    "Stop work immediately.\n\n" +
+                    "Why this answer:\n" +
+                    "1. GD-132 - Foundry & Metal Casting.\n" +
+                    "2. Backend route reviewed_card_runtime.",
+                text -> citationFormatter.stripInlineCitationText(text)
+            );
+
+        assertTrue(actions.isEmpty());
+    }
+
+    @Test
+    public void extractEmergencyActionSpecsStopsBeforeProofBackendChrome() {
+        List<DetailActionBlockPresentationFormatter.EmergencyActionSpec> actions =
+            DetailActionBlockPresentationFormatter.extractEmergencyActionSpecs(
+                "Immediate actions:\n" +
+                    "1. Stop all hot work. No new charges, no new pours.\n" +
+                    "2. Clear the floor to 5 m radius. Move personnel upwind.\n\n" +
+                    "Backend route reviewed_card_runtime\n" +
+                    "1. Route: deterministic.\n" +
+                    "2. Model: local.",
+                text -> citationFormatter.stripInlineCitationText(text)
+            );
+
+        assertEquals(2, actions.size());
+        assertEquals("Stop all hot work", actions.get(0).title);
+        assertEquals("Clear the floor to 5 m radius", actions.get(1).title);
+    }
+
+    @Test
     public void extractEmergencyActionSpecsKeepsOrderedActionsAheadOfEvidenceAndProvenance() {
         List<DetailActionBlockPresentationFormatter.EmergencyActionSpec> actions =
             DetailActionBlockPresentationFormatter.extractEmergencyActionSpecs(
@@ -146,7 +179,7 @@ public final class DetailActionBlockPresentationFormatterTest {
     @Test
     public void emergencyActionHeadingMatchesMockCopy() {
         assertEquals(
-            "Immediate actions \u00b7 4",
+            "IMMEDIATE ACTIONS \u00b7 4",
             DetailActionBlockPresentationFormatter.EMERGENCY_ACTION_HEADING_PREFIX + "4"
         );
     }

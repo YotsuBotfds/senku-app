@@ -360,7 +360,7 @@ final class DetailGuidePresentationFormatter {
         return safe(line)
             .trim()
             .replaceFirst("^#{1,6}\\s+", "")
-            .replaceFirst("(?i)^Section\\s+\\d+\\s*[:\\-\\u00b7]?\\s*", "")
+            .replaceFirst("(?i)^(?:Section\\s+|\\u00a7\\s*)\\d+\\s*[:\\-\\u00b7]?\\s*", "")
             .replaceAll("\\s+", " ")
             .trim()
             .toLowerCase(Locale.US);

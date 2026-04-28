@@ -1631,10 +1631,17 @@ public final class DetailActivity extends AppCompatActivity {
     }
 
     private TabletDetailMode resolveTabletDetailMode(ArrayList<TabletTurnBinding> turnBindings) {
+        return resolveTabletDetailModeForState(
+            answerMode,
+            turnBindings == null ? 0 : turnBindings.size()
+        );
+    }
+
+    static TabletDetailMode resolveTabletDetailModeForState(boolean answerMode, int turnCount) {
         if (!answerMode) {
             return TabletDetailMode.Guide;
         }
-        return turnBindings != null && turnBindings.size() > 1
+        return isThreadDetailRoute(answerMode, turnCount)
             ? TabletDetailMode.Thread
             : TabletDetailMode.Answer;
     }
@@ -2444,8 +2451,12 @@ public final class DetailActivity extends AppCompatActivity {
         if (!isCurrentAnswerFollowUpEligible()
             || followUpPanel == null
             || followUpPanel.getVisibility() != View.VISIBLE
-            // On landscape phones the extra suggestion rail crowds the answer body offscreen.
-            || shouldHideFollowUpSuggestionsOnPhoneLandscape(isLandscapePhoneLayout())
+            // On cramped detail shells the suggestion rail crowds the answer body offscreen.
+            || shouldHideFollowUpSuggestionsForComposerClearance(
+                isLandscapePhoneLayout(),
+                isCompactPortraitPhoneLayout(),
+                isCurrentThreadDetailRoute()
+            )
             || currentFollowUpSuggestions.isEmpty()) {
             followUpSuggestView.setVisibility(View.GONE);
             return;
@@ -2467,6 +2478,15 @@ public final class DetailActivity extends AppCompatActivity {
 
     static boolean shouldHideFollowUpSuggestionsOnPhoneLandscape(boolean landscapePhone) {
         return landscapePhone;
+    }
+
+    static boolean shouldHideFollowUpSuggestionsForComposerClearance(
+        boolean landscapePhone,
+        boolean compactPortraitPhone,
+        boolean threadDetailRoute
+    ) {
+        return shouldHideFollowUpSuggestionsOnPhoneLandscape(landscapePhone)
+            || (compactPortraitPhone && threadDetailRoute);
     }
 
     static String resolveDockedComposerHint(String fullHint, String compactHint, boolean compactFollowUpMode) {
@@ -4993,6 +5013,28 @@ public final class DetailActivity extends AppCompatActivity {
 
     static boolean shouldHideBodyMirrorForAnswerMode(boolean answerMode) {
         return answerMode;
+    }
+
+    static boolean isThreadDetailRoute(boolean answerMode, int totalTurnCount) {
+        return answerMode && totalTurnCount > 1;
+    }
+
+    private boolean isCurrentThreadDetailRoute() {
+        return isThreadDetailRoute(answerMode, currentAnswerThreadTurnCount());
+    }
+
+    private int currentAnswerThreadTurnCount() {
+        if (!answerMode) {
+            return 0;
+        }
+        List<SessionMemory.TurnSnapshot> snapshots = sessionMemory == null
+            ? Collections.emptyList()
+            : sessionMemory.recentTurnSnapshots(6);
+        List<SessionMemory.TurnSnapshot> earlierTurns = detailSessionPresentationFormatter().earlierTurns(
+            snapshots,
+            currentTitle
+        );
+        return Math.max(1, earlierTurns.size() + 1);
     }
 
     static boolean shouldUseSideThreadPanel(

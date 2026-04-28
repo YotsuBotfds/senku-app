@@ -13,7 +13,8 @@ final class GuideBodySanitizer {
     private static final Pattern GUIDE_MARKDOWN_HEADING_PATTERN = Pattern.compile("^#{1,6}\\s+");
     private static final Pattern GUIDE_SECTION_LINE_PATTERN = Pattern.compile("^Source section:\\s*(.+)$", Pattern.CASE_INSENSITIVE);
     private static final Pattern GUIDE_REQUIRED_READING_PATTERN = Pattern.compile("^Required Reading\\s*:\\s*(.+)$", Pattern.CASE_INSENSITIVE);
-    private static final Pattern GUIDE_SECTION_DISPLAY_PATTERN = Pattern.compile("^Section\\s+\\d+\\s*[:\\-\\u00b7]?\\s+.+$", Pattern.CASE_INSENSITIVE);
+    private static final Pattern GUIDE_SECTION_DISPLAY_PATTERN =
+        Pattern.compile("^(?:Section\\s+|\\u00a7\\s*)\\d+\\s*[:\\-\\u00b7]?\\s+.+$", Pattern.CASE_INSENSITIVE);
     private static final Pattern GUIDE_LAYOUT_TAG_PATTERN = Pattern.compile("(?i)</?(section|div|span|p)\\b[^>]*>");
     private static final Pattern GUIDE_INLINE_STYLE_TAG_PATTERN = Pattern.compile("(?i)</?(strong|b|em|i|mark|small)\\b[^>]*>");
     private static final Pattern GUIDE_MARKDOWN_LINK_PATTERN = Pattern.compile("\\[([^\\]]+)\\]\\(([^\\)]+)\\)");
@@ -248,7 +249,7 @@ final class GuideBodySanitizer {
     private static String normalizeSectionComparisonValue(String text) {
         return safe(text)
             .trim()
-            .replaceFirst("(?i)^Section\\s+\\d+\\s*[:\\-\\u00b7]?\\s*", "")
+            .replaceFirst("(?i)^(?:Section\\s+|\\u00a7\\s*)\\d+\\s*[:\\-\\u00b7]?\\s*", "")
             .replaceAll("\\s+", " ")
             .trim()
             .toLowerCase(QUERY_LOCALE);
@@ -363,7 +364,7 @@ final class GuideBodySanitizer {
             return safe(sourceSectionMatcher.group(1)).trim();
         }
         if (isGuideSectionDisplayLine(cleaned)) {
-            return cleaned.replaceFirst("(?i)^Section\\s+\\d+\\s+", "").trim();
+            return cleaned.replaceFirst("(?i)^(?:Section\\s+|\\u00a7\\s*)\\d+\\s*[:\\-\\u00b7]?\\s+", "").trim();
         }
         return cleaned;
     }
@@ -447,7 +448,7 @@ final class GuideBodySanitizer {
     }
 
     private static String buildGuideSectionPrefix(int sectionOrdinal) {
-        return "Section " + Math.max(sectionOrdinal, 1);
+        return "\u00a7 " + Math.max(sectionOrdinal, 1) + " \u00b7";
     }
 
     private static String stripDuplicateAdmonitionLabel(String line, String admonitionLabel, boolean firstAdmonitionContentLine) {
@@ -495,8 +496,13 @@ final class GuideBodySanitizer {
         cleaned = cleaned.replace("&gt;", ">");
         cleaned = cleaned.replace("\u00e2\u20ac\u201d", " - ");
         cleaned = cleaned.replace("\u00e2\u20ac\u201c", "-");
+        cleaned = cleaned.replace("\u00e2\u20ac\u2122", "'");
+        cleaned = cleaned.replace("\u00e2\u20ac\u0153", "\"");
+        cleaned = cleaned.replace("\u00e2\u20ac\ufffd", "\"");
         cleaned = cleaned.replace("\u00e2\u2020\u2019", "->");
+        cleaned = cleaned.replace("\u00e2\u20ac\u00a2", "\u00b7");
         cleaned = cleaned.replace("\u00c2\u00b7", "\u00b7");
+        cleaned = cleaned.replace("\u00c2\u00a7", "\u00a7");
         cleaned = cleaned.replace("\u00c2", "");
         cleaned = cleaned.replace("ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â", " - ");
         cleaned = cleaned.replace("ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“", "-");

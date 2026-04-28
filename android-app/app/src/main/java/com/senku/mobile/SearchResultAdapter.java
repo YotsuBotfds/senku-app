@@ -234,6 +234,7 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
         TextView meta = buildMonoTextView(context, 9, 11, Typeface.BOLD);
         meta.setId(R.id.result_meta);
         meta.setTextColor(ContextCompat.getColor(context, R.color.senku_rev03_accent));
+        meta.setAllCaps(true);
         head.addView(meta, new LinearLayout.LayoutParams(
             0,
             ViewGroup.LayoutParams.WRAP_CONTENT,
@@ -281,6 +282,7 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
         TextView section = buildMonoTextView(context, 8, 10, Typeface.NORMAL);
         section.setId(R.id.result_section);
         section.setTextColor(ContextCompat.getColor(context, R.color.senku_text_muted_light));
+        section.setAllCaps(true);
         LinearLayout.LayoutParams sectionParams = new LinearLayout.LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT,
             ViewGroup.LayoutParams.WRAP_CONTENT
@@ -323,13 +325,17 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
 
         TextView linkedPreview = new TextView(context);
         linkedPreview.setId(R.id.result_related_preview);
-        linkedPreview.setTextColor(ContextCompat.getColor(context, R.color.senku_accent_olive_dark));
-        linkedPreview.setTextSize(TypedValue.COMPLEX_UNIT_SP, 12);
+        linkedPreview.setTextColor(ContextCompat.getColor(context, R.color.senku_rev03_accent_moss));
+        linkedPreview.setTextSize(TypedValue.COMPLEX_UNIT_SP, 11);
+        linkedPreview.setSingleLine(true);
+        linkedPreview.setEllipsize(TextUtils.TruncateAt.END);
         linkedPreview.setVisibility(View.GONE);
-        row.addView(linkedPreview, new LinearLayout.LayoutParams(
+        LinearLayout.LayoutParams linkedPreviewParams = new LinearLayout.LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT,
             ViewGroup.LayoutParams.WRAP_CONTENT
-        ));
+        );
+        linkedPreviewParams.topMargin = dp(3);
+        row.addView(linkedPreview, linkedPreviewParams);
 
         View divider = new View(context);
         divider.setBackgroundColor(ContextCompat.getColor(context, R.color.senku_rev03_hairline_strong));
@@ -360,10 +366,13 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
 
     private TextView buildChipTextView(Context context) {
         TextView chip = new TextView(context);
-        chip.setBackground(ContextCompat.getDrawable(context, R.drawable.bg_badge));
+        chip.setBackground(buildFlatBadgeDrawable(context, defaultBadgeColor));
         chip.setPadding(dp(8), dp(3), dp(8), dp(3));
         chip.setTextColor(ContextCompat.getColor(context, R.color.senku_text_light));
-        chip.setTextSize(TypedValue.COMPLEX_UNIT_SP, 12);
+        chip.setTextSize(TypedValue.COMPLEX_UNIT_SP, 10);
+        chip.setTypeface(Typeface.MONOSPACE, Typeface.BOLD);
+        chip.setSingleLine(true);
+        chip.setEllipsize(TextUtils.TruncateAt.END);
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
             ViewGroup.LayoutParams.WRAP_CONTENT,
             ViewGroup.LayoutParams.WRAP_CONTENT
@@ -415,7 +424,7 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
         badge.setTypeface(Typeface.MONOSPACE, Typeface.BOLD);
         badge.setBackground(null);
         badge.setCompoundDrawablesRelativeWithIntrinsicBounds(0, 0, 0, 0);
-        badge.setContentDescription("Result score marker " + score);
+        badge.setContentDescription("Rank " + buildOrdinalRankLabel(position) + ", score marker " + score);
         if (scoreBar != null) {
             scoreBar.setVisibility(View.VISIBLE);
             scoreBar.setBackground(buildScoreBarDrawable(score));
@@ -430,10 +439,22 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
     private GradientDrawable buildScoreBarDrawable(int score) {
         GradientDrawable drawable = new GradientDrawable();
         drawable.setShape(GradientDrawable.RECTANGLE);
-        drawable.setCornerRadius(dp(1));
+        drawable.setCornerRadius(0f);
         drawable.setColor(score >= 70
             ? ContextCompat.getColor(inflater.getContext(), R.color.senku_rev03_accent)
             : ContextCompat.getColor(inflater.getContext(), R.color.senku_text_muted_light));
+        return drawable;
+    }
+
+    private GradientDrawable buildFlatBadgeDrawable(Context context, int color) {
+        GradientDrawable drawable = new GradientDrawable();
+        drawable.setShape(GradientDrawable.RECTANGLE);
+        drawable.setCornerRadius(0f);
+        drawable.setColor(color);
+        drawable.setStroke(
+            Math.max(1, dp(1)),
+            ContextCompat.getColor(context, R.color.senku_rev03_hairline_strong)
+        );
         return drawable;
     }
 
@@ -573,6 +594,11 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
         if (badge.getBackground() instanceof GradientDrawable) {
             GradientDrawable drawable = (GradientDrawable) badge.getBackground().mutate();
             drawable.setColor(color);
+            drawable.setCornerRadius(0f);
+            drawable.setStroke(
+                Math.max(1, dp(1)),
+                ContextCompat.getColor(badge.getContext(), R.color.senku_rev03_hairline_strong)
+            );
         }
     }
 

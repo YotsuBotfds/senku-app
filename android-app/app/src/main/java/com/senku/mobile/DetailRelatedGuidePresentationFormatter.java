@@ -75,7 +75,7 @@ final class DetailRelatedGuidePresentationFormatter {
     }
 
     String buildNonRailRelatedGuidesTitle() {
-        return "Guide links";
+        return "Cross-reference";
     }
 
     String buildNonRailRelatedGuidesSubtitle(State state, int count) {
@@ -143,7 +143,7 @@ final class DetailRelatedGuidePresentationFormatter {
         boolean nonRailCrossReferenceCopy = state != null && state.nonRailCrossReferenceCopy;
         StringBuilder builder = new StringBuilder();
         builder.append(opensPreview
-            ? (nonRailCrossReferenceCopy ? "Guide links " : "Related guide ")
+            ? (nonRailCrossReferenceCopy ? "Cross-reference linked guide " : "Related guide ")
             : (nonRailCrossReferenceCopy
                 ? context.getString(R.string.detail_related_guides_button_prefix_nonrail)
                 : "Open related guide "));
@@ -151,7 +151,7 @@ final class DetailRelatedGuidePresentationFormatter {
         builder.append(" of ");
         builder.append(total);
         builder.append(". ");
-        builder.append(buildRelatedGuidePrimaryLabel(guide));
+        builder.append(buildRelatedGuideAccessibleLabel(guide));
         String category = formatRelatedGuideCategory(guide);
         if (!category.isEmpty()) {
             builder.append(". Category ");
@@ -183,7 +183,7 @@ final class DetailRelatedGuidePresentationFormatter {
         builder.append(" of ");
         builder.append(total);
         builder.append(". ");
-        builder.append(buildRelatedGuidePrimaryLabel(guide));
+        builder.append(buildRelatedGuideAccessibleLabel(guide));
         String category = formatRelatedGuideCategory(guide);
         if (!category.isEmpty()) {
             builder.append(". Category ");
@@ -213,6 +213,18 @@ final class DetailRelatedGuidePresentationFormatter {
             return guideId;
         }
         return context.getString(R.string.detail_related_guides_anchor_fallback);
+    }
+
+    private String buildRelatedGuideAccessibleLabel(SearchResult guide) {
+        String guideId = safe(guide == null ? null : guide.guideId).trim();
+        String title = safe(guide == null ? null : guide.title).trim();
+        if (!guideId.isEmpty() && !title.isEmpty()) {
+            return guideId + " \u00b7 " + title;
+        }
+        if (!title.isEmpty()) {
+            return title;
+        }
+        return guideId.isEmpty() ? context.getString(R.string.detail_related_guide_fallback_label) : guideId;
     }
 
     String buildContextualFollowupQuery(State state, SearchResult relatedGuide, String anchorGuideId) {

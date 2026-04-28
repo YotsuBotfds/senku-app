@@ -23,18 +23,11 @@ public final class DetailProofPresentationFormatterTest {
         List<DetailProofPresentationFormatter.CompactReviewedCardLine> lines =
             DetailProofPresentationFormatter.compactReviewedCardLines(metadata);
 
-        assertEquals("Reviewed guide card burns_pilot_card", lines.get(0).label);
-        assertEquals("available for review", lines.get(0).value);
-        assertEquals("Cites guide GD-380", lines.get(1).label);
-        assertEquals("guide anchor", lines.get(1).value);
-        assertEquals("Status", lines.get(2).label);
-        assertEquals("Status: pilot reviewed", lines.get(2).value);
-        assertEquals("Limit", lines.get(3).label);
-        assertEquals(
-            "Limit: reviewed support only; inspect cited guide before relying.",
-            lines.get(3).value
-        );
-        assertEquals(4, lines.size());
+        assertEquals("Reviewed card", lines.get(0).label);
+        assertEquals("burns_pilot_card | pilot reviewed", lines.get(0).value);
+        assertEquals("Cites", lines.get(1).label);
+        assertEquals("GD-380", lines.get(1).value);
+        assertEquals(2, lines.size());
     }
 
     @Test
@@ -51,10 +44,12 @@ public final class DetailProofPresentationFormatterTest {
         List<DetailProofPresentationFormatter.CompactReviewedCardLine> lines =
             DetailProofPresentationFormatter.compactReviewedCardLines(metadata);
 
-        assertEquals("Reviewed guide card shock_card", lines.get(0).label);
-        assertEquals("Cites guide GD-400", lines.get(1).label);
-        assertEquals("Cites guide GD-401, GD-402", lines.get(2).label);
-        assertEquals("supporting guide", lines.get(2).value);
+        assertEquals("Reviewed card", lines.get(0).label);
+        assertEquals("shock_card | pilot reviewed", lines.get(0).value);
+        assertEquals("Cites", lines.get(1).label);
+        assertEquals("GD-400", lines.get(1).value);
+        assertEquals("Supports", lines.get(2).label);
+        assertEquals("GD-401, GD-402", lines.get(2).value);
         for (DetailProofPresentationFormatter.CompactReviewedCardLine line : lines) {
             String visible = line.label + " " + line.value;
             assertFalse(visible.contains("runtime_card_only"));

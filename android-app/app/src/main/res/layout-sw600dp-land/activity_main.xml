@@ -27,8 +27,8 @@
         android:paddingTop="24dp">
 
         <TextView
-            android:layout_width="38dp"
-            android:layout_height="38dp"
+            android:layout_width="34dp"
+            android:layout_height="34dp"
             android:background="@drawable/bg_manual_home_nav_shell"
             android:gravity="center"
             android:includeFontPadding="false"
@@ -40,7 +40,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="30dp"
+            android:layout_marginTop="28dp"
             android:gravity="center"
             android:orientation="vertical">
 
@@ -249,11 +249,11 @@
                         android:paddingEnd="14dp">
 
                         <ImageView
-                            android:layout_width="24dp"
-                            android:layout_height="24dp"
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
                             android:background="@drawable/bg_manual_home_search_icon"
                             android:contentDescription="@string/search_input_description"
-                            android:padding="7dp"
+                            android:padding="1dp"
                             android:src="@drawable/ic_search_magnifier"
                             android:tint="@color/senku_rev03_ink_2" />
 

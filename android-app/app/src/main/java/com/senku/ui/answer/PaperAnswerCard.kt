@@ -45,13 +45,13 @@ enum class Mode {
     Dark,
 }
 
-private val PaperAnswerCardInnerPadding = 14.dp
-private val PaperAnswerCardSectionSpacing = 8.dp
+private val PaperAnswerCardInnerPadding = 0.dp
+private val PaperAnswerCardSectionSpacing = 10.dp
 private val PaperAnswerCardBorderWidth = 0.5.dp
 private val PaperAnswerCardBodySize = 17.sp
 private val PaperAnswerCardBodyLineHeight = 25.sp
-private val PaperAnswerCardSupportSize = 13.sp
-private val PaperAnswerCardSupportLineHeight = 19.sp
+private val PaperAnswerCardSupportSize = 12.sp
+private val PaperAnswerCardSupportLineHeight = 18.sp
 private val PaperAnswerCardMetaSize = 10.sp
 private val PaperAnswerCardMetaLineHeight = 13.sp
 
@@ -123,8 +123,12 @@ fun PaperAnswerCard(
         modifier = modifier.fillMaxWidth(),
         color = palette.background,
         contentColor = palette.body,
-        shape = RoundedCornerShape(4.dp),
-        border = BorderStroke(PaperAnswerCardBorderWidth, palette.border),
+        shape = RoundedCornerShape(palette.cornerRadius),
+        border = if (palette.border.alpha > 0f) {
+            BorderStroke(PaperAnswerCardBorderWidth, palette.border)
+        } else {
+            null
+        },
         tonalElevation = 0.dp,
         shadowElevation = 0.dp,
     ) {
@@ -191,13 +195,17 @@ fun PaperAnswerCard(
                 if (!content.steps.isNullOrEmpty() && !content.abstain) {
                     AnswerSectionDivider(palette.hairline)
                     SectionHeader(
-                        label = "STEPS",
-                        color = palette.muted,
+                        label = if (content.uncertainFit) "TRY" else "STEPS",
+                        color = if (content.uncertainFit) evidenceTone else palette.muted,
                     )
                     Column(verticalArrangement = Arrangement.spacedBy(3.dp)) {
                         content.steps.forEachIndexed { index, step ->
                             Text(
-                                text = "${index + 1}. ${step.trim()}",
+                                text = if (content.uncertainFit) {
+                                    step.trim()
+                                } else {
+                                    "${index + 1}. ${step.trim()}"
+                                },
                                 style = typography.smallBody.copy(
                                     fontSize = PaperAnswerCardSupportSize,
                                     lineHeight = PaperAnswerCardSupportLineHeight,
@@ -315,6 +323,7 @@ private data class PaperAnswerPalette(
     val hairline: Color,
     val border: Color,
     val leftAccent: Color,
+    val cornerRadius: androidx.compose.ui.unit.Dp,
 )
 
 @Composable
@@ -341,6 +350,7 @@ private fun rememberPaperAnswerPalette(
                     content.uncertainFit -> colors.warn
                     else -> Color.Transparent
                 },
+                cornerRadius = 4.dp,
             )
         }
 
@@ -355,12 +365,17 @@ private fun rememberPaperAnswerPalette(
                 body = colors.ink0,
                 muted = colors.ink2,
                 hairline = colors.hairline,
-                border = colors.hairline.copy(alpha = 0.7f),
+                border = if (content.abstain || content.uncertainFit) {
+                    colors.hairline.copy(alpha = 0.45f)
+                } else {
+                    Color.Transparent
+                },
                 leftAccent = when {
                     content.abstain -> colors.danger
                     content.uncertainFit -> colors.warn
                     else -> Color.Transparent
                 },
+                cornerRadius = if (content.abstain || content.uncertainFit) 4.dp else 0.dp,
             )
         }
     }
@@ -397,7 +412,11 @@ internal fun compactEvidenceLabel(content: AnswerContent): String {
 
 private fun statusHeaderLabel(content: AnswerContent): String {
     val status = if (content.abstain) "NO MATCH" else "ANSWER"
-    return listOf(status, sourceCountLabel(content.sourceCount)).joinToString(" \u00B7 ")
+    val tokens = mutableListOf(status)
+    if (content.host.isNotBlank()) {
+        tokens += content.host.trim().uppercase(Locale.US)
+    }
+    return tokens.joinToString(" \u00B7 ")
 }
 
 private fun sourceEvidenceLabel(content: AnswerContent): String {
@@ -410,10 +429,10 @@ private fun sourceEvidenceLabel(content: AnswerContent): String {
 
 internal fun buildFooterMeta(content: AnswerContent): String {
     val tokens = mutableListOf<String>()
-    tokens += sourceCountLabel(content.sourceCount)
-    if (content.host.isNotBlank()) {
-        tokens += content.host.trim().uppercase(Locale.US)
+    if (content.reviewedCardMetadata.cardGuideId.isNotBlank()) {
+        tokens += content.reviewedCardMetadata.cardGuideId.trim().uppercase(Locale.US)
     }
+    tokens += sourceCountLabel(content.sourceCount)
     if (content.elapsedSeconds > 0.0) {
         tokens += String.format(Locale.US, "%.1fS", content.elapsedSeconds)
     }

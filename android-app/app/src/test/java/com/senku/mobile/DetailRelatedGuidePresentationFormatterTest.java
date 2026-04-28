@@ -101,9 +101,9 @@ public final class DetailRelatedGuidePresentationFormatterTest {
     public void nonRailPreviewRowDescriptionUsesGuideConnectionLanguage() {
         DetailRelatedGuidePresentationFormatter formatter = new DetailRelatedGuidePresentationFormatter(null);
 
-        assertEquals("Guide links", formatter.buildNonRailRelatedGuidesTitle());
+        assertEquals("Cross-reference", formatter.buildNonRailRelatedGuidesTitle());
         assertEquals(
-            "Guide links 1 of 1. GD-215 \u00b7 Rainwater Catchment. Anchored to GD-214. Preview here. Open full guide switches pages.",
+            "Cross-reference linked guide 1 of 1. GD-215 \u00b7 Rainwater Catchment. Anchored to GD-214. Preview here. Open full guide switches pages.",
             formatter.buildRelatedGuideButtonContentDescription(
                 new DetailRelatedGuidePresentationFormatter.State(
                     false,

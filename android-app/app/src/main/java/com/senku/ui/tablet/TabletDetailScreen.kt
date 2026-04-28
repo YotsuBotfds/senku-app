@@ -487,6 +487,7 @@ private fun DetailWorkspace(
         modifier = modifier.background(colors.bg0),
     ) {
         TitleBar(
+            detailMode = state.detailMode,
             guideId = state.guideId,
             guideTitle = state.guideTitle,
             meta = state.meta,
@@ -609,6 +610,13 @@ private fun CenterPane(
                         onAnchorClick = onAnchorClick,
                     )
                 }
+            } else if (state.isThreadMode()) {
+                ThreadReadingSurface(
+                    state = state,
+                    typeScalePolicy = typeScalePolicy,
+                    onTurnClick = onTurnClick,
+                    onAnchorClick = onAnchorClick,
+                )
             } else {
                 AnswerReadingSurface(
                     state = state,
@@ -619,6 +627,41 @@ private fun CenterPane(
                 Spacer(modifier = Modifier.height(8.dp))
             }
         }
+    }
+}
+
+@Composable
+private fun ThreadReadingSurface(
+    state: TabletDetailState,
+    typeScalePolicy: TabletDetailTypeScalePolicy,
+    onTurnClick: (String) -> Unit,
+    onAnchorClick: () -> Unit,
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = if (state.isLandscape) 24.dp else 20.dp),
+        verticalArrangement = Arrangement.spacedBy(if (state.isLandscape) 14.dp else 12.dp),
+    ) {
+        Text(
+            text = "THREAD TRANSCRIPT - ${state.turns.size} TURNS",
+            style = SenkuTheme.typography.monoCaps.copy(
+                fontSize = 10.sp,
+                lineHeight = 13.sp,
+                fontWeight = FontWeight.Medium,
+            ),
+            color = SenkuTheme.colors.ink3,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+        )
+        ThreadTurnList(
+            state = state,
+            typeScalePolicy = typeScalePolicy,
+            guideMode = false,
+            onTurnClick = onTurnClick,
+            onAnchorClick = onAnchorClick,
+        )
+        Spacer(modifier = Modifier.height(12.dp))
     }
 }
 
@@ -927,6 +970,7 @@ private fun ThreadTurnList(
 
 @Composable
 private fun TitleBar(
+    detailMode: TabletDetailMode,
     guideId: String,
     guideTitle: String,
     meta: List<MetaItem>,
@@ -954,7 +998,7 @@ private fun TitleBar(
             horizontalArrangement = Arrangement.spacedBy(10.dp),
         ) {
             Text(
-                text = if (guideMode) "GUIDE" else "ANSWER",
+                text = tabletTitleBarModeLabel(detailMode),
                 style = typography.monoCaps.copy(
                     fontSize = 11.sp,
                     lineHeight = 14.sp,
@@ -1122,7 +1166,7 @@ private fun QuestionInlineBlock(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
-                text = if (guideMode) "SECTION" else "ANSWER",
+                text = if (guideMode) "SECTION" else "QUESTION",
                 style = typography.monoCaps.copy(
                     fontSize = 10.sp,
                     lineHeight = 13.sp,
@@ -1132,7 +1176,7 @@ private fun QuestionInlineBlock(
                 maxLines = 1,
             )
             Text(
-                text = if (guideMode) "GUIDE PAGE" else "THIS DEVICE",
+                text = if (guideMode) "GUIDE PAGE" else "USER",
                 style = typography.monoCaps.copy(
                     fontSize = 10.sp,
                     lineHeight = 13.sp,
@@ -1142,7 +1186,7 @@ private fun QuestionInlineBlock(
                 maxLines = 1,
             )
             Text(
-                text = if (guideMode) "SEC $turnIndex" else "$turnIndex TURN",
+                text = if (guideMode) "SEC $turnIndex" else "Q$turnIndex",
                 style = typography.monoCaps.copy(
                     fontSize = 10.sp,
                     lineHeight = 13.sp,
@@ -1323,8 +1367,17 @@ private fun AnswerInlineBlock(
 
 internal fun TabletDetailState.isGuideMode(): Boolean = detailMode == TabletDetailMode.Guide
 
+internal fun TabletDetailState.isThreadMode(): Boolean = detailMode == TabletDetailMode.Thread
+
 internal fun TabletDetailState.isAnswerOrThreadMode(): Boolean =
     detailMode == TabletDetailMode.Answer || detailMode == TabletDetailMode.Thread
+
+internal fun tabletTitleBarModeLabel(detailMode: TabletDetailMode): String =
+    when (detailMode) {
+        TabletDetailMode.Answer -> "ANSWER"
+        TabletDetailMode.Thread -> "THREAD"
+        TabletDetailMode.Guide -> "GUIDE"
+    }
 
 internal fun TabletDetailState.hasAnswerOwnedSourceSelection(): Boolean {
     val selectedSource = sources.any { it.isSelected }

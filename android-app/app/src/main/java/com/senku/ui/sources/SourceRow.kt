@@ -28,9 +28,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.senku.mobile.R
-import com.senku.ui.evidence.EvidenceAnchorLabelStyle
 import com.senku.ui.evidence.EvidenceSourceModel
-import com.senku.ui.evidence.evidenceAnchorLabel
 import com.senku.ui.evidence.normalizeEvidenceGuideId
 import com.senku.ui.evidence.normalizeEvidenceLabel
 import com.senku.ui.evidence.normalizeEvidenceSourceTitle
@@ -134,7 +132,7 @@ internal fun buildSourceRowMeta(category: String, isAnchor: Boolean): String {
             .takeIf { it.isNotEmpty() }
             ?.let(::add)
         if (isAnchor) {
-            add(evidenceAnchorLabel(EvidenceAnchorLabelStyle.Guide))
+            add("anchor")
         }
     }
     return parts.joinToString(separator = MetaSeparator)
@@ -144,7 +142,7 @@ internal fun normalizeSourceCategory(category: String): String {
     val cleaned = normalizeEvidenceLabel(category)
     return when (cleaned) {
         "source anchor", "anchor", "anchor guide" -> ""
-        "cross reference", "cross-reference", "crossref", "related guide" -> "cross-ref"
+        "cross reference", "cross-reference", "crossref", "related guide" -> "related"
         "required reading", "prerequisite" -> "required"
         else -> cleaned
     }

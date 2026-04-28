@@ -8,13 +8,11 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -24,8 +22,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -193,18 +189,10 @@ private fun HeaderRow(
 private fun BadgeTile(letter: String) {
     val colors = SenkuTheme.colors
     val tileSize = dimensionResource(R.dimen.senku_rev03_identity_strip_height) + 2.dp
-    val brush = Brush.linearGradient(
-        colors = listOf(
-            colors.olive20,
-            colors.olive60,
-        ),
-    )
-
     Box(
         modifier = Modifier
             .size(tileSize)
-            .clip(RoundedCornerShape(12.dp))
-            .background(brush),
+            .background(colors.bg2, RoundedCornerShape(3.dp)),
         contentAlignment = Alignment.Center,
     ) {
         Text(
@@ -239,7 +227,7 @@ private fun StatusPill(model: IdentityStripModel) {
     Surface(
         color = background,
         contentColor = textColor,
-        shape = RoundedCornerShape(999.dp),
+        shape = RoundedCornerShape(3.dp),
         border = BorderStroke(1.dp, border),
     ) {
         Row(
@@ -247,12 +235,6 @@ private fun StatusPill(model: IdentityStripModel) {
             horizontalArrangement = Arrangement.spacedBy(6.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Spacer(
-                modifier = Modifier
-                    .size(6.dp)
-                    .clip(CircleShape)
-                    .background(textColor),
-            )
             Text(
                 text = model.statusLabel.uppercase(Locale.US),
                 style = SenkuTheme.typography.monoCaps.copy(

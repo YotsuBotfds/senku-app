@@ -50,12 +50,12 @@ final class DetailProvenancePresentationFormatter {
 
     int getCollapsedProvenanceMaxLines(State state) {
         if (state != null && state.utilityRail) {
-            return 5;
+            return 4;
         }
         if (state != null && state.landscapePhoneLayout) {
             return 2;
         }
-        return 3;
+        return 2;
     }
 
     SearchResult selectedSourceForProvenanceAction(List<SearchResult> currentSources, String selectedSourceKey) {

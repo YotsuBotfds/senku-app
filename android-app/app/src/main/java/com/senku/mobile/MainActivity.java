@@ -1785,9 +1785,11 @@ public final class MainActivity extends AppCompatActivity {
         button.setGravity(android.view.Gravity.START | android.view.Gravity.CENTER_VERTICAL);
         button.setMaxLines(manualHomeShell ? 2 : (compactPhoneHome ? 2 : 3));
         button.setEllipsize(TextUtils.TruncateAt.END);
-        button.setText(compactPhoneHome
-            ? presentationFormatter().buildCompactRecentThreadLabel(preview)
-            : presentationFormatter().buildRecentThreadLabel(preview));
+        button.setText(manualHomeShell
+            ? buildManualHomeRecentThreadLabel(preview)
+            : (compactPhoneHome
+                ? presentationFormatter().buildCompactRecentThreadLabel(preview)
+                : presentationFormatter().buildRecentThreadLabel(preview)));
         button.setContentDescription(presentationFormatter().buildRecentThreadContentDescription(preview, index));
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
             LinearLayout.LayoutParams.MATCH_PARENT,
@@ -1810,6 +1812,91 @@ public final class MainActivity extends AppCompatActivity {
             return true;
         });
         return button;
+    }
+
+    private String buildManualHomeRecentThreadLabel(ChatSessionStore.ConversationPreview preview) {
+        return buildManualHomeRecentThreadLabelStatic(preview);
+    }
+
+    static String buildManualHomeRecentThreadLabelForTest(ChatSessionStore.ConversationPreview preview) {
+        return buildManualHomeRecentThreadLabelStatic(preview);
+    }
+
+    private static String buildManualHomeRecentThreadLabelStatic(ChatSessionStore.ConversationPreview preview) {
+        SessionMemory.TurnSnapshot turn = preview == null ? null : preview.latestTurn;
+        if (turn == null) {
+            return "";
+        }
+        String question = clipManualHomeRecentThreadQuestion(turn.question);
+        String meta = buildManualHomeRecentThreadMeta(preview);
+        if (meta.isEmpty()) {
+            return question;
+        }
+        return question + "\n" + meta;
+    }
+
+    private static String clipManualHomeRecentThreadQuestion(String question) {
+        String value = safe(question).trim();
+        if (value.length() <= 34) {
+            return value;
+        }
+        return value.substring(0, 31).trim() + "...";
+    }
+
+    private static String buildManualHomeRecentThreadMeta(ChatSessionStore.ConversationPreview preview) {
+        SessionMemory.TurnSnapshot turn = preview == null ? null : preview.latestTurn;
+        if (turn == null) {
+            return "";
+        }
+        ArrayList<String> parts = new ArrayList<>();
+        String guideId = resolveManualHomeRecentThreadGuideId(turn);
+        if (!guideId.isEmpty()) {
+            parts.add(guideId);
+        }
+        String timeLabel = buildManualHomeRecentThreadTimeLabel(preview == null ? 0L : preview.lastActivityEpoch);
+        if (!timeLabel.isEmpty()) {
+            parts.add(timeLabel);
+        }
+        parts.add(buildManualHomeRecentThreadConfidenceLabel(turn));
+        return String.join(" \u2022 ", parts);
+    }
+
+    private static String resolveManualHomeRecentThreadGuideId(SessionMemory.TurnSnapshot turn) {
+        if (turn == null || turn.sourceResults == null) {
+            return "";
+        }
+        for (SearchResult source : turn.sourceResults) {
+            String guideId = safe(source == null ? null : source.guideId).trim();
+            if (!guideId.isEmpty()) {
+                return guideId;
+            }
+        }
+        return "";
+    }
+
+    private static String buildManualHomeRecentThreadTimeLabel(long recordedAtEpoch) {
+        if (recordedAtEpoch <= 0L) {
+            return "";
+        }
+        long elapsedMillis = Math.max(0L, System.currentTimeMillis() - recordedAtEpoch);
+        long totalMinutes = elapsedMillis / 60_000L;
+        long totalHours = totalMinutes / 60L;
+        long days = totalHours / 24L;
+        if (days == 1L) {
+            return "YESTERDAY";
+        }
+        if (days > 1L) {
+            return days + "D";
+        }
+        return String.format(Locale.US, "%02d:%02d", totalHours, totalMinutes % 60L);
+    }
+
+    private static String buildManualHomeRecentThreadConfidenceLabel(SessionMemory.TurnSnapshot turn) {
+        if (turn == null) {
+            return "UNSURE";
+        }
+        ReviewedCardMetadata metadata = ReviewedCardMetadata.normalize(turn.reviewedCardMetadata);
+        return !safe(turn.ruleId).trim().isEmpty() || metadata.isPresent() ? "CONFIDENT" : "UNSURE";
     }
 
     private void refreshHomeRelatedGuidesAsync() {

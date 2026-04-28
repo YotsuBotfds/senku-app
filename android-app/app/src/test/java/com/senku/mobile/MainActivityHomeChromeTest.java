@@ -8,6 +8,7 @@ import com.senku.ui.home.CategoryShelfItemModel;
 import com.senku.ui.home.CategoryShelfLayoutMode;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.junit.Test;
@@ -132,6 +133,36 @@ public final class MainActivityHomeChromeTest {
             CategoryShelfLayoutMode.TABLET_GRID,
             MainActivity.resolveCategoryShelfLayoutMode(false, false, true)
         );
+    }
+
+    @Test
+    public void manualRecentThreadLabelUsesCompactGuideTimeAndConfidenceMetadata() {
+        long fourHoursTwentyOneMinutesAgo = System.currentTimeMillis() - ((4L * 60L + 21L) * 60_000L);
+        ChatSessionStore.ConversationPreview unsurePreview = preview(
+            "can I make a rain shelter with cord",
+            "GD-345",
+            "",
+            ReviewedCardMetadata.empty(),
+            fourHoursTwentyOneMinutesAgo
+        );
+        ChatSessionStore.ConversationPreview confidentPreview = preview(
+            "how do I keep tinder dry",
+            "GD-027",
+            "deterministic-fire",
+            ReviewedCardMetadata.empty(),
+            fourHoursTwentyOneMinutesAgo
+        );
+        ChatSessionStore.ConversationPreview yesterdayPreview = preview(
+            "how do I brace a wall",
+            "GD-094",
+            "",
+            new ReviewedCardMetadata("card-1", "GD-094", "reviewed", "", "reviewed_card_runtime", Collections.emptyList()),
+            System.currentTimeMillis() - (25L * 60L * 60L * 1000L)
+        );
+
+        assertTrue(MainActivity.buildManualHomeRecentThreadLabelForTest(unsurePreview).endsWith("GD-345 \u2022 04:21 \u2022 UNSURE"));
+        assertTrue(MainActivity.buildManualHomeRecentThreadLabelForTest(confidentPreview).endsWith("GD-027 \u2022 04:21 \u2022 CONFIDENT"));
+        assertTrue(MainActivity.buildManualHomeRecentThreadLabelForTest(yesterdayPreview).endsWith("GD-094 \u2022 YESTERDAY \u2022 CONFIDENT"));
     }
 
     @Test
@@ -310,5 +341,26 @@ public final class MainActivityHomeChromeTest {
             "",
             ""
         );
+    }
+
+    private static ChatSessionStore.ConversationPreview preview(
+        String question,
+        String guideId,
+        String ruleId,
+        ReviewedCardMetadata metadata,
+        long lastActivityEpoch
+    ) {
+        SessionMemory.TurnSnapshot turn = new SessionMemory.TurnSnapshot(
+            question,
+            "",
+            "answer",
+            Collections.emptyList(),
+            Arrays.asList(guideWithId(guideId + " title", guideId)),
+            ruleId,
+            metadata,
+            null,
+            lastActivityEpoch
+        );
+        return new ChatSessionStore.ConversationPreview("conversation-" + guideId, turn, 1, lastActivityEpoch);
     }
 }

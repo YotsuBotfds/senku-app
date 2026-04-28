@@ -67,13 +67,12 @@ final class DetailMetaPresentationFormatter {
 
     String buildCompactHeaderMeta(State state) {
         ArrayList<String> parts = new ArrayList<>();
-        parts.add(context.getString(R.string.detail_loop4_meta_route_token, buildSerialRouteValue(state)));
+        parts.add(state.abstainRoute ? "NO MATCH" : "ANSWER");
         String backendValue = buildSerialBackendValue(state);
         if (!backendValue.isEmpty()) {
-            parts.add(context.getString(R.string.detail_loop4_meta_backend_token, backendValue));
+            parts.add(backendValue);
         }
         parts.add(context.getString(R.string.detail_loop4_meta_evidence_token, buildSerialEvidenceValue(state)));
-        parts.add(context.getString(R.string.detail_loop4_meta_sources_token, state.currentSourcesCount));
         parts.add(context.getString(R.string.detail_loop4_meta_turns_token, Math.max(1, state.recentTurnsCount)));
         return buildHeaderMetaText(parts, state.wide, buildPackFreshnessMeta(state));
     }

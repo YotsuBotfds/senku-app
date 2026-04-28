@@ -22,6 +22,19 @@ files from this lane.
   Wave18 resolved the tablet thread `GD-?` header leak and removed the
   answer-source `GD-?` fallback labels. Remaining high-risk blockers are
   Answer, Guide, and Emergency mock drift, plus Home density/chrome polish.
+- Claude source mocks reviewed for target intent:
+  `claudedesign4-27/surface-home-search.jsx`,
+  `claudedesign4-27/surface-answer-thread.jsx`,
+  `claudedesign4-27/surface-guide.jsx`,
+  `claudedesign4-27/primitives.jsx`, and
+  `claudedesign4-27/tokens.jsx`.
+- Live worktree caution at this planner refresh: concurrent Android edits are
+  present in `DetailActivity.java`, multiple `Detail*PresentationFormatter`
+  files, `GuideBodySanitizer.java`, `MainActivity.java`, `CategoryShelf.kt`,
+  `IdentityStrip.kt`, `PaperAnswerCard.kt`, `SourceRow.kt`,
+  `TabletDetailScreen.kt`, and related tests. Do not dispatch P1, P2, P4, P6,
+  P7, or source-row/evidence component work until the worker has reconciled
+  live `git status --short`.
 
 ## Proof Path Rules
 
@@ -33,6 +46,21 @@ files from this lane.
 - Focused proof is acceptable for a phase commit only when device, APK SHA,
   screenshot path, dump path, and diagnostic-vs-acceptance status are named.
   Final closure still requires a full homogeneous four-role state pack.
+
+## Per-Screen Acceptance Matrix
+
+All rows require screenshot plus XML dump review against the target mock. Unit
+tests, harness pass counts, and data-pack health can support a phase but do not
+close visual parity by themselves.
+
+| Screen | Target mocks | Acceptance criteria | Current proof paths | Owning slice |
+| --- | --- | --- | --- | --- |
+| Home | `home-phone-portrait.png`, `home-phone-landscape.png`, `home-tablet-portrait.png`, `home-tablet-landscape.png` | Shows the flat `HOME SENKU` identity strip, offline/pack-ready state, search affordance, six category tiles with target counts, recent-thread rows, and Library/Ask/Saved nav without developer chrome. Phone portrait keeps bottom nav clear; phone landscape and tablets use side rail plus balanced content/recent-thread columns. | `screenshots/*/homeEntryShowsPrimaryBrowseAndAskLanes__home_entry.png`; use `homeGuideIntentShowsGuideConnectionContext__home_guide_connection_context.png` only as secondary shell context. | P6 |
+| Search | `search-phone-portrait.png`, `search-phone-landscape.png`, `search-tablet-portrait.png`, `search-tablet-landscape.png` | Query is `rain shelter`; count is `4 results`; rows remain `GD-023`, `GD-027`, `GD-345`, `GD-294` with compact score bars/labels, category/role/window metadata, and snippets. Tablet filter rail uses checkbox affordances and counts; tablet landscape includes the `GD-023` preview rail. Phone landscape must not regress to a blank or over-chromed state. | `screenshots/*/searchQueryShowsResultsWithoutShellPolling__search_results.png`; `screenshots/*/searchResultsLinkedGuideHandoffOpensLinkedGuideDetail__browse_linked_handoff.png`. | P5 for rows/cards; P6 for shell/filter chrome |
+| Answer | `answer-phone-portrait.png`, `answer-phone-landscape.png`, `answer-tablet-portrait.png`, `answer-tablet-landscape.png` | Renders as answer canvas, not guide paper or proof-only card mode: `ANSWER GD-345 - Rain shelter`, question title, text-first answer body, `UNSURE FIT` notice, `Sources - 3`, related guides, and follow-up composer. Phone portrait has no bottom-input collision. Phone landscape keeps split answer article plus source/related rail visible. Tablets keep bounded answer/source rails; tablet landscape may use thread/answer/evidence panes. | `screenshots/phone_portrait/generativeAskWithHostInferenceNavigatesToDetailScreen__generative_detail.png`; `screenshots/phone_landscape/generativeAskWithHostInferenceNavigatesToDetailScreen__rain_shelter_gd345_split_answer.png`; `screenshots/tablet_portrait/answerModeSourceSelectionKeepsSourceAnchoredCrossReferenceLane__answer_source_graph_direct.png`; `screenshots/tablet_landscape/answerModeSourceSelectionKeepsSourceAnchoredCrossReferenceLane__answer_source_graph_direct.png`. | P1 for mode/shell; P2 for answer article/source stack |
+| Guide | `guide-phone-portrait.png`, `guide-phone-landscape.png`, `guide-tablet-portrait.png`, `guide-tablet-landscape.png` | Renders as guide reader: `GUIDE GD-132 - Foundry & Metal Casting`, parchment paper panel, field-manual header, section content, danger/admonition block, required-reading rows, and no raw section markers or mojibake. Tablet portrait has sections rail plus centered paper. Tablet landscape has sections rail, centered paper, and `Cross-reference - 6` rail. Guide semantics must stay separate from answer/source/provenance semantics in dumps. | `screenshots/*/guideDetailShowsRelatedGuideNavigation__guide_related_paths.png`; `screenshots/phone_portrait/guideDetailUsesCrossReferenceCopyOffRail__guide_cross_reference_offrail.png`; `screenshots/phone_landscape/guideDetailUsesCrossReferenceCopyOffRail__guide_cross_reference_offrail.png`; `screenshots/tablet_portrait/guideDetailUsesCrossReferenceCopyOffRail__guide_cross_reference_offrail.png`; `screenshots/tablet_landscape/guideDetailDestinationKeepsSourceContextOnTabletLandscape__guide_cross_reference_tablet_landscape.png`. | P1 for mode/shell; P4 for guide formatter/paper/xref |
+| Thread | `thread-phone-portrait.png`, `thread-phone-landscape.png`, `thread-tablet-portrait.png`, `thread-tablet-landscape.png` | Renders as chronological transcript: `THREAD GD-220 - Rain shelter - 2 turns`, Q1/A1 plus Q2/A2 rhythm, source chips, confidence markers, and composer. Phone landscape shows recent turn plus support rail without clipping. Tablet portrait keeps transcript primary with source support rail. Tablet landscape uses left turn index, center transcript, and right `Sources in thread - 2`; no answer-detail takeover or stale `GD-?` owner labels. | `screenshots/*/scriptedSeededFollowUpThreadShowsInlineHistory__followup_thread.png`. | P1 for shell/tablet ownership; P3 for transcript renderer/rail |
+| Emergency | `emergency-phone-portrait.png`, `emergency-tablet-portrait.png` | Portrait-only acceptance: `ANSWER GD-132 - Burn hazard response`, `DANGER` badge, danger banner, underlined `minimum 5 m from active work zone`, four ordered immediate actions, one `WHY THIS ANSWER` / `GD-132` evidence card, and quiet emergency composer. Preserve negative controls as non-emergency. Do not create or require emergency landscape targets. Tablet portrait must remain a full-height emergency owner with no stale background rails. | `screenshots/phone_portrait/emergencyPortraitAnswerShowsImmediateActionState__emergency_portrait_answer.png`; `screenshots/tablet_portrait/emergencyPortraitAnswerShowsImmediateActionState__emergency_portrait_answer.png`. | P1 for shared mounting; P7 for emergency content/chrome |
 
 ## Phase Map
 

@@ -15,7 +15,7 @@ final class DetailActionBlockPresentationFormatter {
     static final String ACTION_LABEL_DO_FIRST = "Do first";
     static final String ACTION_LABEL_AVOID = "Avoid";
     static final String ACTION_LABEL_ESCALATE = "Escalate if";
-    static final String EMERGENCY_ACTION_HEADING_PREFIX = "Immediate actions \u00b7 ";
+    static final String EMERGENCY_ACTION_HEADING_PREFIX = "IMMEDIATE ACTIONS \u00b7 ";
     private static final int MAX_EMERGENCY_PORTRAIT_ACTIONS = 4;
 
     enum ActionBlockKind {
@@ -108,6 +108,24 @@ final class DetailActionBlockPresentationFormatter {
         panel.setVisibility(View.VISIBLE);
         panel.setBackgroundColor(context.getColor(android.R.color.transparent));
         int displayedActionCount = Math.min(actions.size(), MAX_EMERGENCY_PORTRAIT_ACTIONS);
+        panel.addView(buildEmergencyActionsHeadingView(displayedActionCount));
+        for (int i = 0; i < displayedActionCount; i++) {
+            panel.addView(buildEmergencyPortraitActionView(i + 1, actions.get(i), severityAccentColor, i > 0));
+        }
+    }
+
+    private View buildEmergencyActionsHeadingView(int displayedActionCount) {
+        LinearLayout headingRow = new LinearLayout(context);
+        headingRow.setOrientation(LinearLayout.HORIZONTAL);
+        headingRow.setGravity(android.view.Gravity.CENTER_VERTICAL);
+        headingRow.setPadding(0, 0, 0, dp(10));
+
+        View rule = new View(context);
+        rule.setBackgroundColor(context.getColor(R.color.senku_rev03_hairline_strong));
+        LinearLayout.LayoutParams ruleParams = new LinearLayout.LayoutParams(dp(24), dp(1));
+        ruleParams.rightMargin = dp(12);
+        headingRow.addView(rule, ruleParams);
+
         TextView heading = new TextView(context);
         heading.setText(EMERGENCY_ACTION_HEADING_PREFIX + displayedActionCount);
         heading.setTextAppearance(context, android.R.style.TextAppearance_Small);
@@ -116,11 +134,11 @@ final class DetailActionBlockPresentationFormatter {
         heading.setLetterSpacing(0.12f);
         heading.setTextSize(11f);
         heading.setIncludeFontPadding(false);
-        heading.setPadding(0, 0, 0, dp(10));
-        panel.addView(heading);
-        for (int i = 0; i < displayedActionCount; i++) {
-            panel.addView(buildEmergencyPortraitActionView(i + 1, actions.get(i), severityAccentColor, i > 0));
-        }
+        headingRow.addView(heading, new LinearLayout.LayoutParams(
+            ViewGroup.LayoutParams.WRAP_CONTENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        ));
+        return headingRow;
     }
 
     private List<ActionBlock> buildHighRiskActionBlocks(String currentBody, int severityAccentColor) {
@@ -203,7 +221,7 @@ final class DetailActionBlockPresentationFormatter {
 
         LinearLayout row = new LinearLayout(context);
         row.setOrientation(LinearLayout.HORIZONTAL);
-        row.setPadding(0, dp(12), 0, dp(12));
+        row.setPadding(0, dp(10), 0, dp(10));
         LinearLayout.LayoutParams rowParams = new LinearLayout.LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT,
             ViewGroup.LayoutParams.WRAP_CONTENT
@@ -222,7 +240,7 @@ final class DetailActionBlockPresentationFormatter {
 
         LinearLayout content = new LinearLayout(context);
         content.setOrientation(LinearLayout.VERTICAL);
-        content.setPadding(dp(14), dp(1), 0, 0);
+        content.setPadding(dp(12), dp(1), 0, 0);
 
         TextView title = new TextView(context);
         title.setText(action.title);
@@ -240,7 +258,7 @@ final class DetailActionBlockPresentationFormatter {
         detail.setTextSize(13f);
         detail.setLineSpacing(0f, 1.12f);
         detail.setIncludeFontPadding(false);
-        detail.setPadding(0, dp(3), 0, 0);
+        detail.setPadding(0, dp(2), 0, 0);
         detail.setVisibility(action.detail.isEmpty() ? View.GONE : View.VISIBLE);
 
         content.addView(title);
@@ -255,7 +273,7 @@ final class DetailActionBlockPresentationFormatter {
         ActionBlockTextSanitizer sanitizer
     ) {
         ArrayList<EmergencyActionSpec> actions = new ArrayList<>();
-        for (String step : extractStepLines(formattedAnswerText)) {
+        for (String step : extractEmergencyStepLines(formattedAnswerText)) {
             String cleaned = sanitizeActionBlockText(step, sanitizer);
             if (cleaned.isEmpty()) {
                 continue;
@@ -278,6 +296,27 @@ final class DetailActionBlockPresentationFormatter {
             return new EmergencyActionSpec(cleaned, "");
         }
         return new EmergencyActionSpec(title, detail);
+    }
+
+    private static List<String> extractEmergencyStepLines(String answerText) {
+        ArrayList<String> steps = new ArrayList<>();
+        String[] lines = safe(answerText).split("\\R");
+        boolean collectingActionSection = false;
+        for (String rawLine : lines) {
+            String line = safe(rawLine).trim();
+            String normalized = line.toLowerCase(Locale.US);
+            if (isActionSectionHeading(normalized)) {
+                collectingActionSection = true;
+                continue;
+            }
+            if (collectingActionSection && isNonActionSectionHeading(normalized)) {
+                break;
+            }
+            if (collectingActionSection && line.matches("^\\d+[.)]\\s+.*")) {
+                steps.add(line.replaceFirst("^\\d+[.)]\\s*", "").trim());
+            }
+        }
+        return steps;
     }
 
     private static String trimEmergencyActionTitle(String text) {
@@ -392,6 +431,13 @@ final class DetailActionBlockPresentationFormatter {
             || normalizedLine.startsWith("why this answer")
             || normalizedLine.startsWith("evidence")
             || normalizedLine.startsWith("provenance")
+            || normalizedLine.startsWith("proof")
+            || normalizedLine.startsWith("route")
+            || normalizedLine.startsWith("backend")
+            || normalizedLine.startsWith("model")
+            || normalizedLine.startsWith("confidence")
+            || normalizedLine.startsWith("match type")
+            || normalizedLine.startsWith("reviewed card")
             || normalizedLine.startsWith("source")
             || normalizedLine.startsWith("sources")
             || normalizedLine.startsWith("emergency context");

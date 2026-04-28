@@ -41,15 +41,15 @@ public final class DetailProvenancePresentationFormatterTest {
     public void collapsedProvenanceMaxLinesTracksPosture() {
         DetailProvenancePresentationFormatter formatter = new DetailProvenancePresentationFormatter(null);
 
-        assertEquals(5, formatter.getCollapsedProvenanceMaxLines(
+        assertEquals(4, formatter.getCollapsedProvenanceMaxLines(
             new DetailProvenancePresentationFormatter.State(true, false)
         ));
         assertEquals(2, formatter.getCollapsedProvenanceMaxLines(
             new DetailProvenancePresentationFormatter.State(false, true)
         ));
-        assertEquals(3, formatter.getCollapsedProvenanceMaxLines(
+        assertEquals(2, formatter.getCollapsedProvenanceMaxLines(
             new DetailProvenancePresentationFormatter.State(false, false)
         ));
-        assertEquals(3, formatter.getCollapsedProvenanceMaxLines(null));
+        assertEquals(2, formatter.getCollapsedProvenanceMaxLines(null));
     }
 }

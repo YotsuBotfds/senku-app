@@ -7,14 +7,14 @@ import org.junit.Test
 class SourceRowModelTest {
     @Test
     fun buildSourceRowMetaUsesReadableSeparatorAndNormalizesCategory() {
-        assertEquals("water \u00B7 anchor guide", buildSourceRowMeta(category = " Water ", isAnchor = true))
+        assertEquals("water \u00B7 anchor", buildSourceRowMeta(category = " Water ", isAnchor = true))
         assertEquals(
             "resource management",
             buildSourceRowMeta(category = "resource-management", isAnchor = false),
         )
-        assertEquals("anchor guide", buildSourceRowMeta(category = "", isAnchor = true))
-        assertEquals("anchor guide", buildSourceRowMeta(category = "source_anchor", isAnchor = true))
-        assertEquals("cross-ref", buildSourceRowMeta(category = "cross_reference", isAnchor = false))
+        assertEquals("anchor", buildSourceRowMeta(category = "", isAnchor = true))
+        assertEquals("anchor", buildSourceRowMeta(category = "source_anchor", isAnchor = true))
+        assertEquals("related", buildSourceRowMeta(category = "cross_reference", isAnchor = false))
         assertEquals("required", buildSourceRowMeta(category = "required_reading", isAnchor = false))
     }
 
@@ -39,7 +39,7 @@ class SourceRowModelTest {
         assertEquals("Water storage", source.title)
         assertEquals("reviewed evidence", source.category)
         assertEquals(
-            "reviewed evidence \u00B7 anchor guide",
+            "reviewed evidence \u00B7 anchor",
             buildSourceRowMeta(source.category, source.isAnchor),
         )
     }

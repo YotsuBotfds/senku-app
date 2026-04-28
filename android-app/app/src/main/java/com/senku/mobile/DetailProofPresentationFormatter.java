@@ -104,6 +104,19 @@ final class DetailProofPresentationFormatter {
 
     SpannableStringBuilder buildNoCitationProofSummary(State state, boolean compact) {
         ArrayList<StructuredLine> lines = new ArrayList<>();
+        if (compact) {
+            lines.add(new StructuredLine(
+                context.getString(R.string.detail_external_review_proof_evidence),
+                context.getString(R.string.detail_external_review_no_citations_short),
+                state.lowCoverageAccentColor
+            ));
+            lines.add(new StructuredLine(
+                context.getString(R.string.detail_external_review_proof_corpus),
+                context.getString(R.string.detail_external_review_corpus_limit_no_citations),
+                state.lowCoverageAccentColor
+            ));
+            return buildStructuredLineBlock(lines);
+        }
         lines.add(new StructuredLine(
             context.getString(R.string.detail_external_review_proof_route),
             state.routeValue,
@@ -221,7 +234,7 @@ final class DetailProofPresentationFormatter {
         boolean compact
     ) {
         ArrayList<StructuredLine> lines = new ArrayList<>();
-        if (compact && state.reviewedCardMetadata.isPresent()) {
+        if (compact) {
             String leadValue = buildSourceEntryValue(firstSource, currentSources);
             if (!leadValue.isEmpty()) {
                 lines.add(new StructuredLine(
@@ -230,7 +243,14 @@ final class DetailProofPresentationFormatter {
                     context.getColor(R.color.senku_accent_olive)
                 ));
             }
-            appendReviewedCardLines(lines, state, true);
+            lines.add(new StructuredLine(
+                context.getString(R.string.detail_external_review_proof_evidence),
+                state.evidenceStrengthLabel + " | " + formatCountLabel(state.sourceCount, "source", "sources"),
+                state.evidenceAccentColor
+            ));
+            if (state.reviewedCardMetadata.isPresent()) {
+                appendReviewedCardLines(lines, state, true);
+            }
             return lines;
         }
         lines.add(new StructuredLine(
@@ -321,28 +341,26 @@ final class DetailProofPresentationFormatter {
     static List<CompactReviewedCardLine> compactReviewedCardLines(ReviewedCardMetadata metadata) {
         ArrayList<CompactReviewedCardLine> lines = new ArrayList<>();
         ReviewedCardMetadata normalized = ReviewedCardMetadata.normalize(metadata);
-        String cardLabel = normalized.cardId.isEmpty()
-            ? "Reviewed guide card"
-            : "Reviewed guide card " + normalized.cardId;
-        lines.add(new CompactReviewedCardLine(cardLabel, "available for review"));
+        lines.add(new CompactReviewedCardLine("Reviewed card", compactReviewedCardValue(normalized)));
         if (!normalized.cardGuideId.isEmpty()) {
-            lines.add(new CompactReviewedCardLine("Cites guide " + normalized.cardGuideId, "guide anchor"));
+            lines.add(new CompactReviewedCardLine("Cites", normalized.cardGuideId));
         }
         String sourceGuideIds = normalized.citedSourceGuideIdsCsv();
         if (!sourceGuideIds.isEmpty() && !sourceGuideIds.equals(normalized.cardGuideId)) {
-            lines.add(new CompactReviewedCardLine("Cites guide " + sourceGuideIds, "supporting guide"));
+            lines.add(new CompactReviewedCardLine("Supports", sourceGuideIds));
         }
-        if (!normalized.reviewStatus.isEmpty()) {
-            lines.add(new CompactReviewedCardLine(
-                "Status",
-                "Status: " + humanizeReviewedCardToken(normalized.reviewStatus)
-            ));
-        }
-        lines.add(new CompactReviewedCardLine(
-            "Limit",
-            "Limit: reviewed support only; inspect cited guide before relying."
-        ));
         return lines;
+    }
+
+    private static String compactReviewedCardValue(ReviewedCardMetadata metadata) {
+        if (metadata == null || metadata.cardId.isEmpty()) {
+            return "reviewed support";
+        }
+        String status = humanizeReviewedCardToken(metadata.reviewStatus);
+        if (status.isEmpty()) {
+            return metadata.cardId;
+        }
+        return metadata.cardId + " | " + status;
     }
 
     private void addProofDetailLines(

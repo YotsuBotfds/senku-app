@@ -24,7 +24,7 @@ public final class DetailGuidePresentationFormatterTest {
         );
 
         assertEquals(
-            "Section 1 Storage\n\nSection 2 Safe storage\nUse clean water.",
+            "\u00a7 1 \u00b7 Storage\n\n\u00a7 2 \u00b7 Safe storage\nUse clean water.",
             DetailGuidePresentationFormatter.buildGuideBody(result)
         );
     }
@@ -43,7 +43,7 @@ public final class DetailGuidePresentationFormatterTest {
         );
 
         assertEquals(
-            "Section 1 Storage\nUse covered jars.",
+            "\u00a7 1 \u00b7 Storage\nUse covered jars.",
             DetailGuidePresentationFormatter.buildGuideBody(result)
         );
     }
@@ -111,7 +111,7 @@ public final class DetailGuidePresentationFormatterTest {
     @Test
     public void guideBodySanitizerRemovesRawSectionMarkersAndCountsSections() {
         assertEquals(
-            "Section 1 Area readiness\n\nKeep water away.\n\nSection 2 Foundry Safety Quickstart\nCheck tools.",
+            "\u00a7 1 \u00b7 Area readiness\n\nKeep water away.\n\n\u00a7 2 \u00b7 Foundry Safety Quickstart\nCheck tools.",
             GuideBodySanitizer.sanitizeGuideBodyForDisplay(
                 "[[SECTION]] Area readiness\n\nKeep water away.\n\nSource section: Foundry Safety Quickstart\nCheck tools."
             )
@@ -182,7 +182,7 @@ public final class DetailGuidePresentationFormatterTest {
     @Test
     public void guideBodySanitizerSplitsVerboseSectionTitlesIntoManualLabelAndHeading() {
         assertEquals(
-            "Section 1 Area readiness\nReviewed Answer-Card Boundary\nUse this section only for screening.",
+            "\u00a7 1 \u00b7 Area readiness\nReviewed Answer-Card Boundary\nUse this section only for screening.",
             GuideBodySanitizer.sanitizeGuideBodyForDisplay(
                 "## Section 1 Reviewed Answer-Card Boundary: Area Readiness, Hazard Screen, and Handoffs\n"
                     + "Use this section only for screening."
@@ -193,7 +193,7 @@ public final class DetailGuidePresentationFormatterTest {
     @Test
     public void guideBodySanitizerSkipsFrontMatterRulesMetadataAndDuplicateSectionRows() {
         assertEquals(
-            "Section 1 Storage\nKeep jars covered.",
+            "\u00a7 1 \u00b7 Storage\nKeep jars covered.",
             GuideBodySanitizer.sanitizeGuideBodyForDisplay(
                 "---\n"
                     + "title: Water Storage\n"
@@ -211,7 +211,17 @@ public final class DetailGuidePresentationFormatterTest {
     public void guideBodySanitizerNormalizesMojibakeAndRepeatedSeparators() {
         assertEquals(
             "DANGER \u00b7 EXTREME BURN HAZARD",
-            GuideBodySanitizer.sanitizeGuideBodyForDisplay("DANGER Â· Â· EXTREME BURN HAZARD")
+            GuideBodySanitizer.sanitizeGuideBodyForDisplay("DANGER \u00c2\u00b7 \u00c2\u00b7 EXTREME BURN HAZARD")
+        );
+    }
+
+    @Test
+    public void guideBodySanitizerKeepsCompactSectionLabelsIdempotentAndCleansMojibake() {
+        assertEquals(
+            "\u00a7 1 \u00b7 Area readiness\nKeep owner's notes clean.",
+            GuideBodySanitizer.sanitizeGuideBodyForDisplay(
+                "\u00c2\u00a7 1 \u00c2\u00b7 Area readiness\nKeep owner\u00e2\u20ac\u2122s notes clean."
+            )
         );
     }
 
@@ -221,10 +231,10 @@ public final class DetailGuidePresentationFormatterTest {
             "[[SECTION]] Area readiness\nRequired Reading: Read GD-220 first."
         );
 
-        assertEquals("Section 1 Area readiness\nRequired reading \u00b7 Read GD-220 first.", parsed.displayText);
+        assertEquals("\u00a7 1 \u00b7 Area readiness\nRequired reading \u00b7 Read GD-220 first.", parsed.displayText);
         assertEquals(2, parsed.lines.length);
         assertEquals(GuideBodySanitizer.GuideBodyLine.Kind.SECTION, parsed.lines[0].kind);
-        assertEquals("Section 1", parsed.lines[0].label);
+        assertEquals("\u00a7 1 \u00b7", parsed.lines[0].label);
         assertEquals(GuideBodySanitizer.GuideBodyLine.Kind.REQUIRED_READING, parsed.lines[1].kind);
         assertEquals("Required reading", parsed.lines[1].label);
     }
@@ -235,7 +245,7 @@ public final class DetailGuidePresentationFormatterTest {
             "## Section 1 Reviewed Answer-Card Boundary: Area Readiness, Hazard Screen, and Handoffs"
         );
 
-        assertEquals("Section 1 Area readiness\nReviewed Answer-Card Boundary", parsed.displayText);
+        assertEquals("\u00a7 1 \u00b7 Area readiness\nReviewed Answer-Card Boundary", parsed.displayText);
         assertEquals(2, parsed.lines.length);
         assertEquals(GuideBodySanitizer.GuideBodyLine.Kind.SECTION, parsed.lines[0].kind);
         assertEquals(GuideBodySanitizer.GuideBodyLine.Kind.HEADING, parsed.lines[1].kind);

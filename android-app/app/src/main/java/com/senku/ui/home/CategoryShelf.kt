@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -114,7 +113,7 @@ fun CategoryShelf(
                 CategoryGrid(
                     items = items,
                     columns = 3,
-                    cardHeight = 50.dp,
+                    cardHeight = 46.dp,
                     selectionEnabled = selectionEnabled,
                     onCategorySelected = onCategorySelected,
                 )
@@ -124,7 +123,7 @@ fun CategoryShelf(
                 CategoryGrid(
                     items = items,
                     columns = 3,
-                    cardHeight = 50.dp,
+                    cardHeight = 46.dp,
                     selectionEnabled = selectionEnabled,
                     onCategorySelected = onCategorySelected,
                 )
@@ -151,7 +150,7 @@ private fun CategoryGrid(
     selectionEnabled: Boolean,
     onCategorySelected: (CategoryShelfItemModel) -> Unit,
 ) {
-    val gap = 6.dp
+    val gap = 5.dp
     items.chunked(columns).forEach { rowItems ->
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -196,7 +195,7 @@ private fun PhoneCategoryCard(
                     contentDescription = item.contentDescription
                 }
             },
-        color = colors.bg1,
+        color = colors.bg0,
         contentColor = colors.ink0,
         shape = RoundedCornerShape(corner),
         border = BorderStroke(1.dp, colors.hairlineStrong),
@@ -208,19 +207,19 @@ private fun PhoneCategoryCard(
                 .fillMaxWidth()
                 .height(cardHeight)
                 .padding(horizontal = horizontalPadding, vertical = verticalPadding),
-            verticalArrangement = Arrangement.spacedBy(2.dp),
+            verticalArrangement = Arrangement.spacedBy(1.dp),
         ) {
             Box(
                 modifier = Modifier
-                    .width(20.dp)
+                    .width(18.dp)
                     .height(2.dp)
-                    .background(accent.copy(alpha = 0.92f)),
+                    .background(accent.copy(alpha = 0.82f)),
             )
             Text(
                 text = item.label,
                 style = SenkuTheme.typography.uiBody.copy(
-                    fontSize = 12.sp,
-                    lineHeight = 15.sp,
+                    fontSize = 11.sp,
+                    lineHeight = 14.sp,
                     fontWeight = FontWeight.SemiBold,
                 ),
                 color = colors.ink0,
@@ -260,7 +259,7 @@ private fun TabletCategoryRow(
                     contentDescription = item.contentDescription
                 }
             },
-        color = colors.bg1,
+        color = colors.bg0,
         contentColor = colors.ink0,
         shape = RoundedCornerShape(3.dp),
         border = BorderStroke(1.dp, colors.hairlineStrong),
@@ -270,7 +269,7 @@ private fun TabletCategoryRow(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(38.dp)
+                .height(36.dp)
                 .padding(
                     horizontal = dimensionResource(R.dimen.senku_rev03_space_8),
                 ),
@@ -279,7 +278,7 @@ private fun TabletCategoryRow(
         ) {
             Box(
                 modifier = Modifier
-                    .width(14.dp)
+                    .width(12.dp)
                     .height(2.dp)
                     .background(accent),
             )

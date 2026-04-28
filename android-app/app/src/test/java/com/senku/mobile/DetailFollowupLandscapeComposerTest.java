@@ -5,6 +5,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import com.senku.ui.primitives.MetaItem;
+import com.senku.ui.tablet.TabletDetailMode;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -27,6 +28,14 @@ public final class DetailFollowupLandscapeComposerTest {
     public void followUpSuggestionsHideOnLandscapePhone() {
         assertTrue(DetailActivity.shouldHideFollowUpSuggestionsOnPhoneLandscape(true));
         assertFalse(DetailActivity.shouldHideFollowUpSuggestionsOnPhoneLandscape(false));
+    }
+
+    @Test
+    public void followUpSuggestionsHideForCompactPortraitThreadClearance() {
+        assertTrue(DetailActivity.shouldHideFollowUpSuggestionsForComposerClearance(false, true, true));
+        assertTrue(DetailActivity.shouldHideFollowUpSuggestionsForComposerClearance(true, false, false));
+        assertFalse(DetailActivity.shouldHideFollowUpSuggestionsForComposerClearance(false, true, false));
+        assertFalse(DetailActivity.shouldHideFollowUpSuggestionsForComposerClearance(false, false, true));
     }
 
     @Test
@@ -189,6 +198,18 @@ public final class DetailFollowupLandscapeComposerTest {
     public void answerModeSuppressesLegacyBodyMirror() {
         assertTrue(DetailActivity.shouldHideBodyMirrorForAnswerMode(true));
         assertFalse(DetailActivity.shouldHideBodyMirrorForAnswerMode(false));
+    }
+
+    @Test
+    public void sharedDetailModeClassifiesAnswerThreadAndGuideShells() {
+        assertEquals(TabletDetailMode.Guide, DetailActivity.resolveTabletDetailModeForState(false, 2));
+        assertEquals(TabletDetailMode.Answer, DetailActivity.resolveTabletDetailModeForState(true, 1));
+        assertEquals(TabletDetailMode.Answer, DetailActivity.resolveTabletDetailModeForState(true, 0));
+        assertEquals(TabletDetailMode.Thread, DetailActivity.resolveTabletDetailModeForState(true, 2));
+
+        assertFalse(DetailActivity.isThreadDetailRoute(false, 3));
+        assertFalse(DetailActivity.isThreadDetailRoute(true, 1));
+        assertTrue(DetailActivity.isThreadDetailRoute(true, 2));
     }
 
     @Test
