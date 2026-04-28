@@ -15,8 +15,57 @@ import java.util.Locale;
 final class DetailSourcePresentationFormatter {
     private final Context context;
 
+    static final class EvidenceCard {
+        final String guideId;
+        final String roleLabel;
+        final String matchLabel;
+        final String title;
+        final String quote;
+        final String anchorLabel;
+        final boolean isAnchor;
+
+        EvidenceCard(
+            String guideId,
+            String roleLabel,
+            String matchLabel,
+            String title,
+            String quote,
+            String anchorLabel,
+            boolean isAnchor
+        ) {
+            this.guideId = safe(guideId).trim();
+            this.roleLabel = safe(roleLabel).trim();
+            this.matchLabel = safe(matchLabel).trim();
+            this.title = safe(title).trim();
+            this.quote = safe(quote).trim();
+            this.anchorLabel = safe(anchorLabel).trim();
+            this.isAnchor = isAnchor;
+        }
+    }
+
     DetailSourcePresentationFormatter(Context context) {
         this.context = context;
+    }
+
+    EvidenceCard buildEvidenceCard(SearchResult source, int position, String mode) {
+        String guideId = safe(source == null ? null : source.guideId).trim();
+        String title = safe(source == null ? null : source.title).trim();
+        String section = safe(source == null ? null : source.sectionHeading).trim();
+        String quote = safe(source == null ? null : source.snippet).trim();
+        if (quote.isEmpty()) {
+            quote = firstBodyLine(source == null ? null : source.body);
+        }
+
+        boolean anchor = isAnchorEvidenceCard(position, mode);
+        return new EvidenceCard(
+            guideId,
+            buildEvidenceRoleLabel(anchor, mode),
+            buildEvidenceMatchLabel(source, position),
+            title.isEmpty() ? "Open guide note" : title,
+            quote,
+            section,
+            anchor
+        );
     }
 
     String buildInlineSourceChipContentDescription(
@@ -216,6 +265,65 @@ final class DetailSourcePresentationFormatter {
             builder.append("\n").append(section);
         }
         return builder.toString().trim();
+    }
+
+    private static boolean isAnchorEvidenceCard(int position, String mode) {
+        String normalized = safe(mode).trim().toLowerCase(Locale.US);
+        return position <= 0 || "anchor".equals(normalized) || "primary".equals(normalized);
+    }
+
+    private static String buildEvidenceRoleLabel(boolean anchor, String mode) {
+        if (anchor) {
+            return "ANCHOR";
+        }
+        String normalized = safe(mode).trim().toLowerCase(Locale.US);
+        if ("topic".equals(normalized) || "supporting".equals(normalized)) {
+            return "TOPIC";
+        }
+        if ("source".equals(normalized) || "open".equals(normalized)) {
+            return "SOURCE";
+        }
+        return "RELATED";
+    }
+
+    private static String buildEvidenceMatchLabel(SearchResult source, int position) {
+        int rankPenalty = Math.max(0, position) * 6;
+        int score = baseEvidenceMatchScore(source == null ? null : source.retrievalMode) - rankPenalty;
+        return Math.max(55, Math.min(99, score)) + "%";
+    }
+
+    private static int baseEvidenceMatchScore(String retrievalMode) {
+        String mode = safe(retrievalMode).trim().toLowerCase(Locale.US);
+        switch (mode) {
+            case "answer-card":
+            case "route-focus":
+            case "hybrid":
+                return 93;
+            case "guide-focus":
+            case "guide":
+                return 89;
+            case "vector":
+                return 84;
+            case "lexical":
+                return 78;
+            default:
+                return 72;
+        }
+    }
+
+    private static String firstBodyLine(String body) {
+        String cleaned = safe(body).trim();
+        if (cleaned.isEmpty()) {
+            return "";
+        }
+        int lineBreak = cleaned.indexOf('\n');
+        if (lineBreak >= 0) {
+            cleaned = cleaned.substring(0, lineBreak).trim();
+        }
+        if (cleaned.length() <= 140) {
+            return cleaned;
+        }
+        return cleaned.substring(0, 140).trim() + "...";
     }
 
     private static String formatCountLabel(int count, String singular, String plural) {

@@ -1,10 +1,98 @@
 package com.senku.mobile;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
 public final class DetailSourcePresentationFormatterTest {
+    @Test
+    public void evidenceCardBuildsAnchorContractFromSearchResult() {
+        DetailSourcePresentationFormatter formatter = new DetailSourcePresentationFormatter(null);
+        SearchResult source = new SearchResult(
+            "Emergency Shelter",
+            "",
+            "Pitch ridgeline along prevailing wind.",
+            "",
+            "GD-444",
+            "Ridge Line Setup",
+            "survival",
+            "hybrid"
+        );
+
+        DetailSourcePresentationFormatter.EvidenceCard card = formatter.buildEvidenceCard(source, 0, "anchor");
+
+        assertEquals("GD-444", card.guideId);
+        assertEquals("ANCHOR", card.roleLabel);
+        assertEquals("93%", card.matchLabel);
+        assertEquals("Emergency Shelter", card.title);
+        assertEquals("Pitch ridgeline along prevailing wind.", card.quote);
+        assertEquals("Ridge Line Setup", card.anchorLabel);
+        assertTrue(card.isAnchor);
+    }
+
+    @Test
+    public void evidenceCardBuildsRelatedContractFromPositionAndMode() {
+        DetailSourcePresentationFormatter formatter = new DetailSourcePresentationFormatter(null);
+        SearchResult source = new SearchResult(
+            "Rainwater Catchment",
+            "",
+            "",
+            "Use first-flush diversion before storage.\nKeep tank covered.",
+            "GD-215",
+            "Storage Prep",
+            "water",
+            "lexical"
+        );
+
+        DetailSourcePresentationFormatter.EvidenceCard card = formatter.buildEvidenceCard(source, 2, "related");
+
+        assertEquals("GD-215", card.guideId);
+        assertEquals("RELATED", card.roleLabel);
+        assertEquals("66%", card.matchLabel);
+        assertEquals("Rainwater Catchment", card.title);
+        assertEquals("Use first-flush diversion before storage.", card.quote);
+        assertEquals("Storage Prep", card.anchorLabel);
+        assertFalse(card.isAnchor);
+    }
+
+    @Test
+    public void evidenceCardHandlesBlankSourceAsStableFallback() {
+        DetailSourcePresentationFormatter formatter = new DetailSourcePresentationFormatter(null);
+
+        DetailSourcePresentationFormatter.EvidenceCard card = formatter.buildEvidenceCard(null, 3, "topic");
+
+        assertEquals("", card.guideId);
+        assertEquals("TOPIC", card.roleLabel);
+        assertEquals("55%", card.matchLabel);
+        assertEquals("Open guide note", card.title);
+        assertEquals("", card.quote);
+        assertEquals("", card.anchorLabel);
+        assertFalse(card.isAnchor);
+    }
+
+    @Test
+    public void evidenceCardRecognizesOpenSourceModeAndAnswerCardMatch() {
+        DetailSourcePresentationFormatter formatter = new DetailSourcePresentationFormatter(null);
+        SearchResult source = new SearchResult(
+            "Reviewed source",
+            "",
+            "Reviewed quote",
+            "",
+            "GD-898",
+            "Poisoning unknown ingestion",
+            "medicine",
+            "answer-card"
+        );
+
+        DetailSourcePresentationFormatter.EvidenceCard card = formatter.buildEvidenceCard(source, 1, "source");
+
+        assertEquals("SOURCE", card.roleLabel);
+        assertEquals("87%", card.matchLabel);
+        assertFalse(card.isAnchor);
+    }
+
     @Test
     public void sourceChipContentDescriptionClampsIndexAndTotal() {
         DetailSourcePresentationFormatter formatter = new DetailSourcePresentationFormatter(null);
