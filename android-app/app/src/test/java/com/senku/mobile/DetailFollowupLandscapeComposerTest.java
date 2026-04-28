@@ -142,6 +142,26 @@ public final class DetailFollowupLandscapeComposerTest {
     }
 
     @Test
+    public void deterministicPhonePortraitKeepsAnchorChipVisible() {
+        assertTrue(DetailActivity.shouldShowAnswerAnchorChip(true, true, true));
+        assertFalse(DetailActivity.shouldShowAnswerAnchorChip(true, true, false));
+        assertTrue(DetailActivity.shouldShowAnswerAnchorChip(true, false, false));
+        assertFalse(DetailActivity.shouldShowAnswerAnchorChip(false, false, true));
+    }
+
+    @Test
+    public void landscapePhoneUsesSideRegionsForSourcesAndThread() {
+        assertTrue(DetailActivity.shouldUseLandscapePhoneSourceRail(true, true));
+        assertFalse(DetailActivity.shouldUseLandscapePhoneSourceRail(false, true));
+        assertFalse(DetailActivity.shouldUseLandscapePhoneSourceRail(true, false));
+
+        assertTrue(DetailActivity.shouldUseSideThreadPanel(true, false, false));
+        assertTrue(DetailActivity.shouldUseSideThreadPanel(false, true, false));
+        assertTrue(DetailActivity.shouldUseSideThreadPanel(false, false, true));
+        assertFalse(DetailActivity.shouldUseSideThreadPanel(false, false, false));
+    }
+
+    @Test
     public void phonePortraitSourceCardLabelCarriesMetaTitleAndQuote() {
         DetailSourcePresentationFormatter.EvidenceCard card =
             new DetailSourcePresentationFormatter.EvidenceCard(

@@ -85,7 +85,7 @@ public final class DetailRelatedGuidePresentationFormatterTest {
 
         assertEquals("Cross-reference", formatter.buildNonRailRelatedGuidesTitle());
         assertEquals(
-            "Related guide 1 of 1. GD-215 · Rainwater Catchment. Anchored to GD-214. Preview here; Open full guide switches pages.",
+            "Cross-reference 1 of 1. GD-215 · Rainwater Catchment. Anchored to GD-214. Cross-reference preview opens here; Open full guide switches pages.",
             formatter.buildRelatedGuideButtonContentDescription(
                 new DetailRelatedGuidePresentationFormatter.State(
                     false,

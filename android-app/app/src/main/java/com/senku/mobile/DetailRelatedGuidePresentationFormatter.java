@@ -143,7 +143,7 @@ final class DetailRelatedGuidePresentationFormatter {
         boolean nonRailCrossReferenceCopy = state != null && state.nonRailCrossReferenceCopy;
         StringBuilder builder = new StringBuilder();
         builder.append(opensPreview
-            ? "Related guide "
+            ? (nonRailCrossReferenceCopy ? "Cross-reference " : "Related guide ")
             : (nonRailCrossReferenceCopy
                 ? context.getString(R.string.detail_related_guides_button_prefix_nonrail)
                 : "Open related guide "));
@@ -234,7 +234,7 @@ final class DetailRelatedGuidePresentationFormatter {
 
     private String buildRelatedGuidePreviewRowBehaviorText(boolean nonRailCrossReferenceCopy) {
         if (nonRailCrossReferenceCopy) {
-            return "Preview here; Open full guide switches pages.";
+            return "Cross-reference preview opens here; Open full guide switches pages.";
         }
         return context.getString(R.string.detail_loop2_field_links_preview_row_behavior);
     }

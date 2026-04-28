@@ -64,7 +64,7 @@ public final class MainActivity extends AppCompatActivity {
     private static final String EXTRA_PRODUCT_REVIEW_MODE = "product_review_mode";
     private static final String STATE_CONVERSATION_ID = "conversation_id";
     private static final String STATE_PHONE_TAB = "phone_tab";
-    private static final int SEARCH_RESULT_LIMIT = 75;
+    static final int SEARCH_RESULT_LIMIT = 4;
     private static final int ALL_GUIDES = 0;
     private static final int MIN_SEARCH_SUGGESTION_QUERY = 2;
     private static final int MAX_SEARCH_SUGGESTIONS = 6;
@@ -141,6 +141,7 @@ public final class MainActivity extends AppCompatActivity {
     private TextView developerDiagnosticsText;
     private View browseRail;
     private View tabletSearchSurface;
+    private View phoneLandscapeSearchSurface;
     private TextView tabletSearchQueryText;
     private TextView tabletSearchCountText;
     private View tabletSearchPreviewRail;
@@ -333,6 +334,7 @@ public final class MainActivity extends AppCompatActivity {
         updateReviewedCardRuntimeControls();
         browseRail = findViewById(R.id.browse_rail);
         tabletSearchSurface = findViewById(R.id.tablet_search_surface);
+        phoneLandscapeSearchSurface = findViewById(R.id.phone_landscape_search_surface);
         tabletSearchQueryText = findViewById(R.id.tablet_search_query_text);
         tabletSearchCountText = findViewById(R.id.tablet_search_count_text);
         tabletSearchPreviewRail = findViewById(R.id.tablet_search_preview_rail);
@@ -3359,6 +3361,9 @@ public final class MainActivity extends AppCompatActivity {
             if (resultsHeader != null) {
                 resultsHeader.setVisibility(View.GONE);
             }
+            if (phoneLandscapeSearchSurface != null) {
+                phoneLandscapeSearchSurface.setVisibility(View.GONE);
+            }
             if (tabletSearchSurface != null) {
                 tabletSearchSurface.setVisibility(View.GONE);
             }
@@ -3458,6 +3463,9 @@ public final class MainActivity extends AppCompatActivity {
         }
         if (resultsList != null) {
             resultsList.setVisibility(!browseMode && hasResults ? View.VISIBLE : View.GONE);
+        }
+        if (phoneLandscapeSearchSurface != null) {
+            phoneLandscapeSearchSurface.setVisibility(!browseMode && hasResults ? View.VISIBLE : View.GONE);
         }
         if (statusText != null) {
             statusText.setVisibility((busy || browseMode || !hasResults) ? View.VISIBLE : View.GONE);

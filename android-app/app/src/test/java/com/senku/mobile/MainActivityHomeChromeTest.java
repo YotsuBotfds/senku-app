@@ -147,6 +147,11 @@ public final class MainActivityHomeChromeTest {
         assertEquals(3, MainActivity.resolveRecentThreadPreviewLimit(false));
     }
 
+    @Test
+    public void searchResultLimitMatchesCompactStatePackSurface() {
+        assertEquals(4, MainActivity.SEARCH_RESULT_LIMIT);
+    }
+
     private static SearchResult guide(String title, String category, String topicTags) {
         return new SearchResult(
             title,

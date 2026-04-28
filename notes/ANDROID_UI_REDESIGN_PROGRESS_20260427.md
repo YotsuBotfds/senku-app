@@ -1,81 +1,94 @@
 # Android UI Redesign Progress - 2026-04-27
 
-Morning implementation review note for the Android field manual redesign wave.
+Visual progress note for the Android field manual redesign wave.
 
-## Commit Status
+## Current Pushed Baseline
 
-- Latest pushed commit: `de0c071c4822d10bb7f68fd89c864b0a71f2b21c`
-  (`de0c071`, `HEAD -> master`, `origin/master`).
-- Commit title: `advance android field manual redesign`.
-- Scope: Android UI-only redesign work across home/search/detail/tablet
-  surfaces, bottom tab/composer primitives, emergency surface policy, and
-  focused presentation/unit coverage.
+- Latest pushed commit: `3b8baf6` (`HEAD -> master`, `origin/master`).
+- Current implementation batch: `4ac1e48` (`advance android W5 mock parity batch`).
+- Current review batch: `3b8baf6` (`record android wave5 visual review`).
+- Wave5 state-pack artifact: `artifacts/ui_state_pack/20260427_223445`.
+- State-pack status: `partial`, 38 pass, 7 fail, 45 total, 0 platform ANRs.
+- APK/model matrix: homogeneous per Wave5 triage.
 
-## What Changed In `de0c071`
+## What Changed In `4ac1e48`
 
-- Refined phone and tablet home/search/detail layouts toward the 2026-04-27
-  target mocks documented in `notes/ANDROID_TARGET_MOCKS_20260427.md`.
-- Added/updated manual-style drawables for home rows/search/status, search
-  result rows, detail shells, source cards, topbar chips/groups, follow-up dock,
-  and emergency banner treatment.
-- Advanced tablet detail/search composition through `EvidencePane`,
-  `TabletDetailScreen`, and `ThreadRail` updates.
-- Tightened search result presentation through `SearchResultCard` and adapter
-  heuristics.
-- Added tests for emergency surfacing, main presentation formatting, search
-  result adapter behavior, and search card heuristics.
+- Advanced Android mock-parity work across detail, home/search, tablet evidence,
+  tablet detail/thread, and search result presentation.
+- Updated presentation/unit coverage for follow-up landscape composer, home
+  chrome, search result adapter, tablet stress reading policy, and tablet
+  evidence visibility policy.
+- Refreshed the phase tracker after the W5 implementation batch.
 
-## Validation Artifacts
+## What Changed In `3b8baf6`
 
-Latest passing smoke captures are under these artifact roots:
+- Added Wave5 visual review notes:
+  - `notes/ANDROID_VISUAL_REVIEW_20260427_WAVE5_HOME_SEARCH.md`
+  - `notes/ANDROID_VISUAL_REVIEW_20260427_WAVE5_ANSWER_THREAD.md`
+  - `notes/ANDROID_VISUAL_REVIEW_20260427_WAVE5_GUIDE_EMERGENCY.md`
+  - `notes/ANDROID_VISUAL_REVIEW_20260427_WAVE5_STATE_PACK_TRIAGE.md`
+- No production app code changed in the review-note commit.
 
-- Home:
-  - `artifacts/redesign_wave_home_phone_portrait_navfix`
-  - `artifacts/redesign_wave_home_phone_landscape_navfix`
-  - `artifacts/redesign_wave_home_tablet_landscape`
-- Search:
-  - `artifacts/redesign_wave_search_phone_portrait_navfix`
-  - `artifacts/redesign_wave_search_phone_landscape`
-  - `artifacts/redesign_wave_search_tablet_landscape`
-- Answer/detail:
-  - `artifacts/redesign_wave_answer_phone_portrait`
-  - `artifacts/redesign_wave_answer_phone_landscape`
-  - `artifacts/redesign_wave_answer_tablet_landscape`
+## Wave5 Surface Status
 
-Smoke tests with passing latest summaries:
+| Surface | Status | Current evidence |
+| --- | --- | --- |
+| Home | Partial | Screenshots exist for phone/tablet portrait and landscape. Structure is present, but typography, density, header copy, category counts, and recent-thread content diverge from mocks. |
+| Search | Partial, with one fail | Phone/tablet search screenshots mostly render but use `fire`/75-result content instead of mock `rain shelter`/4-result content. Phone landscape search is a visual fail because the captured content area is effectively blank despite a harness pass. Tablet linked-guide handoff fails before trusted screenshots. |
+| Answer detail | Partial, with phone portrait coverage gap | Generative answer screenshots exist for all roles, but phone portrait deterministic detail fails before trusted summary and anchor chip visibility is missing. Phone landscape answer is a visual fail against the split-pane target. |
+| Follow-up thread | Partial, with phone landscape fail | Thread state exists in all four roles, but cards, typography, and spacing remain much larger than target; phone landscape misses the compact split layout. |
+| Guide reader / cross-reference | Partial | Tablet guide-adjacent screenshots exist and phone guide-adjacent screenshots exist, but direct phone guide detail states fail before trusted screenshots. Reader chrome, paper body, and cross-reference rail still differ sharply from mocks. |
+| Emergency portrait | Fail / not captured | No emergency-specific phone portrait or tablet portrait screenshot was found in the Wave5 state pack. Emergency landscape remains out of scope unless a target mock is added. |
+| Tablet linked-guide handoff | Fail / harness readiness | Both tablet postures fail `searchResultsLinkedGuideHandoffOpensLinkedGuideDetail` before trusted screenshots with readiness stuck at idle. Phone postures pass this state. |
 
-- `PromptHarnessSmokeTest#homeEntryShowsPrimaryBrowseAndAskLanes`
-- `PromptHarnessSmokeTest#searchQueryShowsResultsWithoutShellPolling`
-- `PromptHarnessSmokeTest#deterministicAskNavigatesToDetailScreen`
+## Wave5 Harness Failures
 
-Notes:
+All seven failures are instrumentation assertions before trusted screenshot
+capture, not setup failures, app crashes, screenshot diffs, rotation mismatch,
+or platform ANRs.
 
-- `redesign_wave_search_phone_portrait` and
-  `redesign_wave_search_tablet_landscape` include earlier failed summaries, but
-  both have later passing retry/navfix summaries.
-- Captures include phone portrait, phone landscape, and tablet landscape for
-  the covered home/search/detail slices. Tablet portrait, guide reader,
-  thread, and emergency capture coverage still need follow-up.
+- Phone portrait and phone landscape:
+  `guideDetailShowsRelatedGuideNavigation` fails because the preview title does
+  not identify the selected linked guide.
+- Phone portrait and phone landscape:
+  `guideDetailUsesCrossReferenceCopyOffRail` fails because the non-rail guide
+  row does not describe cross-reference behavior.
+- Phone portrait:
+  `deterministicAskNavigatesToDetailScreen` fails because the anchor chip is not
+  visible.
+- Tablet portrait and tablet landscape:
+  `searchResultsLinkedGuideHandoffOpensLinkedGuideDetail` never reaches linked
+  guide handoff readiness even though harness signals are idle.
 
-## Known UI Gaps From Visual Inspection
+## W6 Active Slice Ownership
 
-- `PaperAnswerCard` still reads too parchment-heavy compared with the flatter,
-  cleaner target language.
-- Tablet search still lacks the intended filter/preview rail treatment.
-- Guide reader and cross-reference polish remain incomplete.
-- Thread and emergency captures are still pending, so those surfaces should not
-  be called visually closed.
+Tracker: `notes/ANDROID_UI_REDESIGN_WAVE6_PLAN_20260427.md`.
 
-## Recommended Next Slices
+- W6-A shell/search/home: compact `rain shelter` search parity, phone landscape
+  blank-search blocker, tablet search density/filter controls, home density.
+- W6-B answer/thread detail: deterministic phone portrait anchor chip, phone
+  landscape answer/thread split layout, answer/thread density.
+- W6-C guide/cross-reference: phone related-guide preview title, phone off-rail
+  cross-reference row copy, guide reader chrome/paper/rail parity.
+- W6-D emergency portrait: produce distinct emergency phone/tablet portrait
+  captures and compare against the two emergency mocks.
+- W6-E tablet linked-guide handoff readiness: diagnose tablet-only readiness or
+  navigation state before changing visual acceptance criteria.
+- W6-F visual-progress/tracker: notes-only lane for this file and optional W6
+  plan note. No production code.
 
-- Flatten and rebalance `PaperAnswerCard` so answer/detail reads closer to the
-  field-manual target without losing hierarchy.
-- Build the tablet search filter/preview rail, then recapture tablet landscape
-  and tablet portrait search states.
-- Polish guide reader and cross-reference presentation against the target mocks.
-- Add pending thread and emergency smoke captures, including emergency portrait
-  targets only unless a separate landscape design target is added.
-- Run the focused Android unit/presentation tests plus the relevant
-  `PromptHarnessSmokeTest` smoke set after each visual slice.
+## Top Unresolved UI Risks
+
+- Phone landscape search is visually blank while the harness reports pass.
+- Emergency portrait surfaces have no fresh target captures and cannot be
+  accepted.
+- Tablet linked-guide handoff fails before screenshot capture in both tablet
+  postures.
+- Phone direct guide detail states fail before screenshot capture, blocking
+  confident guide-reader parity.
+- Typography and spacing remain too large across home, search, answer, thread,
+  and guide surfaces, pushing expected content below the fold.
+- Several screenshots use harness/test content or mismatched query content, so
+  visual comparison to the mocks is noisy until state inputs are aligned.
 
 Changed path: `notes/ANDROID_UI_REDESIGN_PROGRESS_20260427.md`.

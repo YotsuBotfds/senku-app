@@ -809,14 +809,16 @@ $commonStates = @(
 
 $specialStatesByRole = @{
     phone_portrait = @(
-        (New-StateDefinition -Method "guideDetailUsesCrossReferenceCopyOffRail")
+        (New-StateDefinition -Method "guideDetailUsesCrossReferenceCopyOffRail"),
+        (New-StateDefinition -Method "emergencyPortraitAnswerShowsImmediateActionState")
     )
     phone_landscape = @(
         (New-StateDefinition -Method "guideDetailUsesCrossReferenceCopyOffRail"),
         (New-StateDefinition -Method "answerModeLandscapePhoneShowsCompactCrossReferenceCue")
     )
     tablet_portrait = @(
-        (New-StateDefinition -Method "guideDetailUsesCrossReferenceCopyOffRail")
+        (New-StateDefinition -Method "guideDetailUsesCrossReferenceCopyOffRail"),
+        (New-StateDefinition -Method "emergencyPortraitAnswerShowsImmediateActionState")
     )
     tablet_landscape = @(
         (New-StateDefinition -Method "guideDetailDestinationKeepsSourceContextOnTabletLandscape")

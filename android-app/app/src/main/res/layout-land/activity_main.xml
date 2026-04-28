@@ -5,10 +5,10 @@
     android:background="@drawable/bg_manual_phone_home_root"
     android:keepScreenOn="true"
     android:orientation="horizontal"
-    android:paddingStart="20dp"
-    android:paddingTop="36dp"
-    android:paddingEnd="24dp"
-    android:paddingBottom="18dp">
+    android:paddingStart="16dp"
+    android:paddingTop="24dp"
+    android:paddingEnd="18dp"
+    android:paddingBottom="14dp">
 
     <ScrollView
         android:id="@+id/browse_scroll_view"
@@ -17,7 +17,7 @@
         android:layout_weight="1"
         android:clipToPadding="false"
         android:fillViewport="true"
-        android:paddingEnd="22dp"
+        android:paddingEnd="16dp"
         android:scrollbars="none">
 
         <LinearLayout
@@ -103,7 +103,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="30dp"
-                android:layout_marginTop="18dp"
+                android:layout_marginTop="12dp"
                 android:background="@drawable/bg_manual_home_status"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
@@ -153,21 +153,21 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="92dp"
-                android:layout_marginTop="18dp"
+                android:layout_height="64dp"
+                android:layout_marginTop="12dp"
                 android:addStatesFromChildren="true"
                 android:background="@drawable/bg_manual_phone_home_search"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
-                android:paddingStart="22dp"
-                android:paddingEnd="22dp">
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp">
 
                 <ImageView
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
                     android:background="@drawable/bg_manual_phone_home_search_icon"
                     android:contentDescription="@string/search_input_description"
-                    android:padding="13dp"
+                    android:padding="10dp"
                     android:src="@drawable/ic_search_magnifier"
                     android:tint="@color/senku_rev03_ink_2" />
 
@@ -175,7 +175,7 @@
                     android:id="@+id/search_input"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_marginStart="16dp"
+                    android:layout_marginStart="12dp"
                     android:layout_weight="1"
                     android:background="@android:color/transparent"
                     android:contentDescription="@string/search_input_description"
@@ -212,7 +212,7 @@
                 android:id="@+id/category_section_header"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="22dp"
+                android:layout_marginTop="16dp"
                 android:fontFamily="monospace"
                 android:includeFontPadding="false"
                 android:text="CATEGORIES - 12"
@@ -236,7 +236,7 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:layout_marginTop="18dp"
+                android:layout_marginTop="12dp"
                 android:background="@color/senku_rev03_hairline_strong" />
 
             <LinearLayout
@@ -300,11 +300,11 @@
         android:id="@+id/recent_threads_section"
         android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:layout_weight="0.84"
+        android:layout_weight="0.78"
         android:background="@drawable/bg_manual_home_row"
         android:orientation="vertical"
-        android:paddingStart="22dp"
-        android:paddingTop="84dp"
+        android:paddingStart="16dp"
+        android:paddingTop="60dp"
         android:paddingEnd="0dp"
         android:paddingBottom="8dp"
         android:visibility="gone">
@@ -325,25 +325,50 @@
             android:id="@+id/recent_threads_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="14dp"
+            android:layout_marginTop="10dp"
             android:orientation="vertical" />
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/results_header"
+    <LinearLayout
+        android:id="@+id/phone_landscape_search_surface"
         android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:accessibilityLiveRegion="polite"
-        android:text="@string/results_header_loading"
-        android:visibility="gone" />
+        android:layout_height="match_parent"
+        android:layout_weight="1.78"
+        android:background="@drawable/bg_manual_home_row"
+        android:orientation="vertical"
+        android:paddingStart="16dp"
+        android:paddingTop="12dp"
+        android:paddingEnd="16dp"
+        android:paddingBottom="4dp"
+        android:visibility="gone">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/results_list"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:clipToPadding="false"
-        android:contentDescription="@string/results_list_description"
-        android:visibility="gone" />
+        <TextView
+            android:id="@+id/results_header"
+            android:layout_width="match_parent"
+            android:layout_height="32dp"
+            android:accessibilityLiveRegion="polite"
+            android:ellipsize="end"
+            android:fontFamily="monospace"
+            android:gravity="center_vertical"
+            android:includeFontPadding="false"
+            android:maxLines="1"
+            android:text="@string/results_header_loading"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textColor="@color/senku_rev03_ink_0"
+            android:textStyle="bold"
+            android:visibility="gone" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/results_list"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:clipToPadding="false"
+            android:contentDescription="@string/results_list_description"
+            android:paddingTop="6dp"
+            android:paddingBottom="8dp"
+            android:visibility="gone" />
+    </LinearLayout>
 
     <LinearLayout
         android:id="@+id/home_utility_views"

@@ -1102,7 +1102,11 @@ public final class DetailActivity extends AppCompatActivity {
         modeChip.setVisibility(answerMode ? View.VISIBLE : (suppressGuideStateChips ? View.GONE : View.VISIBLE));
         if (anchorChip != null) {
             anchorChip.setText(sessionFormatter.buildAnchorText(primaryGuideId, wideLayoutActive()));
-            anchorChip.setVisibility(answerMode && !isCompactPortraitPhoneLayout() ? View.VISIBLE : View.GONE);
+            anchorChip.setVisibility(shouldShowAnswerAnchorChip(
+                answerMode,
+                isCompactPortraitPhoneLayout(),
+                isDeterministicRoute()
+            ) ? View.VISIBLE : View.GONE);
         }
         if (routeChip != null) {
             boolean showAnswerRouteChip = !isCompactPortraitPhoneLayout()
@@ -2140,7 +2144,7 @@ public final class DetailActivity extends AppCompatActivity {
             }
             return;
         }
-        if (showUtilityRail() || isTabletPortraitLayout()) {
+        if (shouldUseSideThreadPanel(isLandscapePhoneLayout(), showUtilityRail(), isTabletPortraitLayout())) {
             detailThreadHistoryRenderer().clearHistory(priorTurnsContainer);
             if (earlierTurns.isEmpty()) {
                 detailThreadHistoryRenderer().clearHistory(inlineThreadContainer);
@@ -2221,7 +2225,10 @@ public final class DetailActivity extends AppCompatActivity {
                 clearProvenancePanel();
                 return;
             }
-            boolean inlineLandscapeProvenance = isLandscapePhoneLayout() && provenancePanel != null;
+            boolean landscapePhoneSideRail = shouldUseLandscapePhoneSourceRail(answerMode, isLandscapePhoneLayout());
+            boolean inlineLandscapeProvenance = isLandscapePhoneLayout()
+                && provenancePanel != null
+                && !landscapePhoneSideRail;
             if (currentSources.isEmpty()) {
                 clearProvenancePanel();
                 if (showUtilityRail()) {
@@ -2272,7 +2279,10 @@ public final class DetailActivity extends AppCompatActivity {
             }
             boolean phonePortraitSourceCards = isCompactPortraitPhoneLayout() && (portraitSourcesExpanded || isEmergencyPortraitSurface());
             applyPhonePortraitSourcePanelTreatment(phonePortraitSourceCards);
-            boolean stationRail = shouldUseSourceProvenancePanel();
+            if ((landscapePhoneSideRail || showUtilityRail()) && sourcesTitleText != null) {
+                sourcesTitleText.setText(R.string.detail_sources_title);
+            }
+            boolean stationRail = shouldUseSourceProvenancePanel() || landscapePhoneSideRail;
             boolean compactPreview = shouldUseCompactSourceProvenancePreview();
             boolean previewMode = stationRail || compactPreview;
             for (int i = 0; i < currentSources.size(); i++) {
@@ -4405,6 +4415,26 @@ public final class DetailActivity extends AppCompatActivity {
     static boolean shouldShowDetailFollowUpPanel(DetailSurfaceContract.Posture posture) {
         return DetailSurfaceContract.shouldShowAnswerFollowUp(posture)
             && DetailSurfaceContract.isFollowUpEligible(posture);
+    }
+
+    static boolean shouldShowAnswerAnchorChip(
+        boolean answerMode,
+        boolean compactPortraitPhone,
+        boolean deterministicRoute
+    ) {
+        return answerMode && (!compactPortraitPhone || deterministicRoute);
+    }
+
+    static boolean shouldUseLandscapePhoneSourceRail(boolean answerMode, boolean landscapePhone) {
+        return answerMode && landscapePhone;
+    }
+
+    static boolean shouldUseSideThreadPanel(
+        boolean landscapePhone,
+        boolean utilityRail,
+        boolean tabletPortrait
+    ) {
+        return landscapePhone || utilityRail || tabletPortrait;
     }
 
     private boolean isDeterministicRoute() {

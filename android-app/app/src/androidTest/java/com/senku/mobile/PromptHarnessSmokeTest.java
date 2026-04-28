@@ -84,6 +84,7 @@ public final class PromptHarnessSmokeTest {
         "detail_body",
         "detail_body_mirror_shell",
         "detail_answer_card",
+        "detail_emergency_header",
         "tablet_detail_root",
         "detail_inline_thread_container",
         "detail_prior_turns_container",
@@ -93,6 +94,7 @@ public final class PromptHarnessSmokeTest {
         R.id.detail_body,
         R.id.detail_body_mirror_shell,
         R.id.detail_answer_card,
+        R.id.detail_emergency_header,
         R.id.tablet_detail_root,
         R.id.detail_inline_thread_container,
         R.id.detail_prior_turns_container,
@@ -398,11 +400,13 @@ public final class PromptHarnessSmokeTest {
             dismissMainSearchKeyboardIfVisible();
             boolean handoffReady = waitForBrowseLinkedGuideHandoff(scenario, DETAIL_WAIT_MS);
 
+            final boolean[] linkedGuideHandoffMissing = {false};
             final String[] expectedGuideId = {""};
             final String[] expectedTitleFragment = {""};
             final String[] expectedSourceGuideId = {""};
             final String[] expectedSourceGuideTitle = {""};
             final String[] expectedSourceGuideSection = {""};
+            final String[] handoffDiagnostics = {""};
             scenario.onActivity(activity -> {
                 RecyclerView recyclerView = activity.findViewById(R.id.results_list);
                 SearchResult sourceResult = findBrowseResultByGuideId(
@@ -410,6 +414,11 @@ public final class PromptHarnessSmokeTest {
                     safe(seed.guide == null ? null : seed.guide.guideId)
                 );
                 Assert.assertNotNull("expected seeded browse result for linked-guide handoff smoke", sourceResult);
+                handoffDiagnostics[0] = describeBrowseLinkedGuideHandoffReadiness(
+                    activity,
+                    recyclerView,
+                    handoffReady
+                );
                 SearchResultAdapter.LinkedGuidePreview preview = new SearchResultAdapter.LinkedGuidePreview(
                     safe(seed.relatedGuide == null ? null : seed.relatedGuide.guideId),
                     safe(seed.relatedGuide == null ? null : seed.relatedGuide.title),
@@ -417,10 +426,10 @@ public final class PromptHarnessSmokeTest {
                 );
                 BrowseLinkedGuideHandoff handoff = findFirstVisibleBrowseLinkedGuideHandoff(recyclerView);
                 if (handoff == null) {
-                    Assert.assertTrue(
-                        "linked-guide handoff never became ready; harness signals=" + HarnessTestSignals.snapshot(),
-                        isLandscapePhoneActivity(activity)
-                    );
+                    if (!isLandscapePhoneActivity(activity)) {
+                        linkedGuideHandoffMissing[0] = true;
+                        return;
+                    }
                     expectedGuideId[0] = safe(preview.guideId);
                     expectedTitleFragment[0] = extractGuideTitleFragment(preview.title);
                     expectedSourceGuideId[0] = safe(seed.guide == null ? null : seed.guide.guideId);
@@ -458,6 +467,16 @@ public final class PromptHarnessSmokeTest {
                     preview
                 );
             });
+
+            if (linkedGuideHandoffMissing[0]) {
+                captureUiState("browse_linked_handoff_not_ready");
+                Assert.fail(
+                    "linked-guide handoff never became ready; "
+                        + handoffDiagnostics[0]
+                        + "; harness signals="
+                        + HarnessTestSignals.snapshot()
+                );
+            }
 
             Assert.assertTrue(
                 "linked-guide handoff should open detail; harness signals=" + HarnessTestSignals.snapshot(),
@@ -1011,6 +1030,90 @@ public final class PromptHarnessSmokeTest {
                 );
             });
             captureUiState("standard_answer_default_card");
+        }
+    }
+
+    @Test
+    public void emergencyPortraitAnswerShowsImmediateActionState() {
+        Context context = ApplicationProvider.getApplicationContext();
+        ArrayList<SearchResult> sources = new ArrayList<>();
+        sources.add(new SearchResult(
+            "Poisoning and overdose first response",
+            "Emergency answer-card anchor",
+            "Treat unknown ingestion as urgent and hand off to emergency or poison-control support.",
+            "Keep the container, identify the substance if safe, and do not induce vomiting unless directed.",
+            "GD-911",
+            "Poisoning ingestion first response",
+            "emergency",
+            "reviewed"
+        ));
+        ArrayList<String> reviewedSourceGuideIds = new ArrayList<>();
+        reviewedSourceGuideIds.add("GD-911");
+        ReviewedCardMetadata reviewedCardMetadata = new ReviewedCardMetadata(
+            "poisoning_ingestion_first_response",
+            "GD-911",
+            "reviewed",
+            "runtime_citation_required",
+            ReviewedCardMetadata.PROVENANCE_REVIEWED_CARD_RUNTIME,
+            reviewedSourceGuideIds
+        );
+        Intent intent = DetailActivity.newAnswerIntent(
+            context,
+            "Unknown poison swallowed",
+            "Offline answer | deterministic | instant",
+            "Short answer:\nTreat this as poisoning until proven otherwise: move away from danger, call emergency or poison-control help if available, and keep the container or plant for responders.\n\n"
+                + "Steps:\n1. Check breathing and responsiveness first.\n"
+                + "2. Do not induce vomiting unless a clinician or poison-control service tells you to.\n"
+                + "3. Save the label, container, pill bottle, or plant sample for handoff.\n\n"
+                + "Limits or safety:\nEscalate immediately for trouble breathing, seizures, confusion, burns around the mouth, or a child exposure.",
+            sources,
+            null,
+            "emergency-portrait-answer-smoke",
+            "answer_card:poisoning_ingestion_first_response",
+            OfflineAnswerEngine.AnswerMode.CONFIDENT,
+            OfflineAnswerEngine.ConfidenceLabel.HIGH,
+            reviewedCardMetadata
+        );
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+
+        try (ActivityScenario<DetailActivity> scenario = ActivityScenario.launch(intent)) {
+            awaitHarnessIdle();
+            Assert.assertTrue(
+                "emergency answer should render before portrait capture",
+                waitForDetailBodyReady(DETAIL_WAIT_MS, 8)
+            );
+            scenario.onActivity(activity -> {
+                View emergencyHeader = activity.findViewById(R.id.detail_emergency_header);
+                TextView emergencyTitle = activity.findViewById(R.id.detail_emergency_header_title);
+                TextView emergencyText = activity.findViewById(R.id.detail_emergency_header_text);
+                View sourcesPanel = activity.findViewById(R.id.detail_sources_panel);
+                Assert.assertNotNull("emergency answer should expose the emergency header", emergencyHeader);
+                Assert.assertNotNull("emergency answer should expose the emergency title", emergencyTitle);
+                Assert.assertNotNull("emergency answer should expose the emergency summary", emergencyText);
+                Assert.assertTrue("emergency header should be visible", isVisible(emergencyHeader));
+                Assert.assertTrue(
+                    "emergency header should read as a danger/field caution state",
+                    containsAny(
+                        safe(emergencyTitle.getText().toString()).toLowerCase(Locale.US),
+                        "danger",
+                        "field caution"
+                    )
+                );
+                Assert.assertTrue(
+                    "emergency summary should preserve immediate action wording",
+                    containsAny(
+                        safe(emergencyText.getText().toString()).toLowerCase(Locale.US),
+                        "poison",
+                        "emergency",
+                        "breathing"
+                    )
+                );
+                Assert.assertTrue(
+                    "emergency portrait should keep source or handoff context visible",
+                    isVisible(sourcesPanel)
+                );
+            });
+            captureUiState("emergency_portrait_answer");
         }
     }
 
@@ -4084,6 +4187,69 @@ public final class PromptHarnessSmokeTest {
         return false;
     }
 
+    private String describeBrowseLinkedGuideHandoffReadiness(
+        Activity activity,
+        RecyclerView recyclerView,
+        boolean waitReportedReady
+    ) {
+        int adapterCount = -1;
+        int childCount = -1;
+        int previewPosition = -1;
+        String visiblePreviewText = "";
+        String visibleCueText = "";
+        String visibleSurface = "";
+        if (recyclerView != null) {
+            childCount = recyclerView.getChildCount();
+            RecyclerView.Adapter<?> adapter = recyclerView.getAdapter();
+            if (adapter != null) {
+                adapterCount = adapter.getItemCount();
+                previewPosition = findFirstBrowseLinkedGuidePreviewPosition(adapter);
+            }
+            for (int index = 0; index < recyclerView.getChildCount(); index++) {
+                View row = recyclerView.getChildAt(index);
+                if (row == null) {
+                    continue;
+                }
+                TextView preview = row.findViewById(R.id.result_related_preview);
+                if (preview != null && isVisible(preview)) {
+                    visiblePreviewText = firstNonEmpty(
+                        visiblePreviewText,
+                        safe(preview.getText().toString()),
+                        safe(String.valueOf(preview.getContentDescription()))
+                    );
+                }
+                TextView cue = row.findViewById(R.id.result_related_cue);
+                if (cue != null && isVisible(cue)) {
+                    visibleCueText = firstNonEmpty(
+                        visibleCueText,
+                        safe(cue.getText().toString()),
+                        safe(String.valueOf(cue.getContentDescription()))
+                    );
+                }
+            }
+        }
+        View root = activity == null ? null : activity.getWindow().getDecorView();
+        if (root != null) {
+            visibleSurface = clipForDiagnostics(buildVisibleSurfaceSnapshot(root), 420);
+        }
+        return "waitReady="
+            + waitReportedReady
+            + ", posture="
+            + (activity == null ? "unknown" : activity.getResources().getConfiguration().orientation)
+            + ", adapterCount="
+            + adapterCount
+            + ", childCount="
+            + childCount
+            + ", firstPreviewPosition="
+            + previewPosition
+            + ", visiblePreview="
+            + quoteForDiagnostics(visiblePreviewText)
+            + ", visibleCue="
+            + quoteForDiagnostics(visibleCueText)
+            + ", visibleSurface="
+            + quoteForDiagnostics(visibleSurface);
+    }
+
     private int findFirstBrowseLinkedGuidePreviewPosition(RecyclerView.Adapter<?> adapter) {
         if (adapter == null) {
             return -1;
@@ -5731,6 +5897,35 @@ public final class PromptHarnessSmokeTest {
             this.sourceGuideTitle = safe(sourceGuideTitle);
             this.sourceGuideSection = safe(sourceGuideSection);
         }
+    }
+
+    private static String firstNonEmpty(String... values) {
+        if (values == null) {
+            return "";
+        }
+        for (String value : values) {
+            String trimmed = safe(value).trim();
+            if (!trimmed.isEmpty() && !"null".equalsIgnoreCase(trimmed)) {
+                return trimmed;
+            }
+        }
+        return "";
+    }
+
+    private static String quoteForDiagnostics(String value) {
+        return "'" + clipForDiagnostics(value, 240).replace('\n', ' ').replace('\r', ' ') + "'";
+    }
+
+    private static String clipForDiagnostics(String value, int maxChars) {
+        String trimmed = safe(value).trim();
+        int limit = Math.max(0, maxChars);
+        if (trimmed.length() <= limit) {
+            return trimmed;
+        }
+        if (limit <= 3) {
+            return trimmed.substring(0, limit);
+        }
+        return trimmed.substring(0, limit - 3) + "...";
     }
 
     private static String safe(String value) {

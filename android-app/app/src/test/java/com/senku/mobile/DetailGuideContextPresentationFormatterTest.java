@@ -113,6 +113,30 @@ public final class DetailGuideContextPresentationFormatterTest {
     }
 
     @Test
+    public void utilityRailPreviewTitleIdentifiesSelectedLinkedGuideWithoutAndroidResources() {
+        DetailGuideContextPresentationFormatter formatter =
+            new DetailGuideContextPresentationFormatter(null);
+        DetailGuideContextPresentationFormatter.State state = state(
+            false,
+            true,
+            false,
+            true,
+            "GD-214",
+            "Water Storage",
+            "",
+            "",
+            "",
+            "",
+            ""
+        );
+
+        assertEquals(
+            "Selected linked guide",
+            formatter.buildRelatedGuidePreviewTitleText(state)
+        );
+    }
+
+    @Test
     public void emptyHandoffLabelShortCircuitsSummaryWithoutAndroidResources() {
         DetailGuideContextPresentationFormatter formatter =
             new DetailGuideContextPresentationFormatter(null);

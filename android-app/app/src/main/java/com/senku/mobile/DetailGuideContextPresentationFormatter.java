@@ -59,10 +59,10 @@ final class DetailGuideContextPresentationFormatter {
     }
 
     String buildRelatedGuidePreviewTitleText(State state) {
-        if (state.answerMode || state.activeGuideContextPanel || state.nonRailCrossReferenceCopy) {
+        if (state.answerMode || state.nonRailCrossReferenceCopy) {
             return "Cross-reference";
         }
-        return guideRailLabel(context);
+        return "Selected linked guide";
     }
 
     String buildRelatedGuidePreviewCaptionText(State state) {

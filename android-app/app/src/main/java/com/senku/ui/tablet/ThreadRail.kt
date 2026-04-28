@@ -54,8 +54,8 @@ fun ThreadRail(
         modifier = modifier
             .background(colors.bg1)
             .verticalScroll(scrollState)
-            .padding(horizontal = 14.dp, vertical = 12.dp),
-        verticalArrangement = Arrangement.spacedBy(15.dp),
+            .padding(horizontal = 10.dp, vertical = 9.dp),
+        verticalArrangement = Arrangement.spacedBy(10.dp),
     ) {
         Toolbar(
             pinVisible = pinVisible,
@@ -110,11 +110,11 @@ private fun Toolbar(
     val colors = SenkuTheme.colors
 
     Column(
-        verticalArrangement = Arrangement.spacedBy(8.dp),
+        verticalArrangement = Arrangement.spacedBy(6.dp),
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            horizontalArrangement = Arrangement.spacedBy(6.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             RailActionButton(
@@ -154,7 +154,7 @@ private fun RailSection(
     val colors = SenkuTheme.colors
 
     Column(
-        verticalArrangement = Arrangement.spacedBy(8.dp),
+        verticalArrangement = Arrangement.spacedBy(6.dp),
         content = {
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -170,7 +170,7 @@ private fun RailSection(
                     text = label + " - " + count,
                     style = SenkuTheme.typography.monoCaps.copy(
                         fontSize = 10.sp,
-                        lineHeight = 13.sp,
+                        lineHeight = 12.sp,
                         fontWeight = FontWeight.Medium,
                     ),
                     color = colors.ink2,
@@ -209,25 +209,25 @@ private fun ThreadTurnRow(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 7.dp, vertical = 7.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                .padding(horizontal = 6.dp, vertical = 5.dp),
+            horizontalArrangement = Arrangement.spacedBy(7.dp),
             verticalAlignment = Alignment.Top,
         ) {
             Box(
                 modifier = Modifier
                     .width(2.dp)
-                    .height(38.dp)
+                    .height(32.dp)
                     .background(if (turn.isActive) colors.accent else colors.hairlineStrong),
             )
             Column(
                 modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.spacedBy(4.dp),
+                verticalArrangement = Arrangement.spacedBy(2.dp),
             ) {
                 Text(
                     text = turn.id,
                     style = SenkuTheme.typography.monoCaps.copy(
                         fontSize = 9.sp,
-                        lineHeight = 12.sp,
+                        lineHeight = 11.sp,
                     ),
                     color = idColor,
                     maxLines = 1,
@@ -237,7 +237,7 @@ private fun ThreadTurnRow(
                     text = turn.question.trim().ifEmpty { "No question recorded." },
                     style = SenkuTheme.typography.smallBody.copy(
                         fontSize = 12.sp,
-                        lineHeight = 15.sp,
+                        lineHeight = 14.sp,
                     ),
                     color = colors.ink1,
                     maxLines = 2,
@@ -275,25 +275,25 @@ private fun SourcePill(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 7.dp, vertical = 7.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                .padding(horizontal = 6.dp, vertical = 5.dp),
+            horizontalArrangement = Arrangement.spacedBy(7.dp),
             verticalAlignment = Alignment.Top,
         ) {
             Box(
                 modifier = Modifier
                     .width(2.dp)
-                    .height(36.dp)
+                    .height(30.dp)
                     .background(if (source.isSelected || source.isAnchor) idColor else colors.hairlineStrong),
             )
             Column(
                 modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.spacedBy(4.dp),
+                verticalArrangement = Arrangement.spacedBy(2.dp),
             ) {
                 Text(
                     text = source.id.trim().ifEmpty { "GD-?" },
                     style = SenkuTheme.typography.monoCaps.copy(
                         fontSize = 9.sp,
-                        lineHeight = 12.sp,
+                        lineHeight = 11.sp,
                         fontWeight = FontWeight.Medium,
                     ),
                     color = idColor,
@@ -304,7 +304,7 @@ private fun SourcePill(
                     text = source.title.trim().ifEmpty { "Source guide" },
                     style = SenkuTheme.typography.smallBody.copy(
                         fontSize = 11.5.sp,
-                        lineHeight = 15.sp,
+                        lineHeight = 13.sp,
                     ),
                     color = colors.ink1,
                     maxLines = 1,
@@ -320,8 +320,8 @@ private fun PlaceholderText(text: String) {
     Text(
         text = text,
         style = SenkuTheme.typography.smallBody.copy(
-            fontSize = 12.sp,
-            lineHeight = 16.sp,
+            fontSize = 11.sp,
+            lineHeight = 14.sp,
         ),
         color = SenkuTheme.colors.ink3,
     )
@@ -337,7 +337,7 @@ private fun RailActionButton(
 
     Surface(
         modifier = Modifier
-            .size(36.dp)
+            .size(32.dp)
             .clickable(onClick = onClick),
         color = if (active) colors.ok.copy(alpha = 0.18f) else colors.bg0,
         contentColor = colors.ink0,
