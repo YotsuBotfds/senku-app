@@ -9,6 +9,10 @@ changing operational detail here.
   Use it before interpreting `notes/dispatch/` filenames as active work.
 - Desktop retrieval uses hybrid retrieval plus metadata-aware reranking and structured session state in [`query.py`](../query.py).
 - Android app is the active parity project: retrieval quality, prompt shaping, and chat/session continuity.
+- Android UI redesign target screenshots are tracked in `artifacts/mocks/`,
+  with the inventory and usage rules in
+  [`ANDROID_TARGET_MOCKS_20260427.md`](./ANDROID_TARGET_MOCKS_20260427.md).
+  Treat those images as current design targets, not validation output.
 - Mobile targets both `E2B` and `E4B`: `E2B` is the practical floor, `E4B` is the quality tier to keep evaluating.
 - Session-aware follow-up behavior is part of normal validation.
 - Local compute routing ladder is `GLM 5.1 > Spark > Qwen 27B > Qwen 9B`.

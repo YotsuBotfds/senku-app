@@ -35,7 +35,9 @@ CLAUDE.md
 .tmp/
 _tmp_gallery/
 archive/
-artifacts/
+artifacts/*
+!artifacts/mocks/
+!artifacts/mocks/*.png
 test_startprocess_*.txt
 
 # --- Local runtime data ---
