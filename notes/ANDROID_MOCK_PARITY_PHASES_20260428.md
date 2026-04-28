@@ -11,9 +11,9 @@ files from this lane.
   - Home, Search, Answer, Guide, Thread: phone portrait, phone landscape,
     tablet portrait, tablet landscape.
   - Emergency: phone portrait and tablet portrait only.
-- Current proof pack: `artifacts/ui_state_pack/20260428_071545`.
+- Current proof pack: `artifacts/ui_state_pack/20260428_073733`.
   - Status `pass`, 47/47 states, homogeneous APK
-    `bbed58bcc9f097b9e262d7ff93ccfb0adc205cadb57d7164195149e80df204fb`,
+    `415426820010d7840d3adccd1979f6a297aa39916b3edaaeacce96f1acc68c0f`,
     model `gemma-4-e2b-it-litert`, rotation mismatch count 0.
 - Baseline commit for Wave23+ planning: `9835ba7` (`disable github workflow
   ci`) plus local Wave24 proof pack `20260428_064105`.
@@ -43,7 +43,7 @@ files from this lane.
 ## Proof Path Rules
 
 - For every screenshot path below, the matching dump path is the same relative
-  path under `artifacts/ui_state_pack/20260428_071545/dumps/` with `.xml`
+  path under `artifacts/ui_state_pack/20260428_073733/dumps/` with `.xml`
   replacing `.png`.
 - Every worker must cite target mock(s), current screenshot(s), current dump(s),
   and remaining deltas split as content/data, layout/density, or behavior.
@@ -53,7 +53,7 @@ files from this lane.
 
 ## Wave25+ Visual Triage
 
-Use proof pack `20260428_071545` as the baseline until a newer closure pack
+Use proof pack `20260428_073733` as the baseline until a newer closure pack
 supersedes it. Ordering below prioritizes visual drift, but shared ownership
 dependencies still win over raw drift.
 
@@ -110,6 +110,28 @@ detail below the chronological transcript. Next shared-shell priority should be
 to make Answer and Thread stop mounting generic proof/detail sections in the
 first viewport.
 
+Wave27 planner note: read-only review of `20260428_071545` keeps the next two
+waves focused on detail-surface ownership before Home/Search polish. Wave27A
+should close Answer/Thread takeovers first: Answer still titles `Wood Quality`
+and mounts unsure/proof rail; Thread starts Q/A but then mounts selected-entry
+answer detail. Wave27B should then finish Guide reader structure: phone
+landscape still lacks the sections rail, tablet rails still report `SECTIONS ·
+1`/`CROSS-REFERENCE · 7`, and guide body still uses oversized raw paper text.
+Home/Search remain lower-risk density/chrome follow-ups after those surfaces
+stop crossing modes.
+
+Wave27 integration note: local proof `20260428_073733` is green after
+thread phone XML shell suppression, source-first proof summaries, answer
+card `UNSURE FIT`/`Sources - 3` copy, guide paper/related-link tightening,
+search row density, emergency row compaction, and restored cross-reference
+smoke contract wording. Visual spot-check: thread phone portrait now opens
+as `THREAD GD-220 - Rain shelter - 2 turns` with Q1/A1/Q2/A2 before support
+cards; guide cross-reference surfaces expose `Cross-reference` and linked-guide
+copy again; answer still leads with a weak GD-345 source title and proof/source
+support below the first viewport. Next work should prioritize answer source
+identity/body selection, guide 17-section/required-reading fidelity, then
+home/search density cleanup.
+
 ## Wave25+ Plan
 
 | Wave | Slice | Why this order | Avoid overlapping write sets | Acceptance proof |
@@ -162,7 +184,7 @@ Owner: planner only.
 
 Acceptance:
 
-- Active proof pack remains `artifacts/ui_state_pack/20260428_071545`.
+- Active proof pack remains `artifacts/ui_state_pack/20260428_073733`.
 - This file stays aligned with reviewer findings and live `git status`.
 - No code, generated artifacts, target mocks, or protected handoff notes are
   edited from this lane.

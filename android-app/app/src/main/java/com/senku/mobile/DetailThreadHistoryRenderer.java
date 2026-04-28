@@ -418,11 +418,43 @@ final class DetailThreadHistoryRenderer {
 
     static String leadTranscriptAnswer(String answerText) {
         String compact = safe(answerText).trim();
-        int firstBreak = compact.indexOf('\n');
-        if (firstBreak > 0) {
-            compact = compact.substring(0, firstBreak).trim();
+        if (compact.isEmpty()) {
+            return "";
         }
-        return compact;
+        String firstCandidate = "";
+        boolean preferNextBodyLine = false;
+        boolean skipNextBodyLine = false;
+        String[] lines = compact.split("\\r?\\n");
+        for (String line : lines) {
+            String candidate = safe(line).trim();
+            if (candidate.isEmpty()) {
+                continue;
+            }
+            if (isTranscriptAnswerHeading(candidate)) {
+                if (isTranscriptQuestionHeading(candidate)) {
+                    skipNextBodyLine = true;
+                    preferNextBodyLine = false;
+                }
+                if (isTranscriptAnswerLeadHeading(candidate)) {
+                    preferNextBodyLine = true;
+                }
+                if (!firstCandidate.isEmpty() && isTranscriptAnswerTrailingHeading(candidate)) {
+                    break;
+                }
+                continue;
+            }
+            if (skipNextBodyLine) {
+                skipNextBodyLine = false;
+                continue;
+            }
+            if (preferNextBodyLine) {
+                return candidate;
+            }
+            if (firstCandidate.isEmpty()) {
+                firstCandidate = candidate;
+            }
+        }
+        return firstCandidate;
     }
 
     static String compactStatusLabel(String status) {
@@ -479,7 +511,58 @@ final class DetailThreadHistoryRenderer {
     }
 
     static boolean shouldShowGuideChips(State state, boolean inlineTranscriptBubble) {
-        return false;
+        return state == null || !state.utilityRail;
+    }
+
+    private static boolean isTranscriptAnswerHeading(String line) {
+        String normalized = normalizeTranscriptHeading(line);
+        return normalized.equals("answer")
+            || normalized.equals("short answer")
+            || normalized.equals("source match")
+            || normalized.equals("steps")
+            || normalized.equals("field steps")
+            || normalized.equals("limits safety")
+            || normalized.equals("limits and safety")
+            || normalized.equals("watch")
+            || normalized.equals("question")
+            || normalized.equals("user")
+            || normalized.equals("field question")
+            || normalized.startsWith("field entry")
+            || normalized.startsWith("uncertain fit")
+            || normalized.startsWith("boundary")
+            || normalized.matches("\\d+\\..*");
+    }
+
+    private static boolean isTranscriptAnswerLeadHeading(String line) {
+        String normalized = normalizeTranscriptHeading(line);
+        return normalized.equals("answer")
+            || normalized.equals("short answer")
+            || normalized.equals("source match");
+    }
+
+    private static boolean isTranscriptQuestionHeading(String line) {
+        return normalizeTranscriptHeading(line).equals("field question");
+    }
+
+    private static boolean isTranscriptAnswerTrailingHeading(String line) {
+        String normalized = normalizeTranscriptHeading(line);
+        return normalized.equals("steps")
+            || normalized.equals("field steps")
+            || normalized.equals("limits safety")
+            || normalized.equals("limits and safety")
+            || normalized.equals("watch")
+            || normalized.startsWith("uncertain fit")
+            || normalized.startsWith("boundary");
+    }
+
+    private static String normalizeTranscriptHeading(String line) {
+        return safe(line)
+            .trim()
+            .replace('&', ' ')
+            .replace(':', ' ')
+            .replace('-', ' ')
+            .replaceAll("\\s+", " ")
+            .toLowerCase(Locale.US);
     }
 
     private static boolean hasMatchingTrailingTurn(

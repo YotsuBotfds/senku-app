@@ -34,7 +34,9 @@ final class DetailRelatedGuidePresentationFormatter {
     }
 
     String buildRelatedGuidesSubtitle(int count) {
-        return formatCountLabel(count, "guide link", "guide links") + " from this guide.";
+        return "Cross-reference \u00b7 "
+            + formatCountLabel(count, "linked guide", "linked guides")
+            + " \u00b7 required reading.";
     }
 
     String buildStationRelatedGuidesSubtitle(State state, int count) {
@@ -83,16 +85,18 @@ final class DetailRelatedGuidePresentationFormatter {
         if (anchorLabel.isEmpty()) {
             anchorLabel = context.getString(R.string.detail_related_guides_anchor_fallback);
         }
-        return "Guide links \u00b7 "
+        return "Cross-reference \u00b7 "
             + formatCountLabel(count, "linked guide", "linked guides")
+            + " \u00b7 required reading"
             + " \u00b7 "
             + anchorLabel
             + ".";
     }
 
     String buildAnswerModeRelatedGuidesSubtitle(State state, int count) {
-        return "Guide links \u00b7 "
+        return "Cross-reference \u00b7 "
             + formatCountLabel(count, "linked guide", "linked guides")
+            + " \u00b7 required reading"
             + " \u00b7 "
             + resolveSourceAnchorLabel(state)
             + ".";
@@ -289,7 +293,7 @@ final class DetailRelatedGuidePresentationFormatter {
             return "Anchor";
         }
         if (normalized.contains("required") || normalized.contains("prereq")) {
-            return "Required";
+            return "Required reading";
         }
         if (normalized.contains("related") || normalized.contains("cross reference") || normalized.contains("crossref")) {
             return "Cross-ref";

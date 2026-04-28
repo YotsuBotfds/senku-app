@@ -233,12 +233,22 @@ public final class DetailActionBlockPresentationFormatterTest {
     }
 
     @Test
+    public void styleEmergencyMinimumDistanceUnderlinesEmergencyDistancePhrases() {
+        assertTrue(DetailActionBlockPresentationFormatter.shouldStyleEmergencyMinimumDistance(
+            "Move to minimum 5 m from the active work zone."
+        ));
+        assertTrue(DetailActionBlockPresentationFormatter.shouldStyleEmergencyMinimumDistance(
+            "Clear the floor to 5 m radius."
+        ));
+    }
+
+    @Test
     public void styleEmergencyMinimumDistanceLeavesNegativeControlPlain() {
         CharSequence styled = DetailActionBlockPresentationFormatter.styleEmergencyMinimumDistance(
-            "Clear the floor to 5 m radius."
+            "Confirm two paths of egress."
         );
 
-        assertEquals("Clear the floor to 5 m radius.", styled.toString());
+        assertEquals("Confirm two paths of egress.", styled.toString());
     }
 
     @Test

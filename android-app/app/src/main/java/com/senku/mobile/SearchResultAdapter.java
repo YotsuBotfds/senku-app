@@ -213,7 +213,7 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
         LinearLayout row = new LinearLayout(context);
         row.setId(R.id.result_legacy_mirror);
         row.setOrientation(LinearLayout.VERTICAL);
-        row.setPadding(dp(3), dp(7), dp(3), 0);
+        row.setPadding(dp(3), dp(10), dp(3), 0);
         root.addView(row, new FrameLayout.LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT,
             ViewGroup.LayoutParams.WRAP_CONTENT
@@ -227,7 +227,7 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
             ViewGroup.LayoutParams.WRAP_CONTENT
         ));
 
-        TextView meta = buildMonoTextView(context, 9, 11, Typeface.BOLD);
+        TextView meta = buildMonoTextView(context, 9, 12, Typeface.BOLD);
         meta.setId(R.id.result_meta);
         meta.setTextColor(ContextCompat.getColor(context, R.color.senku_rev03_accent));
         meta.setAllCaps(true);
@@ -267,16 +267,16 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
         title.setId(R.id.result_title);
         title.setTextColor(ContextCompat.getColor(context, R.color.senku_text_light));
         title.setTypeface(Typeface.DEFAULT, Typeface.BOLD);
-        title.setTextSize(TypedValue.COMPLEX_UNIT_SP, 13);
-        title.setLineSpacing(0, 0.98f);
+        title.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14);
+        title.setLineSpacing(0, 1.02f);
         LinearLayout.LayoutParams titleParams = new LinearLayout.LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT,
             ViewGroup.LayoutParams.WRAP_CONTENT
         );
-        titleParams.topMargin = dp(3);
+        titleParams.topMargin = dp(5);
         row.addView(title, titleParams);
 
-        TextView section = buildMonoTextView(context, 8, 10, Typeface.NORMAL);
+        TextView section = buildMonoTextView(context, 8, 11, Typeface.NORMAL);
         section.setId(R.id.result_section);
         section.setTextColor(ContextCompat.getColor(context, R.color.senku_text_muted_light));
         section.setAllCaps(true);
@@ -285,19 +285,19 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
             ViewGroup.LayoutParams.MATCH_PARENT,
             ViewGroup.LayoutParams.WRAP_CONTENT
         );
-        sectionParams.topMargin = dp(2);
+        sectionParams.topMargin = dp(4);
         row.addView(section, sectionParams);
 
         TextView snippet = new TextView(context);
         snippet.setId(R.id.result_snippet);
         snippet.setTextColor(ContextCompat.getColor(context, R.color.senku_text_muted_light));
-        snippet.setTextSize(TypedValue.COMPLEX_UNIT_SP, 10);
-        snippet.setLineSpacing(0, 1.06f);
+        snippet.setTextSize(TypedValue.COMPLEX_UNIT_SP, 11);
+        snippet.setLineSpacing(0, 1.10f);
         LinearLayout.LayoutParams snippetParams = new LinearLayout.LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT,
             ViewGroup.LayoutParams.WRAP_CONTENT
         );
-        snippetParams.topMargin = dp(4);
+        snippetParams.topMargin = dp(8);
         row.addView(snippet, snippetParams);
 
         LinearLayout chips = new LinearLayout(context);
@@ -341,7 +341,7 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
             ViewGroup.LayoutParams.MATCH_PARENT,
             1
         );
-        dividerParams.topMargin = dp(10);
+        dividerParams.topMargin = dp(18);
         row.addView(divider, dividerParams);
 
         ComposeView composeView = new ComposeView(context);

@@ -74,14 +74,94 @@ internal fun threadRailAnswerPreviewLabel(index: Int, guideMode: Boolean, answer
     "${threadRailAnswerLabel(index, guideMode)} \u00B7 ${threadRailAnswerPreviewText(answer)}"
 
 internal fun threadRailAnswerPreviewText(answer: String): String =
-    answer.trim()
-        .lineSequence()
-        .firstOrNull { it.isNotBlank() }
-        ?.trim()
-        ?.take(96)
-        ?.trimEnd()
-        ?.ifEmpty { null }
-        ?: "No answer recorded."
+    threadRailAnswerLeadText(answer)
+        .take(96)
+        .trimEnd()
+        .ifEmpty { "No answer recorded." }
+
+private fun threadRailAnswerLeadText(answer: String): String {
+    var firstCandidate = ""
+    var preferNextBodyLine = false
+    var skipNextBodyLine = false
+    answer.trim().lineSequence().forEach { rawLine ->
+        val candidate = rawLine.trim()
+        if (candidate.isEmpty()) {
+            return@forEach
+        }
+        if (candidate.isThreadRailAnswerHeading()) {
+            if (candidate.isThreadRailQuestionHeading()) {
+                skipNextBodyLine = true
+                preferNextBodyLine = false
+            }
+            if (candidate.isThreadRailAnswerLeadHeading()) {
+                preferNextBodyLine = true
+            }
+            if (firstCandidate.isNotEmpty() && candidate.isThreadRailAnswerTrailingHeading()) {
+                return firstCandidate
+            }
+            return@forEach
+        }
+        if (skipNextBodyLine) {
+            skipNextBodyLine = false
+            return@forEach
+        }
+        if (preferNextBodyLine) {
+            return candidate
+        }
+        if (firstCandidate.isEmpty()) {
+            firstCandidate = candidate
+        }
+    }
+    return firstCandidate
+}
+
+private fun String.isThreadRailAnswerHeading(): Boolean {
+    val normalized = normalizeThreadRailAnswerHeading()
+    return normalized == "answer" ||
+        normalized == "short answer" ||
+        normalized == "source match" ||
+        normalized == "steps" ||
+        normalized == "field steps" ||
+        normalized == "limits safety" ||
+        normalized == "limits and safety" ||
+        normalized == "watch" ||
+        normalized == "question" ||
+        normalized == "user" ||
+        normalized == "field question" ||
+        normalized.startsWith("field entry") ||
+        normalized.startsWith("uncertain fit") ||
+        normalized.startsWith("boundary") ||
+        normalized.matches(Regex("\\d+\\..*"))
+}
+
+private fun String.isThreadRailAnswerLeadHeading(): Boolean {
+    val normalized = normalizeThreadRailAnswerHeading()
+    return normalized == "answer" ||
+        normalized == "short answer" ||
+        normalized == "source match"
+}
+
+private fun String.isThreadRailQuestionHeading(): Boolean =
+    normalizeThreadRailAnswerHeading() == "field question"
+
+private fun String.isThreadRailAnswerTrailingHeading(): Boolean {
+    val normalized = normalizeThreadRailAnswerHeading()
+    return normalized == "steps" ||
+        normalized == "field steps" ||
+        normalized == "limits safety" ||
+        normalized == "limits and safety" ||
+        normalized == "watch" ||
+        normalized.startsWith("uncertain fit") ||
+        normalized.startsWith("boundary")
+}
+
+private fun String.normalizeThreadRailAnswerHeading(): String =
+    trim()
+        .replace('&', ' ')
+        .replace(':', ' ')
+        .replace('-', ' ')
+        .replace(Regex("\\s+"), " ")
+        .lowercase()
 
 internal fun threadRailSourceContextPriority(source: SourceState): Int {
     val sourceText = "${source.id} ${source.title}".lowercase()

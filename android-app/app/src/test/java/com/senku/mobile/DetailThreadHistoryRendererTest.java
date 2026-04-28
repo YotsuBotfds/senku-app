@@ -160,6 +160,24 @@ public final class DetailThreadHistoryRendererTest {
     }
 
     @Test
+    public void threadAnswerPreviewSkipsAnswerProofHeadings() {
+        String answer = "ANSWER\n"
+            + "Field question\n"
+            + "What should I do next after the ridge line is up?\n"
+            + "Field entry - Moderate evidence\n"
+            + "ANSWER\n"
+            + "SOURCE MATCH\n"
+            + "Center the tarp, tension the corners, and shape the low edge for runoff.\n"
+            + "STEPS\n"
+            + "1. Pull the tarp evenly across the ridgeline.";
+
+        assertEquals(
+            "Center the tarp, tension the corners, and shape the low edge for runoff.",
+            DetailThreadHistoryRenderer.compactThreadAnswer(answer, false, text -> text)
+        );
+    }
+
+    @Test
     public void utilityRailAnswerPreviewStaysTranscriptSized() {
         String answer = "A rain shelter answer with enough detail to become a full card if it is not compacted. "
             + "Keep only a short transcript preview in the rail and history surfaces.";
@@ -228,7 +246,7 @@ public final class DetailThreadHistoryRendererTest {
     }
 
     @Test
-    public void guideChipsStayOutOfUtilityRailRows() {
+    public void guideChipsStayOutOfUtilityRailRowsButShowInTranscriptRows() {
         DetailThreadHistoryRenderer.State utilityRail = new DetailThreadHistoryRenderer.State(
             true,
             false,
@@ -244,7 +262,8 @@ public final class DetailThreadHistoryRendererTest {
 
         assertEquals(false, DetailThreadHistoryRenderer.shouldShowGuideChips(utilityRail, false));
         assertEquals(false, DetailThreadHistoryRenderer.shouldShowGuideChips(utilityRail, true));
-        assertEquals(false, DetailThreadHistoryRenderer.shouldShowGuideChips(detailTranscript, false));
+        assertEquals(true, DetailThreadHistoryRenderer.shouldShowGuideChips(detailTranscript, false));
+        assertEquals(true, DetailThreadHistoryRenderer.shouldShowGuideChips(detailTranscript, true));
     }
 
     @Test

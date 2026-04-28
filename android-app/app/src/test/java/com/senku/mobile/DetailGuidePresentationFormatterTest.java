@@ -1,6 +1,8 @@
 package com.senku.mobile;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
@@ -117,6 +119,41 @@ public final class DetailGuidePresentationFormatterTest {
                 + "Use this section only for foundry-area readiness, visible hazard screening, material and source labeling, no-go triggers, access control, and expert or owner handoff.",
             DetailGuidePresentationFormatter.buildGuideBody(result)
         );
+    }
+
+    @Test
+    public void buildGuideBodyUsesFrontMatterRelatedCountForMockParityHeader() {
+        StringBuilder body = new StringBuilder();
+        body.append("---\n")
+            .append("id: GD-132\n")
+            .append("related:\n");
+        for (int i = 1; i <= 17; i++) {
+            body.append("  - guide-").append(i).append('\n');
+        }
+        body.append("---\n")
+            .append(":::danger\n")
+            .append("EXTREME BURN HAZARD: Keep tools dry.\n")
+            .append(":::\n");
+        for (int i = 1; i <= 26; i++) {
+            body.append("## Section ").append(i).append(" Mock heading\n")
+                .append("Body ").append(i).append(".\n");
+        }
+
+        SearchResult result = new SearchResult(
+            "Foundry & Metal Casting",
+            "",
+            "",
+            body.toString(),
+            "GD-132",
+            "",
+            "metalworking",
+            "guide-focus"
+        );
+
+        String displayBody = DetailGuidePresentationFormatter.buildGuideBody(result);
+
+        assertTrue(displayBody.contains("GD-132 \u00b7 17 SECTIONS"));
+        assertFalse(displayBody.contains("GD-132 \u00b7 26 SECTIONS"));
     }
 
     @Test
@@ -344,6 +381,16 @@ public final class DetailGuidePresentationFormatterTest {
             "Owner's note - Pattern -> Unlimited molds \u00b7 dry tools",
             GuideBodySanitizer.sanitizeGuideBodyForDisplay(
                 "Ownerâ€™s note â€” Pattern â†’ Unlimited molds â€¢ dry tools"
+            )
+        );
+    }
+
+    @Test
+    public void guideBodySanitizerDropsCommonMojibakeEmojiMarkers() {
+        assertEquals(
+            "\u2014 \u00a7 1 \u00b7 OVERVIEW\nUse dry tools.",
+            GuideBodySanitizer.sanitizeGuideBodyForDisplay(
+                "## \u00f0\u0178\u201d\u00a5 Overview\nUse dry tools."
             )
         );
     }

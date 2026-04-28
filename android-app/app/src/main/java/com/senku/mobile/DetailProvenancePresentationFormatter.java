@@ -50,7 +50,7 @@ final class DetailProvenancePresentationFormatter {
 
     int getCollapsedProvenanceMaxLines(State state) {
         if (state != null && state.utilityRail) {
-            return 4;
+            return 3;
         }
         if (state != null && state.landscapePhoneLayout) {
             return 2;

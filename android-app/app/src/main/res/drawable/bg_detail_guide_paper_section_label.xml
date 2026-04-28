@@ -4,10 +4,10 @@
         android:height="1dp"
         android:gravity="center_vertical">
         <shape android:shape="rectangle">
-            <solid android:color="#30B9AA90" />
+            <solid android:color="#40B9AA90" />
         </shape>
     </item>
-    <item android:left="14dp">
+    <item android:left="12dp">
         <shape android:shape="rectangle">
             <solid android:color="@color/senku_rev03_paper" />
         </shape>

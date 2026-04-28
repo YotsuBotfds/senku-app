@@ -186,8 +186,28 @@ class AnswerContentFactoryTest {
             "Use the attached source guide [GD-345] to build a simple rain shelter.",
             content.short,
         )
-        assertEquals(listOf("Check the cited guide before moving. [GD-345]"), content.steps)
+        assertEquals(null, content.steps)
         assertEquals("Treat this as guidance, not procedure.", content.limits)
+    }
+
+    @Test
+    fun fromRenderedAnswer_keepsSubstantiveSteps() {
+        val content = fromRenderedAnswer(
+            body = """
+                ANSWER
+                Build a low ridgeline first.
+
+                FIELD STEPS
+                1. Face the low tarp edge windward.
+            """.trimIndent(),
+            sourceCount = 3,
+            host = "This device",
+            elapsedSeconds = 0.0,
+            evidence = Evidence.Moderate,
+            abstain = false,
+        )
+
+        assertEquals(listOf("Face the low tarp edge windward."), content.steps)
     }
 
     @Test

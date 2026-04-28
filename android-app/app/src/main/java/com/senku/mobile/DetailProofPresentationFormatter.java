@@ -87,6 +87,68 @@ final class DetailProofPresentationFormatter {
         this.context = context;
     }
 
+    private String text(int resId) {
+        if (context != null) {
+            return context.getString(resId);
+        }
+        if (resId == R.string.detail_external_review_proof_route) {
+            return "Route";
+        }
+        if (resId == R.string.detail_external_review_proof_backend) {
+            return "Backend";
+        }
+        if (resId == R.string.detail_external_review_proof_evidence) {
+            return "Evidence";
+        }
+        if (resId == R.string.detail_external_review_proof_lead) {
+            return "Lead";
+        }
+        if (resId == R.string.detail_external_review_proof_section) {
+            return "Section";
+        }
+        if (resId == R.string.detail_external_review_proof_card) {
+            return "Card";
+        }
+        if (resId == R.string.detail_external_review_proof_review) {
+            return "Review";
+        }
+        if (resId == R.string.detail_external_review_proof_card_guide) {
+            return "Card guide";
+        }
+        if (resId == R.string.detail_external_review_proof_reviewed_sources) {
+            return "Reviewed sources";
+        }
+        if (resId == R.string.detail_external_review_proof_corpus) {
+            return "Corpus";
+        }
+        if (resId == R.string.detail_external_review_proof_verify) {
+            return "Verify";
+        }
+        if (resId == R.string.detail_external_review_no_citations_value) {
+            return "No guide citations attached yet";
+        }
+        if (resId == R.string.detail_external_review_no_citations_short) {
+            return "No guide citations yet";
+        }
+        if (resId == R.string.detail_external_review_no_citations_verify) {
+            return "Reopen search or inspect a guide directly before relying on this.";
+        }
+        if (resId == R.string.detail_external_review_corpus_limit_low_coverage) {
+            return "Installed pack coverage is thin for this query.";
+        }
+        if (resId == R.string.detail_external_review_corpus_limit_no_citations) {
+            return "No cited guide lines surfaced from the installed pack for this answer yet.";
+        }
+        if (resId == R.string.detail_loop4_proof_revision) {
+            return "Revision";
+        }
+        return "";
+    }
+
+    private int color(int resId) {
+        return context == null ? (int) 0xffd8ddc8 : context.getColor(resId);
+    }
+
     SpannableStringBuilder buildWhySummary(
         State state,
         List<SearchResult> currentSources,
@@ -106,49 +168,49 @@ final class DetailProofPresentationFormatter {
         ArrayList<StructuredLine> lines = new ArrayList<>();
         if (compact) {
             lines.add(new StructuredLine(
-                context.getString(R.string.detail_external_review_proof_evidence),
-                context.getString(R.string.detail_external_review_no_citations_short),
+                text(R.string.detail_external_review_proof_evidence),
+                text(R.string.detail_external_review_no_citations_short),
                 state.lowCoverageAccentColor
             ));
             lines.add(new StructuredLine(
-                context.getString(R.string.detail_external_review_proof_corpus),
-                context.getString(R.string.detail_external_review_corpus_limit_no_citations),
+                text(R.string.detail_external_review_proof_corpus),
+                text(R.string.detail_external_review_corpus_limit_no_citations),
                 state.lowCoverageAccentColor
             ));
             return buildStructuredLineBlock(lines);
         }
         lines.add(new StructuredLine(
-            context.getString(R.string.detail_external_review_proof_route),
+            text(R.string.detail_external_review_proof_route),
             state.routeValue,
             state.routeAccentColor,
             true
         ));
         if (!state.backendValue.isEmpty()) {
             lines.add(new StructuredLine(
-                context.getString(R.string.detail_external_review_proof_backend),
+                text(R.string.detail_external_review_proof_backend),
                 state.backendValue,
-                context.getColor(R.color.senku_text_muted_light),
+                color(R.color.senku_text_muted_light),
                 true
             ));
         }
         lines.add(new StructuredLine(
-            context.getString(R.string.detail_external_review_proof_evidence),
-            context.getString(compact
+            text(R.string.detail_external_review_proof_evidence),
+            text(compact
                 ? R.string.detail_external_review_no_citations_short
                 : R.string.detail_external_review_no_citations_value),
             state.lowCoverageAccentColor
         ));
         lines.add(new StructuredLine(
-            context.getString(R.string.detail_external_review_proof_corpus),
-            context.getString(R.string.detail_external_review_corpus_limit_no_citations),
+            text(R.string.detail_external_review_proof_corpus),
+            text(R.string.detail_external_review_corpus_limit_no_citations),
             state.lowCoverageAccentColor
         ));
         appendProofRevisionLine(lines, state.revisionStamp);
         if (!compact) {
             lines.add(new StructuredLine(
-                context.getString(R.string.detail_external_review_proof_verify),
-                context.getString(R.string.detail_external_review_no_citations_verify),
-                context.getColor(R.color.senku_text_muted_light)
+                text(R.string.detail_external_review_proof_verify),
+                text(R.string.detail_external_review_no_citations_verify),
+                color(R.color.senku_text_muted_light)
             ));
         }
         return buildStructuredLineBlock(lines);
@@ -193,33 +255,33 @@ final class DetailProofPresentationFormatter {
     SpannableStringBuilder buildProvenanceMetaText(State state, SearchResult source, List<SearchResult> currentSources) {
         ArrayList<StructuredLine> lines = new ArrayList<>();
         lines.add(new StructuredLine(
-            context.getString(R.string.detail_external_review_proof_route),
+            text(R.string.detail_external_review_proof_route),
             state.routeValue,
             state.routeAccentColor,
             true
         ));
         if (!state.backendValue.isEmpty()) {
             lines.add(new StructuredLine(
-                context.getString(R.string.detail_external_review_proof_backend),
+                text(R.string.detail_external_review_proof_backend),
                 state.backendValue,
-                context.getColor(R.color.senku_text_muted_light),
+                color(R.color.senku_text_muted_light),
                 true
             ));
         }
         String entryValue = buildSourceEntryValue(source, currentSources);
         if (!entryValue.isEmpty()) {
             lines.add(new StructuredLine(
-                context.getString(R.string.detail_external_review_proof_lead),
+                text(R.string.detail_external_review_proof_lead),
                 entryValue,
-                context.getColor(R.color.senku_accent_olive)
+                color(R.color.senku_accent_olive)
             ));
         }
         String section = safe(source == null ? null : source.sectionHeading).trim();
         if (!section.isEmpty()) {
             lines.add(new StructuredLine(
-                context.getString(R.string.detail_external_review_proof_section),
+                text(R.string.detail_external_review_proof_section),
                 trimHeaderLabel(section),
-                context.getColor(R.color.senku_text_muted_light)
+                color(R.color.senku_text_muted_light)
             ));
         }
         appendReviewedCardLines(lines, state, false);
@@ -240,7 +302,7 @@ final class DetailProofPresentationFormatter {
                 lines.add(new StructuredLine(
                     "ANCHOR",
                     leadValue,
-                    context.getColor(R.color.senku_accent_olive)
+                    color(R.color.senku_accent_olive)
                 ));
             }
             lines.add(new StructuredLine(
@@ -253,34 +315,34 @@ final class DetailProofPresentationFormatter {
             }
             return lines;
         }
-        if (!state.lowCoverageOrAbstain) {
-            lines.add(new StructuredLine(
-                context.getString(R.string.detail_external_review_proof_route),
-                state.routeValue,
-                state.routeAccentColor,
-                true
-            ));
-            if (!state.backendValue.isEmpty()) {
-                lines.add(new StructuredLine(
-                    context.getString(R.string.detail_external_review_proof_backend),
-                    state.backendValue,
-                    context.getColor(R.color.senku_text_muted_light),
-                    true
-                ));
-            }
-        }
         lines.add(new StructuredLine(
-            state.lowCoverageOrAbstain ? "FIT" : context.getString(R.string.detail_external_review_proof_evidence),
+            state.lowCoverageOrAbstain ? "FIT" : "SOURCES",
             state.evidenceStrengthLabel + " | " + formatCountLabel(state.sourceCount, "source", "sources"),
             state.evidenceAccentColor
         ));
         String leadValue = buildSourceEntryValue(firstSource, currentSources);
         if (!leadValue.isEmpty()) {
             lines.add(new StructuredLine(
-                context.getString(R.string.detail_external_review_proof_lead),
+                text(R.string.detail_external_review_proof_lead),
                 leadValue,
-                context.getColor(R.color.senku_accent_olive)
+                color(R.color.senku_accent_olive)
             ));
+        }
+        if (!state.lowCoverageOrAbstain) {
+            lines.add(new StructuredLine(
+                text(R.string.detail_external_review_proof_route),
+                state.routeValue,
+                state.routeAccentColor,
+                true
+            ));
+            if (!state.backendValue.isEmpty()) {
+                lines.add(new StructuredLine(
+                    text(R.string.detail_external_review_proof_backend),
+                    state.backendValue,
+                    color(R.color.senku_text_muted_light),
+                    true
+                ));
+            }
         }
         appendReviewedCardLines(lines, state, compact);
         if (!state.lowCoverageOrAbstain) {
@@ -300,10 +362,10 @@ final class DetailProofPresentationFormatter {
             appendCompactReviewedCardLines(lines, metadata);
             return;
         }
-        int accentColor = context.getColor(R.color.senku_text_muted_light);
+        int accentColor = color(R.color.senku_text_muted_light);
         if (!metadata.cardId.isEmpty()) {
             lines.add(new StructuredLine(
-                context.getString(R.string.detail_external_review_proof_card),
+                text(R.string.detail_external_review_proof_card),
                 metadata.cardId,
                 accentColor,
                 true
@@ -311,14 +373,14 @@ final class DetailProofPresentationFormatter {
         }
         if (!metadata.reviewStatus.isEmpty()) {
             lines.add(new StructuredLine(
-                context.getString(R.string.detail_external_review_proof_review),
+                text(R.string.detail_external_review_proof_review),
                 humanizeReviewedCardToken(metadata.reviewStatus),
                 accentColor
             ));
         }
         if (!metadata.cardGuideId.isEmpty()) {
             lines.add(new StructuredLine(
-                context.getString(R.string.detail_external_review_proof_card_guide),
+                text(R.string.detail_external_review_proof_card_guide),
                 metadata.cardGuideId,
                 accentColor,
                 true
@@ -327,7 +389,7 @@ final class DetailProofPresentationFormatter {
         String sourceGuideIds = metadata.citedSourceGuideIdsCsv();
         if (!sourceGuideIds.isEmpty()) {
             lines.add(new StructuredLine(
-                context.getString(R.string.detail_external_review_proof_reviewed_sources),
+                text(R.string.detail_external_review_proof_reviewed_sources),
                 sourceGuideIds,
                 accentColor,
                 true
@@ -336,7 +398,7 @@ final class DetailProofPresentationFormatter {
     }
 
     private void appendCompactReviewedCardLines(List<StructuredLine> lines, ReviewedCardMetadata metadata) {
-        int accentColor = context.getColor(R.color.senku_text_muted_light);
+        int accentColor = color(R.color.senku_text_muted_light);
         for (CompactReviewedCardLine line : compactReviewedCardLines(metadata)) {
             lines.add(new StructuredLine(line.label, line.value, accentColor));
         }
@@ -384,9 +446,9 @@ final class DetailProofPresentationFormatter {
             && !section.equalsIgnoreCase(anchorLabel)
             && (!compact || !state.lowCoverageOrAbstain)) {
             lines.add(new StructuredLine(
-                context.getString(R.string.detail_external_review_proof_section),
+                text(R.string.detail_external_review_proof_section),
                 trimHeaderLabel(section),
-                context.getColor(R.color.senku_text_muted_light)
+                color(R.color.senku_text_muted_light)
             ));
         }
         String retrievalMode = safe(firstSource.retrievalMode).trim();
@@ -394,13 +456,13 @@ final class DetailProofPresentationFormatter {
             lines.add(new StructuredLine(
                 MATCH_TYPE_LABEL,
                 humanizeRetrievalMode(retrievalMode),
-                context.getColor(R.color.senku_text_muted_light)
+                color(R.color.senku_text_muted_light)
             ));
         }
         if (state.lowCoverageOrAbstain) {
             lines.add(new StructuredLine(
-                context.getString(R.string.detail_external_review_proof_corpus),
-                context.getString(R.string.detail_external_review_corpus_limit_low_coverage),
+                text(R.string.detail_external_review_proof_corpus),
+                text(R.string.detail_external_review_corpus_limit_low_coverage),
                 state.lowCoverageAccentColor
             ));
         }
@@ -482,9 +544,9 @@ final class DetailProofPresentationFormatter {
             return;
         }
         lines.add(new StructuredLine(
-            context.getString(R.string.detail_loop4_proof_revision),
+            text(R.string.detail_loop4_proof_revision),
             revisionStamp,
-            context.getColor(R.color.senku_text_muted_light),
+            color(R.color.senku_text_muted_light),
             true
         ));
     }
@@ -511,7 +573,7 @@ final class DetailProofPresentationFormatter {
                 Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
             );
             builder.setSpan(
-                new ForegroundColorSpan(context.getColor(R.color.senku_text_light)),
+                new ForegroundColorSpan(color(R.color.senku_text_light)),
                 valueStart,
                 valueEnd,
                 Spanned.SPAN_EXCLUSIVE_EXCLUSIVE

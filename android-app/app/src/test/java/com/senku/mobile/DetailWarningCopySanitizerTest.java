@@ -55,4 +55,13 @@ public final class DetailWarningCopySanitizerTest {
 
         assertEquals("Stop routine planning now.", cleaned);
     }
+
+    @Test
+    public void sanitizeWarningResidualCopy_removesGenericProofGuideChromeLabels() {
+        String cleaned = DetailWarningCopySanitizer.sanitizeWarningResidualCopy(
+            "Use the reviewed card evidence [Proof Metadata]. Keep GD-132 visible [Guide Source Chrome]."
+        );
+
+        assertEquals("Use the reviewed card evidence. Keep GD-132 visible.", cleaned);
+    }
 }

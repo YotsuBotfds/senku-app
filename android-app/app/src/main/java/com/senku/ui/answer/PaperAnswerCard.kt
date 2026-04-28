@@ -47,10 +47,10 @@ enum class Mode {
 }
 
 private val PaperAnswerCardInnerPadding = 0.dp
-private val PaperAnswerCardSectionSpacing = 14.dp
+private val PaperAnswerCardSectionSpacing = 12.dp
 private val PaperAnswerCardBorderWidth = 0.5.dp
-private val PaperAnswerCardBodySize = 18.sp
-private val PaperAnswerCardBodyLineHeight = 29.sp
+private val PaperAnswerCardBodySize = 16.sp
+private val PaperAnswerCardBodyLineHeight = 25.sp
 private val PaperAnswerCardSupportSize = 13.sp
 private val PaperAnswerCardSupportLineHeight = 20.sp
 private val PaperAnswerCardMetaSize = 10.sp
@@ -185,21 +185,37 @@ fun PaperAnswerCard(
                     color = palette.body,
                 )
 
+                if (shouldShowUncertainFitNotice(content)) {
+                    SupportBlock(
+                        label = "UNSURE FIT",
+                        labelColor = evidenceTone,
+                        palette = palette,
+                        emphasized = true,
+                    ) {
+                        Text(
+                            text = uncertainFitNoticeText(content),
+                            style = typography.smallBody.copy(
+                                fontSize = PaperAnswerCardSupportSize,
+                                lineHeight = PaperAnswerCardSupportLineHeight,
+                                fontWeight = FontWeight.Normal,
+                                letterSpacing = 0.sp,
+                            ),
+                            color = palette.body,
+                        )
+                    }
+                }
+
                 if (!content.steps.isNullOrEmpty() && !content.abstain) {
                     SupportBlock(
-                        label = if (content.uncertainFit) "UNSURE FIT" else "STEPS",
-                        labelColor = if (content.uncertainFit) evidenceTone else palette.muted,
+                        label = "STEPS",
+                        labelColor = palette.muted,
                         palette = palette,
-                        emphasized = content.uncertainFit,
+                        emphasized = false,
                     ) {
                         Column(verticalArrangement = Arrangement.spacedBy(3.dp)) {
                             content.steps.forEachIndexed { index, step ->
                                 Text(
-                                    text = if (content.uncertainFit) {
-                                        step.trim()
-                                    } else {
-                                        "${index + 1}. ${step.trim()}"
-                                    },
+                                    text = "${index + 1}. ${step.trim()}",
                                     style = typography.smallBody.copy(
                                         fontSize = PaperAnswerCardSupportSize,
                                         lineHeight = PaperAnswerCardSupportLineHeight,
@@ -467,7 +483,18 @@ internal fun buildFooterMeta(content: AnswerContent): String {
 }
 
 private fun sourceCountLabel(sourceCount: Int): String {
-    return if (sourceCount == 1) "1 SOURCE" else "$sourceCount SOURCES"
+    return if (sourceCount == 1) "Sources - 1" else "Sources - $sourceCount"
+}
+
+internal fun shouldShowUncertainFitNotice(content: AnswerContent): Boolean {
+    return content.uncertainFit || content.answerSurfaceLabel == AnswerSurfaceLabel.LimitedFit
+}
+
+internal fun uncertainFitNoticeText(content: AnswerContent): String {
+    val count = content.sourceCount.coerceAtLeast(0)
+    val guideWord = if (count == 1) "guide" else "guides"
+    val countText = if (count > 0) "$count $guideWord" else "related guides"
+    return "Senku found $countText that may apply but no single guide is a confident anchor. Treat this as guidance, not procedure. See sources below."
 }
 
 internal fun displayProofCtaLabel(label: String): String {

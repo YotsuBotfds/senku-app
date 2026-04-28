@@ -383,12 +383,26 @@ private fun normalizeSteps(lines: List<String>): List<String> {
         .map { it.replace(Regex("""^[\-\u2022]+\s*"""), "") }
         .map { it.trim() }
         .filter { it.isNotEmpty() }
+        .filterNot { isSourceVerificationOnlyStep(it) }
         .filterNot {
             val normalized = it.lowercase(Locale.US).replace(Regex("""[.!:]+$"""), "").trim()
             normalized == "no steps available"
                 || normalized == "no steps are available"
                 || normalized == "no steps were found"
         }
+}
+
+private fun isSourceVerificationOnlyStep(step: String): Boolean {
+    val normalized = step
+        .lowercase(Locale.US)
+        .replace(Regex("""\[[^\]]+\]"""), "")
+        .trim()
+        .replace(Regex("""[.!:]+$"""), "")
+        .replace(Regex("""\s+"""), " ")
+        .trim()
+    return normalized == "check the cited guide before moving"
+        || normalized == "check the source guide before moving"
+        || normalized == "see sources below"
 }
 
 private fun roundSeconds(value: Double): Double {

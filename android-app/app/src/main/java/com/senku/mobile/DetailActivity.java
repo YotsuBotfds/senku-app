@@ -1168,6 +1168,7 @@ public final class DetailActivity extends AppCompatActivity {
         renderActionBlocks();
         applyEmergencyPortraitPresentation();
         applyGuideReaderPresentation();
+        applyPhoneThreadTranscriptPresentation();
 
         detailScroll.post(() -> {
             if (isFinishing() || isDestroyed()) {
@@ -3315,6 +3316,14 @@ public final class DetailActivity extends AppCompatActivity {
         if (whyPanel == null || whyText == null) {
             return;
         }
+        if (shouldHideGenericAnswerScaffoldForThread(answerMode, currentAnswerThreadTurnCount(), phoneXmlDetailLayoutActive())) {
+            whyPanel.setVisibility(View.GONE);
+            if (whyTitleText != null) {
+                whyTitleText.setVisibility(View.VISIBLE);
+            }
+            whyText.setText("");
+            return;
+        }
         if (!answerMode) {
             whyPanel.setVisibility(View.GONE);
             if (whyTitleText != null) {
@@ -3416,6 +3425,13 @@ public final class DetailActivity extends AppCompatActivity {
         try {
             updateNextStepsPanelPlacement();
             nextStepsContainer.removeAllViews();
+            if (shouldHideGenericAnswerScaffoldForThread(answerMode, currentAnswerThreadTurnCount(), phoneXmlDetailLayoutActive())) {
+                nextStepsPanel.setVisibility(View.GONE);
+                clearGuideReturnContextPanel();
+                clearActiveGuideContextPanel();
+                clearRelatedGuidePreviewPanel();
+                return;
+            }
             if (answerMode && isLandscapePhoneLayout()) {
                 nextStepsPanel.setVisibility(View.GONE);
                 clearGuideReturnContextPanel();
@@ -4994,10 +5010,68 @@ public final class DetailActivity extends AppCompatActivity {
     }
 
     private String buildPhoneAwareHeaderTitle(String primaryGuideId, String primarySourceLabel) {
+        if (isCurrentThreadDetailRoute()) {
+            return buildPhonePortraitThreadHeaderTitle(
+                primaryGuideId,
+                buildThreadTopicLabel(),
+                currentAnswerThreadTurnCount()
+            );
+        }
         if (isCompactPortraitPhoneLayout() && answerMode) {
             return buildPhonePortraitAnswerHeaderTitle(primaryGuideId, primarySourceLabel);
         }
         return detailSessionPresentationFormatter().buildCompactHeaderTitle(primaryGuideId, primarySourceLabel);
+    }
+
+    static String buildPhonePortraitThreadHeaderTitle(String primaryGuideId, String topicLabel, int totalTurnCount) {
+        String guideId = safe(primaryGuideId).trim();
+        String topic = safe(topicLabel).trim();
+        int turns = Math.max(2, totalTurnCount);
+        StringBuilder builder = new StringBuilder("THREAD");
+        if (!guideId.isEmpty()) {
+            builder.append(' ').append(guideId);
+        }
+        if (!topic.isEmpty()) {
+            builder.append(" - ").append(topic);
+        }
+        builder.append(" - ").append(turns).append(turns == 1 ? " turn" : " turns");
+        return builder.toString();
+    }
+
+    private String buildThreadTopicLabel() {
+        if (!answerMode) {
+            return "";
+        }
+        LinkedHashSet<String> questions = new LinkedHashSet<>();
+        if (sessionMemory != null) {
+            List<SessionMemory.TurnSnapshot> snapshots = sessionMemory.recentTurnSnapshots(6);
+            for (SessionMemory.TurnSnapshot turn : snapshots) {
+                String question = safe(turn == null ? null : turn.question).trim();
+                if (!question.isEmpty()) {
+                    questions.add(question);
+                }
+            }
+        }
+        String current = safe(currentTitle).trim();
+        if (!current.isEmpty()) {
+            questions.add(current);
+        }
+        for (String question : questions) {
+            String normalized = question.toLowerCase(Locale.US);
+            if (normalized.contains("rain") && normalized.contains("shelter")) {
+                return "Rain shelter";
+            }
+            if (normalized.contains("shelter")) {
+                return "Shelter";
+            }
+            if (normalized.contains("fire")) {
+                return "Fire";
+            }
+            if (normalized.contains("water")) {
+                return "Water";
+            }
+        }
+        return "";
     }
 
     static String buildPhonePortraitAnswerHeaderTitle(String primaryGuideId, String primarySourceLabel) {
@@ -5091,6 +5165,14 @@ public final class DetailActivity extends AppCompatActivity {
 
     static boolean isThreadDetailRoute(boolean answerMode, int totalTurnCount) {
         return answerMode && totalTurnCount > 1;
+    }
+
+    static boolean shouldHideGenericAnswerScaffoldForThread(
+        boolean answerMode,
+        int totalTurnCount,
+        boolean phoneXmlDetailLayout
+    ) {
+        return isThreadDetailRoute(answerMode, totalTurnCount) && phoneXmlDetailLayout;
     }
 
     private boolean isCurrentThreadDetailRoute() {
@@ -7152,6 +7234,34 @@ public final class DetailActivity extends AppCompatActivity {
             inlineSourcesScroll.setVisibility(View.GONE);
         }
         if (inlineNextStepsScroll != null && emergencyPortrait) {
+            inlineNextStepsScroll.setVisibility(View.GONE);
+        }
+    }
+
+    private void applyPhoneThreadTranscriptPresentation() {
+        if (!shouldHideGenericAnswerScaffoldForThread(answerMode, currentAnswerThreadTurnCount(), phoneXmlDetailLayoutActive())) {
+            return;
+        }
+        if (questionBubble != null) {
+            questionBubble.setVisibility(View.GONE);
+        }
+        if (answerCardView != null) {
+            answerCardView.setVisibility(View.GONE);
+        }
+        if (bodyMirrorShell != null) {
+            bodyMirrorShell.setVisibility(View.GONE);
+        }
+        if (bodyLabel != null) {
+            bodyLabel.setVisibility(View.GONE);
+        }
+        if (answerBubble != null) {
+            answerBubble.setBackgroundResource(android.R.color.transparent);
+            answerBubble.setPadding(0, 0, 0, 0);
+        }
+        if (inlineSourcesScroll != null) {
+            inlineSourcesScroll.setVisibility(View.GONE);
+        }
+        if (inlineNextStepsScroll != null) {
             inlineNextStepsScroll.setVisibility(View.GONE);
         }
     }

@@ -62,7 +62,21 @@ class PaperAnswerCardLabelTest {
             elapsedSeconds = 0.8,
         )
 
-        assertEquals("2 SOURCES · 0.8S", buildFooterMeta(content))
+        assertEquals("Sources - 2 · 0.8S", buildFooterMeta(content))
+    }
+
+    @Test
+    fun uncertainFitNotice_usesArticleSourceLanguage() {
+        val content = answer(
+            sourceCount = 3,
+            answerSurfaceLabel = AnswerSurfaceLabel.LimitedFit,
+        )
+
+        assertEquals(true, shouldShowUncertainFitNotice(content))
+        assertEquals(
+            "Senku found 3 guides that may apply but no single guide is a confident anchor. Treat this as guidance, not procedure. See sources below.",
+            uncertainFitNoticeText(content),
+        )
     }
 
     @Test

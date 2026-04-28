@@ -42,6 +42,24 @@ class ThreadRailPolicyTest {
                 answer = "Keep the tarp angled.\n\nFIELD STEPS\n1. Stake the corners.",
             ),
         )
+        assertEquals(
+            "A2 \u00B7 Center the tarp, tension the corners, and shape the low edge for runoff.",
+            threadRailAnswerPreviewLabel(
+                2,
+                guideMode = false,
+                answer = """
+                    ANSWER
+                    Field question
+                    What should I do next after the ridge line is up?
+                    Field entry - Moderate evidence
+                    ANSWER
+                    SOURCE MATCH
+                    Center the tarp, tension the corners, and shape the low edge for runoff.
+                    STEPS
+                    1. Pull the tarp evenly across the ridgeline.
+                """.trimIndent(),
+            ),
+        )
         assertEquals("A3 \u00B7 No answer recorded.", threadRailAnswerPreviewLabel(3, guideMode = false, answer = " "))
         assertEquals("NO SOURCES", threadRailTurnSourceLabel(sourceCount = 0))
         assertEquals("1 SOURCE", threadRailTurnSourceLabel(sourceCount = 1))

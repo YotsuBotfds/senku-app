@@ -650,6 +650,11 @@ final class GuideBodySanitizer {
         cleaned = cleaned.replace("&apos;", "'");
         cleaned = cleaned.replace("&lt;", "<");
         cleaned = cleaned.replace("&gt;", ">");
+        cleaned = cleaned.replace("\u00f0\u0178\u201d\u00a5", "");
+        cleaned = cleaned.replace("\u00f0\u0178\u203a\u00a1\u00ef\u00b8\u008f", "");
+        cleaned = cleaned.replace("\u00e2\u0161\u00a0\u00ef\u00b8\u008f", "");
+        cleaned = cleaned.replace("\u00e2\u0161\u2014\u00ef\u00b8\u008f", "");
+        cleaned = cleaned.replace("\u00f0\u0178\u008f\u201d\u00ef\u00b8\u008f", "");
         cleaned = cleaned.replace("â€™", "'");
         cleaned = cleaned.replace("â€˜", "'");
         cleaned = cleaned.replace("â€œ", "\"");

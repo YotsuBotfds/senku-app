@@ -188,6 +188,18 @@ public final class DetailFollowupLandscapeComposerTest {
     }
 
     @Test
+    public void phoneThreadHeaderUsesTranscriptLabel() {
+        assertEquals(
+            "THREAD GD-220 - Rain shelter - 2 turns",
+            DetailActivity.buildPhonePortraitThreadHeaderTitle("GD-220", "Rain shelter", 2)
+        );
+        assertEquals(
+            "THREAD - 2 turns",
+            DetailActivity.buildPhonePortraitThreadHeaderTitle("", "", 1)
+        );
+    }
+
+    @Test
     public void deterministicPhonePortraitKeepsAnchorChipVisible() {
         assertTrue(DetailActivity.shouldShowAnswerAnchorChip(true, true, true));
         assertFalse(DetailActivity.shouldShowAnswerAnchorChip(true, true, false));
@@ -230,6 +242,10 @@ public final class DetailFollowupLandscapeComposerTest {
         assertFalse(DetailActivity.isThreadDetailRoute(false, 3));
         assertFalse(DetailActivity.isThreadDetailRoute(true, 1));
         assertTrue(DetailActivity.isThreadDetailRoute(true, 2));
+
+        assertTrue(DetailActivity.shouldHideGenericAnswerScaffoldForThread(true, 2, true));
+        assertFalse(DetailActivity.shouldHideGenericAnswerScaffoldForThread(true, 2, false));
+        assertFalse(DetailActivity.shouldHideGenericAnswerScaffoldForThread(true, 1, true));
     }
 
     @Test

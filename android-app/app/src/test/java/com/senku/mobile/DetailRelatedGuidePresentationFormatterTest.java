@@ -64,7 +64,7 @@ public final class DetailRelatedGuidePresentationFormatterTest {
             )
         );
         assertEquals(
-            "GD-499 \u00b7 Bellows\nRequired",
+            "GD-499 \u00b7 Bellows\nRequired reading",
             formatter.buildRelatedGuideButtonLabel(
                 new SearchResult("Bellows", "", "", "", "GD-499", "", "", "", "required_reading", "", "", "")
             )
@@ -76,14 +76,14 @@ public final class DetailRelatedGuidePresentationFormatterTest {
         DetailRelatedGuidePresentationFormatter formatter = new DetailRelatedGuidePresentationFormatter(null);
 
         assertEquals(
-            "Guide links \u00b7 2 linked guides \u00b7 [GD-214] Water Storage.",
+            "Cross-reference \u00b7 2 linked guides \u00b7 required reading \u00b7 [GD-214] Water Storage.",
             formatter.buildAnswerModeRelatedGuidesSubtitle(
                 new DetailRelatedGuidePresentationFormatter.State(false, false, "", "", "[GD-214] Water Storage"),
                 2
             )
         );
         assertEquals(
-            "Guide links \u00b7 1 linked guide \u00b7 GD-215 \u00b7 Rainwater Catchment.",
+            "Cross-reference \u00b7 1 linked guide \u00b7 required reading \u00b7 GD-215 \u00b7 Rainwater Catchment.",
             formatter.buildNonRailRelatedGuidesSubtitle(
                 new DetailRelatedGuidePresentationFormatter.State(
                     false,
@@ -128,7 +128,7 @@ public final class DetailRelatedGuidePresentationFormatterTest {
         SearchResult guide = new SearchResult("Rainwater Catchment", "", "", "", "GD-215", "", "", "");
 
         assertEquals(
-            "Source guide links. Guide links \u00b7 2 linked guides \u00b7 [GD-214] Water Storage.",
+            "Source guide links. Cross-reference \u00b7 2 linked guides \u00b7 required reading \u00b7 [GD-214] Water Storage.",
             formatter.buildAnswerModeRelatedGuidesPanelContentDescription(state, 2)
         );
         assertEquals(

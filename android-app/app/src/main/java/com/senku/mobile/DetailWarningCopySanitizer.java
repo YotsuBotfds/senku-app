@@ -25,7 +25,12 @@ final class DetailWarningCopySanitizer {
         "safety advisory",
         "safety note",
         "safety warning",
-        "safety constraint"
+        "safety constraint",
+        "guide proof",
+        "guide source",
+        "proof route",
+        "proof metadata",
+        "route proof"
     };
     private static final String[] WARNING_RESIDUAL_TRAIL_MARKERS = new String[] {
         "implied",
@@ -37,7 +42,10 @@ final class DetailWarningCopySanitizer {
         "risk",
         "risks",
         "process",
-        "processes"
+        "processes",
+        "clutter",
+        "chrome",
+        "metadata"
     };
 
     private DetailWarningCopySanitizer() {}

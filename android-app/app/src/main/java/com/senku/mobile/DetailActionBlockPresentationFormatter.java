@@ -121,7 +121,7 @@ final class DetailActionBlockPresentationFormatter {
         LinearLayout headingRow = new LinearLayout(context);
         headingRow.setOrientation(LinearLayout.HORIZONTAL);
         headingRow.setGravity(android.view.Gravity.CENTER_VERTICAL);
-        headingRow.setPadding(0, 0, 0, dp(10));
+        headingRow.setPadding(0, 0, 0, dp(6));
 
         View rule = new View(context);
         rule.setBackgroundColor(context.getColor(R.color.senku_rev03_hairline_strong));
@@ -224,7 +224,7 @@ final class DetailActionBlockPresentationFormatter {
 
         LinearLayout row = new LinearLayout(context);
         row.setOrientation(LinearLayout.HORIZONTAL);
-        row.setPadding(0, dp(10), 0, dp(10));
+        row.setPadding(0, dp(7), 0, dp(7));
         LinearLayout.LayoutParams rowParams = new LinearLayout.LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT,
             ViewGroup.LayoutParams.WRAP_CONTENT
@@ -239,27 +239,27 @@ final class DetailActionBlockPresentationFormatter {
         badge.setBackgroundResource(R.drawable.bg_emergency_action_badge);
         badge.setTypeface(Typeface.MONOSPACE, Typeface.BOLD);
         badge.setIncludeFontPadding(false);
-        row.addView(badge, new LinearLayout.LayoutParams(dp(22), dp(22)));
+        row.addView(badge, new LinearLayout.LayoutParams(dp(20), dp(20)));
 
         LinearLayout content = new LinearLayout(context);
         content.setOrientation(LinearLayout.VERTICAL);
-        content.setPadding(dp(12), dp(1), 0, 0);
+        content.setPadding(dp(10), dp(1), 0, 0);
 
         TextView title = new TextView(context);
         title.setText(styleEmergencyMinimumDistance(action.title));
         title.setTextAppearance(context, android.R.style.TextAppearance_Medium);
         title.setTextColor(context.getColor(R.color.senku_text_light));
         title.setTypeface(Typeface.DEFAULT_BOLD);
-        title.setTextSize(14f);
-        title.setLineSpacing(0f, 1.08f);
+        title.setTextSize(13f);
+        title.setLineSpacing(0f, 1.06f);
         title.setIncludeFontPadding(false);
 
         TextView detail = new TextView(context);
         detail.setText(styleEmergencyMinimumDistance(action.detail));
         detail.setTextAppearance(context, android.R.style.TextAppearance_Small);
         detail.setTextColor(context.getColor(R.color.senku_text_muted_light));
-        detail.setTextSize(13f);
-        detail.setLineSpacing(0f, 1.12f);
+        detail.setTextSize(12f);
+        detail.setLineSpacing(0f, 1.08f);
         detail.setIncludeFontPadding(false);
         detail.setPadding(0, dp(2), 0, 0);
         detail.setVisibility(action.detail.isEmpty() ? View.GONE : View.VISIBLE);
@@ -479,11 +479,12 @@ final class DetailActionBlockPresentationFormatter {
     static CharSequence styleEmergencyMinimumDistance(String text) {
         String value = safe(text);
         String lower = value.toLowerCase(Locale.US);
-        int start = lower.indexOf("minimum 5 m");
+        SpanTarget target = emergencyDistanceSpanTarget(lower);
+        int start = target.start;
         if (start < 0) {
             return value;
         }
-        int end = start + "minimum 5 m".length();
+        int end = start + target.text.length();
         int activeWorkZoneEnd = lower.indexOf("from active work zone", start);
         if (activeWorkZoneEnd >= 0) {
             end = activeWorkZoneEnd + "from active work zone".length();
@@ -501,6 +502,32 @@ final class DetailActionBlockPresentationFormatter {
             Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
         );
         return styled;
+    }
+
+    static boolean shouldStyleEmergencyMinimumDistance(String text) {
+        return emergencyDistanceSpanTarget(safe(text).toLowerCase(Locale.US)).start >= 0;
+    }
+
+    private static SpanTarget emergencyDistanceSpanTarget(String lower) {
+        int start = lower.indexOf("minimum 5 m");
+        if (start >= 0) {
+            return new SpanTarget(start, "minimum 5 m");
+        }
+        start = lower.indexOf("5 m radius");
+        if (start >= 0) {
+            return new SpanTarget(start, "5 m radius");
+        }
+        return new SpanTarget(-1, "");
+    }
+
+    private static final class SpanTarget {
+        final int start;
+        final String text;
+
+        SpanTarget(int start, String text) {
+            this.start = start;
+            this.text = text;
+        }
     }
 
     private static String extractActionMarkerClause(String text, ActionBlockTextSanitizer sanitizer, String... markers) {
