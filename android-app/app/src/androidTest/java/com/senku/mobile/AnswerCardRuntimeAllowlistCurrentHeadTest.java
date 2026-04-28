@@ -149,6 +149,14 @@ public final class AnswerCardRuntimeAllowlistCurrentHeadTest {
             "abdominal_internal_bleeding",
             "GD-380"
         );
+        assertPlan(
+            context,
+            repository,
+            "What should we record about wet floors, cracked crucibles, unknown scrap, ventilation concerns, and owner handoff before casting?",
+            "answer_card:foundry_casting_area_readiness_boundary",
+            "foundry_casting_area_readiness_boundary",
+            "GD-132"
+        );
     }
 
     private static void assertSampledNonPilotCurrentHeadCardsDoNotPlan(

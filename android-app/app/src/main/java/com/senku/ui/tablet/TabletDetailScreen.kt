@@ -117,18 +117,30 @@ enum class Status {
 internal data class TabletReadingLayoutPolicy(
     val threadRailWidthDp: Int,
     val answerMaxWidthDp: Int,
+    val evidenceRailWidthDp: Int,
+    val answerHorizontalPaddingDp: Int,
 )
 
 internal fun tabletLandscapeReadingLayoutPolicy(): TabletReadingLayoutPolicy =
     TabletReadingLayoutPolicy(
         threadRailWidthDp = 330,
         answerMaxWidthDp = 600,
+        evidenceRailWidthDp = 360,
+        answerHorizontalPaddingDp = 28,
+    )
+
+internal fun tabletPortraitReadingLayoutPolicy(): TabletReadingLayoutPolicy =
+    TabletReadingLayoutPolicy(
+        threadRailWidthDp = 168,
+        answerMaxWidthDp = 560,
+        evidenceRailWidthDp = 224,
+        answerHorizontalPaddingDp = 20,
     )
 
 internal fun tabletReadingLayoutPolicy(isLandscape: Boolean): TabletReadingLayoutPolicy =
     when (isLandscape) {
         true -> tabletLandscapeReadingLayoutPolicy()
-        false -> tabletLandscapeReadingLayoutPolicy()
+        false -> tabletPortraitReadingLayoutPolicy()
     }
 
 internal fun tabletComposerContextHint(state: TabletDetailState): String {
@@ -246,7 +258,7 @@ fun TabletDetailScreen(
     modifier: Modifier = Modifier,
 ) {
     val colors = SenkuTheme.colors
-    val readingPolicy = tabletLandscapeReadingLayoutPolicy()
+    val readingPolicy = tabletReadingLayoutPolicy(state.isLandscape)
     val threadPaneTitle = stringResource(R.string.detail_a11y_landmark_thread_sources)
     val answerPaneTitle = stringResource(R.string.detail_a11y_landmark_answer_detail)
     val evidencePaneTitle = stringResource(R.string.detail_a11y_landmark_evidence)
@@ -343,6 +355,7 @@ private fun DetailWorkspace(
                 .weight(1f)
                 .fillMaxWidth(),
         ) {
+            val readingPolicy = tabletReadingLayoutPolicy(state.isLandscape)
             CenterPane(
                 state = state,
                 onTurnClick = onTurnClick,
@@ -365,7 +378,7 @@ private fun DetailWorkspace(
                 onAnchorClick = onAnchorClick,
                 onXRefClick = onXRefClick,
                 modifier = Modifier
-                    .width(tabletEvidenceVisibilityPolicy().evidencePaneWidthDp.dp)
+                    .width(readingPolicy.evidenceRailWidthDp.dp)
                     .fillMaxHeight()
                     .semantics {
                         paneTitle = evidencePaneTitle
@@ -414,7 +427,7 @@ private fun CenterPane(
                 .widthIn(max = readingPolicy.answerMaxWidthDp.dp)
                 .fillMaxWidth()
                 .verticalScroll(scrollState)
-                .padding(horizontal = 28.dp, vertical = 0.dp),
+                .padding(horizontal = readingPolicy.answerHorizontalPaddingDp.dp, vertical = 0.dp),
             verticalArrangement = Arrangement.spacedBy(0.dp),
         ) {
             if (state.turns.isEmpty()) {

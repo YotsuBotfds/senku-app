@@ -31,6 +31,7 @@ import android.view.ViewParent;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.ScrollView;
@@ -132,6 +133,7 @@ public final class DetailActivity extends AppCompatActivity {
     private View emergencyHeader;
     private TextView emergencyHeaderTitle;
     private TextView emergencyHeaderText;
+    private LinearLayout tabletEmergencyHeaderOverlay;
     private View whyPanel;
     private TextView whyTitleText;
     private TextView whyText;
@@ -1193,6 +1195,7 @@ public final class DetailActivity extends AppCompatActivity {
                 syncTabletDetailScreen();
             }
         );
+        renderTabletEmergencyHeaderOverlay();
         if (!tabletThreePaneLogged) {
             tabletThreePaneLogged = true;
             Log.d(
@@ -1203,6 +1206,94 @@ public final class DetailActivity extends AppCompatActivity {
                     + " xrefs=" + state.getXrefs().size()
             );
         }
+    }
+
+    private void renderTabletEmergencyHeaderOverlay() {
+        if (!tabletComposeMode || tabletDetailRoot == null) {
+            removeTabletEmergencyHeaderOverlay();
+            return;
+        }
+        if (!shouldShowEmergencyHeader()) {
+            removeTabletEmergencyHeaderOverlay();
+            return;
+        }
+        LinearLayout overlay = ensureTabletEmergencyHeaderOverlay();
+        if (overlay == null) {
+            return;
+        }
+        TextView title = overlay.findViewById(R.id.detail_emergency_header_title);
+        TextView text = overlay.findViewById(R.id.detail_emergency_header_text);
+        if (title != null) {
+            title.setText(buildEmergencyHeaderTitle());
+        }
+        if (text != null) {
+            text.setText(buildEmergencyHeaderSummary());
+        }
+        overlay.setVisibility(View.VISIBLE);
+        overlay.bringToFront();
+    }
+
+    private LinearLayout ensureTabletEmergencyHeaderOverlay() {
+        if (tabletEmergencyHeaderOverlay != null) {
+            return tabletEmergencyHeaderOverlay;
+        }
+        View content = findViewById(android.R.id.content);
+        if (!(content instanceof FrameLayout)) {
+            return null;
+        }
+        FrameLayout root = (FrameLayout) content;
+        LinearLayout overlay = new LinearLayout(this);
+        overlay.setId(R.id.detail_emergency_header);
+        overlay.setOrientation(LinearLayout.VERTICAL);
+        overlay.setBackgroundResource(R.drawable.bg_emergency_banner);
+        overlay.setPadding(dp(18), dp(12), dp(18), dp(12));
+        overlay.setContentDescription(getString(R.string.detail_emergency_header_title));
+
+        TextView title = new TextView(this);
+        title.setId(R.id.detail_emergency_header_title);
+        title.setTextColor(getColor(R.color.senku_emergency_banner_text));
+        title.setTypeface(Typeface.DEFAULT_BOLD);
+        title.setTextSize(16f);
+        title.setIncludeFontPadding(false);
+        overlay.addView(title, new LinearLayout.LayoutParams(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        ));
+
+        TextView text = new TextView(this);
+        text.setId(R.id.detail_emergency_header_text);
+        text.setTextColor(getColor(R.color.senku_emergency_banner_text));
+        text.setTextSize(14f);
+        text.setMaxLines(2);
+        text.setEllipsize(TextUtils.TruncateAt.END);
+        LinearLayout.LayoutParams textParams = new LinearLayout.LayoutParams(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        );
+        textParams.topMargin = dp(6);
+        overlay.addView(text, textParams);
+
+        FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        );
+        params.leftMargin = dp(336);
+        params.rightMargin = dp(24);
+        params.topMargin = dp(16);
+        root.addView(overlay, params);
+        tabletEmergencyHeaderOverlay = overlay;
+        return overlay;
+    }
+
+    private void removeTabletEmergencyHeaderOverlay() {
+        if (tabletEmergencyHeaderOverlay == null) {
+            return;
+        }
+        ViewParent parent = tabletEmergencyHeaderOverlay.getParent();
+        if (parent instanceof ViewGroup) {
+            ((ViewGroup) parent).removeView(tabletEmergencyHeaderOverlay);
+        }
+        tabletEmergencyHeaderOverlay = null;
     }
 
     private TabletDetailState buildTabletState() {
@@ -4288,12 +4379,15 @@ public final class DetailActivity extends AppCompatActivity {
     }
 
     private boolean isEmergencyHeaderSurfaceLayout() {
-        return isLandscapePhoneLayout() || isCompactPortraitPhoneLayout() || isTabletPortraitLayout();
+        return isLandscapePhoneLayout()
+            || isCompactPortraitPhoneLayout()
+            || isTabletPortraitLayout()
+            || showUtilityRail();
     }
 
     private boolean isEmergencyPortraitSurface() {
         return answerMode
-            && (isCompactPortraitPhoneLayout() || isTabletPortraitLayout())
+            && (isCompactPortraitPhoneLayout() || isTabletPortraitLayout() || showUtilityRail())
             && isCurrentEmergencySurfaceEligible();
     }
 

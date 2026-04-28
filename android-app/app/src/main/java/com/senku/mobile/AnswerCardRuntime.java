@@ -18,6 +18,7 @@ final class AnswerCardRuntime {
     private static final String STRUCTURE_TYPE_SAFETY_MENINGITIS_SEPSIS = "safety_meningitis_sepsis";
     private static final String STRUCTURE_TYPE_SAFETY_INFECTED_WOUND = "safety_infected_wound";
     private static final String STRUCTURE_TYPE_SAFETY_INTERNAL_BLEEDING = "safety_internal_bleeding";
+    private static final String STRUCTURE_TYPE_FOUNDRY_AREA_READINESS = "foundry_area_readiness";
     private static final String ANSWER_CARD_RULE_PREFIX = "answer_card:";
     private static final String POISONING_UNKNOWN_INGESTION_CARD_ID = "poisoning_unknown_ingestion";
     private static final String POISONING_UNKNOWN_INGESTION_GUIDE_ID = "GD-898";
@@ -31,6 +32,8 @@ final class AnswerCardRuntime {
     private static final String INFECTED_WOUND_SPREADING_INFECTION_GUIDE_ID = "GD-585";
     private static final String ABDOMINAL_INTERNAL_BLEEDING_CARD_ID = "abdominal_internal_bleeding";
     private static final String ABDOMINAL_INTERNAL_BLEEDING_GUIDE_ID = "GD-380";
+    private static final String FOUNDRY_CASTING_AREA_READINESS_CARD_ID = "foundry_casting_area_readiness_boundary";
+    private static final String FOUNDRY_CASTING_AREA_READINESS_GUIDE_ID = "GD-132";
     private static final Pattern NEWBORN_AGE_PATTERN = Pattern.compile(
         "\\b(?:(?:new\\s*born|newborn|neonate|neonatal)|(?:(?:\\d{1,2}|one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|thirteen|fourteen|fifteen|sixteen|seventeen|eighteen|nineteen|twenty|twenty\\s+one|twenty\\s+two|twenty\\s+three|twenty\\s+four|twenty\\s+five|twenty\\s+six|twenty\\s+seven|twenty\\s+eight)\\s+(?:day|days)\\s+old\\s+(?:baby|infant))|(?:(?:1|2|3|4|one|two|three|four)\\s+(?:week|weeks)\\s+old\\s+(?:baby|infant)))\\b"
     );
@@ -549,6 +552,49 @@ final class AnswerCardRuntime {
         "severe abdominal pain",
         "severe stomach pain"
     );
+    private static final Set<String> FOUNDRY_READINESS_CONTEXT_MARKERS = buildSet(
+        "foundry",
+        "casting area",
+        "metal casting",
+        "before casting",
+        "pre work",
+        "pre-work",
+        "readiness log",
+        "readiness checklist"
+    );
+    private static final Set<String> FOUNDRY_READINESS_ACTION_MARKERS = buildSet(
+        "visible hazards",
+        "hazard screening",
+        "labels",
+        "access control",
+        "pause work",
+        "who can pause",
+        "owner handoff",
+        "owner",
+        "record",
+        "wet floors",
+        "cracked crucibles",
+        "unknown scrap",
+        "ventilation concerns"
+    );
+    private static final Set<String> FOUNDRY_READINESS_DRIFT_MARKERS = buildSet(
+        "melt schedule",
+        "melting temperature",
+        "pouring temperature",
+        "bronze melt",
+        "alloy recipe",
+        "flux recipe",
+        "furnace setup",
+        "set up the furnace",
+        "tune the air blast",
+        "pouring technique",
+        "gating",
+        "risers",
+        "riser design",
+        "sand chemistry",
+        "calculate",
+        "certify"
+    );
     private static final Set<String> ANSWER_CARD_ALLOWED_REVIEW_STATUSES = buildSet(
         "reviewed",
         "pilot_reviewed",
@@ -590,13 +636,20 @@ final class AnswerCardRuntime {
         STRUCTURE_TYPE_SAFETY_INTERNAL_BLEEDING,
         AnswerCardRuntime::isAbdominalInternalBleedingAnswerCardQuery
     );
+    private static final CardSpec FOUNDRY_CASTING_AREA_READINESS_SPEC = new CardSpec(
+        FOUNDRY_CASTING_AREA_READINESS_CARD_ID,
+        FOUNDRY_CASTING_AREA_READINESS_GUIDE_ID,
+        STRUCTURE_TYPE_FOUNDRY_AREA_READINESS,
+        AnswerCardRuntime::isFoundryCastingAreaReadinessAnswerCardQuery
+    );
     private static final CardSpec[] CARD_SPECS = {
         POISONING_UNKNOWN_INGESTION_SPEC,
         NEWBORN_DANGER_SEPSIS_SPEC,
         CHOKING_AIRWAY_OBSTRUCTION_SPEC,
         MENINGITIS_SEPSIS_CHILD_SPEC,
         INFECTED_WOUND_SPREADING_INFECTION_SPEC,
-        ABDOMINAL_INTERNAL_BLEEDING_SPEC
+        ABDOMINAL_INTERNAL_BLEEDING_SPEC,
+        FOUNDRY_CASTING_AREA_READINESS_SPEC
     };
     private static volatile Boolean enabledForTest;
 
@@ -652,6 +705,10 @@ final class AnswerCardRuntime {
         return planAnswerCardFromCards(query, cards, ABDOMINAL_INTERNAL_BLEEDING_SPEC);
     }
 
+    static AnswerPlan planFoundryCastingAreaReadinessAnswerCardFromCardsForTest(String query, List<AnswerCard> cards) {
+        return planAnswerCardFromCards(query, cards, FOUNDRY_CASTING_AREA_READINESS_SPEC);
+    }
+
     static boolean isPoisoningAnswerCardPilotQueryForTest(String query) {
         return isPoisoningAnswerCardPilotQuery(query);
     }
@@ -674,6 +731,10 @@ final class AnswerCardRuntime {
 
     static boolean isAbdominalInternalBleedingAnswerCardQueryForTest(String query) {
         return isAbdominalInternalBleedingAnswerCardQuery(query);
+    }
+
+    static boolean isFoundryCastingAreaReadinessAnswerCardQueryForTest(String query) {
+        return isFoundryCastingAreaReadinessAnswerCardQuery(query);
     }
 
     static boolean isEnabledForTest(Context context) {
@@ -814,6 +875,15 @@ final class AnswerCardRuntime {
             return true;
         }
         return false;
+    }
+
+    private static boolean isFoundryCastingAreaReadinessAnswerCardQuery(String query) {
+        String normalized = normalizeQueryText(query);
+        if (normalized.isEmpty() || containsAny(normalized, FOUNDRY_READINESS_DRIFT_MARKERS)) {
+            return false;
+        }
+        return containsAny(normalized, FOUNDRY_READINESS_CONTEXT_MARKERS)
+            && containsAny(normalized, FOUNDRY_READINESS_ACTION_MARKERS);
     }
 
     private static boolean isEligibleAnswerCard(AnswerCard card, String expectedCardId, String expectedGuideId) {

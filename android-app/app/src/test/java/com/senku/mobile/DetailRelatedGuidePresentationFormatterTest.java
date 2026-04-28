@@ -10,7 +10,7 @@ public final class DetailRelatedGuidePresentationFormatterTest {
         DetailRelatedGuidePresentationFormatter formatter = new DetailRelatedGuidePresentationFormatter(null);
 
         assertEquals(
-            "[GD-214] Water Storage",
+            "GD-214 · Water Storage",
             formatter.buildAnswerModeRelatedGuidesAnchorLabel(
                 new SearchResult("Water Storage", "", "", "", "GD-214", "", "", "")
             )
@@ -22,7 +22,7 @@ public final class DetailRelatedGuidePresentationFormatterTest {
             )
         );
         assertEquals(
-            "[GD-214]",
+            "GD-214",
             formatter.buildAnswerModeRelatedGuidesAnchorLabel(
                 new SearchResult("", "", "", "", "GD-214", "", "", "")
             )
@@ -65,13 +65,13 @@ public final class DetailRelatedGuidePresentationFormatterTest {
             )
         );
         assertEquals(
-            "Cross-reference · 1 linked guide · [GD-215] Rainwater Catchment.",
+            "Cross-reference · 1 linked guide · GD-215 · Rainwater Catchment.",
             formatter.buildNonRailRelatedGuidesSubtitle(
                 new DetailRelatedGuidePresentationFormatter.State(
                     false,
                     true,
                     "GD-215",
-                    "[GD-215] Rainwater Catchment",
+                    "GD-215 · Rainwater Catchment",
                     ""
                 ),
                 1
@@ -85,7 +85,7 @@ public final class DetailRelatedGuidePresentationFormatterTest {
 
         assertEquals("Cross-reference", formatter.buildNonRailRelatedGuidesTitle());
         assertEquals(
-            "Related guide 1 of 1. [GD-215] Rainwater Catchment. Anchored to GD-214. Preview in this rail; open the full guide to switch pages.",
+            "Related guide 1 of 1. GD-215 · Rainwater Catchment. Anchored to GD-214. Preview here; Open full guide switches pages.",
             formatter.buildRelatedGuideButtonContentDescription(
                 new DetailRelatedGuidePresentationFormatter.State(
                     false,
@@ -114,7 +114,7 @@ public final class DetailRelatedGuidePresentationFormatterTest {
             formatter.buildAnswerModeRelatedGuidesPanelContentDescription(state, 2)
         );
         assertEquals(
-            "Cross-reference 1 of 2. [GD-215] Rainwater Catchment. Anchored to [GD-214] Water Storage. Previews here while the source guide stays pinned. Open full guide to switch pages.",
+            "Cross-reference 1 of 2. GD-215 · Rainwater Catchment. Anchored to [GD-214] Water Storage. Previews here while the source guide stays pinned. Open full guide switches pages.",
             formatter.buildAnswerModeRelatedGuideButtonContentDescription(state, guide, 0, 2, true)
         );
     }

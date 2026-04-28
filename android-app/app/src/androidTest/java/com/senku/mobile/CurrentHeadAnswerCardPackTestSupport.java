@@ -29,7 +29,8 @@ final class CurrentHeadAnswerCardPackTestSupport {
         "choking_airway_obstruction",
         "meningitis_sepsis_child",
         "infected_wound_spreading_infection",
-        "abdominal_internal_bleeding"
+        "abdominal_internal_bleeding",
+        "foundry_casting_area_readiness_boundary"
     ));
 
     private CurrentHeadAnswerCardPackTestSupport() {
@@ -83,7 +84,7 @@ final class CurrentHeadAnswerCardPackTestSupport {
             querySampledCards(
                 database,
                 "SELECT card_id, guide_id, risk_tier FROM answer_cards " +
-                    "WHERE card_id NOT IN (?, ?, ?, ?, ?, ?) " +
+                    "WHERE card_id NOT IN (?, ?, ?, ?, ?, ?, ?) " +
                     "ORDER BY card_id LIMIT ?",
                 NON_PILOT_BUCKET_SIZE
             )
@@ -93,7 +94,7 @@ final class CurrentHeadAnswerCardPackTestSupport {
             querySampledCards(
                 database,
                 "SELECT card_id, guide_id, risk_tier FROM answer_cards " +
-                    "WHERE card_id NOT IN (?, ?, ?, ?, ?, ?) " +
+                    "WHERE card_id NOT IN (?, ?, ?, ?, ?, ?, ?) " +
                     "ORDER BY card_id DESC LIMIT ?",
                 NON_PILOT_BUCKET_SIZE
             )
@@ -103,7 +104,7 @@ final class CurrentHeadAnswerCardPackTestSupport {
             querySampledCards(
                 database,
                 "SELECT card_id, guide_id, risk_tier FROM answer_cards " +
-                    "WHERE card_id NOT IN (?, ?, ?, ?, ?, ?) " +
+                    "WHERE card_id NOT IN (?, ?, ?, ?, ?, ?, ?) " +
                     "AND risk_tier IN ('critical', 'high') " +
                     "ORDER BY CASE risk_tier WHEN 'critical' THEN 0 ELSE 1 END, card_id LIMIT ?",
                 NON_PILOT_BUCKET_SIZE
@@ -115,7 +116,7 @@ final class CurrentHeadAnswerCardPackTestSupport {
                 querySampledCards(
                     database,
                     "SELECT card_id, guide_id, risk_tier FROM answer_cards " +
-                        "WHERE card_id NOT IN (?, ?, ?, ?, ?, ?) " +
+                        "WHERE card_id NOT IN (?, ?, ?, ?, ?, ?, ?) " +
                         "ORDER BY card_id LIMIT ?",
                     NON_PILOT_SAMPLE_SIZE
                 )
@@ -192,6 +193,7 @@ final class CurrentHeadAnswerCardPackTestSupport {
                 pilotIds[3],
                 pilotIds[4],
                 pilotIds[5],
+                pilotIds[6],
                 String.valueOf(limit)
             })) {
             java.util.ArrayList<SampledCard> cards = new java.util.ArrayList<>();

@@ -12,19 +12,35 @@ class StressReadingPolicyTest {
 
         assertEquals(330, policy.threadRailWidthDp)
         assertEquals(600, policy.answerMaxWidthDp)
+        assertEquals(360, policy.evidenceRailWidthDp)
+        assertEquals(28, policy.answerHorizontalPaddingDp)
     }
 
     @Test
-    fun tabletReadingPolicySelectorKeepsCurrentPostureBudgets() {
+    fun tabletPortraitReadingPolicyUsesSqueezedPortraitBudget() {
+        val policy = tabletPortraitReadingLayoutPolicy()
+
+        assertEquals(168, policy.threadRailWidthDp)
+        assertEquals(560, policy.answerMaxWidthDp)
+        assertEquals(224, policy.evidenceRailWidthDp)
+        assertEquals(20, policy.answerHorizontalPaddingDp)
+    }
+
+    @Test
+    fun tabletReadingPolicySelectorUsesOrientationSpecificBudgets() {
         val portraitPolicy = tabletReadingLayoutPolicy(isLandscape = false)
         val landscapePolicy = tabletReadingLayoutPolicy(isLandscape = true)
 
-        assertEquals(tabletLandscapeReadingLayoutPolicy(), portraitPolicy)
+        assertEquals(tabletPortraitReadingLayoutPolicy(), portraitPolicy)
         assertEquals(tabletLandscapeReadingLayoutPolicy(), landscapePolicy)
-        assertEquals(330, portraitPolicy.threadRailWidthDp)
-        assertEquals(600, portraitPolicy.answerMaxWidthDp)
+        assertEquals(168, portraitPolicy.threadRailWidthDp)
+        assertEquals(560, portraitPolicy.answerMaxWidthDp)
+        assertEquals(224, portraitPolicy.evidenceRailWidthDp)
+        assertEquals(20, portraitPolicy.answerHorizontalPaddingDp)
         assertEquals(330, landscapePolicy.threadRailWidthDp)
         assertEquals(600, landscapePolicy.answerMaxWidthDp)
+        assertEquals(360, landscapePolicy.evidenceRailWidthDp)
+        assertEquals(28, landscapePolicy.answerHorizontalPaddingDp)
     }
 
     @Test

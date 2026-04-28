@@ -809,6 +809,95 @@ public final class AnswerCardRuntimeTest {
     }
 
     @Test
+    public void foundryCastingAreaReadinessSelectorStaysOnBoundaryReadiness() {
+        assertTrue(AnswerCardRuntime.isFoundryCastingAreaReadinessAnswerCardQueryForTest(
+            "Make a pre-work foundry readiness log for visible hazards, labels, access control, and who can pause work."
+        ));
+        assertTrue(AnswerCardRuntime.isFoundryCastingAreaReadinessAnswerCardQueryForTest(
+            "What should we record about wet floors, cracked crucibles, unknown scrap, ventilation concerns, and owner handoff before casting?"
+        ));
+
+        assertFalse(AnswerCardRuntime.isFoundryCastingAreaReadinessAnswerCardQueryForTest(
+            "Give me a bronze melt schedule and pouring temperature."
+        ));
+        assertFalse(AnswerCardRuntime.isFoundryCastingAreaReadinessAnswerCardQueryForTest(
+            "Show me how to set up the furnace and tune the air blast."
+        ));
+        assertFalse(AnswerCardRuntime.isFoundryCastingAreaReadinessAnswerCardQueryForTest(
+            "Design the gating and risers for my mold."
+        ));
+        assertFalse(AnswerCardRuntime.isFoundryCastingAreaReadinessAnswerCardQueryForTest(
+            "General workshop organization checklist for labels and access control."
+        ));
+    }
+
+    @Test
+    public void foundryCastingAreaReadinessBuildsReviewedAnswerPlan() {
+        AnswerCardRuntime.AnswerPlan plan =
+            AnswerCardRuntime.planFoundryCastingAreaReadinessAnswerCardFromCardsForTest(
+                "What should we record about wet floors, cracked crucibles, unknown scrap, ventilation concerns, and owner handoff before casting?",
+                List.of(foundryCastingAreaReadinessAnswerCard("pilot_reviewed"))
+            );
+
+        assertNotNull(plan);
+        assertEquals("answer_card:foundry_casting_area_readiness_boundary", plan.ruleId);
+        assertTrue(plan.reviewedCardMetadata.isPresent());
+        assertEquals("foundry_casting_area_readiness_boundary", plan.reviewedCardMetadata.cardId);
+        assertEquals("GD-132", plan.reviewedCardMetadata.cardGuideId);
+        assertEquals("pilot_reviewed", plan.reviewedCardMetadata.reviewStatus);
+        assertEquals("reviewed_source_family", plan.reviewedCardMetadata.runtimeCitationPolicy);
+        assertEquals(ReviewedCardMetadata.PROVENANCE_REVIEWED_CARD_RUNTIME, plan.reviewedCardMetadata.provenance);
+        assertEquals(List.of("GD-132"), plan.reviewedCardMetadata.citedReviewedSourceGuideIds);
+        assertEquals(1, plan.sources.size());
+        assertEquals("GD-132", plan.sources.get(0).guideId);
+        assertEquals("answer-card", plan.sources.get(0).retrievalMode);
+        assertEquals("foundry_area_readiness", plan.sources.get(0).structureType);
+        assertTrue(plan.answerText.contains("Start with boundary-only readiness"));
+        assertTrue(plan.answerText.contains("Treat as a no-go or owner-handoff screen"));
+        assertTrue(plan.answerText.contains("End with foundry owner"));
+        assertTrue(plan.answerText.contains("Escalate now if Any moisture"));
+        assertTrue(plan.answerText.contains("Avoid: Do not provide mold-making steps"));
+    }
+
+    @Test
+    public void foundryCastingAreaReadinessRejectsAmbiguousIneligibleAndMissingSourceCards() {
+        AnswerCard card = foundryCastingAreaReadinessAnswerCard("pilot_reviewed");
+
+        assertNull(AnswerCardRuntime.planFoundryCastingAreaReadinessAnswerCardFromCardsForTest(
+            "Give me a bronze melt schedule and pouring temperature.",
+            List.of(card)
+        ));
+        assertNull(AnswerCardRuntime.planFoundryCastingAreaReadinessAnswerCardFromCardsForTest(
+            "Make a pre-work foundry readiness log for visible hazards, labels, access control, and who can pause work.",
+            List.of()
+        ));
+        assertNull(AnswerCardRuntime.planFoundryCastingAreaReadinessAnswerCardFromCardsForTest(
+            "Make a pre-work foundry readiness log for visible hazards, labels, access control, and who can pause work.",
+            List.of(card, card)
+        ));
+        assertNull(AnswerCardRuntime.planFoundryCastingAreaReadinessAnswerCardFromCardsForTest(
+            "Make a pre-work foundry readiness log for visible hazards, labels, access control, and who can pause work.",
+            List.of(foundryCastingAreaReadinessAnswerCard("draft"))
+        ));
+        assertNull(AnswerCardRuntime.planFoundryCastingAreaReadinessAnswerCardFromCardsForTest(
+            "Make a pre-work foundry readiness log for visible hazards, labels, access control, and who can pause work.",
+            List.of(foundryCastingAreaReadinessAnswerCard("approved", "wrong_foundry_card", "GD-132", "high", foundryCastingAreaReadinessSources()))
+        ));
+        assertNull(AnswerCardRuntime.planFoundryCastingAreaReadinessAnswerCardFromCardsForTest(
+            "Make a pre-work foundry readiness log for visible hazards, labels, access control, and who can pause work.",
+            List.of(foundryCastingAreaReadinessAnswerCard("approved", "foundry_casting_area_readiness_boundary", "GD-999", "high", foundryCastingAreaReadinessSources()))
+        ));
+        assertNull(AnswerCardRuntime.planFoundryCastingAreaReadinessAnswerCardFromCardsForTest(
+            "Make a pre-work foundry readiness log for visible hazards, labels, access control, and who can pause work.",
+            List.of(foundryCastingAreaReadinessAnswerCard("approved", "foundry_casting_area_readiness_boundary", "GD-132", "routine", foundryCastingAreaReadinessSources()))
+        ));
+        assertNull(AnswerCardRuntime.planFoundryCastingAreaReadinessAnswerCardFromCardsForTest(
+            "Make a pre-work foundry readiness log for visible hazards, labels, access control, and who can pause work.",
+            List.of(foundryCastingAreaReadinessAnswerCard("approved", "foundry_casting_area_readiness_boundary", "GD-132", "high", List.of()))
+        ));
+    }
+
+    @Test
     public void syntheticHighCriticalNonPilotCardsDoNotBypassPlannerAllowlist() {
         AnswerCard highNonPilotCard = temptingNonPilotAnswerCard("non_pilot_high_card", "GD-585", "high");
         AnswerCard criticalNonPilotCard = temptingNonPilotAnswerCard("non_pilot_critical_card", "GD-898", "critical");
@@ -836,6 +925,10 @@ public final class AnswerCardRuntimeTest {
         assertNull(AnswerCardRuntime.planAbdominalInternalBleedingAnswerCardFromCardsForTest(
             "bike handlebar hit his belly and now he is pale and dizzy",
             List.of(criticalNonPilotCard)
+        ));
+        assertNull(AnswerCardRuntime.planFoundryCastingAreaReadinessAnswerCardFromCardsForTest(
+            "Make a pre-work foundry readiness log for visible hazards, labels, access control, and who can pause work.",
+            List.of(highNonPilotCard)
         ));
     }
 
@@ -1291,6 +1384,60 @@ public final class AnswerCardRuntimeTest {
             "abdominal-internal-bleeding",
             "Abdominal Internal Bleeding",
             List.of("Emergency escalation", "Abdominal trauma and GI bleed danger signs"),
+            true
+        ));
+    }
+
+    private static AnswerCard foundryCastingAreaReadinessAnswerCard(String reviewStatus) {
+        return foundryCastingAreaReadinessAnswerCard(
+            reviewStatus,
+            "foundry_casting_area_readiness_boundary",
+            "GD-132",
+            "high",
+            foundryCastingAreaReadinessSources()
+        );
+    }
+
+    private static AnswerCard foundryCastingAreaReadinessAnswerCard(
+        String reviewStatus,
+        String cardId,
+        String guideId,
+        String riskTier,
+        List<AnswerCardSource> sources
+    ) {
+        return new AnswerCard(
+            cardId,
+            guideId,
+            "foundry-casting",
+            "Foundry casting area readiness boundary",
+            riskTier,
+            "guide-corpus",
+            reviewStatus,
+            "reviewed_source_family",
+            "Foundry-area readiness is limited to visible hazard screening, labels, no-go triggers, access control, and owner handoff.",
+            "Use only for boundary readiness logs, not casting procedure, furnace setup, recipes, calculations, or certification.",
+            "Synthetic GD-132 reviewed-card test fixture.",
+            List.of(
+                clause(cardId, "required_first_action", "Start with boundary-only readiness and non-invasive observation; do not provide casting procedure, setup, recipe, schedule, temperature, calculation, or safety-certification advice."),
+                clause(cardId, "required_first_action", "Identify the activity status, foundry-area owner, responsible operator, access control, material/source labels, visible hazards, and whether work is already paused."),
+                clause(cardId, "conditional_required_action", "Treat as a no-go or owner-handoff screen, not routine readiness.", "water", "wet", "cracked crucible", "unknown scrap", "ventilation concerns"),
+                clause(cardId, "first_action", "Make a foundry-area inventory with location, owner or responsible operator, current activity status, access status, date, observer, and whether work is paused."),
+                clause(cardId, "first_action", "End with foundry owner, experienced operator, fire-safety owner, chemical-safety owner, emergency service, or local-authority routing whenever hazards, labels, ownership, readiness, or authority are uncertain."),
+                clause(cardId, "urgent_red_flag", "Any moisture, wet mold or tool uncertainty, wet floor, rain exposure, water near molten-metal work, or pressure to proceed despite dryness uncertainty."),
+                clause(cardId, "forbidden_advice", "Do not provide mold-making steps, sand preparation, sand chemistry, investment casting steps, core making, pattern changes, or mold-drying procedures."),
+                clause(cardId, "do_not", "Do not convert the source guide's furnace, crucible, mold, metal, pouring, defect, or finishing passages into reviewed-card instructions.")
+            ),
+            sources
+        );
+    }
+
+    private static List<AnswerCardSource> foundryCastingAreaReadinessSources() {
+        return List.of(new AnswerCardSource(
+            "foundry_casting_area_readiness_boundary",
+            "GD-132",
+            "foundry-casting",
+            "Foundry & Metal Casting",
+            List.of("Reviewed Answer-Card Boundary", "Foundry Safety Quickstart", "Emergency Procedures"),
             true
         ));
     }

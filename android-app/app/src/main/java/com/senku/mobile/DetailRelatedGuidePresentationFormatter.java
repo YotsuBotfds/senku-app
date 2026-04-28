@@ -86,17 +86,17 @@ final class DetailRelatedGuidePresentationFormatter {
         if (anchorLabel.isEmpty()) {
             anchorLabel = context.getString(R.string.detail_related_guides_anchor_fallback);
         }
-        return "Cross-reference · "
+        return "Cross-reference \u00b7 "
             + formatCountLabel(count, "linked guide", "linked guides")
-            + " · "
+            + " \u00b7 "
             + anchorLabel
             + ".";
     }
 
     String buildAnswerModeRelatedGuidesSubtitle(State state, int count) {
-        return "Cross-reference · "
+        return "Cross-reference \u00b7 "
             + formatCountLabel(count, "linked guide", "linked guides")
-            + " · "
+            + " \u00b7 "
             + resolveSourceAnchorLabel(state)
             + ".";
     }
@@ -118,12 +118,12 @@ final class DetailRelatedGuidePresentationFormatter {
         String guideId = safe(guide == null ? null : guide.guideId).trim();
         String title = trimHeaderLabel(safe(guide == null ? null : guide.title).trim());
         if (!guideId.isEmpty() && !title.isEmpty()) {
-            return "[" + guideId + "] " + title;
+            return guideId + " \u00b7 " + title;
         }
         if (!title.isEmpty()) {
             return title;
         }
-        return guideId.isEmpty() ? context.getString(R.string.detail_related_guide_fallback_label) : "[" + guideId + "]";
+        return guideId.isEmpty() ? context.getString(R.string.detail_related_guide_fallback_label) : guideId;
     }
 
     String buildRelatedGuideContextLabel(SearchResult guide) {
@@ -195,7 +195,7 @@ final class DetailRelatedGuidePresentationFormatter {
             builder.append(anchorLabel);
         }
         builder.append(opensPreview
-            ? ". Previews here while the source guide stays pinned. Open full guide to switch pages."
+            ? ". Previews here while the source guide stays pinned. Open full guide switches pages."
             : ". Opens this guide with source-guide context.");
         return builder.toString();
     }
@@ -204,13 +204,13 @@ final class DetailRelatedGuidePresentationFormatter {
         String guideId = safe(sourceAnchor == null ? null : sourceAnchor.guideId).trim();
         String title = trimHeaderLabel(safe(sourceAnchor == null ? null : sourceAnchor.title).trim());
         if (!guideId.isEmpty() && !title.isEmpty()) {
-            return "[" + guideId + "] " + title;
+            return guideId + " \u00b7 " + title;
         }
         if (!title.isEmpty()) {
             return title;
         }
         if (!guideId.isEmpty()) {
-            return "[" + guideId + "]";
+            return guideId;
         }
         return context.getString(R.string.detail_related_guides_anchor_fallback);
     }
@@ -234,7 +234,7 @@ final class DetailRelatedGuidePresentationFormatter {
 
     private String buildRelatedGuidePreviewRowBehaviorText(boolean nonRailCrossReferenceCopy) {
         if (nonRailCrossReferenceCopy) {
-            return "Preview in this rail; open the full guide to switch pages.";
+            return "Preview here; Open full guide switches pages.";
         }
         return context.getString(R.string.detail_loop2_field_links_preview_row_behavior);
     }

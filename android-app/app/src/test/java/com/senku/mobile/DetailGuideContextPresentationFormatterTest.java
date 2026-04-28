@@ -24,25 +24,25 @@ public final class DetailGuideContextPresentationFormatterTest {
         );
 
         assertEquals(
-            "Preview in this rail; open the full guide to switch pages.",
+            "Preview here; Open full guide switches pages.",
             formatter.buildRelatedGuidePreviewRowBehaviorText(state)
         );
         assertEquals(
-            "Cross-reference preview",
+            "Cross-reference",
             formatter.buildRelatedGuidePreviewTitleText(state)
         );
         assertEquals(
-            "Cross-reference preview rail anchored to [GD-214] Water Storage. Select a linked guide to inspect it here, then open the full guide to switch pages.",
+            "Cross-reference rail anchored to [GD-214] Water Storage. Select a linked guide to inspect it here; Open full guide switches pages.",
             formatter.buildRelatedGuidePreviewPanelDescriptionText(state)
         );
         assertEquals("[GD-214] Water Storage", formatter.buildActiveGuideContextPrimaryLabel(state));
         assertEquals(
-            "Store water away from heat.\n\nCross-reference rail stays anchored to this source.",
+            "Store water away from heat.\n\nPinned source for this cross-reference rail.",
             formatter.buildActiveGuideContextBody(state)
         );
         assertEquals("Source guide", formatter.buildActiveGuideContextTitleText(state));
         assertEquals(
-            "Source guide context. Cross-reference rail stays anchored to [GD-214] Water Storage.",
+            "Source guide context. Cross-reference rail is pinned to [GD-214] Water Storage.",
             formatter.buildActiveGuideContextContentDescription(state, "[GD-214] Water Storage")
         );
     }
@@ -66,24 +66,24 @@ public final class DetailGuideContextPresentationFormatterTest {
         );
 
         assertEquals(
-            "Preview in this rail; open the full guide to switch pages.",
+            "Preview here; Open full guide switches pages.",
             formatter.buildRelatedGuidePreviewRowBehaviorText(state)
         );
         assertEquals(
-            "Cross-reference preview",
+            "Cross-reference",
             formatter.buildRelatedGuidePreviewTitleText(state)
         );
         assertEquals(
-            "Selected guide appears here before you open the full page.",
+            "Selected guide previews here before page switch.",
             formatter.buildRelatedGuidePreviewCaptionText(state)
         );
         assertEquals(
-            "Cross-reference preview rail. Inspect a linked guide here, then open the full guide to switch pages.",
+            "Cross-reference rail. Inspect a linked guide here; Open full guide switches pages.",
             formatter.buildRelatedGuidePreviewPanelDescriptionText(state)
         );
-        assertEquals("Loading cross-reference preview...", formatter.buildRelatedGuidePreviewLoadingText(state));
+        assertEquals("Loading cross-reference...", formatter.buildRelatedGuidePreviewLoadingText(state));
         assertEquals(
-            "No cross-reference preview text is available in this pack.",
+            "No cross-reference text is available in this pack.",
             formatter.buildRelatedGuidePreviewEmptyText(state)
         );
     }
@@ -107,7 +107,7 @@ public final class DetailGuideContextPresentationFormatterTest {
         );
 
         assertEquals(
-            "[GD-999] 1234567890123456789012345678901234...",
+            "GD-999 · 1234567890123456789012345678901234...",
             formatter.buildActiveGuideContextPrimaryLabel(state)
         );
     }

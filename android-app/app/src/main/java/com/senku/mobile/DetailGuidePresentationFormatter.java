@@ -30,8 +30,8 @@ final class DetailGuidePresentationFormatter {
     private static final Pattern GUIDE_MARKDOWN_ESCAPE_PATTERN = Pattern.compile("\\\\([\\[\\]\\(\\)#*_`])");
     private static final Pattern GUIDE_SECTION_LINE_PATTERN = Pattern.compile("^Source section:\\s*(.+)$", Pattern.CASE_INSENSITIVE);
     private static final String GUIDE_SECTION_ANCHOR_MARKER = "[[SECTION]] ";
-    private static final String GUIDE_SECTION_DISPLAY_PREFIX = "- § ";
-    private static final String GUIDE_SECTION_DISPLAY_SEPARATOR = " · ";
+    private static final String GUIDE_SECTION_DISPLAY_PREFIX = "\u2014 \u00a7 ";
+    private static final String GUIDE_SECTION_DISPLAY_SEPARATOR = " \u00b7 ";
 
     private static final class GuideBodyLine {
         final String text;

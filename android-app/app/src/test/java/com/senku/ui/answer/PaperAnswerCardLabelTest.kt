@@ -11,7 +11,7 @@ class PaperAnswerCardLabelTest {
             compactEvidenceLabel(answer(answerSurfaceLabel = AnswerSurfaceLabel.DeterministicRule)),
         )
         assertEquals(
-            "REVIEWED SOURCES",
+            "SOURCE MATCH",
             compactEvidenceLabel(answer(answerSurfaceLabel = AnswerSurfaceLabel.ReviewedCardEvidence)),
         )
         assertEquals(
@@ -25,6 +25,28 @@ class PaperAnswerCardLabelTest {
         assertEquals(
             "LIMITED SOURCES",
             compactEvidenceLabel(answer(evidence = Evidence.None)),
+        )
+    }
+
+    @Test
+    fun compactEvidenceLabel_hidesReviewedCardBoundaryLanguage() {
+        assertEquals(
+            "STRONG SOURCES",
+            compactEvidenceLabel(
+                answer(
+                    evidence = Evidence.Strong,
+                    answerSurfaceLabel = AnswerSurfaceLabel.ReviewedCardEvidence,
+                ),
+            ),
+        )
+        assertEquals(
+            "LIMITED SOURCES",
+            compactEvidenceLabel(
+                answer(
+                    evidence = Evidence.None,
+                    answerSurfaceLabel = AnswerSurfaceLabel.ReviewedCardEvidence,
+                ),
+            ),
         )
     }
 

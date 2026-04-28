@@ -151,10 +151,10 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
         boolean allowLinkedGuidePreviewLine = !smallPhonePortraitCard && !landscapePhoneCard && !largeFontCard;
         holder.title.setText(formatDisplayText(
             result.title,
-            richTabletCard ? 128 : (landscapePhoneCard ? 100 : 90),
+            richTabletCard ? 96 : (landscapePhoneCard ? 100 : 90),
             2
         ));
-        holder.title.setMaxLines(richTabletCard ? 3 : (stressCompactCard ? 1 : 2));
+        holder.title.setMaxLines(richTabletCard ? 1 : (stressCompactCard ? 1 : 2));
         holder.title.setEllipsize(TextUtils.TruncateAt.END);
         holder.meta.setText(buildMetaLine(result));
         holder.meta.setMaxLines(stressCompactCard ? 1 : 2);
@@ -174,10 +174,10 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
         bindSection(holder.section, result.sectionHeading, smallPhonePortraitCard || stressCompactCard);
         holder.snippet.setText(formatDisplayText(
             result.snippet,
-            richTabletCard ? 420 : (landscapePhoneCard ? 180 : (smallPhonePortraitCard ? 110 : 240)),
+            richTabletCard ? 190 : (landscapePhoneCard ? 180 : (smallPhonePortraitCard ? 110 : 240)),
             richTabletCard ? 4 : 3
         ));
-        holder.snippet.setMaxLines(richTabletCard ? 7 : (stressCompactCard ? 1 : (landscapePhoneCard ? 2 : (smallPhonePortraitCard ? 1 : 5))));
+        holder.snippet.setMaxLines(richTabletCard ? 2 : (stressCompactCard ? 1 : (landscapePhoneCard ? 2 : (smallPhonePortraitCard ? 1 : 5))));
         holder.snippet.setEllipsize(TextUtils.TruncateAt.END);
         if (smallPhonePortraitCard || stressCompactCard) {
             holder.snippet.setAlpha(0.66f);
@@ -564,7 +564,7 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
 
     private String buildCardSnippet(SearchResult result) {
         int maxLen = isRichTabletCard(inflater.getContext())
-            ? 320
+            ? 190
             : (isLandscapePhoneCard(inflater.getContext()) ? 220 : (isSmallPhonePortraitCard(inflater.getContext()) ? 150 : 260));
         String snippet = cleanDisplayText(result == null ? null : result.snippet, maxLen);
         if (!snippet.isEmpty()) {

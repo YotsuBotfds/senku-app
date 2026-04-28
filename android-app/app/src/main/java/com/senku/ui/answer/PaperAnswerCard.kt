@@ -48,8 +48,13 @@ enum class Mode {
     Dark,
 }
 
-private val PaperAnswerCardInnerPadding = 14.dp
-private val PaperAnswerCardSectionSpacing = 9.dp
+private val PaperAnswerCardInnerPadding = 12.dp
+private val PaperAnswerCardSectionSpacing = 8.dp
+private val PaperAnswerCardBorderWidth = 0.5.dp
+private val PaperAnswerCardBodySize = 14.sp
+private val PaperAnswerCardBodyLineHeight = 21.sp
+private val PaperAnswerCardSupportSize = 12.sp
+private val PaperAnswerCardSupportLineHeight = 18.sp
 
 class PaperAnswerCardHostView @JvmOverloads constructor(
     context: Context,
@@ -120,7 +125,7 @@ fun PaperAnswerCard(
         color = palette.background,
         contentColor = palette.body,
         shape = RoundedCornerShape(6.dp),
-        border = BorderStroke(1.dp, palette.border),
+        border = BorderStroke(PaperAnswerCardBorderWidth, palette.border),
         tonalElevation = 0.dp,
         shadowElevation = 0.dp,
     ) {
@@ -145,7 +150,7 @@ fun PaperAnswerCard(
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Text(
-                        text = if (content.abstain) "NO MATCH" else "FIELD ANSWER",
+                        text = if (content.abstain) "NO MATCH" else "ANSWER",
                         style = typography.monoCaps.copy(
                             fontSize = 10.sp,
                             lineHeight = 12.sp,
@@ -194,8 +199,8 @@ fun PaperAnswerCard(
                 Text(
                     text = content.short.trim(),
                     style = typography.answerBody.copy(
-                        fontSize = 16.sp,
-                        lineHeight = 23.sp,
+                        fontSize = PaperAnswerCardBodySize,
+                        lineHeight = PaperAnswerCardBodyLineHeight,
                         letterSpacing = 0.sp,
                     ),
                     color = palette.body,
@@ -212,8 +217,8 @@ fun PaperAnswerCard(
                             Text(
                                 text = "${index + 1}. ${step.trim()}",
                                 style = typography.answerBody.copy(
-                                    fontSize = 13.sp,
-                                    lineHeight = 20.sp,
+                                    fontSize = PaperAnswerCardSupportSize,
+                                    lineHeight = PaperAnswerCardSupportLineHeight,
                                     fontWeight = FontWeight.Normal,
                                     letterSpacing = 0.sp,
                                 ),
@@ -232,8 +237,8 @@ fun PaperAnswerCard(
                     Text(
                         text = content.limits.trim(),
                         style = typography.answerBody.copy(
-                            fontSize = 13.sp,
-                            lineHeight = 19.sp,
+                            fontSize = PaperAnswerCardSupportSize,
+                            lineHeight = PaperAnswerCardSupportLineHeight,
                             fontWeight = FontWeight.Normal,
                             letterSpacing = 0.sp,
                         ),
@@ -316,7 +321,7 @@ private fun SectionHeader(
 private fun AnswerSectionDivider(color: Color) {
     HorizontalDivider(
         modifier = Modifier.fillMaxWidth(),
-        thickness = 1.dp,
+        thickness = PaperAnswerCardBorderWidth,
         color = color,
     )
 }
@@ -348,7 +353,7 @@ private fun rememberPaperAnswerPalette(
                 body = colors.ink0,
                 muted = colors.ink2,
                 hairline = colors.hairlineStrong,
-                border = colors.hairlineStrong,
+                border = colors.hairlineStrong.copy(alpha = 0.72f),
                 leftAccent = when {
                     content.abstain -> colors.danger
                     content.uncertainFit -> colors.warn
@@ -368,7 +373,7 @@ private fun rememberPaperAnswerPalette(
                 body = colors.ink0,
                 muted = colors.ink2,
                 hairline = colors.hairline,
-                border = colors.ink0.copy(alpha = 0.10f),
+                border = colors.ink0.copy(alpha = 0.08f),
                 leftAccent = when {
                     content.abstain -> colors.danger
                     content.uncertainFit -> colors.warn
@@ -396,15 +401,23 @@ internal fun compactEvidenceLabel(content: AnswerContent): String {
         AnswerSurfaceLabel.DeterministicRule -> "RULE MATCH"
         AnswerSurfaceLabel.LimitedFit -> "UNSURE FIT"
         AnswerSurfaceLabel.Abstain -> "NO MATCH"
-        AnswerSurfaceLabel.ReviewedCardEvidence -> "REVIEWED SOURCES"
+        AnswerSurfaceLabel.ReviewedCardEvidence -> sourceEvidenceLabel(content)
         AnswerSurfaceLabel.GeneratedEvidence,
         AnswerSurfaceLabel.Unknown -> when {
             content.uncertainFit -> "UNSURE FIT"
-            content.evidence == Evidence.Strong -> "STRONG SOURCES"
-            content.evidence == Evidence.Moderate -> "SOURCE MATCH"
+            content.evidence == Evidence.Strong -> sourceEvidenceLabel(content)
+            content.evidence == Evidence.Moderate -> sourceEvidenceLabel(content)
             content.abstain -> "NO MATCH"
-            else -> "LIMITED SOURCES"
+            else -> sourceEvidenceLabel(content)
         }
+    }
+}
+
+private fun sourceEvidenceLabel(content: AnswerContent): String {
+    return when (content.evidence) {
+        Evidence.Strong -> "STRONG SOURCES"
+        Evidence.Moderate -> "SOURCE MATCH"
+        Evidence.None -> "LIMITED SOURCES"
     }
 }
 
