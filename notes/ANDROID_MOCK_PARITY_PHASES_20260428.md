@@ -15,7 +15,8 @@ files from this lane.
   - Status `pass`, 47/47 states, homogeneous APK
     `d722ed83fea4ae7f1cee64d459967cd10a51293baa3e92b534fc6717ca5e2a77`,
     model `gemma-4-e2b-it-litert`, rotation mismatch count 0.
-- Reviewed anchor: pending wave18 commit.
+- Reviewed anchors: `7efcac0` (`advance android mock parity wave18`) and
+  `343bfde` (`polish android mock parity wave18`).
 - Reviewer note: `notes/ANDROID_VISUAL_QA_20260428_0445.md`.
 - Current verdict: technical proof is green; visual parity is not closed.
   Wave18 resolved the tablet thread `GD-?` header leak and removed the

@@ -3,8 +3,9 @@
 Reviewer lane: analysis only. This note records the wave18 integration proof
 anchor for the next overnight slice.
 
-Implementation anchor reviewed: pending wave18 commit
-(`advance android mock parity wave18`).
+Implementation anchors reviewed: `7efcac0`
+(`advance android mock parity wave18`) and `343bfde`
+(`polish android mock parity wave18`).
 
 Technical proof pack:
 `artifacts/ui_state_pack/20260428_043744/20260428_043744`

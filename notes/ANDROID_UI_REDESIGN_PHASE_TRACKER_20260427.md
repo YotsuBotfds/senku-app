@@ -6,8 +6,9 @@ one write target: `notes/ANDROID_UI_REDESIGN_PHASE_TRACKER_20260427.md`.
 
 ## Current Anchor And Proof
 
-- Current implementation anchor: pending wave18 commit
-  (`advance android mock parity wave18`).
+- Current implementation anchors: `7efcac0`
+  (`advance android mock parity wave18`) and `343bfde`
+  (`polish android mock parity wave18`).
 - Current technical proof:
   `artifacts/ui_state_pack/20260428_043744/20260428_043744`.
   - Status: `pass`, 47 states, 47 pass, 0 fail, 0 platform ANRs.

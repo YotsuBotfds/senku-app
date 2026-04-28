@@ -1981,11 +1981,11 @@ public final class DetailActivity extends AppCompatActivity {
         tabletEvidenceAnchorSection = safe(activeSource == null ? null : activeSource.sectionHeading).trim();
         tabletEvidenceAnchorSnippet = "";
         tabletEvidenceXRefs.clear();
+        int requestToken = ++tabletEvidenceLoadToken;
         if (guideId.isEmpty()) {
             return;
         }
 
-        int requestToken = ++tabletEvidenceLoadToken;
         executor.execute(() -> {
             String snippet = "";
             String resolvedTitle = tabletEvidenceAnchorTitle;
