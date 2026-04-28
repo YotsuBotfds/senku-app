@@ -48,6 +48,9 @@ enum class Mode {
     Dark,
 }
 
+private val PaperAnswerCardInnerPadding = 16.dp
+private val PaperAnswerCardSectionSpacing = 10.dp
+
 class PaperAnswerCardHostView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
@@ -134,8 +137,8 @@ fun PaperAnswerCard(
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(18.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp),
+                    .padding(PaperAnswerCardInnerPadding),
+                verticalArrangement = Arrangement.spacedBy(PaperAnswerCardSectionSpacing),
             ) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
