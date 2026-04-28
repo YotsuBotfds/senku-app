@@ -251,13 +251,15 @@ public final class DetailFollowupLandscapeComposerTest {
     @Test
     public void phonePortraitHeaderUsesShortAnswerLabel() {
         assertEquals(
-            "ANSWER GD-345 • Rain shelter",
+            "ANSWER GD-345 \u2022 Rain shelter",
             DetailActivity.buildPhonePortraitAnswerHeaderTitle("GD-345", "Rain shelter")
         );
         assertEquals("ANSWER GD-345", DetailActivity.buildPhonePortraitAnswerHeaderTitle("GD-345", ""));
         assertEquals("ANSWER", DetailActivity.buildPhonePortraitAnswerHeaderTitle("", ""));
-        assertEquals("ANSWER GD-132 â€¢ Burn hazard", DetailActivity.buildPhoneEmergencyHeaderTitle("GD-132"));
-        assertEquals("ANSWER â€¢ Burn hazard", DetailActivity.buildPhoneEmergencyHeaderTitle(""));
+        assertEquals("ANSWER GD-132 \u2022 Burn hazard", DetailActivity.buildPhoneEmergencyHeaderTitle("GD-132"));
+        assertEquals("ANSWER \u2022 Burn hazard", DetailActivity.buildPhoneEmergencyHeaderTitle(""));
+        assertFalse(DetailActivity.buildPhoneEmergencyHeaderTitle("GD-132").contains("\u00C3"));
+        assertFalse(DetailActivity.buildPhoneEmergencyHeaderTitle("GD-132").contains("\u00E2"));
         assertTrue(DetailActivity.shouldUsePhoneAnswerHeaderTitle(true, true));
         assertFalse(DetailActivity.shouldUsePhoneAnswerHeaderTitle(true, false));
         assertFalse(DetailActivity.shouldUsePhoneAnswerHeaderTitle(false, true));
@@ -266,11 +268,11 @@ public final class DetailFollowupLandscapeComposerTest {
     @Test
     public void phoneThreadHeaderUsesTranscriptLabel() {
         assertEquals(
-            "THREAD GD-220 • Rain shelter • 2 turns",
+            "THREAD GD-220 \u2022 Rain shelter \u2022 2 turns",
             DetailActivity.buildPhonePortraitThreadHeaderTitle("GD-220", "Rain shelter", 2)
         );
         assertEquals(
-            "THREAD • 2 turns",
+            "THREAD \u2022 2 turns",
             DetailActivity.buildPhonePortraitThreadHeaderTitle("", "", 1)
         );
     }

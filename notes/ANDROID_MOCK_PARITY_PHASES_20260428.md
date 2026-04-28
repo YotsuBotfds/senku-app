@@ -825,6 +825,68 @@ Reviewer-backed next slices:
 - Home/search polish: phone/tablet type and cards are still too compressed;
   tablet landscape home/search headers and columns need clearer containment.
 
+## Wave44 Checkpoint
+
+Committed scope pending at the time of this update:
+
+- Shared chrome/header: normalized legacy mojibake bullet sequences, moved
+  answer/thread/guide/emergency headers to real `•` separators, compacted
+  tablet/landscape breadcrumbs, and added the emergency `• DANGER` top-bar pill.
+- Answer/source stack: rain-shelter answer body now uses the canonical
+  ridgeline/tarp prose, the tablet answer rail titles `SOURCES • 3`, and the
+  right source stack is constrained to `GD-220`, `GD-132`, and `GD-345`.
+- Thread: wide thread rows are center-bounded and thread rails narrow to the
+  canonical `GD-220`/`GD-345` support pair with `SOURCES • 2` copy.
+- Guide: tablet guide paper is wider/calmer, danger and required-reading rows
+  are simplified, and guide-mode manual-entry metadata is suppressed.
+- Home/search: category/search/recent row scale increased, filter heading uses
+  `FILTER • CATEGORY`, and tablet landscape search rails gained clearer bounds.
+
+Fresh proof:
+
+- First pack attempt:
+  `artifacts/ui_state_pack/wave44_gpt_direction/20260428_173317` reached
+  `21/22`; the lone miss was a tablet-portrait host-answer timing flake stuck at
+  `main.ask.prepare` before any screenshot/dump artifact.
+- Closure pack:
+  `artifacts/ui_state_pack/wave44_gpt_direction_rerun/20260428_173826`
+- Canonical mocks:
+  `artifacts/ui_state_pack/wave44_gpt_direction_rerun/20260428_173826/mocks`
+- Zip:
+  `artifacts/ui_state_pack/wave44_gpt_direction_rerun/20260428_173826_mocks.zip`
+- Summary: status `pass`, states `22/22`, failures `0`, ANRs `0`, mock pack
+  `pass`, deterministic frame export `true`.
+- APK SHA:
+  `0394af4319010c0d88837291f5b1c9fed1f91e71fb4ba9d9282d2700e22fbfbe`
+- Host model: `gemma-4-e2b-it-litert`
+- Host model SHA:
+  `ea1102014465edeb14b517bf270f6751d036749e3c5f517a7ff802782cb92161`
+- Validation: full `:app:testDebugUnitTest` passed, Android local quality gate
+  passed, `git diff --check` passed with only CRLF warnings from Git.
+
+Reviewer-backed next slices:
+
+- Wave45 / P1 chrome: finish icon parity and header containment. Dumps are now
+  clear of mojibake, but the visual header scale/icons still differ from target
+  mocks, especially tablet/landscape answer.
+- Wave46 / P2 answer: target exact answer hierarchy. Current answer content is
+  semantically aligned but still too large, has extra proof/thread context chrome,
+  and does not expose related-guide rows like the tablet target.
+- Wave47 / P3 thread: preserve the improved two-source rail while reducing any
+  answer/proof-workflow residue and matching the target transcript rhythm.
+- Wave48 / P4 guide: continue guide paper/rail work toward phone landscape TOC,
+  tablet portrait centered paper, and tablet landscape `Cross-reference • 6`.
+- Wave49 / P7 emergency: inspect fresh phone/tablet danger mocks for remaining
+  banner/action/composer polish after the shared danger-pill work.
+- Wave50A/B / P5-P6 home/search: home/search are close enough for density polish;
+  focus search row scores/preview first, then shared shell sizing/nav.
+- Read-only visual QA verdict: Wave44 is a technical/proof pass, not visual
+  closure. Answer/thread, guide/emergency, and home/search still need target
+  composition passes; reviewers specifically flagged outer shell/header/icon
+  parity, answer related-guide ordering, thread source rail identity, guide
+  paper/TOC/cross-reference allocation, and emergency header/evidence/composer
+  styling as the remaining visual blockers.
+
 ## Parallelization Rules
 
 - Start every worker with `git status --short`, `git log --oneline -n 8

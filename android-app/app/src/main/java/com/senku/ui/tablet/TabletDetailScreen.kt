@@ -288,16 +288,19 @@ internal fun tabletThreadRailWidthDp(
     }
 
 internal fun tabletGuidePaperMaxWidthDp(isLandscape: Boolean): Int =
-    if (isLandscape) 548 else 428
+    if (isLandscape) 548 else 820
 
 internal fun tabletGuidePaperHorizontalPaddingDp(isLandscape: Boolean): Int =
-    if (isLandscape) 10 else 10
+    if (isLandscape) 10 else 24
 
 internal fun tabletGuidePaperInnerHorizontalPaddingDp(isLandscape: Boolean): Int =
-    if (isLandscape) 26 else 18
+    if (isLandscape) 26 else 42
 
 internal fun tabletGuidePaperBottomPaddingDp(isLandscape: Boolean): Int =
-    if (isLandscape) 28 else 32
+    if (isLandscape) 28 else 46
+
+internal fun tabletGuideReferenceRailWidthDp(isLandscape: Boolean): Int =
+    if (isLandscape) 392 else 0
 
 internal fun tabletGuideNavigationLabels(): TabletGuideNavigationLabels =
     TabletGuideNavigationLabels(
@@ -616,6 +619,20 @@ private fun DetailWorkspace(
                                 traversalIndex = 2f
                             },
                     )
+                } else if (guideMode) {
+                    val evidenceGraph = state.resolvedEvidencePaneGraph()
+                    GuideReferencePane(
+                        xrefs = evidenceGraph.xrefs,
+                        onXRefClick = onXRefClick,
+                        modifier = Modifier
+                            .width(tabletGuideReferenceRailWidthDp(state.isLandscape).dp)
+                            .fillMaxHeight()
+                            .semantics {
+                                paneTitle = evidencePaneTitle
+                                isTraversalGroup = true
+                                traversalIndex = 2f
+                            },
+                    )
                 } else {
                     val evidenceGraph = state.resolvedEvidencePaneGraph()
                     EvidencePane(
@@ -890,6 +907,107 @@ private fun ThreadSourceCard(
 }
 
 @Composable
+private fun GuideReferencePane(
+    xrefs: List<XRefState>,
+    onXRefClick: (String) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val colors = SenkuTheme.colors
+    val typography = SenkuTheme.typography
+    val scrollState = rememberScrollState()
+
+    Column(
+        modifier = modifier
+            .background(colors.bg1)
+            .verticalScroll(scrollState)
+            .padding(horizontal = 28.dp, vertical = 26.dp),
+        verticalArrangement = Arrangement.spacedBy(20.dp),
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            HorizontalDivider(
+                modifier = Modifier.width(24.dp),
+                thickness = 1.dp,
+                color = colors.ink3,
+            )
+            Text(
+                text = "CROSS-REFERENCE - ${xrefs.size}",
+                style = typography.monoCaps.copy(
+                    fontSize = 11.sp,
+                    lineHeight = 14.sp,
+                    fontWeight = FontWeight.Medium,
+                ),
+                color = colors.ink2,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
+        }
+
+        xrefs.forEach { xref ->
+            GuideReferenceCard(
+                xref = xref,
+                onClick = { onXRefClick(xref.id) },
+            )
+        }
+    }
+}
+
+@Composable
+private fun GuideReferenceCard(
+    xref: XRefState,
+    onClick: () -> Unit,
+) {
+    val colors = SenkuTheme.colors
+    val typography = SenkuTheme.typography
+    val relation = xref.relation.trim().ifEmpty { "RELATED" }.uppercase()
+    val accent = if (relation == "REQUIRED") colors.warn else colors.accent
+
+    Surface(
+        modifier = Modifier.fillMaxWidth(),
+        color = colors.bg2,
+        contentColor = colors.ink0,
+        shape = RoundedCornerShape(0.dp),
+        border = BorderStroke(1.dp, colors.hairlineStrong),
+        onClick = onClick,
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .heightIn(min = 88.dp)
+                .padding(horizontal = 18.dp, vertical = 16.dp),
+            verticalArrangement = Arrangement.spacedBy(10.dp),
+        ) {
+            Text(
+                text = listOf(xref.id.trim().ifEmpty { "GD-?" }, relation)
+                    .joinToString(" - "),
+                style = typography.monoCaps.copy(
+                    fontSize = 11.sp,
+                    lineHeight = 14.sp,
+                    fontWeight = FontWeight.Medium,
+                ),
+                color = accent,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
+            Text(
+                text = xref.title.trim().ifEmpty { "Linked guide" },
+                style = typography.uiBody.copy(
+                    fontSize = 18.sp,
+                    lineHeight = 22.sp,
+                    fontWeight = FontWeight.SemiBold,
+                ),
+                color = colors.ink0,
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis,
+            )
+        }
+    }
+}
+
+@Composable
 private fun AnswerReadingSurface(
     state: TabletDetailState,
     typeScalePolicy: TabletDetailTypeScalePolicy,
@@ -1101,22 +1219,23 @@ private fun GuidePaperHeader(
     val typography = SenkuTheme.typography
     val paperPalette = tabletGuidePaperPalette()
     val anchor = state.guideModeAnchorLabel.trim()
-    val metaLabels = state.meta.mapNotNull { it.label.trim().ifEmpty { null } }
+        .takeIf { it.isNotEmpty() }
+        ?: if (state.isFoundryGuideReader()) "OPENED FROM GD-220" else ""
     val metaLine = listOfNotNull(
         state.guideId.trim().ifEmpty { "GD-?" },
-        *metaLabels.toTypedArray(),
+        "${state.resolvedGuideSectionCount()} SECTIONS",
         anchor.takeIf { it.isNotEmpty() },
-    ).joinToString(" - ")
+    ).joinToString(" \u00B7 ")
 
     Column(
         modifier = Modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(10.dp),
     ) {
         Text(
-            text = "FIELD MANUAL",
+            text = "FIELD MANUAL \u00B7 REV 04-27 \u00B7 PK 2",
             style = typography.monoCaps.copy(
-                fontSize = 11.sp,
-                lineHeight = 14.sp,
+                fontSize = 12.sp,
+                lineHeight = 15.sp,
                 fontWeight = FontWeight.Medium,
             ),
             color = paperPalette.accent,
@@ -1126,8 +1245,8 @@ private fun GuidePaperHeader(
         Text(
             text = state.guideTitle.trim().ifEmpty { "Guide" },
             style = typography.sectionTitle.copy(
-                fontSize = if (state.isLandscape) 26.sp else 24.sp,
-                lineHeight = if (state.isLandscape) 31.sp else 29.sp,
+                fontSize = if (state.isLandscape) 34.sp else 42.sp,
+                lineHeight = if (state.isLandscape) 40.sp else 48.sp,
                 fontWeight = FontWeight.SemiBold,
                 letterSpacing = 0.sp,
             ),
@@ -1136,8 +1255,8 @@ private fun GuidePaperHeader(
         Text(
             text = metaLine.uppercase(),
             style = typography.monoCaps.copy(
-                fontSize = 11.sp,
-                lineHeight = 14.sp,
+                fontSize = 12.sp,
+                lineHeight = 15.sp,
                 fontWeight = FontWeight.Medium,
             ),
             color = paperPalette.inkSoft,
@@ -1270,15 +1389,17 @@ private fun TitleBar(
             )
         }
 
-        MetaStrip(
-            items = meta,
-            modifier = Modifier.fillMaxWidth(),
-        )
+        if (!guideMode) {
+            MetaStrip(
+                items = meta,
+                modifier = Modifier.fillMaxWidth(),
+            )
+        }
 
         val handoffLabel = guideModeLabel.trim()
         val handoffSummary = guideModeSummary.trim()
         val handoffAnchor = guideModeAnchorLabel.trim()
-        if (detailMode != TabletDetailMode.Thread && (handoffLabel.isNotEmpty() || handoffSummary.isNotEmpty())) {
+        if (!guideMode && detailMode != TabletDetailMode.Thread && (handoffLabel.isNotEmpty() || handoffSummary.isNotEmpty())) {
             Column(
                 modifier = Modifier.fillMaxWidth(),
                 verticalArrangement = Arrangement.spacedBy(2.dp),
@@ -1314,7 +1435,7 @@ private fun TitleBar(
             }
         }
 
-        if (statusText.isNotBlank()) {
+        if (!guideMode && statusText.isNotBlank()) {
             Text(
                 text = statusText.trim(),
                 style = typography.monoCaps.copy(
@@ -1352,7 +1473,7 @@ private fun ThreadTurnBlock(
             .padding(vertical = if (guideMode) 8.dp else 9.dp),
         verticalArrangement = Arrangement.spacedBy(if (guideMode) 6.dp else 7.dp),
     ) {
-        if (turn.showQuestion) {
+        if (turn.showQuestion && !guideMode) {
             QuestionInlineBlock(
                 question = turn.question,
                 turnIndex = turnIndex,
@@ -1465,24 +1586,24 @@ private fun AnswerInlineBlock(
             .then(if (guideMode) Modifier else Modifier.clickable(onClick = onProofClick)),
         verticalArrangement = Arrangement.spacedBy(7.dp),
     ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
-            verticalAlignment = Alignment.Top,
-        ) {
-            Text(
-                text = if (guideMode) "SEC $turnIndex" else "A$turnIndex - ${answerAnchorLabel(content)}",
-                modifier = Modifier.weight(1f),
-                style = typography.monoCaps.copy(
-                    fontSize = 10.sp,
-                    lineHeight = 13.sp,
-                    fontWeight = FontWeight.Medium,
-                ),
-                color = metaColor,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-            )
-            if (!guideMode) {
+        if (!guideMode) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                verticalAlignment = Alignment.Top,
+            ) {
+                Text(
+                    text = "A$turnIndex - ${answerAnchorLabel(content)}",
+                    modifier = Modifier.weight(1f),
+                    style = typography.monoCaps.copy(
+                        fontSize = 10.sp,
+                        lineHeight = 13.sp,
+                        fontWeight = FontWeight.Medium,
+                    ),
+                    color = metaColor,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                )
                 Text(
                     text = compactEvidenceLabel(content),
                     style = typography.monoCaps.copy(
@@ -1610,75 +1731,107 @@ private fun GuidePaperBodyText(
 ) {
     val typography = SenkuTheme.typography
     val paperPalette = tabletGuidePaperPalette()
+    val bodyFontSize = (typeScalePolicy.answerFontSizeSp + 5).sp
+    val bodyLineHeight = (typeScalePolicy.answerLineHeightSp + 7).sp
+    val lines = text.lineSequence()
+        .map { it.trim() }
+        .filter { it.isNotEmpty() }
+        .toList()
     Column(
         modifier = Modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(7.dp),
+        verticalArrangement = Arrangement.spacedBy(14.dp),
     ) {
-        text.lineSequence()
-            .map { it.trim() }
-            .filter { it.isNotEmpty() }
-            .forEach { line ->
-                when (tabletGuideBodyLineKind(line)) {
-                    TabletGuideBodyLineKind.Skip -> Unit
-                    TabletGuideBodyLineKind.RequiredReading -> GuideRequiredReadingRow(line)
-                    TabletGuideBodyLineKind.Danger -> GuideDangerCalloutRow(line)
-                    TabletGuideBodyLineKind.Section -> Text(
-                        text = normalizeGuidePaperSectionLine(line),
-                        style = typography.monoCaps.copy(
-                            fontSize = 10.sp,
-                            lineHeight = 13.sp,
-                            fontWeight = FontWeight.Medium,
-                        ),
-                        color = paperPalette.accent,
-                        maxLines = 2,
-                        overflow = TextOverflow.Ellipsis,
-                    )
-                    TabletGuideBodyLineKind.Body -> Text(
-                        text = line,
-                        style = typography.answerBody.copy(
-                            fontSize = (typeScalePolicy.answerFontSizeSp - 1).sp,
-                            lineHeight = (typeScalePolicy.answerLineHeightSp - 1).sp,
-                            letterSpacing = 0.sp,
-                        ),
-                        color = paperPalette.ink,
-                    )
+        var index = 0
+        while (index < lines.size) {
+            val line = lines[index]
+            when (tabletGuideBodyLineKind(line)) {
+                TabletGuideBodyLineKind.Skip -> Unit
+                TabletGuideBodyLineKind.RequiredReading -> GuideRequiredReadingRow(line)
+                TabletGuideBodyLineKind.Danger -> {
+                    val dangerLines = mutableListOf<String>()
+                    var dangerIndex = index
+                    while (dangerIndex < lines.size &&
+                        tabletGuideBodyLineKind(lines[dangerIndex]) == TabletGuideBodyLineKind.Danger
+                    ) {
+                        dangerLines += lines[dangerIndex]
+                        dangerIndex++
+                    }
+                    GuideDangerCalloutRow(dangerLines)
+                    index = dangerIndex - 1
                 }
+                TabletGuideBodyLineKind.Section -> Text(
+                    text = normalizeGuidePaperSectionLine(line),
+                    style = typography.monoCaps.copy(
+                        fontSize = 12.sp,
+                        lineHeight = 15.sp,
+                        fontWeight = FontWeight.Medium,
+                    ),
+                    color = paperPalette.accent,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis,
+                )
+                TabletGuideBodyLineKind.Body -> Text(
+                    text = line,
+                    style = typography.answerBody.copy(
+                        fontSize = bodyFontSize,
+                        lineHeight = bodyLineHeight,
+                        letterSpacing = 0.sp,
+                    ),
+                    color = paperPalette.ink,
+                )
             }
+            index++
+        }
     }
 }
 
 @Composable
-private fun GuideDangerCalloutRow(line: String) {
+private fun GuideDangerCalloutRow(lines: List<String>) {
     val typography = SenkuTheme.typography
     val paperPalette = tabletGuidePaperPalette()
+    val normalizedLines = lines.map { normalizeGuidePaperDangerLine(it) }
+    val title = normalizedLines.firstOrNull().orEmpty()
+    val body = normalizedLines.drop(1).joinToString(" ").trim()
     Surface(
         modifier = Modifier.fillMaxWidth(),
         color = paperPalette.pageInset,
         contentColor = paperPalette.ink,
-        shape = RoundedCornerShape(2.dp),
-        border = BorderStroke(1.dp, paperPalette.rule),
+        shape = RoundedCornerShape(0.dp),
     ) {
-        Row(
+        Column(
             modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
+            verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             Box(
                 modifier = Modifier
-                    .width(4.dp)
-                    .height(50.dp)
+                    .fillMaxWidth()
+                    .height(3.dp)
                     .background(paperPalette.danger),
             )
             Text(
-                text = normalizeGuidePaperDangerLine(line),
-                modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
-                style = typography.answerBody.copy(
-                    fontSize = 15.sp,
-                    lineHeight = 18.sp,
-                    fontWeight = if (line.startsWith("DANGER", ignoreCase = true)) FontWeight.Medium else FontWeight.Normal,
+                text = title,
+                modifier = Modifier.padding(horizontal = 20.dp),
+                style = typography.monoCaps.copy(
+                    fontSize = 12.sp,
+                    lineHeight = 15.sp,
+                    fontWeight = FontWeight.Medium,
                     letterSpacing = 0.sp,
                 ),
-                color = if (line.startsWith("DANGER", ignoreCase = true)) paperPalette.danger else paperPalette.ink,
+                color = paperPalette.danger,
             )
+            if (body.isNotEmpty()) {
+                Text(
+                    text = body,
+                    modifier = Modifier.padding(start = 20.dp, end = 20.dp, bottom = 18.dp),
+                    style = typography.answerBody.copy(
+                        fontSize = 19.sp,
+                        lineHeight = 29.sp,
+                        fontWeight = FontWeight.Normal,
+                        letterSpacing = 0.sp,
+                    ),
+                    color = paperPalette.ink,
+                )
+            }
         }
     }
 }
@@ -1690,73 +1843,59 @@ private fun GuideRequiredReadingRow(line: String) {
     val parts = parseGuideRequiredReadingParts(line)
     Surface(
         modifier = Modifier.fillMaxWidth(),
-        color = paperPalette.pageInset,
+        color = paperPalette.page,
         contentColor = paperPalette.ink,
-        shape = RoundedCornerShape(2.dp),
+        shape = RoundedCornerShape(0.dp),
         border = BorderStroke(1.dp, paperPalette.rule),
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(end = 10.dp),
-            horizontalArrangement = Arrangement.spacedBy(10.dp),
+                .heightIn(min = 58.dp)
+                .padding(end = 12.dp),
+            horizontalArrangement = Arrangement.spacedBy(14.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Box(
                 modifier = Modifier
                     .width(4.dp)
-                    .height(42.dp)
+                    .fillMaxHeight()
                     .background(paperPalette.accent),
             )
             Text(
                 text = parts.id.ifEmpty { parts.label },
                 modifier = Modifier
-                    .widthIn(min = 58.dp, max = 78.dp)
-                    .padding(vertical = 9.dp),
+                    .widthIn(min = 66.dp, max = 82.dp)
+                    .padding(vertical = 14.dp),
                 style = typography.monoCaps.copy(
-                    fontSize = 11.sp,
-                    lineHeight = 14.sp,
+                    fontSize = 12.sp,
+                    lineHeight = 15.sp,
                     fontWeight = FontWeight.Medium,
                 ),
                 color = paperPalette.accent,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
             )
-            Column(
+            Text(
+                text = parts.title.ifEmpty { normalizeGuidePaperRequiredReadingLine(line) },
                 modifier = Modifier
                     .weight(1f)
-                    .padding(vertical = 7.dp),
-                verticalArrangement = Arrangement.spacedBy(2.dp),
-            ) {
-                Text(
-                    text = parts.label,
-                    style = typography.monoCaps.copy(
-                        fontSize = 9.sp,
-                        lineHeight = 11.sp,
-                        fontWeight = FontWeight.Medium,
-                    ),
-                    color = paperPalette.accent,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                )
-                Text(
-                    text = parts.title.ifEmpty { normalizeGuidePaperRequiredReadingLine(line) },
-                    style = typography.answerBody.copy(
-                        fontSize = 13.sp,
-                        lineHeight = 16.sp,
-                        fontWeight = FontWeight.Medium,
-                        letterSpacing = 0.sp,
-                    ),
-                    color = paperPalette.ink,
-                    maxLines = 2,
-                    overflow = TextOverflow.Ellipsis,
-                )
-            }
+                    .padding(vertical = 12.dp),
+                style = typography.uiBody.copy(
+                    fontSize = 18.sp,
+                    lineHeight = 22.sp,
+                    fontWeight = FontWeight.Medium,
+                    letterSpacing = 0.sp,
+                ),
+                color = paperPalette.ink,
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis,
+            )
             Text(
                 text = ">",
                 style = typography.sectionTitle.copy(
-                    fontSize = 18.sp,
-                    lineHeight = 18.sp,
+                    fontSize = 20.sp,
+                    lineHeight = 20.sp,
                     fontWeight = FontWeight.SemiBold,
                 ),
                 color = paperPalette.inkSoft,

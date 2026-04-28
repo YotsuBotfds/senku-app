@@ -138,14 +138,14 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="30dp"
-                android:layout_marginTop="3dp"
+                android:layout_height="36dp"
+                android:layout_marginTop="6dp"
                 android:addStatesFromChildren="true"
                 android:background="@drawable/bg_manual_phone_home_search"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
-                android:paddingStart="13dp"
-                android:paddingEnd="13dp">
+                android:paddingStart="15dp"
+                android:paddingEnd="15dp">
 
                 <ImageView
                     android:layout_width="17dp"
@@ -159,7 +159,7 @@
                     android:id="@+id/search_input"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_marginStart="8dp"
+                    android:layout_marginStart="10dp"
                     android:layout_weight="1"
                     android:background="@android:color/transparent"
                     android:contentDescription="@string/search_input_description"
@@ -175,7 +175,7 @@
                     android:padding="0dp"
                     android:textColor="@color/senku_rev03_ink_0"
                     android:textColorHint="@color/senku_rev03_ink_2"
-                    android:textSize="12sp" />
+                    android:textSize="13sp" />
             </LinearLayout>
 
             <HorizontalScrollView
@@ -199,7 +199,7 @@
                 android:id="@+id/category_section_header"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="6dp"
+                android:layout_marginTop="10dp"
                 android:fontFamily="monospace"
                 android:includeFontPadding="false"
                 android:text="&#8212; CATEGORIES &#8226; 12"
@@ -212,14 +212,14 @@
                 android:id="@+id/category_section_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
+                android:layout_marginTop="6dp"
                 android:orientation="vertical" />
 
             <LinearLayout
                 android:id="@+id/recent_threads_section"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="12dp"
                 android:orientation="vertical"
                 android:visibility="gone">
 
@@ -238,7 +238,7 @@
                     android:id="@+id/recent_threads_container"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="6dp"
+                    android:layout_marginTop="8dp"
                     android:orientation="vertical" />
             </LinearLayout>
 
@@ -298,15 +298,15 @@
     <LinearLayout
         android:id="@+id/phone_search_query_well"
         android:layout_width="match_parent"
-        android:layout_height="28dp"
+        android:layout_height="34dp"
         android:layout_marginStart="24dp"
         android:layout_marginEnd="24dp"
-        android:layout_marginBottom="4dp"
+        android:layout_marginBottom="8dp"
         android:background="@android:color/transparent"
         android:gravity="center_vertical"
         android:orientation="horizontal"
-        android:paddingStart="12dp"
-        android:paddingEnd="12dp"
+        android:paddingStart="14dp"
+        android:paddingEnd="14dp"
         android:visibility="gone">
 
         <ImageView
@@ -329,7 +329,7 @@
             android:text="Search guide titles, IDs, field notes..."
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:textColor="@color/senku_rev03_ink_0"
-            android:textSize="12sp" />
+            android:textSize="13sp" />
 
         <TextView
             android:id="@+id/phone_search_count_text"
@@ -340,7 +340,7 @@
             android:text="0 RESULTS"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:textColor="@color/senku_rev03_ink_2"
-            android:textSize="10sp"
+            android:textSize="11sp"
             android:textStyle="bold" />
     </LinearLayout>
 

@@ -100,6 +100,7 @@ public final class DetailActivity extends AppCompatActivity {
     private static final int TABLET_EMERGENCY_LANDSCAPE_TOP_MARGIN_DP = 16;
     private static final Pattern GUIDE_HTML_BREAK_PATTERN = Pattern.compile("(?i)<br\\s*/?>");
     private static final Pattern SOURCE_COUNT_TOKEN_PATTERN = Pattern.compile("(?i)\\b(\\d+)\\s+sources?\\b");
+    private static final String HEADER_BULLET = " \u2022 ";
     private static final String EXTRA_TITLE = "title";
     private static final String EXTRA_SUBTITLE = "subtitle";
     private static final String EXTRA_BODY = "body";
@@ -5625,9 +5626,9 @@ public final class DetailActivity extends AppCompatActivity {
             builder.append(' ').append(guideId);
         }
         if (!topic.isEmpty()) {
-            builder.append(" • ").append(topic);
+            builder.append(HEADER_BULLET).append(topic);
         }
-        builder.append(" • ").append(turns).append(turns == 1 ? " turn" : " turns");
+        builder.append(HEADER_BULLET).append(turns).append(turns == 1 ? " turn" : " turns");
         return builder.toString();
     }
 
@@ -5671,20 +5672,20 @@ public final class DetailActivity extends AppCompatActivity {
         String guideId = safe(primaryGuideId).trim();
         String label = safe(primarySourceLabel).trim();
         if (!guideId.isEmpty() && !label.isEmpty()) {
-            return "ANSWER " + guideId + " • " + label;
+            return "ANSWER " + guideId + HEADER_BULLET + label;
         }
         if (!guideId.isEmpty()) {
             return "ANSWER " + guideId;
         }
-        return label.isEmpty() ? "ANSWER" : "ANSWER • " + label;
+        return label.isEmpty() ? "ANSWER" : "ANSWER" + HEADER_BULLET + label;
     }
 
     static String buildPhoneEmergencyHeaderTitle(String primaryGuideId) {
         String guideId = safe(primaryGuideId).trim();
         if (!guideId.isEmpty()) {
-            return "ANSWER " + guideId + " â€¢ Burn hazard";
+            return "ANSWER " + guideId + HEADER_BULLET + "Burn hazard";
         }
-        return "ANSWER â€¢ Burn hazard";
+        return "ANSWER" + HEADER_BULLET + "Burn hazard";
     }
 
     private void applyPhonePortraitHeaderTreatment() {
@@ -6697,6 +6698,7 @@ public final class DetailActivity extends AppCompatActivity {
             rev03TopBarHost.setTopBarState(
                 buildRev03TopBarTitle(),
                 buildRev03TopBarSubtitle(),
+                buildRev03TopBarDangerPillLabel(),
                 compactPhoneAnswerChrome || !isCompactPortraitPhoneLayout(),
                 pinVisible,
                 pinActive,
@@ -6736,7 +6738,7 @@ public final class DetailActivity extends AppCompatActivity {
     }
 
     private String buildRev03TopBarTitle() {
-        if (shouldUseCompactPhoneAnswerChrome()) {
+        if (answerMode) {
             return buildPhoneAwareHeaderTitle(resolveDisplayGuideId(), buildPrimarySourceLabel());
         }
         if (!answerMode && phoneXmlDetailLayoutActive()) {
@@ -6755,29 +6757,23 @@ public final class DetailActivity extends AppCompatActivity {
     }
 
     private String buildRev03TopBarSubtitle() {
-        if (shouldUseCompactPhoneAnswerChrome()) {
-            return "";
-        }
-        if (!answerMode && phoneXmlDetailLayoutActive()) {
-            return "";
-        }
-        String guideId = resolveDisplayGuideId();
-        if (!guideId.isEmpty()) {
-            return guideId;
-        }
-        return answerMode ? buildPrimarySourceLabel() : "";
+        return "";
+    }
+
+    private String buildRev03TopBarDangerPillLabel() {
+        return isCurrentEmergencySurfaceEligible() ? "DANGER" : "";
     }
 
     private String buildPhoneGuideTopBarTitle() {
         String guideId = resolveDisplayGuideId();
         String title = safe(currentTitle).trim();
         if (!guideId.isEmpty() && !title.isEmpty()) {
-            return "GUIDE " + guideId + " â€¢ " + title;
+            return "GUIDE " + guideId + HEADER_BULLET + title;
         }
         if (!guideId.isEmpty()) {
             return "GUIDE " + guideId;
         }
-        return title.isEmpty() ? getString(R.string.detail_header_guide) : "GUIDE â€¢ " + title;
+        return title.isEmpty() ? getString(R.string.detail_header_guide) : "GUIDE" + HEADER_BULLET + title;
     }
 
     private List<MetaItem> buildRev03MetaStripItems() {

@@ -17,12 +17,19 @@ fun interface TopBarActionHandler {
     fun onAction(action: TopBarActionKind)
 }
 
+internal fun normalizeTopBarHeaderText(text: String): String =
+    text
+        .replace("\u00C3\u00A2\u00E2\u201A\u00AC\u00C2\u00A2", "\u2022")
+        .replace("\u00E2\u20AC\u00A2", "\u2022")
+        .replace("\u00C2\u00B7", "\u00B7")
+
 class SenkuTopBarHostView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
 ) : AbstractComposeView(context, attrs) {
     private var title: String by mutableStateOf("")
     private var subtitle: String? by mutableStateOf(null)
+    private var dangerPillLabel: String? by mutableStateOf(null)
     private var showHome: Boolean by mutableStateOf(false)
     private var showPin: Boolean by mutableStateOf(false)
     private var pinActive: Boolean by mutableStateOf(false)
@@ -36,6 +43,7 @@ class SenkuTopBarHostView @JvmOverloads constructor(
     fun setTopBarState(
         title: String,
         subtitle: String?,
+        dangerPillLabel: String?,
         showHome: Boolean,
         showPin: Boolean,
         pinActive: Boolean,
@@ -46,8 +54,9 @@ class SenkuTopBarHostView @JvmOverloads constructor(
         shareDescription: String,
         actionHandler: TopBarActionHandler?,
     ) {
-        this.title = title
-        this.subtitle = subtitle?.takeIf { it.isNotBlank() }
+        this.title = normalizeTopBarHeaderText(title)
+        this.subtitle = subtitle?.takeIf { it.isNotBlank() }?.let(::normalizeTopBarHeaderText)
+        this.dangerPillLabel = dangerPillLabel?.takeIf { it.isNotBlank() }?.let(::normalizeTopBarHeaderText)
         this.showHome = showHome
         this.showPin = showPin
         this.pinActive = pinActive
@@ -65,6 +74,7 @@ class SenkuTopBarHostView @JvmOverloads constructor(
             SenkuTopBar(
                 title = title,
                 subtitle = subtitle,
+                dangerPillLabel = dangerPillLabel,
                 actions = buildActions(),
                 onActionClick = { action -> actionHandler?.onAction(action) },
                 modifier = Modifier,
@@ -92,4 +102,5 @@ class SenkuTopBarHostView @JvmOverloads constructor(
         )
         return actions
     }
+
 }

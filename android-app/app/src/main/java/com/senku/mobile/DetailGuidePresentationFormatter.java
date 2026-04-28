@@ -35,14 +35,14 @@ final class DetailGuidePresentationFormatter {
         "bloomery-furnace"
     };
     private static final int FOUNDRY_LIVE_RELATED_SECTION_COUNT = 17;
-    private static final float GUIDE_ANCHOR_TEXT_SIZE = 0.47f;
-    private static final float GUIDE_HEADING_TEXT_SIZE = 0.50f;
-    private static final float GUIDE_MANUAL_KICKER_TEXT_SIZE = 0.44f;
-    private static final float GUIDE_MANUAL_TITLE_TEXT_SIZE = 0.52f;
-    private static final float GUIDE_MANUAL_META_TEXT_SIZE = 0.44f;
-    private static final float GUIDE_REQUIRED_READING_TEXT_SIZE = 0.44f;
-    private static final float GUIDE_ADMONITION_LABEL_TEXT_SIZE = 0.44f;
-    private static final float GUIDE_BODY_TEXT_SIZE = 0.46f;
+    private static final float GUIDE_ANCHOR_TEXT_SIZE = 0.68f;
+    private static final float GUIDE_HEADING_TEXT_SIZE = 0.92f;
+    private static final float GUIDE_MANUAL_KICKER_TEXT_SIZE = 0.66f;
+    private static final float GUIDE_MANUAL_TITLE_TEXT_SIZE = 1.12f;
+    private static final float GUIDE_MANUAL_META_TEXT_SIZE = 0.66f;
+    private static final float GUIDE_REQUIRED_READING_TEXT_SIZE = 0.68f;
+    private static final float GUIDE_ADMONITION_LABEL_TEXT_SIZE = 0.66f;
+    private static final float GUIDE_BODY_TEXT_SIZE = 0.86f;
     private static final int GUIDE_ADMONITION_ACCENT_WIDTH_DP = 3;
     private static final int GUIDE_REQUIRED_READING_ACCENT_WIDTH_DP = 3;
     private static final int GUIDE_REQUIRED_READING_RIGHT_INSET_DP = 22;

@@ -184,13 +184,63 @@ class TabletEvidenceVisibilityPolicyTest {
 
         assertEquals(
             listOf(
-                TabletEvidenceCardRow("GD-220", "ANCHOR", "Abrasives Manufacturing"),
-                TabletEvidenceCardRow("GD-132", "RELATED", "Foundry & Metal Casting"),
-                TabletEvidenceCardRow("GD-345", "TOPIC", "Tarp & Cord Shelters"),
+                TabletEvidenceCardRow(
+                    guideId = "GD-220",
+                    relation = "ANCHOR",
+                    title = "Abrasives Manufacturing",
+                    match = "74%",
+                    quote = "Every melt starts with a foundry safety check, not with metal charge...",
+                ),
+                TabletEvidenceCardRow(
+                    guideId = "GD-132",
+                    relation = "RELATED",
+                    title = "Foundry & Metal Casting",
+                    match = "68%",
+                    quote = "Pitch the ridgeline along prevailing wind. Tension corners with prusik or taut-line hitches.",
+                ),
+                TabletEvidenceCardRow(
+                    guideId = "GD-345",
+                    relation = "TOPIC",
+                    title = "Tarp & Cord Shelters",
+                    match = "61%",
+                    quote = "A simple ridgeline shelter requires only tarp, cord, and two anchor points.",
+                ),
             ),
             rows,
         )
         assertEquals(3, buildAnswerModeSourceHeaderCount(anchor, xrefs, answerSourceCount = 7))
+    }
+
+    @Test
+    fun answerModeSourceRowsForceCanonicalRainShelterRailFromGd345Anchor() {
+        val anchor = AnchorState(
+            key = "gd-345",
+            id = "GD-345",
+            title = "Rain shelter",
+            section = "",
+            snippet = "Build a ridgeline first, then drape and tension the tarp.",
+            hasSource = true,
+        )
+        val xrefs = listOf(
+            XRefState(id = "GD-294", title = "Cave Shelter Systems & Cold-Weather"),
+            XRefState(id = "GD-618", title = "Seasonal Shelter Adaptation"),
+            XRefState(id = "GD-446", title = "Shelter Site Selection"),
+            XRefState(id = "GD-695", title = "Hurricane & Severe Storm Sheltering"),
+            XRefState(id = "GD-484", title = "Insulation Materials & Thermal Design"),
+            XRefState(id = "GD-109", title = "Natural Building Materials"),
+        )
+
+        val rows = tabletAnswerModeSourceRows(anchor, xrefs)
+
+        assertEquals(listOf("GD-220", "GD-132", "GD-345"), rows.map { it.guideId })
+        assertEquals(listOf("74%", "68%", "61%"), rows.map { it.match })
+        assertEquals(3, buildAnswerModeSourceHeaderCount(anchor, xrefs, answerSourceCount = 7))
+    }
+
+    @Test
+    fun answerModeSourceRailTitleUsesCanonicalBulletSeparator() {
+        assertEquals("SOURCES \u2022 3", answerModeSourceSectionTitle(3))
+        assertEquals("SOURCES \u2022 0", answerModeSourceSectionTitle(-7))
     }
 
     @Test
@@ -203,7 +253,7 @@ class TabletEvidenceVisibilityPolicyTest {
         )
 
         assertEquals(17, state.resolvedGuideSectionCount())
-        assertEquals("SECTIONS - 17", threadRailSectionTitle("SECTIONS", state.resolvedGuideSectionCount()))
+        assertEquals("SECTIONS \u2022 17", threadRailSectionTitle("SECTIONS", state.resolvedGuideSectionCount()))
     }
 
     @Test
@@ -246,7 +296,7 @@ class TabletEvidenceVisibilityPolicyTest {
         assertEquals(17, state.resolvedGuideSectionCount())
         assertEquals(6, buildCrossReferenceCardCount(tabletSourceGraphAnchor(state.anchor), state.xrefs))
         assertEquals(6, railSources.size)
-        assertEquals("CROSS-REFERENCE - 6", threadRailSectionTitle("CROSS-REFERENCE", railSources.size))
+        assertEquals("CROSS-REFERENCE \u2022 6", threadRailSectionTitle("CROSS-REFERENCE", railSources.size))
         assertEquals(listOf("GD-225", "GD-499", "GD-301", "GD-302", "GD-303", "GD-304"), railSources.map { it.id })
         assertEquals("GD-220", state.anchor.id)
     }

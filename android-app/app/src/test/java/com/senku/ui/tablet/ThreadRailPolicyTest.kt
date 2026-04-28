@@ -6,8 +6,8 @@ import org.junit.Test
 class ThreadRailPolicyTest {
     @Test
     fun threadRailSectionTitlesMatchTranscriptMockLanguage() {
-        assertEquals("TURNS - 2", threadRailSectionTitle("TURNS", 2))
-        assertEquals("SOURCES IN THREAD - 2", threadRailSectionTitle("SOURCES IN THREAD", 2))
+        assertEquals("TURNS \u2022 2", threadRailSectionTitle("TURNS", 2))
+        assertEquals("SOURCES \u2022 2", threadRailSectionTitle("SOURCES", 2))
     }
 
     @Test
@@ -31,7 +31,7 @@ class ThreadRailPolicyTest {
             ),
         )
         assertEquals("Q2 \u00B7 ACTIVE", threadRailTurnMetaLabel(2, guideMode = false, status = Status.Done, active = true))
-        assertEquals("A2 \u00B7 3 SOURCES", threadRailAnswerMetaLabel(2, guideMode = false, sourceCount = 3))
+        assertEquals("A2", threadRailAnswerMetaLabel(2, guideMode = false, sourceCount = 3))
         assertEquals("REF 2", threadRailAnswerMetaLabel(2, guideMode = true, sourceCount = 0))
         assertEquals("CONFIDENT", threadRailAnswerConfidenceLabel(Status.Done, active = false))
         assertEquals("UNSURE", threadRailAnswerConfidenceLabel(Status.Pending, active = false))
@@ -75,9 +75,9 @@ class ThreadRailPolicyTest {
             ),
         )
         assertEquals("A3 \u00B7 No answer recorded.", threadRailAnswerPreviewLabel(3, guideMode = false, answer = " "))
-        assertEquals("NO SOURCES", threadRailTurnSourceLabel(sourceCount = 0))
-        assertEquals("1 SOURCE", threadRailTurnSourceLabel(sourceCount = 1))
-        assertEquals("3 SOURCES", threadRailTurnSourceLabel(sourceCount = 3))
+        assertEquals("SOURCES \u2022 0", threadRailTurnSourceLabel(sourceCount = 0))
+        assertEquals("SOURCES \u2022 1", threadRailTurnSourceLabel(sourceCount = 1))
+        assertEquals("SOURCES \u2022 3", threadRailTurnSourceLabel(sourceCount = 3))
     }
 
     @Test
@@ -92,7 +92,7 @@ class ThreadRailPolicyTest {
                 sourceCount = 2,
             ),
         )
-        assertEquals("A1 \u00B7 2 SOURCES", threadRailAnswerMetaLabel(1, guideMode = false, sourceCount = 2))
+        assertEquals("A1", threadRailAnswerMetaLabel(1, guideMode = false, sourceCount = 2))
         assertEquals(
             "A1 \u00B7 Use a sloped ridgeline.",
             threadRailAnswerPreviewLabel(
@@ -157,6 +157,22 @@ class ThreadRailPolicyTest {
         assertEquals("Supporting note", threadRailSourceDisplayLabel(sourceWithoutId, guideMode = true))
         assertEquals("GD-132 - ANCHOR", threadRailSourceDisplayLabel(sourceWithId, guideMode = true))
         assertEquals(true, threadRailShouldShowSource(sourceWithoutId, guideMode = true))
+    }
+
+    @Test
+    fun threadRailThreadModeKeepsDeterministicSupportSourcesWhenPresent() {
+        val anchor = SourceState("anchor", "GD-220", "Abrasives Manufacturing", isAnchor = true, isSelected = true)
+        val rainShelter = SourceState("rain", "GD-345", "Tarp & Cord Shelters", isAnchor = false, isSelected = false)
+        val extra = SourceState("extra", "GD-132", "Foundry & Metal Casting", isAnchor = false, isSelected = false)
+
+        assertEquals(
+            listOf("GD-220", "GD-345"),
+            threadRailVisibleSources(listOf(anchor, rainShelter, extra), guideMode = false).map { it.id },
+        )
+        assertEquals(
+            listOf("GD-345", "GD-132", "GD-220"),
+            threadRailVisibleSources(listOf(extra, anchor, rainShelter), guideMode = true).map { it.id },
+        )
     }
 
     @Test

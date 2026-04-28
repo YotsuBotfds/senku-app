@@ -104,6 +104,7 @@ data class TopBarActionSpec(
 fun SenkuTopBar(
     title: String,
     subtitle: String? = null,
+    dangerPillLabel: String? = null,
     actions: List<TopBarActionSpec>,
     onActionClick: (TopBarActionKind) -> Unit,
     modifier: Modifier = Modifier,
@@ -140,13 +141,23 @@ fun SenkuTopBar(
             modifier = Modifier.weight(1f),
             verticalArrangement = Arrangement.spacedBy(2.dp),
         ) {
-            Text(
-                text = title,
-                style = typography.uiBody.copy(fontSize = 15.sp, lineHeight = 18.sp),
-                color = colors.ink0,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-            )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(6.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(
+                    text = title,
+                    style = typography.uiBody.copy(fontSize = 14.sp, lineHeight = 17.sp),
+                    color = colors.ink0,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.weight(1f),
+                )
+                if (!dangerPillLabel.isNullOrBlank()) {
+                    DangerPill(label = dangerPillLabel)
+                }
+            }
             if (!subtitle.isNullOrBlank()) {
                 Text(
                     text = subtitle,
@@ -164,6 +175,29 @@ fun SenkuTopBar(
                     .background(colors.hairlineStrong),
             )
         }
+    }
+}
+
+@Composable
+private fun DangerPill(
+    label: String,
+    modifier: Modifier = Modifier,
+) {
+    val colors = SenkuTheme.colors
+    Box(
+        modifier = modifier
+            .clip(RoundedCornerShape(999.dp))
+            .background(colors.danger.copy(alpha = 0.14f))
+            .padding(horizontal = 7.dp, vertical = 3.dp),
+        contentAlignment = Alignment.Center,
+    ) {
+        Text(
+            text = "\u2022 ${label.uppercase()}",
+            style = SenkuTheme.typography.monoCaps.copy(fontSize = 10.sp, lineHeight = 12.sp),
+            color = colors.danger,
+            maxLines = 1,
+            overflow = TextOverflow.Clip,
+        )
     }
 }
 

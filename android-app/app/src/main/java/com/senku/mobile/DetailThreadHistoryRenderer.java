@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Typeface;
 import android.graphics.drawable.GradientDrawable;
 import android.text.TextUtils;
+import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
@@ -263,6 +264,9 @@ final class DetailThreadHistoryRenderer {
             state.wideLayout ? state.bubbleWidthPx : ViewGroup.LayoutParams.MATCH_PARENT,
             ViewGroup.LayoutParams.WRAP_CONTENT
         );
+        if (state.wideLayout) {
+            params.gravity = Gravity.CENTER_HORIZONTAL;
+        }
         row.setLayoutParams(params);
         if (container != null && container.getChildCount() > 0) {
             row.addView(buildDivider());

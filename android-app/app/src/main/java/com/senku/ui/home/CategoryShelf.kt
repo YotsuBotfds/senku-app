@@ -102,7 +102,7 @@ fun CategoryShelf(
     onCategorySelected: (CategoryShelfItemModel) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val verticalGap = 3.dp
+    val verticalGap = 4.dp
 
     Column(
         modifier = modifier.fillMaxWidth(),
@@ -113,7 +113,7 @@ fun CategoryShelf(
                 CategoryGrid(
                     items = items,
                     columns = 3,
-                    cardHeight = 40.dp,
+                    cardHeight = 46.dp,
                     selectionEnabled = selectionEnabled,
                     onCategorySelected = onCategorySelected,
                 )
@@ -123,7 +123,7 @@ fun CategoryShelf(
                 CategoryGrid(
                     items = items,
                     columns = 3,
-                    cardHeight = 32.dp,
+                    cardHeight = 38.dp,
                     selectionEnabled = selectionEnabled,
                     onCategorySelected = onCategorySelected,
                 )
@@ -150,7 +150,7 @@ private fun CategoryGrid(
     selectionEnabled: Boolean,
     onCategorySelected: (CategoryShelfItemModel) -> Unit,
 ) {
-    val gap = 3.dp
+    val gap = 4.dp
     items.chunked(columns).forEach { rowItems ->
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -181,10 +181,10 @@ private fun PhoneCategoryCard(
     cardHeight: Dp = 74.dp,
 ) {
     val colors = SenkuTheme.colors
-    val corner = 6.dp
-    val compactGrid = cardHeight <= 36.dp
-    val horizontalPadding = if (compactGrid) 6.dp else 8.dp
-    val verticalPadding = if (compactGrid) 2.dp else 4.dp
+    val corner = 4.dp
+    val compactGrid = cardHeight <= 40.dp
+    val horizontalPadding = if (compactGrid) 7.dp else 9.dp
+    val verticalPadding = if (compactGrid) 3.dp else 5.dp
     val enabled = selectionEnabled && item.enabled
     val accent = Color(item.accentColor)
 
@@ -219,8 +219,8 @@ private fun PhoneCategoryCard(
             Text(
                 text = item.label,
                 style = SenkuTheme.typography.uiBody.copy(
-                    fontSize = if (compactGrid) 9.5.sp else 10.sp,
-                    lineHeight = if (compactGrid) 10.5.sp else 12.sp,
+                    fontSize = if (compactGrid) 10.5.sp else 11.sp,
+                    lineHeight = if (compactGrid) 12.sp else 13.sp,
                     fontWeight = FontWeight.Medium,
                 ),
                 color = colors.ink0,
@@ -231,8 +231,8 @@ private fun PhoneCategoryCard(
                 Text(
                     text = item.countLabel,
                     style = SenkuTheme.typography.uiBody.copy(
-                        fontSize = 9.sp,
-                        lineHeight = 11.sp,
+                        fontSize = 9.5.sp,
+                        lineHeight = 12.sp,
                         fontWeight = FontWeight.Medium,
                     ),
                     color = colors.ink2,
@@ -264,7 +264,7 @@ private fun TabletCategoryRow(
             },
         color = colors.bg1,
         contentColor = colors.ink0,
-        shape = RoundedCornerShape(6.dp),
+        shape = RoundedCornerShape(4.dp),
         border = BorderStroke(1.dp, colors.hairline),
         enabled = enabled,
         onClick = onClick,
@@ -272,7 +272,7 @@ private fun TabletCategoryRow(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(38.dp)
+                .height(42.dp)
                 .padding(
                     horizontal = dimensionResource(R.dimen.senku_rev03_space_8),
                 ),
@@ -289,8 +289,8 @@ private fun TabletCategoryRow(
                 text = item.label,
                 modifier = Modifier.weight(1f),
                 style = SenkuTheme.typography.uiBody.copy(
-                    fontSize = 12.sp,
-                    lineHeight = 16.sp,
+                    fontSize = 13.sp,
+                    lineHeight = 17.sp,
                     fontWeight = FontWeight.Medium,
                 ),
                 color = colors.ink0,
@@ -300,8 +300,8 @@ private fun TabletCategoryRow(
             Text(
                 text = item.countLabel,
                 style = SenkuTheme.typography.monoCaps.copy(
-                    fontSize = 10.sp,
-                    lineHeight = 13.sp,
+                    fontSize = 10.5.sp,
+                    lineHeight = 14.sp,
                     fontWeight = FontWeight.Medium,
                 ),
                 color = colors.ink2,

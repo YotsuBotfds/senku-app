@@ -489,7 +489,7 @@
                         android:layout_height="wrap_content"
                         android:fontFamily="monospace"
                         android:includeFontPadding="false"
-                        android:text="FILTER &#8226; CAT"
+                        android:text="FILTER &#8226; CATEGORY"
                         android:textAppearance="?android:attr/textAppearanceSmall"
                         android:textColor="@color/senku_rev03_ink_2"
                         android:textStyle="bold" />
