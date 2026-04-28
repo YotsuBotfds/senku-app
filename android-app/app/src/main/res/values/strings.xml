@@ -205,7 +205,7 @@
     <string name="detail_followup_title">Keep the thread going</string>
     <string name="detail_followup_subtitle">Ask a tighter follow-up without losing context.</string>
     <string name="detail_followup_hint">Ask another question without leaving this thread</string>
-    <string name="detail_followup_hint_compact">Ask follow-up...</string>
+    <string name="detail_followup_hint_compact">Ask follow-up</string>
     <string name="detail_followup_send">Send</string>
     <string name="detail_followup_send_compact">Go</string>
     <string name="detail_followup_retry">Retry</string>
