@@ -129,7 +129,7 @@ public final class MainActivityHomeChromeTest {
             MainActivity.resolveCategoryShelfLayoutMode(false, true, false)
         );
         assertEquals(
-            CategoryShelfLayoutMode.TABLET_RAIL,
+            CategoryShelfLayoutMode.TABLET_GRID,
             MainActivity.resolveCategoryShelfLayoutMode(false, false, true)
         );
     }

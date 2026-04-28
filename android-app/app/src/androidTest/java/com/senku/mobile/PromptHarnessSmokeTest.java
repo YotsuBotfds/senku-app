@@ -165,31 +165,38 @@ public final class PromptHarnessSmokeTest {
                 Assert.assertNotNull("home manual stamp should exist", manualStamp);
                 Assert.assertNotNull("home lane hint should exist", laneHint);
                 Assert.assertTrue("home search input should be visible", isVisible(input));
-                if (isTabletPortraitActivity(activity)) {
-                    Assert.assertNotNull("tablet portrait home should expose a category header", categoryHeader);
-                    Assert.assertNotNull("tablet portrait home should expose category content", categoryContainer);
-                    Assert.assertNotNull("tablet portrait home should retain recent-thread host", recentThreads);
+                if (isManualHomeShellActivity(activity)) {
+                    Assert.assertNotNull("manual-shell home should expose a category header", categoryHeader);
+                    Assert.assertNotNull("manual-shell home should expose category content", categoryContainer);
+                    Assert.assertNotNull("manual-shell home should retain recent-thread host", recentThreads);
                     Assert.assertTrue(
-                        "tablet portrait home should show the compact category shelf",
+                        "manual-shell home should show the compact category shelf",
                         isEffectivelyVisible(categoryHeader) && isEffectivelyVisible(categoryContainer)
                     );
                     Assert.assertFalse(
-                        "tablet portrait home should not lead with the legacy primary lane switcher",
+                        "manual-shell home should not lead with the legacy primary lane switcher",
                         isEffectivelyVisible(browse) || isEffectivelyVisible(ask)
                     );
                     Assert.assertFalse(
-                        "tablet portrait home should not surface the old helper paragraph",
+                        "manual-shell home should not surface the old helper paragraph",
                         isEffectivelyVisible(laneHint)
                     );
                     CategoryShelfSignals categoryShelfSignals = collectCategoryShelfSignals(activity);
                     Assert.assertTrue(
-                        "tablet portrait home should surface the Rev 03 category shelf",
+                        "manual-shell home should surface the Rev 03 category shelf",
                         categoryShelfSignals.totalCount >= 6
                     );
                     Assert.assertTrue(
-                        "tablet portrait home should keep actionable browse buckets",
+                        "manual-shell home should keep actionable browse buckets",
                         categoryShelfSignals.enabledCount > 0
                     );
+                    if (isLandscapePhoneActivity(activity)) {
+                        Assert.assertNotNull("landscape-phone manual shell should expose browse rail", browseRail);
+                        Assert.assertTrue(
+                            "landscape-phone manual shell should keep the browse rail visible",
+                            isEffectivelyVisible(browseRail)
+                        );
+                    }
                     return;
                 }
                 Assert.assertTrue("home browse button should be visible", isVisible(browse));
@@ -5358,6 +5365,20 @@ public final class PromptHarnessSmokeTest {
         Configuration configuration = activity.getResources().getConfiguration();
         return configuration.smallestScreenWidthDp >= 600
             && configuration.orientation == Configuration.ORIENTATION_PORTRAIT;
+    }
+
+    private boolean isManualHomeShellActivity(Activity activity) {
+        if (activity == null) {
+            return false;
+        }
+        Configuration configuration = activity.getResources().getConfiguration();
+        return isLandscapePhoneActivity(activity)
+            || isCompactPortraitPhoneActivity(activity)
+            || isTabletPortraitActivity(activity)
+            || (
+                configuration.smallestScreenWidthDp >= 600
+                    && configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
+            );
     }
 
     private boolean isUtilityRail(Activity activity) {

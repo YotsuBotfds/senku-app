@@ -118,8 +118,8 @@ fun CategoryShelf(
             CategoryShelfLayoutMode.PHONE_GRID -> {
                 CategoryGrid(
                     items = items,
-                    columns = 2,
-                    cardHeight = 74.dp,
+                    columns = 3,
+                    cardHeight = 64.dp,
                     selectionEnabled = selectionEnabled,
                     onCategorySelected = onCategorySelected,
                 )

@@ -1556,21 +1556,21 @@ public final class MainActivity extends AppCompatActivity {
     private Button createRecentThreadButton(ChatSessionStore.ConversationPreview preview, int index) {
         Button button = new Button(this);
         button.setAllCaps(false);
-        boolean tabletPortrait = isTabletPortraitLayout();
-        button.setBackgroundResource(tabletPortrait
+        boolean manualHomeShell = isManualHomeShellLayout();
+        button.setBackgroundResource(manualHomeShell
             ? R.drawable.bg_tablet_home_recent_row
             : R.drawable.bg_sources_stack_shell);
         button.setMinWidth(0);
         button.setMinimumWidth(0);
         boolean compactPhoneHome = isCompactPhoneHomeLayout();
         button.setPadding(
-            dp(tabletPortrait ? 10 : (compactPhoneHome ? 10 : 12)),
-            dp(tabletPortrait ? 8 : (compactPhoneHome ? 8 : 10)),
-            dp(tabletPortrait ? 10 : (compactPhoneHome ? 10 : 12)),
-            dp(tabletPortrait ? 8 : (compactPhoneHome ? 8 : 10))
+            dp(manualHomeShell ? 10 : (compactPhoneHome ? 10 : 12)),
+            dp(manualHomeShell ? 8 : (compactPhoneHome ? 8 : 10)),
+            dp(manualHomeShell ? 10 : (compactPhoneHome ? 10 : 12)),
+            dp(manualHomeShell ? 8 : (compactPhoneHome ? 8 : 10))
         );
         button.setTextColor(getResources().getColor(R.color.senku_text_light));
-        if (tabletPortrait) {
+        if (manualHomeShell) {
             button.setTextSize(12);
         }
         button.setTextAlignment(View.TEXT_ALIGNMENT_VIEW_START);
@@ -2341,7 +2341,7 @@ public final class MainActivity extends AppCompatActivity {
     }
 
     private View resolveLegacyHomeHeroPanel() {
-        if (isTabletPortraitLayout()) {
+        if (isManualHomeShellLayout()) {
             return null;
         }
         return ancestorView(homeSubtitleText, 3);
@@ -2791,13 +2791,13 @@ public final class MainActivity extends AppCompatActivity {
             }
         }
         ArrayList<CategoryTileState> visibleCategoryTiles = buildVisibleCategoryTiles(categoryTiles);
-        if (isTabletPortraitLayout()) {
-            visibleCategoryTiles = buildTabletPortraitCategoryTiles(categoryTiles);
+        if (isManualHomeShellLayout()) {
+            visibleCategoryTiles = buildManualHomeCategoryTiles(categoryTiles);
         }
         if (categoryShelfView != null) {
             categoryShelfView.setShelf(
-                isTabletPortraitLayout()
-                    ? buildTabletPortraitCategoryShelfItems(visibleCategoryTiles)
+                isManualHomeShellLayout()
+                    ? buildManualHomeCategoryShelfItems(visibleCategoryTiles)
                     : buildHomeChromeCategoryShelfItems(visibleCategoryTiles),
                 resolveCategoryShelfLayoutMode(),
                 item -> filterGuidesByCategory(item.getBucketKey(), item.getLabel())
@@ -2807,7 +2807,9 @@ public final class MainActivity extends AppCompatActivity {
             categoryShelfView.setSelectionEnabled(interactionsEnabled);
             setEnabled(categoryShelfView, interactionsEnabled);
         }
-        applyCategoryDensityLayout(categoryTiles);
+        if (!isManualHomeShellLayout()) {
+            applyCategoryDensityLayout(categoryTiles);
+        }
     }
 
     static List<CategoryShelfItemModel> buildHomeChromeCategoryShelfItems(
@@ -2844,14 +2846,14 @@ public final class MainActivity extends AppCompatActivity {
         return items;
     }
 
-    private static List<CategoryShelfItemModel> buildTabletPortraitCategoryShelfItems(
+    private static List<CategoryShelfItemModel> buildManualHomeCategoryShelfItems(
         List<CategoryTileState> visibleCategoryTiles
     ) {
         ArrayList<CategoryShelfItemModel> items = new ArrayList<>();
         for (CategoryTileState tile : visibleCategoryTiles) {
             items.add(new CategoryShelfItemModel(
                 tile == null ? "" : tile.bucketKey,
-                tabletPortraitCategoryLabel(tile == null ? null : tile.bucketKey),
+                manualHomeCategoryLabel(tile == null ? null : tile.bucketKey),
                 formatHomeChromeCategoryCount(tile == null ? 0 : tile.count),
                 resolveCategoryShelfAccent(tile == null ? null : tile.bucketKey),
                 tile != null && tile.count > 0,
@@ -2864,7 +2866,7 @@ public final class MainActivity extends AppCompatActivity {
         return items;
     }
 
-    private static String tabletPortraitCategoryLabel(String bucketKey) {
+    private static String manualHomeCategoryLabel(String bucketKey) {
         switch (safe(bucketKey).trim()) {
             case "shelter":
                 return "Shelter";
@@ -2897,7 +2899,7 @@ public final class MainActivity extends AppCompatActivity {
         boolean landscapeTabletLayout
     ) {
         if (landscapeTabletLayout) {
-            return CategoryShelfLayoutMode.TABLET_RAIL;
+            return CategoryShelfLayoutMode.TABLET_GRID;
         }
         if (tabletPortraitLayout) {
             return CategoryShelfLayoutMode.TABLET_GRID;
@@ -3029,7 +3031,7 @@ public final class MainActivity extends AppCompatActivity {
         return visible;
     }
 
-    private static ArrayList<CategoryTileState> buildTabletPortraitCategoryTiles(
+    private static ArrayList<CategoryTileState> buildManualHomeCategoryTiles(
         List<CategoryTileState> categoryTiles
     ) {
         ArrayList<CategoryTileState> ordered = new ArrayList<>();
@@ -3360,10 +3362,10 @@ public final class MainActivity extends AppCompatActivity {
         }
         boolean hasResults = !items.isEmpty();
         if (resultsHeader != null) {
-            resultsHeader.setVisibility(hasResults ? View.VISIBLE : View.GONE);
+            resultsHeader.setVisibility(!browseMode && hasResults ? View.VISIBLE : View.GONE);
         }
         if (resultsList != null) {
-            resultsList.setVisibility(hasResults ? View.VISIBLE : View.GONE);
+            resultsList.setVisibility(!browseMode && hasResults ? View.VISIBLE : View.GONE);
         }
         if (developerPanel != null) {
             applyDeveloperToolsPanelVisibility(browseMode, hasResults);
@@ -3486,6 +3488,13 @@ public final class MainActivity extends AppCompatActivity {
         Configuration configuration = getResources().getConfiguration();
         return configuration.smallestScreenWidthDp < 600
             && configuration.orientation == Configuration.ORIENTATION_PORTRAIT;
+    }
+
+    private boolean isManualHomeShellLayout() {
+        return isSmallPhonePortraitLayout()
+            || isLandscapePhoneLayout()
+            || isTabletPortraitLayout()
+            || isLandscapeTabletLayout();
     }
 
     private boolean isAskLaneActive() {
