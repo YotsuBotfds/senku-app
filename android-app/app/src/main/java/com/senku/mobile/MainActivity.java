@@ -1556,12 +1556,23 @@ public final class MainActivity extends AppCompatActivity {
     private Button createRecentThreadButton(ChatSessionStore.ConversationPreview preview, int index) {
         Button button = new Button(this);
         button.setAllCaps(false);
-        button.setBackgroundResource(R.drawable.bg_sources_stack_shell);
+        boolean tabletPortrait = isTabletPortraitLayout();
+        button.setBackgroundResource(tabletPortrait
+            ? R.drawable.bg_tablet_home_recent_row
+            : R.drawable.bg_sources_stack_shell);
         button.setMinWidth(0);
         button.setMinimumWidth(0);
         boolean compactPhoneHome = isCompactPhoneHomeLayout();
-        button.setPadding(dp(compactPhoneHome ? 10 : 12), dp(compactPhoneHome ? 8 : 10), dp(compactPhoneHome ? 10 : 12), dp(compactPhoneHome ? 8 : 10));
+        button.setPadding(
+            dp(tabletPortrait ? 10 : (compactPhoneHome ? 10 : 12)),
+            dp(tabletPortrait ? 8 : (compactPhoneHome ? 8 : 10)),
+            dp(tabletPortrait ? 10 : (compactPhoneHome ? 10 : 12)),
+            dp(tabletPortrait ? 8 : (compactPhoneHome ? 8 : 10))
+        );
         button.setTextColor(getResources().getColor(R.color.senku_text_light));
+        if (tabletPortrait) {
+            button.setTextSize(12);
+        }
         button.setTextAlignment(View.TEXT_ALIGNMENT_VIEW_START);
         button.setGravity(android.view.Gravity.START | android.view.Gravity.CENTER_VERTICAL);
         button.setMaxLines(compactPhoneHome ? 2 : 3);
@@ -2330,6 +2341,9 @@ public final class MainActivity extends AppCompatActivity {
     }
 
     private View resolveLegacyHomeHeroPanel() {
+        if (isTabletPortraitLayout()) {
+            return null;
+        }
         return ancestorView(homeSubtitleText, 3);
     }
 
@@ -2777,9 +2791,14 @@ public final class MainActivity extends AppCompatActivity {
             }
         }
         ArrayList<CategoryTileState> visibleCategoryTiles = buildVisibleCategoryTiles(categoryTiles);
+        if (isTabletPortraitLayout()) {
+            visibleCategoryTiles = buildTabletPortraitCategoryTiles(categoryTiles);
+        }
         if (categoryShelfView != null) {
             categoryShelfView.setShelf(
-                buildHomeChromeCategoryShelfItems(visibleCategoryTiles),
+                isTabletPortraitLayout()
+                    ? buildTabletPortraitCategoryShelfItems(visibleCategoryTiles)
+                    : buildHomeChromeCategoryShelfItems(visibleCategoryTiles),
                 resolveCategoryShelfLayoutMode(),
                 item -> filterGuidesByCategory(item.getBucketKey(), item.getLabel())
             );
@@ -2825,12 +2844,65 @@ public final class MainActivity extends AppCompatActivity {
         return items;
     }
 
+    private static List<CategoryShelfItemModel> buildTabletPortraitCategoryShelfItems(
+        List<CategoryTileState> visibleCategoryTiles
+    ) {
+        ArrayList<CategoryShelfItemModel> items = new ArrayList<>();
+        for (CategoryTileState tile : visibleCategoryTiles) {
+            items.add(new CategoryShelfItemModel(
+                tile == null ? "" : tile.bucketKey,
+                tabletPortraitCategoryLabel(tile == null ? null : tile.bucketKey),
+                formatHomeChromeCategoryCount(tile == null ? 0 : tile.count),
+                resolveCategoryShelfAccent(tile == null ? null : tile.bucketKey),
+                tile != null && tile.count > 0,
+                buildHomeChromeCategoryContentDescription(
+                    tile == null ? null : tile.bucketKey,
+                    tile == null ? 0 : tile.count
+                )
+            ));
+        }
+        return items;
+    }
+
+    private static String tabletPortraitCategoryLabel(String bucketKey) {
+        switch (safe(bucketKey).trim()) {
+            case "shelter":
+                return "Shelter";
+            case "water":
+                return "Water";
+            case "fire":
+                return "Fire";
+            case "food":
+                return "Food";
+            case "medicine":
+                return "Medicine";
+            case "tools":
+                return "Tools";
+            default:
+                return categoryLabelForBucket(bucketKey);
+        }
+    }
+
     private CategoryShelfLayoutMode resolveCategoryShelfLayoutMode() {
-        return resolveCategoryShelfLayoutMode(isPhoneFormFactor());
+        return resolveCategoryShelfLayoutMode(isPhoneFormFactor(), isTabletPortraitLayout(), isLandscapeTabletLayout());
     }
 
     static CategoryShelfLayoutMode resolveCategoryShelfLayoutMode(boolean phoneFormFactor) {
-        return phoneFormFactor ? CategoryShelfLayoutMode.PHONE_GRID : CategoryShelfLayoutMode.TABLET_RAIL;
+        return resolveCategoryShelfLayoutMode(phoneFormFactor, false, !phoneFormFactor);
+    }
+
+    static CategoryShelfLayoutMode resolveCategoryShelfLayoutMode(
+        boolean phoneFormFactor,
+        boolean tabletPortraitLayout,
+        boolean landscapeTabletLayout
+    ) {
+        if (landscapeTabletLayout) {
+            return CategoryShelfLayoutMode.TABLET_RAIL;
+        }
+        if (tabletPortraitLayout) {
+            return CategoryShelfLayoutMode.TABLET_GRID;
+        }
+        return CategoryShelfLayoutMode.PHONE_GRID;
     }
 
     private boolean areCategoryInteractionsEnabled() {
@@ -2955,6 +3027,32 @@ public final class MainActivity extends AppCompatActivity {
             }
         }
         return visible;
+    }
+
+    private static ArrayList<CategoryTileState> buildTabletPortraitCategoryTiles(
+        List<CategoryTileState> categoryTiles
+    ) {
+        ArrayList<CategoryTileState> ordered = new ArrayList<>();
+        addCategoryTileByBucket(ordered, categoryTiles, "shelter");
+        addCategoryTileByBucket(ordered, categoryTiles, "water");
+        addCategoryTileByBucket(ordered, categoryTiles, "fire");
+        addCategoryTileByBucket(ordered, categoryTiles, "food");
+        addCategoryTileByBucket(ordered, categoryTiles, "medicine");
+        addCategoryTileByBucket(ordered, categoryTiles, "tools");
+        return ordered;
+    }
+
+    private static void addCategoryTileByBucket(
+        ArrayList<CategoryTileState> destination,
+        List<CategoryTileState> categoryTiles,
+        String bucketKey
+    ) {
+        for (CategoryTileState tile : categoryTiles) {
+            if (tile != null && tile.count > 0 && bucketKey.equals(tile.bucketKey)) {
+                destination.add(tile);
+                return;
+            }
+        }
     }
 
     private boolean shouldCondenseHomeCategoryDeck() {
@@ -3376,6 +3474,12 @@ public final class MainActivity extends AppCompatActivity {
         Configuration configuration = getResources().getConfiguration();
         return configuration.smallestScreenWidthDp >= 600
             && configuration.orientation == Configuration.ORIENTATION_LANDSCAPE;
+    }
+
+    private boolean isTabletPortraitLayout() {
+        Configuration configuration = getResources().getConfiguration();
+        return configuration.smallestScreenWidthDp >= 600
+            && configuration.orientation == Configuration.ORIENTATION_PORTRAIT;
     }
 
     private boolean isSmallPhonePortraitLayout() {

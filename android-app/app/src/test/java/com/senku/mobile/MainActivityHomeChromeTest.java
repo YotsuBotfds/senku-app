@@ -122,11 +122,15 @@ public final class MainActivityHomeChromeTest {
     public void categoryShelfModeFollowsPhoneFormFactor() {
         assertEquals(
             CategoryShelfLayoutMode.PHONE_GRID,
-            MainActivity.resolveCategoryShelfLayoutMode(true)
+            MainActivity.resolveCategoryShelfLayoutMode(true, false, false)
+        );
+        assertEquals(
+            CategoryShelfLayoutMode.TABLET_GRID,
+            MainActivity.resolveCategoryShelfLayoutMode(false, true, false)
         );
         assertEquals(
             CategoryShelfLayoutMode.TABLET_RAIL,
-            MainActivity.resolveCategoryShelfLayoutMode(false)
+            MainActivity.resolveCategoryShelfLayoutMode(false, false, true)
         );
     }
 

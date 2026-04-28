@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -35,6 +36,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.senku.mobile.R
@@ -44,6 +46,7 @@ import java.util.Locale
 
 enum class CategoryShelfLayoutMode {
     PHONE_GRID,
+    TABLET_GRID,
     TABLET_RAIL,
 }
 
@@ -113,24 +116,23 @@ fun CategoryShelf(
     ) {
         when (layoutMode) {
             CategoryShelfLayoutMode.PHONE_GRID -> {
-                items.chunked(2).forEach { rowItems ->
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(verticalGap),
-                    ) {
-                        rowItems.forEach { item ->
-                            PhoneCategoryCard(
-                                item = item,
-                                selectionEnabled = selectionEnabled,
-                                modifier = Modifier.weight(1f),
-                                onClick = { onCategorySelected(item) },
-                            )
-                        }
-                        if (rowItems.size == 1) {
-                            Spacer(modifier = Modifier.weight(1f))
-                        }
-                    }
-                }
+                CategoryGrid(
+                    items = items,
+                    columns = 2,
+                    cardHeight = 74.dp,
+                    selectionEnabled = selectionEnabled,
+                    onCategorySelected = onCategorySelected,
+                )
+            }
+
+            CategoryShelfLayoutMode.TABLET_GRID -> {
+                CategoryGrid(
+                    items = items,
+                    columns = 3,
+                    cardHeight = 58.dp,
+                    selectionEnabled = selectionEnabled,
+                    onCategorySelected = onCategorySelected,
+                )
             }
 
             CategoryShelfLayoutMode.TABLET_RAIL -> {
@@ -147,11 +149,42 @@ fun CategoryShelf(
 }
 
 @Composable
+private fun CategoryGrid(
+    items: List<CategoryShelfItemModel>,
+    columns: Int,
+    cardHeight: Dp,
+    selectionEnabled: Boolean,
+    onCategorySelected: (CategoryShelfItemModel) -> Unit,
+) {
+    val gap = dimensionResource(R.dimen.senku_rev03_space_8)
+    items.chunked(columns).forEach { rowItems ->
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(gap),
+        ) {
+            rowItems.forEach { item ->
+                PhoneCategoryCard(
+                    item = item,
+                    selectionEnabled = selectionEnabled,
+                    cardHeight = cardHeight,
+                    modifier = Modifier.weight(1f),
+                    onClick = { onCategorySelected(item) },
+                )
+            }
+            repeat(columns - rowItems.size) {
+                Spacer(modifier = Modifier.weight(1f))
+            }
+        }
+    }
+}
+
+@Composable
 private fun PhoneCategoryCard(
     item: CategoryShelfItemModel,
     selectionEnabled: Boolean,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    cardHeight: Dp = 74.dp,
 ) {
     val colors = SenkuTheme.colors
     val corner = dimensionResource(R.dimen.senku_rev03_corner_small)
@@ -179,7 +212,7 @@ private fun PhoneCategoryCard(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .heightIn(min = 74.dp),
+                .height(cardHeight),
         ) {
             Box(
                 modifier = Modifier

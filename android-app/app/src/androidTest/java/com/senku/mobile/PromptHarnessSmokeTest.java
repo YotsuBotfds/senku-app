@@ -141,14 +141,6 @@ public final class PromptHarnessSmokeTest {
                 "home search input never appeared; harness signals=" + HarnessTestSignals.snapshot(),
                 device.wait(Until.hasObject(By.res(APP_PACKAGE, "search_input")), SEARCH_WAIT_MS)
             );
-            Assert.assertTrue(
-                "home search button never appeared; harness signals=" + HarnessTestSignals.snapshot(),
-                device.wait(Until.hasObject(By.res(APP_PACKAGE, "search_button")), SEARCH_WAIT_MS)
-            );
-            Assert.assertTrue(
-                "home ask button never appeared; harness signals=" + HarnessTestSignals.snapshot(),
-                device.wait(Until.hasObject(By.res(APP_PACKAGE, "ask_button")), SEARCH_WAIT_MS)
-            );
 
             scenario.onActivity(activity -> {
                 EditText input = activity.findViewById(R.id.search_input);
@@ -161,6 +153,8 @@ public final class PromptHarnessSmokeTest {
                 TextView laneHint = activity.findViewById(R.id.home_entry_hint);
                 View browseRail = activity.findViewById(R.id.browse_rail);
                 View categoryContainer = activity.findViewById(R.id.category_section_container);
+                TextView categoryHeader = activity.findViewById(R.id.category_section_header);
+                View recentThreads = activity.findViewById(R.id.recent_threads_section);
                 TextView resultsHeader = activity.findViewById(R.id.results_header);
                 RecyclerView resultsList = activity.findViewById(R.id.results_list);
                 Assert.assertNotNull("home search input should exist", input);
@@ -171,6 +165,33 @@ public final class PromptHarnessSmokeTest {
                 Assert.assertNotNull("home manual stamp should exist", manualStamp);
                 Assert.assertNotNull("home lane hint should exist", laneHint);
                 Assert.assertTrue("home search input should be visible", isVisible(input));
+                if (isTabletPortraitActivity(activity)) {
+                    Assert.assertNotNull("tablet portrait home should expose a category header", categoryHeader);
+                    Assert.assertNotNull("tablet portrait home should expose category content", categoryContainer);
+                    Assert.assertNotNull("tablet portrait home should retain recent-thread host", recentThreads);
+                    Assert.assertTrue(
+                        "tablet portrait home should show the compact category shelf",
+                        isEffectivelyVisible(categoryHeader) && isEffectivelyVisible(categoryContainer)
+                    );
+                    Assert.assertFalse(
+                        "tablet portrait home should not lead with the legacy primary lane switcher",
+                        isEffectivelyVisible(browse) || isEffectivelyVisible(ask)
+                    );
+                    Assert.assertFalse(
+                        "tablet portrait home should not surface the old helper paragraph",
+                        isEffectivelyVisible(laneHint)
+                    );
+                    CategoryShelfSignals categoryShelfSignals = collectCategoryShelfSignals(activity);
+                    Assert.assertTrue(
+                        "tablet portrait home should surface the Rev 03 category shelf",
+                        categoryShelfSignals.totalCount >= 6
+                    );
+                    Assert.assertTrue(
+                        "tablet portrait home should keep actionable browse buckets",
+                        categoryShelfSignals.enabledCount > 0
+                    );
+                    return;
+                }
                 Assert.assertTrue("home browse button should be visible", isVisible(browse));
                 Assert.assertTrue("home search button should be visible", isVisible(search));
                 Assert.assertTrue("home ask button should be visible", isVisible(ask));
