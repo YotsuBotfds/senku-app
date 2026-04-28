@@ -5,7 +5,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -80,10 +79,7 @@ fun EvidencePane(
     modifier: Modifier = Modifier,
 ) {
     val colors = SenkuTheme.colors
-    val visibilityPolicy = tabletEvidenceVisibilityPolicy()
     val scrollState = rememberScrollState()
-    val provenanceLandmark = stringResource(R.string.detail_a11y_landmark_provenance)
-    val provenanceEmpty = stringResource(R.string.detail_a11y_provenance_none)
     val sourceGraphLandmark = stringResource(R.string.detail_a11y_landmark_source_graph)
     val sourceGraphEmpty = stringResource(R.string.detail_a11y_source_graph_none)
 
@@ -92,17 +88,9 @@ fun EvidencePane(
             .background(colors.bg1)
             .fillMaxHeight()
             .verticalScroll(scrollState)
-            .padding(horizontal = 20.dp, vertical = 18.dp),
-        verticalArrangement = Arrangement.spacedBy(18.dp),
+            .padding(horizontal = 18.dp, vertical = 18.dp),
+        verticalArrangement = Arrangement.spacedBy(14.dp),
     ) {
-        ActiveEvidenceSection(
-            anchor = anchor,
-            onAnchorClick = onAnchorClick,
-            landmark = provenanceLandmark,
-            emptyDescription = provenanceEmpty,
-            titleMaxLines = visibilityPolicy.activeTitleMaxLines,
-            snippetMaxLines = visibilityPolicy.activeSnippetMaxLines,
-        )
         CrossReferenceSection(
             anchor = anchor,
             xrefs = xrefs,
@@ -354,7 +342,7 @@ private fun CrossReferenceSection(
                 landmark = landmark,
                 emptyDescription = emptyDescription,
                 anchor = anchor,
-                count = xrefs.size,
+                count = cardCount,
             ),
         )
         Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
@@ -410,83 +398,141 @@ private fun ManualEvidenceCard(
     val colors = SenkuTheme.colors
     val typography = SenkuTheme.typography
     val isCompact = density == EvidenceCardDensity.Compact
-    val railHeight = if (isCompact) 0.dp else 96.dp
-    val rowEndPadding = if (isCompact) 10.dp else 12.dp
-    val rowGap = if (isCompact) 12.dp else 14.dp
-    val railWidth = if (isCompact) 2.dp else 3.dp
+    val rowEndPadding = if (isCompact) 14.dp else 12.dp
+    val rowGap = 14.dp
+    val railWidth = 3.dp
     val contentVerticalPadding = if (isCompact) 12.dp else 14.dp
-    val contentGap = if (isCompact) 6.dp else 7.dp
+    val contentGap = if (isCompact) 8.dp else 7.dp
     val metaColor = if (relation == "ANCHOR") colors.accent else colors.ink2
     val titleFontSize = if (isCompact) 14.sp else 15.sp
     val titleLineHeight = if (isCompact) 18.sp else 19.sp
 
     Surface(
         modifier = Modifier.fillMaxWidth(),
-        color = colors.bg2,
+        color = if (isCompact) colors.bg1 else colors.bg2,
         contentColor = colors.ink0,
         shape = RoundedCornerShape(0.dp),
-        border = androidx.compose.foundation.BorderStroke(1.dp, colors.hairlineStrong),
+        border = androidx.compose.foundation.BorderStroke(
+            1.dp,
+            if (isCompact) colors.hairline else colors.hairlineStrong,
+        ),
         onClick = onClick,
     ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(IntrinsicSize.Min)
-                .padding(end = rowEndPadding),
-            horizontalArrangement = Arrangement.spacedBy(rowGap),
-            verticalAlignment = Alignment.Top,
-        ) {
-            Box(
-                modifier = Modifier
-                    .width(railWidth)
-                    .then(if (isCompact) Modifier.fillMaxHeight() else Modifier.height(railHeight))
-                    .background(metaColor),
-            )
+        if (isCompact) {
             Column(
                 modifier = Modifier
-                    .weight(1f)
-                    .padding(vertical = contentVerticalPadding),
+                    .fillMaxWidth()
+                    .padding(
+                        start = rowEndPadding,
+                        top = contentVerticalPadding,
+                        end = rowEndPadding,
+                        bottom = contentVerticalPadding,
+                    ),
                 verticalArrangement = Arrangement.spacedBy(contentGap),
             ) {
-                Text(
-                    text = listOf(guideId.trim().ifEmpty { "GD-?" }, relation, section.trim())
-                        .filter { it.isNotEmpty() }
-                        .joinToString(" - "),
-                    style = typography.monoCaps.copy(
-                        fontSize = 10.sp,
-                        lineHeight = 13.sp,
-                        fontWeight = FontWeight.Medium,
-                    ),
-                    color = metaColor,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
+                EvidenceCardText(
+                    guideId = guideId,
+                    relation = relation,
+                    section = section,
+                    title = title,
+                    snippet = snippet,
+                    titleMaxLines = titleMaxLines,
+                    snippetMaxLines = snippetMaxLines,
+                    metaColor = metaColor,
+                    titleFontSize = titleFontSize,
+                    titleLineHeight = titleLineHeight,
                 )
-                Text(
-                    text = title.trim().ifEmpty { "Source guide" },
-                    style = typography.uiBody.copy(
-                        fontSize = titleFontSize,
-                        lineHeight = titleLineHeight,
-                        fontWeight = FontWeight.SemiBold,
-                    ),
-                    color = colors.ink0,
-                    maxLines = titleMaxLines.coerceAtLeast(1),
-                    overflow = TextOverflow.Ellipsis,
+            }
+        } else {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(end = rowEndPadding),
+                horizontalArrangement = Arrangement.spacedBy(rowGap),
+                verticalAlignment = Alignment.Top,
+            ) {
+                Box(
+                    modifier = Modifier
+                        .width(railWidth)
+                        .height(96.dp)
+                        .background(metaColor),
                 )
-                if (snippet.trim().isNotEmpty()) {
-                    Text(
-                        text = snippet.trim(),
-                        style = typography.smallBody.copy(
-                            fontSize = 12.sp,
-                            lineHeight = 17.sp,
-                            fontStyle = FontStyle.Italic,
-                        ),
-                        color = colors.ink2,
-                        maxLines = snippetMaxLines.coerceAtLeast(1),
-                        overflow = TextOverflow.Ellipsis,
+                Column(
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(vertical = contentVerticalPadding),
+                    verticalArrangement = Arrangement.spacedBy(contentGap),
+                ) {
+                    EvidenceCardText(
+                        guideId = guideId,
+                        relation = relation,
+                        section = section,
+                        title = title,
+                        snippet = snippet,
+                        titleMaxLines = titleMaxLines,
+                        snippetMaxLines = snippetMaxLines,
+                        metaColor = metaColor,
+                        titleFontSize = titleFontSize,
+                        titleLineHeight = titleLineHeight,
                     )
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun EvidenceCardText(
+    guideId: String,
+    relation: String,
+    section: String,
+    title: String,
+    snippet: String,
+    titleMaxLines: Int,
+    snippetMaxLines: Int,
+    metaColor: androidx.compose.ui.graphics.Color,
+    titleFontSize: androidx.compose.ui.unit.TextUnit,
+    titleLineHeight: androidx.compose.ui.unit.TextUnit,
+) {
+    val colors = SenkuTheme.colors
+    val typography = SenkuTheme.typography
+
+    Text(
+        text = listOf(guideId.trim().ifEmpty { "GD-?" }, relation, section.trim())
+            .filter { it.isNotEmpty() }
+            .joinToString(" - "),
+        style = typography.monoCaps.copy(
+            fontSize = 10.sp,
+            lineHeight = 13.sp,
+            fontWeight = FontWeight.Medium,
+        ),
+        color = metaColor,
+        maxLines = 1,
+        overflow = TextOverflow.Ellipsis,
+    )
+    Text(
+        text = title.trim().ifEmpty { "Source guide" },
+        style = typography.uiBody.copy(
+            fontSize = titleFontSize,
+            lineHeight = titleLineHeight,
+            fontWeight = FontWeight.SemiBold,
+        ),
+        color = colors.ink0,
+        maxLines = titleMaxLines.coerceAtLeast(1),
+        overflow = TextOverflow.Ellipsis,
+    )
+    if (snippet.trim().isNotEmpty()) {
+        Text(
+            text = snippet.trim(),
+            style = typography.smallBody.copy(
+                fontSize = 12.sp,
+                lineHeight = 17.sp,
+                fontStyle = FontStyle.Italic,
+            ),
+            color = colors.ink2,
+            maxLines = snippetMaxLines.coerceAtLeast(1),
+            overflow = TextOverflow.Ellipsis,
+        )
     }
 }
 

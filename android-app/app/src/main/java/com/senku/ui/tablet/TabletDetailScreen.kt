@@ -134,18 +134,18 @@ internal data class TabletDetailTypeScalePolicy(
 
 internal fun tabletLandscapeReadingLayoutPolicy(): TabletReadingLayoutPolicy =
     TabletReadingLayoutPolicy(
-        threadRailWidthDp = 320,
-        answerMaxWidthDp = 560,
-        evidenceRailWidthDp = 368,
-        answerHorizontalPaddingDp = 24,
+        threadRailWidthDp = 300,
+        answerMaxWidthDp = 520,
+        evidenceRailWidthDp = 360,
+        answerHorizontalPaddingDp = 22,
     )
 
 internal fun tabletPortraitReadingLayoutPolicy(): TabletReadingLayoutPolicy =
     TabletReadingLayoutPolicy(
-        threadRailWidthDp = 184,
-        answerMaxWidthDp = 520,
-        evidenceRailWidthDp = 240,
-        answerHorizontalPaddingDp = 18,
+        threadRailWidthDp = 168,
+        answerMaxWidthDp = 500,
+        evidenceRailWidthDp = 232,
+        answerHorizontalPaddingDp = 16,
     )
 
 internal fun tabletReadingLayoutPolicy(isLandscape: Boolean): TabletReadingLayoutPolicy =
@@ -156,24 +156,24 @@ internal fun tabletReadingLayoutPolicy(isLandscape: Boolean): TabletReadingLayou
 
 internal fun tabletLandscapeDetailTypeScalePolicy(): TabletDetailTypeScalePolicy =
     TabletDetailTypeScalePolicy(
-        questionFontSizeSp = 18,
-        questionLineHeightSp = 24,
-        answerFontSizeSp = 19,
-        answerLineHeightSp = 27,
-        stepFontSizeSp = 14,
-        stepLineHeightSp = 20,
+        questionFontSizeSp = 25,
+        questionLineHeightSp = 31,
+        answerFontSizeSp = 17,
+        answerLineHeightSp = 25,
+        stepFontSizeSp = 13,
+        stepLineHeightSp = 19,
         limitFontSizeSp = 12,
         limitLineHeightSp = 17,
     )
 
 internal fun tabletPortraitDetailTypeScalePolicy(): TabletDetailTypeScalePolicy =
     TabletDetailTypeScalePolicy(
-        questionFontSizeSp = 17,
-        questionLineHeightSp = 23,
-        answerFontSizeSp = 18,
-        answerLineHeightSp = 26,
-        stepFontSizeSp = 14,
-        stepLineHeightSp = 20,
+        questionFontSizeSp = 24,
+        questionLineHeightSp = 30,
+        answerFontSizeSp = 16,
+        answerLineHeightSp = 24,
+        stepFontSizeSp = 13,
+        stepLineHeightSp = 19,
         limitFontSizeSp = 12,
         limitLineHeightSp = 17,
     )
@@ -523,8 +523,8 @@ private fun TitleBar(
         modifier = modifier
             .fillMaxWidth()
             .background(colors.bg0)
-            .padding(horizontal = 28.dp, vertical = 14.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp),
+            .padding(horizontal = 26.dp, vertical = 11.dp),
+        verticalArrangement = Arrangement.spacedBy(6.dp),
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -532,7 +532,7 @@ private fun TitleBar(
             horizontalArrangement = Arrangement.spacedBy(10.dp),
         ) {
             Text(
-                text = "THREAD",
+                text = "ANSWER",
                 style = typography.monoCaps.copy(
                     fontSize = 11.sp,
                     lineHeight = 14.sp,
@@ -577,7 +577,7 @@ private fun TitleBar(
         if (handoffLabel.isNotEmpty() || handoffSummary.isNotEmpty()) {
             Column(
                 modifier = Modifier.fillMaxWidth(),
-                verticalArrangement = Arrangement.spacedBy(3.dp),
+                verticalArrangement = Arrangement.spacedBy(2.dp),
             ) {
                 if (handoffLabel.isNotEmpty()) {
                     Text(
@@ -599,8 +599,8 @@ private fun TitleBar(
                     Text(
                         text = summaryText,
                         style = typography.smallBody.copy(
-                            fontSize = 12.sp,
-                            lineHeight = 16.sp,
+                            fontSize = 11.sp,
+                            lineHeight = 15.sp,
                         ),
                         color = colors.ink2,
                         maxLines = 2,
@@ -644,8 +644,8 @@ private fun ThreadTurnBlock(
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .padding(vertical = 18.dp),
-        verticalArrangement = Arrangement.spacedBy(12.dp),
+            .padding(vertical = 16.dp),
+        verticalArrangement = Arrangement.spacedBy(10.dp),
     ) {
         if (turn.showQuestion) {
             QuestionInlineBlock(
@@ -677,25 +677,51 @@ private fun QuestionInlineBlock(
 
     Column(
         modifier = modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(8.dp),
+        verticalArrangement = Arrangement.spacedBy(7.dp),
     ) {
-        Text(
-            text = "Q$turnIndex - FIELD QUESTION",
-            style = typography.monoCaps.copy(
-                fontSize = 10.sp,
-                lineHeight = 13.sp,
-                fontWeight = FontWeight.Medium,
-            ),
-            color = colors.ink2,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-        )
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(14.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Text(
+                text = "ANSWER",
+                style = typography.monoCaps.copy(
+                    fontSize = 10.sp,
+                    lineHeight = 13.sp,
+                    fontWeight = FontWeight.Medium,
+                ),
+                color = colors.accent,
+                maxLines = 1,
+            )
+            Text(
+                text = "THIS DEVICE",
+                style = typography.monoCaps.copy(
+                    fontSize = 10.sp,
+                    lineHeight = 13.sp,
+                    fontWeight = FontWeight.Medium,
+                ),
+                color = colors.ink2,
+                maxLines = 1,
+            )
+            Text(
+                text = "$turnIndex TURN",
+                style = typography.monoCaps.copy(
+                    fontSize = 10.sp,
+                    lineHeight = 13.sp,
+                    fontWeight = FontWeight.Medium,
+                ),
+                color = colors.ink2,
+                maxLines = 1,
+            )
+        }
         Text(
             text = question.trim().ifEmpty { "No question text recorded." },
-            style = typography.uiBody.copy(
+            style = typography.sectionTitle.copy(
                 fontSize = typeScalePolicy.questionFontSizeSp.sp,
                 lineHeight = typeScalePolicy.questionLineHeightSp.sp,
                 fontWeight = FontWeight.SemiBold,
+                letterSpacing = 0.sp,
             ),
             color = colors.ink0,
         )
@@ -777,15 +803,45 @@ private fun AnswerInlineBlock(
             }
         }
         if (!content.limits.isNullOrBlank()) {
-            Text(
-                text = content.limits.trim(),
-                style = typography.smallBody.copy(
-                    fontSize = typeScalePolicy.limitFontSizeSp.sp,
-                    lineHeight = typeScalePolicy.limitLineHeightSp.sp,
-                    fontWeight = FontWeight.Medium,
-                ),
-                color = if (content.abstain) colors.danger else colors.ink2,
-            )
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(colors.bg2)
+                    .padding(end = 12.dp),
+                horizontalArrangement = Arrangement.spacedBy(10.dp),
+                verticalAlignment = Alignment.Top,
+            ) {
+                Box(
+                    modifier = Modifier
+                        .width(3.dp)
+                        .height(74.dp)
+                        .background(if (content.abstain) colors.danger else colors.warn),
+                )
+                Column(
+                    modifier = Modifier.padding(vertical = 10.dp),
+                    verticalArrangement = Arrangement.spacedBy(4.dp),
+                ) {
+                    Text(
+                        text = if (content.abstain) "BOUNDARY" else "UNCERTAIN FIT",
+                        style = typography.monoCaps.copy(
+                            fontSize = 9.sp,
+                            lineHeight = 12.sp,
+                            fontWeight = FontWeight.Medium,
+                        ),
+                        color = if (content.abstain) colors.danger else colors.warn,
+                        maxLines = 1,
+                    )
+                    Text(
+                        text = content.limits.trim(),
+                        style = typography.smallBody.copy(
+                            fontSize = typeScalePolicy.limitFontSizeSp.sp,
+                            lineHeight = typeScalePolicy.limitLineHeightSp.sp,
+                            fontWeight = FontWeight.Medium,
+                        ),
+                        color = colors.ink1,
+                    )
+                }
+            }
         }
         Row(
             modifier = Modifier.fillMaxWidth(),

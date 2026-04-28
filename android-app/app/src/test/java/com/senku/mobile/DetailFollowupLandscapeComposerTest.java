@@ -115,6 +115,52 @@ public final class DetailFollowupLandscapeComposerTest {
     }
 
     @Test
+    public void phonePortraitAnswerSourcesExpandByDefaultAfterStableAnswer() {
+        assertTrue(DetailActivity.shouldExpandPhonePortraitSourcesByDefault(true, true, false, 3));
+        assertFalse(DetailActivity.shouldExpandPhonePortraitSourcesByDefault(true, true, true, 3));
+        assertFalse(DetailActivity.shouldExpandPhonePortraitSourcesByDefault(true, true, false, 0));
+        assertFalse(DetailActivity.shouldExpandPhonePortraitSourcesByDefault(false, true, false, 3));
+        assertFalse(DetailActivity.shouldExpandPhonePortraitSourcesByDefault(true, false, false, 3));
+    }
+
+    @Test
+    public void phonePortraitHidesDuplicateInlineSourcePreviewWhenSourcesAreExpanded() {
+        assertTrue(DetailActivity.shouldHideInlineSourcePreviewForPhonePortrait(true, true, true));
+        assertFalse(DetailActivity.shouldHideInlineSourcePreviewForPhonePortrait(true, true, false));
+        assertFalse(DetailActivity.shouldHideInlineSourcePreviewForPhonePortrait(false, true, true));
+        assertFalse(DetailActivity.shouldHideInlineSourcePreviewForPhonePortrait(true, false, true));
+    }
+
+    @Test
+    public void phonePortraitHeaderUsesShortAnswerLabel() {
+        assertEquals(
+            "Answer GD-345 - Rain shelter",
+            DetailActivity.buildPhonePortraitAnswerHeaderTitle("GD-345", "Rain shelter")
+        );
+        assertEquals("Answer GD-345", DetailActivity.buildPhonePortraitAnswerHeaderTitle("GD-345", ""));
+        assertEquals("Answer", DetailActivity.buildPhonePortraitAnswerHeaderTitle("", ""));
+    }
+
+    @Test
+    public void phonePortraitSourceCardLabelCarriesMetaTitleAndQuote() {
+        DetailSourcePresentationFormatter.EvidenceCard card =
+            new DetailSourcePresentationFormatter.EvidenceCard(
+                "GD-345",
+                "ANCHOR",
+                "93%",
+                "Tarp & Cord Shelters",
+                "A simple ridgeline shelter requires only tarp, cord, and two anchor points.",
+                "",
+                true
+            );
+
+        assertEquals(
+            "GD-345 - ANCHOR - 93%\nTarp & Cord Shelters\n\"A simple ridgeline shelter requires only tarp, cord, and two anchor points.\"",
+            DetailActivity.buildPhonePortraitSourceCardLabel(card)
+        );
+    }
+
+    @Test
     public void metaStripAppendsFreshnessTokens() {
         ArrayList<MetaItem> items = new ArrayList<>();
         DetailActivity.appendMetaStripTokens(

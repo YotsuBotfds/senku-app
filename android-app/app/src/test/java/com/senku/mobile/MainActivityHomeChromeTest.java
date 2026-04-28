@@ -141,6 +141,12 @@ public final class MainActivityHomeChromeTest {
         assertFalse(MainActivity.areCategoryInteractionsEnabled(true, true));
     }
 
+    @Test
+    public void recentThreadPreviewLimitKeepsThreeRowsAvailableOnPhones() {
+        assertEquals(3, MainActivity.resolveRecentThreadPreviewLimit(true));
+        assertEquals(3, MainActivity.resolveRecentThreadPreviewLimit(false));
+    }
+
     private static SearchResult guide(String title, String category, String topicTags) {
         return new SearchResult(
             title,

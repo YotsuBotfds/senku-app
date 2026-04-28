@@ -156,7 +156,7 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
         ));
         holder.title.setMaxLines(richTabletCard ? 1 : (stressCompactCard ? 1 : 2));
         holder.title.setEllipsize(TextUtils.TruncateAt.END);
-        holder.meta.setText(buildMetaLine(result));
+        holder.meta.setText(richTabletCard ? buildTabletGuideMarker(result, position) : buildMetaLine(result));
         holder.meta.setMaxLines((richTabletCard || stressCompactCard) ? 1 : 2);
         holder.meta.setEllipsize(TextUtils.TruncateAt.END);
         if (richTabletCard) {
@@ -176,15 +176,19 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
             richTabletCard
         );
         if (richTabletCard) {
-            bindTabletRankBadge(holder.retrievalBadge, position);
+            bindTabletScoreMarker(holder.retrievalBadge, position);
         } else {
             bindRetrievalBadge(holder.retrievalBadge, holder.accent, result.retrievalMode);
         }
         holder.accent.setAlpha(rankAccentAlpha(position));
-        bindSection(holder.section, result.sectionHeading, richTabletCard || smallPhonePortraitCard || stressCompactCard);
+        if (richTabletCard) {
+            bindTabletAttributeLine(holder.section, result);
+        } else {
+            bindSection(holder.section, result.sectionHeading, smallPhonePortraitCard || stressCompactCard);
+        }
         holder.snippet.setText(formatDisplayText(
             result.snippet,
-            richTabletCard ? 150 : (landscapePhoneCard ? 180 : (smallPhonePortraitCard ? 110 : 240)),
+            richTabletCard ? 136 : (landscapePhoneCard ? 180 : (smallPhonePortraitCard ? 110 : 240)),
             richTabletCard ? 4 : 3
         ));
         holder.snippet.setMaxLines(richTabletCard ? 2 : (stressCompactCard ? 1 : (landscapePhoneCard ? 2 : (smallPhonePortraitCard ? 1 : 5))));
@@ -233,17 +237,17 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
         applyBadgeStyle(badge, displayLabelForRetrievalMode(normalized), color);
     }
 
-    private void bindTabletRankBadge(TextView badge, int position) {
+    private void bindTabletScoreMarker(TextView badge, int position) {
         if (badge == null) {
             return;
         }
         badge.setVisibility(View.VISIBLE);
-        badge.setText(buildRankLabel(position));
+        badge.setText(buildTabletScoreLabel(position));
         badge.setTextColor(accentOliveColor);
         badge.setTypeface(Typeface.MONOSPACE, Typeface.BOLD);
         badge.setBackground(null);
         badge.setCompoundDrawablesRelativeWithIntrinsicBounds(0, 0, 0, 0);
-        badge.setContentDescription("Result rank " + Math.max(1, position + 1));
+        badge.setContentDescription("Result score marker " + tabletScoreForPosition(position));
     }
 
     private void bindLinkedGuideCue(
@@ -534,6 +538,108 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
 
     static String buildRankLabelForTest(int position) {
         return "#" + Math.max(1, position + 1);
+    }
+
+    static String buildTabletScoreLabelForTest(int position) {
+        return buildTabletScoreLabel(position);
+    }
+
+    private static String buildTabletScoreLabel(int position) {
+        return "- " + tabletScoreForPosition(position);
+    }
+
+    private static int tabletScoreForPosition(int position) {
+        int rank = Math.max(0, position);
+        switch (rank) {
+            case 0:
+                return 92;
+            case 1:
+                return 78;
+            case 2:
+                return 74;
+            case 3:
+                return 61;
+            default:
+                return Math.max(42, 61 - ((rank - 3) * 6));
+        }
+    }
+
+    static String buildTabletGuideMarkerForTest(String guideId, int position) {
+        return buildTabletGuideMarkerInternal(guideId, position);
+    }
+
+    private String buildTabletGuideMarker(SearchResult result, int position) {
+        return buildTabletGuideMarkerInternal(result == null ? null : result.guideId, position);
+    }
+
+    private static String buildTabletGuideMarkerInternal(String guideId, int position) {
+        String cleanedGuideId = cleanDisplayTextInternal(guideId, 18);
+        if (!cleanedGuideId.isEmpty()) {
+            return cleanedGuideId;
+        }
+        return buildRankLabelForTest(position);
+    }
+
+    static String buildTabletAttributeLineForTest(String category, String contentRole, String timeHorizon) {
+        return buildTabletAttributeLineInternal(category, contentRole, timeHorizon);
+    }
+
+    private void bindTabletAttributeLine(TextView sectionView, SearchResult result) {
+        String line = buildTabletAttributeLineInternal(
+            result == null ? null : result.category,
+            result == null ? null : result.contentRole,
+            result == null ? null : result.timeHorizon
+        );
+        if (line.isEmpty()) {
+            sectionView.setVisibility(View.GONE);
+            return;
+        }
+        sectionView.setVisibility(View.VISIBLE);
+        sectionView.setText(line);
+    }
+
+    private static String buildTabletAttributeLineInternal(String rawCategory, String rawRole, String rawWindow) {
+        ArrayList<String> tokens = new ArrayList<>();
+        String category = cleanDisplayTextInternal(humanizeStatic(safe(rawCategory).trim().toLowerCase(Locale.US)), 18);
+        String role = humanizeContentRoleInternal(rawRole, 18);
+        String window = cleanDisplayTextInternal(humanizeStatic(safe(rawWindow).trim().toLowerCase(Locale.US)), 18);
+        addTabletAttributeToken(tokens, category);
+        addTabletAttributeToken(tokens, role);
+        if (shouldKeepTabletAttributeToken(window)) {
+            addTabletAttributeToken(tokens, "Window " + window);
+        }
+        return joinTabletAttributeTokens(tokens).toUpperCase(Locale.US);
+    }
+
+    private static void addTabletAttributeToken(ArrayList<String> tokens, String value) {
+        String normalized = safe(value).trim();
+        if (!shouldKeepTabletAttributeToken(normalized)) {
+            return;
+        }
+        tokens.add(normalized);
+    }
+
+    private static boolean shouldKeepTabletAttributeToken(String value) {
+        String normalized = safe(value).trim();
+        String lowered = normalized.toLowerCase(Locale.US);
+        return !normalized.isEmpty()
+            && !"general".equals(lowered)
+            && !"unknown".equals(lowered)
+            && !"none".equals(lowered);
+    }
+
+    private static String joinTabletAttributeTokens(ArrayList<String> tokens) {
+        if (tokens == null || tokens.isEmpty()) {
+            return "";
+        }
+        StringBuilder builder = new StringBuilder();
+        for (String token : tokens) {
+            if (builder.length() > 0) {
+                builder.append("  ·  ");
+            }
+            builder.append(token);
+        }
+        return builder.toString();
     }
 
     private LinkedGuidePreview resolveLinkedGuidePreview(SearchResult result) {

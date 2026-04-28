@@ -70,7 +70,7 @@ public final class MainActivity extends AppCompatActivity {
     private static final int MAX_SEARCH_SUGGESTIONS = 6;
     private static final int MAX_CATEGORY_SUGGESTIONS = 2;
     private static final int MAX_COMPACT_HOME_CATEGORY_TILES = 6;
-    private static final int MAX_RECENT_THREAD_PREVIEWS = 2;
+    private static final int MAX_RECENT_THREAD_PREVIEWS = 3;
     private static final int MAX_HOME_RELATED_GUIDES = 4;
     private static final int MAX_RESULT_PREVIEW_BRIDGE_GUIDES = 4;
     private static final int RESULT_PREVIEW_BRIDGE_SIGNAL_LIMIT = 1;
@@ -1584,18 +1584,22 @@ public final class MainActivity extends AppCompatActivity {
         button.setAllCaps(false);
         boolean manualHomeShell = isManualHomeShellLayout();
         button.setBackgroundResource(manualHomeShell
-            ? R.drawable.bg_tablet_home_recent_row
+            ? R.drawable.bg_manual_home_recent_row
             : R.drawable.bg_sources_stack_shell);
         button.setMinWidth(0);
         button.setMinimumWidth(0);
+        button.setMinHeight(0);
+        button.setMinimumHeight(0);
         boolean compactPhoneHome = isCompactPhoneHomeLayout();
         button.setPadding(
+            dp(manualHomeShell ? 14 : (compactPhoneHome ? 10 : 12)),
+            dp(manualHomeShell ? 7 : (compactPhoneHome ? 8 : 10)),
             dp(manualHomeShell ? 10 : (compactPhoneHome ? 10 : 12)),
-            dp(manualHomeShell ? 8 : (compactPhoneHome ? 8 : 10)),
-            dp(manualHomeShell ? 10 : (compactPhoneHome ? 10 : 12)),
-            dp(manualHomeShell ? 8 : (compactPhoneHome ? 8 : 10))
+            dp(manualHomeShell ? 7 : (compactPhoneHome ? 8 : 10))
         );
-        button.setTextColor(getResources().getColor(R.color.senku_text_light));
+        button.setTextColor(getResources().getColor(manualHomeShell
+            ? R.color.senku_rev03_ink_0
+            : R.color.senku_text_light));
         if (manualHomeShell) {
             button.setTextSize(12);
         }
@@ -1612,7 +1616,7 @@ public final class MainActivity extends AppCompatActivity {
             LinearLayout.LayoutParams.WRAP_CONTENT
         );
         if (index > 0) {
-            params.topMargin = dp(compactPhoneHome ? 6 : 8);
+            params.topMargin = dp(manualHomeShell ? 6 : (compactPhoneHome ? 6 : 8));
         }
         button.setLayoutParams(params);
         button.setOnClickListener(v -> openRecentThread(preview));
@@ -3508,7 +3512,11 @@ public final class MainActivity extends AppCompatActivity {
     }
 
     private int getRecentThreadPreviewLimit() {
-        return isCompactPhoneHomeLayout() ? 1 : MAX_RECENT_THREAD_PREVIEWS;
+        return resolveRecentThreadPreviewLimit(isCompactPhoneHomeLayout());
+    }
+
+    static int resolveRecentThreadPreviewLimit(boolean compactPhoneHome) {
+        return MAX_RECENT_THREAD_PREVIEWS;
     }
 
     private int getHomeRelatedGuideLimit() {

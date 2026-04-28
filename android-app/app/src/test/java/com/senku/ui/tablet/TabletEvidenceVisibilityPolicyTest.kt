@@ -113,6 +113,23 @@ class TabletEvidenceVisibilityPolicyTest {
         assertEquals(1, count)
     }
 
+    @Test
+    fun crossReferenceCardCountIsEmptyWithoutAnchorOrRelatedGuides() {
+        val count = buildCrossReferenceCardCount(
+            AnchorState(
+                key = "",
+                id = "",
+                title = "",
+                section = "",
+                snippet = "",
+                hasSource = false,
+            ),
+            emptyList(),
+        )
+
+        assertEquals(0, count)
+    }
+
     private fun anchor(
         section: String,
         snippet: String,

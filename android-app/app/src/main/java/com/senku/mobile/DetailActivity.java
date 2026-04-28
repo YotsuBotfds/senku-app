@@ -858,6 +858,12 @@ public final class DetailActivity extends AppCompatActivity {
                 currentSources = (ArrayList<SearchResult>) serializedSources;
             }
         }
+        portraitSourcesExpanded = shouldExpandPhonePortraitSourcesByDefault(
+            isCompactPortraitPhoneLayout(),
+            answerMode,
+            pendingGeneration,
+            currentSources.size()
+        );
         if (pendingGeneration && safe(currentBody).trim().isEmpty()) {
             currentBody = buildGeneratingPreviewBody(currentSources.size());
         }
@@ -1044,7 +1050,7 @@ public final class DetailActivity extends AppCompatActivity {
         updateTopBarActions();
         renderRev03ComposeChrome();
         screenTitle.setText(answerMode
-            ? sessionFormatter.buildCompactHeaderTitle(primaryGuideId, buildPrimarySourceLabel())
+            ? buildPhoneAwareHeaderTitle(primaryGuideId, buildPrimarySourceLabel())
             : buildGuideHeaderTitle());
         if (screenMeta != null) {
             screenMeta.setText(answerMode ? buildCompactHeaderMeta() : buildGuideHeaderMeta());
@@ -1052,6 +1058,7 @@ public final class DetailActivity extends AppCompatActivity {
             screenMeta.setTypeface(Typeface.MONOSPACE, Typeface.BOLD);
             screenMeta.setLetterSpacing(0.03f);
         }
+        applyPhonePortraitHeaderTreatment();
         if (heroTitle != null) {
             heroTitle.setText(answerMode ? getString(R.string.detail_thread_title) : buildGuideHeroTitle());
             heroTitle.setVisibility(answerMode ? View.GONE : View.VISIBLE);
@@ -1095,7 +1102,7 @@ public final class DetailActivity extends AppCompatActivity {
         modeChip.setVisibility(answerMode ? View.VISIBLE : (suppressGuideStateChips ? View.GONE : View.VISIBLE));
         if (anchorChip != null) {
             anchorChip.setText(sessionFormatter.buildAnchorText(primaryGuideId, wideLayoutActive()));
-            anchorChip.setVisibility(answerMode ? View.VISIBLE : View.GONE);
+            anchorChip.setVisibility(answerMode && !isCompactPortraitPhoneLayout() ? View.VISIBLE : View.GONE);
         }
         if (routeChip != null) {
             boolean showAnswerRouteChip = !isCompactPortraitPhoneLayout()
@@ -2263,6 +2270,8 @@ public final class DetailActivity extends AppCompatActivity {
                 sourcesPanel.setBackgroundResource(detailSourcesPanelBackground());
                 promoteSourcesPanelInUtilityRail();
             }
+            boolean phonePortraitSourceCards = isCompactPortraitPhoneLayout() && (portraitSourcesExpanded || isEmergencyPortraitSurface());
+            applyPhonePortraitSourcePanelTreatment(phonePortraitSourceCards);
             boolean stationRail = shouldUseSourceProvenancePanel();
             boolean compactPreview = shouldUseCompactSourceProvenancePreview();
             boolean previewMode = stationRail || compactPreview;
@@ -2276,12 +2285,14 @@ public final class DetailActivity extends AppCompatActivity {
                 button.setTextColor(getColor(R.color.senku_text_light));
                 button.setMinHeight(0);
                 button.setMinimumHeight(0);
-                int btnPadH = stationRail ? dp(10) : dp(14);
-                int btnPadV = stationRail ? dp(8) : dp(12);
+                int btnPadH = phonePortraitSourceCards ? dp(14) : (stationRail ? dp(10) : dp(14));
+                int btnPadV = phonePortraitSourceCards ? dp(10) : (stationRail ? dp(8) : dp(12));
                 button.setPadding(btnPadH, btnPadV, btnPadH, btnPadV);
-                String sourceLabel = stationRail
-                    ? detailSourcePresentationFormatter().buildStationSourceButtonLabel(source, i, currentSources.size(), i == 0)
-                    : detailSourcePresentationFormatter().buildSourceButtonLabel(source);
+                String sourceLabel = phonePortraitSourceCards
+                    ? buildPhonePortraitSourceCardLabel(evidenceCard)
+                    : (stationRail
+                        ? detailSourcePresentationFormatter().buildStationSourceButtonLabel(source, i, currentSources.size(), i == 0)
+                        : detailSourcePresentationFormatter().buildSourceButtonLabel(source));
                 button.setText(sourceLabel);
                 button.setContentDescription(
                     detailSourcePresentationFormatter().buildEvidenceCardRowContentDescription(
@@ -2292,8 +2303,10 @@ public final class DetailActivity extends AppCompatActivity {
                     )
                 );
                 button.setTextAlignment(View.TEXT_ALIGNMENT_VIEW_START);
-                button.setMaxLines(2);
+                button.setMaxLines(phonePortraitSourceCards ? 4 : 2);
                 button.setEllipsize(TextUtils.TruncateAt.END);
+                button.setTextSize(phonePortraitSourceCards ? 13f : 14f);
+                button.setLineSpacing(0f, phonePortraitSourceCards ? 1.08f : 1f);
                 button.setTag(buildSourceSelectionKey(source));
                 button.setOnClickListener(v -> {
                     if (stationRail || compactPreview) {
@@ -2311,7 +2324,7 @@ public final class DetailActivity extends AppCompatActivity {
                     ViewGroup.LayoutParams.WRAP_CONTENT
                 );
                 if (sourcesContainer.getChildCount() > 0) {
-                    params.topMargin = showUtilityRail() ? dp(4) : dp(8);
+                    params.topMargin = phonePortraitSourceCards ? dp(12) : (showUtilityRail() ? dp(4) : dp(8));
                 }
                 sourcesContainer.addView(button, params);
             }
@@ -2369,6 +2382,10 @@ public final class DetailActivity extends AppCompatActivity {
         boolean compactPhonePortrait = isCompactPortraitPhoneLayout();
         boolean compactPreview = shouldUseCompactSourceProvenancePreview();
         if (!answerMode || inlineSources.isEmpty() || showUtilityRail()) {
+            inlineSourcesScroll.setVisibility(View.GONE);
+            return;
+        }
+        if (shouldHideInlineSourcePreviewForPhonePortrait(compactPhonePortrait, compactPreview, portraitSourcesExpanded)) {
             inlineSourcesScroll.setVisibility(View.GONE);
             return;
         }
@@ -2633,6 +2650,78 @@ public final class DetailActivity extends AppCompatActivity {
             }
             materialsContainer.addView(chip, params);
         }
+    }
+
+    private void applyPhonePortraitSourcePanelTreatment(boolean phonePortraitSourceCards) {
+        if (!phonePortraitSourceCards || sourcesPanel == null) {
+            return;
+        }
+        sourcesPanel.setPadding(dp(12), dp(14), dp(12), dp(14));
+        setTopMargin(sourcesPanel, dp(14));
+        if (sourcesSubtitle != null) {
+            sourcesSubtitle.setMaxLines(2);
+            sourcesSubtitle.setEllipsize(TextUtils.TruncateAt.END);
+        }
+    }
+
+    static boolean shouldExpandPhonePortraitSourcesByDefault(
+        boolean compactPortraitPhone,
+        boolean answerMode,
+        boolean pendingGeneration,
+        int sourceCount
+    ) {
+        return compactPortraitPhone && answerMode && !pendingGeneration && sourceCount > 0;
+    }
+
+    static boolean shouldHideInlineSourcePreviewForPhonePortrait(
+        boolean compactPortraitPhone,
+        boolean compactPreview,
+        boolean portraitSourcesExpanded
+    ) {
+        return compactPortraitPhone && compactPreview && portraitSourcesExpanded;
+    }
+
+    static String buildPhonePortraitSourceCardLabel(DetailSourcePresentationFormatter.EvidenceCard card) {
+        if (card == null) {
+            return "Source guide";
+        }
+        ArrayList<String> metaParts = new ArrayList<>();
+        if (!card.guideId.isEmpty()) {
+            metaParts.add(card.guideId);
+        }
+        if (!card.roleLabel.isEmpty()) {
+            metaParts.add(card.roleLabel);
+        }
+        if (!card.matchLabel.isEmpty()) {
+            metaParts.add(card.matchLabel);
+        }
+        StringBuilder builder = new StringBuilder();
+        if (!metaParts.isEmpty()) {
+            builder.append(String.join(" - ", metaParts));
+        }
+        String title = safe(card.title).trim();
+        if (!title.isEmpty()) {
+            if (builder.length() > 0) {
+                builder.append('\n');
+            }
+            builder.append(title);
+        }
+        String quote = safe(card.quote).trim();
+        if (!quote.isEmpty()) {
+            if (builder.length() > 0) {
+                builder.append('\n');
+            }
+            builder.append('"').append(trimPhonePortraitSourceQuote(quote)).append('"');
+        }
+        return builder.length() == 0 ? "Source guide" : builder.toString();
+    }
+
+    private static String trimPhonePortraitSourceQuote(String quote) {
+        String cleaned = safe(quote).replaceAll("\\s+", " ").trim();
+        if (cleaned.length() <= 94) {
+            return cleaned;
+        }
+        return cleaned.substring(0, 94).trim() + "...";
     }
 
     private void renderMaterialsPanel() {
@@ -4235,6 +4324,43 @@ public final class DetailActivity extends AppCompatActivity {
 
     private String buildPrimarySourceLabel() {
         return detailProofPresentationFormatter().buildPrimarySourceLabel(currentSources);
+    }
+
+    private String buildPhoneAwareHeaderTitle(String primaryGuideId, String primarySourceLabel) {
+        if (isCompactPortraitPhoneLayout() && answerMode) {
+            return buildPhonePortraitAnswerHeaderTitle(primaryGuideId, primarySourceLabel);
+        }
+        return detailSessionPresentationFormatter().buildCompactHeaderTitle(primaryGuideId, primarySourceLabel);
+    }
+
+    static String buildPhonePortraitAnswerHeaderTitle(String primaryGuideId, String primarySourceLabel) {
+        String guideId = safe(primaryGuideId).trim();
+        String label = safe(primarySourceLabel).trim();
+        if (!guideId.isEmpty() && !label.isEmpty()) {
+            return "Answer " + guideId + " - " + label;
+        }
+        if (!guideId.isEmpty()) {
+            return "Answer " + guideId;
+        }
+        return label.isEmpty() ? "Answer" : "Answer - " + label;
+    }
+
+    private void applyPhonePortraitHeaderTreatment() {
+        boolean compactPhoneAnswer = isCompactPortraitPhoneLayout() && answerMode;
+        if (screenTitle != null) {
+            screenTitle.setMaxLines(compactPhoneAnswer ? 2 : 1);
+            screenTitle.setEllipsize(TextUtils.TruncateAt.END);
+            screenTitle.setIncludeFontPadding(!compactPhoneAnswer);
+        }
+        if (screenMeta != null) {
+            screenMeta.setMaxLines(compactPhoneAnswer ? 1 : 2);
+            screenMeta.setEllipsize(TextUtils.TruncateAt.END);
+        }
+        if (titleView != null) {
+            titleView.setMaxLines(compactPhoneAnswer ? 4 : Integer.MAX_VALUE);
+            titleView.setEllipsize(compactPhoneAnswer ? TextUtils.TruncateAt.END : null);
+            titleView.setIncludeFontPadding(!compactPhoneAnswer);
+        }
     }
 
     private void updateHeroPanelVisibility() {

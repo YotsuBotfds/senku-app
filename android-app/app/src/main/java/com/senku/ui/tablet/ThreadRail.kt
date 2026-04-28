@@ -54,8 +54,8 @@ fun ThreadRail(
         modifier = modifier
             .background(colors.bg1)
             .verticalScroll(scrollState)
-            .padding(horizontal = 16.dp, vertical = 14.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp),
+            .padding(horizontal = 14.dp, vertical = 12.dp),
+        verticalArrangement = Arrangement.spacedBy(15.dp),
     ) {
         Toolbar(
             pinVisible = pinVisible,
@@ -110,7 +110,7 @@ private fun Toolbar(
     val colors = SenkuTheme.colors
 
     Column(
-        verticalArrangement = Arrangement.spacedBy(10.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -156,15 +156,27 @@ private fun RailSection(
     Column(
         verticalArrangement = Arrangement.spacedBy(8.dp),
         content = {
-            Text(
-                text = label + " - " + count,
-                style = SenkuTheme.typography.monoCaps.copy(
-                    fontSize = 10.sp,
-                    lineHeight = 13.sp,
-                    fontWeight = FontWeight.Medium,
-                ),
-                color = colors.ink2,
-            )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                HorizontalDivider(
+                    modifier = Modifier.width(22.dp),
+                    thickness = 1.dp,
+                    color = colors.hairlineStrong,
+                )
+                Text(
+                    text = label + " - " + count,
+                    style = SenkuTheme.typography.monoCaps.copy(
+                        fontSize = 10.sp,
+                        lineHeight = 13.sp,
+                        fontWeight = FontWeight.Medium,
+                    ),
+                    color = colors.ink2,
+                    maxLines = 1,
+                )
+            }
             content()
         },
     )
@@ -192,16 +204,12 @@ private fun ThreadTurnRow(
         color = background,
         contentColor = colors.ink0,
         shape = RoundedCornerShape(0.dp),
-        border = androidx.compose.foundation.BorderStroke(
-            1.dp,
-            if (turn.isActive) colors.accent.copy(alpha = 0.32f) else colors.hairline,
-        ),
         onClick = onClick,
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 9.dp, vertical = 7.dp),
+                .padding(horizontal = 7.dp, vertical = 7.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             verticalAlignment = Alignment.Top,
         ) {
@@ -262,20 +270,12 @@ private fun SourcePill(
         color = background,
         contentColor = colors.ink0,
         shape = RoundedCornerShape(0.dp),
-        border = androidx.compose.foundation.BorderStroke(
-            1.dp,
-            when {
-                source.isSelected -> colors.accent.copy(alpha = 0.34f)
-                source.isAnchor -> colors.ok.copy(alpha = 0.30f)
-                else -> colors.hairline
-            },
-        ),
         onClick = onClick,
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 9.dp, vertical = 7.dp),
+                .padding(horizontal = 7.dp, vertical = 7.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             verticalAlignment = Alignment.Top,
         ) {

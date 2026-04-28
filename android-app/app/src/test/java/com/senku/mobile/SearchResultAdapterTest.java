@@ -33,6 +33,29 @@ public final class SearchResultAdapterTest {
     }
 
     @Test
+    public void tabletRowsUseCompactScoreMarkers() {
+        assertEquals("- 92", SearchResultAdapter.buildTabletScoreLabelForTest(0));
+        assertEquals("- 78", SearchResultAdapter.buildTabletScoreLabelForTest(1));
+        assertEquals("- 61", SearchResultAdapter.buildTabletScoreLabelForTest(3));
+        assertEquals("- 49", SearchResultAdapter.buildTabletScoreLabelForTest(5));
+    }
+
+    @Test
+    public void tabletRowsPreferGuideIdAsRankMarker() {
+        assertEquals("GD-345", SearchResultAdapter.buildTabletGuideMarkerForTest("GD-345", 2));
+        assertEquals("#3", SearchResultAdapter.buildTabletGuideMarkerForTest("", 2));
+    }
+
+    @Test
+    public void tabletRowsFlattenMetadataIntoPreviewRailTokens() {
+        assertEquals(
+            "SHELTER  \u00b7  TOPIC  \u00b7  WINDOW IMMEDIATE",
+            SearchResultAdapter.buildTabletAttributeLineForTest("shelter", "role_topic", "immediate")
+        );
+        assertEquals("", SearchResultAdapter.buildTabletAttributeLineForTest("general", "none", "unknown"));
+    }
+
+    @Test
     public void composeBridgeMetadataLineUsesRoleWindowAndCategory() {
         assertEquals(
             "Role: Safety // Window: Immediate // Category: Water",
