@@ -335,11 +335,6 @@ final class DetailThreadHistoryRenderer {
             .append(time);
         if (!anchorGuideId.isEmpty()) {
             builder.append(" \u00B7 ANCHOR ");
-            String previousAnchor = safe(previousAnchorGuideId).trim();
-            if (!previousAnchor.isEmpty() && !previousAnchor.equals(anchorGuideId)) {
-                builder.append(previousAnchor);
-                builder.append(" -> ");
-            }
             builder.append(anchorGuideId);
         }
         return builder.toString();
@@ -373,7 +368,13 @@ final class DetailThreadHistoryRenderer {
         if ("reviewed".equals(resolvedStatus)) {
             return "CONFIDENT";
         }
+        if ("confident".equals(resolvedStatus)) {
+            return "CONFIDENT";
+        }
         if ("ready".equals(resolvedStatus)) {
+            return "UNSURE";
+        }
+        if ("unsure".equals(resolvedStatus)) {
             return "UNSURE";
         }
         return resolvedStatus.toUpperCase(Locale.US);
@@ -472,13 +473,12 @@ final class DetailThreadHistoryRenderer {
             return "";
         }
         if (ReviewedCardMetadata.normalize(turn.reviewedCardMetadata).isPresent()) {
-            return "reviewed";
+            return "confident";
         }
-        if ((turn.sources != null && !turn.sources.isEmpty())
-            || (turn.sourceResults != null && !turn.sourceResults.isEmpty())) {
-            return "source-backed";
+        if (!safe(turn.ruleId).trim().isEmpty()) {
+            return "confident";
         }
-        return safe(turn.answerSummary).trim().isEmpty() ? "" : "ready";
+        return safe(turn.answerSummary).trim().isEmpty() ? "" : "unsure";
     }
 
     private String timeForTurn(SessionMemory.TurnSnapshot turn) {
@@ -490,10 +490,12 @@ final class DetailThreadHistoryRenderer {
 
     private static int statusColorRes(String status) {
         String resolvedStatus = safe(status).trim().toLowerCase(Locale.US);
-        if ("reviewed".equals(resolvedStatus) || "source-backed".equals(resolvedStatus)) {
+        if ("reviewed".equals(resolvedStatus)
+            || "source-backed".equals(resolvedStatus)
+            || "confident".equals(resolvedStatus)) {
             return R.color.senku_rev03_ok;
         }
-        if ("ready".equals(resolvedStatus)) {
+        if ("ready".equals(resolvedStatus) || "unsure".equals(resolvedStatus)) {
             return R.color.senku_rev03_accent;
         }
         return R.color.senku_rev03_warn;

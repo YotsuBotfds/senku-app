@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -46,12 +47,12 @@ enum class Mode {
 }
 
 private val PaperAnswerCardInnerPadding = 0.dp
-private val PaperAnswerCardSectionSpacing = 10.dp
+private val PaperAnswerCardSectionSpacing = 14.dp
 private val PaperAnswerCardBorderWidth = 0.5.dp
-private val PaperAnswerCardBodySize = 17.sp
-private val PaperAnswerCardBodyLineHeight = 25.sp
-private val PaperAnswerCardSupportSize = 12.sp
-private val PaperAnswerCardSupportLineHeight = 18.sp
+private val PaperAnswerCardBodySize = 18.sp
+private val PaperAnswerCardBodyLineHeight = 29.sp
+private val PaperAnswerCardSupportSize = 13.sp
+private val PaperAnswerCardSupportLineHeight = 20.sp
 private val PaperAnswerCardMetaSize = 10.sp
 private val PaperAnswerCardMetaLineHeight = 13.sp
 
@@ -113,10 +114,7 @@ fun PaperAnswerCard(
         )
     }
     val footerMeta = buildFooterMeta(content)
-    val statusTone = when {
-        !content.abstain -> palette.muted
-        else -> colors.danger
-    }
+    val statusTone = if (content.abstain) colors.danger else palette.muted
     val safetyTone = colors.danger
 
     Surface(
@@ -163,22 +161,17 @@ fun PaperAnswerCard(
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                     )
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(6.dp),
-                    ) {
-                        Text(
-                            text = compactEvidenceLabel(content),
-                            style = typography.monoCaps.copy(
-                                fontSize = 10.sp,
-                                lineHeight = 13.sp,
-                                fontWeight = FontWeight.Normal,
-                            ),
-                            color = evidenceTone,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis,
-                        )
-                    }
+                    Text(
+                        text = compactEvidenceLabel(content),
+                        style = typography.monoCaps.copy(
+                            fontSize = 10.sp,
+                            lineHeight = 13.sp,
+                            fontWeight = FontWeight.Normal,
+                        ),
+                        color = evidenceTone,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                    )
                 }
 
                 Text(
@@ -193,47 +186,51 @@ fun PaperAnswerCard(
                 )
 
                 if (!content.steps.isNullOrEmpty() && !content.abstain) {
-                    AnswerSectionDivider(palette.hairline)
-                    SectionHeader(
+                    SupportBlock(
                         label = if (content.uncertainFit) "TRY" else "STEPS",
-                        color = if (content.uncertainFit) evidenceTone else palette.muted,
-                    )
-                    Column(verticalArrangement = Arrangement.spacedBy(3.dp)) {
-                        content.steps.forEachIndexed { index, step ->
-                            Text(
-                                text = if (content.uncertainFit) {
-                                    step.trim()
-                                } else {
-                                    "${index + 1}. ${step.trim()}"
-                                },
-                                style = typography.smallBody.copy(
-                                    fontSize = PaperAnswerCardSupportSize,
-                                    lineHeight = PaperAnswerCardSupportLineHeight,
-                                    fontWeight = FontWeight.Normal,
-                                    letterSpacing = 0.sp,
-                                ),
-                                color = palette.body,
-                            )
+                        labelColor = if (content.uncertainFit) evidenceTone else palette.muted,
+                        palette = palette,
+                        emphasized = content.uncertainFit,
+                    ) {
+                        Column(verticalArrangement = Arrangement.spacedBy(3.dp)) {
+                            content.steps.forEachIndexed { index, step ->
+                                Text(
+                                    text = if (content.uncertainFit) {
+                                        step.trim()
+                                    } else {
+                                        "${index + 1}. ${step.trim()}"
+                                    },
+                                    style = typography.smallBody.copy(
+                                        fontSize = PaperAnswerCardSupportSize,
+                                        lineHeight = PaperAnswerCardSupportLineHeight,
+                                        fontWeight = FontWeight.Normal,
+                                        letterSpacing = 0.sp,
+                                    ),
+                                    color = palette.body,
+                                )
+                            }
                         }
                     }
                 }
 
                 if (!content.limits.isNullOrBlank()) {
-                    AnswerSectionDivider(palette.hairline)
-                    SectionHeader(
+                    SupportBlock(
                         label = if (content.abstain) "NEXT STEP" else "LIMITS & SAFETY",
-                        color = safetyTone,
-                    )
-                    Text(
-                        text = content.limits.trim(),
-                        style = typography.smallBody.copy(
-                            fontSize = PaperAnswerCardSupportSize,
-                            lineHeight = PaperAnswerCardSupportLineHeight,
-                            fontWeight = FontWeight.Normal,
-                            letterSpacing = 0.sp,
-                        ),
-                        color = palette.body,
-                    )
+                        labelColor = safetyTone,
+                        palette = palette,
+                        emphasized = content.abstain || content.uncertainFit,
+                    ) {
+                        Text(
+                            text = content.limits.trim(),
+                            style = typography.smallBody.copy(
+                                fontSize = PaperAnswerCardSupportSize,
+                                lineHeight = PaperAnswerCardSupportLineHeight,
+                                fontWeight = FontWeight.Normal,
+                                letterSpacing = 0.sp,
+                            ),
+                            color = palette.body,
+                        )
+                    }
                 }
 
                 AnswerSectionDivider(palette.hairline)
@@ -292,6 +289,45 @@ fun PaperAnswerCard(
 }
 
 @Composable
+private fun SupportBlock(
+    label: String,
+    labelColor: Color,
+    palette: PaperAnswerPalette,
+    emphasized: Boolean,
+    content: @Composable () -> Unit,
+) {
+    val blockBackground = if (emphasized) palette.calloutBackground else Color.Transparent
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(blockBackground)
+            .padding(
+                start = 0.dp,
+                top = if (emphasized) 12.dp else 0.dp,
+                end = if (emphasized) 12.dp else 0.dp,
+                bottom = if (emphasized) 12.dp else 0.dp,
+            ),
+    ) {
+        if (emphasized) {
+            Box(
+                modifier = Modifier
+                    .width(2.dp)
+                    .height(56.dp)
+                    .background(labelColor)
+            )
+            Spacer(modifier = Modifier.width(12.dp))
+        }
+        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            SectionHeader(
+                label = label,
+                color = labelColor,
+            )
+            content()
+        }
+    }
+}
+
+@Composable
 private fun SectionHeader(
     label: String,
     color: Color,
@@ -323,6 +359,7 @@ private data class PaperAnswerPalette(
     val hairline: Color,
     val border: Color,
     val leftAccent: Color,
+    val calloutBackground: Color,
     val cornerRadius: androidx.compose.ui.unit.Dp,
 )
 
@@ -340,17 +377,14 @@ private fun rememberPaperAnswerPalette(
                 else -> colors.bg2
             }
             PaperAnswerPalette(
-                background = base,
+                background = Color.Transparent,
                 body = colors.ink0,
                 muted = colors.ink2,
                 hairline = colors.hairlineStrong,
-                border = colors.hairlineStrong.copy(alpha = 0.72f),
-                leftAccent = when {
-                    content.abstain -> colors.danger
-                    content.uncertainFit -> colors.warn
-                    else -> Color.Transparent
-                },
-                cornerRadius = 4.dp,
+                border = Color.Transparent,
+                leftAccent = Color.Transparent,
+                calloutBackground = base,
+                cornerRadius = 0.dp,
             )
         }
 
@@ -361,21 +395,14 @@ private fun rememberPaperAnswerPalette(
                 else -> Color.Transparent
             }
             PaperAnswerPalette(
-                background = base,
+                background = Color.Transparent,
                 body = colors.ink0,
                 muted = colors.ink2,
                 hairline = colors.hairline,
-                border = if (content.abstain || content.uncertainFit) {
-                    colors.hairline.copy(alpha = 0.45f)
-                } else {
-                    Color.Transparent
-                },
-                leftAccent = when {
-                    content.abstain -> colors.danger
-                    content.uncertainFit -> colors.warn
-                    else -> Color.Transparent
-                },
-                cornerRadius = if (content.abstain || content.uncertainFit) 4.dp else 0.dp,
+                border = Color.Transparent,
+                leftAccent = Color.Transparent,
+                calloutBackground = base,
+                cornerRadius = 0.dp,
             )
         }
     }
@@ -396,12 +423,12 @@ private fun evidenceToneColor(
 internal fun compactEvidenceLabel(content: AnswerContent): String {
     return when (content.answerSurfaceLabel) {
         AnswerSurfaceLabel.DeterministicRule -> "RULE MATCH"
-        AnswerSurfaceLabel.LimitedFit -> "UNSURE"
+        AnswerSurfaceLabel.LimitedFit -> "UNSURE FIT"
         AnswerSurfaceLabel.Abstain -> "NO MATCH"
         AnswerSurfaceLabel.ReviewedCardEvidence -> sourceEvidenceLabel(content)
         AnswerSurfaceLabel.GeneratedEvidence,
         AnswerSurfaceLabel.Unknown -> when {
-            content.uncertainFit -> "UNSURE"
+            content.uncertainFit -> "UNSURE FIT"
             content.evidence == Evidence.Strong -> sourceEvidenceLabel(content)
             content.evidence == Evidence.Moderate -> sourceEvidenceLabel(content)
             content.abstain -> "NO MATCH"

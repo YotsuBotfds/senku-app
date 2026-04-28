@@ -15,6 +15,10 @@ class PaperAnswerCardLabelTest {
             compactEvidenceLabel(answer(answerSurfaceLabel = AnswerSurfaceLabel.ReviewedCardEvidence)),
         )
         assertEquals(
+            "UNSURE FIT",
+            compactEvidenceLabel(answer(answerSurfaceLabel = AnswerSurfaceLabel.LimitedFit)),
+        )
+        assertEquals(
             "STRONG SOURCES",
             compactEvidenceLabel(answer(evidence = Evidence.Strong)),
         )

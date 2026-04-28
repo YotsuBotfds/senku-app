@@ -102,7 +102,7 @@ fun CategoryShelf(
     onCategorySelected: (CategoryShelfItemModel) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val verticalGap = dimensionResource(R.dimen.senku_rev03_space_8)
+    val verticalGap = 5.dp
 
     Column(
         modifier = modifier.fillMaxWidth(),

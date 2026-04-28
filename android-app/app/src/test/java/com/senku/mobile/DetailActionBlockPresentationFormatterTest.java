@@ -158,6 +158,7 @@ public final class DetailActionBlockPresentationFormatterTest {
 
         assertEquals(4, actions.size());
         assertEquals("Stop all hot work", actions.get(0).title);
+        assertEquals("Clear the floor to 5 m radius", actions.get(1).title);
         assertEquals("Notify the area owner", actions.get(3).title);
     }
 
@@ -165,15 +166,17 @@ public final class DetailActionBlockPresentationFormatterTest {
     public void extractEmergencyActionSpecsNormalizesFoundryMockDetailCopy() {
         List<DetailActionBlockPresentationFormatter.EmergencyActionSpec> actions =
             DetailActionBlockPresentationFormatter.extractEmergencyActionSpecs(
-                "Immediate actions:\n" +
-                    "1. Confirm two paths of egress. Doors and roll-up openings must be unobstructed.\n" +
-                    "2. Notify the area owner. GD-132 \u00a71 is current owner.",
+                    "Immediate actions:\n" +
+                    "1. Clear the floor to a 5 m radius. Move personnel upwind.\n" +
+                    "2. Confirm two paths of egress. Doors and roll-up openings must be unobstructed.\n" +
+                    "3. Notify the area owner. GD-132 \u00a71 is current owner.",
                 text -> citationFormatter.stripInlineCitationText(text)
             );
 
-        assertEquals(2, actions.size());
-        assertEquals("Door and roll-up open and unobstructed.", actions.get(0).detail);
-        assertEquals("GD-132 lists current owner.", actions.get(1).detail);
+        assertEquals(3, actions.size());
+        assertEquals("Clear the floor to 5 m radius", actions.get(0).title);
+        assertEquals("Door and roll-up open and unobstructed.", actions.get(1).detail);
+        assertEquals("GD-132 lists current owner.", actions.get(2).detail);
     }
 
     @Test

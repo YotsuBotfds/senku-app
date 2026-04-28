@@ -11,12 +11,13 @@ files from this lane.
   - Home, Search, Answer, Guide, Thread: phone portrait, phone landscape,
     tablet portrait, tablet landscape.
   - Emergency: phone portrait and tablet portrait only.
-- Current proof pack: `artifacts/ui_state_pack/20260428_043744/20260428_043744`.
+- Current proof pack: `artifacts/ui_state_pack/20260428_054213`.
   - Status `pass`, 47/47 states, homogeneous APK
-    `d722ed83fea4ae7f1cee64d459967cd10a51293baa3e92b534fc6717ca5e2a77`,
+    `41f9af85783049a6f1c6a9554b0a21e2bf3c026983c20be2ff7c37133fcd1426`,
     model `gemma-4-e2b-it-litert`, rotation mismatch count 0.
-- Reviewed anchors: `7efcac0` (`advance android mock parity wave18`) and
-  `343bfde` (`polish android mock parity wave18`).
+- Reviewed anchors: `00a3adb` (`advance android mock parity wave20`),
+  `7efcac0` (`advance android mock parity wave18`), and `343bfde`
+  (`polish android mock parity wave18`).
 - Reviewer note: `notes/ANDROID_VISUAL_QA_20260428_0445.md`.
 - Current verdict: technical proof is green; visual parity is not closed.
   Wave18 resolved the tablet thread `GD-?` header leak and removed the
@@ -28,13 +29,10 @@ files from this lane.
   `claudedesign4-27/surface-guide.jsx`,
   `claudedesign4-27/primitives.jsx`, and
   `claudedesign4-27/tokens.jsx`.
-- Live worktree caution at this planner refresh: concurrent Android edits are
-  present in `DetailActivity.java`, multiple `Detail*PresentationFormatter`
-  files, `GuideBodySanitizer.java`, `MainActivity.java`, `CategoryShelf.kt`,
-  `IdentityStrip.kt`, `PaperAnswerCard.kt`, `SourceRow.kt`,
-  `TabletDetailScreen.kt`, and related tests. Do not dispatch P1, P2, P4, P6,
-  P7, or source-row/evidence component work until the worker has reconciled
-  live `git status --short`.
+- Live worktree caution at this planner refresh: wave20 was committed and
+  pushed as `00a3adb`; only protected untracked handoff notes remained before
+  wave21 workers started. Reconcile live `git status --short` before staging
+  any worker output.
 
 ## Proof Path Rules
 
@@ -70,8 +68,7 @@ Owner: planner only.
 
 Acceptance:
 
-- Active proof pack remains
-  `artifacts/ui_state_pack/20260428_043744/20260428_043744`.
+- Active proof pack remains `artifacts/ui_state_pack/20260428_054213`.
 - This file stays aligned with reviewer findings and live `git status`.
 - No code, generated artifacts, target mocks, or protected handoff notes are
   edited from this lane.

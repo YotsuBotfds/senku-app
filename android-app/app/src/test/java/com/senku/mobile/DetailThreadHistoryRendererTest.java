@@ -60,7 +60,7 @@ public final class DetailThreadHistoryRendererTest {
             renderer.buildTurnLabel(2, true, turn("question", "GD-345", 0L), "")
         );
         assertEquals(
-            "A2 \u00B7 ANCHOR GD-220 -> GD-345",
+            "A2 \u00B7 ANCHOR GD-345",
             renderer.buildTurnLabel(2, false, turn("answer", "GD-345", 0L), "GD-220")
         );
         assertEquals(
@@ -93,7 +93,9 @@ public final class DetailThreadHistoryRendererTest {
     public void statusLabelsUseScreenshotTranscriptTokens() {
         assertEquals("CONFIDENT", DetailThreadHistoryRenderer.compactStatusLabel("source-backed"));
         assertEquals("CONFIDENT", DetailThreadHistoryRenderer.compactStatusLabel("reviewed"));
+        assertEquals("CONFIDENT", DetailThreadHistoryRenderer.compactStatusLabel("confident"));
         assertEquals("UNSURE", DetailThreadHistoryRenderer.compactStatusLabel("ready"));
+        assertEquals("UNSURE", DetailThreadHistoryRenderer.compactStatusLabel("unsure"));
     }
 
     @Test

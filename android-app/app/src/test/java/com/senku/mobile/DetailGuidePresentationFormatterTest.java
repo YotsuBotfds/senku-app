@@ -150,6 +150,37 @@ public final class DetailGuidePresentationFormatterTest {
     }
 
     @Test
+    public void guideBodySanitizerTreatsDashedInfoBoxFencesAsNoteBlocks() {
+        assertEquals(
+            "NOTE \u00b7 Critical Insight\nAncient civilizations used natural stones.",
+            GuideBodySanitizer.sanitizeGuideBodyForDisplay(
+                ":::info-box\nCritical Insight: Ancient civilizations used natural stones.\n:::"
+            )
+        );
+    }
+
+    @Test
+    public void guideBodySanitizerPromotesShortStandaloneAdmonitionTitles() {
+        assertEquals(
+            "WARNING \u00b7 Crucible Safety\nNever use a cracked crucible.",
+            GuideBodySanitizer.sanitizeGuideBodyForDisplay(
+                "::: warning\nCrucible Safety\n\nNever use a cracked crucible.\n:::"
+            )
+        );
+    }
+
+    @Test
+    public void guideBodySanitizerRemovesRawTableMarkupAndHtmlEntities() {
+        assertEquals(
+            "Material \u00b7 Best Use \u00b7 Sandstone \u00b7 Coarse grinding \u00b7 Owner's note",
+            GuideBodySanitizer.sanitizeGuideBodyForDisplay(
+                "<table><tr><th>Material</th><th>Best Use</th></tr><tr><td>Sandstone</td><td>Coarse grinding</td></tr></table> "
+                    + "Owner&apos;s note"
+            )
+        );
+    }
+
+    @Test
     public void guideBodySanitizerRemovesDuplicateInlineAdmonitionSeparator() {
         assertEquals(
             "DANGER \u00b7 EXTREME BURN HAZARD\nKeep every tool dry.",

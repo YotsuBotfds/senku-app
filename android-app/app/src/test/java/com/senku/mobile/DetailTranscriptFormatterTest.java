@@ -21,7 +21,8 @@ public final class DetailTranscriptFormatterTest {
             "what about drainage",
             "Dig a shallow uphill diversion trench.",
             List.of("[GD-222] Site Drainage"),
-            "GD-222"
+            "GD-222",
+            "deterministic-drainage"
         );
 
         String transcript = DetailTranscriptFormatter.buildTranscriptExportText(
@@ -34,13 +35,15 @@ public final class DetailTranscriptFormatterTest {
         assertTrue(transcript.contains("Senku transcript"));
         assertTrue(transcript.contains("Topic: Storm shelter"));
         assertTrue(transcript.contains("Q1: how do i build a rain shelter"));
-        assertTrue(transcript.contains("A1 (Guide GD-111 | source-backed): Keep one side low to the wind."));
-        assertTrue(transcript.contains("Guides: GD-111"));
+        assertTrue(transcript.contains("A1 \u00B7 anchor GD-111 \u00B7 unsure: Keep one side low to the wind."));
+        assertTrue(transcript.contains("Refs: GD-111"));
         assertTrue(transcript.contains("Q2: what about drainage"));
-        assertTrue(transcript.contains("A2 (Guide GD-111 -> GD-222 | source-backed): Dig a shallow uphill diversion trench."));
-        assertTrue(transcript.contains("Guides: GD-222"));
+        assertTrue(transcript.contains("A2 \u00B7 anchor GD-222 \u00B7 confident: Dig a shallow uphill diversion trench."));
+        assertTrue(transcript.contains("Refs: GD-222"));
         assertFalse(transcript.contains("Site Drainage"));
         assertFalse(transcript.contains("Anchor shift"));
+        assertFalse(transcript.contains("Guide "));
+        assertFalse(transcript.contains("->"));
     }
 
     @Test
@@ -85,13 +88,23 @@ public final class DetailTranscriptFormatterTest {
         List<String> sources,
         String anchorGuideId
     ) {
+        return turn(question, answerSummary, sources, anchorGuideId, "");
+    }
+
+    private static SessionMemory.TurnSnapshot turn(
+        String question,
+        String answerSummary,
+        List<String> sources,
+        String anchorGuideId,
+        String ruleId
+    ) {
         return new SessionMemory.TurnSnapshot(
             question,
             answerSummary,
             answerSummary,
             sources,
             List.of(source(anchorGuideId)),
-            "",
+            ruleId,
             1714244042000L
         );
     }

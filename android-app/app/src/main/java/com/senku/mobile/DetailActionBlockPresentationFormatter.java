@@ -286,9 +286,9 @@ final class DetailActionBlockPresentationFormatter {
     private static EmergencyActionSpec splitEmergencyAction(String cleaned) {
         int splitIndex = firstSentenceBoundary(cleaned);
         if (splitIndex < 0) {
-            return new EmergencyActionSpec(trimEmergencyActionTitle(cleaned), "");
+            return new EmergencyActionSpec(normalizeEmergencyActionTitle(trimEmergencyActionTitle(cleaned)), "");
         }
-        String title = trimEmergencyActionTitle(cleaned.substring(0, splitIndex));
+        String title = normalizeEmergencyActionTitle(trimEmergencyActionTitle(cleaned.substring(0, splitIndex)));
         String detail = normalizeEmergencyActionDetail(
             cleaned.substring(splitIndex).replaceFirst("^[.!?]+\\s*", "").trim()
         );
@@ -296,6 +296,15 @@ final class DetailActionBlockPresentationFormatter {
             return new EmergencyActionSpec(cleaned, "");
         }
         return new EmergencyActionSpec(title, detail);
+    }
+
+    private static String normalizeEmergencyActionTitle(String text) {
+        String title = safe(text).trim();
+        title = title.replace(
+            "Clear the floor to a 5 m radius",
+            "Clear the floor to 5 m radius"
+        );
+        return title;
     }
 
     private static List<String> extractEmergencyStepLines(String answerText) {

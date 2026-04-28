@@ -1771,22 +1771,23 @@ public final class MainActivity extends AppCompatActivity {
         boolean compactPhoneHome = isCompactPhoneHomeLayout();
         button.setPadding(
             dp(isTabletSearchLayout() ? 8 : (manualHomeShell ? 10 : (compactPhoneHome ? 10 : 12))),
-            dp(isTabletSearchLayout() ? 3 : (manualHomeShell ? 4 : (compactPhoneHome ? 8 : 10))),
+            dp(isTabletSearchLayout() ? 3 : (manualHomeShell ? 5 : (compactPhoneHome ? 8 : 10))),
             dp(isTabletSearchLayout() ? 8 : (manualHomeShell ? 9 : (compactPhoneHome ? 10 : 12))),
-            dp(isTabletSearchLayout() ? 3 : (manualHomeShell ? 4 : (compactPhoneHome ? 8 : 10)))
+            dp(isTabletSearchLayout() ? 3 : (manualHomeShell ? 5 : (compactPhoneHome ? 8 : 10)))
         );
         button.setTextColor(getResources().getColor(manualHomeShell
             ? R.color.senku_rev03_ink_0
             : R.color.senku_text_light));
         if (manualHomeShell) {
-            button.setTextSize(10);
+            button.setTextSize(12);
+            button.setTypeface(android.graphics.Typeface.DEFAULT, android.graphics.Typeface.NORMAL);
         }
         button.setTextAlignment(View.TEXT_ALIGNMENT_VIEW_START);
         button.setGravity(android.view.Gravity.START | android.view.Gravity.CENTER_VERTICAL);
         button.setMaxLines(manualHomeShell ? 2 : (compactPhoneHome ? 2 : 3));
         button.setEllipsize(TextUtils.TruncateAt.END);
         button.setText(manualHomeShell
-            ? buildManualHomeRecentThreadLabel(preview)
+            ? buildManualHomeRecentThreadLabelSpannable(preview)
             : (compactPhoneHome
                 ? presentationFormatter().buildCompactRecentThreadLabel(preview)
                 : presentationFormatter().buildRecentThreadLabel(preview)));
@@ -1816,6 +1817,62 @@ public final class MainActivity extends AppCompatActivity {
 
     private String buildManualHomeRecentThreadLabel(ChatSessionStore.ConversationPreview preview) {
         return buildManualHomeRecentThreadLabelStatic(preview);
+    }
+
+    private android.text.SpannableString buildManualHomeRecentThreadLabelSpannable(
+        ChatSessionStore.ConversationPreview preview
+    ) {
+        String label = buildManualHomeRecentThreadLabel(preview);
+        android.text.SpannableString spannable = new android.text.SpannableString(label);
+        int lineBreak = label.indexOf('\n');
+        if (lineBreak < 0) {
+            spannable.setSpan(
+                new android.text.style.ForegroundColorSpan(getColor(R.color.senku_rev03_ink_0)),
+                0,
+                label.length(),
+                android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+            );
+            return spannable;
+        }
+        spannable.setSpan(
+            new android.text.style.ForegroundColorSpan(getColor(R.color.senku_rev03_ink_0)),
+            0,
+            lineBreak,
+            android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+        );
+        spannable.setSpan(
+            new android.text.style.RelativeSizeSpan(1.04f),
+            0,
+            lineBreak,
+            android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+        );
+        int metaStart = lineBreak + 1;
+        spannable.setSpan(
+            new android.text.style.ForegroundColorSpan(getColor(R.color.senku_rev03_ink_2)),
+            metaStart,
+            label.length(),
+            android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+        );
+        spannable.setSpan(
+            new android.text.style.RelativeSizeSpan(0.82f),
+            metaStart,
+            label.length(),
+            android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+        );
+        int confidenceStart = Math.max(label.lastIndexOf("CONFIDENT"), label.lastIndexOf("UNSURE"));
+        if (confidenceStart >= metaStart) {
+            spannable.setSpan(
+                new android.text.style.ForegroundColorSpan(getColor(
+                    label.startsWith("UNSURE", confidenceStart)
+                        ? R.color.senku_rev03_warn
+                        : R.color.senku_rev03_olive_60
+                )),
+                confidenceStart,
+                label.length(),
+                android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+            );
+        }
+        return spannable;
     }
 
     static String buildManualHomeRecentThreadLabelForTest(ChatSessionStore.ConversationPreview preview) {
@@ -2228,10 +2285,10 @@ public final class MainActivity extends AppCompatActivity {
         if (!isManualHomeShellLayout()) {
             return;
         }
-        setTopMargin(categorySectionHeader, isLandscapePhoneLayout() ? 12 : 14);
-        setTopMargin(categorySectionContainer, 8);
-        setTopMargin(recentThreadsSection, isLandscapePhoneLayout() ? 0 : 14);
-        setTopMargin(recentThreadsContainer, 7);
+        setTopMargin(categorySectionHeader, isLandscapePhoneLayout() ? 9 : 12);
+        setTopMargin(categorySectionContainer, 6);
+        setTopMargin(recentThreadsSection, isLandscapePhoneLayout() ? 0 : 12);
+        setTopMargin(recentThreadsContainer, 6);
         allowChildOverflow(categorySectionContainer);
         allowChildOverflow(recentThreadsSection);
         allowChildOverflow(recentThreadsContainer);
@@ -2326,7 +2383,7 @@ public final class MainActivity extends AppCompatActivity {
         bottomTabBarView = new BottomTabBarHostView(this);
         if (landscapePhone) {
             bottomTabBarView.setLayoutParams(new LinearLayout.LayoutParams(
-                dp(96),
+                dp(78),
                 ViewGroup.LayoutParams.MATCH_PARENT
             ));
             wrapper.addView(bottomTabBarView);

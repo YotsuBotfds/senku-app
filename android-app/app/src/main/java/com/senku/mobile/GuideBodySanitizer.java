@@ -6,7 +6,7 @@ import java.util.regex.Pattern;
 
 final class GuideBodySanitizer {
     private static final Locale QUERY_LOCALE = Locale.US;
-    private static final Pattern GUIDE_ADMONITION_FENCE_PATTERN = Pattern.compile("^:::\\s*([a-zA-Z]+)?\\s*$");
+    private static final Pattern GUIDE_ADMONITION_FENCE_PATTERN = Pattern.compile("^:::\\s*([a-zA-Z][a-zA-Z-]*)?\\s*$");
     private static final Pattern GUIDE_ADMONITION_LABEL_PATTERN = Pattern.compile("^(DANGER|WARNING|CAUTION|IMPORTANT|NOTE):?$");
     private static final Pattern GUIDE_ADMONITION_INLINE_PREFIX_PATTERN =
         Pattern.compile("^(DANGER|WARNING|CAUTION|IMPORTANT|NOTE|DANGEROUS)(?:\\s*[:.-]\\s*|\\s+)(.+)$");
@@ -20,6 +20,10 @@ final class GuideBodySanitizer {
     private static final Pattern GUIDE_MARKDOWN_LINK_PATTERN = Pattern.compile("\\[([^\\]]+)\\]\\(([^\\)]+)\\)");
     private static final Pattern GUIDE_HTML_LINK_PATTERN = Pattern.compile("(?i)<a\\b[^>]*>(.*?)</a>");
     private static final Pattern GUIDE_HTML_BREAK_PATTERN = Pattern.compile("(?i)<br\\s*/?>");
+    private static final Pattern GUIDE_HTML_TABLE_BOUNDARY_PATTERN =
+        Pattern.compile("(?i)</?(?:tr|thead|tbody|tfoot|table)\\b[^>]*>");
+    private static final Pattern GUIDE_HTML_CELL_BOUNDARY_PATTERN = Pattern.compile("(?i)</?(?:td|th)\\b[^>]*>");
+    private static final Pattern GUIDE_HTML_TAG_PATTERN = Pattern.compile("(?i)</?[a-z][a-z0-9:-]*\\b[^>]*>");
     private static final Pattern GUIDE_MARKDOWN_ESCAPE_PATTERN = Pattern.compile("\\\\([\\[\\]\\(\\)#*_`])");
     private static final Pattern GUIDE_MARKDOWN_RULE_PATTERN = Pattern.compile("^\\s*(?:-{3,}|_{3,}|\\*{3,})\\s*$");
     private static final Pattern GUIDE_METADATA_LINE_PATTERN =
@@ -140,6 +144,9 @@ final class GuideBodySanitizer {
                 }
             }
             if (displayLine.isEmpty() && trimmed.isEmpty()) {
+                if (insideAdmonitionBlock) {
+                    continue;
+                }
                 appendBlankLine(builder, parsedLines);
                 continue;
             }
@@ -297,6 +304,9 @@ final class GuideBodySanitizer {
         cleaned = GUIDE_MARKDOWN_HEADING_PATTERN.matcher(cleaned).replaceFirst("");
         cleaned = GUIDE_MARKDOWN_LINK_PATTERN.matcher(cleaned).replaceAll("$1");
         cleaned = GUIDE_HTML_LINK_PATTERN.matcher(cleaned).replaceAll("$1");
+        cleaned = GUIDE_HTML_TABLE_BOUNDARY_PATTERN.matcher(cleaned).replaceAll(" ");
+        cleaned = GUIDE_HTML_CELL_BOUNDARY_PATTERN.matcher(cleaned).replaceAll(" \u00b7 ");
+        cleaned = GUIDE_HTML_TAG_PATTERN.matcher(cleaned).replaceAll(" ");
         cleaned = cleaned.replace("**", "");
         cleaned = cleaned.replace("__", "");
         cleaned = cleaned.replace("`", "");
@@ -387,6 +397,9 @@ final class GuideBodySanitizer {
         String cleaned = safe(line).trim();
         int colonIndex = cleaned.indexOf(':');
         if (colonIndex < 0) {
+            if (looksLikeStandaloneAdmonitionTitle(cleaned)) {
+                return new AdmonitionTitleSplit(cleaned, "");
+            }
             return new AdmonitionTitleSplit("", cleaned);
         }
         String title = cleaned.substring(0, colonIndex).trim();
@@ -398,6 +411,32 @@ final class GuideBodySanitizer {
             return new AdmonitionTitleSplit("", cleaned);
         }
         return new AdmonitionTitleSplit(title, detail);
+    }
+
+    private static boolean looksLikeStandaloneAdmonitionTitle(String line) {
+        String cleaned = safe(line).trim();
+        if (cleaned.isEmpty() || cleaned.length() > 48 || cleaned.endsWith(".")) {
+            return false;
+        }
+        if (canonicalGuideAdmonitionLabel(cleaned).equals(cleaned)) {
+            return false;
+        }
+        String[] words = cleaned.split("\\s+");
+        if (words.length > 6) {
+            return false;
+        }
+        int titleishWords = 0;
+        for (String word : words) {
+            String normalized = word.replaceAll("^[^\\p{Alnum}]+|[^\\p{Alnum}]+$", "");
+            if (normalized.isEmpty()) {
+                continue;
+            }
+            char first = normalized.charAt(0);
+            if (Character.isUpperCase(first) || normalized.equals(normalized.toUpperCase(QUERY_LOCALE))) {
+                titleishWords++;
+            }
+        }
+        return titleishWords == words.length && titleishWords > 0;
     }
 
     static boolean isGuideSectionDisplayLine(String line) {
@@ -492,6 +531,8 @@ final class GuideBodySanitizer {
         cleaned = GUIDE_HTML_BREAK_PATTERN.matcher(cleaned).replaceAll("\n");
         cleaned = cleaned.replace("&nbsp;", " ");
         cleaned = cleaned.replace("&amp;", "&");
+        cleaned = cleaned.replace("&quot;", "\"");
+        cleaned = cleaned.replace("&apos;", "'");
         cleaned = cleaned.replace("&lt;", "<");
         cleaned = cleaned.replace("&gt;", ">");
         cleaned = cleaned.replace("\u00e2\u20ac\u201d", " - ");
@@ -529,6 +570,8 @@ final class GuideBodySanitizer {
         cleaned = cleaned.replace("Â·", "\u00b7");
         cleaned = GUIDE_SEPARATOR_RUN_PATTERN.matcher(cleaned).replaceAll(" \u00b7 ");
         cleaned = cleaned.replaceAll("\\s+\\u00b7\\s+", " \u00b7 ");
+        cleaned = cleaned.replaceAll("^\\s*\\u00b7\\s*", "");
+        cleaned = cleaned.replaceAll("\\s*\\u00b7\\s*$", "");
         cleaned = cleaned.replaceAll("[ \\t]+([,.;:])", "$1");
         return cleaned;
     }

@@ -70,38 +70,32 @@ final class DetailTranscriptFormatter {
         String answerText = safe(turn == null ? null : turn.answerSummary).trim();
         if (!answerText.isEmpty()) {
             builder.append("\nA").append(safeTurnNumber);
-            String answerMeta = buildAnswerMeta(turn, previousAnchorGuideId, turnAnchorResolver);
+            String answerMeta = buildAnswerMeta(turn, turnAnchorResolver);
             if (!answerMeta.isEmpty()) {
-                builder.append(" (").append(answerMeta).append(")");
+                builder.append(" \u00B7 ").append(answerMeta);
             }
             builder.append(": ").append(answerText);
         }
 
         List<String> guideIds = guideIdsForTurn(turn, turnAnchorResolver);
         if (!guideIds.isEmpty()) {
-            builder.append("\nGuides: ").append(String.join(", ", guideIds));
+            builder.append("\nRefs: ").append(String.join(", ", guideIds));
         }
     }
 
     private static String buildAnswerMeta(
         SessionMemory.TurnSnapshot turn,
-        String previousAnchorGuideId,
         TurnAnchorResolver turnAnchorResolver
     ) {
         String anchorGuideId = resolveAnchorGuideId(turn, turnAnchorResolver);
         StringBuilder builder = new StringBuilder();
         if (!anchorGuideId.isEmpty()) {
-            String previous = safe(previousAnchorGuideId).trim();
-            builder.append("Guide ");
-            if (!previous.isEmpty() && !previous.equals(anchorGuideId)) {
-                builder.append(previous).append(" -> ");
-            }
-            builder.append(anchorGuideId);
+            builder.append("anchor ").append(anchorGuideId);
         }
         String status = statusForTurn(turn);
         if (!status.isEmpty()) {
             if (builder.length() > 0) {
-                builder.append(" | ");
+                builder.append(" \u00B7 ");
             }
             builder.append(status);
         }
@@ -182,12 +176,12 @@ final class DetailTranscriptFormatter {
             return "";
         }
         if (ReviewedCardMetadata.normalize(turn.reviewedCardMetadata).isPresent()) {
-            return "reviewed";
+            return "confident";
         }
-        if (turn.sources != null && !turn.sources.isEmpty()) {
-            return "source-backed";
+        if (!safe(turn.ruleId).trim().isEmpty()) {
+            return "confident";
         }
-        return safe(turn.answerSummary).trim().isEmpty() ? "" : "ready";
+        return safe(turn.answerSummary).trim().isEmpty() ? "" : "unsure";
     }
 
     private static String safe(String text) {
