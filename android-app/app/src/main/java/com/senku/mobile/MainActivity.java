@@ -78,6 +78,9 @@ public final class MainActivity extends AppCompatActivity {
     private static final int MANUAL_HOME_CATEGORY_CARD_HEIGHT_DP = 40;
     private static final int TABLET_MANUAL_HOME_CATEGORY_CARD_HEIGHT_DP = 32;
     private static final int MANUAL_HOME_CATEGORY_ROW_GAP_DP = 2;
+    private static final int MANUAL_HOME_RECENT_ROW_HEIGHT_DP = 44;
+    private static final int MANUAL_HOME_RECENT_ROW_GAP_DP = 3;
+    private static final int TABLET_MANUAL_HOME_RECENT_ROW_GAP_DP = 4;
     private static final String REVIEW_SEARCH_QUERY = "rain shelter";
     private static final String REVIEW_SEARCH_LATENCY_LABEL = "12ms";
     private static final ReviewSearchResultSpec[] REVIEW_RAIN_SHELTER_RESULTS = {
@@ -1792,9 +1795,9 @@ public final class MainActivity extends AppCompatActivity {
         boolean compactPhoneHome = isCompactPhoneHomeLayout();
         button.setPadding(
             dp(isTabletSearchLayout() ? 9 : (manualHomeShell ? 12 : (compactPhoneHome ? 10 : 12))),
-            dp(isTabletSearchLayout() ? 4 : (manualHomeShell ? 6 : (compactPhoneHome ? 8 : 10))),
+            dp(resolveManualHomeRecentThreadVerticalPaddingDp(isTabletSearchLayout(), manualHomeShell, compactPhoneHome)),
             dp(isTabletSearchLayout() ? 9 : (manualHomeShell ? 12 : (compactPhoneHome ? 10 : 12))),
-            dp(isTabletSearchLayout() ? 4 : (manualHomeShell ? 6 : (compactPhoneHome ? 8 : 10)))
+            dp(resolveManualHomeRecentThreadVerticalPaddingDp(isTabletSearchLayout(), manualHomeShell, compactPhoneHome))
         );
         button.setTextColor(getResources().getColor(manualHomeShell
             ? R.color.senku_rev03_ink_0
@@ -1808,8 +1811,13 @@ public final class MainActivity extends AppCompatActivity {
         button.setMaxLines(manualHomeShell ? 2 : (compactPhoneHome ? 2 : 3));
         button.setEllipsize(TextUtils.TruncateAt.END);
         if (manualHomeShell && !isTabletSearchLayout()) {
-            button.setMinHeight(dp(isLandscapePhoneLayout() ? 44 : 48));
-            button.setMinimumHeight(dp(isLandscapePhoneLayout() ? 44 : 48));
+            int minimumHeight = resolveManualHomeRecentThreadMinimumHeightDp(
+                isTabletSearchLayout(),
+                isLandscapePhoneLayout(),
+                manualHomeShell
+            );
+            button.setMinHeight(dp(minimumHeight));
+            button.setMinimumHeight(dp(minimumHeight));
         }
         button.setText(manualHomeShell
             ? buildManualHomeRecentThreadLabelSpannable(preview, index)
@@ -1822,7 +1830,11 @@ public final class MainActivity extends AppCompatActivity {
             LinearLayout.LayoutParams.WRAP_CONTENT
         );
         if (index > 0) {
-            params.topMargin = dp(isTabletSearchLayout() ? 4 : (manualHomeShell ? 4 : (compactPhoneHome ? 6 : 8)));
+            params.topMargin = dp(resolveManualHomeRecentThreadGapDp(
+                isTabletSearchLayout(),
+                manualHomeShell,
+                compactPhoneHome
+            ));
         }
         button.setLayoutParams(params);
         button.setOnClickListener(v -> openRecentThread(preview));
@@ -1838,6 +1850,45 @@ public final class MainActivity extends AppCompatActivity {
             return true;
         });
         return button;
+    }
+
+    static int resolveManualHomeRecentThreadMinimumHeightDp(
+        boolean tabletSearchLayout,
+        boolean landscapePhoneLayout,
+        boolean manualHomeShell
+    ) {
+        if (!manualHomeShell || tabletSearchLayout) {
+            return 0;
+        }
+        return MANUAL_HOME_RECENT_ROW_HEIGHT_DP;
+    }
+
+    static int resolveManualHomeRecentThreadGapDp(
+        boolean tabletSearchLayout,
+        boolean manualHomeShell,
+        boolean compactPhoneHome
+    ) {
+        if (tabletSearchLayout) {
+            return TABLET_MANUAL_HOME_RECENT_ROW_GAP_DP;
+        }
+        if (manualHomeShell) {
+            return MANUAL_HOME_RECENT_ROW_GAP_DP;
+        }
+        return compactPhoneHome ? 6 : 8;
+    }
+
+    static int resolveManualHomeRecentThreadVerticalPaddingDp(
+        boolean tabletSearchLayout,
+        boolean manualHomeShell,
+        boolean compactPhoneHome
+    ) {
+        if (tabletSearchLayout) {
+            return 4;
+        }
+        if (manualHomeShell) {
+            return 4;
+        }
+        return compactPhoneHome ? 8 : 10;
     }
 
     private String buildManualHomeRecentThreadLabel(ChatSessionStore.ConversationPreview preview) {

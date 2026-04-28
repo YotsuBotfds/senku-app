@@ -277,7 +277,7 @@ internal fun tabletThreadRailWidthDp(
     }
 
 internal fun tabletGuidePaperMaxWidthDp(isLandscape: Boolean): Int =
-    if (isLandscape) 560 else 440
+    if (isLandscape) 520 else 440
 
 internal fun tabletGuideNavigationLabels(): TabletGuideNavigationLabels =
     TabletGuideNavigationLabels(

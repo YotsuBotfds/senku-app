@@ -227,7 +227,7 @@ public final class DetailFollowupLandscapeComposerTest {
     @Test
     public void phonePortraitHeaderUsesShortAnswerLabel() {
         assertEquals(
-            "ANSWER GD-345 - Rain shelter",
+            "ANSWER GD-345 • Rain shelter",
             DetailActivity.buildPhonePortraitAnswerHeaderTitle("GD-345", "Rain shelter")
         );
         assertEquals("ANSWER GD-345", DetailActivity.buildPhonePortraitAnswerHeaderTitle("GD-345", ""));
@@ -240,11 +240,11 @@ public final class DetailFollowupLandscapeComposerTest {
     @Test
     public void phoneThreadHeaderUsesTranscriptLabel() {
         assertEquals(
-            "THREAD GD-220 - Rain shelter - 2 turns",
+            "THREAD GD-220 • Rain shelter • 2 turns",
             DetailActivity.buildPhonePortraitThreadHeaderTitle("GD-220", "Rain shelter", 2)
         );
         assertEquals(
-            "THREAD - 2 turns",
+            "THREAD • 2 turns",
             DetailActivity.buildPhonePortraitThreadHeaderTitle("", "", 1)
         );
     }

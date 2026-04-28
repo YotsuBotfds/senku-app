@@ -5498,9 +5498,9 @@ public final class DetailActivity extends AppCompatActivity {
             builder.append(' ').append(guideId);
         }
         if (!topic.isEmpty()) {
-            builder.append(" - ").append(topic);
+            builder.append(" • ").append(topic);
         }
-        builder.append(" - ").append(turns).append(turns == 1 ? " turn" : " turns");
+        builder.append(" • ").append(turns).append(turns == 1 ? " turn" : " turns");
         return builder.toString();
     }
 
@@ -5544,12 +5544,12 @@ public final class DetailActivity extends AppCompatActivity {
         String guideId = safe(primaryGuideId).trim();
         String label = safe(primarySourceLabel).trim();
         if (!guideId.isEmpty() && !label.isEmpty()) {
-            return "ANSWER " + guideId + " - " + label;
+            return "ANSWER " + guideId + " • " + label;
         }
         if (!guideId.isEmpty()) {
             return "ANSWER " + guideId;
         }
-        return label.isEmpty() ? "ANSWER" : "ANSWER - " + label;
+        return label.isEmpty() ? "ANSWER" : "ANSWER • " + label;
     }
 
     private void applyPhonePortraitHeaderTreatment() {

@@ -140,9 +140,9 @@ fun DockedComposer(
     val colors = SenkuTheme.colors
     val typography = SenkuTheme.typography
     val focusRequester = remember { FocusRequester() }
-    val fieldHeight = if (landscapePhoneBudgeted) 36.dp else 40.dp
-    val fieldVerticalPadding = if (landscapePhoneBudgeted) 7.dp else 9.dp
-    val rowVerticalPadding = if (landscapePhoneBudgeted) 6.dp else 9.dp
+    val fieldHeight = if (landscapePhoneBudgeted) 36.dp else 38.dp
+    val fieldVerticalPadding = if (landscapePhoneBudgeted) 7.dp else 8.dp
+    val rowVerticalPadding = if (landscapePhoneBudgeted) 6.dp else 7.dp
     val actionSize = if (landscapePhoneBudgeted) 34.dp else 36.dp
     val sendVerticalPadding = if (landscapePhoneBudgeted) 8.dp else 9.dp
     val hasSendText = model.enabled && model.text.trim().isNotEmpty()
@@ -162,7 +162,7 @@ fun DockedComposer(
         HorizontalDivider(
             modifier = Modifier.fillMaxWidth(),
             thickness = 1.dp,
-            color = colors.hairlineStrong,
+            color = colors.hairline,
         )
         if (contextHint.isNotEmpty()) {
             Text(
@@ -170,9 +170,9 @@ fun DockedComposer(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(
-                        start = if (model.compact) 18.dp else 24.dp,
-                        top = 8.dp,
-                        end = if (model.compact) 18.dp else 24.dp,
+                        start = if (model.compact) 16.dp else 24.dp,
+                        top = 7.dp,
+                        end = if (model.compact) 16.dp else 24.dp,
                     ),
                 style = typography.monoCaps.copy(
                     fontSize = 10.sp,
@@ -187,16 +187,16 @@ fun DockedComposer(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = if (model.compact) 18.dp else 24.dp, vertical = rowVerticalPadding),
+                .padding(horizontal = if (model.compact) 16.dp else 24.dp, vertical = rowVerticalPadding),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(10.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             if (model.showRetry && onRetryClick != null) {
                 Surface(
                     color = colors.bg2,
                     contentColor = colors.ink1,
                     shape = RoundedCornerShape(10.dp),
-                    border = androidx.compose.foundation.BorderStroke(1.dp, colors.hairlineStrong),
+                    border = androidx.compose.foundation.BorderStroke(1.dp, colors.hairline),
                     onClick = { if (model.enabled) onRetryClick() },
                 ) {
                     Text(
@@ -214,10 +214,10 @@ fun DockedComposer(
 
             Surface(
                 modifier = Modifier.size(actionSize),
-                color = colors.bg1,
+                color = colors.bg0,
                 contentColor = colors.ink2,
                 shape = CircleShape,
-                border = androidx.compose.foundation.BorderStroke(1.dp, colors.hairlineStrong),
+                border = androidx.compose.foundation.BorderStroke(1.dp, colors.hairline),
                 onClick = { },
             ) {
                 Box(contentAlignment = Alignment.Center) {
@@ -288,12 +288,12 @@ fun DockedComposer(
             )
 
             Surface(
-                color = colors.bg1,
+                color = colors.bg0,
                 contentColor = if (hasSendText) colors.ink0 else colors.ink2,
                 shape = RoundedCornerShape(10.dp),
                 border = androidx.compose.foundation.BorderStroke(
                     1.dp,
-                    if (hasSendText) colors.accent.copy(alpha = 0.72f) else colors.hairlineStrong,
+                    if (hasSendText) colors.accent.copy(alpha = 0.72f) else colors.hairline,
                 ),
                 onClick = {
                     if (hasSendText) {

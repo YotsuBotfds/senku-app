@@ -52,8 +52,8 @@ class StressReadingPolicyTest {
     }
 
     @Test
-    fun tabletGuidePaperPolicyContainsPortraitReaderWithoutChangingLandscapeSheet() {
-        assertEquals(560, tabletGuidePaperMaxWidthDp(isLandscape = true))
+    fun tabletGuidePaperPolicyContainsPortraitReaderWithTrimmedLandscapeSheet() {
+        assertEquals(520, tabletGuidePaperMaxWidthDp(isLandscape = true))
         assertEquals(440, tabletGuidePaperMaxWidthDp(isLandscape = false))
     }
 

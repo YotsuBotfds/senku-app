@@ -227,7 +227,7 @@ private fun ScoreTick(
     ) {
         Box(
             modifier = Modifier
-                    .width(22.dp)
+                    .width(scoreTickTrackWidthDp(label).dp)
                     .height(2.dp)
                     .background(color.copy(alpha = 0.30f)),
         ) {
@@ -347,6 +347,17 @@ internal fun scoreTickFillFraction(rankLabel: String): Float {
         score >= 70 -> 0.74f
         score >= 60 -> 0.66f
         else -> 0.54f
+    }
+}
+
+internal fun scoreTickTrackWidthDp(rankLabel: String): Int {
+    val score = rankLabel.trim().toIntOrNull() ?: return 16
+    return when {
+        score >= 90 -> 18
+        score >= 75 -> 17
+        score >= 70 -> 16
+        score >= 60 -> 15
+        else -> 14
     }
 }
 

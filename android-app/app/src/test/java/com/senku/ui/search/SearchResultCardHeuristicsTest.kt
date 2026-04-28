@@ -130,6 +130,16 @@ class SearchResultCardHeuristicsTest {
     }
 
     @Test
+    fun scoreTickTrackWidthDp_staysCompactAndRankSensitive() {
+        assertEquals(18, scoreTickTrackWidthDp("92"))
+        assertEquals(17, scoreTickTrackWidthDp("78"))
+        assertEquals(16, scoreTickTrackWidthDp("74"))
+        assertEquals(15, scoreTickTrackWidthDp("61"))
+        assertEquals(14, scoreTickTrackWidthDp("49"))
+        assertEquals(16, scoreTickTrackWidthDp("#1"))
+    }
+
+    @Test
     fun warmThreadGuideIdsForPreview_onlyKeepsFreshThreads() {
         val now = 1_000_000L
         val freshIds = warmThreadGuideIdsForPreview(

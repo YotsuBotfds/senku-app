@@ -179,6 +179,16 @@ public final class MainActivityHomeChromeTest {
     }
 
     @Test
+    public void manualHomeRecentRowsUseCompactPhoneDensityForThreeRows() {
+        assertEquals(44, MainActivity.resolveManualHomeRecentThreadMinimumHeightDp(false, false, true));
+        assertEquals(44, MainActivity.resolveManualHomeRecentThreadMinimumHeightDp(false, true, true));
+        assertEquals(0, MainActivity.resolveManualHomeRecentThreadMinimumHeightDp(true, false, true));
+        assertEquals(3, MainActivity.resolveManualHomeRecentThreadGapDp(false, true, true));
+        assertEquals(4, MainActivity.resolveManualHomeRecentThreadVerticalPaddingDp(false, true, true));
+        assertEquals(4, MainActivity.resolveManualHomeRecentThreadGapDp(true, true, false));
+    }
+
+    @Test
     public void searchResultLimitMatchesCompactStatePackSurface() {
         assertEquals(4, MainActivity.SEARCH_RESULT_LIMIT);
     }

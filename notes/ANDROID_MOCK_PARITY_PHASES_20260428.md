@@ -268,6 +268,22 @@ to phone detail layouts. Residual risks: visual parity remains roughly
 polish-stage rather than exact, especially guide paper sizing, answer/thread
 composer placement, and tablet source-rail proportions.
 
+Wave37 integration proof:
+`artifacts/ui_state_pack/wave37_integration/20260428_144332` is green
+(`pass`, 47/47, fail count 0, ANR count 0), homogeneous APK
+`6cb6dacd1a0053e1dd601bfc2bb32b2b3e0a29fa3496900cc4b4be961cd98b1a`,
+model `gemma-4-e2b-it-litert`
+(`ea1102014465edeb14b517bf270f6751d036749e3c5f517a7ff802782cb92161`),
+rotation mismatch count 0. Scope was narrow mock-polish: phone answer/thread
+headers now use compact bullet-style separators instead of hyphens, the docked
+composer is denser and quieter, tablet guide paper width is bounded closer to
+the target, phone home recent rows keep all three rows visible, and search score
+ticks compress to fit the right score column. Reviewer status:
+visual final review PASS against Wave36 and `artifacts/mocks`; commit-readiness
+review requested only this proof stanza before staging. Residual risks: global
+system status/nav chrome remains the largest broad visual mismatch, and tablet
+answer/source pane proportions still need a dedicated follow-up slice.
+
 ## Wave25+ Plan
 
 | Wave | Slice | Why this order | Avoid overlapping write sets | Acceptance proof |
