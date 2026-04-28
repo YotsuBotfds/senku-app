@@ -4166,10 +4166,111 @@ public final class DetailActivity extends AppCompatActivity {
     }
 
     private boolean shouldShowEmergencyHeader() {
-        return answerMode
-            && isLandscapePhoneLayout()
-            && isDeterministicRoute()
-            && DeterministicAnswerRouter.isEmergencyRuleId(currentRuleId);
+        return shouldShowEmergencyHeaderForPolicy(
+            answerMode,
+            isLandscapePhoneLayout(),
+            isDeterministicRoute(),
+            currentRuleId,
+            currentPrimarySourceCategory(),
+            reviewedCardMetadataBridge.current(),
+            isLowCoverageRoute(),
+            currentAnswerConfidenceLabel,
+            currentAnswerResponseMode
+        );
+    }
+
+    static boolean shouldShowEmergencyHeaderForPolicy(
+        boolean detailAnswerMode,
+        boolean landscapePhoneLayout,
+        boolean deterministicRoute,
+        String ruleId,
+        String category,
+        ReviewedCardMetadata reviewedCardMetadata,
+        boolean lowCoverageRoute,
+        OfflineAnswerEngine.ConfidenceLabel confidenceLabel,
+        OfflineAnswerEngine.AnswerMode responseMode
+    ) {
+        return detailAnswerMode
+            && landscapePhoneLayout
+            && evaluateEmergencySurfacePolicy(
+                detailAnswerMode,
+                deterministicRoute,
+                ruleId,
+                category,
+                reviewedCardMetadata,
+                lowCoverageRoute,
+                confidenceLabel,
+                responseMode
+            ).eligible;
+    }
+
+    static EmergencySurfacePolicy.Decision evaluateEmergencySurfacePolicy(
+        boolean detailAnswerMode,
+        boolean deterministicRoute,
+        String ruleId,
+        String category,
+        ReviewedCardMetadata reviewedCardMetadata,
+        boolean lowCoverageRoute,
+        OfflineAnswerEngine.ConfidenceLabel confidenceLabel,
+        OfflineAnswerEngine.AnswerMode responseMode
+    ) {
+        return EmergencySurfacePolicy.evaluate(buildEmergencySurfacePolicyInput(
+            detailAnswerMode,
+            deterministicRoute,
+            ruleId,
+            category,
+            reviewedCardMetadata,
+            lowCoverageRoute,
+            confidenceLabel,
+            responseMode
+        ));
+    }
+
+    static EmergencySurfacePolicy.Input buildEmergencySurfacePolicyInput(
+        boolean detailAnswerMode,
+        boolean deterministicRoute,
+        String ruleId,
+        String category,
+        ReviewedCardMetadata reviewedCardMetadata,
+        boolean lowCoverageRoute,
+        OfflineAnswerEngine.ConfidenceLabel confidenceLabel,
+        OfflineAnswerEngine.AnswerMode responseMode
+    ) {
+        ReviewedCardMetadata metadata = ReviewedCardMetadata.normalize(reviewedCardMetadata);
+        return new EmergencySurfacePolicy.Input(
+            deterministicRoute,
+            ruleId,
+            emergencySurfacePolicyCategory(ruleId, category, metadata),
+            metadata.reviewStatus,
+            metadata.provenance,
+            lowCoverageRoute ? "low" : "",
+            confidenceLabelExtraValue(confidenceLabel),
+            detailAnswerMode ? answerModeExtraValue(responseMode) : "guide_reading",
+            metadata.citedReviewedSourceGuideIds.size()
+        );
+    }
+
+    static String emergencySurfacePolicyCategory(
+        String ruleId,
+        String category,
+        ReviewedCardMetadata reviewedCardMetadata
+    ) {
+        ReviewedCardMetadata metadata = ReviewedCardMetadata.normalize(reviewedCardMetadata);
+        String normalizedRuleId = safe(ruleId).trim().toLowerCase(Locale.US);
+        String normalizedCardRuleId = "answer_card:" + safe(metadata.cardId).trim().toLowerCase(Locale.US);
+        if (metadata.isPresent()
+            && !safe(metadata.cardId).trim().isEmpty()
+            && normalizedRuleId.equals(normalizedCardRuleId)) {
+            return (safe(category).trim() + " reviewed emergency answer card").trim();
+        }
+        return safe(category).trim();
+    }
+
+    private String currentPrimarySourceCategory() {
+        if (currentSources == null || currentSources.isEmpty()) {
+            return "";
+        }
+        return safe(currentSources.get(0) == null ? null : currentSources.get(0).category);
     }
 
     private String buildEmergencyHeaderSummary() {
