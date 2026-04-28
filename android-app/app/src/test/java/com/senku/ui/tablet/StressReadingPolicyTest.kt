@@ -10,10 +10,10 @@ class StressReadingPolicyTest {
     fun tabletLandscapeReadingPolicyKeepsAnswerFirstWidthBudget() {
         val policy = tabletLandscapeReadingLayoutPolicy()
 
-        assertEquals(220, policy.threadRailWidthDp)
-        assertEquals(620, policy.answerMaxWidthDp)
-        assertEquals(260, policy.evidenceRailWidthDp)
-        assertEquals(18, policy.answerHorizontalPaddingDp)
+        assertEquals(212, policy.threadRailWidthDp)
+        assertEquals(568, policy.answerMaxWidthDp)
+        assertEquals(248, policy.evidenceRailWidthDp)
+        assertEquals(16, policy.answerHorizontalPaddingDp)
     }
 
     @Test
@@ -37,15 +37,15 @@ class StressReadingPolicyTest {
         assertEquals(456, portraitPolicy.answerMaxWidthDp)
         assertEquals(208, portraitPolicy.evidenceRailWidthDp)
         assertEquals(12, portraitPolicy.answerHorizontalPaddingDp)
-        assertEquals(220, landscapePolicy.threadRailWidthDp)
-        assertEquals(620, landscapePolicy.answerMaxWidthDp)
-        assertEquals(260, landscapePolicy.evidenceRailWidthDp)
-        assertEquals(18, landscapePolicy.answerHorizontalPaddingDp)
+        assertEquals(212, landscapePolicy.threadRailWidthDp)
+        assertEquals(568, landscapePolicy.answerMaxWidthDp)
+        assertEquals(248, landscapePolicy.evidenceRailWidthDp)
+        assertEquals(16, landscapePolicy.answerHorizontalPaddingDp)
     }
 
     @Test
     fun tabletGuideThreadRailUsesSectionIndexWidthWithoutChangingAnswerRails() {
-        assertEquals(220, tabletThreadRailWidthDp(isLandscape = true, guideMode = false))
+        assertEquals(212, tabletThreadRailWidthDp(isLandscape = true, guideMode = false))
         assertEquals(132, tabletThreadRailWidthDp(isLandscape = false, guideMode = false))
         assertEquals(216, tabletThreadRailWidthDp(isLandscape = true, guideMode = true))
         assertEquals(226, tabletThreadRailWidthDp(isLandscape = false, guideMode = true))

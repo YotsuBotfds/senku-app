@@ -1154,7 +1154,7 @@ public final class DetailActivity extends AppCompatActivity {
         );
         scopeChip.setVisibility(answerMode || suppressGuideStateChips ? View.GONE : View.VISIBLE);
         titleView.setTextIsSelectable(answerMode);
-        bodyView.setLineSpacing(0f, answerMode ? 1.18f : 1.08f);
+        bodyView.setLineSpacing(0f, answerMode ? 1.14f : 1.08f);
         followUpPanel.setVisibility(isCurrentAnswerFollowUpEligible() ? View.VISIBLE : View.GONE);
         updateFollowUpMirrorMode();
         if (answerMode && pendingAutoFollowUpQuery.isEmpty()) {
@@ -2540,10 +2540,10 @@ public final class DetailActivity extends AppCompatActivity {
         } else {
             params.width = ViewGroup.LayoutParams.MATCH_PARENT;
             params.height = ViewGroup.LayoutParams.WRAP_CONTENT;
-            params.topMargin = phoneXmlDetailLayoutActive() && answerMode ? dp(6) : dp(12);
+            params.topMargin = phoneXmlDetailLayoutActive() && answerMode ? dp(4) : dp(12);
             bodyMirrorShell.setLayoutParams(params);
             int horizontalPadding = phoneXmlDetailLayoutActive() && answerMode ? 0 : dp(14);
-            int verticalPadding = phoneXmlDetailLayoutActive() && answerMode ? dp(8) : dp(12);
+            int verticalPadding = phoneXmlDetailLayoutActive() && answerMode ? dp(6) : dp(12);
             bodyMirrorShell.setPadding(horizontalPadding, verticalPadding, horizontalPadding, verticalPadding);
             bodyMirrorShell.setBackgroundResource(answerMode && phoneXmlDetailLayoutActive()
                 ? R.drawable.bg_detail_answer_shell
@@ -5564,8 +5564,8 @@ public final class DetailActivity extends AppCompatActivity {
             screenMeta.setEllipsize(TextUtils.TruncateAt.END);
         }
         if (titleView != null) {
-            titleView.setMaxLines(compactPhoneAnswer ? 4 : Integer.MAX_VALUE);
-            titleView.setEllipsize(compactPhoneAnswer ? TextUtils.TruncateAt.END : null);
+            titleView.setMaxLines(Integer.MAX_VALUE);
+            titleView.setEllipsize(null);
             titleView.setIncludeFontPadding(!compactPhoneAnswer);
         }
     }
@@ -5797,6 +5797,10 @@ public final class DetailActivity extends AppCompatActivity {
         emergencyHeader.setVisibility(View.VISIBLE);
         emergencyHeaderTitle.setText(buildEmergencyHeaderTitle());
         emergencyHeaderText.setText(buildEmergencyHeaderSummary());
+        emergencyHeaderTitle.setSingleLine(false);
+        emergencyHeaderTitle.setEllipsize(null);
+        emergencyHeaderText.setMaxLines(Integer.MAX_VALUE);
+        emergencyHeaderText.setEllipsize(null);
     }
 
     private boolean shouldShowEmergencyHeader() {
@@ -6276,12 +6280,12 @@ public final class DetailActivity extends AppCompatActivity {
         setTopMargin(answerBubble, dp(4));
         setTopMargin(inlineSourcesScroll, dp(6));
         setTopMargin(materialsScroll, dp(6));
-        setTopMargin(bodyMirrorShell, answerMode ? dp(6) : dp(10));
-        setTopMargin(answerCardView, answerMode ? dp(8) : dp(12));
+        setTopMargin(bodyMirrorShell, answerMode ? dp(4) : dp(10));
+        setTopMargin(answerCardView, answerMode ? dp(6) : dp(12));
         setTopMargin(bodyView, dp(0));
         setTopMargin(titleView, answerMode ? dp(6) : dp(8));
         setTopMargin(subtitleView, answerMode ? dp(4) : dp(8));
-        setTopMargin(whyPanel, dp(8));
+        setTopMargin(whyPanel, dp(6));
         setTopMargin(inlineNextStepsScroll, dp(6));
     }
 
@@ -6413,7 +6417,7 @@ public final class DetailActivity extends AppCompatActivity {
         if (landscapePhone) {
             return 6;
         }
-        return compactFollowUp ? 10 : 14;
+        return compactFollowUp ? 8 : 14;
     }
 
     private void updateTopBarActions() {

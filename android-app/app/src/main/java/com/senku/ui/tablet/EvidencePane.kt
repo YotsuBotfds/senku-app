@@ -62,10 +62,10 @@ private enum class EvidenceCardDensity {
 
 internal fun tabletEvidenceVisibilityPolicy(): TabletEvidenceVisibilityPolicy =
     TabletEvidenceVisibilityPolicy(
-        evidencePaneWidthDp = 260,
+        evidencePaneWidthDp = tabletLandscapeReadingLayoutPolicy().evidenceRailWidthDp,
         landscapeRailDensity = EvidenceRailDensity.Full,
         activeTitleMaxLines = 2,
-        activeSnippetMaxLines = 8,
+        activeSnippetMaxLines = 6,
         portraitCollapsedByDefault = true,
         collapsedTitleMaxLines = 2,
         collapsedSnippetMaxLines = 4,
@@ -91,8 +91,8 @@ fun EvidencePane(
             .background(colors.bg1)
             .fillMaxHeight()
             .verticalScroll(scrollState)
-            .padding(horizontal = 14.dp, vertical = 14.dp),
-        verticalArrangement = Arrangement.spacedBy(12.dp),
+            .padding(horizontal = 12.dp, vertical = 12.dp),
+        verticalArrangement = Arrangement.spacedBy(10.dp),
     ) {
         CrossReferenceSection(
             anchor = anchor,

@@ -246,10 +246,10 @@ internal enum class TabletGuideBodyLineKind {
 
 internal fun tabletLandscapeReadingLayoutPolicy(): TabletReadingLayoutPolicy =
     TabletReadingLayoutPolicy(
-        threadRailWidthDp = 220,
-        answerMaxWidthDp = 620,
-        evidenceRailWidthDp = 260,
-        answerHorizontalPaddingDp = 18,
+        threadRailWidthDp = 212,
+        answerMaxWidthDp = 568,
+        evidenceRailWidthDp = 248,
+        answerHorizontalPaddingDp = 16,
     )
 
 internal fun tabletPortraitReadingLayoutPolicy(): TabletReadingLayoutPolicy =

@@ -284,6 +284,22 @@ review requested only this proof stanza before staging. Residual risks: global
 system status/nav chrome remains the largest broad visual mismatch, and tablet
 answer/source pane proportions still need a dedicated follow-up slice.
 
+Wave38 integration proof:
+`artifacts/ui_state_pack/wave38_integration/20260428_150500` is green
+(`pass`, 47/47, fail count 0, ANR count 0), homogeneous APK
+`683c0830a9671a297cc179d8d278db43710874f03edf4c92a7e4138a707897d9`,
+model `gemma-4-e2b-it-litert`
+(`ea1102014465edeb14b517bf270f6751d036749e3c5f517a7ff802782cb92161`),
+rotation mismatch count 0. Scope covered parallel polish slices: app theme now
+uses dark status/navigation bar colors, tablet answer/evidence proportions are
+tighter, guide paper chrome and section-marker sanitizing are calmer, phone
+detail spacing is denser with un-clamped emergency copy, and home/search chrome
+plus nav rails are more compact. Validation included the Android local quality
+gate and focused JVM tests for detail, guide, home/search, emergency, and tablet
+policies. Residual risks: emulator system icons remain bright outside app
+control, phone answer still exposes proof/provenance earlier than the target
+mock, and Home/Search typography remains heavier than the Claude reference.
+
 ## Wave25+ Plan
 
 | Wave | Slice | Why this order | Avoid overlapping write sets | Acceptance proof |

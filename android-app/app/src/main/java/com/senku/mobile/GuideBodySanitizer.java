@@ -12,6 +12,8 @@ final class GuideBodySanitizer {
         Pattern.compile("^(DANGER|WARNING|CAUTION|IMPORTANT|NOTE|DANGEROUS)(?:\\s*[:.-]\\s*|\\s+)(.+)$");
     private static final Pattern GUIDE_MARKDOWN_HEADING_PATTERN = Pattern.compile("^#{1,6}\\s+");
     private static final Pattern GUIDE_SECTION_LINE_PATTERN = Pattern.compile("^Source section:\\s*(.+)$", Pattern.CASE_INSENSITIVE);
+    private static final Pattern GUIDE_BRACKET_SECTION_LINE_PATTERN =
+        Pattern.compile("^\\[\\[?/?SECTION\\]?\\]?\\s*(.*)$", Pattern.CASE_INSENSITIVE);
     private static final Pattern GUIDE_REQUIRED_READING_PATTERN =
         Pattern.compile("^Required Reading\\s*[:\\-\\u00b7]\\s*(.+)$", Pattern.CASE_INSENSITIVE);
     private static final Pattern GUIDE_SECTION_DISPLAY_PATTERN =
@@ -308,7 +310,8 @@ final class GuideBodySanitizer {
     private static boolean shouldSkipGuideDisplayLine(String trimmedLine) {
         String cleaned = safe(trimmedLine).trim();
         return GUIDE_MARKDOWN_RULE_PATTERN.matcher(cleaned).matches()
-            || GUIDE_METADATA_LINE_PATTERN.matcher(cleaned).matches();
+            || GUIDE_METADATA_LINE_PATTERN.matcher(cleaned).matches()
+            || isEmptyBracketSectionMarkerLine(cleaned);
     }
 
     private static String joinParsedLines(java.util.ArrayList<GuideBodyLine> parsedLines) {
@@ -406,13 +409,18 @@ final class GuideBodySanitizer {
     private static boolean isGuideSectionMarkerLine(String line) {
         String cleaned = safe(line).trim();
         return cleaned.startsWith(GUIDE_SECTION_ANCHOR_MARKER)
-            || GUIDE_SECTION_LINE_PATTERN.matcher(cleaned).matches();
+            || GUIDE_SECTION_LINE_PATTERN.matcher(cleaned).matches()
+            || GUIDE_BRACKET_SECTION_LINE_PATTERN.matcher(cleaned).matches();
     }
 
     private static String extractGuideSectionValue(String line) {
         String cleaned = safe(line).trim();
         if (cleaned.startsWith(GUIDE_SECTION_ANCHOR_MARKER)) {
             return cleaned.substring(GUIDE_SECTION_ANCHOR_MARKER.length()).trim();
+        }
+        Matcher bracketSectionMatcher = GUIDE_BRACKET_SECTION_LINE_PATTERN.matcher(cleaned);
+        if (bracketSectionMatcher.matches()) {
+            return safe(bracketSectionMatcher.group(1)).trim();
         }
         Matcher sourceSectionMatcher = GUIDE_SECTION_LINE_PATTERN.matcher(cleaned);
         if (sourceSectionMatcher.matches()) {
@@ -425,6 +433,11 @@ final class GuideBodySanitizer {
                 .trim();
         }
         return cleaned;
+    }
+
+    private static boolean isEmptyBracketSectionMarkerLine(String line) {
+        Matcher matcher = GUIDE_BRACKET_SECTION_LINE_PATTERN.matcher(safe(line).trim());
+        return matcher.matches() && safe(matcher.group(1)).trim().isEmpty();
     }
 
     private static boolean isRequiredReadingLine(String line) {

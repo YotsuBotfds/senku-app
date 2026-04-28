@@ -394,6 +394,18 @@ public final class DetailGuidePresentationFormatterTest {
     }
 
     @Test
+    public void guideBodySanitizerRemovesBracketSectionMarkersAndClosers() {
+        assertEquals(
+            "\u2014 \u00a7 1 \u00b7 AREA READINESS\nKeep water away.",
+            GuideBodySanitizer.sanitizeGuideBodyForDisplay(
+                "[SECTION] Area readiness\n"
+                    + "Keep water away.\n"
+                    + "[[/SECTION]]"
+            )
+        );
+    }
+
+    @Test
     public void guideBodySanitizerRemovesRawHtmlLinksAndImageBang() {
         assertEquals(
             "For air supply, see Bellows & Forge Blower Construction.\nFoundry diagram 1",

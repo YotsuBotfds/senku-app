@@ -11,11 +11,11 @@
     android:paddingBottom="2dp">
 
     <LinearLayout
-        android:layout_width="36dp"
+        android:layout_width="32dp"
         android:layout_height="match_parent"
         android:gravity="center_horizontal"
         android:orientation="vertical"
-        android:paddingTop="5dp">
+        android:paddingTop="4dp">
 
         <TextView
             android:layout_width="22dp"
@@ -28,8 +28,8 @@
             android:textStyle="bold" />
 
         <ImageView
-            android:layout_width="18dp"
-            android:layout_height="18dp"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
             android:layout_marginTop="12dp"
             android:contentDescription="@string/browse_guides_button"
             android:padding="2dp"
@@ -37,18 +37,18 @@
             android:tint="@color/senku_rev03_accent" />
 
         <ImageView
-            android:layout_width="18dp"
-            android:layout_height="18dp"
-            android:layout_marginTop="16dp"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:layout_marginTop="14dp"
             android:contentDescription="@string/ask_button"
             android:padding="2dp"
             android:src="@drawable/ic_home_ask"
             android:tint="@color/senku_rev03_ink_2" />
 
         <ImageView
-            android:layout_width="18dp"
-            android:layout_height="18dp"
-            android:layout_marginTop="16dp"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:layout_marginTop="14dp"
             android:contentDescription="@string/bottom_tab_pins"
             android:padding="2dp"
             android:src="@drawable/ic_home_saved"
@@ -79,7 +79,7 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="30dp"
+                android:layout_height="28dp"
                 android:gravity="center_vertical"
                 android:orientation="horizontal">
 
@@ -109,8 +109,8 @@
                 </LinearLayout>
 
                 <ImageView
-                    android:layout_width="22dp"
-                    android:layout_height="22dp"
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
                     android:contentDescription="@null"
                     android:importantForAccessibility="no"
                     android:padding="3dp"
@@ -119,9 +119,9 @@
 
                 <View
                     android:layout_width="1dp"
-                    android:layout_height="22dp"
-                    android:layout_marginStart="12dp"
-                    android:layout_marginEnd="16dp"
+                    android:layout_height="18dp"
+                    android:layout_marginStart="9dp"
+                    android:layout_marginEnd="12dp"
                     android:background="@color/senku_rev03_hairline_strong" />
 
                 <TextView
@@ -136,12 +136,12 @@
                     android:text="HOME  SENKU  &#8226;  Field manual &#8226; ed.2"
                     android:textAppearance="?android:attr/textAppearanceSmall"
                     android:textColor="@color/senku_rev03_ink_1"
-                    android:textSize="11sp"
+                    android:textSize="10sp"
                     android:textStyle="bold" />
 
                 <ImageView
-                    android:layout_width="18dp"
-                    android:layout_height="18dp"
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
                     android:contentDescription="@string/search_button"
                     android:src="@drawable/ic_search_magnifier"
                     android:tint="@color/senku_rev03_ink_2" />
@@ -155,13 +155,13 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="24dp"
-                android:layout_marginTop="5dp"
+                android:layout_height="22dp"
+                android:layout_marginTop="4dp"
                 android:background="@drawable/bg_manual_home_status"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
-                android:paddingStart="12dp"
-                android:paddingEnd="12dp">
+                android:paddingStart="10dp"
+                android:paddingEnd="10dp">
 
                 <TextView
                     android:id="@+id/status_text"
@@ -206,21 +206,20 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="34dp"
-                android:layout_marginTop="5dp"
+                android:layout_height="31dp"
+                android:layout_marginTop="4dp"
                 android:addStatesFromChildren="true"
                 android:background="@drawable/bg_manual_home_search"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
-                android:paddingStart="16dp"
-                android:paddingEnd="16dp">
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp">
 
                 <ImageView
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:background="@drawable/bg_manual_home_search_icon"
+                    android:layout_width="17dp"
+                    android:layout_height="17dp"
                     android:contentDescription="@string/search_input_description"
-                    android:padding="3dp"
+                    android:padding="2dp"
                     android:src="@drawable/ic_search_magnifier"
                     android:tint="@color/senku_rev03_accent" />
 
@@ -228,7 +227,7 @@
                     android:id="@+id/search_input"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_marginStart="9dp"
+                    android:layout_marginStart="8dp"
                     android:layout_weight="1"
                     android:background="@android:color/transparent"
                     android:contentDescription="@string/search_input_description"
@@ -356,8 +355,8 @@
         android:layout_weight="0.78"
         android:background="@drawable/bg_manual_home_row"
         android:orientation="vertical"
-        android:paddingStart="16dp"
-        android:paddingTop="60dp"
+        android:paddingStart="12dp"
+        android:paddingTop="54dp"
         android:paddingEnd="0dp"
         android:paddingBottom="8dp"
         android:visibility="gone">
@@ -415,7 +414,7 @@
         <LinearLayout
             android:id="@+id/phone_search_query_well"
             android:layout_width="match_parent"
-            android:layout_height="30dp"
+            android:layout_height="28dp"
             android:layout_marginBottom="0dp"
             android:gravity="center_vertical"
             android:orientation="horizontal"
@@ -424,10 +423,10 @@
             android:visibility="gone">
 
             <ImageView
-                android:layout_width="16dp"
-                android:layout_height="16dp"
+                android:layout_width="15dp"
+                android:layout_height="15dp"
                 android:contentDescription="@string/search_input_description"
-                android:padding="3dp"
+                android:padding="2dp"
                 android:src="@drawable/ic_search_magnifier"
                 android:tint="@color/senku_rev03_accent" />
 

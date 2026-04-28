@@ -102,7 +102,7 @@ fun CategoryShelf(
     onCategorySelected: (CategoryShelfItemModel) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val verticalGap = 3.dp
+    val verticalGap = 2.dp
 
     Column(
         modifier = modifier.fillMaxWidth(),
@@ -113,7 +113,7 @@ fun CategoryShelf(
                 CategoryGrid(
                     items = items,
                     columns = 3,
-                    cardHeight = 42.dp,
+                    cardHeight = 40.dp,
                     selectionEnabled = selectionEnabled,
                     onCategorySelected = onCategorySelected,
                 )
@@ -123,7 +123,7 @@ fun CategoryShelf(
                 CategoryGrid(
                     items = items,
                     columns = 3,
-                    cardHeight = 34.dp,
+                    cardHeight = 32.dp,
                     selectionEnabled = selectionEnabled,
                     onCategorySelected = onCategorySelected,
                 )
@@ -150,7 +150,7 @@ private fun CategoryGrid(
     selectionEnabled: Boolean,
     onCategorySelected: (CategoryShelfItemModel) -> Unit,
 ) {
-    val gap = 3.dp
+    val gap = 2.dp
     items.chunked(columns).forEach { rowItems ->
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -181,7 +181,7 @@ private fun PhoneCategoryCard(
     cardHeight: Dp = 74.dp,
 ) {
     val colors = SenkuTheme.colors
-    val corner = 3.dp
+    val corner = 1.dp
     val compactGrid = cardHeight <= 36.dp
     val horizontalPadding = if (compactGrid) 6.dp else 8.dp
     val verticalPadding = if (compactGrid) 2.dp else 4.dp
@@ -208,12 +208,12 @@ private fun PhoneCategoryCard(
                 .fillMaxWidth()
                 .height(cardHeight)
                 .padding(horizontal = horizontalPadding, vertical = verticalPadding),
-            verticalArrangement = Arrangement.spacedBy(1.dp),
+            verticalArrangement = Arrangement.spacedBy(0.dp),
         ) {
             Box(
                 modifier = Modifier
-                    .width(20.dp)
-                    .height(3.dp)
+                    .width(18.dp)
+                    .height(2.dp)
                     .background(accent.copy(alpha = 0.9f)),
             )
             Text(
@@ -264,7 +264,7 @@ private fun TabletCategoryRow(
             },
         color = colors.bg0,
         contentColor = colors.ink0,
-        shape = RoundedCornerShape(3.dp),
+        shape = RoundedCornerShape(1.dp),
         border = BorderStroke(1.dp, colors.hairlineStrong),
         enabled = enabled,
         onClick = onClick,
@@ -282,7 +282,7 @@ private fun TabletCategoryRow(
             Box(
                 modifier = Modifier
                     .width(14.dp)
-                    .height(3.dp)
+                    .height(2.dp)
                     .background(accent),
             )
             Text(

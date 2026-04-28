@@ -47,7 +47,7 @@ public final class DetailFollowupLandscapeComposerTest {
 
     @Test
     public void followUpPanelKeepsExistingVerticalPaddingOutsideLandscapePhone() {
-        assertEquals(10, DetailActivity.resolveFollowUpPanelVerticalPaddingDp(false, true));
+        assertEquals(8, DetailActivity.resolveFollowUpPanelVerticalPaddingDp(false, true));
         assertEquals(14, DetailActivity.resolveFollowUpPanelVerticalPaddingDp(false, false));
     }
 

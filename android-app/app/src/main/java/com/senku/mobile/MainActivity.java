@@ -2536,7 +2536,7 @@ public final class MainActivity extends AppCompatActivity {
         bottomTabBarView = new BottomTabBarHostView(this);
         if (landscapePhone) {
             bottomTabBarView.setLayoutParams(new LinearLayout.LayoutParams(
-                dp(56),
+                dp(48),
                 ViewGroup.LayoutParams.MATCH_PARENT
             ));
             wrapper.addView(bottomTabBarView);
