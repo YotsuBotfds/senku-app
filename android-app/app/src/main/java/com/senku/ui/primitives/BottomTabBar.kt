@@ -183,8 +183,8 @@ fun SenkuBottomTabBar(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                .padding(start = 8.dp, top = 3.dp, end = 8.dp, bottom = 5.dp),
-                horizontalArrangement = Arrangement.spacedBy(2.dp),
+                    .padding(start = 8.dp, top = 4.dp, end = 8.dp, bottom = 6.dp),
+                horizontalArrangement = Arrangement.spacedBy(4.dp),
             ) {
                 tabs.forEach { tab ->
                     val selected = tab.destination == activeTab
@@ -212,7 +212,7 @@ private fun BottomTabItem(
     val colors = SenkuTheme.colors
     val tint = if (selected) colors.accent else colors.ink3
     val verticalRail = layoutMode == BottomTabBarLayoutMode.VERTICAL_RAIL
-    val itemHeight = if (verticalRail) 46.dp else 33.dp
+    val itemHeight = if (verticalRail) 46.dp else 40.dp
 
     Column(
         modifier = modifier
@@ -222,21 +222,21 @@ private fun BottomTabItem(
                 onClick = onClick,
                 role = Role.Tab,
             )
-            .padding(horizontal = if (verticalRail) 2.dp else 3.dp, vertical = if (verticalRail) 2.dp else 1.dp),
+            .padding(horizontal = if (verticalRail) 2.dp else 4.dp, vertical = if (verticalRail) 2.dp else 3.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(2.dp, Alignment.CenterVertically),
     ) {
         BottomTabIcon(
             destination = tab.destination,
             tint = tint,
-            modifier = Modifier.size(if (verticalRail) 15.dp else 14.dp),
+            modifier = Modifier.size(if (verticalRail) 15.dp else 16.dp),
         )
         Text(
             text = tab.label,
             style = SenkuTheme.typography.tag.copy(
-                fontSize = if (verticalRail) 9.5.sp else 9.sp,
-                lineHeight = if (verticalRail) 10.5.sp else 10.sp,
-                fontWeight = if (selected) FontWeight.Medium else FontWeight.Normal,
+                    fontSize = if (verticalRail) 9.5.sp else 9.5.sp,
+                    lineHeight = if (verticalRail) 10.5.sp else 11.sp,
+                    fontWeight = if (selected) FontWeight.Bold else FontWeight.Normal,
             ),
             color = tint,
             maxLines = if (verticalRail) 2 else 1,
@@ -245,8 +245,8 @@ private fun BottomTabItem(
         )
         Box(
             modifier = Modifier
-                .width(if (selected) 18.dp else 0.dp)
-                .height(1.dp)
+                .width(if (selected) 22.dp else 0.dp)
+                .height(if (selected) 2.dp else 1.dp)
                 .background(if (selected) colors.accent else Color.Transparent),
         )
     }

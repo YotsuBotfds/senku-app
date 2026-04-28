@@ -47,16 +47,20 @@ class StressReadingPolicyTest {
     fun tabletGuideThreadRailUsesSectionIndexWidthWithoutChangingAnswerRails() {
         assertEquals(212, tabletThreadRailWidthDp(isLandscape = true, guideMode = false))
         assertEquals(132, tabletThreadRailWidthDp(isLandscape = false, guideMode = false))
-        assertEquals(204, tabletThreadRailWidthDp(isLandscape = true, guideMode = true))
-        assertEquals(226, tabletThreadRailWidthDp(isLandscape = false, guideMode = true))
+        assertEquals(196, tabletThreadRailWidthDp(isLandscape = true, guideMode = true))
+        assertEquals(216, tabletThreadRailWidthDp(isLandscape = false, guideMode = true))
     }
 
     @Test
     fun tabletGuidePaperPolicyContainsPortraitReaderWithReadableLandscapeSheet() {
-        assertEquals(560, tabletGuidePaperMaxWidthDp(isLandscape = true))
-        assertEquals(440, tabletGuidePaperMaxWidthDp(isLandscape = false))
-        assertEquals(12, tabletGuidePaperHorizontalPaddingDp(isLandscape = true))
-        assertEquals(12, tabletGuidePaperHorizontalPaddingDp(isLandscape = false))
+        assertEquals(548, tabletGuidePaperMaxWidthDp(isLandscape = true))
+        assertEquals(428, tabletGuidePaperMaxWidthDp(isLandscape = false))
+        assertEquals(10, tabletGuidePaperHorizontalPaddingDp(isLandscape = true))
+        assertEquals(10, tabletGuidePaperHorizontalPaddingDp(isLandscape = false))
+        assertEquals(26, tabletGuidePaperInnerHorizontalPaddingDp(isLandscape = true))
+        assertEquals(18, tabletGuidePaperInnerHorizontalPaddingDp(isLandscape = false))
+        assertEquals(28, tabletGuidePaperBottomPaddingDp(isLandscape = true))
+        assertEquals(32, tabletGuidePaperBottomPaddingDp(isLandscape = false))
     }
 
     @Test

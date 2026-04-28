@@ -164,6 +164,36 @@ class TabletEvidenceVisibilityPolicyTest {
     }
 
     @Test
+    fun answerModeSourceRowsCollapseRainShelterStackToThreeMockCards() {
+        val anchor = AnchorState(
+            key = "gd-345",
+            id = "GD-345",
+            title = "Tarp & Cord Shelters",
+            section = "",
+            snippet = "",
+            hasSource = true,
+        )
+        val xrefs = listOf(
+            XRefState(id = "GD-294", title = "Cave Shelter Systems & Cold-Weather"),
+            XRefState(id = "GD-220", title = "Abrasives Manufacturing"),
+            XRefState(id = "GD-132", title = "Foundry & Metal Casting"),
+            XRefState(id = "GD-695", title = "Hurricane & Severe Storm Sheltering"),
+        )
+
+        val rows = tabletAnswerModeSourceRows(anchor, xrefs)
+
+        assertEquals(
+            listOf(
+                TabletEvidenceCardRow("GD-220", "ANCHOR", "Abrasives Manufacturing"),
+                TabletEvidenceCardRow("GD-132", "RELATED", "Foundry & Metal Casting"),
+                TabletEvidenceCardRow("GD-345", "TOPIC", "Tarp & Cord Shelters"),
+            ),
+            rows,
+        )
+        assertEquals(3, buildAnswerModeSourceHeaderCount(anchor, xrefs, answerSourceCount = 7))
+    }
+
+    @Test
     fun tabletGuideModeUsesGuideSectionCountForRailHeader() {
         val state = stateWithSources(
             sourceCount = 1,

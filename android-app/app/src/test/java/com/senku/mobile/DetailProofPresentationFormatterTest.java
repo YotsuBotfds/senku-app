@@ -59,7 +59,7 @@ public final class DetailProofPresentationFormatterTest {
 
     @Test
     public void retrievalModesUseReaderFacingMatchTypes() {
-        assertEquals("MATCH", DetailProofPresentationFormatter.MATCH_TYPE_LABEL);
+        assertEquals("TYPE", DetailProofPresentationFormatter.MATCH_TYPE_LABEL);
         assertEquals("Best match", DetailProofPresentationFormatter.humanizeRetrievalMode("route-focus"));
         assertEquals("Related", DetailProofPresentationFormatter.humanizeRetrievalMode("guide-focus"));
         assertEquals("Generated answer", DetailProofPresentationFormatter.humanizeRetrievalMode("ai-generated"));
@@ -107,7 +107,7 @@ public final class DetailProofPresentationFormatterTest {
         );
 
         assertEquals("Tarp & Cord Shelters", formatter.buildPrimarySourceLabel(sources));
-        assertEquals("ANCHOR [GD-345] - Tarp & Cord Shelters", formatter.buildPrimarySourcePreviewLine(sources));
+        assertEquals("[GD-345] - Tarp & Cord Shelters", formatter.buildPrimarySourcePreviewLine(sources));
         assertEquals("[GD-345] Tarp & Cord Shelters", formatter.buildSourceEntryValue(sources.get(0), sources));
     }
 
@@ -152,7 +152,7 @@ public final class DetailProofPresentationFormatterTest {
         );
 
         assertEquals("Tarp & Cord Shelters", formatter.buildPrimarySourceLabel(sources));
-        assertEquals("ANCHOR [GD-345] - Tarp & Cord Shelters", formatter.buildPrimarySourcePreviewLine(sources));
+        assertEquals("[GD-345] - Tarp & Cord Shelters", formatter.buildPrimarySourcePreviewLine(sources));
         assertEquals("[GD-345] Tarp & Cord Shelters", formatter.buildSourceEntryValue(sources.get(2), sources));
     }
 
@@ -211,7 +211,7 @@ public final class DetailProofPresentationFormatterTest {
         String visible = formatter.buildWhySummaryPlainText(state, sources, true, false);
 
         assertEquals(
-            "SOURCE  [GD-345] Tarp & Cord Shelters\nSOURCES  3 sources",
+            "GUIDE  [GD-345] Tarp & Cord Shelters\nSOURCES  3 sources",
             visible
         );
         assertFalse(visible.contains("MATCH"));

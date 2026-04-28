@@ -282,16 +282,22 @@ internal fun tabletThreadRailWidthDp(
     guideMode: Boolean,
 ): Int =
     when {
-        guideMode && isLandscape -> 204
-        guideMode -> 226
+        guideMode && isLandscape -> 196
+        guideMode -> 216
         else -> tabletReadingLayoutPolicy(isLandscape).threadRailWidthDp
     }
 
 internal fun tabletGuidePaperMaxWidthDp(isLandscape: Boolean): Int =
-    if (isLandscape) 560 else 440
+    if (isLandscape) 548 else 428
 
 internal fun tabletGuidePaperHorizontalPaddingDp(isLandscape: Boolean): Int =
-    if (isLandscape) 12 else 12
+    if (isLandscape) 10 else 10
+
+internal fun tabletGuidePaperInnerHorizontalPaddingDp(isLandscape: Boolean): Int =
+    if (isLandscape) 26 else 18
+
+internal fun tabletGuidePaperBottomPaddingDp(isLandscape: Boolean): Int =
+    if (isLandscape) 28 else 32
 
 internal fun tabletGuideNavigationLabels(): TabletGuideNavigationLabels =
     TabletGuideNavigationLabels(
@@ -1064,7 +1070,7 @@ private fun GuidePaperSurface(
     content: @Composable ColumnScope.() -> Unit,
 ) {
     val paperPalette = tabletGuidePaperPalette()
-    val horizontalPadding = if (state.isLandscape) 28.dp else 20.dp
+    val horizontalPadding = tabletGuidePaperInnerHorizontalPaddingDp(state.isLandscape).dp
 
     Surface(
         modifier = Modifier.fillMaxWidth(),
@@ -1080,9 +1086,9 @@ private fun GuidePaperSurface(
                     start = horizontalPadding,
                     top = if (state.isLandscape) 24.dp else 22.dp,
                     end = horizontalPadding,
-                    bottom = if (state.isLandscape) 30.dp else 36.dp,
+                    bottom = tabletGuidePaperBottomPaddingDp(state.isLandscape).dp,
                 ),
-            verticalArrangement = Arrangement.spacedBy(if (state.isLandscape) 13.dp else 14.dp),
+            verticalArrangement = Arrangement.spacedBy(if (state.isLandscape) 12.dp else 13.dp),
             content = content,
         )
     }

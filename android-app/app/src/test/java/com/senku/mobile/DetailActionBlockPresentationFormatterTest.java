@@ -343,6 +343,23 @@ public final class DetailActionBlockPresentationFormatterTest {
     }
 
     @Test
+    public void extractEmergencyActionSpecsNormalizesBurnHazardMockVariants() {
+        List<DetailActionBlockPresentationFormatter.EmergencyActionSpec> actions =
+            DetailActionBlockPresentationFormatter.extractEmergencyActionSpecs(
+                "Immediate actions:\n" +
+                    "1. Move everyone to minimum 5 m from active work zone. Confirm two paths of egress.\n" +
+                    "2. Clear the floor to minimum 5 m radius. Move personnel upwind.\n" +
+                    "3. Notify the area owner. The guide lists the current owner.",
+                text -> citationFormatter.stripInlineCitationText(text)
+            );
+
+        assertEquals(3, actions.size());
+        assertEquals("Move to minimum 5 m from active work zone", actions.get(0).title);
+        assertEquals("Clear the floor to 5 m radius", actions.get(1).title);
+        assertEquals("GD-132 lists current owner.", actions.get(2).detail);
+    }
+
+    @Test
     public void emergencyActionHeadingMatchesMockCopy() {
         assertEquals(
             "IMMEDIATE ACTIONS \u00b7 4",

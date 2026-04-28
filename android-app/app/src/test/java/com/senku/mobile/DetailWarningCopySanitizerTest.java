@@ -97,6 +97,22 @@ public final class DetailWarningCopySanitizerTest {
     }
 
     @Test
+    public void sanitizeWarningResidualCopy_compactsBurnHazardMockVariants() {
+        String cleaned = DetailWarningCopySanitizer.sanitizeWarningResidualCopy(
+            "Move everyone to minimum 5 m from the active work zone. "
+                + "Clear the floor to minimum 5 m radius. "
+                + "The guide lists the current owner."
+        );
+
+        assertEquals(
+            "Move to minimum 5 m from active work zone. "
+                + "Clear the floor to 5 m radius. "
+                + "GD-132 lists current owner.",
+            cleaned
+        );
+    }
+
+    @Test
     public void sanitizeWarningResidualCopy_removesRouteMetaStatusResidue() {
         String cleaned = DetailWarningCopySanitizer.sanitizeWarningResidualCopy(
             "Stop all hot work [Route Metadata reviewed_card_runtime]. "

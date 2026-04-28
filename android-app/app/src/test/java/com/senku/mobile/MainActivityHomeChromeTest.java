@@ -252,7 +252,7 @@ public final class MainActivityHomeChromeTest {
         assertEquals(0, MainActivity.resolveManualHomeCategoryShelfMinimumHeightDp(0));
         assertEquals(40, MainActivity.resolveManualHomeCategoryShelfMinimumHeightDp(3));
         assertEquals(82, MainActivity.resolveManualHomeCategoryShelfMinimumHeightDp(6));
-        assertEquals(82, MainActivity.resolveTabletManualHomeCategoryShelfMinimumHeightDp(6));
+        assertEquals(66, MainActivity.resolveTabletManualHomeCategoryShelfMinimumHeightDp(6));
     }
 
     @Test

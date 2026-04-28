@@ -22,6 +22,7 @@ final class DetailActionBlockPresentationFormatter {
     static final String EMERGENCY_ACTION_HEADING_PREFIX = "IMMEDIATE ACTIONS \u00b7 ";
     static final int EMERGENCY_DISTANCE_HIGHLIGHT_COLOR = 0xFFC4704B;
     private static final int MAX_EMERGENCY_PORTRAIT_ACTIONS = 4;
+    private static final int EMERGENCY_ACTION_BADGE_SIZE_DP = 17;
 
     enum ActionBlockKind {
         DO_FIRST,
@@ -123,12 +124,12 @@ final class DetailActionBlockPresentationFormatter {
         LinearLayout headingRow = new LinearLayout(context);
         headingRow.setOrientation(LinearLayout.HORIZONTAL);
         headingRow.setGravity(android.view.Gravity.CENTER_VERTICAL);
-        headingRow.setPadding(0, 0, 0, dp(4));
+        headingRow.setPadding(0, 0, 0, dp(3));
 
         View rule = new View(context);
         rule.setBackgroundColor(context.getColor(R.color.senku_rev03_hairline_strong));
-        LinearLayout.LayoutParams ruleParams = new LinearLayout.LayoutParams(dp(22), dp(1));
-        ruleParams.rightMargin = dp(10);
+        LinearLayout.LayoutParams ruleParams = new LinearLayout.LayoutParams(dp(21), dp(1));
+        ruleParams.rightMargin = dp(9);
         headingRow.addView(rule, ruleParams);
 
         TextView heading = new TextView(context);
@@ -137,7 +138,7 @@ final class DetailActionBlockPresentationFormatter {
         heading.setTextColor(context.getColor(R.color.senku_text_muted_light));
         heading.setTypeface(Typeface.MONOSPACE, Typeface.BOLD);
         heading.setLetterSpacing(0.10f);
-        heading.setTextSize(10f);
+        heading.setTextSize(9.5f);
         heading.setIncludeFontPadding(false);
         headingRow.addView(heading, new LinearLayout.LayoutParams(
             ViewGroup.LayoutParams.WRAP_CONTENT,
@@ -226,7 +227,7 @@ final class DetailActionBlockPresentationFormatter {
 
         LinearLayout row = new LinearLayout(context);
         row.setOrientation(LinearLayout.HORIZONTAL);
-        row.setPadding(0, dp(5), 0, dp(5));
+        row.setPadding(0, dp(4), 0, dp(4));
         LinearLayout.LayoutParams rowParams = new LinearLayout.LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT,
             ViewGroup.LayoutParams.WRAP_CONTENT
@@ -241,27 +242,30 @@ final class DetailActionBlockPresentationFormatter {
         badge.setBackgroundResource(R.drawable.bg_emergency_action_badge);
         badge.setTypeface(Typeface.MONOSPACE, Typeface.BOLD);
         badge.setIncludeFontPadding(false);
-        row.addView(badge, new LinearLayout.LayoutParams(dp(18), dp(18)));
+        row.addView(badge, new LinearLayout.LayoutParams(
+            dp(EMERGENCY_ACTION_BADGE_SIZE_DP),
+            dp(EMERGENCY_ACTION_BADGE_SIZE_DP)
+        ));
 
         LinearLayout content = new LinearLayout(context);
         content.setOrientation(LinearLayout.VERTICAL);
-        content.setPadding(dp(9), 0, 0, 0);
+        content.setPadding(dp(8), 0, 0, 0);
 
         TextView title = new TextView(context);
         title.setText(styleEmergencyMinimumDistance(action.title));
         title.setTextAppearance(context, android.R.style.TextAppearance_Medium);
         title.setTextColor(context.getColor(R.color.senku_text_light));
         title.setTypeface(Typeface.DEFAULT_BOLD);
-        title.setTextSize(12.5f);
-        title.setLineSpacing(0f, 1.04f);
+        title.setTextSize(12f);
+        title.setLineSpacing(0f, 1.02f);
         title.setIncludeFontPadding(false);
 
         TextView detail = new TextView(context);
         detail.setText(styleEmergencyMinimumDistance(action.detail));
         detail.setTextAppearance(context, android.R.style.TextAppearance_Small);
         detail.setTextColor(context.getColor(R.color.senku_text_muted_light));
-        detail.setTextSize(11.5f);
-        detail.setLineSpacing(0f, 1.04f);
+        detail.setTextSize(11f);
+        detail.setLineSpacing(0f, 1.02f);
         detail.setIncludeFontPadding(false);
         detail.setPadding(0, dp(1), 0, 0);
         detail.setVisibility(action.detail.isEmpty() ? View.GONE : View.VISIBLE);
@@ -313,6 +317,14 @@ final class DetailActionBlockPresentationFormatter {
             "Clear the floor to a minimum 5 m radius",
             "Clear the floor to 5 m radius"
         );
+        title = title.replace(
+            "Clear the floor to minimum 5 m radius",
+            "Clear the floor to 5 m radius"
+        );
+        title = title.replace(
+            "Move everyone to minimum 5 m from active work zone",
+            "Move to minimum 5 m from active work zone"
+        );
         return title;
     }
 
@@ -349,6 +361,10 @@ final class DetailActionBlockPresentationFormatter {
         );
         detail = detail.replace(
             "GD-132 \u00a71 is current owner.",
+            "GD-132 lists current owner."
+        );
+        detail = detail.replace(
+            "The guide lists the current owner.",
             "GD-132 lists current owner."
         );
         return detail;

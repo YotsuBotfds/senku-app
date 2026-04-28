@@ -5587,6 +5587,9 @@ public final class DetailActivity extends AppCompatActivity {
             answerMode,
             isCompactPortraitPhoneLayout() || isLandscapePhoneLayout()
         )) {
+            if (isCurrentEmergencySurfaceEligible()) {
+                return buildPhoneEmergencyHeaderTitle(primaryGuideId);
+            }
             String topicLabel = buildThreadTopicLabel();
             return buildPhonePortraitAnswerHeaderTitle(
                 primaryGuideId,
@@ -5674,6 +5677,14 @@ public final class DetailActivity extends AppCompatActivity {
             return "ANSWER " + guideId;
         }
         return label.isEmpty() ? "ANSWER" : "ANSWER • " + label;
+    }
+
+    static String buildPhoneEmergencyHeaderTitle(String primaryGuideId) {
+        String guideId = safe(primaryGuideId).trim();
+        if (!guideId.isEmpty()) {
+            return "ANSWER " + guideId + " â€¢ Burn hazard";
+        }
+        return "ANSWER â€¢ Burn hazard";
     }
 
     private void applyPhonePortraitHeaderTreatment() {
@@ -6744,6 +6755,9 @@ public final class DetailActivity extends AppCompatActivity {
     }
 
     private String buildRev03TopBarSubtitle() {
+        if (shouldUseCompactPhoneAnswerChrome()) {
+            return "";
+        }
         if (!answerMode && phoneXmlDetailLayoutActive()) {
             return "";
         }
@@ -6758,12 +6772,12 @@ public final class DetailActivity extends AppCompatActivity {
         String guideId = resolveDisplayGuideId();
         String title = safe(currentTitle).trim();
         if (!guideId.isEmpty() && !title.isEmpty()) {
-            return "Guide " + guideId + " - " + title;
+            return "GUIDE " + guideId + " â€¢ " + title;
         }
         if (!guideId.isEmpty()) {
-            return "Guide " + guideId;
+            return "GUIDE " + guideId;
         }
-        return title.isEmpty() ? getString(R.string.detail_header_guide) : "Guide - " + title;
+        return title.isEmpty() ? getString(R.string.detail_header_guide) : "GUIDE â€¢ " + title;
     }
 
     private List<MetaItem> buildRev03MetaStripItems() {

@@ -92,14 +92,12 @@ final class DetailRelatedGuidePresentationFormatter {
 
     String buildAnswerModeRelatedGuidesSubtitle(State state, int count) {
         return formatCountLabel(count, "linked guide", "linked guides")
-            + " \u00b7 required reading"
-            + " \u00b7 "
-            + resolveSourceAnchorLabel(state)
+            + " \u00b7 related support"
             + ".";
     }
 
     String buildAnswerModeRelatedGuidesPanelContentDescription(State state, int count) {
-        return "Source guide links. " + buildAnswerModeRelatedGuidesSubtitle(state, count);
+        return "Related guides. " + buildAnswerModeRelatedGuidesSubtitle(state, count);
     }
 
     String buildRelatedGuideButtonLabel(SearchResult guide) {
@@ -178,7 +176,7 @@ final class DetailRelatedGuidePresentationFormatter {
         boolean opensPreview
     ) {
         StringBuilder builder = new StringBuilder();
-        builder.append("Cross-reference ");
+        builder.append("Related guide ");
         builder.append(index + 1);
         builder.append(" of ");
         builder.append(total);
@@ -191,12 +189,12 @@ final class DetailRelatedGuidePresentationFormatter {
         }
         String anchorLabel = resolveSourceAnchorLabel(state);
         if (!anchorLabel.isEmpty()) {
-            builder.append(". Anchored to ");
+            builder.append(". Supports ");
             builder.append(anchorLabel);
         }
         builder.append(opensPreview
-            ? ". Previews here with source guide pinned. Open full guide switches pages."
-            : ". Opens this guide with source-guide context.");
+            ? ". Previews here. Open full guide switches pages."
+            : ". Opens this related guide.");
         return builder.toString();
     }
 

@@ -39,9 +39,9 @@ internal fun threadRailSectionTitle(label: String, count: Int): String =
     "${label.trim().ifEmpty { "THREAD" }} - $count"
 
 internal fun threadRailTurnRowMinHeightDp(active: Boolean): Int =
-    if (active) 62 else 54
+    if (active) 54 else 48
 
-internal fun threadRailSourceRowMinHeightDp(): Int = 46
+internal fun threadRailSourceRowMinHeightDp(): Int = 38
 
 internal fun threadRailTurnLabel(index: Int, guideMode: Boolean): String =
     if (guideMode) "SEC $index" else "Q$index"
@@ -96,8 +96,7 @@ internal fun threadRailAnswerPreviewLabel(
     if (guideMode) {
         return threadRailAnswerPreviewLabel(index, guideMode, answer)
     }
-    return "${threadRailAnswerMetaLabel(index, guideMode, sourceCount)} \u00B7 " +
-        "${threadRailAnswerConfidenceLabel(status, active)} \u00B7 ${threadRailAnswerPreviewText(answer)}"
+    return "${threadRailAnswerLabel(index, guideMode)} \u00B7 ${threadRailAnswerPreviewText(answer)}"
 }
 
 internal fun threadRailAnswerPreviewText(answer: String): String =
@@ -268,8 +267,8 @@ fun ThreadRail(
         modifier = modifier
             .background(colors.bg1)
             .verticalScroll(scrollState)
-            .padding(horizontal = 8.dp, vertical = 8.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp),
+            .padding(horizontal = 6.dp, vertical = 6.dp),
+        verticalArrangement = Arrangement.spacedBy(6.dp),
     ) {
         Toolbar(
             pinVisible = pinVisible,
@@ -335,11 +334,11 @@ private fun Toolbar(
     val colors = SenkuTheme.colors
 
     Column(
-        verticalArrangement = Arrangement.spacedBy(5.dp),
+        verticalArrangement = Arrangement.spacedBy(4.dp),
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(5.dp),
+            horizontalArrangement = Arrangement.spacedBy(4.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             RailActionButton(
@@ -379,7 +378,7 @@ private fun RailSection(
     val colors = SenkuTheme.colors
 
     Column(
-        verticalArrangement = Arrangement.spacedBy(5.dp),
+        verticalArrangement = Arrangement.spacedBy(4.dp),
         content = {
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -387,15 +386,15 @@ private fun RailSection(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 HorizontalDivider(
-                    modifier = Modifier.width(18.dp),
+                    modifier = Modifier.width(14.dp),
                     thickness = 1.dp,
                     color = colors.hairlineStrong,
                 )
                 Text(
                     text = threadRailSectionTitle(label, count),
                     style = SenkuTheme.typography.monoCaps.copy(
-                        fontSize = 10.sp,
-                        lineHeight = 12.sp,
+                        fontSize = 9.5.sp,
+                        lineHeight = 11.sp,
                         fontWeight = FontWeight.Medium,
                     ),
                     color = colors.ink2,
@@ -437,19 +436,19 @@ private fun ThreadTurnRow(
             modifier = Modifier
                 .fillMaxWidth()
                 .heightIn(min = threadRailTurnRowMinHeightDp(turn.isActive).dp)
-                .padding(horizontal = 7.dp, vertical = 6.dp),
-            horizontalArrangement = Arrangement.spacedBy(6.dp),
+                .padding(horizontal = 6.dp, vertical = 5.dp),
+            horizontalArrangement = Arrangement.spacedBy(5.dp),
             verticalAlignment = Alignment.Top,
         ) {
             Box(
                 modifier = Modifier
                     .width(3.dp)
-                    .height(if (turn.isActive) 28.dp else 22.dp)
+                    .height(if (turn.isActive) 24.dp else 20.dp)
                     .background(if (turn.isActive) colors.accent else colors.hairlineStrong),
             )
             Column(
                 modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.spacedBy(3.dp),
+                verticalArrangement = Arrangement.spacedBy(2.dp),
             ) {
                 Text(
                     text = threadRailTurnMetaLabel(
@@ -460,8 +459,8 @@ private fun ThreadTurnRow(
                         sourceCount = turn.answer.sourceCount,
                     ),
                     style = SenkuTheme.typography.monoCaps.copy(
-                        fontSize = 9.sp,
-                        lineHeight = 11.sp,
+                        fontSize = 8.5.sp,
+                        lineHeight = 10.sp,
                         fontWeight = FontWeight.Medium,
                     ),
                     color = idColor,
@@ -471,8 +470,8 @@ private fun ThreadTurnRow(
                 Text(
                     text = turn.question.trim().ifEmpty { "No question recorded." },
                     style = SenkuTheme.typography.smallBody.copy(
-                        fontSize = 11.sp,
-                        lineHeight = 14.sp,
+                        fontSize = 10.5.sp,
+                        lineHeight = 13.sp,
                         fontWeight = FontWeight.Normal,
                     ),
                     color = if (turn.isActive) colors.ink0 else colors.ink1,
@@ -489,8 +488,8 @@ private fun ThreadTurnRow(
                         active = turn.isActive,
                     ),
                     style = SenkuTheme.typography.smallBody.copy(
-                        fontSize = 10.sp,
-                        lineHeight = 12.sp,
+                        fontSize = 9.5.sp,
+                        lineHeight = 11.sp,
                     ),
                     color = colors.ink2,
                     maxLines = 1,
@@ -530,27 +529,27 @@ private fun SourcePill(
             modifier = Modifier
                 .fillMaxWidth()
                 .heightIn(min = threadRailSourceRowMinHeightDp().dp)
-                .padding(horizontal = 8.dp, vertical = 6.dp),
-            horizontalArrangement = Arrangement.spacedBy(6.dp),
+                .padding(horizontal = 6.dp, vertical = 5.dp),
+            horizontalArrangement = Arrangement.spacedBy(5.dp),
             verticalAlignment = Alignment.Top,
         ) {
             Box(
                 modifier = Modifier
                     .width(3.dp)
-                    .height(30.dp)
+                    .height(24.dp)
                     .background(if (source.isSelected || source.isAnchor) idColor else colors.hairlineStrong),
             )
             Column(
                 modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.spacedBy(3.dp),
+                verticalArrangement = Arrangement.spacedBy(2.dp),
             ) {
                 val displayLabel = threadRailSourceDisplayLabel(source, guideMode)
                 val titleLabel = threadRailSourceTitleLabel(source, guideMode)
                 Text(
                     text = displayLabel,
                     style = SenkuTheme.typography.monoCaps.copy(
-                        fontSize = 9.sp,
-                        lineHeight = 11.sp,
+                        fontSize = 8.5.sp,
+                        lineHeight = 10.sp,
                         fontWeight = FontWeight.Medium,
                     ),
                     color = idColor,
@@ -561,8 +560,8 @@ private fun SourcePill(
                     Text(
                         text = titleLabel,
                         style = SenkuTheme.typography.smallBody.copy(
-                            fontSize = 10.5.sp,
-                            lineHeight = 12.sp,
+                            fontSize = 10.sp,
+                            lineHeight = 11.sp,
                         ),
                         color = colors.ink1,
                         maxLines = 1,
@@ -596,7 +595,7 @@ private fun RailActionButton(
 
     Surface(
         modifier = Modifier
-            .size(30.dp)
+            .size(26.dp)
             .clickable(onClick = onClick),
         color = if (active) colors.ok.copy(alpha = 0.18f) else colors.bg0,
         contentColor = colors.ink0,

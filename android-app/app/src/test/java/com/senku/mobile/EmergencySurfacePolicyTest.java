@@ -274,6 +274,24 @@ public final class EmergencySurfacePolicyTest {
     }
 
     @Test
+    public void reviewedDeterministicFoundryBurnHazardCategoryQualifies() {
+        EmergencySurfacePolicy.Decision decision = EmergencySurfacePolicy.evaluate(
+            input(
+                true,
+                "answer_card:foundry_casting_area_readiness_boundary",
+                "Foundry burn hazard response",
+                "reviewed",
+                "high",
+                "high",
+                "deterministic_rule",
+                1
+            )
+        );
+
+        assertTrue(decision.eligible);
+    }
+
+    @Test
     public void reviewedDeterministicMeningitisEmergencyQualifies() {
         EmergencySurfacePolicy.Decision decision = EmergencySurfacePolicy.evaluate(
             input(

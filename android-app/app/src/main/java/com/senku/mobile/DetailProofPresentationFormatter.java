@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Locale;
 
 final class DetailProofPresentationFormatter {
-    static final String MATCH_TYPE_LABEL = "MATCH";
+    static final String MATCH_TYPE_LABEL = "TYPE";
 
     static final class State {
         final String routeValue;
@@ -243,7 +243,6 @@ final class DetailProofPresentationFormatter {
         String sourceLabel = readerFacingSourceLabel(primary, currentSources);
         StringBuilder preview = new StringBuilder();
         if (!guideId.isEmpty() || !sourceLabel.isEmpty()) {
-            preview.append("ANCHOR ");
             if (!guideId.isEmpty()) {
                 preview.append("[").append(guideId).append("]");
                 if (!sourceLabel.isEmpty()) {
@@ -284,7 +283,7 @@ final class DetailProofPresentationFormatter {
         String entryValue = buildSourceEntryValue(source, currentSources);
         if (!entryValue.isEmpty()) {
             lines.add(new StructuredLine(
-                text(R.string.detail_external_review_proof_lead),
+                "GUIDE",
                 entryValue,
                 color(R.color.senku_accent_olive)
             ));
@@ -314,7 +313,7 @@ final class DetailProofPresentationFormatter {
             String leadValue = buildSourceEntryValue(bestReaderFacingSource(currentSources), currentSources);
             if (!leadValue.isEmpty()) {
                 lines.add(new StructuredLine(
-                    "SOURCE",
+                    "GUIDE",
                     leadValue,
                     color(R.color.senku_accent_olive)
                 ));
@@ -337,7 +336,7 @@ final class DetailProofPresentationFormatter {
         String leadValue = buildSourceEntryValue(bestReaderFacingSource(currentSources), currentSources);
         if (!leadValue.isEmpty()) {
             lines.add(new StructuredLine(
-                text(R.string.detail_external_review_proof_lead),
+                "GUIDE",
                 leadValue,
                 color(R.color.senku_accent_olive)
             ));

@@ -256,6 +256,8 @@ public final class DetailFollowupLandscapeComposerTest {
         );
         assertEquals("ANSWER GD-345", DetailActivity.buildPhonePortraitAnswerHeaderTitle("GD-345", ""));
         assertEquals("ANSWER", DetailActivity.buildPhonePortraitAnswerHeaderTitle("", ""));
+        assertEquals("ANSWER GD-132 â€¢ Burn hazard", DetailActivity.buildPhoneEmergencyHeaderTitle("GD-132"));
+        assertEquals("ANSWER â€¢ Burn hazard", DetailActivity.buildPhoneEmergencyHeaderTitle(""));
         assertTrue(DetailActivity.shouldUsePhoneAnswerHeaderTitle(true, true));
         assertFalse(DetailActivity.shouldUsePhoneAnswerHeaderTitle(true, false));
         assertFalse(DetailActivity.shouldUsePhoneAnswerHeaderTitle(false, true));

@@ -6,6 +6,6 @@
         android:width="1dp"
         android:color="@color/senku_rev03_danger" />
     <size
-        android:width="18dp"
-        android:height="18dp" />
+        android:width="17dp"
+        android:height="17dp" />
 </shape>

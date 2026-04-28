@@ -117,6 +117,14 @@ final class DetailWarningCopySanitizer {
             "Move to minimum 5 m from active work zone."
         );
         cleaned = cleaned.replace(
+            "Move everyone to minimum 5 m from active work zone.",
+            "Move to minimum 5 m from active work zone."
+        );
+        cleaned = cleaned.replace(
+            "Move everyone to minimum 5 m from the active work zone.",
+            "Move to minimum 5 m from active work zone."
+        );
+        cleaned = cleaned.replace(
             "Clear the floor to a 5 m radius",
             "Clear the floor to 5 m radius"
         );
@@ -125,11 +133,19 @@ final class DetailWarningCopySanitizer {
             "Clear the floor to 5 m radius"
         );
         cleaned = cleaned.replace(
+            "Clear the floor to minimum 5 m radius",
+            "Clear the floor to 5 m radius"
+        );
+        cleaned = cleaned.replace(
             "Doors and roll-up openings must be unobstructed.",
             "Door and roll-up open and unobstructed."
         );
         cleaned = cleaned.replace(
             "GD-132 \u00a71 is current owner.",
+            "GD-132 lists current owner."
+        );
+        cleaned = cleaned.replace(
+            "The guide lists the current owner.",
             "GD-132 lists current owner."
         );
         return cleaned;

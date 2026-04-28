@@ -784,6 +784,47 @@ Reviewer-backed next slices:
 - P7 emergency: restore full tablet top ownership/danger banner and retitle
   phone emergency chrome toward the burn-hazard target.
 
+## Wave43 Checkpoint
+
+Committed scope pending at the time of this update:
+
+- Home/search: tighter tablet home/search rails, phone bottom-tab emphasis, and
+  search filter checkbox affordance.
+- Answer/source stack: tablet evidence policy moves toward three rain-shelter
+  source cards and quieter related/proof language.
+- Thread: chronological Q1/A1/Q2/A2 order in wide layouts and denser tablet rail.
+- Guide: GD-132 guide formatter/tablet policy density adjustments.
+- Emergency: tighter action/banner styling and foundry burn-hazard policy/copy.
+- Shared detail chrome: emergency phone header now owns `Burn hazard`, and compact
+  answer chrome suppresses the duplicate subtitle line.
+
+Fresh proof:
+
+- Pack: `artifacts/ui_state_pack/wave43_gpt_direction/20260428_171607`
+- Canonical mocks: `artifacts/ui_state_pack/wave43_gpt_direction/20260428_171607/mocks`
+- Zip: `artifacts/ui_state_pack/wave43_gpt_direction/20260428_171607_mocks.zip`
+- Summary: status `pass`, states `22/22`, failures `0`, ANRs `0`, mock pack
+  `pass`, deterministic frame export `true`.
+- APK SHA: `414155f1d3b88f0710243cc27571406c78e56adcfea178cc172b9136cef1e5fa`
+- Host model: `gemma-4-e2b-it-litert`
+- Host model SHA:
+  `ea1102014465edeb14b517bf270f6751d036749e3c5f517a7ff802782cb92161`
+
+Reviewer-backed next slices:
+
+- Global chrome/encoding: mock headers still show mojibake bullets (`â€¢`),
+  wrong icon sets, clipped tablet/landscape breadcrumbs, and missing danger pill.
+- Answer/thread shell: tablet/landscape answer and thread still use proof/thread
+  workflow rails instead of canonical source rails; answer tablet still shows
+  `SOURCES - 7` and unrelated source IDs.
+- Exact fixtures: answer prose and source/related-guide lists need to match the
+  canonical GD-345 copy exactly; thread landscape/tablet right rail should show
+  only `GD-220`/`GD-345`.
+- Guide layouts: phone landscape still lacks the left nav/section rail, tablet
+  guide still uses dense manual-entry/cross-reference styling.
+- Home/search polish: phone/tablet type and cards are still too compressed;
+  tablet landscape home/search headers and columns need clearer containment.
+
 ## Parallelization Rules
 
 - Start every worker with `git status --short`, `git log --oneline -n 8

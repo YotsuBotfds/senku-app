@@ -477,7 +477,7 @@
                 android:orientation="horizontal">
 
                 <LinearLayout
-                    android:layout_width="204dp"
+                    android:layout_width="184dp"
                     android:layout_height="match_parent"
                     android:orientation="vertical"
                     android:paddingStart="18dp"
@@ -498,7 +498,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="14dp"
-                        android:buttonTint="@color/senku_rev03_accent"
+                        android:button="@drawable/bg_search_filter_checkbox"
                         android:clickable="false"
                         android:focusable="false"
                         android:includeFontPadding="false"
@@ -512,7 +512,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="9dp"
-                        android:buttonTint="@color/senku_rev03_accent"
+                        android:button="@drawable/bg_search_filter_checkbox"
                         android:clickable="false"
                         android:focusable="false"
                         android:includeFontPadding="false"
@@ -526,7 +526,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="9dp"
-                        android:buttonTint="@color/senku_rev03_accent"
+                        android:button="@drawable/bg_search_filter_checkbox"
                         android:clickable="false"
                         android:focusable="false"
                         android:includeFontPadding="false"
@@ -540,7 +540,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="9dp"
-                        android:buttonTint="@color/senku_rev03_accent"
+                        android:button="@drawable/bg_search_filter_checkbox"
                         android:clickable="false"
                         android:focusable="false"
                         android:includeFontPadding="false"
@@ -565,7 +565,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="14dp"
-                        android:buttonTint="@color/senku_rev03_accent"
+                        android:button="@drawable/bg_search_filter_checkbox"
                         android:clickable="false"
                         android:focusable="false"
                         android:includeFontPadding="false"
@@ -579,7 +579,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="9dp"
-                        android:buttonTint="@color/senku_rev03_accent"
+                        android:button="@drawable/bg_search_filter_checkbox"
                         android:clickable="false"
                         android:focusable="false"
                         android:includeFontPadding="false"
@@ -593,7 +593,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="9dp"
-                        android:buttonTint="@color/senku_rev03_accent"
+                        android:button="@drawable/bg_search_filter_checkbox"
                         android:clickable="false"
                         android:focusable="false"
                         android:includeFontPadding="false"
@@ -607,7 +607,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="9dp"
-                        android:buttonTint="@color/senku_rev03_accent"
+                        android:button="@drawable/bg_search_filter_checkbox"
                         android:clickable="false"
                         android:focusable="false"
                         android:includeFontPadding="false"
@@ -637,7 +637,7 @@
 
                 <LinearLayout
                     android:id="@+id/tablet_search_preview_rail"
-                    android:layout_width="236dp"
+                    android:layout_width="220dp"
                     android:layout_height="match_parent"
                     android:background="@color/senku_rev03_bg_1"
                     android:clickable="true"
@@ -667,7 +667,7 @@
                         android:layout_marginTop="12dp"
                         android:textAppearance="?android:attr/textAppearanceLarge"
                         android:textColor="@color/senku_rev03_ink_0"
-                        android:textSize="16sp"
+                        android:textSize="15sp"
                         android:textStyle="bold" />
 
                     <TextView
@@ -688,7 +688,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="12dp"
                         android:lineSpacingExtra="2dp"
-                        android:maxLines="5"
+                        android:maxLines="4"
                         android:textAppearance="?android:attr/textAppearanceMedium"
                         android:textColor="@color/senku_rev03_ink_1"
                         android:textSize="12sp" />

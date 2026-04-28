@@ -76,7 +76,7 @@ public final class MainActivity extends AppCompatActivity {
     private static final int RESULT_PREVIEW_BRIDGE_SIGNAL_LIMIT = 1;
     private static final int MANUAL_HOME_CATEGORY_COLUMNS = 3;
     private static final int MANUAL_HOME_CATEGORY_CARD_HEIGHT_DP = 40;
-    private static final int TABLET_MANUAL_HOME_CATEGORY_CARD_HEIGHT_DP = 40;
+    private static final int TABLET_MANUAL_HOME_CATEGORY_CARD_HEIGHT_DP = 32;
     private static final int MANUAL_HOME_CATEGORY_ROW_GAP_DP = 2;
     private static final int MANUAL_HOME_RECENT_ROW_HEIGHT_DP = 44;
     private static final int MANUAL_HOME_RECENT_ROW_GAP_DP = 3;

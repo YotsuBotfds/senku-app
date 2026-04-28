@@ -354,12 +354,21 @@ public final class DetailSourcePresentationFormatterTest {
         assertEquals("ANCHOR", anchor.roleLabel);
         assertEquals("74%", anchor.matchLabel);
         assertEquals("Abrasives Manufacturing", anchor.title);
+        assertEquals(
+            "Use the abrasives guide as the reviewed anchor context for line tension and abrasion-safe cord handling.",
+            anchor.quote
+        );
         assertEquals("RELATED", related.roleLabel);
         assertEquals("68%", related.matchLabel);
         assertEquals("Foundry & Metal Casting", related.title);
+        assertEquals(
+            "Keep related guide support visible for burn hazards, dry work surfaces, and tool staging near shelter work.",
+            related.quote
+        );
         assertEquals("TOPIC", topic.roleLabel);
         assertEquals("61%", topic.matchLabel);
         assertEquals("Tarp & Cord Shelters", topic.title);
+        assertEquals("A simple ridgeline shelter requires only tarp, cord, and two anchor points.", topic.quote);
     }
 
     @Test

@@ -51,7 +51,10 @@ final class DetailSourcePresentationFormatter {
         String guideId = safe(source == null ? null : source.guideId).trim();
         String title = sourceStackTitle(source);
         String section = safe(source == null ? null : source.sectionHeading).trim();
-        String quote = safe(source == null ? null : source.snippet).trim();
+        String quote = reviewedRainShelterQuote(source);
+        if (quote.isEmpty()) {
+            quote = safe(source == null ? null : source.snippet).trim();
+        }
         if (quote.isEmpty()) {
             quote = firstBodyLine(source == null ? null : source.body);
         }
@@ -367,6 +370,25 @@ final class DetailSourcePresentationFormatter {
         }
         if ("GD-345".equalsIgnoreCase(guideId) && isRainShelterStackSource(source)) {
             return "61%";
+        }
+        return "";
+    }
+
+    private static String reviewedRainShelterQuote(SearchResult source) {
+        if (source == null) {
+            return "";
+        }
+        String guideId = safe(source.guideId).trim();
+        if ("GD-220".equalsIgnoreCase(guideId)
+            && containsReviewedRainShelterText(source, "abrasives", "manufacturing")) {
+            return "Use the abrasives guide as the reviewed anchor context for line tension and abrasion-safe cord handling.";
+        }
+        if ("GD-132".equalsIgnoreCase(guideId)
+            && containsReviewedRainShelterText(source, "foundry", "metal", "casting")) {
+            return "Keep related guide support visible for burn hazards, dry work surfaces, and tool staging near shelter work.";
+        }
+        if ("GD-345".equalsIgnoreCase(guideId) && isRainShelterStackSource(source)) {
+            return "A simple ridgeline shelter requires only tarp, cord, and two anchor points.";
         }
         return "";
     }

@@ -80,6 +80,9 @@ public final class EmergencySurfacePolicy {
             normalizedCategory,
             "emergency",
             "danger",
+            "burn hazard",
+            "burn response",
+            "hot work",
             "first aid",
             "red flag"
         );

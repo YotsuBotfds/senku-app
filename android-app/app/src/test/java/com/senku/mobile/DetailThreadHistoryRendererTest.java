@@ -48,7 +48,7 @@ public final class DetailThreadHistoryRendererTest {
     }
 
     @Test
-    public void wideInlineThreadLeadsWithRecentTurnWithoutChangingPortraitOrder() {
+    public void inlineThreadKeepsChronologicalTurnOrderAcrossLayouts() {
         DetailThreadHistoryRenderer.State wideSideThread = new DetailThreadHistoryRenderer.State(
             false,
             true,
@@ -62,7 +62,7 @@ public final class DetailThreadHistoryRendererTest {
             320
         );
 
-        assertEquals(true, DetailThreadHistoryRenderer.shouldShowRecentTurnFirst(wideSideThread));
+        assertEquals(false, DetailThreadHistoryRenderer.shouldShowRecentTurnFirst(wideSideThread));
         assertEquals(false, DetailThreadHistoryRenderer.shouldShowRecentTurnFirst(compactPortrait));
     }
 

@@ -76,7 +76,7 @@ public final class DetailRelatedGuidePresentationFormatterTest {
         DetailRelatedGuidePresentationFormatter formatter = new DetailRelatedGuidePresentationFormatter(null);
 
         assertEquals(
-            "2 linked guides \u00b7 required reading \u00b7 [GD-214] Water Storage.",
+            "2 linked guides \u00b7 related support.",
             formatter.buildAnswerModeRelatedGuidesSubtitle(
                 new DetailRelatedGuidePresentationFormatter.State(false, false, "", "", "[GD-214] Water Storage"),
                 2
@@ -141,11 +141,11 @@ public final class DetailRelatedGuidePresentationFormatterTest {
         SearchResult guide = new SearchResult("Rainwater Catchment", "", "", "", "GD-215", "", "", "");
 
         assertEquals(
-            "Source guide links. 2 linked guides \u00b7 required reading \u00b7 [GD-214] Water Storage.",
+            "Related guides. 2 linked guides \u00b7 related support.",
             formatter.buildAnswerModeRelatedGuidesPanelContentDescription(state, 2)
         );
         assertEquals(
-            "Cross-reference 1 of 2. GD-215 \u00b7 Rainwater Catchment. Anchored to [GD-214] Water Storage. Previews here with source guide pinned. Open full guide switches pages.",
+            "Related guide 1 of 2. GD-215 \u00b7 Rainwater Catchment. Supports [GD-214] Water Storage. Previews here. Open full guide switches pages.",
             formatter.buildAnswerModeRelatedGuideButtonContentDescription(state, guide, 0, 2, true)
         );
     }

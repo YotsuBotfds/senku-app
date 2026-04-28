@@ -169,7 +169,7 @@ final class DetailThreadHistoryRenderer {
     }
 
     static boolean shouldShowRecentTurnFirst(State state) {
-        return state != null && state.wideLayout && !state.compactPortraitSections;
+        return false;
     }
 
     private static List<NumberedTurn> numberedDisplayTurnsForInlineHistory(
@@ -252,9 +252,11 @@ final class DetailThreadHistoryRenderer {
         LinearLayout row = new LinearLayout(context);
         row.setOrientation(LinearLayout.VERTICAL);
         boolean railRow = state.utilityRail && !inlineTranscriptBubble;
-        int padH = railRow ? dp(8) : dp(10);
-        int padTop = container != null && container.getChildCount() > 0 ? (railRow ? dp(8) : dp(10)) : dp(6);
-        int padBottom = railRow ? dp(8) : dp(12);
+        int padH = railRow ? dp(6) : (state.wideLayout ? dp(8) : dp(10));
+        int padTop = container != null && container.getChildCount() > 0
+            ? (railRow ? dp(6) : (state.wideLayout ? dp(8) : dp(10)))
+            : dp(5);
+        int padBottom = railRow ? dp(6) : (state.wideLayout ? dp(9) : dp(12));
         row.setPadding(padH, padTop, padH, padBottom);
 
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
@@ -287,8 +289,8 @@ final class DetailThreadHistoryRenderer {
         body.setTextAppearance(context, android.R.style.TextAppearance_Medium);
         body.setTextColor(context.getColor(userTurn ? R.color.senku_rev03_ink_0 : R.color.senku_text_light));
         body.setTypeface(userTurn ? Typeface.DEFAULT_BOLD : Typeface.SERIF, userTurn ? Typeface.BOLD : Typeface.NORMAL);
-        body.setTextSize(userTurn ? (railBubble ? 14 : 15) : (inlineTranscriptBubble ? 15 : 14));
-        body.setLineSpacing(0f, userTurn ? 1.02f : 1.08f);
+        body.setTextSize(userTurn ? (railBubble ? 13 : 15) : (inlineTranscriptBubble ? 15 : 13));
+        body.setLineSpacing(0f, userTurn ? 1.02f : (railBubble ? 1.02f : 1.08f));
         body.setPadding(0, 0, 0, userTurn ? dp(8) : dp(4));
         if (userTurn) {
             body.setMaxLines(QUESTION_MAX_LINES);

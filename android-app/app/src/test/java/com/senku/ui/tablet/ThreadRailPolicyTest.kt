@@ -38,7 +38,7 @@ class ThreadRailPolicyTest {
         assertEquals("ACTIVE", threadRailAnswerConfidenceLabel(Status.Done, active = true))
         assertEquals("A2 \u00B7 Keep the tarp angled.", threadRailAnswerPreviewLabel(2, guideMode = false, answer = " Keep the tarp angled. "))
         assertEquals(
-            "A2 \u00B7 3 SOURCES \u00B7 CONFIDENT \u00B7 Keep the tarp angled.",
+            "A2 \u00B7 Keep the tarp angled.",
             threadRailAnswerPreviewLabel(
                 2,
                 guideMode = false,
@@ -94,7 +94,7 @@ class ThreadRailPolicyTest {
         )
         assertEquals("A1 \u00B7 2 SOURCES", threadRailAnswerMetaLabel(1, guideMode = false, sourceCount = 2))
         assertEquals(
-            "A1 \u00B7 2 SOURCES \u00B7 ACTIVE \u00B7 Use a sloped ridgeline.",
+            "A1 \u00B7 Use a sloped ridgeline.",
             threadRailAnswerPreviewLabel(
                 1,
                 guideMode = false,
@@ -161,8 +161,8 @@ class ThreadRailPolicyTest {
 
     @Test
     fun threadRailRowsReserveTranscriptScanningSpace() {
-        assertEquals(54, threadRailTurnRowMinHeightDp(active = false))
-        assertEquals(62, threadRailTurnRowMinHeightDp(active = true))
-        assertEquals(46, threadRailSourceRowMinHeightDp())
+        assertEquals(48, threadRailTurnRowMinHeightDp(active = false))
+        assertEquals(54, threadRailTurnRowMinHeightDp(active = true))
+        assertEquals(38, threadRailSourceRowMinHeightDp())
     }
 }
