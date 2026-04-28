@@ -238,6 +238,10 @@ public final class DetailFollowupLandscapeComposerTest {
         assertFalse(DetailActivity.shouldPreservePhoneLandscapeThreadTopAfterComposerSetup(true, 1, true));
         assertFalse(DetailActivity.shouldPreservePhoneLandscapeThreadTopAfterComposerSetup(true, 2, false));
         assertFalse(DetailActivity.shouldPreservePhoneLandscapeThreadTopAfterComposerSetup(false, 2, true));
+        assertTrue(DetailActivity.shouldPreservePhoneLandscapeThreadTopAfterComposerFocus(true, 2, true));
+        assertFalse(DetailActivity.shouldPreservePhoneLandscapeThreadTopAfterComposerFocus(true, 1, true));
+        assertFalse(DetailActivity.shouldPreservePhoneLandscapeThreadTopAfterComposerFocus(true, 2, false));
+        assertFalse(DetailActivity.shouldPreservePhoneLandscapeThreadTopAfterComposerFocus(false, 2, true));
         assertArrayEquals(
             new long[] {0L, 80L, 240L, 480L},
             DetailActivity.phoneLandscapeThreadTopPreservationDelaysMs()
@@ -279,6 +283,50 @@ public final class DetailFollowupLandscapeComposerTest {
         assertFalse(DetailActivity.shouldHideProofRailForThreadDetail(true, 2, false));
         assertFalse(DetailActivity.shouldHideProofRailForThreadDetail(true, 1, true));
         assertFalse(DetailActivity.shouldHideProofRailForThreadDetail(false, 2, true));
+    }
+
+    @Test
+    public void phoneLandscapeThreadSuppressesInlineCrossReferencesBelowTranscript() {
+        assertFalse(DetailActivity.shouldShowLandscapePhoneInlineCrossReferences(
+            true,
+            true,
+            true,
+            false,
+            true,
+            2
+        ));
+        assertTrue(DetailActivity.shouldShowLandscapePhoneInlineCrossReferences(
+            true,
+            true,
+            false,
+            false,
+            true,
+            2
+        ));
+        assertFalse(DetailActivity.shouldShowLandscapePhoneInlineCrossReferences(
+            true,
+            true,
+            false,
+            true,
+            true,
+            2
+        ));
+        assertFalse(DetailActivity.shouldShowLandscapePhoneInlineCrossReferences(
+            true,
+            true,
+            false,
+            false,
+            false,
+            2
+        ));
+        assertFalse(DetailActivity.shouldShowLandscapePhoneInlineCrossReferences(
+            true,
+            true,
+            false,
+            false,
+            true,
+            0
+        ));
     }
 
     @Test

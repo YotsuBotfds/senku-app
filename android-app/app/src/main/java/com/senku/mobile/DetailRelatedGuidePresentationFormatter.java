@@ -149,7 +149,7 @@ final class DetailRelatedGuidePresentationFormatter {
         builder.append(opensPreview
             ? (nonRailCrossReferenceCopy ? "Cross-reference linked guide " : "Related guide ")
             : (nonRailCrossReferenceCopy
-                ? context.getString(R.string.detail_related_guides_button_prefix_nonrail)
+                ? "Open cross-reference linked guide "
                 : "Open related guide "));
         builder.append(index + 1);
         builder.append(" of ");
@@ -169,8 +169,8 @@ final class DetailRelatedGuidePresentationFormatter {
         builder.append(opensPreview
             ? ". " + buildRelatedGuidePreviewRowBehaviorText(nonRailCrossReferenceCopy)
             : (nonRailCrossReferenceCopy
-                ? ". " + context.getString(R.string.detail_related_guides_button_open_nonrail)
-                : ". Opens another guide page in the installed pack."));
+                ? ". Opens the linked guide page in the installed pack."
+                : ". Opens the linked guide page in the installed pack."));
         return builder.toString();
     }
 

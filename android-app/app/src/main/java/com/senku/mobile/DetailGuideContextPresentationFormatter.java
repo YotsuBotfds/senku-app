@@ -192,13 +192,9 @@ final class DetailGuideContextPresentationFormatter {
         }
         String resolvedAnchor = safe(anchorLabel).trim();
         if (resolvedAnchor.isEmpty()) {
-            return context.getString(R.string.detail_guide_handoff_summary_no_anchor, resolvedLabel.toLowerCase(Locale.US));
+            return "Opened from " + resolvedLabel.toLowerCase(Locale.US) + ".";
         }
-        return context.getString(
-            R.string.detail_guide_handoff_summary,
-            resolvedAnchor,
-            resolvedLabel.toLowerCase(Locale.US)
-        );
+        return "Opened from " + resolvedAnchor + ".";
     }
 
     private String buildRelatedGuidePreviewComparisonCaption(State state) {

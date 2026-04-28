@@ -151,6 +151,28 @@ public final class DetailRelatedGuidePresentationFormatterTest {
     }
 
     @Test
+    public void nonRailOpenDescriptionUsesLinkedGuideCopy() {
+        DetailRelatedGuidePresentationFormatter formatter = new DetailRelatedGuidePresentationFormatter(null);
+
+        assertEquals(
+            "Open cross-reference linked guide 1 of 1. GD-215 \u00b7 Rainwater Catchment. Anchored to GD-214. Opens the linked guide page in the installed pack.",
+            formatter.buildRelatedGuideButtonContentDescription(
+                new DetailRelatedGuidePresentationFormatter.State(
+                    false,
+                    true,
+                    "GD-214",
+                    "[GD-214] Water Storage",
+                    ""
+                ),
+                new SearchResult("Rainwater Catchment", "", "", "", "GD-215", "", "", ""),
+                0,
+                1,
+                false
+            )
+        );
+    }
+
+    @Test
     public void relatedGuideContextLabelCompactsCrossReferenceMetadata() {
         DetailRelatedGuidePresentationFormatter formatter = new DetailRelatedGuidePresentationFormatter(null);
 

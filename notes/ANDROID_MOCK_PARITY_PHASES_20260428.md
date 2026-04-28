@@ -157,6 +157,23 @@ no longer opens inside the clipped field-steps card. Remaining deferred visual
 work: phone thread should expose fuller Q1/Q2 transcript, and Answer/Guide
 phone chrome still needs another mock-parity pass.
 
+Wave31 integration proof: `artifacts/ui_state_pack/wave31_closure_rerun/20260428_093815`
+is green (`pass`, 47/47, fail count 0), homogeneous APK
+`e981ccabcdd05bb588f2f17a53eee5eeb57fd5e382f4f29c9ef5746093c38c0b`,
+model `gemma-4-e2b-it-litert`
+(`ea1102014465edeb14b517bf270f6751d036749e3c5f517a7ff802782cb92161`),
+rotation mismatch count 0. Local build, unit tests, and quality gate passed
+before the pack; the first Wave31 pack exposed four stale search-header smoke
+expectations and one phone-landscape rain-shelter owner mismatch, both fixed
+before the rerun. Integration changes moved rain-shelter answer ownership
+toward `GD-345`, preserved the reviewed source stack, removed duplicate search
+header-band expectations, improved guide required-reading/cross-reference
+labels, kept tablet answer/thread source header counts nonzero, and made
+phone-landscape thread keep the transcript top after composer focus. Reviewer
+residuals remain substantial: global chrome/status density, answer content/state
+drift, guide document structure, thread metadata/detail richness, and emergency
+styling/content still need follow-up waves.
+
 ## Wave25+ Plan
 
 | Wave | Slice | Why this order | Avoid overlapping write sets | Acceptance proof |

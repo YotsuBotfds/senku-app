@@ -101,6 +101,16 @@ class StressReadingPolicyTest {
     }
 
     @Test
+    fun tabletPortraitAnswerChromeKeepsEmergencyAnswerHigherDensityThanLandscape() {
+        val portraitPolicy = tabletAnswerReadingChromePolicy(isLandscape = false)
+        val landscapePolicy = tabletAnswerReadingChromePolicy(isLandscape = true)
+
+        assertTrue(portraitPolicy.topPaddingDp < landscapePolicy.topPaddingDp)
+        assertTrue(portraitPolicy.blockSpacingDp < landscapePolicy.blockSpacingDp)
+        assertTrue(portraitPolicy.bottomPaddingDp <= landscapePolicy.bottomPaddingDp)
+    }
+
+    @Test
     fun tabletComposerContextHintUsesGuideAnchorAndSourceCount() {
         val state = tabletDetailState(
             guideTitle = "Pressure canning beans",
@@ -125,6 +135,16 @@ class StressReadingPolicyTest {
             "GUIDE CONTEXT KEPT - 2 SECTIONS - 2 REFERENCES",
             tabletComposerContextHint(state),
         )
+    }
+
+    @Test
+    fun tabletAnswerSourceCountUsesThreadAnswerCountWhenSourceRowsAreDelayed() {
+        val state = tabletDetailState(
+            sources = emptyList(),
+            turns = listOf(threadTurn("q1", sourceCount = 2)),
+        )
+
+        assertEquals(2, state.resolvedAnswerSourceCount())
     }
 
     @Test
@@ -342,13 +362,13 @@ class StressReadingPolicyTest {
             detailMode = detailMode,
         )
 
-    private fun threadTurn(id: String): ThreadTurnState =
+    private fun threadTurn(id: String, sourceCount: Int = 1): ThreadTurnState =
         ThreadTurnState(
             id = id,
             question = "Question",
             answer = com.senku.ui.answer.AnswerContent(
                 short = "Answer",
-                sourceCount = 1,
+                sourceCount = sourceCount,
                 host = "Host",
                 elapsedSeconds = 1.0,
             ),

@@ -111,4 +111,49 @@ public final class DetailProofPresentationFormatterTest {
         assertEquals("[GD-345] Tarp & Cord Shelters", formatter.buildSourceEntryValue(sources.get(0), sources));
     }
 
+    @Test
+    public void primarySourceLabelUsesRainShelterArticleForReviewedSourceStack() {
+        DetailProofPresentationFormatter formatter = new DetailProofPresentationFormatter(null);
+        List<SearchResult> sources = Arrays.asList(
+            new SearchResult(
+                "Abrasives Manufacturing",
+                "",
+                "Reviewed anchor context.",
+                "",
+                "GD-220",
+                "Abrasives Manufacturing",
+                "materials",
+                "hybrid"
+            ),
+            new SearchResult(
+                "Foundry & Metal Casting",
+                "",
+                "Reviewed related context.",
+                "",
+                "GD-132",
+                "Foundry & Metal Casting",
+                "metal",
+                "guide-focus"
+            ),
+            new SearchResult(
+                "Tarp & Cord Shelters",
+                "",
+                "A simple ridgeline shelter requires only tarp, cord, and two anchor points.",
+                "Pitch the low edge toward weather so rain sheds away from the sheltered area.",
+                "GD-345",
+                "Tarp & Cord Shelters",
+                "survival",
+                "guide-focus",
+                "topic",
+                "immediate",
+                "emergency_shelter",
+                "tarp,cord,rain_shelter,ridgeline"
+            )
+        );
+
+        assertEquals("Tarp & Cord Shelters", formatter.buildPrimarySourceLabel(sources));
+        assertEquals("ANCHOR [GD-345] - Tarp & Cord Shelters", formatter.buildPrimarySourcePreviewLine(sources));
+        assertEquals("[GD-345] Tarp & Cord Shelters", formatter.buildSourceEntryValue(sources.get(2), sources));
+    }
+
 }

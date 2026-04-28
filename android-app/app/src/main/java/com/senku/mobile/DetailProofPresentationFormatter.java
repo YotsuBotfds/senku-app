@@ -220,9 +220,9 @@ final class DetailProofPresentationFormatter {
         if (currentSources == null || currentSources.isEmpty()) {
             return "";
         }
-        SearchResult primary = currentSources.get(0);
+        SearchResult primary = bestReaderFacingSource(currentSources);
         String guideId = safe(primary == null ? null : primary.guideId).trim();
-        String sourceLabel = buildPrimarySourceLabel(currentSources);
+        String sourceLabel = readerFacingSourceLabel(primary, currentSources);
         StringBuilder preview = new StringBuilder();
         if (!guideId.isEmpty() || !sourceLabel.isEmpty()) {
             preview.append("ANCHOR ");
@@ -293,7 +293,7 @@ final class DetailProofPresentationFormatter {
     ) {
         ArrayList<StructuredLine> lines = new ArrayList<>();
         if (compact) {
-            String leadValue = buildSourceEntryValue(firstSource, currentSources);
+            String leadValue = buildSourceEntryValue(bestReaderFacingSource(currentSources), currentSources);
             if (!leadValue.isEmpty()) {
                 lines.add(new StructuredLine(
                     "ANCHOR",
@@ -316,7 +316,7 @@ final class DetailProofPresentationFormatter {
             state.evidenceStrengthLabel + " | " + formatCountLabel(state.sourceCount, "source", "sources"),
             state.evidenceAccentColor
         ));
-        String leadValue = buildSourceEntryValue(firstSource, currentSources);
+        String leadValue = buildSourceEntryValue(bestReaderFacingSource(currentSources), currentSources);
         if (!leadValue.isEmpty()) {
             lines.add(new StructuredLine(
                 text(R.string.detail_external_review_proof_lead),

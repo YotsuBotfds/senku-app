@@ -655,10 +655,10 @@ final class DetailGuidePresentationFormatter {
             return "REQUIRED READING \u00b7 GD-220 \u00b7 Abrasives Manufacturing";
         }
         if ("bellows-forge-blower-construction".equals(normalized)) {
-            return "REQUIRED READING \u00b7 GD-499 \u00b7 Bellows Forge Blower Construction";
+            return "REQUIRED READING \u00b7 GD-499 \u00b7 Bellows & Forge Blower Construction";
         }
         if ("bloomery-furnace".equals(normalized)) {
-            return "REQUIRED READING \u00b7 GD-225 \u00b7 Bloomery Furnace";
+            return "REQUIRED READING \u00b7 GD-225 \u00b7 Bloomery Furnace Construction";
         }
         return "";
     }

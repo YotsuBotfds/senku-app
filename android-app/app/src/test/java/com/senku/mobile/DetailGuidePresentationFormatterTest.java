@@ -115,7 +115,7 @@ public final class DetailGuidePresentationFormatterTest {
                 + "DANGER \u00b7 EXTREME BURN HAZARD\n"
                 + "A single drop of water contacting molten metal causes a violent steam explosion. EVERY tool, mold, crucible, and surface that contacts molten metal must be completely dry.\n"
                 + "REQUIRED READING \u00b7 GD-220 \u00b7 Abrasives Manufacturing\n"
-                + "REQUIRED READING \u00b7 GD-499 \u00b7 Bellows Forge Blower Construction\n"
+                + "REQUIRED READING \u00b7 GD-499 \u00b7 Bellows & Forge Blower Construction\n"
                 + "\u2014 \u00a7 1 \u00b7 AREA READINESS\n"
                 + "Reviewed Answer-Card Boundary\n"
                 + "Use this section only for foundry-area readiness, visible hazard screening, material and source labeling, no-go triggers, access control, and expert or owner handoff.",
@@ -249,8 +249,8 @@ public final class DetailGuidePresentationFormatterTest {
         assertTrue(displayBody.contains("GD-132 \u00b7 17 SECTIONS"));
         assertFalse(displayBody.contains("GD-132 \u00b7 26 SECTIONS"));
         assertTrue(displayBody.contains("REQUIRED READING \u00b7 GD-220 \u00b7 Abrasives Manufacturing"));
-        assertTrue(displayBody.contains("REQUIRED READING \u00b7 GD-499 \u00b7 Bellows Forge Blower Construction"));
-        assertTrue(displayBody.contains("REQUIRED READING \u00b7 GD-225 \u00b7 Bloomery Furnace"));
+        assertTrue(displayBody.contains("REQUIRED READING \u00b7 GD-499 \u00b7 Bellows & Forge Blower Construction"));
+        assertTrue(displayBody.contains("REQUIRED READING \u00b7 GD-225 \u00b7 Bloomery Furnace Construction"));
         assertFalse(displayBody.contains("REQUIRED READING \u00b7 Chemical Safety Guide"));
     }
 
@@ -289,8 +289,8 @@ public final class DetailGuidePresentationFormatterTest {
                 + "DANGER \u00b7 EXTREME BURN HAZARD\n"
                 + "Keep tools dry.\n"
                 + "REQUIRED READING \u00b7 GD-220 \u00b7 Abrasives Manufacturing\n"
-                + "REQUIRED READING \u00b7 GD-499 \u00b7 Bellows Forge Blower Construction\n"
-                + "REQUIRED READING \u00b7 GD-225 \u00b7 Bloomery Furnace\n"
+                + "REQUIRED READING \u00b7 GD-499 \u00b7 Bellows & Forge Blower Construction\n"
+                + "REQUIRED READING \u00b7 GD-225 \u00b7 Bloomery Furnace Construction\n"
                 + "\u2014 \u00a7 1 \u00b7 FOUNDRY SAFETY QUICKSTART\n"
                 + "Check dry tools.",
             DetailGuidePresentationFormatter.buildGuideBody(result)

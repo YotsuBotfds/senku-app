@@ -346,11 +346,14 @@ public final class PromptHarnessSmokeTest {
                 Assert.assertNotNull("results header should exist after search", resultsHeader);
                 Assert.assertNotNull("results list should exist after search", resultsList);
                 Assert.assertEquals("search query should stay in the input", query, safe(input.getText().toString()));
-                Assert.assertTrue("results header should be visible once search settles", isVisible(resultsHeader));
                 Assert.assertTrue("results list should be visible once search settles", isVisible(resultsList));
                 Assert.assertTrue(
                     "search results should populate the list instead of bouncing back to the browse shell",
                     resultsList.getAdapter() != null && resultsList.getAdapter().getItemCount() > 0
+                );
+                Assert.assertFalse(
+                    "target search surface should not reintroduce the duplicate results header band",
+                    isVisible(resultsHeader)
                 );
                 Assert.assertEquals(
                     "search results should keep browse-results helper copy visible",

@@ -184,6 +184,18 @@ public final class DetailGuideContextPresentationFormatterTest {
     }
 
     @Test
+    public void guideHandoffSummaryUsesOpenedFromAnchorCopyWithoutFieldLinkLanguage() {
+        assertEquals(
+            "Opened from GD-220.",
+            DetailGuideContextPresentationFormatter.buildGuideHandoffSummaryText(null, "Cross-reference", "GD-220")
+        );
+        assertEquals(
+            "Opened from cross-reference.",
+            DetailGuideContextPresentationFormatter.buildGuideHandoffSummaryText(null, "Cross-reference", "")
+        );
+    }
+
+    @Test
     public void nonRailGuideHandoffUsesCrossReferenceLanguage() {
         DetailGuideContextPresentationFormatter formatter =
             new DetailGuideContextPresentationFormatter(null);

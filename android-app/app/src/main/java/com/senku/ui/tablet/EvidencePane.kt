@@ -75,6 +75,7 @@ fun EvidencePane(
     anchor: AnchorState,
     xrefs: List<XRefState>,
     answerMode: Boolean,
+    answerSourceCount: Int = 0,
     onAnchorClick: () -> Unit,
     onXRefClick: (String) -> Unit,
     modifier: Modifier = Modifier,
@@ -96,6 +97,7 @@ fun EvidencePane(
             anchor = anchor,
             xrefs = xrefs,
             answerMode = answerMode,
+            answerSourceCount = answerSourceCount,
             onAnchorClick = onAnchorClick,
             onXRefClick = onXRefClick,
             landmark = sourceGraphLandmark,
@@ -327,6 +329,7 @@ private fun CrossReferenceSection(
     anchor: AnchorState,
     xrefs: List<XRefState>,
     answerMode: Boolean,
+    answerSourceCount: Int = 0,
     onAnchorClick: () -> Unit,
     onXRefClick: (String) -> Unit,
     landmark: String,
@@ -334,7 +337,11 @@ private fun CrossReferenceSection(
 ) {
     val visibleXRefs = tabletSourceGraphVisibleXRefs(anchor, xrefs)
     val referenceCount = buildCrossReferenceCardCount(anchor, visibleXRefs)
-    val sourceCount = visibleXRefs.size + if (anchor.hasSource) 1 else 0
+    val sourceCount = buildAnswerModeSourceHeaderCount(
+        anchor = anchor,
+        xrefs = visibleXRefs,
+        answerSourceCount = answerSourceCount,
+    )
     val headerCount = if (answerMode) sourceCount else referenceCount
     val hasRows = anchor.hasSource || visibleXRefs.isNotEmpty()
     Column(
@@ -390,6 +397,16 @@ private fun CrossReferenceSection(
 
 internal fun buildCrossReferenceCardCount(anchor: AnchorState, xrefs: List<XRefState>): Int =
     tabletSourceGraphVisibleXRefs(anchor, xrefs).size
+
+internal fun buildAnswerModeSourceHeaderCount(
+    anchor: AnchorState,
+    xrefs: List<XRefState>,
+    answerSourceCount: Int,
+): Int =
+    maxOf(
+        answerSourceCount.coerceAtLeast(0),
+        tabletSourceGraphVisibleXRefs(anchor, xrefs).size + if (anchor.hasSource) 1 else 0,
+    )
 
 internal fun tabletSourceGraphVisibleXRefs(anchor: AnchorState, xrefs: List<XRefState>): List<XRefState> {
     val anchorId = anchor.id.trim()

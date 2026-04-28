@@ -132,6 +132,38 @@ class TabletEvidenceVisibilityPolicyTest {
     }
 
     @Test
+    fun answerModeSourceHeaderCountUsesThreadSourceFloorWhenGraphRowsAreEmpty() {
+        val count = buildAnswerModeSourceHeaderCount(
+            anchor = AnchorState(
+                key = "",
+                id = "",
+                title = "",
+                section = "",
+                snippet = "",
+                hasSource = false,
+            ),
+            xrefs = emptyList(),
+            answerSourceCount = 2,
+        )
+
+        assertEquals(2, count)
+    }
+
+    @Test
+    fun answerModeSourceHeaderCountStillCountsGraphRowsWhenTheyExceedThreadSources() {
+        val count = buildAnswerModeSourceHeaderCount(
+            anchor = anchor(section = "water storage", snippet = ""),
+            xrefs = listOf(
+                XRefState(id = "GD-215", title = "Rainwater Catchment"),
+                XRefState(id = "GD-216", title = "Clay Filter"),
+            ),
+            answerSourceCount = 1,
+        )
+
+        assertEquals(3, count)
+    }
+
+    @Test
     fun tabletGuideModeUsesGuideSectionCountForRailHeader() {
         val state = stateWithSources(
             sourceCount = 1,

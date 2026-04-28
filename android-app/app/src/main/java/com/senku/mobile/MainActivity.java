@@ -3931,7 +3931,7 @@ public final class MainActivity extends AppCompatActivity {
             tabletSearchSurface.setVisibility(showSearchSurface ? View.VISIBLE : View.GONE);
         }
         if (resultsHeader != null) {
-            resultsHeader.setVisibility(showSearchSurface ? View.VISIBLE : View.GONE);
+            resultsHeader.setVisibility(View.GONE);
         }
         if (resultsList != null) {
             resultsList.setVisibility(showSearchSurface && hasResults ? View.VISIBLE : View.GONE);
@@ -3957,7 +3957,7 @@ public final class MainActivity extends AppCompatActivity {
             tabletSearchSurface.setVisibility(showSearchSurface ? View.VISIBLE : View.GONE);
         }
         if (resultsHeader != null) {
-            resultsHeader.setVisibility(showSearchSurface ? View.VISIBLE : View.GONE);
+            resultsHeader.setVisibility(View.GONE);
         }
         if (resultsList != null) {
             resultsList.setVisibility(showSearchSurface && hasResults ? View.VISIBLE : View.GONE);
@@ -3982,7 +3982,7 @@ public final class MainActivity extends AppCompatActivity {
         boolean browseMode = isBrowseModeActive();
 
         if (resultsHeader != null) {
-            resultsHeader.setVisibility(!browseMode && hasResults ? View.VISIBLE : View.GONE);
+            resultsHeader.setVisibility(View.GONE);
         }
         if (resultsList != null) {
             resultsList.setVisibility(!browseMode && hasResults ? View.VISIBLE : View.GONE);
@@ -4028,7 +4028,7 @@ public final class MainActivity extends AppCompatActivity {
         boolean hasResults = !items.isEmpty();
 
         if (resultsHeader != null) {
-            resultsHeader.setVisibility(hasResults ? View.VISIBLE : View.GONE);
+            resultsHeader.setVisibility(View.GONE);
         }
         if (resultsList != null) {
             resultsList.setVisibility(hasResults ? View.VISIBLE : View.GONE);

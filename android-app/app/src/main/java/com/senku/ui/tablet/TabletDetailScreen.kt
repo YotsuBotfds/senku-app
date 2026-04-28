@@ -206,6 +206,12 @@ internal data class TabletDetailTypeScalePolicy(
     val limitLineHeightSp: Int,
 )
 
+internal data class TabletAnswerReadingChromePolicy(
+    val topPaddingDp: Int,
+    val blockSpacingDp: Int,
+    val bottomPaddingDp: Int,
+)
+
 private data class GuidePaperPalette(
     val page: Color = Color(0xFFE8DFC9),
     val pageInset: Color = Color(0xFFE1D3BA),
@@ -290,6 +296,21 @@ internal fun tabletDetailTypeScalePolicy(isLandscape: Boolean): TabletDetailType
     when (isLandscape) {
         true -> tabletLandscapeDetailTypeScalePolicy()
         false -> tabletPortraitDetailTypeScalePolicy()
+    }
+
+internal fun tabletAnswerReadingChromePolicy(isLandscape: Boolean): TabletAnswerReadingChromePolicy =
+    if (isLandscape) {
+        TabletAnswerReadingChromePolicy(
+            topPaddingDp = 28,
+            blockSpacingDp = 20,
+            bottomPaddingDp = 8,
+        )
+    } else {
+        TabletAnswerReadingChromePolicy(
+            topPaddingDp = 16,
+            blockSpacingDp = 14,
+            bottomPaddingDp = 4,
+        )
     }
 
 internal fun tabletComposerContextHint(state: TabletDetailState): String {
@@ -536,6 +557,7 @@ private fun DetailWorkspace(
                     anchor = tabletSourceGraphAnchor(state.anchor),
                     xrefs = tabletSourceGraphXRefs(state.xrefs),
                     answerMode = state.isAnswerOrThreadMode(),
+                    answerSourceCount = state.resolvedAnswerSourceCount(),
                     onAnchorClick = onAnchorClick,
                     onXRefClick = onXRefClick,
                     modifier = Modifier
@@ -631,7 +653,6 @@ private fun CenterPane(
                     onTurnClick = onTurnClick,
                     onShowProof = onEvidenceToggleClick,
                 )
-                Spacer(modifier = Modifier.height(8.dp))
             }
         }
     }
@@ -680,6 +701,7 @@ private fun AnswerReadingSurface(
     onShowProof: () -> Unit,
 ) {
     val activeTurn = state.turns.lastOrNull { it.isActive } ?: state.turns.lastOrNull()
+    val chromePolicy = tabletAnswerReadingChromePolicy(state.isLandscape)
 
     if (activeTurn == null) {
         Text(
@@ -694,8 +716,11 @@ private fun AnswerReadingSurface(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(top = if (state.isLandscape) 28.dp else 24.dp),
-        verticalArrangement = Arrangement.spacedBy(if (state.isLandscape) 20.dp else 18.dp),
+            .padding(
+                top = chromePolicy.topPaddingDp.dp,
+                bottom = chromePolicy.bottomPaddingDp.dp,
+            ),
+        verticalArrangement = Arrangement.spacedBy(chromePolicy.blockSpacingDp.dp),
     ) {
         PrimaryAnswerBlock(
             turn = activeTurn,
@@ -1381,6 +1406,12 @@ internal fun TabletDetailState.isThreadMode(): Boolean = detailMode == TabletDet
 
 internal fun TabletDetailState.isAnswerOrThreadMode(): Boolean =
     detailMode == TabletDetailMode.Answer || detailMode == TabletDetailMode.Thread
+
+internal fun TabletDetailState.resolvedAnswerSourceCount(): Int =
+    maxOf(
+        sources.size,
+        turns.maxOfOrNull { it.answer.sourceCount } ?: 0,
+    )
 
 internal fun TabletDetailState.resolvedGuideSectionCount(): Int =
     if (isGuideMode()) {

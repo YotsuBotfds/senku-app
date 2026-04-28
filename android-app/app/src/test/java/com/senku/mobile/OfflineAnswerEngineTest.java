@@ -2336,6 +2336,49 @@ public final class OfflineAnswerEngineTest {
     }
 
     @Test
+    public void rainShelterUncertainFitSourcesUseReviewedMockIdentityStack() {
+        List<SearchResult> sources = OfflineAnswerEngine.shapeUncertainFitSourcesForPresentation(
+            "How do I build a simple rain shelter from tarp and cord?",
+            List.of(
+                new SearchResult(
+                    "Primitive Shelter Construction Techniques",
+                    "",
+                    "A simple ridgeline shelter requires only tarp, cord, and two anchor points.",
+                    "",
+                    "GD-345",
+                    "Wood Quality Evaluation for Shelter Construction",
+                    "survival",
+                    "lexical",
+                    "",
+                    "",
+                    "emergency_shelter",
+                    "foundation,weatherproofing,site_selection"
+                ),
+                new SearchResult(
+                    "Primitive Shelter Construction Techniques",
+                    "",
+                    "Pile leaves and boughs over a small frame.",
+                    "",
+                    "GD-345",
+                    "Debris Hut (Emergency Shelter)",
+                    "survival",
+                    "lexical"
+                )
+            ),
+            false
+        );
+
+        assertEquals(3, sources.size());
+        assertEquals("GD-220", sources.get(0).guideId);
+        assertEquals("Abrasives Manufacturing", sources.get(0).title);
+        assertEquals("GD-132", sources.get(1).guideId);
+        assertEquals("Foundry & Metal Casting", sources.get(1).title);
+        assertEquals("GD-345", sources.get(2).guideId);
+        assertEquals("Tarp & Cord Shelters", sources.get(2).title);
+        assertEquals("Tarp & Cord Shelters", sources.get(2).sectionHeading);
+    }
+
+    @Test
     public void buildUncertainFitAnswerBodyDoesNotInventRainShelterStepsWithoutSources() {
         String answerBody = OfflineAnswerEngine.buildUncertainFitAnswerBody(
             "How do I build a simple rain shelter from tarp and cord?",
