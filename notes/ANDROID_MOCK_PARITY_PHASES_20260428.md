@@ -317,6 +317,25 @@ Residual risks: answer detail still has visible product/provenance vocabulary
 that is more explicit than the mock, and search/result typography remains
 somewhat heavier than the Claude reference even after the softness pass.
 
+Wave40 integration proof:
+`artifacts/ui_state_pack/wave40_integration_final/20260428_161300` is green
+(`pass`, 47/47, fail count 0, ANR count 0), homogeneous APK
+`438396ebda34e5586b26cd9d1aaf08ec7223ba4a7f75bd87cc69d5ae45be31d4`,
+model `gemma-4-e2b-it-litert`
+(`ea1102014465edeb14b517bf270f6751d036749e3c5f517a7ff802782cb92161`),
+rotation mismatch count 0. Scope covered parallel polish slices plus a
+post-review home/search blocker fix: answer/provenance copy and source snippets
+are calmer, top-bar actions are less boxed, search rows and score ticks are
+denser, tablet guide/evidence proportions are adjusted, and Home/Search chrome
+was flattened after targeted screenshot review flagged heavy query/status
+surfaces. Validation included the Android local quality gate, focused
+home/search and answer/evidence/tablet JVM tests, a targeted three-role
+home/search pack (`artifacts/ui_state_pack/wave40_home_search_fix/20260428_160527`,
+`pass`, 35/35), and the final four-role pack. Residual risks: Home/Search are
+closer but still not pixel-level mock parity, especially Android system chrome
+and overall native text weight; answer/detail remains the next high-value
+visual-polish area once the external design review returns.
+
 ## Wave25+ Plan
 
 | Wave | Slice | Why this order | Avoid overlapping write sets | Acceptance proof |

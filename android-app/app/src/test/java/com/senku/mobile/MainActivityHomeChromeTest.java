@@ -325,7 +325,7 @@ public final class MainActivityHomeChromeTest {
 
     @Test
     public void searchChromeSplitsTargetQueryAndCountLatency() {
-        assertEquals("Search rain shelter", MainActivity.buildSearchChromeQueryLabelForTest(" rain shelter "));
+        assertEquals("rain shelter", MainActivity.buildSearchChromeQueryLabelForTest(" rain shelter "));
         assertEquals(
             "4 results  \u00b7  12ms",
             MainActivity.buildSearchChromeCountLabelForTest("rain shelter", 4, true)

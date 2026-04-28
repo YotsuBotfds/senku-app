@@ -47,14 +47,16 @@ class StressReadingPolicyTest {
     fun tabletGuideThreadRailUsesSectionIndexWidthWithoutChangingAnswerRails() {
         assertEquals(212, tabletThreadRailWidthDp(isLandscape = true, guideMode = false))
         assertEquals(132, tabletThreadRailWidthDp(isLandscape = false, guideMode = false))
-        assertEquals(216, tabletThreadRailWidthDp(isLandscape = true, guideMode = true))
+        assertEquals(204, tabletThreadRailWidthDp(isLandscape = true, guideMode = true))
         assertEquals(226, tabletThreadRailWidthDp(isLandscape = false, guideMode = true))
     }
 
     @Test
-    fun tabletGuidePaperPolicyContainsPortraitReaderWithTrimmedLandscapeSheet() {
-        assertEquals(520, tabletGuidePaperMaxWidthDp(isLandscape = true))
+    fun tabletGuidePaperPolicyContainsPortraitReaderWithReadableLandscapeSheet() {
+        assertEquals(560, tabletGuidePaperMaxWidthDp(isLandscape = true))
         assertEquals(440, tabletGuidePaperMaxWidthDp(isLandscape = false))
+        assertEquals(12, tabletGuidePaperHorizontalPaddingDp(isLandscape = true))
+        assertEquals(12, tabletGuidePaperHorizontalPaddingDp(isLandscape = false))
     }
 
     @Test

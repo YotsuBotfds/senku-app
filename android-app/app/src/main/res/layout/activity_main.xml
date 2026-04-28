@@ -20,15 +20,15 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="28dp"
+        android:layout_height="26dp"
         android:gravity="center_vertical"
         android:orientation="horizontal"
-        android:paddingStart="14dp"
-        android:paddingEnd="14dp">
+        android:paddingStart="12dp"
+        android:paddingEnd="12dp">
 
         <ImageView
-            android:layout_width="18dp"
-            android:layout_height="18dp"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
             android:contentDescription="@null"
             android:importantForAccessibility="no"
             android:padding="3dp"
@@ -37,9 +37,9 @@
 
         <View
             android:layout_width="1dp"
-            android:layout_height="16dp"
-            android:layout_marginStart="9dp"
-            android:layout_marginEnd="10dp"
+            android:layout_height="14dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="9dp"
             android:background="@color/senku_rev03_hairline_strong" />
 
         <TextView
@@ -54,12 +54,12 @@
             android:text="Home  Senku  &#8226;  ed.2"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:textColor="@color/senku_rev03_ink_1"
-            android:textSize="10sp"
+            android:textSize="9sp"
             android:textStyle="normal" />
 
         <ImageView
-            android:layout_width="16dp"
-            android:layout_height="16dp"
+            android:layout_width="14dp"
+            android:layout_height="14dp"
             android:contentDescription="@string/search_button"
             android:src="@drawable/ic_search_magnifier"
             android:tint="@color/senku_rev03_ink_2" />
@@ -67,7 +67,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
+            android:layout_marginStart="8dp"
             android:fontFamily="monospace"
             android:includeFontPadding="false"
             android:text="..."
@@ -88,8 +88,8 @@
         android:layout_weight="1"
         android:clipToPadding="false"
         android:fillViewport="true"
-        android:paddingStart="16dp"
-        android:paddingEnd="16dp"
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp"
         android:paddingBottom="18dp"
         android:scrollbars="none">
 
@@ -100,7 +100,7 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="18dp"
+                android:layout_height="17dp"
                 android:layout_marginTop="5dp"
                 android:background="@drawable/bg_manual_home_status"
                 android:gravity="center_vertical"
@@ -121,6 +121,7 @@
                     android:text="@string/status_starting"
                     android:textAppearance="?android:attr/textAppearanceSmall"
                     android:textColor="@color/senku_rev03_ok"
+                    android:textSize="10sp"
                     android:textStyle="bold" />
 
                 <TextView
@@ -131,12 +132,13 @@
                     android:text="ed.2 &#8226; 184 MB"
                     android:textAppearance="?android:attr/textAppearanceSmall"
                     android:textColor="@color/senku_rev03_ink_2"
+                    android:textSize="10sp"
                     android:textStyle="bold" />
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="32dp"
+                android:layout_height="30dp"
                 android:layout_marginTop="3dp"
                 android:addStatesFromChildren="true"
                 android:background="@drawable/bg_manual_phone_home_search"
@@ -166,11 +168,14 @@
                     android:hint="@string/search_hint"
                     android:importantForAutofill="no"
                     android:imeOptions="actionSearch"
+                    android:includeFontPadding="false"
                     android:inputType="text"
                     android:maxLines="1"
+                    android:minHeight="0dp"
                     android:padding="0dp"
                     android:textColor="@color/senku_rev03_ink_0"
-                    android:textColorHint="@color/senku_rev03_ink_2" />
+                    android:textColorHint="@color/senku_rev03_ink_2"
+                    android:textSize="12sp" />
             </LinearLayout>
 
             <HorizontalScrollView
@@ -200,6 +205,7 @@
                 android:text="Categories  &#8226;  12"
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:textColor="@color/senku_rev03_ink_2"
+                android:textSize="10sp"
                 android:textStyle="bold" />
 
             <LinearLayout
@@ -225,6 +231,7 @@
                     android:text="Recent threads"
                     android:textAppearance="?android:attr/textAppearanceSmall"
                     android:textColor="@color/senku_rev03_ink_2"
+                    android:textSize="9sp"
                     android:textStyle="bold" />
 
                 <LinearLayout
@@ -291,11 +298,11 @@
     <LinearLayout
         android:id="@+id/phone_search_query_well"
         android:layout_width="match_parent"
-        android:layout_height="32dp"
-        android:layout_marginStart="18dp"
-        android:layout_marginEnd="18dp"
-        android:layout_marginBottom="6dp"
-        android:background="@drawable/bg_manual_phone_home_search"
+        android:layout_height="28dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginBottom="4dp"
+        android:background="@android:color/transparent"
         android:gravity="center_vertical"
         android:orientation="horizontal"
         android:paddingStart="12dp"
@@ -321,7 +328,8 @@
             android:maxLines="1"
             android:text="@string/search_hint"
             android:textAppearance="?android:attr/textAppearanceSmall"
-            android:textColor="@color/senku_rev03_ink_0" />
+            android:textColor="@color/senku_rev03_ink_0"
+            android:textSize="12sp" />
 
         <TextView
             android:id="@+id/phone_search_count_text"
@@ -332,6 +340,7 @@
             android:text="0 results"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:textColor="@color/senku_rev03_ink_2"
+            android:textSize="10sp"
             android:textStyle="bold" />
     </LinearLayout>
 

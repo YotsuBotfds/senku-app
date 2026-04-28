@@ -56,6 +56,8 @@ internal val PaperAnswerCardSupportLineHeight = 15.sp
 internal val PaperAnswerCardMetaSize = 9.sp
 internal val PaperAnswerCardMetaLineHeight = 11.sp
 internal val PaperAnswerCardSupportHeaderSpacing = 4.dp
+internal val PaperAnswerCardProofCtaSize = 9.sp
+internal val PaperAnswerCardProofCtaLineHeight = 12.sp
 
 class PaperAnswerCardHostView @JvmOverloads constructor(
     context: Context,
@@ -282,8 +284,8 @@ fun PaperAnswerCard(
                             Text(
                                 text = displayProofCtaLabel(showProofLabel),
                                 style = typography.monoCaps.copy(
-                                    fontSize = 10.sp,
-                                    lineHeight = 13.sp,
+                                    fontSize = PaperAnswerCardProofCtaSize,
+                                    lineHeight = PaperAnswerCardProofCtaLineHeight,
                                     fontWeight = FontWeight.Normal,
                                 ),
                                 color = colors.accent,
@@ -291,8 +293,8 @@ fun PaperAnswerCard(
                             Text(
                                 text = ">",
                                 style = typography.monoCaps.copy(
-                                    fontSize = 10.sp,
-                                    lineHeight = 13.sp,
+                                    fontSize = PaperAnswerCardProofCtaSize,
+                                    lineHeight = PaperAnswerCardProofCtaLineHeight,
                                     fontWeight = FontWeight.Normal,
                                 ),
                                 color = colors.accent,
@@ -439,35 +441,35 @@ private fun evidenceToneColor(
 
 internal fun compactEvidenceLabel(content: AnswerContent): String {
     return when (content.answerSurfaceLabel) {
-        AnswerSurfaceLabel.DeterministicRule -> "RULE MATCH"
-        AnswerSurfaceLabel.LimitedFit -> "UNSURE"
-        AnswerSurfaceLabel.Abstain -> "NO MATCH"
+        AnswerSurfaceLabel.DeterministicRule -> "Rule match"
+        AnswerSurfaceLabel.LimitedFit -> "Unsure"
+        AnswerSurfaceLabel.Abstain -> "No match"
         AnswerSurfaceLabel.ReviewedCardEvidence -> sourceEvidenceLabel(content)
         AnswerSurfaceLabel.GeneratedEvidence,
         AnswerSurfaceLabel.Unknown -> when {
-            content.uncertainFit -> "UNSURE"
+            content.uncertainFit -> "Unsure"
             content.evidence == Evidence.Strong -> sourceEvidenceLabel(content)
             content.evidence == Evidence.Moderate -> sourceEvidenceLabel(content)
-            content.abstain -> "NO MATCH"
+            content.abstain -> "No match"
             else -> sourceEvidenceLabel(content)
         }
     }
 }
 
 private fun statusHeaderLabel(content: AnswerContent): String {
-    val status = if (content.abstain) "NO MATCH" else "ANSWER"
+    val status = if (content.abstain) "No match" else "Answer"
     val tokens = mutableListOf(status)
     if (content.host.isNotBlank()) {
-        tokens += content.host.trim().uppercase(Locale.US)
+        tokens += content.host.trim()
     }
     return tokens.joinToString(" \u00B7 ")
 }
 
 private fun sourceEvidenceLabel(content: AnswerContent): String {
     return when (content.evidence) {
-        Evidence.Strong -> "STRONG SOURCES"
-        Evidence.Moderate -> "SOURCE MATCH"
-        Evidence.None -> "LIMITED SOURCES"
+        Evidence.Strong -> "Sources ready"
+        Evidence.Moderate -> "Sources"
+        Evidence.None -> "Limited sources"
     }
 }
 
@@ -478,13 +480,13 @@ internal fun buildFooterMeta(content: AnswerContent): String {
     }
     tokens += sourceCountLabel(content.sourceCount)
     if (content.elapsedSeconds > 0.0) {
-        tokens += String.format(Locale.US, "%.1fS", content.elapsedSeconds)
+        tokens += String.format(Locale.US, "%.1fs", content.elapsedSeconds)
     }
     return tokens.joinToString(" \u00B7 ")
 }
 
 private fun sourceCountLabel(sourceCount: Int): String {
-    return if (sourceCount == 1) "1 SOURCE" else "$sourceCount SOURCES"
+    return if (sourceCount == 1) "1 source" else "$sourceCount sources"
 }
 
 internal fun shouldShowUncertainFitNotice(content: AnswerContent): Boolean {
@@ -496,22 +498,22 @@ internal fun shouldEmphasizeUncertainFitNotice(content: AnswerContent): Boolean 
 }
 
 internal fun uncertainFitNoticeLabel(content: AnswerContent): String {
-    return if (shouldEmphasizeUncertainFitNotice(content)) "UNSURE FIT" else "UNSURE"
+    return if (shouldEmphasizeUncertainFitNotice(content)) "Unsure fit" else "Unsure"
 }
 
 internal fun uncertainFitNoticeText(content: AnswerContent): String {
     val count = content.sourceCount.coerceAtLeast(0)
     val guideWord = if (count == 1) "guide" else "guides"
     val countText = if (count > 0) "$count related $guideWord" else "Related guides"
-    return "$countText found; no single confident anchor. Treat as guidance."
+    return "$countText found. No single confident anchor yet."
 }
 
 internal fun displayProofCtaLabel(label: String): String {
-    return if (label.trim().equals("Show proof", ignoreCase = true)) {
-        "View sources"
-    } else if (label.trim().equals("Show proof rail", ignoreCase = true)) {
-        "View sources"
-    } else {
-        label
+    val trimmed = label.trim()
+    return when {
+        trimmed.equals("Show proof", ignoreCase = true) -> "Sources"
+        trimmed.equals("Show proof rail", ignoreCase = true) -> "Sources"
+        trimmed.equals("View sources", ignoreCase = true) -> "Sources"
+        else -> label
     }
 }

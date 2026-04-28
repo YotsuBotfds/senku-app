@@ -4246,7 +4246,7 @@ public final class MainActivity extends AppCompatActivity {
         if (cleanQuery.isEmpty() || "guides".equalsIgnoreCase(cleanQuery)) {
             return "Search guides";
         }
-        return "Search " + cleanQuery;
+        return cleanQuery;
     }
 
     private String buildSearchChromeCountLabel(String query, int resultCount) {
@@ -4308,15 +4308,15 @@ public final class MainActivity extends AppCompatActivity {
             return;
         }
         if (browseMode) {
-            homeChromeTitleText.setText("Home  Senku  \u2022  Field manual \u2022 ed.2");
+            homeChromeTitleText.setText("HOME SENKU \u2022 Field manual \u2022 ed.2");
             return;
         }
         String cleanQuery = safe(query).trim();
         if (cleanQuery.isEmpty() || "guides".equalsIgnoreCase(cleanQuery)) {
-            homeChromeTitleText.setText("Search  Senku");
+            homeChromeTitleText.setText("SEARCH SENKU");
             return;
         }
-        homeChromeTitleText.setText("Search  '" + cleanQuery + "'");
+        homeChromeTitleText.setText("SEARCH " + cleanQuery);
     }
 
     private void updateTabletSearchPreview() {

@@ -271,13 +271,16 @@ internal fun tabletThreadRailWidthDp(
     guideMode: Boolean,
 ): Int =
     when {
-        guideMode && isLandscape -> 216
+        guideMode && isLandscape -> 204
         guideMode -> 226
         else -> tabletReadingLayoutPolicy(isLandscape).threadRailWidthDp
     }
 
 internal fun tabletGuidePaperMaxWidthDp(isLandscape: Boolean): Int =
-    if (isLandscape) 520 else 440
+    if (isLandscape) 560 else 440
+
+internal fun tabletGuidePaperHorizontalPaddingDp(isLandscape: Boolean): Int =
+    if (isLandscape) 12 else 12
 
 internal fun tabletGuideNavigationLabels(): TabletGuideNavigationLabels =
     TabletGuideNavigationLabels(
@@ -630,9 +633,14 @@ private fun CenterPane(
         modifier = modifier.background(colors.bg0),
     ) {
         val verticalPagePadding = if (guideMode) 12.dp else 0.dp
-        val horizontalPagePadding = readingPolicy.answerHorizontalPaddingDp.dp
+        val horizontalPagePadding = if (guideMode) {
+            tabletGuidePaperHorizontalPaddingDp(state.isLandscape).dp
+        } else {
+            readingPolicy.answerHorizontalPaddingDp.dp
+        }
         val maxContentWidth = if (guideMode) {
-            tabletGuidePaperMaxWidthDp(state.isLandscape) + (readingPolicy.answerHorizontalPaddingDp * 2)
+            tabletGuidePaperMaxWidthDp(state.isLandscape) +
+                (tabletGuidePaperHorizontalPaddingDp(state.isLandscape) * 2)
         } else {
             readingPolicy.answerMaxWidthDp
         }

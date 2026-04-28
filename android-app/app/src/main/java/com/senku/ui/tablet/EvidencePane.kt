@@ -91,7 +91,7 @@ fun EvidencePane(
             .background(colors.bg1)
             .fillMaxHeight()
             .verticalScroll(scrollState)
-            .padding(horizontal = 12.dp, vertical = 12.dp),
+            .padding(horizontal = 10.dp, vertical = 12.dp),
         verticalArrangement = Arrangement.spacedBy(10.dp),
     ) {
         CrossReferenceSection(
@@ -434,10 +434,10 @@ private fun ManualEvidenceCard(
     val isCompact = density == EvidenceCardDensity.Compact
     val isAnchor = relation == "ANCHOR"
     val showsSelectionRail = !isCompact || isAnchor
-    val rowEndPadding = if (isCompact) 10.dp else 11.dp
-    val rowGap = if (isCompact) 9.dp else 11.dp
+    val rowEndPadding = if (isCompact) 9.dp else 11.dp
+    val rowGap = if (isCompact) 8.dp else 11.dp
     val railWidth = if (isCompact) 3.dp else 4.dp
-    val contentVerticalPadding = if (isCompact) 9.dp else 12.dp
+    val contentVerticalPadding = if (isCompact) 8.dp else 12.dp
     val contentGap = if (isCompact) 5.dp else 6.dp
     val metaColor = if (relation == "ANCHOR") colors.accent else colors.ink2
     val titleFontSize = if (isCompact) 12.5.sp else 14.sp
@@ -546,7 +546,7 @@ private fun EvidenceCardText(
             .filter { it.isNotEmpty() }
             .joinToString(" \u00b7 "),
         style = typography.monoCaps.copy(
-            fontSize = 10.sp,
+            fontSize = 9.5.sp,
             lineHeight = 12.sp,
             fontWeight = FontWeight.Medium,
         ),

@@ -33,6 +33,13 @@ import com.senku.ui.theme.SenkuTheme
 private const val FallbackTitle = "Anchor guide"
 private const val AnchorLabel = "anchor"
 private const val EmptySnippetLabel = "No snippet yet."
+internal val EvidenceSnippetPaddingHorizontal = 10.dp
+internal val EvidenceSnippetPaddingVertical = 9.dp
+internal val EvidenceSnippetSectionSpacing = 6.dp
+internal val EvidenceSnippetTitleSize = 12.sp
+internal val EvidenceSnippetTitleLineHeight = 16.sp
+internal val EvidenceSnippetSnippetSize = 11.sp
+internal val EvidenceSnippetSnippetLineHeight = 16.sp
 
 @Immutable
 data class EvidenceSnippetModel(
@@ -48,10 +55,10 @@ fun EvidenceSnippet(
     onClick: ((EvidenceSnippetModel) -> Unit)? = null,
     modifier: Modifier = Modifier,
     titleMaxLines: Int = 2,
-    snippetMaxLines: Int = 6,
+    snippetMaxLines: Int = 5,
 ) {
     val colors = SenkuTheme.colors
-    val shape = RoundedCornerShape(12.dp)
+    val shape = RoundedCornerShape(8.dp)
     val content: @Composable () -> Unit = {
         EvidenceSnippetContent(
             evidence = evidence,
@@ -66,7 +73,7 @@ fun EvidenceSnippet(
             color = colors.bg1,
             contentColor = colors.ink0,
             shape = shape,
-            border = BorderStroke(1.dp, colors.hairlineStrong),
+            border = BorderStroke(0.5.dp, colors.hairline),
         ) {
             content()
         }
@@ -76,7 +83,7 @@ fun EvidenceSnippet(
             color = colors.bg1,
             contentColor = colors.ink0,
             shape = shape,
-            border = BorderStroke(1.dp, colors.hairlineStrong),
+            border = BorderStroke(0.5.dp, colors.hairline),
             onClick = { onClick(evidence) },
         ) {
             content()
@@ -98,8 +105,11 @@ private fun EvidenceSnippetContent(
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 12.dp, vertical = 12.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp),
+            .padding(
+                horizontal = EvidenceSnippetPaddingHorizontal,
+                vertical = EvidenceSnippetPaddingVertical,
+            ),
+        verticalArrangement = Arrangement.spacedBy(EvidenceSnippetSectionSpacing),
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -119,15 +129,15 @@ private fun EvidenceSnippetContent(
             )
             Spacer(modifier = Modifier.width(8.dp))
             LaunchGlyph(
-                modifier = Modifier.size(12.dp),
+                modifier = Modifier.size(11.dp),
             )
         }
 
         Text(
             text = evidence.displayTitle(),
             style = typography.uiBody.copy(
-                fontSize = 13.sp,
-                lineHeight = 17.sp,
+                fontSize = EvidenceSnippetTitleSize,
+                lineHeight = EvidenceSnippetTitleLineHeight,
                 fontWeight = FontWeight.SemiBold,
             ),
             color = colors.ink0,
@@ -158,8 +168,8 @@ private fun EvidenceSnippetContent(
         Text(
             text = evidence.quotedSnippet(),
             style = typography.answerBody.copy(
-                fontSize = 12.sp,
-                lineHeight = 18.sp,
+                fontSize = EvidenceSnippetSnippetSize,
+                lineHeight = EvidenceSnippetSnippetLineHeight,
                 fontWeight = FontWeight.Normal,
             ),
             color = if (hasSnippet) colors.ink1 else colors.ink3,
@@ -169,24 +179,24 @@ private fun EvidenceSnippetContent(
     }
 }
 
-private fun EvidenceSnippetModel.anchorLine(): String =
+internal fun EvidenceSnippetModel.anchorLine(): String =
     listOf(displayGuideId(), AnchorLabel)
         .filter { it.isNotEmpty() }
-        .joinToString(" | ")
+        .joinToString(" ")
 
-private fun EvidenceSnippetModel.displayGuideId(): String =
+internal fun EvidenceSnippetModel.displayGuideId(): String =
     guideId.trim()
 
-private fun EvidenceSnippetModel.displayTitle(): String =
+internal fun EvidenceSnippetModel.displayTitle(): String =
     title.trim().ifEmpty { FallbackTitle }
 
-private fun EvidenceSnippetModel.displaySection(): String =
+internal fun EvidenceSnippetModel.displaySection(): String =
     section.trim()
 
-private fun EvidenceSnippetModel.displaySnippet(): String =
+internal fun EvidenceSnippetModel.displaySnippet(): String =
     snippet.trim()
 
-private fun EvidenceSnippetModel.quotedSnippet(): String {
+internal fun EvidenceSnippetModel.quotedSnippet(): String {
     val value = displaySnippet()
     return if (value.isEmpty()) {
         EmptySnippetLabel

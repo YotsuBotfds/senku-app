@@ -1,6 +1,5 @@
 package com.senku.ui.primitives
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -124,22 +123,15 @@ fun SenkuTopBar(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         if (visibleActions.isNotEmpty()) {
-            Surface(
-                color = Color.Transparent,
-                contentColor = colors.ink0,
-                shape = RoundedCornerShape(7.dp),
-                border = BorderStroke(1.dp, colors.hairline.copy(alpha = 0.78f)),
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(4.dp),
+                verticalAlignment = Alignment.CenterVertically,
             ) {
-                Row(
-                    modifier = Modifier.padding(horizontal = 2.dp, vertical = 1.dp),
-                    horizontalArrangement = Arrangement.spacedBy(2.dp),
-                ) {
-                    visibleActions.forEach { action ->
-                        TopBarActionButton(
-                            action = action,
-                            onClick = { onActionClick(action.kind) },
-                        )
-                    }
+                visibleActions.forEach { action ->
+                    TopBarActionButton(
+                        action = action,
+                        onClick = { onActionClick(action.kind) },
+                    )
                 }
             }
         }
@@ -182,13 +174,9 @@ private fun TopBarActionButton(
     modifier: Modifier = Modifier,
 ) {
     val colors = SenkuTheme.colors
-    val shape = RoundedCornerShape(5.dp)
+    val shape = RoundedCornerShape(6.dp)
     val containerColor = when {
-        action.isActive -> colors.ok.copy(alpha = 0.14f)
-        else -> Color.Transparent
-    }
-    val borderColor = when {
-        action.isActive -> colors.ok.copy(alpha = 0.58f)
+        action.isActive -> colors.ok.copy(alpha = 0.10f)
         else -> Color.Transparent
     }
     val iconTint = when {
@@ -201,7 +189,7 @@ private fun TopBarActionButton(
 
     Box(
         modifier = modifier
-            .size(30.dp)
+            .size(28.dp)
             .clip(shape)
             .background(containerColor)
             .clickable(
@@ -217,13 +205,6 @@ private fun TopBarActionButton(
             },
         contentAlignment = Alignment.Center,
     ) {
-        Surface(
-            modifier = Modifier.matchParentSize(),
-            color = Color.Transparent,
-            shape = shape,
-            border = BorderStroke(1.dp, borderColor),
-        ) {}
-
         Icon(
             imageVector = action.kind.icon(),
             contentDescription = null,

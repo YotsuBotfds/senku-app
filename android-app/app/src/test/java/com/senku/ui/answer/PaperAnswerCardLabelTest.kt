@@ -7,31 +7,31 @@ class PaperAnswerCardLabelTest {
     @Test
     fun compactEvidenceLabel_usesFieldManualSourceLanguage() {
         assertEquals(
-            "RULE MATCH",
+            "Rule match",
             compactEvidenceLabel(answer(answerSurfaceLabel = AnswerSurfaceLabel.DeterministicRule)),
         )
         assertEquals(
-            "SOURCE MATCH",
+            "Sources",
             compactEvidenceLabel(answer(answerSurfaceLabel = AnswerSurfaceLabel.ReviewedCardEvidence)),
         )
         assertEquals(
-            "UNSURE",
+            "Unsure",
             compactEvidenceLabel(answer(answerSurfaceLabel = AnswerSurfaceLabel.LimitedFit)),
         )
         assertEquals(
-            "STRONG SOURCES",
+            "Sources ready",
             compactEvidenceLabel(answer(evidence = Evidence.Strong)),
         )
         assertEquals(
-            "SOURCE MATCH",
+            "Sources",
             compactEvidenceLabel(answer(evidence = Evidence.Moderate)),
         )
         assertEquals(
-            "LIMITED SOURCES",
+            "Limited sources",
             compactEvidenceLabel(answer(evidence = Evidence.None)),
         )
         assertEquals(
-            "UNSURE",
+            "Unsure",
             compactEvidenceLabel(
                 AnswerContent(
                     short = "Related guidance only.",
@@ -47,7 +47,7 @@ class PaperAnswerCardLabelTest {
     @Test
     fun compactEvidenceLabel_hidesReviewedCardBoundaryLanguage() {
         assertEquals(
-            "STRONG SOURCES",
+            "Sources ready",
             compactEvidenceLabel(
                 answer(
                     evidence = Evidence.Strong,
@@ -56,7 +56,7 @@ class PaperAnswerCardLabelTest {
             ),
         )
         assertEquals(
-            "LIMITED SOURCES",
+            "Limited sources",
             compactEvidenceLabel(
                 answer(
                     evidence = Evidence.None,
@@ -74,7 +74,7 @@ class PaperAnswerCardLabelTest {
             elapsedSeconds = 0.8,
         )
 
-        assertEquals("2 SOURCES · 0.8S", buildFooterMeta(content))
+        assertEquals("2 sources · 0.8s", buildFooterMeta(content))
     }
 
     @Test
@@ -86,11 +86,11 @@ class PaperAnswerCardLabelTest {
 
         assertEquals(true, shouldShowUncertainFitNotice(content))
         assertEquals(
-            "UNSURE",
+            "Unsure",
             uncertainFitNoticeLabel(content),
         )
         assertEquals(
-            "3 related guides found; no single confident anchor. Treat as guidance.",
+            "3 related guides found. No single confident anchor yet.",
             uncertainFitNoticeText(content),
         )
     }
@@ -105,6 +105,8 @@ class PaperAnswerCardLabelTest {
         assertEquals(9f, PaperAnswerCardMetaSize.value)
         assertEquals(11f, PaperAnswerCardMetaLineHeight.value)
         assertEquals(4f, PaperAnswerCardSupportHeaderSpacing.value)
+        assertEquals(9f, PaperAnswerCardProofCtaSize.value)
+        assertEquals(12f, PaperAnswerCardProofCtaLineHeight.value)
     }
 
     @Test
@@ -131,7 +133,7 @@ class PaperAnswerCardLabelTest {
             ),
         )
         assertEquals(
-            "UNSURE FIT",
+            "Unsure fit",
             uncertainFitNoticeLabel(
                 AnswerContent(
                     short = "",
@@ -146,7 +148,8 @@ class PaperAnswerCardLabelTest {
 
     @Test
     fun displayProofCtaLabel_replacesLegacyProofCopyOnly() {
-        assertEquals("View sources", displayProofCtaLabel("Show proof"))
+        assertEquals("Sources", displayProofCtaLabel("Show proof"))
+        assertEquals("Sources", displayProofCtaLabel("View sources"))
         assertEquals("View citations", displayProofCtaLabel("View citations"))
     }
 
