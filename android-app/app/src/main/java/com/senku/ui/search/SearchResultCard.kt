@@ -105,14 +105,14 @@ fun SearchResultCard(
             Box(
                 modifier = Modifier
                     .width(1.dp)
-                    .heightIn(min = 72.dp)
+                    .heightIn(min = 66.dp)
                     .background(laneColor.copy(alpha = 0.60f)),
             ) {
             }
             Column(
                 modifier = Modifier
                     .weight(1f)
-                    .padding(start = 9.dp, top = 7.dp, end = 10.dp, bottom = 7.dp),
+                    .padding(start = 8.dp, top = 6.dp, end = 9.dp, bottom = 6.dp),
                 verticalArrangement = Arrangement.spacedBy(2.dp),
             ) {
                 Row(
@@ -124,7 +124,7 @@ fun SearchResultCard(
                         modifier = Modifier.weight(1f),
                         style = SenkuTheme.typography.monoCaps.copy(
                             fontSize = 9.sp,
-                            lineHeight = 12.sp,
+                            lineHeight = 11.sp,
                             fontWeight = FontWeight.Bold,
                         ),
                         color = colors.accent,
@@ -141,7 +141,7 @@ fun SearchResultCard(
                     text = model.title.trim(),
                     style = SenkuTheme.typography.uiBody.copy(
                         fontSize = 13.sp,
-                        lineHeight = 15.sp,
+                        lineHeight = 14.sp,
                         fontWeight = FontWeight.Bold,
                     ),
                     color = colors.ink0,
@@ -155,7 +155,7 @@ fun SearchResultCard(
                         text = metadataLabel,
                         style = SenkuTheme.typography.monoCaps.copy(
                             fontSize = 8.sp,
-                            lineHeight = 10.sp,
+                            lineHeight = 9.sp,
                             fontWeight = FontWeight.Medium,
                         ),
                         color = colors.ink2,
@@ -168,7 +168,7 @@ fun SearchResultCard(
                     text = compactResultPreviewText(model.subtitle, model.snippet),
                     style = SenkuTheme.typography.smallBody.copy(
                         fontSize = 10.sp,
-                        lineHeight = 13.sp,
+                        lineHeight = 12.sp,
                         fontWeight = FontWeight.Normal,
                     ),
                     color = colors.ink1.copy(alpha = 0.78f),
@@ -226,7 +226,7 @@ private fun ScoreTick(
     ) {
         Box(
             modifier = Modifier
-                .width(22.dp)
+                .width(18.dp)
                 .height(2.dp)
                 .background(color.copy(alpha = 0.30f)),
         ) {
@@ -308,7 +308,7 @@ internal fun compactSearchResultMetadataLabel(metadataLine: String): String {
     valuesByKey["role"]?.let { tokens.add(it.uppercase(Locale.US)) }
     valuesByKey["category"]?.let { tokens.add(it.uppercase(Locale.US)) }
     valuesByKey["window"]?.let { tokens.add("WINDOW ${it.uppercase(Locale.US)}") }
-    return tokens.joinToString("  \u00B7  ")
+    return tokens.joinToString(" \u00B7 ")
 }
 
 internal fun compactResultPreviewText(subtitle: String, snippet: String): String {

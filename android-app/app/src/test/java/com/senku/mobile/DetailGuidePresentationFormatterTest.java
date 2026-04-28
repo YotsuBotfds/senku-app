@@ -100,6 +100,17 @@ public final class DetailGuidePresentationFormatterTest {
     }
 
     @Test
+    public void guideBodySanitizerRemovesRawHtmlLinksAndImageBang() {
+        assertEquals(
+            "For air supply, see Bellows & Forge Blower Construction.\nFoundry diagram 1",
+            GuideBodySanitizer.sanitizeGuideBodyForDisplay(
+                "For air supply, see <a href=\"../bellows.html\">Bellows &amp; Forge Blower Construction</a>.\n"
+                    + "!Foundry diagram 1"
+            )
+        );
+    }
+
+    @Test
     public void guideBodySanitizerPreservesRequiredReadingAsCompactGuideRow() {
         assertEquals(
             "Required reading \u00b7 Before attempting this guide, read the Chemical Safety Guide in full.",
@@ -120,6 +131,47 @@ public final class DetailGuidePresentationFormatterTest {
     }
 
     @Test
+    public void guideBodySanitizerRemovesDuplicateInlineAdmonitionSeparator() {
+        assertEquals(
+            "DANGER \u00b7 EXTREME BURN HAZARD\nKeep every tool dry.",
+            GuideBodySanitizer.sanitizeGuideBodyForDisplay(
+                "DANGER \u00b7 EXTREME BURN HAZARD\nKeep every tool dry."
+            )
+        );
+    }
+
+    @Test
+    public void guideBodySanitizerRemovesRepeatedDangerLabelFromManualCallout() {
+        assertEquals(
+            "DANGER \u00b7 EXTREME BURN HAZARD",
+            GuideBodySanitizer.sanitizeGuideBodyForDisplay(
+                "DANGER: DANGER - EXTREME BURN HAZARD"
+            )
+        );
+    }
+
+    @Test
+    public void guideBodySanitizerRemovesRepeatedRequiredReadingLabel() {
+        assertEquals(
+            "Required reading \u00b7 Read GD-220 first.",
+            GuideBodySanitizer.sanitizeGuideBodyForDisplay(
+                "Required Reading: Required reading - Read GD-220 first."
+            )
+        );
+    }
+
+    @Test
+    public void guideBodySanitizerSplitsVerboseSectionTitlesIntoManualLabelAndHeading() {
+        assertEquals(
+            "Section 1 Area readiness\nReviewed Answer-Card Boundary\nUse this section only for screening.",
+            GuideBodySanitizer.sanitizeGuideBodyForDisplay(
+                "## Section 1 Reviewed Answer-Card Boundary: Area Readiness, Hazard Screen, and Handoffs\n"
+                    + "Use this section only for screening."
+            )
+        );
+    }
+
+    @Test
     public void guideBodyParserExposesSectionAndRequiredReadingKindsWithoutDisplayMarkers() {
         GuideBodySanitizer.ParsedGuideBody parsed = GuideBodySanitizer.parseGuideBodyForDisplay(
             "[[SECTION]] Area readiness\nRequired Reading: Read GD-220 first."
@@ -131,5 +183,17 @@ public final class DetailGuidePresentationFormatterTest {
         assertEquals("Section 1", parsed.lines[0].label);
         assertEquals(GuideBodySanitizer.GuideBodyLine.Kind.REQUIRED_READING, parsed.lines[1].kind);
         assertEquals("Required reading", parsed.lines[1].label);
+    }
+
+    @Test
+    public void guideBodyParserExposesSplitHeadingKind() {
+        GuideBodySanitizer.ParsedGuideBody parsed = GuideBodySanitizer.parseGuideBodyForDisplay(
+            "## Section 1 Reviewed Answer-Card Boundary: Area Readiness, Hazard Screen, and Handoffs"
+        );
+
+        assertEquals("Section 1 Area readiness\nReviewed Answer-Card Boundary", parsed.displayText);
+        assertEquals(2, parsed.lines.length);
+        assertEquals(GuideBodySanitizer.GuideBodyLine.Kind.SECTION, parsed.lines[0].kind);
+        assertEquals(GuideBodySanitizer.GuideBodyLine.Kind.HEADING, parsed.lines[1].kind);
     }
 }

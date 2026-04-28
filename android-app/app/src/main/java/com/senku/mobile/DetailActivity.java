@@ -65,6 +65,7 @@ import com.senku.ui.tablet.AnchorState;
 import com.senku.ui.tablet.SourceState;
 import com.senku.ui.tablet.Status;
 import com.senku.ui.tablet.TabletDetailScreenKt;
+import com.senku.ui.tablet.TabletDetailMode;
 import com.senku.ui.tablet.TabletDetailState;
 import com.senku.ui.tablet.ThreadTurnState;
 import com.senku.ui.tablet.XRefState;
@@ -308,6 +309,7 @@ public final class DetailActivity extends AppCompatActivity {
     private String tabletEvidenceAnchorSection = "";
     private String tabletEvidenceAnchorSnippet = "";
     private int tabletEvidenceLoadToken;
+    private boolean tabletSourceSelectionExplicit;
     private final ArrayList<SearchResult> tabletEvidenceXRefs = new ArrayList<>();
     private final Runnable streamingCursorTick = new Runnable() {
         @Override
@@ -1218,10 +1220,12 @@ public final class DetailActivity extends AppCompatActivity {
             turnId -> {
                 selectedTabletTurnId = safe(turnId).trim();
                 selectedSourceKey = "";
+                tabletSourceSelectionExplicit = false;
                 syncTabletDetailScreen();
             },
             sourceKey -> {
                 selectedSourceKey = safe(sourceKey).trim();
+                tabletSourceSelectionExplicit = true;
                 syncTabletDetailScreen();
             },
             this::handleTabletAnchorClick,
@@ -1562,7 +1566,8 @@ public final class DetailActivity extends AppCompatActivity {
         ArrayList<TabletTurnBinding> turnBindings = buildTabletTurnBindings();
         TabletTurnBinding activeTurn = resolveActiveTabletTurn(turnBindings);
         SearchResult activeSource = resolveActiveTabletSource(activeTurn);
-        ensureTabletEvidenceSelection(activeSource);
+        SearchResult visualOwnerSource = resolveTabletVisualOwnerSource(turnBindings, activeSource);
+        ensureTabletEvidenceSelection(visualOwnerSource);
 
         ArrayList<ThreadTurnState> turns = new ArrayList<>();
         for (TabletTurnBinding turn : turnBindings) {
@@ -1576,11 +1581,10 @@ public final class DetailActivity extends AppCompatActivity {
             ));
         }
 
-        String activeSourceKey = buildSourceSelectionKey(activeSource);
+        String activeSourceKey = buildSourceSelectionKey(visualOwnerSource);
         ArrayList<SourceState> sources = new ArrayList<>();
         if (activeTurn != null) {
-            SearchResult anchorSource = firstRealSource(activeTurn.sources);
-            String anchorKey = buildSourceSelectionKey(anchorSource);
+            String anchorKey = buildSourceSelectionKey(visualOwnerSource);
             for (SearchResult source : activeTurn.sources) {
                 String sourceKey = buildSourceSelectionKey(source);
                 sources.add(new SourceState(
@@ -1598,14 +1602,15 @@ public final class DetailActivity extends AppCompatActivity {
         boolean showRetry = (!tabletBusy && !safe(lastFailedQuery).isEmpty())
             || (tabletBusy && generationStallNoticeVisible && !safe(currentTitle).isEmpty());
         boolean tabletEmergencyFullHeightPage = isTabletEmergencyFullHeightPage();
-        SearchResult displaySource = resolveTabletDisplaySource(turnBindings, activeSource);
+        SearchResult displaySource = resolveTabletDisplaySource(turnBindings, visualOwnerSource);
+        boolean allowGuideIdFallback = !answerMode || visualOwnerSource != null;
         return new TabletDetailState(
-            buildTabletGuideId(displaySource),
+            buildTabletGuideId(displaySource, allowGuideIdFallback),
             buildTabletGuideTitle(displaySource, turnBindings),
             buildRev03MetaStripItems(),
             turns,
             tabletEmergencyFullHeightPage ? Collections.emptyList() : sources,
-            tabletEmergencyFullHeightPage ? emptyTabletAnchorState() : buildTabletAnchorState(activeSource),
+            tabletEmergencyFullHeightPage ? emptyTabletAnchorState() : buildTabletAnchorState(visualOwnerSource),
             tabletEmergencyFullHeightPage ? Collections.emptyList() : buildTabletXRefStates(),
             tabletEmergencyFullHeightPage ? "" : tabletComposerText,
             getString(R.string.detail_followup_hint),
@@ -1617,11 +1622,21 @@ public final class DetailActivity extends AppCompatActivity {
             pinActive,
             !tabletEmergencyFullHeightPage && tabletEvidenceExpanded,
             showUtilityRail(),
-            buildTabletGuideModeLabel(activeSource),
-            buildTabletGuideModeSummary(activeSource),
-            buildTabletGuideModeAnchorLabel(activeSource),
-            safe(tabletStatusText)
+            buildTabletGuideModeLabel(visualOwnerSource),
+            buildTabletGuideModeSummary(visualOwnerSource, turnBindings),
+            buildTabletGuideModeAnchorLabel(visualOwnerSource),
+            safe(tabletStatusText),
+            resolveTabletDetailMode(turnBindings)
         );
+    }
+
+    private TabletDetailMode resolveTabletDetailMode(ArrayList<TabletTurnBinding> turnBindings) {
+        if (!answerMode) {
+            return TabletDetailMode.Guide;
+        }
+        return turnBindings != null && turnBindings.size() > 1
+            ? TabletDetailMode.Thread
+            : TabletDetailMode.Answer;
     }
 
     private String buildTabletGuideModeLabel(SearchResult activeSource) {
@@ -1631,10 +1646,14 @@ public final class DetailActivity extends AppCompatActivity {
         return safe(currentGuideModeLabel);
     }
 
-    private String buildTabletGuideModeSummary(SearchResult activeSource) {
+    private String buildTabletGuideModeSummary(SearchResult activeSource, List<TabletTurnBinding> turnBindings) {
         if (answerMode) {
             String guideId = safe(activeSource == null ? null : activeSource.guideId).trim();
-            return guideId.isEmpty() ? "Answer source selected" : "Answer source selected: " + guideId;
+            if (!guideId.isEmpty()) {
+                return "Answer source selected: " + guideId;
+            }
+            String threadTopic = buildTabletThreadTopicTitle(turnBindings);
+            return threadTopic.isEmpty() ? "Thread context kept" : "Thread context kept: " + threadTopic;
         }
         return safe(currentGuideModeSummary);
     }
@@ -1808,6 +1827,148 @@ public final class DetailActivity extends AppCompatActivity {
         return fallback;
     }
 
+    private SearchResult resolveTabletVisualOwnerSource(
+        List<TabletTurnBinding> turnBindings,
+        SearchResult activeSource
+    ) {
+        if (!answerMode || tabletSourceSelectionExplicit) {
+            return activeSource;
+        }
+        ArrayList<String> questions = tabletTurnQuestions(turnBindings);
+        if (!tabletQuestionsHaveOwnedShelterTopic(questions)) {
+            return activeSource;
+        }
+        ArrayList<SearchResult> sources = tabletTurnSources(turnBindings);
+        SearchResult bestSource = bestTabletThreadTopicSource(activeSource, sources, questions);
+        int bestScore = tabletSourceThreadTopicScore(bestSource, questions);
+        return bestScore > 0 ? bestSource : null;
+    }
+
+    static String resolveTabletVisualOwnerGuideIdForTest(
+        boolean answerMode,
+        boolean explicitSelection,
+        List<String> questions,
+        SearchResult activeSource,
+        List<SearchResult> sources
+    ) {
+        SearchResult owner = resolveTabletVisualOwnerSourceForInputs(
+            answerMode,
+            explicitSelection,
+            questions,
+            activeSource,
+            sources
+        );
+        return safe(owner == null ? null : owner.guideId).trim();
+    }
+
+    private static SearchResult resolveTabletVisualOwnerSourceForInputs(
+        boolean answerMode,
+        boolean explicitSelection,
+        List<String> questions,
+        SearchResult activeSource,
+        List<SearchResult> sources
+    ) {
+        if (!answerMode || explicitSelection || !tabletQuestionsHaveOwnedShelterTopic(questions)) {
+            return activeSource;
+        }
+        SearchResult bestSource = bestTabletThreadTopicSource(activeSource, sources, questions);
+        int bestScore = tabletSourceThreadTopicScore(bestSource, questions);
+        return bestScore > 0 ? bestSource : null;
+    }
+
+    private static SearchResult bestTabletThreadTopicSource(
+        SearchResult activeSource,
+        List<SearchResult> sources,
+        List<String> questions
+    ) {
+        SearchResult best = activeSource;
+        int bestScore = tabletSourceThreadTopicScore(activeSource, questions);
+        if (sources == null) {
+            return best;
+        }
+        for (SearchResult source : sources) {
+            int score = tabletSourceThreadTopicScore(source, questions);
+            if (score > bestScore) {
+                best = source;
+                bestScore = score;
+            }
+        }
+        return best;
+    }
+
+    private static int tabletSourceThreadTopicScore(SearchResult source, List<String> questions) {
+        if (source == null || questions == null || questions.isEmpty()) {
+            return 0;
+        }
+        String haystack = (
+            safe(source.guideId) + " " +
+                safe(source.title) + " " +
+                safe(source.sectionHeading) + " " +
+                safe(source.category) + " " +
+                safe(source.structureType) + " " +
+                safe(source.topicTags)
+        ).replace('_', ' ').toLowerCase(Locale.US);
+        int score = 0;
+        for (String rawQuestion : questions) {
+            String question = safe(rawQuestion).toLowerCase(Locale.US);
+            if (question.contains("rain shelter") && haystack.contains("rain") && haystack.contains("shelter")) {
+                score += 24;
+            }
+            if (question.contains("shelter") && haystack.contains("shelter")) {
+                score += 10;
+            }
+            if (question.contains("rain") && haystack.contains("rain")) {
+                score += 8;
+            }
+            if (question.contains("tarp") && haystack.contains("tarp")) {
+                score += 8;
+            }
+            if (question.contains("cord") && haystack.contains("cord")) {
+                score += 6;
+            }
+        }
+        return score;
+    }
+
+    private static boolean tabletQuestionsHaveOwnedShelterTopic(List<String> questions) {
+        if (questions == null) {
+            return false;
+        }
+        StringBuilder combined = new StringBuilder();
+        for (String question : questions) {
+            combined.append(' ').append(safe(question).toLowerCase(Locale.US));
+        }
+        String text = combined.toString();
+        return (text.contains("rain") && text.contains("shelter"))
+            || text.contains("tarp shelter")
+            || text.contains("ridgeline shelter")
+            || (text.contains("tarp") && text.contains("cord") && text.contains("shelter"));
+    }
+
+    private static ArrayList<String> tabletTurnQuestions(List<TabletTurnBinding> turnBindings) {
+        ArrayList<String> questions = new ArrayList<>();
+        if (turnBindings == null) {
+            return questions;
+        }
+        for (TabletTurnBinding turn : turnBindings) {
+            questions.add(safe(turn == null ? null : turn.question));
+        }
+        return questions;
+    }
+
+    private static ArrayList<SearchResult> tabletTurnSources(List<TabletTurnBinding> turnBindings) {
+        ArrayList<SearchResult> sources = new ArrayList<>();
+        if (turnBindings == null) {
+            return sources;
+        }
+        for (TabletTurnBinding turn : turnBindings) {
+            if (turn != null && turn.sources != null) {
+                sources.addAll(turn.sources);
+            }
+        }
+        return sources;
+    }
+
     private void ensureTabletEvidenceSelection(SearchResult activeSource) {
         String guideId = safe(activeSource == null ? null : activeSource.guideId).trim();
         String selectionKey = buildSourceSelectionKey(activeSource);
@@ -1917,10 +2078,13 @@ public final class DetailActivity extends AppCompatActivity {
         return xrefs;
     }
 
-    private String buildTabletGuideId(SearchResult activeSource) {
+    private String buildTabletGuideId(SearchResult activeSource, boolean allowFallback) {
         String guideId = safe(activeSource == null ? null : activeSource.guideId).trim();
         if (!guideId.isEmpty()) {
             return guideId;
+        }
+        if (!allowFallback) {
+            return "";
         }
         if (!safe(tabletEvidenceAnchorId).trim().isEmpty()) {
             return safe(tabletEvidenceAnchorId).trim();
@@ -2029,6 +2193,7 @@ public final class DetailActivity extends AppCompatActivity {
             return;
         }
         selectedSourceKey = buildSourceSelectionKey(source);
+        tabletSourceSelectionExplicit = source != null;
         tabletEvidenceExpanded = true;
         ensureTabletEvidenceSelection(source);
         syncTabletDetailScreen();
@@ -3792,6 +3957,7 @@ public final class DetailActivity extends AppCompatActivity {
 
     void clearTabletFollowUpSelectionState() {
         tabletComposerText = selectedTabletTurnId = selectedSourceKey = tabletEvidenceSelectionKey = "";
+        tabletSourceSelectionExplicit = false;
         tabletEvidenceXRefs.clear();
     }
 

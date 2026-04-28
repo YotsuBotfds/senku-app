@@ -51,11 +51,11 @@ public final class SearchResultAdapterTest {
     @Test
     public void tabletRowsFlattenMetadataIntoPreviewRailTokens() {
         assertEquals(
-            "SHELTER  \u00b7  TOPIC  \u00b7  WINDOW IMMEDIATE",
+            "SHELTER \u00b7 TOPIC \u00b7 WINDOW IMMEDIATE",
             SearchResultAdapter.buildTabletAttributeLineForTest("shelter", "role_topic", "immediate")
         );
         assertEquals(
-            "SURVIVAL  \u00b7  STARTER  \u00b7  WINDOW IMMEDIATE",
+            "SURVIVAL \u00b7 STARTER \u00b7 WINDOW IMMEDIATE",
             SearchResultAdapter.buildTabletAttributeLineForTest("survival", "role_starter", "immediate")
         );
         assertEquals("", SearchResultAdapter.buildTabletAttributeLineForTest("general", "none", "unknown"));

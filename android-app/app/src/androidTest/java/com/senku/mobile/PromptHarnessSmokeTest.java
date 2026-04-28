@@ -1864,7 +1864,8 @@ public final class PromptHarnessSmokeTest {
 
     @Test
     public void answerModeSourceSelectionKeepsSourceAnchoredCrossReferenceLane() throws Exception {
-        RelatedGuideSeed seed = findGuideWithRelations();
+        RelatedGuideSeed rainShelterSeed = findRainShelterGuideWithRelations();
+        RelatedGuideSeed seed = rainShelterSeed == null ? findGuideWithRelations() : rainShelterSeed;
         Assume.assumeNotNull("no guide available for answer-mode source graph smoke", seed);
 
         ArrayList<SearchResult> sources = new ArrayList<>();
@@ -1883,12 +1884,12 @@ public final class PromptHarnessSmokeTest {
 
         Intent intent = DetailActivity.newAnswerIntent(
             ApplicationProvider.getApplicationContext(),
-            "Answer source graph smoke",
-            "Selecting a source should keep graph navigation visible",
+            "How do I build a simple rain shelter from tarp and cord?",
+            "GD-345 · 3 sources · rev 04-27 04:21",
             "Short answer:\nUse the attached source guide ["
                 + safe(seed.guide.guideId)
-                + "], then inspect the linked survival guides anchored to that source.\n\n"
-                + "Materials: map, pencil, clean water\n\n"
+                + "] to build a simple rain shelter from tarp and cord. Pitch the ridgeline along the prevailing wind, then drape and tension the tarp around it so the low edge faces windward.\n\n"
+                + "Materials: tarp, cord, two anchor points\n\n"
                 + "Steps:\n1. Check the cited guide before moving. ["
                 + safe(seed.guide.guideId)
                 + "]",
@@ -1918,7 +1919,7 @@ public final class PromptHarnessSmokeTest {
                     );
                     Assert.assertTrue(
                         "tablet answer detail should still surface the scripted materials cue",
-                        containsAny(signals.bodyText, "Materials", "map")
+                        containsAny(signals.bodyText, "Materials", "tarp", "cord")
                     );
                     return;
                 }
@@ -1928,7 +1929,7 @@ public final class PromptHarnessSmokeTest {
                     "answer detail should highlight inline guide citations when the generator cites a guide in-body",
                     hasBackgroundSpanOn(detailBody, "[" + safe(seed.guide.guideId) + "]")
                 );
-                assertMaterialIndexVisible(activity, "Map");
+                assertMaterialIndexVisible(activity, "Tarp");
             });
 
             selectAnswerSourcePreview(scenario, seed.guide);
@@ -1971,6 +1972,7 @@ public final class PromptHarnessSmokeTest {
                 }
                 final String expectedSourceContextFinal = expectedSourceContext;
                 final boolean[] previewShown = {false};
+                final boolean[] tabletComposeSourceGraphCaptured = {false};
                 InstrumentationRegistry.getInstrumentation().runOnMainSync(() -> {
                     Activity activity = getResumedActivityOnMainThread();
                     Assert.assertNotNull("source-selected guide detail should be resumed", activity);
@@ -2024,7 +2026,25 @@ public final class PromptHarnessSmokeTest {
                                 safe(seed.relatedGuide == null ? null : seed.relatedGuide.guideId)
                             )
                         );
+                        tabletComposeSourceGraphCaptured[0] = true;
                         previewShown[0] = false;
+                        return;
+                    }
+
+                    ScrollView detailScroll = activity.findViewById(R.id.detail_scroll);
+                    android.view.View panel = activity.findViewById(R.id.detail_next_steps_panel);
+                    if (detailScroll != null && panel != null) {
+                        detailScroll.scrollTo(0, Math.max(0, panel.getTop() - 24));
+                    }
+                });
+
+                captureUiState("answer_source_graph_direct");
+
+                InstrumentationRegistry.getInstrumentation().runOnMainSync(() -> {
+                    Activity activity = getResumedActivityOnMainThread();
+                    Assert.assertNotNull("source-selected guide detail should be resumed", activity);
+                    DetailSettleSignals signals = collectDetailSettleSignals(activity);
+                    if (signals.tabletCompose) {
                         Object sourceAnchor = invokePrivateNoArgMethod(activity, "selectedTabletSourceForAction");
                         invokePrivateMethod(
                             activity,
@@ -2072,7 +2092,7 @@ public final class PromptHarnessSmokeTest {
                     Assert.assertTrue(
                         "answer-mode source selection should keep the answer detail in place until a cross-reference is chosen",
                         safe(currentTitle.getText().toString()).toLowerCase(Locale.US)
-                            .contains("answer source graph smoke")
+                            .contains("rain shelter")
                     );
 
                     String titleText = safe(title.getText().toString()).toLowerCase(Locale.US);
@@ -2172,7 +2192,7 @@ public final class PromptHarnessSmokeTest {
                         waitForDetailGuideModeContext("cross-reference", expectedSourceContextFinal, DETAIL_WAIT_MS)
                     );
                 }
-                captureUiState(previewShown[0] ? "answer_source_graph_preview" : "answer_source_graph_direct");
+                captureUiState(previewShown[0] ? "answer_source_graph_preview" : "answer_source_graph_destination");
             }
         } finally {
             closeScenarioLeniently(scenario);
@@ -3918,6 +3938,24 @@ public final class PromptHarnessSmokeTest {
             }
         }
         return null;
+    }
+
+    private RelatedGuideSeed findRainShelterGuideWithRelations() throws Exception {
+        PackInstaller.InstalledPack pack = PackInstaller.ensureInstalled(
+            ApplicationProvider.getApplicationContext(),
+            false
+        );
+        try (PackRepository repo = new PackRepository(pack.databaseFile, pack.vectorFile)) {
+            SearchResult guide = repo.loadGuideById("GD-345");
+            if (guide == null || safe(guide.guideId).trim().isEmpty()) {
+                return null;
+            }
+            java.util.List<SearchResult> relatedGuides = repo.loadRelatedGuides(guide.guideId, 1);
+            if (relatedGuides.isEmpty()) {
+                return null;
+            }
+            return new RelatedGuideSeed(guide, relatedGuides.get(0));
+        }
     }
 
     private RelatedGuideSeed findGuideWithRelationsAndWarningMarkup() throws Exception {

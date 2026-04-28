@@ -118,6 +118,7 @@ class StressReadingPolicyTest {
                 SourceState("s2", "GD-ALT", "Guide B", isAnchor = false, isSelected = false),
             ),
             turns = listOf(threadTurn("q1"), threadTurn("q2")),
+            detailMode = TabletDetailMode.Guide,
         )
 
         assertEquals(
@@ -163,6 +164,7 @@ class StressReadingPolicyTest {
                 hasSource = false,
             ),
             sources = emptyList(),
+            detailMode = TabletDetailMode.Guide,
         )
 
         assertEquals(
@@ -315,6 +317,7 @@ class StressReadingPolicyTest {
         guideModeAnchorLabel: String = "",
         evidenceExpanded: Boolean = false,
         isLandscape: Boolean = true,
+        detailMode: TabletDetailMode = TabletDetailMode.Answer,
     ): TabletDetailState =
         TabletDetailState(
             guideId = guideId,
@@ -336,6 +339,7 @@ class StressReadingPolicyTest {
             isLandscape = isLandscape,
             guideModeLabel = guideModeLabel,
             guideModeAnchorLabel = guideModeAnchorLabel,
+            detailMode = detailMode,
         )
 
     private fun threadTurn(id: String): ThreadTurnState =

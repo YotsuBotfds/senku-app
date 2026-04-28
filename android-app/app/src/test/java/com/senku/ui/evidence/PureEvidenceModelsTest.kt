@@ -17,7 +17,7 @@ class PureEvidenceModelsTest {
 
     @Test
     fun sourceFallbackVocabularyIsShared() {
-        assertEquals("GD-?", normalizeEvidenceGuideId(" "))
+        assertEquals("", normalizeEvidenceGuideId(" "))
         assertEquals("Source guide", normalizeEvidenceSourceTitle(" "))
         assertEquals("anchor", evidenceAnchorLabel(EvidenceAnchorLabelStyle.Short))
         assertEquals("anchor guide", evidenceAnchorLabel(EvidenceAnchorLabelStyle.Guide))
@@ -39,7 +39,7 @@ class PureEvidenceModelsTest {
             snippet = " ",
         ).toEvidenceSourceRowData()
 
-        assertEquals("GD-?", row.guideId)
+        assertEquals("", row.guideId)
         assertEquals("Source guide", row.title)
         assertEquals("", row.section)
         assertEquals("", row.metaLabel)

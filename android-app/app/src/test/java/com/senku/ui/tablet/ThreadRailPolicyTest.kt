@@ -69,9 +69,47 @@ class ThreadRailPolicyTest {
     }
 
     @Test
+    fun threadRailOmitsClearedSourceFallbackRows() {
+        val clearedSource = SourceState(
+            key = "field-note",
+            id = "",
+            title = "Field note summary",
+            isAnchor = true,
+            isSelected = true,
+        )
+
+        assertEquals("", threadRailSourceDisplayLabel(clearedSource, guideMode = false))
+        assertEquals("", threadRailSourceDisplayLabel(clearedSource, guideMode = true))
+        assertEquals("", threadRailSourceTitleLabel(clearedSource, guideMode = true))
+        assertEquals(false, threadRailShouldShowSource(clearedSource, guideMode = true))
+    }
+
+    @Test
+    fun threadRailUsesRealGuideIdsOrMeaningfulSourceLabels() {
+        val sourceWithoutId = SourceState(
+            key = "support",
+            id = "",
+            title = "Supporting note",
+            isAnchor = true,
+            isSelected = true,
+        )
+        val sourceWithId = SourceState(
+            key = "guide",
+            id = "GD-132",
+            title = "Foundry & Metal Casting",
+            isAnchor = true,
+            isSelected = false,
+        )
+
+        assertEquals("Supporting note", threadRailSourceDisplayLabel(sourceWithoutId, guideMode = true))
+        assertEquals("GD-132 - ANCHOR", threadRailSourceDisplayLabel(sourceWithId, guideMode = true))
+        assertEquals(true, threadRailShouldShowSource(sourceWithoutId, guideMode = true))
+    }
+
+    @Test
     fun threadRailRowsReserveTranscriptScanningSpace() {
-        assertEquals(68, threadRailTurnRowMinHeightDp(active = false))
-        assertEquals(76, threadRailTurnRowMinHeightDp(active = true))
+        assertEquals(60, threadRailTurnRowMinHeightDp(active = false))
+        assertEquals(68, threadRailTurnRowMinHeightDp(active = true))
         assertEquals(58, threadRailSourceRowMinHeightDp())
     }
 }

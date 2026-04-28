@@ -150,7 +150,8 @@ internal fun EvidenceSourceModel.toSourceRowModel(): SourceRowModel =
         isAnchor = isAnchor,
     )
 
-internal fun SourceRowModel.displayGuideId(): String = normalizeEvidenceGuideId(guideId)
+internal fun SourceRowModel.displayGuideId(): String =
+    normalizeEvidenceGuideId(guideId).ifBlank { "GD-?" }
 
 internal fun SourceRowModel.displayTitle(): String = normalizeEvidenceSourceTitle(title)
 

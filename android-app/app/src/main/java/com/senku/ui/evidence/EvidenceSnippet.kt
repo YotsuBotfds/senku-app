@@ -30,7 +30,6 @@ import androidx.compose.ui.unit.sp
 import com.senku.ui.theme.SenkuAppTheme
 import com.senku.ui.theme.SenkuTheme
 
-private const val FallbackGuideId = "GD-?"
 private const val FallbackTitle = "Anchor guide"
 private const val AnchorLabel = "anchor"
 private const val EmptySnippetLabel = "No snippet yet."
@@ -171,10 +170,12 @@ private fun EvidenceSnippetContent(
 }
 
 private fun EvidenceSnippetModel.anchorLine(): String =
-    displayGuideId() + " | " + AnchorLabel
+    listOf(displayGuideId(), AnchorLabel)
+        .filter { it.isNotEmpty() }
+        .joinToString(" | ")
 
 private fun EvidenceSnippetModel.displayGuideId(): String =
-    guideId.trim().ifEmpty { FallbackGuideId }
+    guideId.trim()
 
 private fun EvidenceSnippetModel.displayTitle(): String =
     title.trim().ifEmpty { FallbackTitle }

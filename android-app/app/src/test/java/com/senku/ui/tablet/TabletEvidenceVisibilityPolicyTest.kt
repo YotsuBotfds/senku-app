@@ -220,11 +220,43 @@ class TabletEvidenceVisibilityPolicyTest {
             guideModeSummary = "Guide reader",
             guideModeAnchorLabel = "Opened from GD-214",
             showQuestion = false,
+            detailMode = TabletDetailMode.Guide,
         )
 
         assertFalse(state.hasAnswerOwnedSourceSelection())
         assertTrue(state.isGuideMode())
         assertTrue(tabletShouldShowEvidencePane(state, guideMode = state.isGuideMode()))
+    }
+
+    @Test
+    fun tabletSourceGraphDropsClearedSourceFallbackAnchor() {
+        val anchor = AnchorState(
+            key = "field-note",
+            id = "",
+            title = "Field note summary",
+            section = "Supporting note",
+            snippet = "",
+            hasSource = true,
+        )
+
+        val graphAnchor = tabletSourceGraphAnchor(anchor)
+
+        assertFalse(graphAnchor.hasSource)
+        assertEquals("", graphAnchor.id)
+        assertEquals("", graphAnchor.title)
+        assertEquals("", graphAnchor.section)
+    }
+
+    @Test
+    fun tabletSourceGraphKeepsOnlyRealGuideXRefs() {
+        val xrefs = tabletSourceGraphXRefs(
+            listOf(
+                XRefState(id = "", title = "Field note summary"),
+                XRefState(id = "GD-132", title = "Foundry & Metal Casting"),
+            )
+        )
+
+        assertEquals(listOf(XRefState(id = "GD-132", title = "Foundry & Metal Casting")), xrefs)
     }
 
     private fun anchor(
@@ -251,6 +283,7 @@ class TabletEvidenceVisibilityPolicyTest {
         guideModeAnchorLabel: String = "",
         selectedSourceIndex: Int = 1,
         showQuestion: Boolean = true,
+        detailMode: TabletDetailMode = TabletDetailMode.Answer,
     ): TabletDetailState {
         val sources = (1..sourceCount).map { index ->
             SourceState(
@@ -301,6 +334,7 @@ class TabletEvidenceVisibilityPolicyTest {
             guideModeLabel = guideModeLabel,
             guideModeSummary = guideModeSummary,
             guideModeAnchorLabel = guideModeAnchorLabel,
+            detailMode = detailMode,
         )
     }
 }

@@ -24,7 +24,7 @@
         android:background="@color/senku_rev03_bg_0"
         android:gravity="center_horizontal"
         android:orientation="vertical"
-        android:paddingTop="28dp">
+        android:paddingTop="24dp">
 
         <TextView
             android:layout_width="38dp"
@@ -40,7 +40,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="38dp"
+            android:layout_marginTop="30dp"
             android:gravity="center"
             android:orientation="vertical">
 
@@ -60,13 +60,14 @@
                 android:text="Library"
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:textColor="@color/senku_rev03_accent"
+                android:textSize="12sp"
                 android:textStyle="bold" />
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="28dp"
+            android:layout_marginTop="22dp"
             android:gravity="center"
             android:orientation="vertical">
 
@@ -91,7 +92,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="28dp"
+            android:layout_marginTop="22dp"
             android:gravity="center"
             android:orientation="vertical">
 
@@ -127,11 +128,11 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="56dp"
+            android:layout_height="48dp"
             android:gravity="center_vertical"
             android:orientation="horizontal"
-            android:paddingStart="24dp"
-            android:paddingEnd="24dp">
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp">
 
             <TextView
                 android:layout_width="0dp"
@@ -164,9 +165,9 @@
             android:layout_weight="1"
             android:clipToPadding="false"
             android:fillViewport="true"
-            android:paddingStart="24dp"
-            android:paddingEnd="24dp"
-            android:paddingBottom="18dp"
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp"
+            android:paddingBottom="14dp"
             android:scrollbars="none">
 
             <LinearLayout
@@ -174,13 +175,12 @@
                 android:layout_height="wrap_content"
                 android:baselineAligned="false"
                 android:orientation="horizontal"
-                android:paddingTop="10dp">
+                android:paddingTop="8dp">
 
                 <LinearLayout
-                    android:layout_width="0dp"
+                    android:layout_width="520dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="24dp"
-                    android:layout_weight="1"
+                    android:layout_marginEnd="20dp"
                     android:orientation="vertical">
 
                     <TextView
@@ -204,7 +204,7 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="36dp"
-                        android:layout_marginTop="22dp"
+                        android:layout_marginTop="16dp"
                         android:background="@drawable/bg_manual_home_status"
                         android:gravity="center_vertical"
                         android:orientation="horizontal"
@@ -239,8 +239,8 @@
 
                     <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="48dp"
-                        android:layout_marginTop="16dp"
+                        android:layout_height="42dp"
+                        android:layout_marginTop="10dp"
                         android:addStatesFromChildren="true"
                         android:background="@drawable/bg_manual_home_search"
                         android:gravity="center_vertical"
@@ -249,8 +249,8 @@
                         android:paddingEnd="14dp">
 
                         <ImageView
-                            android:layout_width="28dp"
-                            android:layout_height="28dp"
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
                             android:background="@drawable/bg_manual_home_search_icon"
                             android:contentDescription="@string/search_input_description"
                             android:padding="7dp"
@@ -298,7 +298,7 @@
                         android:id="@+id/category_section_header"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="18dp"
+                        android:layout_marginTop="14dp"
                         android:fontFamily="monospace"
                         android:includeFontPadding="false"
                         android:text="CATEGORIES - FIELD SHELF"
@@ -328,7 +328,7 @@
                                 android:clickable="true"
                                 android:focusable="true"
                                 android:orientation="vertical"
-                                android:padding="14dp">
+                                android:padding="10dp">
 
                                 <TextView
                                     android:layout_width="match_parent"
@@ -363,7 +363,7 @@
                                 android:clickable="true"
                                 android:focusable="true"
                                 android:orientation="vertical"
-                                android:padding="14dp">
+                                android:padding="10dp">
 
                                 <TextView
                                     android:layout_width="match_parent"
@@ -398,7 +398,7 @@
                                 android:clickable="true"
                                 android:focusable="true"
                                 android:orientation="vertical"
-                                android:padding="14dp">
+                                android:padding="10dp">
 
                                 <TextView
                                     android:layout_width="match_parent"
@@ -439,7 +439,7 @@
                                 android:clickable="true"
                                 android:focusable="true"
                                 android:orientation="vertical"
-                                android:padding="14dp">
+                                android:padding="10dp">
 
                                 <TextView
                                     android:layout_width="match_parent"
@@ -474,7 +474,7 @@
                                 android:clickable="true"
                                 android:focusable="true"
                                 android:orientation="vertical"
-                                android:padding="14dp">
+                                android:padding="10dp">
 
                                 <TextView
                                     android:layout_width="match_parent"
@@ -509,7 +509,7 @@
                                 android:clickable="true"
                                 android:focusable="true"
                                 android:orientation="vertical"
-                                android:padding="14dp">
+                                android:padding="10dp">
 
                                 <TextView
                                     android:layout_width="match_parent"
@@ -538,11 +538,9 @@
 
                 <LinearLayout
                     android:id="@+id/recent_threads_section"
-                    android:layout_width="318dp"
+                    android:layout_width="292dp"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/bg_manual_home_status"
                     android:orientation="vertical"
-                    android:padding="14dp"
                     android:visibility="gone">
 
                     <TextView

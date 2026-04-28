@@ -54,6 +54,24 @@ public final class DetailRelatedGuidePresentationFormatterTest {
     }
 
     @Test
+    public void relatedGuideContextLabelUsesCompactAnchorAndRequiredMetadata() {
+        DetailRelatedGuidePresentationFormatter formatter = new DetailRelatedGuidePresentationFormatter(null);
+
+        assertEquals(
+            "GD-132 \u00b7 Foundry\nAnchor",
+            formatter.buildRelatedGuideButtonLabel(
+                new SearchResult("Foundry", "", "", "", "GD-132", "", "", "", "source_anchor", "", "", "")
+            )
+        );
+        assertEquals(
+            "GD-499 \u00b7 Bellows\nRequired",
+            formatter.buildRelatedGuideButtonLabel(
+                new SearchResult("Bellows", "", "", "", "GD-499", "", "", "", "required_reading", "", "", "")
+            )
+        );
+    }
+
+    @Test
     public void guideConnectionSubtitlesUseCompactActionCopy() {
         DetailRelatedGuidePresentationFormatter formatter = new DetailRelatedGuidePresentationFormatter(null);
 

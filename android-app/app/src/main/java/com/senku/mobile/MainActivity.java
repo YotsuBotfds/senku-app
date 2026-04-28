@@ -75,8 +75,8 @@ public final class MainActivity extends AppCompatActivity {
     private static final int MAX_RESULT_PREVIEW_BRIDGE_GUIDES = 4;
     private static final int RESULT_PREVIEW_BRIDGE_SIGNAL_LIMIT = 1;
     private static final int MANUAL_HOME_CATEGORY_COLUMNS = 3;
-    private static final int MANUAL_HOME_CATEGORY_CARD_HEIGHT_DP = 54;
-    private static final int MANUAL_HOME_CATEGORY_ROW_GAP_DP = 6;
+    private static final int MANUAL_HOME_CATEGORY_CARD_HEIGHT_DP = 46;
+    private static final int MANUAL_HOME_CATEGORY_ROW_GAP_DP = 5;
     private static final String REVIEW_SEARCH_QUERY = "rain shelter";
     private static final String REVIEW_SEARCH_LATENCY_LABEL = "12ms";
     private static final ReviewSearchResultSpec[] REVIEW_RAIN_SHELTER_RESULTS = {
@@ -1761,19 +1761,19 @@ public final class MainActivity extends AppCompatActivity {
         Button button = new Button(this);
         button.setAllCaps(false);
         boolean manualHomeShell = isManualHomeShellLayout();
-        button.setBackgroundResource(manualHomeShell
-            ? R.drawable.bg_manual_home_recent_row
-            : R.drawable.bg_sources_stack_shell);
+        button.setBackgroundResource(isTabletSearchLayout()
+            ? R.drawable.bg_tablet_home_recent_row
+            : (manualHomeShell ? R.drawable.bg_manual_home_recent_row : R.drawable.bg_sources_stack_shell));
         button.setMinWidth(0);
         button.setMinimumWidth(0);
         button.setMinHeight(0);
         button.setMinimumHeight(0);
         boolean compactPhoneHome = isCompactPhoneHomeLayout();
         button.setPadding(
-            dp(manualHomeShell ? 10 : (compactPhoneHome ? 10 : 12)),
-            dp(manualHomeShell ? 4 : (compactPhoneHome ? 8 : 10)),
-            dp(manualHomeShell ? 9 : (compactPhoneHome ? 10 : 12)),
-            dp(manualHomeShell ? 4 : (compactPhoneHome ? 8 : 10))
+            dp(isTabletSearchLayout() ? 8 : (manualHomeShell ? 10 : (compactPhoneHome ? 10 : 12))),
+            dp(isTabletSearchLayout() ? 3 : (manualHomeShell ? 4 : (compactPhoneHome ? 8 : 10))),
+            dp(isTabletSearchLayout() ? 8 : (manualHomeShell ? 9 : (compactPhoneHome ? 10 : 12))),
+            dp(isTabletSearchLayout() ? 3 : (manualHomeShell ? 4 : (compactPhoneHome ? 8 : 10)))
         );
         button.setTextColor(getResources().getColor(manualHomeShell
             ? R.color.senku_rev03_ink_0
@@ -1794,7 +1794,7 @@ public final class MainActivity extends AppCompatActivity {
             LinearLayout.LayoutParams.WRAP_CONTENT
         );
         if (index > 0) {
-            params.topMargin = dp(manualHomeShell ? 4 : (compactPhoneHome ? 6 : 8));
+            params.topMargin = dp(isTabletSearchLayout() ? 3 : (manualHomeShell ? 4 : (compactPhoneHome ? 6 : 8)));
         }
         button.setLayoutParams(params);
         button.setOnClickListener(v -> openRecentThread(preview));
@@ -2239,7 +2239,7 @@ public final class MainActivity extends AppCompatActivity {
         bottomTabBarView = new BottomTabBarHostView(this);
         if (landscapePhone) {
             bottomTabBarView.setLayoutParams(new LinearLayout.LayoutParams(
-                dp(84),
+                dp(96),
                 ViewGroup.LayoutParams.MATCH_PARENT
             ));
             wrapper.addView(bottomTabBarView);

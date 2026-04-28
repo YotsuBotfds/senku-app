@@ -1,8 +1,9 @@
 # Android Mock Parity Phase Map - 2026-04-28
 
-Planner lane only. This note tracks the remaining target-mock parity work from
-`artifacts/mocks` and the latest reviewer findings. Do not edit Android source
-from this lane.
+Planner lane only. This is the concise overnight dispatch sheet for closing
+visual parity against `artifacts/mocks`. Do not edit Android source,
+generated artifacts, target mocks, or protected `notes/PLANNER_HANDOFF_*.md`
+files from this lane.
 
 ## Evidence Anchor
 
@@ -10,103 +11,173 @@ from this lane.
   - Home, Search, Answer, Guide, Thread: phone portrait, phone landscape,
     tablet portrait, tablet landscape.
   - Emergency: phone portrait and tablet portrait only.
-- Prior visual QA: `notes/ANDROID_VISUAL_QA_20260428_0315.md`.
-- Latest implementation anchor: `fbf69e0`
-  (`advance android mock parity wave17`).
-- Latest visual proof: `artifacts/ui_state_pack/20260428_035816`.
+- Current proof pack: `artifacts/ui_state_pack/20260428_043744/20260428_043744`.
   - Status `pass`, 47/47 states, homogeneous APK
-    `b12344900d12a08a6a37a3a12b4e530ead6359e807e95683dadbafed014a8c81`,
+    `d722ed83fea4ae7f1cee64d459967cd10a51293baa3e92b534fc6717ca5e2a77`,
     model `gemma-4-e2b-it-litert`, rotation mismatch count 0.
-  - Use this pack for latest screenshots/dumps before assigning the next
-    visual slice.
-- Latest reviewer note: `notes/ANDROID_VISUAL_QA_20260428_0408.md`.
+- Reviewed anchor: pending wave18 commit.
+- Reviewer note: `notes/ANDROID_VISUAL_QA_20260428_0445.md`.
+- Current verdict: technical proof is green; visual parity is not closed.
+  Wave18 resolved the tablet thread `GD-?` header leak and removed the
+  answer-source `GD-?` fallback labels. Remaining high-risk blockers are
+  Answer, Guide, and Emergency mock drift, plus Home density/chrome polish.
 
-Current reviewer blockers:
+## Proof Path Rules
 
-- Answer detail still falls into guide/manual or answer-card presentation rather
-  than target answer hierarchy.
-- Thread transcript is not target-shaped and still inherits answer-detail card
-  behavior.
-- Guide reader still does not match compact guide mocks.
-- Search and Home are improved but remain density/chrome polish.
-
-Emergency tablet core content is close after wave17, but phone/tablet chrome
-polish remains open.
+- For every screenshot path below, the matching dump path is the same relative
+  path under `artifacts/ui_state_pack/20260428_043744/20260428_043744/dumps/` with `.xml`
+  replacing `.png`.
+- Every worker must cite target mock(s), current screenshot(s), current dump(s),
+  and remaining deltas split as content/data, layout/density, or behavior.
+- Focused proof is acceptable for a phase commit only when device, APK SHA,
+  screenshot path, dump path, and diagnostic-vs-acceptance status are named.
+  Final closure still requires a full homogeneous four-role state pack.
 
 ## Phase Map
 
 ### P0 - Evidence And Dispatch Lock
 
-Status: open for tracker updates only.
+Owner: planner only.
 
 Acceptance:
 
-- This file names the active proof pack, fallback pack, target mocks, and
-  current blockers.
+- Active proof pack remains
+  `artifacts/ui_state_pack/20260428_043744/20260428_043744`.
+- This file stays aligned with reviewer findings and live `git status`.
 - No code, generated artifacts, target mocks, or protected handoff notes are
   edited from this lane.
 
-Write set:
+Disjoint write set:
 
 - `notes/ANDROID_MOCK_PARITY_PHASES_20260428.md`
 
-### P1 - Tablet Detail Ownership
+### P1 - Shared Detail Mode And Shell
 
-Goal: put tablet-only source and emergency ownership in the shared detail shell
-instead of answer/emergency content formatters.
+Goal: stop answer/thread/guide states from falling into the wrong detail mode
+while preserving the green emergency tablet ownership.
 
-Blockers covered:
+Target mocks:
 
-- Tablet answer source rail escapes answer ownership.
-- Tablet emergency needs a full-height owned hierarchy, not an overlay over
-  stale thread/source rails.
+- `artifacts/mocks/answer-*.png`
+- `artifacts/mocks/thread-*.png`
+- `artifacts/mocks/guide-*.png`
+- `artifacts/mocks/emergency-tablet-portrait.png`
 
-Primary acceptance:
+Current proof paths:
 
-- `answer-tablet-portrait.png` and `answer-tablet-landscape.png`: answer
-  surface keeps the target tablet structure: left thread/source support, center
-  article, bounded right source cards. Source selection must not turn the
-  answer into a guide/cross-reference station unless the user navigated to a
-  guide route.
-- `emergency-tablet-portrait.png`: emergency is the tablet surface owner from
-  the header through the bottom context/composer. No stale thread rail, source
-  graph, or normal answer shell remains visible behind it.
-- Phone answer/thread/emergency screenshots remain unaffected except for shared
-  composer clearance.
+- `screenshots/phone_portrait/generativeAskWithHostInferenceNavigatesToDetailScreen__generative_detail.png`
+- `screenshots/phone_landscape/generativeAskWithHostInferenceNavigatesToDetailScreen__rain_shelter_gd345_split_answer.png`
+- `screenshots/tablet_portrait/answerModeSourceSelectionKeepsSourceAnchoredCrossReferenceLane__answer_source_graph_direct.png`
+- `screenshots/tablet_landscape/answerModeSourceSelectionKeepsSourceAnchoredCrossReferenceLane__answer_source_graph_direct.png`
+- `screenshots/tablet_portrait/emergencyPortraitAnswerShowsImmediateActionState__emergency_portrait_answer.png`
+- `screenshots/*/scriptedSeededFollowUpThreadShowsInlineHistory__followup_thread.png`
+- `screenshots/*/guideDetailShowsRelatedGuideNavigation__guide_related_paths.png`
+
+Acceptance:
+
+- Answer routes render answer hierarchy, not guide/manual fallback or proof-only
+  cards.
+- Thread routes render transcript hierarchy, not answer-detail card mode.
+- Guide routes remain guide reader routes and keep source/cross-reference rails
+  only where mocks show them.
+- Phone portrait has no bottom-input collision; phone landscape has no
+  header/body clipping.
+- Tablet emergency remains a full-height emergency owner with no stale rails
+  visible behind it.
 
 Disjoint write set:
 
 - `android-app/app/src/main/java/com/senku/mobile/DetailActivity.java`
-- `android-app/app/src/main/java/com/senku/ui/tablet/TabletDetailScreen.kt`
-- `android-app/app/src/main/java/com/senku/ui/tablet/EvidencePane.kt`
-- `android-app/app/src/main/java/com/senku/ui/composer/DockedComposer.kt`
 - `android-app/app/src/main/res/layout/activity_detail.xml`
 - `android-app/app/src/main/res/layout-land/activity_detail.xml`
 - `android-app/app/src/main/res/layout-large/activity_detail.xml`
 - `android-app/app/src/main/res/layout-large-land/activity_detail.xml`
 - `android-app/app/src/main/res/layout-sw600dp-port/activity_detail.xml`
 - `android-app/app/src/main/res/layout-sw600dp-land/activity_detail.xml`
+- `android-app/app/src/main/java/com/senku/ui/tablet/TabletDetailScreen.kt`
+- `android-app/app/src/main/java/com/senku/ui/tablet/EvidencePane.kt`
+- `android-app/app/src/main/java/com/senku/ui/composer/DockedComposer.kt`
+- `android-app/app/src/test/java/com/senku/mobile/DetailSurfaceContractTest.java`
 - `android-app/app/src/test/java/com/senku/mobile/DetailFollowupLandscapeComposerTest.java`
 - `android-app/app/src/test/java/com/senku/ui/tablet/TabletEvidenceVisibilityPolicyTest.kt`
 
-Do not also assign these files to P2-P4 while P1 is active.
+### P2 - Answer Article And Source Stack
 
-### P2 - Thread Transcript Shape
+Goal: make answer screens match the article-first answer mocks after P1 fixes
+mode ownership.
 
-Goal: make thread screens read like transcript surfaces, not answer-detail
-cards with thread history attached.
+Target mocks:
 
-Primary acceptance:
+- `artifacts/mocks/answer-phone-portrait.png`
+- `artifacts/mocks/answer-phone-landscape.png`
+- `artifacts/mocks/answer-tablet-portrait.png`
+- `artifacts/mocks/answer-tablet-landscape.png`
 
-- `thread-phone-portrait.png`: Q1/A1 and Q2/A2 appear as transcript entries.
-  The current `Field entry - Moderate evidence` answer card treatment is gone.
-  Source chips and composer do not overlap the transcript.
-- `thread-phone-landscape.png`: Q2/A2 is the primary landscape content with the
-  compact right source rail; no provenance card replaces the transcript.
-- `thread-tablet-portrait.png` and `thread-tablet-landscape.png`: transcript is
-  primary, with Q1/A1 and Q2/A2 rhythm matching the mocks. The tablet title and
-  rails support the thread instead of presenting `Abrasives Manufacturing - 2
-  turns` as an answer detail.
+Current proof paths:
+
+- `screenshots/phone_portrait/generativeAskWithHostInferenceNavigatesToDetailScreen__generative_detail.png`
+- `screenshots/phone_portrait/answerModeSourceSelectionKeepsSourceAnchoredCrossReferenceLane__answer_source_graph_preview.png`
+- `screenshots/phone_landscape/generativeAskWithHostInferenceNavigatesToDetailScreen__rain_shelter_gd345_split_answer.png`
+- `screenshots/tablet_portrait/answerModeSourceSelectionKeepsSourceAnchoredCrossReferenceLane__answer_source_graph_direct.png`
+- `screenshots/tablet_landscape/answerModeSourceSelectionKeepsSourceAnchoredCrossReferenceLane__answer_source_graph_direct.png`
+
+Acceptance:
+
+- Phone portrait shows compact answer header, article body, unsure-fit notice,
+  source cards, related-guide rows, and composer clearance like the mock.
+- Phone landscape keeps the split answer article visible without source or
+  provenance clipping.
+- Tablet answer keeps bounded source support rails and source cards without
+  becoming a guide/cross-reference station.
+- Dumps keep uncertain-fit, abstain, deterministic, reviewed-evidence, strong
+  evidence, proof, and provenance labels distinct.
+
+Disjoint write set:
+
+- `android-app/app/src/main/java/com/senku/mobile/DetailAnswerBodyFormatter.java`
+- `android-app/app/src/main/java/com/senku/mobile/DetailAnswerPresentationFormatter.java`
+- `android-app/app/src/main/java/com/senku/mobile/DetailMetaPresentationFormatter.java`
+- `android-app/app/src/main/java/com/senku/mobile/DetailProofPresentationFormatter.java`
+- `android-app/app/src/main/java/com/senku/mobile/DetailProvenancePresentationFormatter.java`
+- `android-app/app/src/main/java/com/senku/mobile/DetailReviewedCardMetadataBridge.java`
+- `android-app/app/src/main/java/com/senku/ui/answer/AnswerContent.kt`
+- `android-app/app/src/main/java/com/senku/ui/answer/PaperAnswerCard.kt`
+- `android-app/app/src/test/java/com/senku/mobile/DetailAnswerBodyFormatterTest.java`
+- `android-app/app/src/test/java/com/senku/mobile/DetailMetaPresentationFormatterTest.java`
+- `android-app/app/src/test/java/com/senku/mobile/DetailProofPresentationFormatterTest.java`
+- `android-app/app/src/test/java/com/senku/mobile/DetailProvenancePresentationFormatterTest.java`
+- `android-app/app/src/test/java/com/senku/mobile/DetailReviewedCardMetadataBridgeTest.java`
+- `android-app/app/src/test/java/com/senku/ui/answer/AnswerContentFactoryTest.kt`
+- `android-app/app/src/test/java/com/senku/ui/answer/PaperAnswerCardLabelTest.kt`
+
+Escalate to P1 for detail shell, tablet shell, composer, or detail XML.
+
+### P3 - Thread Transcript Shape
+
+Goal: make thread screens read as chronological Q/A transcript surfaces.
+
+Target mocks:
+
+- `artifacts/mocks/thread-phone-portrait.png`
+- `artifacts/mocks/thread-phone-landscape.png`
+- `artifacts/mocks/thread-tablet-portrait.png`
+- `artifacts/mocks/thread-tablet-landscape.png`
+
+Current proof paths:
+
+- `screenshots/phone_portrait/scriptedSeededFollowUpThreadShowsInlineHistory__followup_thread.png`
+- `screenshots/phone_landscape/scriptedSeededFollowUpThreadShowsInlineHistory__followup_thread.png`
+- `screenshots/tablet_portrait/scriptedSeededFollowUpThreadShowsInlineHistory__followup_thread.png`
+- `screenshots/tablet_landscape/scriptedSeededFollowUpThreadShowsInlineHistory__followup_thread.png`
+
+Acceptance:
+
+- Phone portrait and landscape show Q1/A1 plus Q2/A2 transcript rhythm with no
+  overlapping chips, composer, or proof card takeover.
+- Tablet portrait and landscape make the two-turn transcript primary; side
+  rails support the thread instead of presenting an answer-detail hierarchy.
+- Handoff names composer focus/IME behavior and whether source rails remain
+  visible in landscape/tablet.
 
 Disjoint write set:
 
@@ -115,23 +186,158 @@ Disjoint write set:
 - `android-app/app/src/test/java/com/senku/mobile/DetailThreadHistoryRendererTest.java`
 - `android-app/app/src/test/java/com/senku/ui/tablet/ThreadRailPolicyTest.kt`
 
-Escalate to P1, do not self-claim, if the fix needs `DetailActivity.java`,
-`TabletDetailScreen.kt`, `EvidencePane.kt`, detail XML, or composer geometry.
+Escalate to P1 for detail shell, tablet shell, evidence panes, composer, or
+detail XML.
 
-### P3 - Emergency Content Polish
+### P4 - Guide Reader Structure
 
-Goal: after P1 owns the tablet emergency surface, align the emergency copy,
-proof card, and warning treatments with the two emergency mocks.
+Goal: close compact guide reader parity and tablet rail/paper/xref structure.
 
-Primary acceptance:
+Target mocks:
 
-- `emergency-phone-portrait.png`: danger header, summary sentence, four
-  immediate actions, `WHY THIS ANSWER`, single GD-132 anchor card, and quiet
-  emergency composer match the mock. No `Route, backend & proof` label remains.
-- `emergency-tablet-portrait.png`: same content contract in full tablet width,
-  with large empty lower field and no normal answer source graph.
-- No emergency landscape target is introduced.
-- Negative controls remain non-emergency.
+- `artifacts/mocks/guide-phone-portrait.png`
+- `artifacts/mocks/guide-phone-landscape.png`
+- `artifacts/mocks/guide-tablet-portrait.png`
+- `artifacts/mocks/guide-tablet-landscape.png`
+
+Current proof paths:
+
+- `screenshots/phone_portrait/guideDetailShowsRelatedGuideNavigation__guide_related_paths.png`
+- `screenshots/phone_landscape/guideDetailShowsRelatedGuideNavigation__guide_related_paths.png`
+- `screenshots/tablet_portrait/guideDetailShowsRelatedGuideNavigation__guide_related_paths.png`
+- `screenshots/tablet_landscape/guideDetailShowsRelatedGuideNavigation__guide_related_paths.png`
+- `screenshots/tablet_landscape/guideDetailDestinationKeepsSourceContextOnTabletLandscape__guide_cross_reference_tablet_landscape.png`
+- `screenshots/phone_portrait/guideDetailUsesCrossReferenceCopyOffRail__guide_cross_reference_offrail.png`
+- `screenshots/phone_landscape/guideDetailUsesCrossReferenceCopyOffRail__guide_cross_reference_offrail.png`
+- `screenshots/tablet_portrait/guideDetailUsesCrossReferenceCopyOffRail__guide_cross_reference_offrail.png`
+
+Acceptance:
+
+- Phone guide uses compact top chrome, contained paper card, sections, related
+  rows, and bottom nav without oversized manual-body treatment.
+- Compose output never exposes raw section markers or mojibake section text.
+- Tablet guide shows sections rail, centered paper, and cross-reference rail
+  matching the guide mocks.
+- Dumps keep guide semantics separate from answer/source/provenance semantics.
+
+Disjoint write set:
+
+- `android-app/app/src/main/java/com/senku/mobile/DetailGuidePresentationFormatter.java`
+- `android-app/app/src/main/java/com/senku/mobile/DetailGuideContextPresentationFormatter.java`
+- `android-app/app/src/main/java/com/senku/mobile/DetailRelatedGuidePresentationFormatter.java`
+- `android-app/app/src/main/java/com/senku/mobile/GuideBodySanitizer.java`
+- `android-app/app/src/main/res/drawable/bg_detail_guide_paper_panel.xml`
+- `android-app/app/src/main/res/drawable/bg_detail_guide_paper_link_row.xml`
+- `android-app/app/src/main/res/drawable/bg_detail_guide_paper_shell.xml`
+- `android-app/app/src/main/res/drawable/bg_detail_guide_paper_section_label.xml`
+- `android-app/app/src/test/java/com/senku/mobile/DetailGuidePresentationFormatterTest.java`
+- `android-app/app/src/test/java/com/senku/mobile/DetailGuideContextPresentationFormatterTest.java`
+- `android-app/app/src/test/java/com/senku/mobile/DetailRelatedGuidePresentationFormatterTest.java`
+
+Escalate to P1 for tablet shell, evidence panes, composer, or detail XML.
+
+### P5 - Search Results And Preview Components
+
+Goal: close search row/card data, score, snippet, and preview component parity
+without taking shared app chrome.
+
+Target mocks:
+
+- `artifacts/mocks/search-phone-portrait.png`
+- `artifacts/mocks/search-phone-landscape.png`
+- `artifacts/mocks/search-tablet-portrait.png`
+- `artifacts/mocks/search-tablet-landscape.png`
+
+Current proof paths:
+
+- `screenshots/phone_portrait/searchQueryShowsResultsWithoutShellPolling__search_results.png`
+- `screenshots/phone_landscape/searchQueryShowsResultsWithoutShellPolling__search_results.png`
+- `screenshots/tablet_portrait/searchQueryShowsResultsWithoutShellPolling__search_results.png`
+- `screenshots/tablet_landscape/searchQueryShowsResultsWithoutShellPolling__search_results.png`
+- `screenshots/*/searchResultsLinkedGuideHandoffOpensLinkedGuideDetail__browse_linked_handoff.png`
+
+Acceptance:
+
+- Result IDs/order remain `GD-023`, `GD-027`, `GD-345`, `GD-294`.
+- Rows keep compact scores, metadata, snippets, linked-guide affordance, and
+  stable browse linked-guide handoff.
+- Tablet landscape preview copy/proportions match `GD-023` target content.
+- If filter rail, app shell, or layout XML changes are needed, transfer that
+  work to P6 before editing.
+
+Disjoint write set:
+
+- `android-app/app/src/main/java/com/senku/mobile/SearchResultAdapter.java`
+- `android-app/app/src/main/java/com/senku/ui/search/SearchResultCard.kt`
+- `android-app/app/src/test/java/com/senku/mobile/SearchResultAdapterTest.java`
+- `android-app/app/src/test/java/com/senku/ui/search/SearchResultCardHeuristicsTest.kt`
+
+### P6 - Home/Search Shell And App Chrome
+
+Goal: finish shared home/search layout density, filter rail affordances, and
+bottom/status chrome after higher-risk detail surfaces settle.
+
+Target mocks:
+
+- `artifacts/mocks/home-*.png`
+- `artifacts/mocks/search-*.png`
+
+Current proof paths:
+
+- `screenshots/phone_portrait/homeEntryShowsPrimaryBrowseAndAskLanes__home_entry.png`
+- `screenshots/phone_landscape/homeEntryShowsPrimaryBrowseAndAskLanes__home_entry.png`
+- `screenshots/tablet_portrait/homeEntryShowsPrimaryBrowseAndAskLanes__home_entry.png`
+- `screenshots/tablet_landscape/homeEntryShowsPrimaryBrowseAndAskLanes__home_entry.png`
+- `screenshots/*/searchQueryShowsResultsWithoutShellPolling__search_results.png`
+
+Acceptance:
+
+- Home status/search/category/recent order, recent-row density, tablet/landscape
+  spacing, and bottom-nav clearance match the home mocks.
+- Search tablet filter rail uses real checkbox affordances and counts; phone
+  and landscape search header/input density match the mocks.
+- Recheck Home after Search changes because this phase owns shared chrome.
+
+Disjoint write set:
+
+- `android-app/app/src/main/java/com/senku/mobile/MainActivity.java`
+- `android-app/app/src/main/java/com/senku/ui/home/CategoryShelf.kt`
+- `android-app/app/src/main/java/com/senku/ui/primitives/BottomTabBar.kt`
+- `android-app/app/src/main/res/layout/activity_main.xml`
+- `android-app/app/src/main/res/layout-land/activity_main.xml`
+- `android-app/app/src/main/res/layout-sw600dp/activity_main.xml`
+- `android-app/app/src/main/res/layout-sw600dp-port/activity_main.xml`
+- `android-app/app/src/main/res/layout-sw600dp-land/activity_main.xml`
+- Home/search chrome drawables under `android-app/app/src/main/res/drawable/`
+  with prefixes `bg_home`, `bg_manual_home`, `bg_manual_phone_home`,
+  `bg_tablet_home`, and `bg_search_shell`
+- `android-app/app/src/test/java/com/senku/mobile/MainActivityHomeChromeTest.java`
+- `android-app/app/src/test/java/com/senku/mobile/MainActivityPhoneNavigationTest.java`
+
+### P7 - Emergency Content And Chrome Polish
+
+Goal: preserve the close tablet emergency hierarchy and finish phone/tablet
+content weight, warning card, and composer chrome.
+
+Target mocks:
+
+- `artifacts/mocks/emergency-phone-portrait.png`
+- `artifacts/mocks/emergency-tablet-portrait.png`
+
+Current proof paths:
+
+- `screenshots/phone_portrait/emergencyPortraitAnswerShowsImmediateActionState__emergency_portrait_answer.png`
+- `screenshots/tablet_portrait/emergencyPortraitAnswerShowsImmediateActionState__emergency_portrait_answer.png`
+
+Acceptance:
+
+- Phone and tablet show danger header, summary sentence, four immediate
+  actions, `WHY THIS ANSWER`, one GD-132 proof card, and quiet emergency
+  composer without normal answer/source graph takeover.
+- At least two negative controls remain non-emergency.
+- No emergency landscape target is introduced as acceptance evidence.
+- If shell mounting, top frame, or composer behavior changes are needed,
+  transfer to P1 before editing.
 
 Disjoint write set:
 
@@ -145,73 +351,33 @@ Disjoint write set:
 - `android-app/app/src/test/java/com/senku/mobile/DetailWarningCopySanitizerTest.java`
 - `android-app/app/src/test/java/com/senku/mobile/EmergencySurfacePolicyTest.java`
 
-P3 may run only after P1 if tablet mounting or composer behavior is still
-changing.
+### P8 - Closure Review
 
-### P4 - Search Polish
+Owner: final integration/review lane. No standing implementation write set.
+Any final fix must first claim the owning P1-P7 file set.
 
-Goal: close the remaining search visual deltas without reopening search shell
-architecture.
+Closure acceptance:
 
-Current latest evidence:
+- Full pack status `pass`, 47/47 states.
+- Homogeneous APK SHA across all four roles.
+- Homogeneous model name/SHA for host-backed roles.
+- Rotation mismatch count 0.
+- Screenshot plus XML dump review against all 22 target mocks.
+- Any accepted delta is named as content/data, layout/density, or behavior.
 
-- `20260428_033240` shows the target result IDs/order in dumps:
-  GD-023, GD-027, GD-345, GD-294.
-- Remaining polish: literal `[ ]` filter text instead of checkbox controls,
-  incomplete filter counts/window options, row/score density, and preview prose
-  matching.
+## Parallelization Rules
 
-Primary acceptance:
-
-- `search-phone-portrait.png` and `search-phone-landscape.png`: compact search
-  header, four-result list, scores, metadata, snippets, linked-guide rows, and
-  bottom/nav clearance match the mocks.
-- `search-tablet-portrait.png`: left filter rail uses real checkbox affordances
-  with counts; results column keeps the target row density; no landscape
-  preview rail appears.
-- `search-tablet-landscape.png`: filter rail, centered result list, and GD-023
-  preview rail match target proportions and copy, including window options.
-- Browse linked-guide handoff still opens the expected linked guide.
-
-Disjoint write set:
-
-- `android-app/app/src/main/java/com/senku/mobile/MainActivity.java`
-- `android-app/app/src/main/java/com/senku/mobile/SearchResultAdapter.java`
-- `android-app/app/src/main/java/com/senku/ui/search/SearchResultCard.kt`
-- `android-app/app/src/main/res/layout/activity_main.xml`
-- `android-app/app/src/main/res/layout-land/activity_main.xml`
-- `android-app/app/src/main/res/layout-sw600dp/activity_main.xml`
-- `android-app/app/src/main/res/layout-sw600dp-port/activity_main.xml`
-- `android-app/app/src/main/res/layout-sw600dp-land/activity_main.xml`
-- `android-app/app/src/test/java/com/senku/mobile/MainActivityHomeChromeTest.java`
-- `android-app/app/src/test/java/com/senku/mobile/SearchResultAdapterTest.java`
-- `android-app/app/src/test/java/com/senku/ui/search/SearchResultCardHeuristicsTest.kt`
-
-Do not mix P4 with P1-P3 in one worker because `MainActivity` and detail-shell
-work need separate review and proof.
-
-## Acceptance Matrix
-
-| Screen | Phone portrait | Phone landscape | Tablet portrait | Tablet landscape |
-| --- | --- | --- | --- | --- |
-| Answer | Article-first answer, no bottom collision. | Split answer article visible, no source/provenance clipping. | Source rail bounded by tablet answer surface; not guide station. | Source cards match answer mock; selection does not escape answer ownership. |
-| Thread | Q1/A1 + Q2/A2 transcript, no answer card mode. | Q2/A2 primary with compact sources; no provenance replacement. | Two-turn transcript primary; no answer-detail title/card hierarchy. | Same transcript hierarchy with right sources only as support. |
-| Emergency | Danger surface, four actions, `WHY THIS ANSWER`, quiet composer. | No target; do not accept/reject landscape. | Full-height tablet emergency owner; no stale rails behind it. | No target; do not accept/reject landscape. |
-| Search | GD-023/GD-027/GD-345/GD-294 list, compact rows and nav clearance. | Compact landscape list/header and scores. | Checkbox filter rail with counts, result density, no preview rail. | Checkbox filter rail, result list, GD-023 preview, target copy/proportions. |
-
-## Delegation Rules
-
-- Start every worker with `git status --short`; the worktree was dirty in all
-  active Android lanes when this tracker was created.
-- One active worker per phase write set. If a live dirty file appears in another
-  phase's write set, resequence instead of sharing it.
-- P1 must lead when a fix changes tablet ownership, detail layouts, shared
-  composer, or evidence/source rails.
-- P2 may run in parallel with P4 only if neither worker touches files outside
-  their disjoint write set.
-- P3 should follow P1 unless the work is purely formatter/drawable copy.
-- P4 can run independently after claiming `MainActivity.java` and search layout
-  ownership.
+- Start every worker with `git status --short`, `git log --oneline -n 8
+  --decorate`, and `git diff --stat`.
+- One active worker per phase write set. If a live dirty file appears in
+  another phase's write set, resequence instead of sharing it.
+- P1 must lead when a fix changes detail mode routing, tablet ownership, detail
+  layouts, shared composer, or evidence/source rails.
+- P2, P3, P4, P5, and P7 may run in parallel only if they stay inside their
+  disjoint write sets and do not need P1/P6 files.
+- P6 should run after P5 unless the only search work left is shared shell or
+  filter rail.
+- P8 starts only after each target mock has a current screenshot/dump verdict.
 
 ## Validation Gates
 
@@ -226,29 +392,9 @@ $env:JAVA_HOME='C:\Program Files\Android\Android Studio\jbr'
 cd ..
 ```
 
-Focused visual proof:
-
-- P1: tablet portrait/landscape answer-source states, tablet portrait emergency,
-  plus one phone detail sanity screenshot.
-- P2: all four thread screenshots/dumps.
-- P3: emergency phone portrait and tablet portrait screenshots/dumps, plus at
-  least two non-emergency negative controls.
-- P4: all four search result screenshots/dumps and linked-guide handoff proof.
-
 Closure pack:
 
 ```powershell
 powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\run_android_local_quality_gate.ps1
 powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\build_android_ui_state_pack_parallel.ps1 -OutputRoot artifacts\ui_state_pack\<closure_pack> -RoleFilter phone_portrait,phone_landscape,tablet_portrait,tablet_landscape -MaxParallelDevices 4
 ```
-
-Final closure requires:
-
-- Full pack status `pass`, 47/47 states.
-- Homogeneous APK SHA across all four roles.
-- Homogeneous model name/SHA for host-backed roles.
-- Rotation mismatch count 0.
-- Screenshot plus XML dump review against every relevant mock in the acceptance
-  matrix.
-- `20260428_035816` is the current clean technical proof; final visual closure
-  still requires screenshot review against the target mocks.

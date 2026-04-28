@@ -17,6 +17,7 @@ final class GuideBodySanitizer {
     private static final Pattern GUIDE_LAYOUT_TAG_PATTERN = Pattern.compile("(?i)</?(section|div|span|p)\\b[^>]*>");
     private static final Pattern GUIDE_INLINE_STYLE_TAG_PATTERN = Pattern.compile("(?i)</?(strong|b|em|i|mark|small)\\b[^>]*>");
     private static final Pattern GUIDE_MARKDOWN_LINK_PATTERN = Pattern.compile("\\[([^\\]]+)\\]\\(([^\\)]+)\\)");
+    private static final Pattern GUIDE_HTML_LINK_PATTERN = Pattern.compile("(?i)<a\\b[^>]*>(.*?)</a>");
     private static final Pattern GUIDE_HTML_BREAK_PATTERN = Pattern.compile("(?i)<br\\s*/?>");
     private static final Pattern GUIDE_MARKDOWN_ESCAPE_PATTERN = Pattern.compile("\\\\([\\[\\]\\(\\)#*_`])");
     private static final String GUIDE_SECTION_ANCHOR_MARKER = "[[SECTION]] ";
@@ -41,7 +42,8 @@ final class GuideBodySanitizer {
             SECTION,
             ADMONITION_LABEL,
             ADMONITION_TEXT,
-            REQUIRED_READING
+            REQUIRED_READING,
+            HEADING
         }
 
         final Kind kind;
@@ -136,15 +138,27 @@ final class GuideBodySanitizer {
             if (!displayLine.isEmpty()) {
                 if (sectionLine && !sectionValue.isEmpty()) {
                     sectionOrdinal++;
+                    SectionDisplayParts sectionParts = buildSectionDisplayParts(sectionOrdinal, sectionValue);
                     appendParsedLine(
                         builder,
                         parsedLines,
                         new GuideBodyLine(
                             GuideBodyLine.Kind.SECTION,
-                            buildGuideSectionDisplayLabel(sectionOrdinal, sectionValue),
+                            sectionParts.label,
                             buildGuideSectionPrefix(sectionOrdinal)
                         )
                     );
+                    if (!sectionParts.heading.isEmpty()) {
+                        appendParsedLine(
+                            builder,
+                            parsedLines,
+                            new GuideBodyLine(
+                                GuideBodyLine.Kind.HEADING,
+                                sectionParts.heading,
+                                sectionParts.heading
+                            )
+                        );
+                    }
                 } else if (requiredReadingLine) {
                     appendParsedLine(
                         builder,
@@ -238,9 +252,13 @@ final class GuideBodySanitizer {
         cleaned = GUIDE_INLINE_STYLE_TAG_PATTERN.matcher(cleaned).replaceAll("");
         cleaned = GUIDE_MARKDOWN_HEADING_PATTERN.matcher(cleaned).replaceFirst("");
         cleaned = GUIDE_MARKDOWN_LINK_PATTERN.matcher(cleaned).replaceAll("$1");
+        cleaned = GUIDE_HTML_LINK_PATTERN.matcher(cleaned).replaceAll("$1");
         cleaned = cleaned.replace("**", "");
         cleaned = cleaned.replace("__", "");
         cleaned = cleaned.replace("`", "");
+        if (cleaned.trim().startsWith("!")) {
+            cleaned = cleaned.trim().substring(1).trim();
+        }
         if (insideAdmonitionBlock) {
             cleaned = cleaned.replaceFirst("^[^\\p{Alnum}\\[]+\\s*", "");
         }
@@ -265,10 +283,25 @@ final class GuideBodySanitizer {
             return cleaned;
         }
         String detail = safe(inlinePrefixMatcher.group(2)).trim();
+        detail = trimAdmonitionInlineDetailPrefix(detail);
+        detail = stripDuplicateAdmonitionDetailPrefix(detail, label);
         if (detail.isEmpty()) {
             return label;
         }
         return label + " \u00b7 " + detail;
+    }
+
+    private static String trimAdmonitionInlineDetailPrefix(String detail) {
+        String cleaned = safe(detail).trim();
+        while (!cleaned.isEmpty()) {
+            char first = cleaned.charAt(0);
+            if (first == '\u00b7' || first == '-' || first == ':' || first == '.') {
+                cleaned = cleaned.substring(1).trim();
+                continue;
+            }
+            break;
+        }
+        return cleaned;
     }
 
     private static boolean isGuideSectionMarkerLine(String line) {
@@ -302,6 +335,7 @@ final class GuideBodySanitizer {
             return safe(line).trim();
         }
         String detail = safe(matcher.group(1)).trim();
+        detail = detail.replaceFirst("(?i)^required\\s+reading\\s*[:\\-\\u00b7]?\\s*", "").trim();
         return detail.isEmpty() ? GUIDE_REQUIRED_READING_LABEL : GUIDE_REQUIRED_READING_LABEL + " \u00b7 " + detail;
     }
 
@@ -326,8 +360,47 @@ final class GuideBodySanitizer {
         return GUIDE_SECTION_DISPLAY_PATTERN.matcher(safe(line).trim()).matches();
     }
 
-    private static String buildGuideSectionDisplayLabel(int sectionOrdinal, String value) {
-        return buildGuideSectionPrefix(sectionOrdinal) + " " + safe(value).trim();
+    private static SectionDisplayParts buildSectionDisplayParts(int sectionOrdinal, String value) {
+        String cleaned = safe(value).trim();
+        String heading = "";
+        String label = cleaned;
+        int colonIndex = cleaned.indexOf(':');
+        if (colonIndex > 0 && colonIndex < cleaned.length() - 1) {
+            String beforeColon = cleaned.substring(0, colonIndex).trim();
+            String afterColon = cleaned.substring(colonIndex + 1).trim();
+            if (!beforeColon.isEmpty() && !afterColon.isEmpty() && beforeColon.length() <= 56) {
+                heading = beforeColon;
+                label = firstGuideSectionCue(afterColon);
+            }
+        }
+        if (label.isEmpty()) {
+            label = cleaned;
+        }
+        return new SectionDisplayParts(
+            buildGuideSectionPrefix(sectionOrdinal) + " " + label,
+            heading
+        );
+    }
+
+    private static String firstGuideSectionCue(String text) {
+        String cleaned = safe(text).trim();
+        int commaIndex = cleaned.indexOf(',');
+        if (commaIndex > 0) {
+            cleaned = cleaned.substring(0, commaIndex).trim();
+        }
+        return sentenceCase(cleaned);
+    }
+
+    private static String sentenceCase(String text) {
+        String cleaned = safe(text).trim();
+        if (cleaned.isEmpty()) {
+            return "";
+        }
+        if (cleaned.length() == 1) {
+            return cleaned.toUpperCase(QUERY_LOCALE);
+        }
+        return cleaned.substring(0, 1).toUpperCase(QUERY_LOCALE)
+            + cleaned.substring(1).toLowerCase(QUERY_LOCALE);
     }
 
     private static String buildGuideSectionPrefix(int sectionOrdinal) {
@@ -353,7 +426,21 @@ final class GuideBodySanitizer {
         if (!normalizedLabel.equals(canonicalGuideAdmonitionLabel(inlinePrefixMatcher.group(1)))) {
             return cleaned;
         }
-        return safe(inlinePrefixMatcher.group(2)).trim();
+        return stripDuplicateAdmonitionDetailPrefix(safe(inlinePrefixMatcher.group(2)).trim(), normalizedLabel);
+    }
+
+    private static String stripDuplicateAdmonitionDetailPrefix(String detail, String admonitionLabel) {
+        String cleaned = safe(detail).trim();
+        String normalizedLabel = canonicalGuideAdmonitionLabel(admonitionLabel);
+        if (cleaned.isEmpty() || normalizedLabel.isEmpty()) {
+            return cleaned;
+        }
+        Matcher inlinePrefixMatcher = GUIDE_ADMONITION_INLINE_PREFIX_PATTERN.matcher(cleaned);
+        if (inlinePrefixMatcher.matches()
+            && normalizedLabel.equals(canonicalGuideAdmonitionLabel(inlinePrefixMatcher.group(1)))) {
+            return safe(inlinePrefixMatcher.group(2)).trim();
+        }
+        return cleaned;
     }
 
     static String normalizeGuideDisplayText(String text) {
@@ -417,6 +504,16 @@ final class GuideBodySanitizer {
         AdmonitionTitleSplit(String title, String detail) {
             this.title = safe(title);
             this.detail = safe(detail);
+        }
+    }
+
+    private static final class SectionDisplayParts {
+        final String label;
+        final String heading;
+
+        SectionDisplayParts(String label, String heading) {
+            this.label = safe(label);
+            this.heading = safe(heading);
         }
     }
 }

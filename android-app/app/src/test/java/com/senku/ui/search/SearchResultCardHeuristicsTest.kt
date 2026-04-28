@@ -70,7 +70,7 @@ class SearchResultCardHeuristicsTest {
     @Test
     fun compactSearchResultMetadataLabel_keepsDenseRowTokens() {
         assertEquals(
-            "SAFETY  \u00B7  WATER  \u00B7  WINDOW IMMEDIATE",
+            "SAFETY \u00B7 WATER \u00B7 WINDOW IMMEDIATE",
             compactSearchResultMetadataLabel("Role: Safety // Window: Immediate // Category: Water"),
         )
         assertEquals(

@@ -127,7 +127,10 @@ final class DetailRelatedGuidePresentationFormatter {
     }
 
     String buildRelatedGuideContextLabel(SearchResult guide) {
-        String categoryLabel = formatRelatedGuideCategory(guide == null ? null : guide.category);
+        String categoryLabel = formatRelatedGuideCategory(guide);
+        if (context == null) {
+            return categoryLabel.isEmpty() ? "Related guide" : categoryLabel;
+        }
         return categoryLabel.isEmpty()
             ? context.getString(R.string.detail_related_guides_context_plain)
             : context.getString(R.string.detail_related_guides_context_category, categoryLabel);
@@ -152,7 +155,7 @@ final class DetailRelatedGuidePresentationFormatter {
         builder.append(total);
         builder.append(". ");
         builder.append(buildRelatedGuidePrimaryLabel(guide));
-        String category = formatRelatedGuideCategory(guide == null ? null : guide.category);
+        String category = formatRelatedGuideCategory(guide);
         if (!category.isEmpty()) {
             builder.append(". Category ");
             builder.append(category);
@@ -184,7 +187,7 @@ final class DetailRelatedGuidePresentationFormatter {
         builder.append(total);
         builder.append(". ");
         builder.append(buildRelatedGuidePrimaryLabel(guide));
-        String category = formatRelatedGuideCategory(guide == null ? null : guide.category);
+        String category = formatRelatedGuideCategory(guide);
         if (!category.isEmpty()) {
             builder.append(". Category ");
             builder.append(category);
@@ -259,13 +262,43 @@ final class DetailRelatedGuidePresentationFormatter {
         return cleaned.substring(0, 34).trim() + "...";
     }
 
-    private static String formatRelatedGuideCategory(String category) {
-        String cleaned = safe(category).trim().replace('-', ' ').replace('_', ' ');
+    private static String formatRelatedGuideCategory(SearchResult guide) {
+        String cleaned = firstNonEmpty(
+            guide == null ? null : guide.category,
+            guide == null ? null : guide.contentRole,
+            guide == null ? null : guide.structureType,
+            guide == null ? null : guide.retrievalMode,
+            guide == null ? null : guide.topicTags
+        );
+        cleaned = cleaned.trim().replace('-', ' ').replace('_', ' ');
         cleaned = cleaned.replaceAll("\\s+", " ").trim();
         if (cleaned.isEmpty()) {
             return "";
         }
+        String normalized = cleaned.toLowerCase(Locale.US);
+        if (normalized.contains("anchor") || normalized.contains("source")) {
+            return "Anchor";
+        }
+        if (normalized.contains("required") || normalized.contains("prereq")) {
+            return "Required";
+        }
+        if (normalized.contains("related") || normalized.contains("cross reference")) {
+            return "Related";
+        }
         return Character.toUpperCase(cleaned.charAt(0)) + cleaned.substring(1);
+    }
+
+    private static String firstNonEmpty(String... values) {
+        if (values == null) {
+            return "";
+        }
+        for (String value : values) {
+            String cleaned = safe(value).trim();
+            if (!cleaned.isEmpty()) {
+                return cleaned;
+            }
+        }
+        return "";
     }
 
     private static String safe(String text) {

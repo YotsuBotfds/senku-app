@@ -2,7 +2,6 @@ package com.senku.ui.evidence
 
 import java.util.Locale
 
-private const val FallbackGuideId = "GD-?"
 private const val FallbackSourceTitle = "Source guide"
 private const val FallbackSurfaceLabel = "Evidence"
 private const val EmptySnippetLabel = "No snippet yet."
@@ -87,7 +86,7 @@ internal fun EvidenceSourceModel.toEvidenceSourceRowData(): EvidenceSourceRowDat
 }
 
 internal fun normalizeEvidenceGuideId(guideId: String): String =
-    guideId.trim().ifEmpty { FallbackGuideId }
+    guideId.trim()
 
 internal fun normalizeEvidenceSourceTitle(title: String): String =
     normalizeEvidenceTitle(title).ifEmpty { FallbackSourceTitle }

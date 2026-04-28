@@ -26,7 +26,6 @@ import androidx.compose.ui.unit.sp
 import com.senku.ui.theme.SenkuAppTheme
 import com.senku.ui.theme.SenkuTheme
 
-private const val XRefFallbackGuideId = "GD-?"
 private const val XRefFallbackTitle = "Guide connection"
 
 @Immutable
@@ -90,7 +89,7 @@ fun XRefRow(
 }
 
 private fun XRefRowModel.displayGuideId(): String =
-    guideId.trim().ifEmpty { XRefFallbackGuideId }
+    guideId.trim()
 
 private fun XRefRowModel.displayTitle(): String =
     title.trim().ifEmpty { XRefFallbackTitle }

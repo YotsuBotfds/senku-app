@@ -55,6 +55,13 @@ import com.senku.ui.theme.SenkuTheme
 import java.util.function.Consumer
 
 @Immutable
+enum class TabletDetailMode {
+    Answer,
+    Thread,
+    Guide,
+}
+
+@Immutable
 data class TabletDetailState(
     val guideId: String,
     val guideTitle: String,
@@ -77,7 +84,55 @@ data class TabletDetailState(
     val guideModeSummary: String = "",
     val guideModeAnchorLabel: String = "",
     val statusText: String = "",
-)
+    val detailMode: TabletDetailMode = TabletDetailMode.Answer,
+) {
+    constructor(
+        guideId: String,
+        guideTitle: String,
+        meta: List<MetaItem>,
+        turns: List<ThreadTurnState>,
+        sources: List<SourceState>,
+        anchor: AnchorState,
+        xrefs: List<XRefState>,
+        composerText: String,
+        composerPlaceholder: String,
+        composerEnabled: Boolean,
+        composerVisible: Boolean,
+        composerShowRetry: Boolean,
+        composerRetryLabel: String,
+        pinVisible: Boolean,
+        pinActive: Boolean,
+        evidenceExpanded: Boolean,
+        isLandscape: Boolean,
+        guideModeLabel: String = "",
+        guideModeSummary: String = "",
+        guideModeAnchorLabel: String = "",
+        statusText: String = "",
+    ) : this(
+        guideId = guideId,
+        guideTitle = guideTitle,
+        meta = meta,
+        turns = turns,
+        sources = sources,
+        anchor = anchor,
+        xrefs = xrefs,
+        composerText = composerText,
+        composerPlaceholder = composerPlaceholder,
+        composerEnabled = composerEnabled,
+        composerVisible = composerVisible,
+        composerShowRetry = composerShowRetry,
+        composerRetryLabel = composerRetryLabel,
+        pinVisible = pinVisible,
+        pinActive = pinActive,
+        evidenceExpanded = evidenceExpanded,
+        isLandscape = isLandscape,
+        guideModeLabel = guideModeLabel,
+        guideModeSummary = guideModeSummary,
+        guideModeAnchorLabel = guideModeAnchorLabel,
+        statusText = statusText,
+        detailMode = TabletDetailMode.Answer,
+    )
+}
 
 @Immutable
 data class ThreadTurnState(
@@ -232,7 +287,7 @@ internal fun tabletDetailTypeScalePolicy(isLandscape: Boolean): TabletDetailType
     }
 
 internal fun tabletComposerContextHint(state: TabletDetailState): String {
-    val guideMode = state.hasGuideReaderContext()
+    val guideMode = state.isGuideMode()
     val turnLabel = when (val count = state.turns.size) {
         0 -> if (guideMode) "No sections" else "No turns"
         1 -> if (guideMode) "1 section" else "1 turn"
@@ -470,9 +525,9 @@ private fun DetailWorkspace(
                 )
 
                 EvidencePane(
-                    anchor = state.anchor,
-                    xrefs = state.xrefs,
-                    answerMode = !guideMode,
+                    anchor = tabletSourceGraphAnchor(state.anchor),
+                    xrefs = tabletSourceGraphXRefs(state.xrefs),
+                    answerMode = state.isAnswerOrThreadMode(),
                     onAnchorClick = onAnchorClick,
                     onXRefClick = onXRefClick,
                     modifier = Modifier
@@ -908,17 +963,20 @@ private fun TitleBar(
                 color = colors.accent,
                 maxLines = 1,
             )
-            Text(
-                text = guideId.trim().ifEmpty { "GD-?" },
-                style = typography.monoCaps.copy(
-                    fontSize = 11.sp,
-                    lineHeight = 14.sp,
-                    fontWeight = FontWeight.Medium,
-                ),
-                color = colors.accent,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-            )
+            val resolvedGuideId = guideId.trim()
+            if (resolvedGuideId.isNotEmpty()) {
+                Text(
+                    text = resolvedGuideId,
+                    style = typography.monoCaps.copy(
+                        fontSize = 11.sp,
+                        lineHeight = 14.sp,
+                        fontWeight = FontWeight.Medium,
+                    ),
+                    color = colors.accent,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                )
+            }
             Text(
                 text = if (guideMode) {
                     guideTitle.trim().ifEmpty { "Guide" }
@@ -1263,8 +1321,10 @@ private fun AnswerInlineBlock(
     }
 }
 
-internal fun TabletDetailState.isGuideMode(): Boolean =
-    !composerVisible && hasGuideReaderContext() && !hasAnswerOwnedSourceSelection()
+internal fun TabletDetailState.isGuideMode(): Boolean = detailMode == TabletDetailMode.Guide
+
+internal fun TabletDetailState.isAnswerOrThreadMode(): Boolean =
+    detailMode == TabletDetailMode.Answer || detailMode == TabletDetailMode.Thread
 
 internal fun TabletDetailState.hasAnswerOwnedSourceSelection(): Boolean {
     val selectedSource = sources.any { it.isSelected }
@@ -1296,12 +1356,25 @@ internal fun tabletShouldShowEvidencePane(
         else -> state.sources.isNotEmpty()
     }
 
+internal fun tabletSourceGraphAnchor(anchor: AnchorState): AnchorState =
+    if (anchor.hasSource && anchor.id.isBlank()) {
+        AnchorState("", "", "", "", "", false)
+    } else {
+        anchor
+    }
+
+internal fun tabletSourceGraphXRefs(xrefs: List<XRefState>): List<XRefState> =
+    xrefs.filter { it.id.isNotBlank() }
+
 private fun buildTitleSummary(
     guideTitle: String,
     turnCount: Int,
 ): String {
     val title = guideTitle.trim().ifEmpty { "Guide evidence" }
     val turnLabel = if (turnCount == 1) "1 turn" else "$turnCount turns"
+    if (title.contains(turnLabel, ignoreCase = true)) {
+        return title
+    }
     return "$title - $turnLabel"
 }
 

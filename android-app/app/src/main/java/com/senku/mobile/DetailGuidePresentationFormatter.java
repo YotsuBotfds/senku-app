@@ -70,6 +70,9 @@ final class DetailGuidePresentationFormatter {
             } else if (line.kind == GuideBodySanitizer.GuideBodyLine.Kind.REQUIRED_READING) {
                 styleRequiredReadingLine(styled, displayText, lineStart, lineEnd, line.label);
                 insideAdmonitionBlock = false;
+            } else if (line.kind == GuideBodySanitizer.GuideBodyLine.Kind.HEADING) {
+                styleGuideHeadingLine(styled, lineStart, lineEnd);
+                insideAdmonitionBlock = false;
             } else if (line.kind == GuideBodySanitizer.GuideBodyLine.Kind.ADMONITION_LABEL) {
                 admonitionAccentColorRes = admonitionAccentColorRes(trimmed);
                 styleGuideAdmonitionLabelLine(styled, lineStart, lineEnd, line.label, admonitionAccentColorRes);
@@ -104,6 +107,8 @@ final class DetailGuidePresentationFormatter {
                     insideAdmonitionBlock = false;
                 } else if (insideAdmonitionBlock) {
                     applyGuideIndentedWarningLine(styled, lineStart, lineEnd, admonitionAccentColorRes);
+                } else {
+                    styleGuideTextLine(styled, lineStart, lineEnd);
                 }
             }
             cursor = lineEnd + 1;
@@ -165,7 +170,7 @@ final class DetailGuidePresentationFormatter {
         int valueStart = firstNonWhitespaceIndex(fullText, labelEnd, lineEnd);
         styled.setSpan(new StyleSpan(Typeface.BOLD), lineStart, labelEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         styled.setSpan(new TypefaceSpan("monospace"), lineStart, labelEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-        styled.setSpan(new RelativeSizeSpan(0.9f), lineStart, labelEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        styled.setSpan(new RelativeSizeSpan(0.7f), lineStart, lineEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         styled.setSpan(
             new ForegroundColorSpan(color(guideAnchorLabelColorResForLegacy())),
             lineStart,
@@ -173,7 +178,6 @@ final class DetailGuidePresentationFormatter {
             Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
         );
         if (valueStart < lineEnd) {
-            styled.setSpan(new StyleSpan(Typeface.BOLD), valueStart, lineEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             styled.setSpan(
                 new ForegroundColorSpan(color(guideAnchorValueColorResForLegacy())),
                 valueStart,
@@ -181,6 +185,21 @@ final class DetailGuidePresentationFormatter {
                 Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
             );
         }
+    }
+
+    private void styleGuideHeadingLine(SpannableStringBuilder styled, int lineStart, int lineEnd) {
+        if (lineStart >= lineEnd) {
+            return;
+        }
+        styled.setSpan(new StyleSpan(Typeface.BOLD), lineStart, lineEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        styled.setSpan(new TypefaceSpan("sans"), lineStart, lineEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        styled.setSpan(new RelativeSizeSpan(0.9f), lineStart, lineEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        styled.setSpan(
+            new ForegroundColorSpan(color(guideBodyTextColorResForLegacy())),
+            lineStart,
+            lineEnd,
+            Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+        );
     }
 
     private void styleRequiredReadingLine(
@@ -194,7 +213,7 @@ final class DetailGuidePresentationFormatter {
         int valueStart = firstNonWhitespaceIndex(fullText, labelEnd, lineEnd);
         styled.setSpan(new StyleSpan(Typeface.BOLD), lineStart, labelEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         styled.setSpan(new TypefaceSpan("monospace"), lineStart, labelEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-        styled.setSpan(new RelativeSizeSpan(0.92f), lineStart, labelEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        styled.setSpan(new RelativeSizeSpan(0.78f), lineStart, lineEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         styled.setSpan(
             new ForegroundColorSpan(color(guideAdmonitionWarningColorResForLegacy())),
             lineStart,
@@ -226,11 +245,24 @@ final class DetailGuidePresentationFormatter {
             Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
         );
         styled.setSpan(new StyleSpan(Typeface.BOLD), lineStart, lineEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-        styled.setSpan(new RelativeSizeSpan(0.92f), lineStart, lineEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        styled.setSpan(new RelativeSizeSpan(0.78f), lineStart, lineEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         if (labelEnd > lineStart) {
             styled.setSpan(new TypefaceSpan("monospace"), lineStart, labelEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             styled.setSpan(new ForegroundColorSpan(color(accentColorRes)), lineStart, labelEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         }
+    }
+
+    private void styleGuideTextLine(SpannableStringBuilder styled, int lineStart, int lineEnd) {
+        if (lineStart >= lineEnd) {
+            return;
+        }
+        styled.setSpan(new RelativeSizeSpan(0.82f), lineStart, lineEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        styled.setSpan(
+            new ForegroundColorSpan(color(guideBodyTextColorResForLegacy())),
+            lineStart,
+            lineEnd,
+            Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+        );
     }
 
     private static int firstNonWhitespaceIndex(String text, int start, int end) {
@@ -262,6 +294,7 @@ final class DetailGuidePresentationFormatter {
             lineEnd,
             Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
         );
+        styled.setSpan(new RelativeSizeSpan(0.82f), lineStart, lineEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         styled.setSpan(
             new BackgroundColorSpan(color(admonitionContinuationBackgroundColorRes(accentColorRes))),
             lineStart,

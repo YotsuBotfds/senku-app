@@ -39,7 +39,7 @@ internal fun threadRailSectionTitle(label: String, count: Int): String =
     "${label.trim().ifEmpty { "THREAD" }} \u00B7 $count"
 
 internal fun threadRailTurnRowMinHeightDp(active: Boolean): Int =
-    if (active) 76 else 68
+    if (active) 68 else 60
 
 internal fun threadRailSourceRowMinHeightDp(): Int = 58
 
@@ -80,8 +80,21 @@ internal fun threadRailSourceContextPriority(source: SourceState): Int {
     }
 }
 
+internal fun threadRailSourceTitleLabel(source: SourceState, guideMode: Boolean): String {
+    val title = source.title.trim()
+    return when {
+        source.id.isBlank() && title.isConfusingSourceFallbackTitle() -> ""
+        title.isNotEmpty() -> title
+        guideMode -> "Related guide"
+        else -> "Source guide"
+    }
+}
+
 internal fun threadRailSourceDisplayLabel(source: SourceState, guideMode: Boolean): String {
-    val sourceId = source.id.trim().ifEmpty { "GD-?" }
+    val sourceId = source.id.trim()
+    if (sourceId.isEmpty()) {
+        return threadRailSourceTitleLabel(source, guideMode)
+    }
     if (!guideMode) {
         return sourceId
     }
@@ -92,6 +105,13 @@ internal fun threadRailSourceDisplayLabel(source: SourceState, guideMode: Boolea
         else -> "$sourceId - RELATED"
     }
 }
+
+internal fun threadRailShouldShowSource(source: SourceState, guideMode: Boolean): Boolean =
+    threadRailSourceDisplayLabel(source, guideMode).isNotEmpty() ||
+        threadRailSourceTitleLabel(source, guideMode).isNotEmpty()
+
+private fun String.isConfusingSourceFallbackTitle(): Boolean =
+    trim().equals("Field note summary", ignoreCase = true)
 
 internal fun threadRailTurnMetaLabel(
     index: Int,
@@ -156,18 +176,21 @@ fun ThreadRail(
             }
         }
 
+        val visibleSources = if (guideMode) {
+            sources
+                .filter { threadRailShouldShowSource(it, guideMode) }
+                .sortedByDescending { threadRailSourceContextPriority(it) }
+        } else {
+            sources.filter { threadRailShouldShowSource(it, guideMode) }
+        }
+
         RailSection(
             label = if (guideMode) guideLabels.referenceLabel else "SOURCES IN THREAD",
-            count = sources.size,
+            count = visibleSources.size,
         ) {
-            if (sources.isEmpty()) {
+            if (visibleSources.isEmpty()) {
                 PlaceholderText(if (guideMode) guideLabels.emptyReferenceLabel else "No sources yet.")
             } else {
-                val visibleSources = if (guideMode) {
-                    sources.sortedByDescending { threadRailSourceContextPriority(it) }
-                } else {
-                    sources
-                }
                 visibleSources.forEach { source ->
                     SourcePill(
                         source = source,
@@ -293,7 +316,7 @@ private fun ThreadTurnRow(
             modifier = Modifier
                 .fillMaxWidth()
                 .heightIn(min = threadRailTurnRowMinHeightDp(turn.isActive).dp)
-                .padding(horizontal = 8.dp, vertical = 6.dp),
+                .padding(horizontal = 8.dp, vertical = 7.dp),
             horizontalArrangement = Arrangement.spacedBy(6.dp),
             verticalAlignment = Alignment.Top,
         ) {
@@ -332,7 +355,7 @@ private fun ThreadTurnRow(
                         fontWeight = FontWeight.Normal,
                     ),
                     color = if (turn.isActive) colors.ink0 else colors.ink1,
-                    maxLines = 2,
+                    maxLines = if (turn.isActive) 3 else 2,
                     overflow = TextOverflow.Ellipsis,
                 )
                 Text(
@@ -345,16 +368,6 @@ private fun ThreadTurnRow(
                         fontSize = 9.sp,
                         lineHeight = 11.sp,
                         fontWeight = FontWeight.Medium,
-                    ),
-                    color = colors.ink2,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                )
-                Text(
-                    text = turn.answer.short.trim().ifEmpty { "No answer recorded." },
-                    style = SenkuTheme.typography.smallBody.copy(
-                        fontSize = 10.sp,
-                        lineHeight = 12.sp,
                     ),
                     color = colors.ink2,
                     maxLines = 1,
@@ -408,8 +421,10 @@ private fun SourcePill(
                 modifier = Modifier.weight(1f),
                 verticalArrangement = Arrangement.spacedBy(5.dp),
             ) {
+                val displayLabel = threadRailSourceDisplayLabel(source, guideMode)
+                val titleLabel = threadRailSourceTitleLabel(source, guideMode)
                 Text(
-                    text = threadRailSourceDisplayLabel(source, guideMode),
+                    text = displayLabel,
                     style = SenkuTheme.typography.monoCaps.copy(
                         fontSize = 9.sp,
                         lineHeight = 11.sp,
@@ -419,16 +434,18 @@ private fun SourcePill(
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                 )
-                Text(
-                    text = source.title.trim().ifEmpty { if (guideMode) "Related guide" else "Source guide" },
-                    style = SenkuTheme.typography.smallBody.copy(
-                        fontSize = 10.5.sp,
-                        lineHeight = 12.sp,
-                    ),
-                    color = colors.ink1,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                )
+                if (titleLabel.isNotEmpty() && titleLabel != displayLabel) {
+                    Text(
+                        text = titleLabel,
+                        style = SenkuTheme.typography.smallBody.copy(
+                            fontSize = 10.5.sp,
+                            lineHeight = 12.sp,
+                        ),
+                        color = colors.ink1,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                }
             }
         }
     }
