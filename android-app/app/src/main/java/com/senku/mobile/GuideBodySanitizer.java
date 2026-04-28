@@ -20,6 +20,10 @@ final class GuideBodySanitizer {
     private static final Pattern GUIDE_HTML_LINK_PATTERN = Pattern.compile("(?i)<a\\b[^>]*>(.*?)</a>");
     private static final Pattern GUIDE_HTML_BREAK_PATTERN = Pattern.compile("(?i)<br\\s*/?>");
     private static final Pattern GUIDE_MARKDOWN_ESCAPE_PATTERN = Pattern.compile("\\\\([\\[\\]\\(\\)#*_`])");
+    private static final Pattern GUIDE_MARKDOWN_RULE_PATTERN = Pattern.compile("^\\s*(?:-{3,}|_{3,}|\\*{3,})\\s*$");
+    private static final Pattern GUIDE_METADATA_LINE_PATTERN =
+        Pattern.compile("(?i)^\\s*(title|slug|date|updated|source|tags|category|id)\\s*:\\s+.+$");
+    private static final Pattern GUIDE_SEPARATOR_RUN_PATTERN = Pattern.compile("\\s*(?:\\u00b7\\s*){2,}");
     private static final String GUIDE_SECTION_ANCHOR_MARKER = "[[SECTION]] ";
     private static final String GUIDE_REQUIRED_READING_LABEL = "Required reading";
 
@@ -62,7 +66,7 @@ final class GuideBodySanitizer {
     }
 
     static ParsedGuideBody parseGuideBodyForDisplay(String body) {
-        String cleaned = normalizeGuideDisplayText(safe(body)).trim();
+        String cleaned = stripGuideFrontMatter(normalizeGuideDisplayText(safe(body))).trim();
         if (cleaned.isEmpty()) {
             return new ParsedGuideBody("", new GuideBodyLine[0]);
         }
@@ -76,6 +80,9 @@ final class GuideBodySanitizer {
         int sectionOrdinal = 0;
         for (String rawLine : lines) {
             String trimmed = safe(rawLine).trim();
+            if (shouldSkipGuideDisplayLine(trimmed)) {
+                continue;
+            }
             boolean markdownHeading = GUIDE_MARKDOWN_HEADING_PATTERN.matcher(trimmed).find();
             Matcher fenceMatcher = GUIDE_ADMONITION_FENCE_PATTERN.matcher(trimmed);
             if (fenceMatcher.matches()) {
@@ -200,6 +207,7 @@ final class GuideBodySanitizer {
             parsedLines.remove(parsedLines.size() - 1);
         }
         collapseRepeatedBlankLines(parsedLines);
+        collapseRepeatedSectionLines(parsedLines);
         String displayText = joinParsedLines(parsedLines);
         return new ParsedGuideBody(displayText, parsedLines.toArray(new GuideBodyLine[0]));
     }
@@ -215,6 +223,41 @@ final class GuideBodySanitizer {
             }
             previousBlank = blank;
         }
+    }
+
+    private static void collapseRepeatedSectionLines(java.util.ArrayList<GuideBodyLine> parsedLines) {
+        String previousSectionValue = "";
+        for (int i = 0; i < parsedLines.size(); i++) {
+            GuideBodyLine line = parsedLines.get(i);
+            if (line.kind != GuideBodyLine.Kind.SECTION) {
+                if (!line.text.isEmpty()) {
+                    previousSectionValue = "";
+                }
+                continue;
+            }
+            String sectionValue = normalizeSectionComparisonValue(line.text);
+            if (!sectionValue.isEmpty() && sectionValue.equals(previousSectionValue)) {
+                parsedLines.remove(i);
+                i--;
+                continue;
+            }
+            previousSectionValue = sectionValue;
+        }
+    }
+
+    private static String normalizeSectionComparisonValue(String text) {
+        return safe(text)
+            .trim()
+            .replaceFirst("(?i)^Section\\s+\\d+\\s*[:\\-\\u00b7]?\\s*", "")
+            .replaceAll("\\s+", " ")
+            .trim()
+            .toLowerCase(QUERY_LOCALE);
+    }
+
+    private static boolean shouldSkipGuideDisplayLine(String trimmedLine) {
+        String cleaned = safe(trimmedLine).trim();
+        return GUIDE_MARKDOWN_RULE_PATTERN.matcher(cleaned).matches()
+            || GUIDE_METADATA_LINE_PATTERN.matcher(cleaned).matches();
     }
 
     private static String joinParsedLines(java.util.ArrayList<GuideBodyLine> parsedLines) {
@@ -262,7 +305,7 @@ final class GuideBodySanitizer {
         if (insideAdmonitionBlock) {
             cleaned = cleaned.replaceFirst("^[^\\p{Alnum}\\[]+\\s*", "");
         }
-        return cleaned.trim();
+        return normalizeGuideSeparators(cleaned).trim();
     }
 
     private static String formatGuideAdmonitionLine(String line) {
@@ -459,7 +502,29 @@ final class GuideBodySanitizer {
         cleaned = cleaned.replace("ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“", "-");
         cleaned = cleaned.replace("ÃƒÂ¢Ã¢â‚¬Â Ã¢â‚¬â„¢", "->");
         cleaned = cleaned.replace("ÃƒÂ¢Ã…Â¡Ã‚Â ÃƒÂ¯Ã‚Â¸Ã‚Â", "!");
-        return DetailWarningCopySanitizer.sanitizeWarningResidualCopy(cleaned);
+        return normalizeGuideSeparators(DetailWarningCopySanitizer.sanitizeWarningResidualCopy(cleaned));
+    }
+
+    private static String stripGuideFrontMatter(String text) {
+        String cleaned = safe(text).trim();
+        if (!cleaned.startsWith("---\n")) {
+            return cleaned;
+        }
+        int closingMarker = cleaned.indexOf("\n---", 4);
+        if (closingMarker < 0) {
+            return cleaned;
+        }
+        int afterClosingLine = cleaned.indexOf('\n', closingMarker + 4);
+        return afterClosingLine < 0 ? "" : cleaned.substring(afterClosingLine + 1);
+    }
+
+    private static String normalizeGuideSeparators(String text) {
+        String cleaned = safe(text);
+        cleaned = cleaned.replace("Â·", "\u00b7");
+        cleaned = GUIDE_SEPARATOR_RUN_PATTERN.matcher(cleaned).replaceAll(" \u00b7 ");
+        cleaned = cleaned.replaceAll("\\s+\\u00b7\\s+", " \u00b7 ");
+        cleaned = cleaned.replaceAll("[ \\t]+([,.;:])", "$1");
+        return cleaned;
     }
 
     static String normalizeGuideAdmonitionLabel(String marker) {

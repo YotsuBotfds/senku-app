@@ -30,6 +30,25 @@ public final class DetailGuidePresentationFormatterTest {
     }
 
     @Test
+    public void buildGuideBodyAvoidsDuplicatingExistingOpeningSection() {
+        SearchResult result = new SearchResult(
+            "Water",
+            "",
+            "",
+            "## Storage\nUse covered jars.",
+            "GD-214",
+            "Storage",
+            "water",
+            "guide-focus"
+        );
+
+        assertEquals(
+            "Section 1 Storage\nUse covered jars.",
+            DetailGuidePresentationFormatter.buildGuideBody(result)
+        );
+    }
+
+    @Test
     public void buildGuideBodyFallsBackToSanitizedSnippetWhenBodyBlank() {
         SearchResult result = new SearchResult(
             "Water",
@@ -168,6 +187,31 @@ public final class DetailGuidePresentationFormatterTest {
                 "## Section 1 Reviewed Answer-Card Boundary: Area Readiness, Hazard Screen, and Handoffs\n"
                     + "Use this section only for screening."
             )
+        );
+    }
+
+    @Test
+    public void guideBodySanitizerSkipsFrontMatterRulesMetadataAndDuplicateSectionRows() {
+        assertEquals(
+            "Section 1 Storage\nKeep jars covered.",
+            GuideBodySanitizer.sanitizeGuideBodyForDisplay(
+                "---\n"
+                    + "title: Water Storage\n"
+                    + "tags: water, storage\n"
+                    + "---\n"
+                    + "## Storage\n"
+                    + "Source section: Storage\n"
+                    + "---\n"
+                    + "Keep jars covered."
+            )
+        );
+    }
+
+    @Test
+    public void guideBodySanitizerNormalizesMojibakeAndRepeatedSeparators() {
+        assertEquals(
+            "DANGER \u00b7 EXTREME BURN HAZARD",
+            GuideBodySanitizer.sanitizeGuideBodyForDisplay("DANGER Â· Â· EXTREME BURN HAZARD")
         );
     }
 

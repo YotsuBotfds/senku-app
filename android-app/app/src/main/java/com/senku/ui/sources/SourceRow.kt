@@ -62,8 +62,8 @@ fun SourceRow(
     val rowCorner = dimensionResource(R.dimen.senku_rev03_corner_small)
     val rowMinHeight = dimensionResource(R.dimen.senku_rev03_identity_strip_height)
     val horizontalPadding = dimensionResource(R.dimen.senku_rev03_space_12)
-    val verticalPadding = dimensionResource(R.dimen.senku_rev03_space_10)
-    val contentGap = dimensionResource(R.dimen.senku_rev03_space_8)
+    val verticalPadding = dimensionResource(R.dimen.senku_rev03_space_6)
+    val contentGap = dimensionResource(R.dimen.senku_rev03_space_6)
     val chevronGap = dimensionResource(R.dimen.senku_rev03_space_6)
     val chevronSize = dimensionResource(R.dimen.senku_rev03_space_10)
     val metaLabel = buildSourceRowMeta(category = source.category, isAnchor = source.isAnchor)
@@ -112,7 +112,7 @@ fun SourceRow(
                 Spacer(modifier = Modifier.width(contentGap))
                 Text(
                     text = metaLabel,
-                    modifier = Modifier.widthIn(max = 120.dp),
+                    modifier = Modifier.widthIn(max = 96.dp),
                     style = typography.monoCaps,
                     color = metaColor,
                     maxLines = 1,
@@ -140,7 +140,15 @@ internal fun buildSourceRowMeta(category: String, isAnchor: Boolean): String {
     return parts.joinToString(separator = MetaSeparator)
 }
 
-internal fun normalizeSourceCategory(category: String): String = normalizeEvidenceLabel(category)
+internal fun normalizeSourceCategory(category: String): String {
+    val cleaned = normalizeEvidenceLabel(category)
+    return when (cleaned) {
+        "source anchor", "anchor", "anchor guide" -> ""
+        "cross reference", "cross-reference", "crossref", "related guide" -> "cross-ref"
+        "required reading", "prerequisite" -> "required"
+        else -> cleaned
+    }
+}
 
 internal fun EvidenceSourceModel.toSourceRowModel(): SourceRowModel =
     SourceRowModel(

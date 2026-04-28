@@ -13,6 +13,9 @@ class SourceRowModelTest {
             buildSourceRowMeta(category = "resource-management", isAnchor = false),
         )
         assertEquals("anchor guide", buildSourceRowMeta(category = "", isAnchor = true))
+        assertEquals("anchor guide", buildSourceRowMeta(category = "source_anchor", isAnchor = true))
+        assertEquals("cross-ref", buildSourceRowMeta(category = "cross_reference", isAnchor = false))
+        assertEquals("required", buildSourceRowMeta(category = "required_reading", isAnchor = false))
     }
 
     @Test

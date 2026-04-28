@@ -76,20 +76,20 @@ public final class DetailRelatedGuidePresentationFormatterTest {
         DetailRelatedGuidePresentationFormatter formatter = new DetailRelatedGuidePresentationFormatter(null);
 
         assertEquals(
-            "Cross-reference · 2 linked guides · [GD-214] Water Storage.",
+            "Guide links \u00b7 2 linked guides \u00b7 [GD-214] Water Storage.",
             formatter.buildAnswerModeRelatedGuidesSubtitle(
                 new DetailRelatedGuidePresentationFormatter.State(false, false, "", "", "[GD-214] Water Storage"),
                 2
             )
         );
         assertEquals(
-            "Cross-reference · 1 linked guide · GD-215 · Rainwater Catchment.",
+            "Guide links \u00b7 1 linked guide \u00b7 GD-215 \u00b7 Rainwater Catchment.",
             formatter.buildNonRailRelatedGuidesSubtitle(
                 new DetailRelatedGuidePresentationFormatter.State(
                     false,
                     true,
                     "GD-215",
-                    "GD-215 · Rainwater Catchment",
+                    "GD-215 \u00b7 Rainwater Catchment",
                     ""
                 ),
                 1
@@ -101,9 +101,9 @@ public final class DetailRelatedGuidePresentationFormatterTest {
     public void nonRailPreviewRowDescriptionUsesGuideConnectionLanguage() {
         DetailRelatedGuidePresentationFormatter formatter = new DetailRelatedGuidePresentationFormatter(null);
 
-        assertEquals("Cross-reference", formatter.buildNonRailRelatedGuidesTitle());
+        assertEquals("Guide links", formatter.buildNonRailRelatedGuidesTitle());
         assertEquals(
-            "Cross-reference 1 of 1. GD-215 · Rainwater Catchment. Anchored to GD-214. Preview here. Open full guide switches pages.",
+            "Guide links 1 of 1. GD-215 \u00b7 Rainwater Catchment. Anchored to GD-214. Preview here. Open full guide switches pages.",
             formatter.buildRelatedGuideButtonContentDescription(
                 new DetailRelatedGuidePresentationFormatter.State(
                     false,
@@ -128,12 +128,24 @@ public final class DetailRelatedGuidePresentationFormatterTest {
         SearchResult guide = new SearchResult("Rainwater Catchment", "", "", "", "GD-215", "", "", "");
 
         assertEquals(
-            "Source cross-reference. Cross-reference · 2 linked guides · [GD-214] Water Storage.",
+            "Source guide links. Guide links \u00b7 2 linked guides \u00b7 [GD-214] Water Storage.",
             formatter.buildAnswerModeRelatedGuidesPanelContentDescription(state, 2)
         );
         assertEquals(
-            "Cross-reference 1 of 2. GD-215 · Rainwater Catchment. Anchored to [GD-214] Water Storage. Previews here while the source guide stays pinned. Open full guide switches pages.",
+            "Cross-reference 1 of 2. GD-215 \u00b7 Rainwater Catchment. Anchored to [GD-214] Water Storage. Previews here with source guide pinned. Open full guide switches pages.",
             formatter.buildAnswerModeRelatedGuideButtonContentDescription(state, guide, 0, 2, true)
+        );
+    }
+
+    @Test
+    public void relatedGuideContextLabelCompactsCrossReferenceMetadata() {
+        DetailRelatedGuidePresentationFormatter formatter = new DetailRelatedGuidePresentationFormatter(null);
+
+        assertEquals(
+            "GD-215 \u00b7 Rainwater Catchment\nCross-ref",
+            formatter.buildRelatedGuideButtonLabel(
+                new SearchResult("Rainwater Catchment", "", "", "", "GD-215", "", "", "", "cross_reference", "", "", "")
+            )
         );
     }
 }

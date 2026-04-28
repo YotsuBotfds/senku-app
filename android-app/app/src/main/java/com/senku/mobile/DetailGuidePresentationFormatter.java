@@ -170,7 +170,7 @@ final class DetailGuidePresentationFormatter {
         int valueStart = firstNonWhitespaceIndex(fullText, labelEnd, lineEnd);
         styled.setSpan(new StyleSpan(Typeface.BOLD), lineStart, labelEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         styled.setSpan(new TypefaceSpan("monospace"), lineStart, labelEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-        styled.setSpan(new RelativeSizeSpan(0.7f), lineStart, lineEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        styled.setSpan(new RelativeSizeSpan(0.66f), lineStart, lineEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         styled.setSpan(
             new ForegroundColorSpan(color(guideAnchorLabelColorResForLegacy())),
             lineStart,
@@ -193,7 +193,7 @@ final class DetailGuidePresentationFormatter {
         }
         styled.setSpan(new StyleSpan(Typeface.BOLD), lineStart, lineEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         styled.setSpan(new TypefaceSpan("sans"), lineStart, lineEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-        styled.setSpan(new RelativeSizeSpan(0.9f), lineStart, lineEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        styled.setSpan(new RelativeSizeSpan(0.86f), lineStart, lineEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         styled.setSpan(
             new ForegroundColorSpan(color(guideBodyTextColorResForLegacy())),
             lineStart,
@@ -213,7 +213,7 @@ final class DetailGuidePresentationFormatter {
         int valueStart = firstNonWhitespaceIndex(fullText, labelEnd, lineEnd);
         styled.setSpan(new StyleSpan(Typeface.BOLD), lineStart, labelEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         styled.setSpan(new TypefaceSpan("monospace"), lineStart, labelEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-        styled.setSpan(new RelativeSizeSpan(0.78f), lineStart, lineEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        styled.setSpan(new RelativeSizeSpan(0.74f), lineStart, lineEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         styled.setSpan(
             new ForegroundColorSpan(color(guideAdmonitionWarningColorResForLegacy())),
             lineStart,
@@ -245,7 +245,7 @@ final class DetailGuidePresentationFormatter {
             Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
         );
         styled.setSpan(new StyleSpan(Typeface.BOLD), lineStart, lineEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-        styled.setSpan(new RelativeSizeSpan(0.78f), lineStart, lineEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        styled.setSpan(new RelativeSizeSpan(0.74f), lineStart, lineEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         if (labelEnd > lineStart) {
             styled.setSpan(new TypefaceSpan("monospace"), lineStart, labelEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             styled.setSpan(new ForegroundColorSpan(color(accentColorRes)), lineStart, labelEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
@@ -256,7 +256,7 @@ final class DetailGuidePresentationFormatter {
         if (lineStart >= lineEnd) {
             return;
         }
-        styled.setSpan(new RelativeSizeSpan(0.82f), lineStart, lineEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        styled.setSpan(new RelativeSizeSpan(0.78f), lineStart, lineEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         styled.setSpan(
             new ForegroundColorSpan(color(guideBodyTextColorResForLegacy())),
             lineStart,
@@ -294,7 +294,7 @@ final class DetailGuidePresentationFormatter {
             lineEnd,
             Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
         );
-        styled.setSpan(new RelativeSizeSpan(0.82f), lineStart, lineEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        styled.setSpan(new RelativeSizeSpan(0.78f), lineStart, lineEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         styled.setSpan(
             new BackgroundColorSpan(color(admonitionContinuationBackgroundColorRes(accentColorRes))),
             lineStart,
@@ -333,7 +333,37 @@ final class DetailGuidePresentationFormatter {
         if (section.isEmpty()) {
             return GuideBodySanitizer.sanitizeGuideBodyForDisplay(source);
         }
+        if (sourceAlreadyStartsWithSection(source, section)) {
+            return GuideBodySanitizer.sanitizeGuideBodyForDisplay(source);
+        }
         return GuideBodySanitizer.sanitizeGuideBodyForDisplay("## " + section + "\n\n" + source);
+    }
+
+    private static boolean sourceAlreadyStartsWithSection(String source, String section) {
+        String firstLine = "";
+        String[] lines = safe(source).split("\\n", -1);
+        for (String line : lines) {
+            firstLine = safe(line).trim();
+            if (!firstLine.isEmpty()) {
+                break;
+            }
+        }
+        if (firstLine.isEmpty()) {
+            return false;
+        }
+        String normalizedFirstLine = normalizeSectionComparisonLine(firstLine);
+        String normalizedSection = normalizeSectionComparisonLine(section);
+        return !normalizedSection.isEmpty() && normalizedFirstLine.equals(normalizedSection);
+    }
+
+    private static String normalizeSectionComparisonLine(String line) {
+        return safe(line)
+            .trim()
+            .replaceFirst("^#{1,6}\\s+", "")
+            .replaceFirst("(?i)^Section\\s+\\d+\\s*[:\\-\\u00b7]?\\s*", "")
+            .replaceAll("\\s+", " ")
+            .trim()
+            .toLowerCase(Locale.US);
     }
 
     private int color(int resId) {

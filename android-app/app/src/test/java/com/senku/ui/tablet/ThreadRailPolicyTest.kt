@@ -31,8 +31,10 @@ class ThreadRailPolicyTest {
             ),
         )
         assertEquals("Q2 \u00B7 ACTIVE", threadRailTurnMetaLabel(2, guideMode = false, status = Status.Done, active = true))
-        assertEquals("A2 \u00B7 3 SOURCES", threadRailAnswerMetaLabel(2, guideMode = false, sourceCount = 3))
-        assertEquals("REF 2 \u00B7 NO SOURCES", threadRailAnswerMetaLabel(2, guideMode = true, sourceCount = 0))
+        assertEquals("A2", threadRailAnswerMetaLabel(2, guideMode = false, sourceCount = 3))
+        assertEquals("REF 2", threadRailAnswerMetaLabel(2, guideMode = true, sourceCount = 0))
+        assertEquals("A2 \u00B7 Keep the tarp angled.", threadRailAnswerPreviewLabel(2, guideMode = false, answer = " Keep the tarp angled. "))
+        assertEquals("A3 \u00B7 No answer recorded.", threadRailAnswerPreviewLabel(3, guideMode = false, answer = " "))
         assertEquals("NO SOURCES", threadRailTurnSourceLabel(sourceCount = 0))
         assertEquals("1 SOURCE", threadRailTurnSourceLabel(sourceCount = 1))
         assertEquals("3 SOURCES", threadRailTurnSourceLabel(sourceCount = 3))
@@ -50,7 +52,8 @@ class ThreadRailPolicyTest {
                 sourceCount = 2,
             ),
         )
-        assertEquals("A1 \u00B7 2 SOURCES", threadRailAnswerMetaLabel(1, guideMode = false, sourceCount = 2))
+        assertEquals("A1", threadRailAnswerMetaLabel(1, guideMode = false, sourceCount = 2))
+        assertEquals("A1 \u00B7 Use a sloped ridgeline.", threadRailAnswerPreviewLabel(1, guideMode = false, answer = "Use a sloped ridgeline."))
     }
 
     @Test
@@ -108,8 +111,8 @@ class ThreadRailPolicyTest {
 
     @Test
     fun threadRailRowsReserveTranscriptScanningSpace() {
-        assertEquals(60, threadRailTurnRowMinHeightDp(active = false))
-        assertEquals(68, threadRailTurnRowMinHeightDp(active = true))
-        assertEquals(58, threadRailSourceRowMinHeightDp())
+        assertEquals(54, threadRailTurnRowMinHeightDp(active = false))
+        assertEquals(62, threadRailTurnRowMinHeightDp(active = true))
+        assertEquals(46, threadRailSourceRowMinHeightDp())
     }
 }

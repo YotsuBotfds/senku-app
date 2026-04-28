@@ -108,7 +108,7 @@ public final class DetailThreadHistoryRendererTest {
         String longAnswer = "1234567890".repeat(20);
         String compact = DetailThreadHistoryRenderer.compactThreadAnswer(longAnswer, true, text -> text);
 
-        assertEquals(120, compact.length());
+        assertEquals(96, compact.length());
         assertTrue(compact.endsWith("..."));
     }
 
@@ -119,7 +119,7 @@ public final class DetailThreadHistoryRendererTest {
 
         String compact = DetailThreadHistoryRenderer.compactThreadAnswer(answer, true, text -> text);
 
-        assertTrue(compact.length() <= 120);
+        assertTrue(compact.length() <= 96);
         assertTrue(compact.startsWith("A rain shelter answer"));
     }
 
@@ -136,7 +136,7 @@ public final class DetailThreadHistoryRendererTest {
         );
 
         assertEquals(
-            List.of("GD-001", "GD-002", "GD-003"),
+            List.of("GD-001", "GD-002"),
             DetailThreadHistoryRenderer.guideChipIdsForTurn(turn)
         );
     }
@@ -164,6 +164,26 @@ public final class DetailThreadHistoryRendererTest {
             List.of("GD-345", "GD-111"),
             DetailThreadHistoryRenderer.guideChipIdsForTurn(turn)
         );
+    }
+
+    @Test
+    public void guideChipsStayOutOfUtilityRailRows() {
+        DetailThreadHistoryRenderer.State utilityRail = new DetailThreadHistoryRenderer.State(
+            true,
+            false,
+            false,
+            360
+        );
+        DetailThreadHistoryRenderer.State detailTranscript = new DetailThreadHistoryRenderer.State(
+            false,
+            false,
+            false,
+            360
+        );
+
+        assertEquals(false, DetailThreadHistoryRenderer.shouldShowGuideChips(utilityRail, false));
+        assertEquals(true, DetailThreadHistoryRenderer.shouldShowGuideChips(utilityRail, true));
+        assertEquals(true, DetailThreadHistoryRenderer.shouldShowGuideChips(detailTranscript, false));
     }
 
     @Test

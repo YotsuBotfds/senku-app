@@ -39,9 +39,9 @@ internal fun threadRailSectionTitle(label: String, count: Int): String =
     "${label.trim().ifEmpty { "THREAD" }} \u00B7 $count"
 
 internal fun threadRailTurnRowMinHeightDp(active: Boolean): Int =
-    if (active) 68 else 60
+    if (active) 62 else 54
 
-internal fun threadRailSourceRowMinHeightDp(): Int = 58
+internal fun threadRailSourceRowMinHeightDp(): Int = 46
 
 internal fun threadRailTurnLabel(index: Int, guideMode: Boolean): String =
     if (guideMode) "SEC $index" else "Q$index"
@@ -68,7 +68,10 @@ internal fun threadRailAnswerLabel(index: Int, guideMode: Boolean): String =
     if (guideMode) "REF $index" else "A$index"
 
 internal fun threadRailAnswerMetaLabel(index: Int, guideMode: Boolean, sourceCount: Int): String =
-    "${threadRailAnswerLabel(index, guideMode)} \u00B7 ${threadRailTurnSourceLabel(sourceCount)}"
+    threadRailAnswerLabel(index, guideMode)
+
+internal fun threadRailAnswerPreviewLabel(index: Int, guideMode: Boolean, answer: String): String =
+    "${threadRailAnswerLabel(index, guideMode)} \u00B7 ${answer.trim().ifEmpty { "No answer recorded." }}"
 
 internal fun threadRailSourceContextPriority(source: SourceState): Int {
     val sourceText = "${source.id} ${source.title}".lowercase()
@@ -316,19 +319,19 @@ private fun ThreadTurnRow(
             modifier = Modifier
                 .fillMaxWidth()
                 .heightIn(min = threadRailTurnRowMinHeightDp(turn.isActive).dp)
-                .padding(horizontal = 8.dp, vertical = 7.dp),
+                .padding(horizontal = 7.dp, vertical = 6.dp),
             horizontalArrangement = Arrangement.spacedBy(6.dp),
             verticalAlignment = Alignment.Top,
         ) {
             Box(
                 modifier = Modifier
                     .width(3.dp)
-                    .height(if (turn.isActive) 30.dp else 24.dp)
+                    .height(if (turn.isActive) 28.dp else 22.dp)
                     .background(if (turn.isActive) colors.accent else colors.hairlineStrong),
             )
             Column(
                 modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.spacedBy(4.dp),
+                verticalArrangement = Arrangement.spacedBy(3.dp),
             ) {
                 Text(
                     text = threadRailTurnMetaLabel(
@@ -355,19 +358,18 @@ private fun ThreadTurnRow(
                         fontWeight = FontWeight.Normal,
                     ),
                     color = if (turn.isActive) colors.ink0 else colors.ink1,
-                    maxLines = if (turn.isActive) 3 else 2,
+                    maxLines = 2,
                     overflow = TextOverflow.Ellipsis,
                 )
                 Text(
-                    text = threadRailAnswerMetaLabel(
+                    text = threadRailAnswerPreviewLabel(
                         index = index,
                         guideMode = guideMode,
-                        sourceCount = turn.answer.sourceCount,
+                        answer = turn.answer.short,
                     ),
-                    style = SenkuTheme.typography.monoCaps.copy(
-                        fontSize = 9.sp,
-                        lineHeight = 11.sp,
-                        fontWeight = FontWeight.Medium,
+                    style = SenkuTheme.typography.smallBody.copy(
+                        fontSize = 10.sp,
+                        lineHeight = 12.sp,
                     ),
                     color = colors.ink2,
                     maxLines = 1,
@@ -407,19 +409,19 @@ private fun SourcePill(
             modifier = Modifier
                 .fillMaxWidth()
                 .heightIn(min = threadRailSourceRowMinHeightDp().dp)
-                .padding(horizontal = 10.dp, vertical = 8.dp),
+                .padding(horizontal = 8.dp, vertical = 6.dp),
             horizontalArrangement = Arrangement.spacedBy(6.dp),
             verticalAlignment = Alignment.Top,
         ) {
             Box(
                 modifier = Modifier
                     .width(3.dp)
-                    .height(38.dp)
+                    .height(30.dp)
                     .background(if (source.isSelected || source.isAnchor) idColor else colors.hairlineStrong),
             )
             Column(
                 modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.spacedBy(5.dp),
+                verticalArrangement = Arrangement.spacedBy(3.dp),
             ) {
                 val displayLabel = threadRailSourceDisplayLabel(source, guideMode)
                 val titleLabel = threadRailSourceTitleLabel(source, guideMode)
