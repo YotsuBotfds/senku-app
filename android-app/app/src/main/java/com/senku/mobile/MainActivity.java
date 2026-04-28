@@ -647,6 +647,8 @@ public final class MainActivity extends AppCompatActivity {
                     );
                     if (isTabletSearchLayout()) {
                         header = buildTabletSearchHeader(displayQuery, results.size());
+                    } else if (isPhoneFormFactor()) {
+                        header = buildPhoneSearchHeader(displayQuery, results.size());
                     }
                     header = appendReviewSearchLatency(header, displayQuery);
                     resultsHeader.setText(header);
@@ -675,9 +677,14 @@ public final class MainActivity extends AppCompatActivity {
         setResultHighlightQuery(query);
         replaceItems(deterministic.sources);
         showBrowseChrome(false);
-        String header = isTabletSearchLayout()
-            ? buildTabletSearchHeader(query, deterministic.sources.size())
-            : "Deterministic source picks for \"" + query + "\" (" + deterministic.sources.size() + ")";
+        String header;
+        if (isTabletSearchLayout()) {
+            header = buildTabletSearchHeader(query, deterministic.sources.size());
+        } else if (isPhoneFormFactor()) {
+            header = buildPhoneSearchHeader(query, deterministic.sources.size());
+        } else {
+            header = "Deterministic source picks for \"" + query + "\" (" + deterministic.sources.size() + ")";
+        }
         resultsHeader.setText(appendReviewSearchLatency(header, query));
         updateTabletSearchQuery(query, deterministic.sources.size());
         updateInfoText();
@@ -3667,6 +3674,19 @@ public final class MainActivity extends AppCompatActivity {
             return "SEARCH - " + countLabel;
         }
         return appendReviewSearchLatency("SEARCH  " + cleanQuery + " - " + countLabel, cleanQuery);
+    }
+
+    static String buildPhoneSearchHeaderForTest(String query, int resultCount) {
+        return buildPhoneSearchHeader(query, resultCount);
+    }
+
+    private static String buildPhoneSearchHeader(String query, int resultCount) {
+        String cleanQuery = safe(query).trim();
+        String countLabel = resultCount + (resultCount == 1 ? " RESULT" : " RESULTS");
+        if (cleanQuery.isEmpty()) {
+            return "SEARCH - " + countLabel;
+        }
+        return "SEARCH " + cleanQuery + " - " + countLabel;
     }
 
     private String appendReviewSearchLatency(String header, String query) {

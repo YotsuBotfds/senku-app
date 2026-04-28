@@ -44,6 +44,30 @@ class StressReadingPolicyTest {
     }
 
     @Test
+    fun tabletGuideThreadRailUsesSectionIndexWidthWithoutChangingAnswerRails() {
+        assertEquals(236, tabletThreadRailWidthDp(isLandscape = true, guideMode = false))
+        assertEquals(132, tabletThreadRailWidthDp(isLandscape = false, guideMode = false))
+        assertEquals(316, tabletThreadRailWidthDp(isLandscape = true, guideMode = true))
+        assertEquals(330, tabletThreadRailWidthDp(isLandscape = false, guideMode = true))
+    }
+
+    @Test
+    fun tabletGuidePaperPolicyWidensPortraitReaderWithoutChangingLandscapeSheet() {
+        assertEquals(520, tabletGuidePaperMaxWidthDp(isLandscape = true))
+        assertEquals(820, tabletGuidePaperMaxWidthDp(isLandscape = false))
+    }
+
+    @Test
+    fun tabletGuideNavigationLabelsUseSectionLanguage() {
+        val labels = tabletGuideNavigationLabels()
+
+        assertEquals("SECTIONS", labels.sectionLabel)
+        assertEquals("CROSS-REFERENCE", labels.referenceLabel)
+        assertEquals("No sections yet.", labels.emptySectionLabel)
+        assertEquals("No cross-references yet.", labels.emptyReferenceLabel)
+    }
+
+    @Test
     fun tabletLandscapeTypeScaleKeepsAnswerReadableWithoutOversizingBody() {
         val policy = tabletLandscapeDetailTypeScalePolicy()
 
@@ -80,6 +104,7 @@ class StressReadingPolicyTest {
     fun tabletComposerContextHintUsesGuideAnchorAndSourceCount() {
         val state = tabletDetailState(
             guideTitle = "Pressure canning beans",
+            guideModeLabel = "GUIDE",
             anchor = AnchorState(
                 key = "anchor",
                 id = "GD-BEANS",
@@ -96,13 +121,13 @@ class StressReadingPolicyTest {
         )
 
         assertEquals(
-            "THREAD CONTEXT KEPT - 2 TURNS - 2 SOURCES",
+            "GUIDE CONTEXT KEPT - 2 SECTIONS - 2 REFERENCES",
             tabletComposerContextHint(state),
         )
     }
 
     @Test
-    fun tabletComposerContextHintFallsBackToGuideIdAndEmptySourceLabel() {
+    fun tabletComposerContextHintKeepsThreadLanguageOutsideGuideMode() {
         val state = tabletDetailState(
             guideId = "GD-FALLBACK",
             guideTitle = " ",
@@ -119,6 +144,29 @@ class StressReadingPolicyTest {
 
         assertEquals(
             "THREAD CONTEXT KEPT - NO TURNS - NO SOURCES",
+            tabletComposerContextHint(state),
+        )
+    }
+
+    @Test
+    fun tabletComposerContextHintUsesGuideEmptyLabelsInGuideMode() {
+        val state = tabletDetailState(
+            guideId = "GD-FALLBACK",
+            guideTitle = " ",
+            guideModeAnchorLabel = "Opened from GD-220",
+            anchor = AnchorState(
+                key = "anchor",
+                id = "GD-FALLBACK",
+                title = "Fallback anchor",
+                section = " ",
+                snippet = "",
+                hasSource = false,
+            ),
+            sources = emptyList(),
+        )
+
+        assertEquals(
+            "GUIDE CONTEXT KEPT - NO SECTIONS - NO REFERENCES",
             tabletComposerContextHint(state),
         )
     }
@@ -218,6 +266,8 @@ class StressReadingPolicyTest {
         ),
         sources: List<SourceState> = emptyList(),
         turns: List<ThreadTurnState> = emptyList(),
+        guideModeLabel: String = "",
+        guideModeAnchorLabel: String = "",
     ): TabletDetailState =
         TabletDetailState(
             guideId = guideId,
@@ -237,6 +287,8 @@ class StressReadingPolicyTest {
             pinActive = false,
             evidenceExpanded = false,
             isLandscape = true,
+            guideModeLabel = guideModeLabel,
+            guideModeAnchorLabel = guideModeAnchorLabel,
         )
 
     private fun threadTurn(id: String): ThreadTurnState =

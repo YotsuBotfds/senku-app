@@ -11,9 +11,9 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="28dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="28dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
         android:gravity="center_vertical"
         android:orientation="horizontal">
 
@@ -107,7 +107,7 @@
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
+            android:layout_marginStart="8dp"
             android:layout_weight="1"
             android:orientation="vertical">
 
@@ -250,10 +250,10 @@
                     android:ellipsize="end"
                     android:fontFamily="monospace"
                     android:maxLines="1"
-            android:paddingStart="8dp"
-            android:paddingTop="4dp"
-            android:paddingEnd="8dp"
-            android:paddingBottom="4dp"
+                    android:paddingStart="8dp"
+                    android:paddingTop="4dp"
+                    android:paddingEnd="8dp"
+                    android:paddingBottom="4dp"
                     android:text="@string/detail_mode_answer"
                     android:textAppearance="?android:attr/textAppearanceSmall"
                     android:textColor="@color/senku_text_light"
@@ -268,10 +268,10 @@
                     android:ellipsize="end"
                     android:fontFamily="monospace"
                     android:maxLines="1"
-            android:paddingStart="8dp"
-            android:paddingTop="4dp"
-            android:paddingEnd="8dp"
-            android:paddingBottom="4dp"
+                    android:paddingStart="8dp"
+                    android:paddingTop="4dp"
+                    android:paddingEnd="8dp"
+                    android:paddingBottom="4dp"
                     android:text="@string/detail_scope_default"
                     android:textAppearance="?android:attr/textAppearanceSmall"
                     android:textColor="@color/senku_text_light" />
@@ -287,10 +287,10 @@
                     android:ellipsize="end"
                     android:fontFamily="monospace"
                     android:maxLines="1"
-            android:paddingStart="8dp"
-            android:paddingTop="4dp"
-            android:paddingEnd="8dp"
-            android:paddingBottom="4dp"
+                    android:paddingStart="8dp"
+                    android:paddingTop="4dp"
+                    android:paddingEnd="8dp"
+                    android:paddingBottom="4dp"
                     android:text="@string/detail_route_generated"
                     android:textAppearance="?android:attr/textAppearanceSmall"
                     android:textColor="@color/senku_text_light"
@@ -351,15 +351,15 @@
             android:layout_height="wrap_content"
             android:baselineAligned="false"
             android:orientation="horizontal"
-            android:paddingStart="14dp"
-            android:paddingTop="8dp"
-            android:paddingEnd="14dp"
-            android:paddingBottom="12dp">
+            android:paddingStart="10dp"
+            android:paddingTop="6dp"
+            android:paddingEnd="10dp"
+            android:paddingBottom="10dp">
 
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
+                android:layout_marginEnd="6dp"
                 android:layout_weight="1.45"
                 android:orientation="vertical">
 
@@ -498,7 +498,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginStart="0dp"
                             android:fontFamily="serif"
-                            android:lineSpacingExtra="4dp"
+                            android:lineSpacingExtra="2dp"
                             android:textAppearance="?android:attr/textAppearanceMedium"
                             android:textColor="@color/senku_rev03_paper_ink"
                             android:textIsSelectable="true" />

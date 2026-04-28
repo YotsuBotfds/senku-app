@@ -5196,6 +5196,13 @@ public final class DetailActivity extends AppCompatActivity {
         view.setLayoutParams(params);
     }
 
+    private void setParentTopMargin(View child, int topMarginPx) {
+        if (child == null || !(child.getParent() instanceof View)) {
+            return;
+        }
+        setTopMargin((View) child.getParent(), topMarginPx);
+    }
+
     private void applyFollowUpLayoutMode() {
         if (followUpPanel == null) {
             return;
@@ -5358,7 +5365,7 @@ public final class DetailActivity extends AppCompatActivity {
                     ViewGroup.LayoutParams.MATCH_PARENT,
                     ViewGroup.LayoutParams.WRAP_CONTENT
                 );
-                params.setMargins(dp(12), dp(12), dp(12), 0);
+                params.setMargins(dp(10), dp(isLandscapePhoneLayout() ? 5 : 6), dp(10), 0);
                 root.addView(rev03TopBarHost, root.indexOfChild(legacyDetailTopRow), params);
                 legacyDetailTopRow.setVisibility(View.GONE);
             }
@@ -6549,24 +6556,33 @@ public final class DetailActivity extends AppCompatActivity {
         }
         if (questionBubble != null) {
             questionBubble.setBackgroundResource(R.drawable.bg_detail_guide_paper_panel);
-            questionBubble.setPadding(dp(24), dp(20), dp(24), dp(14));
+            questionBubble.setPadding(
+                dp(isLandscapePhoneLayout() ? 18 : 16),
+                dp(isLandscapePhoneLayout() ? 10 : 12),
+                dp(isLandscapePhoneLayout() ? 18 : 16),
+                dp(isLandscapePhoneLayout() ? 8 : 10)
+            );
         }
+        setParentTopMargin(answerBubble, dp(isLandscapePhoneLayout() ? 4 : 6));
+        setTopMargin(rev03MetaStripHost, dp(isLandscapePhoneLayout() ? 5 : 6));
         if (headerLabel != null) {
             headerLabel.setText("FIELD MANUAL");
-            headerLabel.setTextColor(getColor(R.color.senku_rev03_paper_warn));
+            headerLabel.setTextColor(getColor(R.color.senku_rev03_paper_ink_muted));
             headerLabel.setTypeface(Typeface.MONOSPACE, Typeface.BOLD);
-            headerLabel.setLetterSpacing(0.12f);
+            headerLabel.setLetterSpacing(0.1f);
             headerLabel.setVisibility(View.VISIBLE);
         }
         if (titleView != null) {
             titleView.setTextColor(getColor(R.color.senku_rev03_paper_ink));
             titleView.setTypeface(Typeface.DEFAULT_BOLD);
-            titleView.setTextSize(28f);
+            titleView.setTextSize(isLandscapePhoneLayout() ? 22f : 24f);
+            titleView.setIncludeFontPadding(false);
         }
         if (subtitleView != null) {
             subtitleView.setTextColor(getColor(R.color.senku_rev03_paper_ink_muted));
             subtitleView.setTypeface(Typeface.MONOSPACE, Typeface.BOLD);
-            subtitleView.setLetterSpacing(0.08f);
+            subtitleView.setLetterSpacing(0.06f);
+            subtitleView.setIncludeFontPadding(false);
         }
         if (answerBubble != null) {
             answerBubble.setBackgroundColor(getColor(android.R.color.transparent));
@@ -6577,13 +6593,19 @@ public final class DetailActivity extends AppCompatActivity {
         }
         if (bodyMirrorShell != null) {
             bodyMirrorShell.setBackgroundResource(R.drawable.bg_detail_guide_paper_shell);
-            bodyMirrorShell.setPadding(dp(24), dp(18), dp(24), dp(22));
+            bodyMirrorShell.setPadding(
+                dp(16),
+                dp(isLandscapePhoneLayout() ? 10 : 12),
+                dp(16),
+                dp(isLandscapePhoneLayout() ? 14 : 16)
+            );
             setTopMargin(bodyMirrorShell, dp(0));
         }
         if (bodyView != null) {
             bodyView.setTextColor(getColor(R.color.senku_rev03_paper_ink));
-            bodyView.setTextSize(18f);
-            bodyView.setLineSpacing(dp(3), 1.08f);
+            bodyView.setTextSize(isLandscapePhoneLayout() ? 15f : 16f);
+            bodyView.setLineSpacing(dp(isLandscapePhoneLayout() ? 2 : 3), 1.08f);
+            bodyView.setIncludeFontPadding(false);
         }
     }
 
@@ -6592,6 +6614,8 @@ public final class DetailActivity extends AppCompatActivity {
             questionBubble.setBackgroundResource(R.drawable.bg_detail_question_shell);
             questionBubble.setPadding(0, 0, 0, 0);
         }
+        setParentTopMargin(answerBubble, dp(8));
+        setTopMargin(rev03MetaStripHost, dp(8));
         if (headerLabel != null) {
             headerLabel.setTextColor(getColor(R.color.senku_rev03_accent));
             headerLabel.setTypeface(Typeface.DEFAULT_BOLD);

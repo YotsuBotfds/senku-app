@@ -38,6 +38,7 @@ import com.senku.ui.theme.SenkuTheme
 fun ThreadRail(
     turns: List<ThreadTurnState>,
     sources: List<SourceState>,
+    guideMode: Boolean,
     pinVisible: Boolean,
     pinActive: Boolean,
     onBackClick: () -> Unit,
@@ -49,6 +50,7 @@ fun ThreadRail(
 ) {
     val colors = SenkuTheme.colors
     val scrollState = rememberScrollState()
+    val guideLabels = tabletGuideNavigationLabels()
 
     Column(
         modifier = modifier
@@ -66,15 +68,17 @@ fun ThreadRail(
         )
 
         RailSection(
-            label = "THREAD",
+            label = if (guideMode) guideLabels.sectionLabel else "THREAD",
             count = turns.size,
         ) {
             if (turns.isEmpty()) {
-                PlaceholderText("No turns yet.")
+                PlaceholderText(if (guideMode) guideLabels.emptySectionLabel else "No turns yet.")
             } else {
-                turns.forEach { turn ->
+                turns.forEachIndexed { index, turn ->
                     ThreadTurnRow(
                         turn = turn,
+                        index = index + 1,
+                        guideMode = guideMode,
                         onClick = { onTurnClick(turn.id) },
                     )
                 }
@@ -82,15 +86,16 @@ fun ThreadRail(
         }
 
         RailSection(
-            label = "SOURCES",
+            label = if (guideMode) guideLabels.referenceLabel else "SOURCES",
             count = sources.size,
         ) {
             if (sources.isEmpty()) {
-                PlaceholderText("No sources yet.")
+                PlaceholderText(if (guideMode) guideLabels.emptyReferenceLabel else "No sources yet.")
             } else {
                 sources.forEach { source ->
                     SourcePill(
                         source = source,
+                        guideMode = guideMode,
                         onClick = { onSourceClick(source.key) },
                     )
                 }
@@ -185,6 +190,8 @@ private fun RailSection(
 @Composable
 private fun ThreadTurnRow(
     turn: ThreadTurnState,
+    index: Int,
+    guideMode: Boolean,
     onClick: () -> Unit,
 ) {
     val colors = SenkuTheme.colors
@@ -224,7 +231,7 @@ private fun ThreadTurnRow(
                 verticalArrangement = Arrangement.spacedBy(2.dp),
             ) {
                 Text(
-                    text = turn.id,
+                    text = if (guideMode) "SEC $index" else turn.id,
                     style = SenkuTheme.typography.monoCaps.copy(
                         fontSize = 9.sp,
                         lineHeight = 11.sp,
@@ -251,6 +258,7 @@ private fun ThreadTurnRow(
 @Composable
 private fun SourcePill(
     source: SourceState,
+    guideMode: Boolean,
     onClick: () -> Unit,
 ) {
     val colors = SenkuTheme.colors
@@ -290,7 +298,11 @@ private fun SourcePill(
                 verticalArrangement = Arrangement.spacedBy(2.dp),
             ) {
                 Text(
-                    text = source.id.trim().ifEmpty { "GD-?" },
+                    text = if (guideMode) {
+                        sourceGuideRole(source)
+                    } else {
+                        source.id.trim().ifEmpty { "GD-?" }
+                    },
                     style = SenkuTheme.typography.monoCaps.copy(
                         fontSize = 9.sp,
                         lineHeight = 11.sp,
@@ -301,7 +313,7 @@ private fun SourcePill(
                     overflow = TextOverflow.Ellipsis,
                 )
                 Text(
-                    text = source.title.trim().ifEmpty { "Source guide" },
+                    text = source.title.trim().ifEmpty { if (guideMode) "Related guide" else "Source guide" },
                     style = SenkuTheme.typography.smallBody.copy(
                         fontSize = 10.5.sp,
                         lineHeight = 12.sp,
@@ -314,6 +326,13 @@ private fun SourcePill(
         }
     }
 }
+
+private fun sourceGuideRole(source: SourceState): String =
+    when {
+        source.isAnchor -> "${source.id.trim().ifEmpty { "GD-?" }} - ANCHOR"
+        source.isSelected -> "${source.id.trim().ifEmpty { "GD-?" }} - OPEN"
+        else -> "${source.id.trim().ifEmpty { "GD-?" }} - RELATED"
+    }
 
 @Composable
 private fun PlaceholderText(text: String) {

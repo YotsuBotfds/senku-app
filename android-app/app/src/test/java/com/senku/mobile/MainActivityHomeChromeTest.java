@@ -197,6 +197,19 @@ public final class MainActivityHomeChromeTest {
         );
     }
 
+    @Test
+    public void phoneSearchHeaderKeepsCompactCountAndReviewLatency() {
+        assertEquals(
+            "SEARCH rain shelter - 4 RESULTS - 12ms",
+            MainActivity.appendReviewSearchLatency(
+                MainActivity.buildPhoneSearchHeaderForTest("rain shelter", 4),
+                "rain shelter",
+                true
+            )
+        );
+        assertEquals("SEARCH - 1 RESULT", MainActivity.buildPhoneSearchHeaderForTest("", 1));
+    }
+
     private static SearchResult guide(String title, String category, String topicTags) {
         return new SearchResult(
             title,

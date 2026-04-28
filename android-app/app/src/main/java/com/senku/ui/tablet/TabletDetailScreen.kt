@@ -125,6 +125,13 @@ internal data class TabletReadingLayoutPolicy(
     val answerHorizontalPaddingDp: Int,
 )
 
+internal data class TabletGuideNavigationLabels(
+    val sectionLabel: String,
+    val referenceLabel: String,
+    val emptySectionLabel: String,
+    val emptyReferenceLabel: String,
+)
+
 internal data class TabletDetailTypeScalePolicy(
     val questionFontSizeSp: Int,
     val questionLineHeightSp: Int,
@@ -171,6 +178,27 @@ internal fun tabletReadingLayoutPolicy(isLandscape: Boolean): TabletReadingLayou
         false -> tabletPortraitReadingLayoutPolicy()
     }
 
+internal fun tabletThreadRailWidthDp(
+    isLandscape: Boolean,
+    guideMode: Boolean,
+): Int =
+    when {
+        guideMode && isLandscape -> 316
+        guideMode -> 330
+        else -> tabletReadingLayoutPolicy(isLandscape).threadRailWidthDp
+    }
+
+internal fun tabletGuidePaperMaxWidthDp(isLandscape: Boolean): Int =
+    if (isLandscape) 520 else 820
+
+internal fun tabletGuideNavigationLabels(): TabletGuideNavigationLabels =
+    TabletGuideNavigationLabels(
+        sectionLabel = "SECTIONS",
+        referenceLabel = "CROSS-REFERENCE",
+        emptySectionLabel = "No sections yet.",
+        emptyReferenceLabel = "No cross-references yet.",
+    )
+
 internal fun tabletLandscapeDetailTypeScalePolicy(): TabletDetailTypeScalePolicy =
     TabletDetailTypeScalePolicy(
         questionFontSizeSp = 18,
@@ -202,18 +230,19 @@ internal fun tabletDetailTypeScalePolicy(isLandscape: Boolean): TabletDetailType
     }
 
 internal fun tabletComposerContextHint(state: TabletDetailState): String {
+    val guideMode = state.isGuideMode()
     val turnLabel = when (val count = state.turns.size) {
-        0 -> "No turns"
-        1 -> "1 turn"
-        else -> "$count turns"
+        0 -> if (guideMode) "No sections" else "No turns"
+        1 -> if (guideMode) "1 section" else "1 turn"
+        else -> if (guideMode) "$count sections" else "$count turns"
     }
     val sourceLabel = when (val count = state.sources.size) {
-        0 -> "No sources"
-        1 -> "1 source"
-        else -> "$count sources"
+        0 -> if (guideMode) "No references" else "No sources"
+        1 -> if (guideMode) "1 reference" else "1 source"
+        else -> if (guideMode) "$count references" else "$count sources"
     }
 
-    return listOf("Thread context kept", turnLabel, sourceLabel)
+    return listOf(if (guideMode) "Guide context kept" else "Thread context kept", turnLabel, sourceLabel)
         .joinToString(" - ")
         .uppercase()
 }
@@ -316,7 +345,6 @@ fun TabletDetailScreen(
     modifier: Modifier = Modifier,
 ) {
     val colors = SenkuTheme.colors
-    val readingPolicy = tabletReadingLayoutPolicy(state.isLandscape)
     val threadPaneTitle = stringResource(R.string.detail_a11y_landmark_thread_sources)
     val answerPaneTitle = stringResource(R.string.detail_a11y_landmark_answer_detail)
     val evidencePaneTitle = stringResource(R.string.detail_a11y_landmark_evidence)
@@ -334,6 +362,7 @@ fun TabletDetailScreen(
             ThreadRail(
                 turns = state.turns,
                 sources = state.sources,
+                guideMode = state.isGuideMode(),
                 pinVisible = state.pinVisible,
                 pinActive = state.pinActive,
                 onBackClick = onBackClick,
@@ -342,7 +371,7 @@ fun TabletDetailScreen(
                 onTurnClick = onTurnClick,
                 onSourceClick = onSourceClick,
                 modifier = Modifier
-                    .width(readingPolicy.threadRailWidthDp.dp)
+                    .width(tabletThreadRailWidthDp(state.isLandscape, state.isGuideMode()).dp)
                     .fillMaxHeight()
                     .semantics {
                         paneTitle = threadPaneTitle
@@ -416,6 +445,7 @@ private fun DetailWorkspace(
                 .fillMaxWidth(),
         ) {
             val readingPolicy = tabletReadingLayoutPolicy(state.isLandscape)
+            val showEvidencePane = !guideMode || state.isLandscape
             CenterPane(
                 state = state,
                 onTurnClick = onTurnClick,
@@ -426,27 +456,29 @@ private fun DetailWorkspace(
                     .fillMaxHeight(),
             )
 
-            Box(
-                modifier = Modifier
-                    .width(1.dp)
-                    .fillMaxHeight()
-                    .background(colors.hairlineStrong),
-            )
+            if (showEvidencePane) {
+                Box(
+                    modifier = Modifier
+                        .width(1.dp)
+                        .fillMaxHeight()
+                        .background(colors.hairlineStrong),
+                )
 
-            EvidencePane(
-                anchor = state.anchor,
-                xrefs = state.xrefs,
-                onAnchorClick = onAnchorClick,
-                onXRefClick = onXRefClick,
-                modifier = Modifier
-                    .width(readingPolicy.evidenceRailWidthDp.dp)
-                    .fillMaxHeight()
-                    .semantics {
-                        paneTitle = evidencePaneTitle
-                        isTraversalGroup = true
-                        traversalIndex = 2f
-                    },
-            )
+                EvidencePane(
+                    anchor = state.anchor,
+                    xrefs = state.xrefs,
+                    onAnchorClick = onAnchorClick,
+                    onXRefClick = onXRefClick,
+                    modifier = Modifier
+                        .width(readingPolicy.evidenceRailWidthDp.dp)
+                        .fillMaxHeight()
+                        .semantics {
+                            paneTitle = evidencePaneTitle
+                            isTraversalGroup = true
+                            traversalIndex = 2f
+                        },
+                )
+            }
         }
 
         if (state.composerVisible) {
@@ -485,14 +517,20 @@ private fun CenterPane(
         modifier = modifier.background(colors.bg0),
     ) {
         val verticalPagePadding = if (guideMode) 22.dp else 0.dp
+        val horizontalPagePadding = readingPolicy.answerHorizontalPaddingDp.dp
+        val maxContentWidth = if (guideMode) {
+            tabletGuidePaperMaxWidthDp(state.isLandscape) + (readingPolicy.answerHorizontalPaddingDp * 2)
+        } else {
+            readingPolicy.answerMaxWidthDp
+        }
         Column(
             modifier = Modifier
                 .align(Alignment.TopCenter)
-                .widthIn(max = readingPolicy.answerMaxWidthDp.dp)
+                .widthIn(max = maxContentWidth.dp)
                 .fillMaxWidth()
                 .verticalScroll(scrollState)
                 .padding(
-                    horizontal = readingPolicy.answerHorizontalPaddingDp.dp,
+                    horizontal = horizontalPagePadding,
                     vertical = verticalPagePadding,
                 ),
             verticalArrangement = Arrangement.spacedBy(0.dp),
@@ -536,18 +574,18 @@ private fun GuidePaperSurface(
         color = paperPalette.page,
         contentColor = paperPalette.ink,
         shape = RoundedCornerShape(4.dp),
-        border = BorderStroke(1.dp, paperPalette.ruleStrong),
+        border = BorderStroke(1.dp, paperPalette.rule),
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(
                     start = horizontalPadding,
-                    top = 24.dp,
+                    top = if (state.isLandscape) 30.dp else 28.dp,
                     end = horizontalPadding,
-                    bottom = 26.dp,
+                    bottom = if (state.isLandscape) 34.dp else 42.dp,
                 ),
-            verticalArrangement = Arrangement.spacedBy(14.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
             content = content,
         )
     }
@@ -859,7 +897,7 @@ private fun QuestionInlineBlock(
                 maxLines = 1,
             )
             Text(
-                text = if (guideMode) "FIELD NOTE" else "THIS DEVICE",
+                text = if (guideMode) "GUIDE PAGE" else "THIS DEVICE",
                 style = typography.monoCaps.copy(
                     fontSize = 10.sp,
                     lineHeight = 13.sp,
@@ -869,7 +907,7 @@ private fun QuestionInlineBlock(
                 maxLines = 1,
             )
             Text(
-                text = if (guideMode) "§ $turnIndex" else "$turnIndex TURN",
+                text = if (guideMode) "SEC $turnIndex" else "$turnIndex TURN",
                 style = typography.monoCaps.copy(
                     fontSize = 10.sp,
                     lineHeight = 13.sp,
@@ -914,7 +952,7 @@ private fun AnswerInlineBlock(
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .clickable(onClick = onProofClick),
+            .then(if (guideMode) Modifier else Modifier.clickable(onClick = onProofClick)),
         verticalArrangement = Arrangement.spacedBy(7.dp),
     ) {
         Row(
@@ -923,7 +961,7 @@ private fun AnswerInlineBlock(
             verticalAlignment = Alignment.Top,
         ) {
             Text(
-                text = if (guideMode) "§ $turnIndex - ${answerAnchorLabel(content)}" else "A$turnIndex - ${answerAnchorLabel(content)}",
+                text = if (guideMode) "SEC $turnIndex" else "A$turnIndex - ${answerAnchorLabel(content)}",
                 modifier = Modifier.weight(1f),
                 style = typography.monoCaps.copy(
                     fontSize = 10.sp,
@@ -934,17 +972,19 @@ private fun AnswerInlineBlock(
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
             )
-            Text(
-                text = compactEvidenceLabel(content),
-                style = typography.monoCaps.copy(
-                    fontSize = 10.sp,
-                    lineHeight = 13.sp,
-                    fontWeight = FontWeight.Medium,
-                ),
-                color = if (guideMode) paperPalette.accent else evidenceTone,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-            )
+            if (!guideMode) {
+                Text(
+                    text = compactEvidenceLabel(content),
+                    style = typography.monoCaps.copy(
+                        fontSize = 10.sp,
+                        lineHeight = 13.sp,
+                        fontWeight = FontWeight.Medium,
+                    ),
+                    color = evidenceTone,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                )
+            }
         }
         Text(
             text = content.short.trim(),
@@ -1013,38 +1053,40 @@ private fun AnswerInlineBlock(
                 }
             }
         }
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Text(
-                text = buildFooterMeta(content),
-                modifier = Modifier.weight(1f),
-                style = typography.monoCaps.copy(
-                    fontSize = 10.sp,
-                    lineHeight = 13.sp,
-                ),
-                color = mutedColor,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-            )
-            Text(
-                text = proofLabel,
-                modifier = Modifier.padding(start = 12.dp),
-                style = typography.tag.copy(
-                    fontSize = 12.sp,
-                    lineHeight = 14.sp,
-                    fontWeight = FontWeight.SemiBold,
-                ),
-                color = metaColor,
-                maxLines = 1,
-            )
+        if (!guideMode) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(
+                    text = buildFooterMeta(content),
+                    modifier = Modifier.weight(1f),
+                    style = typography.monoCaps.copy(
+                        fontSize = 10.sp,
+                        lineHeight = 13.sp,
+                    ),
+                    color = mutedColor,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                )
+                Text(
+                    text = proofLabel,
+                    modifier = Modifier.padding(start = 12.dp),
+                    style = typography.tag.copy(
+                        fontSize = 12.sp,
+                        lineHeight = 14.sp,
+                        fontWeight = FontWeight.SemiBold,
+                    ),
+                    color = metaColor,
+                    maxLines = 1,
+                )
+            }
         }
     }
 }
 
-private fun TabletDetailState.isGuideMode(): Boolean =
+internal fun TabletDetailState.isGuideMode(): Boolean =
     guideModeLabel.isNotBlank() ||
         guideModeSummary.isNotBlank() ||
         guideModeAnchorLabel.isNotBlank()
