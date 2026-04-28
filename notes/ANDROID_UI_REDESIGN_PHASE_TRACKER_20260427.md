@@ -6,21 +6,21 @@ one write target: `notes/ANDROID_UI_REDESIGN_PHASE_TRACKER_20260427.md`.
 
 ## Current Anchor And Proof
 
-- Current implementation anchor: `74c57e9`
-  (`advance android mock parity wave16`), observed at local `HEAD` before the
-  wave16 proof-record commit.
+- Current implementation anchor: `fbf69e0`
+  (`advance android mock parity wave17`), observed before the wave17
+  proof-record commit.
 - Current technical proof:
-  `artifacts/ui_state_pack/20260428_033240`.
+  `artifacts/ui_state_pack/20260428_035816`.
   - Status: `pass`, 47 states, 47 pass, 0 fail, 0 platform ANRs.
   - Matrix APK homogeneity: `true`.
   - APK SHA:
-    `17c0da0fe6f5f131cbef12c61b6680020e7aa142a4304db56faeedc6731f4dc5`.
+    `b12344900d12a08a6a37a3a12b4e530ead6359e807e95683dadbafed014a8c81`.
   - Model: `gemma-4-e2b-it-litert`.
   - Model SHA:
     `ea1102014465edeb14b517bf270f6751d036749e3c5f517a7ff802782cb92161`.
   - Rotation mismatch count: 0.
-  - Summary generated: `2026-04-28T08:36:55.4895709Z`.
-- Local quality gate passed after the wave16 answer/emergency/shell and polish
+  - Summary generated: `2026-04-28T09:06:29.4329387Z`.
+- Local quality gate passed after the wave17 detail/emergency/thread/search
   integration:
   `powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\run_android_local_quality_gate.ps1`.
 - Current target mocks: `artifacts/mocks`, 22 PNGs total:
@@ -30,7 +30,7 @@ one write target: `notes/ANDROID_UI_REDESIGN_PHASE_TRACKER_20260427.md`.
 
 Interpretation:
 
-- `20260428_033240` is the current acceptance-grade
+- `20260428_035816` is the current acceptance-grade
   technical proof pack for state-pack health, APK homogeneity, model identity,
   and device rotation.
 - Passing technical proof is not final visual parity. Remaining work is judged
@@ -65,8 +65,12 @@ Interpretation:
 - `notes/ANDROID_VISUAL_QA_20260428_0315.md`: post-wave15 analysis-only punch
   list against `artifacts/ui_state_pack/20260428_030203` and `artifacts/mocks`.
   It drove the wave16 answer proof/header, thread density, emergency hierarchy,
-  home/search chrome, and tablet proof-rail changes. Remaining visual closure
-  should be reviewed against `artifacts/ui_state_pack/20260428_033240`.
+  home/search chrome, and tablet proof-rail changes. Wave17 visual closure
+  should be reviewed against `artifacts/ui_state_pack/20260428_035816`.
+- `notes/ANDROID_VISUAL_QA_20260428_0408.md`: post-wave17 analysis-only punch
+  list against `artifacts/ui_state_pack/20260428_035806` and `artifacts/mocks`.
+  It records green technical proof and remaining blockers: answer mode, thread
+  transcript, guide reader, and search/home density polish.
 - `artifacts/mocks`: visual truth for phase closure. Do not modify these files.
   Inventory inspected during this refresh: 22 PNGs covering Home, Search,
   Answer, Guide, and Thread across phone/tablet portrait/landscape, plus
@@ -150,7 +154,7 @@ Rules:
 
 ## Current Visual Defect Map
 
-Use `artifacts/ui_state_pack/20260428_033240/screenshots`
+Use `artifacts/ui_state_pack/20260428_035806/screenshots`
 and matching `dumps` for fresh comparisons unless a newer phase-specific proof
 replaces it. The visual QA notes used this pack or earlier packs as context;
 each worker must first confirm which gaps still reproduce on the current pack.
@@ -186,8 +190,8 @@ Write ownership:
 
 Status:
 
-- Current anchor and proof reconciled to `74c57e9` and
-  `artifacts/ui_state_pack/20260428_033240`.
+- Current anchor and proof reconciled to `fbf69e0` and
+  `artifacts/ui_state_pack/20260428_035816`.
 - Android source, generated artifacts, target mocks, and protected handoffs are
   out of scope for this lane.
 
@@ -276,7 +280,7 @@ Remaining slices:
 Current-proof checklist:
 
 - Compare `guideDetailShowsRelatedGuideNavigation` and off-rail cross-reference
-  screenshots/dumps from `20260428_033240`.
+  screenshots/dumps from `20260428_035816`.
 - Split remaining mismatches into parser/content, reader density, and tablet
   rail/paper/xref layout before assigning code.
 

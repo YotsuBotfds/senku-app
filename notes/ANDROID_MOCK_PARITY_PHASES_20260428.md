@@ -11,22 +11,27 @@ from this lane.
     tablet portrait, tablet landscape.
   - Emergency: phone portrait and tablet portrait only.
 - Prior visual QA: `notes/ANDROID_VISUAL_QA_20260428_0315.md`.
-- Latest visual proof: `artifacts/ui_state_pack/20260428_033240`.
+- Latest implementation anchor: `fbf69e0`
+  (`advance android mock parity wave17`).
+- Latest visual proof: `artifacts/ui_state_pack/20260428_035816`.
   - Status `pass`, 47/47 states, homogeneous APK
-    `17c0da0fe6f5f131cbef12c61b6680020e7aa142a4304db56faeedc6731f4dc5`,
+    `b12344900d12a08a6a37a3a12b4e530ead6359e807e95683dadbafed014a8c81`,
     model `gemma-4-e2b-it-litert`, rotation mismatch count 0.
   - Use this pack for latest screenshots/dumps before assigning the next
     visual slice.
+- Latest reviewer note: `notes/ANDROID_VISUAL_QA_20260428_0408.md`.
 
 Current reviewer blockers:
 
-- Tablet answer source rail escapes answer ownership.
-- Thread transcript is not target-shaped.
-- Tablet emergency full-height ownership is missing.
-- Search polish remains.
+- Answer detail still falls into guide/manual or answer-card presentation rather
+  than target answer hierarchy.
+- Thread transcript is not target-shaped and still inherits answer-detail card
+  behavior.
+- Guide reader still does not match compact guide mocks.
+- Search and Home are improved but remain density/chrome polish.
 
-Guide and Home are not current blockers in this tracker. Reopen them only if a
-new reviewer finding names a regression against their mocks.
+Emergency tablet core content is close after wave17, but phone/tablet chrome
+polish remains open.
 
 ## Phase Map
 
@@ -245,5 +250,5 @@ Final closure requires:
 - Rotation mismatch count 0.
 - Screenshot plus XML dump review against every relevant mock in the acceptance
   matrix.
-- `20260428_033240` is the current clean technical proof; final visual closure
+- `20260428_035816` is the current clean technical proof; final visual closure
   still requires screenshot review against the target mocks.
