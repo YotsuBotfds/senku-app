@@ -165,7 +165,7 @@ fun SearchResultCard(
                 }
 
                 Text(
-                    text = resultSnippetLine(model.subtitle, model.snippet),
+                    text = compactResultPreviewText(model.subtitle, model.snippet),
                     style = SenkuTheme.typography.smallBody.copy(
                         fontSize = 11.sp,
                         lineHeight = 14.sp,
@@ -311,16 +311,49 @@ internal fun compactSearchResultMetadataLabel(metadataLine: String): String {
     return tokens.joinToString("  \u00B7  ")
 }
 
-private fun resultSnippetLine(subtitle: String, snippet: String): String {
+internal fun compactResultPreviewText(subtitle: String, snippet: String): String {
     val cleanedSubtitle = subtitle.trim()
-    val cleanedSnippet = snippet.trim()
+    val cleanedSnippet = stripPreviewMarkdown(snippet).trim()
     if (cleanedSubtitle.isEmpty() || cleanedSnippet.startsWith(cleanedSubtitle)) {
-        return cleanedSnippet
+        return collapseRepeatedPreviewLead(cleanedSnippet, cleanedSubtitle)
     }
     if (cleanedSnippet.isEmpty()) {
         return cleanedSubtitle
     }
-    return "$cleanedSubtitle: $cleanedSnippet"
+    return "$cleanedSubtitle: ${collapseRepeatedPreviewLead(cleanedSnippet, cleanedSubtitle)}"
+}
+
+private fun stripPreviewMarkdown(value: String): String {
+    return value
+        .replace("\r", "\n")
+        .replace(Regex("(?m)^\\s*#{1,6}\\s*"), "")
+        .replace(Regex("\\s+"), " ")
+}
+
+private fun collapseRepeatedPreviewLead(value: String, lead: String): String {
+    val cleaned = value.trim()
+    val cleanedLead = lead.trim()
+    if (cleanedLead.isEmpty() || !cleaned.startsWith(cleanedLead, ignoreCase = true)) {
+        return cleaned
+    }
+    val remainder = stripLeadingPreviewJoiners(cleaned.drop(cleanedLead.length))
+    if (!remainder.startsWith(cleanedLead, ignoreCase = true)) {
+        return cleaned
+    }
+    val secondRemainder = stripLeadingPreviewJoiners(remainder.drop(cleanedLead.length))
+    return if (secondRemainder.isEmpty()) {
+        cleanedLead
+    } else {
+        "$cleanedLead: $secondRemainder"
+    }
+}
+
+private fun stripLeadingPreviewJoiners(value: String): String {
+    var cleaned = value.trim()
+    while (cleaned.isNotEmpty() && cleaned.first() in listOf(':', '-', '\u2013', '\u2014')) {
+        cleaned = cleaned.drop(1).trim()
+    }
+    return cleaned
 }
 
 fun buildWarmThreadGuideIds(context: Context): Set<String> {

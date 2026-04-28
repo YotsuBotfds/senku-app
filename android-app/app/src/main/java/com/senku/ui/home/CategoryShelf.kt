@@ -183,7 +183,7 @@ private fun PhoneCategoryCard(
     cardHeight: Dp = 74.dp,
 ) {
     val colors = SenkuTheme.colors
-    val corner = 6.dp
+    val corner = 4.dp
     val horizontalPadding = 12.dp
     val verticalPadding = dimensionResource(R.dimen.senku_rev03_space_6)
     val enabled = selectionEnabled && item.enabled
@@ -220,8 +220,8 @@ private fun PhoneCategoryCard(
             Text(
                 text = item.label,
                 style = SenkuTheme.typography.uiBody.copy(
-                    fontSize = 14.sp,
-                    lineHeight = 17.sp,
+                    fontSize = 13.sp,
+                    lineHeight = 16.sp,
                     fontWeight = FontWeight.SemiBold,
                 ),
                 color = colors.ink0,
@@ -231,8 +231,8 @@ private fun PhoneCategoryCard(
             Text(
                 text = item.countLabel,
                 style = SenkuTheme.typography.uiBody.copy(
-                    fontSize = 12.sp,
-                    lineHeight = 14.sp,
+                    fontSize = 11.sp,
+                    lineHeight = 13.sp,
                     fontWeight = FontWeight.Normal,
                 ),
                 color = colors.ink2,

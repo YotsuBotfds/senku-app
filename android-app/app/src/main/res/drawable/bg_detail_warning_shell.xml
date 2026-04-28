@@ -13,4 +13,20 @@
             <solid android:color="@color/senku_rev03_warn" />
         </shape>
     </item>
+
+    <item
+        android:gravity="top"
+        android:height="1dp">
+        <shape android:shape="rectangle">
+            <solid android:color="@color/senku_rev03_hairline_strong" />
+        </shape>
+    </item>
+
+    <item
+        android:gravity="bottom"
+        android:height="1dp">
+        <shape android:shape="rectangle">
+            <solid android:color="@color/senku_rev03_hairline_strong" />
+        </shape>
+    </item>
 </layer-list>

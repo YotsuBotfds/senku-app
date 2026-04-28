@@ -15,6 +15,7 @@ final class DetailActionBlockPresentationFormatter {
     static final String ACTION_LABEL_DO_FIRST = "Do first";
     static final String ACTION_LABEL_AVOID = "Avoid";
     static final String ACTION_LABEL_ESCALATE = "Escalate if";
+    private static final String EMERGENCY_ACTION_HEADING_PREFIX = "\u2014 IMMEDIATE ACTIONS \u00b7 ";
     private static final int MAX_EMERGENCY_PORTRAIT_ACTIONS = 4;
 
     enum ActionBlockKind {
@@ -108,12 +109,13 @@ final class DetailActionBlockPresentationFormatter {
         panel.setBackgroundColor(context.getColor(android.R.color.transparent));
         int displayedActionCount = Math.min(actions.size(), MAX_EMERGENCY_PORTRAIT_ACTIONS);
         TextView heading = new TextView(context);
-        heading.setText("IMMEDIATE ACTIONS \u2022 " + displayedActionCount);
+        heading.setText(EMERGENCY_ACTION_HEADING_PREFIX + displayedActionCount);
         heading.setTextAppearance(context, android.R.style.TextAppearance_Small);
         heading.setTextColor(context.getColor(R.color.senku_text_muted_light));
         heading.setTypeface(Typeface.MONOSPACE, Typeface.BOLD);
         heading.setLetterSpacing(0.08f);
         heading.setTextSize(11f);
+        heading.setIncludeFontPadding(false);
         heading.setPadding(0, 0, 0, dp(10));
         panel.addView(heading);
         for (int i = 0; i < displayedActionCount; i++) {
@@ -227,6 +229,7 @@ final class DetailActionBlockPresentationFormatter {
         title.setTypeface(Typeface.DEFAULT_BOLD);
         title.setTextSize(14f);
         title.setLineSpacing(0f, 1.08f);
+        title.setIncludeFontPadding(false);
 
         TextView detail = new TextView(context);
         detail.setText(action.detail);
@@ -234,6 +237,7 @@ final class DetailActionBlockPresentationFormatter {
         detail.setTextColor(context.getColor(R.color.senku_text_muted_light));
         detail.setTextSize(13f);
         detail.setLineSpacing(0f, 1.12f);
+        detail.setIncludeFontPadding(false);
         detail.setPadding(0, dp(3), 0, 0);
         detail.setVisibility(action.detail.isEmpty() ? View.GONE : View.VISIBLE);
 
@@ -350,9 +354,9 @@ final class DetailActionBlockPresentationFormatter {
                 collectingActionSection = false;
                 continue;
             }
-            if (line.matches("^\\d+\\.\\s+.*")) {
+            if (line.matches("^\\d+[.)]\\s+.*")) {
                 if (!sawActionSection || collectingActionSection) {
-                    steps.add(line.replaceFirst("^\\d+\\.\\s*", "").trim());
+                    steps.add(line.replaceFirst("^\\d+[.)]\\s*", "").trim());
                 }
                 continue;
             }
@@ -369,6 +373,8 @@ final class DetailActionBlockPresentationFormatter {
     private static boolean isNonActionSectionHeading(String normalizedLine) {
         return normalizedLine.endsWith(":")
             || normalizedLine.startsWith("why this answer")
+            || normalizedLine.startsWith("evidence")
+            || normalizedLine.startsWith("provenance")
             || normalizedLine.startsWith("source")
             || normalizedLine.startsWith("sources")
             || normalizedLine.startsWith("emergency context");

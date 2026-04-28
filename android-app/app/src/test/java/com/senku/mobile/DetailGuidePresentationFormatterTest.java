@@ -24,7 +24,7 @@ public final class DetailGuidePresentationFormatterTest {
         );
 
         assertEquals(
-            "[[SECTION]] Storage\n\n[[SECTION]] Safe storage\nUse clean water.",
+            "Section 1 Storage\n\nSection 2 Safe storage\nUse clean water.",
             DetailGuidePresentationFormatter.buildGuideBody(result)
         );
     }
@@ -82,10 +82,44 @@ public final class DetailGuidePresentationFormatterTest {
     @Test
     public void guideBodySanitizerFormatsInlineAdmonitionsAsManualLabels() {
         assertEquals(
-            "DANGER \u00b7 EXTREME BURN HAZARD\nKeep every tool dry.",
+            "DANGER \u00b7 Extreme burn hazard\nKeep every tool dry.",
             GuideBodySanitizer.sanitizeGuideBodyForDisplay(
                 "DANGER: Extreme burn hazard\nKeep every tool dry."
             )
         );
+    }
+
+    @Test
+    public void guideBodySanitizerRemovesRawSectionMarkersAndCountsSections() {
+        assertEquals(
+            "Section 1 Area readiness\n\nKeep water away.\n\nSection 2 Foundry Safety Quickstart\nCheck tools.",
+            GuideBodySanitizer.sanitizeGuideBodyForDisplay(
+                "[[SECTION]] Area readiness\n\nKeep water away.\n\nSource section: Foundry Safety Quickstart\nCheck tools."
+            )
+        );
+    }
+
+    @Test
+    public void guideBodySanitizerPreservesRequiredReadingAsCompactGuideRow() {
+        assertEquals(
+            "WARNING\nRequired reading \u00b7 Before attempting this guide, read the Chemical Safety Guide in full.",
+            GuideBodySanitizer.sanitizeGuideBodyForDisplay(
+                "::: warning\nRequired Reading: Before attempting this guide, read the Chemical Safety Guide in full.\n:::"
+            )
+        );
+    }
+
+    @Test
+    public void guideBodyParserExposesSectionAndRequiredReadingKindsWithoutDisplayMarkers() {
+        GuideBodySanitizer.ParsedGuideBody parsed = GuideBodySanitizer.parseGuideBodyForDisplay(
+            "[[SECTION]] Area readiness\nRequired Reading: Read GD-220 first."
+        );
+
+        assertEquals("Section 1 Area readiness\nRequired reading \u00b7 Read GD-220 first.", parsed.displayText);
+        assertEquals(2, parsed.lines.length);
+        assertEquals(GuideBodySanitizer.GuideBodyLine.Kind.SECTION, parsed.lines[0].kind);
+        assertEquals("Section 1", parsed.lines[0].label);
+        assertEquals(GuideBodySanitizer.GuideBodyLine.Kind.REQUIRED_READING, parsed.lines[1].kind);
+        assertEquals("Required reading", parsed.lines[1].label);
     }
 }

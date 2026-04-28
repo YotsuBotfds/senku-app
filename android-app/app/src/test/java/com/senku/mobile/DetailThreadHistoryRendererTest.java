@@ -41,11 +41,11 @@ public final class DetailThreadHistoryRendererTest {
         );
 
         assertEquals(
-            "Q2 - FIELD QUESTION",
+            "Q2 \u00B7 FIELD QUESTION",
             renderer.buildTurnLabel(2, true, turn("question", "GD-345", 0L), "")
         );
         assertEquals(
-            "A2 - ANCHOR GD-220 -> GD-345",
+            "A2 \u00B7 ANCHOR GD-345",
             renderer.buildTurnLabel(2, false, turn("answer", "GD-345", 0L), "GD-220")
         );
     }
@@ -71,6 +71,24 @@ public final class DetailThreadHistoryRendererTest {
 
         assertEquals(180, compact.length());
         assertTrue(compact.endsWith("..."));
+    }
+
+    @Test
+    public void guideChipsStayInlineAndDeduplicated() {
+        SessionMemory.TurnSnapshot turn = new SessionMemory.TurnSnapshot(
+            "question",
+            "answer",
+            "answer",
+            List.of("Source GD-002", "Source GD-004"),
+            List.of(source("GD-001"), source("GD-002"), source("GD-003"), source("GD-004")),
+            "",
+            0L
+        );
+
+        assertEquals(
+            List.of("GD-001", "GD-002", "GD-003"),
+            DetailThreadHistoryRenderer.guideChipIdsForTurn(turn)
+        );
     }
 
     private static SessionMemory.TurnSnapshot turn(String answer, String guideId, long recordedAtEpochMs) {

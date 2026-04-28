@@ -8,7 +8,7 @@
     android:paddingStart="16dp"
     android:paddingTop="24dp"
     android:paddingEnd="18dp"
-    android:paddingBottom="14dp">
+    android:paddingBottom="10dp">
 
     <ScrollView
         android:id="@+id/browse_scroll_view"
@@ -17,7 +17,7 @@
         android:layout_weight="1"
         android:clipToPadding="false"
         android:fillViewport="true"
-        android:paddingEnd="16dp"
+        android:paddingEnd="14dp"
         android:scrollbars="none">
 
         <LinearLayout
@@ -153,7 +153,7 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="64dp"
+                android:layout_height="58dp"
                 android:layout_marginTop="12dp"
                 android:addStatesFromChildren="true"
                 android:background="@drawable/bg_manual_phone_home_search"
@@ -163,11 +163,11 @@
                 android:paddingEnd="16dp">
 
                 <ImageView
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
                     android:background="@drawable/bg_manual_phone_home_search_icon"
                     android:contentDescription="@string/search_input_description"
-                    android:padding="10dp"
+                    android:padding="9dp"
                     android:src="@drawable/ic_search_magnifier"
                     android:tint="@color/senku_rev03_ink_2" />
 
@@ -175,7 +175,7 @@
                     android:id="@+id/search_input"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_marginStart="12dp"
+                    android:layout_marginStart="10dp"
                     android:layout_weight="1"
                     android:background="@android:color/transparent"
                     android:contentDescription="@string/search_input_description"

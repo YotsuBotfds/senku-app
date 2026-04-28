@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -33,6 +34,14 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.senku.ui.theme.SenkuTheme
+
+internal fun threadRailSectionTitle(label: String, count: Int): String =
+    "${label.trim().ifEmpty { "THREAD" }} \u00B7 $count"
+
+internal fun threadRailTurnRowMinHeightDp(active: Boolean): Int =
+    if (active) 66 else 52
+
+internal fun threadRailSourceRowMinHeightDp(): Int = 56
 
 @Composable
 fun ThreadRail(
@@ -68,7 +77,7 @@ fun ThreadRail(
         )
 
         RailSection(
-            label = if (guideMode) guideLabels.sectionLabel else "THREAD",
+            label = if (guideMode) guideLabels.sectionLabel else "TURNS",
             count = turns.size,
         ) {
             if (turns.isEmpty()) {
@@ -86,7 +95,7 @@ fun ThreadRail(
         }
 
         RailSection(
-            label = if (guideMode) guideLabels.referenceLabel else "SOURCES",
+            label = if (guideMode) guideLabels.referenceLabel else "SOURCES IN THREAD",
             count = sources.size,
         ) {
             if (sources.isEmpty()) {
@@ -172,7 +181,7 @@ private fun RailSection(
                     color = colors.hairlineStrong,
                 )
                 Text(
-                    text = label + " - " + count,
+                    text = threadRailSectionTitle(label, count),
                     style = SenkuTheme.typography.monoCaps.copy(
                         fontSize = 10.sp,
                         lineHeight = 12.sp,
@@ -216,25 +225,27 @@ private fun ThreadTurnRow(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 5.dp, vertical = 4.dp),
+                .heightIn(min = threadRailTurnRowMinHeightDp(turn.isActive).dp)
+                .padding(horizontal = 10.dp, vertical = 9.dp),
             horizontalArrangement = Arrangement.spacedBy(6.dp),
             verticalAlignment = Alignment.Top,
         ) {
             Box(
                 modifier = Modifier
-                    .width(2.dp)
-                    .height(28.dp)
+                    .width(3.dp)
+                    .height(if (turn.isActive) 46.dp else 34.dp)
                     .background(if (turn.isActive) colors.accent else colors.hairlineStrong),
             )
             Column(
                 modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.spacedBy(2.dp),
+                verticalArrangement = Arrangement.spacedBy(5.dp),
             ) {
                 Text(
                     text = if (guideMode) "SEC $index" else turn.id,
                     style = SenkuTheme.typography.monoCaps.copy(
                         fontSize = 9.sp,
                         lineHeight = 11.sp,
+                        fontWeight = FontWeight.Medium,
                     ),
                     color = idColor,
                     maxLines = 1,
@@ -244,7 +255,7 @@ private fun ThreadTurnRow(
                     text = turn.question.trim().ifEmpty { "No question recorded." },
                     style = SenkuTheme.typography.smallBody.copy(
                         fontSize = 11.sp,
-                        lineHeight = 13.sp,
+                        lineHeight = 14.sp,
                     ),
                     color = colors.ink1,
                     maxLines = 2,
@@ -283,19 +294,20 @@ private fun SourcePill(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 5.dp, vertical = 4.dp),
+                .heightIn(min = threadRailSourceRowMinHeightDp().dp)
+                .padding(horizontal = 10.dp, vertical = 8.dp),
             horizontalArrangement = Arrangement.spacedBy(6.dp),
             verticalAlignment = Alignment.Top,
         ) {
             Box(
                 modifier = Modifier
-                    .width(2.dp)
-                    .height(27.dp)
+                    .width(3.dp)
+                    .height(38.dp)
                     .background(if (source.isSelected || source.isAnchor) idColor else colors.hairlineStrong),
             )
             Column(
                 modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.spacedBy(2.dp),
+                verticalArrangement = Arrangement.spacedBy(5.dp),
             ) {
                 Text(
                     text = if (guideMode) {

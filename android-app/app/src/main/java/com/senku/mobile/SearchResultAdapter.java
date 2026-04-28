@@ -172,9 +172,13 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
         bindTabletScoreMarker(holder.retrievalBadge, holder.scoreBar, position);
         holder.accent.setAlpha(rankAccentAlpha(position));
         bindTabletAttributeLine(holder.section, result);
+        String snippet = buildCompactRowSnippet(
+            result,
+            richTabletCard ? 118 : (landscapePhoneCard ? 150 : (smallPhonePortraitCard ? 118 : 220))
+        );
         holder.snippet.setText(formatDisplayText(
-            result.snippet,
-            richTabletCard ? 118 : (landscapePhoneCard ? 150 : (smallPhonePortraitCard ? 118 : 220)),
+            snippet,
+            0,
             richTabletCard ? 4 : 3
         ));
         holder.snippet.setMaxLines((richTabletCard || landscapePhoneCard || stressCompactCard) ? 1 : (smallPhonePortraitCard ? 2 : 4));
@@ -473,7 +477,7 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
             buildLinkedGuidePreviewLabel(preview),
             richTabletCard ? 92 : 72
         );
-        String actionLabel = previewLabel.isEmpty() ? safe(preview.guideId).trim() : previewLabel;
+        String actionLabel = buildLinkedGuideActionLabel(preview);
         boolean usePreviewLineAction = allowLinkedGuidePreviewLine && !previewLabel.isEmpty();
         applyBadgeStyle(
             cue,
@@ -592,6 +596,21 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
         String displayLabel = safe(preview.displayLabel).trim();
         if (!displayLabel.isEmpty()) {
             return displayLabel;
+        }
+        String guideId = safe(preview.guideId).trim();
+        String title = safe(preview.title).trim();
+        if (!guideId.isEmpty() && !title.isEmpty()) {
+            return guideId + " - " + title;
+        }
+        if (!title.isEmpty()) {
+            return title;
+        }
+        return guideId;
+    }
+
+    private String buildLinkedGuideActionLabel(LinkedGuidePreview preview) {
+        if (preview == null) {
+            return "";
         }
         String guideId = safe(preview.guideId).trim();
         String title = safe(preview.title).trim();
@@ -893,7 +912,7 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
         int maxLen = isRichTabletCard(inflater.getContext())
             ? 170
             : (isLandscapePhoneCard(inflater.getContext()) ? 180 : (isSmallPhonePortraitCard(inflater.getContext()) ? 126 : 220));
-        String snippet = cleanDisplayText(result == null ? null : result.snippet, maxLen);
+        String snippet = buildCompactRowSnippet(result, maxLen);
         if (!snippet.isEmpty()) {
             return snippet;
         }
@@ -1110,12 +1129,76 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
         return cleanDisplayText(humanize(safe(raw).trim().toLowerCase(Locale.US)), maxLen);
     }
 
-    private String buildLinkedGuidePreviewLine(LinkedGuidePreview preview, boolean richTabletCard) {
-        String label = cleanDisplayText(buildLinkedGuidePreviewLabel(preview), richTabletCard ? 104 : 82);
-        if (label.isEmpty()) {
+    static String buildCompactRowSnippetForTest(String rawSnippet, String sectionHeading, int maxLen) {
+        String cleaned = cleanDisplayTextInternal(rawSnippet, 0);
+        if (cleaned.isEmpty()) {
             return "";
         }
-        return "Linked guide: " + label;
+        cleaned = collapseRepeatedLeadingSection(cleaned, sectionHeading);
+        if (maxLen > 0 && cleaned.length() > maxLen) {
+            return cleaned.substring(0, Math.max(0, maxLen - 1)).trim() + "\u2026";
+        }
+        return cleaned;
+    }
+
+    private String buildCompactRowSnippet(SearchResult result, int maxLen) {
+        return buildCompactRowSnippetForTest(
+            result == null ? null : result.snippet,
+            result == null ? null : result.sectionHeading,
+            maxLen
+        );
+    }
+
+    private static String collapseRepeatedLeadingSection(String cleaned, String sectionHeading) {
+        String section = cleanDisplayTextInternal(sectionHeading, 0);
+        if (section.isEmpty() || !startsWithIgnoreCase(cleaned, section)) {
+            return cleaned;
+        }
+        String remainder = stripLeadingSnippetJoiners(cleaned.substring(section.length()));
+        if (!startsWithIgnoreCase(remainder, section)) {
+            return cleaned;
+        }
+        String secondRemainder = stripLeadingSnippetJoiners(remainder.substring(section.length()));
+        if (secondRemainder.isEmpty()) {
+            return section;
+        }
+        return section + ": " + secondRemainder;
+    }
+
+    private static String stripLeadingSnippetJoiners(String value) {
+        String cleaned = safe(value).trim();
+        while (!cleaned.isEmpty()) {
+            char first = cleaned.charAt(0);
+            if (first != ':' && first != '-' && first != '\u2013' && first != '\u2014') {
+                break;
+            }
+            cleaned = cleaned.substring(1).trim();
+        }
+        return cleaned;
+    }
+
+    private static boolean startsWithIgnoreCase(String value, String prefix) {
+        return safe(value).regionMatches(true, 0, safe(prefix), 0, safe(prefix).length());
+    }
+
+    static String buildLinkedGuidePreviewLineForTest() {
+        return buildLinkedGuidePreviewLineLabel();
+    }
+
+    private String buildLinkedGuidePreviewLine(LinkedGuidePreview preview, boolean richTabletCard) {
+        if (preview == null || !preview.hasTargetGuide()) {
+            return "";
+        }
+        String title = cleanDisplayText(preview.title, richTabletCard ? 54 : 42);
+        if (!title.isEmpty()) {
+            return buildLinkedGuidePreviewLineLabel() + ": " + title;
+        }
+        String label = cleanDisplayText(buildLinkedGuidePreviewLabel(preview), richTabletCard ? 58 : 46);
+        return label.isEmpty() ? buildLinkedGuidePreviewLineLabel() : buildLinkedGuidePreviewLineLabel() + ": " + label;
+    }
+
+    private static String buildLinkedGuidePreviewLineLabel() {
+        return "Guide";
     }
 
     private String formatSectionAnchor(String section) {

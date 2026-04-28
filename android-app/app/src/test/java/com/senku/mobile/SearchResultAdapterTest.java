@@ -60,6 +60,26 @@ public final class SearchResultAdapterTest {
     }
 
     @Test
+    public void compactRowSnippetCollapsesRepeatedSectionLeadBeforeTruncating() {
+        assertEquals(
+            "Shelter Building: Protection from the Elements Day signaling vs. night signaling.",
+            SearchResultAdapter.buildCompactRowSnippetForTest(
+                "Shelter Building: Shelter Building: Protection from the Elements Day signaling vs. night signaling.",
+                "Shelter Building",
+                120
+            )
+        );
+        assertEquals(
+            "Shelter Building: Protection from the Elements Day\u2026",
+            SearchResultAdapter.buildCompactRowSnippetForTest(
+                "Shelter Building: Shelter Building: Protection from the Elements Day signaling vs. night signaling.",
+                "Shelter Building",
+                52
+            )
+        );
+    }
+
+    @Test
     public void composeBridgeMetadataLineUsesRoleWindowAndCategory() {
         assertEquals(
             "Role: Safety // Window: Immediate // Category: Water",
@@ -101,5 +121,10 @@ public final class SearchResultAdapterTest {
     @Test
     public void linkedGuideChipKeepsCompactVisibleCue() {
         assertEquals("Guide", SearchResultAdapter.buildLinkedGuideChipLabelForTest());
+    }
+
+    @Test
+    public void linkedGuidePreviewLineKeepsRowsCompact() {
+        assertEquals("Guide", SearchResultAdapter.buildLinkedGuidePreviewLineForTest());
     }
 }

@@ -11,26 +11,66 @@ final class GuideBodySanitizer {
     private static final Pattern GUIDE_ADMONITION_INLINE_PREFIX_PATTERN =
         Pattern.compile("^(DANGER|WARNING|CAUTION|IMPORTANT|NOTE|DANGEROUS)(?:\\s*[:.-]\\s*|\\s+)(.+)$");
     private static final Pattern GUIDE_MARKDOWN_HEADING_PATTERN = Pattern.compile("^#{1,6}\\s+");
+    private static final Pattern GUIDE_SECTION_LINE_PATTERN = Pattern.compile("^Source section:\\s*(.+)$", Pattern.CASE_INSENSITIVE);
+    private static final Pattern GUIDE_REQUIRED_READING_PATTERN = Pattern.compile("^Required Reading\\s*:\\s*(.+)$", Pattern.CASE_INSENSITIVE);
+    private static final Pattern GUIDE_SECTION_DISPLAY_PATTERN = Pattern.compile("^Section\\s+\\d+\\s*[:\\-\\u00b7]?\\s+.+$", Pattern.CASE_INSENSITIVE);
     private static final Pattern GUIDE_LAYOUT_TAG_PATTERN = Pattern.compile("(?i)</?(section|div|span|p)\\b[^>]*>");
     private static final Pattern GUIDE_INLINE_STYLE_TAG_PATTERN = Pattern.compile("(?i)</?(strong|b|em|i|mark|small)\\b[^>]*>");
     private static final Pattern GUIDE_MARKDOWN_LINK_PATTERN = Pattern.compile("\\[([^\\]]+)\\]\\(([^\\)]+)\\)");
     private static final Pattern GUIDE_HTML_BREAK_PATTERN = Pattern.compile("(?i)<br\\s*/?>");
     private static final Pattern GUIDE_MARKDOWN_ESCAPE_PATTERN = Pattern.compile("\\\\([\\[\\]\\(\\)#*_`])");
     private static final String GUIDE_SECTION_ANCHOR_MARKER = "[[SECTION]] ";
+    private static final String GUIDE_REQUIRED_READING_LABEL = "Required reading";
 
     private GuideBodySanitizer() {
     }
 
+    static final class ParsedGuideBody {
+        final String displayText;
+        final GuideBodyLine[] lines;
+
+        ParsedGuideBody(String displayText, GuideBodyLine[] lines) {
+            this.displayText = safe(displayText);
+            this.lines = lines == null ? new GuideBodyLine[0] : lines;
+        }
+    }
+
+    static final class GuideBodyLine {
+        enum Kind {
+            TEXT,
+            SECTION,
+            ADMONITION_LABEL,
+            ADMONITION_TEXT,
+            REQUIRED_READING
+        }
+
+        final Kind kind;
+        final String text;
+        final String label;
+
+        GuideBodyLine(Kind kind, String text, String label) {
+            this.kind = kind == null ? Kind.TEXT : kind;
+            this.text = safe(text);
+            this.label = safe(label);
+        }
+    }
+
     static String sanitizeGuideBodyForDisplay(String body) {
+        return parseGuideBodyForDisplay(body).displayText;
+    }
+
+    static ParsedGuideBody parseGuideBodyForDisplay(String body) {
         String cleaned = normalizeGuideDisplayText(safe(body)).trim();
         if (cleaned.isEmpty()) {
-            return "";
+            return new ParsedGuideBody("", new GuideBodyLine[0]);
         }
         String[] lines = cleaned.split("\\n", -1);
+        java.util.ArrayList<GuideBodyLine> parsedLines = new java.util.ArrayList<>(lines.length);
         StringBuilder builder = new StringBuilder(cleaned.length() + 32);
         boolean insideAdmonitionBlock = false;
         String activeAdmonitionLabel = "";
         boolean firstAdmonitionContentLine = false;
+        int sectionOrdinal = 0;
         for (String rawLine : lines) {
             String trimmed = safe(rawLine).trim();
             boolean markdownHeading = GUIDE_MARKDOWN_HEADING_PATTERN.matcher(trimmed).find();
@@ -44,7 +84,11 @@ final class GuideBodySanitizer {
                     if (builder.length() > 0 && builder.charAt(builder.length() - 1) != '\n') {
                         builder.append('\n');
                     }
-                    builder.append(activeAdmonitionLabel).append('\n');
+                    appendParsedLine(
+                        builder,
+                        parsedLines,
+                        new GuideBodyLine(GuideBodyLine.Kind.ADMONITION_LABEL, activeAdmonitionLabel, activeAdmonitionLabel)
+                    );
                 } else {
                     activeAdmonitionLabel = "";
                     firstAdmonitionContentLine = false;
@@ -56,24 +100,102 @@ final class GuideBodySanitizer {
                 displayLine = stripDuplicateAdmonitionLabel(displayLine, activeAdmonitionLabel, firstAdmonitionContentLine);
             }
             displayLine = formatGuideAdmonitionLine(displayLine);
-            if (markdownHeading
-                && !displayLine.isEmpty()
-                && !insideAdmonitionBlock
-                && canonicalGuideAdmonitionLabel(displayLine).isEmpty()) {
-                displayLine = GUIDE_SECTION_ANCHOR_MARKER + displayLine;
-            }
+            boolean explicitSectionMarkerLine = isGuideSectionMarkerLine(displayLine);
+            boolean sectionLine = !insideAdmonitionBlock
+                && (markdownHeading || explicitSectionMarkerLine);
+            String sectionValue = sectionLine ? extractGuideSectionValue(displayLine) : "";
+            boolean requiredReadingLine = isRequiredReadingLine(displayLine);
             if (displayLine.isEmpty() && trimmed.isEmpty()) {
-                builder.append('\n');
+                appendBlankLine(builder, parsedLines);
                 continue;
             }
             if (!displayLine.isEmpty()) {
-                builder.append(displayLine).append('\n');
+                if (sectionLine && !sectionValue.isEmpty()) {
+                    sectionOrdinal++;
+                    appendParsedLine(
+                        builder,
+                        parsedLines,
+                        new GuideBodyLine(
+                            GuideBodyLine.Kind.SECTION,
+                            buildGuideSectionDisplayLabel(sectionOrdinal, sectionValue),
+                            buildGuideSectionPrefix(sectionOrdinal)
+                        )
+                    );
+                } else if (requiredReadingLine) {
+                    appendParsedLine(
+                        builder,
+                        parsedLines,
+                        new GuideBodyLine(
+                            GuideBodyLine.Kind.REQUIRED_READING,
+                            formatRequiredReadingLine(displayLine),
+                            GUIDE_REQUIRED_READING_LABEL
+                        )
+                    );
+                } else {
+                    appendParsedLine(
+                        builder,
+                        parsedLines,
+                        new GuideBodyLine(
+                            canonicalGuideAdmonitionLabel(displayLine).isEmpty()
+                                ? (insideAdmonitionBlock ? GuideBodyLine.Kind.ADMONITION_TEXT : GuideBodyLine.Kind.TEXT)
+                                : GuideBodyLine.Kind.ADMONITION_LABEL,
+                            displayLine,
+                            canonicalGuideAdmonitionLabel(displayLine)
+                        )
+                    );
+                }
                 if (insideAdmonitionBlock) {
                     firstAdmonitionContentLine = false;
                 }
             }
         }
-        return builder.toString().replaceAll("\\n{3,}", "\n\n").trim();
+        while (!parsedLines.isEmpty() && parsedLines.get(parsedLines.size() - 1).text.isEmpty()) {
+            parsedLines.remove(parsedLines.size() - 1);
+        }
+        collapseRepeatedBlankLines(parsedLines);
+        String displayText = joinParsedLines(parsedLines);
+        return new ParsedGuideBody(displayText, parsedLines.toArray(new GuideBodyLine[0]));
+    }
+
+    private static void collapseRepeatedBlankLines(java.util.ArrayList<GuideBodyLine> parsedLines) {
+        boolean previousBlank = false;
+        for (int i = 0; i < parsedLines.size(); i++) {
+            boolean blank = parsedLines.get(i).text.isEmpty();
+            if (blank && previousBlank) {
+                parsedLines.remove(i);
+                i--;
+                continue;
+            }
+            previousBlank = blank;
+        }
+    }
+
+    private static String joinParsedLines(java.util.ArrayList<GuideBodyLine> parsedLines) {
+        StringBuilder builder = new StringBuilder();
+        for (GuideBodyLine line : parsedLines) {
+            if (builder.length() > 0) {
+                builder.append('\n');
+            }
+            builder.append(line.text);
+        }
+        return builder.toString().trim();
+    }
+
+    private static void appendParsedLine(
+        StringBuilder builder,
+        java.util.ArrayList<GuideBodyLine> parsedLines,
+        GuideBodyLine line
+    ) {
+        if (builder.length() > 0 && builder.charAt(builder.length() - 1) != '\n') {
+            builder.append('\n');
+        }
+        builder.append(line.text).append('\n');
+        parsedLines.add(line);
+    }
+
+    private static void appendBlankLine(StringBuilder builder, java.util.ArrayList<GuideBodyLine> parsedLines) {
+        builder.append('\n');
+        parsedLines.add(new GuideBodyLine(GuideBodyLine.Kind.TEXT, "", ""));
     }
 
     private static String sanitizeGuideDisplayLine(String rawLine, boolean insideAdmonitionBlock) {
@@ -113,7 +235,53 @@ final class GuideBodySanitizer {
         if (detail.isEmpty()) {
             return label;
         }
-        return label + " \u00b7 " + detail.toUpperCase(QUERY_LOCALE);
+        return label + " \u00b7 " + detail;
+    }
+
+    private static boolean isGuideSectionMarkerLine(String line) {
+        String cleaned = safe(line).trim();
+        return cleaned.startsWith(GUIDE_SECTION_ANCHOR_MARKER)
+            || GUIDE_SECTION_LINE_PATTERN.matcher(cleaned).matches();
+    }
+
+    private static String extractGuideSectionValue(String line) {
+        String cleaned = safe(line).trim();
+        if (cleaned.startsWith(GUIDE_SECTION_ANCHOR_MARKER)) {
+            return cleaned.substring(GUIDE_SECTION_ANCHOR_MARKER.length()).trim();
+        }
+        Matcher sourceSectionMatcher = GUIDE_SECTION_LINE_PATTERN.matcher(cleaned);
+        if (sourceSectionMatcher.matches()) {
+            return safe(sourceSectionMatcher.group(1)).trim();
+        }
+        if (isGuideSectionDisplayLine(cleaned)) {
+            return cleaned.replaceFirst("(?i)^Section\\s+\\d+\\s+", "").trim();
+        }
+        return cleaned;
+    }
+
+    private static boolean isRequiredReadingLine(String line) {
+        return GUIDE_REQUIRED_READING_PATTERN.matcher(safe(line).trim()).matches();
+    }
+
+    private static String formatRequiredReadingLine(String line) {
+        Matcher matcher = GUIDE_REQUIRED_READING_PATTERN.matcher(safe(line).trim());
+        if (!matcher.matches()) {
+            return safe(line).trim();
+        }
+        String detail = safe(matcher.group(1)).trim();
+        return detail.isEmpty() ? GUIDE_REQUIRED_READING_LABEL : GUIDE_REQUIRED_READING_LABEL + " \u00b7 " + detail;
+    }
+
+    static boolean isGuideSectionDisplayLine(String line) {
+        return GUIDE_SECTION_DISPLAY_PATTERN.matcher(safe(line).trim()).matches();
+    }
+
+    private static String buildGuideSectionDisplayLabel(int sectionOrdinal, String value) {
+        return buildGuideSectionPrefix(sectionOrdinal) + " " + safe(value).trim();
+    }
+
+    private static String buildGuideSectionPrefix(int sectionOrdinal) {
+        return "Section " + Math.max(sectionOrdinal, 1);
     }
 
     private static String stripDuplicateAdmonitionLabel(String line, String admonitionLabel, boolean firstAdmonitionContentLine) {
@@ -138,7 +306,7 @@ final class GuideBodySanitizer {
         return safe(inlinePrefixMatcher.group(2)).trim();
     }
 
-    private static String normalizeGuideDisplayText(String text) {
+    static String normalizeGuideDisplayText(String text) {
         String cleaned = safe(text).replace("\r\n", "\n");
         cleaned = GUIDE_HTML_BREAK_PATTERN.matcher(cleaned).replaceAll("\n");
         cleaned = cleaned.replace("&nbsp;", " ");
@@ -156,7 +324,7 @@ final class GuideBodySanitizer {
         return DetailWarningCopySanitizer.sanitizeWarningResidualCopy(cleaned);
     }
 
-    private static String normalizeGuideAdmonitionLabel(String marker) {
+    static String normalizeGuideAdmonitionLabel(String marker) {
         String normalized = safe(marker).trim().toLowerCase(QUERY_LOCALE);
         if ("danger".equals(normalized)) {
             return "DANGER";
@@ -173,7 +341,7 @@ final class GuideBodySanitizer {
         return "NOTE";
     }
 
-    private static String canonicalGuideAdmonitionLabel(String label) {
+    static String canonicalGuideAdmonitionLabel(String label) {
         String cleaned = safe(label).trim().toUpperCase(QUERY_LOCALE);
         if (cleaned.endsWith(":")) {
             cleaned = cleaned.substring(0, cleaned.length() - 1).trim();

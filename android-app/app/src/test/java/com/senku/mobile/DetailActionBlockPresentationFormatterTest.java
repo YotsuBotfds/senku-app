@@ -107,6 +107,27 @@ public final class DetailActionBlockPresentationFormatterTest {
         assertEquals("GD-132 lists current owner.", actions.get(3).detail);
     }
 
+    @Test
+    public void extractEmergencyActionSpecsKeepsOrderedActionsAheadOfEvidenceAndProvenance() {
+        List<DetailActionBlockPresentationFormatter.EmergencyActionSpec> actions =
+            DetailActionBlockPresentationFormatter.extractEmergencyActionSpecs(
+                "Immediate actions:\n" +
+                    "1) Stop all hot work. No new charges, no new pours.\n" +
+                    "2) Clear the floor to 5 m radius. Move personnel upwind.\n" +
+                    "3) Confirm two paths of egress. Door and roll-up open and unobstructed.\n" +
+                    "4) Notify the area owner. GD-132 lists current owner.\n\n" +
+                    "Evidence:\n" +
+                    "1) GD-132 - Foundry & Metal Casting.\n\n" +
+                    "Provenance:\n" +
+                    "1) Reviewed card runtime.",
+                text -> citationFormatter.stripInlineCitationText(text)
+            );
+
+        assertEquals(4, actions.size());
+        assertEquals("Stop all hot work", actions.get(0).title);
+        assertEquals("Notify the area owner", actions.get(3).title);
+    }
+
     private List<DetailActionBlockPresentationFormatter.ActionBlockSpec> extract(String formattedAnswerText) {
         return DetailActionBlockPresentationFormatter.extractHighRiskActionBlockSpecs(
             formattedAnswerText,

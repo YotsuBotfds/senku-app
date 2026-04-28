@@ -84,6 +84,24 @@ class SearchResultCardHeuristicsTest {
     }
 
     @Test
+    fun compactResultPreviewText_stripsMarkdownAndSectionEchoes() {
+        assertEquals(
+            "Shelter Building: Protection from the Elements Day signaling.",
+            compactResultPreviewText(
+                "Shelter Building",
+                "## Shelter Building\nShelter Building: Protection from the Elements Day signaling.",
+            ),
+        )
+        assertEquals(
+            "Fire Management: Best tinder in survival situations.",
+            compactResultPreviewText(
+                "Fire Management",
+                "Best tinder in survival situations.",
+            ),
+        )
+    }
+
+    @Test
     fun warmThreadGuideIdsForPreview_onlyKeepsFreshThreads() {
         val now = 1_000_000L
         val freshIds = warmThreadGuideIdsForPreview(
