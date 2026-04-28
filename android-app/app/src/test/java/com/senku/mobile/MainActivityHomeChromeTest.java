@@ -204,7 +204,7 @@ public final class MainActivityHomeChromeTest {
     @Test
     public void manualHomeStatusDropsDuplicateGuideCountForNarrowChrome() {
         assertEquals(
-            "PACK READY",
+            "Pack ready",
             MainActivity.compactManualHomeStatusForTest("Ready offline | 754 guides", true)
         );
         assertEquals(
@@ -297,41 +297,41 @@ public final class MainActivityHomeChromeTest {
     @Test
     public void reviewSearchLatencyOnlyAppliesToTargetMockQuery() {
         assertEquals(
-            "SEARCH  rain shelter - 4 results  \u00b7  12MS",
-            MainActivity.appendReviewSearchLatency("SEARCH  rain shelter - 4 results", "rain shelter", true)
+            "Search  rain shelter - 4 results  \u00b7  12ms",
+            MainActivity.appendReviewSearchLatency("Search  rain shelter - 4 results", "rain shelter", true)
         );
         assertEquals(
-            "SEARCH  rain shelter - 4 results",
-            MainActivity.appendReviewSearchLatency("SEARCH  rain shelter - 4 results", "rain shelter", false)
+            "Search  rain shelter - 4 results",
+            MainActivity.appendReviewSearchLatency("Search  rain shelter - 4 results", "rain shelter", false)
         );
         assertEquals(
-            "SEARCH  water - 4 results",
-            MainActivity.appendReviewSearchLatency("SEARCH  water - 4 results", "water", true)
+            "Search  water - 4 results",
+            MainActivity.appendReviewSearchLatency("Search  water - 4 results", "water", true)
         );
     }
 
     @Test
     public void phoneSearchHeaderKeepsCompactCountAndReviewLatency() {
         assertEquals(
-            "SEARCH rain shelter    4 RESULTS  \u00b7  12MS",
+            "Search rain shelter    4 results  \u00b7  12ms",
             MainActivity.appendReviewSearchLatency(
                 MainActivity.buildPhoneSearchHeaderForTest("rain shelter", 4),
                 "rain shelter",
                 true
             )
         );
-        assertEquals("SEARCH - 1 RESULT", MainActivity.buildPhoneSearchHeaderForTest("", 1));
+        assertEquals("Search - 1 result", MainActivity.buildPhoneSearchHeaderForTest("", 1));
     }
 
     @Test
     public void searchChromeSplitsTargetQueryAndCountLatency() {
-        assertEquals("SEARCH rain shelter", MainActivity.buildSearchChromeQueryLabelForTest(" rain shelter "));
+        assertEquals("Search rain shelter", MainActivity.buildSearchChromeQueryLabelForTest(" rain shelter "));
         assertEquals(
-            "4 RESULTS  \u00b7  12MS",
+            "4 results  \u00b7  12ms",
             MainActivity.buildSearchChromeCountLabelForTest("rain shelter", 4, true)
         );
-        assertEquals("SEARCH guides", MainActivity.buildSearchChromeQueryLabelForTest(""));
-        assertEquals("1 RESULT", MainActivity.buildSearchChromeCountLabelForTest("water", 1, true));
+        assertEquals("Search guides", MainActivity.buildSearchChromeQueryLabelForTest(""));
+        assertEquals("1 result", MainActivity.buildSearchChromeCountLabelForTest("water", 1, true));
     }
 
     @Test
@@ -377,7 +377,7 @@ public final class MainActivityHomeChromeTest {
             Arrays.asList(guideWithId("Survival Basics & First 72 Hours", "GD-023"))
         ).get(0);
 
-        assertEquals("STARTER  \u00b7  17 SECTIONS", MainActivity.buildTabletPreviewMetaForTest(result));
+        assertEquals("Starter  \u00b7  17 sections", MainActivity.buildTabletPreviewMetaForTest(result));
         assertTrue(MainActivity.buildTabletPreviewBodyForTest(result).startsWith("Day signaling vs. night signaling."));
         assertTrue(MainActivity.buildTabletPreviewBodyForTest(result).contains("signal flares."));
     }
@@ -386,7 +386,7 @@ public final class MainActivityHomeChromeTest {
     public void tabletSearchPreviewDoesNotUseTargetCopyForNormalGuide() {
         SearchResult result = guideWithId("Survival Basics & First 72 Hours", "GD-023");
 
-        assertEquals("SOURCE GUIDE", MainActivity.buildTabletPreviewMetaForTest(result));
+        assertEquals("Source guide", MainActivity.buildTabletPreviewMetaForTest(result));
         assertEquals("Survival Basics & First 72 Hours snippet", MainActivity.buildTabletPreviewBodyForTest(result));
     }
 

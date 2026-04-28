@@ -300,6 +300,23 @@ policies. Residual risks: emulator system icons remain bright outside app
 control, phone answer still exposes proof/provenance earlier than the target
 mock, and Home/Search typography remains heavier than the Claude reference.
 
+Wave39 integration proof:
+`artifacts/ui_state_pack/wave39_integration_final/20260428_153133` is green
+(`pass`, 47/47, fail count 0, ANR count 0), homogeneous APK
+`ab42027fde25212e68cc4aaf86708fb90474696693316f03e4cbfbd3024d195f`,
+model `gemma-4-e2b-it-litert`
+(`ea1102014465edeb14b517bf270f6751d036749e3c5f517a7ff802782cb92161`),
+rotation mismatch count 0. Scope was a focused phone/Home polish wave:
+phone portrait answer now keeps a compact `Source guides | 3 src | Show`
+trigger above deferred proof/provenance, the instrumentation trust-spine check
+counts that collapsed title as a valid source trigger, and Home/Search surfaces
+use softer fills, calmer title/lowercase labels, and quieter nav/category
+chrome. Validation included the Android local quality gate, focused JVM tests
+for detail/home/search, androidTest compilation, and the final four-role pack.
+Residual risks: answer detail still has visible product/provenance vocabulary
+that is more explicit than the mock, and search/result typography remains
+somewhat heavier than the Claude reference even after the softness pass.
+
 ## Wave25+ Plan
 
 | Wave | Slice | Why this order | Avoid overlapping write sets | Acceptance proof |

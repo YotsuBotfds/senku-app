@@ -178,6 +178,8 @@ public final class DetailActivity extends AppCompatActivity {
     private LinearLayout inlineThreadContainer;
     private LinearLayout threadContainer;
     private View sourcesPanel;
+    private View sourcesProofStamp;
+    private View sourcesProofDivider;
     private TextView sourcesTitleText;
     private TextView sourcesSubtitle;
     private LinearLayout sourcesContainer;
@@ -710,6 +712,8 @@ public final class DetailActivity extends AppCompatActivity {
         inlineThreadContainer = findViewById(R.id.detail_inline_thread_container);
         threadContainer = findViewById(R.id.detail_thread_container);
         sourcesPanel = findViewById(R.id.detail_sources_panel);
+        sourcesProofStamp = findViewById(R.id.detail_sources_proof_stamp);
+        sourcesProofDivider = findViewById(R.id.detail_sources_proof_divider);
         sourcesTitleText = findViewById(R.id.detail_sources_title_text);
         sourcesSubtitle = findViewById(R.id.detail_sources_subtitle);
         sourcesContainer = findViewById(R.id.detail_sources_container);
@@ -3128,7 +3132,13 @@ public final class DetailActivity extends AppCompatActivity {
                 if (sourcesTitleText != null) {
                     sourcesTitleText.setText(emergencyPortrait
                         ? "WHY THIS ANSWER"
-                        : buildCompactToggleTitle(R.string.detail_sources_title, portraitSourcesExpanded));
+                        : (isCompactPortraitPhoneLayout()
+                            ? buildCompactPhoneSourcesTriggerTitle(
+                                getString(R.string.detail_sources_title),
+                                currentSources.size(),
+                                portraitSourcesExpanded
+                            )
+                            : buildCompactToggleTitle(R.string.detail_sources_title, portraitSourcesExpanded)));
                 }
                 if (sourcesSubtitle != null) {
                     sourcesSubtitle.setVisibility(emergencyPortrait ? View.GONE : View.VISIBLE);
@@ -3244,7 +3254,7 @@ public final class DetailActivity extends AppCompatActivity {
                         sourcesContainer.getChildAt(i).setVisibility(View.VISIBLE);
                     }
                     sourcesContainer.setVisibility(
-                        (portraitSourcesExpanded || emergencyPortrait || collapsedPhonePortraitTrigger)
+                        (portraitSourcesExpanded || emergencyPortrait)
                             ? View.VISIBLE
                             : View.GONE
                     );
@@ -3586,11 +3596,22 @@ public final class DetailActivity extends AppCompatActivity {
     }
 
     private void applyPhonePortraitSourcePanelTreatment(boolean phonePortraitSourceCards) {
-        if (!phonePortraitSourceCards || sourcesPanel == null) {
+        boolean collapsedPhonePortrait = isCompactPortraitPhoneLayout()
+            && answerMode
+            && !portraitSourcesExpanded
+            && !isEmergencyPortraitSurface();
+        if (sourcesProofStamp != null) {
+            sourcesProofStamp.setVisibility(collapsedPhonePortrait ? View.GONE : View.VISIBLE);
+        }
+        if (sourcesProofDivider != null) {
+            sourcesProofDivider.setVisibility(collapsedPhonePortrait ? View.GONE : View.VISIBLE);
+        }
+        if ((!phonePortraitSourceCards && !collapsedPhonePortrait) || sourcesPanel == null) {
             return;
         }
-        sourcesPanel.setPadding(dp(10), dp(10), dp(10), dp(10));
-        setTopMargin(sourcesPanel, dp(10));
+        int panelPad = collapsedPhonePortrait ? dp(8) : dp(10);
+        sourcesPanel.setPadding(panelPad, panelPad, panelPad, panelPad);
+        setTopMargin(sourcesPanel, dp(collapsedPhonePortrait ? 8 : 10));
         if (sourcesSubtitle != null) {
             sourcesSubtitle.setMaxLines(1);
             sourcesSubtitle.setEllipsize(TextUtils.TruncateAt.END);
@@ -4273,8 +4294,24 @@ public final class DetailActivity extends AppCompatActivity {
             moveWhyPanelToTabletHelperStack(contentColumn, currentParent);
             return;
         }
+        if (shouldDeferPhonePortraitProofPanelBelowSources(
+            answerMode,
+            isCompactPortraitPhoneLayout(),
+            isEmergencyPortraitSurface()
+        )) {
+            moveWhyPanelBelowPhoneSources(contentColumn, currentParent);
+            return;
+        }
 
         restoreWhyPanelToAnswerBubble(currentParent);
+    }
+
+    static boolean shouldDeferPhonePortraitProofPanelBelowSources(
+        boolean answerMode,
+        boolean compactPortraitPhone,
+        boolean emergencyPortrait
+    ) {
+        return answerMode && compactPortraitPhone && !emergencyPortrait;
     }
 
     private void moveWhyPanelToTabletHelperStack(LinearLayout contentColumn, ViewParent currentParent) {
@@ -4303,6 +4340,37 @@ public final class DetailActivity extends AppCompatActivity {
                 contentColumn.addView(whyPanel, Math.min(targetIndex, contentColumn.getChildCount()));
             }
             setTopMargin(whyPanel, dp(12));
+        }
+    }
+
+    private void moveWhyPanelBelowPhoneSources(LinearLayout contentColumn, ViewParent currentParent) {
+        if (sourcesPanel == null) {
+            restoreWhyPanelToAnswerBubble(currentParent);
+            return;
+        }
+        int sourcesIndex = contentColumn.indexOfChild(sourcesPanel);
+        if (sourcesIndex < 0) {
+            restoreWhyPanelToAnswerBubble(currentParent);
+            return;
+        }
+        int targetIndex = Math.min(sourcesIndex + 1, contentColumn.getChildCount());
+        if (currentParent != contentColumn) {
+            if (currentParent instanceof ViewGroup) {
+                ((ViewGroup) currentParent).removeView(whyPanel);
+            }
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+            );
+            params.topMargin = dp(8);
+            contentColumn.addView(whyPanel, targetIndex, params);
+        } else {
+            int currentIndex = contentColumn.indexOfChild(whyPanel);
+            if (currentIndex != targetIndex && currentIndex >= 0) {
+                contentColumn.removeView(whyPanel);
+                contentColumn.addView(whyPanel, Math.min(targetIndex, contentColumn.getChildCount()));
+            }
+            setTopMargin(whyPanel, dp(8));
         }
     }
 
@@ -6931,6 +6999,17 @@ public final class DetailActivity extends AppCompatActivity {
         if (!evidence.isEmpty()) {
             parts.add(evidence);
         }
+        if (sourceCount > 0) {
+            parts.add(sourceCount + " src");
+        }
+        parts.add(expanded ? "Hide" : "Show");
+        return String.join(" | ", parts);
+    }
+
+    static String buildCompactPhoneSourcesTriggerTitle(String baseTitle, int sourceCount, boolean expanded) {
+        ArrayList<String> parts = new ArrayList<>();
+        String title = safe(baseTitle).trim();
+        parts.add(title.isEmpty() ? "Sources" : title);
         if (sourceCount > 0) {
             parts.add(sourceCount + " src");
         }

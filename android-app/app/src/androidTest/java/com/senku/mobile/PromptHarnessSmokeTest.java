@@ -3453,8 +3453,11 @@ public final class PromptHarnessSmokeTest {
                     return;
                 }
 
+                boolean visibleSourceTitleTrigger = sourcesTitle != null
+                    && isVisible(sourcesTitle)
+                    && containsAny(safe(String.valueOf(sourcesTitle.getText())), sourcesTitleLabel);
                 int visibleSourceCount = visibleButtonCount(sourcesContainer) + visibleButtonCount(inlineSourcesContainer);
-                if (visibleSourceCount <= 0) {
+                if (visibleSourceCount <= 0 && !visibleSourceTitleTrigger) {
                     failure[0] = "generated detail should keep at least one source trigger visible after settling";
                     return;
                 }

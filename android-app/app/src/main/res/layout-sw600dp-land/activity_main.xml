@@ -143,7 +143,7 @@
                 android:fontFamily="monospace"
                 android:includeFontPadding="false"
                 android:maxLines="1"
-                android:text="HOME  SENKU  &#8226;  Field manual &#8226; ed.2"
+                android:text="Home  Senku  &#8226;  Field manual &#8226; ed.2"
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:textColor="@color/senku_rev03_ink_1"
                 android:textStyle="bold" />
@@ -153,7 +153,7 @@
                 android:layout_height="wrap_content"
                 android:fontFamily="monospace"
                 android:includeFontPadding="false"
-                android:text="754 GUIDES"
+                android:text="754 guides"
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:textColor="@color/senku_rev03_ink_2"
                 android:textStyle="bold" />
@@ -232,7 +232,7 @@
                             android:layout_height="wrap_content"
                             android:fontFamily="monospace"
                             android:includeFontPadding="false"
-                            android:text="754 GUIDES &#8226; ED.2 &#8226; 184 MB"
+                            android:text="754 guides &#8226; ed.2 &#8226; 184 MB"
                             android:textAppearance="?android:attr/textAppearanceSmall"
                             android:textColor="@color/senku_rev03_ink_2"
                             android:textStyle="bold" />
@@ -301,7 +301,7 @@
                         android:layout_marginTop="6dp"
                         android:fontFamily="monospace"
                         android:includeFontPadding="false"
-                        android:text="CATEGORIES - 12"
+                        android:text="Categories - 12"
                         android:textAppearance="?android:attr/textAppearanceSmall"
                         android:textColor="@color/senku_rev03_ink_2"
                         android:textStyle="bold" />
@@ -648,7 +648,7 @@
                     android:layout_height="wrap_content"
                     android:fontFamily="monospace"
                     android:includeFontPadding="false"
-                    android:text="0 RESULTS"
+                    android:text="0 results"
                     android:textAppearance="?android:attr/textAppearanceSmall"
                     android:textColor="@color/senku_rev03_accent"
                     android:textStyle="bold" />
@@ -679,7 +679,7 @@
                         android:layout_height="wrap_content"
                         android:fontFamily="monospace"
                         android:includeFontPadding="false"
-                        android:text="-- FILTER - CATEGORY"
+                        android:text="Filter - category"
                         android:textAppearance="?android:attr/textAppearanceSmall"
                         android:textColor="@color/senku_rev03_ink_2"
                         android:textStyle="bold" />
@@ -746,7 +746,7 @@
                         android:layout_marginTop="20dp"
                         android:fontFamily="monospace"
                         android:includeFontPadding="false"
-                        android:text="-- WINDOW"
+                        android:text="Window"
                         android:textAppearance="?android:attr/textAppearanceSmall"
                         android:textColor="@color/senku_rev03_ink_2"
                         android:textStyle="bold" />
@@ -890,7 +890,7 @@
                         android:layout_marginTop="16dp"
                         android:fontFamily="monospace"
                         android:includeFontPadding="false"
-                        android:text="TAP TO OPEN"
+                        android:text="Tap to open"
                         android:textAppearance="?android:attr/textAppearanceSmall"
                         android:textColor="@color/senku_rev03_ink_2"
                         android:textStyle="bold" />

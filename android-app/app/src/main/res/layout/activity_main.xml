@@ -51,11 +51,11 @@
             android:fontFamily="monospace"
             android:includeFontPadding="false"
             android:maxLines="1"
-            android:text="HOME  SENKU  &#8226;  ed.2"
+            android:text="Home  Senku  &#8226;  ed.2"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:textColor="@color/senku_rev03_ink_1"
             android:textSize="10sp"
-            android:textStyle="bold" />
+            android:textStyle="normal" />
 
         <ImageView
             android:layout_width="16dp"
@@ -128,7 +128,7 @@
                     android:layout_height="wrap_content"
                     android:fontFamily="monospace"
                     android:includeFontPadding="false"
-                    android:text="ED.2 &#8226; 184 MB"
+                    android:text="ed.2 &#8226; 184 MB"
                     android:textAppearance="?android:attr/textAppearanceSmall"
                     android:textColor="@color/senku_rev03_ink_2"
                     android:textStyle="bold" />
@@ -197,7 +197,7 @@
                 android:layout_marginTop="6dp"
                 android:fontFamily="monospace"
                 android:includeFontPadding="false"
-                android:text="-- CATEGORIES  &#8226;  12"
+                android:text="Categories  &#8226;  12"
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:textColor="@color/senku_rev03_ink_2"
                 android:textStyle="bold" />
@@ -222,7 +222,7 @@
                     android:layout_height="wrap_content"
                     android:fontFamily="monospace"
                     android:includeFontPadding="false"
-                    android:text="-- RECENT THREADS"
+                    android:text="Recent threads"
                     android:textAppearance="?android:attr/textAppearanceSmall"
                     android:textColor="@color/senku_rev03_ink_2"
                     android:textStyle="bold" />
@@ -329,7 +329,7 @@
             android:layout_height="wrap_content"
             android:fontFamily="monospace"
             android:includeFontPadding="false"
-            android:text="0 RESULTS"
+            android:text="0 results"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:textColor="@color/senku_rev03_ink_2"
             android:textStyle="bold" />

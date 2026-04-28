@@ -584,6 +584,7 @@
                 android:visibility="gone">
 
                 <TextView
+                    android:id="@+id/detail_sources_proof_stamp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="monospace"
@@ -594,6 +595,7 @@
                     android:textStyle="bold" />
 
                 <View
+                    android:id="@+id/detail_sources_proof_divider"
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
                     android:layout_marginTop="6dp"

@@ -17,6 +17,27 @@ Missing or non-current packs intentionally make the current-head tests skip on
 dev/hot-swap lanes. Clean installs from current APKs should have the bundled
 271-card pack available.
 
+## Mock Parity Delta Check
+
+After each UI state-pack run, add a short manual delta line beside the new
+state-pack evidence before treating screenshots as review-ready. Use the
+historical mockup bundle at `notes/reviews/senku_mobile_mockups.md` only as a
+non-acceptance visual baseline.
+
+Record:
+
+- state-pack artifact path and status;
+- compared screens/postures;
+- visible deltas from the mockup bundle, especially navigation shell,
+  search/results layout, answer detail metadata, first-launch/install state,
+  counts, labels, and stale/synthetic copy;
+- whether any delta blocks screenshot review or is expected current-product
+  drift.
+
+Keep this check lightweight and local. Do not promote mockups to product truth,
+and do not count this comparison as acceptance evidence; the fixed four-role
+state pack remains the UI acceptance proof.
+
 ## Expected Pack
 
 Current export:

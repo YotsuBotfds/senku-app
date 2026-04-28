@@ -4199,9 +4199,9 @@ public final class MainActivity extends AppCompatActivity {
         String cleanQuery = safe(query).trim();
         String countLabel = resultCount + (resultCount == 1 ? " result" : " results");
         if (cleanQuery.isEmpty() || "guides".equalsIgnoreCase(cleanQuery)) {
-            return "SEARCH - " + countLabel;
+            return "Search - " + countLabel;
         }
-        return appendReviewSearchLatency("SEARCH " + cleanQuery + " - " + countLabel, cleanQuery);
+        return appendReviewSearchLatency("Search " + cleanQuery + " - " + countLabel, cleanQuery);
     }
 
     static String buildPhoneSearchHeaderForTest(String query, int resultCount) {
@@ -4219,18 +4219,18 @@ public final class MainActivity extends AppCompatActivity {
         }
         String lowerStatus = cleanStatus.toLowerCase(Locale.US);
         if (lowerStatus.startsWith("ready offline")) {
-            return "PACK READY";
+            return "Pack ready";
         }
         return cleanStatus;
     }
 
     private static String buildPhoneSearchHeader(String query, int resultCount) {
         String cleanQuery = safe(query).trim();
-        String countLabel = resultCount + (resultCount == 1 ? " RESULT" : " RESULTS");
+        String countLabel = resultCount + (resultCount == 1 ? " result" : " results");
         if (cleanQuery.isEmpty()) {
-            return "SEARCH - " + countLabel;
+            return "Search - " + countLabel;
         }
-        return "SEARCH " + cleanQuery + "    " + countLabel;
+        return "Search " + cleanQuery + "    " + countLabel;
     }
 
     static String buildSearchChromeQueryLabelForTest(String query) {
@@ -4244,9 +4244,9 @@ public final class MainActivity extends AppCompatActivity {
     private static String buildSearchChromeQueryLabel(String query) {
         String cleanQuery = safe(query).trim();
         if (cleanQuery.isEmpty() || "guides".equalsIgnoreCase(cleanQuery)) {
-            return "SEARCH guides";
+            return "Search guides";
         }
-        return "SEARCH " + cleanQuery;
+        return "Search " + cleanQuery;
     }
 
     private String buildSearchChromeCountLabel(String query, int resultCount) {
@@ -4254,7 +4254,7 @@ public final class MainActivity extends AppCompatActivity {
     }
 
     private static String buildSearchChromeCountLabel(String query, int resultCount, boolean productReviewMode) {
-        String countLabel = resultCount + (resultCount == 1 ? " RESULT" : " RESULTS");
+        String countLabel = resultCount + (resultCount == 1 ? " result" : " results");
         return appendReviewSearchLatency(countLabel, query, productReviewMode);
     }
 
@@ -4270,7 +4270,7 @@ public final class MainActivity extends AppCompatActivity {
             || cleanHeader.toLowerCase(Locale.US).contains(REVIEW_SEARCH_LATENCY_LABEL)) {
             return cleanHeader;
         }
-        return cleanHeader + "  \u00B7  " + REVIEW_SEARCH_LATENCY_LABEL.toUpperCase(Locale.US);
+        return cleanHeader + "  \u00B7  " + REVIEW_SEARCH_LATENCY_LABEL;
     }
 
     private static boolean isReviewSearchQuery(String query) {
@@ -4308,15 +4308,15 @@ public final class MainActivity extends AppCompatActivity {
             return;
         }
         if (browseMode) {
-            homeChromeTitleText.setText("HOME  SENKU  \u2022  Field manual \u2022 ed.2");
+            homeChromeTitleText.setText("Home  Senku  \u2022  Field manual \u2022 ed.2");
             return;
         }
         String cleanQuery = safe(query).trim();
         if (cleanQuery.isEmpty() || "guides".equalsIgnoreCase(cleanQuery)) {
-            homeChromeTitleText.setText("SEARCH  SENKU");
+            homeChromeTitleText.setText("Search  Senku");
             return;
         }
-        homeChromeTitleText.setText("SEARCH  '" + cleanQuery + "'");
+        homeChromeTitleText.setText("Search  '" + cleanQuery + "'");
     }
 
     private void updateTabletSearchPreview() {
@@ -4330,7 +4330,7 @@ public final class MainActivity extends AppCompatActivity {
         SearchResult result = items.get(0);
         if (tabletSearchPreviewKicker != null) {
             String guideId = safe(result.guideId).trim();
-            tabletSearchPreviewKicker.setText("PREVIEW" + (guideId.isEmpty() ? "" : " - " + guideId));
+            tabletSearchPreviewKicker.setText("Preview" + (guideId.isEmpty() ? "" : " - " + guideId));
         }
         if (tabletSearchPreviewTitle != null) {
             tabletSearchPreviewTitle.setText(firstNonEmpty(result.title, "Guide preview"));
@@ -4363,7 +4363,7 @@ public final class MainActivity extends AppCompatActivity {
 
     private static String buildTabletPreviewMetaStatic(SearchResult result) {
         if (isReviewPreviewResult(result)) {
-            return "STARTER  \u00B7  17 SECTIONS";
+            return "Starter  \u00B7  17 sections";
         }
         ArrayList<String> parts = new ArrayList<>();
         addNonEmptyPartStatic(parts, result == null ? null : result.contentRole);
@@ -4372,7 +4372,7 @@ public final class MainActivity extends AppCompatActivity {
         if (parts.isEmpty()) {
             addNonEmptyPartStatic(parts, result == null ? null : result.subtitle);
         }
-        return parts.isEmpty() ? "SOURCE GUIDE" : TextUtils.join("  -  ", parts).toUpperCase(Locale.US);
+        return parts.isEmpty() ? "Source guide" : TextUtils.join("  \u00B7  ", parts);
     }
 
     private static String buildTabletPreviewBodyStatic(SearchResult result) {

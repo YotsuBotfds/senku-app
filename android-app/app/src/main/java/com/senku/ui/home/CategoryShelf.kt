@@ -102,7 +102,7 @@ fun CategoryShelf(
     onCategorySelected: (CategoryShelfItemModel) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val verticalGap = 2.dp
+    val verticalGap = 3.dp
 
     Column(
         modifier = modifier.fillMaxWidth(),
@@ -150,7 +150,7 @@ private fun CategoryGrid(
     selectionEnabled: Boolean,
     onCategorySelected: (CategoryShelfItemModel) -> Unit,
 ) {
-    val gap = 2.dp
+    val gap = 3.dp
     items.chunked(columns).forEach { rowItems ->
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -181,7 +181,7 @@ private fun PhoneCategoryCard(
     cardHeight: Dp = 74.dp,
 ) {
     val colors = SenkuTheme.colors
-    val corner = 1.dp
+    val corner = 6.dp
     val compactGrid = cardHeight <= 36.dp
     val horizontalPadding = if (compactGrid) 6.dp else 8.dp
     val verticalPadding = if (compactGrid) 2.dp else 4.dp
@@ -196,10 +196,10 @@ private fun PhoneCategoryCard(
                     contentDescription = item.contentDescription
                 }
             },
-        color = colors.bg0,
+        color = colors.bg1,
         contentColor = colors.ink0,
         shape = RoundedCornerShape(corner),
-        border = BorderStroke(1.dp, colors.hairlineStrong),
+        border = BorderStroke(1.dp, colors.hairline),
         enabled = enabled,
         onClick = onClick,
     ) {
@@ -221,7 +221,7 @@ private fun PhoneCategoryCard(
                 style = SenkuTheme.typography.uiBody.copy(
                     fontSize = if (compactGrid) 9.5.sp else 10.sp,
                     lineHeight = if (compactGrid) 10.5.sp else 12.sp,
-                    fontWeight = FontWeight.Bold,
+                    fontWeight = FontWeight.Medium,
                 ),
                 color = colors.ink0,
                 maxLines = 1,
@@ -262,10 +262,10 @@ private fun TabletCategoryRow(
                     contentDescription = item.contentDescription
                 }
             },
-        color = colors.bg0,
+        color = colors.bg1,
         contentColor = colors.ink0,
-        shape = RoundedCornerShape(1.dp),
-        border = BorderStroke(1.dp, colors.hairlineStrong),
+        shape = RoundedCornerShape(6.dp),
+        border = BorderStroke(1.dp, colors.hairline),
         enabled = enabled,
         onClick = onClick,
     ) {

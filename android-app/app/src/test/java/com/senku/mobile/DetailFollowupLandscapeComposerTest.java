@@ -178,6 +178,26 @@ public final class DetailFollowupLandscapeComposerTest {
     }
 
     @Test
+    public void phonePortraitSourcesUseQuietCollapsedTriggerTitle() {
+        assertEquals(
+            "Source guides | 3 src | Show",
+            DetailActivity.buildCompactPhoneSourcesTriggerTitle("Source guides", 3, false)
+        );
+        assertEquals(
+            "Sources | Hide",
+            DetailActivity.buildCompactPhoneSourcesTriggerTitle("", 0, true)
+        );
+    }
+
+    @Test
+    public void phonePortraitProofPanelDefersBelowSourceTriggerExceptEmergency() {
+        assertTrue(DetailActivity.shouldDeferPhonePortraitProofPanelBelowSources(true, true, false));
+        assertFalse(DetailActivity.shouldDeferPhonePortraitProofPanelBelowSources(true, true, true));
+        assertFalse(DetailActivity.shouldDeferPhonePortraitProofPanelBelowSources(true, false, false));
+        assertFalse(DetailActivity.shouldDeferPhonePortraitProofPanelBelowSources(false, true, false));
+    }
+
+    @Test
     public void phonePortraitSourceSelectionDoesNotJumpToProvenance() {
         assertFalse(DetailActivity.shouldScrollToProvenanceOnCompactPreview(true, true));
         assertTrue(DetailActivity.shouldScrollToProvenanceOnCompactPreview(true, false));
