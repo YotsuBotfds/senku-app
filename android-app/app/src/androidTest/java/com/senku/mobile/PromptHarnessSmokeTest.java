@@ -4627,6 +4627,10 @@ public final class PromptHarnessSmokeTest {
             "tablet answer detail should accept source selection through Compose state",
             setPrivateField(activity, "selectedSourceKey", sourceKey)
         );
+        Assert.assertTrue(
+            "tablet answer detail should mark test source selection as explicit",
+            setPrivateField(activity, "tabletSourceSelectionExplicit", true)
+        );
         invokePrivateNoArgMethod(activity, "syncTabletDetailScreen");
         return true;
     }
