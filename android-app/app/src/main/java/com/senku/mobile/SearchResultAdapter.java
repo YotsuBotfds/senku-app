@@ -545,7 +545,7 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
     }
 
     private static String buildTabletScoreLabel(int position) {
-        return "- " + tabletScoreForPosition(position);
+        return "\u2713 " + tabletScoreForPosition(position);
     }
 
     private static int tabletScoreForPosition(int position) {

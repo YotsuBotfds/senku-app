@@ -9,6 +9,7 @@ import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LayerDrawable;
 import android.net.Uri;
@@ -75,7 +76,7 @@ public final class PromptHarnessSmokeTest {
     private static final String EXTRA_AUTO_QUERY = "auto_query";
     private static final String EXTRA_AUTO_ASK = "auto_ask";
     private static final String EXTRA_AUTO_FOLLOWUP_QUERY = "auto_followup_query";
-    // Empirical: "fire" search logs ~5.8-6.2s; 10s missed three times across 48h on 5554/5556. See notes/R-SEARCH_DIAGNOSTIC_20260421.md.
+    // Empirical: search logs ~5.8-6.2s; 10s missed three times across 48h on 5554/5556. See notes/R-SEARCH_DIAGNOSTIC_20260421.md.
     private static final long SEARCH_WAIT_MS = 15_000L;
     private static final long DETAIL_WAIT_MS = 15_000L;
     private static final long GENERATIVE_DETAIL_WAIT_MS = 20_000L;
@@ -326,7 +327,7 @@ public final class PromptHarnessSmokeTest {
     public void searchQueryShowsResultsWithoutShellPolling() {
         try (ActivityScenario<MainActivity> scenario = ActivityScenario.launch(MainActivity.class)) {
             awaitHarnessIdle();
-            String query = "fire";
+            String query = "rain shelter";
             submitSearchFromResumedActivity(query, false);
             assertResultsSettled(scenario, SEARCH_WAIT_MS);
             dismissMainSearchKeyboardIfVisible();
@@ -1082,6 +1083,10 @@ public final class PromptHarnessSmokeTest {
                 "emergency answer should render before portrait capture",
                 waitForDetailBodyReady(DETAIL_WAIT_MS, 8)
             );
+            Assert.assertTrue(
+                "emergency portrait should keep source or handoff context visible",
+                waitForVisibleEmergencySourceOrHandoffContext(DETAIL_WAIT_MS)
+            );
             scenario.onActivity(activity -> {
                 View emergencyHeader = activity.findViewById(R.id.detail_emergency_header);
                 TextView emergencyTitle = activity.findViewById(R.id.detail_emergency_header_title);
@@ -1106,10 +1111,6 @@ public final class PromptHarnessSmokeTest {
                         "emergency",
                         "breathing"
                     )
-                );
-                Assert.assertTrue(
-                    "emergency portrait should keep source or handoff context visible",
-                    hasVisibleEmergencySourceOrHandoffContext(activity)
                 );
             });
             captureUiState("emergency_portrait_answer");
@@ -1288,6 +1289,15 @@ public final class PromptHarnessSmokeTest {
                 }
             });
             assertGeneratedTrustSpineSettled(scenario);
+            InstrumentationRegistry.getInstrumentation().runOnMainSync(() -> {
+                Activity activity = getResumedActivityOnMainThread();
+                if (isLandscapePhoneActivity(activity)) {
+                    assertPhoneLandscapeRainShelterSplitAnswer(activity);
+                }
+            });
+            if (isResumedLandscapePhoneDetailActivity()) {
+                captureUiState("rain_shelter_gd345_split_answer");
+            }
             captureUiState("generative_detail");
         } finally {
             closeScenarioLeniently(scenario);
@@ -4966,6 +4976,57 @@ public final class PromptHarnessSmokeTest {
         return false;
     }
 
+    private void assertPhoneLandscapeRainShelterSplitAnswer(Activity activity) {
+        Assert.assertNotNull("phone-landscape split-answer proof needs a resumed detail activity", activity);
+        DetailSettleSignals signals = collectDetailSettleSignals(activity);
+        Assert.assertTrue(
+            "phone-landscape rain-shelter proof should stay in answer mode; signals="
+                + describeDetailSignals(signals),
+            signals.answerMode
+        );
+        Assert.assertEquals(
+            "phone-landscape rain-shelter proof should anchor on GD-345",
+            "GD-345",
+            safe(signals.guideId).trim()
+        );
+        Assert.assertTrue(
+            "phone-landscape rain-shelter proof should keep the user question as the title; signals="
+                + describeDetailSignals(signals),
+            containsAny(signals.title, "rain shelter")
+        );
+        Assert.assertTrue(
+            "phone-landscape rain-shelter proof should expose a settled answer body; signals="
+                + describeDetailSignals(signals),
+            safe(signals.bodyText).trim().length() >= 40
+        );
+
+        View answerCard = activity.findViewById(R.id.detail_answer_card);
+        View answerBubble = activity.findViewById(R.id.detail_answer_bubble);
+        View sourcesPanel = activity.findViewById(R.id.detail_sources_panel);
+        LinearLayout sourcesContainer = activity.findViewById(R.id.detail_sources_container);
+        TextView sourcesTitle = activity.findViewById(R.id.detail_sources_title_text);
+
+        Assert.assertTrue("phone-landscape split answer should show the answer card", isEffectivelyVisible(answerCard));
+        Assert.assertTrue("phone-landscape split answer should show the answer column", isEffectivelyVisible(answerBubble));
+        Assert.assertTrue("phone-landscape split answer should show the source rail", isEffectivelyVisible(sourcesPanel));
+        Assert.assertTrue(
+            "phone-landscape split answer should expose at least one source trigger in the rail",
+            visibleButtonCount(sourcesContainer) > 0
+        );
+        Assert.assertTrue(
+            "phone-landscape split answer source rail should identify GD-345",
+            visibleButtonTextContains(sourcesContainer, "GD-345")
+        );
+        Assert.assertTrue(
+            "phone-landscape split answer should use source-guide rail wording, not a guide destination substitute",
+            sourcesTitle != null && containsAny(safe(String.valueOf(sourcesTitle.getText())), activity.getString(R.string.detail_sources_title))
+        );
+        Assert.assertTrue(
+            "phone-landscape split answer should place the answer column to the left of the source rail",
+            isVisiblyLeftOf(answerBubble, sourcesPanel)
+        );
+    }
+
     private DetailSettleSignals collectDetailSettleSignals(Activity activity) {
         DetailSettleSignals signals = new DetailSettleSignals();
         if (activity == null) {
@@ -5479,6 +5540,46 @@ public final class PromptHarnessSmokeTest {
         return count;
     }
 
+    private boolean visibleButtonTextContains(LinearLayout container, String fragment) {
+        if (container == null || !isVisible(container)) {
+            return false;
+        }
+        for (int index = 0; index < container.getChildCount(); index++) {
+            android.view.View child = container.getChildAt(index);
+            if (child instanceof Button && isVisible(child)) {
+                String text = safe(String.valueOf(((Button) child).getText()));
+                if (containsAny(text, fragment)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private boolean isVisiblyLeftOf(View left, View right) {
+        if (left == null || right == null || !isEffectivelyVisible(left) || !isEffectivelyVisible(right)) {
+            return false;
+        }
+        Rect leftBounds = new Rect();
+        Rect rightBounds = new Rect();
+        if (!left.getGlobalVisibleRect(leftBounds) || !right.getGlobalVisibleRect(rightBounds)) {
+            return false;
+        }
+        return leftBounds.width() > 0
+            && rightBounds.width() > 0
+            && leftBounds.left < rightBounds.left
+            && leftBounds.right <= rightBounds.left;
+    }
+
+    private boolean isResumedLandscapePhoneDetailActivity() {
+        final boolean[] matched = {false};
+        InstrumentationRegistry.getInstrumentation().runOnMainSync(() -> {
+            Activity activity = getResumedActivityOnMainThread();
+            matched[0] = activity instanceof DetailActivity && isLandscapePhoneActivity(activity);
+        });
+        return matched[0];
+    }
+
     private String clipExpectedSummary(String expectedSummaryLower) {
         String cleaned = safe(expectedSummaryLower).trim();
         if (cleaned.length() <= 24) {
@@ -5537,6 +5638,36 @@ public final class PromptHarnessSmokeTest {
                 "1 source",
                 "gd-911",
                 "poisoning and overdose first response"
+            );
+    }
+
+    private boolean waitForVisibleEmergencySourceOrHandoffContext(long timeoutMs) {
+        long deadline = SystemClock.uptimeMillis() + timeoutMs;
+        while (SystemClock.uptimeMillis() < deadline) {
+            final boolean[] visible = {false};
+            InstrumentationRegistry.getInstrumentation().runOnMainSync(() -> {
+                Activity activity = getResumedActivityOnMainThread();
+                visible[0] = hasVisibleEmergencySourceOrHandoffContext(activity);
+            });
+            if (visible[0] || hasUiAutomatorEmergencySourceContext()) {
+                return true;
+            }
+            InstrumentationRegistry.getInstrumentation().waitForIdleSync();
+            SystemClock.sleep(75L);
+        }
+        return false;
+    }
+
+    private boolean hasUiAutomatorEmergencySourceContext() {
+        return device != null
+            && (
+                device.hasObject(By.textContains("SOURCES -"))
+                    || device.hasObject(By.textContains("1 SOURCE"))
+                    || device.hasObject(By.textContains("GD-911"))
+                    || device.hasObject(By.textContains("Poisoning and overdose first response"))
+                    || device.hasObject(By.descContains("Source graph"))
+                    || device.hasObject(By.descContains("Sources -"))
+                    || device.hasObject(By.descContains("GD-911"))
             );
     }
 

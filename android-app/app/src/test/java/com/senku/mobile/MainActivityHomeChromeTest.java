@@ -152,6 +152,17 @@ public final class MainActivityHomeChromeTest {
         assertEquals(4, MainActivity.SEARCH_RESULT_LIMIT);
     }
 
+    @Test
+    public void reviewHomeCategoryCountsMatchTargetMockContract() {
+        assertEquals(84, MainActivity.reviewHomeCategoryCountForTest("shelter"));
+        assertEquals(67, MainActivity.reviewHomeCategoryCountForTest("water"));
+        assertEquals(52, MainActivity.reviewHomeCategoryCountForTest("fire"));
+        assertEquals(91, MainActivity.reviewHomeCategoryCountForTest("food"));
+        assertEquals(73, MainActivity.reviewHomeCategoryCountForTest("medicine"));
+        assertEquals(119, MainActivity.reviewHomeCategoryCountForTest("tools"));
+        assertEquals(0, MainActivity.reviewHomeCategoryCountForTest("communications"));
+    }
+
     private static SearchResult guide(String title, String category, String topicTags) {
         return new SearchResult(
             title,

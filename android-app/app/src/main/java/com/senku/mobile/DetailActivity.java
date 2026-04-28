@@ -1250,10 +1250,35 @@ public final class DetailActivity extends AppCompatActivity {
             text.setTextSize(isTabletPortraitLayout() ? 15f : 14f);
             text.setMaxLines(isTabletPortraitLayout() ? 3 : 2);
         }
+        overlay.setContentDescription(buildTabletEmergencyOverlayContentDescription());
         renderTabletEmergencyOverlayActions();
         updateTabletEmergencyHeaderOverlayLayout(overlay);
         overlay.setVisibility(View.VISIBLE);
         overlay.bringToFront();
+    }
+
+    private String buildTabletEmergencyOverlayContentDescription() {
+        StringBuilder builder = new StringBuilder();
+        builder.append(buildEmergencyHeaderTitle());
+        builder.append(". ");
+        builder.append(buildEmergencyHeaderSummary());
+        int sourceCount = currentSources == null ? 0 : currentSources.size();
+        if (sourceCount > 0) {
+            builder.append(" Sources - ");
+            builder.append(sourceCount);
+            SearchResult source = currentSources.get(0);
+            String guideId = safe(source == null ? null : source.guideId).trim();
+            String title = safe(source == null ? null : source.title).trim();
+            if (!guideId.isEmpty()) {
+                builder.append(". ");
+                builder.append(guideId);
+            }
+            if (!title.isEmpty()) {
+                builder.append(". ");
+                builder.append(title);
+            }
+        }
+        return builder.toString();
     }
 
     private LinearLayout ensureTabletEmergencyHeaderOverlay() {

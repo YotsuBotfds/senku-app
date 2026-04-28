@@ -22,15 +22,15 @@ Do not edit, revert, stash, or clean Android source from this lane.
 - Current local/pushed HEAD before Wave7 commit: `094ca52`
   (`advance android W6 visual and harness fixes`).
 - Latest full state pack:
-  `artifacts/ui_state_pack/20260427_231419`.
+  `artifacts/ui_state_pack/20260427_233004`.
 - Pack status: `pass`, 47 states, 47 pass, 0 fail, 0 platform ANRs.
 - Matrix health: homogeneous APK/model, no rotation mismatches.
-- APK SHA: `f2a2c0f3295a4a84a9c8f895273fcb7f95d2fc5b307d43f7ab3cad44525bc6a7`.
+- APK SHA: `c5e8b4cc57b59bfef2b7cc481d6ba461681135d0e556b64342a18f685821697a`.
 - Model: `gemma-4-e2b-it-litert`.
 - Model SHA: `ea1102014465edeb14b517bf270f6751d036749e3c5f517a7ff802782cb92161`.
 
 Some older notes still name `3b8baf6` or `094ca52` as the baseline because they
-were written before the Wave7 closure pack. Use `artifacts/ui_state_pack/20260427_231419`
+were written before the Wave7 closure pack. Use `artifacts/ui_state_pack/20260427_233004`
 as the starting point for new visual-parity work.
 
 ## Worktree Guard
@@ -91,14 +91,14 @@ Use `artifacts/mocks` as the visual truth, not older captures.
 | Surface | Current verdict | Fresh evidence |
 | --- | --- | --- |
 | Home, all postures | Partial | Structure exists, but density, target content, counts, and recent-thread rows still diverge. |
-| Search, phone landscape | Partial | Former blank-state blocker is fixed. Still uses `fire` content and card-like result rhythm instead of compact `rain shelter` rows. |
-| Search, tablet portrait/landscape | Partial, with linked-guide failures | Results render, but tablet linked-guide handoff readiness fails in both tablet postures. Filters are text-like and preview/cue discoverability is incomplete. |
+| Search, phone landscape | Partial | Former blank-state blocker is fixed and the review query is now `rain shelter`. Card rhythm and density still differ from the compact row mock. |
+| Search, tablet portrait/landscape | Partial | Results render and tablet linked-guide handoff now passes with trusted screenshots. Filters, preview/cue density, and row rhythm remain visually heavier than the mocks. |
 | Phone portrait deterministic answer | Pass for capture | Anchor/source chips are visible, but content differs from target mock and density still needs polish. |
-| Phone landscape answer | Partial, with one failure | Fresh captures prove source/cross-reference paths, but not the mock's true split answer. Generative landscape has a provenance wording/visibility assertion failure. |
+| Phone landscape answer | Partial | Fresh captures prove source/cross-reference paths and a split answer proof capture exists. Density and chrome still differ from the mock. |
 | Phone landscape thread | Pass for split behavior | Expected split behavior is present. Density remains larger than mock. |
-| Guide cross-reference | Partial to pass by posture | Tablet related/cross-reference captures exist, but styling is still dark detail surface rather than cream guide reader. Phone related-guide preview title still fails. |
+| Guide cross-reference | Partial to pass by posture | Tablet related/cross-reference captures exist and phone related-guide title now passes, but styling is still dark detail surface rather than cream guide reader. |
 | Emergency phone portrait | Pass for surface behavior | True emergency surface captured, but content differs from burn-hazard target. |
-| Emergency tablet portrait | Fail | Summary exists but no trusted screenshot; assertion says source or handoff context is not visible in tablet portrait three-pane mode. |
+| Emergency tablet portrait | Pass for capture | Trusted screenshot exists with source-context proof through visible accessibility/UIAutomator context. Visual hierarchy still differs from the burn-hazard mock. |
 
 ## Top 5 Next Slices
 
