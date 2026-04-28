@@ -2100,6 +2100,8 @@ public final class DetailActivity extends AppCompatActivity {
             boolean previewMode = stationRail || compactPreview;
             for (int i = 0; i < currentSources.size(); i++) {
                 SearchResult source = currentSources.get(i);
+                DetailSourcePresentationFormatter.EvidenceCard evidenceCard =
+                    detailSourcePresentationFormatter().buildEvidenceCard(source, i, i == 0 ? "anchor" : "related");
                 Button button = new Button(this);
                 button.setAllCaps(false);
                 button.setBackgroundResource(previewMode ? R.drawable.bg_source_link_selector : R.drawable.bg_source_link);
@@ -2114,12 +2116,11 @@ public final class DetailActivity extends AppCompatActivity {
                     : detailSourcePresentationFormatter().buildSourceButtonLabel(source);
                 button.setText(sourceLabel);
                 button.setContentDescription(
-                    detailSourcePresentationFormatter().buildSourceButtonContentDescription(
-                        source,
+                    detailSourcePresentationFormatter().buildEvidenceCardRowContentDescription(
+                        evidenceCard,
                         previewMode,
                         i,
-                        currentSources.size(),
-                        i == 0
+                        currentSources.size()
                     )
                 );
                 button.setTextAlignment(View.TEXT_ALIGNMENT_VIEW_START);

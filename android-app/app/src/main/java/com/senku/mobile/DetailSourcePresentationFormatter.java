@@ -117,6 +117,52 @@ final class DetailSourcePresentationFormatter {
         return "Source guide " + safeIndex + " of " + safeTotal + ": " + compactLabel + ". Opens source guide.";
     }
 
+    String buildEvidenceCardRowLabel(EvidenceCard card) {
+        if (card == null) {
+            return "Open guide note";
+        }
+        StringBuilder builder = new StringBuilder();
+        if (!card.guideId.isEmpty()) {
+            builder.append("[").append(card.guideId).append("] ");
+        }
+        builder.append(card.title.isEmpty() ? "Open guide note" : card.title);
+        if (!card.anchorLabel.isEmpty()) {
+            builder.append("\n").append(card.anchorLabel);
+        }
+        return builder.toString().trim();
+    }
+
+    String buildStationEvidenceCardRowLabel(EvidenceCard card, int index, int total) {
+        String label = buildEvidenceCardRowLabel(card);
+        int safeTotal = Math.max(total, 1);
+        int safeIndex = Math.max(0, index) + 1;
+        String role = evidenceCardSpeechRole(card);
+        if (label.isEmpty()) {
+            return String.format(Locale.US, "%s %d/%d", role, safeIndex, safeTotal);
+        }
+        return String.format(Locale.US, "%s %d/%d %s", role, safeIndex, safeTotal, label);
+    }
+
+    String buildEvidenceCardRowContentDescription(EvidenceCard card, boolean opensPreview, int index, int total) {
+        String label = buildEvidenceCardRowLabel(card).replace('\n', ' ').trim();
+        int safeIndex = Math.max(0, index) + 1;
+        int safeTotal = Math.max(total, 1);
+        String role = evidenceCardSpeechRole(card);
+        String match = card == null ? "" : card.matchLabel;
+        StringBuilder builder = new StringBuilder(role);
+        if (safeTotal > 1 || !label.isEmpty()) {
+            builder.append(" ").append(safeIndex).append(" of ").append(safeTotal);
+        }
+        if (!match.isEmpty()) {
+            builder.append(", ").append(match).append(" match");
+        }
+        if (!label.isEmpty()) {
+            builder.append(": ").append(label);
+        }
+        builder.append(opensPreview ? ". Shows source preview." : ". Opens source guide.");
+        return builder.toString();
+    }
+
     String buildStationSourceButtonLabel(SearchResult source, int index, int total, boolean primaryAnchorSource) {
         String label = buildSourceButtonLabel(source);
         int safeTotal = Math.max(total, 1);
@@ -309,6 +355,20 @@ final class DetailSourcePresentationFormatter {
             default:
                 return 72;
         }
+    }
+
+    private static String evidenceCardSpeechRole(EvidenceCard card) {
+        if (card == null) {
+            return "Source guide";
+        }
+        if (card.isAnchor) {
+            return "Anchor guide";
+        }
+        String role = safe(card.roleLabel).trim().toLowerCase(Locale.US);
+        if ("topic".equals(role) || "related".equals(role)) {
+            return "Related guide";
+        }
+        return "Source guide";
     }
 
     private static String firstBodyLine(String body) {

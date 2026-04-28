@@ -163,6 +163,96 @@ public final class DetailSourcePresentationFormatterTest {
     }
 
     @Test
+    public void evidenceCardRowLabelPreservesCurrentSourceButtonShape() {
+        DetailSourcePresentationFormatter formatter = new DetailSourcePresentationFormatter(null);
+        DetailSourcePresentationFormatter.EvidenceCard card = formatter.buildEvidenceCard(
+            new SearchResult(
+                "Emergency Shelter",
+                "",
+                "Pitch ridgeline along prevailing wind.",
+                "",
+                "GD-444",
+                "Ridge Line Setup",
+                "survival",
+                "hybrid"
+            ),
+            0,
+            "anchor"
+        );
+
+        assertEquals(
+            "[GD-444] Emergency Shelter\nRidge Line Setup",
+            formatter.buildEvidenceCardRowLabel(card)
+        );
+    }
+
+    @Test
+    public void evidenceCardRowContentDescriptionCarriesRoleRankAndMatch() {
+        DetailSourcePresentationFormatter formatter = new DetailSourcePresentationFormatter(null);
+        DetailSourcePresentationFormatter.EvidenceCard anchorCard = formatter.buildEvidenceCard(
+            new SearchResult(
+                "Emergency Shelter",
+                "",
+                "Pitch ridgeline along prevailing wind.",
+                "",
+                "GD-444",
+                "Ridge Line Setup",
+                "survival",
+                "hybrid"
+            ),
+            0,
+            "anchor"
+        );
+        DetailSourcePresentationFormatter.EvidenceCard relatedCard = formatter.buildEvidenceCard(
+            new SearchResult(
+                "Rainwater Catchment",
+                "",
+                "",
+                "Use first-flush diversion before storage.\nKeep tank covered.",
+                "GD-215",
+                "Storage Prep",
+                "water",
+                "lexical"
+            ),
+            2,
+            "related"
+        );
+
+        assertEquals(
+            "Anchor guide 1 of 2, 93% match: [GD-444] Emergency Shelter Ridge Line Setup. Shows source preview.",
+            formatter.buildEvidenceCardRowContentDescription(anchorCard, true, 0, 2)
+        );
+        assertEquals(
+            "Related guide 3 of 3, 66% match: [GD-215] Rainwater Catchment Storage Prep. Opens source guide.",
+            formatter.buildEvidenceCardRowContentDescription(relatedCard, false, 2, 3)
+        );
+    }
+
+    @Test
+    public void stationEvidenceCardRowLabelUsesCompactMetadataPrefix() {
+        DetailSourcePresentationFormatter formatter = new DetailSourcePresentationFormatter(null);
+        DetailSourcePresentationFormatter.EvidenceCard card = formatter.buildEvidenceCard(
+            new SearchResult(
+                "Reviewed source",
+                "",
+                "Reviewed quote",
+                "",
+                "GD-898",
+                "Poisoning unknown ingestion",
+                "medicine",
+                "answer-card"
+            ),
+            1,
+            "source"
+        );
+
+        assertEquals(
+            "Source guide 2/4 [GD-898] Reviewed source\nPoisoning unknown ingestion",
+            formatter.buildStationEvidenceCardRowLabel(card, 1, 4)
+        );
+    }
+
+    @Test
     public void inlineSourceChipLabelUsesAnchorGuideAndPlainSeparator() {
         DetailSourcePresentationFormatter formatter = new DetailSourcePresentationFormatter(null);
 
