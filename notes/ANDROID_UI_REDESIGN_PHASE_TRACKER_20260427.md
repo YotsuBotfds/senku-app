@@ -6,20 +6,21 @@ one write target: `notes/ANDROID_UI_REDESIGN_PHASE_TRACKER_20260427.md`.
 
 ## Current Anchor And Proof
 
-- Current pushed anchor: `f9b6e11`
-  (`advance android mock parity wave11`), observed at `HEAD`, `origin/master`,
+- Current pushed anchor: `c06e0c3`
+  (`advance android answer parity wave13`), observed at `HEAD`, `origin/master`,
   and `origin/HEAD` during this refresh.
 - Current technical proof:
-  `artifacts/ui_state_pack/20260428_013056`.
+  `artifacts/ui_state_pack/20260428_020610`.
   - Status: `pass`, 47 states, 47 pass, 0 fail, 0 platform ANRs.
   - Matrix APK homogeneity: `true`.
   - APK SHA:
-    `25363347fe8556cb4595daed1a556f2b86720f1c2616abdbfdf8b91327dbd358`.
+    `0d8a6c6d711d9d4be0c8093c0fb6b82b2cef9341e44cf1c67174a3a08233a779`.
   - Model: `gemma-4-e2b-it-litert`.
   - Model SHA:
     `ea1102014465edeb14b517bf270f6751d036749e3c5f517a7ff802782cb92161`.
   - Rotation mismatch count: 0.
-- Local quality gate passed after the linked-guide search preview binding fix:
+- Local quality gate passed after the wave13 answer, parser, and emergency
+  geometry integration:
   `powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\run_android_local_quality_gate.ps1`.
 - Current target mocks: `artifacts/mocks`, 22 PNGs total:
   - home, search, answer, guide, and thread each cover phone portrait, phone
@@ -28,7 +29,7 @@ one write target: `notes/ANDROID_UI_REDESIGN_PHASE_TRACKER_20260427.md`.
 
 Interpretation:
 
-- `20260428_013056` is the current acceptance-grade technical proof pack for
+- `20260428_020610` is the current acceptance-grade technical proof pack for
   state-pack health, APK homogeneity, model identity, and device rotation.
 - Passing technical proof is not final visual parity. Remaining work is judged
   against `artifacts/mocks` and must cite current screenshots and XML dumps.
@@ -46,6 +47,13 @@ Interpretation:
   audit. It calls out phone guide header density, raw section marker leakage in
   Compose, tablet guide rail semantics, tablet paper content, and
   cross-reference rail contract drift.
+- `notes/ANDROID_VISUAL_QA_20260428_0200.md`: post-wave12 comparison against
+  `artifacts/mocks`. It preserves guide-body parsing, phone guide density,
+  tablet answer-first layout, tablet emergency sizing, and search polish as the
+  highest-value remaining gaps.
+- `notes/ANDROID_EMERGENCY_TABLET_POLISH_20260428.md`: worker note for tablet
+  emergency geometry. Wave13 applied the narrow portrait overlay candidate, but
+  true inline tablet emergency treatment remains a later Compose/tablet phase.
 - `artifacts/mocks`: visual truth for phase closure. Do not modify these files.
 - Existing tracker sections were reconciled into the current phase map below;
   stale latest-proof and older-anchor claims were removed.
@@ -55,24 +63,10 @@ Interpretation:
 - Tracker-Planner may edit only this tracker.
 - Do not edit Android source, generated artifacts, `artifacts/mocks`, or
   protected `notes/PLANNER_HANDOFF_*.md` files from this lane.
-- Current `git status --short` during final sanity pass showed active Android
-  source/resource/test changes outside this planner lane. Treat them as
-  worker-owned and do not revert, reformat, or overwrite them from this lane.
-- Dirty Android files observed:
-  - `android-app/app/src/main/java/com/senku/mobile/DetailActivity.java`
-  - `android-app/app/src/main/java/com/senku/mobile/MainActivity.java`
-  - `android-app/app/src/main/java/com/senku/ui/tablet/TabletDetailScreen.kt`
-  - `android-app/app/src/main/java/com/senku/ui/tablet/ThreadRail.kt`
-  - `android-app/app/src/main/res/drawable/bg_detail_guide_paper_link_row.xml`
-  - `android-app/app/src/main/res/drawable/bg_detail_guide_paper_panel.xml`
-  - `android-app/app/src/main/res/drawable/bg_detail_guide_paper_section_label.xml`
-  - `android-app/app/src/main/res/drawable/bg_detail_guide_paper_shell.xml`
-  - `android-app/app/src/main/res/layout-land/activity_detail.xml`
-  - `android-app/app/src/main/res/layout/activity_detail.xml`
-  - `android-app/app/src/main/res/layout/activity_main.xml`
-  - `android-app/app/src/test/java/com/senku/ui/tablet/StressReadingPolicyTest.kt`
-- Untracked analysis notes may also be active worker outputs. Protected
-  `notes/PLANNER_HANDOFF_*.md` files remain untouched.
+- Current `git status --short` after wave13 push is clean except protected
+  untracked `notes/PLANNER_HANDOFF_*.md` files.
+- Protected `notes/PLANNER_HANDOFF_*.md` files remain untouched and must not be
+  staged as part of redesign proof commits.
 - Every implementation worker starts with:
 
 ```powershell
@@ -108,10 +102,10 @@ Rules:
 
 ## Current Visual Defect Map
 
-Use `artifacts/ui_state_pack/20260428_013056/screenshots` and matching
+Use `artifacts/ui_state_pack/20260428_020610/screenshots` and matching
 `dumps` for fresh comparisons unless a newer phase-specific proof replaces it.
-The visual QA notes used earlier screenshots, so each worker must first confirm
-which gaps still reproduce on the current pack.
+The visual QA notes used this pack or earlier packs as context; each worker must
+first confirm which gaps still reproduce on the current pack.
 
 | Family | Current priority | Remaining gap to check against mocks |
 | --- | --- | --- |
@@ -142,8 +136,8 @@ Write ownership:
 
 Status:
 
-- Current anchor and proof reconciled to `f9b6e11` and
-  `artifacts/ui_state_pack/20260428_013056`.
+- Current anchor and proof reconciled to `c06e0c3` and
+  `artifacts/ui_state_pack/20260428_020610`.
 - Android source, generated artifacts, target mocks, and protected handoffs are
   out of scope for this lane.
 
