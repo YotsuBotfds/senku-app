@@ -15,7 +15,7 @@ class PaperAnswerCardLabelTest {
             compactEvidenceLabel(answer(answerSurfaceLabel = AnswerSurfaceLabel.ReviewedCardEvidence)),
         )
         assertEquals(
-            "Unsure",
+            "• UNSURE",
             compactEvidenceLabel(answer(answerSurfaceLabel = AnswerSurfaceLabel.LimitedFit)),
         )
         assertEquals(
@@ -31,7 +31,7 @@ class PaperAnswerCardLabelTest {
             compactEvidenceLabel(answer(evidence = Evidence.None)),
         )
         assertEquals(
-            "Unsure",
+            "• UNSURE",
             compactEvidenceLabel(
                 AnswerContent(
                     short = "Related guidance only.",
@@ -74,7 +74,7 @@ class PaperAnswerCardLabelTest {
             elapsedSeconds = 0.8,
         )
 
-        assertEquals("2 sources · 0.8s", buildFooterMeta(content))
+        assertEquals("2 SOURCES • 0.8s", buildFooterMeta(content))
     }
 
     @Test
@@ -86,11 +86,11 @@ class PaperAnswerCardLabelTest {
 
         assertEquals(true, shouldShowUncertainFitNotice(content))
         assertEquals(
-            "Unsure",
+            "UNSURE FIT",
             uncertainFitNoticeLabel(content),
         )
         assertEquals(
-            "3 related guides found. No single confident anchor yet.",
+            "Senku found 3 guides that may apply but no single guide is a confident anchor. Treat this as guidance, not procedure. See sources below.",
             uncertainFitNoticeText(content),
         )
     }
@@ -110,9 +110,9 @@ class PaperAnswerCardLabelTest {
     }
 
     @Test
-    fun uncertainFitNotice_isSecondaryWhenArticleHasProse() {
+    fun uncertainFitNotice_isEmphasizedForArticleParity() {
         assertEquals(
-            false,
+            true,
             shouldEmphasizeUncertainFitNotice(
                 answer(
                     answerSurfaceLabel = AnswerSurfaceLabel.LimitedFit,
@@ -133,7 +133,7 @@ class PaperAnswerCardLabelTest {
             ),
         )
         assertEquals(
-            "Unsure fit",
+            "UNSURE FIT",
             uncertainFitNoticeLabel(
                 AnswerContent(
                     short = "",

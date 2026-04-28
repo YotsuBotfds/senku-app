@@ -114,6 +114,38 @@ public final class SessionMemory {
         }
     }
 
+    synchronized void recordTranscriptFixtureTurnForTest(
+        String question,
+        String answerSummary,
+        String answerBody,
+        List<SearchResult> sources,
+        String ruleId,
+        long recordedAtEpochMs
+    ) {
+        String trimmedQuestion = safe(question).trim();
+        if (trimmedQuestion.isEmpty()) {
+            return;
+        }
+        maybeRefreshStickyAnchor(trimmedQuestion, sources);
+        turns.add(new Turn(
+            trimmedQuestion,
+            safe(answerSummary).trim(),
+            safe(answerBody).trim(),
+            summarizeSources(sources),
+            summarizeSourceResults(sources),
+            safe(ruleId).trim(),
+            ReviewedCardMetadata.empty(),
+            null,
+            recordedAtEpochMs
+        ));
+        while (turns.size() > MAX_TURNS) {
+            turns.remove(0);
+            if (anchorResetTurnIndex > 0) {
+                anchorResetTurnIndex -= 1;
+            }
+        }
+    }
+
     public synchronized boolean shouldUseContext(String question) {
         if (turns.isEmpty()) {
             return false;

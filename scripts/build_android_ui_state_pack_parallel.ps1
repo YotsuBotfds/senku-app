@@ -27,6 +27,17 @@ if (-not (Test-Path -LiteralPath $gradlew)) {
 
 $runId = Get-Date -Format "yyyyMMdd_HHmmss"
 $allRoles = @("phone_portrait", "phone_landscape", "tablet_portrait", "tablet_landscape")
+$goalMockFamilies = @("home", "search", "thread", "guide", "answer")
+$goalMockPostures = @("phone-portrait", "phone-landscape", "tablet-portrait", "tablet-landscape")
+$goalMockExpectedNames = @(
+    foreach ($family in $goalMockFamilies) {
+        foreach ($posture in $goalMockPostures) {
+            "{0}-{1}.png" -f $family, $posture
+        }
+    }
+    "emergency-phone-portrait.png"
+    "emergency-tablet-portrait.png"
+) | Sort-Object
 $roleDeviceMatrix = @(
     [pscustomobject]@{ role = "phone_portrait"; device = "emulator-5556"; orientation = "portrait"; avd = "Senku_Large_4"; dimensions = "1080x2400" },
     [pscustomobject]@{ role = "phone_landscape"; device = "emulator-5560"; orientation = "landscape"; avd = "Senku_Large_3"; dimensions = "2400x1080" },
@@ -99,6 +110,13 @@ if ($PlanOnly) {
         max_parallel_devices = [int]$MaxParallelDevices
         effective_max_parallel_devices = [Math]::Max(1, $MaxParallelDevices)
         plan_only = $true
+        goal_pack = [pscustomobject]@{
+            canonical_directory = "mocks"
+            expected_png_count = [int]$goalMockExpectedNames.Count
+            expected_png_names = @($goalMockExpectedNames)
+            validator = "scripts/validate_android_mock_goal_pack.py"
+            excludes_debug_intermediate_screenshots = $true
+        }
         migration_checklist_intent = [pscustomobject]@{
             selected_roles = @($roles)
             host_flags = [pscustomobject]@{
@@ -253,7 +271,22 @@ while ($active.Count -gt 0) {
     Complete-FinishedRoleProcesses -FinishedEntries $finished
 }
 
-& powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File $buildScript -OutputRoot $OutputRoot -RunId $runId -FinalizeOnly -SkipBuild -HostInferenceUrl $HostInferenceUrl -HostInferenceModel $HostInferenceModel
+$finalizeArgs = @(
+    "-NoProfile",
+    "-NonInteractive",
+    "-ExecutionPolicy", "Bypass",
+    "-File", $buildScript,
+    "-OutputRoot", $OutputRoot,
+    "-RunId", $runId,
+    "-FinalizeOnly",
+    "-SkipBuild",
+    "-HostInferenceUrl", $HostInferenceUrl,
+    "-HostInferenceModel", $HostInferenceModel
+)
+if ($SkipHostStates) {
+    $finalizeArgs += "-SkipHostStates"
+}
+& powershell @finalizeArgs
 $finalizeExitCode = $LASTEXITCODE
 $summaryPath = Join-Path $repoRoot (Join-Path (Join-Path $OutputRoot $runId) "summary.json")
 

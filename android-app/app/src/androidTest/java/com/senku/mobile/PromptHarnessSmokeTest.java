@@ -62,6 +62,7 @@ import java.io.FileOutputStream;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Collection;
 import java.util.Locale;
@@ -1451,42 +1452,71 @@ public final class PromptHarnessSmokeTest {
 
     @Test
     public void scriptedSeededFollowUpThreadShowsInlineHistory() throws Exception {
-        RelatedGuideSeed seed = findGuideWithRelations();
-        Assume.assumeNotNull("no guide available for seeded follow-up thread smoke", seed);
-
         Context context = ApplicationProvider.getApplicationContext();
         ChatSessionStore.restore(context);
         String conversationId = ChatSessionStore.createConversation();
         SessionMemory sessionMemory = ChatSessionStore.memoryFor(conversationId);
-        ArrayList<SearchResult> sources = new ArrayList<>();
-        sources.add(seed.guide);
-        sources.add(seed.relatedGuide);
+        ArrayList<SearchResult> initialSources = new ArrayList<>();
+        initialSources.add(threadFixtureSource(
+            "GD-220",
+            "Abrasives Manufacturing",
+            "Guide anchor",
+            "Boundary-level field card for abrasive material and equipment inventory.",
+            "abrasives manufacturing"
+        ));
+        initialSources.add(threadFixtureSource(
+            "GD-132",
+            "Foundry & Metal Casting",
+            "Related safety card",
+            "Area readiness and extreme burn hazard boundaries.",
+            "foundry metal casting"
+        ));
+        ArrayList<SearchResult> followUpSources = new ArrayList<>();
+        followUpSources.add(threadFixtureSource(
+            "GD-345",
+            "Tarp & Cord Shelters",
+            "Rain shelter",
+            "A simple ridgeline shelter requires only tarp, cord, and two anchor points.",
+            "rain shelter tarp cord ridgeline"
+        ));
 
         String initialQuery = "How do I build a simple rain shelter from tarp and cord?";
         String initialAnswer =
-            "Short answer:\nBuild a ridgeline first, then drape and tension the tarp around it.\n\n"
-                + "Steps:\n1. Tie the ridgeline between two anchors.\n2. Center the tarp over the line.\n"
-                + "3. Stake the corners low and adjust runoff.\n\n"
-                + "Limits or safety:\nKeep the low side pointed into runoff, not into sleeping space.";
+            "Build a ridgeline first, then drape and tension the tarp around it. "
+                + "Pitch ridge along prevailing wind.";
         String followUpQuery = "What should I do next after the ridge line is up?";
         String followUpAnswer =
-            "Short answer:\nCenter the tarp, tension the corners, and shape the low edge for runoff.\n\n"
-                + "Steps:\n1. Pull the tarp evenly across the ridgeline.\n2. Stake the windward corners first.\n"
-                + "3. Adjust the remaining corners until water sheds cleanly.\n\n"
-                + "Limits or safety:\nRetension after the first wind gust or rain burst so the shelter does not sag.";
+            "Drape the tarp evenly across the ridge with both edges hanging the same length. "
+                + "Tension the four corners with taut-line hitches; aim for the windward edge to sit closest to the ground.";
 
-        sessionMemory.recordTurn(initialQuery, initialAnswer, sources, null);
-        sessionMemory.recordTurn(followUpQuery, followUpAnswer, sources, null);
+        sessionMemory.recordTranscriptFixtureTurnForTest(
+            initialQuery,
+            initialAnswer,
+            initialAnswer,
+            initialSources,
+            null,
+            fixedLocalTimeEpochMsForThreadFixture(4, 21)
+        );
+        sessionMemory.recordTranscriptFixtureTurnForTest(
+            followUpQuery,
+            followUpAnswer,
+            followUpAnswer,
+            followUpSources,
+            "thread_fixture_gd345_confident",
+            fixedLocalTimeEpochMsForThreadFixture(4, 23)
+        );
 
         Intent intent = DetailActivity.newAnswerIntent(
             context,
             followUpQuery,
-            "AI-generated answer | Host GPU | Moderate evidence | 2 sources",
+            "GD-345 | confident | 04:23",
             followUpAnswer,
-            sources,
+            followUpSources,
             null,
             conversationId,
-            null
+            "thread_fixture_gd345_confident",
+            OfflineAnswerEngine.AnswerMode.CONFIDENT,
+            OfflineAnswerEngine.ConfidenceLabel.HIGH
         );
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 
@@ -3940,6 +3970,38 @@ public final class PromptHarnessSmokeTest {
             send.performClick();
         });
         InstrumentationRegistry.getInstrumentation().waitForIdleSync();
+    }
+
+    private SearchResult threadFixtureSource(
+        String guideId,
+        String title,
+        String subtitle,
+        String body,
+        String topicTags
+    ) {
+        return new SearchResult(
+            title,
+            subtitle,
+            body,
+            body,
+            guideId,
+            title,
+            "shelter",
+            "fixture",
+            "",
+            "",
+            "",
+            topicTags
+        );
+    }
+
+    private long fixedLocalTimeEpochMsForThreadFixture(int hourOfDay, int minute) {
+        Calendar calendar = Calendar.getInstance(Locale.US);
+        calendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
+        calendar.set(Calendar.MINUTE, minute);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
+        return calendar.getTimeInMillis();
     }
 
     private RelatedGuideSeed findGuideWithRelations() throws Exception {

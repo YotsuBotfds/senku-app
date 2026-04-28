@@ -90,8 +90,8 @@ public final class DetailWarningCopySanitizerTest {
         assertEquals(
             "Stop work immediately. Move to minimum 5 m from active work zone. "
                 + "Clear the floor to 5 m radius. "
-                + "Keep doors and roll-up openings unobstructed. "
-                + "Use GD-132 owner listing.",
+                + "Door and roll-up open and unobstructed. "
+                + "GD-132 lists current owner.",
             cleaned
         );
     }

@@ -3073,7 +3073,7 @@ public final class MainActivity extends AppCompatActivity {
             homeSubtitleText.setText(R.string.home_subtitle);
             return;
         }
-        homeSubtitleText.setText(R.string.external_review_home_subtitle_ready);
+        homeSubtitleText.setText("754 guides \u2022 12 categories \u2022 ready offline \u2022 ed. 2");
     }
 
     private void updateHomeManualStamp() {
@@ -3430,8 +3430,8 @@ public final class MainActivity extends AppCompatActivity {
             int count = tile == null ? 0 : tile.count;
             items.add(new CategoryShelfItemModel(
                 tile == null ? "" : tile.bucketKey,
-                includeCountInLabel ? buildCategoryFilterLabel(label, count) : label,
-                includeCountInLabel ? "" : formatHomeChromeCategoryCount(count),
+                label,
+                formatHomeChromeCategoryCount(count),
                 resolveCategoryShelfAccent(tile == null ? null : tile.bucketKey),
                 tile != null && count > 0,
                 buildHomeChromeCategoryContentDescription(
@@ -4254,7 +4254,7 @@ public final class MainActivity extends AppCompatActivity {
     }
 
     private static String buildSearchChromeCountLabel(String query, int resultCount, boolean productReviewMode) {
-        String countLabel = resultCount + (resultCount == 1 ? " result" : " results");
+        String countLabel = resultCount + (resultCount == 1 ? " RESULT" : " RESULTS");
         return appendReviewSearchLatency(countLabel, query, productReviewMode);
     }
 
@@ -4270,7 +4270,7 @@ public final class MainActivity extends AppCompatActivity {
             || cleanHeader.toLowerCase(Locale.US).contains(REVIEW_SEARCH_LATENCY_LABEL)) {
             return cleanHeader;
         }
-        return cleanHeader + "  \u00B7  " + REVIEW_SEARCH_LATENCY_LABEL;
+        return cleanHeader + " \u2022 " + REVIEW_SEARCH_LATENCY_LABEL.toUpperCase(Locale.US);
     }
 
     private static boolean isReviewSearchQuery(String query) {
@@ -4316,21 +4316,23 @@ public final class MainActivity extends AppCompatActivity {
             homeChromeTitleText.setText("SEARCH SENKU");
             return;
         }
-        homeChromeTitleText.setText("SEARCH " + cleanQuery);
+        homeChromeTitleText.setText(isReviewSearchQuery(cleanQuery)
+            ? "SEARCH '" + cleanQuery + "'"
+            : "SEARCH " + cleanQuery);
     }
 
     private void updateTabletSearchPreview() {
         if (!isTabletSearchLayout() || tabletSearchPreviewRail == null) {
             return;
         }
-        if (!isLandscapeTabletLayout() || items.isEmpty()) {
+        if (items.isEmpty()) {
             tabletSearchPreviewRail.setVisibility(View.GONE);
             return;
         }
         SearchResult result = items.get(0);
         if (tabletSearchPreviewKicker != null) {
             String guideId = safe(result.guideId).trim();
-            tabletSearchPreviewKicker.setText("Preview" + (guideId.isEmpty() ? "" : " - " + guideId));
+            tabletSearchPreviewKicker.setText("PREVIEW" + (guideId.isEmpty() ? "" : " \u2022 " + guideId));
         }
         if (tabletSearchPreviewTitle != null) {
             tabletSearchPreviewTitle.setText(firstNonEmpty(result.title, "Guide preview"));

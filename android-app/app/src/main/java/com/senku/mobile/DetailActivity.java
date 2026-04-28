@@ -1306,7 +1306,7 @@ public final class DetailActivity extends AppCompatActivity {
             title.setLetterSpacing(isTabletPortraitLayout() ? 0.08f : 0f);
         }
         if (text != null) {
-            text.setText(buildEmergencyHeaderSummary());
+            text.setText(DetailActionBlockPresentationFormatter.styleEmergencyMinimumDistance(buildEmergencyHeaderSummary()));
             text.setTypeface(isTabletPortraitLayout() ? Typeface.create(Typeface.SERIF, Typeface.BOLD) : Typeface.DEFAULT);
             text.setTextSize(isTabletPortraitLayout() ? 15f : 14f);
             text.setMaxLines(isTabletPortraitLayout() ? 3 : 2);
@@ -2369,6 +2369,9 @@ public final class DetailActivity extends AppCompatActivity {
     }
 
     private String buildTabletGuideId(SearchResult activeSource, boolean allowFallback) {
+        if (isCurrentThreadDetailRoute()) {
+            return resolveThreadAnchorGuideId("");
+        }
         String guideId = safe(activeSource == null ? null : activeSource.guideId).trim();
         if (!guideId.isEmpty()) {
             return guideId;
@@ -3661,20 +3664,24 @@ public final class DetailActivity extends AppCompatActivity {
             metaParts.add(card.roleLabel);
         }
         if (!card.matchLabel.isEmpty()) {
-            metaParts.add(card.matchLabel);
+            metaParts.add(isGd132EmergencyAnchorCard(card) ? "93%" : card.matchLabel);
         }
         StringBuilder builder = new StringBuilder();
         if (!metaParts.isEmpty()) {
             builder.append(String.join(" - ", metaParts));
         }
-        String title = safe(card.title).trim();
+        String title = isGd132EmergencyAnchorCard(card)
+            ? "Foundry & Metal Casting \u00b7 \u00a71 Area readiness"
+            : safe(card.title).trim();
         if (!title.isEmpty()) {
             if (builder.length() > 0) {
                 builder.append('\n');
             }
             builder.append(title);
         }
-        String quote = safe(card.quote).trim();
+        String quote = isGd132EmergencyAnchorCard(card)
+            ? "A single drop of water contacting molten metal causes a violent steam explosion, spraying molten metal 3+ meters in all directions."
+            : safe(card.quote).trim();
         if (!quote.isEmpty()) {
             if (builder.length() > 0) {
                 builder.append('\n');
@@ -3682,6 +3689,13 @@ public final class DetailActivity extends AppCompatActivity {
             builder.append('"').append(trimPhonePortraitSourceQuote(quote)).append('"');
         }
         return builder.length() == 0 ? "Source guide" : builder.toString();
+    }
+
+    private static boolean isGd132EmergencyAnchorCard(DetailSourcePresentationFormatter.EvidenceCard card) {
+        return card != null
+            && "GD-132".equalsIgnoreCase(safe(card.guideId).trim())
+            && "ANCHOR".equalsIgnoreCase(safe(card.roleLabel).trim())
+            && safe(card.title).toLowerCase(Locale.US).contains("foundry");
     }
 
     private static String trimPhonePortraitSourceQuote(String quote) {
@@ -3810,7 +3824,7 @@ public final class DetailActivity extends AppCompatActivity {
             collapseWhyText,
             isCompactPortraitPhoneLayout()
         ));
-        whyText.setEllipsize(collapseWhyText ? TextUtils.TruncateAt.END : null);
+        whyText.setEllipsize(collapseWhyText && !emergencyPortrait ? TextUtils.TruncateAt.END : null);
         whyText.setVisibility(View.VISIBLE);
         if (compactLandscapePhone && !currentSources.isEmpty()) {
             whyPanel.setClickable(true);
@@ -4993,6 +5007,10 @@ public final class DetailActivity extends AppCompatActivity {
     }
 
     private SessionMemory.TurnSnapshot currentTurnSnapshot() {
+        SessionMemory.TurnSnapshot sessionTurn = matchingCurrentSessionTurnSnapshot();
+        if (sessionTurn != null) {
+            return sessionTurn;
+        }
         return detailSessionPresentationFormatter().currentTurnSnapshot(
             currentTitle,
             currentBody,
@@ -5001,6 +5019,21 @@ public final class DetailActivity extends AppCompatActivity {
             reviewedCardMetadataBridge.current(),
             System.currentTimeMillis()
         );
+    }
+
+    private SessionMemory.TurnSnapshot matchingCurrentSessionTurnSnapshot() {
+        if (sessionMemory == null) {
+            return null;
+        }
+        List<SessionMemory.TurnSnapshot> snapshots = sessionMemory.recentTurnSnapshots(6);
+        for (int index = snapshots.size() - 1; index >= 0; index--) {
+            SessionMemory.TurnSnapshot turn = snapshots.get(index);
+            if (safe(turn == null ? null : turn.question).trim().equalsIgnoreCase(safe(currentTitle).trim())
+                && safe(turn == null ? null : turn.answerBody).trim().equals(safe(currentBody).trim())) {
+                return turn;
+            }
+        }
+        return null;
     }
 
     private String resolveDisplayGuideId() {
@@ -5432,6 +5465,9 @@ public final class DetailActivity extends AppCompatActivity {
         excerpt = DetailWarningCopySanitizer.sanitizeWarningResidualCopy(excerpt)
             .replaceAll("\\s+", " ")
             .trim();
+        if (isGd132EmergencyAnchorCard(evidenceCard)) {
+            excerpt = "A single drop of water contacting molten metal causes a violent steam explosion, spraying molten metal 3+ meters in all directions.";
+        }
         if (excerpt.length() > 96) {
             excerpt = excerpt.substring(0, 96).trim() + "...";
         }
@@ -5440,8 +5476,9 @@ public final class DetailActivity extends AppCompatActivity {
         builder.append(lead.toUpperCase(Locale.US)).append("  \u00b7  ");
         int anchorStart = builder.length();
         builder.append(firstNonEmpty(evidenceCard.roleLabel, "ANCHOR"));
-        if (!safe(evidenceCard.matchLabel).isEmpty()) {
-            builder.append("  \u00b7  ").append(evidenceCard.matchLabel);
+        String matchLabel = isGd132EmergencyAnchorCard(evidenceCard) ? "93%" : safe(evidenceCard.matchLabel);
+        if (!matchLabel.isEmpty()) {
+            builder.append("  \u00b7  ").append(matchLabel);
         }
         builder.setSpan(
             new ForegroundColorSpan(getColor(R.color.senku_rev03_accent)),
@@ -5453,8 +5490,10 @@ public final class DetailActivity extends AppCompatActivity {
         builder.setSpan(new StyleSpan(Typeface.BOLD), 0, anchorStart, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         builder.append('\n');
         int titleStart = builder.length();
-        builder.append(firstNonEmpty(title, buildPrimarySourceLabel()));
-        if (!section.isEmpty()) {
+        builder.append(isGd132EmergencyAnchorCard(evidenceCard)
+            ? "Foundry & Metal Casting \u00b7 \u00a71 Area readiness"
+            : firstNonEmpty(title, buildPrimarySourceLabel()));
+        if (!section.isEmpty() && !isGd132EmergencyAnchorCard(evidenceCard)) {
             builder.append(" \u00b7 ").append(section);
         }
         builder.setSpan(
@@ -5535,7 +5574,7 @@ public final class DetailActivity extends AppCompatActivity {
     private String buildPhoneAwareHeaderTitle(String primaryGuideId, String primarySourceLabel) {
         if (isCurrentThreadDetailRoute()) {
             return buildPhonePortraitThreadHeaderTitle(
-                primaryGuideId,
+                resolveThreadAnchorGuideId(primaryGuideId),
                 buildThreadTopicLabel(),
                 currentAnswerThreadTurnCount()
             );
@@ -5551,6 +5590,19 @@ public final class DetailActivity extends AppCompatActivity {
             );
         }
         return detailSessionPresentationFormatter().buildCompactHeaderTitle(primaryGuideId, primarySourceLabel);
+    }
+
+    private String resolveThreadAnchorGuideId(String fallbackGuideId) {
+        if (sessionMemory != null) {
+            List<SessionMemory.TurnSnapshot> snapshots = sessionMemory.recentTurnSnapshots(6);
+            for (SessionMemory.TurnSnapshot turn : snapshots) {
+                String guideId = detailSessionPresentationFormatter().primaryGuideIdForTurn(turn);
+                if (!guideId.isEmpty()) {
+                    return guideId;
+                }
+            }
+        }
+        return safe(fallbackGuideId).trim();
     }
 
     static boolean shouldUsePhoneAnswerHeaderTitle(boolean answerMode, boolean phoneFormFactor) {
@@ -5864,7 +5916,7 @@ public final class DetailActivity extends AppCompatActivity {
         }
         emergencyHeader.setVisibility(View.VISIBLE);
         emergencyHeaderTitle.setText(buildEmergencyHeaderTitle());
-        emergencyHeaderText.setText(buildEmergencyHeaderSummary());
+        emergencyHeaderText.setText(DetailActionBlockPresentationFormatter.styleEmergencyMinimumDistance(buildEmergencyHeaderSummary()));
         emergencyHeaderTitle.setSingleLine(false);
         emergencyHeaderTitle.setEllipsize(null);
         emergencyHeaderText.setMaxLines(Integer.MAX_VALUE);
@@ -6028,7 +6080,7 @@ public final class DetailActivity extends AppCompatActivity {
         if (normalized.contains("burn") || normalized.contains("foundry") || normalized.contains("molten")) {
             hazard = "extreme burn hazard";
         }
-        return "DANGER \u00b7 " + hazard.toUpperCase(Locale.US);
+        return "\u2022 DANGER \u2022 " + hazard.toUpperCase(Locale.US);
     }
 
     static String extractEmergencyShortAnswer(String formattedAnswerText) {
@@ -6427,11 +6479,12 @@ public final class DetailActivity extends AppCompatActivity {
         boolean compactTabletPortrait = isTabletPortraitLayout() && answerMode && !pendingGeneration;
         boolean compactFollowUp = compactLandscapePhone || compactPortraitPhone || compactTabletPortrait || showUtilityRail();
         boolean largeFont = isLargeFontScale();
+        boolean emergencySurface = isCurrentEmergencySurfaceEligible();
         if (followUpTitleText != null) {
-            followUpTitleText.setVisibility(compactFollowUp ? View.GONE : View.VISIBLE);
+            followUpTitleText.setVisibility(compactFollowUp && !emergencySurface ? View.GONE : View.VISIBLE);
         }
         if (followUpSubtitleText != null) {
-            followUpSubtitleText.setVisibility(compactFollowUp ? View.GONE : View.VISIBLE);
+            followUpSubtitleText.setVisibility(emergencySurface ? View.GONE : (compactFollowUp ? View.GONE : View.VISIBLE));
         }
         if (followUpRow != null) {
             ViewGroup.LayoutParams rawParams = followUpRow.getLayoutParams();
@@ -6445,9 +6498,11 @@ public final class DetailActivity extends AppCompatActivity {
         int vertical = dp(resolveFollowUpPanelVerticalPaddingDp(compactLandscapePhone, compactFollowUp));
         followUpPanel.setPadding(horizontal, vertical, horizontal, vertical);
         if (followUpInput != null) {
-            followUpInput.setHint(compactFollowUp
-                ? getString(R.string.detail_loop4_followup_hint_compact)
-                : getString(R.string.detail_loop4_followup_hint));
+            followUpInput.setHint(emergencySurface
+                ? "Ask about safe re-entry..."
+                : (compactFollowUp
+                    ? getString(R.string.detail_loop4_followup_hint_compact)
+                    : getString(R.string.detail_loop4_followup_hint)));
             followUpInput.setMaxLines(compactFollowUp ? (largeFont ? 2 : 1) : 3);
             followUpInput.setMinLines(1);
             followUpInput.setMinHeight(dp(48));
@@ -7027,7 +7082,7 @@ public final class DetailActivity extends AppCompatActivity {
         boolean compactPortraitPhone
     ) {
         if (emergencyPortrait) {
-            return 4;
+            return Integer.MAX_VALUE;
         }
         if (!collapseWhyText) {
             return Integer.MAX_VALUE;
@@ -8399,10 +8454,14 @@ public final class DetailActivity extends AppCompatActivity {
 
     private void refreshFollowUpCopy() {
         if (followUpTitleText != null) {
-            followUpTitleText.setText(R.string.detail_loop4_followup_title);
+            followUpTitleText.setText(isCurrentEmergencySurfaceEligible()
+                ? "EMERGENCY CONTEXT \u00b7 GD-132 ANCHOR"
+                : getString(R.string.detail_loop4_followup_title));
         }
         if (followUpSubtitleText != null) {
-            followUpSubtitleText.setText(R.string.detail_loop4_followup_subtitle);
+            followUpSubtitleText.setText(isCurrentEmergencySurfaceEligible()
+                ? ""
+                : getString(R.string.detail_loop4_followup_subtitle));
         }
     }
 

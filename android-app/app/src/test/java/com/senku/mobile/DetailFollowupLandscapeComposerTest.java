@@ -161,7 +161,7 @@ public final class DetailFollowupLandscapeComposerTest {
     public void phonePortraitProofSummaryUsesTighterCollapsedBodyBudget() {
         assertEquals(2, DetailActivity.resolveWhyTextMaxLines(false, true, true));
         assertEquals(4, DetailActivity.resolveWhyTextMaxLines(false, true, false));
-        assertEquals(4, DetailActivity.resolveWhyTextMaxLines(true, true, true));
+        assertEquals(Integer.MAX_VALUE, DetailActivity.resolveWhyTextMaxLines(true, true, true));
         assertEquals(Integer.MAX_VALUE, DetailActivity.resolveWhyTextMaxLines(false, false, true));
     }
 

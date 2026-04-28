@@ -22,6 +22,7 @@ $gradlew = Join-Path $androidRoot "gradlew.bat"
 $smokeScript = Join-Path $PSScriptRoot "run_android_instrumented_ui_smoke.ps1"
 $detailFollowupScript = Join-Path $PSScriptRoot "run_android_detail_followup.ps1"
 $commonHarnessModule = Join-Path $PSScriptRoot "android_harness_common.psm1"
+$goalPackValidator = Join-Path $PSScriptRoot "validate_android_mock_goal_pack.py"
 
 if (-not (Test-Path -LiteralPath $gradlew)) {
     throw "gradlew.bat not found at $gradlew"
@@ -35,8 +36,187 @@ if (-not (Test-Path -LiteralPath $detailFollowupScript)) {
 if (-not (Test-Path -LiteralPath $commonHarnessModule)) {
     throw "android_harness_common.psm1 not found at $commonHarnessModule"
 }
+if (-not (Test-Path -LiteralPath $goalPackValidator)) {
+    throw "validate_android_mock_goal_pack.py not found at $goalPackValidator"
+}
 
 Import-Module $commonHarnessModule -Force -DisableNameChecking
+
+$GoalMockFamilies = @("home", "search", "thread", "guide", "answer")
+$GoalMockRoles = @("phone_portrait", "phone_landscape", "tablet_portrait", "tablet_landscape")
+$GoalMockRoleSlugByRole = @{
+    phone_portrait = "phone-portrait"
+    phone_landscape = "phone-landscape"
+    tablet_portrait = "tablet-portrait"
+    tablet_landscape = "tablet-landscape"
+}
+$GoalMockCaptureSuffixByFamily = @{
+    home = "__home_entry.png"
+    search = "__search_results.png"
+    thread = "__followup_thread.png"
+    guide = "__guide_related_paths.png"
+    answer = "__generative_detail.png"
+    emergency = "__emergency_portrait_answer.png"
+}
+
+function Get-ExpectedGoalMockNames {
+    $names = New-Object System.Collections.Generic.List[string]
+    foreach ($family in $GoalMockFamilies) {
+        foreach ($role in $GoalMockRoles) {
+            $names.Add(("{0}-{1}.png" -f $family, $GoalMockRoleSlugByRole[$role]))
+        }
+    }
+    $names.Add("emergency-phone-portrait.png")
+    $names.Add("emergency-tablet-portrait.png")
+    return @($names | Sort-Object)
+}
+
+function Get-GoalMockCanonicalName {
+    param([string]$Family, [string]$Role)
+
+    if ($Family -eq "emergency") {
+        if ($Role -eq "phone_portrait") { return "emergency-phone-portrait.png" }
+        if ($Role -eq "tablet_portrait") { return "emergency-tablet-portrait.png" }
+        return $null
+    }
+    if (-not $GoalMockRoleSlugByRole.ContainsKey($Role)) {
+        return $null
+    }
+    return ("{0}-{1}.png" -f $Family, $GoalMockRoleSlugByRole[$Role])
+}
+
+function Select-GoalMockScreenshot {
+    param([object]$Entry, [string]$Family)
+
+    $suffix = [string]$GoalMockCaptureSuffixByFamily[$Family]
+    if ([string]::IsNullOrWhiteSpace($suffix)) {
+        return $null
+    }
+    $candidates = @($Entry.screenshots | Where-Object {
+        -not [string]::IsNullOrWhiteSpace([string]$_) -and
+        ([System.IO.Path]::GetFileName([string]$_)).EndsWith($suffix, [System.StringComparison]::Ordinal)
+    })
+    if ($candidates.Count -eq 0) {
+        return $null
+    }
+    return [string]$candidates[0]
+}
+
+function Write-GoalMockZip {
+    param([string]$MocksDir, [string]$ZipPath)
+
+    if (Test-Path -LiteralPath $ZipPath) {
+        Remove-Item -LiteralPath $ZipPath -Force
+    }
+    Add-Type -AssemblyName System.IO.Compression.FileSystem
+    [System.IO.Compression.ZipFile]::CreateFromDirectory($MocksDir, $ZipPath)
+    return $ZipPath
+}
+
+function Invoke-GoalMockValidator {
+    param([string]$Path)
+
+    $validatorOutput = & python -B $goalPackValidator $Path 2>&1
+    if ($LASTEXITCODE -ne 0) {
+        throw ("Goal mock pack validation failed for {0}: {1}" -f $Path, (($validatorOutput | Out-String).Trim()))
+    }
+    foreach ($line in @($validatorOutput)) {
+        if (-not [string]::IsNullOrWhiteSpace([string]$line)) {
+            Write-Host $line
+        }
+    }
+}
+
+function Export-GoalMockPack {
+    param(
+        [object[]]$ResultEntries,
+        [string]$OutputDir,
+        [string]$Timestamp
+    )
+
+    $mocksDir = Join-Path $OutputDir "mocks"
+    if (Test-Path -LiteralPath $mocksDir) {
+        Remove-Item -LiteralPath $mocksDir -Recurse -Force
+    }
+    New-Item -ItemType Directory -Force -Path $mocksDir | Out-Null
+
+    $copied = New-Object System.Collections.Generic.List[object]
+    $failures = New-Object System.Collections.Generic.List[string]
+    foreach ($entry in @($ResultEntries)) {
+        $family = [string]$entry.goal_family
+        if ([string]::IsNullOrWhiteSpace($family)) {
+            continue
+        }
+
+        $canonicalName = Get-GoalMockCanonicalName -Family $family -Role ([string]$entry.role)
+        if ([string]::IsNullOrWhiteSpace($canonicalName)) {
+            continue
+        }
+        if ([string]$entry.status -ne "pass") {
+            $failures.Add(("goal source failed for {0}: {1}/{2}" -f $canonicalName, [string]$entry.role, [string]$entry.state_method))
+            continue
+        }
+
+        $source = Select-GoalMockScreenshot -Entry $entry -Family $family
+        if ([string]::IsNullOrWhiteSpace($source) -or -not (Test-Path -LiteralPath $source)) {
+            $failures.Add(("missing goal source screenshot for {0}: {1}/{2}" -f $canonicalName, [string]$entry.role, [string]$entry.state_method))
+            continue
+        }
+
+        $destination = Join-Path $mocksDir $canonicalName
+        Copy-Item -LiteralPath $source -Destination $destination -Force
+        $copied.Add([pscustomobject]@{
+            name = $canonicalName
+            source = $source
+            destination = $destination
+            role = [string]$entry.role
+            family = $family
+            state_method = [string]$entry.state_method
+        })
+    }
+
+    $expectedNames = Get-ExpectedGoalMockNames
+    $actualNames = @(Get-ChildItem -LiteralPath $mocksDir -Filter "*.png" -File | ForEach-Object { $_.Name } | Sort-Object)
+    $missing = @($expectedNames | Where-Object { $actualNames -notcontains $_ })
+    $extra = @($actualNames | Where-Object { $expectedNames -notcontains $_ })
+    if ($missing.Count -gt 0) {
+        $failures.Add(("missing canonical mock PNG(s): {0}" -f ($missing -join ", ")))
+    }
+    if ($extra.Count -gt 0) {
+        $failures.Add(("unexpected canonical mock PNG(s): {0}" -f ($extra -join ", ")))
+    }
+
+    if ($failures.Count -gt 0) {
+        return [pscustomobject]@{
+            status = "fail"
+            mocks_dir = $mocksDir
+            zip_path = $null
+            expected_count = [int]$expectedNames.Count
+            actual_count = [int]$actualNames.Count
+            expected_names = @($expectedNames)
+            actual_names = @($actualNames)
+            copied = @($copied.ToArray())
+            failures = @($failures)
+        }
+    }
+
+    Invoke-GoalMockValidator -Path $mocksDir
+    $zipPath = Join-Path (Split-Path -Parent $OutputDir) ($Timestamp + "_mocks.zip")
+    $zipPath = Write-GoalMockZip -MocksDir $mocksDir -ZipPath $zipPath
+    Invoke-GoalMockValidator -Path $zipPath
+
+    return [pscustomobject]@{
+        status = "pass"
+        mocks_dir = $mocksDir
+        zip_path = $zipPath
+        expected_count = [int]$expectedNames.Count
+        actual_count = [int]$actualNames.Count
+        expected_names = @($expectedNames)
+        actual_names = @($actualNames)
+        copied = @($copied.ToArray())
+        failures = @()
+    }
+}
 
 function Copy-PackArtifactSet {
     param(
@@ -729,6 +909,7 @@ function New-StateDefinition {
     param(
         [string]$Name = "",
         [string]$Method,
+        [string]$GoalFamily = "",
         [string]$Runner = "instrumented",
         [string]$InitialQuery = "",
         [string]$FollowUpQuery = "",
@@ -739,6 +920,7 @@ function New-StateDefinition {
     return [pscustomobject]@{
         name = $Name
         method = $Method
+        goal_family = $GoalFamily
         runner = $Runner
         initial_query = $InitialQuery
         followup_query = $FollowUpQuery
@@ -795,33 +977,19 @@ if ($normalizedRoleFilter.Count -gt 0) {
 }
 
 $commonStates = @(
-    (New-StateDefinition -Method "homeEntryShowsPrimaryBrowseAndAskLanes"),
-    (New-StateDefinition -Method "searchQueryShowsResultsWithoutShellPolling"),
-    (New-StateDefinition -Method "searchResultsLinkedGuideHandoffOpensLinkedGuideDetail"),
-    (New-StateDefinition -Method "homeGuideIntentShowsGuideConnectionContext"),
-    (New-StateDefinition -Method "deterministicAskNavigatesToDetailScreen"),
-    (New-StateDefinition -Method "generativeAskWithHostInferenceNavigatesToDetailScreen" -HostBacked),
-    (New-StateDefinition -Method "scriptedSeededFollowUpThreadShowsInlineHistory"),
-    (New-StateDefinition -Method "guideDetailShowsRelatedGuideNavigation"),
-    (New-StateDefinition -Method "answerModeSourceSelectionKeepsSourceAnchoredCrossReferenceLane"),
-    (New-StateDefinition -Method "answerModeProvenanceOpenRemainsNeutral")
+    (New-StateDefinition -Method "homeEntryShowsPrimaryBrowseAndAskLanes" -GoalFamily "home"),
+    (New-StateDefinition -Method "searchQueryShowsResultsWithoutShellPolling" -GoalFamily "search"),
+    (New-StateDefinition -Method "scriptedSeededFollowUpThreadShowsInlineHistory" -GoalFamily "thread"),
+    (New-StateDefinition -Method "guideDetailShowsRelatedGuideNavigation" -GoalFamily "guide"),
+    (New-StateDefinition -Method "generativeAskWithHostInferenceNavigatesToDetailScreen" -GoalFamily "answer" -HostBacked)
 )
 
 $specialStatesByRole = @{
     phone_portrait = @(
-        (New-StateDefinition -Method "guideDetailUsesCrossReferenceCopyOffRail"),
-        (New-StateDefinition -Method "emergencyPortraitAnswerShowsImmediateActionState")
-    )
-    phone_landscape = @(
-        (New-StateDefinition -Method "guideDetailUsesCrossReferenceCopyOffRail"),
-        (New-StateDefinition -Method "answerModeLandscapePhoneShowsCompactCrossReferenceCue")
+        (New-StateDefinition -Method "emergencyPortraitAnswerShowsImmediateActionState" -GoalFamily "emergency")
     )
     tablet_portrait = @(
-        (New-StateDefinition -Method "guideDetailUsesCrossReferenceCopyOffRail"),
-        (New-StateDefinition -Method "emergencyPortraitAnswerShowsImmediateActionState")
-    )
-    tablet_landscape = @(
-        (New-StateDefinition -Method "guideDetailDestinationKeepsSourceContextOnTabletLandscape")
+        (New-StateDefinition -Method "emergencyPortraitAnswerShowsImmediateActionState" -GoalFamily "emergency")
     )
 }
 
@@ -921,6 +1089,7 @@ if ($FinalizeOnly) {
                         orientation = $orientation
                         state_method = $stateName
                         test_method = [string]$state.method
+                        goal_family = [string]$state.goal_family
                         status = "fail"
                         summary_path = $stateSummaryPath
                         screenshots = @()
@@ -977,6 +1146,7 @@ if ($FinalizeOnly) {
                     orientation = $orientation
                     state_method = $stateName
                     test_method = [string]$state.method
+                    goal_family = [string]$state.goal_family
                     status = [string]$trustedFollowupSummary.status
                     summary_path = $stateSummaryPath
                     screenshots = $copiedScreenshots
@@ -1025,6 +1195,7 @@ if ($FinalizeOnly) {
                     orientation = $orientation
                     state_method = $stateName
                     test_method = [string]$state.method
+                    goal_family = [string]$state.goal_family
                     status = "fail"
                     summary_path = $stateSummaryPath
                     screenshots = @()
@@ -1050,6 +1221,7 @@ if ($FinalizeOnly) {
                 orientation = $orientation
                 state_method = $stateName
                 test_method = [string]$state.method
+                goal_family = [string]$state.goal_family
                 status = [string]$trustedSummary.status
                 summary_path = $stateSummaryPath
                 screenshots = $copied.screenshots
@@ -1093,6 +1265,11 @@ if ($SkipFinalize) {
     exit 0
 }
 
+$goalMockPack = Export-GoalMockPack -ResultEntries $results -OutputDir $outputDir -Timestamp $timestamp
+if ($goalMockPack.status -ne "pass") {
+    $status = "fail"
+}
+
 $manifest = [pscustomobject]@{
     run_started_utc = $runStartedUtc.ToString("o")
     run_completed_utc = $runCompletedUtc.ToString("o")
@@ -1124,6 +1301,7 @@ $summary = [pscustomobject]@{
     devices = $identityRollup.devices
     installed_pack = $installedPackRollup
     viewport_facts = $viewportFactsRollup
+    goal_mock_pack = $goalMockPack
     manifest_path = $manifestPath
     readme_path = $readmePath
 }
@@ -1141,22 +1319,18 @@ $readme = @(
     '- `tablet_landscape` = `emulator-5558` / `Senku_Tablet` / `2560x1600`',
     '',
     'Included states:',
-    '- home entry',
-    '- search results',
-    '- browse linked-guide handoff',
-    '- home guide-connection detail handoff',
-    '- deterministic detail',
-    '- host generative detail',
-    '- follow-up thread',
-    '- guide-detail related-guide state',
-    '- off-rail cross-reference state',
-    '- answer-source anchored cross-reference state',
-    '- neutral provenance state',
-    '- phone-landscape compact cross-reference cue',
-    '- tablet-landscape source-context state',
+    '- home',
+    '- search',
+    '- thread',
+    '- guide',
+    '- answer',
+    '- emergency phone portrait',
+    '- emergency tablet portrait',
     '',
     'Artifacts:',
-    '- screenshots by posture under `screenshots/`',
+    '- canonical flat mock PNGs under `mocks/`',
+    '- canonical flat mock ZIP at `goal_mock_pack.zip_path` in `summary.json`',
+    '- source screenshots by posture under `screenshots/`',
     '- matching XML dumps under `dumps/`',
     '- per-state summaries under `summaries/`',
     '- machine-readable manifest in `manifest.json`',
@@ -1164,15 +1338,15 @@ $readme = @(
 )
 $readme | Set-Content -LiteralPath $readmePath -Encoding UTF8
 
-$zipPath = Join-Path (Split-Path -Parent $outputDir) ($timestamp + "_bundle.zip")
-$bundleZip = Write-AndroidHarnessZipBundle -SourceDirectory $outputDir -DestinationZip $zipPath
+$bundleZip = $goalMockPack.zip_path
 
 Write-Host ""
-Write-Host "Android UI state pack complete."
+Write-Host "Android goal mock pack complete."
 Write-Host "Output: $outputDir"
 Write-Host "Summary: $summaryPath"
 Write-Host "Manifest: $manifestPath"
-Write-Host "Bundle: $bundleZip"
+Write-Host "Mocks: $($goalMockPack.mocks_dir)"
+Write-Host "Goal bundle: $bundleZip"
 Write-Host ("Pass: {0} / {1}" -f $successCount, $results.Count)
 
 if ($status -ne "pass") {

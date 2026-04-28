@@ -128,6 +128,35 @@ class StressReadingPolicyTest {
     }
 
     @Test
+    fun tabletFoundryGuideRailUsesCanonicalMockSections() {
+        val state = tabletDetailState(
+            guideId = "GD-132",
+            guideTitle = "Foundry & Metal Casting",
+            turns = listOf(
+                threadTurn(
+                    id = "guide",
+                    answer = "\u2014 \u00A7 1 \u00B7 AREA READINESS\n" +
+                        "Reviewed Answer-Card Boundary",
+                )
+            ),
+            detailMode = TabletDetailMode.Guide,
+        )
+
+        assertEquals(
+            listOf(
+                "\u00A71 Area readiness",
+                "\u00A72 Required reading",
+                "\u00A73 Hazard screen",
+                "\u00A74 Material labeling",
+                "\u00A75 No-go triggers",
+                "\u00A76 Access control",
+                "\u00A77 Owner handoff",
+            ),
+            state.resolvedThreadRailTurns().map { it.question },
+        )
+    }
+
+    @Test
     fun tabletGuideEvidenceGraphCountsAnchorPlusVisibleCrossReferences() {
         val state = tabletDetailState(
             guideId = "GD-132",
@@ -155,6 +184,37 @@ class StressReadingPolicyTest {
         assertEquals(6, graph.xrefs.size)
         assertEquals("ANCHOR", graph.xrefs.first().relation)
         assertEquals("GD-132", graph.xrefs.first().id)
+    }
+
+    @Test
+    fun tabletGuideEvidenceGraphCapsAtSixMockReferenceCardsIncludingAnchor() {
+        val state = tabletDetailState(
+            guideId = "GD-132",
+            guideTitle = "Foundry & Metal Casting",
+            anchor = AnchorState(
+                key = "gd-220",
+                id = "GD-220",
+                title = "Abrasives Manufacturing",
+                section = "",
+                snippet = "",
+                hasSource = true,
+            ),
+            xrefs = listOf(
+                XRefState(id = "GD-220", title = "Abrasives Manufacturing"),
+                XRefState(id = "GD-172", title = "Bearing Manufacturing"),
+                XRefState(id = "GD-499", title = "Bellows Forge Blower Construction", relation = "REQUIRED"),
+                XRefState(id = "GD-224", title = "Blacksmithing"),
+                XRefState(id = "GD-225", title = "Bloomery Furnace", relation = "REQUIRED"),
+                XRefState(id = "GD-110", title = "Bridges, Dams & Infra."),
+                XRefState(id = "GD-301", title = "Charcoal Production"),
+            ),
+            detailMode = TabletDetailMode.Guide,
+        )
+
+        val graph = state.resolvedEvidencePaneGraph()
+
+        assertEquals(6, graph.xrefs.size)
+        assertEquals(listOf("GD-220", "GD-172", "GD-499", "GD-224", "GD-225", "GD-110"), graph.xrefs.map { it.id })
     }
 
     @Test

@@ -89,6 +89,30 @@ public final class DetailThreadHistoryRendererTest {
     }
 
     @Test
+    public void answerMetaUsesPrimaryAnchorWhileChipsKeepRelatedGuides() {
+        DetailThreadHistoryRenderer renderer = new DetailThreadHistoryRenderer(
+            null,
+            new DetailSessionPresentationFormatter(null),
+            null
+        );
+        SessionMemory.TurnSnapshot turn = new SessionMemory.TurnSnapshot(
+            "How do I build a simple rain shelter from tarp and cord?",
+            "Build a ridgeline first, then drape and tension the tarp around it.",
+            "Build a ridgeline first, then drape and tension the tarp around it.",
+            List.of("GD-220", "GD-132"),
+            List.of(
+                source("GD-220", "Abrasives Manufacturing", "abrasives manufacturing"),
+                source("GD-132", "Foundry & Metal Casting", "foundry metal casting")
+            ),
+            "",
+            0L
+        );
+
+        assertEquals("A1 \u00B7 ANCHOR GD-220", renderer.buildTurnLabel(1, false, turn, ""));
+        assertEquals(List.of("GD-220", "GD-132"), DetailThreadHistoryRenderer.guideChipLabelsForTurn(turn));
+    }
+
+    @Test
     public void turnLabelsUseDotSeparatedTranscriptTime() {
         DetailThreadHistoryRenderer renderer = new DetailThreadHistoryRenderer(
             null,

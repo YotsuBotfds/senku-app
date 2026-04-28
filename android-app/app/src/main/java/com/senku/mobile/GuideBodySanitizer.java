@@ -89,7 +89,7 @@ final class GuideBodySanitizer {
         boolean pendingAdmonitionLabel = false;
         boolean compactedOpeningDanger = false;
         boolean insideReviewedBoundaryOpening = false;
-        boolean reviewedBoundaryOpeningTextAdded = false;
+        int reviewedBoundaryOpeningTextLines = 0;
         boolean truncateReviewedBoundaryOpening = false;
         int sectionOrdinal = 0;
         for (String rawLine : lines) {
@@ -164,7 +164,7 @@ final class GuideBodySanitizer {
             }
             if (!displayLine.isEmpty()) {
                 if (sectionLine && !sectionValue.isEmpty()) {
-                    if (insideReviewedBoundaryOpening && reviewedBoundaryOpeningTextAdded) {
+                    if (insideReviewedBoundaryOpening && reviewedBoundaryOpeningTextLines > 0) {
                         truncateReviewedBoundaryOpening = true;
                         break;
                     }
@@ -182,7 +182,7 @@ final class GuideBodySanitizer {
                     );
                     if (!sectionParts.heading.isEmpty()) {
                         insideReviewedBoundaryOpening = "Reviewed Answer-Card Boundary".equals(sectionParts.heading);
-                        reviewedBoundaryOpeningTextAdded = false;
+                        reviewedBoundaryOpeningTextLines = 0;
                         appendParsedLine(
                             builder,
                             parsedLines,
@@ -208,20 +208,34 @@ final class GuideBodySanitizer {
                 } else {
                     if (insideReviewedBoundaryOpening) {
                         if (displayLine.isEmpty()) {
-                            if (reviewedBoundaryOpeningTextAdded) {
+                            if (reviewedBoundaryOpeningTextLines > 0) {
                                 truncateReviewedBoundaryOpening = true;
                             }
                             continue;
                         }
-                        if (reviewedBoundaryOpeningTextAdded) {
+                        if (reviewedBoundaryOpeningTextLines >= 2) {
                             truncateReviewedBoundaryOpening = true;
                             break;
                         }
-                        displayLine = trimReviewedBoundaryOpeningBoilerplate(displayLine);
-                        if (displayLine.isEmpty()) {
+                        java.util.ArrayList<String> reviewedLines = splitReviewedBoundaryOpeningLines(
+                            trimReviewedBoundaryOpeningBoilerplate(displayLine)
+                        );
+                        if (reviewedLines.isEmpty()) {
                             continue;
                         }
-                        reviewedBoundaryOpeningTextAdded = true;
+                        for (String reviewedLine : reviewedLines) {
+                            if (reviewedBoundaryOpeningTextLines >= 2) {
+                                truncateReviewedBoundaryOpening = true;
+                                break;
+                            }
+                            appendParsedLine(
+                                builder,
+                                parsedLines,
+                                new GuideBodyLine(GuideBodyLine.Kind.TEXT, reviewedLine, "")
+                            );
+                            reviewedBoundaryOpeningTextLines++;
+                        }
+                        continue;
                     }
                     if (insideAdmonitionBlock
                         && !compactedOpeningDanger
@@ -495,7 +509,7 @@ final class GuideBodySanitizer {
             if (builder.length() > 0) {
                 builder.append(' ');
             }
-            builder.append(candidate);
+            builder.append(sentenceCaseLeadingEvery(candidate));
             if (candidate.toUpperCase(QUERY_LOCALE).startsWith("EVERY ")) {
                 break;
             }
@@ -507,6 +521,37 @@ final class GuideBodySanitizer {
             }
         }
         return builder.length() == 0 ? cleaned : builder.toString();
+    }
+
+    private static String sentenceCaseLeadingEvery(String sentence) {
+        String cleaned = safe(sentence).trim();
+        if (cleaned.startsWith("EVERY ")) {
+            return "Every " + cleaned.substring("EVERY ".length());
+        }
+        return cleaned;
+    }
+
+    private static java.util.ArrayList<String> splitReviewedBoundaryOpeningLines(String line) {
+        java.util.ArrayList<String> lines = new java.util.ArrayList<>();
+        String cleaned = safe(line).trim();
+        if (cleaned.isEmpty()) {
+            return lines;
+        }
+        String splitMarker = " Start with ";
+        int splitIndex = cleaned.indexOf(splitMarker);
+        if (splitIndex > 0) {
+            String first = cleaned.substring(0, splitIndex).trim();
+            String second = cleaned.substring(splitIndex + 1).trim();
+            if (!first.isEmpty()) {
+                lines.add(first);
+            }
+            if (!second.isEmpty()) {
+                lines.add(second);
+            }
+            return lines;
+        }
+        lines.add(cleaned);
+        return lines;
     }
 
     private static boolean nextSentenceStartsWithEvery(String[] sentences, String currentSentence) {

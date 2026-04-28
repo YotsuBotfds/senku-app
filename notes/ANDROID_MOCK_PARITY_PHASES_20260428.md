@@ -336,6 +336,40 @@ closer but still not pixel-level mock parity, especially Android system chrome
 and overall native text weight; answer/detail remains the next high-value
 visual-polish area once the external design review returns.
 
+Wave41 GPT Pro direction intake:
+`codex_screenshot_alignment_notes.md` is the active design-review direction
+for the next integration wave. It reframes closure around a canonical flat
+22-PNG goal export, deterministic mock status chrome (`4:21`, `OFFLINE`, no
+live OS icons), compact breadcrumb headers, and exact fixture/content parity
+for Home, Search, Thread, Guide, Answer, and Emergency. Active parallel slices:
+R1/R2 canonical export and goal-pack validator, R3 answer article/source stack,
+R4 thread transcript fixture, R5 guide reader structure, R6 emergency polish,
+and R7 home/search finish. Integration rule: keep production UI slices inside
+their owning files, treat the 22 target mock names as closure evidence, and run
+the local Android quality gate plus a full homogeneous four-role state pack
+before any push.
+
+Wave41 checkpoint proof:
+`artifacts/ui_state_pack/wave41_gpt_direction/20260428_163834` is green
+(`pass`, 22/22 goal states, fail count 0, ANR count 0), homogeneous APK
+`9fb9f125b9e62c95dc572befbc70c595a80a8f349044cef0af6e6aa6ef02e40c`,
+model `gemma-4-e2b-it-litert`
+(`ea1102014465edeb14b517bf270f6751d036749e3c5f517a7ff802782cb92161`),
+rotation mismatch count 0. The generated canonical mock export validates at
+`artifacts/ui_state_pack/wave41_gpt_direction/20260428_163834/mocks` and
+`artifacts/ui_state_pack/wave41_gpt_direction/20260428_163834_mocks.zip`
+with exactly 22 PNG names. Local full JVM tests, Android local quality gate,
+plan validation, and goal-pack validation passed. Integrated slices: canonical
+goal-pack export/validator, answer rain-shelter prose and three named source
+roles/scores, thread fixture A2 ownership/status, guide section/required
+reading rail polish, emergency danger/93% why-card copy, and Home/Search text
+and query/result polish. Reviewer residuals remain blocking for final mock
+parity: global deterministic frame/status chrome is missing, generated
+dimensions still differ from targets, compact breadcrumb headers are not fully
+shared, guide phone portrait still shows forbidden cross-reference chrome,
+answer source cards/related guides remain collapsed or overpopulated in several
+breakpoints, and tablet thread rails still show generic source/proof content.
+
 ## Wave25+ Plan
 
 | Wave | Slice | Why this order | Avoid overlapping write sets | Acceptance proof |

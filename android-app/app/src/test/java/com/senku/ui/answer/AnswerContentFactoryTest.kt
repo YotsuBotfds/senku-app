@@ -232,18 +232,12 @@ class AnswerContentFactoryTest {
         )
 
         assertEquals(
-            "Build a ridgeline first, then drape and tension the tarp around it. Keep the low edge toward the weather and leave runoff a clear path away from the sheltered area.",
+            "Build a ridgeline first, then drape and tension the tarp around it. Tie the line between two solid anchor points, keep the tarp centered over the ridge, and tension the four corners evenly so the fabric sheds water instead of sagging.\n\n" +
+                "Pitch the tarp ridge along the prevailing wind. Set the windward edge lower than the leeward edge, leave runoff a clear path away from the sleeping area, and re-check each tie after the fabric takes its first load of rain.",
             content.short,
         )
         assertEquals(3, content.sourceCount)
-        assertEquals(
-            listOf(
-                "Tie a taut ridgeline between two solid anchor points.",
-                "Drape the tarp over the line and stake or tie the windward edge low.",
-                "Tension the corners evenly, then adjust the pitch so rain sheds instead of pooling.",
-            ),
-            content.steps,
-        )
+        assertEquals(null, content.steps)
     }
 
     @Test

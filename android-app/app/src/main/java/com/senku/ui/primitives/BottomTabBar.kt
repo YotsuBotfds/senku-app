@@ -267,24 +267,31 @@ private fun BottomTabIcon(
         )
         when (destination) {
             BottomTabDestination.HOME -> {
+                drawRoundRect(
+                    color = tint,
+                    topLeft = Offset(size.width * 0.18f, size.height * 0.18f),
+                    size = Size(size.width * 0.64f, size.height * 0.66f),
+                    cornerRadius = CornerRadius(size.width * 0.04f, size.width * 0.04f),
+                    style = stroke,
+                )
                 drawLine(
                     color = tint,
-                    start = Offset(size.width * 0.30f, size.height * 0.32f),
-                    end = Offset(size.width * 0.70f, size.height * 0.32f),
+                    start = Offset(size.width * 0.50f, size.height * 0.20f),
+                    end = Offset(size.width * 0.50f, size.height * 0.82f),
                     strokeWidth = strokeWidth,
                     cap = StrokeCap.Round,
                 )
                 drawLine(
                     color = tint,
-                    start = Offset(size.width * 0.30f, size.height * 0.50f),
-                    end = Offset(size.width * 0.70f, size.height * 0.50f),
+                    start = Offset(size.width * 0.28f, size.height * 0.35f),
+                    end = Offset(size.width * 0.42f, size.height * 0.35f),
                     strokeWidth = strokeWidth,
                     cap = StrokeCap.Round,
                 )
                 drawLine(
                     color = tint,
-                    start = Offset(size.width * 0.30f, size.height * 0.68f),
-                    end = Offset(size.width * 0.70f, size.height * 0.68f),
+                    start = Offset(size.width * 0.58f, size.height * 0.35f),
+                    end = Offset(size.width * 0.72f, size.height * 0.35f),
                     strokeWidth = strokeWidth,
                     cap = StrokeCap.Round,
                 )

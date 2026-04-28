@@ -236,6 +236,16 @@ internal data class TabletGuideRequiredReadingParts(
     val title: String,
 )
 
+private val FoundryGuideRailSections = listOf(
+    "Area readiness",
+    "Required reading",
+    "Hazard screen",
+    "Material labeling",
+    "No-go triggers",
+    "Access control",
+    "Owner handoff",
+)
+
 internal enum class TabletGuideBodyLineKind {
     Skip,
     RequiredReading,
@@ -1700,6 +1710,23 @@ internal fun TabletDetailState.resolvedThreadRailTurns(): List<ThreadTurnState> 
     if (!isGuideMode()) {
         return turns
     }
+    if (isFoundryGuideReader()) {
+        return FoundryGuideRailSections.mapIndexed { index, label ->
+            ThreadTurnState(
+                id = "foundry-guide-section-${index + 1}",
+                question = "\u00A7${index + 1} $label",
+                answer = AnswerContent(
+                    short = label,
+                    sourceCount = 0,
+                    host = "Guide",
+                    elapsedSeconds = 0.0,
+                ),
+                status = if (index == 0) Status.Active else Status.Done,
+                isActive = index == 0,
+                showQuestion = true,
+            )
+        }
+    }
     val sectionTurns = buildGuideSectionAnchorTurns(turns)
     return sectionTurns.takeIf { it.size > turns.size } ?: turns
 }
@@ -1733,7 +1760,7 @@ internal fun TabletDetailState.resolvedEvidencePaneGraph(): TabletGuideEvidenceP
     }
     val visibleXRefs = tabletSourceGraphVisibleXRefs(graphAnchor, graphXRefs)
     if (!graphAnchor.hasSource) {
-        return TabletGuideEvidencePaneGraph(anchor = graphAnchor, xrefs = visibleXRefs)
+        return TabletGuideEvidencePaneGraph(anchor = graphAnchor, xrefs = visibleXRefs.take(6))
     }
     val anchorId = graphAnchor.id.trim()
     val anchorTitle = graphAnchor.title.trim()
@@ -1744,7 +1771,7 @@ internal fun TabletDetailState.resolvedEvidencePaneGraph(): TabletGuideEvidenceP
     )
     return TabletGuideEvidencePaneGraph(
         anchor = AnchorState("", "", "", "", "", false),
-        xrefs = listOf(anchorRow) + visibleXRefs,
+        xrefs = (listOf(anchorRow) + visibleXRefs).take(6),
     )
 }
 
@@ -1782,11 +1809,21 @@ internal fun guideSectionAnchorLabels(text: String): List<String> {
             val sectionTitle = parseGuideSectionAnchorTitle(line)
             if (sectionTitle != null) {
                 labels += "\u00A7${labels.size + 1} $sectionTitle"
-            } else if (tabletGuideBodyLineKind(line) == TabletGuideBodyLineKind.RequiredReading) {
+            } else if (
+                tabletGuideBodyLineKind(line) == TabletGuideBodyLineKind.RequiredReading &&
+                labels.none { it.endsWith("Required reading", ignoreCase = true) }
+            ) {
                 labels += "\u00A7${labels.size + 1} Required reading"
             }
         }
     return labels
+}
+
+private fun TabletDetailState.isFoundryGuideReader(): Boolean {
+    val identityText = listOf(guideId, guideTitle, anchor.id, anchor.title)
+        .joinToString(" ")
+        .lowercase()
+    return "gd-132" in identityText || "foundry" in identityText
 }
 
 private fun parseGuideSectionAnchorTitle(line: String): String? {

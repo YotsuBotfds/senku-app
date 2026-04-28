@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Typeface;
 import android.text.SpannableString;
 import android.text.Spanned;
+import android.text.style.ForegroundColorSpan;
 import android.text.style.UnderlineSpan;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +20,7 @@ final class DetailActionBlockPresentationFormatter {
     static final String ACTION_LABEL_AVOID = "Avoid";
     static final String ACTION_LABEL_ESCALATE = "Escalate if";
     static final String EMERGENCY_ACTION_HEADING_PREFIX = "IMMEDIATE ACTIONS \u00b7 ";
+    static final int EMERGENCY_DISTANCE_HIGHLIGHT_COLOR = 0xFFC4704B;
     private static final int MAX_EMERGENCY_PORTRAIT_ACTIONS = 4;
 
     enum ActionBlockKind {
@@ -343,19 +345,11 @@ final class DetailActionBlockPresentationFormatter {
         String detail = safe(text).trim();
         detail = detail.replace(
             "Doors and roll-up openings must be unobstructed.",
-            "Keep doors and roll-up openings unobstructed."
-        );
-        detail = detail.replace(
-            "Door and roll-up open and unobstructed.",
-            "Keep doors and roll-up openings unobstructed."
+            "Door and roll-up open and unobstructed."
         );
         detail = detail.replace(
             "GD-132 \u00a71 is current owner.",
-            "Use GD-132 owner listing."
-        );
-        detail = detail.replace(
-            "GD-132 lists current owner.",
-            "Use GD-132 owner listing."
+            "GD-132 lists current owner."
         );
         return detail;
     }
@@ -504,23 +498,19 @@ final class DetailActionBlockPresentationFormatter {
 
     static CharSequence styleEmergencyMinimumDistance(String text) {
         String value = safe(text);
-        String lower = value.toLowerCase(Locale.US);
-        SpanTarget target = emergencyDistanceSpanTarget(lower);
-        int start = target.start;
+        int[] range = emergencyMinimumDistanceSpanRange(value);
+        int start = range[0];
         if (start < 0) {
             return value;
         }
-        int end = start + target.text.length();
-        int activeWorkZoneEnd = lower.indexOf("from active work zone", start);
-        if (activeWorkZoneEnd >= 0) {
-            end = activeWorkZoneEnd + "from active work zone".length();
-        } else {
-            activeWorkZoneEnd = lower.indexOf("from the active work zone", start);
-            if (activeWorkZoneEnd >= 0) {
-                end = activeWorkZoneEnd + "from the active work zone".length();
-            }
-        }
+        int end = range[1];
         SpannableString styled = new SpannableString(value);
+        styled.setSpan(
+            new ForegroundColorSpan(EMERGENCY_DISTANCE_HIGHLIGHT_COLOR),
+            start,
+            end,
+            Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+        );
         styled.setSpan(
             new UnderlineSpan(),
             start,
@@ -532,6 +522,31 @@ final class DetailActionBlockPresentationFormatter {
 
     static boolean shouldStyleEmergencyMinimumDistance(String text) {
         return emergencyDistanceSpanTarget(safe(text).toLowerCase(Locale.US)).start >= 0;
+    }
+
+    static int[] emergencyMinimumDistanceSpanRangeForTest(String text) {
+        return emergencyMinimumDistanceSpanRange(text);
+    }
+
+    private static int[] emergencyMinimumDistanceSpanRange(String text) {
+        String value = safe(text);
+        String lower = value.toLowerCase(Locale.US);
+        SpanTarget target = emergencyDistanceSpanTarget(lower);
+        int start = target.start;
+        if (start < 0) {
+            return new int[] {-1, -1};
+        }
+        int end = start + target.text.length();
+        int activeWorkZoneEnd = lower.indexOf("from active work zone", start);
+        if (activeWorkZoneEnd >= 0) {
+            end = activeWorkZoneEnd + "from active work zone".length();
+        } else {
+            activeWorkZoneEnd = lower.indexOf("from the active work zone", start);
+            if (activeWorkZoneEnd >= 0) {
+                end = activeWorkZoneEnd + "from the active work zone".length();
+            }
+        }
+        return new int[] {start, end};
     }
 
     private static SpanTarget emergencyDistanceSpanTarget(String lower) {

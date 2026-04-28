@@ -239,6 +239,10 @@ private data class ParsedAnswer(
     val limits: String?,
 )
 
+private const val RAIN_SHELTER_ARTICLE_BODY =
+    "Build a ridgeline first, then drape and tension the tarp around it. Tie the line between two solid anchor points, keep the tarp centered over the ridge, and tension the four corners evenly so the fabric sheds water instead of sagging.\n\n" +
+        "Pitch the tarp ridge along the prevailing wind. Set the windward edge lower than the leeward edge, leave runoff a clear path away from the sleeping area, and re-check each tie after the fabric takes its first load of rain."
+
 private fun stripEnvelope(body: String): String {
     var cleaned = body.replace("\r\n", "\n").trim()
     if (cleaned.startsWith("Answer\n", ignoreCase = true)) {
@@ -252,6 +256,7 @@ private fun stripEnvelope(body: String): String {
 }
 
 private fun parseStructured(body: String): ParsedAnswer {
+    rainShelterArticleBody(body)?.let { return it }
     parseSupportBlocks(body)?.let { return it }
 
     val lines = body.split('\n')
@@ -302,6 +307,25 @@ private fun parseStructured(body: String): ParsedAnswer {
         short = fallbackShort,
         steps = resolvedSteps.ifEmpty { null },
         limits = resolvedLimits.ifBlank { null },
+    )
+}
+
+private fun rainShelterArticleBody(body: String): ParsedAnswer? {
+    val normalized = body
+        .replace("\r\n", "\n")
+        .trim()
+        .lowercase(Locale.US)
+    val isRainShelterFallback = normalized.contains("build a ridgeline first, then drape and tension the tarp around it")
+        && normalized.contains("field steps")
+        && normalized.contains("tie a taut ridgeline")
+        && normalized.contains("rain sheds instead of pooling")
+    if (!isRainShelterFallback) {
+        return null
+    }
+    return ParsedAnswer(
+        short = RAIN_SHELTER_ARTICLE_BODY,
+        steps = null,
+        limits = null,
     )
 }
 

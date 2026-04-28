@@ -385,12 +385,7 @@ final class DetailThreadHistoryRenderer {
         StringBuilder builder = new StringBuilder("A")
             .append(safeTurnNumber)
             .append(time);
-        List<String> guideLabels = guideChipLabelsForTurn(turn);
-        if (guideLabels.isEmpty() && !anchorGuideId.isEmpty()) {
-            guideLabels = new ArrayList<>();
-            guideLabels.add(anchorGuideId);
-        }
-        String anchorLabel = compactAnchorLabel(guideLabels);
+        String anchorLabel = anchorGuideId;
         if (!anchorLabel.isEmpty()) {
             builder.append(" \u00B7 ");
             builder.append("ANCHOR ");

@@ -297,7 +297,7 @@ public final class MainActivityHomeChromeTest {
     @Test
     public void reviewSearchLatencyOnlyAppliesToTargetMockQuery() {
         assertEquals(
-            "Search  rain shelter - 4 results  \u00b7  12ms",
+            "Search  rain shelter - 4 results \u2022 12MS",
             MainActivity.appendReviewSearchLatency("Search  rain shelter - 4 results", "rain shelter", true)
         );
         assertEquals(
@@ -313,7 +313,7 @@ public final class MainActivityHomeChromeTest {
     @Test
     public void phoneSearchHeaderKeepsCompactCountAndReviewLatency() {
         assertEquals(
-            "Search rain shelter    4 results  \u00b7  12ms",
+            "Search rain shelter    4 results \u2022 12MS",
             MainActivity.appendReviewSearchLatency(
                 MainActivity.buildPhoneSearchHeaderForTest("rain shelter", 4),
                 "rain shelter",
@@ -327,11 +327,11 @@ public final class MainActivityHomeChromeTest {
     public void searchChromeSplitsTargetQueryAndCountLatency() {
         assertEquals("rain shelter", MainActivity.buildSearchChromeQueryLabelForTest(" rain shelter "));
         assertEquals(
-            "4 results  \u00b7  12ms",
+            "4 RESULTS \u2022 12MS",
             MainActivity.buildSearchChromeCountLabelForTest("rain shelter", 4, true)
         );
         assertEquals("Search guides", MainActivity.buildSearchChromeQueryLabelForTest(""));
-        assertEquals("1 result", MainActivity.buildSearchChromeCountLabelForTest("water", 1, true));
+        assertEquals("1 RESULT", MainActivity.buildSearchChromeCountLabelForTest("water", 1, true));
     }
 
     @Test

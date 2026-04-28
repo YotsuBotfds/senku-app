@@ -338,6 +338,31 @@ public final class DetailSourcePresentationFormatterTest {
     }
 
     @Test
+    public void evidenceCardsUseRainShelterMockRolesAndScores() {
+        DetailSourcePresentationFormatter formatter = new DetailSourcePresentationFormatter(null);
+        SearchResult abrasiveAnchor = reviewedStackResult("GD-220", "Abrasives Manufacturing", "abrasives manufacturing");
+        SearchResult foundryRelated = reviewedStackResult("GD-132", "Foundry & Metal Casting", "foundry metal casting");
+        SearchResult rainShelter = reviewedStackResult("GD-345", "Wood Quality Evaluation for Shelter Construction", "tarp cord rain shelter");
+
+        DetailSourcePresentationFormatter.EvidenceCard anchor =
+            formatter.buildEvidenceCard(abrasiveAnchor, 0, "anchor");
+        DetailSourcePresentationFormatter.EvidenceCard related =
+            formatter.buildEvidenceCard(foundryRelated, 1, "related");
+        DetailSourcePresentationFormatter.EvidenceCard topic =
+            formatter.buildEvidenceCard(rainShelter, 2, "related");
+
+        assertEquals("ANCHOR", anchor.roleLabel);
+        assertEquals("74%", anchor.matchLabel);
+        assertEquals("Abrasives Manufacturing", anchor.title);
+        assertEquals("RELATED", related.roleLabel);
+        assertEquals("68%", related.matchLabel);
+        assertEquals("Foundry & Metal Casting", related.title);
+        assertEquals("TOPIC", topic.roleLabel);
+        assertEquals("61%", topic.matchLabel);
+        assertEquals("Tarp & Cord Shelters", topic.title);
+    }
+
+    @Test
     public void stationSourceButtonLabelDoesNotRelabelClickTargetByIndex() {
         DetailSourcePresentationFormatter formatter = new DetailSourcePresentationFormatter(null);
         SearchResult rainShelter = reviewedStackResult("GD-345", "Wood Quality Evaluation for Shelter Construction", "tarp cord rain shelter");

@@ -3,6 +3,10 @@ package com.senku.mobile;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import android.text.Spanned;
+import android.text.style.ForegroundColorSpan;
+import android.text.style.UnderlineSpan;
+
 import java.util.List;
 
 import org.junit.Test;
@@ -73,7 +77,7 @@ public final class DetailActionBlockPresentationFormatterTest {
                     "1. Stop all hot work. No new charges, no new pours. [GD-132]\n" +
                     "2. Clear the floor to 5 m radius. Move personnel upwind.\n" +
                     "3. Confirm two paths of egress.\n" +
-                    "4. Notify the area owner. Use GD-132 owner listing.",
+                    "4. Notify the area owner. GD-132 lists current owner.",
                 text -> citationFormatter.stripInlineCitationText(text)
             );
 
@@ -95,8 +99,8 @@ public final class DetailActionBlockPresentationFormatterTest {
                     "Immediate actions:\n" +
                     "1. Stop all hot work. No new charges, no new pours.\n" +
                     "2. Clear the floor to 5 m radius. Move personnel upwind.\n" +
-                    "3. Confirm two paths of egress. Keep doors and roll-up openings unobstructed.\n" +
-                    "4. Notify the area owner. Use GD-132 owner listing.\n\n" +
+                    "3. Confirm two paths of egress. Door and roll-up open and unobstructed.\n" +
+                    "4. Notify the area owner. GD-132 lists current owner.\n\n" +
                     "Sources:\n" +
                     "1. GD-132 - Foundry & Metal Casting: Section 1 Area readiness.",
                 text -> citationFormatter.stripInlineCitationText(text)
@@ -104,7 +108,7 @@ public final class DetailActionBlockPresentationFormatterTest {
 
         assertEquals(4, actions.size());
         assertEquals("Notify the area owner", actions.get(3).title);
-        assertEquals("Use GD-132 owner listing.", actions.get(3).detail);
+        assertEquals("GD-132 lists current owner.", actions.get(3).detail);
     }
 
     @Test
@@ -128,9 +132,9 @@ public final class DetailActionBlockPresentationFormatterTest {
         assertEquals("Clear the floor to 5 m radius", actions.get(1).title);
         assertEquals("Move personnel upwind.", actions.get(1).detail);
         assertEquals("Confirm two paths of egress", actions.get(2).title);
-        assertEquals("Keep doors and roll-up openings unobstructed.", actions.get(2).detail);
+        assertEquals("Door and roll-up open and unobstructed.", actions.get(2).detail);
         assertEquals("Notify the area owner", actions.get(3).title);
-        assertEquals("Use GD-132 owner listing.", actions.get(3).detail);
+        assertEquals("GD-132 lists current owner.", actions.get(3).detail);
     }
 
     @Test
@@ -142,16 +146,16 @@ public final class DetailActionBlockPresentationFormatterTest {
                     "STEPS\n" +
                     "1. Stop all hot work. No new charges, no new pours.\n" +
                     "2. Clear the floor to 5 m radius. Move personnel upwind.\n" +
-                    "3. Confirm two paths of egress. Keep doors and roll-up openings unobstructed.\n" +
-                    "4. Notify the area owner. Use GD-132 owner listing.",
+                    "3. Confirm two paths of egress. Door and roll-up open and unobstructed.\n" +
+                    "4. Notify the area owner. GD-132 lists current owner.",
                 text -> citationFormatter.stripInlineCitationText(text)
             );
 
         assertEquals(4, actions.size());
         assertEquals("Stop all hot work", actions.get(0).title);
         assertEquals("Clear the floor to 5 m radius", actions.get(1).title);
-        assertEquals("Keep doors and roll-up openings unobstructed.", actions.get(2).detail);
-        assertEquals("Use GD-132 owner listing.", actions.get(3).detail);
+        assertEquals("Door and roll-up open and unobstructed.", actions.get(2).detail);
+        assertEquals("GD-132 lists current owner.", actions.get(3).detail);
     }
 
     @Test
@@ -168,8 +172,8 @@ public final class DetailActionBlockPresentationFormatterTest {
             DetailActionBlockPresentationFormatter.extractEmergencyActionSpecs(
                 "Stop work immediately.\n\n" +
                     "EMERGENCY ACTIONS\n" +
-                    "1. Confirm two paths of egress. Keep doors and roll-up openings unobstructed.\n" +
-                    "2. Notify the area owner. Use GD-132 owner listing.",
+                    "1. Confirm two paths of egress. Door and roll-up open and unobstructed.\n" +
+                    "2. Notify the area owner. GD-132 lists current owner.",
                 text -> citationFormatter.stripInlineCitationText(text)
             );
 
@@ -187,11 +191,11 @@ public final class DetailActionBlockPresentationFormatterTest {
 
         String formatted = bodyFormatter.formatAnswerBody(
             "Stop work immediately. Move to minimum 5 m from active work zone.\n\n" +
-                "FIELD STEPS\n" +
-                "1. Stop all hot work. No new charges, no new pours.\n" +
-                "2. Clear the floor to a 5 m radius. Move personnel upwind.\n" +
-                "3. Confirm two paths of egress. Keep doors and roll-up openings unobstructed.\n" +
-                "4. Notify the area owner. Use GD-132 owner listing."
+                    "FIELD STEPS\n" +
+                    "1. Stop all hot work. No new charges, no new pours.\n" +
+                    "2. Clear the floor to a 5 m radius. Move personnel upwind.\n" +
+                    "3. Confirm two paths of egress. Door and roll-up open and unobstructed.\n" +
+                    "4. Notify the area owner. GD-132 lists current owner."
         );
         List<DetailActionBlockPresentationFormatter.EmergencyActionSpec> actions =
             DetailActionBlockPresentationFormatter.extractEmergencyActionSpecs(
@@ -202,8 +206,8 @@ public final class DetailActionBlockPresentationFormatterTest {
         assertEquals(4, actions.size());
         assertEquals("Stop all hot work", actions.get(0).title);
         assertEquals("Clear the floor to 5 m radius", actions.get(1).title);
-        assertEquals("Keep doors and roll-up openings unobstructed.", actions.get(2).detail);
-        assertEquals("Use GD-132 owner listing.", actions.get(3).detail);
+        assertEquals("Door and roll-up open and unobstructed.", actions.get(2).detail);
+        assertEquals("GD-132 lists current owner.", actions.get(3).detail);
     }
 
     @Test
@@ -246,8 +250,8 @@ public final class DetailActionBlockPresentationFormatterTest {
                 "Immediate actions:\n" +
                     "1) Stop all hot work. No new charges, no new pours.\n" +
                     "2) Clear the floor to 5 m radius. Move personnel upwind.\n" +
-                    "3) Confirm two paths of egress. Keep doors and roll-up openings unobstructed.\n" +
-                    "4) Notify the area owner. Use GD-132 owner listing.\n\n" +
+                    "3) Confirm two paths of egress. Door and roll-up open and unobstructed.\n" +
+                    "4) Notify the area owner. GD-132 lists current owner.\n\n" +
                     "Evidence:\n" +
                     "1) GD-132 - Foundry & Metal Casting.\n\n" +
                     "Provenance:\n" +
@@ -259,6 +263,7 @@ public final class DetailActionBlockPresentationFormatterTest {
         assertEquals("Stop all hot work", actions.get(0).title);
         assertEquals("Clear the floor to 5 m radius", actions.get(1).title);
         assertEquals("Notify the area owner", actions.get(3).title);
+        assertEquals("GD-132 lists current owner.", actions.get(3).detail);
     }
 
     @Test
@@ -316,8 +321,8 @@ public final class DetailActionBlockPresentationFormatterTest {
         assertEquals(4, actions.size());
         assertEquals("Stop all hot work", actions.get(0).title);
         assertEquals("Clear the floor to 5 m radius", actions.get(1).title);
-        assertEquals("Keep doors and roll-up openings unobstructed.", actions.get(2).detail);
-        assertEquals("Use GD-132 owner listing.", actions.get(3).detail);
+        assertEquals("Door and roll-up open and unobstructed.", actions.get(2).detail);
+        assertEquals("GD-132 lists current owner.", actions.get(3).detail);
     }
 
     @Test
@@ -333,8 +338,8 @@ public final class DetailActionBlockPresentationFormatterTest {
 
         assertEquals(3, actions.size());
         assertEquals("Clear the floor to 5 m radius", actions.get(0).title);
-        assertEquals("Keep doors and roll-up openings unobstructed.", actions.get(1).detail);
-        assertEquals("Use GD-132 owner listing.", actions.get(2).detail);
+        assertEquals("Door and roll-up open and unobstructed.", actions.get(1).detail);
+        assertEquals("GD-132 lists current owner.", actions.get(2).detail);
     }
 
     @Test
@@ -343,6 +348,26 @@ public final class DetailActionBlockPresentationFormatterTest {
             "IMMEDIATE ACTIONS \u00b7 4",
             DetailActionBlockPresentationFormatter.EMERGENCY_ACTION_HEADING_PREFIX + "4"
         );
+    }
+
+    @Test
+    public void emergencyGd132AnchorSourceLabelMatchesTargetCardCopy() {
+        DetailSourcePresentationFormatter.EvidenceCard card =
+            new DetailSourcePresentationFormatter.EvidenceCard(
+                "GD-132",
+                "ANCHOR",
+                "82%",
+                "Foundry & Metal Casting",
+                "Reviewed Answer-Card Boundary, Foundry Safety Quickstart, Emergency Procedures",
+                "Reviewed Answer-Card Boundary",
+                true
+            );
+
+        String label = DetailActivity.buildPhonePortraitSourceCardLabel(card);
+
+        assertTrue(label.contains("GD-132 - ANCHOR - 93%"));
+        assertTrue(label.contains("Foundry & Metal Casting \u00b7 \u00a71 Area readiness"));
+        assertTrue(label.contains("A single drop of water contacting molten metal causes a violent steam explosion"));
     }
 
     @Test
@@ -359,6 +384,18 @@ public final class DetailActionBlockPresentationFormatterTest {
         assertTrue(DetailActionBlockPresentationFormatter.shouldStyleEmergencyMinimumDistance(
             "Move to minimum 5 metres from the active work zone."
         ));
+    }
+
+    @Test
+    public void styleEmergencyMinimumDistanceTargetsMockPhraseAndColor() {
+        String text = "Stop work immediately. Move to minimum 5 m from active work zone. Confirm two paths of egress.";
+        int[] range = DetailActionBlockPresentationFormatter.emergencyMinimumDistanceSpanRangeForTest(text);
+
+        assertEquals(DetailActionBlockPresentationFormatter.EMERGENCY_DISTANCE_HIGHLIGHT_COLOR, 0xFFC4704B);
+        assertEquals(
+            "minimum 5 m from active work zone",
+            text.substring(range[0], range[1])
+        );
     }
 
     @Test
@@ -389,8 +426,8 @@ public final class DetailActionBlockPresentationFormatterTest {
                 "Immediate actions:\n" +
                     "1. Stop all hot work. No new charges, no new pours.\n" +
                     "2. Clear the floor to 5 m radius. Move personnel upwind.\n" +
-                    "3. Confirm two paths of egress. Keep doors and roll-up openings unobstructed.\n" +
-                    "4. Notify the area owner. Use GD-132 owner listing.\n" +
+                    "3. Confirm two paths of egress. Door and roll-up open and unobstructed.\n" +
+                    "4. Notify the area owner. GD-132 lists current owner.\n" +
                     "5. Document the pause for handoff.",
                 text -> citationFormatter.stripInlineCitationText(text)
             );

@@ -60,7 +60,28 @@ REQUIRED_ROOT_FIELDS: dict[str, type | tuple[type, ...]] = {
     "max_parallel_devices": int,
     "effective_max_parallel_devices": int,
     "migration_checklist_intent": dict,
+    "goal_pack": dict,
     "launchers": list,
+}
+
+GOAL_FAMILIES = ("home", "search", "thread", "guide", "answer")
+GOAL_POSTURES = (
+    "phone-portrait",
+    "phone-landscape",
+    "tablet-portrait",
+    "tablet-landscape",
+)
+EXPECTED_GOAL_NAMES = sorted(
+    [f"{family}-{posture}.png" for family in GOAL_FAMILIES for posture in GOAL_POSTURES]
+    + ["emergency-phone-portrait.png", "emergency-tablet-portrait.png"]
+)
+
+REQUIRED_GOAL_PACK_FIELDS: dict[str, type | tuple[type, ...]] = {
+    "canonical_directory": str,
+    "expected_png_count": int,
+    "expected_png_names": list,
+    "validator": str,
+    "excludes_debug_intermediate_screenshots": bool,
 }
 
 REQUIRED_DEVICE_FIELDS: dict[str, type | tuple[type, ...]] = {
@@ -274,6 +295,25 @@ def _validate_launchers(data: dict[str, Any], selected_roles: list[str], errors:
         errors.append("expected root.launchers to contain exactly one launcher for each selected role")
 
 
+def _validate_goal_pack(data: dict[str, Any], errors: list[str]) -> None:
+    goal_pack = data.get("goal_pack")
+    if not isinstance(goal_pack, dict):
+        return
+
+    for key, expected_type in REQUIRED_GOAL_PACK_FIELDS.items():
+        _expect(goal_pack, key, expected_type, errors, "root.goal_pack")
+
+    if goal_pack.get("canonical_directory") != "mocks":
+        errors.append("expected root.goal_pack.canonical_directory to be 'mocks'")
+    if goal_pack.get("expected_png_count") != len(EXPECTED_GOAL_NAMES):
+        errors.append(f"expected root.goal_pack.expected_png_count to be {len(EXPECTED_GOAL_NAMES)}")
+    if goal_pack.get("expected_png_names") != EXPECTED_GOAL_NAMES:
+        errors.append("expected root.goal_pack.expected_png_names to exactly match canonical mock inventory")
+    if goal_pack.get("validator") != "scripts/validate_android_mock_goal_pack.py":
+        errors.append("expected root.goal_pack.validator to be scripts/validate_android_mock_goal_pack.py")
+    _expect_bool_value(goal_pack, "excludes_debug_intermediate_screenshots", True, errors, "root.goal_pack")
+
+
 def validate_plan(path: Path) -> tuple[dict[str, Any] | None, list[str]]:
     if not path.exists():
         return None, [f"plan file not found: {path}"]
@@ -305,6 +345,7 @@ def validate_plan(path: Path) -> tuple[dict[str, Any] | None, list[str]]:
     selected_roles = _validate_selected_roles(data, errors)
     _validate_devices(data, selected_roles, errors)
     _validate_intent(data, selected_roles, errors)
+    _validate_goal_pack(data, errors)
     _validate_launchers(data, selected_roles, errors)
 
     return data, errors
@@ -327,6 +368,7 @@ def main(argv: list[str] | None = None) -> int:
     print("preflight_only: true")
     print(f"selected_roles: {len(data.get('selected_roles', []))}")
     print(f"devices: {len(data.get('devices', []))}")
+    print(f"goal_png_count: {data.get('goal_pack', {}).get('expected_png_count')}")
     return 0
 
 

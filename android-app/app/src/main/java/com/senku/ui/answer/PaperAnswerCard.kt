@@ -442,12 +442,12 @@ private fun evidenceToneColor(
 internal fun compactEvidenceLabel(content: AnswerContent): String {
     return when (content.answerSurfaceLabel) {
         AnswerSurfaceLabel.DeterministicRule -> "Rule match"
-        AnswerSurfaceLabel.LimitedFit -> "Unsure"
+        AnswerSurfaceLabel.LimitedFit -> "\u2022 UNSURE"
         AnswerSurfaceLabel.Abstain -> "No match"
         AnswerSurfaceLabel.ReviewedCardEvidence -> sourceEvidenceLabel(content)
         AnswerSurfaceLabel.GeneratedEvidence,
         AnswerSurfaceLabel.Unknown -> when {
-            content.uncertainFit -> "Unsure"
+            content.uncertainFit -> "\u2022 UNSURE"
             content.evidence == Evidence.Strong -> sourceEvidenceLabel(content)
             content.evidence == Evidence.Moderate -> sourceEvidenceLabel(content)
             content.abstain -> "No match"
@@ -457,12 +457,23 @@ internal fun compactEvidenceLabel(content: AnswerContent): String {
 }
 
 private fun statusHeaderLabel(content: AnswerContent): String {
-    val status = if (content.abstain) "No match" else "Answer"
+    val status = if (content.abstain) "NO MATCH" else "ANSWER"
     val tokens = mutableListOf(status)
     if (content.host.isNotBlank()) {
-        tokens += content.host.trim()
+        tokens += displayHostLabel(content.host)
     }
-    return tokens.joinToString(" \u00B7 ")
+    if (content.uncertainFit || content.answerSurfaceLabel == AnswerSurfaceLabel.LimitedFit) {
+        tokens += "1 TURN"
+    }
+    return tokens.joinToString(" \u2022 ")
+}
+
+private fun displayHostLabel(host: String): String {
+    val trimmed = host.trim()
+    if (trimmed.equals("on-device", ignoreCase = true) || trimmed.equals("this device", ignoreCase = true)) {
+        return "THIS DEVICE"
+    }
+    return trimmed.uppercase(Locale.US)
 }
 
 private fun sourceEvidenceLabel(content: AnswerContent): String {
@@ -478,11 +489,11 @@ internal fun buildFooterMeta(content: AnswerContent): String {
     if (content.reviewedCardMetadata.cardGuideId.isNotBlank()) {
         tokens += content.reviewedCardMetadata.cardGuideId.trim().uppercase(Locale.US)
     }
-    tokens += sourceCountLabel(content.sourceCount)
+    tokens += sourceCountLabel(content.sourceCount).uppercase(Locale.US)
     if (content.elapsedSeconds > 0.0) {
         tokens += String.format(Locale.US, "%.1fs", content.elapsedSeconds)
     }
-    return tokens.joinToString(" \u00B7 ")
+    return tokens.joinToString(" \u2022 ")
 }
 
 private fun sourceCountLabel(sourceCount: Int): String {
@@ -494,18 +505,18 @@ internal fun shouldShowUncertainFitNotice(content: AnswerContent): Boolean {
 }
 
 internal fun shouldEmphasizeUncertainFitNotice(content: AnswerContent): Boolean {
-    return content.short.isBlank() && content.steps.isNullOrEmpty() && content.limits.isNullOrBlank()
+    return content.uncertainFit || content.answerSurfaceLabel == AnswerSurfaceLabel.LimitedFit
 }
 
 internal fun uncertainFitNoticeLabel(content: AnswerContent): String {
-    return if (shouldEmphasizeUncertainFitNotice(content)) "Unsure fit" else "Unsure"
+    return "UNSURE FIT"
 }
 
 internal fun uncertainFitNoticeText(content: AnswerContent): String {
     val count = content.sourceCount.coerceAtLeast(0)
     val guideWord = if (count == 1) "guide" else "guides"
-    val countText = if (count > 0) "$count related $guideWord" else "Related guides"
-    return "$countText found. No single confident anchor yet."
+    val countText = if (count > 0) "$count $guideWord" else "guides"
+    return "Senku found $countText that may apply but no single guide is a confident anchor. Treat this as guidance, not procedure. See sources below."
 }
 
 internal fun displayProofCtaLabel(label: String): String {

@@ -126,19 +126,11 @@ final class DetailWarningCopySanitizer {
         );
         cleaned = cleaned.replace(
             "Doors and roll-up openings must be unobstructed.",
-            "Keep doors and roll-up openings unobstructed."
-        );
-        cleaned = cleaned.replace(
-            "Door and roll-up open and unobstructed.",
-            "Keep doors and roll-up openings unobstructed."
+            "Door and roll-up open and unobstructed."
         );
         cleaned = cleaned.replace(
             "GD-132 \u00a71 is current owner.",
-            "Use GD-132 owner listing."
-        );
-        cleaned = cleaned.replace(
-            "GD-132 lists current owner.",
-            "Use GD-132 owner listing."
+            "GD-132 lists current owner."
         );
         return cleaned;
     }

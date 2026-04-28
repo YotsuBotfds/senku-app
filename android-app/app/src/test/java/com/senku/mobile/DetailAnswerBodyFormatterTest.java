@@ -59,4 +59,26 @@ public final class DetailAnswerBodyFormatterTest {
     public void sectionSeparatorKeepsAnswerBodyDenseForLandscapeCards() {
         assertEquals(1, DetailAnswerBodyFormatter.SECTION_SEPARATOR_NEWLINE_COUNT);
     }
+
+    @Test
+    public void formatAnswerBodyNormalizesRainShelterFallbackToArticleProse() {
+        DetailAnswerBodyFormatter formatter = new DetailAnswerBodyFormatter(null);
+
+        assertEquals(
+            "Build a ridgeline first, then drape and tension the tarp around it. "
+                + "Tie the line between two solid anchor points, keep the tarp centered over the ridge, "
+                + "and tension the four corners evenly so the fabric sheds water instead of sagging.\n\n"
+                + "Pitch the tarp ridge along the prevailing wind. Set the windward edge lower than the leeward edge, "
+                + "leave runoff a clear path away from the sleeping area, and re-check each tie after the fabric takes its first load of rain.",
+            formatter.formatAnswerBody(
+                "ANSWER\n"
+                    + "Build a ridgeline first, then drape and tension the tarp around it. "
+                    + "Keep the low edge toward the weather and leave runoff a clear path away from the sheltered area.\n\n"
+                    + "FIELD STEPS\n"
+                    + "1. Tie a taut ridgeline between two solid anchor points.\n"
+                    + "2. Drape the tarp over the line and stake or tie the windward edge low.\n"
+                    + "3. Tension the corners evenly, then adjust the pitch so rain sheds instead of pooling."
+            )
+        );
+    }
 }

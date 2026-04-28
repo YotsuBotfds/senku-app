@@ -113,10 +113,12 @@ public final class DetailGuidePresentationFormatterTest {
                 + "Foundry & Metal Casting\n"
                 + "GD-132 \u00b7 3 SECTIONS\n\n"
                 + "DANGER \u00b7 EXTREME BURN HAZARD\n"
-                + "A single drop of water contacting molten metal causes a violent steam explosion. EVERY tool, mold, crucible, and surface that contacts molten metal must be completely dry.\n"
+                + "A single drop of water contacting molten metal causes a violent steam explosion. Every tool, mold, crucible, and surface that contacts molten metal must be completely dry.\n"
                 + "\u2014 \u00a7 1 \u00b7 AREA READINESS\n"
                 + "Reviewed Answer-Card Boundary\n"
-                + "Use this section only for foundry-area readiness, visible hazard screening, material and source labeling, no-go triggers, access control, and expert or owner handoff. Start with the current activity status.\n\n"
+                + "Use this section only for foundry-area readiness, visible hazard screening, material and source labeling, no-go triggers, access control, and expert or owner handoff.\n"
+                + "Start with the current activity status.\n\n"
+                + "\u2014 \u00a7 2 \u00b7 REQUIRED READING\n"
                 + "REQUIRED READING \u00b7 GD-220 \u00b7 Abrasives Manufacturing\n\n"
                 + "REQUIRED READING \u00b7 GD-499 \u00b7 Bellows & Forge Blower Construction",
             DetailGuidePresentationFormatter.buildGuideBody(result)
@@ -290,6 +292,7 @@ public final class DetailGuidePresentationFormatterTest {
                 + "Keep tools dry.\n"
                 + "\u2014 \u00a7 1 \u00b7 FOUNDRY SAFETY QUICKSTART\n"
                 + "Check dry tools.\n\n"
+                + "\u2014 \u00a7 2 \u00b7 REQUIRED READING\n"
                 + "REQUIRED READING \u00b7 GD-220 \u00b7 Abrasives Manufacturing\n\n"
                 + "REQUIRED READING \u00b7 GD-499 \u00b7 Bellows & Forge Blower Construction\n\n"
                 + "REQUIRED READING \u00b7 GD-225 \u00b7 Bloomery Furnace Construction",
@@ -472,11 +475,12 @@ public final class DetailGuidePresentationFormatterTest {
     public void guideBodySanitizerCompactsReviewedBoundaryOpeningForFirstViewport() {
         assertEquals(
             "DANGER \u00b7 EXTREME BURN HAZARD\n"
-                + "A single drop of water contacting molten metal causes a violent steam explosion. EVERY tool, mold, crucible, and surface that contacts molten metal must be completely dry.\n"
+                + "A single drop of water contacting molten metal causes a violent steam explosion. Every tool, mold, crucible, and surface that contacts molten metal must be completely dry.\n"
                 + "REQUIRED READING \u00b7 Chemical Safety Guide\n"
                 + "\u2014 \u00a7 1 \u00b7 AREA READINESS\n"
                 + "Reviewed Answer-Card Boundary\n"
-                + "Use this section only for foundry-area readiness, visible hazard screening, material and source labeling, no-go triggers, access control, and expert or owner handoff. Start with the current activity status.",
+                + "Use this section only for foundry-area readiness, visible hazard screening, material and source labeling, no-go triggers, access control, and expert or owner handoff.\n"
+                + "Start with the current activity status.",
             GuideBodySanitizer.sanitizeGuideBodyForDisplay(
                 "::: danger\n"
                     + "EXTREME BURN HAZARD: A single drop of water contacting molten metal causes a violent steam explosion. "

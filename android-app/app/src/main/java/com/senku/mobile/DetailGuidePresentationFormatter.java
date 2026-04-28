@@ -710,8 +710,11 @@ final class DetailGuidePresentationFormatter {
         if (requiredRows.isEmpty()) {
             return cleanedBody;
         }
+        String requiredBlock = isFoundryGuide(result)
+            ? "\u2014 \u00a7 2 \u00b7 REQUIRED READING\n" + requiredRows
+            : requiredRows;
         String[] lines = cleanedBody.split("\\n", -1);
-        StringBuilder builder = new StringBuilder(cleanedBody.length() + requiredRows.length() + 16);
+        StringBuilder builder = new StringBuilder(cleanedBody.length() + requiredBlock.length() + 16);
         boolean insertedAfterOpeningSection = false;
         int seenSections = 0;
         for (int i = 0; i < lines.length; i++) {
@@ -724,13 +727,13 @@ final class DetailGuidePresentationFormatter {
                 seenSections++;
             }
             if (!insertedAfterOpeningSection && seenSections > 1) {
-                appendRequiredReadingRows(builder, requiredRows);
+                appendRequiredReadingRows(builder, requiredBlock);
                 insertedAfterOpeningSection = true;
             }
             appendLine(builder, line);
         }
         if (!insertedAfterOpeningSection) {
-            appendRequiredReadingRows(builder, requiredRows);
+            appendRequiredReadingRows(builder, requiredBlock);
         }
         return builder.toString().trim();
     }
