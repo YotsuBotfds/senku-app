@@ -14,6 +14,9 @@ final class DetailAnswerBodyFormatter {
         "Steps:",
         "Limits or safety:"
     };
+    private static final String SUMMARY_DISPLAY_LABEL = "ANSWER";
+    private static final String STEPS_DISPLAY_LABEL = "FIELD STEPS";
+    private static final String SAFETY_DISPLAY_LABEL = "WATCH";
     private static final String STEPS_LABEL = "Steps:";
     private static final String LIMITS_OR_SAFETY_LABEL = "Limits or safety:";
 
@@ -58,11 +61,16 @@ final class DetailAnswerBodyFormatter {
         AnswerBodySection currentSection = null;
         for (String line : lines) {
             String trimmedLine = safe(line).trim();
-            if (isKnownAnswerSectionLabel(trimmedLine)) {
+            String sectionLabel = knownAnswerSectionLabelPrefix(trimmedLine);
+            if (!sectionLabel.isEmpty()) {
                 if (currentSection != null) {
                     sections.add(currentSection);
                 }
-                currentSection = new AnswerBodySection(trimmedLine);
+                currentSection = new AnswerBodySection(sectionLabel);
+                String inlineContent = trimmedLine.substring(sectionLabel.length()).trim();
+                if (!inlineContent.isEmpty()) {
+                    currentSection.lines.add(inlineContent);
+                }
                 continue;
             }
             if (currentSection == null) {
@@ -94,7 +102,7 @@ final class DetailAnswerBodyFormatter {
                 continue;
             }
             ArrayList<String> blockLines = new ArrayList<>(visibleLines.size() + 1);
-            blockLines.add(section.label);
+            blockLines.add(displayLabelForSection(section.label));
             blockLines.addAll(visibleLines);
             appendAnswerBodyBlock(rebuilt, blockLines);
         }
@@ -199,7 +207,7 @@ final class DetailAnswerBodyFormatter {
     private static boolean containsKnownAnswerSection(String body) {
         String[] lines = safe(body).split("\\R", -1);
         for (String line : lines) {
-            if (isKnownAnswerSectionLabel(safe(line).trim())) {
+            if (!knownAnswerSectionLabelPrefix(safe(line).trim()).isEmpty()) {
                 return true;
             }
         }
@@ -270,11 +278,11 @@ final class DetailAnswerBodyFormatter {
         for (int i = 0; i < lines.length; i++) {
             String currentLine = lines[i];
             String trimmedLine = currentLine.trim();
-            if (isKnownAnswerSectionLabel(trimmedLine)) {
+            if (isAnswerDisplayLabel(trimmedLine) || isKnownAnswerSectionLabel(trimmedLine)) {
                 if (!previousLineBlank && spaced.length() > 0) {
                     spaced.append('\n');
                 }
-                spaced.append(trimmedLine);
+                spaced.append(displayLabelForSection(trimmedLine));
             } else {
                 spaced.append(currentLine);
             }
@@ -286,6 +294,26 @@ final class DetailAnswerBodyFormatter {
         return spaced.toString().trim();
     }
 
+    private static String displayLabelForSection(String label) {
+        String safeLabel = safe(label).trim();
+        if ("Short answer:".equals(safeLabel) || SUMMARY_DISPLAY_LABEL.equals(safeLabel)) {
+            return SUMMARY_DISPLAY_LABEL;
+        }
+        if ("Steps:".equals(safeLabel) || STEPS_DISPLAY_LABEL.equals(safeLabel)) {
+            return STEPS_DISPLAY_LABEL;
+        }
+        if ("Limits or safety:".equals(safeLabel) || SAFETY_DISPLAY_LABEL.equals(safeLabel)) {
+            return SAFETY_DISPLAY_LABEL;
+        }
+        return safeLabel;
+    }
+
+    private static boolean isAnswerDisplayLabel(String trimmedLine) {
+        return SUMMARY_DISPLAY_LABEL.equals(trimmedLine)
+            || STEPS_DISPLAY_LABEL.equals(trimmedLine)
+            || SAFETY_DISPLAY_LABEL.equals(trimmedLine);
+    }
+
     private static boolean isKnownAnswerSectionLabel(String trimmedLine) {
         for (String label : ANSWER_SECTION_LABELS) {
             if (trimmedLine.equals(label)) {
@@ -293,6 +321,15 @@ final class DetailAnswerBodyFormatter {
             }
         }
         return false;
+    }
+
+    private static String knownAnswerSectionLabelPrefix(String trimmedLine) {
+        for (String label : ANSWER_SECTION_LABELS) {
+            if (trimmedLine.equals(label) || trimmedLine.startsWith(label + " ")) {
+                return label;
+            }
+        }
+        return "";
     }
 
     private static String safe(String text) {

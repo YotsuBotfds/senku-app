@@ -23,9 +23,9 @@ public final class DetailProofPresentationFormatterTest {
         List<DetailProofPresentationFormatter.CompactReviewedCardLine> lines =
             DetailProofPresentationFormatter.compactReviewedCardLines(metadata);
 
-        assertEquals("Reviewed card", lines.get(0).label);
+        assertEquals("CARD", lines.get(0).label);
         assertEquals("burns_pilot_card | pilot reviewed", lines.get(0).value);
-        assertEquals("Cites", lines.get(1).label);
+        assertEquals("ANCHOR", lines.get(1).label);
         assertEquals("GD-380", lines.get(1).value);
         assertEquals(2, lines.size());
     }
@@ -44,11 +44,11 @@ public final class DetailProofPresentationFormatterTest {
         List<DetailProofPresentationFormatter.CompactReviewedCardLine> lines =
             DetailProofPresentationFormatter.compactReviewedCardLines(metadata);
 
-        assertEquals("Reviewed card", lines.get(0).label);
+        assertEquals("CARD", lines.get(0).label);
         assertEquals("shock_card | pilot reviewed", lines.get(0).value);
-        assertEquals("Cites", lines.get(1).label);
+        assertEquals("ANCHOR", lines.get(1).label);
         assertEquals("GD-400", lines.get(1).value);
-        assertEquals("Supports", lines.get(2).label);
+        assertEquals("RELATED", lines.get(2).label);
         assertEquals("GD-401, GD-402", lines.get(2).value);
         for (DetailProofPresentationFormatter.CompactReviewedCardLine line : lines) {
             String visible = line.label + " " + line.value;
@@ -59,9 +59,9 @@ public final class DetailProofPresentationFormatterTest {
 
     @Test
     public void retrievalModesUseReaderFacingMatchTypes() {
-        assertEquals("Match type", DetailProofPresentationFormatter.MATCH_TYPE_LABEL);
+        assertEquals("MATCH", DetailProofPresentationFormatter.MATCH_TYPE_LABEL);
         assertEquals("Best match", DetailProofPresentationFormatter.humanizeRetrievalMode("route-focus"));
-        assertEquals("Related guide", DetailProofPresentationFormatter.humanizeRetrievalMode("guide-focus"));
+        assertEquals("Related", DetailProofPresentationFormatter.humanizeRetrievalMode("guide-focus"));
         assertEquals("Generated answer", DetailProofPresentationFormatter.humanizeRetrievalMode("ai-generated"));
         assertEquals("Concept match", DetailProofPresentationFormatter.humanizeRetrievalMode("vector"));
         assertEquals("Keyword match", DetailProofPresentationFormatter.humanizeRetrievalMode("lexical"));

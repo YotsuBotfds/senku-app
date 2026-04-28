@@ -99,6 +99,23 @@ class SearchResultCardHeuristicsTest {
                 "Best tinder in survival situations.",
             ),
         )
+        assertEquals(
+            "Safety Notes: Keep the tarp ridge clear of pooled water.",
+            compactResultPreviewText(
+                "Safety Notes",
+                "- [ ] **Safety Notes**: Keep the `tarp` ridge clear of pooled water.",
+            ),
+        )
+    }
+
+    @Test
+    fun scoreTickFillFraction_tracksRankScoreWithoutPercentCopy() {
+        assertEquals(0.95f, scoreTickFillFraction("92"), 0.001f)
+        assertEquals(0.82f, scoreTickFillFraction("78"), 0.001f)
+        assertEquals(0.74f, scoreTickFillFraction("74"), 0.001f)
+        assertEquals(0.66f, scoreTickFillFraction("61"), 0.001f)
+        assertEquals(0.54f, scoreTickFillFraction("49"), 0.001f)
+        assertEquals(0.72f, scoreTickFillFraction("#1"), 0.001f)
     }
 
     @Test

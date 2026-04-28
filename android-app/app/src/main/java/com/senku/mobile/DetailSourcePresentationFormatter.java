@@ -136,7 +136,7 @@ final class DetailSourcePresentationFormatter {
         String label = buildEvidenceCardRowLabel(card);
         int safeTotal = Math.max(total, 1);
         int safeIndex = Math.max(0, index) + 1;
-        String role = evidenceCardSpeechRole(card);
+        String role = evidenceCardStationRole(card);
         if (label.isEmpty()) {
             return String.format(Locale.US, "%s %d/%d", role, safeIndex, safeTotal);
         }
@@ -169,13 +169,13 @@ final class DetailSourcePresentationFormatter {
         int safeIndex = Math.max(0, index) + 1;
         if (label.isEmpty()) {
             return primaryAnchorSource
-                ? String.format(Locale.US, "Anchor guide %d/%d", safeIndex, safeTotal)
-                : String.format(Locale.US, "Related guide %d/%d", safeIndex, safeTotal);
+                ? String.format(Locale.US, "ANCHOR %d/%d", safeIndex, safeTotal)
+                : String.format(Locale.US, "RELATED %d/%d", safeIndex, safeTotal);
         }
         if (primaryAnchorSource) {
-            return String.format(Locale.US, "Anchor guide %d/%d %s", safeIndex, safeTotal, label);
+            return String.format(Locale.US, "ANCHOR %d/%d %s", safeIndex, safeTotal, label);
         }
-        return String.format(Locale.US, "Related guide %d/%d %s", safeIndex, safeTotal, label);
+        return String.format(Locale.US, "RELATED %d/%d %s", safeIndex, safeTotal, label);
     }
 
     String buildNextStepChipContentDescription(String nextStep, int index, int total) {
@@ -253,11 +253,11 @@ final class DetailSourcePresentationFormatter {
 
     String buildCompactInlineSourceTriggerLabel(SearchResult source, int totalSources) {
         String sourceGuideId = safe(source == null ? null : source.guideId).trim();
-        String guideCount = formatCountLabel(totalSources, "guide", "guides");
+        String guideCount = formatCountLabel(totalSources, "source", "sources");
         if (!sourceGuideId.isEmpty()) {
-            return sourceGuideId + " - Source preview (" + guideCount + ")";
+            return sourceGuideId + " - SOURCES (" + guideCount + ")";
         }
-        return "Source preview (" + guideCount + ")";
+        return "SOURCES (" + guideCount + ")";
     }
 
     String buildCompactInlineSourceTriggerContentDescription(SearchResult source, int totalSources) {
@@ -282,18 +282,16 @@ final class DetailSourcePresentationFormatter {
         String label = formatCountLabel(sourceCount, "guide", "guides");
         String action = expanded
             ? (generationStallNoticeVisible
-                ? label + " ready. Preview stays visible while the answer finishes."
-                : label + " ready. Tap a source guide to preview.")
-            : label + " ready. Tap source preview or a source guide.";
+                ? label + " ready."
+                : label + " ready.")
+            : label + " ready.";
         String compactTrustSummary = safe(trustSummary).trim();
         return compactTrustSummary.isEmpty() ? action : compactTrustSummary + " | " + action;
     }
 
     String buildExpandedSourcesSubtitle(int sourceCount, boolean generationStallNoticeVisible, String trustSummary) {
         String label = formatCountLabel(sourceCount, "guide", "guides");
-        String action = generationStallNoticeVisible
-            ? label + " ready. Preview stays visible while the answer finishes."
-            : label + " ready. Tap a source guide to preview.";
+        String action = label + " ready.";
         String expandedTrustSummary = safe(trustSummary).trim();
         return expandedTrustSummary.isEmpty() ? action : expandedTrustSummary + " | " + action;
     }
@@ -369,6 +367,20 @@ final class DetailSourcePresentationFormatter {
             return "Related guide";
         }
         return "Source guide";
+    }
+
+    private static String evidenceCardStationRole(EvidenceCard card) {
+        if (card == null) {
+            return "SOURCE";
+        }
+        if (card.isAnchor) {
+            return "ANCHOR";
+        }
+        String role = safe(card.roleLabel).trim().toUpperCase(Locale.US);
+        if ("TOPIC".equals(role) || "RELATED".equals(role)) {
+            return "RELATED";
+        }
+        return "SOURCE";
     }
 
     private static String firstBodyLine(String body) {

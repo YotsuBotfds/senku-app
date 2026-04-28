@@ -102,6 +102,15 @@ public final class EmergencySurfacePolicyTest {
                     "1. Stop all hot work. No new charges, no new pours."
             )
         );
+        assertEquals(
+            "Stop work immediately. Move to minimum 5 m from active work zone.",
+            DetailActivity.extractEmergencyShortAnswer(
+                "ANSWER\n" +
+                    "Stop work immediately. Move to minimum 5 m from active work zone.\n\n" +
+                    "FIELD STEPS\n" +
+                    "1. Stop all hot work. No new charges, no new pours."
+            )
+        );
     }
 
     @Test

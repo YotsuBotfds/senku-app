@@ -10,7 +10,7 @@ public final class DetailAnswerBodyFormatterTest {
         DetailAnswerBodyFormatter formatter = new DetailAnswerBodyFormatter(null);
 
         assertEquals(
-            "Short answer: Keep pressure on the wound.\n\nLimits or safety:\nUse clean cloth [GD-232].",
+            "ANSWER\nKeep pressure on the wound.\n\nWATCH\nUse clean cloth [GD-232].",
             formatter.formatAnswerBody(
                 "Answer\n" +
                 "Short answer: Keep pressure on the wound [System Instruction].\n" +
@@ -26,7 +26,7 @@ public final class DetailAnswerBodyFormatterTest {
         DetailAnswerBodyFormatter formatter = new DetailAnswerBodyFormatter(null);
 
         assertEquals(
-            "Short answer: Use stored clean water.\n\nLimits or safety:\nDo not use unknown chemicals.",
+            "ANSWER\nUse stored clean water.\n\nWATCH\nDo not use unknown chemicals.",
             formatter.formatAnswerBody(
                 "Short answer: Use stored clean water.\n" +
                     "Limits or safety:\nDo not use unknown chemicals."
@@ -39,9 +39,9 @@ public final class DetailAnswerBodyFormatterTest {
         DetailAnswerBodyFormatter formatter = new DetailAnswerBodyFormatter(null);
 
         assertEquals(
-            "Short answer:\nControl bleeding first.\n\n" +
-                "Steps:\n1. Apply steady pressure.\n2. Wrap the wound.\n\n" +
-                "Limits or safety:\nWatch for shock.\nAvoid: Do not remove deeply embedded objects.",
+            "ANSWER\nControl bleeding first.\n\n" +
+                "FIELD STEPS\n1. Apply steady pressure.\n2. Wrap the wound.\n\n" +
+                "WATCH\nWatch for shock.\nAvoid: Do not remove deeply embedded objects.",
             formatter.formatAnswerBody(
                 "Steps:\n" +
                     "1. Apply steady pressure.\n" +

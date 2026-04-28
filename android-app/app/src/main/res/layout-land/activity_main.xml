@@ -11,12 +11,11 @@
     android:paddingBottom="8dp">
 
     <LinearLayout
-        android:layout_width="0dp"
+        android:layout_width="52dp"
         android:layout_height="match_parent"
         android:gravity="center_horizontal"
         android:orientation="vertical"
-        android:paddingTop="0dp"
-        android:paddingEnd="0dp">
+        android:paddingTop="0dp">
 
         <ImageView
             android:layout_width="24dp"
@@ -46,7 +45,7 @@
     </LinearLayout>
 
     <View
-        android:layout_width="0dp"
+        android:layout_width="1dp"
         android:layout_height="match_parent"
         android:layout_marginEnd="0dp"
         android:background="@color/senku_rev03_hairline_strong" />

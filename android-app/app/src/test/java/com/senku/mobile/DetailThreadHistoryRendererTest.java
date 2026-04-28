@@ -56,15 +56,15 @@ public final class DetailThreadHistoryRendererTest {
         );
 
         assertEquals(
-            "Q2 \u00B7 FIELD QUESTION",
+            "Q2",
             renderer.buildTurnLabel(2, true, turn("question", "GD-345", 0L), "")
         );
         assertEquals(
-            "A2 \u00B7 UNSURE \u00B7 GD-345",
+            "A2 \u00B7 GD-345 \u00B7 UNSURE",
             renderer.buildTurnLabel(2, false, turn("answer", "GD-345", 0L), "GD-220")
         );
         assertEquals(
-            "A2 \u00B7 UNSURE \u00B7 GD-345",
+            "A2 \u00B7 GD-345 \u00B7 UNSURE",
             renderer.buildTurnLabel(2, false, turn("answer", "GD-345", 0L), "GD-345")
         );
     }
@@ -80,11 +80,11 @@ public final class DetailThreadHistoryRendererTest {
         String expectedTime = new SimpleDateFormat("HH:mm", Locale.US).format(new Date(timestamp));
 
         assertEquals(
-            "Q1 \u00B7 " + expectedTime + " \u00B7 FIELD QUESTION",
+            "Q1 \u00B7 " + expectedTime,
             renderer.buildTurnLabel(1, true, turn("answer", "GD-220", timestamp), "")
         );
         assertEquals(
-            "A1 \u00B7 " + expectedTime + " \u00B7 UNSURE \u00B7 GD-220",
+            "A1 \u00B7 " + expectedTime + " \u00B7 GD-220 \u00B7 UNSURE",
             renderer.buildTurnLabel(1, false, turn("answer", "GD-220", timestamp), "")
         );
     }
@@ -175,6 +175,20 @@ public final class DetailThreadHistoryRendererTest {
         assertEquals(
             List.of("GD-001", "GD-002"),
             DetailThreadHistoryRenderer.guideChipIdsForTurn(turn)
+        );
+    }
+
+    @Test
+    public void compactAnchorLabelKeepsTwoSourceRhythmInline() {
+        assertEquals("", DetailThreadHistoryRenderer.compactAnchorLabel(List.of()));
+        assertEquals("GD-220", DetailThreadHistoryRenderer.compactAnchorLabel(List.of("GD-220")));
+        assertEquals(
+            "GD-220/GD-132",
+            DetailThreadHistoryRenderer.compactAnchorLabel(List.of("GD-220", "GD-132"))
+        );
+        assertEquals(
+            "GD-220/GD-132 +1",
+            DetailThreadHistoryRenderer.compactAnchorLabel(List.of("GD-220", "GD-132", "GD-345"))
         );
     }
 

@@ -353,27 +353,51 @@ final class DetailThreadHistoryRenderer {
         int safeTurnNumber = Math.max(1, turnNumber);
         String time = timeForTurn(turn);
         if (userTurn) {
-            return "Q" + safeTurnNumber + time + " \u00B7 FIELD QUESTION";
+            return "Q" + safeTurnNumber + time;
         }
         String anchorGuideId = sessionFormatter.primaryGuideIdForTurn(turn);
         StringBuilder builder = new StringBuilder("A")
             .append(safeTurnNumber)
             .append(time);
-        String status = compactStatusLabel(statusForTurn(turn));
-        if (!status.isEmpty()) {
-            builder.append(" \u00B7 ");
-            builder.append(status);
-        }
         List<String> guideLabels = guideChipLabelsForTurn(turn);
         if (guideLabels.isEmpty() && !anchorGuideId.isEmpty()) {
             guideLabels = new ArrayList<>();
             guideLabels.add(anchorGuideId);
         }
-        for (String guideLabel : guideLabels) {
+        String anchorLabel = compactAnchorLabel(guideLabels);
+        if (!anchorLabel.isEmpty()) {
             builder.append(" \u00B7 ");
-            builder.append(guideLabel);
+            builder.append(anchorLabel);
+        }
+        String status = compactStatusLabel(statusForTurn(turn));
+        if (!status.isEmpty()) {
+            builder.append(" \u00B7 ");
+            builder.append(status);
         }
         return builder.toString();
+    }
+
+    static String compactAnchorLabel(List<String> guideLabels) {
+        if (guideLabels == null || guideLabels.isEmpty()) {
+            return "";
+        }
+        ArrayList<String> resolved = new ArrayList<>();
+        for (String guideLabel : guideLabels) {
+            String trimmed = safe(guideLabel).trim();
+            if (!trimmed.isEmpty() && !resolved.contains(trimmed)) {
+                resolved.add(trimmed);
+            }
+        }
+        if (resolved.isEmpty()) {
+            return "";
+        }
+        if (resolved.size() == 1) {
+            return resolved.get(0);
+        }
+        if (resolved.size() == 2) {
+            return resolved.get(0) + "/" + resolved.get(1);
+        }
+        return resolved.get(0) + "/" + resolved.get(1) + " +" + (resolved.size() - 2);
     }
 
     private String nextAnchorGuideId(String previousAnchorGuideId, SessionMemory.TurnSnapshot turn) {

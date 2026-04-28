@@ -72,14 +72,9 @@ final class DetailTranscriptFormatter {
             builder.append("\nA").append(safeTurnNumber);
             String answerMeta = buildAnswerMeta(turn, turnAnchorResolver);
             if (!answerMeta.isEmpty()) {
-                builder.append(" \u00B7 ").append(answerMeta);
+                builder.append(" [").append(answerMeta).append("]");
             }
             builder.append(": ").append(answerText);
-        }
-
-        List<String> guideIds = guideIdsForTurn(turn, turnAnchorResolver);
-        if (!guideIds.isEmpty()) {
-            builder.append("\nRefs: ").append(String.join(", ", guideIds));
         }
     }
 
@@ -89,12 +84,19 @@ final class DetailTranscriptFormatter {
     ) {
         String anchorGuideId = resolveAnchorGuideId(turn, turnAnchorResolver);
         StringBuilder builder = new StringBuilder();
-        if (!anchorGuideId.isEmpty()) {
+        List<String> guideIds = guideIdsForTurn(turn, turnAnchorResolver);
+        String anchorLabel = DetailThreadHistoryRenderer.compactAnchorLabel(guideIds);
+        if (!anchorLabel.isEmpty()) {
+            builder.append(anchorLabel);
+        } else if (!anchorGuideId.isEmpty()) {
             builder.append(anchorGuideId);
         }
         String status = statusForTurn(turn);
         if (!status.isEmpty()) {
-            builder.insert(0, compactStatusLabel(status) + (builder.length() > 0 ? " \u00B7 " : ""));
+            if (builder.length() > 0) {
+                builder.append(" \u00B7 ");
+            }
+            builder.append(compactStatusLabel(status));
         }
         return builder.toString();
     }

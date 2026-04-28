@@ -113,7 +113,7 @@ fun CategoryShelf(
                 CategoryGrid(
                     items = items,
                     columns = 3,
-                    cardHeight = 54.dp,
+                    cardHeight = 50.dp,
                     selectionEnabled = selectionEnabled,
                     onCategorySelected = onCategorySelected,
                 )
@@ -207,7 +207,7 @@ private fun PhoneCategoryCard(
                 .fillMaxWidth()
                 .height(cardHeight)
                 .padding(horizontal = horizontalPadding, vertical = verticalPadding),
-            verticalArrangement = Arrangement.spacedBy(1.dp),
+            verticalArrangement = Arrangement.spacedBy(0.dp),
         ) {
             Box(
                 modifier = Modifier

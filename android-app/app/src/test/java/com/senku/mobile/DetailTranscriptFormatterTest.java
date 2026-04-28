@@ -35,15 +35,14 @@ public final class DetailTranscriptFormatterTest {
         assertTrue(transcript.contains("Senku transcript"));
         assertTrue(transcript.contains("Topic: Storm shelter"));
         assertTrue(transcript.contains("Q1: how do i build a rain shelter"));
-        assertTrue(transcript.contains("A1 \u00B7 UNSURE \u00B7 GD-111: Keep one side low to the wind."));
-        assertTrue(transcript.contains("Refs: GD-111"));
+        assertTrue(transcript.contains("A1 [GD-111 \u00B7 UNSURE]: Keep one side low to the wind."));
         assertTrue(transcript.contains("Q2: what about drainage"));
-        assertTrue(transcript.contains("A2 \u00B7 CONFIDENT \u00B7 GD-222: Dig a shallow uphill diversion trench."));
-        assertTrue(transcript.contains("Refs: GD-222"));
+        assertTrue(transcript.contains("A2 [GD-222 \u00B7 CONFIDENT]: Dig a shallow uphill diversion trench."));
         assertFalse(transcript.contains("Site Drainage"));
         assertFalse(transcript.contains("Anchor shift"));
         assertFalse(transcript.contains("Guide "));
         assertFalse(transcript.contains("->"));
+        assertFalse(transcript.contains("Refs:"));
     }
 
     @Test

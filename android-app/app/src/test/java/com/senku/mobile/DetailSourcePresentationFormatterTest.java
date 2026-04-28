@@ -122,14 +122,14 @@ public final class DetailSourcePresentationFormatterTest {
         DetailSourcePresentationFormatter formatter = new DetailSourcePresentationFormatter(null);
 
         assertEquals(
-            "GD-444 - Source preview (2 guides)",
+            "GD-444 - SOURCES (2 sources)",
             formatter.buildCompactInlineSourceTriggerLabel(
                 new SearchResult("Emergency Shelter", "", "", "", "GD-444", "", "", "guide-focus"),
                 2
             )
         );
         assertEquals(
-            "Source preview (0 guides)",
+            "SOURCES (0 sources)",
             formatter.buildCompactInlineSourceTriggerLabel(new SearchResult("", "", "", ""), -1)
         );
     }
@@ -247,7 +247,7 @@ public final class DetailSourcePresentationFormatterTest {
         );
 
         assertEquals(
-            "Source guide 2/4 [GD-898] Reviewed source\nPoisoning unknown ingestion",
+            "SOURCE 2/4 [GD-898] Reviewed source\nPoisoning unknown ingestion",
             formatter.buildStationEvidenceCardRowLabel(card, 1, 4)
         );
     }

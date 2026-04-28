@@ -1650,6 +1650,9 @@ public final class DetailActivity extends AppCompatActivity {
 
     private String buildTabletGuideModeLabel(SearchResult activeSource) {
         if (answerMode) {
+            if (isCurrentThreadDetailRoute()) {
+                return "THREAD";
+            }
             return "ANSWER";
         }
         return safe(currentGuideModeLabel);
@@ -1657,6 +1660,9 @@ public final class DetailActivity extends AppCompatActivity {
 
     private String buildTabletGuideModeSummary(SearchResult activeSource, List<TabletTurnBinding> turnBindings) {
         if (answerMode) {
+            if (isThreadDetailRoute(answerMode, turnBindings == null ? 0 : turnBindings.size())) {
+                return "Sources in thread - " + countDistinctTabletThreadSources(turnBindings);
+            }
             String guideId = safe(activeSource == null ? null : activeSource.guideId).trim();
             if (!guideId.isEmpty()) {
                 return "Answer source selected: " + guideId;
@@ -1669,9 +1675,31 @@ public final class DetailActivity extends AppCompatActivity {
 
     private String buildTabletGuideModeAnchorLabel(SearchResult activeSource) {
         if (answerMode) {
+            if (isCurrentThreadDetailRoute()) {
+                return "Thread sources";
+            }
             return "Proof rail";
         }
         return safe(currentGuideModeAnchorLabel);
+    }
+
+    private int countDistinctTabletThreadSources(List<TabletTurnBinding> turnBindings) {
+        if (turnBindings == null) {
+            return 0;
+        }
+        LinkedHashSet<String> keys = new LinkedHashSet<>();
+        for (TabletTurnBinding turn : turnBindings) {
+            if (turn == null || turn.sources == null) {
+                continue;
+            }
+            for (SearchResult source : turn.sources) {
+                String key = buildSourceSelectionKey(source);
+                if (!key.isEmpty()) {
+                    keys.add(key);
+                }
+            }
+        }
+        return keys.size();
     }
 
     private ArrayList<TabletTurnBinding> buildTabletTurnBindings() {
@@ -5326,12 +5354,15 @@ public final class DetailActivity extends AppCompatActivity {
         boolean sawShortLabel = false;
         for (String rawLine : lines) {
             String line = safe(rawLine).trim();
-            if (line.equalsIgnoreCase("Short answer:")) {
+            if (line.equalsIgnoreCase("Short answer:") || line.equalsIgnoreCase("ANSWER")) {
                 inShort = true;
                 sawShortLabel = true;
                 continue;
             }
-            if (line.equalsIgnoreCase("Steps:") || line.equalsIgnoreCase("Limits or safety:")) {
+            if (line.equalsIgnoreCase("Steps:")
+                || line.equalsIgnoreCase("FIELD STEPS")
+                || line.equalsIgnoreCase("Limits or safety:")
+                || line.equalsIgnoreCase("WATCH")) {
                 if (sawShortLabel) {
                     break;
                 }
@@ -5945,6 +5976,9 @@ public final class DetailActivity extends AppCompatActivity {
         if (shouldUseCompactPhoneAnswerChrome()) {
             return buildPhoneAwareHeaderTitle(resolveDisplayGuideId(), buildPrimarySourceLabel());
         }
+        if (!answerMode && phoneXmlDetailLayoutActive()) {
+            return buildPhoneGuideTopBarTitle();
+        }
         String candidate = safe(currentTitle).trim();
         if (!candidate.isEmpty()) {
             return candidate;
@@ -5958,6 +5992,9 @@ public final class DetailActivity extends AppCompatActivity {
     }
 
     private String buildRev03TopBarSubtitle() {
+        if (!answerMode && phoneXmlDetailLayoutActive()) {
+            return "";
+        }
         String guideId = resolveDisplayGuideId();
         if (!guideId.isEmpty()) {
             return guideId;
@@ -5965,11 +6002,23 @@ public final class DetailActivity extends AppCompatActivity {
         return answerMode ? buildPrimarySourceLabel() : "";
     }
 
+    private String buildPhoneGuideTopBarTitle() {
+        String guideId = resolveDisplayGuideId();
+        String title = safe(currentTitle).trim();
+        if (!guideId.isEmpty() && !title.isEmpty()) {
+            return "Guide " + guideId + " - " + title;
+        }
+        if (!guideId.isEmpty()) {
+            return "Guide " + guideId;
+        }
+        return title.isEmpty() ? getString(R.string.detail_header_guide) : "Guide - " + title;
+    }
+
     private List<MetaItem> buildRev03MetaStripItems() {
         ArrayList<MetaItem> items = new ArrayList<>();
         if (answerMode) {
             items.add(new MetaItem(
-                getString(R.string.meta_answered),
+                isCurrentThreadDetailRoute() ? "thread" : getString(R.string.meta_answered),
                 routeTone(),
                 true
             ));
@@ -7112,16 +7161,20 @@ public final class DetailActivity extends AppCompatActivity {
             restoreAnswerSemanticPresentation();
             return;
         }
+        boolean singlePaperPhoneGuide = shouldUseSinglePaperPhoneGuideShell();
         if (questionBubble != null) {
-            questionBubble.setBackgroundResource(R.drawable.bg_detail_guide_paper_panel);
-            questionBubble.setPadding(
-                dp(isLandscapePhoneLayout() ? 18 : 16),
-                dp(isLandscapePhoneLayout() ? 10 : 12),
-                dp(isLandscapePhoneLayout() ? 18 : 16),
-                dp(isLandscapePhoneLayout() ? 8 : 10)
-            );
+            questionBubble.setVisibility(singlePaperPhoneGuide ? View.GONE : View.VISIBLE);
+            if (!singlePaperPhoneGuide) {
+                questionBubble.setBackgroundResource(R.drawable.bg_detail_guide_paper_panel);
+                questionBubble.setPadding(
+                    dp(isLandscapePhoneLayout() ? 18 : 16),
+                    dp(isLandscapePhoneLayout() ? 10 : 12),
+                    dp(isLandscapePhoneLayout() ? 18 : 16),
+                    dp(isLandscapePhoneLayout() ? 8 : 10)
+                );
+            }
         }
-        setParentTopMargin(answerBubble, dp(isLandscapePhoneLayout() ? 4 : 6));
+        setParentTopMargin(answerBubble, dp(singlePaperPhoneGuide ? (isLandscapePhoneLayout() ? 2 : 4) : (isLandscapePhoneLayout() ? 4 : 6)));
         setTopMargin(rev03MetaStripHost, dp(isLandscapePhoneLayout() ? 5 : 6));
         if (headerLabel != null) {
             headerLabel.setText("FIELD MANUAL");
@@ -7152,10 +7205,10 @@ public final class DetailActivity extends AppCompatActivity {
         if (bodyMirrorShell != null) {
             bodyMirrorShell.setBackgroundResource(R.drawable.bg_detail_guide_paper_shell);
             bodyMirrorShell.setPadding(
-                dp(16),
-                dp(isLandscapePhoneLayout() ? 10 : 12),
-                dp(16),
-                dp(isLandscapePhoneLayout() ? 14 : 16)
+                dp(singlePaperPhoneGuide ? 12 : 16),
+                dp(singlePaperPhoneGuide ? (isLandscapePhoneLayout() ? 8 : 10) : (isLandscapePhoneLayout() ? 10 : 12)),
+                dp(singlePaperPhoneGuide ? 12 : 16),
+                dp(singlePaperPhoneGuide ? (isLandscapePhoneLayout() ? 12 : 14) : (isLandscapePhoneLayout() ? 14 : 16))
             );
             setTopMargin(bodyMirrorShell, dp(0));
         }
@@ -7169,6 +7222,10 @@ public final class DetailActivity extends AppCompatActivity {
 
     private void restoreAnswerSemanticPresentation() {
         if (questionBubble != null && questionBubble.getVisibility() == View.VISIBLE) {
+            questionBubble.setBackgroundResource(R.drawable.bg_detail_question_shell);
+            questionBubble.setPadding(0, 0, 0, 0);
+        } else if (questionBubble != null) {
+            questionBubble.setVisibility(View.VISIBLE);
             questionBubble.setBackgroundResource(R.drawable.bg_detail_question_shell);
             questionBubble.setPadding(0, 0, 0, 0);
         }
@@ -7189,6 +7246,10 @@ public final class DetailActivity extends AppCompatActivity {
             subtitleView.setTypeface(Typeface.MONOSPACE);
             subtitleView.setLetterSpacing(0f);
         }
+    }
+
+    private boolean shouldUseSinglePaperPhoneGuideShell() {
+        return !answerMode && phoneXmlDetailLayoutActive();
     }
 
     private void clearProvenancePanel() {

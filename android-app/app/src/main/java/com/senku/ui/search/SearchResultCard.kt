@@ -140,8 +140,8 @@ fun SearchResultCard(
                 Text(
                     text = model.title.trim(),
                     style = SenkuTheme.typography.uiBody.copy(
-                        fontSize = 12.sp,
-                        lineHeight = 13.sp,
+                        fontSize = 11.sp,
+                        lineHeight = 12.sp,
                         fontWeight = FontWeight.Bold,
                     ),
                     color = colors.ink0,
@@ -155,7 +155,7 @@ fun SearchResultCard(
                         text = metadataLabel,
                         style = SenkuTheme.typography.monoCaps.copy(
                             fontSize = 8.sp,
-                            lineHeight = 8.sp,
+                            lineHeight = 9.sp,
                             fontWeight = FontWeight.Medium,
                         ),
                         color = colors.ink2,
@@ -172,7 +172,7 @@ fun SearchResultCard(
                         fontWeight = FontWeight.Normal,
                     ),
                     color = colors.ink1.copy(alpha = 0.78f),
-                    maxLines = 2,
+                    maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                 )
 
@@ -226,13 +226,13 @@ private fun ScoreTick(
     ) {
         Box(
             modifier = Modifier
-                .width(16.dp)
-                .height(2.dp)
-                .background(color.copy(alpha = 0.30f)),
+                    .width(22.dp)
+                    .height(2.dp)
+                    .background(color.copy(alpha = 0.30f)),
         ) {
             Box(
                 modifier = Modifier
-                    .fillMaxWidth(0.72f)
+                    .fillMaxWidth(scoreTickFillFraction(label))
                     .height(2.dp)
                     .background(SenkuTheme.colors.accent),
             )
@@ -326,8 +326,25 @@ internal fun compactResultPreviewText(subtitle: String, snippet: String): String
 private fun stripPreviewMarkdown(value: String): String {
     return value
         .replace("\r", "\n")
+        .replace(Regex("!\\[([^\\]]*)\\]\\([^)]*\\)"), "$1")
+        .replace(Regex("\\[([^\\]]+)]\\([^)]*\\)"), "$1")
         .replace(Regex("(?m)^\\s*#{1,6}\\s*"), "")
+        .replace(Regex("(?m)^\\s*>+\\s*"), "")
+        .replace(Regex("(?m)^\\s*[-*+]\\s+\\[[ xX]\\]\\s*"), "")
+        .replace(Regex("(?m)^\\s*[-*+]\\s+"), "")
+        .replace(Regex("`|\\*\\*|__|~~"), "")
         .replace(Regex("\\s+"), " ")
+}
+
+internal fun scoreTickFillFraction(rankLabel: String): Float {
+    val score = rankLabel.trim().toIntOrNull() ?: return 0.72f
+    return when {
+        score >= 90 -> 0.95f
+        score >= 75 -> 0.82f
+        score >= 70 -> 0.74f
+        score >= 60 -> 0.66f
+        else -> 0.54f
+    }
 }
 
 private fun collapseRepeatedPreviewLead(value: String, lead: String): String {

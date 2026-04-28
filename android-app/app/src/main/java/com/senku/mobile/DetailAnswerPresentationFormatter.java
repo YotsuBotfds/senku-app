@@ -19,7 +19,10 @@ final class DetailAnswerPresentationFormatter {
     private static final String[] ANSWER_SECTION_LABELS = new String[] {
         "Short answer:",
         "Steps:",
-        "Limits or safety:"
+        "Limits or safety:",
+        "ANSWER",
+        "FIELD STEPS",
+        "WATCH"
     };
 
     private final Context context;
@@ -142,7 +145,7 @@ final class DetailAnswerPresentationFormatter {
             Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
         );
         styled.setSpan(
-            new RelativeSizeSpan(1.06f),
+            new RelativeSizeSpan(0.96f),
             contentStart,
             labelEnd,
             Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
@@ -153,7 +156,7 @@ final class DetailAnswerPresentationFormatter {
             labelEnd,
             Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
         );
-        if ("Short answer:".equals(sectionLabel)) {
+        if ("Short answer:".equals(sectionLabel) || "ANSWER".equals(sectionLabel)) {
             int summaryStart = firstNonWhitespaceIndex(fullText, labelEnd, contentEnd);
             if (summaryStart < contentEnd) {
                 styled.setSpan(
@@ -190,7 +193,7 @@ final class DetailAnswerPresentationFormatter {
             Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
         );
         styled.setSpan(
-            new RelativeSizeSpan(1.08f),
+            new RelativeSizeSpan(0.98f),
             contentStart,
             markerEnd,
             Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
@@ -225,10 +228,10 @@ final class DetailAnswerPresentationFormatter {
     }
 
     private int colorForAnswerSectionLabel(String sectionLabel) {
-        if ("Limits or safety:".equals(sectionLabel)) {
+        if ("Limits or safety:".equals(sectionLabel) || "WATCH".equals(sectionLabel)) {
             return color(R.color.senku_accent_warning);
         }
-        if ("Steps:".equals(sectionLabel)) {
+        if ("Steps:".equals(sectionLabel) || "FIELD STEPS".equals(sectionLabel)) {
             return color(R.color.senku_accent_olive);
         }
         return color(R.color.senku_text_muted_light);

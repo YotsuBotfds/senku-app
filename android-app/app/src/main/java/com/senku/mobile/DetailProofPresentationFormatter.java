@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Locale;
 
 final class DetailProofPresentationFormatter {
-    static final String MATCH_TYPE_LABEL = "Match type";
+    static final String MATCH_TYPE_LABEL = "MATCH";
 
     static final class State {
         final String routeValue;
@@ -163,7 +163,7 @@ final class DetailProofPresentationFormatter {
         String sourceLabel = buildPrimarySourceLabel(currentSources);
         StringBuilder preview = new StringBuilder();
         if (!guideId.isEmpty() || !sourceLabel.isEmpty()) {
-            preview.append("Primary source: ");
+            preview.append("ANCHOR ");
             if (!guideId.isEmpty()) {
                 preview.append("[").append(guideId).append("]");
                 if (!sourceLabel.isEmpty()) {
@@ -238,13 +238,13 @@ final class DetailProofPresentationFormatter {
             String leadValue = buildSourceEntryValue(firstSource, currentSources);
             if (!leadValue.isEmpty()) {
                 lines.add(new StructuredLine(
-                    context.getString(R.string.detail_external_review_proof_lead),
+                    "ANCHOR",
                     leadValue,
                     context.getColor(R.color.senku_accent_olive)
                 ));
             }
             lines.add(new StructuredLine(
-                context.getString(R.string.detail_external_review_proof_evidence),
+                "SOURCES",
                 state.evidenceStrengthLabel + " | " + formatCountLabel(state.sourceCount, "source", "sources"),
                 state.evidenceAccentColor
             ));
@@ -341,13 +341,13 @@ final class DetailProofPresentationFormatter {
     static List<CompactReviewedCardLine> compactReviewedCardLines(ReviewedCardMetadata metadata) {
         ArrayList<CompactReviewedCardLine> lines = new ArrayList<>();
         ReviewedCardMetadata normalized = ReviewedCardMetadata.normalize(metadata);
-        lines.add(new CompactReviewedCardLine("Reviewed card", compactReviewedCardValue(normalized)));
+        lines.add(new CompactReviewedCardLine("CARD", compactReviewedCardValue(normalized)));
         if (!normalized.cardGuideId.isEmpty()) {
-            lines.add(new CompactReviewedCardLine("Cites", normalized.cardGuideId));
+            lines.add(new CompactReviewedCardLine("ANCHOR", normalized.cardGuideId));
         }
         String sourceGuideIds = normalized.citedSourceGuideIdsCsv();
         if (!sourceGuideIds.isEmpty() && !sourceGuideIds.equals(normalized.cardGuideId)) {
-            lines.add(new CompactReviewedCardLine("Supports", sourceGuideIds));
+            lines.add(new CompactReviewedCardLine("RELATED", sourceGuideIds));
         }
         return lines;
     }
@@ -410,7 +410,7 @@ final class DetailProofPresentationFormatter {
         switch (mode) {
             case "guide-focus":
             case "guide":
-                return "Related guide";
+                return "Related";
             case "route-focus":
             case "hybrid":
                 return "Best match";
