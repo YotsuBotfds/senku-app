@@ -220,8 +220,47 @@ public final class MainActivityHomeChromeTest {
     @Test
     public void manualHomeCategoryShelfReservesTwoRowsWithoutClipping() {
         assertEquals(0, MainActivity.resolveManualHomeCategoryShelfMinimumHeightDp(0));
-        assertEquals(46, MainActivity.resolveManualHomeCategoryShelfMinimumHeightDp(3));
-        assertEquals(97, MainActivity.resolveManualHomeCategoryShelfMinimumHeightDp(6));
+        assertEquals(74, MainActivity.resolveManualHomeCategoryShelfMinimumHeightDp(3));
+        assertEquals(153, MainActivity.resolveManualHomeCategoryShelfMinimumHeightDp(6));
+    }
+
+    @Test
+    public void reviewManualRecentThreadsUseTargetMockExamplesWhenKnown() {
+        long fourHoursTwentyOneMinutesAgo = System.currentTimeMillis() - ((4L * 60L + 21L) * 60_000L);
+        ChatSessionStore.ConversationPreview first = preview(
+            "can I make a rain shelter with cord",
+            "GD-345",
+            "",
+            ReviewedCardMetadata.empty(),
+            fourHoursTwentyOneMinutesAgo
+        );
+        ChatSessionStore.ConversationPreview fire = preview(
+            "how do I start a fire in rain",
+            "GD-394",
+            "deterministic-fire",
+            ReviewedCardMetadata.empty(),
+            fourHoursTwentyOneMinutesAgo
+        );
+        ChatSessionStore.ConversationPreview pot = preview(
+            "boil water without a safe pot",
+            "GD-094",
+            "",
+            new ReviewedCardMetadata("card-1", "GD-094", "reviewed", "", "reviewed_card_runtime", Collections.emptyList()),
+            System.currentTimeMillis() - (25L * 60L * 60L * 1000L)
+        );
+
+        assertEquals(
+            "How do I build a simple rain shelter...\nGD-345 \u2022 04:21 \u2022 UNSURE",
+            MainActivity.buildReviewManualHomeRecentThreadLabelForTest(first, 0)
+        );
+        assertEquals(
+            "Best tinder when materials are wet\nGD-027 \u2022 04:08 \u2022 CONFIDENT",
+            MainActivity.buildReviewManualHomeRecentThreadLabelForTest(fire, 1)
+        );
+        assertEquals(
+            "Boil water without a fire-safe pot\nGD-094 \u2022 YESTERDAY \u2022 CONFIDENT",
+            MainActivity.buildReviewManualHomeRecentThreadLabelForTest(pot, 2)
+        );
     }
 
     @Test

@@ -2232,7 +2232,7 @@ public final class DetailActivity extends AppCompatActivity {
             return;
         }
         ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) rawParams;
-        if (shouldHideBodyMirrorForAnswerMode(answerMode)) {
+        if (shouldHideBodyMirrorForAnswerMode(answerMode) && !phoneXmlDetailLayoutActive()) {
             params.width = dp(1);
             params.height = dp(1);
             params.topMargin = 0;
@@ -2246,10 +2246,14 @@ public final class DetailActivity extends AppCompatActivity {
         } else {
             params.width = ViewGroup.LayoutParams.MATCH_PARENT;
             params.height = ViewGroup.LayoutParams.WRAP_CONTENT;
-            params.topMargin = dp(12);
+            params.topMargin = phoneXmlDetailLayoutActive() && answerMode ? dp(6) : dp(12);
             bodyMirrorShell.setLayoutParams(params);
-            bodyMirrorShell.setPadding(dp(14), dp(12), dp(12), dp(12));
-            bodyMirrorShell.setBackgroundResource(R.drawable.bg_detail_guide_paper_shell);
+            int horizontalPadding = phoneXmlDetailLayoutActive() && answerMode ? dp(12) : dp(14);
+            int verticalPadding = phoneXmlDetailLayoutActive() && answerMode ? dp(10) : dp(12);
+            bodyMirrorShell.setPadding(horizontalPadding, verticalPadding, horizontalPadding, verticalPadding);
+            bodyMirrorShell.setBackgroundResource(answerMode && phoneXmlDetailLayoutActive()
+                ? R.drawable.bg_detail_warning_shell
+                : R.drawable.bg_detail_guide_paper_shell);
             bodyMirrorShell.setAlpha(1f);
             bodyView.setTextColor(getColor(R.color.senku_rev03_paper_ink));
             bodyView.setAlpha(1f);
@@ -5553,8 +5557,8 @@ public final class DetailActivity extends AppCompatActivity {
         if (!isCompactPortraitPhoneLayout()) {
             return;
         }
-        applyBubblePadding(questionBubble, dp(14));
-        applyBubblePadding(answerBubble, dp(14));
+        applyBubblePadding(questionBubble, answerMode ? dp(10) : dp(14));
+        applyBubblePadding(answerBubble, answerMode ? dp(10) : dp(14));
         if (answerBubble == null) {
             return;
         }
@@ -5567,7 +5571,7 @@ public final class DetailActivity extends AppCompatActivity {
             return;
         }
         ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) rawParams;
-        params.topMargin = dp(8);
+        params.topMargin = answerMode ? dp(6) : dp(8);
         parent.setLayoutParams(params);
     }
 
@@ -5575,11 +5579,13 @@ public final class DetailActivity extends AppCompatActivity {
         if (!isCompactPortraitPhoneLayout()) {
             return;
         }
-        setTopMargin(answerBubble, dp(6));
+        setTopMargin(answerBubble, dp(4));
         setTopMargin(inlineSourcesScroll, dp(6));
         setTopMargin(materialsScroll, dp(6));
-        setTopMargin(bodyView, dp(8));
-        setTopMargin(whyPanel, dp(10));
+        setTopMargin(bodyMirrorShell, answerMode ? dp(6) : dp(10));
+        setTopMargin(answerCardView, answerMode ? dp(8) : dp(12));
+        setTopMargin(bodyView, dp(0));
+        setTopMargin(whyPanel, dp(8));
         setTopMargin(inlineNextStepsScroll, dp(6));
     }
 

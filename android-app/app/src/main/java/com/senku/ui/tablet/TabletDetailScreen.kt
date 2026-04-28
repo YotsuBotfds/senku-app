@@ -215,9 +215,9 @@ private fun tabletGuidePaperPalette() = GuidePaperPalette()
 
 internal fun tabletLandscapeReadingLayoutPolicy(): TabletReadingLayoutPolicy =
     TabletReadingLayoutPolicy(
-        threadRailWidthDp = 236,
-        answerMaxWidthDp = 520,
-        evidenceRailWidthDp = 320,
+        threadRailWidthDp = 220,
+        answerMaxWidthDp = 620,
+        evidenceRailWidthDp = 300,
         answerHorizontalPaddingDp = 18,
     )
 
@@ -240,13 +240,13 @@ internal fun tabletThreadRailWidthDp(
     guideMode: Boolean,
 ): Int =
     when {
-        guideMode && isLandscape -> 316
+        guideMode && isLandscape -> 296
         guideMode -> 330
         else -> tabletReadingLayoutPolicy(isLandscape).threadRailWidthDp
     }
 
 internal fun tabletGuidePaperMaxWidthDp(isLandscape: Boolean): Int =
-    if (isLandscape) 520 else 820
+    if (isLandscape) 560 else 820
 
 internal fun tabletGuideNavigationLabels(): TabletGuideNavigationLabels =
     TabletGuideNavigationLabels(

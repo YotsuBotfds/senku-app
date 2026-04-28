@@ -75,7 +75,7 @@ public final class MainActivity extends AppCompatActivity {
     private static final int MAX_RESULT_PREVIEW_BRIDGE_GUIDES = 4;
     private static final int RESULT_PREVIEW_BRIDGE_SIGNAL_LIMIT = 1;
     private static final int MANUAL_HOME_CATEGORY_COLUMNS = 3;
-    private static final int MANUAL_HOME_CATEGORY_CARD_HEIGHT_DP = 46;
+    private static final int MANUAL_HOME_CATEGORY_CARD_HEIGHT_DP = 74;
     private static final int MANUAL_HOME_CATEGORY_ROW_GAP_DP = 5;
     private static final String REVIEW_SEARCH_QUERY = "rain shelter";
     private static final String REVIEW_SEARCH_LATENCY_LABEL = "12ms";
@@ -1770,10 +1770,10 @@ public final class MainActivity extends AppCompatActivity {
         button.setMinimumHeight(0);
         boolean compactPhoneHome = isCompactPhoneHomeLayout();
         button.setPadding(
-            dp(isTabletSearchLayout() ? 8 : (manualHomeShell ? 10 : (compactPhoneHome ? 10 : 12))),
-            dp(isTabletSearchLayout() ? 3 : (manualHomeShell ? 5 : (compactPhoneHome ? 8 : 10))),
-            dp(isTabletSearchLayout() ? 8 : (manualHomeShell ? 9 : (compactPhoneHome ? 10 : 12))),
-            dp(isTabletSearchLayout() ? 3 : (manualHomeShell ? 5 : (compactPhoneHome ? 8 : 10)))
+            dp(isTabletSearchLayout() ? 8 : (manualHomeShell ? 12 : (compactPhoneHome ? 10 : 12))),
+            dp(isTabletSearchLayout() ? 3 : (manualHomeShell ? 8 : (compactPhoneHome ? 8 : 10))),
+            dp(isTabletSearchLayout() ? 8 : (manualHomeShell ? 11 : (compactPhoneHome ? 10 : 12))),
+            dp(isTabletSearchLayout() ? 3 : (manualHomeShell ? 8 : (compactPhoneHome ? 8 : 10)))
         );
         button.setTextColor(getResources().getColor(manualHomeShell
             ? R.color.senku_rev03_ink_0
@@ -1786,8 +1786,12 @@ public final class MainActivity extends AppCompatActivity {
         button.setGravity(android.view.Gravity.START | android.view.Gravity.CENTER_VERTICAL);
         button.setMaxLines(manualHomeShell ? 2 : (compactPhoneHome ? 2 : 3));
         button.setEllipsize(TextUtils.TruncateAt.END);
+        if (manualHomeShell && !isTabletSearchLayout()) {
+            button.setMinHeight(dp(64));
+            button.setMinimumHeight(dp(64));
+        }
         button.setText(manualHomeShell
-            ? buildManualHomeRecentThreadLabelSpannable(preview)
+            ? buildManualHomeRecentThreadLabelSpannable(preview, index)
             : (compactPhoneHome
                 ? presentationFormatter().buildCompactRecentThreadLabel(preview)
                 : presentationFormatter().buildRecentThreadLabel(preview)));
@@ -1820,9 +1824,12 @@ public final class MainActivity extends AppCompatActivity {
     }
 
     private android.text.SpannableString buildManualHomeRecentThreadLabelSpannable(
-        ChatSessionStore.ConversationPreview preview
+        ChatSessionStore.ConversationPreview preview,
+        int index
     ) {
-        String label = buildManualHomeRecentThreadLabel(preview);
+        String label = productReviewMode
+            ? buildReviewManualHomeRecentThreadLabel(preview, index)
+            : buildManualHomeRecentThreadLabel(preview);
         android.text.SpannableString spannable = new android.text.SpannableString(label);
         int lineBreak = label.indexOf('\n');
         if (lineBreak < 0) {
@@ -1877,6 +1884,67 @@ public final class MainActivity extends AppCompatActivity {
 
     static String buildManualHomeRecentThreadLabelForTest(ChatSessionStore.ConversationPreview preview) {
         return buildManualHomeRecentThreadLabelStatic(preview);
+    }
+
+    static String buildReviewManualHomeRecentThreadLabelForTest(
+        ChatSessionStore.ConversationPreview preview,
+        int index
+    ) {
+        return buildReviewManualHomeRecentThreadLabelStatic(preview, index);
+    }
+
+    private String buildReviewManualHomeRecentThreadLabel(ChatSessionStore.ConversationPreview preview, int index) {
+        return buildReviewManualHomeRecentThreadLabelStatic(preview, index);
+    }
+
+    private static String buildReviewManualHomeRecentThreadLabelStatic(
+        ChatSessionStore.ConversationPreview preview,
+        int index
+    ) {
+        String reviewLabel = reviewManualHomeRecentThreadLabel(index);
+        if (!reviewLabel.isEmpty()) {
+            return reviewLabel;
+        }
+        String meta = buildManualHomeRecentThreadMeta(preview);
+        String title = reviewManualHomeRecentThreadTitle(preview, index);
+        if (title.isEmpty()) {
+            return buildManualHomeRecentThreadLabelStatic(preview);
+        }
+        return meta.isEmpty() ? title : title + "\n" + meta;
+    }
+
+    private static String reviewManualHomeRecentThreadLabel(int index) {
+        switch (index) {
+            case 0:
+                return "How do I build a simple rain shelter...\nGD-345 \u2022 04:21 \u2022 UNSURE";
+            case 1:
+                return "Best tinder when materials are wet\nGD-027 \u2022 04:08 \u2022 CONFIDENT";
+            case 2:
+                return "Boil water without a fire-safe pot\nGD-094 \u2022 YESTERDAY \u2022 CONFIDENT";
+            default:
+                return "";
+        }
+    }
+
+    private static String reviewManualHomeRecentThreadTitle(
+        ChatSessionStore.ConversationPreview preview,
+        int index
+    ) {
+        SessionMemory.TurnSnapshot turn = preview == null ? null : preview.latestTurn;
+        String guideId = resolveManualHomeRecentThreadGuideId(turn);
+        String confidence = buildManualHomeRecentThreadConfidenceLabel(turn);
+        if (index == 0 || "GD-345".equalsIgnoreCase(guideId)) {
+            return "How do I build a simple rain shelter...";
+        }
+        if ("GD-027".equalsIgnoreCase(guideId)
+            || "deterministic-fire".equalsIgnoreCase(safe(turn == null ? null : turn.ruleId).trim())
+            || "GD-394".equalsIgnoreCase(guideId)) {
+            return "Best tinder when materials are wet";
+        }
+        if ("GD-094".equalsIgnoreCase(guideId) || (index == 2 && "CONFIDENT".equals(confidence))) {
+            return "Boil water without a fire-safe pot";
+        }
+        return "";
     }
 
     private static String buildManualHomeRecentThreadLabelStatic(ChatSessionStore.ConversationPreview preview) {

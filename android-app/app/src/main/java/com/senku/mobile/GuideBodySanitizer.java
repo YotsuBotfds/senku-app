@@ -14,9 +14,11 @@ final class GuideBodySanitizer {
     private static final Pattern GUIDE_SECTION_LINE_PATTERN = Pattern.compile("^Source section:\\s*(.+)$", Pattern.CASE_INSENSITIVE);
     private static final Pattern GUIDE_REQUIRED_READING_PATTERN = Pattern.compile("^Required Reading\\s*:\\s*(.+)$", Pattern.CASE_INSENSITIVE);
     private static final Pattern GUIDE_SECTION_DISPLAY_PATTERN =
-        Pattern.compile("^(?:Section\\s+|\\u00a7\\s*)\\d+\\s*[:\\-\\u00b7]?\\s+.+$", Pattern.CASE_INSENSITIVE);
+        Pattern.compile("^(?:[\\-\\u2013\\u2014]+\\s*)?(?:Section\\s+|\\u00a7\\s*)\\d+\\s*[:\\-\\u00b7]?\\s+.+$", Pattern.CASE_INSENSITIVE);
     private static final Pattern GUIDE_LAYOUT_TAG_PATTERN = Pattern.compile("(?i)</?(section|div|span|p)\\b[^>]*>");
     private static final Pattern GUIDE_INLINE_STYLE_TAG_PATTERN = Pattern.compile("(?i)</?(strong|b|em|i|mark|small)\\b[^>]*>");
+    private static final Pattern GUIDE_HTML_COMMENT_PATTERN = Pattern.compile("(?s)<!--.*?-->");
+    private static final Pattern GUIDE_MARKDOWN_IMAGE_PATTERN = Pattern.compile("!\\[([^\\]]*)\\]\\(([^\\)]+)\\)");
     private static final Pattern GUIDE_MARKDOWN_LINK_PATTERN = Pattern.compile("\\[([^\\]]+)\\]\\(([^\\)]+)\\)");
     private static final Pattern GUIDE_HTML_LINK_PATTERN = Pattern.compile("(?i)<a\\b[^>]*>(.*?)</a>");
     private static final Pattern GUIDE_HTML_BREAK_PATTERN = Pattern.compile("(?i)<br\\s*/?>");
@@ -30,7 +32,7 @@ final class GuideBodySanitizer {
         Pattern.compile("(?i)^\\s*(title|slug|date|updated|source|tags|category|id)\\s*:\\s+.+$");
     private static final Pattern GUIDE_SEPARATOR_RUN_PATTERN = Pattern.compile("\\s*(?:\\u00b7\\s*){2,}");
     private static final String GUIDE_SECTION_ANCHOR_MARKER = "[[SECTION]] ";
-    private static final String GUIDE_REQUIRED_READING_LABEL = "Required reading";
+    private static final String GUIDE_REQUIRED_READING_LABEL = "REQUIRED READING";
 
     private GuideBodySanitizer() {
     }
@@ -122,7 +124,7 @@ final class GuideBodySanitizer {
             displayLine = formatGuideAdmonitionLine(displayLine);
             boolean explicitSectionMarkerLine = isGuideSectionMarkerLine(displayLine);
             boolean sectionLine = !insideAdmonitionBlock
-                && (markdownHeading || explicitSectionMarkerLine);
+                && (markdownHeading || explicitSectionMarkerLine || isGuideSectionDisplayLine(displayLine));
             String sectionValue = sectionLine ? extractGuideSectionValue(displayLine) : "";
             boolean requiredReadingLine = isRequiredReadingLine(displayLine);
             if (pendingAdmonitionLabel && !displayLine.isEmpty() && !requiredReadingLine) {
@@ -256,6 +258,7 @@ final class GuideBodySanitizer {
     private static String normalizeSectionComparisonValue(String text) {
         return safe(text)
             .trim()
+            .replaceFirst("^[\\-\\u2013\\u2014]+\\s*", "")
             .replaceFirst("(?i)^(?:Section\\s+|\\u00a7\\s*)\\d+\\s*[:\\-\\u00b7]?\\s*", "")
             .replaceAll("\\s+", " ")
             .trim()
@@ -299,9 +302,11 @@ final class GuideBodySanitizer {
     private static String sanitizeGuideDisplayLine(String rawLine, boolean insideAdmonitionBlock) {
         String cleaned = safe(rawLine);
         cleaned = GUIDE_MARKDOWN_ESCAPE_PATTERN.matcher(cleaned).replaceAll("$1");
+        cleaned = GUIDE_HTML_COMMENT_PATTERN.matcher(cleaned).replaceAll(" ");
         cleaned = GUIDE_LAYOUT_TAG_PATTERN.matcher(cleaned).replaceAll("");
         cleaned = GUIDE_INLINE_STYLE_TAG_PATTERN.matcher(cleaned).replaceAll("");
         cleaned = GUIDE_MARKDOWN_HEADING_PATTERN.matcher(cleaned).replaceFirst("");
+        cleaned = GUIDE_MARKDOWN_IMAGE_PATTERN.matcher(cleaned).replaceAll("$1");
         cleaned = GUIDE_MARKDOWN_LINK_PATTERN.matcher(cleaned).replaceAll("$1");
         cleaned = GUIDE_HTML_LINK_PATTERN.matcher(cleaned).replaceAll("$1");
         cleaned = GUIDE_HTML_TABLE_BOUNDARY_PATTERN.matcher(cleaned).replaceAll(" ");
@@ -374,7 +379,10 @@ final class GuideBodySanitizer {
             return safe(sourceSectionMatcher.group(1)).trim();
         }
         if (isGuideSectionDisplayLine(cleaned)) {
-            return cleaned.replaceFirst("(?i)^(?:Section\\s+|\\u00a7\\s*)\\d+\\s*[:\\-\\u00b7]?\\s+", "").trim();
+            return cleaned
+                .replaceFirst("^[\\-\\u2013\\u2014]+\\s*", "")
+                .replaceFirst("(?i)^(?:Section\\s+|\\u00a7\\s*)\\d+\\s*[:\\-\\u00b7]?\\s+", "")
+                .trim();
         }
         return cleaned;
     }
@@ -460,7 +468,7 @@ final class GuideBodySanitizer {
             label = cleaned;
         }
         return new SectionDisplayParts(
-            buildGuideSectionPrefix(sectionOrdinal) + " " + label,
+            buildGuideSectionPrefix(sectionOrdinal) + " " + label.toUpperCase(QUERY_LOCALE),
             heading
         );
     }
@@ -487,7 +495,7 @@ final class GuideBodySanitizer {
     }
 
     private static String buildGuideSectionPrefix(int sectionOrdinal) {
-        return "\u00a7 " + Math.max(sectionOrdinal, 1) + " \u00b7";
+        return "\u2014 \u00a7 " + Math.max(sectionOrdinal, 1) + " \u00b7";
     }
 
     private static String stripDuplicateAdmonitionLabel(String line, String admonitionLabel, boolean firstAdmonitionContentLine) {
@@ -535,6 +543,17 @@ final class GuideBodySanitizer {
         cleaned = cleaned.replace("&apos;", "'");
         cleaned = cleaned.replace("&lt;", "<");
         cleaned = cleaned.replace("&gt;", ">");
+        cleaned = cleaned.replace("â€™", "'");
+        cleaned = cleaned.replace("â€˜", "'");
+        cleaned = cleaned.replace("â€œ", "\"");
+        cleaned = cleaned.replace("\u00e2\u20ac\u009d", "\"");
+        cleaned = cleaned.replace("â€“", "-");
+        cleaned = cleaned.replace("â€”", " - ");
+        cleaned = cleaned.replace("â€¢", "\u00b7");
+        cleaned = cleaned.replace("â†’", "->");
+        cleaned = cleaned.replace("Â·", "\u00b7");
+        cleaned = cleaned.replace("Â§", "\u00a7");
+        cleaned = cleaned.replace("Â", "");
         cleaned = cleaned.replace("\u00e2\u20ac\u201d", " - ");
         cleaned = cleaned.replace("\u00e2\u20ac\u201c", "-");
         cleaned = cleaned.replace("\u00e2\u20ac\u2122", "'");

@@ -191,7 +191,7 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
         holder.snippet.setMaxLines((richTabletCard || landscapePhoneCard || stressCompactCard) ? 1 : (smallPhonePortraitCard ? 2 : 4));
         holder.snippet.setEllipsize(TextUtils.TruncateAt.END);
         if (smallPhonePortraitCard || stressCompactCard) {
-            holder.snippet.setAlpha(0.66f);
+            holder.snippet.setAlpha(0.74f);
             holder.snippet.setTextSize(TypedValue.COMPLEX_UNIT_PX, holder.defaultSnippetTextSizePx * 0.94f);
         } else {
             holder.snippet.setAlpha(1.0f);
@@ -217,7 +217,7 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
         LinearLayout row = new LinearLayout(context);
         row.setId(R.id.result_legacy_mirror);
         row.setOrientation(LinearLayout.VERTICAL);
-        row.setPadding(dp(3), dp(4), dp(3), 0);
+        row.setPadding(dp(3), dp(3), dp(3), 0);
         root.addView(row, new FrameLayout.LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT,
             ViewGroup.LayoutParams.WRAP_CONTENT
@@ -235,6 +235,7 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
         meta.setId(R.id.result_meta);
         meta.setTextColor(ContextCompat.getColor(context, R.color.senku_rev03_accent));
         meta.setAllCaps(true);
+        meta.setLetterSpacing(0.08f);
         head.addView(meta, new LinearLayout.LayoutParams(
             0,
             ViewGroup.LayoutParams.WRAP_CONTENT,
@@ -260,7 +261,7 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
         TextView score = buildMonoTextView(context, 8, 10, Typeface.BOLD);
         score.setId(R.id.result_retrieval_badge);
         score.setTextColor(ContextCompat.getColor(context, R.color.senku_rev03_accent));
-        score.setPadding(dp(4), 0, 0, 0);
+        score.setPadding(dp(3), 0, 0, 0);
         scoreCluster.addView(score, new LinearLayout.LayoutParams(
             ViewGroup.LayoutParams.WRAP_CONTENT,
             ViewGroup.LayoutParams.WRAP_CONTENT
@@ -283,6 +284,7 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
         section.setId(R.id.result_section);
         section.setTextColor(ContextCompat.getColor(context, R.color.senku_text_muted_light));
         section.setAllCaps(true);
+        section.setLetterSpacing(0.10f);
         LinearLayout.LayoutParams sectionParams = new LinearLayout.LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT,
             ViewGroup.LayoutParams.WRAP_CONTENT
@@ -341,9 +343,9 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
         divider.setBackgroundColor(ContextCompat.getColor(context, R.color.senku_rev03_hairline_strong));
         LinearLayout.LayoutParams dividerParams = new LinearLayout.LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT,
-            Math.max(1, dp(1))
+            1
         );
-        dividerParams.topMargin = dp(6);
+        dividerParams.topMargin = dp(5);
         row.addView(divider, dividerParams);
 
         ComposeView composeView = new ComposeView(context);
@@ -430,10 +432,30 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
             scoreBar.setBackground(buildScoreBarDrawable(score));
             ViewGroup.LayoutParams params = scoreBar.getLayoutParams();
             if (params != null) {
-                params.width = dp(Math.max(14, Math.min(20, Math.round(score * 0.22f))));
+                params.width = dp(scoreBarWidthDpForScore(score));
                 scoreBar.setLayoutParams(params);
             }
         }
+    }
+
+    static int scoreBarWidthDpForPositionForTest(int position) {
+        return scoreBarWidthDpForScore(tabletScoreForPosition(position));
+    }
+
+    private static int scoreBarWidthDpForScore(int score) {
+        if (score >= 90) {
+            return 16;
+        }
+        if (score >= 75) {
+            return 13;
+        }
+        if (score >= 70) {
+            return 12;
+        }
+        if (score >= 60) {
+            return 10;
+        }
+        return 8;
     }
 
     private GradientDrawable buildScoreBarDrawable(int score) {

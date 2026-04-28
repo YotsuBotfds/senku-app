@@ -61,7 +61,7 @@ private enum class EvidenceCardDensity {
 
 internal fun tabletEvidenceVisibilityPolicy(): TabletEvidenceVisibilityPolicy =
     TabletEvidenceVisibilityPolicy(
-        evidencePaneWidthDp = 320,
+        evidencePaneWidthDp = 300,
         landscapeRailDensity = EvidenceRailDensity.Full,
         activeTitleMaxLines = 2,
         activeSnippetMaxLines = 8,

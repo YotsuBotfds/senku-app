@@ -11,9 +11,9 @@ files from this lane.
   - Home, Search, Answer, Guide, Thread: phone portrait, phone landscape,
     tablet portrait, tablet landscape.
   - Emergency: phone portrait and tablet portrait only.
-- Current proof pack: `artifacts/ui_state_pack/20260428_054213`.
+- Current proof pack: `artifacts/ui_state_pack/20260428_055424`.
   - Status `pass`, 47/47 states, homogeneous APK
-    `41f9af85783049a6f1c6a9554b0a21e2bf3c026983c20be2ff7c37133fcd1426`,
+    `dda610dd64538fd1e303f772028630ad768740117230d16ae5639f9563c38591`,
     model `gemma-4-e2b-it-litert`, rotation mismatch count 0.
 - Reviewed anchors: `00a3adb` (`advance android mock parity wave20`),
   `7efcac0` (`advance android mock parity wave18`), and `343bfde`
@@ -29,10 +29,10 @@ files from this lane.
   `claudedesign4-27/surface-guide.jsx`,
   `claudedesign4-27/primitives.jsx`, and
   `claudedesign4-27/tokens.jsx`.
-- Live worktree caution at this planner refresh: wave20 was committed and
-  pushed as `00a3adb`; only protected untracked handoff notes remained before
-  wave21 workers started. Reconcile live `git status --short` before staging
-  any worker output.
+- Live worktree caution at this planner refresh: wave21 was committed and
+  pushed as `a34af0e`; wave22 worker output is staged only after local proof
+  pack `20260428_055424` is confirmed. Reconcile live `git status --short`
+  before staging any worker output.
 
 ## Proof Path Rules
 
@@ -68,7 +68,7 @@ Owner: planner only.
 
 Acceptance:
 
-- Active proof pack remains `artifacts/ui_state_pack/20260428_054213`.
+- Active proof pack remains `artifacts/ui_state_pack/20260428_055424`.
 - This file stays aligned with reviewer findings and live `git status`.
 - No code, generated artifacts, target mocks, or protected handoff notes are
   edited from this lane.

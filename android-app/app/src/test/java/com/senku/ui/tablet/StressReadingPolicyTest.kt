@@ -10,9 +10,9 @@ class StressReadingPolicyTest {
     fun tabletLandscapeReadingPolicyKeepsAnswerFirstWidthBudget() {
         val policy = tabletLandscapeReadingLayoutPolicy()
 
-        assertEquals(236, policy.threadRailWidthDp)
-        assertEquals(520, policy.answerMaxWidthDp)
-        assertEquals(320, policy.evidenceRailWidthDp)
+        assertEquals(220, policy.threadRailWidthDp)
+        assertEquals(620, policy.answerMaxWidthDp)
+        assertEquals(300, policy.evidenceRailWidthDp)
         assertEquals(18, policy.answerHorizontalPaddingDp)
     }
 
@@ -37,23 +37,23 @@ class StressReadingPolicyTest {
         assertEquals(456, portraitPolicy.answerMaxWidthDp)
         assertEquals(208, portraitPolicy.evidenceRailWidthDp)
         assertEquals(12, portraitPolicy.answerHorizontalPaddingDp)
-        assertEquals(236, landscapePolicy.threadRailWidthDp)
-        assertEquals(520, landscapePolicy.answerMaxWidthDp)
-        assertEquals(320, landscapePolicy.evidenceRailWidthDp)
+        assertEquals(220, landscapePolicy.threadRailWidthDp)
+        assertEquals(620, landscapePolicy.answerMaxWidthDp)
+        assertEquals(300, landscapePolicy.evidenceRailWidthDp)
         assertEquals(18, landscapePolicy.answerHorizontalPaddingDp)
     }
 
     @Test
     fun tabletGuideThreadRailUsesSectionIndexWidthWithoutChangingAnswerRails() {
-        assertEquals(236, tabletThreadRailWidthDp(isLandscape = true, guideMode = false))
+        assertEquals(220, tabletThreadRailWidthDp(isLandscape = true, guideMode = false))
         assertEquals(132, tabletThreadRailWidthDp(isLandscape = false, guideMode = false))
-        assertEquals(316, tabletThreadRailWidthDp(isLandscape = true, guideMode = true))
+        assertEquals(296, tabletThreadRailWidthDp(isLandscape = true, guideMode = true))
         assertEquals(330, tabletThreadRailWidthDp(isLandscape = false, guideMode = true))
     }
 
     @Test
     fun tabletGuidePaperPolicyWidensPortraitReaderWithoutChangingLandscapeSheet() {
-        assertEquals(520, tabletGuidePaperMaxWidthDp(isLandscape = true))
+        assertEquals(560, tabletGuidePaperMaxWidthDp(isLandscape = true))
         assertEquals(820, tabletGuidePaperMaxWidthDp(isLandscape = false))
     }
 
