@@ -54,8 +54,8 @@ fun ThreadRail(
         modifier = modifier
             .background(colors.bg1)
             .verticalScroll(scrollState)
-            .padding(horizontal = 18.dp, vertical = 16.dp),
-        verticalArrangement = Arrangement.spacedBy(18.dp),
+            .padding(horizontal = 16.dp, vertical = 14.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
         Toolbar(
             pinVisible = pinVisible,
@@ -154,7 +154,7 @@ private fun RailSection(
     val colors = SenkuTheme.colors
 
     Column(
-        verticalArrangement = Arrangement.spacedBy(7.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
         content = {
             Text(
                 text = label + " - " + count,
@@ -201,7 +201,7 @@ private fun ThreadTurnRow(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 8.dp, vertical = 6.dp),
+                .padding(horizontal = 9.dp, vertical = 7.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             verticalAlignment = Alignment.Top,
         ) {
@@ -229,7 +229,7 @@ private fun ThreadTurnRow(
                     text = turn.question.trim().ifEmpty { "No question recorded." },
                     style = SenkuTheme.typography.smallBody.copy(
                         fontSize = 12.sp,
-                        lineHeight = 16.sp,
+                        lineHeight = 15.sp,
                     ),
                     color = colors.ink1,
                     maxLines = 2,
@@ -275,7 +275,7 @@ private fun SourcePill(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 8.dp, vertical = 7.dp),
+                .padding(horizontal = 9.dp, vertical = 7.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             verticalAlignment = Alignment.Top,
         ) {
@@ -304,7 +304,7 @@ private fun SourcePill(
                     text = source.title.trim().ifEmpty { "Source guide" },
                     style = SenkuTheme.typography.smallBody.copy(
                         fontSize = 11.5.sp,
-                        lineHeight = 15.5.sp,
+                        lineHeight = 15.sp,
                     ),
                     color = colors.ink1,
                     maxLines = 1,

@@ -121,26 +121,67 @@ internal data class TabletReadingLayoutPolicy(
     val answerHorizontalPaddingDp: Int,
 )
 
+internal data class TabletDetailTypeScalePolicy(
+    val questionFontSizeSp: Int,
+    val questionLineHeightSp: Int,
+    val answerFontSizeSp: Int,
+    val answerLineHeightSp: Int,
+    val stepFontSizeSp: Int,
+    val stepLineHeightSp: Int,
+    val limitFontSizeSp: Int,
+    val limitLineHeightSp: Int,
+)
+
 internal fun tabletLandscapeReadingLayoutPolicy(): TabletReadingLayoutPolicy =
     TabletReadingLayoutPolicy(
-        threadRailWidthDp = 330,
-        answerMaxWidthDp = 600,
-        evidenceRailWidthDp = 360,
-        answerHorizontalPaddingDp = 28,
+        threadRailWidthDp = 320,
+        answerMaxWidthDp = 560,
+        evidenceRailWidthDp = 368,
+        answerHorizontalPaddingDp = 24,
     )
 
 internal fun tabletPortraitReadingLayoutPolicy(): TabletReadingLayoutPolicy =
     TabletReadingLayoutPolicy(
-        threadRailWidthDp = 168,
-        answerMaxWidthDp = 560,
-        evidenceRailWidthDp = 224,
-        answerHorizontalPaddingDp = 20,
+        threadRailWidthDp = 184,
+        answerMaxWidthDp = 520,
+        evidenceRailWidthDp = 240,
+        answerHorizontalPaddingDp = 18,
     )
 
 internal fun tabletReadingLayoutPolicy(isLandscape: Boolean): TabletReadingLayoutPolicy =
     when (isLandscape) {
         true -> tabletLandscapeReadingLayoutPolicy()
         false -> tabletPortraitReadingLayoutPolicy()
+    }
+
+internal fun tabletLandscapeDetailTypeScalePolicy(): TabletDetailTypeScalePolicy =
+    TabletDetailTypeScalePolicy(
+        questionFontSizeSp = 18,
+        questionLineHeightSp = 24,
+        answerFontSizeSp = 19,
+        answerLineHeightSp = 27,
+        stepFontSizeSp = 14,
+        stepLineHeightSp = 20,
+        limitFontSizeSp = 12,
+        limitLineHeightSp = 17,
+    )
+
+internal fun tabletPortraitDetailTypeScalePolicy(): TabletDetailTypeScalePolicy =
+    TabletDetailTypeScalePolicy(
+        questionFontSizeSp = 17,
+        questionLineHeightSp = 23,
+        answerFontSizeSp = 18,
+        answerLineHeightSp = 26,
+        stepFontSizeSp = 14,
+        stepLineHeightSp = 20,
+        limitFontSizeSp = 12,
+        limitLineHeightSp = 17,
+    )
+
+internal fun tabletDetailTypeScalePolicy(isLandscape: Boolean): TabletDetailTypeScalePolicy =
+    when (isLandscape) {
+        true -> tabletLandscapeDetailTypeScalePolicy()
+        false -> tabletPortraitDetailTypeScalePolicy()
     }
 
 internal fun tabletComposerContextHint(state: TabletDetailState): String {
@@ -416,6 +457,7 @@ private fun CenterPane(
 ) {
     val colors = SenkuTheme.colors
     val readingPolicy = tabletReadingLayoutPolicy(state.isLandscape)
+    val typeScalePolicy = tabletDetailTypeScalePolicy(state.isLandscape)
     val scrollState = rememberScrollState()
 
     Box(
@@ -449,6 +491,7 @@ private fun CenterPane(
                     ThreadTurnBlock(
                         turn = turn,
                         turnIndex = index + 1,
+                        typeScalePolicy = typeScalePolicy,
                         canOpenProof = turn.isActive && state.anchor.hasSource,
                         onFocusTurn = { onTurnClick(turn.id) },
                         onOpenProof = onAnchorClick,
@@ -592,6 +635,7 @@ private fun TitleBar(
 private fun ThreadTurnBlock(
     turn: ThreadTurnState,
     turnIndex: Int,
+    typeScalePolicy: TabletDetailTypeScalePolicy,
     canOpenProof: Boolean,
     onFocusTurn: () -> Unit,
     onOpenProof: () -> Unit,
@@ -607,12 +651,14 @@ private fun ThreadTurnBlock(
             QuestionInlineBlock(
                 question = turn.question,
                 turnIndex = turnIndex,
+                typeScalePolicy = typeScalePolicy,
             )
         }
 
         AnswerInlineBlock(
             content = turn.answer,
             turnIndex = turnIndex,
+            typeScalePolicy = typeScalePolicy,
             proofLabel = if (canOpenProof) "Open proof" else "Focus turn",
             onProofClick = if (canOpenProof) onOpenProof else onFocusTurn,
         )
@@ -623,6 +669,7 @@ private fun ThreadTurnBlock(
 private fun QuestionInlineBlock(
     question: String,
     turnIndex: Int,
+    typeScalePolicy: TabletDetailTypeScalePolicy,
     modifier: Modifier = Modifier,
 ) {
     val colors = SenkuTheme.colors
@@ -646,8 +693,8 @@ private fun QuestionInlineBlock(
         Text(
             text = question.trim().ifEmpty { "No question text recorded." },
             style = typography.uiBody.copy(
-                fontSize = 20.sp,
-                lineHeight = 26.sp,
+                fontSize = typeScalePolicy.questionFontSizeSp.sp,
+                lineHeight = typeScalePolicy.questionLineHeightSp.sp,
                 fontWeight = FontWeight.SemiBold,
             ),
             color = colors.ink0,
@@ -659,6 +706,7 @@ private fun QuestionInlineBlock(
 private fun AnswerInlineBlock(
     content: AnswerContent,
     turnIndex: Int,
+    typeScalePolicy: TabletDetailTypeScalePolicy,
     proofLabel: String,
     onProofClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -705,8 +753,8 @@ private fun AnswerInlineBlock(
         Text(
             text = content.short.trim(),
             style = typography.answerBody.copy(
-                fontSize = 20.sp,
-                lineHeight = 29.sp,
+                fontSize = typeScalePolicy.answerFontSizeSp.sp,
+                lineHeight = typeScalePolicy.answerLineHeightSp.sp,
                 letterSpacing = 0.sp,
             ),
             color = colors.ink0,
@@ -719,8 +767,8 @@ private fun AnswerInlineBlock(
                     Text(
                         text = "${index + 1}. ${step.trim()}",
                         style = typography.answerBody.copy(
-                            fontSize = 15.sp,
-                            lineHeight = 22.sp,
+                            fontSize = typeScalePolicy.stepFontSizeSp.sp,
+                            lineHeight = typeScalePolicy.stepLineHeightSp.sp,
                             letterSpacing = 0.sp,
                         ),
                         color = colors.ink1,
@@ -732,8 +780,8 @@ private fun AnswerInlineBlock(
             Text(
                 text = content.limits.trim(),
                 style = typography.smallBody.copy(
-                    fontSize = 13.sp,
-                    lineHeight = 18.sp,
+                    fontSize = typeScalePolicy.limitFontSizeSp.sp,
+                    lineHeight = typeScalePolicy.limitLineHeightSp.sp,
                     fontWeight = FontWeight.Medium,
                 ),
                 color = if (content.abstain) colors.danger else colors.ink2,

@@ -82,7 +82,7 @@ public final class DetailActionBlockPresentationFormatterTest {
         assertEquals("No new charges, no new pours.", actions.get(0).detail);
         assertEquals("Clear the floor to 5 m radius", actions.get(1).title);
         assertEquals("Move personnel upwind.", actions.get(1).detail);
-        assertEquals("Confirm two paths of egress.", actions.get(2).title);
+        assertEquals("Confirm two paths of egress", actions.get(2).title);
         assertEquals("", actions.get(2).detail);
     }
 

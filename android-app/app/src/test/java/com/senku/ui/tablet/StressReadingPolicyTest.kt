@@ -10,20 +10,20 @@ class StressReadingPolicyTest {
     fun tabletLandscapeReadingPolicyKeepsAnswerFirstWidthBudget() {
         val policy = tabletLandscapeReadingLayoutPolicy()
 
-        assertEquals(330, policy.threadRailWidthDp)
-        assertEquals(600, policy.answerMaxWidthDp)
-        assertEquals(360, policy.evidenceRailWidthDp)
-        assertEquals(28, policy.answerHorizontalPaddingDp)
+        assertEquals(320, policy.threadRailWidthDp)
+        assertEquals(560, policy.answerMaxWidthDp)
+        assertEquals(368, policy.evidenceRailWidthDp)
+        assertEquals(24, policy.answerHorizontalPaddingDp)
     }
 
     @Test
     fun tabletPortraitReadingPolicyUsesSqueezedPortraitBudget() {
         val policy = tabletPortraitReadingLayoutPolicy()
 
-        assertEquals(168, policy.threadRailWidthDp)
-        assertEquals(560, policy.answerMaxWidthDp)
-        assertEquals(224, policy.evidenceRailWidthDp)
-        assertEquals(20, policy.answerHorizontalPaddingDp)
+        assertEquals(184, policy.threadRailWidthDp)
+        assertEquals(520, policy.answerMaxWidthDp)
+        assertEquals(240, policy.evidenceRailWidthDp)
+        assertEquals(18, policy.answerHorizontalPaddingDp)
     }
 
     @Test
@@ -33,14 +33,47 @@ class StressReadingPolicyTest {
 
         assertEquals(tabletPortraitReadingLayoutPolicy(), portraitPolicy)
         assertEquals(tabletLandscapeReadingLayoutPolicy(), landscapePolicy)
-        assertEquals(168, portraitPolicy.threadRailWidthDp)
-        assertEquals(560, portraitPolicy.answerMaxWidthDp)
-        assertEquals(224, portraitPolicy.evidenceRailWidthDp)
-        assertEquals(20, portraitPolicy.answerHorizontalPaddingDp)
-        assertEquals(330, landscapePolicy.threadRailWidthDp)
-        assertEquals(600, landscapePolicy.answerMaxWidthDp)
-        assertEquals(360, landscapePolicy.evidenceRailWidthDp)
-        assertEquals(28, landscapePolicy.answerHorizontalPaddingDp)
+        assertEquals(184, portraitPolicy.threadRailWidthDp)
+        assertEquals(520, portraitPolicy.answerMaxWidthDp)
+        assertEquals(240, portraitPolicy.evidenceRailWidthDp)
+        assertEquals(18, portraitPolicy.answerHorizontalPaddingDp)
+        assertEquals(320, landscapePolicy.threadRailWidthDp)
+        assertEquals(560, landscapePolicy.answerMaxWidthDp)
+        assertEquals(368, landscapePolicy.evidenceRailWidthDp)
+        assertEquals(24, landscapePolicy.answerHorizontalPaddingDp)
+    }
+
+    @Test
+    fun tabletLandscapeTypeScaleKeepsAnswerReadableWithoutOversizingBody() {
+        val policy = tabletLandscapeDetailTypeScalePolicy()
+
+        assertEquals(18, policy.questionFontSizeSp)
+        assertEquals(24, policy.questionLineHeightSp)
+        assertEquals(19, policy.answerFontSizeSp)
+        assertEquals(27, policy.answerLineHeightSp)
+        assertEquals(14, policy.stepFontSizeSp)
+        assertEquals(20, policy.stepLineHeightSp)
+    }
+
+    @Test
+    fun tabletPortraitTypeScaleTightensAfterPortraitSqueeze() {
+        val policy = tabletPortraitDetailTypeScalePolicy()
+
+        assertEquals(17, policy.questionFontSizeSp)
+        assertEquals(23, policy.questionLineHeightSp)
+        assertEquals(18, policy.answerFontSizeSp)
+        assertEquals(26, policy.answerLineHeightSp)
+        assertEquals(12, policy.limitFontSizeSp)
+        assertEquals(17, policy.limitLineHeightSp)
+    }
+
+    @Test
+    fun tabletTypeScaleSelectorUsesOrientationSpecificBudgets() {
+        val portraitPolicy = tabletDetailTypeScalePolicy(isLandscape = false)
+        val landscapePolicy = tabletDetailTypeScalePolicy(isLandscape = true)
+
+        assertEquals(tabletPortraitDetailTypeScalePolicy(), portraitPolicy)
+        assertEquals(tabletLandscapeDetailTypeScalePolicy(), landscapePolicy)
     }
 
     @Test

@@ -15,6 +15,7 @@ final class DetailActionBlockPresentationFormatter {
     static final String ACTION_LABEL_DO_FIRST = "Do first";
     static final String ACTION_LABEL_AVOID = "Avoid";
     static final String ACTION_LABEL_ESCALATE = "Escalate if";
+    private static final int MAX_EMERGENCY_PORTRAIT_ACTIONS = 6;
 
     enum ActionBlockKind {
         DO_FIRST,
@@ -105,15 +106,19 @@ final class DetailActionBlockPresentationFormatter {
         }
         panel.setVisibility(View.VISIBLE);
         panel.setBackgroundColor(context.getColor(android.R.color.transparent));
+        int displayedActionCount = Math.min(actions.size(), MAX_EMERGENCY_PORTRAIT_ACTIONS);
         TextView heading = new TextView(context);
-        heading.setText("IMMEDIATE ACTIONS - " + actions.size());
+        heading.setText(actions.size() > displayedActionCount
+            ? "IMMEDIATE ACTIONS - " + displayedActionCount + " OF " + actions.size()
+            : "IMMEDIATE ACTIONS - " + actions.size());
         heading.setTextAppearance(context, android.R.style.TextAppearance_Small);
         heading.setTextColor(context.getColor(R.color.senku_text_muted_light));
         heading.setTypeface(Typeface.MONOSPACE, Typeface.BOLD);
         heading.setLetterSpacing(0.08f);
-        heading.setPadding(0, 0, 0, dp(8));
+        heading.setTextSize(11f);
+        heading.setPadding(0, 0, 0, dp(6));
         panel.addView(heading);
-        for (int i = 0; i < actions.size(); i++) {
+        for (int i = 0; i < displayedActionCount; i++) {
             panel.addView(buildEmergencyPortraitActionView(i + 1, actions.get(i), severityAccentColor, i > 0));
         }
     }
@@ -181,6 +186,21 @@ final class DetailActionBlockPresentationFormatter {
         int severityAccentColor,
         boolean addTopDivider
     ) {
+        LinearLayout container = new LinearLayout(context);
+        container.setOrientation(LinearLayout.VERTICAL);
+        container.setLayoutParams(new LinearLayout.LayoutParams(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        ));
+        if (addTopDivider) {
+            View divider = new View(context);
+            divider.setBackgroundColor(context.getColor(R.color.senku_rev03_hairline_strong));
+            container.addView(divider, new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                dp(1)
+            ));
+        }
+
         LinearLayout row = new LinearLayout(context);
         row.setOrientation(LinearLayout.HORIZONTAL);
         row.setPadding(0, addTopDivider ? dp(12) : dp(8), 0, dp(12));
@@ -207,20 +227,23 @@ final class DetailActionBlockPresentationFormatter {
         title.setTextAppearance(context, android.R.style.TextAppearance_Medium);
         title.setTextColor(context.getColor(R.color.senku_text_light));
         title.setTypeface(Typeface.DEFAULT_BOLD);
-        title.setLineSpacing(0f, 1.05f);
+        title.setTextSize(13f);
+        title.setLineSpacing(0f, 1.08f);
 
         TextView detail = new TextView(context);
         detail.setText(action.detail);
         detail.setTextAppearance(context, android.R.style.TextAppearance_Small);
         detail.setTextColor(context.getColor(R.color.senku_text_muted_light));
-        detail.setLineSpacing(0f, 1.08f);
+        detail.setTextSize(12f);
+        detail.setLineSpacing(0f, 1.12f);
         detail.setPadding(0, dp(3), 0, 0);
         detail.setVisibility(action.detail.isEmpty() ? View.GONE : View.VISIBLE);
 
         content.addView(title);
         content.addView(detail);
         row.addView(content, new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f));
-        return row;
+        container.addView(row);
+        return container;
     }
 
     static List<EmergencyActionSpec> extractEmergencyActionSpecs(
@@ -241,14 +264,18 @@ final class DetailActionBlockPresentationFormatter {
     private static EmergencyActionSpec splitEmergencyAction(String cleaned) {
         int splitIndex = firstSentenceBoundary(cleaned);
         if (splitIndex < 0) {
-            return new EmergencyActionSpec(cleaned, "");
+            return new EmergencyActionSpec(trimEmergencyActionTitle(cleaned), "");
         }
-        String title = cleaned.substring(0, splitIndex).trim();
+        String title = trimEmergencyActionTitle(cleaned.substring(0, splitIndex));
         String detail = cleaned.substring(splitIndex).replaceFirst("^[.!?]+\\s*", "").trim();
         if (title.isEmpty()) {
             return new EmergencyActionSpec(cleaned, "");
         }
         return new EmergencyActionSpec(title, detail);
+    }
+
+    private static String trimEmergencyActionTitle(String text) {
+        return safe(text).trim().replaceFirst("[.!?]+$", "").trim();
     }
 
     private static int firstSentenceBoundary(String text) {

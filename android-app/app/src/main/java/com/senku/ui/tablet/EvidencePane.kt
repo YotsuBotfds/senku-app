@@ -106,6 +106,7 @@ fun EvidencePane(
         CrossReferenceSection(
             anchor = anchor,
             xrefs = xrefs,
+            onAnchorClick = onAnchorClick,
             onXRefClick = onXRefClick,
             landmark = sourceGraphLandmark,
             emptyDescription = sourceGraphEmpty,
@@ -190,6 +191,7 @@ fun CollapsibleEvidencePane(
                     CrossReferenceSection(
                         anchor = anchor,
                         xrefs = xrefs,
+                        onAnchorClick = onAnchorClick,
                         onXRefClick = onXRefClick,
                         landmark = sourceGraphLandmark,
                         emptyDescription = sourceGraphEmpty,
@@ -333,10 +335,12 @@ internal fun buildCollapsedEvidencePreviewText(anchor: AnchorState): String {
 private fun CrossReferenceSection(
     anchor: AnchorState,
     xrefs: List<XRefState>,
+    onAnchorClick: () -> Unit,
     onXRefClick: (String) -> Unit,
     landmark: String,
     emptyDescription: String,
 ) {
+    val cardCount = buildCrossReferenceCardCount(anchor, xrefs)
     Column(
         modifier = Modifier.semantics {
             isTraversalGroup = true
@@ -345,7 +349,7 @@ private fun CrossReferenceSection(
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         SectionHeader(
-            title = "CROSS-REFERENCE - ${xrefs.size}",
+            title = "CROSS-REFERENCE - $cardCount",
             accessibilitySummary = buildSourceGraphAccessibilitySummary(
                 landmark = landmark,
                 emptyDescription = emptyDescription,
@@ -354,9 +358,22 @@ private fun CrossReferenceSection(
             ),
         )
         Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-            if (xrefs.isEmpty()) {
+            if (cardCount == 0) {
                 PlaceholderCard("No guide connections")
             } else {
+                if (anchor.hasSource) {
+                    ManualEvidenceCard(
+                        guideId = anchor.id,
+                        relation = "ANCHOR",
+                        title = anchor.title,
+                        section = anchor.section,
+                        snippet = "",
+                        onClick = onAnchorClick,
+                        titleMaxLines = 2,
+                        snippetMaxLines = 1,
+                        density = EvidenceCardDensity.Compact,
+                    )
+                }
                 xrefs.forEach { xref ->
                     ManualEvidenceCard(
                         guideId = xref.id,
@@ -374,6 +391,9 @@ private fun CrossReferenceSection(
         }
     }
 }
+
+internal fun buildCrossReferenceCardCount(anchor: AnchorState, xrefs: List<XRefState>): Int =
+    xrefs.size + if (anchor.hasSource) 1 else 0
 
 @Composable
 private fun ManualEvidenceCard(

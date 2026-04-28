@@ -83,6 +83,36 @@ class TabletEvidenceVisibilityPolicyTest {
         assertEquals("", previewText)
     }
 
+    @Test
+    fun crossReferenceCardCountIncludesActiveAnchorWhenPresent() {
+        val count = buildCrossReferenceCardCount(
+            anchor(section = "water storage", snippet = ""),
+            listOf(
+                XRefState(id = "GD-215", title = "Rainwater Catchment"),
+                XRefState(id = "GD-216", title = "Clay Filter"),
+            ),
+        )
+
+        assertEquals(3, count)
+    }
+
+    @Test
+    fun crossReferenceCardCountDoesNotInventAnchorWithoutSource() {
+        val count = buildCrossReferenceCardCount(
+            AnchorState(
+                key = "",
+                id = "",
+                title = "",
+                section = "",
+                snippet = "",
+                hasSource = false,
+            ),
+            listOf(XRefState(id = "GD-215", title = "Rainwater Catchment")),
+        )
+
+        assertEquals(1, count)
+    }
+
     private fun anchor(
         section: String,
         snippet: String,

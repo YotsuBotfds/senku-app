@@ -146,20 +146,26 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
         boolean landscapePhoneCard = isLandscapePhoneCard(context);
         boolean smallPhonePortraitCard = isSmallPhonePortraitCard(context);
         boolean largeFontCard = isLargeFontScale(context);
-        boolean compactLinkedCue = smallPhonePortraitCard || landscapePhoneCard || largeFontCard;
+        boolean compactLinkedCue = richTabletCard || smallPhonePortraitCard || landscapePhoneCard || largeFontCard;
         boolean stressCompactCard = landscapePhoneCard && largeFontCard;
-        boolean allowLinkedGuidePreviewLine = !smallPhonePortraitCard && !landscapePhoneCard && !largeFontCard;
+        boolean allowLinkedGuidePreviewLine = !richTabletCard && !smallPhonePortraitCard && !landscapePhoneCard && !largeFontCard;
         holder.title.setText(formatDisplayText(
             result.title,
-            richTabletCard ? 96 : (landscapePhoneCard ? 100 : 90),
+            richTabletCard ? 110 : (landscapePhoneCard ? 100 : 90),
             2
         ));
         holder.title.setMaxLines(richTabletCard ? 1 : (stressCompactCard ? 1 : 2));
         holder.title.setEllipsize(TextUtils.TruncateAt.END);
         holder.meta.setText(buildMetaLine(result));
-        holder.meta.setMaxLines(stressCompactCard ? 1 : 2);
+        holder.meta.setMaxLines((richTabletCard || stressCompactCard) ? 1 : 2);
         holder.meta.setEllipsize(TextUtils.TruncateAt.END);
-        bindCategoryBadge(holder.categoryBadge, holder.accent, result.category);
+        if (richTabletCard) {
+            holder.categoryBadge.setVisibility(View.GONE);
+            holder.accent.setVisibility(View.GONE);
+        } else {
+            holder.accent.setVisibility(View.VISIBLE);
+            bindCategoryBadge(holder.categoryBadge, holder.accent, result.category);
+        }
         bindLinkedGuideCue(
             holder.linkedGuideCue,
             holder.linkedGuidePreview,
@@ -169,12 +175,16 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
             stressCompactCard,
             richTabletCard
         );
-        bindRetrievalBadge(holder.retrievalBadge, holder.accent, result.retrievalMode);
+        if (richTabletCard) {
+            bindTabletRankBadge(holder.retrievalBadge, position);
+        } else {
+            bindRetrievalBadge(holder.retrievalBadge, holder.accent, result.retrievalMode);
+        }
         holder.accent.setAlpha(rankAccentAlpha(position));
-        bindSection(holder.section, result.sectionHeading, smallPhonePortraitCard || stressCompactCard);
+        bindSection(holder.section, result.sectionHeading, richTabletCard || smallPhonePortraitCard || stressCompactCard);
         holder.snippet.setText(formatDisplayText(
             result.snippet,
-            richTabletCard ? 190 : (landscapePhoneCard ? 180 : (smallPhonePortraitCard ? 110 : 240)),
+            richTabletCard ? 150 : (landscapePhoneCard ? 180 : (smallPhonePortraitCard ? 110 : 240)),
             richTabletCard ? 4 : 3
         ));
         holder.snippet.setMaxLines(richTabletCard ? 2 : (stressCompactCard ? 1 : (landscapePhoneCard ? 2 : (smallPhonePortraitCard ? 1 : 5))));
@@ -223,6 +233,19 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
         applyBadgeStyle(badge, displayLabelForRetrievalMode(normalized), color);
     }
 
+    private void bindTabletRankBadge(TextView badge, int position) {
+        if (badge == null) {
+            return;
+        }
+        badge.setVisibility(View.VISIBLE);
+        badge.setText(buildRankLabel(position));
+        badge.setTextColor(accentOliveColor);
+        badge.setTypeface(Typeface.MONOSPACE, Typeface.BOLD);
+        badge.setBackground(null);
+        badge.setCompoundDrawablesRelativeWithIntrinsicBounds(0, 0, 0, 0);
+        badge.setContentDescription("Result rank " + Math.max(1, position + 1));
+    }
+
     private void bindLinkedGuideCue(
         TextView cue,
         TextView previewView,
@@ -243,7 +266,7 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
         previewView.setOnClickListener(null);
         previewView.setClickable(false);
         previewView.setFocusable(false);
-        if (stressCompactCard) {
+        if (richTabletCard || stressCompactCard) {
             cue.setVisibility(View.GONE);
             return;
         }

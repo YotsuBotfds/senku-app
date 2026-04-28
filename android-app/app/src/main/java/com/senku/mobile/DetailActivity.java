@@ -134,6 +134,7 @@ public final class DetailActivity extends AppCompatActivity {
     private TextView emergencyHeaderTitle;
     private TextView emergencyHeaderText;
     private LinearLayout tabletEmergencyHeaderOverlay;
+    private LinearLayout tabletEmergencyActionsOverlayPanel;
     private View whyPanel;
     private TextView whyTitleText;
     private TextView whyText;
@@ -1225,10 +1226,21 @@ public final class DetailActivity extends AppCompatActivity {
         TextView text = overlay.findViewById(R.id.detail_emergency_header_text);
         if (title != null) {
             title.setText(buildEmergencyHeaderTitle());
+            title.setTextColor(getColor(isTabletPortraitLayout()
+                ? R.color.senku_rev03_danger
+                : R.color.senku_emergency_banner_text));
+            title.setTypeface(Typeface.MONOSPACE, Typeface.BOLD);
+            title.setTextSize(isTabletPortraitLayout() ? 11f : 16f);
+            title.setLetterSpacing(isTabletPortraitLayout() ? 0.08f : 0f);
         }
         if (text != null) {
             text.setText(buildEmergencyHeaderSummary());
+            text.setTypeface(isTabletPortraitLayout() ? Typeface.create(Typeface.SERIF, Typeface.BOLD) : Typeface.DEFAULT);
+            text.setTextSize(isTabletPortraitLayout() ? 15f : 14f);
+            text.setMaxLines(isTabletPortraitLayout() ? 3 : 2);
         }
+        renderTabletEmergencyOverlayActions();
+        updateTabletEmergencyHeaderOverlayLayout(overlay);
         overlay.setVisibility(View.VISIBLE);
         overlay.bringToFront();
     }
@@ -1246,7 +1258,6 @@ public final class DetailActivity extends AppCompatActivity {
         overlay.setId(R.id.detail_emergency_header);
         overlay.setOrientation(LinearLayout.VERTICAL);
         overlay.setBackgroundResource(R.drawable.bg_emergency_banner);
-        overlay.setPadding(dp(18), dp(12), dp(18), dp(12));
         overlay.setContentDescription(getString(R.string.detail_emergency_header_title));
 
         TextView title = new TextView(this);
@@ -1273,16 +1284,72 @@ public final class DetailActivity extends AppCompatActivity {
         textParams.topMargin = dp(6);
         overlay.addView(text, textParams);
 
+        tabletEmergencyActionsOverlayPanel = new LinearLayout(this);
+        tabletEmergencyActionsOverlayPanel.setOrientation(LinearLayout.VERTICAL);
+        LinearLayout.LayoutParams actionsParams = new LinearLayout.LayoutParams(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        );
+        actionsParams.topMargin = dp(16);
+        overlay.addView(tabletEmergencyActionsOverlayPanel, actionsParams);
+
+        FrameLayout.LayoutParams params = tabletEmergencyHeaderOverlayParams();
+        root.addView(overlay, params);
+        tabletEmergencyHeaderOverlay = overlay;
+        return overlay;
+    }
+
+    private void updateTabletEmergencyHeaderOverlayLayout(LinearLayout overlay) {
+        overlay.setPadding(
+            isTabletPortraitLayout() ? dp(36) : dp(18),
+            isTabletPortraitLayout() ? dp(18) : dp(12),
+            isTabletPortraitLayout() ? dp(36) : dp(18),
+            isTabletPortraitLayout() ? dp(18) : dp(12)
+        );
+        ViewGroup.LayoutParams currentParams = overlay.getLayoutParams();
+        if (currentParams instanceof FrameLayout.LayoutParams) {
+            FrameLayout.LayoutParams desiredParams = tabletEmergencyHeaderOverlayParams();
+            FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) currentParams;
+            params.width = desiredParams.width;
+            params.height = desiredParams.height;
+            params.leftMargin = desiredParams.leftMargin;
+            params.rightMargin = desiredParams.rightMargin;
+            params.topMargin = desiredParams.topMargin;
+            params.bottomMargin = desiredParams.bottomMargin;
+            overlay.setLayoutParams(params);
+        }
+    }
+
+    private FrameLayout.LayoutParams tabletEmergencyHeaderOverlayParams() {
         FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT,
             ViewGroup.LayoutParams.WRAP_CONTENT
         );
-        params.leftMargin = dp(336);
-        params.rightMargin = dp(24);
-        params.topMargin = dp(16);
-        root.addView(overlay, params);
-        tabletEmergencyHeaderOverlay = overlay;
-        return overlay;
+        if (isTabletPortraitLayout()) {
+            params.leftMargin = dp(84);
+            params.rightMargin = dp(16);
+            params.topMargin = dp(132);
+        } else {
+            params.leftMargin = dp(336);
+            params.rightMargin = dp(24);
+            params.topMargin = dp(16);
+        }
+        return params;
+    }
+
+    private void renderTabletEmergencyOverlayActions() {
+        if (tabletEmergencyActionsOverlayPanel == null) {
+            return;
+        }
+        if (!isTabletPortraitLayout()) {
+            tabletEmergencyActionsOverlayPanel.setVisibility(View.GONE);
+            return;
+        }
+        detailActionBlockPresentationFormatter().renderEmergencyPortraitActions(
+            tabletEmergencyActionsOverlayPanel,
+            currentBody,
+            getColor(R.color.senku_rev03_danger)
+        );
     }
 
     private void removeTabletEmergencyHeaderOverlay() {
@@ -1294,6 +1361,7 @@ public final class DetailActivity extends AppCompatActivity {
             ((ViewGroup) parent).removeView(tabletEmergencyHeaderOverlay);
         }
         tabletEmergencyHeaderOverlay = null;
+        tabletEmergencyActionsOverlayPanel = null;
     }
 
     private TabletDetailState buildTabletState() {
