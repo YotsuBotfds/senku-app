@@ -140,6 +140,14 @@ public final class MainActivity extends AppCompatActivity {
     private View developerPanel;
     private TextView developerDiagnosticsText;
     private View browseRail;
+    private View tabletSearchSurface;
+    private TextView tabletSearchQueryText;
+    private TextView tabletSearchCountText;
+    private View tabletSearchPreviewRail;
+    private TextView tabletSearchPreviewKicker;
+    private TextView tabletSearchPreviewTitle;
+    private TextView tabletSearchPreviewMeta;
+    private TextView tabletSearchPreviewBody;
     private View legacyHomeHeroPanel;
     private IdentityStripHostView identityStripView;
     private CategoryShelfHostView categoryShelfView;
@@ -324,6 +332,14 @@ public final class MainActivity extends AppCompatActivity {
         developerDiagnosticsText = findViewById(R.id.developer_diagnostics_text);
         updateReviewedCardRuntimeControls();
         browseRail = findViewById(R.id.browse_rail);
+        tabletSearchSurface = findViewById(R.id.tablet_search_surface);
+        tabletSearchQueryText = findViewById(R.id.tablet_search_query_text);
+        tabletSearchCountText = findViewById(R.id.tablet_search_count_text);
+        tabletSearchPreviewRail = findViewById(R.id.tablet_search_preview_rail);
+        tabletSearchPreviewKicker = findViewById(R.id.tablet_search_preview_kicker);
+        tabletSearchPreviewTitle = findViewById(R.id.tablet_search_preview_title);
+        tabletSearchPreviewMeta = findViewById(R.id.tablet_search_preview_meta);
+        tabletSearchPreviewBody = findViewById(R.id.tablet_search_preview_body);
         legacyHomeHeroPanel = resolveLegacyHomeHeroPanel();
         if (homeEntryHint != null) {
             homeEntryHintDefaultPaddingLeft = homeEntryHint.getPaddingLeft();
@@ -593,6 +609,7 @@ public final class MainActivity extends AppCompatActivity {
         boolean sessionUsed = retrievalPlan.sessionUsed;
         String displayQuery = query.isEmpty() ? "guides" : query;
         setResultHighlightQuery(query);
+        updateTabletSearchQuery(displayQuery, 0);
         showBrowseChrome(false);
         replaceItems(Collections.emptyList());
         resultsHeader.setText(R.string.results_header_searching);
@@ -611,7 +628,7 @@ public final class MainActivity extends AppCompatActivity {
                     setBusy("Search complete", false);
                     replaceItems(results);
                     showBrowseChrome(false);
-                    resultsHeader.setText(presentationFormatter().buildResultsHeader(
+                    String header = presentationFormatter().buildResultsHeader(
                         displayQuery,
                         results,
                         repo.hasVectorStore(),
@@ -620,7 +637,12 @@ public final class MainActivity extends AppCompatActivity {
                         isLandscapePhoneLayout(),
                         isLargeFontScale(),
                         sessionUsed
-                    ));
+                    );
+                    if (isTabletSearchLayout()) {
+                        header = buildTabletSearchHeader(displayQuery, results.size());
+                    }
+                    resultsHeader.setText(header);
+                    updateTabletSearchQuery(displayQuery, results.size());
                     updateSessionPanel();
                     updatePortraitPhoneResultsPriority();
                 });
@@ -645,7 +667,10 @@ public final class MainActivity extends AppCompatActivity {
         setResultHighlightQuery(query);
         replaceItems(deterministic.sources);
         showBrowseChrome(false);
-        resultsHeader.setText("Deterministic source picks for \"" + query + "\" (" + deterministic.sources.size() + ")");
+        resultsHeader.setText(isTabletSearchLayout()
+            ? buildTabletSearchHeader(query, deterministic.sources.size())
+            : "Deterministic source picks for \"" + query + "\" (" + deterministic.sources.size() + ")");
+        updateTabletSearchQuery(query, deterministic.sources.size());
         updateInfoText();
         updatePortraitPhoneResultsPriority();
     }
@@ -993,6 +1018,7 @@ public final class MainActivity extends AppCompatActivity {
         if (resultsList != null) {
             resultsList.scrollToPosition(0);
         }
+        updateTabletSearchPreview();
         updateLandscapePhoneResultsPriority();
         updatePortraitPhoneResultsPriority();
         refreshResultPreviewBridgesAsync(results);
@@ -2764,7 +2790,10 @@ public final class MainActivity extends AppCompatActivity {
         setResultHighlightQuery("");
         replaceItems(filtered);
         showBrowseChrome(false);
-        resultsHeader.setText(label + " (" + filtered.size() + " guides)");
+        resultsHeader.setText(isTabletSearchLayout()
+            ? buildTabletSearchHeader(label, filtered.size())
+            : label + " (" + filtered.size() + " guides)");
+        updateTabletSearchQuery(label, filtered.size());
         setBusy("Category ready", false);
         updatePortraitPhoneResultsPriority();
     }
@@ -3326,6 +3355,9 @@ public final class MainActivity extends AppCompatActivity {
             if (resultsHeader != null) {
                 resultsHeader.setVisibility(View.GONE);
             }
+            if (tabletSearchSurface != null) {
+                tabletSearchSurface.setVisibility(View.GONE);
+            }
         } else if (resultsList != null && !isLandscapePhoneLayout()) {
             resultsList.setVisibility(View.VISIBLE);
             if (resultsHeader != null) {
@@ -3349,6 +3381,7 @@ public final class MainActivity extends AppCompatActivity {
             }
         }
         updateLandscapeTabletResultsPriority(show);
+        updatePortraitTabletResultsPriority(show);
         updateLandscapePhoneResultsPriority();
         updatePortraitPhoneResultsPriority();
         updateInfoTextVisibility();
@@ -3361,14 +3394,47 @@ public final class MainActivity extends AppCompatActivity {
             return;
         }
         boolean hasResults = !items.isEmpty();
+        boolean showSearchSurface = !browseMode;
+        if (tabletSearchSurface != null) {
+            tabletSearchSurface.setVisibility(showSearchSurface ? View.VISIBLE : View.GONE);
+        }
         if (resultsHeader != null) {
-            resultsHeader.setVisibility(!browseMode && hasResults ? View.VISIBLE : View.GONE);
+            resultsHeader.setVisibility(showSearchSurface ? View.VISIBLE : View.GONE);
         }
         if (resultsList != null) {
-            resultsList.setVisibility(!browseMode && hasResults ? View.VISIBLE : View.GONE);
+            resultsList.setVisibility(showSearchSurface && hasResults ? View.VISIBLE : View.GONE);
         }
         if (browseRail != null) {
             browseRail.setVisibility(browseMode ? View.VISIBLE : View.GONE);
+        }
+        if (tabletSearchPreviewRail != null) {
+            tabletSearchPreviewRail.setVisibility(showSearchSurface && hasResults ? View.VISIBLE : View.GONE);
+        }
+        if (developerPanel != null) {
+            applyDeveloperToolsPanelVisibility(browseMode, hasResults);
+        }
+    }
+
+    private void updatePortraitTabletResultsPriority(boolean browseMode) {
+        if (!isTabletPortraitLayout()) {
+            return;
+        }
+        boolean hasResults = !items.isEmpty();
+        boolean showSearchSurface = !browseMode;
+        if (tabletSearchSurface != null) {
+            tabletSearchSurface.setVisibility(showSearchSurface ? View.VISIBLE : View.GONE);
+        }
+        if (resultsHeader != null) {
+            resultsHeader.setVisibility(showSearchSurface ? View.VISIBLE : View.GONE);
+        }
+        if (resultsList != null) {
+            resultsList.setVisibility(showSearchSurface && hasResults ? View.VISIBLE : View.GONE);
+        }
+        if (browseRail != null) {
+            browseRail.setVisibility(browseMode ? View.VISIBLE : View.GONE);
+        }
+        if (tabletSearchPreviewRail != null) {
+            tabletSearchPreviewRail.setVisibility(View.GONE);
         }
         if (developerPanel != null) {
             applyDeveloperToolsPanelVisibility(browseMode, hasResults);
@@ -3473,6 +3539,89 @@ public final class MainActivity extends AppCompatActivity {
     private int dp(int value) {
         float density = getResources().getDisplayMetrics().density;
         return Math.round(value * density);
+    }
+
+    private boolean isTabletSearchLayout() {
+        return isLandscapeTabletLayout() || isTabletPortraitLayout();
+    }
+
+    private String buildTabletSearchHeader(String query, int resultCount) {
+        String cleanQuery = safe(query).trim();
+        String countLabel = resultCount + (resultCount == 1 ? " result" : " results");
+        if (cleanQuery.isEmpty() || "guides".equalsIgnoreCase(cleanQuery)) {
+            return "SEARCH - " + countLabel;
+        }
+        return "SEARCH  " + cleanQuery + " - " + countLabel;
+    }
+
+    private void updateTabletSearchQuery(String query, int resultCount) {
+        if (!isTabletSearchLayout()) {
+            return;
+        }
+        String cleanQuery = safe(query).trim();
+        if (tabletSearchQueryText != null) {
+            tabletSearchQueryText.setText(cleanQuery.isEmpty() ? "guides" : cleanQuery);
+        }
+        if (tabletSearchCountText != null) {
+            tabletSearchCountText.setText(resultCount + (resultCount == 1 ? " RESULT" : " RESULTS"));
+        }
+    }
+
+    private void updateTabletSearchPreview() {
+        if (!isTabletSearchLayout() || tabletSearchPreviewRail == null) {
+            return;
+        }
+        if (!isLandscapeTabletLayout() || items.isEmpty()) {
+            tabletSearchPreviewRail.setVisibility(View.GONE);
+            return;
+        }
+        SearchResult result = items.get(0);
+        if (tabletSearchPreviewKicker != null) {
+            String guideId = safe(result.guideId).trim();
+            tabletSearchPreviewKicker.setText("PREVIEW" + (guideId.isEmpty() ? "" : " - " + guideId));
+        }
+        if (tabletSearchPreviewTitle != null) {
+            tabletSearchPreviewTitle.setText(firstNonEmpty(result.title, "Guide preview"));
+        }
+        if (tabletSearchPreviewMeta != null) {
+            tabletSearchPreviewMeta.setText(buildTabletPreviewMeta(result));
+        }
+        if (tabletSearchPreviewBody != null) {
+            tabletSearchPreviewBody.setText(firstNonEmpty(result.snippet, result.body, "Tap a result to open the full guide."));
+        }
+        tabletSearchPreviewRail.setOnClickListener(v -> openDetail(result));
+        tabletSearchPreviewRail.setVisibility(isBrowseModeActive() ? View.GONE : View.VISIBLE);
+    }
+
+    private String buildTabletPreviewMeta(SearchResult result) {
+        ArrayList<String> parts = new ArrayList<>();
+        addNonEmptyPart(parts, result == null ? null : result.contentRole);
+        addNonEmptyPart(parts, result == null ? null : result.timeHorizon);
+        addNonEmptyPart(parts, result == null ? null : result.category);
+        if (parts.isEmpty()) {
+            addNonEmptyPart(parts, result == null ? null : result.subtitle);
+        }
+        return parts.isEmpty() ? "SOURCE GUIDE" : TextUtils.join("  -  ", parts).toUpperCase(Locale.US);
+    }
+
+    private void addNonEmptyPart(List<String> parts, String value) {
+        String clean = safe(value).trim();
+        if (!clean.isEmpty()) {
+            parts.add(clean.replace('-', ' '));
+        }
+    }
+
+    private String firstNonEmpty(String... values) {
+        if (values == null) {
+            return "";
+        }
+        for (String value : values) {
+            String clean = safe(value).trim();
+            if (!clean.isEmpty()) {
+                return clean;
+            }
+        }
+        return "";
     }
 
     private boolean isLandscapeTabletLayout() {

@@ -70,7 +70,7 @@ public final class EmergencySurfacePolicyTest {
     }
 
     @Test
-    public void detailBridgeKeepsEmergencyHeaderLandscapePhoneOnly() {
+    public void detailBridgeAllowsEmergencyHeaderOnEligiblePortraitOrLandscapeSurface() {
         ReviewedCardMetadata metadata = reviewedMetadata(
             "poisoning_unknown_ingestion",
             "GD-898",
@@ -90,9 +90,9 @@ public final class EmergencySurfacePolicyTest {
             OfflineAnswerEngine.AnswerMode.CONFIDENT
         ));
 
-        assertFalse(DetailActivity.shouldShowEmergencyHeaderForPolicy(
+        assertTrue(DetailActivity.shouldShowEmergencyHeaderForPolicy(
             true,
-            false,
+            true,
             true,
             "answer_card:poisoning_unknown_ingestion",
             "medical",
@@ -101,6 +101,19 @@ public final class EmergencySurfacePolicyTest {
             OfflineAnswerEngine.ConfidenceLabel.HIGH,
             OfflineAnswerEngine.AnswerMode.CONFIDENT
         ));
+    }
+
+    @Test
+    public void emergencyShortAnswerExtractionPrefersShortAnswerSection() {
+        assertEquals(
+            "Stop work immediately. Move to minimum 5 m from active work zone.",
+            DetailActivity.extractEmergencyShortAnswer(
+                "Short answer:\n" +
+                    "Stop work immediately. Move to minimum 5 m from active work zone.\n\n" +
+                    "Steps:\n" +
+                    "1. Stop all hot work. No new charges, no new pours."
+            )
+        );
     }
 
     @Test

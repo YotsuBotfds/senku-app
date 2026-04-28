@@ -1134,6 +1134,7 @@ public final class DetailActivity extends AppCompatActivity {
         renderEmergencyHeader();
         clearStatus();
         renderActionBlocks();
+        applyEmergencyPortraitPresentation();
 
         detailScroll.post(() -> {
             if (isFinishing() || isDestroyed()) {
@@ -2071,21 +2072,29 @@ public final class DetailActivity extends AppCompatActivity {
             }
 
             if (useCompactSourceSections()) {
+                boolean emergencyPortrait = isEmergencyPortraitSurface();
                 sourcesPanel.setVisibility(View.VISIBLE);
                 sourcesPanel.setBackgroundResource(detailSourcesPanelBackground());
                 if (sourcesTitleText != null) {
-                    sourcesTitleText.setText(buildCompactToggleTitle(R.string.detail_sources_title, portraitSourcesExpanded));
+                    sourcesTitleText.setText(emergencyPortrait
+                        ? "WHY THIS ANSWER"
+                        : buildCompactToggleTitle(R.string.detail_sources_title, portraitSourcesExpanded));
                 }
                 if (sourcesSubtitle != null) {
-                    sourcesSubtitle.setText(
-                        detailSourcePresentationFormatter().buildCompactSourcesSubtitle(
-                            currentSources.size(),
-                            portraitSourcesExpanded,
-                            generationStallNoticeVisible,
-                            buildTrustRouteBackendSummary(false)
-                        )
-                    );
+                    sourcesSubtitle.setVisibility(emergencyPortrait ? View.GONE : View.VISIBLE);
+                    if (!emergencyPortrait) {
+                        sourcesSubtitle.setText(
+                            detailSourcePresentationFormatter().buildCompactSourcesSubtitle(
+                                currentSources.size(),
+                                portraitSourcesExpanded,
+                                generationStallNoticeVisible,
+                                buildTrustRouteBackendSummary(false)
+                            )
+                        );
+                    }
                 }
+            } else if (sourcesSubtitle != null) {
+                sourcesSubtitle.setVisibility(View.VISIBLE);
             }
 
             if (inlineLandscapeProvenance) {
@@ -2161,10 +2170,11 @@ public final class DetailActivity extends AppCompatActivity {
                 }
             }
             if (useCompactSourceSections()) {
+                boolean emergencyPortrait = isEmergencyPortraitSurface();
                 if (sourcesContainer != null) {
-                    sourcesContainer.setVisibility(portraitSourcesExpanded ? View.VISIBLE : View.GONE);
+                    sourcesContainer.setVisibility((portraitSourcesExpanded || emergencyPortrait) ? View.VISIBLE : View.GONE);
                 }
-                if (!portraitSourcesExpanded) {
+                if (!portraitSourcesExpanded && !emergencyPortrait) {
                     clearProvenancePanel();
                 }
                 return;
@@ -2192,6 +2202,10 @@ public final class DetailActivity extends AppCompatActivity {
             return;
         }
         inlineSourcesContainer.removeAllViews();
+        if (isEmergencyPortraitSurface()) {
+            inlineSourcesScroll.setVisibility(View.GONE);
+            return;
+        }
         List<SearchResult> inlineSources = sourcesForInlineVerification();
         boolean compactPhonePortrait = isCompactPortraitPhoneLayout();
         boolean compactPreview = shouldUseCompactSourceProvenancePreview();
@@ -2314,6 +2328,10 @@ public final class DetailActivity extends AppCompatActivity {
             return;
         }
         inlineNextStepsContainer.removeAllViews();
+        if (isEmergencyPortraitSurface()) {
+            inlineNextStepsScroll.setVisibility(View.GONE);
+            return;
+        }
         if (!answerMode || showUtilityRail() || isTabletPortraitLayout()) {
             inlineNextStepsScroll.setVisibility(View.GONE);
             return;
@@ -4164,14 +4182,14 @@ public final class DetailActivity extends AppCompatActivity {
             return;
         }
         emergencyHeader.setVisibility(View.VISIBLE);
-        emergencyHeaderTitle.setText(R.string.detail_emergency_header_title);
+        emergencyHeaderTitle.setText(buildEmergencyHeaderTitle());
         emergencyHeaderText.setText(buildEmergencyHeaderSummary());
     }
 
     private boolean shouldShowEmergencyHeader() {
         return shouldShowEmergencyHeaderForPolicy(
             answerMode,
-            isLandscapePhoneLayout(),
+            isEmergencyHeaderSurfaceLayout(),
             isDeterministicRoute(),
             currentRuleId,
             currentPrimarySourceCategory(),
@@ -4184,7 +4202,7 @@ public final class DetailActivity extends AppCompatActivity {
 
     static boolean shouldShowEmergencyHeaderForPolicy(
         boolean detailAnswerMode,
-        boolean landscapePhoneLayout,
+        boolean emergencySurfaceLayout,
         boolean deterministicRoute,
         String ruleId,
         String category,
@@ -4194,7 +4212,7 @@ public final class DetailActivity extends AppCompatActivity {
         OfflineAnswerEngine.AnswerMode responseMode
     ) {
         return detailAnswerMode
-            && landscapePhoneLayout
+            && emergencySurfaceLayout
             && evaluateEmergencySurfacePolicy(
                 detailAnswerMode,
                 deterministicRoute,
@@ -4269,6 +4287,30 @@ public final class DetailActivity extends AppCompatActivity {
         return safe(category).trim();
     }
 
+    private boolean isEmergencyHeaderSurfaceLayout() {
+        return isLandscapePhoneLayout() || isCompactPortraitPhoneLayout() || isTabletPortraitLayout();
+    }
+
+    private boolean isEmergencyPortraitSurface() {
+        return answerMode
+            && (isCompactPortraitPhoneLayout() || isTabletPortraitLayout())
+            && isCurrentEmergencySurfaceEligible();
+    }
+
+    private boolean isCurrentEmergencySurfaceEligible() {
+        return answerMode
+            && evaluateEmergencySurfacePolicy(
+                answerMode,
+                isDeterministicRoute(),
+                currentRuleId,
+                currentPrimarySourceCategory(),
+                reviewedCardMetadataBridge.current(),
+                isLowCoverageRoute(),
+                currentAnswerConfidenceLabel,
+                currentAnswerResponseMode
+            ).eligible;
+    }
+
     private String currentPrimarySourceCategory() {
         if (currentSources == null || currentSources.isEmpty()) {
             return "";
@@ -4277,11 +4319,60 @@ public final class DetailActivity extends AppCompatActivity {
     }
 
     private String buildEmergencyHeaderSummary() {
+        String extracted = extractEmergencyShortAnswer(formatAnswerBody(currentBody));
+        if (!extracted.isEmpty()) {
+            return extracted;
+        }
         String normalized = safe(currentRuleId).trim().toLowerCase(Locale.US);
         if ("generic_puncture".equals(normalized)) {
             return getString(R.string.detail_emergency_generic_puncture);
         }
         return getString(R.string.detail_emergency_default);
+    }
+
+    private String buildEmergencyHeaderTitle() {
+        String hazard = firstNonEmpty(reviewedCardMetadataBridge.current().cardId, currentPrimarySourceCategory(), currentTitle);
+        hazard = hazard.replace("answer_card:", "").replace('_', ' ').trim();
+        if (hazard.isEmpty()) {
+            return getString(R.string.detail_emergency_header_title);
+        }
+        return "DANGER - " + hazard.toUpperCase(Locale.US);
+    }
+
+    static String extractEmergencyShortAnswer(String formattedAnswerText) {
+        String text = safe(formattedAnswerText).trim();
+        if (text.isEmpty()) {
+            return "";
+        }
+        String[] lines = text.split("\\R");
+        ArrayList<String> shortLines = new ArrayList<>();
+        boolean inShort = false;
+        boolean sawShortLabel = false;
+        for (String rawLine : lines) {
+            String line = safe(rawLine).trim();
+            if (line.equalsIgnoreCase("Short answer:")) {
+                inShort = true;
+                sawShortLabel = true;
+                continue;
+            }
+            if (line.equalsIgnoreCase("Steps:") || line.equalsIgnoreCase("Limits or safety:")) {
+                if (sawShortLabel) {
+                    break;
+                }
+                continue;
+            }
+            if (sawShortLabel) {
+                if (inShort && !line.isEmpty()) {
+                    shortLines.add(line);
+                }
+            } else if (!line.isEmpty() && !line.matches("^\\d+\\.\\s+.*")) {
+                shortLines.add(line);
+                break;
+            }
+        }
+        return DetailWarningCopySanitizer.sanitizeWarningResidualCopy(String.join(" ", shortLines))
+            .replaceAll("\\s{2,}", " ")
+            .trim();
     }
 
     private void applyResiliencyAccent() {
@@ -4887,6 +4978,9 @@ public final class DetailActivity extends AppCompatActivity {
                 routeTone(),
                 true
             ));
+            if (isCurrentEmergencySurfaceEligible()) {
+                items.add(new MetaItem("danger", Tone.Danger, false));
+            }
             String backendValue = buildSerialBackendValue();
             if (!backendValue.isEmpty()) {
                 items.add(new MetaItem(backendValue, Tone.Accent, false));
@@ -5891,6 +5985,14 @@ public final class DetailActivity extends AppCompatActivity {
         if (actionBlocksPanel == null) {
             return;
         }
+        if (isEmergencyPortraitSurface()) {
+            detailActionBlockPresentationFormatter().renderEmergencyPortraitActions(
+                actionBlocksPanel,
+                currentBody,
+                getColor(R.color.senku_rev03_danger)
+            );
+            return;
+        }
         if (!shouldShowHighRiskActionBlocks()) {
             actionBlocksPanel.setVisibility(View.GONE);
             return;
@@ -5904,6 +6006,34 @@ public final class DetailActivity extends AppCompatActivity {
 
     private boolean shouldShowHighRiskActionBlocks() {
         return answerMode && isHighRiskRoute() && isDeterministicRoute() && !safe(currentBody).trim().isEmpty();
+    }
+
+    private void applyEmergencyPortraitPresentation() {
+        boolean emergencyPortrait = isEmergencyPortraitSurface();
+        if (questionBubble != null) {
+            questionBubble.setVisibility(emergencyPortrait ? View.GONE : View.VISIBLE);
+        }
+        if (answerCardView != null) {
+            answerCardView.setVisibility(emergencyPortrait ? View.GONE : (answerMode ? View.VISIBLE : View.GONE));
+        }
+        if (bodyMirrorShell != null) {
+            bodyMirrorShell.setVisibility(emergencyPortrait ? View.GONE : View.VISIBLE);
+        }
+        if (bodyLabel != null) {
+            bodyLabel.setVisibility(emergencyPortrait ? View.GONE : View.VISIBLE);
+        }
+        if (answerBubble != null) {
+            answerBubble.setBackgroundResource(emergencyPortrait
+                ? android.R.color.transparent
+                : R.drawable.bg_detail_answer_shell);
+            answerBubble.setPadding(0, 0, 0, 0);
+        }
+        if (inlineSourcesScroll != null && emergencyPortrait) {
+            inlineSourcesScroll.setVisibility(View.GONE);
+        }
+        if (inlineNextStepsScroll != null && emergencyPortrait) {
+            inlineNextStepsScroll.setVisibility(View.GONE);
+        }
     }
 
     private void clearProvenancePanel() {
@@ -6312,6 +6442,19 @@ public final class DetailActivity extends AppCompatActivity {
 
     private static String safe(String text) {
         return text == null ? "" : text;
+    }
+
+    private static String firstNonEmpty(String... values) {
+        if (values == null) {
+            return "";
+        }
+        for (String value : values) {
+            String cleaned = safe(value).trim();
+            if (!cleaned.isEmpty()) {
+                return cleaned;
+            }
+        }
+        return "";
     }
 
     private static String confidenceLabelExtraValue(OfflineAnswerEngine.ConfidenceLabel label) {

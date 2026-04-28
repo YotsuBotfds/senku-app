@@ -1,6 +1,7 @@
 package com.senku.ui.tablet
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -11,11 +12,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Surface
@@ -37,8 +36,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.senku.mobile.R
 import com.senku.ui.answer.AnswerContent
-import com.senku.ui.answer.Mode
-import com.senku.ui.answer.PaperAnswerCard
+import com.senku.ui.answer.AnswerSurfaceLabel
+import com.senku.ui.answer.Evidence
+import com.senku.ui.answer.buildFooterMeta
+import com.senku.ui.answer.compactEvidenceLabel
 import com.senku.ui.composer.DockedComposer
 import com.senku.ui.composer.DockedComposerModel
 import com.senku.ui.primitives.MetaItem
@@ -120,8 +121,8 @@ internal data class TabletReadingLayoutPolicy(
 
 internal fun tabletLandscapeReadingLayoutPolicy(): TabletReadingLayoutPolicy =
     TabletReadingLayoutPolicy(
-        threadRailWidthDp = 240,
-        answerMaxWidthDp = 680,
+        threadRailWidthDp = 330,
+        answerMaxWidthDp = 600,
     )
 
 internal fun tabletReadingLayoutPolicy(isLandscape: Boolean): TabletReadingLayoutPolicy =
@@ -131,21 +132,20 @@ internal fun tabletReadingLayoutPolicy(isLandscape: Boolean): TabletReadingLayou
     }
 
 internal fun tabletComposerContextHint(state: TabletDetailState): String {
-    val guideLabel = state.guideTitle.trim()
-        .ifEmpty { state.guideId.trim() }
-        .ifEmpty { "Guide context" }
-    val anchorLabel = state.guideModeAnchorLabel.trim()
-        .ifEmpty { state.anchor.section.trim() }
-        .ifEmpty { state.anchor.title.trim() }
+    val turnLabel = when (val count = state.turns.size) {
+        0 -> "No turns"
+        1 -> "1 turn"
+        else -> "$count turns"
+    }
     val sourceLabel = when (val count = state.sources.size) {
         0 -> "No sources"
         1 -> "1 source"
         else -> "$count sources"
     }
 
-    return listOf(guideLabel, anchorLabel, sourceLabel)
-        .filter { it.isNotBlank() }
+    return listOf("Thread context kept", turnLabel, sourceLabel)
         .joinToString(" - ")
+        .uppercase()
 }
 
 internal data class PhoneStressReadingPolicy(
@@ -331,6 +331,7 @@ private fun DetailWorkspace(
             guideId = state.guideId,
             guideTitle = state.guideTitle,
             meta = state.meta,
+            turnCount = state.turns.size,
             guideModeLabel = state.guideModeLabel,
             guideModeSummary = state.guideModeSummary,
             guideModeAnchorLabel = state.guideModeAnchorLabel,
@@ -382,7 +383,7 @@ private fun DetailWorkspace(
                     enabled = state.composerEnabled,
                     showRetry = state.composerShowRetry,
                     retryLabel = state.composerRetryLabel,
-                    compact = false,
+                    compact = true,
                     contextHint = tabletComposerContextHint(state),
                 ),
                 onTextChange = onComposerTextChange,
@@ -413,19 +414,28 @@ private fun CenterPane(
                 .widthIn(max = readingPolicy.answerMaxWidthDp.dp)
                 .fillMaxWidth()
                 .verticalScroll(scrollState)
-                .padding(horizontal = 28.dp, vertical = 20.dp),
-            verticalArrangement = Arrangement.spacedBy(18.dp),
+                .padding(horizontal = 28.dp, vertical = 0.dp),
+            verticalArrangement = Arrangement.spacedBy(0.dp),
         ) {
             if (state.turns.isEmpty()) {
                 Text(
                     text = "No conversation turns yet.",
+                    modifier = Modifier.padding(vertical = 20.dp),
                     style = SenkuTheme.typography.smallBody,
                     color = colors.ink3,
                 )
             } else {
-                state.turns.forEach { turn ->
-                    ThreadTurnCard(
+                state.turns.forEachIndexed { index, turn ->
+                    if (index > 0) {
+                        HorizontalDivider(
+                            modifier = Modifier.fillMaxWidth(),
+                            thickness = 1.dp,
+                            color = colors.hairline,
+                        )
+                    }
+                    ThreadTurnBlock(
                         turn = turn,
+                        turnIndex = index + 1,
                         canOpenProof = turn.isActive && state.anchor.hasSource,
                         onFocusTurn = { onTurnClick(turn.id) },
                         onOpenProof = onAnchorClick,
@@ -443,6 +453,7 @@ private fun TitleBar(
     guideId: String,
     guideTitle: String,
     meta: List<MetaItem>,
+    turnCount: Int,
     guideModeLabel: String,
     guideModeSummary: String,
     guideModeAnchorLabel: String,
@@ -456,14 +467,24 @@ private fun TitleBar(
         modifier = modifier
             .fillMaxWidth()
             .background(colors.bg0)
-            .padding(horizontal = 28.dp, vertical = 16.dp),
-        verticalArrangement = Arrangement.spacedBy(9.dp),
+            .padding(horizontal = 28.dp, vertical = 14.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.Bottom,
+            verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(10.dp),
         ) {
+            Text(
+                text = "THREAD",
+                style = typography.monoCaps.copy(
+                    fontSize = 11.sp,
+                    lineHeight = 14.sp,
+                    fontWeight = FontWeight.Medium,
+                ),
+                color = colors.accent,
+                maxLines = 1,
+            )
             Text(
                 text = guideId.trim().ifEmpty { "GD-?" },
                 style = typography.monoCaps.copy(
@@ -476,11 +497,11 @@ private fun TitleBar(
                 overflow = TextOverflow.Ellipsis,
             )
             Text(
-                text = guideTitle.trim().ifEmpty { "Guide evidence" },
+                text = buildTitleSummary(guideTitle = guideTitle, turnCount = turnCount),
                 modifier = Modifier.weight(1f),
                 style = typography.sectionTitle.copy(
-                    fontSize = 18.sp,
-                    lineHeight = 23.sp,
+                    fontSize = 17.sp,
+                    lineHeight = 22.sp,
                     fontWeight = FontWeight.SemiBold,
                 ),
                 color = colors.ink0,
@@ -555,87 +576,210 @@ private fun TitleBar(
 }
 
 @Composable
-private fun ThreadTurnCard(
+private fun ThreadTurnBlock(
     turn: ThreadTurnState,
+    turnIndex: Int,
     canOpenProof: Boolean,
     onFocusTurn: () -> Unit,
     onOpenProof: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(vertical = 18.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
         if (turn.showQuestion) {
-            QuestionQuoteBlock(
+            QuestionInlineBlock(
                 question = turn.question,
-                active = turn.isActive,
+                turnIndex = turnIndex,
             )
         }
 
-        PaperAnswerCard(
+        AnswerInlineBlock(
             content = turn.answer,
-            mode = Mode.Paper,
-            showProofLabel = if (canOpenProof) "Open proof" else "Focus turn",
-            onShowProof = if (canOpenProof) onOpenProof else onFocusTurn,
+            turnIndex = turnIndex,
+            proofLabel = if (canOpenProof) "Open proof" else "Focus turn",
+            onProofClick = if (canOpenProof) onOpenProof else onFocusTurn,
         )
     }
 }
 
 @Composable
-private fun QuestionQuoteBlock(
+private fun QuestionInlineBlock(
     question: String,
-    active: Boolean,
+    turnIndex: Int,
     modifier: Modifier = Modifier,
 ) {
     val colors = SenkuTheme.colors
     val typography = SenkuTheme.typography
-    val borderColor = if (active) colors.accent.copy(alpha = 0.22f) else colors.accent.copy(alpha = 0.14f)
-    val backgroundColor = if (active) colors.bg2 else colors.bg1
 
-    Surface(
+    Column(
         modifier = modifier.fillMaxWidth(),
-        color = backgroundColor,
-        contentColor = colors.ink0,
-        shape = RoundedCornerShape(0.dp),
-        border = androidx.compose.foundation.BorderStroke(1.dp, borderColor),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        Text(
+            text = "Q$turnIndex - FIELD QUESTION",
+            style = typography.monoCaps.copy(
+                fontSize = 10.sp,
+                lineHeight = 13.sp,
+                fontWeight = FontWeight.Medium,
+            ),
+            color = colors.ink2,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+        )
+        Text(
+            text = question.trim().ifEmpty { "No question text recorded." },
+            style = typography.uiBody.copy(
+                fontSize = 20.sp,
+                lineHeight = 26.sp,
+                fontWeight = FontWeight.SemiBold,
+            ),
+            color = colors.ink0,
+        )
+    }
+}
+
+@Composable
+private fun AnswerInlineBlock(
+    content: AnswerContent,
+    turnIndex: Int,
+    proofLabel: String,
+    onProofClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val colors = SenkuTheme.colors
+    val typography = SenkuTheme.typography
+    val evidenceTone = answerEvidenceTone(content)
+
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .clickable(onClick = onProofClick),
+        verticalArrangement = Arrangement.spacedBy(10.dp),
     ) {
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 12.dp, vertical = 12.dp),
+            modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(12.dp),
+            verticalAlignment = Alignment.Top,
         ) {
-            Box(
-                modifier = Modifier
-                    .width(2.dp)
-                    .height(52.dp)
-                    .background(colors.accent),
-            )
-
-            Column(
+            Text(
+                text = "A$turnIndex - ${answerAnchorLabel(content)}",
                 modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.spacedBy(6.dp),
+                style = typography.monoCaps.copy(
+                    fontSize = 10.sp,
+                    lineHeight = 13.sp,
+                    fontWeight = FontWeight.Medium,
+                ),
+                color = colors.accent,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
+            Text(
+                text = compactEvidenceLabel(content),
+                style = typography.monoCaps.copy(
+                    fontSize = 10.sp,
+                    lineHeight = 13.sp,
+                    fontWeight = FontWeight.Medium,
+                ),
+                color = evidenceTone,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
+        }
+        Text(
+            text = content.short.trim(),
+            style = typography.answerBody.copy(
+                fontSize = 20.sp,
+                lineHeight = 29.sp,
+                letterSpacing = 0.sp,
+            ),
+            color = colors.ink0,
+        )
+        if (!content.steps.isNullOrEmpty() && !content.abstain) {
+            Column(
+                verticalArrangement = Arrangement.spacedBy(5.dp),
             ) {
-                Text(
-                    text = "YOU ASKED",
-                    style = typography.monoCaps.copy(
-                        fontSize = 10.sp,
-                        lineHeight = 13.sp,
-                        fontWeight = FontWeight.Medium,
-                    ),
-                    color = colors.accent,
-                )
-                Text(
-                    text = question.trim().ifEmpty { "No question text recorded." },
-                    style = typography.uiBody.copy(
-                        fontSize = 15.sp,
-                        lineHeight = 20.sp,
-                        fontWeight = FontWeight.Medium,
-                    ),
-                    color = colors.ink0,
-                )
+                content.steps.forEachIndexed { index, step ->
+                    Text(
+                        text = "${index + 1}. ${step.trim()}",
+                        style = typography.answerBody.copy(
+                            fontSize = 15.sp,
+                            lineHeight = 22.sp,
+                            letterSpacing = 0.sp,
+                        ),
+                        color = colors.ink1,
+                    )
+                }
             }
+        }
+        if (!content.limits.isNullOrBlank()) {
+            Text(
+                text = content.limits.trim(),
+                style = typography.smallBody.copy(
+                    fontSize = 13.sp,
+                    lineHeight = 18.sp,
+                    fontWeight = FontWeight.Medium,
+                ),
+                color = if (content.abstain) colors.danger else colors.ink2,
+            )
+        }
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Text(
+                text = buildFooterMeta(content),
+                modifier = Modifier.weight(1f),
+                style = typography.monoCaps.copy(
+                    fontSize = 10.sp,
+                    lineHeight = 13.sp,
+                ),
+                color = colors.ink3,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
+            Text(
+                text = proofLabel,
+                modifier = Modifier.padding(start = 12.dp),
+                style = typography.tag.copy(
+                    fontSize = 12.sp,
+                    lineHeight = 14.sp,
+                    fontWeight = FontWeight.SemiBold,
+                ),
+                color = colors.accent,
+                maxLines = 1,
+            )
         }
     }
 }
+
+private fun buildTitleSummary(
+    guideTitle: String,
+    turnCount: Int,
+): String {
+    val title = guideTitle.trim().ifEmpty { "Guide evidence" }
+    val turnLabel = if (turnCount == 1) "1 turn" else "$turnCount turns"
+    return "$title - $turnLabel"
+}
+
+private fun answerAnchorLabel(content: AnswerContent): String =
+    when (content.sourceCount) {
+        0 -> "NO SOURCE"
+        1 -> "ANCHOR"
+        else -> "SOURCES ${content.sourceCount}"
+    }
+
+@Composable
+private fun answerEvidenceTone(content: AnswerContent) =
+    when {
+        content.abstain -> SenkuTheme.colors.danger
+        content.uncertainFit -> SenkuTheme.colors.warn
+        content.answerSurfaceLabel == AnswerSurfaceLabel.ReviewedCardEvidence -> SenkuTheme.colors.ok
+        content.evidence == Evidence.Strong -> SenkuTheme.colors.ok
+        content.evidence == Evidence.Moderate -> SenkuTheme.colors.warn
+        else -> SenkuTheme.colors.danger
+    }

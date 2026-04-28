@@ -54,8 +54,8 @@ fun ThreadRail(
         modifier = modifier
             .background(colors.bg1)
             .verticalScroll(scrollState)
-            .padding(horizontal = 18.dp, vertical = 18.dp),
-        verticalArrangement = Arrangement.spacedBy(20.dp),
+            .padding(horizontal = 18.dp, vertical = 16.dp),
+        verticalArrangement = Arrangement.spacedBy(18.dp),
     ) {
         Toolbar(
             pinVisible = pinVisible,
@@ -154,7 +154,7 @@ private fun RailSection(
     val colors = SenkuTheme.colors
 
     Column(
-        verticalArrangement = Arrangement.spacedBy(8.dp),
+        verticalArrangement = Arrangement.spacedBy(7.dp),
         content = {
             Text(
                 text = label + " - " + count,
@@ -208,7 +208,7 @@ private fun ThreadTurnRow(
             Box(
                 modifier = Modifier
                     .width(2.dp)
-                    .height(42.dp)
+                    .height(38.dp)
                     .background(if (turn.isActive) colors.accent else colors.hairlineStrong),
             )
             Column(
@@ -275,14 +275,14 @@ private fun SourcePill(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 8.dp, vertical = 6.dp),
+                .padding(horizontal = 8.dp, vertical = 7.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             verticalAlignment = Alignment.Top,
         ) {
             Box(
                 modifier = Modifier
                     .width(2.dp)
-                    .height(42.dp)
+                    .height(36.dp)
                     .background(if (source.isSelected || source.isAnchor) idColor else colors.hairlineStrong),
             )
             Column(
@@ -307,7 +307,7 @@ private fun SourcePill(
                         lineHeight = 15.5.sp,
                     ),
                     color = colors.ink1,
-                    maxLines = 2,
+                    maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                 )
             }

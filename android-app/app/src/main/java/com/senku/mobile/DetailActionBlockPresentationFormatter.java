@@ -34,6 +34,16 @@ final class DetailActionBlockPresentationFormatter {
         }
     }
 
+    static final class EmergencyActionSpec {
+        final String title;
+        final String detail;
+
+        EmergencyActionSpec(String title, String detail) {
+            this.title = title;
+            this.detail = detail;
+        }
+    }
+
     interface ActionBlockTextSanitizer {
         String sanitize(String text);
     }
@@ -77,6 +87,34 @@ final class DetailActionBlockPresentationFormatter {
         panel.setVisibility(View.VISIBLE);
         for (int i = 0; i < blocks.size(); i++) {
             panel.addView(buildActionBlockView(blocks.get(i), i > 0));
+        }
+    }
+
+    void renderEmergencyPortraitActions(LinearLayout panel, String currentBody, int severityAccentColor) {
+        if (panel == null) {
+            return;
+        }
+        panel.removeAllViews();
+        List<EmergencyActionSpec> actions = extractEmergencyActionSpecs(
+            answerBodyFormatter.formatAnswerBody(currentBody),
+            this::sanitizeActionBlockText
+        );
+        if (actions.isEmpty()) {
+            panel.setVisibility(View.GONE);
+            return;
+        }
+        panel.setVisibility(View.VISIBLE);
+        panel.setBackgroundColor(context.getColor(android.R.color.transparent));
+        TextView heading = new TextView(context);
+        heading.setText("IMMEDIATE ACTIONS - " + actions.size());
+        heading.setTextAppearance(context, android.R.style.TextAppearance_Small);
+        heading.setTextColor(context.getColor(R.color.senku_text_muted_light));
+        heading.setTypeface(Typeface.MONOSPACE, Typeface.BOLD);
+        heading.setLetterSpacing(0.08f);
+        heading.setPadding(0, 0, 0, dp(8));
+        panel.addView(heading);
+        for (int i = 0; i < actions.size(); i++) {
+            panel.addView(buildEmergencyPortraitActionView(i + 1, actions.get(i), severityAccentColor, i > 0));
         }
     }
 
@@ -135,6 +173,96 @@ final class DetailActionBlockPresentationFormatter {
             new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
         );
         return card;
+    }
+
+    private View buildEmergencyPortraitActionView(
+        int number,
+        EmergencyActionSpec action,
+        int severityAccentColor,
+        boolean addTopDivider
+    ) {
+        LinearLayout row = new LinearLayout(context);
+        row.setOrientation(LinearLayout.HORIZONTAL);
+        row.setPadding(0, addTopDivider ? dp(12) : dp(8), 0, dp(12));
+        LinearLayout.LayoutParams rowParams = new LinearLayout.LayoutParams(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        );
+        row.setLayoutParams(rowParams);
+
+        TextView badge = new TextView(context);
+        badge.setText(String.valueOf(number));
+        badge.setGravity(android.view.Gravity.CENTER);
+        badge.setTextAppearance(context, android.R.style.TextAppearance_Small);
+        badge.setTextColor(severityAccentColor);
+        badge.setBackgroundResource(R.drawable.bg_emergency_action_badge);
+        row.addView(badge, new LinearLayout.LayoutParams(dp(34), dp(34)));
+
+        LinearLayout content = new LinearLayout(context);
+        content.setOrientation(LinearLayout.VERTICAL);
+        content.setPadding(dp(14), 0, 0, 0);
+
+        TextView title = new TextView(context);
+        title.setText(action.title);
+        title.setTextAppearance(context, android.R.style.TextAppearance_Medium);
+        title.setTextColor(context.getColor(R.color.senku_text_light));
+        title.setTypeface(Typeface.DEFAULT_BOLD);
+        title.setLineSpacing(0f, 1.05f);
+
+        TextView detail = new TextView(context);
+        detail.setText(action.detail);
+        detail.setTextAppearance(context, android.R.style.TextAppearance_Small);
+        detail.setTextColor(context.getColor(R.color.senku_text_muted_light));
+        detail.setLineSpacing(0f, 1.08f);
+        detail.setPadding(0, dp(3), 0, 0);
+        detail.setVisibility(action.detail.isEmpty() ? View.GONE : View.VISIBLE);
+
+        content.addView(title);
+        content.addView(detail);
+        row.addView(content, new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f));
+        return row;
+    }
+
+    static List<EmergencyActionSpec> extractEmergencyActionSpecs(
+        String formattedAnswerText,
+        ActionBlockTextSanitizer sanitizer
+    ) {
+        ArrayList<EmergencyActionSpec> actions = new ArrayList<>();
+        for (String step : extractStepLines(formattedAnswerText)) {
+            String cleaned = sanitizeActionBlockText(step, sanitizer);
+            if (cleaned.isEmpty()) {
+                continue;
+            }
+            actions.add(splitEmergencyAction(cleaned));
+        }
+        return actions;
+    }
+
+    private static EmergencyActionSpec splitEmergencyAction(String cleaned) {
+        int splitIndex = firstSentenceBoundary(cleaned);
+        if (splitIndex < 0) {
+            return new EmergencyActionSpec(cleaned, "");
+        }
+        String title = cleaned.substring(0, splitIndex).trim();
+        String detail = cleaned.substring(splitIndex).replaceFirst("^[.!?]+\\s*", "").trim();
+        if (title.isEmpty()) {
+            return new EmergencyActionSpec(cleaned, "");
+        }
+        return new EmergencyActionSpec(title, detail);
+    }
+
+    private static int firstSentenceBoundary(String text) {
+        String value = safe(text).trim();
+        for (int i = 0; i < value.length(); i++) {
+            char c = value.charAt(i);
+            if ((c == '.' || c == '!' || c == '?') && i + 1 < value.length()) {
+                char next = value.charAt(i + 1);
+                if (Character.isWhitespace(next)) {
+                    return i;
+                }
+            }
+        }
+        return -1;
     }
 
     static List<ActionBlockSpec> extractHighRiskActionBlockSpecs(

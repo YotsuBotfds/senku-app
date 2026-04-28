@@ -63,6 +63,29 @@ public final class DetailActionBlockPresentationFormatterTest {
         assertTrue(extract(null).isEmpty());
     }
 
+    @Test
+    public void extractEmergencyActionSpecsKeepsAllImmediateStepsWithDetailCopy() {
+        List<DetailActionBlockPresentationFormatter.EmergencyActionSpec> actions =
+            DetailActionBlockPresentationFormatter.extractEmergencyActionSpecs(
+                "Short answer:\n" +
+                    "Stop work immediately.\n\n" +
+                    "Steps:\n" +
+                    "1. Stop all hot work. No new charges, no new pours. [GD-132]\n" +
+                    "2. Clear the floor to 5 m radius. Move personnel upwind.\n" +
+                    "3. Confirm two paths of egress.\n" +
+                    "4. Notify the area owner. GD-132 lists current owner.",
+                text -> citationFormatter.stripInlineCitationText(text)
+            );
+
+        assertEquals(4, actions.size());
+        assertEquals("Stop all hot work", actions.get(0).title);
+        assertEquals("No new charges, no new pours.", actions.get(0).detail);
+        assertEquals("Clear the floor to 5 m radius", actions.get(1).title);
+        assertEquals("Move personnel upwind.", actions.get(1).detail);
+        assertEquals("Confirm two paths of egress.", actions.get(2).title);
+        assertEquals("", actions.get(2).detail);
+    }
+
     private List<DetailActionBlockPresentationFormatter.ActionBlockSpec> extract(String formattedAnswerText) {
         return DetailActionBlockPresentationFormatter.extractHighRiskActionBlockSpecs(
             formattedAnswerText,

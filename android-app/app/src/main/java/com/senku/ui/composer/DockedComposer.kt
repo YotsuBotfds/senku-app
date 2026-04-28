@@ -145,11 +145,11 @@ fun DockedComposer(
     var focused by remember { mutableStateOf(false) }
     val focusRequester = remember { FocusRequester() }
     val fieldMinHeight = if (landscapePhoneBudgeted) 40.dp else 44.dp
-    val fieldVerticalPadding = if (landscapePhoneBudgeted) 8.dp else if (model.compact) 10.dp else 12.dp
-    val rowVerticalPadding = if (landscapePhoneBudgeted) 6.dp else 8.dp
+    val fieldVerticalPadding = if (landscapePhoneBudgeted) 8.dp else 9.dp
+    val rowVerticalPadding = if (landscapePhoneBudgeted) 6.dp else 10.dp
     val actionSize = if (landscapePhoneBudgeted) 36.dp else 38.dp
-    val sendVerticalPadding = if (landscapePhoneBudgeted) 8.dp else 10.dp
-    val bottomSpacerHeight = if (landscapePhoneBudgeted) 0.dp else 2.dp
+    val sendVerticalPadding = if (landscapePhoneBudgeted) 8.dp else 9.dp
+    val bottomSpacerHeight = 0.dp
     val hasSendText = model.enabled && model.text.trim().isNotEmpty()
     val contextHint = model.contextHint.trim()
 
@@ -162,7 +162,7 @@ fun DockedComposer(
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .background(colors.bg1),
+            .background(colors.bg0),
     ) {
         HorizontalDivider(
             modifier = Modifier.fillMaxWidth(),
@@ -175,9 +175,9 @@ fun DockedComposer(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(
-                        start = if (model.compact) 10.dp else 12.dp,
-                        top = 7.dp,
-                        end = if (model.compact) 10.dp else 12.dp,
+                        start = if (model.compact) 18.dp else 24.dp,
+                        top = 10.dp,
+                        end = if (model.compact) 18.dp else 24.dp,
                     ),
                 style = typography.monoCaps.copy(
                     fontSize = 10.sp,
@@ -192,9 +192,9 @@ fun DockedComposer(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = if (model.compact) 10.dp else 12.dp, vertical = rowVerticalPadding),
+                .padding(horizontal = if (model.compact) 18.dp else 24.dp, vertical = rowVerticalPadding),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(9.dp),
+            horizontalArrangement = Arrangement.spacedBy(10.dp),
         ) {
             if (model.showRetry && onRetryClick != null) {
                 Surface(
@@ -247,10 +247,10 @@ fun DockedComposer(
                     .focusRequester(focusRequester)
                     .border(
                         width = 1.dp,
-                        color = if (focused) colors.accent.copy(alpha = 0.58f) else colors.hairlineStrong.copy(alpha = 0.45f),
-                        shape = RoundedCornerShape(10.dp),
+                        color = if (focused) colors.accent.copy(alpha = 0.54f) else colors.hairlineStrong.copy(alpha = 0.22f),
+                        shape = RoundedCornerShape(8.dp),
                     )
-                    .background(colors.bg1, RoundedCornerShape(10.dp))
+                    .background(colors.bg0, RoundedCornerShape(8.dp))
                     .padding(horizontal = 12.dp, vertical = fieldVerticalPadding)
                     .onFocusChanged {
                         focused = it.isFocused

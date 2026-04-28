@@ -10,8 +10,8 @@ class StressReadingPolicyTest {
     fun tabletLandscapeReadingPolicyKeepsAnswerFirstWidthBudget() {
         val policy = tabletLandscapeReadingLayoutPolicy()
 
-        assertEquals(240, policy.threadRailWidthDp)
-        assertEquals(680, policy.answerMaxWidthDp)
+        assertEquals(330, policy.threadRailWidthDp)
+        assertEquals(600, policy.answerMaxWidthDp)
     }
 
     @Test
@@ -21,10 +21,10 @@ class StressReadingPolicyTest {
 
         assertEquals(tabletLandscapeReadingLayoutPolicy(), portraitPolicy)
         assertEquals(tabletLandscapeReadingLayoutPolicy(), landscapePolicy)
-        assertEquals(240, portraitPolicy.threadRailWidthDp)
-        assertEquals(680, portraitPolicy.answerMaxWidthDp)
-        assertEquals(240, landscapePolicy.threadRailWidthDp)
-        assertEquals(680, landscapePolicy.answerMaxWidthDp)
+        assertEquals(330, portraitPolicy.threadRailWidthDp)
+        assertEquals(600, portraitPolicy.answerMaxWidthDp)
+        assertEquals(330, landscapePolicy.threadRailWidthDp)
+        assertEquals(600, landscapePolicy.answerMaxWidthDp)
     }
 
     @Test
@@ -43,10 +43,11 @@ class StressReadingPolicyTest {
                 SourceState("s1", "GD-BEANS", "Guide A", isAnchor = true, isSelected = true),
                 SourceState("s2", "GD-ALT", "Guide B", isAnchor = false, isSelected = false),
             ),
+            turns = listOf(threadTurn("q1"), threadTurn("q2")),
         )
 
         assertEquals(
-            "Pressure canning beans - Altitude adjustment - 2 sources",
+            "THREAD CONTEXT KEPT - 2 TURNS - 2 SOURCES",
             tabletComposerContextHint(state),
         )
     }
@@ -68,7 +69,7 @@ class StressReadingPolicyTest {
         )
 
         assertEquals(
-            "GD-FALLBACK - Fallback anchor - No sources",
+            "THREAD CONTEXT KEPT - NO TURNS - NO SOURCES",
             tabletComposerContextHint(state),
         )
     }
@@ -167,12 +168,13 @@ class StressReadingPolicyTest {
             hasSource = true,
         ),
         sources: List<SourceState> = emptyList(),
+        turns: List<ThreadTurnState> = emptyList(),
     ): TabletDetailState =
         TabletDetailState(
             guideId = guideId,
             guideTitle = guideTitle,
             meta = emptyList(),
-            turns = emptyList(),
+            turns = turns,
             sources = sources,
             anchor = anchor,
             xrefs = emptyList(),
@@ -186,5 +188,19 @@ class StressReadingPolicyTest {
             pinActive = false,
             evidenceExpanded = false,
             isLandscape = true,
+        )
+
+    private fun threadTurn(id: String): ThreadTurnState =
+        ThreadTurnState(
+            id = id,
+            question = "Question",
+            answer = com.senku.ui.answer.AnswerContent(
+                short = "Answer",
+                sourceCount = 1,
+                host = "Host",
+                elapsedSeconds = 1.0,
+            ),
+            status = Status.Done,
+            isActive = false,
         )
 }
