@@ -102,7 +102,7 @@ final class DetailRelatedGuidePresentationFormatter {
     }
 
     String buildAnswerModeRelatedGuidesPanelContentDescription(State state, int count) {
-        return "Source-anchored cross-reference rail. " + buildAnswerModeRelatedGuidesSubtitle(state, count);
+        return "Source cross-reference. " + buildAnswerModeRelatedGuidesSubtitle(state, count);
     }
 
     String buildRelatedGuideButtonLabel(SearchResult guide) {
@@ -234,7 +234,7 @@ final class DetailRelatedGuidePresentationFormatter {
 
     private String buildRelatedGuidePreviewRowBehaviorText(boolean nonRailCrossReferenceCopy) {
         if (nonRailCrossReferenceCopy) {
-            return "Cross-reference preview opens here; Open full guide switches pages.";
+            return "Preview here. Open full guide switches pages.";
         }
         return context.getString(R.string.detail_loop2_field_links_preview_row_behavior);
     }

@@ -1039,20 +1039,20 @@ public final class PromptHarnessSmokeTest {
         Context context = ApplicationProvider.getApplicationContext();
         ArrayList<SearchResult> sources = new ArrayList<>();
         sources.add(new SearchResult(
-            "Poisoning and overdose first response",
+            "Foundry & Metal Casting - §1 Area readiness",
             "Emergency answer-card anchor",
-            "Treat unknown ingestion as urgent and hand off to emergency or poison-control support.",
-            "Keep the container, identify the substance if safe, and do not induce vomiting unless directed.",
-            "GD-911",
-            "Poisoning ingestion first response",
-            "emergency",
+            "A single drop of water contacting molten metal can trigger violent steam explosion.",
+            "Stop work immediately, clear the floor, and confirm two paths of egress.",
+            "GD-132",
+            "Foundry & Metal Casting",
+            "workshop",
             "reviewed"
         ));
         ArrayList<String> reviewedSourceGuideIds = new ArrayList<>();
-        reviewedSourceGuideIds.add("GD-911");
+        reviewedSourceGuideIds.add("GD-132");
         ReviewedCardMetadata reviewedCardMetadata = new ReviewedCardMetadata(
-            "poisoning_ingestion_first_response",
-            "GD-911",
+            "foundry_casting_area_readiness_boundary",
+            "GD-132",
             "reviewed",
             "runtime_citation_required",
             ReviewedCardMetadata.PROVENANCE_REVIEWED_CARD_RUNTIME,
@@ -1060,17 +1060,18 @@ public final class PromptHarnessSmokeTest {
         );
         Intent intent = DetailActivity.newAnswerIntent(
             context,
-            "Unknown poison swallowed",
+            "Burn hazard response",
             "Offline answer | deterministic | instant",
-            "Short answer:\nTreat this as poisoning until proven otherwise: move away from danger, call emergency or poison-control help if available, and keep the container or plant for responders.\n\n"
-                + "Steps:\n1. Check breathing and responsiveness first.\n"
-                + "2. Do not induce vomiting unless a clinician or poison-control service tells you to.\n"
-                + "3. Save the label, container, pill bottle, or plant sample for handoff.\n\n"
-                + "Limits or safety:\nEscalate immediately for trouble breathing, seizures, confusion, burns around the mouth, or a child exposure.",
+            "Short answer:\nStop work immediately. Move to minimum 5 m from the active work zone. Confirm two paths of egress.\n\n"
+                + "Steps:\n1. Stop all hot work. No new charges, no new pours.\n"
+                + "2. Clear the floor to a 5 m radius. Move personnel upwind.\n"
+                + "3. Confirm two paths of egress. Doors and roll-up openings must be unobstructed.\n"
+                + "4. Notify the area owner. GD-132 §1 is current owner.\n\n"
+                + "Limits or safety:\nTreat water near molten metal as an extreme burn hazard and keep every tool, mold, crucible, and surface dry.",
             sources,
             null,
             "emergency-portrait-answer-smoke",
-            "answer_card:poisoning_ingestion_first_response",
+            "answer_card:foundry_casting_area_readiness_boundary",
             OfflineAnswerEngine.AnswerMode.CONFIDENT,
             OfflineAnswerEngine.ConfidenceLabel.HIGH,
             reviewedCardMetadata
@@ -1088,6 +1089,27 @@ public final class PromptHarnessSmokeTest {
                 waitForVisibleEmergencySourceOrHandoffContext(DETAIL_WAIT_MS)
             );
             scenario.onActivity(activity -> {
+                DetailSettleSignals signals = collectDetailSettleSignals(activity);
+                if (signals.tabletCompose) {
+                    Assert.assertTrue(
+                        "tablet emergency answer should keep the Compose root visible",
+                        signals.tabletRootVisible
+                    );
+                    Assert.assertTrue(
+                        "tablet emergency answer should stay in answer mode",
+                        signals.answerMode
+                    );
+                    Assert.assertTrue(
+                        "tablet emergency answer should preserve immediate action wording",
+                        containsAny(
+                            (signals.bodyText + " " + signals.proofText).toLowerCase(Locale.US),
+                            "burn",
+                            "egress",
+                            "molten"
+                        )
+                    );
+                    return;
+                }
                 View emergencyHeader = activity.findViewById(R.id.detail_emergency_header);
                 TextView emergencyTitle = activity.findViewById(R.id.detail_emergency_header_title);
                 TextView emergencyText = activity.findViewById(R.id.detail_emergency_header_text);
@@ -1107,9 +1129,9 @@ public final class PromptHarnessSmokeTest {
                     "emergency summary should preserve immediate action wording",
                     containsAny(
                         safe(emergencyText.getText().toString()).toLowerCase(Locale.US),
-                        "poison",
-                        "emergency",
-                        "breathing"
+                        "burn",
+                        "egress",
+                        "molten"
                     )
                 );
             });
@@ -5664,22 +5686,35 @@ public final class PromptHarnessSmokeTest {
         if (isVisible(activity.findViewById(R.id.detail_sources_panel))) {
             return true;
         }
-        if (!isTabletPortraitActivity(activity)) {
-            return false;
-        }
         View emergencyHeader = activity.findViewById(R.id.detail_emergency_header);
         View tabletRoot = activity.findViewById(R.id.tablet_detail_root);
         View root = activity.getWindow() == null ? null : activity.getWindow().getDecorView();
         String visibleSurface = buildVisibleSurfaceSnapshot(root).toLowerCase(Locale.US);
-        return isVisible(emergencyHeader)
+        boolean emergencySurfaceVisible = isVisible(emergencyHeader)
+            || visibleSurface.contains("danger")
+            || visibleSurface.contains("extreme burn hazard");
+        boolean expectedSourceVisible = containsAny(
+            visibleSurface,
+            "sources -",
+            "source graph",
+            "1 source",
+            "gd-132",
+            "foundry & metal casting",
+            "guide connection"
+        );
+        if (!isTabletPortraitActivity(activity)) {
+            return emergencySurfaceVisible && expectedSourceVisible;
+        }
+        return emergencySurfaceVisible
             && isVisible(tabletRoot)
             && containsAny(
                 visibleSurface,
                 "sources -",
                 "source graph",
                 "1 source",
-                "gd-911",
-                "poisoning and overdose first response"
+                "gd-132",
+                "foundry & metal casting",
+                "guide connection"
             );
     }
 
@@ -5705,11 +5740,12 @@ public final class PromptHarnessSmokeTest {
             && (
                 device.hasObject(By.textContains("SOURCES -"))
                     || device.hasObject(By.textContains("1 SOURCE"))
-                    || device.hasObject(By.textContains("GD-911"))
-                    || device.hasObject(By.textContains("Poisoning and overdose first response"))
+                    || device.hasObject(By.textContains("GD-132"))
+                    || device.hasObject(By.textContains("Foundry & Metal Casting"))
+                    || device.hasObject(By.textContains("Guide connection"))
                     || device.hasObject(By.descContains("Source graph"))
                     || device.hasObject(By.descContains("Sources -"))
-                    || device.hasObject(By.descContains("GD-911"))
+                    || device.hasObject(By.descContains("GD-132"))
             );
     }
 

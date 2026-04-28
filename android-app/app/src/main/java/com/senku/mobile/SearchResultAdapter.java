@@ -12,6 +12,8 @@ import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -133,7 +135,7 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
     @NonNull
     @Override
     public ResultViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = inflater.inflate(R.layout.list_item_result, parent, false);
+        View view = buildCompactResultRow(parent.getContext());
         return new ResultViewHolder(view);
     }
 
@@ -146,9 +148,7 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
         boolean landscapePhoneCard = isLandscapePhoneCard(context);
         boolean smallPhonePortraitCard = isSmallPhonePortraitCard(context);
         boolean largeFontCard = isLargeFontScale(context);
-        boolean compactLinkedCue = richTabletCard || smallPhonePortraitCard || landscapePhoneCard || largeFontCard;
         boolean stressCompactCard = landscapePhoneCard && largeFontCard;
-        boolean allowLinkedGuidePreviewLine = !richTabletCard && !smallPhonePortraitCard && !landscapePhoneCard && !largeFontCard;
         holder.title.setText(formatDisplayText(
             result.title,
             richTabletCard ? 110 : (landscapePhoneCard ? 100 : 90),
@@ -156,36 +156,22 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
         ));
         holder.title.setMaxLines(richTabletCard ? 1 : (stressCompactCard ? 1 : 2));
         holder.title.setEllipsize(TextUtils.TruncateAt.END);
-        holder.meta.setText(richTabletCard ? buildTabletGuideMarker(result, position) : buildMetaLine(result));
+        holder.meta.setText(buildTabletGuideMarker(result, position));
         holder.meta.setMaxLines((richTabletCard || stressCompactCard) ? 1 : 2);
         holder.meta.setEllipsize(TextUtils.TruncateAt.END);
-        if (richTabletCard) {
-            holder.categoryBadge.setVisibility(View.GONE);
-            holder.accent.setVisibility(View.GONE);
-        } else {
-            holder.accent.setVisibility(View.VISIBLE);
-            bindCategoryBadge(holder.categoryBadge, holder.accent, result.category);
-        }
+        holder.categoryBadge.setVisibility(View.GONE);
         bindLinkedGuideCue(
             holder.linkedGuideCue,
             holder.linkedGuidePreview,
             result,
-            compactLinkedCue,
-            allowLinkedGuidePreviewLine,
-            stressCompactCard,
-            richTabletCard
+            true,
+            true,
+            false,
+            true
         );
-        if (richTabletCard) {
-            bindTabletScoreMarker(holder.retrievalBadge, position);
-        } else {
-            bindRetrievalBadge(holder.retrievalBadge, holder.accent, result.retrievalMode);
-        }
+        bindTabletScoreMarker(holder.retrievalBadge, holder.scoreBar, position);
         holder.accent.setAlpha(rankAccentAlpha(position));
-        if (richTabletCard) {
-            bindTabletAttributeLine(holder.section, result);
-        } else {
-            bindSection(holder.section, result.sectionHeading, smallPhonePortraitCard || stressCompactCard);
-        }
+        bindTabletAttributeLine(holder.section, result);
         holder.snippet.setText(formatDisplayText(
             result.snippet,
             richTabletCard ? 136 : (landscapePhoneCard ? 180 : (smallPhonePortraitCard ? 110 : 240)),
@@ -200,12 +186,180 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
             holder.snippet.setAlpha(1.0f);
             holder.snippet.setTextSize(TypedValue.COMPLEX_UNIT_PX, holder.defaultSnippetTextSizePx);
         }
-        bindComposeCard(holder, result, position);
+        if (holder.composeView != null) {
+            holder.composeView.setVisibility(View.GONE);
+        }
         holder.itemView.setOnClickListener(v -> {
             if (listener != null) {
                 listener.onResultClick(result);
             }
         });
+    }
+
+    private View buildCompactResultRow(Context context) {
+        FrameLayout root = new FrameLayout(context);
+        root.setLayoutParams(new RecyclerView.LayoutParams(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        ));
+
+        LinearLayout row = new LinearLayout(context);
+        row.setId(R.id.result_legacy_mirror);
+        row.setOrientation(LinearLayout.VERTICAL);
+        row.setPadding(dp(24), dp(13), dp(24), 0);
+        root.addView(row, new FrameLayout.LayoutParams(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        ));
+
+        LinearLayout head = new LinearLayout(context);
+        head.setOrientation(LinearLayout.HORIZONTAL);
+        head.setGravity(android.view.Gravity.CENTER_VERTICAL);
+        row.addView(head, new LinearLayout.LayoutParams(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        ));
+
+        TextView meta = buildMonoTextView(context, 12, 15, Typeface.BOLD);
+        meta.setId(R.id.result_meta);
+        meta.setTextColor(ContextCompat.getColor(context, R.color.senku_rev03_accent));
+        head.addView(meta, new LinearLayout.LayoutParams(
+            0,
+            ViewGroup.LayoutParams.WRAP_CONTENT,
+            1f
+        ));
+
+        LinearLayout scoreCluster = new LinearLayout(context);
+        scoreCluster.setOrientation(LinearLayout.HORIZONTAL);
+        scoreCluster.setGravity(android.view.Gravity.CENTER_VERTICAL);
+        scoreCluster.setPadding(dp(10), 0, 0, 0);
+        head.addView(scoreCluster, new LinearLayout.LayoutParams(
+            ViewGroup.LayoutParams.WRAP_CONTENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        ));
+
+        View scoreBar = new View(context);
+        scoreBar.setId(R.id.result_accent_strip);
+        scoreCluster.addView(scoreBar, new LinearLayout.LayoutParams(
+            dp(42),
+            dp(4)
+        ));
+
+        TextView score = buildMonoTextView(context, 10, 13, Typeface.BOLD);
+        score.setId(R.id.result_retrieval_badge);
+        score.setTextColor(accentOliveColor);
+        score.setPadding(dp(8), 0, 0, 0);
+        scoreCluster.addView(score, new LinearLayout.LayoutParams(
+            ViewGroup.LayoutParams.WRAP_CONTENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        ));
+
+        TextView title = new TextView(context);
+        title.setId(R.id.result_title);
+        title.setTextColor(ContextCompat.getColor(context, R.color.senku_text_light));
+        title.setTypeface(Typeface.DEFAULT, Typeface.BOLD);
+        title.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
+        title.setLineSpacing(0, 1.02f);
+        LinearLayout.LayoutParams titleParams = new LinearLayout.LayoutParams(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        );
+        titleParams.topMargin = dp(7);
+        row.addView(title, titleParams);
+
+        TextView section = buildMonoTextView(context, 10, 14, Typeface.NORMAL);
+        section.setId(R.id.result_section);
+        section.setTextColor(ContextCompat.getColor(context, R.color.senku_text_muted_light));
+        LinearLayout.LayoutParams sectionParams = new LinearLayout.LayoutParams(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        );
+        sectionParams.topMargin = dp(6);
+        row.addView(section, sectionParams);
+
+        TextView snippet = new TextView(context);
+        snippet.setId(R.id.result_snippet);
+        snippet.setTextColor(ContextCompat.getColor(context, R.color.senku_text_muted_light));
+        snippet.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14);
+        snippet.setLineSpacing(0, 1.08f);
+        LinearLayout.LayoutParams snippetParams = new LinearLayout.LayoutParams(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        );
+        snippetParams.topMargin = dp(9);
+        row.addView(snippet, snippetParams);
+
+        LinearLayout chips = new LinearLayout(context);
+        chips.setOrientation(LinearLayout.HORIZONTAL);
+        chips.setGravity(android.view.Gravity.CENTER_VERTICAL);
+        chips.setVisibility(View.GONE);
+        LinearLayout.LayoutParams chipsParams = new LinearLayout.LayoutParams(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        );
+        chipsParams.topMargin = dp(8);
+        row.addView(chips, chipsParams);
+
+        TextView category = buildChipTextView(context);
+        category.setId(R.id.result_category_badge);
+        category.setVisibility(View.GONE);
+        chips.addView(category);
+
+        TextView linked = buildChipTextView(context);
+        linked.setId(R.id.result_related_cue);
+        linked.setVisibility(View.GONE);
+        chips.addView(linked);
+
+        TextView linkedPreview = new TextView(context);
+        linkedPreview.setId(R.id.result_related_preview);
+        linkedPreview.setTextColor(ContextCompat.getColor(context, R.color.senku_accent_olive_dark));
+        linkedPreview.setTextSize(TypedValue.COMPLEX_UNIT_SP, 12);
+        linkedPreview.setVisibility(View.GONE);
+        row.addView(linkedPreview, new LinearLayout.LayoutParams(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        ));
+
+        View divider = new View(context);
+        divider.setBackgroundColor(ContextCompat.getColor(context, R.color.senku_rev03_hairline_strong));
+        LinearLayout.LayoutParams dividerParams = new LinearLayout.LayoutParams(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            Math.max(1, dp(1))
+        );
+        dividerParams.topMargin = dp(18);
+        row.addView(divider, dividerParams);
+
+        ComposeView composeView = new ComposeView(context);
+        composeView.setId(R.id.result_card_compose);
+        composeView.setVisibility(View.GONE);
+        root.addView(composeView, new FrameLayout.LayoutParams(0, 0));
+
+        return root;
+    }
+
+    private TextView buildMonoTextView(Context context, int textSizeSp, int lineHeightSp, int style) {
+        TextView textView = new TextView(context);
+        textView.setTypeface(Typeface.MONOSPACE, style);
+        textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, textSizeSp);
+        textView.setLineSpacing(0, (float) lineHeightSp / Math.max(1, textSizeSp));
+        textView.setIncludeFontPadding(false);
+        textView.setAllCaps(false);
+        return textView;
+    }
+
+    private TextView buildChipTextView(Context context) {
+        TextView chip = new TextView(context);
+        chip.setBackground(ContextCompat.getDrawable(context, R.drawable.bg_badge));
+        chip.setPadding(dp(8), dp(3), dp(8), dp(3));
+        chip.setTextColor(ContextCompat.getColor(context, R.color.senku_text_light));
+        chip.setTextSize(TypedValue.COMPLEX_UNIT_SP, 12);
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+            ViewGroup.LayoutParams.WRAP_CONTENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        );
+        params.setMarginEnd(dp(8));
+        chip.setLayoutParams(params);
+        return chip;
     }
 
     @Override
@@ -237,17 +391,52 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
         applyBadgeStyle(badge, displayLabelForRetrievalMode(normalized), color);
     }
 
-    private void bindTabletScoreMarker(TextView badge, int position) {
+    private void bindTabletScoreMarker(TextView badge, View scoreBar, int position) {
         if (badge == null) {
             return;
         }
+        int score = tabletScoreForPosition(position);
         badge.setVisibility(View.VISIBLE);
         badge.setText(buildTabletScoreLabel(position));
         badge.setTextColor(accentOliveColor);
         badge.setTypeface(Typeface.MONOSPACE, Typeface.BOLD);
         badge.setBackground(null);
         badge.setCompoundDrawablesRelativeWithIntrinsicBounds(0, 0, 0, 0);
-        badge.setContentDescription("Result score marker " + tabletScoreForPosition(position));
+        badge.setContentDescription("Result score marker " + score);
+        if (scoreBar != null) {
+            scoreBar.setVisibility(View.VISIBLE);
+            scoreBar.setBackground(buildScoreBarDrawable(score));
+            ViewGroup.LayoutParams params = scoreBar.getLayoutParams();
+            if (params != null) {
+                params.width = dp(Math.max(24, Math.min(42, Math.round(score * 0.46f))));
+                scoreBar.setLayoutParams(params);
+            }
+        }
+    }
+
+    private GradientDrawable buildScoreBarDrawable(int score) {
+        GradientDrawable drawable = new GradientDrawable();
+        drawable.setShape(GradientDrawable.RECTANGLE);
+        drawable.setCornerRadius(dp(2));
+        drawable.setColor(score >= 70 ? accentOliveColor : ContextCompat.getColor(inflater.getContext(), R.color.senku_text_muted_light));
+        return drawable;
+    }
+
+    private void hideLinkedGuideChrome(TextView cue, TextView previewView) {
+        if (cue != null) {
+            cue.setVisibility(View.GONE);
+            cue.setText("");
+            cue.setOnClickListener(null);
+            cue.setClickable(false);
+            cue.setFocusable(false);
+        }
+        if (previewView != null) {
+            previewView.setVisibility(View.GONE);
+            previewView.setText("");
+            previewView.setOnClickListener(null);
+            previewView.setClickable(false);
+            previewView.setFocusable(false);
+        }
     }
 
     private void bindLinkedGuideCue(
@@ -550,7 +739,7 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
     }
 
     private static String buildTabletScoreLabel(int position) {
-        return "\u2713 " + tabletScoreForPosition(position);
+        return Integer.toString(tabletScoreForPosition(position));
     }
 
     private static int tabletScoreForPosition(int position) {
@@ -1149,6 +1338,7 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
         final ComposeView composeView;
         final TextView title;
         final TextView retrievalBadge;
+        final View scoreBar;
         final TextView categoryBadge;
         final TextView linkedGuideCue;
         final TextView linkedGuidePreview;
@@ -1163,6 +1353,7 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
             composeView = itemView.findViewById(R.id.result_card_compose);
             title = itemView.findViewById(R.id.result_title);
             retrievalBadge = itemView.findViewById(R.id.result_retrieval_badge);
+            scoreBar = itemView.findViewById(R.id.result_accent_strip);
             categoryBadge = itemView.findViewById(R.id.result_category_badge);
             linkedGuideCue = itemView.findViewById(R.id.result_related_cue);
             linkedGuidePreview = itemView.findViewById(R.id.result_related_preview);

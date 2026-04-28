@@ -135,6 +135,9 @@ public final class DetailActivity extends AppCompatActivity {
     private TextView emergencyHeaderText;
     private LinearLayout tabletEmergencyHeaderOverlay;
     private LinearLayout tabletEmergencyActionsOverlayPanel;
+    private LinearLayout tabletEmergencyProofOverlayPanel;
+    private TextView tabletEmergencyProofOverlayTitle;
+    private TextView tabletEmergencyProofOverlayText;
     private View whyPanel;
     private TextView whyTitleText;
     private TextView whyText;
@@ -1170,6 +1173,14 @@ public final class DetailActivity extends AppCompatActivity {
                 updateWhyPanelPlacement();
                 renderNextSteps();
                 updateHelperSection();
+                if (isEmergencyPortraitSurface()) {
+                    detailScroll.scrollTo(0, 0);
+                    detailScroll.post(() -> {
+                        if (!isFinishing() && !isDestroyed() && isEmergencyPortraitSurface()) {
+                            detailScroll.scrollTo(0, 0);
+                        }
+                    });
+                }
             });
         });
     }
@@ -1329,6 +1340,42 @@ public final class DetailActivity extends AppCompatActivity {
         actionsParams.topMargin = dp(16);
         overlay.addView(tabletEmergencyActionsOverlayPanel, actionsParams);
 
+        tabletEmergencyProofOverlayPanel = new LinearLayout(this);
+        tabletEmergencyProofOverlayPanel.setOrientation(LinearLayout.VERTICAL);
+        tabletEmergencyProofOverlayPanel.setBackgroundResource(R.drawable.bg_evidence_panel);
+        tabletEmergencyProofOverlayPanel.setPadding(dp(14), dp(12), dp(14), dp(12));
+
+        tabletEmergencyProofOverlayTitle = new TextView(this);
+        tabletEmergencyProofOverlayTitle.setText(R.string.detail_why_title);
+        tabletEmergencyProofOverlayTitle.setTextColor(getColor(R.color.senku_text_light));
+        tabletEmergencyProofOverlayTitle.setTypeface(Typeface.MONOSPACE, Typeface.BOLD);
+        tabletEmergencyProofOverlayTitle.setTextSize(11f);
+        tabletEmergencyProofOverlayTitle.setLetterSpacing(0.08f);
+        tabletEmergencyProofOverlayPanel.addView(tabletEmergencyProofOverlayTitle, new LinearLayout.LayoutParams(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        ));
+
+        tabletEmergencyProofOverlayText = new TextView(this);
+        tabletEmergencyProofOverlayText.setTextColor(getColor(R.color.senku_text_muted_light));
+        tabletEmergencyProofOverlayText.setTextSize(13f);
+        tabletEmergencyProofOverlayText.setLineSpacing(0f, 1.08f);
+        tabletEmergencyProofOverlayText.setMaxLines(3);
+        tabletEmergencyProofOverlayText.setEllipsize(TextUtils.TruncateAt.END);
+        LinearLayout.LayoutParams proofTextParams = new LinearLayout.LayoutParams(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        );
+        proofTextParams.topMargin = dp(6);
+        tabletEmergencyProofOverlayPanel.addView(tabletEmergencyProofOverlayText, proofTextParams);
+
+        LinearLayout.LayoutParams proofParams = new LinearLayout.LayoutParams(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        );
+        proofParams.topMargin = dp(14);
+        overlay.addView(tabletEmergencyProofOverlayPanel, proofParams);
+
         FrameLayout.LayoutParams params = tabletEmergencyHeaderOverlayParams();
         root.addView(overlay, params);
         tabletEmergencyHeaderOverlay = overlay;
@@ -1386,6 +1433,20 @@ public final class DetailActivity extends AppCompatActivity {
             currentBody,
             getColor(R.color.senku_rev03_danger)
         );
+        renderTabletEmergencyProofOverlay();
+    }
+
+    private void renderTabletEmergencyProofOverlay() {
+        if (tabletEmergencyProofOverlayPanel == null || tabletEmergencyProofOverlayText == null) {
+            return;
+        }
+        if (!isTabletPortraitLayout() || currentSources == null || currentSources.isEmpty()) {
+            tabletEmergencyProofOverlayPanel.setVisibility(View.GONE);
+            return;
+        }
+        tabletEmergencyProofOverlayPanel.setVisibility(View.VISIBLE);
+        tabletEmergencyProofOverlayText.setText(buildCompactWhyPanelSummary());
+        tabletEmergencyProofOverlayPanel.setContentDescription(tabletEmergencyProofOverlayText.getText());
     }
 
     private void removeTabletEmergencyHeaderOverlay() {
@@ -1398,6 +1459,9 @@ public final class DetailActivity extends AppCompatActivity {
         }
         tabletEmergencyHeaderOverlay = null;
         tabletEmergencyActionsOverlayPanel = null;
+        tabletEmergencyProofOverlayPanel = null;
+        tabletEmergencyProofOverlayTitle = null;
+        tabletEmergencyProofOverlayText = null;
     }
 
     private TabletDetailState buildTabletState() {
@@ -2816,30 +2880,38 @@ public final class DetailActivity extends AppCompatActivity {
         whyPanel.setPadding(whyPad, whyPad, whyPad, whyPad);
         if (whyTitleText != null) {
             whyTitleText.setVisibility(View.VISIBLE);
-            if (compactContextSections) {
-                whyTitleText.setText(buildCompactWhyToggleTitle(portraitWhyExpanded));
+            if (isEmergencyPortraitSurface()) {
+                whyTitleText.setText(R.string.detail_why_title);
             } else if (showUtilityRail()) {
                 whyTitleText.setText(R.string.detail_why_title_compact);
+            } else if (compactContextSections) {
+                whyTitleText.setText(buildCompactWhyToggleTitle(portraitWhyExpanded));
             } else {
                 whyTitleText.setText(R.string.detail_why_title);
             }
             whyTitleText.setBackgroundResource(
-                compactContextSections
+                compactContextSections && !isEmergencyPortraitSurface()
                     ? R.drawable.bg_why_toggle_compact
                     : R.drawable.bg_sources_section_pill
             );
             whyTitleText.setContentDescription(whyTitleText.getText());
         }
-        whyText.setText(compactLandscapePhone
+        boolean emergencyPortrait = isEmergencyPortraitSurface();
+        whyText.setText(emergencyPortrait && !currentSources.isEmpty()
+            ? buildCompactWhyPanelSummary()
+            : (compactLandscapePhone
             ? buildCompactWhyPanelSummary()
             : (showUtilityRail()
                 ? buildUtilityRailWhySummary()
                 : (currentSources.isEmpty()
                 ? buildNoCitationProofSummary(false)
-                : buildWhyThisAnswerSummary())));
+                : buildWhyThisAnswerSummary()))));
         whyText.setLineSpacing(0f, compactLandscapePhone ? 1.0f : 1.08f);
-        whyText.setMaxLines((compactLandscapePhone || (compactContextSections && !portraitWhyExpanded)) ? 4 : Integer.MAX_VALUE);
-        whyText.setEllipsize((compactLandscapePhone || (compactContextSections && !portraitWhyExpanded)) ? TextUtils.TruncateAt.END : null);
+        boolean collapseWhyText = compactLandscapePhone
+            || emergencyPortrait
+            || (compactContextSections && !portraitWhyExpanded);
+        whyText.setMaxLines(emergencyPortrait ? 5 : (collapseWhyText ? 4 : Integer.MAX_VALUE));
+        whyText.setEllipsize(collapseWhyText ? TextUtils.TruncateAt.END : null);
         if (compactLandscapePhone && !currentSources.isEmpty()) {
             whyPanel.setClickable(true);
             whyPanel.setFocusable(true);

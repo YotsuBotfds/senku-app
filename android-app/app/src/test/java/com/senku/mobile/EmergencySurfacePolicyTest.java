@@ -70,25 +70,13 @@ public final class EmergencySurfacePolicyTest {
     }
 
     @Test
-    public void detailBridgeAllowsEmergencyHeaderOnEligiblePortraitOrLandscapeSurface() {
+    public void detailBridgeAllowsEmergencyHeaderOnEligibleEmergencySurfaceLayout() {
         ReviewedCardMetadata metadata = reviewedMetadata(
             "poisoning_unknown_ingestion",
             "GD-898",
             "pilot_reviewed",
             "GD-898"
         );
-
-        assertTrue(DetailActivity.shouldShowEmergencyHeaderForPolicy(
-            true,
-            true,
-            true,
-            "answer_card:poisoning_unknown_ingestion",
-            "medical",
-            metadata,
-            false,
-            OfflineAnswerEngine.ConfidenceLabel.HIGH,
-            OfflineAnswerEngine.AnswerMode.CONFIDENT
-        ));
 
         assertTrue(DetailActivity.shouldShowEmergencyHeaderForPolicy(
             true,
@@ -314,6 +302,25 @@ public final class EmergencySurfacePolicyTest {
                 true,
                 "answer_card:sunburn_sun_protection_boundary",
                 "First Aid & Emergency Response",
+                "reviewed",
+                "high",
+                "high",
+                "deterministic_rule",
+                1
+            )
+        );
+
+        assertFalse(decision.eligible);
+        assertEquals(EmergencySurfacePolicy.REASON_NOT_HIGH_RISK_EMERGENCY, decision.reason);
+    }
+
+    @Test
+    public void genericBurnHazardCardDoesNotQualifyAsFoundryEmergency() {
+        EmergencySurfacePolicy.Decision decision = EmergencySurfacePolicy.evaluate(
+            input(
+                true,
+                "answer_card:burn_hazard_general_shop_safety",
+                "Workshop danger response",
                 "reviewed",
                 "high",
                 "high",

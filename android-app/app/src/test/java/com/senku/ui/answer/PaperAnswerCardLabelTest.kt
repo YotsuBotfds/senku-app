@@ -58,7 +58,7 @@ class PaperAnswerCardLabelTest {
             elapsedSeconds = 0.8,
         )
 
-        assertEquals("2 SOURCES | ON-DEVICE | 0.8S", buildFooterMeta(content))
+        assertEquals("2 SOURCES · ON-DEVICE · 0.8S", buildFooterMeta(content))
     }
 
     @Test

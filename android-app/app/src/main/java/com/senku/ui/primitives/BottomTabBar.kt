@@ -136,10 +136,10 @@ fun SenkuBottomTabBar(
             ) {
                 Column(
                     modifier = Modifier
-                        .width(88.dp)
+                        .width(80.dp)
                         .fillMaxHeight()
-                        .padding(start = 8.dp, top = 14.dp, end = 8.dp, bottom = 14.dp),
-                    verticalArrangement = Arrangement.spacedBy(4.dp, Alignment.Top),
+                        .padding(start = 6.dp, top = 10.dp, end = 6.dp, bottom = 10.dp),
+                    verticalArrangement = Arrangement.spacedBy(2.dp, Alignment.Top),
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
                     tabs.forEach { tab ->
@@ -184,7 +184,7 @@ fun SenkuBottomTabBar(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(start = 8.dp, top = 8.dp, end = 8.dp, bottom = 20.dp),
+                    .padding(start = 6.dp, top = 6.dp, end = 6.dp, bottom = 14.dp),
                 horizontalArrangement = Arrangement.spacedBy(2.dp),
             ) {
                 tabs.forEach { tab ->
@@ -216,20 +216,20 @@ private fun BottomTabItem(
 
     Column(
         modifier = modifier
-            .heightIn(min = if (verticalRail) 68.dp else 52.dp)
+            .heightIn(min = if (verticalRail) 58.dp else 48.dp)
             .selectable(
                 selected = selected,
                 onClick = onClick,
                 role = Role.Tab,
             )
-            .padding(horizontal = if (verticalRail) 6.dp else 4.dp, vertical = if (verticalRail) 8.dp else 6.dp),
+            .padding(horizontal = if (verticalRail) 5.dp else 3.dp, vertical = if (verticalRail) 6.dp else 5.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(if (verticalRail) 6.dp else 5.dp, Alignment.CenterVertically),
+        verticalArrangement = Arrangement.spacedBy(if (verticalRail) 4.dp else 4.dp, Alignment.CenterVertically),
     ) {
         BottomTabIcon(
             destination = tab.destination,
             tint = tint,
-            modifier = Modifier.size(if (verticalRail) 18.dp else 19.dp),
+            modifier = Modifier.size(if (verticalRail) 17.dp else 18.dp),
         )
         Text(
             text = tab.label,

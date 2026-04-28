@@ -8,25 +8,63 @@ edit, revert, stash, or clean Android source from this lane.
 
 - Target mocks under `artifacts/mocks`: 22 PNGs covering home, search, answer,
   thread, guide, and emergency. Emergency has portrait-only targets.
-- Latest state pack:
-  `artifacts/ui_state_pack/20260427_233208`.
-- Latest progress note:
+- Target mock index:
+  `notes/ANDROID_TARGET_MOCKS_20260427.md`.
+- Next-slice planning note:
+  `notes/ANDROID_NEXT_UI_SLICES_20260427.md`.
+- Latest repaired state pack summary:
+  `artifacts/ui_state_pack/20260428_005337/summary.json`, after checking the
+  earlier `20260428_002343` failure row for the tablet-portrait emergency
+  header regression.
+- Earlier progress note:
   `notes/ANDROID_UI_REDESIGN_PROGRESS_20260427.md`.
 - Wave8 visual review:
   `notes/ANDROID_VISUAL_REVIEW_20260427_WAVE8_STATE_PACK_231419.md`.
 - Current `git status --short`, `git diff --stat`, and recent git log.
 
-## Current Baseline
+## Current Baseline And Latest Attempt
 
-- Current HEAD: `7338983` (`record android wave8 state pack proof`).
-- Latest local state pack:
-  `artifacts/ui_state_pack/20260427_233208`.
-- Pack status: `pass`, 47 states, 47 pass, 0 fail, 0 platform ANRs.
+Post-Wave9/Wave10 status, read on 2026-04-28:
+
+- Latest clean committed anchor: `92c0fef`
+  (`advance android mock parity wave9`). Treat this as the safe committed
+  anchor until the current integration commit lands.
+- Current integration work is broad and now locally reproven. This planner lane
+  owns only this note and must not edit Android source or artifacts.
+- Latest repaired state pack:
+  `artifacts/ui_state_pack/20260428_005337`.
+- Pack status: `pass`, 47 total states, 47 pass, 0 fail, 0 platform ANRs.
 - Matrix health: homogeneous APK/model, 0 rotation mismatches.
-- APK SHA: `c5e8b4cc57b59bfef2b7cc481d6ba461681135d0e556b64342a18f685821697a`.
+- Repaired blocker:
+  `tablet_portrait/emergencyPortraitAnswerShowsImmediateActionState` now passes
+  after the tablet-portrait emergency header overlay was restored. The phone
+  portrait emergency capture was also repaired so the danger header no longer
+  clips the immediate-action list and compact proof/source context remains
+  visible. The failed attempt remains `artifacts/ui_state_pack/20260428_002343`
+  for regression context.
+- APK SHA:
+  `67a3823b0b75d0b98f0895dbec25674c9bbac4af3c7e4bdd7c981ef3ccb6abaa`.
 - Model: `gemma-4-e2b-it-litert`.
 - Model SHA:
   `ea1102014465edeb14b517bf270f6751d036749e3c5f517a7ff802782cb92161`.
+- Use `20260428_005337` as the current visual evidence pack. The pack is a
+  proof gate, not a declaration that all target mocks are visually closed.
+
+Immediate overnight unblock:
+
+1. Land the current integration batch from `92c0fef` after local review.
+2. Push and check the post-push status stream.
+3. Compare any changed family against its target mocks before dispatching the
+   next slice.
+4. Continue with the phase order below; emergency visual parity remains a
+   follow-up polish task even though the header regression is fixed.
+
+Earlier clean proof:
+
+- `artifacts/ui_state_pack/20260428_000801`: Wave9 local integration proof
+  before commit; `pass`, 47 states, 47 pass, 0 fail, 0 platform ANRs.
+- `artifacts/ui_state_pack/20260427_233208`: Wave8 proof; `pass`, 47 states,
+  47 pass, 0 fail, 0 platform ANRs.
 
 Wave8 moved this from harness-readiness to visual-parity work:
 
@@ -68,22 +106,39 @@ Wave9 local integration proof before commit:
 Current dirty Android files appear to be active implementation work owned by
 other agents. Do not revert or reformat them from this planner lane.
 
+Current dirty implementation files observed on 2026-04-28:
+
+- `android-app/app/src/androidTest/java/com/senku/mobile/PromptHarnessSmokeTest.java`
+- `android-app/app/src/main/java/com/senku/mobile/DetailActionBlockPresentationFormatter.java`
+- `android-app/app/src/main/java/com/senku/mobile/DetailActivity.java`
+- `android-app/app/src/main/java/com/senku/mobile/DetailGuideContextPresentationFormatter.java`
+- `android-app/app/src/main/java/com/senku/mobile/DetailGuidePresentationFormatter.java`
+- `android-app/app/src/main/java/com/senku/mobile/DetailRelatedGuidePresentationFormatter.java`
 - `android-app/app/src/main/java/com/senku/mobile/DetailThreadHistoryRenderer.java`
-- `android-app/app/src/main/java/com/senku/mobile/DetailSessionPresentationFormatter.java`
+- `android-app/app/src/main/java/com/senku/mobile/GuideBodySanitizer.java`
 - `android-app/app/src/main/java/com/senku/mobile/MainActivity.java`
 - `android-app/app/src/main/java/com/senku/mobile/SearchResultAdapter.java`
-- `android-app/app/src/main/java/com/senku/ui/composer/DockedComposer.kt`
-- `android-app/app/src/main/res/drawable/bg_detail_guide_paper_shell.xml`
-- `android-app/app/src/main/res/layout-land/activity_detail.xml`
-- `android-app/app/src/main/res/layout/activity_detail.xml`
+- `android-app/app/src/main/java/com/senku/ui/answer/PaperAnswerCard.kt`
+- `android-app/app/src/main/java/com/senku/ui/home/CategoryShelf.kt`
+- `android-app/app/src/main/java/com/senku/ui/primitives/BottomTabBar.kt`
+- `android-app/app/src/main/java/com/senku/ui/search/SearchResultCard.kt`
+- `android-app/app/src/main/java/com/senku/ui/tablet/TabletDetailScreen.kt`
+- `android-app/app/src/main/res/drawable/bg_detail_warning_shell.xml`
+- `android-app/app/src/main/res/layout/activity_main.xml`
+- `android-app/app/src/test/java/com/senku/mobile/DetailActionBlockPresentationFormatterTest.java`
+- `android-app/app/src/test/java/com/senku/mobile/DetailGuideContextPresentationFormatterTest.java`
+- `android-app/app/src/test/java/com/senku/mobile/DetailGuidePresentationFormatterTest.java`
+- `android-app/app/src/test/java/com/senku/mobile/DetailRelatedGuidePresentationFormatterTest.java`
+- `android-app/app/src/test/java/com/senku/mobile/EmergencySurfacePolicyTest.java`
 - `android-app/app/src/test/java/com/senku/mobile/MainActivityHomeChromeTest.java`
-- `android-app/app/src/test/java/com/senku/mobile/SearchResultAdapterTest.java`
+- `android-app/app/src/test/java/com/senku/ui/answer/PaperAnswerCardLabelTest.kt`
 
-Untracked guide paper drawables are also present:
+Current untracked implementation/test file:
 
-- `android-app/app/src/main/res/drawable/bg_detail_guide_paper_link_row.xml`
-- `android-app/app/src/main/res/drawable/bg_detail_guide_paper_panel.xml`
-- `android-app/app/src/main/res/drawable/bg_detail_guide_paper_section_label.xml`
+- `android-app/app/src/test/java/com/senku/mobile/DetailThreadHistoryRendererTest.java`
+
+Several untracked `notes/PLANNER_HANDOFF_*.md` files are also present and are
+protected planner handoffs. Leave them untouched from this lane.
 
 Every implementation worker starts with:
 
@@ -99,23 +154,25 @@ parallel implementation on the same chokepoint file.
 
 ## Current Visual Gap Ranking
 
-Use `artifacts/mocks` as the visual truth. Latest pack `20260427_233208` is
-trusted for screenshot availability, but not for final visual parity.
+Use `artifacts/mocks` as the visual truth. Latest attempted pack
+`20260428_002343` is trusted only for the 46 passing states; tablet-portrait
+emergency needs fresh proof after the header regression is fixed.
 
-1. Guide reader document surface: biggest gap. Target is a cream field-manual
-   document with sections and cross-reference rails; current capture is still
-   closer to dark detail chrome.
-2. Thread transcript view: target is a compact two-turn transcript; current
-   capture still reads as large answer/detail blocks.
-3. Emergency burn-hazard state: target is burn hazard with four immediate
-   actions; current emergency capture is trusted but scenario/hierarchy still
-   needs target alignment.
-4. Global chrome and density: headers, nav, card padding, and typography remain
-   heavier than the mocks across families.
-5. Search visual language: inputs now match better, but result cards remain too
-   heavy versus compact rows/ticks.
-6. Answer density: phone-landscape true split is proven, but answer/tablet
+1. Emergency tablet portrait: current top blocker because the latest attempted
+   fixed-matrix pack is 46/47, with the failing emergency header state on
+   `emulator-5554`.
+2. Guide reader document surface: target is a cream field-manual document with
+   sections and cross-reference rails; keep guide semantics separate from answer
+   semantics while closing visual parity.
+3. Thread transcript view: target is a compact two-turn transcript; keep the
+   composer stable while reducing large-card treatment.
+4. Answer density: phone-landscape true split is proven, but answer/tablet
    surfaces still need flatter document/source composition.
+5. Home/search density and preview coherence: home counts/query anchors are
+   settled; remaining work is compact rhythm, result rows, and tablet preview
+   coherence.
+6. Global chrome and density: headers, nav, card padding, and typography need a
+   final shared pass after family slices stop moving.
 
 ## Target Mock Contract
 
@@ -174,6 +231,34 @@ Use a focused pack during slice work and a full four-device pack before closure.
 If a focused run changes only one family, still include regression screenshots
 for any shared chrome or detail chokepoint it touches.
 
+## Post-Wave9/Wave10 Overnight Phase Map
+
+Use this as the active dispatch map. The longer phase sections below remain the
+file/test detail reference, but the order here reflects the current 46/47 pack
+and dirty integration state.
+
+| Order | Slice | Target mocks | Actionable work | Proof gate |
+| --- | --- | --- | --- | --- |
+| 0 | Re-anchor the integration batch | `emergency-tablet-portrait.png` first, then any touched family | Fix the tablet-portrait emergency header regression, land the current dirty integration batch, and promote a new clean anchor only after proof. | Focused `tablet_portrait/emergencyPortraitAnswerShowsImmediateActionState` screenshot/dump passes; then full fixed-matrix pack is 47/47 with 0 ANRs. |
+| 1 | Emergency portrait parity | `emergency-phone-portrait.png`, `emergency-tablet-portrait.png` | Keep burn hazard narrow: danger badge, one strong danger lane, four ordered immediate actions, one evidence/provenance card, quiet composer, no landscape target. | Emergency unit tests plus phone/tablet portrait screenshots compared to mocks; at least two negative controls stay non-emergency. |
+| 2 | Guide reader document station | All four guide mocks | Close the GD-132 cream paper reader: phone paper body/bottom nav, tablet portrait reader, tablet landscape sections rail + centered page + cross-reference rail. | Four guide screenshots and XML dumps from a focused pack; handoff states guide semantics remain separate from answer semantics. |
+| 3 | Thread transcript and composer | All four thread mocks | Reduce the two-turn rain-shelter thread to compact transcript rows while keeping sources/rails and docked composer stable. | Four thread screenshots; focused formatter/composer tests; handoff calls out focus/IME behavior. |
+| 4 | Answer/source density | All four answer mocks | Flatten the rain-shelter GD-345 answer surface, preserve 3-source/unsure-fit labels, and keep phone-landscape true split proof. | Four answer screenshots, including `rain_shelter_gd345_split_answer`; proof tests keep uncertain-fit, abstain, deterministic, and reviewed-evidence labels distinct. |
+| 5 | Home/search density and preview coherence | Eight home/search mocks | Tighten compact home rhythm, keep category counts exact, make search rows/ticks compact, and align tablet selected-result preview behavior. | Eight home/search screenshots; dumps preserve query `rain shelter`, count 4, timing `12ms`, and category labels. |
+| 6 | Global chrome harmonization | Representative screenshots from every touched family | Final shared header/nav/card/type/composer pass after family slices stop moving. | Full unit/assemble plus fresh screenshots for every family touched by shared files. |
+| 7 | Mock-parity closure | All 22 target mocks | Compare each target mock to a current screenshot, split residuals into content/data, layout/density, and behavior, and record final review. | `git diff --check`, unit tests, assemble, and full fixed-matrix pack pass or every accepted delta is named in a fresh review note. |
+
+Parallel guidance:
+
+- Give emergency, guide, and answer detail work to one detail owner or sequence
+  it; they all contend for `DetailActivity.java` and detail presentation
+  formatters.
+- Home/search can run independently only after the current `MainActivity.java`
+  and `SearchResultAdapter.java` WIP is owned or landed.
+- Thread work may run beside home/search if it stays out of app shell files.
+- Do not spend a slice on pure visual polish until the 46/47 emergency blocker
+  is fixed and a new pack anchor is named.
+
 ## Phase 0 - Dispatch Locks And Evidence Sync
 
 Owner: orchestrator / notes lane.
@@ -185,10 +270,12 @@ Checklist:
 
 - [ ] Confirm current dirty Android files have named owners before assigning
   new work.
-- [ ] Start new work from `7338983` plus the current dirty owner context, or
+- [ ] Start new work from `92c0fef` plus the current dirty owner context, or
   from a newer explicit commit/pack named in the handoff.
-- [ ] Treat `artifacts/ui_state_pack/20260427_233208` as the baseline unless a
-  newer passing pack is named.
+- [ ] Treat `artifacts/ui_state_pack/20260428_002343` as a partial visual
+  reference only: 46 passing states are usable, tablet-portrait emergency is
+  not.
+- [ ] Do not name a new clean anchor until a full fixed-matrix pack is 47/47.
 - [ ] Preserve Wave8 progress evidence; do not resurrect cleared harness
   blockers as active blockers.
 - [ ] Keep emergency acceptance portrait-only.
@@ -485,8 +572,10 @@ Parallel safety:
 
 Owner slice: emergency/detail lane.
 
-Priority: high after the detail chokepoint is free. Emergency screenshots are
-trusted in `20260427_233208`, but target scenario and hierarchy are not done.
+Priority: immediate blocker before visual-polish dispatch. Latest attempted
+pack `20260428_002343` is 46/47 because tablet portrait emergency failed before
+trusted summary; fix the header regression first, then continue burn-hazard
+visual parity.
 
 Screens/form factors:
 
@@ -495,6 +584,8 @@ Screens/form factors:
 
 Acceptance checklist:
 
+- [ ] Tablet portrait emergency header is visible/stable and the state no
+  longer fails the smoke wrapper.
 - [ ] Target scenario is burn hazard, not a different emergency answer.
 - [ ] Danger badge and one strong danger lane are visible.
 - [ ] Four ordered immediate-action rows are visible and compact.
@@ -531,6 +622,9 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\build_android_ui_s
 
 Screenshot review gate:
 
+- First prove
+  `tablet_portrait/emergencyPortraitAnswerShowsImmediateActionState` no longer
+  fails before trusted summary.
 - Compare only:
   - `artifacts/mocks/emergency-phone-portrait.png`
   - `artifacts/mocks/emergency-tablet-portrait.png`
@@ -631,19 +725,23 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\run_android_headle
 | Order | Slice | Start when | Do not run beside | First proof expected |
 | --- | --- | --- | --- | --- |
 | 0 | P0 locks/evidence | Immediately. | None, notes-only. | Named owners for dirty source files. |
-| 1 | P2 guide reader | Detail/layout owner is available. | P4/P5 detail slices. | Four guide screenshots show cream document treatment. |
-| 2 | P3 thread transcript | Thread renderer owner is available. | Detail layout changes unless same owner. | Four thread screenshots show compact transcript and stable composer. |
-| 3 | P5 emergency burn hazard | Detail chokepoint is free. | P2/P4 detail slices. | Phone/tablet portrait emergency screenshots match burn-hazard hierarchy. |
-| 4 | P1 home/search density | Current MainActivity/SearchResultAdapter WIP is owned or landed. | Other home/search slices. | Eight home/search screenshots match target content and compact rows. |
+| 1 | P5 emergency header unblock | Current integration owner is available. | P2/P4 detail slices unless same owner. | Tablet-portrait emergency screenshot/dump passes; then full pack reaches 47/47. |
+| 2 | P5 emergency burn-hazard parity | Header unblock is proven. | P2/P4 detail slices unless same owner. | Phone/tablet portrait emergency screenshots match burn-hazard hierarchy. |
+| 3 | P2 guide reader | Detail/layout owner is available. | P4/P5 detail slices. | Four guide screenshots show cream document treatment. |
+| 4 | P3 thread transcript | Thread renderer owner is available. | Detail layout changes unless same owner. | Four thread screenshots show compact transcript and stable composer. |
 | 5 | P4 answer density | Guide/emergency detail work is stable. | P2/P5 detail slices. | Four answer screenshots show actual answer mode and compact sources. |
-| 6 | P6 global chrome | Family slices have landed. | Any unowned source WIP. | Fresh screenshots for every family touched by shared chrome. |
-| 7 | P7 closure | All target-family slices have handoffs. | Implementation work. | Full passing state pack plus mock checklist review. |
+| 6 | P1 home/search density | Current MainActivity/SearchResultAdapter WIP is owned or landed. | Other home/search slices. | Eight home/search screenshots match target content and compact rows. |
+| 7 | P6 global chrome | Family slices have landed. | Any unowned source WIP. | Fresh screenshots for every family touched by shared chrome. |
+| 8 | P7 closure | All target-family slices have handoffs. | Implementation work. | Full passing state pack plus mock checklist review. |
 
 Notes on ordering:
 
+- The emergency header unblock is first because `20260428_002343` is 46/47 and
+  cannot serve as a clean anchor.
 - P2/P4/P5 are ordered mainly because they share `DetailActivity.java` and
-  `activity_detail` layouts.
-- P1 can be pulled earlier if the current home/search owner is ready.
+  detail presentation files.
+- P1 can be pulled earlier only after the current home/search WIP is owned or
+  landed.
 - P3 can run in parallel with P1 if it stays in thread/composer files and avoids
   detail layout churn.
 

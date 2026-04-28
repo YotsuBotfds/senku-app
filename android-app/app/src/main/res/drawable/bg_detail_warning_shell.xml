@@ -2,55 +2,15 @@
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
     <item>
         <shape android:shape="rectangle">
-            <solid android:color="@color/senku_bg_shadow_warm" />
-            <corners android:radius="18dp" />
+            <solid android:color="@color/senku_rev03_bg_2" />
         </shape>
     </item>
 
     <item
-        android:left="1dp"
-        android:top="1dp"
-        android:right="1dp"
-        android:bottom="1dp">
+        android:width="3dp"
+        android:gravity="left">
         <shape android:shape="rectangle">
-            <gradient
-                android:angle="270"
-                android:centerColor="@color/senku_bg_surface"
-                android:endColor="@color/senku_bg_primary"
-                android:startColor="@color/senku_surface_alert" />
-            <corners android:radius="17dp" />
-            <stroke
-                android:width="1dp"
-                android:color="@color/senku_surface_rule_warm" />
-        </shape>
-    </item>
-
-    <item
-        android:width="5dp"
-        android:gravity="left"
-        android:left="8dp"
-        android:top="8dp"
-        android:bottom="8dp">
-        <shape android:shape="rectangle">
-            <gradient
-                android:angle="270"
-                android:endColor="@color/senku_accent_alert"
-                android:startColor="@color/senku_accent_warning_amber" />
-            <corners android:radius="4dp" />
-        </shape>
-    </item>
-
-    <item
-        android:left="20dp"
-        android:top="8dp"
-        android:right="10dp"
-        android:bottom="8dp">
-        <shape android:shape="rectangle">
-            <gradient
-                android:angle="0"
-                android:endColor="#04FFFFFF"
-                android:startColor="#12E8DCC8" />
-            <corners android:radius="12dp" />
+            <solid android:color="@color/senku_rev03_warn" />
         </shape>
     </item>
 </layer-list>

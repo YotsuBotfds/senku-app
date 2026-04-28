@@ -60,10 +60,10 @@ final class DetailGuidePresentationFormatter {
         String sectionHeading = safe(result.sectionHeading).trim();
         String body = sanitizeGuideBodyForDisplay(safe(result.body));
         if (!body.isEmpty()) {
-            return sectionHeading.isEmpty() ? body : "Source section: " + sectionHeading + "\n\n" + body;
+            return sectionHeading.isEmpty() ? body : buildGuideSectionMarker(sectionHeading) + "\n\n" + body;
         }
         String snippet = sanitizeGuideBodyForDisplay(safe(result.snippet));
-        return sectionHeading.isEmpty() ? snippet : "Source section: " + sectionHeading + "\n\n" + snippet;
+        return sectionHeading.isEmpty() ? snippet : buildGuideSectionMarker(sectionHeading) + "\n\n" + snippet;
     }
 
     static String normalizeGuideDisplayTextForLegacy(String text) {
@@ -217,6 +217,11 @@ final class DetailGuidePresentationFormatter {
 
     private static String buildGuideSectionPrefix(int sectionOrdinal) {
         return GUIDE_SECTION_DISPLAY_PREFIX + Math.max(sectionOrdinal, 1);
+    }
+
+    private static String buildGuideSectionMarker(String value) {
+        String cleaned = safe(value).trim();
+        return cleaned.isEmpty() ? "" : GUIDE_SECTION_ANCHOR_MARKER + cleaned;
     }
 
     private void styleGuideAnchorLine(

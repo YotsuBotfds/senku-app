@@ -55,6 +55,7 @@ final class GuideBodySanitizer {
             if (insideAdmonitionBlock && !displayLine.isEmpty()) {
                 displayLine = stripDuplicateAdmonitionLabel(displayLine, activeAdmonitionLabel, firstAdmonitionContentLine);
             }
+            displayLine = formatGuideAdmonitionLine(displayLine);
             if (markdownHeading
                 && !displayLine.isEmpty()
                 && !insideAdmonitionBlock
@@ -89,6 +90,30 @@ final class GuideBodySanitizer {
             cleaned = cleaned.replaceFirst("^[^\\p{Alnum}\\[]+\\s*", "");
         }
         return cleaned.trim();
+    }
+
+    private static String formatGuideAdmonitionLine(String line) {
+        String cleaned = safe(line).trim();
+        if (cleaned.isEmpty()) {
+            return "";
+        }
+        String canonical = canonicalGuideAdmonitionLabel(cleaned);
+        if (!canonical.isEmpty()) {
+            return canonical;
+        }
+        Matcher inlinePrefixMatcher = GUIDE_ADMONITION_INLINE_PREFIX_PATTERN.matcher(cleaned);
+        if (!inlinePrefixMatcher.matches()) {
+            return cleaned;
+        }
+        String label = canonicalGuideAdmonitionLabel(inlinePrefixMatcher.group(1));
+        if (label.isEmpty()) {
+            return cleaned;
+        }
+        String detail = safe(inlinePrefixMatcher.group(2)).trim();
+        if (detail.isEmpty()) {
+            return label;
+        }
+        return label + " \u00b7 " + detail.toUpperCase(QUERY_LOCALE);
     }
 
     private static String stripDuplicateAdmonitionLabel(String line, String admonitionLabel, boolean firstAdmonitionContentLine) {

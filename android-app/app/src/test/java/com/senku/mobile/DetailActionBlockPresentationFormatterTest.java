@@ -86,6 +86,27 @@ public final class DetailActionBlockPresentationFormatterTest {
         assertEquals("", actions.get(2).detail);
     }
 
+    @Test
+    public void extractEmergencyActionSpecsIgnoresNumberedSourceContext() {
+        List<DetailActionBlockPresentationFormatter.EmergencyActionSpec> actions =
+            DetailActionBlockPresentationFormatter.extractEmergencyActionSpecs(
+                "Short answer:\n" +
+                    "Stop work immediately.\n\n" +
+                    "Immediate actions:\n" +
+                    "1. Stop all hot work. No new charges, no new pours.\n" +
+                    "2. Clear the floor to 5 m radius. Move personnel upwind.\n" +
+                    "3. Confirm two paths of egress. Door and roll-up open and unobstructed.\n" +
+                    "4. Notify the area owner. GD-132 lists current owner.\n\n" +
+                    "Sources:\n" +
+                    "1. GD-132 - Foundry & Metal Casting: Section 1 Area readiness.",
+                text -> citationFormatter.stripInlineCitationText(text)
+            );
+
+        assertEquals(4, actions.size());
+        assertEquals("Notify the area owner", actions.get(3).title);
+        assertEquals("GD-132 lists current owner.", actions.get(3).detail);
+    }
+
     private List<DetailActionBlockPresentationFormatter.ActionBlockSpec> extract(String formattedAnswerText) {
         return DetailActionBlockPresentationFormatter.extractHighRiskActionBlockSpecs(
             formattedAnswerText,

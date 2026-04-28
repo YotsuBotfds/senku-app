@@ -1,10 +1,12 @@
 package com.senku.ui.tablet
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -15,6 +17,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Surface
@@ -22,6 +25,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
@@ -132,20 +136,33 @@ internal data class TabletDetailTypeScalePolicy(
     val limitLineHeightSp: Int,
 )
 
+private data class GuidePaperPalette(
+    val page: Color = Color(0xFFE8DFC9),
+    val pageInset: Color = Color(0xFFE1D3BA),
+    val ink: Color = Color(0xFF20241D),
+    val inkSoft: Color = Color(0xFF5E6256),
+    val rule: Color = Color(0x3320241D),
+    val ruleStrong: Color = Color(0x5520241D),
+    val accent: Color = Color(0xFF8A6630),
+    val danger: Color = Color(0xFF9A4E34),
+)
+
+private fun tabletGuidePaperPalette() = GuidePaperPalette()
+
 internal fun tabletLandscapeReadingLayoutPolicy(): TabletReadingLayoutPolicy =
     TabletReadingLayoutPolicy(
-        threadRailWidthDp = 292,
-        answerMaxWidthDp = 500,
-        evidenceRailWidthDp = 360,
-        answerHorizontalPaddingDp = 18,
+        threadRailWidthDp = 276,
+        answerMaxWidthDp = 486,
+        evidenceRailWidthDp = 344,
+        answerHorizontalPaddingDp = 16,
     )
 
 internal fun tabletPortraitReadingLayoutPolicy(): TabletReadingLayoutPolicy =
     TabletReadingLayoutPolicy(
-        threadRailWidthDp = 160,
-        answerMaxWidthDp = 488,
-        evidenceRailWidthDp = 232,
-        answerHorizontalPaddingDp = 12,
+        threadRailWidthDp = 148,
+        answerMaxWidthDp = 472,
+        evidenceRailWidthDp = 224,
+        answerHorizontalPaddingDp = 10,
     )
 
 internal fun tabletReadingLayoutPolicy(isLandscape: Boolean): TabletReadingLayoutPolicy =
@@ -156,10 +173,10 @@ internal fun tabletReadingLayoutPolicy(isLandscape: Boolean): TabletReadingLayou
 
 internal fun tabletLandscapeDetailTypeScalePolicy(): TabletDetailTypeScalePolicy =
     TabletDetailTypeScalePolicy(
-        questionFontSizeSp = 22,
-        questionLineHeightSp = 27,
-        answerFontSizeSp = 15,
-        answerLineHeightSp = 22,
+        questionFontSizeSp = 20,
+        questionLineHeightSp = 25,
+        answerFontSizeSp = 14,
+        answerLineHeightSp = 21,
         stepFontSizeSp = 12,
         stepLineHeightSp = 17,
         limitFontSizeSp = 11,
@@ -168,10 +185,10 @@ internal fun tabletLandscapeDetailTypeScalePolicy(): TabletDetailTypeScalePolicy
 
 internal fun tabletPortraitDetailTypeScalePolicy(): TabletDetailTypeScalePolicy =
     TabletDetailTypeScalePolicy(
-        questionFontSizeSp = 21,
-        questionLineHeightSp = 26,
-        answerFontSizeSp = 15,
-        answerLineHeightSp = 22,
+        questionFontSizeSp = 20,
+        questionLineHeightSp = 25,
+        answerFontSizeSp = 14,
+        answerLineHeightSp = 21,
         stepFontSizeSp = 12,
         stepLineHeightSp = 17,
         limitFontSizeSp = 11,
@@ -376,6 +393,7 @@ private fun DetailWorkspace(
     modifier: Modifier = Modifier,
 ) {
     val colors = SenkuTheme.colors
+    val guideMode = state.isGuideMode()
 
     Column(
         modifier = modifier.background(colors.bg0),
@@ -389,6 +407,7 @@ private fun DetailWorkspace(
             guideModeSummary = state.guideModeSummary,
             guideModeAnchorLabel = state.guideModeAnchorLabel,
             statusText = state.statusText,
+            guideMode = guideMode,
         )
 
         Row(
@@ -401,6 +420,7 @@ private fun DetailWorkspace(
                 state = state,
                 onTurnClick = onTurnClick,
                 onAnchorClick = onAnchorClick,
+                guideMode = guideMode,
                 modifier = Modifier
                     .weight(1f)
                     .fillMaxHeight(),
@@ -453,6 +473,7 @@ private fun CenterPane(
     state: TabletDetailState,
     onTurnClick: (String) -> Unit,
     onAnchorClick: () -> Unit,
+    guideMode: Boolean,
     modifier: Modifier = Modifier,
 ) {
     val colors = SenkuTheme.colors
@@ -463,44 +484,174 @@ private fun CenterPane(
     Box(
         modifier = modifier.background(colors.bg0),
     ) {
+        val verticalPagePadding = if (guideMode) 22.dp else 0.dp
         Column(
             modifier = Modifier
                 .align(Alignment.TopCenter)
                 .widthIn(max = readingPolicy.answerMaxWidthDp.dp)
                 .fillMaxWidth()
                 .verticalScroll(scrollState)
-                .padding(horizontal = readingPolicy.answerHorizontalPaddingDp.dp, vertical = 0.dp),
+                .padding(
+                    horizontal = readingPolicy.answerHorizontalPaddingDp.dp,
+                    vertical = verticalPagePadding,
+                ),
             verticalArrangement = Arrangement.spacedBy(0.dp),
         ) {
-            if (state.turns.isEmpty()) {
-                Text(
-                    text = "No conversation turns yet.",
-                    modifier = Modifier.padding(vertical = 20.dp),
-                    style = SenkuTheme.typography.smallBody,
-                    color = colors.ink3,
-                )
-            } else {
-                state.turns.forEachIndexed { index, turn ->
-                    if (index > 0) {
-                        HorizontalDivider(
-                            modifier = Modifier.fillMaxWidth(),
-                            thickness = 1.dp,
-                            color = colors.hairline,
-                        )
-                    }
-                    ThreadTurnBlock(
-                        turn = turn,
-                        turnIndex = index + 1,
+            if (guideMode) {
+                GuidePaperSurface(state = state) {
+                    GuidePaperHeader(state = state)
+                    GuidePaperDivider()
+                    ThreadTurnList(
+                        state = state,
                         typeScalePolicy = typeScalePolicy,
-                        canOpenProof = turn.isActive && state.anchor.hasSource,
-                        onFocusTurn = { onTurnClick(turn.id) },
-                        onOpenProof = onAnchorClick,
+                        guideMode = true,
+                        onTurnClick = onTurnClick,
+                        onAnchorClick = onAnchorClick,
                     )
                 }
+            } else {
+                ThreadTurnList(
+                    state = state,
+                    typeScalePolicy = typeScalePolicy,
+                    guideMode = false,
+                    onTurnClick = onTurnClick,
+                    onAnchorClick = onAnchorClick,
+                )
+                Spacer(modifier = Modifier.height(8.dp))
             }
-
-            Spacer(modifier = Modifier.height(8.dp))
         }
+    }
+}
+
+@Composable
+private fun GuidePaperSurface(
+    state: TabletDetailState,
+    content: @Composable ColumnScope.() -> Unit,
+) {
+    val paperPalette = tabletGuidePaperPalette()
+    val horizontalPadding = if (state.isLandscape) 34.dp else 24.dp
+
+    Surface(
+        modifier = Modifier.fillMaxWidth(),
+        color = paperPalette.page,
+        contentColor = paperPalette.ink,
+        shape = RoundedCornerShape(4.dp),
+        border = BorderStroke(1.dp, paperPalette.ruleStrong),
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(
+                    start = horizontalPadding,
+                    top = 26.dp,
+                    end = horizontalPadding,
+                    bottom = 30.dp,
+                ),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+            content = content,
+        )
+    }
+}
+
+@Composable
+private fun GuidePaperHeader(
+    state: TabletDetailState,
+) {
+    val typography = SenkuTheme.typography
+    val paperPalette = tabletGuidePaperPalette()
+    val anchor = state.guideModeAnchorLabel.trim()
+    val metaLabels = state.meta.mapNotNull { it.label.trim().ifEmpty { null } }
+    val metaLine = listOfNotNull(
+        state.guideId.trim().ifEmpty { "GD-?" },
+        *metaLabels.toTypedArray(),
+        anchor.takeIf { it.isNotEmpty() },
+    ).joinToString(" - ")
+
+    Column(
+        modifier = Modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(10.dp),
+    ) {
+        Text(
+            text = "FIELD MANUAL",
+            style = typography.monoCaps.copy(
+                fontSize = 11.sp,
+                lineHeight = 14.sp,
+                fontWeight = FontWeight.Medium,
+            ),
+            color = paperPalette.accent,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+        )
+        Text(
+            text = state.guideTitle.trim().ifEmpty { "Guide" },
+            style = typography.sectionTitle.copy(
+                fontSize = if (state.isLandscape) 30.sp else 28.sp,
+                lineHeight = if (state.isLandscape) 34.sp else 32.sp,
+                fontWeight = FontWeight.SemiBold,
+                letterSpacing = 0.sp,
+            ),
+            color = paperPalette.ink,
+        )
+        Text(
+            text = metaLine.uppercase(),
+            style = typography.monoCaps.copy(
+                fontSize = 11.sp,
+                lineHeight = 14.sp,
+                fontWeight = FontWeight.Medium,
+            ),
+            color = paperPalette.inkSoft,
+            maxLines = 2,
+            overflow = TextOverflow.Ellipsis,
+        )
+    }
+}
+
+@Composable
+private fun GuidePaperDivider() {
+    HorizontalDivider(
+        modifier = Modifier.fillMaxWidth(),
+        thickness = 1.dp,
+        color = tabletGuidePaperPalette().rule,
+    )
+}
+
+@Composable
+private fun ThreadTurnList(
+    state: TabletDetailState,
+    typeScalePolicy: TabletDetailTypeScalePolicy,
+    guideMode: Boolean,
+    onTurnClick: (String) -> Unit,
+    onAnchorClick: () -> Unit,
+) {
+    val colors = SenkuTheme.colors
+
+    if (state.turns.isEmpty()) {
+        Text(
+            text = if (guideMode) "No guide sections recorded." else "No conversation turns yet.",
+            modifier = Modifier.padding(vertical = 20.dp),
+            style = SenkuTheme.typography.smallBody,
+            color = if (guideMode) tabletGuidePaperPalette().inkSoft else colors.ink3,
+        )
+        return
+    }
+
+    state.turns.forEachIndexed { index, turn ->
+        if (index > 0) {
+            HorizontalDivider(
+                modifier = Modifier.fillMaxWidth(),
+                thickness = 1.dp,
+                color = if (guideMode) tabletGuidePaperPalette().rule else colors.hairline,
+            )
+        }
+        ThreadTurnBlock(
+            turn = turn,
+            turnIndex = index + 1,
+            typeScalePolicy = typeScalePolicy,
+            canOpenProof = turn.isActive && state.anchor.hasSource,
+            onFocusTurn = { onTurnClick(turn.id) },
+            onOpenProof = onAnchorClick,
+            guideMode = guideMode,
+        )
     }
 }
 
@@ -514,6 +665,7 @@ private fun TitleBar(
     guideModeSummary: String,
     guideModeAnchorLabel: String,
     statusText: String,
+    guideMode: Boolean,
     modifier: Modifier = Modifier,
 ) {
     val colors = SenkuTheme.colors
@@ -523,8 +675,8 @@ private fun TitleBar(
         modifier = modifier
             .fillMaxWidth()
             .background(colors.bg0)
-            .padding(horizontal = 22.dp, vertical = 8.dp),
-        verticalArrangement = Arrangement.spacedBy(4.dp),
+            .padding(horizontal = 18.dp, vertical = 6.dp),
+        verticalArrangement = Arrangement.spacedBy(3.dp),
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -532,7 +684,7 @@ private fun TitleBar(
             horizontalArrangement = Arrangement.spacedBy(10.dp),
         ) {
             Text(
-                text = "ANSWER",
+                text = if (guideMode) "GUIDE" else "ANSWER",
                 style = typography.monoCaps.copy(
                     fontSize = 11.sp,
                     lineHeight = 14.sp,
@@ -553,7 +705,11 @@ private fun TitleBar(
                 overflow = TextOverflow.Ellipsis,
             )
             Text(
-                text = buildTitleSummary(guideTitle = guideTitle, turnCount = turnCount),
+                text = if (guideMode) {
+                    guideTitle.trim().ifEmpty { "Guide" }
+                } else {
+                    buildTitleSummary(guideTitle = guideTitle, turnCount = turnCount)
+                },
                 modifier = Modifier.weight(1f),
                 style = typography.sectionTitle.copy(
                     fontSize = 17.sp,
@@ -639,19 +795,21 @@ private fun ThreadTurnBlock(
     canOpenProof: Boolean,
     onFocusTurn: () -> Unit,
     onOpenProof: () -> Unit,
+    guideMode: Boolean,
     modifier: Modifier = Modifier,
 ) {
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .padding(vertical = 10.dp),
-        verticalArrangement = Arrangement.spacedBy(7.dp),
+            .padding(vertical = if (guideMode) 8.dp else 9.dp),
+        verticalArrangement = Arrangement.spacedBy(if (guideMode) 6.dp else 7.dp),
     ) {
         if (turn.showQuestion) {
             QuestionInlineBlock(
                 question = turn.question,
                 turnIndex = turnIndex,
                 typeScalePolicy = typeScalePolicy,
+                guideMode = guideMode,
             )
         }
 
@@ -661,6 +819,7 @@ private fun ThreadTurnBlock(
             typeScalePolicy = typeScalePolicy,
             proofLabel = if (canOpenProof) "Open proof" else "Focus turn",
             onProofClick = if (canOpenProof) onOpenProof else onFocusTurn,
+            guideMode = guideMode,
         )
     }
 }
@@ -670,10 +829,15 @@ private fun QuestionInlineBlock(
     question: String,
     turnIndex: Int,
     typeScalePolicy: TabletDetailTypeScalePolicy,
+    guideMode: Boolean,
     modifier: Modifier = Modifier,
 ) {
     val colors = SenkuTheme.colors
     val typography = SenkuTheme.typography
+    val paperPalette = tabletGuidePaperPalette()
+    val metaColor = if (guideMode) paperPalette.accent else colors.accent
+    val secondaryColor = if (guideMode) paperPalette.inkSoft else colors.ink2
+    val bodyColor = if (guideMode) paperPalette.ink else colors.ink0
 
     Column(
         modifier = modifier.fillMaxWidth(),
@@ -685,33 +849,33 @@ private fun QuestionInlineBlock(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
-                text = "ANSWER",
+                text = if (guideMode) "SECTION" else "ANSWER",
                 style = typography.monoCaps.copy(
                     fontSize = 10.sp,
                     lineHeight = 13.sp,
                     fontWeight = FontWeight.Medium,
                 ),
-                color = colors.accent,
+                color = metaColor,
                 maxLines = 1,
             )
             Text(
-                text = "THIS DEVICE",
+                text = if (guideMode) "FIELD NOTE" else "THIS DEVICE",
                 style = typography.monoCaps.copy(
                     fontSize = 10.sp,
                     lineHeight = 13.sp,
                     fontWeight = FontWeight.Medium,
                 ),
-                color = colors.ink2,
+                color = secondaryColor,
                 maxLines = 1,
             )
             Text(
-                text = "$turnIndex TURN",
+                text = if (guideMode) "§ $turnIndex" else "$turnIndex TURN",
                 style = typography.monoCaps.copy(
                     fontSize = 10.sp,
                     lineHeight = 13.sp,
                     fontWeight = FontWeight.Medium,
                 ),
-                color = colors.ink2,
+                color = secondaryColor,
                 maxLines = 1,
             )
         }
@@ -723,7 +887,7 @@ private fun QuestionInlineBlock(
                 fontWeight = FontWeight.SemiBold,
                 letterSpacing = 0.sp,
             ),
-            color = colors.ink0,
+            color = bodyColor,
         )
     }
 }
@@ -735,11 +899,17 @@ private fun AnswerInlineBlock(
     typeScalePolicy: TabletDetailTypeScalePolicy,
     proofLabel: String,
     onProofClick: () -> Unit,
+    guideMode: Boolean,
     modifier: Modifier = Modifier,
 ) {
     val colors = SenkuTheme.colors
     val typography = SenkuTheme.typography
     val evidenceTone = answerEvidenceTone(content)
+    val paperPalette = tabletGuidePaperPalette()
+    val metaColor = if (guideMode) paperPalette.accent else colors.accent
+    val bodyColor = if (guideMode) paperPalette.ink else colors.ink0
+    val softBodyColor = if (guideMode) paperPalette.ink else colors.ink1
+    val mutedColor = if (guideMode) paperPalette.inkSoft else colors.ink3
 
     Column(
         modifier = modifier
@@ -753,14 +923,14 @@ private fun AnswerInlineBlock(
             verticalAlignment = Alignment.Top,
         ) {
             Text(
-                text = "A$turnIndex - ${answerAnchorLabel(content)}",
+                text = if (guideMode) "§ $turnIndex - ${answerAnchorLabel(content)}" else "A$turnIndex - ${answerAnchorLabel(content)}",
                 modifier = Modifier.weight(1f),
                 style = typography.monoCaps.copy(
                     fontSize = 10.sp,
                     lineHeight = 13.sp,
                     fontWeight = FontWeight.Medium,
                 ),
-                color = colors.accent,
+                color = metaColor,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
             )
@@ -771,7 +941,7 @@ private fun AnswerInlineBlock(
                     lineHeight = 13.sp,
                     fontWeight = FontWeight.Medium,
                 ),
-                color = evidenceTone,
+                color = if (guideMode) paperPalette.accent else evidenceTone,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
             )
@@ -783,7 +953,7 @@ private fun AnswerInlineBlock(
                 lineHeight = typeScalePolicy.answerLineHeightSp.sp,
                 letterSpacing = 0.sp,
             ),
-            color = colors.ink0,
+            color = bodyColor,
         )
         if (!content.steps.isNullOrEmpty() && !content.abstain) {
             Column(
@@ -797,7 +967,7 @@ private fun AnswerInlineBlock(
                             lineHeight = typeScalePolicy.stepLineHeightSp.sp,
                             letterSpacing = 0.sp,
                         ),
-                        color = colors.ink1,
+                        color = softBodyColor,
                     )
                 }
             }
@@ -806,7 +976,7 @@ private fun AnswerInlineBlock(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(colors.bg2)
+                    .background(if (guideMode) paperPalette.pageInset else colors.bg2)
                     .padding(end = 10.dp),
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 verticalAlignment = Alignment.Top,
@@ -815,7 +985,7 @@ private fun AnswerInlineBlock(
                     modifier = Modifier
                         .width(3.dp)
                         .height(58.dp)
-                        .background(if (content.abstain) colors.danger else colors.warn),
+                        .background(if (guideMode) paperPalette.danger else if (content.abstain) colors.danger else colors.warn),
                 )
                 Column(
                     modifier = Modifier.padding(vertical = 7.dp),
@@ -828,7 +998,7 @@ private fun AnswerInlineBlock(
                             lineHeight = 12.sp,
                             fontWeight = FontWeight.Medium,
                         ),
-                        color = if (content.abstain) colors.danger else colors.warn,
+                        color = if (guideMode) paperPalette.danger else if (content.abstain) colors.danger else colors.warn,
                         maxLines = 1,
                     )
                     Text(
@@ -838,7 +1008,7 @@ private fun AnswerInlineBlock(
                             lineHeight = typeScalePolicy.limitLineHeightSp.sp,
                             fontWeight = FontWeight.Medium,
                         ),
-                        color = colors.ink1,
+                        color = softBodyColor,
                     )
                 }
             }
@@ -855,7 +1025,7 @@ private fun AnswerInlineBlock(
                     fontSize = 10.sp,
                     lineHeight = 13.sp,
                 ),
-                color = colors.ink3,
+                color = mutedColor,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
             )
@@ -867,12 +1037,17 @@ private fun AnswerInlineBlock(
                     lineHeight = 14.sp,
                     fontWeight = FontWeight.SemiBold,
                 ),
-                color = colors.accent,
+                color = metaColor,
                 maxLines = 1,
             )
         }
     }
 }
+
+private fun TabletDetailState.isGuideMode(): Boolean =
+    guideModeLabel.isNotBlank() ||
+        guideModeSummary.isNotBlank() ||
+        guideModeAnchorLabel.isNotBlank()
 
 private fun buildTitleSummary(
     guideTitle: String,

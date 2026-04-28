@@ -75,8 +75,8 @@ public final class MainActivity extends AppCompatActivity {
     private static final int MAX_RESULT_PREVIEW_BRIDGE_GUIDES = 4;
     private static final int RESULT_PREVIEW_BRIDGE_SIGNAL_LIMIT = 1;
     private static final int MANUAL_HOME_CATEGORY_COLUMNS = 3;
-    private static final int MANUAL_HOME_CATEGORY_CARD_HEIGHT_DP = 64;
-    private static final int MANUAL_HOME_CATEGORY_ROW_GAP_DP = 8;
+    private static final int MANUAL_HOME_CATEGORY_CARD_HEIGHT_DP = 54;
+    private static final int MANUAL_HOME_CATEGORY_ROW_GAP_DP = 6;
     private static final String REVIEW_SEARCH_QUERY = "rain shelter";
     private static final String REVIEW_SEARCH_LATENCY_LABEL = "12ms";
     private static final long MILLIS_PER_MINUTE = 60_000L;
@@ -1601,16 +1601,16 @@ public final class MainActivity extends AppCompatActivity {
         button.setMinimumHeight(0);
         boolean compactPhoneHome = isCompactPhoneHomeLayout();
         button.setPadding(
-            dp(manualHomeShell ? 12 : (compactPhoneHome ? 10 : 12)),
-            dp(manualHomeShell ? 5 : (compactPhoneHome ? 8 : 10)),
             dp(manualHomeShell ? 10 : (compactPhoneHome ? 10 : 12)),
-            dp(manualHomeShell ? 5 : (compactPhoneHome ? 8 : 10))
+            dp(manualHomeShell ? 4 : (compactPhoneHome ? 8 : 10)),
+            dp(manualHomeShell ? 9 : (compactPhoneHome ? 10 : 12)),
+            dp(manualHomeShell ? 4 : (compactPhoneHome ? 8 : 10))
         );
         button.setTextColor(getResources().getColor(manualHomeShell
             ? R.color.senku_rev03_ink_0
             : R.color.senku_text_light));
         if (manualHomeShell) {
-            button.setTextSize(11);
+            button.setTextSize(10);
         }
         button.setTextAlignment(View.TEXT_ALIGNMENT_VIEW_START);
         button.setGravity(android.view.Gravity.START | android.view.Gravity.CENTER_VERTICAL);
@@ -1625,7 +1625,7 @@ public final class MainActivity extends AppCompatActivity {
             LinearLayout.LayoutParams.WRAP_CONTENT
         );
         if (index > 0) {
-            params.topMargin = dp(manualHomeShell ? 5 : (compactPhoneHome ? 6 : 8));
+            params.topMargin = dp(manualHomeShell ? 4 : (compactPhoneHome ? 6 : 8));
         }
         button.setLayoutParams(params);
         button.setOnClickListener(v -> openRecentThread(preview));

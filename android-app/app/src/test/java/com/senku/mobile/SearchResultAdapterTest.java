@@ -34,10 +34,10 @@ public final class SearchResultAdapterTest {
 
     @Test
     public void tabletRowsUseCompactScoreMarkers() {
-        assertEquals("\u2713 92", SearchResultAdapter.buildTabletScoreLabelForTest(0));
-        assertEquals("\u2713 78", SearchResultAdapter.buildTabletScoreLabelForTest(1));
-        assertEquals("\u2713 61", SearchResultAdapter.buildTabletScoreLabelForTest(3));
-        assertEquals("\u2713 49", SearchResultAdapter.buildTabletScoreLabelForTest(5));
+        assertEquals("92", SearchResultAdapter.buildTabletScoreLabelForTest(0));
+        assertEquals("78", SearchResultAdapter.buildTabletScoreLabelForTest(1));
+        assertEquals("61", SearchResultAdapter.buildTabletScoreLabelForTest(3));
+        assertEquals("49", SearchResultAdapter.buildTabletScoreLabelForTest(5));
     }
 
     @Test

@@ -24,7 +24,7 @@ public final class DetailGuideContextPresentationFormatterTest {
         );
 
         assertEquals(
-            "Preview here; Open full guide switches pages.",
+            "Preview here. Open full guide switches pages.",
             formatter.buildRelatedGuidePreviewRowBehaviorText(state)
         );
         assertEquals(
@@ -32,17 +32,17 @@ public final class DetailGuideContextPresentationFormatterTest {
             formatter.buildRelatedGuidePreviewTitleText(state)
         );
         assertEquals(
-            "Cross-reference rail anchored to [GD-214] Water Storage. Select a linked guide to inspect it here; Open full guide switches pages.",
+            "Cross-reference \u00b7 anchored to [GD-214] Water Storage. Preview linked guides here.",
             formatter.buildRelatedGuidePreviewPanelDescriptionText(state)
         );
         assertEquals("[GD-214] Water Storage", formatter.buildActiveGuideContextPrimaryLabel(state));
         assertEquals(
-            "Store water away from heat.\n\nPinned source for this cross-reference rail.",
+            "Store water away from heat.\n\nPinned source for cross-reference.",
             formatter.buildActiveGuideContextBody(state)
         );
         assertEquals("Source guide", formatter.buildActiveGuideContextTitleText(state));
         assertEquals(
-            "Source guide context. Cross-reference rail is pinned to [GD-214] Water Storage.",
+            "Source guide context. Cross-reference pinned to [GD-214] Water Storage.",
             formatter.buildActiveGuideContextContentDescription(state, "[GD-214] Water Storage")
         );
     }
@@ -66,7 +66,7 @@ public final class DetailGuideContextPresentationFormatterTest {
         );
 
         assertEquals(
-            "Preview here; Open full guide switches pages.",
+            "Preview here. Open full guide switches pages.",
             formatter.buildRelatedGuidePreviewRowBehaviorText(state)
         );
         assertEquals(
@@ -74,11 +74,11 @@ public final class DetailGuideContextPresentationFormatterTest {
             formatter.buildRelatedGuidePreviewTitleText(state)
         );
         assertEquals(
-            "Selected guide previews here before page switch.",
+            "Preview selected guide before switching pages.",
             formatter.buildRelatedGuidePreviewCaptionText(state)
         );
         assertEquals(
-            "Cross-reference rail. Inspect a linked guide here; Open full guide switches pages.",
+            "Cross-reference. Preview linked guides here.",
             formatter.buildRelatedGuidePreviewPanelDescriptionText(state)
         );
         assertEquals("Loading cross-reference...", formatter.buildRelatedGuidePreviewLoadingText(state));

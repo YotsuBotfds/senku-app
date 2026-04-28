@@ -2,7 +2,6 @@ package com.senku.ui.home
 
 import android.content.Context
 import android.util.AttributeSet
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -119,7 +118,7 @@ fun CategoryShelf(
                 CategoryGrid(
                     items = items,
                     columns = 3,
-                    cardHeight = 64.dp,
+                    cardHeight = 50.dp,
                     selectionEnabled = selectionEnabled,
                     onCategorySelected = onCategorySelected,
                 )
@@ -129,7 +128,7 @@ fun CategoryShelf(
                 CategoryGrid(
                     items = items,
                     columns = 3,
-                    cardHeight = 58.dp,
+                    cardHeight = 48.dp,
                     selectionEnabled = selectionEnabled,
                     onCategorySelected = onCategorySelected,
                 )
@@ -187,10 +186,10 @@ private fun PhoneCategoryCard(
     cardHeight: Dp = 74.dp,
 ) {
     val colors = SenkuTheme.colors
-    val corner = dimensionResource(R.dimen.senku_rev03_corner_small)
-    val accentWidth = dimensionResource(R.dimen.senku_rev03_space_3)
-    val horizontalPadding = dimensionResource(R.dimen.senku_rev03_space_10)
-    val verticalPadding = dimensionResource(R.dimen.senku_rev03_space_8)
+    val corner = 3.dp
+    val accentWidth = 2.dp
+    val horizontalPadding = dimensionResource(R.dimen.senku_rev03_space_8)
+    val verticalPadding = dimensionResource(R.dimen.senku_rev03_space_6)
     val enabled = selectionEnabled && item.enabled
     val accent = Color(item.accentColor)
 
@@ -202,10 +201,9 @@ private fun PhoneCategoryCard(
                     contentDescription = item.contentDescription
                 }
             },
-        color = colors.bg1,
+        color = colors.bg0,
         contentColor = colors.ink0,
         shape = RoundedCornerShape(corner),
-        border = BorderStroke(1.dp, colors.hairlineStrong),
         enabled = enabled,
         onClick = onClick,
     ) {
@@ -218,19 +216,13 @@ private fun PhoneCategoryCard(
                 modifier = Modifier
                     .width(accentWidth)
                     .fillMaxHeight()
-                    .clip(
-                        RoundedCornerShape(
-                            topStart = corner,
-                            bottomStart = corner,
-                        ),
-                    )
                     .background(accent),
             )
             Column(
                 modifier = Modifier
                     .weight(1f)
                     .padding(horizontal = horizontalPadding, vertical = verticalPadding),
-                verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.senku_rev03_space_4)),
+                verticalArrangement = Arrangement.spacedBy(2.dp),
             ) {
                 Text(
                     text = item.label,
@@ -240,7 +232,7 @@ private fun PhoneCategoryCard(
                         fontWeight = FontWeight.SemiBold,
                     ),
                     color = colors.ink0,
-                    maxLines = 2,
+                    maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                 )
                 Text(
@@ -254,6 +246,12 @@ private fun PhoneCategoryCard(
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                 )
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(1.dp)
+                        .background(colors.hairline),
+                )
             }
         }
     }
@@ -266,7 +264,6 @@ private fun TabletCategoryRow(
     onClick: () -> Unit,
 ) {
     val colors = SenkuTheme.colors
-    val corner = dimensionResource(R.dimen.senku_rev03_corner_small)
     val enabled = selectionEnabled && item.enabled
     val accent = Color(item.accentColor)
 
@@ -278,20 +275,19 @@ private fun TabletCategoryRow(
                     contentDescription = item.contentDescription
                 }
             },
-        color = colors.bg1,
+        color = colors.bg0,
         contentColor = colors.ink0,
-        shape = RoundedCornerShape(corner),
-        border = BorderStroke(1.dp, colors.hairline),
+        shape = RoundedCornerShape(2.dp),
         enabled = enabled,
         onClick = onClick,
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .heightIn(min = 44.dp)
+                .heightIn(min = 40.dp)
                 .padding(
-                    horizontal = dimensionResource(R.dimen.senku_rev03_space_10),
-                    vertical = dimensionResource(R.dimen.senku_rev03_space_8),
+                    horizontal = dimensionResource(R.dimen.senku_rev03_space_8),
+                    vertical = dimensionResource(R.dimen.senku_rev03_space_6),
                 ),
             horizontalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.senku_rev03_space_8)),
             verticalAlignment = Alignment.CenterVertically,

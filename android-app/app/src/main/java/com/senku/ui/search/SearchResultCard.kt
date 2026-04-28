@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -97,107 +98,119 @@ fun SearchResultCard(
         shadowElevation = 0.dp,
         onClick = { onCardClick.run() },
     ) {
-        Column(
+        Row(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 24.dp, vertical = 14.dp),
-            verticalArrangement = Arrangement.spacedBy(5.dp),
+                .fillMaxWidth(),
         ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Text(
-                    text = model.guideIdLabel.trim().uppercase(Locale.US),
-                    modifier = Modifier.weight(1f),
-                    style = SenkuTheme.typography.monoCaps.copy(
-                        fontSize = 10.sp,
-                        lineHeight = 13.sp,
-                        fontWeight = FontWeight.Bold,
-                    ),
-                    color = colors.accent,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                )
-                ScoreTick(
-                    label = model.rankLabel,
-                    color = laneColor,
-                )
-            }
-
-            Text(
-                text = model.title.trim(),
-                style = SenkuTheme.typography.uiBody.copy(
-                    fontSize = 15.sp,
-                    lineHeight = 17.sp,
-                    fontWeight = FontWeight.Bold,
-                ),
-                color = colors.ink0,
-                maxLines = 2,
-                overflow = TextOverflow.Ellipsis,
-            )
-
-            val metadataLabel = compactSearchResultMetadataLabel(model.metadataLine)
-            if (metadataLabel.isNotBlank()) {
-                Text(
-                    text = metadataLabel,
-                    style = SenkuTheme.typography.monoCaps.copy(
-                        fontSize = 9.sp,
-                        lineHeight = 13.sp,
-                        fontWeight = FontWeight.Medium,
-                    ),
-                    color = colors.ink2,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                )
-            }
-
-            Text(
-                text = resultSnippetLine(model.subtitle, model.snippet),
-                style = SenkuTheme.typography.smallBody.copy(
-                    fontSize = 12.sp,
-                    lineHeight = 16.sp,
-                    fontWeight = FontWeight.Normal,
-                ),
-                color = colors.ink1.copy(alpha = 0.78f),
-                maxLines = 2,
-                overflow = TextOverflow.Ellipsis,
-            )
-
-            val hasActionChips = model.showContinueThreadChip || !model.linkedGuideLabel.isNullOrBlank()
-            if (hasActionChips) {
-                FlowRow(
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    verticalArrangement = Arrangement.spacedBy(6.dp),
-                ) {
-                    if (model.showContinueThreadChip) {
-                        ActionChip(
-                            label = model.continueThreadLabel,
-                            contentDescription = model.continueThreadContentDescription,
-                            backgroundColor = colors.bg2.copy(alpha = 0.74f),
-                            textColor = colors.ink0,
-                            onClick = onContinueThreadClick,
-                        )
-                    }
-                    model.linkedGuideLabel?.takeIf { it.isNotBlank() }?.let { label ->
-                        ActionChip(
-                            label = label,
-                            contentDescription = model.linkedGuideContentDescription
-                                ?: relatedGuideContentDescription(),
-                            backgroundColor = colors.bg2.copy(alpha = 0.52f),
-                            textColor = colors.ink1,
-                            onClick = onLinkedGuideClick,
-                        )
-                    }
-                }
-            }
-
             Box(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .height(1.dp)
-                    .background(colors.hairlineStrong),
-            )
+                    .width(2.dp)
+                    .heightIn(min = 92.dp)
+                    .background(laneColor.copy(alpha = 0.80f)),
+            ) {
+            }
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(start = 14.dp, top = 11.dp, end = 18.dp, bottom = 10.dp),
+                verticalArrangement = Arrangement.spacedBy(4.dp),
+            ) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Text(
+                        text = model.guideIdLabel.trim().uppercase(Locale.US),
+                        modifier = Modifier.weight(1f),
+                        style = SenkuTheme.typography.monoCaps.copy(
+                            fontSize = 10.sp,
+                            lineHeight = 13.sp,
+                            fontWeight = FontWeight.Bold,
+                        ),
+                        color = colors.accent,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                    ScoreTick(
+                        label = model.rankLabel,
+                        color = laneColor,
+                    )
+                }
+
+                Text(
+                    text = model.title.trim(),
+                    style = SenkuTheme.typography.uiBody.copy(
+                        fontSize = 15.sp,
+                        lineHeight = 17.sp,
+                        fontWeight = FontWeight.Bold,
+                    ),
+                    color = colors.ink0,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis,
+                )
+
+                val metadataLabel = compactSearchResultMetadataLabel(model.metadataLine)
+                if (metadataLabel.isNotBlank()) {
+                    Text(
+                        text = metadataLabel,
+                        style = SenkuTheme.typography.monoCaps.copy(
+                            fontSize = 9.sp,
+                            lineHeight = 12.sp,
+                            fontWeight = FontWeight.Medium,
+                        ),
+                        color = colors.ink2,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                }
+
+                Text(
+                    text = resultSnippetLine(model.subtitle, model.snippet),
+                    style = SenkuTheme.typography.smallBody.copy(
+                        fontSize = 12.sp,
+                        lineHeight = 15.sp,
+                        fontWeight = FontWeight.Normal,
+                    ),
+                    color = colors.ink1.copy(alpha = 0.78f),
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis,
+                )
+
+                val hasActionChips = model.showContinueThreadChip || !model.linkedGuideLabel.isNullOrBlank()
+                if (hasActionChips) {
+                    FlowRow(
+                        horizontalArrangement = Arrangement.spacedBy(6.dp),
+                        verticalArrangement = Arrangement.spacedBy(4.dp),
+                    ) {
+                        if (model.showContinueThreadChip) {
+                            ActionChip(
+                                label = model.continueThreadLabel,
+                                contentDescription = model.continueThreadContentDescription,
+                                backgroundColor = colors.bg2.copy(alpha = 0.54f),
+                                textColor = colors.ink0,
+                                onClick = onContinueThreadClick,
+                            )
+                        }
+                        model.linkedGuideLabel?.takeIf { it.isNotBlank() }?.let { label ->
+                            ActionChip(
+                                label = label,
+                                contentDescription = model.linkedGuideContentDescription
+                                    ?: relatedGuideContentDescription(),
+                                backgroundColor = colors.bg2.copy(alpha = 0.36f),
+                                textColor = colors.ink1,
+                                onClick = onLinkedGuideClick,
+                            )
+                        }
+                    }
+                }
+
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(1.dp)
+                        .background(colors.hairlineStrong),
+                )
+            }
         }
     }
 }
@@ -214,14 +227,14 @@ private fun ScoreTick(
         Box(
             modifier = Modifier
                 .width(32.dp)
-                .height(3.dp)
-                .background(color.copy(alpha = 0.30f), RoundedCornerShape(999.dp)),
+                .height(2.dp)
+                .background(color.copy(alpha = 0.30f)),
         ) {
             Box(
                 modifier = Modifier
                     .fillMaxWidth(0.72f)
-                    .height(3.dp)
-                    .background(SenkuTheme.colors.accent, RoundedCornerShape(999.dp)),
+                    .height(2.dp)
+                    .background(SenkuTheme.colors.accent),
             )
         }
         Text(
@@ -252,14 +265,14 @@ private fun ActionChip(
         },
         color = backgroundColor,
         contentColor = textColor,
-        shape = RoundedCornerShape(4.dp),
+        shape = RoundedCornerShape(2.dp),
         onClick = {
             onClick?.run()
         },
     ) {
         Text(
             text = label.trim(),
-            modifier = Modifier.padding(horizontal = 10.dp, vertical = 5.dp),
+            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
             style = SenkuTheme.typography.tag.copy(
                 fontSize = 11.sp,
                 lineHeight = 13.sp,

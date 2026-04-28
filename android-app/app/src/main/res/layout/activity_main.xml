@@ -98,8 +98,8 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="28dp"
-                android:layout_marginTop="16dp"
+                android:layout_height="24dp"
+                android:layout_marginTop="14dp"
                 android:background="@drawable/bg_manual_home_status"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
@@ -134,8 +134,8 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="72dp"
-                android:layout_marginTop="16dp"
+                android:layout_height="54dp"
+                android:layout_marginTop="12dp"
                 android:addStatesFromChildren="true"
                 android:background="@drawable/bg_manual_phone_home_search"
                 android:gravity="center_vertical"
@@ -144,11 +144,11 @@
                 android:paddingEnd="16dp">
 
                 <ImageView
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
                     android:background="@drawable/bg_manual_phone_home_search_icon"
                     android:contentDescription="@string/search_input_description"
-                    android:padding="10dp"
+                    android:padding="8dp"
                     android:src="@drawable/ic_search_magnifier"
                     android:tint="@color/senku_rev03_ink_2" />
 
@@ -156,7 +156,7 @@
                     android:id="@+id/search_input"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_marginStart="12dp"
+                    android:layout_marginStart="10dp"
                     android:layout_weight="1"
                     android:background="@android:color/transparent"
                     android:contentDescription="@string/search_input_description"
@@ -193,7 +193,7 @@
                 android:id="@+id/category_section_header"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="16dp"
                 android:fontFamily="monospace"
                 android:includeFontPadding="false"
                 android:text="CATEGORIES - 12"
@@ -205,14 +205,14 @@
                 android:id="@+id/category_section_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="8dp"
                 android:orientation="vertical" />
 
             <LinearLayout
                 android:id="@+id/recent_threads_section"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="14dp"
                 android:orientation="vertical"
                 android:visibility="gone">
 
@@ -230,7 +230,7 @@
                     android:id="@+id/recent_threads_container"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
+                    android:layout_marginTop="8dp"
                     android:orientation="vertical" />
             </LinearLayout>
 

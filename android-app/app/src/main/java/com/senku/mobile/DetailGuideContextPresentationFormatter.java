@@ -53,7 +53,7 @@ final class DetailGuideContextPresentationFormatter {
 
     String buildRelatedGuidePreviewRowBehaviorText(State state) {
         if (state.answerMode || state.nonRailCrossReferenceCopy) {
-            return "Preview here; Open full guide switches pages.";
+            return "Preview here. Open full guide switches pages.";
         }
         return context.getString(R.string.detail_loop2_field_links_preview_row_behavior);
     }
@@ -67,7 +67,7 @@ final class DetailGuideContextPresentationFormatter {
 
     String buildRelatedGuidePreviewCaptionText(State state) {
         if (state.answerMode || state.nonRailCrossReferenceCopy) {
-            return "Selected guide previews here before page switch.";
+            return "Preview selected guide before switching pages.";
         }
         if (state.activeGuideContextPanel) {
             return buildRelatedGuidePreviewComparisonCaption(state);
@@ -79,17 +79,17 @@ final class DetailGuideContextPresentationFormatter {
         if (state.answerMode) {
             String sourceLabel = buildActiveGuideContextPrimaryLabel(state);
             if (!sourceLabel.isEmpty()) {
-                return "Cross-reference rail anchored to "
+                return "Cross-reference \u00b7 anchored to "
                     + sourceLabel
-                    + ". Select a linked guide to inspect it here; Open full guide switches pages.";
+                    + ". Preview linked guides here.";
             }
-            return "Cross-reference rail. Inspect a linked guide here; Open full guide switches pages.";
+            return "Cross-reference. Preview linked guides here.";
         }
         if (state.activeGuideContextPanel) {
             return buildRelatedGuidePreviewPanelDescription(state);
         }
         if (state.nonRailCrossReferenceCopy) {
-            return "Cross-reference rail. Inspect a linked guide here; Open full guide switches pages.";
+            return "Cross-reference. Preview linked guides here.";
         }
         return context.getString(R.string.detail_loop2_field_links_preview_panel_description);
     }
@@ -118,7 +118,7 @@ final class DetailGuideContextPresentationFormatter {
     String buildActiveGuideContextBody(State state) {
         if (state.answerMode) {
             String subtitle = safe(state.sourceAnchorSubtitle).trim();
-            String anchorText = "Pinned source for this cross-reference rail.";
+            String anchorText = "Pinned source for cross-reference.";
             if (!subtitle.isEmpty()) {
                 return subtitle + "\n\n" + anchorText;
             }
@@ -137,7 +137,7 @@ final class DetailGuideContextPresentationFormatter {
 
     String buildActiveGuideContextContentDescription(State state, String guideLabel) {
         if (state.answerMode) {
-            return "Source guide context. Cross-reference rail is pinned to " + guideLabel + ".";
+            return "Source guide context. Cross-reference pinned to " + guideLabel + ".";
         }
         return context.getString(R.string.detail_active_guide_context_content_description, guideLabel);
     }

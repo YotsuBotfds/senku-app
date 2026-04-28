@@ -22,6 +22,9 @@ import java.util.regex.Pattern;
 
 final class DetailThreadHistoryRenderer {
     private static final Pattern SIMPLE_GUIDE_ID_PATTERN = Pattern.compile("GD-\\d{3}");
+    private static final int QUESTION_MAX_LINES = 3;
+    private static final int ANSWER_MAX_LINES = 4;
+    private static final int UTILITY_RAIL_ANSWER_CHAR_LIMIT = 180;
 
     static final class State {
         final boolean utilityRail;
@@ -75,7 +78,7 @@ final class DetailThreadHistoryRenderer {
         String previousAnchorGuideId = "";
         for (int index = 0; index < earlierTurns.size(); index++) {
             SessionMemory.TurnSnapshot turn = earlierTurns.get(index);
-            addTurn(container, turn, previousAnchorGuideId, state, answerFormatter, true, false, index + 1);
+            addTurn(container, turn, previousAnchorGuideId, state, answerFormatter, true, index + 1);
             previousAnchorGuideId = nextAnchorGuideId(previousAnchorGuideId, turn);
         }
     }
@@ -100,7 +103,7 @@ final class DetailThreadHistoryRenderer {
         int firstTurnNumber = Math.max(1, (earlierTurns == null ? 0 : earlierTurns.size()) - visibleTurns.size() + 1);
         for (int index = 0; index < visibleTurns.size(); index++) {
             SessionMemory.TurnSnapshot turn = visibleTurns.get(index);
-            addTurn(container, turn, previousAnchorGuideId, state, answerFormatter, false, true, firstTurnNumber + index);
+            addTurn(container, turn, previousAnchorGuideId, state, answerFormatter, false, firstTurnNumber + index);
             previousAnchorGuideId = nextAnchorGuideId(previousAnchorGuideId, turn);
         }
     }
@@ -112,18 +115,24 @@ final class DetailThreadHistoryRenderer {
         if (earlierTurns == null || earlierTurns.isEmpty()) {
             return Collections.emptyList();
         }
-        int limit;
-        if (state.compactPortraitSections) {
-            limit = 1;
-        } else if (state.wideLayout) {
-            limit = 3;
-        } else {
-            limit = 2;
-        }
+        int limit = visiblePriorTurnLimit(state);
         if (earlierTurns.size() <= limit) {
             return new ArrayList<>(earlierTurns);
         }
         return new ArrayList<>(earlierTurns.subList(earlierTurns.size() - limit, earlierTurns.size()));
+    }
+
+    static int visiblePriorTurnLimit(State state) {
+        if (state == null) {
+            return 2;
+        }
+        if (state.compactPortraitSections) {
+            return 2;
+        }
+        if (state.wideLayout) {
+            return 3;
+        }
+        return 2;
     }
 
     private void addTurn(
@@ -133,7 +142,6 @@ final class DetailThreadHistoryRenderer {
         State state,
         UnaryOperator<String> answerFormatter,
         boolean inlineTranscriptBubble,
-        boolean includeSourceSummary,
         int turnNumber
     ) {
         if (turn == null || container == null) {
@@ -160,12 +168,6 @@ final class DetailThreadHistoryRenderer {
         if (!guideIds.isEmpty()) {
             turnRow.addView(buildGuideChipRow(guideIds));
         }
-        if (includeSourceSummary) {
-            String sourceSummary = buildCompactGuideSummary(turn);
-            if (!sourceSummary.isEmpty()) {
-                turnRow.addView(buildMutedLine(sourceSummary));
-            }
-        }
         container.addView(turnRow);
     }
 
@@ -178,8 +180,8 @@ final class DetailThreadHistoryRenderer {
         row.setOrientation(LinearLayout.VERTICAL);
         boolean railRow = state.utilityRail && !inlineTranscriptBubble;
         int padH = railRow ? dp(12) : dp(16);
-        int padTop = container != null && container.getChildCount() > 0 ? (railRow ? dp(14) : dp(18)) : dp(2);
-        int padBottom = railRow ? dp(12) : dp(18);
+        int padTop = container != null && container.getChildCount() > 0 ? (railRow ? dp(12) : dp(14)) : dp(2);
+        int padBottom = railRow ? dp(10) : dp(14);
         row.setPadding(padH, padTop, padH, padBottom);
 
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
@@ -202,7 +204,7 @@ final class DetailThreadHistoryRenderer {
         label.setTextSize(12);
         label.setSingleLine(true);
         label.setEllipsize(TextUtils.TruncateAt.END);
-        label.setPadding(0, 0, 0, dp(8));
+        label.setPadding(0, 0, 0, dp(6));
         return label;
     }
 
@@ -211,11 +213,14 @@ final class DetailThreadHistoryRenderer {
         body.setText(text);
         body.setTextAppearance(context, android.R.style.TextAppearance_Medium);
         body.setTextColor(context.getColor(userTurn ? R.color.senku_rev03_ink_0 : R.color.senku_text_light));
-        body.setTextSize(userTurn ? (railBubble ? 19 : 21) : (inlineTranscriptBubble ? 20 : 18));
-        body.setLineSpacing(0f, userTurn ? 1.02f : 1.18f);
-        body.setPadding(0, 0, 0, userTurn ? dp(16) : dp(8));
-        if (!userTurn && railBubble) {
-            body.setMaxLines(5);
+        body.setTextSize(userTurn ? (railBubble ? 17 : 18) : (inlineTranscriptBubble ? 18 : 17));
+        body.setLineSpacing(0f, userTurn ? 1.02f : 1.08f);
+        body.setPadding(0, 0, 0, userTurn ? dp(12) : dp(6));
+        if (userTurn) {
+            body.setMaxLines(QUESTION_MAX_LINES);
+            body.setEllipsize(TextUtils.TruncateAt.END);
+        } else {
+            body.setMaxLines(ANSWER_MAX_LINES);
             body.setEllipsize(TextUtils.TruncateAt.END);
         }
         return body;
@@ -224,7 +229,7 @@ final class DetailThreadHistoryRenderer {
     private LinearLayout buildAnswerMetaRow(String labelText, String status) {
         LinearLayout row = new LinearLayout(context);
         row.setOrientation(LinearLayout.HORIZONTAL);
-        row.setPadding(0, 0, 0, dp(8));
+        row.setPadding(0, 0, 0, dp(6));
 
         TextView label = buildMetaLine(labelText, false);
         label.setPadding(0, 0, dp(8), 0);
@@ -234,7 +239,7 @@ final class DetailThreadHistoryRenderer {
         String resolvedStatus = safe(status).trim();
         if (!resolvedStatus.isEmpty()) {
             TextView statusLabel = new TextView(context);
-            statusLabel.setText(resolvedStatus.toUpperCase(Locale.US));
+            statusLabel.setText(compactStatusLabel(resolvedStatus));
             statusLabel.setTextAppearance(context, android.R.style.TextAppearance_Small);
             statusLabel.setTextColor(context.getColor(statusColorRes(resolvedStatus)));
             statusLabel.setTypeface(Typeface.MONOSPACE, Typeface.NORMAL);
@@ -262,7 +267,7 @@ final class DetailThreadHistoryRenderer {
             chip.setTextSize(12);
             chip.setSingleLine(true);
             chip.setBackground(buildChipBackground());
-            chip.setPadding(dp(10), dp(4), dp(10), dp(4));
+            chip.setPadding(dp(9), dp(3), dp(9), dp(3));
             LinearLayout.LayoutParams chipParams = new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.WRAP_CONTENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT
@@ -280,7 +285,7 @@ final class DetailThreadHistoryRenderer {
             ViewGroup.LayoutParams.MATCH_PARENT,
             Math.max(1, dp(1))
         );
-        params.setMargins(0, 0, 0, dp(18));
+        params.setMargins(0, 0, 0, dp(14));
         divider.setLayoutParams(params);
         return divider;
     }
@@ -293,18 +298,7 @@ final class DetailThreadHistoryRenderer {
         return drawable;
     }
 
-    private TextView buildMutedLine(String text) {
-        TextView line = new TextView(context);
-        line.setText(text);
-        line.setTextAppearance(context, android.R.style.TextAppearance_Small);
-        line.setTextColor(context.getColor(R.color.senku_rev03_ink_2));
-        line.setTypeface(Typeface.MONOSPACE, Typeface.NORMAL);
-        line.setTextSize(12);
-        line.setPadding(0, dp(8), 0, 0);
-        return line;
-    }
-
-    private String buildTurnLabel(
+    String buildTurnLabel(
         int turnNumber,
         boolean userTurn,
         SessionMemory.TurnSnapshot turn,
@@ -313,12 +307,12 @@ final class DetailThreadHistoryRenderer {
         int safeTurnNumber = Math.max(1, turnNumber);
         String time = timeForTurn(turn);
         if (userTurn) {
-            return "Q" + safeTurnNumber + time + " - FIELD QUESTION";
+            return "Q" + safeTurnNumber + time;
         }
         String anchorGuideId = sessionFormatter.primaryGuideIdForTurn(turn);
         StringBuilder builder = new StringBuilder("A").append(safeTurnNumber).append(time);
         if (!anchorGuideId.isEmpty()) {
-            builder.append(" - ANCHOR ");
+            builder.append(" ");
             String previous = safe(previousAnchorGuideId).trim();
             if (!previous.isEmpty() && !previous.equals(anchorGuideId)) {
                 builder.append(previous).append(" -> ");
@@ -328,20 +322,12 @@ final class DetailThreadHistoryRenderer {
         return builder.toString();
     }
 
-    private String buildCompactGuideSummary(SessionMemory.TurnSnapshot turn) {
-        List<String> guideIds = guideIdsForTurn(turn);
-        if (guideIds.isEmpty()) {
-            return "";
-        }
-        return "Guides " + String.join(", ", guideIds);
-    }
-
     private String nextAnchorGuideId(String previousAnchorGuideId, SessionMemory.TurnSnapshot turn) {
         String anchorGuideId = sessionFormatter.primaryGuideIdForTurn(turn);
         return anchorGuideId.isEmpty() ? safe(previousAnchorGuideId).trim() : anchorGuideId;
     }
 
-    private String compactThreadAnswer(String answerSummary, boolean utilityRail, UnaryOperator<String> answerFormatter) {
+    static String compactThreadAnswer(String answerSummary, boolean utilityRail, UnaryOperator<String> answerFormatter) {
         String compact = answerFormatter == null ? safe(answerSummary) : safe(answerFormatter.apply(answerSummary));
         if (!utilityRail) {
             return compact;
@@ -350,10 +336,24 @@ final class DetailThreadHistoryRenderer {
         if (firstBreak > 0) {
             compact = compact.substring(0, firstBreak).trim();
         }
-        if (compact.length() > 220) {
-            compact = compact.substring(0, 217).trim() + "...";
+        if (compact.length() > UTILITY_RAIL_ANSWER_CHAR_LIMIT) {
+            compact = compact.substring(0, UTILITY_RAIL_ANSWER_CHAR_LIMIT - 3).trim() + "...";
         }
         return compact;
+    }
+
+    static String compactStatusLabel(String status) {
+        String resolvedStatus = safe(status).trim().toLowerCase(Locale.US);
+        if ("source-backed".equals(resolvedStatus)) {
+            return "SRC";
+        }
+        if ("reviewed".equals(resolvedStatus)) {
+            return "REVIEWED";
+        }
+        if ("ready".equals(resolvedStatus)) {
+            return "READY";
+        }
+        return resolvedStatus.toUpperCase(Locale.US);
     }
 
     static List<String> guideIdsForTurn(SessionMemory.TurnSnapshot turn) {
@@ -395,7 +395,7 @@ final class DetailThreadHistoryRenderer {
         if (turn == null || turn.recordedAtEpochMs <= 0L) {
             return "";
         }
-        return " - " + new SimpleDateFormat("HH:mm", Locale.US).format(new Date(turn.recordedAtEpochMs));
+        return " " + new SimpleDateFormat("HH:mm", Locale.US).format(new Date(turn.recordedAtEpochMs));
     }
 
     private static int statusColorRes(String status) {

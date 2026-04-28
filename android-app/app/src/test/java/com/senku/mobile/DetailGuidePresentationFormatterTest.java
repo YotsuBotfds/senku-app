@@ -24,7 +24,7 @@ public final class DetailGuidePresentationFormatterTest {
         );
 
         assertEquals(
-            "Source section: Storage\n\n[[SECTION]] Safe storage\nUse clean water.",
+            "[[SECTION]] Storage\n\n[[SECTION]] Safe storage\nUse clean water.",
             DetailGuidePresentationFormatter.buildGuideBody(result)
         );
     }
@@ -76,6 +76,16 @@ public final class DetailGuidePresentationFormatterTest {
         assertEquals(
             R.color.senku_rev03_paper_ok,
             DetailGuidePresentationFormatter.admonitionAccentColorResForLegacy("NOTE: store dry")
+        );
+    }
+
+    @Test
+    public void guideBodySanitizerFormatsInlineAdmonitionsAsManualLabels() {
+        assertEquals(
+            "DANGER \u00b7 EXTREME BURN HAZARD\nKeep every tool dry.",
+            GuideBodySanitizer.sanitizeGuideBodyForDisplay(
+                "DANGER: Extreme burn hazard\nKeep every tool dry."
+            )
         );
     }
 }

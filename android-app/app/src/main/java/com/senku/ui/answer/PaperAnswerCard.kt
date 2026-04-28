@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -48,13 +47,15 @@ enum class Mode {
     Dark,
 }
 
-private val PaperAnswerCardInnerPadding = 12.dp
-private val PaperAnswerCardSectionSpacing = 8.dp
+private val PaperAnswerCardInnerPadding = 10.dp
+private val PaperAnswerCardSectionSpacing = 6.dp
 private val PaperAnswerCardBorderWidth = 0.5.dp
-private val PaperAnswerCardBodySize = 14.sp
-private val PaperAnswerCardBodyLineHeight = 21.sp
+private val PaperAnswerCardBodySize = 13.sp
+private val PaperAnswerCardBodyLineHeight = 18.sp
 private val PaperAnswerCardSupportSize = 12.sp
-private val PaperAnswerCardSupportLineHeight = 18.sp
+private val PaperAnswerCardSupportLineHeight = 16.sp
+private val PaperAnswerCardMetaSize = 9.sp
+private val PaperAnswerCardMetaLineHeight = 11.sp
 
 class PaperAnswerCardHostView @JvmOverloads constructor(
     context: Context,
@@ -124,7 +125,7 @@ fun PaperAnswerCard(
         modifier = modifier.fillMaxWidth(),
         color = palette.background,
         contentColor = palette.body,
-        shape = RoundedCornerShape(6.dp),
+        shape = RoundedCornerShape(4.dp),
         border = BorderStroke(PaperAnswerCardBorderWidth, palette.border),
         tonalElevation = 0.dp,
         shadowElevation = 0.dp,
@@ -133,7 +134,7 @@ fun PaperAnswerCard(
             if (palette.leftAccent.alpha > 0f) {
                 Box(
                     modifier = Modifier
-                        .width(3.dp)
+                        .width(2.dp)
                         .fillMaxHeight()
                         .background(palette.leftAccent)
                 )
@@ -153,7 +154,7 @@ fun PaperAnswerCard(
                         text = if (content.abstain) "NO MATCH" else "ANSWER",
                         style = typography.monoCaps.copy(
                             fontSize = 10.sp,
-                            lineHeight = 12.sp,
+                            lineHeight = 11.sp,
                             fontWeight = FontWeight.Normal,
                         ),
                         color = statusTone,
@@ -169,7 +170,7 @@ fun PaperAnswerCard(
                                 text = "!",
                                 style = typography.monoCaps.copy(
                                     fontSize = 10.sp,
-                                    lineHeight = 12.sp,
+                                    lineHeight = 11.sp,
                                     fontWeight = FontWeight.SemiBold,
                                 ),
                                 color = evidenceTone,
@@ -177,7 +178,7 @@ fun PaperAnswerCard(
                         } else {
                             Spacer(
                                 modifier = Modifier
-                                    .size(6.dp)
+                                    .size(5.dp)
                                     .clip(CircleShape)
                                     .background(evidenceTone),
                             )
@@ -186,7 +187,7 @@ fun PaperAnswerCard(
                             text = compactEvidenceLabel(content),
                             style = typography.monoCaps.copy(
                                 fontSize = 10.sp,
-                                lineHeight = 12.sp,
+                                lineHeight = 11.sp,
                                 fontWeight = FontWeight.Medium,
                             ),
                             color = evidenceTone,
@@ -201,6 +202,7 @@ fun PaperAnswerCard(
                     style = typography.answerBody.copy(
                         fontSize = PaperAnswerCardBodySize,
                         lineHeight = PaperAnswerCardBodyLineHeight,
+                        fontWeight = FontWeight.Normal,
                         letterSpacing = 0.sp,
                     ),
                     color = palette.body,
@@ -212,11 +214,11 @@ fun PaperAnswerCard(
                         label = "STEPS",
                         color = palette.muted,
                     )
-                    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                    Column(verticalArrangement = Arrangement.spacedBy(3.dp)) {
                         content.steps.forEachIndexed { index, step ->
                             Text(
                                 text = "${index + 1}. ${step.trim()}",
-                                style = typography.answerBody.copy(
+                                style = typography.smallBody.copy(
                                     fontSize = PaperAnswerCardSupportSize,
                                     lineHeight = PaperAnswerCardSupportLineHeight,
                                     fontWeight = FontWeight.Normal,
@@ -236,7 +238,7 @@ fun PaperAnswerCard(
                     )
                     Text(
                         text = content.limits.trim(),
-                        style = typography.answerBody.copy(
+                        style = typography.smallBody.copy(
                             fontSize = PaperAnswerCardSupportSize,
                             lineHeight = PaperAnswerCardSupportLineHeight,
                             fontWeight = FontWeight.Normal,
@@ -255,8 +257,8 @@ fun PaperAnswerCard(
                     Text(
                         text = footerMeta,
                         style = typography.monoCaps.copy(
-                            fontSize = 10.sp,
-                            lineHeight = 12.sp,
+                            fontSize = PaperAnswerCardMetaSize,
+                            lineHeight = PaperAnswerCardMetaLineHeight,
                             fontWeight = FontWeight.Normal,
                         ),
                         color = palette.muted,
@@ -271,25 +273,25 @@ fun PaperAnswerCard(
                         onClick = onShowProof,
                     ) {
                         Row(
-                            modifier = Modifier.padding(vertical = 2.dp),
+                            modifier = Modifier.padding(vertical = 1.dp),
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.spacedBy(4.dp),
                         ) {
                             Text(
                                 text = displayProofCtaLabel(showProofLabel),
                                 style = typography.tag.copy(
-                                    fontSize = 12.sp,
-                                    lineHeight = 14.sp,
-                                    fontWeight = FontWeight.SemiBold,
+                                    fontSize = 11.sp,
+                                    lineHeight = 13.sp,
+                                    fontWeight = FontWeight.Medium,
                                 ),
                                 color = colors.accent,
                             )
                             Text(
                                 text = ">",
                                 style = typography.tag.copy(
-                                    fontSize = 12.sp,
-                                    lineHeight = 14.sp,
-                                    fontWeight = FontWeight.SemiBold,
+                                    fontSize = 11.sp,
+                                    lineHeight = 13.sp,
+                                    fontWeight = FontWeight.Medium,
                                 ),
                                 color = colors.accent,
                             )
@@ -310,7 +312,7 @@ private fun SectionHeader(
         text = label,
         style = SenkuTheme.typography.monoCaps.copy(
             fontSize = 10.sp,
-            lineHeight = 12.sp,
+            lineHeight = 11.sp,
             fontWeight = FontWeight.Normal,
         ),
         color = color,
@@ -366,14 +368,14 @@ private fun rememberPaperAnswerPalette(
             val base = when {
                 content.abstain -> colors.danger.copy(alpha = 0.12f)
                 content.uncertainFit -> colors.warn.copy(alpha = 0.12f)
-                else -> colors.bg1
+                else -> Color.Transparent
             }
             PaperAnswerPalette(
                 background = base,
                 body = colors.ink0,
                 muted = colors.ink2,
                 hairline = colors.hairline,
-                border = colors.ink0.copy(alpha = 0.08f),
+                border = colors.ink0.copy(alpha = 0.06f),
                 leftAccent = when {
                     content.abstain -> colors.danger
                     content.uncertainFit -> colors.warn
@@ -430,7 +432,7 @@ internal fun buildFooterMeta(content: AnswerContent): String {
     if (content.elapsedSeconds > 0.0) {
         tokens += String.format(Locale.US, "%.1fS", content.elapsedSeconds)
     }
-    return tokens.joinToString(" | ")
+    return tokens.joinToString(" · ")
 }
 
 internal fun displayProofCtaLabel(label: String): String {
