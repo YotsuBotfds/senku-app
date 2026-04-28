@@ -102,7 +102,7 @@ fun CategoryShelf(
     onCategorySelected: (CategoryShelfItemModel) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val verticalGap = 4.dp
+    val verticalGap = 3.dp
 
     Column(
         modifier = modifier.fillMaxWidth(),
@@ -113,7 +113,7 @@ fun CategoryShelf(
                 CategoryGrid(
                     items = items,
                     columns = 3,
-                    cardHeight = 54.dp,
+                    cardHeight = 42.dp,
                     selectionEnabled = selectionEnabled,
                     onCategorySelected = onCategorySelected,
                 )
@@ -123,7 +123,7 @@ fun CategoryShelf(
                 CategoryGrid(
                     items = items,
                     columns = 3,
-                    cardHeight = 54.dp,
+                    cardHeight = 42.dp,
                     selectionEnabled = selectionEnabled,
                     onCategorySelected = onCategorySelected,
                 )
@@ -150,7 +150,7 @@ private fun CategoryGrid(
     selectionEnabled: Boolean,
     onCategorySelected: (CategoryShelfItemModel) -> Unit,
 ) {
-    val gap = 4.dp
+    val gap = 3.dp
     items.chunked(columns).forEach { rowItems ->
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -183,7 +183,7 @@ private fun PhoneCategoryCard(
     val colors = SenkuTheme.colors
     val corner = 3.dp
     val horizontalPadding = 8.dp
-    val verticalPadding = 5.dp
+    val verticalPadding = 4.dp
     val enabled = selectionEnabled && item.enabled
     val accent = Color(item.accentColor)
 
@@ -218,8 +218,8 @@ private fun PhoneCategoryCard(
             Text(
                 text = item.label,
                 style = SenkuTheme.typography.uiBody.copy(
-                    fontSize = 11.sp,
-                    lineHeight = 14.sp,
+                    fontSize = 10.sp,
+                    lineHeight = 12.sp,
                     fontWeight = FontWeight.Bold,
                 ),
                 color = colors.ink0,
@@ -229,8 +229,8 @@ private fun PhoneCategoryCard(
             Text(
                 text = item.countLabel,
                 style = SenkuTheme.typography.uiBody.copy(
-                    fontSize = 10.sp,
-                    lineHeight = 12.sp,
+                    fontSize = 9.sp,
+                    lineHeight = 11.sp,
                     fontWeight = FontWeight.Medium,
                 ),
                 color = colors.ink2,

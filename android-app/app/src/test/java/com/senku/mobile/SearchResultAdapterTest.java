@@ -58,6 +58,15 @@ public final class SearchResultAdapterTest {
     }
 
     @Test
+    public void targetRainShelterRowsKeepGuideIdOrderMarkers() {
+        String[] guideIds = {"GD-023", "GD-027", "GD-345", "GD-294"};
+
+        for (int i = 0; i < guideIds.length; i++) {
+            assertEquals(guideIds[i], SearchResultAdapter.buildTabletGuideMarkerForTest(guideIds[i], i));
+        }
+    }
+
+    @Test
     public void tabletRowsFlattenMetadataIntoPreviewRailTokens() {
         assertEquals(
             "SHELTER \u00b7 TOPIC \u00b7 WINDOW IMMEDIATE",
@@ -106,6 +115,18 @@ public final class SearchResultAdapterTest {
                 "Guide: Tarp & Cord Shelters Use a ridgeline to shed rain.",
                 "Tarp & Cord Shelters",
                 120
+            )
+        );
+    }
+
+    @Test
+    public void compactRowSnippetUsesShorterPreviewBudgetForDenseRows() {
+        assertEquals(
+            "Use a ridgeline, pitch one side low into the wind, keep runoff from pooling, and pin\u2026",
+            SearchResultAdapter.buildCompactRowSnippetForTest(
+                "Use a ridgeline, pitch one side low into the wind, keep runoff from pooling, and pin corners before loading gear.",
+                "Tarp & Cord Shelters",
+                86
             )
         );
     }

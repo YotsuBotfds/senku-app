@@ -223,6 +223,7 @@ fun ThreadRail(
     turns: List<ThreadTurnState>,
     sources: List<SourceState>,
     guideMode: Boolean,
+    guideSectionCount: Int = turns.size,
     pinVisible: Boolean,
     pinActive: Boolean,
     onBackClick: () -> Unit,
@@ -253,7 +254,7 @@ fun ThreadRail(
 
         RailSection(
             label = if (guideMode) guideLabels.sectionLabel else "TURNS",
-            count = turns.size,
+            count = if (guideMode) guideSectionCount.coerceAtLeast(turns.size) else turns.size,
         ) {
             if (turns.isEmpty()) {
                 PlaceholderText(if (guideMode) guideLabels.emptySectionLabel else "No turns yet.")
@@ -278,7 +279,7 @@ fun ThreadRail(
         }
 
         RailSection(
-            label = if (guideMode) guideLabels.referenceLabel else "SOURCES IN THREAD",
+            label = if (guideMode) guideLabels.referenceLabel else "SOURCES",
             count = visibleSources.size,
         ) {
             if (visibleSources.isEmpty()) {

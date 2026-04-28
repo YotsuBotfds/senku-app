@@ -75,8 +75,8 @@ public final class MainActivity extends AppCompatActivity {
     private static final int MAX_RESULT_PREVIEW_BRIDGE_GUIDES = 4;
     private static final int RESULT_PREVIEW_BRIDGE_SIGNAL_LIMIT = 1;
     private static final int MANUAL_HOME_CATEGORY_COLUMNS = 3;
-    private static final int MANUAL_HOME_CATEGORY_CARD_HEIGHT_DP = 54;
-    private static final int MANUAL_HOME_CATEGORY_ROW_GAP_DP = 5;
+    private static final int MANUAL_HOME_CATEGORY_CARD_HEIGHT_DP = 42;
+    private static final int MANUAL_HOME_CATEGORY_ROW_GAP_DP = 3;
     private static final String REVIEW_SEARCH_QUERY = "rain shelter";
     private static final String REVIEW_SEARCH_LATENCY_LABEL = "12ms";
     private static final ReviewSearchResultSpec[] REVIEW_RAIN_SHELTER_RESULTS = {
@@ -194,6 +194,9 @@ public final class MainActivity extends AppCompatActivity {
     private View browseRail;
     private View tabletSearchSurface;
     private View phoneLandscapeSearchSurface;
+    private View phoneSearchQueryWell;
+    private TextView phoneSearchQueryText;
+    private TextView phoneSearchCountText;
     private TextView tabletSearchQueryText;
     private TextView tabletSearchCountText;
     private View tabletSearchPreviewRail;
@@ -422,6 +425,9 @@ public final class MainActivity extends AppCompatActivity {
         browseRail = findViewById(R.id.browse_rail);
         tabletSearchSurface = findViewById(R.id.tablet_search_surface);
         phoneLandscapeSearchSurface = findViewById(R.id.phone_landscape_search_surface);
+        phoneSearchQueryWell = findViewById(R.id.phone_search_query_well);
+        phoneSearchQueryText = findViewById(R.id.phone_search_query_text);
+        phoneSearchCountText = findViewById(R.id.phone_search_count_text);
         tabletSearchQueryText = findViewById(R.id.tablet_search_query_text);
         tabletSearchCountText = findViewById(R.id.tablet_search_count_text);
         tabletSearchPreviewRail = findViewById(R.id.tablet_search_preview_rail);
@@ -699,6 +705,7 @@ public final class MainActivity extends AppCompatActivity {
         String displayQuery = query.isEmpty() ? "guides" : query;
         setResultHighlightQuery(query);
         updateTabletSearchQuery(displayQuery, 0);
+        updatePhoneSearchQuery(displayQuery, 0);
         showBrowseChrome(false);
         replaceItems(Collections.emptyList());
         resultsHeader.setText(R.string.results_header_searching);
@@ -742,6 +749,7 @@ public final class MainActivity extends AppCompatActivity {
                     resultsHeader.setText(header);
                     updateHomeChromeTitle(false, displayQuery);
                     updateTabletSearchQuery(displayQuery, displayResults.size());
+                    updatePhoneSearchQuery(displayQuery, displayResults.size());
                     updateSessionPanel();
                     updatePortraitPhoneResultsPriority();
                 });
@@ -777,6 +785,7 @@ public final class MainActivity extends AppCompatActivity {
         resultsHeader.setText(appendReviewSearchLatency(header, query));
         updateHomeChromeTitle(false, query);
         updateTabletSearchQuery(query, deterministic.sources.size());
+        updatePhoneSearchQuery(query, deterministic.sources.size());
         updateInfoText();
         updatePortraitPhoneResultsPriority();
     }
@@ -1770,16 +1779,16 @@ public final class MainActivity extends AppCompatActivity {
         button.setMinimumHeight(0);
         boolean compactPhoneHome = isCompactPhoneHomeLayout();
         button.setPadding(
-            dp(isTabletSearchLayout() ? 10 : (manualHomeShell ? 13 : (compactPhoneHome ? 10 : 12))),
-            dp(isTabletSearchLayout() ? 5 : (manualHomeShell ? 9 : (compactPhoneHome ? 8 : 10))),
             dp(isTabletSearchLayout() ? 10 : (manualHomeShell ? 12 : (compactPhoneHome ? 10 : 12))),
-            dp(isTabletSearchLayout() ? 5 : (manualHomeShell ? 9 : (compactPhoneHome ? 8 : 10)))
+            dp(isTabletSearchLayout() ? 5 : (manualHomeShell ? 6 : (compactPhoneHome ? 8 : 10))),
+            dp(isTabletSearchLayout() ? 10 : (manualHomeShell ? 12 : (compactPhoneHome ? 10 : 12))),
+            dp(isTabletSearchLayout() ? 5 : (manualHomeShell ? 6 : (compactPhoneHome ? 8 : 10)))
         );
         button.setTextColor(getResources().getColor(manualHomeShell
             ? R.color.senku_rev03_ink_0
             : R.color.senku_text_light));
         if (manualHomeShell) {
-            button.setTextSize(isTabletSearchLayout() ? 12 : 11.5f);
+            button.setTextSize(isTabletSearchLayout() ? 12 : 10.5f);
             button.setTypeface(android.graphics.Typeface.DEFAULT, android.graphics.Typeface.BOLD);
         }
         button.setTextAlignment(View.TEXT_ALIGNMENT_VIEW_START);
@@ -1787,8 +1796,8 @@ public final class MainActivity extends AppCompatActivity {
         button.setMaxLines(manualHomeShell ? 2 : (compactPhoneHome ? 2 : 3));
         button.setEllipsize(TextUtils.TruncateAt.END);
         if (manualHomeShell && !isTabletSearchLayout()) {
-            button.setMinHeight(dp(isLandscapePhoneLayout() ? 52 : 58));
-            button.setMinimumHeight(dp(isLandscapePhoneLayout() ? 52 : 58));
+            button.setMinHeight(dp(isLandscapePhoneLayout() ? 44 : 48));
+            button.setMinimumHeight(dp(isLandscapePhoneLayout() ? 44 : 48));
         }
         button.setText(manualHomeShell
             ? buildManualHomeRecentThreadLabelSpannable(preview, index)
@@ -1801,7 +1810,7 @@ public final class MainActivity extends AppCompatActivity {
             LinearLayout.LayoutParams.WRAP_CONTENT
         );
         if (index > 0) {
-            params.topMargin = dp(isTabletSearchLayout() ? 5 : (manualHomeShell ? 5 : (compactPhoneHome ? 6 : 8)));
+            params.topMargin = dp(isTabletSearchLayout() ? 5 : (manualHomeShell ? 4 : (compactPhoneHome ? 6 : 8)));
         }
         button.setLayoutParams(params);
         button.setOnClickListener(v -> openRecentThread(preview));
@@ -2353,10 +2362,10 @@ public final class MainActivity extends AppCompatActivity {
         if (!isManualHomeShellLayout()) {
             return;
         }
-        setTopMargin(categorySectionHeader, isLandscapePhoneLayout() ? 7 : 9);
-        setTopMargin(categorySectionContainer, 5);
-        setTopMargin(recentThreadsSection, isLandscapePhoneLayout() ? 0 : 9);
-        setTopMargin(recentThreadsContainer, 6);
+        setTopMargin(categorySectionHeader, isLandscapePhoneLayout() ? 5 : 8);
+        setTopMargin(categorySectionContainer, 4);
+        setTopMargin(recentThreadsSection, isLandscapePhoneLayout() ? 0 : 8);
+        setTopMargin(recentThreadsContainer, 5);
         allowChildOverflow(categorySectionContainer);
         allowChildOverflow(recentThreadsSection);
         allowChildOverflow(recentThreadsContainer);
@@ -3244,6 +3253,7 @@ public final class MainActivity extends AppCompatActivity {
             ? buildTabletSearchHeader(filterLabel, filtered.size())
             : filterLabel);
         updateTabletSearchQuery(filterLabel, filtered.size());
+        updatePhoneSearchQuery(filterLabel, filtered.size());
         setBusy("Category ready", false);
         updatePortraitPhoneResultsPriority();
     }
@@ -3874,6 +3884,9 @@ public final class MainActivity extends AppCompatActivity {
             if (phoneLandscapeSearchSurface != null) {
                 phoneLandscapeSearchSurface.setVisibility(View.GONE);
             }
+            if (phoneSearchQueryWell != null) {
+                phoneSearchQueryWell.setVisibility(View.GONE);
+            }
             if (tabletSearchSurface != null) {
                 tabletSearchSurface.setVisibility(View.GONE);
             }
@@ -3977,6 +3990,9 @@ public final class MainActivity extends AppCompatActivity {
         if (phoneLandscapeSearchSurface != null) {
             phoneLandscapeSearchSurface.setVisibility(!browseMode && hasResults ? View.VISIBLE : View.GONE);
         }
+        if (phoneSearchQueryWell != null) {
+            phoneSearchQueryWell.setVisibility(!browseMode && hasResults ? View.VISIBLE : View.GONE);
+        }
         if (statusText != null) {
             statusText.setVisibility((busy || browseMode || !hasResults) ? View.VISIBLE : View.GONE);
         }
@@ -4016,6 +4032,9 @@ public final class MainActivity extends AppCompatActivity {
         }
         if (resultsList != null) {
             resultsList.setVisibility(hasResults ? View.VISIBLE : View.GONE);
+        }
+        if (phoneSearchQueryWell != null) {
+            phoneSearchQueryWell.setVisibility(hasResults ? View.VISIBLE : View.GONE);
         }
         if (statusText != null) {
             statusText.setVisibility((busy || !hasResults) ? View.VISIBLE : View.GONE);
@@ -4122,6 +4141,19 @@ public final class MainActivity extends AppCompatActivity {
         }
         if (tabletSearchCountText != null) {
             tabletSearchCountText.setText(resultCount + (resultCount == 1 ? " RESULT" : " RESULTS"));
+        }
+    }
+
+    private void updatePhoneSearchQuery(String query, int resultCount) {
+        if (!isPhoneFormFactor()) {
+            return;
+        }
+        String cleanQuery = safe(query).trim();
+        if (phoneSearchQueryText != null) {
+            phoneSearchQueryText.setText(cleanQuery.isEmpty() ? "guides" : cleanQuery);
+        }
+        if (phoneSearchCountText != null) {
+            phoneSearchCountText.setText(resultCount + (resultCount == 1 ? " RESULT" : " RESULTS"));
         }
     }
 

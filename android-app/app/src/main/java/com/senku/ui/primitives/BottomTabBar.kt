@@ -183,7 +183,7 @@ fun SenkuBottomTabBar(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(start = 6.dp, top = 5.dp, end = 6.dp, bottom = 14.dp),
+                    .padding(start = 6.dp, top = 4.dp, end = 6.dp, bottom = 10.dp),
                 horizontalArrangement = Arrangement.spacedBy(2.dp),
             ) {
                 tabs.forEach { tab ->
@@ -212,7 +212,7 @@ private fun BottomTabItem(
     val colors = SenkuTheme.colors
     val tint = if (selected) colors.accent else colors.ink3
     val verticalRail = layoutMode == BottomTabBarLayoutMode.VERTICAL_RAIL
-    val itemHeight = if (verticalRail) 62.dp else 48.dp
+    val itemHeight = if (verticalRail) 58.dp else 43.dp
 
     Column(
         modifier = modifier
@@ -222,20 +222,20 @@ private fun BottomTabItem(
                 onClick = onClick,
                 role = Role.Tab,
             )
-            .padding(horizontal = if (verticalRail) 5.dp else 3.dp, vertical = if (verticalRail) 5.dp else 4.dp),
+            .padding(horizontal = if (verticalRail) 5.dp else 3.dp, vertical = if (verticalRail) 4.dp else 3.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(3.dp, Alignment.CenterVertically),
+        verticalArrangement = Arrangement.spacedBy(2.dp, Alignment.CenterVertically),
     ) {
         BottomTabIcon(
             destination = tab.destination,
             tint = tint,
-            modifier = Modifier.size(if (verticalRail) 19.dp else 18.dp),
+            modifier = Modifier.size(if (verticalRail) 18.dp else 17.dp),
         )
         Text(
             text = tab.label,
             style = SenkuTheme.typography.tag.copy(
-                fontSize = if (verticalRail) 11.sp else 10.sp,
-                lineHeight = if (verticalRail) 13.sp else 12.sp,
+                fontSize = if (verticalRail) 10.sp else 9.5.sp,
+                lineHeight = if (verticalRail) 12.sp else 11.sp,
                 fontWeight = FontWeight.Medium,
             ),
             color = tint,

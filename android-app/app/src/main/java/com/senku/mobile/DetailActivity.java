@@ -1157,6 +1157,7 @@ public final class DetailActivity extends AppCompatActivity {
             followUpInput.setText("");
         }
         renderDockedComposer();
+        preservePhoneLandscapeThreadTopAfterComposerSetup();
         renderFollowUpSuggestions();
         refreshFollowUpCopy();
         updateHeroPanelVisibility();
@@ -1199,6 +1200,7 @@ public final class DetailActivity extends AppCompatActivity {
                     });
                 } else {
                     resetPhoneLandscapeAnswerScrollToHeader();
+                    preservePhoneLandscapeThreadTopAfterComposerSetup();
                 }
             });
         });
@@ -1278,10 +1280,12 @@ public final class DetailActivity extends AppCompatActivity {
             removeTabletEmergencyHeaderOverlay();
             return;
         }
+        boolean emergencyFullHeightPage = isTabletEmergencyFullHeightPage();
         LinearLayout overlay = ensureTabletEmergencyHeaderOverlay();
         if (overlay == null) {
             return;
         }
+        applyTabletEmergencyRootVisibility(emergencyFullHeightPage);
         TextView title = overlay.findViewById(R.id.detail_emergency_header_title);
         TextView text = overlay.findViewById(R.id.detail_emergency_header_text);
         if (title != null) {
@@ -1424,6 +1428,11 @@ public final class DetailActivity extends AppCompatActivity {
     }
 
     private void updateTabletEmergencyHeaderOverlayLayout(LinearLayout overlay) {
+        if (isTabletEmergencyFullHeightPage()) {
+            overlay.setBackgroundColor(getColor(R.color.senku_rev03_bg_0));
+        } else {
+            overlay.setBackgroundResource(R.drawable.bg_emergency_banner);
+        }
         overlay.setPadding(
             isTabletPortraitLayout() ? dp(20) : dp(18),
             isTabletPortraitLayout() ? dp(16) : dp(12),
@@ -1511,8 +1520,8 @@ public final class DetailActivity extends AppCompatActivity {
         if (tabletDetailRoot == null) {
             return;
         }
-        tabletDetailRoot.setVisibility(View.VISIBLE);
-        tabletDetailRoot.setAlpha(1f);
+        tabletDetailRoot.setVisibility(emergencyFullHeightPage ? View.GONE : View.VISIBLE);
+        tabletDetailRoot.setAlpha(emergencyFullHeightPage ? 0f : 1f);
         tabletDetailRoot.setEnabled(!emergencyFullHeightPage);
     }
 
@@ -1629,7 +1638,21 @@ public final class DetailActivity extends AppCompatActivity {
             buildTabletGuideModeSummary(visualOwnerSource, turnBindings),
             buildTabletGuideModeAnchorLabel(visualOwnerSource),
             safe(tabletStatusText),
+            buildTabletGuideSectionCount(displaySource),
             resolveTabletDetailMode(turnBindings)
+        );
+    }
+
+    private int buildTabletGuideSectionCount(SearchResult displaySource) {
+        if (answerMode) {
+            return 0;
+        }
+        String sourceBody = safe(displaySource == null ? null : displaySource.body);
+        String displayBody = DetailGuidePresentationFormatter.buildGuideBody(displaySource);
+        return DetailGuidePresentationFormatter.inferGuideSectionCountForRail(
+            displaySource,
+            sourceBody,
+            displayBody
         );
     }
 
@@ -2084,6 +2107,20 @@ public final class DetailActivity extends AppCompatActivity {
         String guideId = safe(activeSource == null ? null : activeSource.guideId).trim();
         String title = safe(activeSource == null ? null : activeSource.title).trim();
         String section = safe(activeSource == null ? null : activeSource.sectionHeading).trim();
+        if (!answerMode) {
+            String handoffAnchorLabel = safe(currentGuideModeAnchorLabel).trim();
+            String handoffGuideId = extractGuideIdFromLabel(handoffAnchorLabel);
+            if (!handoffGuideId.isEmpty() && !handoffGuideId.equalsIgnoreCase(guideId)) {
+                return new AnchorState(
+                    handoffGuideId.toLowerCase(Locale.US),
+                    handoffGuideId,
+                    stripGuideIdFromLabel(handoffAnchorLabel, handoffGuideId),
+                    "",
+                    "",
+                    true
+                );
+            }
+        }
         if (!sourceKey.isEmpty() && sourceKey.equals(tabletEvidenceSelectionKey)) {
             if (!safe(tabletEvidenceAnchorId).trim().isEmpty()) {
                 guideId = safe(tabletEvidenceAnchorId).trim();
@@ -2110,10 +2147,47 @@ public final class DetailActivity extends AppCompatActivity {
         for (SearchResult guide : tabletEvidenceXRefs) {
             xrefs.add(new XRefState(
                 safe(guide == null ? null : guide.guideId).trim(),
-                safe(guide == null ? null : guide.title).trim()
+                safe(guide == null ? null : guide.title).trim(),
+                tabletXRefRelationLabel(guide)
             ));
         }
         return xrefs;
+    }
+
+    private String tabletXRefRelationLabel(SearchResult guide) {
+        String guideId = safe(guide == null ? null : guide.guideId).trim();
+        if ("GD-499".equalsIgnoreCase(guideId) || "GD-225".equalsIgnoreCase(guideId)) {
+            return "REQUIRED";
+        }
+        String relationText = (
+            safe(guide == null ? null : guide.contentRole) + " " +
+                safe(guide == null ? null : guide.structureType) + " " +
+                safe(guide == null ? null : guide.topicTags)
+        ).replace('_', ' ').replace('-', ' ').toLowerCase(Locale.US);
+        if (relationText.contains("required") || relationText.contains("prereq")) {
+            return "REQUIRED";
+        }
+        if (relationText.contains("anchor") || relationText.contains("source")) {
+            return "ANCHOR";
+        }
+        return "RELATED";
+    }
+
+    private static String extractGuideIdFromLabel(String label) {
+        java.util.regex.Matcher matcher = java.util.regex.Pattern
+            .compile("(?i)\\bGD-\\d+\\b")
+            .matcher(safe(label));
+        return matcher.find() ? matcher.group().toUpperCase(Locale.US) : "";
+    }
+
+    private static String stripGuideIdFromLabel(String label, String guideId) {
+        String cleaned = safe(label).trim();
+        String id = safe(guideId).trim();
+        if (id.isEmpty()) {
+            return cleaned;
+        }
+        cleaned = cleaned.replaceFirst("(?i)^\\s*" + java.util.regex.Pattern.quote(id) + "\\s*(?:\\u00b7|-|,|:)?\\s*", "");
+        return cleaned.trim();
     }
 
     private String buildTabletGuideId(SearchResult activeSource, boolean allowFallback) {
@@ -2476,6 +2550,7 @@ public final class DetailActivity extends AppCompatActivity {
             showRetry ? this::retryLastFailedQuery : null,
             this::onDockedComposerFocusChanged
         );
+        preservePhoneLandscapeThreadTopAfterComposerSetup();
         if (shouldRequestLandscapeDockedComposerFocus(isLandscapePhoneLayout(), answerMode, followUpInput.hasFocus(), false)) {
             followUpComposeView.post(this::requestLandscapeDockedComposerFocus);
         }
@@ -2607,8 +2682,54 @@ public final class DetailActivity extends AppCompatActivity {
             }
             if (followUpComposeView.getVisibility() == View.VISIBLE) {
                 followUpComposeView.requestComposerFocus();
+                preservePhoneLandscapeThreadTopAfterComposerFocus();
             }
         });
+    }
+
+    private void preservePhoneLandscapeThreadTopAfterComposerFocus() {
+        if (detailScroll == null || !shouldKeepPhoneLandscapeThreadAtTop(
+            answerMode,
+            currentAnswerThreadTurnCount(),
+            isLandscapePhoneLayout()
+        )) {
+            return;
+        }
+        detailScroll.post(() -> {
+            if (!isFinishing()
+                && !isDestroyed()
+                && shouldKeepPhoneLandscapeThreadAtTop(
+                    answerMode,
+                    currentAnswerThreadTurnCount(),
+                    isLandscapePhoneLayout()
+                )) {
+                detailScroll.scrollTo(0, 0);
+            }
+        });
+    }
+
+    private void preservePhoneLandscapeThreadTopAfterComposerSetup() {
+        if (detailScroll == null || !shouldPreservePhoneLandscapeThreadTopAfterComposerSetup(
+            answerMode,
+            currentAnswerThreadTurnCount(),
+            isLandscapePhoneLayout()
+        )) {
+            return;
+        }
+        detailScroll.scrollTo(0, 0);
+        for (long delayMs : phoneLandscapeThreadTopPreservationDelaysMs()) {
+            detailScroll.postDelayed(() -> {
+                if (!isFinishing()
+                    && !isDestroyed()
+                    && shouldPreservePhoneLandscapeThreadTopAfterComposerSetup(
+                        answerMode,
+                        currentAnswerThreadTurnCount(),
+                        isLandscapePhoneLayout()
+                    )) {
+                    detailScroll.scrollTo(0, 0);
+                }
+            }, delayMs);
+        }
     }
 
     private boolean isFollowUpInputShellActive() {
@@ -2649,6 +2770,25 @@ public final class DetailActivity extends AppCompatActivity {
         SessionMemory.TurnSnapshot currentTurn = currentTurnSnapshot();
         if (!answerMode) {
             detailThreadHistoryRenderer().clearHistory(priorTurnsContainer);
+            detailThreadHistoryRenderer().clearHistory(inlineThreadContainer);
+            sessionPanel.setVisibility(View.GONE);
+            sessionText.setText("");
+            if (sessionTitle != null) {
+                sessionTitle.setText(R.string.detail_session_title);
+            }
+            if (threadContainer != null) {
+                detailThreadHistoryRenderer().clearHistory(threadContainer);
+            }
+            return;
+        }
+        if (isLandscapePhoneLayout() && isCurrentThreadDetailRoute()) {
+            detailThreadHistoryRenderer().renderPriorTurnsHistory(
+                priorTurnsContainer,
+                earlierTurns,
+                currentTurn,
+                buildDetailThreadHistoryState(),
+                this::formatAnswerBody
+            );
             detailThreadHistoryRenderer().clearHistory(inlineThreadContainer);
             sessionPanel.setVisibility(View.GONE);
             sessionText.setText("");
@@ -2748,6 +2888,15 @@ public final class DetailActivity extends AppCompatActivity {
                 clearProvenancePanel();
                 return;
             }
+            if (shouldHideProofRailForThreadDetail(
+                answerMode,
+                currentAnswerThreadTurnCount(),
+                phoneXmlDetailLayoutActive() && !isLandscapePhoneLayout()
+            )) {
+                sourcesPanel.setVisibility(View.GONE);
+                clearProvenancePanel();
+                return;
+            }
             boolean landscapePhoneSideRail = shouldUseLandscapePhoneSourceRail(answerMode, isLandscapePhoneLayout());
             boolean inlineLandscapeProvenance = isLandscapePhoneLayout()
                 && provenancePanel != null
@@ -2803,7 +2952,9 @@ public final class DetailActivity extends AppCompatActivity {
             boolean phonePortraitSourceCards = isCompactPortraitPhoneLayout() && (portraitSourcesExpanded || isEmergencyPortraitSurface());
             applyPhonePortraitSourcePanelTreatment(phonePortraitSourceCards);
             if ((landscapePhoneSideRail || showUtilityRail()) && sourcesTitleText != null) {
-                sourcesTitleText.setText(R.string.detail_sources_title);
+                sourcesTitleText.setText(landscapePhoneSideRail
+                    ? buildLandscapePhoneSourceRailTitle(getString(R.string.detail_sources_title), currentSources.size())
+                    : getString(R.string.detail_sources_title));
             }
             boolean stationRail = shouldUseSourceProvenancePanel() || landscapePhoneSideRail;
             boolean compactPreview = shouldUseCompactSourceProvenancePreview();
@@ -2818,8 +2969,8 @@ public final class DetailActivity extends AppCompatActivity {
                 button.setTextColor(getColor(R.color.senku_text_light));
                 button.setMinHeight(0);
                 button.setMinimumHeight(0);
-                int btnPadH = phonePortraitSourceCards ? dp(14) : (stationRail ? dp(10) : dp(14));
-                int btnPadV = phonePortraitSourceCards ? dp(10) : (stationRail ? dp(8) : dp(12));
+                int btnPadH = phonePortraitSourceCards ? dp(12) : (stationRail ? dp(10) : dp(14));
+                int btnPadV = phonePortraitSourceCards ? dp(8) : (stationRail ? dp(8) : dp(12));
                 button.setPadding(btnPadH, btnPadV, btnPadH, btnPadV);
                 String sourceLabel = phonePortraitSourceCards
                     ? buildPhonePortraitSourceCardLabel(evidenceCard)
@@ -2836,10 +2987,10 @@ public final class DetailActivity extends AppCompatActivity {
                     )
                 );
                 button.setTextAlignment(View.TEXT_ALIGNMENT_VIEW_START);
-                button.setMaxLines(phonePortraitSourceCards ? 4 : 2);
+                button.setMaxLines(phonePortraitSourceCards ? 3 : 2);
                 button.setEllipsize(TextUtils.TruncateAt.END);
-                button.setTextSize(phonePortraitSourceCards ? 13f : 14f);
-                button.setLineSpacing(0f, phonePortraitSourceCards ? 1.08f : 1f);
+                button.setTextSize(phonePortraitSourceCards ? 12f : 14f);
+                button.setLineSpacing(0f, phonePortraitSourceCards ? 1.04f : 1f);
                 button.setTag(buildSourceSelectionKey(source));
                 button.setOnClickListener(v -> {
                     if (stationRail || compactPreview) {
@@ -2857,7 +3008,7 @@ public final class DetailActivity extends AppCompatActivity {
                     ViewGroup.LayoutParams.WRAP_CONTENT
                 );
                 if (sourcesContainer.getChildCount() > 0) {
-                    params.topMargin = phonePortraitSourceCards ? dp(12) : (showUtilityRail() ? dp(4) : dp(8));
+                    params.topMargin = phonePortraitSourceCards ? dp(8) : (showUtilityRail() ? dp(4) : dp(8));
                 }
                 sourcesContainer.addView(button, params);
             }
@@ -2889,7 +3040,11 @@ public final class DetailActivity extends AppCompatActivity {
                     ? (Button) sourcesContainer.getChildAt(0)
                     : null;
                 SearchResult primarySource = firstRealSource(currentSources);
-                if (primarySource != null) {
+                if (primarySource != null && shouldAutoOpenProvenanceForAnswerRail(
+                    answerMode,
+                    currentAnswerThreadTurnCount(),
+                    isLandscapePhoneLayout()
+                )) {
                     showSourceProvenancePanel(primarySource, firstButton);
                 } else {
                     clearProvenancePanel();
@@ -3208,10 +3363,10 @@ public final class DetailActivity extends AppCompatActivity {
         if (!phonePortraitSourceCards || sourcesPanel == null) {
             return;
         }
-        sourcesPanel.setPadding(dp(12), dp(14), dp(12), dp(14));
-        setTopMargin(sourcesPanel, dp(14));
+        sourcesPanel.setPadding(dp(10), dp(10), dp(10), dp(10));
+        setTopMargin(sourcesPanel, dp(10));
         if (sourcesSubtitle != null) {
-            sourcesSubtitle.setMaxLines(2);
+            sourcesSubtitle.setMaxLines(1);
             sourcesSubtitle.setEllipsize(TextUtils.TruncateAt.END);
         }
     }
@@ -3316,7 +3471,11 @@ public final class DetailActivity extends AppCompatActivity {
         if (whyPanel == null || whyText == null) {
             return;
         }
-        if (shouldHideGenericAnswerScaffoldForThread(answerMode, currentAnswerThreadTurnCount(), phoneXmlDetailLayoutActive())) {
+        if (shouldHideGenericAnswerScaffoldForThread(
+            answerMode,
+            currentAnswerThreadTurnCount(),
+            phoneXmlDetailLayoutActive() && !isLandscapePhoneLayout()
+        )) {
             whyPanel.setVisibility(View.GONE);
             if (whyTitleText != null) {
                 whyTitleText.setVisibility(View.VISIBLE);
@@ -3425,7 +3584,11 @@ public final class DetailActivity extends AppCompatActivity {
         try {
             updateNextStepsPanelPlacement();
             nextStepsContainer.removeAllViews();
-            if (shouldHideGenericAnswerScaffoldForThread(answerMode, currentAnswerThreadTurnCount(), phoneXmlDetailLayoutActive())) {
+            if (shouldHideGenericAnswerScaffoldForThread(
+                answerMode,
+                currentAnswerThreadTurnCount(),
+                phoneXmlDetailLayoutActive() && !isLandscapePhoneLayout()
+            )) {
                 nextStepsPanel.setVisibility(View.GONE);
                 clearGuideReturnContextPanel();
                 clearActiveGuideContextPanel();
@@ -4428,6 +4591,14 @@ public final class DetailActivity extends AppCompatActivity {
         if (detailScroll == null) {
             return;
         }
+        if (shouldKeepPhoneLandscapeThreadAtTop(
+            answerMode,
+            currentAnswerThreadTurnCount(),
+            isLandscapePhoneLayout()
+        )) {
+            resetPhoneLandscapeAnswerScrollToHeader();
+            return;
+        }
         detailScroll.post(() -> detailScroll.post(() -> {
             if (isFinishing() || isDestroyed()) {
                 return;
@@ -4482,6 +4653,23 @@ public final class DetailActivity extends AppCompatActivity {
                 detailScroll.scrollTo(0, 0);
             }
         });
+        if (shouldKeepPhoneLandscapeThreadAtTop(
+            answerMode,
+            currentAnswerThreadTurnCount(),
+            isLandscapePhoneLayout()
+        )) {
+            detailScroll.postDelayed(() -> {
+                if (!isFinishing()
+                    && !isDestroyed()
+                    && shouldKeepPhoneLandscapeThreadAtTop(
+                        answerMode,
+                        currentAnswerThreadTurnCount(),
+                        isLandscapePhoneLayout()
+                    )) {
+                    detailScroll.scrollTo(0, 0);
+                }
+            }, 120L);
+        }
     }
 
     static boolean shouldResetPhoneLandscapeAnswerScroll(boolean answerMode, boolean landscapePhone) {
@@ -5159,6 +5347,42 @@ public final class DetailActivity extends AppCompatActivity {
         return answerMode && landscapePhone;
     }
 
+    static boolean shouldKeepPhoneLandscapeThreadAtTop(
+        boolean answerMode,
+        int totalTurnCount,
+        boolean landscapePhone
+    ) {
+        return landscapePhone && isThreadDetailRoute(answerMode, totalTurnCount);
+    }
+
+    static boolean shouldPreservePhoneLandscapeThreadTopAfterComposerSetup(
+        boolean answerMode,
+        int totalTurnCount,
+        boolean landscapePhone
+    ) {
+        return shouldKeepPhoneLandscapeThreadAtTop(answerMode, totalTurnCount, landscapePhone);
+    }
+
+    static long[] phoneLandscapeThreadTopPreservationDelaysMs() {
+        return new long[] {0L, 80L, 240L, 480L};
+    }
+
+    static boolean shouldAutoOpenProvenanceForAnswerRail(
+        boolean answerMode,
+        int totalTurnCount,
+        boolean landscapePhone
+    ) {
+        return !shouldKeepPhoneLandscapeThreadAtTop(answerMode, totalTurnCount, landscapePhone);
+    }
+
+    static String buildLandscapePhoneSourceRailTitle(String baseTitle, int sourceCount) {
+        String base = safe(baseTitle).trim();
+        if (base.isEmpty()) {
+            base = "Sources";
+        }
+        return base + " - " + Math.max(0, sourceCount);
+    }
+
     static boolean shouldHideBodyMirrorForAnswerMode(boolean answerMode) {
         return answerMode;
     }
@@ -5173,6 +5397,14 @@ public final class DetailActivity extends AppCompatActivity {
         boolean phoneXmlDetailLayout
     ) {
         return isThreadDetailRoute(answerMode, totalTurnCount) && phoneXmlDetailLayout;
+    }
+
+    static boolean shouldHideProofRailForThreadDetail(
+        boolean answerMode,
+        int totalTurnCount,
+        boolean phoneXmlDetailLayout
+    ) {
+        return shouldHideGenericAnswerScaffoldForThread(answerMode, totalTurnCount, phoneXmlDetailLayout);
     }
 
     private boolean isCurrentThreadDetailRoute() {
@@ -7239,7 +7471,11 @@ public final class DetailActivity extends AppCompatActivity {
     }
 
     private void applyPhoneThreadTranscriptPresentation() {
-        if (!shouldHideGenericAnswerScaffoldForThread(answerMode, currentAnswerThreadTurnCount(), phoneXmlDetailLayoutActive())) {
+        if (!shouldHideGenericAnswerScaffoldForThread(
+            answerMode,
+            currentAnswerThreadTurnCount(),
+            phoneXmlDetailLayoutActive()
+        )) {
             return;
         }
         if (questionBubble != null) {

@@ -80,6 +80,31 @@ class PaperAnswerCardLabelTest {
     }
 
     @Test
+    fun uncertainFitNotice_isSecondaryWhenArticleHasProse() {
+        assertEquals(
+            false,
+            shouldEmphasizeUncertainFitNotice(
+                answer(
+                    answerSurfaceLabel = AnswerSurfaceLabel.LimitedFit,
+                    sourceCount = 3,
+                ),
+            ),
+        )
+        assertEquals(
+            true,
+            shouldEmphasizeUncertainFitNotice(
+                AnswerContent(
+                    short = "",
+                    sourceCount = 0,
+                    host = "",
+                    elapsedSeconds = 0.0,
+                    answerSurfaceLabel = AnswerSurfaceLabel.LimitedFit,
+                ),
+            ),
+        )
+    }
+
+    @Test
     fun displayProofCtaLabel_replacesLegacyProofCopyOnly() {
         assertEquals("View sources", displayProofCtaLabel("Show proof"))
         assertEquals("View citations", displayProofCtaLabel("View citations"))

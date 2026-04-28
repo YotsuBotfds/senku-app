@@ -98,6 +98,19 @@ public final class DetailRelatedGuidePresentationFormatterTest {
     }
 
     @Test
+    public void stationRailSubtitleUsesCrossReferenceOpenedFromCopy() {
+        DetailRelatedGuidePresentationFormatter formatter = new DetailRelatedGuidePresentationFormatter(null);
+
+        assertEquals(
+            "Cross-reference \u00b7 6 linked guides \u00b7 opened from GD-220.",
+            formatter.buildStationRelatedGuidesSubtitle(
+                new DetailRelatedGuidePresentationFormatter.State(true, false, "GD-220", "", ""),
+                6
+            )
+        );
+    }
+
+    @Test
     public void nonRailPreviewRowDescriptionUsesGuideConnectionLanguage() {
         DetailRelatedGuidePresentationFormatter formatter = new DetailRelatedGuidePresentationFormatter(null);
 

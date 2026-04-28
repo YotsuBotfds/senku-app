@@ -185,26 +185,6 @@ fun PaperAnswerCard(
                     color = palette.body,
                 )
 
-                if (shouldShowUncertainFitNotice(content)) {
-                    SupportBlock(
-                        label = "UNSURE FIT",
-                        labelColor = evidenceTone,
-                        palette = palette,
-                        emphasized = true,
-                    ) {
-                        Text(
-                            text = uncertainFitNoticeText(content),
-                            style = typography.smallBody.copy(
-                                fontSize = PaperAnswerCardSupportSize,
-                                lineHeight = PaperAnswerCardSupportLineHeight,
-                                fontWeight = FontWeight.Normal,
-                                letterSpacing = 0.sp,
-                            ),
-                            color = palette.body,
-                        )
-                    }
-                }
-
                 if (!content.steps.isNullOrEmpty() && !content.abstain) {
                     SupportBlock(
                         label = "STEPS",
@@ -238,6 +218,26 @@ fun PaperAnswerCard(
                     ) {
                         Text(
                             text = content.limits.trim(),
+                            style = typography.smallBody.copy(
+                                fontSize = PaperAnswerCardSupportSize,
+                                lineHeight = PaperAnswerCardSupportLineHeight,
+                                fontWeight = FontWeight.Normal,
+                                letterSpacing = 0.sp,
+                            ),
+                            color = palette.body,
+                        )
+                    }
+                }
+
+                if (shouldShowUncertainFitNotice(content)) {
+                    SupportBlock(
+                        label = "UNSURE FIT",
+                        labelColor = evidenceTone,
+                        palette = palette,
+                        emphasized = shouldEmphasizeUncertainFitNotice(content),
+                    ) {
+                        Text(
+                            text = uncertainFitNoticeText(content),
                             style = typography.smallBody.copy(
                                 fontSize = PaperAnswerCardSupportSize,
                                 lineHeight = PaperAnswerCardSupportLineHeight,
@@ -488,6 +488,10 @@ private fun sourceCountLabel(sourceCount: Int): String {
 
 internal fun shouldShowUncertainFitNotice(content: AnswerContent): Boolean {
     return content.uncertainFit || content.answerSurfaceLabel == AnswerSurfaceLabel.LimitedFit
+}
+
+internal fun shouldEmphasizeUncertainFitNotice(content: AnswerContent): Boolean {
+    return content.short.isBlank() && content.steps.isNullOrEmpty() && content.limits.isNullOrBlank()
 }
 
 internal fun uncertainFitNoticeText(content: AnswerContent): String {

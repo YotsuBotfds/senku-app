@@ -220,8 +220,8 @@ public final class MainActivityHomeChromeTest {
     @Test
     public void manualHomeCategoryShelfReservesTwoRowsWithoutClipping() {
         assertEquals(0, MainActivity.resolveManualHomeCategoryShelfMinimumHeightDp(0));
-        assertEquals(54, MainActivity.resolveManualHomeCategoryShelfMinimumHeightDp(3));
-        assertEquals(113, MainActivity.resolveManualHomeCategoryShelfMinimumHeightDp(6));
+        assertEquals(42, MainActivity.resolveManualHomeCategoryShelfMinimumHeightDp(3));
+        assertEquals(87, MainActivity.resolveManualHomeCategoryShelfMinimumHeightDp(6));
     }
 
     @Test

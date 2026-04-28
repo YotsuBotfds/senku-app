@@ -12,7 +12,8 @@ final class GuideBodySanitizer {
         Pattern.compile("^(DANGER|WARNING|CAUTION|IMPORTANT|NOTE|DANGEROUS)(?:\\s*[:.-]\\s*|\\s+)(.+)$");
     private static final Pattern GUIDE_MARKDOWN_HEADING_PATTERN = Pattern.compile("^#{1,6}\\s+");
     private static final Pattern GUIDE_SECTION_LINE_PATTERN = Pattern.compile("^Source section:\\s*(.+)$", Pattern.CASE_INSENSITIVE);
-    private static final Pattern GUIDE_REQUIRED_READING_PATTERN = Pattern.compile("^Required Reading\\s*:\\s*(.+)$", Pattern.CASE_INSENSITIVE);
+    private static final Pattern GUIDE_REQUIRED_READING_PATTERN =
+        Pattern.compile("^Required Reading\\s*[:\\-\\u00b7]\\s*(.+)$", Pattern.CASE_INSENSITIVE);
     private static final Pattern GUIDE_SECTION_DISPLAY_PATTERN =
         Pattern.compile("^(?:[\\-\\u2013\\u2014]+\\s*)?(?:Section\\s+|\\u00a7\\s*)\\d+\\s*[:\\-\\u00b7]?\\s+.+$", Pattern.CASE_INSENSITIVE);
     private static final Pattern GUIDE_LAYOUT_TAG_PATTERN = Pattern.compile("(?i)</?(section|div|span|p)\\b[^>]*>");

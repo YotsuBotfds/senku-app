@@ -109,6 +109,17 @@ class SearchResultCardHeuristicsTest {
     }
 
     @Test
+    fun compactResultPreviewText_avoidsRepeatingGuideIdsInPreviewLead() {
+        assertEquals(
+            "Tarp & Cord Shelters: Keep the ridgeline taut and shed runoff away from the sleeping area.",
+            compactResultPreviewText(
+                "Tarp & Cord Shelters",
+                "Guide: GD-345 Tarp & Cord Shelters: Keep the ridgeline taut and shed runoff away from the sleeping area.",
+            ),
+        )
+    }
+
+    @Test
     fun scoreTickFillFraction_tracksRankScoreWithoutPercentCopy() {
         assertEquals(0.95f, scoreTickFillFraction("92"), 0.001f)
         assertEquals(0.82f, scoreTickFillFraction("78"), 0.001f)

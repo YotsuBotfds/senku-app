@@ -20,7 +20,7 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="42dp"
+        android:layout_height="38dp"
         android:gravity="center_vertical"
         android:orientation="horizontal"
         android:paddingStart="16dp"
@@ -90,7 +90,7 @@
         android:fillViewport="true"
         android:paddingStart="16dp"
         android:paddingEnd="16dp"
-        android:paddingBottom="26dp"
+        android:paddingBottom="18dp"
         android:scrollbars="none">
 
         <LinearLayout
@@ -100,8 +100,8 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="26dp"
-                android:layout_marginTop="8dp"
+                android:layout_height="21dp"
+                android:layout_marginTop="6dp"
                 android:background="@drawable/bg_manual_home_status"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
@@ -128,7 +128,7 @@
                     android:layout_height="wrap_content"
                     android:fontFamily="monospace"
                     android:includeFontPadding="false"
-                    android:text="754 GUIDES - ED.2 - 184 MB"
+                    android:text="754 GUIDES &#8226; ED.2 &#8226; 184 MB"
                     android:textAppearance="?android:attr/textAppearanceSmall"
                     android:textColor="@color/senku_rev03_ink_2"
                     android:textStyle="bold" />
@@ -136,8 +136,8 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="42dp"
-                android:layout_marginTop="7dp"
+                android:layout_height="36dp"
+                android:layout_marginTop="5dp"
                 android:addStatesFromChildren="true"
                 android:background="@drawable/bg_manual_phone_home_search"
                 android:gravity="center_vertical"
@@ -150,15 +150,15 @@
                     android:layout_height="20dp"
                     android:background="@drawable/bg_manual_phone_home_search_icon"
                     android:contentDescription="@string/search_input_description"
-                    android:padding="2dp"
+                    android:padding="3dp"
                     android:src="@drawable/ic_search_magnifier"
-                    android:tint="@color/senku_rev03_ink_2" />
+                    android:tint="@color/senku_rev03_accent" />
 
                 <EditText
                     android:id="@+id/search_input"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_marginStart="10dp"
+                    android:layout_marginStart="9dp"
                     android:layout_weight="1"
                     android:background="@android:color/transparent"
                     android:contentDescription="@string/search_input_description"
@@ -178,7 +178,7 @@
                 android:id="@+id/search_suggestions_section"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="7dp"
                 android:fadingEdge="horizontal"
                 android:fadingEdgeLength="24dp"
                 android:scrollbars="none"
@@ -195,7 +195,7 @@
                 android:id="@+id/category_section_header"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="6dp"
                 android:fontFamily="monospace"
                 android:includeFontPadding="false"
                 android:text="-- CATEGORIES  &#8226;  12"
@@ -207,14 +207,14 @@
                 android:id="@+id/category_section_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="6dp"
+                android:layout_marginTop="4dp"
                 android:orientation="vertical" />
 
             <LinearLayout
                 android:id="@+id/recent_threads_section"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="9dp"
+                android:layout_marginTop="8dp"
                 android:orientation="vertical"
                 android:visibility="gone">
 
@@ -232,7 +232,7 @@
                     android:id="@+id/recent_threads_container"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="7dp"
+                    android:layout_marginTop="6dp"
                     android:orientation="vertical" />
             </LinearLayout>
 
@@ -276,7 +276,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="18dp"
         android:layout_marginEnd="18dp"
-        android:layout_marginBottom="8dp"
+        android:layout_marginBottom="6dp"
         android:accessibilityLiveRegion="polite"
         android:ellipsize="end"
         android:fontFamily="monospace"
@@ -288,6 +288,54 @@
         android:textSize="12sp"
         android:textStyle="bold"
         android:visibility="gone" />
+
+    <LinearLayout
+        android:id="@+id/phone_search_query_well"
+        android:layout_width="match_parent"
+        android:layout_height="36dp"
+        android:layout_marginStart="18dp"
+        android:layout_marginEnd="18dp"
+        android:layout_marginBottom="8dp"
+        android:background="@drawable/bg_manual_phone_home_search"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="14dp"
+        android:paddingEnd="14dp"
+        android:visibility="gone">
+
+        <ImageView
+            android:layout_width="18dp"
+            android:layout_height="18dp"
+            android:background="@drawable/bg_manual_phone_home_search_icon"
+            android:contentDescription="@string/search_input_description"
+            android:padding="3dp"
+            android:src="@drawable/ic_search_magnifier"
+            android:tint="@color/senku_rev03_accent" />
+
+        <TextView
+            android:id="@+id/phone_search_query_text"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_weight="1"
+            android:ellipsize="end"
+            android:includeFontPadding="false"
+            android:maxLines="1"
+            android:text="@string/search_hint"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textColor="@color/senku_rev03_ink_0" />
+
+        <TextView
+            android:id="@+id/phone_search_count_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="monospace"
+            android:includeFontPadding="false"
+            android:text="0 RESULTS"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textColor="@color/senku_rev03_ink_2"
+            android:textStyle="bold" />
+    </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/results_list"

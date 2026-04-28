@@ -89,7 +89,7 @@ class TabletEvidenceVisibilityPolicyTest {
     }
 
     @Test
-    fun crossReferenceCardCountIncludesActiveAnchorWhenPresent() {
+    fun crossReferenceCardCountCountsLinkedGuidesBesideActiveAnchor() {
         val count = buildCrossReferenceCardCount(
             anchor(section = "water storage", snippet = ""),
             listOf(
@@ -98,21 +98,17 @@ class TabletEvidenceVisibilityPolicyTest {
             ),
         )
 
-        assertEquals(3, count)
+        assertEquals(2, count)
     }
 
     @Test
-    fun crossReferenceCardCountDoesNotInventAnchorWithoutSource() {
+    fun crossReferenceCardCountDropsDuplicateActiveAnchorXRef() {
         val count = buildCrossReferenceCardCount(
-            AnchorState(
-                key = "",
-                id = "",
-                title = "",
-                section = "",
-                snippet = "",
-                hasSource = false,
+            anchor(section = "water storage", snippet = ""),
+            listOf(
+                XRefState(id = "GD-214", title = "Water purification and storage"),
+                XRefState(id = "GD-215", title = "Rainwater Catchment"),
             ),
-            listOf(XRefState(id = "GD-215", title = "Rainwater Catchment")),
         )
 
         assertEquals(1, count)
@@ -133,6 +129,81 @@ class TabletEvidenceVisibilityPolicyTest {
         )
 
         assertEquals(0, count)
+    }
+
+    @Test
+    fun tabletGuideModeUsesGuideSectionCountForRailHeader() {
+        val state = stateWithSources(
+            sourceCount = 1,
+            isLandscape = true,
+            detailMode = TabletDetailMode.Guide,
+            guideSectionCount = 17,
+        )
+
+        assertEquals(17, state.resolvedGuideSectionCount())
+        assertEquals("SECTIONS · 17", threadRailSectionTitle("SECTIONS", state.resolvedGuideSectionCount()))
+    }
+
+    @Test
+    fun tabletXRefsCarryRequiredRailRelation() {
+        val xref = XRefState(id = "GD-499", title = "Bellows", relation = "REQUIRED")
+
+        assertEquals("REQUIRED", xref.relation)
+    }
+
+    @Test
+    fun tabletGuideDestinationRailUsesLoadedCrossReferencesForLeftRailParity() {
+        val state = stateWithSources(
+            sourceCount = 1,
+            isLandscape = true,
+            detailMode = TabletDetailMode.Guide,
+            guideId = "GD-132",
+            guideTitle = "Foundry & Metal Casting",
+            guideSectionCount = 1,
+            anchor = AnchorState(
+                key = "gd-220",
+                id = "GD-220",
+                title = "Abrasives Manufacturing",
+                section = "",
+                snippet = "",
+                hasSource = true,
+            ),
+            xrefs = listOf(
+                XRefState(id = "GD-220", title = "Abrasives Manufacturing"),
+                XRefState(id = "GD-225", title = "Bloomery Furnace", relation = "REQUIRED"),
+                XRefState(id = "GD-499", title = "Bellows Forge Blower Construction", relation = "REQUIRED"),
+                XRefState(id = "GD-301", title = "Charcoal Production"),
+                XRefState(id = "GD-302", title = "Clay Furnace Lining"),
+                XRefState(id = "GD-303", title = "Ore Sorting"),
+                XRefState(id = "GD-304", title = "Quench Water Station"),
+            ),
+        )
+
+        val railSources = state.resolvedThreadRailSources()
+
+        assertEquals(17, state.resolvedGuideSectionCount())
+        assertEquals(6, buildCrossReferenceCardCount(tabletSourceGraphAnchor(state.anchor), state.xrefs))
+        assertEquals(6, railSources.size)
+        assertEquals("CROSS-REFERENCE \u00B7 6", threadRailSectionTitle("CROSS-REFERENCE", railSources.size))
+        assertEquals(listOf("GD-225", "GD-499", "GD-301", "GD-302", "GD-303", "GD-304"), railSources.map { it.id })
+        assertEquals("GD-220", state.anchor.id)
+    }
+
+    @Test
+    fun tabletGuideDestinationRailKeepsCurrentGuideSourceUntilCrossReferencesLoad() {
+        val state = stateWithSources(
+            sourceCount = 1,
+            isLandscape = true,
+            detailMode = TabletDetailMode.Guide,
+            guideId = "GD-132",
+            guideTitle = "Foundry & Metal Casting",
+            xrefs = emptyList(),
+        )
+
+        val railSources = state.resolvedThreadRailSources()
+
+        assertEquals(1, railSources.size)
+        assertEquals("GD-1", railSources.first().id)
     }
 
     @Test
@@ -298,6 +369,8 @@ class TabletEvidenceVisibilityPolicyTest {
         sourceCount: Int,
         evidenceExpanded: Boolean = false,
         isLandscape: Boolean,
+        guideId: String = "GD-214",
+        guideTitle: String = "Water purification and storage",
         composerVisible: Boolean = true,
         guideModeLabel: String = "",
         guideModeSummary: String = "",
@@ -305,6 +378,9 @@ class TabletEvidenceVisibilityPolicyTest {
         selectedSourceIndex: Int = 1,
         showQuestion: Boolean = true,
         detailMode: TabletDetailMode = TabletDetailMode.Answer,
+        guideSectionCount: Int = 0,
+        anchor: AnchorState? = null,
+        xrefs: List<XRefState> = emptyList(),
     ): TabletDetailState {
         val sources = (1..sourceCount).map { index ->
             SourceState(
@@ -316,8 +392,8 @@ class TabletEvidenceVisibilityPolicyTest {
             )
         }
         return TabletDetailState(
-            guideId = "GD-214",
-            guideTitle = "Water purification and storage",
+            guideId = guideId,
+            guideTitle = guideTitle,
             meta = listOf(MetaItem("answer", Tone.Accent)),
             turns = listOf(
                 ThreadTurnState(
@@ -336,12 +412,12 @@ class TabletEvidenceVisibilityPolicyTest {
                 )
             ),
             sources = sources,
-            anchor = if (sources.isEmpty()) {
+            anchor = anchor ?: if (sources.isEmpty()) {
                 AnchorState("", "", "", "", "", false)
             } else {
                 anchor(section = "water storage", snippet = "Keep treated water sealed between uses.")
             },
-            xrefs = emptyList(),
+            xrefs = xrefs,
             composerText = "",
             composerPlaceholder = "",
             composerEnabled = true,
@@ -355,6 +431,7 @@ class TabletEvidenceVisibilityPolicyTest {
             guideModeLabel = guideModeLabel,
             guideModeSummary = guideModeSummary,
             guideModeAnchorLabel = guideModeAnchorLabel,
+            guideSectionCount = guideSectionCount,
             detailMode = detailMode,
         )
     }

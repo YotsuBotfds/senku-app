@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="detail_loop2_field_links_title">Field links</string>
-    <string name="detail_loop2_field_links_panel_prefix">Field links.</string>
-    <string name="detail_loop2_field_links_preview_panel_description">Field links. Linked guide preview opens here. Use Open full guide to open the selected guide page.</string>
+    <string name="detail_loop2_field_links_title">Cross-reference</string>
+    <string name="detail_loop2_field_links_panel_prefix">Cross-reference.</string>
+    <string name="detail_loop2_field_links_preview_panel_description">Cross-reference. Linked guide preview opens here. Use Open full guide to open the selected guide page.</string>
     <string name="detail_loop2_field_links_preview_row_behavior">Opens a linked guide preview here. Use Open full guide to open the guide page.</string>
-    <string name="detail_loop2_field_links_preview_loading">Loading field-link preview...</string>
-    <string name="detail_loop2_field_links_preview_empty">No field-link preview text is available in this pack.</string>
+    <string name="detail_loop2_field_links_preview_loading">Loading cross-reference preview...</string>
+    <string name="detail_loop2_field_links_preview_empty">No cross-reference preview text is available in this pack.</string>
     <string name="detail_loop2_corpus_gap_label">Corpus limit:</string>
     <string name="detail_loop2_corpus_gap_no_steps">No numbered steps were found in the installed guides for this query.</string>
     <string name="detail_loop2_corpus_gap_followup">Treat this as a pack gap, not a finished procedure.</string>

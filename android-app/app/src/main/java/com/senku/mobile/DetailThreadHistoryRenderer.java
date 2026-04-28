@@ -83,10 +83,10 @@ final class DetailThreadHistoryRenderer {
         container.setVisibility(View.VISIBLE);
         String previousAnchorGuideId = anchorGuideIdBeforeVisibleTurns(transcriptTurns, visibleTurns);
         int firstTurnNumber = Math.max(1, transcriptTurns.size() - visibleTurns.size() + 1);
-        for (int index = 0; index < visibleTurns.size(); index++) {
-            SessionMemory.TurnSnapshot turn = visibleTurns.get(index);
-            addTurn(container, turn, previousAnchorGuideId, state, answerFormatter, true, firstTurnNumber + index);
-            previousAnchorGuideId = nextAnchorGuideId(previousAnchorGuideId, turn);
+        List<NumberedTurn> displayTurns = numberedDisplayTurnsForInlineHistory(visibleTurns, firstTurnNumber, state);
+        for (NumberedTurn displayTurn : displayTurns) {
+            addTurn(container, displayTurn.turn, previousAnchorGuideId, state, answerFormatter, true, displayTurn.turnNumber);
+            previousAnchorGuideId = nextAnchorGuideId(previousAnchorGuideId, displayTurn.turn);
         }
     }
 
@@ -164,6 +164,28 @@ final class DetailThreadHistoryRenderer {
             return 2;
         }
         return 2;
+    }
+
+    static boolean shouldShowRecentTurnFirst(State state) {
+        return state != null && state.wideLayout && !state.compactPortraitSections;
+    }
+
+    private static List<NumberedTurn> numberedDisplayTurnsForInlineHistory(
+        List<SessionMemory.TurnSnapshot> visibleTurns,
+        int firstTurnNumber,
+        State state
+    ) {
+        ArrayList<NumberedTurn> numberedTurns = new ArrayList<>();
+        if (visibleTurns == null || visibleTurns.isEmpty()) {
+            return numberedTurns;
+        }
+        for (int index = 0; index < visibleTurns.size(); index++) {
+            numberedTurns.add(new NumberedTurn(visibleTurns.get(index), firstTurnNumber + index));
+        }
+        if (shouldShowRecentTurnFirst(state)) {
+            Collections.reverse(numberedTurns);
+        }
+        return numberedTurns;
     }
 
     private String anchorGuideIdBeforeVisibleTurns(
@@ -583,6 +605,16 @@ final class DetailThreadHistoryRenderer {
                 || !safe(turn.answerSummary).trim().isEmpty()
                 || (turn.sources != null && !turn.sources.isEmpty())
                 || (turn.sourceResults != null && !turn.sourceResults.isEmpty()));
+    }
+
+    private static final class NumberedTurn {
+        final SessionMemory.TurnSnapshot turn;
+        final int turnNumber;
+
+        NumberedTurn(SessionMemory.TurnSnapshot turn, int turnNumber) {
+            this.turn = turn;
+            this.turnNumber = turnNumber;
+        }
     }
 
     private static List<SearchResult> prioritizedSourceResultsForTurn(SessionMemory.TurnSnapshot turn) {

@@ -211,6 +211,42 @@ class AnswerContentFactoryTest {
     }
 
     @Test
+    fun fromRenderedAnswer_parsesRainShelterEngineFallbackForArticleCard() {
+        val content = fromRenderedAnswer(
+            body = """
+                ANSWER
+                Build a ridgeline first, then drape and tension the tarp around it. Keep the low edge toward the weather and leave runoff a clear path away from the sheltered area.
+
+                FIELD STEPS
+                1. Tie a taut ridgeline between two solid anchor points.
+                2. Drape the tarp over the line and stake or tie the windward edge low.
+                3. Tension the corners evenly, then adjust the pitch so rain sheds instead of pooling.
+            """.trimIndent(),
+            sourceCount = 3,
+            host = "Host",
+            elapsedSeconds = 0.8,
+            evidence = Evidence.Moderate,
+            abstain = false,
+            uncertainFit = true,
+            answerSurfaceLabel = AnswerSurfaceLabel.LimitedFit,
+        )
+
+        assertEquals(
+            "Build a ridgeline first, then drape and tension the tarp around it. Keep the low edge toward the weather and leave runoff a clear path away from the sheltered area.",
+            content.short,
+        )
+        assertEquals(3, content.sourceCount)
+        assertEquals(
+            listOf(
+                "Tie a taut ridgeline between two solid anchor points.",
+                "Drape the tarp over the line and stake or tie the windward edge low.",
+                "Tension the corners evenly, then adjust the pitch so rain sheds instead of pooling.",
+            ),
+            content.steps,
+        )
+    }
+
+    @Test
     fun fromRenderedAnswer_keepsUncertainEscalationAsLimits() {
         val content = fromRenderedAnswer(
             body = """

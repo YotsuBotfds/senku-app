@@ -140,8 +140,8 @@ fun SearchResultCard(
                 Text(
                     text = model.title.trim(),
                     style = SenkuTheme.typography.uiBody.copy(
-                        fontSize = 14.sp,
-                        lineHeight = 16.sp,
+                        fontSize = 13.sp,
+                        lineHeight = 15.sp,
                         fontWeight = FontWeight.Bold,
                     ),
                     color = colors.ink0,
@@ -167,8 +167,8 @@ fun SearchResultCard(
                 Text(
                     text = compactResultPreviewText(model.subtitle, model.snippet),
                     style = SenkuTheme.typography.smallBody.copy(
-                        fontSize = 11.sp,
-                        lineHeight = 13.sp,
+                        fontSize = 10.sp,
+                        lineHeight = 12.sp,
                         fontWeight = FontWeight.Normal,
                     ),
                     color = colors.ink1.copy(alpha = 0.78f),
@@ -335,6 +335,8 @@ private fun stripPreviewMarkdown(value: String): String {
         .replace(Regex("(?m)^\\s*[-*+]\\s+"), "")
         .replace(Regex("`|\\*\\*|__|~~"), "")
         .replace(Regex("\\s+"), " ")
+        .replace(Regex("(?i)^Guide\\s*:\\s*[A-Z]{2}-\\d{3}\\s+"), "")
+        .replace(Regex("(?i)^Guide\\s*:\\s+"), "")
 }
 
 internal fun scoreTickFillFraction(rankLabel: String): Float {

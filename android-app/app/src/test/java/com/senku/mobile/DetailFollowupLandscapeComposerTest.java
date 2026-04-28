@@ -2,6 +2,7 @@ package com.senku.mobile;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertTrue;
 
 import com.senku.ui.primitives.MetaItem;
@@ -220,6 +221,30 @@ public final class DetailFollowupLandscapeComposerTest {
     }
 
     @Test
+    public void landscapePhoneThreadKeepsPrimaryAnswerAndCompactSourceRail() {
+        assertTrue(DetailActivity.shouldKeepPhoneLandscapeThreadAtTop(true, 2, true));
+        assertFalse(DetailActivity.shouldKeepPhoneLandscapeThreadAtTop(true, 1, true));
+        assertFalse(DetailActivity.shouldKeepPhoneLandscapeThreadAtTop(true, 2, false));
+
+        assertFalse(DetailActivity.shouldAutoOpenProvenanceForAnswerRail(true, 2, true));
+        assertTrue(DetailActivity.shouldAutoOpenProvenanceForAnswerRail(true, 1, true));
+        assertEquals("Sources - 2", DetailActivity.buildLandscapePhoneSourceRailTitle("Sources", 2));
+        assertTrue(DetailActivity.shouldHideGenericAnswerScaffoldForThread(true, 2, true));
+    }
+
+    @Test
+    public void landscapePhoneThreadPreservesTopAfterComposerSetup() {
+        assertTrue(DetailActivity.shouldPreservePhoneLandscapeThreadTopAfterComposerSetup(true, 2, true));
+        assertFalse(DetailActivity.shouldPreservePhoneLandscapeThreadTopAfterComposerSetup(true, 1, true));
+        assertFalse(DetailActivity.shouldPreservePhoneLandscapeThreadTopAfterComposerSetup(true, 2, false));
+        assertFalse(DetailActivity.shouldPreservePhoneLandscapeThreadTopAfterComposerSetup(false, 2, true));
+        assertArrayEquals(
+            new long[] {0L, 80L, 240L, 480L},
+            DetailActivity.phoneLandscapeThreadTopPreservationDelaysMs()
+        );
+    }
+
+    @Test
     public void phoneLandscapeAnswerResetsToHeaderAfterRender() {
         assertTrue(DetailActivity.shouldResetPhoneLandscapeAnswerScroll(true, true));
         assertFalse(DetailActivity.shouldResetPhoneLandscapeAnswerScroll(false, true));
@@ -246,6 +271,14 @@ public final class DetailFollowupLandscapeComposerTest {
         assertTrue(DetailActivity.shouldHideGenericAnswerScaffoldForThread(true, 2, true));
         assertFalse(DetailActivity.shouldHideGenericAnswerScaffoldForThread(true, 2, false));
         assertFalse(DetailActivity.shouldHideGenericAnswerScaffoldForThread(true, 1, true));
+    }
+
+    @Test
+    public void phoneThreadDetailHidesProofRailBelowTranscript() {
+        assertTrue(DetailActivity.shouldHideProofRailForThreadDetail(true, 2, true));
+        assertFalse(DetailActivity.shouldHideProofRailForThreadDetail(true, 2, false));
+        assertFalse(DetailActivity.shouldHideProofRailForThreadDetail(true, 1, true));
+        assertFalse(DetailActivity.shouldHideProofRailForThreadDetail(false, 2, true));
     }
 
     @Test

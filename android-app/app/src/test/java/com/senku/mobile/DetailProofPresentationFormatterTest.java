@@ -75,4 +75,40 @@ public final class DetailProofPresentationFormatterTest {
         assertFalse(visible.contains("_"));
         assertFalse(visible.contains("-"));
     }
+
+    @Test
+    public void primarySourceLabelPrefersRainShelterArticleIdentityOverSectionTakeover() {
+        DetailProofPresentationFormatter formatter = new DetailProofPresentationFormatter(null);
+        List<SearchResult> sources = Arrays.asList(
+            new SearchResult(
+                "Primitive Shelter Construction Techniques",
+                "",
+                "Use tarp and cord to form a simple ridgeline shelter.",
+                "How do I build a simple rain shelter from tarp and cord?",
+                "GD-345",
+                "Wood Quality Evaluation for Shelter Construction",
+                "survival",
+                "lexical",
+                "",
+                "",
+                "emergency_shelter",
+                "foundation,weatherproofing,site_selection"
+            ),
+            new SearchResult(
+                "Shelter Site Selection & Hazard Assessment",
+                "",
+                "Choose drainage before pitching a tarp.",
+                "",
+                "GD-446",
+                "Identifying Natural Hazards",
+                "survival",
+                "hybrid"
+            )
+        );
+
+        assertEquals("Tarp & Cord Shelters", formatter.buildPrimarySourceLabel(sources));
+        assertEquals("ANCHOR [GD-345] - Tarp & Cord Shelters", formatter.buildPrimarySourcePreviewLine(sources));
+        assertEquals("[GD-345] Tarp & Cord Shelters", formatter.buildSourceEntryValue(sources.get(0), sources));
+    }
+
 }

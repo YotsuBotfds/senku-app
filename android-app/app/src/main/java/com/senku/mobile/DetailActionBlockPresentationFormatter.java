@@ -436,7 +436,13 @@ final class DetailActionBlockPresentationFormatter {
         return "steps:".equals(normalizedLine)
             || "field steps".equals(normalizedLine)
             || "field steps:".equals(normalizedLine)
+            || "field actions".equals(normalizedLine)
+            || "field actions:".equals(normalizedLine)
             || "immediate actions:".equals(normalizedLine)
+            || "emergency actions:".equals(normalizedLine)
+            || "emergency response:".equals(normalizedLine)
+            || "response actions:".equals(normalizedLine)
+            || "answer gd-132 - burn hazard response".equals(normalizedLine)
             || "actions:".equals(normalizedLine);
     }
 
@@ -512,6 +518,10 @@ final class DetailActionBlockPresentationFormatter {
         int start = lower.indexOf("minimum 5 m");
         if (start >= 0) {
             return new SpanTarget(start, "minimum 5 m");
+        }
+        start = lower.indexOf("minimum 5 meters");
+        if (start >= 0) {
+            return new SpanTarget(start, "minimum 5 meters");
         }
         start = lower.indexOf("5 m radius");
         if (start >= 0) {

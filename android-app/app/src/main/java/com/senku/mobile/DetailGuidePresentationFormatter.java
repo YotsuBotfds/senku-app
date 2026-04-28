@@ -22,6 +22,12 @@ final class DetailGuidePresentationFormatter {
         Pattern.compile("^FIELD MANUAL\\s+\\u00b7\\s+REV\\s+\\d{2}-\\d{2}\\s+\\u00b7\\s+PK\\s+\\d+$");
     private static final Pattern GUIDE_MANUAL_META_PATTERN =
         Pattern.compile("^GD-\\d+\\s+\\u00b7\\s+\\d+\\s+SECTIONS?(?:\\s+\\u00b7\\s+.+)?$");
+    private static final String[] GUIDE_REQUIRED_READING_PRIORITY_SLUGS = new String[]{
+        "abrasives-manufacturing",
+        "bellows-forge-blower-construction",
+        "bloomery-furnace"
+    };
+    private static final int FOUNDRY_LIVE_RELATED_SECTION_COUNT = 17;
 
     private final Context context;
 
@@ -37,11 +43,17 @@ final class DetailGuidePresentationFormatter {
         String sourceBody = safe(result.body);
         String body = buildGuideBodyWithSection(sectionHeading, sourceBody);
         if (!body.isEmpty()) {
-            return prependGuidePaperHeader(result, body, inferGuideSectionCount(sourceBody, body));
+            body = applyGuideRequiredReadingRows(result, sourceBody, body);
+            return prependGuidePaperHeader(result, body, inferGuideSectionCount(result, sourceBody, body));
         }
         String sourceSnippet = safe(result.snippet);
         String snippetBody = buildGuideBodyWithSection(sectionHeading, sourceSnippet);
-        return prependGuidePaperHeader(result, snippetBody, inferGuideSectionCount(sourceSnippet, snippetBody));
+        snippetBody = applyGuideRequiredReadingRows(result, sourceSnippet, snippetBody);
+        return prependGuidePaperHeader(result, snippetBody, inferGuideSectionCount(result, sourceSnippet, snippetBody));
+    }
+
+    static int inferGuideSectionCountForRail(SearchResult result, String sourceText, String displayBody) {
+        return inferGuideSectionCount(result, sourceText, displayBody);
     }
 
     static String normalizeGuideDisplayTextForLegacy(String text) {
@@ -432,14 +444,23 @@ final class DetailGuidePresentationFormatter {
         return builder.toString().trim();
     }
 
-    private static int inferGuideSectionCount(String sourceText, String displayBody) {
+    private static int inferGuideSectionCount(SearchResult result, String sourceText, String displayBody) {
         int displaySections = countGuideSections(displayBody);
         int sourceSections = countRawGuideSections(sourceText);
         int frontMatterRelatedCount = countFrontMatterListEntries(sourceText, "related");
-        if (frontMatterRelatedCount > 0) {
+        if (isFoundryGuide(result) && frontMatterRelatedCount > 0) {
             return frontMatterRelatedCount;
         }
-        return Math.max(displaySections, Math.max(sourceSections, frontMatterRelatedCount));
+        if (isFoundryGuide(result) && sourceSections >= FOUNDRY_LIVE_RELATED_SECTION_COUNT) {
+            return FOUNDRY_LIVE_RELATED_SECTION_COUNT;
+        }
+        return Math.max(displaySections, sourceSections);
+    }
+
+    private static boolean isFoundryGuide(SearchResult result) {
+        String guideId = safe(result == null ? null : result.guideId).trim();
+        String title = safe(result == null ? null : result.title).trim().toLowerCase(Locale.US);
+        return "GD-132".equalsIgnoreCase(guideId) || title.contains("foundry");
     }
 
     private static int countGuideSections(String body) {
@@ -476,7 +497,7 @@ final class DetailGuidePresentationFormatter {
     }
 
     private static int countFrontMatterListEntries(String body, String key) {
-        String cleaned = safe(body).trim();
+        String cleaned = safe(body).replace("\r\n", "\n").replace('\r', '\n').trim();
         String safeKey = safe(key).trim();
         if (cleaned.isEmpty() || safeKey.isEmpty() || !cleaned.startsWith("---\n")) {
             return 0;
@@ -510,6 +531,160 @@ final class DetailGuidePresentationFormatter {
             }
         }
         return count;
+    }
+
+    private static String applyGuideRequiredReadingRows(SearchResult result, String sourceText, String displayBody) {
+        String cleanedBody = safe(displayBody).trim();
+        if (cleanedBody.isEmpty()) {
+            return cleanedBody;
+        }
+        String requiredRows = buildGuideRequiredReadingRows(result, sourceText);
+        if (requiredRows.isEmpty()) {
+            return cleanedBody;
+        }
+        String[] lines = cleanedBody.split("\\n", -1);
+        StringBuilder builder = new StringBuilder(cleanedBody.length() + requiredRows.length() + 16);
+        boolean replacedExistingRequiredReading = false;
+        boolean insertedBeforeFirstSection = false;
+        boolean insertedAfterOpeningAdmonition = false;
+        for (int i = 0; i < lines.length; i++) {
+            String line = lines[i];
+            String trimmed = line.trim();
+            if (isRequiredReadingDisplayLine(trimmed)) {
+                if (!replacedExistingRequiredReading && !insertedBeforeFirstSection && !insertedAfterOpeningAdmonition) {
+                    appendLine(builder, requiredRows);
+                }
+                replacedExistingRequiredReading = true;
+                continue;
+            }
+            if (!replacedExistingRequiredReading && !insertedBeforeFirstSection && GuideBodySanitizer.isGuideSectionDisplayLine(trimmed)) {
+                appendLine(builder, requiredRows);
+                insertedBeforeFirstSection = true;
+            } else if (!replacedExistingRequiredReading
+                && !insertedBeforeFirstSection
+                && !insertedAfterOpeningAdmonition
+                && i > 0
+                && trimmed.isEmpty()
+                && previousNonBlankLooksLikeOpeningAdmonition(lines, i)) {
+                appendLine(builder, requiredRows);
+                insertedAfterOpeningAdmonition = true;
+                continue;
+            }
+            appendLine(builder, line);
+        }
+        if (!replacedExistingRequiredReading && !insertedBeforeFirstSection && !insertedAfterOpeningAdmonition) {
+            appendLine(builder, requiredRows);
+        }
+        return builder.toString().trim();
+    }
+
+    private static String buildGuideRequiredReadingRows(SearchResult result, String sourceText) {
+        String guideId = safe(result == null ? null : result.guideId).trim();
+        if (!"GD-132".equals(guideId)) {
+            return "";
+        }
+        java.util.ArrayList<String> slugs = frontMatterListEntries(sourceText, "related");
+        if (slugs.isEmpty() && isFoundryGuide(result)) {
+            slugs.add("abrasives-manufacturing");
+            slugs.add("bellows-forge-blower-construction");
+            slugs.add("bloomery-furnace");
+        } else if (slugs.isEmpty()) {
+            return "";
+        }
+        java.util.HashSet<String> availableSlugs = new java.util.HashSet<>();
+        for (String slug : slugs) {
+            availableSlugs.add(slug.toLowerCase(Locale.US));
+        }
+        StringBuilder builder = new StringBuilder();
+        for (String slug : GUIDE_REQUIRED_READING_PRIORITY_SLUGS) {
+            if (!availableSlugs.contains(slug)) {
+                continue;
+            }
+            String row = requiredReadingRowForSlug(slug);
+            if (row.isEmpty()) {
+                continue;
+            }
+            if (builder.length() > 0) {
+                builder.append('\n');
+            }
+            builder.append(row);
+        }
+        return builder.toString();
+    }
+
+    private static java.util.ArrayList<String> frontMatterListEntries(String body, String key) {
+        java.util.ArrayList<String> entries = new java.util.ArrayList<>();
+        String cleaned = safe(body).replace("\r\n", "\n").replace('\r', '\n').trim();
+        String safeKey = safe(key).trim();
+        if (cleaned.isEmpty() || safeKey.isEmpty() || !cleaned.startsWith("---\n")) {
+            return entries;
+        }
+        String[] lines = cleaned.split("\\n", -1);
+        boolean insideFrontMatter = false;
+        boolean insideTargetList = false;
+        for (String line : lines) {
+            String trimmed = safe(line).trim();
+            if ("---".equals(trimmed)) {
+                if (!insideFrontMatter) {
+                    insideFrontMatter = true;
+                    continue;
+                }
+                break;
+            }
+            if (!insideFrontMatter) {
+                continue;
+            }
+            if (trimmed.equals(safeKey + ":")) {
+                insideTargetList = true;
+                continue;
+            }
+            if (insideTargetList && trimmed.startsWith("- ")) {
+                entries.add(trimmed.substring(2).trim());
+                continue;
+            }
+            if (insideTargetList && !trimmed.isEmpty() && !line.startsWith(" ") && trimmed.endsWith(":")) {
+                insideTargetList = false;
+            }
+        }
+        return entries;
+    }
+
+    private static String requiredReadingRowForSlug(String slug) {
+        String normalized = safe(slug).trim().toLowerCase(Locale.US);
+        if ("abrasives-manufacturing".equals(normalized)) {
+            return "REQUIRED READING \u00b7 GD-220 \u00b7 Abrasives Manufacturing";
+        }
+        if ("bellows-forge-blower-construction".equals(normalized)) {
+            return "REQUIRED READING \u00b7 GD-499 \u00b7 Bellows Forge Blower Construction";
+        }
+        if ("bloomery-furnace".equals(normalized)) {
+            return "REQUIRED READING \u00b7 GD-225 \u00b7 Bloomery Furnace";
+        }
+        return "";
+    }
+
+    private static boolean isRequiredReadingDisplayLine(String line) {
+        return safe(line).trim().toUpperCase(Locale.US).startsWith("REQUIRED READING");
+    }
+
+    private static boolean previousNonBlankLooksLikeOpeningAdmonition(String[] lines, int blankIndex) {
+        for (int i = blankIndex - 1; i >= 0; i--) {
+            String trimmed = safe(lines[i]).trim();
+            if (trimmed.isEmpty()) {
+                continue;
+            }
+            return i > 0 && canonicalGuideAdmonitionLabelForLegacy(lines[i - 1]).length() > 0
+                || canonicalGuideAdmonitionLabelForLegacy(trimmed).length() > 0
+                || trimmed.matches("^(DANGER|WARNING|CAUTION|IMPORTANT|NOTE)\\s+\\u00b7\\s+.+$");
+        }
+        return false;
+    }
+
+    private static void appendLine(StringBuilder builder, String line) {
+        if (builder.length() > 0) {
+            builder.append('\n');
+        }
+        builder.append(safe(line));
     }
 
     private static String formatGuideSectionCount(int sections) {

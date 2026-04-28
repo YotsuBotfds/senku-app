@@ -48,6 +48,25 @@ public final class DetailThreadHistoryRendererTest {
     }
 
     @Test
+    public void wideInlineThreadLeadsWithRecentTurnWithoutChangingPortraitOrder() {
+        DetailThreadHistoryRenderer.State wideSideThread = new DetailThreadHistoryRenderer.State(
+            false,
+            true,
+            false,
+            720
+        );
+        DetailThreadHistoryRenderer.State compactPortrait = new DetailThreadHistoryRenderer.State(
+            false,
+            false,
+            true,
+            320
+        );
+
+        assertEquals(true, DetailThreadHistoryRenderer.shouldShowRecentTurnFirst(wideSideThread));
+        assertEquals(false, DetailThreadHistoryRenderer.shouldShowRecentTurnFirst(compactPortrait));
+    }
+
+    @Test
     public void turnLabelsStayCompactForQuestionAndAnchorShift() {
         DetailThreadHistoryRenderer renderer = new DetailThreadHistoryRenderer(
             null,

@@ -114,6 +114,8 @@ public final class DetailGuidePresentationFormatterTest {
                 + "GD-132 \u00b7 3 SECTIONS\n\n"
                 + "DANGER \u00b7 EXTREME BURN HAZARD\n"
                 + "A single drop of water contacting molten metal causes a violent steam explosion. EVERY tool, mold, crucible, and surface that contacts molten metal must be completely dry.\n"
+                + "REQUIRED READING \u00b7 GD-220 \u00b7 Abrasives Manufacturing\n"
+                + "REQUIRED READING \u00b7 GD-499 \u00b7 Bellows Forge Blower Construction\n"
                 + "\u2014 \u00a7 1 \u00b7 AREA READINESS\n"
                 + "Reviewed Answer-Card Boundary\n"
                 + "Use this section only for foundry-area readiness, visible hazard screening, material and source labeling, no-go triggers, access control, and expert or owner handoff.",
@@ -154,6 +156,145 @@ public final class DetailGuidePresentationFormatterTest {
 
         assertTrue(displayBody.contains("GD-132 \u00b7 17 SECTIONS"));
         assertFalse(displayBody.contains("GD-132 \u00b7 26 SECTIONS"));
+    }
+
+    @Test
+    public void buildGuideBodyDoesNotUseRelatedCountForUnrelatedGuideHeaders() {
+        SearchResult result = new SearchResult(
+            "Water Storage",
+            "",
+            "",
+            "---\n"
+                + "id: GD-214\n"
+                + "related:\n"
+                + "  - clay-vessels\n"
+                + "  - charcoal-filtering\n"
+                + "  - boil-water\n"
+                + "---\n"
+                + "## Safe storage\n"
+                + "Use covered jars.\n"
+                + "## Rotation\n"
+                + "Rotate monthly.",
+            "GD-214",
+            "",
+            "water",
+            "guide-focus"
+        );
+
+        String displayBody = DetailGuidePresentationFormatter.buildGuideBody(result);
+
+        assertTrue(displayBody.contains("GD-214 \u00b7 2 SECTIONS"));
+        assertFalse(displayBody.contains("GD-214 \u00b7 3 SECTIONS"));
+    }
+
+    @Test
+    public void buildGuideBodyCountsFrontMatterRelatedEntriesWithWindowsLineEndings() {
+        StringBuilder body = new StringBuilder();
+        body.append("---\r\n")
+            .append("id: GD-132\r\n")
+            .append("related:\r\n");
+        for (int i = 1; i <= 17; i++) {
+            body.append("  - guide-").append(i).append("\r\n");
+        }
+        body.append("---\r\n");
+        for (int i = 1; i <= 26; i++) {
+            body.append("## Section ").append(i).append(" Mock heading\r\n")
+                .append("Body ").append(i).append(".\r\n");
+        }
+
+        SearchResult result = new SearchResult(
+            "Foundry & Metal Casting",
+            "",
+            "",
+            body.toString(),
+            "GD-132",
+            "",
+            "metalworking",
+            "guide-focus"
+        );
+
+        String displayBody = DetailGuidePresentationFormatter.buildGuideBody(result);
+
+        assertTrue(displayBody.contains("GD-132 \u00b7 17 SECTIONS"));
+        assertFalse(displayBody.contains("GD-132 \u00b7 26 SECTIONS"));
+    }
+
+    @Test
+    public void buildGuideBodyUsesFoundryLiveDefaultsWhenPackBodyLacksFrontMatter() {
+        StringBuilder body = new StringBuilder();
+        body.append(":::danger\n")
+            .append("**EXTREME BURN HAZARD:** Keep every tool dry. Never cast alone.\n")
+            .append(":::\n\n")
+            .append(":::warning\n")
+            .append("**Required Reading:** Before attempting any procedures in this guide, read the [Chemical Safety Guide](chemical-safety.html) in full.\n")
+            .append(":::\n\n");
+        for (int i = 1; i <= 26; i++) {
+            body.append("## Section ").append(i).append(" Mock heading\n")
+                .append("Body ").append(i).append(".\n");
+        }
+
+        SearchResult result = new SearchResult(
+            "Foundry & Metal Casting",
+            "",
+            "",
+            body.toString(),
+            "GD-132",
+            "",
+            "metalworking",
+            "guide"
+        );
+
+        String displayBody = DetailGuidePresentationFormatter.buildGuideBody(result);
+
+        assertTrue(displayBody.contains("GD-132 \u00b7 17 SECTIONS"));
+        assertFalse(displayBody.contains("GD-132 \u00b7 26 SECTIONS"));
+        assertTrue(displayBody.contains("REQUIRED READING \u00b7 GD-220 \u00b7 Abrasives Manufacturing"));
+        assertTrue(displayBody.contains("REQUIRED READING \u00b7 GD-499 \u00b7 Bellows Forge Blower Construction"));
+        assertTrue(displayBody.contains("REQUIRED READING \u00b7 GD-225 \u00b7 Bloomery Furnace"));
+        assertFalse(displayBody.contains("REQUIRED READING \u00b7 Chemical Safety Guide"));
+    }
+
+    @Test
+    public void buildGuideBodyPromotesFoundryRequiredReadingRowsFromRelatedMetadata() {
+        SearchResult result = new SearchResult(
+            "Foundry & Metal Casting",
+            "",
+            "",
+            "---\n"
+                + "id: GD-132\n"
+                + "related:\n"
+                + "  - abrasives-manufacturing\n"
+                + "  - bearing-manufacturing\n"
+                + "  - bellows-forge-blower-construction\n"
+                + "  - bloomery-furnace\n"
+                + "---\n"
+                + ":::danger\n"
+                + "EXTREME BURN HAZARD: Keep tools dry.\n"
+                + ":::\n"
+                + ":::warning\n"
+                + "**Required Reading:** Before attempting any procedures in this guide, read the [Chemical Safety Guide](chemical-safety.html) in full.\n"
+                + ":::\n"
+                + "## Foundry Safety Quickstart\n"
+                + "Check dry tools.",
+            "GD-132",
+            "",
+            "metalworking",
+            "guide-focus"
+        );
+
+        assertEquals(
+            "FIELD MANUAL \u00b7 REV 04-27 \u00b7 PK 2\n"
+                + "Foundry & Metal Casting\n"
+                + "GD-132 \u00b7 4 SECTIONS\n\n"
+                + "DANGER \u00b7 EXTREME BURN HAZARD\n"
+                + "Keep tools dry.\n"
+                + "REQUIRED READING \u00b7 GD-220 \u00b7 Abrasives Manufacturing\n"
+                + "REQUIRED READING \u00b7 GD-499 \u00b7 Bellows Forge Blower Construction\n"
+                + "REQUIRED READING \u00b7 GD-225 \u00b7 Bloomery Furnace\n"
+                + "\u2014 \u00a7 1 \u00b7 FOUNDRY SAFETY QUICKSTART\n"
+                + "Check dry tools.",
+            DetailGuidePresentationFormatter.buildGuideBody(result)
+        );
     }
 
     @Test

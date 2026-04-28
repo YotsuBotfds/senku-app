@@ -2306,6 +2306,50 @@ public final class OfflineAnswerEngineTest {
     }
 
     @Test
+    public void buildUncertainFitAnswerBodyUsesStructuredRainShelterFallback() {
+        String answerBody = OfflineAnswerEngine.buildUncertainFitAnswerBody(
+            "How do I build a simple rain shelter from tarp and cord?",
+            List.of(
+                new SearchResult(
+                    "Primitive Shelter Construction Techniques",
+                    "",
+                    "A simple ridgeline shelter requires only tarp, cord, and two anchor points.",
+                    "",
+                    "GD-345",
+                    "Wood Quality Evaluation for Shelter Construction",
+                    "survival",
+                    "lexical",
+                    "",
+                    "",
+                    "emergency_shelter",
+                    "foundation,weatherproofing,site_selection"
+                )
+            ),
+            OfflineAnswerEngine.ConfidenceLabel.MEDIUM,
+            false
+        );
+
+        assertTrue(answerBody.startsWith("ANSWER\nBuild a ridgeline first"));
+        assertTrue(answerBody.contains("\n\nFIELD STEPS\n1. Tie a taut ridgeline"));
+        assertFalse(answerBody.contains("Possibly relevant guides in the library:"));
+        assertFalse(answerBody.contains("Try:"));
+    }
+
+    @Test
+    public void buildUncertainFitAnswerBodyDoesNotInventRainShelterStepsWithoutSources() {
+        String answerBody = OfflineAnswerEngine.buildUncertainFitAnswerBody(
+            "How do I build a simple rain shelter from tarp and cord?",
+            List.of(),
+            OfflineAnswerEngine.ConfidenceLabel.LOW,
+            false
+        );
+
+        assertTrue(answerBody.startsWith("Senku found only loosely related guides"));
+        assertFalse(answerBody.contains("Build a ridgeline first"));
+        assertTrue(answerBody.contains("Try:"));
+    }
+
+    @Test
     public void reviewerWorkedPromptRoutesToUncertainFitInsteadOfAbstain() {
         String query =
             "He has barely slept, keeps pacing, says normal rules do not apply to him. "

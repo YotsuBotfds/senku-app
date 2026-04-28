@@ -1091,9 +1091,24 @@ public final class PromptHarnessSmokeTest {
             scenario.onActivity(activity -> {
                 DetailSettleSignals signals = collectDetailSettleSignals(activity);
                 if (signals.tabletCompose) {
+                    if (isTabletPortraitActivity(activity)) {
+                        Assert.assertTrue(
+                            "tablet portrait emergency answer should use the full-height emergency owner",
+                            signals.tabletEmergencyFullHeightPage
+                        );
+                        Assert.assertFalse(
+                            "tablet portrait emergency answer should hide stale Compose chrome behind the emergency owner",
+                            signals.tabletRootVisible
+                        );
+                    } else {
+                        Assert.assertTrue(
+                            "tablet non-portrait emergency answer should keep the Compose root visible",
+                            signals.tabletRootVisible
+                        );
+                    }
                     Assert.assertTrue(
-                        "tablet emergency answer should keep the Compose root visible",
-                        signals.tabletRootVisible
+                        "tablet emergency owner should expose the emergency header",
+                        isVisible(activity.findViewById(R.id.detail_emergency_header))
                     );
                     Assert.assertTrue(
                         "tablet emergency answer should stay in answer mode",
@@ -2425,8 +2440,8 @@ public final class PromptHarnessSmokeTest {
                         signals.tabletRootVisible && isUtilityRail(activity)
                     );
                     Assert.assertTrue(
-                        "tablet-landscape guide detail should adopt the new field-links title in compose state",
-                        containsAny(handoffLabel, "field links")
+                        "tablet-landscape guide detail should adopt the cross-reference title in compose state",
+                        containsAny(handoffLabel, "cross-reference")
                     );
                     Assert.assertFalse(
                         "tablet-landscape guide detail should no longer use the old cross-reference rail label",
@@ -2477,8 +2492,8 @@ public final class PromptHarnessSmokeTest {
                 String railSubtitleText = safe(railSubtitle.getText().toString());
                 String panelDescription = safe(String.valueOf(panel.getContentDescription()));
                 Assert.assertTrue(
-                    "tablet-landscape guide rail should adopt the new field-links title",
-                    containsAny(railTitleText, "field links")
+                    "tablet-landscape guide rail should adopt the cross-reference title",
+                    containsAny(railTitleText, "cross-reference")
                 );
                 Assert.assertFalse(
                     "tablet-landscape guide rail subtitle should drop tutorial-style instructions",
@@ -2532,10 +2547,10 @@ public final class PromptHarnessSmokeTest {
                         "utility-rail preview caption should drop tutorial-style field-links wording",
                         containsAny(safe(previewCaption.getText().toString()), "cross-reference rail", "select a linked guide", "inspect it here")
                     );
-                    Assert.assertTrue(
-                        "utility-rail preview panel description should use the tighter field-links copy",
-                        containsAny(safe(String.valueOf(previewPanel.getContentDescription())), "field links. linked guide preview opens here")
-                    );
+                Assert.assertTrue(
+                    "utility-rail preview panel description should use the tighter cross-reference copy",
+                    containsAny(safe(String.valueOf(previewPanel.getContentDescription())), "cross-reference. linked guide preview opens here")
+                );
                     Assert.assertFalse(
                         "utility-rail preview panel description should drop tutorial-style field-links wording",
                         containsAny(safe(String.valueOf(previewPanel.getContentDescription())), "cross-reference rail", "select a linked guide", "inspect it here")
@@ -2551,7 +2566,7 @@ public final class PromptHarnessSmokeTest {
             );
             Assert.assertTrue(
                 "utility-rail destination should preserve the source-guide context",
-                waitForDetailGuideModeContext("field links", expectedAnchorContext, DETAIL_WAIT_MS)
+                waitForDetailGuideModeContext("cross-reference", expectedAnchorContext, DETAIL_WAIT_MS)
             );
             Assert.assertFalse(
                 "utility-rail destination should not use the off-rail return card",
@@ -2600,8 +2615,8 @@ public final class PromptHarnessSmokeTest {
                 String railTitleText = safe(railTitle.getText().toString());
                 String railDescription = safe(String.valueOf(railPanel.getContentDescription()));
                 Assert.assertTrue(
-                    "tablet-landscape warning proof should keep the new field-links title visible",
-                    containsAny(railTitleText, "field links")
+                    "tablet-landscape warning proof should keep the cross-reference title visible",
+                    containsAny(railTitleText, "cross-reference")
                 );
                 Assert.assertFalse(
                     "tablet-landscape warning proof should not regress to the old cross-reference rail wording",
@@ -4940,6 +4955,11 @@ public final class PromptHarnessSmokeTest {
         }
         int minimumLength = Math.max(0, minimumVisibleLength);
         if (signals.tabletCompose) {
+            if (signals.tabletEmergencyFullHeightPage) {
+                return isVisible(activity.findViewById(R.id.detail_emergency_header))
+                    && signals.bodyText.trim().length() >= minimumLength
+                    && signals.answerMode;
+            }
             boolean hasIdentity = !signals.title.trim().isEmpty() || !signals.guideId.trim().isEmpty();
             return signals.tabletRootVisible
                 && signals.bodyText.trim().length() >= minimumLength
@@ -5100,6 +5120,7 @@ public final class PromptHarnessSmokeTest {
         }
         signals.tabletRootVisible = isVisible(activity.findViewById(R.id.tablet_detail_root));
         signals.tabletCompose = signals.tabletRootVisible || readPrivateBooleanField(activity, "tabletComposeMode");
+        signals.tabletEmergencyFullHeightPage = readPrivateBooleanMethod(activity, "isTabletEmergencyFullHeightPage");
         signals.answerMode = readPrivateBooleanField(activity, "answerMode");
         signals.title = readPrivateStringField(activity, "currentTitle");
         signals.guideId = readPrivateStringField(activity, "currentGuideId");
@@ -5452,6 +5473,7 @@ public final class PromptHarnessSmokeTest {
     private static final class DetailSettleSignals {
         boolean tabletCompose;
         boolean tabletRootVisible;
+        boolean tabletEmergencyFullHeightPage;
         boolean answerMode;
         boolean deterministicRoute;
         boolean lowCoverageRoute;
@@ -5729,7 +5751,6 @@ public final class PromptHarnessSmokeTest {
             return true;
         }
         View emergencyHeader = activity.findViewById(R.id.detail_emergency_header);
-        View tabletRoot = activity.findViewById(R.id.tablet_detail_root);
         View root = activity.getWindow() == null ? null : activity.getWindow().getDecorView();
         String visibleSurface = buildVisibleSurfaceSnapshot(root).toLowerCase(Locale.US);
         boolean emergencySurfaceVisible = isVisible(emergencyHeader)
@@ -5747,17 +5768,7 @@ public final class PromptHarnessSmokeTest {
         if (!isTabletPortraitActivity(activity)) {
             return emergencySurfaceVisible && expectedSourceVisible;
         }
-        return emergencySurfaceVisible
-            && isVisible(tabletRoot)
-            && containsAny(
-                visibleSurface,
-                "sources -",
-                "source graph",
-                "1 source",
-                "gd-132",
-                "foundry & metal casting",
-                "guide connection"
-            );
+        return emergencySurfaceVisible && expectedSourceVisible;
     }
 
     private boolean waitForVisibleEmergencySourceOrHandoffContext(long timeoutMs) {

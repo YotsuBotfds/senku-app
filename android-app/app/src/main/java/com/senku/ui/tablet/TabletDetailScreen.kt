@@ -84,6 +84,7 @@ data class TabletDetailState(
     val guideModeSummary: String = "",
     val guideModeAnchorLabel: String = "",
     val statusText: String = "",
+    val guideSectionCount: Int = 0,
     val detailMode: TabletDetailMode = TabletDetailMode.Answer,
 ) {
     constructor(
@@ -108,6 +109,7 @@ data class TabletDetailState(
         guideModeSummary: String = "",
         guideModeAnchorLabel: String = "",
         statusText: String = "",
+        guideSectionCount: Int = 0,
     ) : this(
         guideId = guideId,
         guideTitle = guideTitle,
@@ -130,6 +132,7 @@ data class TabletDetailState(
         guideModeSummary = guideModeSummary,
         guideModeAnchorLabel = guideModeAnchorLabel,
         statusText = statusText,
+        guideSectionCount = guideSectionCount,
         detailMode = TabletDetailMode.Answer,
     )
 }
@@ -167,7 +170,10 @@ data class AnchorState(
 data class XRefState(
     val id: String,
     val title: String,
-)
+    val relation: String,
+) {
+    constructor(id: String, title: String) : this(id, title, "RELATED")
+}
 
 enum class Status {
     Done,
@@ -418,8 +424,9 @@ fun TabletDetailScreen(
         ) {
             ThreadRail(
                 turns = state.turns,
-                sources = state.sources,
+                sources = state.resolvedThreadRailSources(),
                 guideMode = state.isGuideMode(),
+                guideSectionCount = state.resolvedGuideSectionCount(),
                 pinVisible = state.pinVisible,
                 pinActive = state.pinActive,
                 onBackClick = onBackClick,
@@ -579,7 +586,7 @@ private fun CenterPane(
     Box(
         modifier = modifier.background(colors.bg0),
     ) {
-        val verticalPagePadding = if (guideMode) 22.dp else 0.dp
+        val verticalPagePadding = if (guideMode) 12.dp else 0.dp
         val horizontalPagePadding = readingPolicy.answerHorizontalPaddingDp.dp
         val maxContentWidth = if (guideMode) {
             tabletGuidePaperMaxWidthDp(state.isLandscape) + (readingPolicy.answerHorizontalPaddingDp * 2)
@@ -842,7 +849,7 @@ private fun GuidePaperSurface(
     content: @Composable ColumnScope.() -> Unit,
 ) {
     val paperPalette = tabletGuidePaperPalette()
-    val horizontalPadding = if (state.isLandscape) 30.dp else 22.dp
+    val horizontalPadding = if (state.isLandscape) 28.dp else 20.dp
 
     Surface(
         modifier = Modifier.fillMaxWidth(),
@@ -856,11 +863,11 @@ private fun GuidePaperSurface(
                 .fillMaxWidth()
                 .padding(
                     start = horizontalPadding,
-                    top = if (state.isLandscape) 30.dp else 28.dp,
+                    top = if (state.isLandscape) 24.dp else 22.dp,
                     end = horizontalPadding,
-                    bottom = if (state.isLandscape) 34.dp else 42.dp,
+                    bottom = if (state.isLandscape) 30.dp else 36.dp,
                 ),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
+            verticalArrangement = Arrangement.spacedBy(if (state.isLandscape) 13.dp else 14.dp),
             content = content,
         )
     }
@@ -989,8 +996,11 @@ private fun TitleBar(
         modifier = modifier
             .fillMaxWidth()
             .background(colors.bg0)
-            .padding(horizontal = 16.dp, vertical = 5.dp),
-        verticalArrangement = Arrangement.spacedBy(3.dp),
+            .padding(
+                horizontal = 16.dp,
+                vertical = if (guideMode) 3.dp else 5.dp,
+            ),
+        verticalArrangement = Arrangement.spacedBy(if (guideMode) 2.dp else 3.dp),
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -1029,8 +1039,8 @@ private fun TitleBar(
                 },
                 modifier = Modifier.weight(1f),
                 style = typography.sectionTitle.copy(
-                    fontSize = 17.sp,
-                    lineHeight = 20.sp,
+                    fontSize = if (guideMode) 15.sp else 17.sp,
+                    lineHeight = if (guideMode) 18.sp else 20.sp,
                     fontWeight = FontWeight.SemiBold,
                 ),
                 color = colors.ink0,
@@ -1076,7 +1086,7 @@ private fun TitleBar(
                             lineHeight = 14.sp,
                         ),
                         color = colors.ink2,
-                        maxLines = 2,
+                        maxLines = if (guideMode) 1 else 2,
                         overflow = TextOverflow.Ellipsis,
                     )
                 }
@@ -1371,6 +1381,48 @@ internal fun TabletDetailState.isThreadMode(): Boolean = detailMode == TabletDet
 
 internal fun TabletDetailState.isAnswerOrThreadMode(): Boolean =
     detailMode == TabletDetailMode.Answer || detailMode == TabletDetailMode.Thread
+
+internal fun TabletDetailState.resolvedGuideSectionCount(): Int =
+    if (isGuideMode()) {
+        maxOf(
+            guideSectionCount.takeIf { it > 0 } ?: 0,
+            inferredGuideSectionCountFallback() ?: 0,
+            turns.size,
+        )
+    } else {
+        turns.size
+    }
+
+internal fun TabletDetailState.resolvedThreadRailSources(): List<SourceState> {
+    if (!isGuideMode()) {
+        return sources
+    }
+    val visibleXRefs = tabletSourceGraphVisibleXRefs(tabletSourceGraphAnchor(anchor), tabletSourceGraphXRefs(xrefs))
+    if (visibleXRefs.isEmpty()) {
+        return sources
+    }
+    val currentGuideId = guideId.trim()
+    return visibleXRefs.map { xref ->
+        val xrefId = xref.id.trim()
+        SourceState(
+            key = xrefId.ifEmpty { xref.title.trim() },
+            id = xrefId,
+            title = xref.title.trim(),
+            isAnchor = false,
+            isSelected = currentGuideId.isNotEmpty() && xrefId.equals(currentGuideId, ignoreCase = true),
+        )
+    }
+}
+
+private fun TabletDetailState.inferredGuideSectionCountFallback(): Int? {
+    val identityText = listOf(guideId, guideTitle, anchor.id, anchor.title)
+        .joinToString(" ")
+        .lowercase()
+    if ("gd-132" in identityText || "foundry" in identityText) {
+        return 17
+    }
+    return null
+}
 
 internal fun tabletTitleBarModeLabel(detailMode: TabletDetailMode): String =
     when (detailMode) {

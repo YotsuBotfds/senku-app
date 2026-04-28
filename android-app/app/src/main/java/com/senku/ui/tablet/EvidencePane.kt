@@ -332,7 +332,11 @@ private fun CrossReferenceSection(
     landmark: String,
     emptyDescription: String,
 ) {
-    val cardCount = buildCrossReferenceCardCount(anchor, xrefs)
+    val visibleXRefs = tabletSourceGraphVisibleXRefs(anchor, xrefs)
+    val referenceCount = buildCrossReferenceCardCount(anchor, visibleXRefs)
+    val sourceCount = visibleXRefs.size + if (anchor.hasSource) 1 else 0
+    val headerCount = if (answerMode) sourceCount else referenceCount
+    val hasRows = anchor.hasSource || visibleXRefs.isNotEmpty()
     Column(
         modifier = Modifier.semantics {
             isTraversalGroup = true
@@ -341,16 +345,16 @@ private fun CrossReferenceSection(
         verticalArrangement = Arrangement.spacedBy(7.dp),
     ) {
         SectionHeader(
-            title = if (answerMode) "SOURCES - $cardCount" else "CROSS-REFERENCE - $cardCount",
+            title = if (answerMode) "SOURCES - $sourceCount" else "CROSS-REFERENCE \u00b7 $referenceCount",
             accessibilitySummary = buildSourceGraphAccessibilitySummary(
                 landmark = landmark,
                 emptyDescription = emptyDescription,
                 anchor = anchor,
-                count = cardCount,
+                count = headerCount,
             ),
         )
         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            if (cardCount == 0) {
+            if (!hasRows) {
                 PlaceholderCard("No guide connections")
             } else {
                 if (anchor.hasSource) {
@@ -366,10 +370,10 @@ private fun CrossReferenceSection(
                         density = EvidenceCardDensity.Compact,
                     )
                 }
-                xrefs.forEach { xref ->
+                visibleXRefs.forEach { xref ->
                     ManualEvidenceCard(
                         guideId = xref.id,
-                        relation = "RELATED",
+                        relation = xref.relation.trim().ifEmpty { "RELATED" },
                         title = xref.title,
                         section = "",
                         snippet = "",
@@ -385,7 +389,15 @@ private fun CrossReferenceSection(
 }
 
 internal fun buildCrossReferenceCardCount(anchor: AnchorState, xrefs: List<XRefState>): Int =
-    xrefs.size + if (anchor.hasSource) 1 else 0
+    tabletSourceGraphVisibleXRefs(anchor, xrefs).size
+
+internal fun tabletSourceGraphVisibleXRefs(anchor: AnchorState, xrefs: List<XRefState>): List<XRefState> {
+    val anchorId = anchor.id.trim()
+    return xrefs.filter { xref ->
+        val xrefId = xref.id.trim()
+        xrefId.isNotEmpty() && (anchorId.isEmpty() || !xrefId.equals(anchorId, ignoreCase = true))
+    }
+}
 
 @Composable
 private fun ManualEvidenceCard(
@@ -504,7 +516,7 @@ private fun EvidenceCardText(
     Text(
         text = listOf(guideId.trim().ifEmpty { "GD-?" }, relation, section.trim())
             .filter { it.isNotEmpty() }
-            .joinToString(" - "),
+            .joinToString(" \u00b7 "),
         style = typography.monoCaps.copy(
             fontSize = 10.sp,
             lineHeight = 12.sp,

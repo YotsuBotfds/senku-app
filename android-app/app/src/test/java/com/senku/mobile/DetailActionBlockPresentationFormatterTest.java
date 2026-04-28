@@ -208,6 +208,27 @@ public final class DetailActionBlockPresentationFormatterTest {
     }
 
     @Test
+    public void extractEmergencyActionSpecsReadsGd132AnswerHeadingAsActions() {
+        List<DetailActionBlockPresentationFormatter.EmergencyActionSpec> actions =
+            DetailActionBlockPresentationFormatter.extractEmergencyActionSpecs(
+                "ANSWER GD-132 - Burn hazard response\n" +
+                    "1. Stop all hot work. No new charges, no new pours.\n" +
+                    "2. Clear the floor to a 5 m radius. Move personnel upwind.\n" +
+                    "3. Confirm two paths of egress. Doors and roll-up openings must be unobstructed.\n" +
+                    "4. Notify the area owner. GD-132 \u00a71 is current owner.\n\n" +
+                    "Limits & safety:\n" +
+                    "Treat water near molten metal as an extreme burn hazard.",
+                text -> citationFormatter.stripInlineCitationText(text)
+            );
+
+        assertEquals(4, actions.size());
+        assertEquals("Stop all hot work", actions.get(0).title);
+        assertEquals("Clear the floor to 5 m radius", actions.get(1).title);
+        assertEquals("Door and roll-up open and unobstructed.", actions.get(2).detail);
+        assertEquals("GD-132 lists current owner.", actions.get(3).detail);
+    }
+
+    @Test
     public void extractEmergencyActionSpecsNormalizesFoundryMockDetailCopy() {
         List<DetailActionBlockPresentationFormatter.EmergencyActionSpec> actions =
             DetailActionBlockPresentationFormatter.extractEmergencyActionSpecs(
@@ -236,6 +257,9 @@ public final class DetailActionBlockPresentationFormatterTest {
     public void styleEmergencyMinimumDistanceUnderlinesEmergencyDistancePhrases() {
         assertTrue(DetailActionBlockPresentationFormatter.shouldStyleEmergencyMinimumDistance(
             "Move to minimum 5 m from the active work zone."
+        ));
+        assertTrue(DetailActionBlockPresentationFormatter.shouldStyleEmergencyMinimumDistance(
+            "Move to minimum 5 meters from the active work zone."
         ));
         assertTrue(DetailActionBlockPresentationFormatter.shouldStyleEmergencyMinimumDistance(
             "Clear the floor to 5 m radius."

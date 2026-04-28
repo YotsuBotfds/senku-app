@@ -204,6 +204,27 @@ public final class DetailGuideContextPresentationFormatterTest {
         assertEquals("Cross-reference", formatter.buildCurrentGuideHandoffLabel(state));
     }
 
+    @Test
+    public void utilityRailGuideHandoffUsesCrossReferenceLanguage() {
+        DetailGuideContextPresentationFormatter formatter =
+            new DetailGuideContextPresentationFormatter(null);
+        DetailGuideContextPresentationFormatter.State state = state(
+            false,
+            false,
+            false,
+            true,
+            "GD-132",
+            "Foundry & Metal Casting",
+            "",
+            "",
+            "",
+            "",
+            ""
+        );
+
+        assertEquals("Cross-reference", formatter.buildCurrentGuideHandoffLabel(state));
+    }
+
     private static DetailGuideContextPresentationFormatter.State state(
         boolean answerMode,
         boolean activeGuideContextPanel,

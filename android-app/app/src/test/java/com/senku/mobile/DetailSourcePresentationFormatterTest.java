@@ -253,6 +253,119 @@ public final class DetailSourcePresentationFormatterTest {
     }
 
     @Test
+    public void stationSourceButtonLabelUsesAnswerSourceStackContract() {
+        DetailSourcePresentationFormatter formatter = new DetailSourcePresentationFormatter(null);
+
+        assertEquals(
+            "GD-220 \u00B7 ANCHOR \u00B7 Abrasives Manufacturing",
+            formatter.buildStationSourceButtonLabel(
+                new SearchResult(
+                    "Abrasives Manufacturing",
+                    "",
+                    "",
+                    "",
+                    "GD-220",
+                    "",
+                    "materials",
+                    "hybrid"
+                ),
+                0,
+                3,
+                true
+            )
+        );
+        assertEquals(
+            "GD-132 \u00B7 RELATED \u00B7 Foundry & Metal Casting",
+            formatter.buildStationSourceButtonLabel(
+                new SearchResult(
+                    "Foundry & Metal Casting",
+                    "",
+                    "",
+                    "",
+                    "GD-132",
+                    "",
+                    "metal",
+                    "guide-focus"
+                ),
+                1,
+                3,
+                false
+            )
+        );
+        assertEquals(
+            "GD-345 \u00B7 TOPIC \u00B7 Tarp & Cord Shelters",
+            formatter.buildStationSourceButtonLabel(
+                new SearchResult(
+                    "Primitive Shelter Construction Techniques",
+                    "",
+                    "A simple ridgeline shelter requires only tarp, cord, and two anchor points.",
+                    "",
+                    "GD-345",
+                    "Wood Quality Evaluation for Shelter Construction",
+                    "survival",
+                    "lexical",
+                    "",
+                    "",
+                    "emergency_shelter",
+                    "foundation,weatherproofing,site_selection"
+                ),
+                2,
+                3,
+                false
+            )
+        );
+    }
+
+    @Test
+    public void stationSourceButtonLabelNormalizesRainShelterLiveStack() {
+        DetailSourcePresentationFormatter formatter = new DetailSourcePresentationFormatter(null);
+        SearchResult abrasiveAnchor = reviewedStackResult("GD-220", "Abrasives Manufacturing", "abrasives manufacturing");
+        SearchResult foundryRelated = reviewedStackResult("GD-132", "Foundry & Metal Casting", "foundry metal casting");
+        SearchResult rainShelter = reviewedStackResult("GD-345", "Wood Quality Evaluation for Shelter Construction", "tarp cord rain shelter");
+
+        assertEquals(
+            "GD-220 \u00B7 ANCHOR \u00B7 Abrasives Manufacturing",
+            formatter.buildStationSourceButtonLabel(abrasiveAnchor, 0, 3, true)
+        );
+        assertEquals(
+            "GD-132 \u00B7 RELATED \u00B7 Foundry & Metal Casting",
+            formatter.buildStationSourceButtonLabel(foundryRelated, 1, 3, false)
+        );
+        assertEquals(
+            "GD-345 \u00B7 TOPIC \u00B7 Tarp & Cord Shelters",
+            formatter.buildStationSourceButtonLabel(rainShelter, 2, 3, false)
+        );
+    }
+
+    @Test
+    public void stationSourceButtonLabelDoesNotRelabelClickTargetByIndex() {
+        DetailSourcePresentationFormatter formatter = new DetailSourcePresentationFormatter(null);
+        SearchResult rainShelter = reviewedStackResult("GD-345", "Wood Quality Evaluation for Shelter Construction", "tarp cord rain shelter");
+
+        assertEquals(
+            "GD-345 \u00B7 TOPIC \u00B7 Tarp & Cord Shelters",
+            formatter.buildStationSourceButtonLabel(rainShelter, 0, 3, true)
+        );
+    }
+
+    private static SearchResult reviewedStackResult(String guideId, String title, String text) {
+        return new SearchResult(
+            text,
+            "",
+            "A simple ridgeline shelter requires only tarp, cord, and two anchor points.",
+            "",
+            guideId,
+            title,
+            "survival",
+            "lexical",
+            "",
+            "",
+            "emergency_shelter",
+            "foundation,weatherproofing,site_selection"
+        );
+    }
+
+    @Test
     public void inlineSourceChipLabelUsesAnchorGuideAndPlainSeparator() {
         DetailSourcePresentationFormatter formatter = new DetailSourcePresentationFormatter(null);
 

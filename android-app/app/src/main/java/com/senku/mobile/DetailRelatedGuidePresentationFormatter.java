@@ -42,13 +42,13 @@ final class DetailRelatedGuidePresentationFormatter {
     String buildStationRelatedGuidesSubtitle(State state, int count) {
         String anchorLabel = safe(state == null ? null : state.currentGuideId).trim();
         if (anchorLabel.isEmpty()) {
-            anchorLabel = context.getString(R.string.detail_related_guides_anchor_fallback);
+            anchorLabel = fallbackAnchorLabel();
         }
-        return context.getString(
-            R.string.detail_related_guides_station_subtitle_live,
-            formatCountLabel(count, "related guide", "related guides"),
-            anchorLabel
-        );
+        return "Cross-reference \u00b7 "
+            + formatCountLabel(count, "linked guide", "linked guides")
+            + " \u00b7 opened from "
+            + anchorLabel
+            + ".";
     }
 
     String buildRelatedGuidesPanelContentDescription(State state, int count) {
@@ -57,7 +57,7 @@ final class DetailRelatedGuidePresentationFormatter {
             : state;
         StringBuilder builder = new StringBuilder();
         if (safeState.promotedCrossReferenceRail) {
-            builder.append(context.getString(R.string.detail_loop2_field_links_panel_prefix));
+            builder.append("Cross-reference.");
         } else if (safeState.nonRailCrossReferenceCopy) {
             builder.append(context.getString(R.string.detail_related_guides_panel_prefix_nonrail));
         } else {
@@ -83,7 +83,7 @@ final class DetailRelatedGuidePresentationFormatter {
     String buildNonRailRelatedGuidesSubtitle(State state, int count) {
         String anchorLabel = safe(state == null ? null : state.activeGuideContextPrimaryLabel).trim();
         if (anchorLabel.isEmpty()) {
-            anchorLabel = context.getString(R.string.detail_related_guides_anchor_fallback);
+            anchorLabel = fallbackAnchorLabel();
         }
         return "Cross-reference \u00b7 "
             + formatCountLabel(count, "linked guide", "linked guides")
@@ -258,8 +258,14 @@ final class DetailRelatedGuidePresentationFormatter {
     private String resolveSourceAnchorLabel(State state) {
         String sourceAnchorLabel = safe(state == null ? null : state.sourceAnchorLabel).trim();
         return sourceAnchorLabel.isEmpty()
-            ? context.getString(R.string.detail_related_guides_anchor_fallback)
+            ? fallbackAnchorLabel()
             : sourceAnchorLabel;
+    }
+
+    private String fallbackAnchorLabel() {
+        return context == null
+            ? "this guide"
+            : context.getString(R.string.detail_related_guides_anchor_fallback);
     }
 
     private static String formatCountLabel(int count, String singular, String plural) {

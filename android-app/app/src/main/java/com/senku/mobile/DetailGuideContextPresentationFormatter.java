@@ -182,7 +182,7 @@ final class DetailGuideContextPresentationFormatter {
     }
 
     static String guideRailLabel(Context context) {
-        return context.getString(R.string.detail_loop2_field_links_title);
+        return "Cross-reference";
     }
 
     static String buildGuideHandoffSummaryText(Context context, String handoffLabel, String anchorLabel) {

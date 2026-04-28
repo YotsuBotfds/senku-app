@@ -132,6 +132,31 @@ support below the first viewport. Next work should prioritize answer source
 identity/body selection, guide 17-section/required-reading fidelity, then
 home/search density cleanup.
 
+Wave28 reviewer note: read-only visual/XML review of `20260428_073733`
+keeps Answer as the top residual. Phone and phone-landscape Answer still title
+GD-345 as `Wood Quality Evaluation...`, render generic unsure-fit steps, and
+use duplicate GD-345 source cards instead of the mock article body plus
+GD-220/GD-132/GD-345 source identities. Guide is second: normal guide views
+are closer but still report `26 SECTIONS` where mocks expect 17, while the
+tablet cross-reference proof regresses to `SECTIONS - 1` / `CROSS-REFERENCE -
+1` owner rails and a `Field links` body. Thread is improved, but phone
+landscape still exposes a large GD-220 provenance/source block ahead of the
+mock's recent-turn transcript. Home/Search are lower-risk density/chrome
+cleanup; current Search rows preserve IDs/order but remain heavier and more
+developer-chromed than mocks.
+
+Wave30 commit proof: `artifacts/ui_state_pack/wave30_commit_proof/20260428_091449`
+is green (`pass`, 47/47, fail count 0), homogeneous APK
+`bbd8bee4b2d4f7fb2a8ff1349ee35882738eaf6197ebcaf9c15ddde569dc8c88`,
+model `gemma-4-e2b-it-litert`
+(`ea1102014465edeb14b517bf270f6751d036749e3c5f517a7ff802782cb92161`),
+rotation mismatch count 0. Local Android quality gate passed immediately before
+the pack. Manual spot check: tablet-landscape guide destination now reports
+`SECTIONS - 17` and keeps required/cross-reference rails; phone-landscape thread
+no longer opens inside the clipped field-steps card. Remaining deferred visual
+work: phone thread should expose fuller Q1/Q2 transcript, and Answer/Guide
+phone chrome still needs another mock-parity pass.
+
 ## Wave25+ Plan
 
 | Wave | Slice | Why this order | Avoid overlapping write sets | Acceptance proof |
