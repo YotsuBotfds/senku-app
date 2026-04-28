@@ -26,6 +26,25 @@ public final class SearchResultAdapterTest {
     }
 
     @Test
+    public void composeBridgeUsesOrdinalRankInsteadOfSyntheticScore() {
+        assertEquals("#1", SearchResultAdapter.buildRankLabelForTest(0));
+        assertEquals("#4", SearchResultAdapter.buildRankLabelForTest(3));
+        assertEquals("#1", SearchResultAdapter.buildRankLabelForTest(-1));
+    }
+
+    @Test
+    public void composeBridgeMetadataLineUsesRoleWindowAndCategory() {
+        assertEquals(
+            "Role: Safety // Window: Immediate // Category: Water",
+            SearchResultAdapter.buildCardMetadataLineForTest("role_safety", "immediate", "water")
+        );
+        assertEquals(
+            "Category: Shelter",
+            SearchResultAdapter.buildCardMetadataLineForTest("general", "unknown", "shelter")
+        );
+    }
+
+    @Test
     public void linkedGuideBrowseHandoffDescriptionsUseConnectionLanguage() {
         assertEquals(
             "Guide connection available: GD-214 - Water Storage",

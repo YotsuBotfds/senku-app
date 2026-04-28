@@ -34,6 +34,7 @@ import static com.senku.ui.search.SearchResultCardKt.bindSearchResultCard;
 import static com.senku.ui.search.SearchResultCardKt.buildWarmThreadGuideIds;
 import static com.senku.ui.search.SearchResultCardKt.continueConversationContentDescription;
 import static com.senku.ui.search.SearchResultCardKt.laneLabelForRetrievalMode;
+import static com.senku.ui.search.SearchResultCardKt.metadataLineForSearchResultCard;
 
 public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResultAdapter.ResultViewHolder> {
     private static final int MAX_HIGHLIGHT_TERMS = 4;
@@ -185,7 +186,7 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
             holder.snippet.setAlpha(1.0f);
             holder.snippet.setTextSize(TypedValue.COMPLEX_UNIT_PX, holder.defaultSnippetTextSizePx);
         }
-        bindComposeCard(holder, result);
+        bindComposeCard(holder, result, position);
         holder.itemView.setOnClickListener(v -> {
             if (listener != null) {
                 listener.onResultClick(result);
@@ -443,11 +444,11 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
         });
     }
 
-    private void bindComposeCard(ResultViewHolder holder, SearchResult result) {
+    private void bindComposeCard(ResultViewHolder holder, SearchResult result, int position) {
         if (holder == null || holder.composeView == null || result == null) {
             return;
         }
-        SearchResultCardModel model = buildSearchResultCardModel(result);
+        SearchResultCardModel model = buildSearchResultCardModel(result, position);
         Runnable cardClick = () -> {
             if (listener != null) {
                 listener.onResultClick(result);
@@ -472,12 +473,15 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
         bindSearchResultCard(holder.composeView, model, cardClick, continueThreadClick, linkedGuideClick);
     }
 
-    private SearchResultCardModel buildSearchResultCardModel(SearchResult result) {
+    private SearchResultCardModel buildSearchResultCardModel(SearchResult result, int position) {
         String title = cleanDisplayText(result == null ? null : result.title, 120);
         String subtitle = buildCardSubtitle(result);
         String snippet = buildCardSnippet(result);
         String laneLabel = laneLabelForRetrievalMode(safe(result == null ? null : result.retrievalMode));
         int laneColor = colorForRetrievalMode(safe(result == null ? null : result.retrievalMode).trim().toLowerCase(Locale.US));
+        String rankLabel = buildRankLabel(position);
+        String guideIdLabel = cleanDisplayText(result == null ? null : result.guideId, 32);
+        String metadataLine = buildCardMetadataLine(result);
         LinkedGuidePreview linkedPreview = resolveLinkedGuidePreview(result);
         String linkedLabel = linkedPreview != null && linkedPreview.hasTargetGuide() ? "Guide connection" : null;
         String linkedDescription = linkedPreview != null && linkedPreview.hasTargetGuide()
@@ -490,12 +494,23 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
             snippet,
             laneLabel,
             laneColor,
+            rankLabel,
+            guideIdLabel,
+            metadataLine,
             showContinueThreadChip,
             "Continue conversation",
             showContinueThreadChip ? buildContinueThreadContentDescription(result) : continueConversationContentDescription(""),
             linkedLabel,
             linkedDescription
         );
+    }
+
+    private String buildRankLabel(int position) {
+        return buildRankLabelForTest(position);
+    }
+
+    static String buildRankLabelForTest(int position) {
+        return "#" + Math.max(1, position + 1);
     }
 
     private LinkedGuidePreview resolveLinkedGuidePreview(SearchResult result) {
@@ -520,18 +535,31 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
         if (result == null) {
             return "";
         }
+        String section = cleanDisplayText(result.sectionHeading, 64);
+        if (!section.isEmpty()) {
+            return section;
+        }
+        String subtitle = cleanDisplayText(result.subtitle, 64);
         String guideId = cleanDisplayText(result.guideId, 40);
-        String category = humanizeMetadataValue(result.category, 24);
-        if (!guideId.isEmpty() && !category.isEmpty()) {
-            return guideId + " \u00B7 " + category;
+        if (!subtitle.isEmpty() && !subtitle.equalsIgnoreCase(guideId)) {
+            return subtitle;
         }
-        if (!guideId.isEmpty()) {
-            return guideId;
-        }
-        if (!category.isEmpty()) {
-            return category;
-        }
-        return cleanDisplayText(result.subtitle, 64);
+        return "";
+    }
+
+    private String buildCardMetadataLine(SearchResult result) {
+        return buildCardMetadataLineForTest(
+            result == null ? null : result.contentRole,
+            result == null ? null : result.timeHorizon,
+            result == null ? null : result.category
+        );
+    }
+
+    static String buildCardMetadataLineForTest(String rawRole, String rawWindow, String rawCategory) {
+        String role = humanizeContentRoleInternal(rawRole, 22);
+        String window = cleanDisplayTextInternal(humanizeStatic(safe(rawWindow).trim().toLowerCase(Locale.US)), 22);
+        String category = cleanDisplayTextInternal(humanizeStatic(safe(rawCategory).trim().toLowerCase(Locale.US)), 24);
+        return metadataLineForSearchResultCard(role, window, category);
     }
 
     private String buildCardSnippet(SearchResult result) {

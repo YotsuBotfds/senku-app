@@ -41,6 +41,25 @@ class SearchResultCardHeuristicsTest {
     }
 
     @Test
+    fun honestRankLabel_neverImpersonatesMatchPercentages() {
+        assertEquals("#1", honestRankLabel(""))
+        assertEquals("#3", honestRankLabel(" #3 "))
+        assertFalse(honestRankLabel("#2").contains("%"))
+    }
+
+    @Test
+    fun metadataLineForSearchResultCard_surfacesOnlyHonestMetadata() {
+        assertEquals(
+            "Role: Safety // Window: Immediate // Category: Water",
+            metadataLineForSearchResultCard("Safety", "Immediate", "Water"),
+        )
+        assertEquals(
+            "Category: Fire",
+            metadataLineForSearchResultCard("General", "unknown", "Fire"),
+        )
+    }
+
+    @Test
     fun warmThreadGuideIdsForPreview_onlyKeepsFreshThreads() {
         val now = 1_000_000L
         val freshIds = warmThreadGuideIdsForPreview(

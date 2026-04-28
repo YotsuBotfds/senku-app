@@ -46,6 +46,9 @@ data class SearchResultCardModel(
     val snippet: String,
     val laneLabel: String,
     @param:ColorInt val laneColorArgb: Int,
+    val rankLabel: String = "",
+    val guideIdLabel: String = "",
+    val metadataLine: String = "",
     val showContinueThreadChip: Boolean = false,
     val continueThreadLabel: String = "Continue conversation",
     val continueThreadContentDescription: String = continueConversationContentDescription(),
@@ -99,23 +102,25 @@ fun SearchResultCard(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 14.dp, vertical = 13.dp),
-            verticalArrangement = Arrangement.spacedBy(6.dp),
+                .padding(horizontal = 12.dp, vertical = 11.dp),
+            verticalArrangement = Arrangement.spacedBy(5.dp),
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.Top,
+                verticalAlignment = Alignment.CenterVertically,
             ) {
+                RankTag(label = model.rankLabel)
+                Spacer(modifier = Modifier.width(8.dp))
                 Text(
-                    text = model.title.trim(),
+                    text = model.guideIdLabel.trim().uppercase(Locale.US),
                     modifier = Modifier.weight(1f),
-                    style = SenkuTheme.typography.uiBody.copy(
-                        fontSize = 15.sp,
-                        lineHeight = 18.sp,
-                        fontWeight = FontWeight.SemiBold,
+                    style = SenkuTheme.typography.monoCaps.copy(
+                        fontSize = 10.sp,
+                        lineHeight = 12.sp,
+                        fontWeight = FontWeight.Bold,
                     ),
-                    color = colors.paperInk,
-                    maxLines = 2,
+                    color = colors.paperInkMuted,
+                    maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                 )
                 Spacer(modifier = Modifier.width(10.dp))
@@ -126,16 +131,44 @@ fun SearchResultCard(
             }
 
             Text(
-                text = model.subtitle.trim().uppercase(Locale.US),
-                style = SenkuTheme.typography.monoCaps.copy(
-                    fontSize = 10.sp,
-                    lineHeight = 13.5.sp,
-                    fontWeight = FontWeight.Medium,
+                text = model.title.trim(),
+                style = SenkuTheme.typography.uiBody.copy(
+                    fontSize = 15.sp,
+                    lineHeight = 18.sp,
+                    fontWeight = FontWeight.SemiBold,
                 ),
-                color = colors.paperInkMuted,
-                maxLines = 1,
+                color = colors.paperInk,
+                maxLines = 2,
                 overflow = TextOverflow.Ellipsis,
             )
+
+            if (model.metadataLine.isNotBlank()) {
+                Text(
+                    text = model.metadataLine.trim().uppercase(Locale.US),
+                    style = SenkuTheme.typography.monoCaps.copy(
+                        fontSize = 9.5.sp,
+                        lineHeight = 12.sp,
+                        fontWeight = FontWeight.Medium,
+                    ),
+                    color = colors.paperInkMuted,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                )
+            }
+
+            if (model.subtitle.isNotBlank()) {
+                Text(
+                    text = model.subtitle.trim(),
+                    style = SenkuTheme.typography.monoCaps.copy(
+                        fontSize = 10.sp,
+                        lineHeight = 12.5.sp,
+                        fontWeight = FontWeight.Medium,
+                    ),
+                    color = colors.paperInkMuted,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                )
+            }
 
             Text(
                 text = model.snippet.trim(),
@@ -209,6 +242,29 @@ private fun LaneTag(
 }
 
 @Composable
+private fun RankTag(label: String) {
+    val colors = SenkuTheme.colors
+    Surface(
+        color = colors.paperInk.copy(alpha = 0.08f),
+        contentColor = colors.paperInk,
+        shape = RoundedCornerShape(6.dp),
+        border = BorderStroke(1.dp, colors.paperInk.copy(alpha = 0.14f)),
+    ) {
+        Text(
+            text = honestRankLabel(label),
+            modifier = Modifier.padding(horizontal = 7.dp, vertical = 4.dp),
+            style = SenkuTheme.typography.monoCaps.copy(
+                fontSize = 10.sp,
+                lineHeight = 12.sp,
+                fontWeight = FontWeight.Bold,
+            ),
+            color = colors.paperInk,
+            maxLines = 1,
+        )
+    }
+}
+
+@Composable
 private fun ActionChip(
     label: String,
     contentDescription: String,
@@ -272,6 +328,39 @@ fun laneLabelForRetrievalMode(retrievalMode: String): String {
     }
 }
 
+fun honestRankLabel(rankLabel: String): String {
+    val cleaned = rankLabel.trim()
+    return if (cleaned.isEmpty()) {
+        "#1"
+    } else {
+        cleaned
+    }
+}
+
+fun metadataLineForSearchResultCard(
+    role: String,
+    window: String,
+    category: String,
+): String {
+    val tokens = ArrayList<String>(3)
+    normalizedMetadataValue(role)?.let { tokens.add("Role: $it") }
+    normalizedMetadataValue(window)?.let { tokens.add("Window: $it") }
+    normalizedMetadataValue(category)?.let { tokens.add("Category: $it") }
+    return tokens.joinToString(" // ")
+}
+
+private fun normalizedMetadataValue(value: String): String? {
+    val cleaned = value.trim()
+    if (cleaned.isEmpty()) {
+        return null
+    }
+    val normalized = cleaned.lowercase(Locale.US)
+    if (normalized == "general" || normalized == "unknown" || normalized == "none") {
+        return null
+    }
+    return cleaned
+}
+
 fun continueConversationContentDescription(guideId: String = ""): String {
     val cleanedGuideId = guideId.trim()
     return if (cleanedGuideId.isEmpty()) {
@@ -330,6 +419,9 @@ private fun SearchResultCardPreview() {
                 snippet = "Bring the water to a rolling boil, then let it cool covered before storing it in a clean container.",
                 laneLabel = "Best match",
                 laneColorArgb = 0xFF7A9A5A.toInt(),
+                rankLabel = "#1",
+                guideIdLabel = "GD-214",
+                metadataLine = "Role: Safety // Window: Immediate // Category: Water",
                 showContinueThreadChip = true,
                 linkedGuideLabel = "Related guide",
                 linkedGuideContentDescription = relatedGuideContentDescription("GD-214 - Boiling water"),
