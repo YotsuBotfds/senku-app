@@ -28,9 +28,16 @@ final class DetailWarningCopySanitizer {
         "safety constraint",
         "guide proof",
         "guide source",
+        "reviewed card proof",
+        "reviewed evidence",
+        "evidence proof",
+        "proof card",
+        "proof rail",
         "proof route",
         "proof metadata",
-        "route proof"
+        "route proof",
+        "backend route",
+        "route backend"
     };
     private static final String[] WARNING_RESIDUAL_TRAIL_MARKERS = new String[] {
         "implied",
@@ -82,7 +89,27 @@ final class DetailWarningCopySanitizer {
             "Move to minimum 5 m from active work zone."
         );
         cleaned = cleaned.replace(
+            "Move to minimum five meters from the active work zone.",
+            "Move to minimum 5 m from active work zone."
+        );
+        cleaned = cleaned.replace(
+            "Move to minimum five metres from the active work zone.",
+            "Move to minimum 5 m from active work zone."
+        );
+        cleaned = cleaned.replace(
+            "Move to minimum 5 meters from the active work zone.",
+            "Move to minimum 5 m from active work zone."
+        );
+        cleaned = cleaned.replace(
+            "Move to minimum 5 metres from the active work zone.",
+            "Move to minimum 5 m from active work zone."
+        );
+        cleaned = cleaned.replace(
             "Clear the floor to a 5 m radius",
+            "Clear the floor to 5 m radius"
+        );
+        cleaned = cleaned.replace(
+            "Clear the floor to a minimum 5 m radius",
             "Clear the floor to 5 m radius"
         );
         cleaned = cleaned.replace(

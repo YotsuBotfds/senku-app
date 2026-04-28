@@ -148,6 +148,22 @@ class StressReadingPolicyTest {
     }
 
     @Test
+    fun tabletComposerContextHintUsesAnswerSourceCountFloor() {
+        val state = tabletDetailState(
+            sources = listOf(
+                SourceState("s1", "GD-001", "Anchor guide", isAnchor = true, isSelected = true),
+                SourceState("s2", "", "Field note", isAnchor = false, isSelected = false),
+            ),
+            turns = listOf(threadTurn("q1", sourceCount = 3)),
+        )
+
+        assertEquals(
+            "THREAD CONTEXT KEPT - 1 TURN - 3 SOURCES",
+            tabletComposerContextHint(state),
+        )
+    }
+
+    @Test
     fun tabletComposerContextHintKeepsThreadLanguageOutsideGuideMode() {
         val state = tabletDetailState(
             guideId = "GD-FALLBACK",

@@ -184,6 +184,18 @@ public final class MainActivityHomeChromeTest {
     }
 
     @Test
+    public void manualHomeStatusDropsDuplicateGuideCountForNarrowChrome() {
+        assertEquals(
+            "Ready offline",
+            MainActivity.compactManualHomeStatusForTest("Ready offline | 754 guides", true)
+        );
+        assertEquals(
+            "Ready offline | 754 guides",
+            MainActivity.compactManualHomeStatusForTest("Ready offline | 754 guides", false)
+        );
+    }
+
+    @Test
     public void reviewHomeCategoryCountsMatchTargetMockContract() {
         assertEquals(84, MainActivity.reviewHomeCategoryCountForTest("shelter"));
         assertEquals(67, MainActivity.reviewHomeCategoryCountForTest("water"));
@@ -222,6 +234,7 @@ public final class MainActivityHomeChromeTest {
         assertEquals(0, MainActivity.resolveManualHomeCategoryShelfMinimumHeightDp(0));
         assertEquals(42, MainActivity.resolveManualHomeCategoryShelfMinimumHeightDp(3));
         assertEquals(87, MainActivity.resolveManualHomeCategoryShelfMinimumHeightDp(6));
+        assertEquals(75, MainActivity.resolveTabletManualHomeCategoryShelfMinimumHeightDp(6));
     }
 
     @Test

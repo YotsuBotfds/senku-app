@@ -256,6 +256,13 @@ public final class DetailFollowupLandscapeComposerTest {
     }
 
     @Test
+    public void restoredAnswerSemanticShellKeepsPhoneLandscapeQuestionPadding() {
+        assertEquals(10, DetailActivity.resolveAnswerSemanticQuestionPaddingDp(true, false));
+        assertEquals(10, DetailActivity.resolveAnswerSemanticQuestionPaddingDp(false, true));
+        assertEquals(0, DetailActivity.resolveAnswerSemanticQuestionPaddingDp(false, false));
+    }
+
+    @Test
     public void answerModeSuppressesLegacyBodyMirror() {
         assertTrue(DetailActivity.shouldHideBodyMirrorForAnswerMode(true));
         assertFalse(DetailActivity.shouldHideBodyMirrorForAnswerMode(false));
@@ -275,6 +282,49 @@ public final class DetailFollowupLandscapeComposerTest {
         assertTrue(DetailActivity.shouldHideGenericAnswerScaffoldForThread(true, 2, true));
         assertFalse(DetailActivity.shouldHideGenericAnswerScaffoldForThread(true, 2, false));
         assertFalse(DetailActivity.shouldHideGenericAnswerScaffoldForThread(true, 1, true));
+    }
+
+    @Test
+    public void tabletAnswerTitleUsesQuestionTopicInsteadOfSelectedSourceTitle() {
+        assertEquals(
+            "Rain shelter",
+            DetailActivity.buildTabletAnswerTopicTitleForQuestions(
+                Arrays.asList("How do I build a simple rain shelter from tarp and cord?"),
+                1
+            )
+        );
+        assertEquals(
+            "Rain shelter - 2 turns",
+            DetailActivity.buildTabletAnswerTopicTitleForQuestions(
+                Arrays.asList(
+                    "How do I build a simple rain shelter from tarp and cord?",
+                    "What should I do next after the ridge line is up?"
+                ),
+                2
+            )
+        );
+    }
+
+    @Test
+    public void tabletAnswerShellHonorsSubtitleSourceCountFloor() {
+        assertEquals(3, DetailActivity.resolveAnswerShellSourceCount(2, "GD-345 - 3 sources - rev 04-27"));
+        assertEquals(2, DetailActivity.resolveAnswerShellSourceCount(2, "GD-345 - rev 04-27"));
+        assertTrue(DetailActivity.shouldInferUncertainTabletShellFromSourceSummary(
+            true,
+            false,
+            false,
+            false,
+            2,
+            "GD-345 - 3 sources - rev 04-27"
+        ));
+        assertFalse(DetailActivity.shouldInferUncertainTabletShellFromSourceSummary(
+            true,
+            false,
+            false,
+            true,
+            2,
+            "GD-345 - 3 sources - rev 04-27"
+        ));
     }
 
     @Test

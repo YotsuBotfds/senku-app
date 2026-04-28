@@ -99,6 +99,7 @@ public final class DetailActivity extends AppCompatActivity {
     private static final int TABLET_EMERGENCY_LANDSCAPE_RIGHT_MARGIN_DP = 24;
     private static final int TABLET_EMERGENCY_LANDSCAPE_TOP_MARGIN_DP = 16;
     private static final Pattern GUIDE_HTML_BREAK_PATTERN = Pattern.compile("(?i)<br\\s*/?>");
+    private static final Pattern SOURCE_COUNT_TOKEN_PATTERN = Pattern.compile("(?i)\\b(\\d+)\\s+sources?\\b");
     private static final String EXTRA_TITLE = "title";
     private static final String EXTRA_SUBTITLE = "subtitle";
     private static final String EXTRA_BODY = "body";
@@ -1130,7 +1131,7 @@ public final class DetailActivity extends AppCompatActivity {
             boolean showAnswerRouteChip = !isCompactPortraitPhoneLayout()
                 || isDeterministicRoute()
                 || isAbstainRoute()
-                || isUncertainFitRoute();
+                || isAnswerShellUncertainFitRoute();
             routeChip.setText(answerMode
                 ? buildRouteLabel(true)
                 : getString(R.string.detail_header_guide));
@@ -1752,7 +1753,9 @@ public final class DetailActivity extends AppCompatActivity {
                         false,
                         false,
                         false,
-                        safe(turn == null ? null : turn.ruleId)
+                        safe(turn == null ? null : turn.ruleId),
+                        -1,
+                        null
                     ),
                     Status.Done,
                     true,
@@ -1761,6 +1764,18 @@ public final class DetailActivity extends AppCompatActivity {
                 turnNumber += 1;
             }
             SessionMemory.TurnSnapshot currentTurn = currentTurnSnapshot();
+            int currentSourceRowCount = currentTurn == null || currentTurn.sourceResults == null
+                ? 0
+                : currentTurn.sourceResults.size();
+            int currentShellSourceCount = resolveAnswerShellSourceCount(currentSourceRowCount, currentSubtitle);
+            boolean shellUncertainFit = shouldInferUncertainTabletShellFromSourceSummary(
+                answerMode,
+                isDeterministicRoute(),
+                isAbstainRoute() || isLowCoverageRoute(),
+                isUncertainFitRoute(),
+                currentSourceRowCount,
+                currentSubtitle
+            );
             turns.add(new TabletTurnBinding(
                 "T" + Math.max(1, turnNumber),
                 safe(currentTurn == null ? null : currentTurn.question).trim(),
@@ -1771,9 +1786,11 @@ public final class DetailActivity extends AppCompatActivity {
                     AnswerContentFactory.parseElapsedSeconds(currentSubtitle),
                     buildAnswerCardEvidence(),
                     isAbstainRoute(),
-                    isUncertainFitRoute(),
+                    isUncertainFitRoute() || shellUncertainFit,
                     streamingCursorActive,
-                    currentRuleId
+                    currentRuleId,
+                    currentShellSourceCount,
+                    shellUncertainFit ? OfflineAnswerEngine.AnswerMode.UNCERTAIN_FIT : currentAnswerResponseMode
                 ),
                 tabletBusy ? Status.Pending : Status.Active,
                 true,
@@ -1807,7 +1824,9 @@ public final class DetailActivity extends AppCompatActivity {
                 false,
                 false,
                 false,
-                ""
+                "",
+                -1,
+                null
             ),
             Status.Active,
             false,
@@ -1825,21 +1844,26 @@ public final class DetailActivity extends AppCompatActivity {
         boolean abstain,
         boolean uncertainFit,
         boolean showStreamingCursor,
-        String ruleId
+        String ruleId,
+        int sourceCountOverride,
+        OfflineAnswerEngine.AnswerMode answerResponseMode
         ) {
         List<SearchResult> safeSources = sources == null ? Collections.emptyList() : sources;
+        int sourceCount = sourceCountOverride > 0
+            ? Math.max(safeSources.size(), sourceCountOverride)
+            : safeSources.size();
         ReviewedCardMetadata turnReviewedCardMetadata = reviewedCardMetadataBridge.forRuleId(ruleId, currentRuleId);
         AnswerSurfaceInference answerSurface = inferAnswerSurface(
-            null,
+            answerResponseMode,
             abstain,
             !safe(ruleId).trim().isEmpty(),
-            safeSources.size(),
+            sourceCount,
             ruleId,
             turnReviewedCardMetadata
         );
         return AnswerContentFactory.fromRenderedAnswer(
             formatAnswerBody(rawBody),
-            safeSources.size(),
+            sourceCount,
             safe(host),
             elapsedSeconds,
             evidence,
@@ -1851,6 +1875,36 @@ public final class DetailActivity extends AppCompatActivity {
             answerSurface.getAnswerSurfaceLabel() == AnswerSurfaceLabel.ReviewedCardEvidence,
             turnReviewedCardMetadata
         );
+    }
+
+    static int resolveAnswerShellSourceCount(int sourceRowCount, String subtitle) {
+        int safeSourceRows = Math.max(0, sourceRowCount);
+        java.util.regex.Matcher matcher = SOURCE_COUNT_TOKEN_PATTERN.matcher(safe(subtitle));
+        if (!matcher.find()) {
+            return safeSourceRows;
+        }
+        try {
+            return Math.max(safeSourceRows, Integer.parseInt(matcher.group(1)));
+        } catch (NumberFormatException ignored) {
+            return safeSourceRows;
+        }
+    }
+
+    static boolean shouldInferUncertainTabletShellFromSourceSummary(
+        boolean answerMode,
+        boolean deterministicRoute,
+        boolean abstainOrLowCoverageRoute,
+        boolean explicitUncertainFitRoute,
+        int sourceRowCount,
+        String subtitle
+    ) {
+        int subtitleSourceCount = resolveAnswerShellSourceCount(0, subtitle);
+        return answerMode
+            && !deterministicRoute
+            && !abstainOrLowCoverageRoute
+            && !explicitUncertainFitRoute
+            && subtitleSourceCount >= 3
+            && subtitleSourceCount > Math.max(0, sourceRowCount);
     }
 
     private TabletTurnBinding resolveActiveTabletTurn(List<TabletTurnBinding> turnBindings) {
@@ -2261,9 +2315,9 @@ public final class DetailActivity extends AppCompatActivity {
     }
 
     private String buildTabletGuideTitle(SearchResult activeSource, List<TabletTurnBinding> turnBindings) {
-        String threadTopic = buildTabletThreadTopicTitle(turnBindings);
-        if (answerMode && !threadTopic.isEmpty()) {
-            return threadTopic;
+        String answerTopic = buildTabletAnswerTopicTitle(turnBindings);
+        if (answerMode && !answerTopic.isEmpty()) {
+            return answerTopic;
         }
         String title = safe(activeSource == null ? null : activeSource.title).trim();
         if (!title.isEmpty()) {
@@ -2282,16 +2336,31 @@ public final class DetailActivity extends AppCompatActivity {
         if (!answerMode || turnBindings == null || turnBindings.size() <= 1) {
             return "";
         }
-        for (TabletTurnBinding turn : turnBindings) {
-            String question = safe(turn == null ? null : turn.question).toLowerCase(Locale.US);
-            if (question.contains("rain") && question.contains("shelter")) {
-                return "Rain shelter - " + turnBindings.size() + " turns";
-            }
-            if (question.contains("shelter")) {
-                return "Shelter thread - " + turnBindings.size() + " turns";
+        return buildTabletAnswerTopicTitle(turnBindings);
+    }
+
+    private String buildTabletAnswerTopicTitle(List<TabletTurnBinding> turnBindings) {
+        if (!answerMode || turnBindings == null || turnBindings.isEmpty()) {
+            return "";
+        }
+        return buildTabletAnswerTopicTitleForQuestions(tabletTurnQuestions(turnBindings), turnBindings.size());
+    }
+
+    static String buildTabletAnswerTopicTitleForQuestions(List<String> questions, int turnCount) {
+        int safeTurnCount = Math.max(1, turnCount);
+        String suffix = safeTurnCount > 1 ? " - " + safeTurnCount + " turns" : "";
+        if (questions != null) {
+            for (String rawQuestion : questions) {
+                String question = safe(rawQuestion).toLowerCase(Locale.US);
+                if (question.contains("rain") && question.contains("shelter")) {
+                    return "Rain shelter" + suffix;
+                }
+                if (question.contains("shelter")) {
+                    return "Shelter thread" + suffix;
+                }
             }
         }
-        return "Thread - " + turnBindings.size() + " turns";
+        return safeTurnCount > 1 ? "Thread - " + safeTurnCount + " turns" : "";
     }
 
     private SearchResult selectedTabletSourceForAction() {
@@ -2379,12 +2448,12 @@ public final class DetailActivity extends AppCompatActivity {
         AnswerSurfaceInference answerSurface = inferCurrentAnswerSurface();
         AnswerContent content = AnswerContentFactory.fromRenderedAnswer(
             formatAnswerBody(currentBody),
-            currentSources == null ? 0 : currentSources.size(),
+            currentAnswerShellSourceCount(),
             buildAnswerCardHostLabel(),
             AnswerContentFactory.parseElapsedSeconds(currentSubtitle),
             buildAnswerCardEvidence(),
             isAbstainRoute(),
-            isUncertainFitRoute(),
+            isAnswerShellUncertainFitRoute(),
             showStreamingCursor,
             answerSurface.getAnswerSurfaceLabel(),
             answerSurface.getAnswerProvenance(),
@@ -2413,7 +2482,7 @@ public final class DetailActivity extends AppCompatActivity {
         if (isAbstainRoute() || isLowCoverageRoute()) {
             return Evidence.None;
         }
-        if (isUncertainFitRoute()) {
+        if (isAnswerShellUncertainFitRoute()) {
             return Evidence.Moderate;
         }
         if (isDeterministicRoute()) {
@@ -2431,10 +2500,10 @@ public final class DetailActivity extends AppCompatActivity {
 
     private AnswerSurfaceInference inferCurrentAnswerSurface() {
         return inferAnswerSurface(
-            currentAnswerResponseMode,
+            isAnswerShellUncertainFitRoute() ? OfflineAnswerEngine.AnswerMode.UNCERTAIN_FIT : currentAnswerResponseMode,
             isAbstainRoute(),
             isDeterministicRoute(),
-            currentSources == null ? 0 : currentSources.size(),
+            currentAnswerShellSourceCount(),
             currentRuleId,
             reviewedCardMetadataBridge.current()
         );
@@ -2466,7 +2535,7 @@ public final class DetailActivity extends AppCompatActivity {
         if (isDeterministicRoute()) {
             return "Deterministic";
         }
-        if (isAbstainRoute() || isUncertainFitRoute()) {
+        if (isAbstainRoute() || isAnswerShellUncertainFitRoute()) {
             return "Instant";
         }
         return "";
@@ -4771,7 +4840,7 @@ public final class DetailActivity extends AppCompatActivity {
                 ? R.string.detail_route_deterministic
                 : (isAbstainRoute()
                     ? R.string.detail_evidence_limited
-                    : (isUncertainFitRoute() ? R.string.detail_evidence_unsure_fit : evidenceStrengthLabelRes())));
+                    : (isAnswerShellUncertainFitRoute() ? R.string.detail_evidence_unsure_fit : evidenceStrengthLabelRes())));
         return getString(
             R.string.detail_body_answer_with_evidence,
             getString(R.string.detail_body_answer),
@@ -4780,7 +4849,7 @@ public final class DetailActivity extends AppCompatActivity {
     }
 
     private int evidenceStrengthLabelRes() {
-        int sourceCount = currentSources == null ? 0 : currentSources.size();
+        int sourceCount = currentAnswerShellSourceCount();
         if (sourceCount >= 3) {
             return R.string.detail_evidence_strong;
         }
@@ -4799,13 +4868,14 @@ public final class DetailActivity extends AppCompatActivity {
     }
 
     private String getEvidenceStrengthLabel() {
-        if (currentSources.isEmpty()) {
+        int sourceCount = currentAnswerShellSourceCount();
+        if (sourceCount <= 0) {
             return getString(R.string.detail_sources_unavailable_short);
         }
         if (isDeterministicRoute()) {
             return getString(R.string.detail_evidence_strong);
         }
-        if (isUncertainFitRoute()) {
+        if (isAnswerShellUncertainFitRoute()) {
             return getString(R.string.detail_evidence_unsure_fit);
         }
         if (isLowCoverageRoute() || isAbstainRoute()) {
@@ -4836,9 +4906,9 @@ public final class DetailActivity extends AppCompatActivity {
                 hasFocusedAnchor = true;
             }
         }
-        if (currentSources.size() >= 3) {
+        if (sourceCount >= 3) {
             score += 2;
-        } else if (currentSources.size() >= 2) {
+        } else if (sourceCount >= 2) {
             score += 1;
         }
         if (hasFocusedAnchor) {
@@ -4863,6 +4933,24 @@ public final class DetailActivity extends AppCompatActivity {
         return inferCurrentAnswerSurface().getAnswerSurfaceLabel() == AnswerSurfaceLabel.ReviewedCardEvidence
             ? getString(R.string.detail_evidence_reviewed)
             : getEvidenceStrengthLabel();
+    }
+
+    private int currentAnswerShellSourceCount() {
+        if (!answerMode) {
+            return currentSources == null ? 0 : currentSources.size();
+        }
+        return resolveAnswerShellSourceCount(currentSources == null ? 0 : currentSources.size(), currentSubtitle);
+    }
+
+    private boolean isAnswerShellUncertainFitRoute() {
+        return isUncertainFitRoute() || shouldInferUncertainTabletShellFromSourceSummary(
+            answerMode,
+            isDeterministicRoute(),
+            isAbstainRoute() || isLowCoverageRoute(),
+            isUncertainFitRoute(),
+            currentSources == null ? 0 : currentSources.size(),
+            currentSubtitle
+        );
     }
 
     private DetailProofPresentationFormatter detailProofPresentationFormatter() {
@@ -4992,11 +5080,11 @@ public final class DetailActivity extends AppCompatActivity {
             answerMode,
             isDeterministicRoute(),
             isAbstainRoute(),
-            isLowCoverageRoute() || isUncertainFitRoute(),
+            isLowCoverageRoute() || isAnswerShellUncertainFitRoute(),
             pendingHostEnabled,
             currentAnswerUsesOnDeviceFallback(),
             wide,
-            currentSources == null ? 0 : currentSources.size(),
+            currentAnswerShellSourceCount(),
             sessionMemory == null ? 0 : sessionMemory.recentTurnSnapshots(6).size(),
             currentPackVersion,
             currentSubtitle,
@@ -5054,7 +5142,7 @@ public final class DetailActivity extends AppCompatActivity {
     }
 
     private DetailProofPresentationFormatter.State buildProofPresentationState() {
-        boolean subduedRoute = isLowCoverageRoute() || isAbstainRoute() || isUncertainFitRoute();
+        boolean subduedRoute = isLowCoverageRoute() || isAbstainRoute() || isAnswerShellUncertainFitRoute();
         int lowCoverageAccentColor = getLowCoverageAccentColor();
         int evidenceAccentColor = lowCoverageAccentColor;
         String evidenceLabel = getEvidenceTrustSurfaceLabel();
@@ -5512,7 +5600,7 @@ public final class DetailActivity extends AppCompatActivity {
         if (isAbstainRoute()) {
             return wide ? "No guide match" : "No match";
         }
-        if (isUncertainFitRoute()) {
+        if (isAnswerShellUncertainFitRoute()) {
             return getString(wide ? R.string.detail_route_uncertain_fit : R.string.detail_route_uncertain_fit_short);
         }
         if (isLowCoverageRoute()) {
@@ -5740,7 +5828,7 @@ public final class DetailActivity extends AppCompatActivity {
     private void applyResiliencyAccent() {
         int severityColor = getSeverityAccentColor();
         boolean highRisk = isHighRiskRoute();
-        int routeColor = (isLowCoverageRoute() || isAbstainRoute() || isUncertainFitRoute())
+        int routeColor = (isLowCoverageRoute() || isAbstainRoute() || isAnswerShellUncertainFitRoute())
             ? getLowCoverageAccentColor()
             : (isDeterministicRoute() && !highRisk
                 ? getColor(R.color.senku_accent_olive)
@@ -6392,7 +6480,7 @@ public final class DetailActivity extends AppCompatActivity {
                 }
             }
             items.add(new MetaItem(
-                getSourcesMetaLabel(currentSources.size()),
+                getSourcesMetaLabel(currentAnswerShellSourceCount()),
                 Tone.Default,
                 false
             ));
@@ -6452,7 +6540,7 @@ public final class DetailActivity extends AppCompatActivity {
         if (isAbstainRoute()) {
             return Tone.Danger;
         }
-        if (isUncertainFitRoute()) {
+        if (isAnswerShellUncertainFitRoute()) {
             return Tone.Warn;
         }
         if (isLowCoverageRoute()) {
@@ -7608,13 +7696,17 @@ public final class DetailActivity extends AppCompatActivity {
     }
 
     private void restoreAnswerSemanticPresentation() {
+        int questionPadding = dp(resolveAnswerSemanticQuestionPaddingDp(
+            isLandscapePhoneLayout(),
+            isCompactPortraitPhoneLayout()
+        ));
         if (questionBubble != null && questionBubble.getVisibility() == View.VISIBLE) {
             questionBubble.setBackgroundResource(R.drawable.bg_detail_question_shell);
-            questionBubble.setPadding(0, 0, 0, 0);
+            questionBubble.setPadding(questionPadding, questionPadding, questionPadding, questionPadding);
         } else if (questionBubble != null) {
             questionBubble.setVisibility(View.VISIBLE);
             questionBubble.setBackgroundResource(R.drawable.bg_detail_question_shell);
-            questionBubble.setPadding(0, 0, 0, 0);
+            questionBubble.setPadding(questionPadding, questionPadding, questionPadding, questionPadding);
         }
         setParentTopMargin(answerBubble, dp(8));
         setTopMargin(rev03MetaStripHost, dp(8));
@@ -7633,6 +7725,16 @@ public final class DetailActivity extends AppCompatActivity {
             subtitleView.setTypeface(Typeface.MONOSPACE);
             subtitleView.setLetterSpacing(0f);
         }
+    }
+
+    static int resolveAnswerSemanticQuestionPaddingDp(boolean landscapePhone, boolean compactPortraitPhone) {
+        if (landscapePhone) {
+            return 10;
+        }
+        if (compactPortraitPhone) {
+            return 10;
+        }
+        return 0;
     }
 
     private boolean shouldUseSinglePaperPhoneGuideShell() {
@@ -7920,7 +8022,7 @@ public final class DetailActivity extends AppCompatActivity {
     }
 
     private boolean shouldUseSubduedAnswerCard() {
-        return answerMode && (isAbstainRoute() || isLowCoverageRoute() || isUncertainFitRoute());
+        return answerMode && (isAbstainRoute() || isLowCoverageRoute() || isAnswerShellUncertainFitRoute());
     }
 
     private CharSequence buildStyledAnswerBody(String body, boolean showStreamingCursor) {
@@ -8020,7 +8122,7 @@ public final class DetailActivity extends AppCompatActivity {
         if (routeChip == null) {
             return;
         }
-        boolean emphasizedChip = answerMode && (isDeterministicRoute() || isAbstainRoute() || isUncertainFitRoute());
+        boolean emphasizedChip = answerMode && (isDeterministicRoute() || isAbstainRoute() || isAnswerShellUncertainFitRoute());
         routeChip.setTypeface(emphasizedChip ? Typeface.MONOSPACE : Typeface.DEFAULT_BOLD, Typeface.BOLD);
         routeChip.setLetterSpacing(emphasizedChip ? 0.05f : 0f);
         Drawable icon = null;

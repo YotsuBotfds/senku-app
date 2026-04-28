@@ -561,6 +561,30 @@ public final class DetailGuidePresentationFormatterTest {
     }
 
     @Test
+    public void guideBodyParserKeepsDangerCalloutAsOneContiguousDisplayBlock() {
+        GuideBodySanitizer.ParsedGuideBody parsed = GuideBodySanitizer.parseGuideBodyForDisplay(
+            "::: danger\n"
+                + "EXTREME BURN HAZARD: Keep every tool dry.\n"
+                + "Never cast alone.\n"
+                + ":::\n"
+                + "Required Reading: Read GD-220 first."
+        );
+
+        assertEquals(
+            "DANGER \u00b7 EXTREME BURN HAZARD\n"
+                + "Keep every tool dry.\n"
+                + "Never cast alone.\n"
+                + "REQUIRED READING \u00b7 Read GD-220 first.",
+            parsed.displayText
+        );
+        assertEquals(4, parsed.lines.length);
+        assertEquals(GuideBodySanitizer.GuideBodyLine.Kind.ADMONITION_LABEL, parsed.lines[0].kind);
+        assertEquals(GuideBodySanitizer.GuideBodyLine.Kind.ADMONITION_TEXT, parsed.lines[1].kind);
+        assertEquals(GuideBodySanitizer.GuideBodyLine.Kind.ADMONITION_TEXT, parsed.lines[2].kind);
+        assertEquals(GuideBodySanitizer.GuideBodyLine.Kind.REQUIRED_READING, parsed.lines[3].kind);
+    }
+
+    @Test
     public void guideBodyParserExposesSplitHeadingKind() {
         GuideBodySanitizer.ParsedGuideBody parsed = GuideBodySanitizer.parseGuideBodyForDisplay(
             "## Section 1 Reviewed Answer-Card Boundary: Area Readiness, Hazard Screen, and Handoffs"

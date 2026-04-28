@@ -194,6 +194,27 @@ Techniques`, `2 sources`, and `LIMITED EVIDENCE` instead of rain-shelter
 toolbar/status area. P6 chrome/home/search density remains lower priority after
 the answer/tablet source owner work.
 
+Wave33 integration proof: `artifacts/ui_state_pack/wave33_integration/20260428_100904`
+is green (`pass`, 47/47, fail count 0), homogeneous APK
+`9a2a9c1988e7ac49ab153e9057cc5b389b11ffa3ddeccee6cf1110e52573ac90`,
+model `gemma-4-e2b-it-litert`
+(`ea1102014465edeb14b517bf270f6751d036749e3c5f517a7ff802782cb92161`),
+rotation mismatch count 0. Local full Android build/unit tests and local
+quality gate passed before the pack. Integrated slices: P1/P2 answer shell
+owner and phone-landscape inset fixes, P6 home/search density/chrome tightening,
+P4 guide danger/required-reading affordance polish, and P7 emergency copy
+cleanup. Fresh screenshot QA was requested before commit.
+Post-pack QA: the named P2 blockers are cleared. Tablet answer/source-selection
+no longer visually owns the screen as `Primitive Shelter`; the answer remains
+primary with `UNSURE FIT` and `3 SOURCES`, and phone-landscape rain-shelter
+top clipping is improved. P6 has no fresh blockers; tablet home spacing and
+status-pill parity remain residuals. Guide is the next blocker: tablet guide
+danger and required-reading content still render too much like plain document
+text instead of callout/row affordances, and phone guide clips the third
+required-reading row before the cross-reference panel. Emergency copy improved,
+but normal field-question/status chrome still adds noise before immediate
+actions.
+
 ## Wave25+ Plan
 
 | Wave | Slice | Why this order | Avoid overlapping write sets | Acceptance proof |

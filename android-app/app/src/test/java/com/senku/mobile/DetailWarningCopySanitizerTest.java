@@ -66,10 +66,23 @@ public final class DetailWarningCopySanitizerTest {
     }
 
     @Test
+    public void sanitizeWarningResidualCopy_removesReviewedProofChromeButKeepsEvidenceWords() {
+        String cleaned = DetailWarningCopySanitizer.sanitizeWarningResidualCopy(
+            "WHY THIS ANSWER: GD-132 is the source [Reviewed Card Proof]. "
+                + "Keep the action visible [Backend Route reviewed_card_runtime]."
+        );
+
+        assertEquals(
+            "WHY THIS ANSWER: GD-132 is the source. Keep the action visible.",
+            cleaned
+        );
+    }
+
+    @Test
     public void sanitizeWarningResidualCopy_compactsEmergencyGd132ChromeCopy() {
         String cleaned = DetailWarningCopySanitizer.sanitizeWarningResidualCopy(
-            "Stop work immediately. Move to minimum 5 m from the active work zone. "
-                + "Clear the floor to a 5 m radius. "
+            "Stop work immediately. Move to minimum five meters from the active work zone. "
+                + "Clear the floor to a minimum 5 m radius. "
                 + "Doors and roll-up openings must be unobstructed. "
                 + "GD-132 \u00a71 is current owner."
         );

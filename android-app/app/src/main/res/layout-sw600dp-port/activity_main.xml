@@ -129,11 +129,11 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="48dp"
+            android:layout_height="40dp"
             android:gravity="center_vertical"
             android:orientation="horizontal"
-            android:paddingStart="22dp"
-            android:paddingEnd="22dp">
+            android:paddingStart="18dp"
+            android:paddingEnd="18dp">
 
             <TextView
                 android:id="@+id/home_chrome_title"
@@ -144,7 +144,7 @@
                 android:fontFamily="monospace"
                 android:includeFontPadding="false"
                 android:maxLines="1"
-                android:text="HOME  SENKU  &#8226;  Field manual &#8226; ed.2"
+                android:text="HOME  SENKU  &#8226;  ed.2"
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:textColor="@color/senku_rev03_ink_1"
                 android:textStyle="bold" />
@@ -167,21 +167,21 @@
             android:layout_weight="1"
             android:clipToPadding="false"
             android:fillViewport="true"
-            android:paddingStart="20dp"
-            android:paddingEnd="20dp"
-            android:paddingBottom="20dp">
+            android:paddingStart="18dp"
+            android:paddingEnd="18dp"
+            android:paddingBottom="14dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:paddingTop="12dp">
+                android:paddingTop="8dp">
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:includeFontPadding="false"
-                    android:text="Field manual"
+                    android:text="Senku"
                     android:textAppearance="?android:attr/textAppearanceLarge"
                     android:textColor="@color/senku_rev03_ink_0"
                     android:textStyle="bold" />
@@ -189,21 +189,21 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="6dp"
+                    android:layout_marginTop="4dp"
                     android:includeFontPadding="false"
-                    android:text="754 guides &#8226; 12 categories &#8226; ready offline"
+                    android:text="754 guides &#8226; 12 categories &#8226; ed.2"
                     android:textAppearance="?android:attr/textAppearanceSmall"
                     android:textColor="@color/senku_rev03_ink_1" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="34dp"
-                    android:layout_marginTop="12dp"
+                    android:layout_height="30dp"
+                    android:layout_marginTop="8dp"
                     android:background="@drawable/bg_tablet_home_status_bar"
                     android:gravity="center_vertical"
                     android:orientation="horizontal"
-                    android:paddingStart="16dp"
-                    android:paddingEnd="16dp">
+                    android:paddingStart="12dp"
+                    android:paddingEnd="12dp">
 
                     <TextView
                         android:id="@+id/status_text"
@@ -223,7 +223,7 @@
                         android:layout_height="wrap_content"
                         android:fontFamily="monospace"
                         android:includeFontPadding="false"
-                        android:text="754 GUIDES &#8226; ED.2 &#8226; 184 MB"
+                        android:text="ED.2 &#8226; 184 MB"
                         android:textAppearance="?android:attr/textAppearanceSmall"
                         android:textColor="@color/senku_rev03_ink_2"
                         android:textStyle="bold" />
@@ -231,21 +231,21 @@
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="42dp"
-                    android:layout_marginTop="9dp"
+                    android:layout_height="36dp"
+                    android:layout_marginTop="6dp"
                     android:addStatesFromChildren="true"
                     android:background="@drawable/bg_tablet_home_search"
                     android:gravity="center_vertical"
                     android:orientation="horizontal"
-                    android:paddingStart="16dp"
-                    android:paddingEnd="16dp">
+                    android:paddingStart="12dp"
+                    android:paddingEnd="12dp">
 
                     <ImageView
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
                         android:background="@drawable/bg_tablet_home_search_icon"
                         android:contentDescription="@string/search_input_description"
-                        android:padding="7dp"
+                        android:padding="4dp"
                         android:src="@drawable/ic_search_magnifier"
                         android:tint="@color/senku_rev03_accent" />
 

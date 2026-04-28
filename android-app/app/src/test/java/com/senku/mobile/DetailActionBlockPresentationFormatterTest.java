@@ -233,7 +233,7 @@ public final class DetailActionBlockPresentationFormatterTest {
         List<DetailActionBlockPresentationFormatter.EmergencyActionSpec> actions =
             DetailActionBlockPresentationFormatter.extractEmergencyActionSpecs(
                     "Immediate actions:\n" +
-                    "1. Clear the floor to a 5 m radius. Move personnel upwind.\n" +
+                    "1. Clear the floor to a minimum 5 m radius. Move personnel upwind.\n" +
                     "2. Confirm two paths of egress. Doors and roll-up openings must be unobstructed.\n" +
                     "3. Notify the area owner. GD-132 \u00a71 is current owner.",
                 text -> citationFormatter.stripInlineCitationText(text)
@@ -260,6 +260,12 @@ public final class DetailActionBlockPresentationFormatterTest {
         ));
         assertTrue(DetailActionBlockPresentationFormatter.shouldStyleEmergencyMinimumDistance(
             "Move to minimum 5 meters from the active work zone."
+        ));
+        assertTrue(DetailActionBlockPresentationFormatter.shouldStyleEmergencyMinimumDistance(
+            "Move to minimum five meters from the active work zone."
+        ));
+        assertTrue(DetailActionBlockPresentationFormatter.shouldStyleEmergencyMinimumDistance(
+            "Move to minimum 5 metres from the active work zone."
         ));
     }
 

@@ -20,15 +20,15 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="38dp"
+        android:layout_height="32dp"
         android:gravity="center_vertical"
         android:orientation="horizontal"
         android:paddingStart="16dp"
         android:paddingEnd="16dp">
 
         <ImageView
-            android:layout_width="22dp"
-            android:layout_height="22dp"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
             android:contentDescription="@null"
             android:importantForAccessibility="no"
             android:padding="3dp"
@@ -37,9 +37,9 @@
 
         <View
             android:layout_width="1dp"
-            android:layout_height="22dp"
-            android:layout_marginStart="12dp"
-            android:layout_marginEnd="16dp"
+            android:layout_height="18dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="12dp"
             android:background="@color/senku_rev03_hairline_strong" />
 
         <TextView
@@ -51,10 +51,10 @@
             android:fontFamily="monospace"
             android:includeFontPadding="false"
             android:maxLines="1"
-            android:text="HOME  SENKU  &#8226;  Field manual &#8226; ed.2"
+            android:text="HOME  SENKU  &#8226;  ed.2"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:textColor="@color/senku_rev03_ink_1"
-            android:textSize="12sp"
+            android:textSize="11sp"
             android:textStyle="bold" />
 
         <ImageView
@@ -67,7 +67,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="14dp"
+            android:layout_marginStart="10dp"
             android:fontFamily="monospace"
             android:includeFontPadding="false"
             android:text="..."
@@ -100,13 +100,13 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="21dp"
-                android:layout_marginTop="6dp"
+                android:layout_height="20dp"
+                android:layout_marginTop="5dp"
                 android:background="@drawable/bg_manual_home_status"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
-                android:paddingStart="12dp"
-                android:paddingEnd="12dp">
+                android:paddingStart="10dp"
+                android:paddingEnd="10dp">
 
                 <TextView
                     android:id="@+id/status_text"
@@ -128,7 +128,7 @@
                     android:layout_height="wrap_content"
                     android:fontFamily="monospace"
                     android:includeFontPadding="false"
-                    android:text="754 GUIDES &#8226; ED.2 &#8226; 184 MB"
+                    android:text="ED.2 &#8226; 184 MB"
                     android:textAppearance="?android:attr/textAppearanceSmall"
                     android:textColor="@color/senku_rev03_ink_2"
                     android:textStyle="bold" />
@@ -136,8 +136,8 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="36dp"
-                android:layout_marginTop="5dp"
+                android:layout_height="34dp"
+                android:layout_marginTop="4dp"
                 android:addStatesFromChildren="true"
                 android:background="@drawable/bg_manual_phone_home_search"
                 android:gravity="center_vertical"
@@ -304,8 +304,8 @@
         android:visibility="gone">
 
         <ImageView
-            android:layout_width="18dp"
-            android:layout_height="18dp"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
             android:background="@drawable/bg_manual_phone_home_search_icon"
             android:contentDescription="@string/search_input_description"
             android:padding="3dp"

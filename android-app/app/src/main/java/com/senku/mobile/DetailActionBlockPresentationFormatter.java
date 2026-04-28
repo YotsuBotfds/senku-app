@@ -307,6 +307,10 @@ final class DetailActionBlockPresentationFormatter {
             "Clear the floor to a 5 m radius",
             "Clear the floor to 5 m radius"
         );
+        title = title.replace(
+            "Clear the floor to a minimum 5 m radius",
+            "Clear the floor to 5 m radius"
+        );
         return title;
     }
 
@@ -522,6 +526,18 @@ final class DetailActionBlockPresentationFormatter {
         start = lower.indexOf("minimum 5 meters");
         if (start >= 0) {
             return new SpanTarget(start, "minimum 5 meters");
+        }
+        start = lower.indexOf("minimum 5 metres");
+        if (start >= 0) {
+            return new SpanTarget(start, "minimum 5 metres");
+        }
+        start = lower.indexOf("minimum five meters");
+        if (start >= 0) {
+            return new SpanTarget(start, "minimum five meters");
+        }
+        start = lower.indexOf("minimum five metres");
+        if (start >= 0) {
+            return new SpanTarget(start, "minimum five metres");
         }
         return new SpanTarget(-1, "");
     }

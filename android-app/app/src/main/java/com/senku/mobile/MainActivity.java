@@ -76,6 +76,7 @@ public final class MainActivity extends AppCompatActivity {
     private static final int RESULT_PREVIEW_BRIDGE_SIGNAL_LIMIT = 1;
     private static final int MANUAL_HOME_CATEGORY_COLUMNS = 3;
     private static final int MANUAL_HOME_CATEGORY_CARD_HEIGHT_DP = 42;
+    private static final int TABLET_MANUAL_HOME_CATEGORY_CARD_HEIGHT_DP = 36;
     private static final int MANUAL_HOME_CATEGORY_ROW_GAP_DP = 3;
     private static final String REVIEW_SEARCH_QUERY = "rain shelter";
     private static final String REVIEW_SEARCH_LATENCY_LABEL = "12ms";
@@ -2370,7 +2371,11 @@ public final class MainActivity extends AppCompatActivity {
         allowChildOverflow(recentThreadsSection);
         allowChildOverflow(recentThreadsContainer);
         if (categoryShelfView != null) {
-            categoryShelfView.setMinimumHeight(dp(resolveManualHomeCategoryShelfMinimumHeightDp(6)));
+            categoryShelfView.setMinimumHeight(dp(
+                isTabletPortraitLayout() || isLandscapeTabletLayout()
+                    ? resolveTabletManualHomeCategoryShelfMinimumHeightDp(6)
+                    : resolveManualHomeCategoryShelfMinimumHeightDp(6)
+            ));
         }
     }
 
@@ -2388,12 +2393,20 @@ public final class MainActivity extends AppCompatActivity {
     }
 
     static int resolveManualHomeCategoryShelfMinimumHeightDp(int itemCount) {
+        return resolveManualHomeCategoryShelfMinimumHeightDp(itemCount, MANUAL_HOME_CATEGORY_CARD_HEIGHT_DP);
+    }
+
+    static int resolveTabletManualHomeCategoryShelfMinimumHeightDp(int itemCount) {
+        return resolveManualHomeCategoryShelfMinimumHeightDp(itemCount, TABLET_MANUAL_HOME_CATEGORY_CARD_HEIGHT_DP);
+    }
+
+    private static int resolveManualHomeCategoryShelfMinimumHeightDp(int itemCount, int cardHeightDp) {
         int safeItemCount = Math.max(0, itemCount);
         if (safeItemCount == 0) {
             return 0;
         }
         int rows = (safeItemCount + MANUAL_HOME_CATEGORY_COLUMNS - 1) / MANUAL_HOME_CATEGORY_COLUMNS;
-        return rows * MANUAL_HOME_CATEGORY_CARD_HEIGHT_DP
+        return rows * cardHeightDp
             + Math.max(0, rows - 1) * MANUAL_HOME_CATEGORY_ROW_GAP_DP;
     }
 
@@ -2912,7 +2925,7 @@ public final class MainActivity extends AppCompatActivity {
     }
 
     private void setBusy(String status, boolean busy) {
-        statusText.setText(status);
+        statusText.setText(compactManualHomeStatus(status, isManualHomeShellLayout()));
         progressBar.setVisibility(busy ? View.VISIBLE : View.GONE);
         if (!busy) {
             suppressSearchFocusForAutomation = false;
@@ -4103,6 +4116,22 @@ public final class MainActivity extends AppCompatActivity {
         return buildPhoneSearchHeader(query, resultCount);
     }
 
+    static String compactManualHomeStatusForTest(String status, boolean manualHomeShell) {
+        return compactManualHomeStatus(status, manualHomeShell);
+    }
+
+    private static String compactManualHomeStatus(String status, boolean manualHomeShell) {
+        String cleanStatus = safe(status).trim();
+        if (!manualHomeShell || cleanStatus.isEmpty()) {
+            return cleanStatus;
+        }
+        String lowerStatus = cleanStatus.toLowerCase(Locale.US);
+        if (lowerStatus.startsWith("ready offline")) {
+            return "Ready offline";
+        }
+        return cleanStatus;
+    }
+
     private static String buildPhoneSearchHeader(String query, int resultCount) {
         String cleanQuery = safe(query).trim();
         String countLabel = resultCount + (resultCount == 1 ? " RESULT" : " RESULTS");
@@ -4162,7 +4191,9 @@ public final class MainActivity extends AppCompatActivity {
             return;
         }
         if (browseMode) {
-            homeChromeTitleText.setText("HOME  SENKU  \u2022  Field manual \u2022 ed.2");
+            homeChromeTitleText.setText(isManualHomeShellLayout()
+                ? "HOME  SENKU  \u2022  ed.2"
+                : "HOME  SENKU  \u2022  Field manual \u2022 ed.2");
             return;
         }
         String cleanQuery = safe(query).trim();

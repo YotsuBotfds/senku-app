@@ -135,9 +135,9 @@ fun SenkuBottomTabBar(
             ) {
                 Column(
                     modifier = Modifier
-                        .width(76.dp)
+                        .width(68.dp)
                         .fillMaxHeight()
-                        .padding(start = 6.dp, top = 10.dp, end = 6.dp, bottom = 10.dp),
+                        .padding(start = 5.dp, top = 8.dp, end = 5.dp, bottom = 8.dp),
                     verticalArrangement = Arrangement.spacedBy(2.dp, Alignment.Top),
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
@@ -183,7 +183,7 @@ fun SenkuBottomTabBar(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(start = 6.dp, top = 4.dp, end = 6.dp, bottom = 10.dp),
+                    .padding(start = 6.dp, top = 3.dp, end = 6.dp, bottom = 6.dp),
                 horizontalArrangement = Arrangement.spacedBy(2.dp),
             ) {
                 tabs.forEach { tab ->
@@ -212,7 +212,7 @@ private fun BottomTabItem(
     val colors = SenkuTheme.colors
     val tint = if (selected) colors.accent else colors.ink3
     val verticalRail = layoutMode == BottomTabBarLayoutMode.VERTICAL_RAIL
-    val itemHeight = if (verticalRail) 58.dp else 43.dp
+    val itemHeight = if (verticalRail) 52.dp else 38.dp
 
     Column(
         modifier = modifier
@@ -222,20 +222,20 @@ private fun BottomTabItem(
                 onClick = onClick,
                 role = Role.Tab,
             )
-            .padding(horizontal = if (verticalRail) 5.dp else 3.dp, vertical = if (verticalRail) 4.dp else 3.dp),
+            .padding(horizontal = if (verticalRail) 4.dp else 3.dp, vertical = if (verticalRail) 3.dp else 2.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(2.dp, Alignment.CenterVertically),
     ) {
         BottomTabIcon(
             destination = tab.destination,
             tint = tint,
-            modifier = Modifier.size(if (verticalRail) 18.dp else 17.dp),
+            modifier = Modifier.size(if (verticalRail) 17.dp else 16.dp),
         )
         Text(
             text = tab.label,
             style = SenkuTheme.typography.tag.copy(
-                fontSize = if (verticalRail) 10.sp else 9.5.sp,
-                lineHeight = if (verticalRail) 12.sp else 11.sp,
+                fontSize = if (verticalRail) 9.5.sp else 9.sp,
+                lineHeight = if (verticalRail) 11.sp else 10.sp,
                 fontWeight = FontWeight.Medium,
             ),
             color = tint,

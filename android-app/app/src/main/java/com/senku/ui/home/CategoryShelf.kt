@@ -123,7 +123,7 @@ fun CategoryShelf(
                 CategoryGrid(
                     items = items,
                     columns = 3,
-                    cardHeight = 42.dp,
+                    cardHeight = 36.dp,
                     selectionEnabled = selectionEnabled,
                     onCategorySelected = onCategorySelected,
                 )
@@ -182,8 +182,9 @@ private fun PhoneCategoryCard(
 ) {
     val colors = SenkuTheme.colors
     val corner = 3.dp
-    val horizontalPadding = 8.dp
-    val verticalPadding = 4.dp
+    val compactGrid = cardHeight <= 36.dp
+    val horizontalPadding = if (compactGrid) 7.dp else 8.dp
+    val verticalPadding = if (compactGrid) 3.dp else 4.dp
     val enabled = selectionEnabled && item.enabled
     val accent = Color(item.accentColor)
 
@@ -218,25 +219,27 @@ private fun PhoneCategoryCard(
             Text(
                 text = item.label,
                 style = SenkuTheme.typography.uiBody.copy(
-                    fontSize = 10.sp,
-                    lineHeight = 12.sp,
+                    fontSize = if (compactGrid) 9.5.sp else 10.sp,
+                    lineHeight = if (compactGrid) 11.sp else 12.sp,
                     fontWeight = FontWeight.Bold,
                 ),
                 color = colors.ink0,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
             )
-            Text(
-                text = item.countLabel,
-                style = SenkuTheme.typography.uiBody.copy(
-                    fontSize = 9.sp,
-                    lineHeight = 11.sp,
-                    fontWeight = FontWeight.Medium,
-                ),
-                color = colors.ink2,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-            )
+            if (!compactGrid) {
+                Text(
+                    text = item.countLabel,
+                    style = SenkuTheme.typography.uiBody.copy(
+                        fontSize = 9.sp,
+                        lineHeight = 11.sp,
+                        fontWeight = FontWeight.Medium,
+                    ),
+                    color = colors.ink2,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                )
+            }
         }
     }
 }

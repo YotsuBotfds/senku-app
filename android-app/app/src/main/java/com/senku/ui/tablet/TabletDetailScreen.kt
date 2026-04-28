@@ -320,10 +320,11 @@ internal fun tabletComposerContextHint(state: TabletDetailState): String {
         1 -> if (guideMode) "1 section" else "1 turn"
         else -> if (guideMode) "$count sections" else "$count turns"
     }
-    val sourceLabel = when (val count = state.sources.size) {
+    val sourceCount = if (guideMode) state.sources.size else state.resolvedAnswerSourceCount()
+    val sourceLabel = when (sourceCount) {
         0 -> if (guideMode) "No references" else "No sources"
         1 -> if (guideMode) "1 reference" else "1 source"
-        else -> if (guideMode) "$count references" else "$count sources"
+        else -> if (guideMode) "$sourceCount references" else "$sourceCount sources"
     }
 
     return listOf(if (guideMode) "Guide context kept" else "Thread context kept", turnLabel, sourceLabel)
@@ -726,7 +727,7 @@ private fun AnswerReadingSurface(
             turn = activeTurn,
             turnIndex = state.turns.indexOf(activeTurn).coerceAtLeast(0) + 1,
             typeScalePolicy = typeScalePolicy,
-            sourceCount = state.sources.size,
+            sourceCount = state.resolvedAnswerSourceCount(),
             onShowProof = onShowProof,
         )
 
