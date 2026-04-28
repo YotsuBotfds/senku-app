@@ -113,7 +113,7 @@ fun CategoryShelf(
                 CategoryGrid(
                     items = items,
                     columns = 3,
-                    cardHeight = 74.dp,
+                    cardHeight = 58.dp,
                     selectionEnabled = selectionEnabled,
                     onCategorySelected = onCategorySelected,
                 )
@@ -123,7 +123,7 @@ fun CategoryShelf(
                 CategoryGrid(
                     items = items,
                     columns = 3,
-                    cardHeight = 46.dp,
+                    cardHeight = 54.dp,
                     selectionEnabled = selectionEnabled,
                     onCategorySelected = onCategorySelected,
                 )
@@ -182,8 +182,8 @@ private fun PhoneCategoryCard(
 ) {
     val colors = SenkuTheme.colors
     val corner = 3.dp
-    val horizontalPadding = 10.dp
-    val verticalPadding = 5.dp
+    val horizontalPadding = 9.dp
+    val verticalPadding = 4.dp
     val enabled = selectionEnabled && item.enabled
     val accent = Color(item.accentColor)
 
@@ -218,8 +218,8 @@ private fun PhoneCategoryCard(
             Text(
                 text = item.label,
                 style = SenkuTheme.typography.uiBody.copy(
-                    fontSize = 11.sp,
-                    lineHeight = 14.sp,
+                    fontSize = 10.sp,
+                    lineHeight = 13.sp,
                     fontWeight = FontWeight.SemiBold,
                 ),
                 color = colors.ink0,
@@ -229,8 +229,8 @@ private fun PhoneCategoryCard(
             Text(
                 text = item.countLabel,
                 style = SenkuTheme.typography.uiBody.copy(
-                    fontSize = 10.sp,
-                    lineHeight = 12.sp,
+                    fontSize = 9.sp,
+                    lineHeight = 11.sp,
                     fontWeight = FontWeight.Normal,
                 ),
                 color = colors.ink2,

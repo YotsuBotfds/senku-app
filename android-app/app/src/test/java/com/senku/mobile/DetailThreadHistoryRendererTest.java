@@ -60,11 +60,11 @@ public final class DetailThreadHistoryRendererTest {
             renderer.buildTurnLabel(2, true, turn("question", "GD-345", 0L), "")
         );
         assertEquals(
-            "A2 \u00B7 ANCHOR GD-345",
+            "A2 \u00B7 UNSURE \u00B7 GD-345",
             renderer.buildTurnLabel(2, false, turn("answer", "GD-345", 0L), "GD-220")
         );
         assertEquals(
-            "A2 \u00B7 ANCHOR GD-345",
+            "A2 \u00B7 UNSURE \u00B7 GD-345",
             renderer.buildTurnLabel(2, false, turn("answer", "GD-345", 0L), "GD-345")
         );
     }
@@ -84,9 +84,44 @@ public final class DetailThreadHistoryRendererTest {
             renderer.buildTurnLabel(1, true, turn("answer", "GD-220", timestamp), "")
         );
         assertEquals(
-            "A1 \u00B7 " + expectedTime + " \u00B7 ANCHOR GD-220",
+            "A1 \u00B7 " + expectedTime + " \u00B7 UNSURE \u00B7 GD-220",
             renderer.buildTurnLabel(1, false, turn("answer", "GD-220", timestamp), "")
         );
+    }
+
+    @Test
+    public void transcriptTurnsAppendCurrentTurnAfterEarlierTurns() {
+        SessionMemory.TurnSnapshot first = turn("first answer", "GD-220", 0L);
+        SessionMemory.TurnSnapshot second = new SessionMemory.TurnSnapshot(
+            "what about runoff",
+            "Shape the low edge for runoff.",
+            "Shape the low edge for runoff.",
+            List.of("GD-132"),
+            List.of(source("GD-132")),
+            "",
+            0L
+        );
+
+        List<SessionMemory.TurnSnapshot> transcript = DetailThreadHistoryRenderer.transcriptTurns(
+            List.of(first),
+            second
+        );
+
+        assertEquals(2, transcript.size());
+        assertEquals("question", transcript.get(0).question);
+        assertEquals("what about runoff", transcript.get(1).question);
+    }
+
+    @Test
+    public void transcriptTurnsDoNotDuplicateMatchingCurrentTurn() {
+        SessionMemory.TurnSnapshot current = turn("answer", "GD-220", 0L);
+
+        List<SessionMemory.TurnSnapshot> transcript = DetailThreadHistoryRenderer.transcriptTurns(
+            List.of(current),
+            current
+        );
+
+        assertEquals(1, transcript.size());
     }
 
     @Test
@@ -184,8 +219,8 @@ public final class DetailThreadHistoryRendererTest {
         );
 
         assertEquals(false, DetailThreadHistoryRenderer.shouldShowGuideChips(utilityRail, false));
-        assertEquals(true, DetailThreadHistoryRenderer.shouldShowGuideChips(utilityRail, true));
-        assertEquals(true, DetailThreadHistoryRenderer.shouldShowGuideChips(detailTranscript, false));
+        assertEquals(false, DetailThreadHistoryRenderer.shouldShowGuideChips(utilityRail, true));
+        assertEquals(false, DetailThreadHistoryRenderer.shouldShowGuideChips(detailTranscript, false));
     }
 
     @Test

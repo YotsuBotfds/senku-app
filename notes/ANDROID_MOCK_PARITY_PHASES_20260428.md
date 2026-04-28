@@ -11,10 +11,12 @@ files from this lane.
   - Home, Search, Answer, Guide, Thread: phone portrait, phone landscape,
     tablet portrait, tablet landscape.
   - Emergency: phone portrait and tablet portrait only.
-- Current proof pack: `artifacts/ui_state_pack/20260428_055424`.
+- Current proof pack: `artifacts/ui_state_pack/20260428_061705`.
   - Status `pass`, 47/47 states, homogeneous APK
-    `dda610dd64538fd1e303f772028630ad768740117230d16ae5639f9563c38591`,
+    `51eb9a8420c5eb6207e4760f863573522ebf68c8888ab346bb33c81f0b042c09`,
     model `gemma-4-e2b-it-litert`, rotation mismatch count 0.
+- Baseline commit for Wave23+ planning: `9835ba7` (`disable github workflow
+  ci`) plus local Wave23 proof pack `20260428_061705`.
 - Reviewed anchors: `00a3adb` (`advance android mock parity wave20`),
   `7efcac0` (`advance android mock parity wave18`), and `343bfde`
   (`polish android mock parity wave18`).
@@ -29,21 +31,43 @@ files from this lane.
   `claudedesign4-27/surface-guide.jsx`,
   `claudedesign4-27/primitives.jsx`, and
   `claudedesign4-27/tokens.jsx`.
-- Live worktree caution at this planner refresh: wave21 was committed and
-  pushed as `a34af0e`; wave22 worker output is staged only after local proof
-  pack `20260428_055424` is confirmed. Reconcile live `git status --short`
-  before staging any worker output.
+- Live worktree caution at this planner refresh: final `git status --short`
+  showed concurrent Android edits in P1/P3/P5-owned files (`DetailActivity`,
+  thread/transcript renderers/tests, `SearchResultAdapter`, tablet evidence
+  files/tests). This lane edited only this note; reconcile live status before
+  assigning or staging worker output.
 
 ## Proof Path Rules
 
 - For every screenshot path below, the matching dump path is the same relative
-  path under `artifacts/ui_state_pack/20260428_043744/20260428_043744/dumps/` with `.xml`
+  path under `artifacts/ui_state_pack/20260428_061705/dumps/` with `.xml`
   replacing `.png`.
 - Every worker must cite target mock(s), current screenshot(s), current dump(s),
   and remaining deltas split as content/data, layout/density, or behavior.
 - Focused proof is acceptable for a phase commit only when device, APK SHA,
   screenshot path, dump path, and diagnostic-vs-acceptance status are named.
   Final closure still requires a full homogeneous four-role state pack.
+
+## Wave23+ Remaining Checklist
+
+Order of attack is deliberate: fix shared detail ownership before polishing
+individual renderers, then close search/home chrome, then run closure review.
+
+Wave23 integration note: local proof `20260428_061705` is green after phone
+answer chrome/material-tab restoration, chronological thread renderer work,
+tablet rail tightening, Home density polish, and search row tightening. Visual
+parity is still not closed; the highest remaining visible drift is the phone
+answer proof/provenance block, guide first-viewport composition, and emergency
+chrome polish.
+
+| Wave | Claim | Screen deltas from current proof | Suggested owner files | Acceptance proof |
+| --- | --- | --- | --- | --- |
+| Wave23 | P1 + P3 thread/detail ownership | Thread phone portrait still titles the screen with the follow-up question and drops into answer-detail/proof-card mode. Tablet landscape dump still contains `ANSWER` and `Proof rail - Thread context kept`, and the right rail shows `SOURCES - 0` instead of the mock's `Sources in thread - 2`. Preserve the Wave22 removal of stale `GD-?` labels. | `DetailActivity.java`, detail layout XML variants, `TabletDetailScreen.kt`, `EvidencePane.kt`, `DockedComposer.kt`, `DetailThreadHistoryRenderer.java`, `ThreadRail.kt`, related detail/thread tests. | Compare `artifacts/mocks/thread-*.png` to `screenshots/*/scriptedSeededFollowUpThreadShowsInlineHistory__followup_thread.png` plus matching dumps. Acceptance is a chronological Q1/A1/Q2/A2 transcript in all four roles, with tablet source rails showing the two thread sources and no answer/proof takeover. |
+| Wave24 | P2 answer article/source stack | Answer phone portrait is still an unsure-fit fallback card (`Field entry - Unsure fit`) with proof rail in primary flow, wrong next-step chips, and source cards pushed below the first viewport. Tablet landscape direct source proof shows `Primitive Shelter Construction Techniques - 1 turn`, limited-source copy, and a seven-item source rail instead of `ANSWER GD-345 - Rain shelter`, text-first answer, `Sources - 3`, and related guides. | `DetailAnswerBodyFormatter.java`, answer/meta/proof/provenance presentation formatters, `DetailReviewedCardMetadataBridge.java`, `AnswerContent.kt`, `PaperAnswerCard.kt`, answer formatter/factory tests. Escalate shell/composer/tablet rail changes back to Wave23. | Compare `artifacts/mocks/answer-*.png` to phone `generativeAskWithHostInferenceNavigatesToDetailScreen__generative_detail.png`, phone landscape `generativeAskWithHostInferenceNavigatesToDetailScreen__rain_shelter_gd345_split_answer.png`, and tablet `answerModeSourceSelectionKeepsSourceAnchoredCrossReferenceLane__answer_source_graph_direct.png` screenshots/dumps. Acceptance is rain-shelter article copy, three named source cards, related guide rows, and composer clearance. |
+| Wave25 | P7 emergency polish after P1 is stable | Emergency phone is close, but current proof uses the generic top title, oversized warning block, no underlined `minimum 5 m from active work zone`, `Route, backend & proof` card at 72%, and visible guide-connection/chip chrome. Target wants compact `ANSWER GD-132 - Burn hazard response`, danger badge/banner, one `WHY THIS ANSWER` GD-132 card, and quiet emergency composer. Tablet portrait must stay full-height with no background rails. | `DetailActionBlockPresentationFormatter.java`, `DetailWarningCopySanitizer.java`, `EmergencySurfacePolicy.java`, emergency/warning drawables, emergency formatter/policy tests. Escalate mounting/composer changes to Wave23. | Compare `artifacts/mocks/emergency-phone-portrait.png` and `emergency-tablet-portrait.png` to `screenshots/phone_portrait/emergencyPortraitAnswerShowsImmediateActionState__emergency_portrait_answer.png` and `screenshots/tablet_portrait/emergencyPortraitAnswerShowsImmediateActionState__emergency_portrait_answer.png` plus dumps. Acceptance includes four ordered actions, one proof card, negative controls still non-emergency, and no emergency landscape target. |
+| Wave26 | P4 guide reader structure | Guide phone portrait now has the parchment surface but not the target first viewport: top chrome is oversized, paper lacks the compact `FIELD MANUAL - REV 04-27 - PK 2` header stack, warning/body copy is too long, required-reading rows are not visible, and bottom guide nav is absent from the current first viewport. Tablet guide still needs centered paper plus sections/xref rails checked against the mocks after formatter changes. | `DetailGuidePresentationFormatter.java`, guide context/related formatters, `GuideBodySanitizer.java`, guide paper drawables, guide formatter tests. Escalate tablet shell/evidence pane changes to Wave23. | Compare `artifacts/mocks/guide-*.png` to `screenshots/*/guideDetailShowsRelatedGuideNavigation__guide_related_paths.png`, `screenshots/*/guideDetailUsesCrossReferenceCopyOffRail__guide_cross_reference_offrail.png`, and tablet landscape `guideDetailDestinationKeepsSourceContextOnTabletLandscape__guide_cross_reference_tablet_landscape.png` plus dumps. Acceptance is field-manual header, danger block, section content, required-reading rows, and cross-reference rail only where mocked. |
+| Wave27 | P5 search components, then P6 shared home/search chrome | Search data/order is mostly aligned, but tablet landscape shell is too tall, checkbox/filter affordances are heavier than target, and row/preview proportions need final density tuning. Home phone portrait keeps correct content but is vertically inflated: status/search/category/recent cards and top chrome are larger than the target and should be tightened without losing bottom-nav clearance. | Search first: `SearchResultAdapter.java`, `SearchResultCard.kt`, search tests. Chrome second: `MainActivity.java`, `CategoryShelf.kt`, `BottomTabBar.kt`, `activity_main*` XML, home/search drawables, home/navigation tests. | Search proof: `screenshots/*/searchQueryShowsResultsWithoutShellPolling__search_results.png` and `screenshots/*/searchResultsLinkedGuideHandoffOpensLinkedGuideDetail__browse_linked_handoff.png` plus dumps against `artifacts/mocks/search-*.png`. Home proof: `screenshots/*/homeEntryShowsPrimaryBrowseAndAskLanes__home_entry.png` plus dumps against `artifacts/mocks/home-*.png`. Acceptance keeps Search IDs/order `GD-023`, `GD-027`, `GD-345`, `GD-294` and Home's six category counts/recent rows. |
+| Wave28 | P8 closure review | No new implementation ownership until every target has a current screenshot/dump verdict. Name accepted residual drift as content/data, layout/density, or behavior. | No standing write set; any fix must claim P1-P7 first. | Full pack must pass 47/47 with homogeneous APK/model identities, rotation mismatch count 0, and visual review of all 22 target mocks against screenshots/dumps in the closure pack. |
 
 ## Per-Screen Acceptance Matrix
 
@@ -68,7 +92,7 @@ Owner: planner only.
 
 Acceptance:
 
-- Active proof pack remains `artifacts/ui_state_pack/20260428_055424`.
+- Active proof pack remains `artifacts/ui_state_pack/20260428_061705`.
 - This file stays aligned with reviewer findings and live `git status`.
 - No code, generated artifacts, target mocks, or protected handoff notes are
   edited from this lane.

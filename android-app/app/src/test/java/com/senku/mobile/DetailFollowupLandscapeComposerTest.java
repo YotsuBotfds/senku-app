@@ -32,10 +32,11 @@ public final class DetailFollowupLandscapeComposerTest {
 
     @Test
     public void followUpSuggestionsHideForCompactPortraitThreadClearance() {
-        assertTrue(DetailActivity.shouldHideFollowUpSuggestionsForComposerClearance(false, true, true));
-        assertTrue(DetailActivity.shouldHideFollowUpSuggestionsForComposerClearance(true, false, false));
-        assertFalse(DetailActivity.shouldHideFollowUpSuggestionsForComposerClearance(false, true, false));
-        assertFalse(DetailActivity.shouldHideFollowUpSuggestionsForComposerClearance(false, false, true));
+        assertTrue(DetailActivity.shouldHideFollowUpSuggestionsForComposerClearance(false, true, true, true));
+        assertTrue(DetailActivity.shouldHideFollowUpSuggestionsForComposerClearance(true, false, false, true));
+        assertTrue(DetailActivity.shouldHideFollowUpSuggestionsForComposerClearance(false, true, false, true));
+        assertFalse(DetailActivity.shouldHideFollowUpSuggestionsForComposerClearance(false, true, false, false));
+        assertFalse(DetailActivity.shouldHideFollowUpSuggestionsForComposerClearance(false, false, true, true));
     }
 
     @Test

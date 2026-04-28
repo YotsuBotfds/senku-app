@@ -65,6 +65,7 @@ final class DetailThreadHistoryRenderer {
     void renderInlineThreadHistory(
         LinearLayout container,
         List<SessionMemory.TurnSnapshot> earlierTurns,
+        SessionMemory.TurnSnapshot currentTurn,
         State state,
         UnaryOperator<String> answerFormatter
     ) {
@@ -76,10 +77,11 @@ final class DetailThreadHistoryRenderer {
             container.setVisibility(View.GONE);
             return;
         }
-        List<SessionMemory.TurnSnapshot> visibleTurns = trimPriorTurnsForInlineHistory(earlierTurns, state);
+        List<SessionMemory.TurnSnapshot> transcriptTurns = transcriptTurns(earlierTurns, currentTurn);
+        List<SessionMemory.TurnSnapshot> visibleTurns = trimPriorTurnsForInlineHistory(transcriptTurns, state);
         container.setVisibility(View.VISIBLE);
-        String previousAnchorGuideId = anchorGuideIdBeforeVisibleTurns(earlierTurns, visibleTurns);
-        int firstTurnNumber = Math.max(1, earlierTurns.size() - visibleTurns.size() + 1);
+        String previousAnchorGuideId = anchorGuideIdBeforeVisibleTurns(transcriptTurns, visibleTurns);
+        int firstTurnNumber = Math.max(1, transcriptTurns.size() - visibleTurns.size() + 1);
         for (int index = 0; index < visibleTurns.size(); index++) {
             SessionMemory.TurnSnapshot turn = visibleTurns.get(index);
             addTurn(container, turn, previousAnchorGuideId, state, answerFormatter, true, firstTurnNumber + index);
@@ -90,6 +92,7 @@ final class DetailThreadHistoryRenderer {
     void renderPriorTurnsHistory(
         LinearLayout container,
         List<SessionMemory.TurnSnapshot> earlierTurns,
+        SessionMemory.TurnSnapshot currentTurn,
         State state,
         UnaryOperator<String> answerFormatter
     ) {
@@ -97,19 +100,42 @@ final class DetailThreadHistoryRenderer {
             return;
         }
         container.removeAllViews();
-        List<SessionMemory.TurnSnapshot> visibleTurns = trimPriorTurnsForInlineHistory(earlierTurns, state);
+        if (earlierTurns == null || earlierTurns.isEmpty()) {
+            container.setVisibility(View.GONE);
+            return;
+        }
+        List<SessionMemory.TurnSnapshot> transcriptTurns = transcriptTurns(earlierTurns, currentTurn);
+        List<SessionMemory.TurnSnapshot> visibleTurns = trimPriorTurnsForInlineHistory(transcriptTurns, state);
         if (visibleTurns.isEmpty()) {
             container.setVisibility(View.GONE);
             return;
         }
         container.setVisibility(View.VISIBLE);
-        String previousAnchorGuideId = anchorGuideIdBeforeVisibleTurns(earlierTurns, visibleTurns);
-        int firstTurnNumber = Math.max(1, (earlierTurns == null ? 0 : earlierTurns.size()) - visibleTurns.size() + 1);
+        String previousAnchorGuideId = anchorGuideIdBeforeVisibleTurns(transcriptTurns, visibleTurns);
+        int firstTurnNumber = Math.max(1, transcriptTurns.size() - visibleTurns.size() + 1);
         for (int index = 0; index < visibleTurns.size(); index++) {
             SessionMemory.TurnSnapshot turn = visibleTurns.get(index);
             addTurn(container, turn, previousAnchorGuideId, state, answerFormatter, false, firstTurnNumber + index);
             previousAnchorGuideId = nextAnchorGuideId(previousAnchorGuideId, turn);
         }
+    }
+
+    static List<SessionMemory.TurnSnapshot> transcriptTurns(
+        List<SessionMemory.TurnSnapshot> earlierTurns,
+        SessionMemory.TurnSnapshot currentTurn
+    ) {
+        ArrayList<SessionMemory.TurnSnapshot> turns = new ArrayList<>();
+        if (earlierTurns != null) {
+            for (SessionMemory.TurnSnapshot turn : earlierTurns) {
+                if (isRenderableTurn(turn)) {
+                    turns.add(turn);
+                }
+            }
+        }
+        if (isRenderableTurn(currentTurn) && !hasMatchingTrailingTurn(turns, currentTurn)) {
+            turns.add(currentTurn);
+        }
+        return turns;
     }
 
     private List<SessionMemory.TurnSnapshot> trimPriorTurnsForInlineHistory(
@@ -175,7 +201,7 @@ final class DetailThreadHistoryRenderer {
             container.addView(turnRow);
             return;
         }
-        turnRow.addView(buildAnswerMetaRow(buildTurnLabel(turnNumber, false, turn, previousAnchorGuideId), statusForTurn(turn)));
+        turnRow.addView(buildAnswerMetaRow(buildTurnLabel(turnNumber, false, turn, previousAnchorGuideId), ""));
         turnRow.addView(buildBodyLine(
             compactThreadAnswer(answerSummary, state.utilityRail, answerFormatter),
             false,
@@ -333,9 +359,19 @@ final class DetailThreadHistoryRenderer {
         StringBuilder builder = new StringBuilder("A")
             .append(safeTurnNumber)
             .append(time);
-        if (!anchorGuideId.isEmpty()) {
-            builder.append(" \u00B7 ANCHOR ");
-            builder.append(anchorGuideId);
+        String status = compactStatusLabel(statusForTurn(turn));
+        if (!status.isEmpty()) {
+            builder.append(" \u00B7 ");
+            builder.append(status);
+        }
+        List<String> guideLabels = guideChipLabelsForTurn(turn);
+        if (guideLabels.isEmpty() && !anchorGuideId.isEmpty()) {
+            guideLabels = new ArrayList<>();
+            guideLabels.add(anchorGuideId);
+        }
+        for (String guideLabel : guideLabels) {
+            builder.append(" \u00B7 ");
+            builder.append(guideLabel);
         }
         return builder.toString();
     }
@@ -414,7 +450,27 @@ final class DetailThreadHistoryRenderer {
     }
 
     static boolean shouldShowGuideChips(State state, boolean inlineTranscriptBubble) {
-        return state == null || !state.utilityRail || inlineTranscriptBubble;
+        return false;
+    }
+
+    private static boolean hasMatchingTrailingTurn(
+        List<SessionMemory.TurnSnapshot> turns,
+        SessionMemory.TurnSnapshot candidate
+    ) {
+        if (turns == null || turns.isEmpty() || candidate == null) {
+            return false;
+        }
+        SessionMemory.TurnSnapshot last = turns.get(turns.size() - 1);
+        return safe(last == null ? null : last.question).trim().equals(safe(candidate.question).trim())
+            && safe(last == null ? null : last.answerSummary).trim().equals(safe(candidate.answerSummary).trim());
+    }
+
+    private static boolean isRenderableTurn(SessionMemory.TurnSnapshot turn) {
+        return turn != null
+            && (!safe(turn.question).trim().isEmpty()
+                || !safe(turn.answerSummary).trim().isEmpty()
+                || (turn.sources != null && !turn.sources.isEmpty())
+                || (turn.sourceResults != null && !turn.sourceResults.isEmpty()));
     }
 
     private static List<SearchResult> prioritizedSourceResultsForTurn(SessionMemory.TurnSnapshot turn) {

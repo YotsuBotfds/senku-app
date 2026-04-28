@@ -24,6 +24,7 @@ import android.text.style.RelativeSizeSpan;
 import android.text.style.StyleSpan;
 import android.text.style.TypefaceSpan;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -1086,6 +1087,7 @@ public final class DetailActivity extends AppCompatActivity {
         headerLabel.setText(answerMode ? R.string.detail_header_question : R.string.detail_header_guide);
         bodyLabel.setText(buildBodyLabelText());
         headerLabel.setVisibility(shouldShowQuestionHeaderLabel() ? View.VISIBLE : View.GONE);
+        bodyLabel.setVisibility(answerMode && phoneXmlDetailLayoutActive() ? View.GONE : View.VISIBLE);
         titleView.setText(currentTitle);
         String questionSubtitle = currentSubtitle;
         if (answerMode && showUtilityRail()) {
@@ -2248,14 +2250,16 @@ public final class DetailActivity extends AppCompatActivity {
             params.height = ViewGroup.LayoutParams.WRAP_CONTENT;
             params.topMargin = phoneXmlDetailLayoutActive() && answerMode ? dp(6) : dp(12);
             bodyMirrorShell.setLayoutParams(params);
-            int horizontalPadding = phoneXmlDetailLayoutActive() && answerMode ? dp(12) : dp(14);
-            int verticalPadding = phoneXmlDetailLayoutActive() && answerMode ? dp(10) : dp(12);
+            int horizontalPadding = phoneXmlDetailLayoutActive() && answerMode ? 0 : dp(14);
+            int verticalPadding = phoneXmlDetailLayoutActive() && answerMode ? dp(8) : dp(12);
             bodyMirrorShell.setPadding(horizontalPadding, verticalPadding, horizontalPadding, verticalPadding);
             bodyMirrorShell.setBackgroundResource(answerMode && phoneXmlDetailLayoutActive()
-                ? R.drawable.bg_detail_warning_shell
+                ? R.drawable.bg_detail_answer_shell
                 : R.drawable.bg_detail_guide_paper_shell);
             bodyMirrorShell.setAlpha(1f);
-            bodyView.setTextColor(getColor(R.color.senku_rev03_paper_ink));
+            bodyView.setTextColor(getColor(answerMode && phoneXmlDetailLayoutActive()
+                ? R.color.senku_text_light
+                : R.color.senku_rev03_paper_ink));
             bodyView.setAlpha(1f);
             bodyMirrorShell.setVisibility(View.VISIBLE);
         }
@@ -2459,7 +2463,8 @@ public final class DetailActivity extends AppCompatActivity {
             || shouldHideFollowUpSuggestionsForComposerClearance(
                 isLandscapePhoneLayout(),
                 isCompactPortraitPhoneLayout(),
-                isCurrentThreadDetailRoute()
+                isCurrentThreadDetailRoute(),
+                answerMode
             )
             || currentFollowUpSuggestions.isEmpty()) {
             followUpSuggestView.setVisibility(View.GONE);
@@ -2487,9 +2492,11 @@ public final class DetailActivity extends AppCompatActivity {
     static boolean shouldHideFollowUpSuggestionsForComposerClearance(
         boolean landscapePhone,
         boolean compactPortraitPhone,
-        boolean threadDetailRoute
+        boolean threadDetailRoute,
+        boolean answerMode
     ) {
         return shouldHideFollowUpSuggestionsOnPhoneLandscape(landscapePhone)
+            || (compactPortraitPhone && answerMode)
             || (compactPortraitPhone && threadDetailRoute);
     }
 
@@ -2638,6 +2645,7 @@ public final class DetailActivity extends AppCompatActivity {
             detailThreadHistoryRenderer().renderInlineThreadHistory(
                 inlineThreadContainer,
                 earlierTurns,
+                currentTurn,
                 buildDetailThreadHistoryState(),
                 this::formatAnswerBody
             );
@@ -2661,6 +2669,7 @@ public final class DetailActivity extends AppCompatActivity {
         detailThreadHistoryRenderer().renderPriorTurnsHistory(
             priorTurnsContainer,
             earlierTurns,
+            currentTurn,
             buildDetailThreadHistoryState(),
             this::formatAnswerBody
         );
@@ -2873,6 +2882,10 @@ public final class DetailActivity extends AppCompatActivity {
             inlineSourcesScroll.setVisibility(View.GONE);
             return;
         }
+        if (answerMode && isCompactPortraitPhoneLayout()) {
+            inlineSourcesScroll.setVisibility(View.GONE);
+            return;
+        }
         List<SearchResult> inlineSources = sourcesForInlineVerification();
         boolean compactPhonePortrait = isCompactPortraitPhoneLayout();
         boolean compactPreview = shouldUseCompactSourceProvenancePreview();
@@ -3008,6 +3021,10 @@ public final class DetailActivity extends AppCompatActivity {
             inlineNextStepsScroll.setVisibility(View.GONE);
             return;
         }
+        if (isCompactPortraitPhoneLayout()) {
+            inlineNextStepsScroll.setVisibility(View.GONE);
+            return;
+        }
         if (isLandscapePhoneLayout()) {
             if (shouldShowEmergencyHeader()) {
                 inlineNextStepsScroll.setVisibility(View.GONE);
@@ -3121,18 +3138,28 @@ public final class DetailActivity extends AppCompatActivity {
             materialsScroll.setVisibility(View.GONE);
             return;
         }
+        boolean compactPhoneAnswer = phoneXmlDetailLayoutActive();
+        int visibleMaterialCount = compactPhoneAnswer ? 1 : materials.size();
         materialsScroll.setVisibility(View.VISIBLE);
         materialsScroll.setContentDescription(
-            materials.size() == 1
+            visibleMaterialCount == 1
                 ? "1 material item"
-                : materials.size() + " material items");
+                : visibleMaterialCount + " material items");
         boolean compactPhonePortrait = isCompactPortraitPhoneLayout();
-        for (int i = 0; i < materials.size(); i++) {
+        for (int i = 0; i < visibleMaterialCount; i++) {
             String material = materials.get(i);
             TextView chip = new TextView(this);
             chip.setBackgroundResource(R.drawable.bg_helper_pill);
             chip.setTextColor(getColor(R.color.senku_text_light));
-            chip.setPadding(dp(12), compactPhonePortrait ? dp(7) : dp(8), dp(12), compactPhonePortrait ? dp(7) : dp(8));
+            chip.setPadding(
+                compactPhoneAnswer ? dp(9) : dp(12),
+                compactPhonePortrait ? dp(6) : dp(8),
+                compactPhoneAnswer ? dp(9) : dp(12),
+                compactPhonePortrait ? dp(6) : dp(8)
+            );
+            if (compactPhoneAnswer) {
+                chip.setTextSize(TypedValue.COMPLEX_UNIT_SP, 10);
+            }
             chip.setText(detailSourcePresentationFormatter().buildMaterialChipLabel(i, material));
             chip.setContentDescription(detailSourcePresentationFormatter().buildMaterialChipContentDescription(material, i));
             configureMaterialChipInteractions(chip, material);
@@ -5585,6 +5612,8 @@ public final class DetailActivity extends AppCompatActivity {
         setTopMargin(bodyMirrorShell, answerMode ? dp(6) : dp(10));
         setTopMargin(answerCardView, answerMode ? dp(8) : dp(12));
         setTopMargin(bodyView, dp(0));
+        setTopMargin(titleView, answerMode ? dp(6) : dp(8));
+        setTopMargin(subtitleView, answerMode ? dp(4) : dp(8));
         setTopMargin(whyPanel, dp(8));
         setTopMargin(inlineNextStepsScroll, dp(6));
     }
@@ -5722,11 +5751,15 @@ public final class DetailActivity extends AppCompatActivity {
 
     private void updateTopBarActions() {
         if (homeButton != null) {
-            homeButton.setVisibility(isCompactPortraitPhoneLayout() ? View.GONE : View.VISIBLE);
+            homeButton.setVisibility(answerMode && phoneXmlDetailLayoutActive()
+                ? View.VISIBLE
+                : (isCompactPortraitPhoneLayout() ? View.GONE : View.VISIBLE));
         }
         if (pinButton != null) {
             String pinnableGuideId = resolvePinnableGuideId();
-            pinButton.setVisibility(pinnableGuideId.isEmpty() ? View.GONE : View.VISIBLE);
+            pinButton.setVisibility(pinnableGuideId.isEmpty() || shouldUseCompactPhoneAnswerChrome()
+                ? View.GONE
+                : View.VISIBLE);
             refreshPinButton();
         }
         if (shareButton != null) {
@@ -5761,7 +5794,7 @@ public final class DetailActivity extends AppCompatActivity {
             return;
         }
         String guideId = resolvePinnableGuideId();
-        if (guideId.isEmpty()) {
+        if (guideId.isEmpty() || shouldUseCompactPhoneAnswerChrome()) {
             pinButton.setVisibility(View.GONE);
             return;
         }
@@ -5849,12 +5882,13 @@ public final class DetailActivity extends AppCompatActivity {
     private void renderRev03ComposeChrome() {
         if (rev03TopBarHost != null) {
             String pinnableGuideId = resolvePinnableGuideId();
-            boolean pinVisible = !pinnableGuideId.isEmpty();
+            boolean compactPhoneAnswerChrome = shouldUseCompactPhoneAnswerChrome();
+            boolean pinVisible = !pinnableGuideId.isEmpty() && !compactPhoneAnswerChrome;
             boolean pinActive = pinVisible && PinnedGuideStore.contains(this, pinnableGuideId);
             rev03TopBarHost.setTopBarState(
                 buildRev03TopBarTitle(),
                 buildRev03TopBarSubtitle(),
-                !isCompactPortraitPhoneLayout(),
+                compactPhoneAnswerChrome || !isCompactPortraitPhoneLayout(),
                 pinVisible,
                 pinActive,
                 answerMode && !buildTranscriptExportText().isEmpty(),
@@ -5893,6 +5927,9 @@ public final class DetailActivity extends AppCompatActivity {
     }
 
     private String buildRev03TopBarTitle() {
+        if (shouldUseCompactPhoneAnswerChrome()) {
+            return buildPhoneAwareHeaderTitle(resolveDisplayGuideId(), buildPrimarySourceLabel());
+        }
         String candidate = safe(currentTitle).trim();
         if (!candidate.isEmpty()) {
             return candidate;
@@ -5951,6 +5988,9 @@ public final class DetailActivity extends AppCompatActivity {
                 evidenceTone(),
                 false
             ));
+            if (phoneXmlDetailLayoutActive()) {
+                return items;
+            }
             appendMetaStripTokens(items, splitSerialTokens(buildPackFreshnessMeta(true)));
         } else {
             items.add(new MetaItem(buildGuideModeChipText(), Tone.Accent, false));
@@ -6076,6 +6116,10 @@ public final class DetailActivity extends AppCompatActivity {
 
     private boolean phoneXmlDetailLayoutActive() {
         return isCompactPortraitPhoneLayout() || isLandscapePhoneLayout();
+    }
+
+    private boolean shouldUseCompactPhoneAnswerChrome() {
+        return answerMode && phoneXmlDetailLayoutActive();
     }
 
     private int detailSourcesPanelBackground() {

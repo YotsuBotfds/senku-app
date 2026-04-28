@@ -12,7 +12,7 @@ class StressReadingPolicyTest {
 
         assertEquals(220, policy.threadRailWidthDp)
         assertEquals(620, policy.answerMaxWidthDp)
-        assertEquals(300, policy.evidenceRailWidthDp)
+        assertEquals(260, policy.evidenceRailWidthDp)
         assertEquals(18, policy.answerHorizontalPaddingDp)
     }
 
@@ -39,7 +39,7 @@ class StressReadingPolicyTest {
         assertEquals(12, portraitPolicy.answerHorizontalPaddingDp)
         assertEquals(220, landscapePolicy.threadRailWidthDp)
         assertEquals(620, landscapePolicy.answerMaxWidthDp)
-        assertEquals(300, landscapePolicy.evidenceRailWidthDp)
+        assertEquals(260, landscapePolicy.evidenceRailWidthDp)
         assertEquals(18, landscapePolicy.answerHorizontalPaddingDp)
     }
 
@@ -47,14 +47,14 @@ class StressReadingPolicyTest {
     fun tabletGuideThreadRailUsesSectionIndexWidthWithoutChangingAnswerRails() {
         assertEquals(220, tabletThreadRailWidthDp(isLandscape = true, guideMode = false))
         assertEquals(132, tabletThreadRailWidthDp(isLandscape = false, guideMode = false))
-        assertEquals(296, tabletThreadRailWidthDp(isLandscape = true, guideMode = true))
-        assertEquals(330, tabletThreadRailWidthDp(isLandscape = false, guideMode = true))
+        assertEquals(216, tabletThreadRailWidthDp(isLandscape = true, guideMode = true))
+        assertEquals(226, tabletThreadRailWidthDp(isLandscape = false, guideMode = true))
     }
 
     @Test
-    fun tabletGuidePaperPolicyWidensPortraitReaderWithoutChangingLandscapeSheet() {
+    fun tabletGuidePaperPolicyContainsPortraitReaderWithoutChangingLandscapeSheet() {
         assertEquals(560, tabletGuidePaperMaxWidthDp(isLandscape = true))
-        assertEquals(820, tabletGuidePaperMaxWidthDp(isLandscape = false))
+        assertEquals(440, tabletGuidePaperMaxWidthDp(isLandscape = false))
     }
 
     @Test

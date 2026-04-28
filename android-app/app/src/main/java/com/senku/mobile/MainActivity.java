@@ -75,7 +75,7 @@ public final class MainActivity extends AppCompatActivity {
     private static final int MAX_RESULT_PREVIEW_BRIDGE_GUIDES = 4;
     private static final int RESULT_PREVIEW_BRIDGE_SIGNAL_LIMIT = 1;
     private static final int MANUAL_HOME_CATEGORY_COLUMNS = 3;
-    private static final int MANUAL_HOME_CATEGORY_CARD_HEIGHT_DP = 74;
+    private static final int MANUAL_HOME_CATEGORY_CARD_HEIGHT_DP = 58;
     private static final int MANUAL_HOME_CATEGORY_ROW_GAP_DP = 5;
     private static final String REVIEW_SEARCH_QUERY = "rain shelter";
     private static final String REVIEW_SEARCH_LATENCY_LABEL = "12ms";
@@ -1779,7 +1779,7 @@ public final class MainActivity extends AppCompatActivity {
             ? R.color.senku_rev03_ink_0
             : R.color.senku_text_light));
         if (manualHomeShell) {
-            button.setTextSize(12);
+            button.setTextSize(11);
             button.setTypeface(android.graphics.Typeface.DEFAULT, android.graphics.Typeface.NORMAL);
         }
         button.setTextAlignment(View.TEXT_ALIGNMENT_VIEW_START);
@@ -1787,8 +1787,8 @@ public final class MainActivity extends AppCompatActivity {
         button.setMaxLines(manualHomeShell ? 2 : (compactPhoneHome ? 2 : 3));
         button.setEllipsize(TextUtils.TruncateAt.END);
         if (manualHomeShell && !isTabletSearchLayout()) {
-            button.setMinHeight(dp(64));
-            button.setMinimumHeight(dp(64));
+            button.setMinHeight(dp(isLandscapePhoneLayout() ? 48 : 54));
+            button.setMinimumHeight(dp(isLandscapePhoneLayout() ? 48 : 54));
         }
         button.setText(manualHomeShell
             ? buildManualHomeRecentThreadLabelSpannable(preview, index)
@@ -2451,7 +2451,7 @@ public final class MainActivity extends AppCompatActivity {
         bottomTabBarView = new BottomTabBarHostView(this);
         if (landscapePhone) {
             bottomTabBarView.setLayoutParams(new LinearLayout.LayoutParams(
-                dp(78),
+                dp(56),
                 ViewGroup.LayoutParams.MATCH_PARENT
             ));
             wrapper.addView(bottomTabBarView);

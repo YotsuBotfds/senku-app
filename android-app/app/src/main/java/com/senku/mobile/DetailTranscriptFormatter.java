@@ -90,14 +90,11 @@ final class DetailTranscriptFormatter {
         String anchorGuideId = resolveAnchorGuideId(turn, turnAnchorResolver);
         StringBuilder builder = new StringBuilder();
         if (!anchorGuideId.isEmpty()) {
-            builder.append("anchor ").append(anchorGuideId);
+            builder.append(anchorGuideId);
         }
         String status = statusForTurn(turn);
         if (!status.isEmpty()) {
-            if (builder.length() > 0) {
-                builder.append(" \u00B7 ");
-            }
-            builder.append(status);
+            builder.insert(0, compactStatusLabel(status) + (builder.length() > 0 ? " \u00B7 " : ""));
         }
         return builder.toString();
     }
@@ -182,6 +179,19 @@ final class DetailTranscriptFormatter {
             return "confident";
         }
         return safe(turn.answerSummary).trim().isEmpty() ? "" : "unsure";
+    }
+
+    private static String compactStatusLabel(String status) {
+        String resolvedStatus = safe(status).trim().toLowerCase(java.util.Locale.US);
+        if ("source-backed".equals(resolvedStatus)
+            || "reviewed".equals(resolvedStatus)
+            || "confident".equals(resolvedStatus)) {
+            return "CONFIDENT";
+        }
+        if ("ready".equals(resolvedStatus) || "unsure".equals(resolvedStatus)) {
+            return "UNSURE";
+        }
+        return resolvedStatus.toUpperCase(java.util.Locale.US);
     }
 
     private static String safe(String text) {
