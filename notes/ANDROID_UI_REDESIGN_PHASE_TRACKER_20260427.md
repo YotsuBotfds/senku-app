@@ -13,7 +13,7 @@ edit, revert, stash, or clean Android source from this lane.
 - Next-slice planning note:
   `notes/ANDROID_NEXT_UI_SLICES_20260427.md`.
 - Latest repaired state pack summary:
-  `artifacts/ui_state_pack/20260428_005337/summary.json`, after checking the
+  `artifacts/ui_state_pack/20260428_010423/summary.json`, after checking the
   earlier `20260428_002343` failure row for the tablet-portrait emergency
   header regression.
 - Earlier progress note:
@@ -32,22 +32,22 @@ Post-Wave9/Wave10 status, read on 2026-04-28:
 - Current integration work is broad and now locally reproven. This planner lane
   owns only this note and must not edit Android source or artifacts.
 - Latest repaired state pack:
-  `artifacts/ui_state_pack/20260428_005337`.
+  `artifacts/ui_state_pack/20260428_010423`.
 - Pack status: `pass`, 47 total states, 47 pass, 0 fail, 0 platform ANRs.
 - Matrix health: homogeneous APK/model, 0 rotation mismatches.
 - Repaired blocker:
   `tablet_portrait/emergencyPortraitAnswerShowsImmediateActionState` now passes
   after the tablet-portrait emergency header overlay was restored. The phone
   portrait emergency capture was also repaired so the danger header no longer
-  clips the immediate-action list and compact proof/source context remains
-  visible. The failed attempt remains `artifacts/ui_state_pack/20260428_002343`
-  for regression context.
+  clips the immediate-action list; compact proof/source context is visible on
+  phone and inside the tablet emergency surface. The failed attempt remains
+  `artifacts/ui_state_pack/20260428_002343` for regression context.
 - APK SHA:
-  `67a3823b0b75d0b98f0895dbec25674c9bbac4af3c7e4bdd7c981ef3ccb6abaa`.
+  `c4c28a03f61b9f3eb6ea902e04fd1c5b06724cde94f432444739d705286f01a2`.
 - Model: `gemma-4-e2b-it-litert`.
 - Model SHA:
   `ea1102014465edeb14b517bf270f6751d036749e3c5f517a7ff802782cb92161`.
-- Use `20260428_005337` as the current visual evidence pack. The pack is a
+- Use `20260428_010423` as the current visual evidence pack. The pack is a
   proof gate, not a declaration that all target mocks are visually closed.
 
 Immediate overnight unblock:
