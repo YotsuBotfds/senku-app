@@ -3,10 +3,6 @@ package com.senku.mobile;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import android.text.Spanned;
-import android.text.style.ForegroundColorSpan;
-import android.text.style.UnderlineSpan;
-
 import java.util.List;
 
 import org.junit.Test;
@@ -84,7 +80,7 @@ public final class DetailActionBlockPresentationFormatterTest {
         assertEquals(4, actions.size());
         assertEquals("Stop all hot work", actions.get(0).title);
         assertEquals("No new charges, no new pours.", actions.get(0).detail);
-        assertEquals("Clear the floor to 5 m radius", actions.get(1).title);
+        assertEquals("Clear the floor to minimum 5 m radius", actions.get(1).title);
         assertEquals("Move personnel upwind.", actions.get(1).detail);
         assertEquals("Confirm two paths of egress", actions.get(2).title);
         assertEquals("", actions.get(2).detail);
@@ -129,7 +125,7 @@ public final class DetailActionBlockPresentationFormatterTest {
         assertEquals(4, actions.size());
         assertEquals("Stop all hot work", actions.get(0).title);
         assertEquals("No new charges, no new pours.", actions.get(0).detail);
-        assertEquals("Clear the floor to 5 m radius", actions.get(1).title);
+        assertEquals("Clear the floor to minimum 5 m radius", actions.get(1).title);
         assertEquals("Move personnel upwind.", actions.get(1).detail);
         assertEquals("Confirm two paths of egress", actions.get(2).title);
         assertEquals("Door and roll-up open and unobstructed.", actions.get(2).detail);
@@ -153,7 +149,7 @@ public final class DetailActionBlockPresentationFormatterTest {
 
         assertEquals(4, actions.size());
         assertEquals("Stop all hot work", actions.get(0).title);
-        assertEquals("Clear the floor to 5 m radius", actions.get(1).title);
+        assertEquals("Clear the floor to minimum 5 m radius", actions.get(1).title);
         assertEquals("Door and roll-up open and unobstructed.", actions.get(2).detail);
         assertEquals("GD-132 lists current owner.", actions.get(3).detail);
     }
@@ -179,7 +175,7 @@ public final class DetailActionBlockPresentationFormatterTest {
 
         assertEquals(2, immediateActions.size());
         assertEquals("Stop all hot work", immediateActions.get(0).title);
-        assertEquals("Clear the floor to 5 m radius", immediateActions.get(1).title);
+        assertEquals("Clear the floor to minimum 5 m radius", immediateActions.get(1).title);
         assertEquals(2, emergencyActions.size());
         assertEquals("Confirm two paths of egress", emergencyActions.get(0).title);
         assertEquals("Notify the area owner", emergencyActions.get(1).title);
@@ -205,7 +201,7 @@ public final class DetailActionBlockPresentationFormatterTest {
 
         assertEquals(4, actions.size());
         assertEquals("Stop all hot work", actions.get(0).title);
-        assertEquals("Clear the floor to 5 m radius", actions.get(1).title);
+        assertEquals("Clear the floor to minimum 5 m radius", actions.get(1).title);
         assertEquals("Door and roll-up open and unobstructed.", actions.get(2).detail);
         assertEquals("GD-132 lists current owner.", actions.get(3).detail);
     }
@@ -240,7 +236,7 @@ public final class DetailActionBlockPresentationFormatterTest {
 
         assertEquals(2, actions.size());
         assertEquals("Stop all hot work", actions.get(0).title);
-        assertEquals("Clear the floor to 5 m radius", actions.get(1).title);
+        assertEquals("Clear the floor to minimum 5 m radius", actions.get(1).title);
     }
 
     @Test
@@ -261,7 +257,7 @@ public final class DetailActionBlockPresentationFormatterTest {
 
         assertEquals(4, actions.size());
         assertEquals("Stop all hot work", actions.get(0).title);
-        assertEquals("Clear the floor to 5 m radius", actions.get(1).title);
+        assertEquals("Clear the floor to minimum 5 m radius", actions.get(1).title);
         assertEquals("Notify the area owner", actions.get(3).title);
         assertEquals("GD-132 lists current owner.", actions.get(3).detail);
     }
@@ -282,7 +278,7 @@ public final class DetailActionBlockPresentationFormatterTest {
 
         assertEquals(2, actions.size());
         assertEquals("Stop all hot work", actions.get(0).title);
-        assertEquals("Clear the floor to 5 m radius", actions.get(1).title);
+        assertEquals("Clear the floor to minimum 5 m radius", actions.get(1).title);
     }
 
     @Test
@@ -301,7 +297,7 @@ public final class DetailActionBlockPresentationFormatterTest {
 
         assertEquals(2, actions.size());
         assertEquals("Stop all hot work", actions.get(0).title);
-        assertEquals("Clear the floor to 5 m radius", actions.get(1).title);
+        assertEquals("Clear the floor to minimum 5 m radius", actions.get(1).title);
     }
 
     @Test
@@ -320,7 +316,7 @@ public final class DetailActionBlockPresentationFormatterTest {
 
         assertEquals(4, actions.size());
         assertEquals("Stop all hot work", actions.get(0).title);
-        assertEquals("Clear the floor to 5 m radius", actions.get(1).title);
+        assertEquals("Clear the floor to minimum 5 m radius", actions.get(1).title);
         assertEquals("Door and roll-up open and unobstructed.", actions.get(2).detail);
         assertEquals("GD-132 lists current owner.", actions.get(3).detail);
     }
@@ -337,7 +333,7 @@ public final class DetailActionBlockPresentationFormatterTest {
             );
 
         assertEquals(3, actions.size());
-        assertEquals("Clear the floor to 5 m radius", actions.get(0).title);
+        assertEquals("Clear the floor to minimum 5 m radius", actions.get(0).title);
         assertEquals("Door and roll-up open and unobstructed.", actions.get(1).detail);
         assertEquals("GD-132 lists current owner.", actions.get(2).detail);
     }
@@ -355,7 +351,7 @@ public final class DetailActionBlockPresentationFormatterTest {
 
         assertEquals(3, actions.size());
         assertEquals("Move to minimum 5 m from active work zone", actions.get(0).title);
-        assertEquals("Clear the floor to 5 m radius", actions.get(1).title);
+        assertEquals("Clear the floor to minimum 5 m radius", actions.get(1).title);
         assertEquals("GD-132 lists current owner.", actions.get(2).detail);
     }
 
@@ -416,15 +412,14 @@ public final class DetailActionBlockPresentationFormatterTest {
     }
 
     @Test
-    public void styleEmergencyMinimumDistanceLeavesActionDistanceRowsPlain() {
-        CharSequence styled = DetailActionBlockPresentationFormatter.styleEmergencyMinimumDistance(
-            "Clear the floor to 5 m radius."
-        );
+    public void styleEmergencyMinimumDistanceUnderlinesActionMinimumDistanceRows() {
+        String text = "Clear the floor to minimum 5 m radius.";
+        int[] range = DetailActionBlockPresentationFormatter.emergencyMinimumDistanceSpanRangeForTest(text);
 
-        assertEquals("Clear the floor to 5 m radius.", styled.toString());
-        assertTrue(!DetailActionBlockPresentationFormatter.shouldStyleEmergencyMinimumDistance(
-            "Clear the floor to 5 m radius."
+        assertTrue(DetailActionBlockPresentationFormatter.shouldStyleEmergencyMinimumDistance(
+            text
         ));
+        assertEquals("minimum 5 m", text.substring(range[0], range[1]));
     }
 
     @Test

@@ -62,9 +62,12 @@ final class DetailAnswerBodyFormatter {
     private static boolean isRainShelterUncertainFitFallback(String body) {
         String normalized = safe(body).trim().toLowerCase(Locale.US);
         return normalized.contains("build a ridgeline first, then drape and tension the tarp around it")
-            && normalized.contains("field steps")
-            && normalized.contains("tie a taut ridgeline")
-            && normalized.contains("rain sheds instead of pooling");
+            && ((normalized.contains("field steps")
+                && normalized.contains("tie a taut ridgeline")
+                && normalized.contains("rain sheds instead of pooling"))
+                || normalized.contains("pitch the tarp ridge along the prevailing wind")
+                || normalized.contains("gd-345")
+                || normalized.contains("tarp & cord shelters"));
     }
 
     private String collapseEmptyAnswerSections(String body) {

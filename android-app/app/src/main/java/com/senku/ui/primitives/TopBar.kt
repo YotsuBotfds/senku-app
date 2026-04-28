@@ -6,10 +6,12 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
@@ -108,56 +110,47 @@ fun SenkuTopBar(
     actions: List<TopBarActionSpec>,
     onActionClick: (TopBarActionKind) -> Unit,
     modifier: Modifier = Modifier,
+    titleMaxLines: Int = 1,
 ) {
     val colors = SenkuTheme.colors
     val typography = SenkuTheme.typography
-    val visibleActions = remember(actions) {
-        actions
-            .filter { it.isVisible }
-            .sortedBy { it.kind.ordinal }
-            .distinctBy { it.kind }
+    val actionLayout = remember(actions) {
+        topBarActionLayout(actions)
     }
 
     Row(
         modifier = modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(9.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        if (visibleActions.isNotEmpty()) {
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(4.dp),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                visibleActions.forEach { action ->
-                    TopBarActionButton(
-                        action = action,
-                        onClick = { onActionClick(action.kind) },
-                    )
-                }
-            }
+        actionLayout.leading.forEach { action ->
+            TopBarActionButton(
+                action = action,
+                onClick = { onActionClick(action.kind) },
+            )
+        }
+        if (actionLayout.leading.isNotEmpty()) {
+            Spacer(modifier = Modifier.width(8.dp))
+            Box(
+                modifier = Modifier
+                    .width(1.dp)
+                    .height(18.dp)
+                    .background(colors.hairlineStrong),
+            )
+            Spacer(modifier = Modifier.width(12.dp))
         }
 
         Column(
             modifier = Modifier.weight(1f),
             verticalArrangement = Arrangement.spacedBy(2.dp),
         ) {
-            Row(
+            Text(
+                text = title,
+                style = typography.uiBody.copy(fontSize = 14.sp, lineHeight = 17.sp),
+                color = colors.ink0,
+                maxLines = titleMaxLines.coerceAtLeast(1),
+                overflow = TextOverflow.Ellipsis,
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(6.dp),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Text(
-                    text = title,
-                    style = typography.uiBody.copy(fontSize = 14.sp, lineHeight = 17.sp),
-                    color = colors.ink0,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier.weight(1f),
-                )
-                if (!dangerPillLabel.isNullOrBlank()) {
-                    DangerPill(label = dangerPillLabel)
-                }
-            }
+            )
             if (!subtitle.isNullOrBlank()) {
                 Text(
                     text = subtitle,
@@ -175,7 +168,51 @@ fun SenkuTopBar(
                     .background(colors.hairlineStrong),
             )
         }
+
+        if (!dangerPillLabel.isNullOrBlank() || actionLayout.trailing.isNotEmpty()) {
+            Spacer(modifier = Modifier.width(10.dp))
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(7.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                if (!dangerPillLabel.isNullOrBlank()) {
+                    DangerPill(label = dangerPillLabel)
+                }
+                actionLayout.trailing.forEach { action ->
+                    TopBarActionButton(
+                        action = action,
+                        onClick = { onActionClick(action.kind) },
+                    )
+                }
+            }
+        }
     }
+}
+
+internal data class TopBarActionLayout(
+    val leading: List<TopBarActionSpec>,
+    val trailing: List<TopBarActionSpec>,
+)
+
+internal fun topBarActionLayout(actions: List<TopBarActionSpec>): TopBarActionLayout {
+    val visibleDistinct = actions
+        .asSequence()
+        .filter { it.isVisible }
+        .distinctBy { it.kind }
+        .toList()
+    return TopBarActionLayout(
+        leading = visibleDistinct.filter { it.kind == TopBarActionKind.Back },
+        trailing = visibleDistinct
+            .filter { it.kind != TopBarActionKind.Back }
+            .sortedBy { it.kind.trailingOrder() },
+    )
+}
+
+private fun TopBarActionKind.trailingOrder(): Int = when (this) {
+    TopBarActionKind.Home -> 0
+    TopBarActionKind.Share -> 1
+    TopBarActionKind.Pin -> 2
+    TopBarActionKind.Back -> 3
 }
 
 @Composable
@@ -188,7 +225,7 @@ private fun DangerPill(
         modifier = modifier
             .clip(RoundedCornerShape(999.dp))
             .background(colors.danger.copy(alpha = 0.14f))
-            .padding(horizontal = 7.dp, vertical = 3.dp),
+            .padding(horizontal = 9.dp, vertical = 4.dp),
         contentAlignment = Alignment.Center,
     ) {
         Text(
@@ -216,14 +253,14 @@ private fun TopBarActionButton(
     val iconTint = when {
         !action.isEnabled -> colors.ink3
         action.isActive -> colors.ok
-        action.kind == TopBarActionKind.Share -> colors.accent
-        action.kind == TopBarActionKind.Back -> colors.ink0
+        action.kind == TopBarActionKind.Share -> colors.ink1
+        action.kind == TopBarActionKind.Back -> colors.ink1
         else -> colors.ink1
     }
 
     Box(
         modifier = modifier
-            .size(28.dp)
+            .size(30.dp)
             .clip(shape)
             .background(containerColor)
             .clickable(
@@ -243,7 +280,7 @@ private fun TopBarActionButton(
             imageVector = action.kind.icon(),
             contentDescription = null,
             tint = iconTint,
-            modifier = Modifier.size(18.dp),
+            modifier = Modifier.size(20.dp),
         )
     }
 }
@@ -251,7 +288,7 @@ private fun TopBarActionButton(
 private fun TopBarActionKind.icon(): ImageVector = when (this) {
     TopBarActionKind.Back -> SenkuTopBarIcons.Back
     TopBarActionKind.Home -> SenkuTopBarIcons.Home
-    TopBarActionKind.Pin -> SenkuTopBarIcons.Pin
+    TopBarActionKind.Pin -> SenkuTopBarIcons.More
     TopBarActionKind.Share -> SenkuTopBarIcons.Share
 }
 
@@ -265,19 +302,15 @@ private object SenkuTopBarIcons {
             viewportHeight = 24f,
         ).apply {
             path(
-                fill = SolidColor(Color.Black),
+                stroke = SolidColor(Color.Black),
+                strokeLineWidth = 2f,
+                strokeLineCap = StrokeCap.Round,
+                strokeLineJoin = StrokeJoin.Round,
                 pathFillType = PathFillType.NonZero,
             ) {
-                moveTo(20f, 11f)
-                lineTo(8.83f, 11f)
-                lineTo(13.71f, 6.12f)
-                lineTo(12.29f, 4.71f)
-                lineTo(5f, 12f)
-                lineTo(12.29f, 19.29f)
-                lineTo(13.71f, 17.88f)
-                lineTo(8.83f, 13f)
-                lineTo(20f, 13f)
-                close()
+                moveTo(15f, 6f)
+                lineTo(9f, 12f)
+                lineTo(15f, 18f)
             }
         }.build()
     }
@@ -291,56 +324,54 @@ private object SenkuTopBarIcons {
             viewportHeight = 24f,
         ).apply {
             path(
-                fill = SolidColor(Color.Black),
+                stroke = SolidColor(Color.Black),
+                strokeLineWidth = 1.9f,
+                strokeLineCap = StrokeCap.Round,
+                strokeLineJoin = StrokeJoin.Round,
                 pathFillType = PathFillType.NonZero,
             ) {
-                moveTo(12f, 4f)
-                lineTo(4f, 10.5f)
-                lineTo(5.4f, 11.9f)
-                lineTo(6.5f, 11.01f)
-                lineTo(6.5f, 19f)
-                lineTo(10.25f, 19f)
-                lineTo(10.25f, 14.5f)
-                lineTo(13.75f, 14.5f)
-                lineTo(13.75f, 19f)
-                lineTo(17.5f, 19f)
-                lineTo(17.5f, 11.01f)
-                lineTo(18.6f, 11.9f)
-                lineTo(20f, 10.5f)
-                close()
+                moveTo(4.5f, 11.2f)
+                lineTo(12f, 5.2f)
+                lineTo(19.5f, 11.2f)
+                moveTo(6.8f, 10.4f)
+                lineTo(6.8f, 19f)
+                lineTo(10.2f, 19f)
+                lineTo(10.2f, 14.2f)
+                lineTo(13.8f, 14.2f)
+                lineTo(13.8f, 19f)
+                lineTo(17.2f, 19f)
+                lineTo(17.2f, 10.4f)
             }
         }.build()
     }
 
-    val Pin: ImageVector by lazy {
+    val More: ImageVector by lazy {
         ImageVector.Builder(
-            name = "TopBarPin",
+            name = "TopBarMore",
             defaultWidth = 24.dp,
             defaultHeight = 24.dp,
             viewportWidth = 24f,
             viewportHeight = 24f,
         ).apply {
             path(
-                stroke = SolidColor(Color.Black),
-                strokeLineWidth = 1.8f,
-                strokeLineCap = StrokeCap.Round,
-                strokeLineJoin = StrokeJoin.Round,
+                fill = SolidColor(Color.Black),
                 pathFillType = PathFillType.NonZero,
             ) {
-                moveTo(9f, 5f)
-                lineTo(15f, 5f)
-                lineTo(17f, 9f)
-                lineTo(13.25f, 11.5f)
-                lineTo(13.25f, 14.25f)
-                lineTo(16f, 17f)
-                lineTo(14.75f, 18.25f)
-                lineTo(12f, 15.5f)
-                lineTo(9.5f, 21f)
-                lineTo(8.4f, 20.5f)
-                lineTo(10.4f, 14.6f)
-                lineTo(7f, 11.2f)
-                lineTo(9f, 9f)
-                close()
+                moveTo(6f, 12f)
+                lineTo(6.01f, 12f)
+                moveTo(5f, 12f)
+                arcToRelative(1f, 1f, 0f, true, false, 2f, 0f)
+                arcToRelative(1f, 1f, 0f, true, false, -2f, 0f)
+                moveTo(12f, 12f)
+                lineTo(12.01f, 12f)
+                moveTo(11f, 12f)
+                arcToRelative(1f, 1f, 0f, true, false, 2f, 0f)
+                arcToRelative(1f, 1f, 0f, true, false, -2f, 0f)
+                moveTo(18f, 12f)
+                lineTo(18.01f, 12f)
+                moveTo(17f, 12f)
+                arcToRelative(1f, 1f, 0f, true, false, 2f, 0f)
+                arcToRelative(1f, 1f, 0f, true, false, -2f, 0f)
             }
         }.build()
     }
@@ -354,28 +385,30 @@ private object SenkuTopBarIcons {
             viewportHeight = 24f,
         ).apply {
             path(
+                stroke = SolidColor(Color.Black),
+                strokeLineWidth = 1.8f,
+                strokeLineCap = StrokeCap.Round,
+                strokeLineJoin = StrokeJoin.Round,
+                pathFillType = PathFillType.NonZero,
+            ) {
+                moveTo(8.4f, 12.3f)
+                lineTo(15.6f, 8.4f)
+                moveTo(8.4f, 13.7f)
+                lineTo(15.6f, 17.6f)
+            }
+            path(
                 fill = SolidColor(Color.Black),
                 pathFillType = PathFillType.NonZero,
             ) {
-                moveTo(5f, 20f)
-                lineTo(19f, 20f)
-                lineTo(19f, 13.5f)
-                lineTo(17f, 13.5f)
-                lineTo(17f, 18f)
-                lineTo(7f, 18f)
-                lineTo(7f, 13.5f)
-                lineTo(5f, 13.5f)
-                close()
-                moveTo(12f, 4f)
-                lineTo(7f, 9f)
-                lineTo(8.41f, 10.41f)
-                lineTo(11f, 7.83f)
-                lineTo(11f, 16f)
-                lineTo(13f, 16f)
-                lineTo(13f, 7.83f)
-                lineTo(15.59f, 10.41f)
-                lineTo(17f, 9f)
-                close()
+                moveTo(6f, 15f)
+                arcToRelative(3f, 3f, 0f, true, false, 0f, -6f)
+                arcToRelative(3f, 3f, 0f, false, false, 0f, 6f)
+                moveTo(18f, 10.5f)
+                arcToRelative(3f, 3f, 0f, true, false, 0f, -6f)
+                arcToRelative(3f, 3f, 0f, false, false, 0f, 6f)
+                moveTo(18f, 19.5f)
+                arcToRelative(3f, 3f, 0f, true, false, 0f, -6f)
+                arcToRelative(3f, 3f, 0f, false, false, 0f, 6f)
             }
         }.build()
     }

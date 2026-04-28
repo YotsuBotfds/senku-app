@@ -310,16 +310,20 @@ final class DetailActionBlockPresentationFormatter {
     private static String normalizeEmergencyActionTitle(String text) {
         String title = safe(text).trim();
         title = title.replace(
+            "Clear the floor to 5 m radius",
+            "Clear the floor to minimum 5 m radius"
+        );
+        title = title.replace(
             "Clear the floor to a 5 m radius",
-            "Clear the floor to 5 m radius"
+            "Clear the floor to minimum 5 m radius"
         );
         title = title.replace(
             "Clear the floor to a minimum 5 m radius",
-            "Clear the floor to 5 m radius"
+            "Clear the floor to minimum 5 m radius"
         );
         title = title.replace(
             "Clear the floor to minimum 5 m radius",
-            "Clear the floor to 5 m radius"
+            "Clear the floor to minimum 5 m radius"
         );
         title = title.replace(
             "Move everyone to minimum 5 m from active work zone",

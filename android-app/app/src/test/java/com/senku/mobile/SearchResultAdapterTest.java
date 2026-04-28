@@ -38,6 +38,7 @@ public final class SearchResultAdapterTest {
     public void tabletRowsUseCompactScoreMarkers() {
         assertEquals("92", SearchResultAdapter.buildTabletScoreLabelForTest(0));
         assertEquals("78", SearchResultAdapter.buildTabletScoreLabelForTest(1));
+        assertEquals("74", SearchResultAdapter.buildTabletScoreLabelForTest(2));
         assertEquals("61", SearchResultAdapter.buildTabletScoreLabelForTest(3));
         assertEquals("49", SearchResultAdapter.buildTabletScoreLabelForTest(5));
     }
@@ -60,9 +61,11 @@ public final class SearchResultAdapterTest {
     @Test
     public void targetRainShelterRowsKeepGuideIdOrderMarkers() {
         String[] guideIds = {"GD-023", "GD-027", "GD-345", "GD-294"};
+        String[] scoreLabels = {"92", "78", "74", "61"};
 
         for (int i = 0; i < guideIds.length; i++) {
             assertEquals(guideIds[i], SearchResultAdapter.buildTabletGuideMarkerForTest(guideIds[i], i));
+            assertEquals(scoreLabels[i], SearchResultAdapter.buildTabletScoreLabelForTest(i));
         }
     }
 

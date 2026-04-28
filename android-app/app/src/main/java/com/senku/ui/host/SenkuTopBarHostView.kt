@@ -34,6 +34,7 @@ class SenkuTopBarHostView @JvmOverloads constructor(
     private var showPin: Boolean by mutableStateOf(false)
     private var pinActive: Boolean by mutableStateOf(false)
     private var showShare: Boolean by mutableStateOf(false)
+    private var titleMaxLines: Int by mutableStateOf(1)
     private var backDescription: String by mutableStateOf("")
     private var homeDescription: String by mutableStateOf("")
     private var pinDescription: String by mutableStateOf("")
@@ -48,6 +49,7 @@ class SenkuTopBarHostView @JvmOverloads constructor(
         showPin: Boolean,
         pinActive: Boolean,
         showShare: Boolean,
+        titleMaxLines: Int,
         backDescription: String,
         homeDescription: String,
         pinDescription: String,
@@ -61,6 +63,7 @@ class SenkuTopBarHostView @JvmOverloads constructor(
         this.showPin = showPin
         this.pinActive = pinActive
         this.showShare = showShare
+        this.titleMaxLines = titleMaxLines.coerceAtLeast(1)
         this.backDescription = backDescription
         this.homeDescription = homeDescription
         this.pinDescription = pinDescription
@@ -78,6 +81,7 @@ class SenkuTopBarHostView @JvmOverloads constructor(
                 actions = buildActions(),
                 onActionClick = { action -> actionHandler?.onAction(action) },
                 modifier = Modifier,
+                titleMaxLines = titleMaxLines,
             )
         }
     }

@@ -11,6 +11,7 @@ final class GuideBodySanitizer {
     private static final Pattern GUIDE_ADMONITION_INLINE_PREFIX_PATTERN =
         Pattern.compile("^(DANGER|WARNING|CAUTION|IMPORTANT|NOTE|DANGEROUS)(?:\\s*[:.-]\\s*|\\s+)(.+)$");
     private static final Pattern GUIDE_MARKDOWN_HEADING_PATTERN = Pattern.compile("^#{1,6}\\s+");
+    private static final Pattern GUIDE_MARKDOWN_SECTION_HEADING_PATTERN = Pattern.compile("^##\\s+");
     private static final Pattern GUIDE_SECTION_LINE_PATTERN = Pattern.compile("^Source section:\\s*(.+)$", Pattern.CASE_INSENSITIVE);
     private static final Pattern GUIDE_BRACKET_SECTION_LINE_PATTERN =
         Pattern.compile("^\\[\\[?/?SECTION\\]?\\]?\\s*(.*)$", Pattern.CASE_INSENSITIVE);
@@ -100,7 +101,7 @@ final class GuideBodySanitizer {
             if (shouldSkipGuideDisplayLine(trimmed)) {
                 continue;
             }
-            boolean markdownHeading = GUIDE_MARKDOWN_HEADING_PATTERN.matcher(trimmed).find();
+            boolean markdownSectionHeading = GUIDE_MARKDOWN_SECTION_HEADING_PATTERN.matcher(trimmed).find();
             Matcher fenceMatcher = GUIDE_ADMONITION_FENCE_PATTERN.matcher(trimmed);
             if (fenceMatcher.matches()) {
                 String marker = safe(fenceMatcher.group(1)).trim();
@@ -134,7 +135,7 @@ final class GuideBodySanitizer {
             displayLine = formatGuideAdmonitionLine(displayLine);
             boolean explicitSectionMarkerLine = isGuideSectionMarkerLine(displayLine);
             boolean sectionLine = !insideAdmonitionBlock
-                && (markdownHeading || explicitSectionMarkerLine || isGuideSectionDisplayLine(displayLine));
+                && (markdownSectionHeading || explicitSectionMarkerLine || isGuideSectionDisplayLine(displayLine));
             String sectionValue = sectionLine ? extractGuideSectionValue(displayLine) : "";
             boolean requiredReadingLine = isRequiredReadingLine(displayLine);
             if (pendingAdmonitionLabel && !displayLine.isEmpty() && !requiredReadingLine) {

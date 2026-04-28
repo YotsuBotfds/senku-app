@@ -887,6 +887,62 @@ Reviewer-backed next slices:
   paper/TOC/cross-reference allocation, and emergency header/evidence/composer
   styling as the remaining visual blockers.
 
+## Wave45 Checkpoint
+
+Committed scope pending at the time of this update:
+
+- P1 chrome: shared top bar now splits leading back from trailing home/share/more
+  actions, uses mock-closer outline/connected-node icons, gives tablet/landscape
+  titles a two-line wrap budget, and preserves the emergency `• DANGER` pill.
+- P2 answer: GD-345 rain-shelter answers canonicalize back to the exact
+  two-paragraph ridgeline prose, and limited-fit article cards suppress the
+  inner status row and collapsed `Sources >` footer.
+- P3 thread: deterministic thread guide chips retain the `GD-220`/`GD-345`
+  support pair, and tablet thread rails stop showing generic action toolbar
+  chrome outside guide mode.
+- P4 guide: guide body sanitization no longer turns nested markdown headings into
+  fake paper sections, keeping foundry guide structure closer to the 17-section
+  target.
+- P5 search rows: row contract is pinned to `GD-023 92`, `GD-027 78`, `GD-345
+  74`, and `GD-294 61`, with the card preview using the `GD-023` target copy.
+- P6 home/search shell: phone home category and recent rows are larger and less
+  compressed, with expanded top chrome/search/status spacing in phone portrait
+  and phone landscape.
+- P7 emergency: owned emergency copy/drawables preserve `minimum 5 m radius`,
+  keep the four ordered actions, and strengthen danger banner/action/warning
+  rail styling.
+
+Fresh proof:
+
+- Pack: `artifacts/ui_state_pack/wave45_integrated/20260428_175328`
+- Canonical mocks:
+  `artifacts/ui_state_pack/wave45_integrated/20260428_175328/mocks`
+- Zip:
+  `artifacts/ui_state_pack/wave45_integrated/20260428_175328_mocks.zip`
+- Summary: status `pass`, states `22/22`, failures `0`, ANRs `0`, mock pack
+  `pass`, deterministic frame export `true`.
+- APK SHA:
+  `f47c59c6b6b23652fe685c849866689465cb95a65cc6e945b437ccc88275cd16`
+- Host model: `gemma-4-e2b-it-litert`
+- Host model SHA:
+  `ea1102014465edeb14b517bf270f6751d036749e3c5f517a7ff802782cb92161`
+- Validation: full `:app:testDebugUnitTest` passed, Android local quality gate
+  passed, `git diff --check` passed with only CRLF warnings from Git.
+
+Reviewer-backed next slices:
+
+- Answer remains the main blocker: tablet answer is still oversized and too
+  left-rail-heavy, related-guide rows are not yet in the target viewport, and
+  phone portrait still exposes a lower `PROOF RAIL` card.
+- Detail shell/tablet layout should get a serial P1/P2 pass to reduce the
+  answer/thread left-rail width and make target related-guide/source stacks land
+  in the visible frame.
+- Home phone is materially closer after the density pass; next P6 should tune
+  exact category/recent row sizes rather than wholesale structure.
+- Guide/emergency still need visual proof review against Wave45 screenshots
+  before further formatter work, especially guide tablet paper/rail allocation
+  and emergency bottom composer/context copy.
+
 ## Parallelization Rules
 
 - Start every worker with `git status --short`, `git log --oneline -n 8

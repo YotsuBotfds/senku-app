@@ -339,7 +339,7 @@ public final class DetailThreadHistoryRendererTest {
     }
 
     @Test
-    public void guideChipLabelsPrioritizeRainShelterSourceOverAbrasivesAnchor() {
+    public void guideChipLabelsKeepDeterministicThreadAnchorBeforeRainShelterSource() {
         SessionMemory.TurnSnapshot turn = new SessionMemory.TurnSnapshot(
             "how do i build a rain shelter",
             "Use a sloped tarp ridgeline.",
@@ -354,11 +354,11 @@ public final class DetailThreadHistoryRendererTest {
         );
 
         assertEquals(
-            List.of("GD-345", "GD-220"),
+            List.of("GD-220", "GD-345"),
             DetailThreadHistoryRenderer.guideChipLabelsForTurn(turn)
         );
         assertEquals(
-            List.of("GD-345", "GD-220"),
+            List.of("GD-220", "GD-345"),
             DetailThreadHistoryRenderer.guideChipIdsForTurn(turn)
         );
     }

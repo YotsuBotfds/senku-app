@@ -102,7 +102,7 @@ fun CategoryShelf(
     onCategorySelected: (CategoryShelfItemModel) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val verticalGap = 4.dp
+    val verticalGap = 8.dp
 
     Column(
         modifier = modifier.fillMaxWidth(),
@@ -113,7 +113,7 @@ fun CategoryShelf(
                 CategoryGrid(
                     items = items,
                     columns = 3,
-                    cardHeight = 46.dp,
+                    cardHeight = 68.dp,
                     selectionEnabled = selectionEnabled,
                     onCategorySelected = onCategorySelected,
                 )
@@ -123,7 +123,7 @@ fun CategoryShelf(
                 CategoryGrid(
                     items = items,
                     columns = 3,
-                    cardHeight = 38.dp,
+                    cardHeight = 54.dp,
                     selectionEnabled = selectionEnabled,
                     onCategorySelected = onCategorySelected,
                 )
@@ -150,7 +150,7 @@ private fun CategoryGrid(
     selectionEnabled: Boolean,
     onCategorySelected: (CategoryShelfItemModel) -> Unit,
 ) {
-    val gap = 4.dp
+    val gap = 8.dp
     items.chunked(columns).forEach { rowItems ->
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -182,9 +182,9 @@ private fun PhoneCategoryCard(
 ) {
     val colors = SenkuTheme.colors
     val corner = 4.dp
-    val compactGrid = cardHeight <= 40.dp
-    val horizontalPadding = if (compactGrid) 7.dp else 9.dp
-    val verticalPadding = if (compactGrid) 3.dp else 5.dp
+    val compactGrid = cardHeight <= 56.dp
+    val horizontalPadding = if (compactGrid) 8.dp else 12.dp
+    val verticalPadding = if (compactGrid) 5.dp else 8.dp
     val enabled = selectionEnabled && item.enabled
     val accent = Color(item.accentColor)
 
@@ -220,7 +220,7 @@ private fun PhoneCategoryCard(
                 text = item.label,
                 style = SenkuTheme.typography.uiBody.copy(
                     fontSize = if (compactGrid) 10.5.sp else 11.sp,
-                    lineHeight = if (compactGrid) 12.sp else 13.sp,
+                    lineHeight = if (compactGrid) 12.sp else 15.sp,
                     fontWeight = FontWeight.Medium,
                 ),
                 color = colors.ink0,
@@ -232,7 +232,7 @@ private fun PhoneCategoryCard(
                     text = item.countLabel,
                     style = SenkuTheme.typography.uiBody.copy(
                         fontSize = 9.5.sp,
-                        lineHeight = 12.sp,
+                        lineHeight = 14.sp,
                         fontWeight = FontWeight.Medium,
                     ),
                     color = colors.ink2,

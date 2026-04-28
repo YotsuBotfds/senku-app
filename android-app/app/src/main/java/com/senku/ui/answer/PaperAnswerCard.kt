@@ -119,6 +119,7 @@ fun PaperAnswerCard(
     val footerMeta = buildFooterMeta(content)
     val statusTone = if (content.abstain) colors.danger else palette.muted
     val safetyTone = colors.danger
+    val showArticleChrome = shouldShowPaperAnswerArticleChrome(content)
 
     Surface(
         modifier = modifier.fillMaxWidth(),
@@ -148,33 +149,35 @@ fun PaperAnswerCard(
                     .padding(PaperAnswerCardInnerPadding),
                 verticalArrangement = Arrangement.spacedBy(PaperAnswerCardSectionSpacing),
             ) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    Text(
-                        text = statusHeaderLabel(content),
-                        style = typography.monoCaps.copy(
-                            fontSize = 10.sp,
-                            lineHeight = 13.sp,
-                            fontWeight = FontWeight.Normal,
-                        ),
-                        color = statusTone,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                    )
-                    Text(
-                        text = compactEvidenceLabel(content),
-                        style = typography.monoCaps.copy(
-                            fontSize = 10.sp,
-                            lineHeight = 13.sp,
-                            fontWeight = FontWeight.Normal,
-                        ),
-                        color = evidenceTone,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                    )
+                if (showArticleChrome) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Text(
+                            text = statusHeaderLabel(content),
+                            style = typography.monoCaps.copy(
+                                fontSize = 10.sp,
+                                lineHeight = 13.sp,
+                                fontWeight = FontWeight.Normal,
+                            ),
+                            color = statusTone,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                        )
+                        Text(
+                            text = compactEvidenceLabel(content),
+                            style = typography.monoCaps.copy(
+                                fontSize = 10.sp,
+                                lineHeight = 13.sp,
+                                fontWeight = FontWeight.Normal,
+                            ),
+                            color = evidenceTone,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                        )
+                    }
                 }
 
                 Text(
@@ -252,53 +255,55 @@ fun PaperAnswerCard(
                     }
                 }
 
-                AnswerSectionDivider(palette.hairline)
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    Text(
-                        text = footerMeta,
-                        style = typography.monoCaps.copy(
-                            fontSize = PaperAnswerCardMetaSize,
-                            lineHeight = PaperAnswerCardMetaLineHeight,
-                            fontWeight = FontWeight.Normal,
-                        ),
-                        color = palette.muted,
-                        maxLines = 2,
-                        overflow = TextOverflow.Ellipsis,
-                        modifier = Modifier.weight(1f),
-                    )
-                    Spacer(modifier = Modifier.size(10.dp))
-                    Surface(
-                        color = Color.Transparent,
-                        contentColor = colors.accent,
-                        onClick = onShowProof,
+                if (showArticleChrome) {
+                    AnswerSectionDivider(palette.hairline)
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically,
                     ) {
-                        Row(
-                            modifier = Modifier.padding(vertical = 2.dp),
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(5.dp),
+                        Text(
+                            text = footerMeta,
+                            style = typography.monoCaps.copy(
+                                fontSize = PaperAnswerCardMetaSize,
+                                lineHeight = PaperAnswerCardMetaLineHeight,
+                                fontWeight = FontWeight.Normal,
+                            ),
+                            color = palette.muted,
+                            maxLines = 2,
+                            overflow = TextOverflow.Ellipsis,
+                            modifier = Modifier.weight(1f),
+                        )
+                        Spacer(modifier = Modifier.size(10.dp))
+                        Surface(
+                            color = Color.Transparent,
+                            contentColor = colors.accent,
+                            onClick = onShowProof,
                         ) {
-                            Text(
-                                text = displayProofCtaLabel(showProofLabel),
-                                style = typography.monoCaps.copy(
-                                    fontSize = PaperAnswerCardProofCtaSize,
-                                    lineHeight = PaperAnswerCardProofCtaLineHeight,
-                                    fontWeight = FontWeight.Normal,
-                                ),
-                                color = colors.accent,
-                            )
-                            Text(
-                                text = ">",
-                                style = typography.monoCaps.copy(
-                                    fontSize = PaperAnswerCardProofCtaSize,
-                                    lineHeight = PaperAnswerCardProofCtaLineHeight,
-                                    fontWeight = FontWeight.Normal,
-                                ),
-                                color = colors.accent,
-                            )
+                            Row(
+                                modifier = Modifier.padding(vertical = 2.dp),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(5.dp),
+                            ) {
+                                Text(
+                                    text = displayProofCtaLabel(showProofLabel),
+                                    style = typography.monoCaps.copy(
+                                        fontSize = PaperAnswerCardProofCtaSize,
+                                        lineHeight = PaperAnswerCardProofCtaLineHeight,
+                                        fontWeight = FontWeight.Normal,
+                                    ),
+                                    color = colors.accent,
+                                )
+                                Text(
+                                    text = ">",
+                                    style = typography.monoCaps.copy(
+                                        fontSize = PaperAnswerCardProofCtaSize,
+                                        lineHeight = PaperAnswerCardProofCtaLineHeight,
+                                        fontWeight = FontWeight.Normal,
+                                    ),
+                                    color = colors.accent,
+                                )
+                            }
                         }
                     }
                 }
@@ -537,4 +542,8 @@ internal fun displayProofCtaLabel(label: String): String {
         trimmed.equals("View sources", ignoreCase = true) -> "Sources"
         else -> label
     }
+}
+
+internal fun shouldShowPaperAnswerArticleChrome(content: AnswerContent): Boolean {
+    return !content.uncertainFit && content.answerSurfaceLabel != AnswerSurfaceLabel.LimitedFit
 }

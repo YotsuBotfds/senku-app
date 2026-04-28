@@ -6703,6 +6703,7 @@ public final class DetailActivity extends AppCompatActivity {
                 pinVisible,
                 pinActive,
                 answerMode && !buildTranscriptExportText().isEmpty(),
+                shouldAllowRev03TopBarTitleWrap() ? 2 : 1,
                 getString(R.string.detail_back_content_description),
                 getString(R.string.detail_home_content_description),
                 getString(
@@ -6735,6 +6736,10 @@ public final class DetailActivity extends AppCompatActivity {
                 subtitleView.setVisibility(showMetaStrip ? View.GONE : View.VISIBLE);
             }
         }
+    }
+
+    private boolean shouldAllowRev03TopBarTitleWrap() {
+        return !isCompactPortraitPhoneLayout();
     }
 
     private String buildRev03TopBarTitle() {

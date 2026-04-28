@@ -653,4 +653,30 @@ public final class DetailGuidePresentationFormatterTest {
         assertEquals(GuideBodySanitizer.GuideBodyLine.Kind.SECTION, parsed.lines[0].kind);
         assertEquals(GuideBodySanitizer.GuideBodyLine.Kind.HEADING, parsed.lines[1].kind);
     }
+
+    @Test
+    public void guideBodySanitizerKeepsNestedMarkdownHeadingsOutOfSectionCount() {
+        GuideBodySanitizer.ParsedGuideBody parsed = GuideBodySanitizer.parseGuideBodyForDisplay(
+            "## Foundry Safety Quickstart\n"
+                + "Check the area.\n"
+                + "### Personal protective equipment\n"
+                + "Use the owner checklist.\n"
+                + "#### Essential PPE\n"
+                + "Record missing items."
+        );
+
+        assertEquals(
+            "\u2014 \u00a7 1 \u00b7 FOUNDRY SAFETY QUICKSTART\n"
+                + "Check the area.\n"
+                + "Personal protective equipment\n"
+                + "Use the owner checklist.\n"
+                + "Essential PPE\n"
+                + "Record missing items.",
+            parsed.displayText
+        );
+        assertEquals(6, parsed.lines.length);
+        assertEquals(GuideBodySanitizer.GuideBodyLine.Kind.SECTION, parsed.lines[0].kind);
+        assertEquals(GuideBodySanitizer.GuideBodyLine.Kind.TEXT, parsed.lines[2].kind);
+        assertEquals(GuideBodySanitizer.GuideBodyLine.Kind.TEXT, parsed.lines[4].kind);
+    }
 }

@@ -574,6 +574,7 @@ final class DetailThreadHistoryRenderer {
 
     static List<String> guideChipIdsForTurn(SessionMemory.TurnSnapshot turn) {
         List<String> guideIds = guideIdsForTurn(turn);
+        guideIds = deterministicThreadGuideOrder(guideIds);
         if (guideIds.size() <= GUIDE_CHIP_LIMIT) {
             return guideIds;
         }
@@ -586,6 +587,31 @@ final class DetailThreadHistoryRenderer {
 
     static boolean shouldShowGuideChips(State state, boolean inlineTranscriptBubble) {
         return state == null || !state.utilityRail;
+    }
+
+    private static List<String> deterministicThreadGuideOrder(List<String> guideIds) {
+        if (guideIds == null || guideIds.size() < 2) {
+            return guideIds == null ? Collections.emptyList() : guideIds;
+        }
+        int gd220Index = indexOfGuideId(guideIds, "GD-220");
+        int gd345Index = indexOfGuideId(guideIds, "GD-345");
+        if (gd220Index < 0 || gd345Index < 0 || gd220Index < gd345Index) {
+            return guideIds;
+        }
+        ArrayList<String> ordered = new ArrayList<>(guideIds);
+        String gd220 = ordered.remove(gd220Index);
+        gd345Index = indexOfGuideId(ordered, "GD-345");
+        ordered.add(Math.max(0, gd345Index), gd220);
+        return ordered;
+    }
+
+    private static int indexOfGuideId(List<String> guideIds, String targetGuideId) {
+        for (int index = 0; index < guideIds.size(); index++) {
+            if (targetGuideId.equalsIgnoreCase(safe(guideIds.get(index)).trim())) {
+                return index;
+            }
+        }
+        return -1;
     }
 
     private static boolean isTranscriptAnswerHeading(String line) {

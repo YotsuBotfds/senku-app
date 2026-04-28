@@ -11,6 +11,12 @@ class ThreadRailPolicyTest {
     }
 
     @Test
+    fun threadRailToolbarStaysOutOfThreadModeMockRail() {
+        assertEquals(false, threadRailShouldShowToolbar(guideMode = false))
+        assertEquals(true, threadRailShouldShowToolbar(guideMode = true))
+    }
+
+    @Test
     fun threadRailTurnLabelsUseTranscriptQuestionIds() {
         assertEquals("Q2", threadRailTurnLabel(index = 2, guideMode = false))
         assertEquals("SEC 2", threadRailTurnLabel(index = 2, guideMode = true))
@@ -168,6 +174,10 @@ class ThreadRailPolicyTest {
         assertEquals(
             listOf("GD-220", "GD-345"),
             threadRailVisibleSources(listOf(anchor, rainShelter, extra), guideMode = false).map { it.id },
+        )
+        assertEquals(
+            "SOURCES \u2022 2",
+            threadRailSectionTitle("SOURCES", threadRailVisibleSources(listOf(anchor, rainShelter, extra), guideMode = false).size),
         )
         assertEquals(
             listOf("GD-345", "GD-132", "GD-220"),

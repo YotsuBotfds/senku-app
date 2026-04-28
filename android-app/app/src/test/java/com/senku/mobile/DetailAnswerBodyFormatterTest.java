@@ -81,4 +81,27 @@ public final class DetailAnswerBodyFormatterTest {
             )
         );
     }
+
+    @Test
+    public void formatAnswerBodyKeepsCanonicalRainShelterArticleCleanWhenSupportChromeIsPresent() {
+        DetailAnswerBodyFormatter formatter = new DetailAnswerBodyFormatter(null);
+
+        assertEquals(
+            "Build a ridgeline first, then drape and tension the tarp around it. "
+                + "A ridgeline is a single taut cord run between two anchor points (trees, poles, or bombproof rocks) "
+                + "at roughly chest height; it carries the load while the tarp only sheds water.\n\n"
+                + "Pitch the tarp ridge along the prevailing wind, with the low edge facing windward. "
+                + "Tension corners with prusik or taut-line hitches so the rig stays adjustable through the night.",
+            formatter.formatAnswerBody(
+                "ANSWER\n"
+                    + "Build a ridgeline first, then drape and tension the tarp around it. "
+                    + "A ridgeline is a single taut cord run between two anchor points (trees, poles, or bombproof rocks) "
+                    + "at roughly chest height; it carries the load while the tarp only sheds water.\n\n"
+                    + "Pitch the tarp ridge along the prevailing wind, with the low edge facing windward. "
+                    + "Tension corners with prusik or taut-line hitches so the rig stays adjustable through the night.\n\n"
+                    + "UNSURE FIT\n"
+                    + "See GD-345 Tarp & Cord Shelters before relying on this."
+            )
+        );
+    }
 }

@@ -120,6 +120,17 @@ class SearchResultCardHeuristicsTest {
     }
 
     @Test
+    fun compactResultPreviewText_preservesFlatRainShelterQueryText() {
+        assertEquals(
+            "GD-023 \u00B7 Survival: rain shelter preview: choose overhead cover and shed runoff away.",
+            compactResultPreviewText(
+                "GD-023 \u00B7 Survival",
+                "rain shelter preview: choose overhead cover and shed runoff away.",
+            ),
+        )
+    }
+
+    @Test
     fun scoreTickFillFraction_tracksRankScoreWithoutPercentCopy() {
         assertEquals(0.95f, scoreTickFillFraction("92"), 0.001f)
         assertEquals(0.82f, scoreTickFillFraction("78"), 0.001f)

@@ -43,6 +43,8 @@ internal fun threadRailTurnRowMinHeightDp(active: Boolean): Int =
 
 internal fun threadRailSourceRowMinHeightDp(): Int = 38
 
+internal fun threadRailShouldShowToolbar(guideMode: Boolean): Boolean = guideMode
+
 internal fun threadRailTurnLabel(index: Int, guideMode: Boolean): String =
     if (guideMode) "SEC $index" else "Q$index"
 
@@ -276,13 +278,15 @@ fun ThreadRail(
             .padding(horizontal = 6.dp, vertical = 6.dp),
         verticalArrangement = Arrangement.spacedBy(6.dp),
     ) {
-        Toolbar(
-            pinVisible = pinVisible,
-            pinActive = pinActive,
-            onBackClick = onBackClick,
-            onHomeClick = onHomeClick,
-            onPinClick = onPinClick,
-        )
+        if (threadRailShouldShowToolbar(guideMode)) {
+            Toolbar(
+                pinVisible = pinVisible,
+                pinActive = pinActive,
+                onBackClick = onBackClick,
+                onHomeClick = onHomeClick,
+                onPinClick = onPinClick,
+            )
+        }
 
         RailSection(
             label = if (guideMode) guideLabels.sectionLabel else "TURNS",

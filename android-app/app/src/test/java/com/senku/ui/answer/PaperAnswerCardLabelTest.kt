@@ -173,6 +173,29 @@ class PaperAnswerCardLabelTest {
         assertEquals("View citations", displayProofCtaLabel("View citations"))
     }
 
+    @Test
+    fun paperAnswerArticleChrome_isHiddenForLimitedFitArticleAnswers() {
+        assertEquals(
+            false,
+            shouldShowPaperAnswerArticleChrome(
+                answer(answerSurfaceLabel = AnswerSurfaceLabel.LimitedFit),
+            ),
+        )
+        assertEquals(
+            false,
+            shouldShowPaperAnswerArticleChrome(
+                AnswerContent(
+                    short = "Related guidance only.",
+                    sourceCount = 3,
+                    host = "This device",
+                    elapsedSeconds = 0.0,
+                    uncertainFit = true,
+                ),
+            ),
+        )
+        assertEquals(true, shouldShowPaperAnswerArticleChrome(answer()))
+    }
+
     private fun answer(
         evidence: Evidence = Evidence.Moderate,
         sourceCount: Int = 1,
