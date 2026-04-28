@@ -122,7 +122,7 @@ class SearchResultCardHeuristicsTest {
     @Test
     fun compactResultPreviewText_preservesFlatRainShelterQueryText() {
         assertEquals(
-            "GD-023 \u00B7 Survival: rain shelter preview: choose overhead cover and shed runoff away.",
+            "rain shelter preview: choose overhead cover and shed runoff away.",
             compactResultPreviewText(
                 "GD-023 \u00B7 Survival",
                 "rain shelter preview: choose overhead cover and shed runoff away.",

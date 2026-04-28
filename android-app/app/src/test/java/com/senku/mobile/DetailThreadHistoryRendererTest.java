@@ -275,16 +275,16 @@ public final class DetailThreadHistoryRendererTest {
     }
 
     @Test
-    public void threadContextFooterUsesFirstThreadAnchor() {
+    public void threadContextFooterKeepsTurnCountWithoutRepeatingAnchor() {
         assertEquals(
-            "THREAD CONTEXT \u00B7 2 TURNS \u00B7 GD-220 ANCHOR",
+            "THREAD CONTEXT KEPT \u00B7 2 TURNS",
             DetailThreadHistoryRenderer.threadContextFooterLabel(
                 List.of(turn("answer", "GD-220", 0L), turn("answer", "GD-345", 0L)),
                 "GD-220"
             )
         );
         assertEquals(
-            "THREAD CONTEXT \u00B7 1 TURN",
+            "THREAD CONTEXT KEPT \u00B7 1 TURN",
             DetailThreadHistoryRenderer.threadContextFooterLabel(
                 List.of(turn("answer", "", 0L)),
                 ""

@@ -1045,6 +1045,58 @@ Residuals for next wave:
 - Home tablet landscape structure is close enough to keep, with remaining polish
   around exact card stroke weight, density, and typographic scale.
 
+## Wave48 Checkpoint
+
+Committed scope pending at the time of this update:
+
+- Guide tablet shell: separated guide title chrome from the body row so the
+  section rail, paper, and cross-reference rail begin below stable top chrome.
+- Thread footer/context: quieted tablet and phone thread composer context to
+  `THREAD CONTEXT KEPT - 2 TURNS` / `THREAD CONTEXT KEPT · 2 TURNS`, removing
+  duplicated `GD-220 ANCHOR` footer copy.
+- Answer source stamp: quieted tablet answer guide-mode header from `Sources -
+  Answer source: GD-345` to compact source ownership (`Sources - GD-345`).
+- Home tablet polish: tightened category/recent row density, widened the left
+  rail, and boxed the search icon treatment while preserving the Wave47 layout.
+- Search polish: increased ranked-row readability, dropped redundant preview
+  prefixes, and removed search-only rounded-shape residue.
+- Reviewer pass: Wave47 parity score was roughly Home 8/10, Search 8/10,
+  Emergency 7/10, Answer/Thread 6/10, Guide 5.5/10, with guide layout and
+  answer/thread hierarchy still the biggest blockers.
+
+Fresh proof:
+
+- Pack: `artifacts/ui_state_pack/wave48_integrated_b/20260428_183602`
+- Canonical mocks:
+  `artifacts/ui_state_pack/wave48_integrated_b/20260428_183602/mocks`
+- Zip:
+  `artifacts/ui_state_pack/wave48_integrated_b/20260428_183602_mocks.zip`
+- Summary: status `pass`, states `22/22`, failures `0`, ANRs `0`, mock pack
+  `pass`, deterministic frame export `true`.
+- APK SHA:
+  `2e8755717304ea60aaa74a914fd23b1333bc4959926a2435aa2fd4707994207c`
+- Host model: `gemma-4-e2b-it-litert`
+- Host model SHA:
+  `ea1102014465edeb14b517bf270f6751d036749e3c5f517a7ff802782cb92161`
+- Validation: full `:app:testDebugUnitTest` passed before the final footer
+  patch, focused thread/tablet tests passed after the patch, Android local
+  quality gate passed, and `git diff --check` passed with only CRLF warnings.
+  Dump sweep found no `PROOF RAIL`, `Proof rail`, `Answer source selected`,
+  `Answer source:`, mojibake, or `GD-?` fallback residue in the final Wave48b
+  state pack.
+
+Residuals for next wave:
+
+- Guide phone landscape remains the largest miss: it still needs a true target
+  left section rail plus paper layout instead of the current right-heavy
+  cross-reference treatment.
+- Thread tablet/wide content still exposes workflow labels (`QUESTION USER`,
+  `Rule match`, `Open proof`) rather than the simpler mock Q/A transcript.
+- Answer phone portrait still needs hierarchy/source-order cleanup: target order
+  is `GD-220 ANCHOR`, `GD-132 RELATED`, `GD-345 TOPIC`, then related guides.
+- Emergency remains close but needs the next P7 pass for flatter why-card shape
+  and exact composer placeholder/context copy.
+
 ## Parallelization Rules
 
 - Start every worker with `git status --short`, `git log --oneline -n 8

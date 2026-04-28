@@ -76,11 +76,11 @@ public final class MainActivity extends AppCompatActivity {
     private static final int RESULT_PREVIEW_BRIDGE_SIGNAL_LIMIT = 1;
     private static final int MANUAL_HOME_CATEGORY_COLUMNS = 3;
     private static final int MANUAL_HOME_CATEGORY_CARD_HEIGHT_DP = 64;
-    private static final int TABLET_MANUAL_HOME_CATEGORY_CARD_HEIGHT_DP = 82;
+    private static final int TABLET_MANUAL_HOME_CATEGORY_CARD_HEIGHT_DP = 64;
     private static final int MANUAL_HOME_CATEGORY_ROW_GAP_DP = 8;
     private static final int MANUAL_HOME_RECENT_ROW_HEIGHT_DP = 72;
     private static final int MANUAL_HOME_RECENT_ROW_GAP_DP = 10;
-    private static final int TABLET_MANUAL_HOME_RECENT_ROW_GAP_DP = 10;
+    private static final int TABLET_MANUAL_HOME_RECENT_ROW_GAP_DP = 8;
     private static final String REVIEW_SEARCH_QUERY = "rain shelter";
     private static final String REVIEW_SEARCH_LATENCY_LABEL = "12ms";
     private static final ReviewSearchResultSpec[] REVIEW_RAIN_SHELTER_RESULTS = {
@@ -1804,7 +1804,7 @@ public final class MainActivity extends AppCompatActivity {
             ? R.color.senku_rev03_ink_0
             : R.color.senku_text_light));
         if (manualHomeShell) {
-            button.setTextSize(isTabletSearchLayout() ? 16 : 12f);
+            button.setTextSize(isTabletSearchLayout() ? 14 : 12f);
             button.setTypeface(android.graphics.Typeface.DEFAULT, android.graphics.Typeface.BOLD);
         }
         button.setTextAlignment(View.TEXT_ALIGNMENT_VIEW_START);
@@ -1862,7 +1862,7 @@ public final class MainActivity extends AppCompatActivity {
             return 0;
         }
         if (tabletSearchLayout) {
-            return 100;
+            return 60;
         }
         return MANUAL_HOME_RECENT_ROW_HEIGHT_DP;
     }
@@ -1887,7 +1887,7 @@ public final class MainActivity extends AppCompatActivity {
         boolean compactPhoneHome
     ) {
         if (tabletSearchLayout) {
-            return 12;
+            return 8;
         }
         if (manualHomeShell) {
             return 7;

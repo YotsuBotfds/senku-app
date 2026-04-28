@@ -177,6 +177,8 @@ class ThreadRailPolicyTest {
             listOf("GD-220", "GD-345"),
             threadRailVisibleSources(listOf(anchor, rainShelter, extra), guideMode = false).map { it.id },
         )
+        assertEquals("GD-220", threadRailSourceDisplayLabel(anchor, guideMode = false))
+        assertEquals("GD-345", threadRailSourceDisplayLabel(rainShelter, guideMode = false))
         assertEquals(
             "SOURCES \u2022 2",
             threadRailSectionTitle("SOURCES", threadRailVisibleSources(listOf(anchor, rainShelter, extra), guideMode = false).size),

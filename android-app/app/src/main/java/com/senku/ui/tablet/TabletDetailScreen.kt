@@ -213,6 +213,13 @@ internal data class TabletAnswerReadingChromePolicy(
     val bottomPaddingDp: Int,
 )
 
+internal data class TabletGuideChromePolicy(
+    val topBarMinHeightDp: Int,
+    val topBarHorizontalPaddingDp: Int,
+    val topBarVerticalPaddingDp: Int,
+    val topBarTitleLineHeightSp: Int,
+)
+
 private data class GuidePaperPalette(
     val page: Color = Color(0xFFE8DFC9),
     val pageInset: Color = Color(0xFFE1D3BA),
@@ -307,6 +314,23 @@ internal fun tabletGuidePaperBottomPaddingDp(isLandscape: Boolean): Int =
 internal fun tabletGuideReferenceRailWidthDp(isLandscape: Boolean): Int =
     if (isLandscape) 424 else 0
 
+internal fun tabletGuideChromePolicy(isLandscape: Boolean): TabletGuideChromePolicy =
+    if (isLandscape) {
+        TabletGuideChromePolicy(
+            topBarMinHeightDp = 64,
+            topBarHorizontalPaddingDp = 28,
+            topBarVerticalPaddingDp = 9,
+            topBarTitleLineHeightSp = 20,
+        )
+    } else {
+        TabletGuideChromePolicy(
+            topBarMinHeightDp = 58,
+            topBarHorizontalPaddingDp = 24,
+            topBarVerticalPaddingDp = 8,
+            topBarTitleLineHeightSp = 19,
+        )
+    }
+
 internal fun tabletGuideReferenceHeaderTitle(count: Int): String =
     "${tabletGuideNavigationLabels().referenceLabel} \u00B7 ${count.coerceAtLeast(0)}"
 
@@ -371,9 +395,7 @@ internal fun tabletComposerContextHint(state: TabletDetailState): String {
         else -> if (guideMode) "$count sections" else "$count turns"
     }
     if (state.isThreadMode()) {
-        val anchorLabel = state.guideId.trim().takeIf { it.isNotEmpty() }?.let { "$it anchor" }
-        return listOf("Thread context", turnLabel, anchorLabel)
-            .filterNotNull()
+        return listOf("Thread context kept", turnLabel)
             .joinToString(" - ")
             .uppercase()
     }
@@ -497,45 +519,52 @@ fun TabletDetailScreen(
         color = colors.bg0,
         contentColor = colors.ink0,
     ) {
-        Row(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(colors.bg0),
-        ) {
-            val showThreadRail = tabletShouldShowThreadRail(state.isLandscape, state.isGuideMode())
-            if (showThreadRail) {
-                ThreadRail(
-                    turns = state.resolvedThreadRailTurns(),
-                    sources = state.resolvedThreadRailSources(),
-                    guideMode = state.isGuideMode(),
-                    guideSectionCount = state.resolvedGuideSectionCount(),
-                    pinVisible = state.pinVisible,
-                    pinActive = state.pinActive,
+        val guideMode = state.isGuideMode()
+        if (guideMode) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(colors.bg0),
+            ) {
+                TitleBar(
+                    detailMode = state.detailMode,
+                    guideId = state.guideId,
+                    guideTitle = state.guideTitle,
+                    meta = state.meta,
+                    turnCount = state.turns.size,
+                    guideModeLabel = state.guideModeLabel,
+                    guideModeSummary = state.guideModeSummary,
+                    guideModeAnchorLabel = state.guideModeAnchorLabel,
+                    statusText = state.statusText,
+                    guideMode = true,
+                    isLandscape = state.isLandscape,
+                )
+                TabletDetailBodyRow(
+                    state = state,
                     onBackClick = onBackClick,
                     onHomeClick = onHomeClick,
                     onPinClick = onPinClick,
                     onTurnClick = onTurnClick,
                     onSourceClick = onSourceClick,
-                    modifier = Modifier
-                        .width(tabletThreadRailWidthDp(state.isLandscape, state.isGuideMode()).dp)
-                        .fillMaxHeight()
-                        .semantics {
-                            paneTitle = threadPaneTitle
-                            isTraversalGroup = true
-                            traversalIndex = 0f
-                        },
-                )
-
-                Box(
-                    modifier = Modifier
-                        .width(1.dp)
-                        .fillMaxHeight()
-                        .background(colors.hairlineStrong),
+                    onAnchorClick = onAnchorClick,
+                    onComposerTextChange = onComposerTextChange,
+                    onComposerSendClick = onComposerSendClick,
+                    onRetryClick = onRetryClick,
+                    onXRefClick = onXRefClick,
+                    onEvidenceToggleClick = onEvidenceToggleClick,
+                    threadPaneTitle = threadPaneTitle,
+                    answerPaneTitle = answerPaneTitle,
+                    evidencePaneTitle = evidencePaneTitle,
+                    showTitleBarInWorkspace = false,
+                    modifier = Modifier.weight(1f),
                 )
             }
-
-            DetailWorkspace(
+        } else {
+            TabletDetailBodyRow(
                 state = state,
+                onBackClick = onBackClick,
+                onHomeClick = onHomeClick,
+                onPinClick = onPinClick,
                 onTurnClick = onTurnClick,
                 onSourceClick = onSourceClick,
                 onAnchorClick = onAnchorClick,
@@ -544,17 +573,94 @@ fun TabletDetailScreen(
                 onRetryClick = onRetryClick,
                 onXRefClick = onXRefClick,
                 onEvidenceToggleClick = onEvidenceToggleClick,
+                threadPaneTitle = threadPaneTitle,
+                answerPaneTitle = answerPaneTitle,
                 evidencePaneTitle = evidencePaneTitle,
-                modifier = Modifier
-                    .weight(1f)
-                    .fillMaxHeight()
-                    .semantics {
-                        paneTitle = answerPaneTitle
-                        isTraversalGroup = true
-                        traversalIndex = 1f
-                    },
+                showTitleBarInWorkspace = true,
+                modifier = Modifier.fillMaxSize(),
             )
         }
+    }
+}
+
+@Composable
+private fun TabletDetailBodyRow(
+    state: TabletDetailState,
+    onBackClick: () -> Unit,
+    onHomeClick: () -> Unit,
+    onPinClick: () -> Unit,
+    onTurnClick: (String) -> Unit,
+    onSourceClick: (String) -> Unit,
+    onAnchorClick: () -> Unit,
+    onComposerTextChange: (String) -> Unit,
+    onComposerSendClick: (String) -> Unit,
+    onRetryClick: () -> Unit,
+    onXRefClick: (String) -> Unit,
+    onEvidenceToggleClick: () -> Unit,
+    threadPaneTitle: String,
+    answerPaneTitle: String,
+    evidencePaneTitle: String,
+    showTitleBarInWorkspace: Boolean,
+    modifier: Modifier = Modifier,
+) {
+    val colors = SenkuTheme.colors
+    Row(
+        modifier = modifier.background(colors.bg0),
+    ) {
+        val guideMode = state.isGuideMode()
+        val showThreadRail = tabletShouldShowThreadRail(state.isLandscape, guideMode)
+        if (showThreadRail) {
+            ThreadRail(
+                turns = state.resolvedThreadRailTurns(),
+                sources = state.resolvedThreadRailSources(),
+                guideMode = guideMode,
+                guideSectionCount = state.resolvedGuideSectionCount(),
+                pinVisible = state.pinVisible,
+                pinActive = state.pinActive,
+                onBackClick = onBackClick,
+                onHomeClick = onHomeClick,
+                onPinClick = onPinClick,
+                onTurnClick = onTurnClick,
+                onSourceClick = onSourceClick,
+                modifier = Modifier
+                    .width(tabletThreadRailWidthDp(state.isLandscape, guideMode).dp)
+                    .fillMaxHeight()
+                    .semantics {
+                        paneTitle = threadPaneTitle
+                        isTraversalGroup = true
+                        traversalIndex = 0f
+                    },
+            )
+
+            Box(
+                modifier = Modifier
+                    .width(1.dp)
+                    .fillMaxHeight()
+                    .background(colors.hairlineStrong),
+            )
+        }
+
+        DetailWorkspace(
+            state = state,
+            onTurnClick = onTurnClick,
+            onSourceClick = onSourceClick,
+            onAnchorClick = onAnchorClick,
+            onComposerTextChange = onComposerTextChange,
+            onComposerSendClick = onComposerSendClick,
+            onRetryClick = onRetryClick,
+            onXRefClick = onXRefClick,
+            onEvidenceToggleClick = onEvidenceToggleClick,
+            evidencePaneTitle = evidencePaneTitle,
+            showTitleBar = showTitleBarInWorkspace,
+            modifier = Modifier
+                .weight(1f)
+                .fillMaxHeight()
+                .semantics {
+                    paneTitle = answerPaneTitle
+                    isTraversalGroup = true
+                    traversalIndex = 1f
+                },
+        )
     }
 }
 
@@ -570,6 +676,7 @@ private fun DetailWorkspace(
     onXRefClick: (String) -> Unit,
     onEvidenceToggleClick: () -> Unit,
     evidencePaneTitle: String,
+    showTitleBar: Boolean,
     modifier: Modifier = Modifier,
 ) {
     val colors = SenkuTheme.colors
@@ -578,18 +685,21 @@ private fun DetailWorkspace(
     Column(
         modifier = modifier.background(colors.bg0),
     ) {
-        TitleBar(
-            detailMode = state.detailMode,
-            guideId = state.guideId,
-            guideTitle = state.guideTitle,
-            meta = state.meta,
-            turnCount = state.turns.size,
-            guideModeLabel = state.guideModeLabel,
-            guideModeSummary = state.guideModeSummary,
-            guideModeAnchorLabel = state.guideModeAnchorLabel,
-            statusText = state.statusText,
-            guideMode = guideMode,
-        )
+        if (showTitleBar) {
+            TitleBar(
+                detailMode = state.detailMode,
+                guideId = state.guideId,
+                guideTitle = state.guideTitle,
+                meta = state.meta,
+                turnCount = state.turns.size,
+                guideModeLabel = state.guideModeLabel,
+                guideModeSummary = state.guideModeSummary,
+                guideModeAnchorLabel = state.guideModeAnchorLabel,
+                statusText = state.statusText,
+                guideMode = guideMode,
+                isLandscape = state.isLandscape,
+            )
+        }
 
         Row(
             modifier = Modifier
@@ -1338,18 +1448,27 @@ private fun TitleBar(
     guideModeAnchorLabel: String,
     statusText: String,
     guideMode: Boolean,
+    isLandscape: Boolean,
     modifier: Modifier = Modifier,
 ) {
     val colors = SenkuTheme.colors
     val typography = SenkuTheme.typography
+    val guideChromePolicy = tabletGuideChromePolicy(isLandscape)
 
     Column(
         modifier = modifier
             .fillMaxWidth()
             .background(colors.bg0)
+            .then(
+                if (guideMode) {
+                    Modifier.heightIn(min = guideChromePolicy.topBarMinHeightDp.dp)
+                } else {
+                    Modifier
+                }
+            )
             .padding(
-                horizontal = 16.dp,
-                vertical = if (guideMode) 3.dp else 5.dp,
+                horizontal = if (guideMode) guideChromePolicy.topBarHorizontalPaddingDp.dp else 16.dp,
+                vertical = if (guideMode) guideChromePolicy.topBarVerticalPaddingDp.dp else 5.dp,
             ),
         verticalArrangement = Arrangement.spacedBy(if (guideMode) 2.dp else 3.dp),
     ) {
@@ -1391,7 +1510,7 @@ private fun TitleBar(
                 modifier = Modifier.weight(1f),
                 style = typography.sectionTitle.copy(
                     fontSize = if (guideMode) 15.sp else 17.sp,
-                    lineHeight = if (guideMode) 18.sp else 20.sp,
+                    lineHeight = if (guideMode) guideChromePolicy.topBarTitleLineHeightSp.sp else 20.sp,
                     fontWeight = FontWeight.SemiBold,
                 ),
                 color = colors.ink0,

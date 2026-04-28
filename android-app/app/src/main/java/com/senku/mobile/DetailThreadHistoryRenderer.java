@@ -450,9 +450,9 @@ final class DetailThreadHistoryRenderer {
         String turnLabel = turnCount == 1 ? "1 TURN" : turnCount + " TURNS";
         String anchorLabel = safe(anchorGuideId).trim();
         if (anchorLabel.isEmpty()) {
-            return "THREAD CONTEXT \u00B7 " + turnLabel;
+            return "THREAD CONTEXT KEPT \u00B7 " + turnLabel;
         }
-        return "THREAD CONTEXT \u00B7 " + turnLabel + " \u00B7 " + anchorLabel + " ANCHOR";
+        return "THREAD CONTEXT KEPT \u00B7 " + turnLabel;
     }
 
     private String nextAnchorGuideId(String previousAnchorGuideId, SessionMemory.TurnSnapshot turn) {

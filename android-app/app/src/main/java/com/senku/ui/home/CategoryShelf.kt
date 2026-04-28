@@ -114,6 +114,7 @@ fun CategoryShelf(
                     items = items,
                     columns = 3,
                     cardHeight = 64.dp,
+                    tabletGrid = false,
                     selectionEnabled = selectionEnabled,
                     onCategorySelected = onCategorySelected,
                 )
@@ -123,7 +124,8 @@ fun CategoryShelf(
                 CategoryGrid(
                     items = items,
                     columns = 3,
-                    cardHeight = 82.dp,
+                    cardHeight = 64.dp,
+                    tabletGrid = true,
                     selectionEnabled = selectionEnabled,
                     onCategorySelected = onCategorySelected,
                 )
@@ -147,6 +149,7 @@ private fun CategoryGrid(
     items: List<CategoryShelfItemModel>,
     columns: Int,
     cardHeight: Dp,
+    tabletGrid: Boolean,
     selectionEnabled: Boolean,
     onCategorySelected: (CategoryShelfItemModel) -> Unit,
 ) {
@@ -161,6 +164,7 @@ private fun CategoryGrid(
                     item = item,
                     selectionEnabled = selectionEnabled,
                     cardHeight = cardHeight,
+                    tabletGrid = tabletGrid,
                     modifier = Modifier.weight(1f),
                     onClick = { onCategorySelected(item) },
                 )
@@ -179,19 +183,19 @@ private fun PhoneCategoryCard(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     cardHeight: Dp = 74.dp,
+    tabletGrid: Boolean = false,
 ) {
     val colors = SenkuTheme.colors
     val corner = 4.dp
     val compactGrid = cardHeight <= 56.dp
-    val tabletGrid = cardHeight >= 80.dp
     val horizontalPadding = when {
         compactGrid -> 8.dp
-        tabletGrid -> 16.dp
+        tabletGrid -> 14.dp
         else -> 12.dp
     }
     val verticalPadding = when {
         compactGrid -> 5.dp
-        tabletGrid -> 13.dp
+        tabletGrid -> 9.dp
         else -> 8.dp
     }
     val enabled = selectionEnabled && item.enabled
@@ -230,12 +234,12 @@ private fun PhoneCategoryCard(
                 style = SenkuTheme.typography.uiBody.copy(
                     fontSize = when {
                         compactGrid -> 10.5.sp
-                        tabletGrid -> 17.sp
+                        tabletGrid -> 15.sp
                         else -> 11.sp
                     },
                     lineHeight = when {
                         compactGrid -> 12.sp
-                        tabletGrid -> 22.sp
+                        tabletGrid -> 18.sp
                         else -> 15.sp
                     },
                     fontWeight = FontWeight.Medium,
@@ -249,7 +253,7 @@ private fun PhoneCategoryCard(
                     text = item.countLabel,
                     style = SenkuTheme.typography.uiBody.copy(
                         fontSize = if (tabletGrid) 14.sp else 9.5.sp,
-                        lineHeight = if (tabletGrid) 19.sp else 14.sp,
+                        lineHeight = if (tabletGrid) 16.sp else 14.sp,
                         fontWeight = FontWeight.Medium,
                     ),
                     color = colors.ink2,

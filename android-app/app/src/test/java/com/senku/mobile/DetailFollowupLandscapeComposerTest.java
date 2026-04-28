@@ -429,10 +429,23 @@ public final class DetailFollowupLandscapeComposerTest {
         String summary = DetailActivity.buildTabletAnswerGuideModeSummary("GD-345", "");
         String anchorLabel = DetailActivity.buildTabletAnswerGuideModeAnchorLabel(false);
 
-        assertEquals("Answer source: GD-345", summary);
+        assertEquals("GD-345", summary);
         assertEquals("Sources", anchorLabel);
         assertFalse((anchorLabel + " - " + summary).contains("Proof rail"));
+        assertFalse(summary.contains("Answer source"));
         assertFalse(summary.contains("selected"));
+    }
+
+    @Test
+    public void tabletAnswerGuideModeFallsBackToQuietContextText() {
+        assertEquals(
+            "Rain shelter",
+            DetailActivity.buildTabletAnswerGuideModeSummary("", "Rain shelter")
+        );
+        assertEquals(
+            "Answer context",
+            DetailActivity.buildTabletAnswerGuideModeSummary("", "")
+        );
     }
 
     @Test

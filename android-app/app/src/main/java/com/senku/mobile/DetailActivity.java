@@ -1802,10 +1802,10 @@ public final class DetailActivity extends AppCompatActivity {
     static String buildTabletAnswerGuideModeSummary(String guideId, String threadTopic) {
         String cleanGuideId = safe(guideId).trim();
         if (!cleanGuideId.isEmpty()) {
-            return "Answer source: " + cleanGuideId;
+            return cleanGuideId;
         }
         String cleanTopic = safe(threadTopic).trim();
-        return cleanTopic.isEmpty() ? "Answer context kept" : "Answer context kept: " + cleanTopic;
+        return cleanTopic.isEmpty() ? "Answer context" : cleanTopic;
     }
 
     static String buildTabletAnswerGuideModeAnchorLabel(boolean threadDetailRoute) {

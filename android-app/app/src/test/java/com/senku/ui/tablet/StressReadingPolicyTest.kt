@@ -74,6 +74,20 @@ class StressReadingPolicyTest {
     }
 
     @Test
+    fun tabletGuideChromePolicyKeepsLandscapeTitleAboveRails() {
+        val landscapePolicy = tabletGuideChromePolicy(isLandscape = true)
+        val portraitPolicy = tabletGuideChromePolicy(isLandscape = false)
+
+        assertEquals(64, landscapePolicy.topBarMinHeightDp)
+        assertEquals(28, landscapePolicy.topBarHorizontalPaddingDp)
+        assertEquals(9, landscapePolicy.topBarVerticalPaddingDp)
+        assertEquals(20, landscapePolicy.topBarTitleLineHeightSp)
+        assertEquals(58, portraitPolicy.topBarMinHeightDp)
+        assertTrue(landscapePolicy.topBarMinHeightDp > portraitPolicy.topBarMinHeightDp)
+        assertTrue(landscapePolicy.topBarHorizontalPaddingDp > portraitPolicy.topBarHorizontalPaddingDp)
+    }
+
+    @Test
     fun tabletGuideReferenceHeaderUsesMockBulletSeparator() {
         assertEquals("CROSS-REFERENCE \u00B7 6", tabletGuideReferenceHeaderTitle(6))
         assertEquals("CROSS-REFERENCE \u00B7 0", tabletGuideReferenceHeaderTitle(-1))
@@ -356,7 +370,7 @@ class StressReadingPolicyTest {
     }
 
     @Test
-    fun tabletThreadContextHintUsesAnchorInsteadOfGenericSourceCount() {
+    fun tabletThreadContextHintKeepsTurnCountWithoutRepeatingAnchor() {
         val state = tabletDetailState(
             guideId = "GD-220",
             guideTitle = "Rain shelter",
@@ -366,7 +380,7 @@ class StressReadingPolicyTest {
         )
 
         assertEquals(
-            "THREAD CONTEXT - 2 TURNS - GD-220 ANCHOR",
+            "THREAD CONTEXT KEPT - 2 TURNS",
             tabletComposerContextHint(state),
         )
         assertEquals(

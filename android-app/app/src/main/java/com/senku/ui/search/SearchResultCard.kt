@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -105,14 +104,14 @@ fun SearchResultCard(
             Box(
                 modifier = Modifier
                     .width(1.dp)
-                    .heightIn(min = 72.dp)
+                    .heightIn(min = 82.dp)
                     .background(laneColor.copy(alpha = 0.60f)),
             ) {
             }
             Column(
                 modifier = Modifier
                     .weight(1f)
-                    .padding(start = 7.dp, top = 10.dp, end = 8.dp, bottom = 0.dp),
+                    .padding(start = 7.dp, top = 12.dp, end = 8.dp, bottom = 0.dp),
                 verticalArrangement = Arrangement.spacedBy(4.dp),
             ) {
                 Row(
@@ -140,8 +139,8 @@ fun SearchResultCard(
                 Text(
                     text = model.title.trim(),
                     style = SenkuTheme.typography.uiBody.copy(
-                        fontSize = 13.sp,
-                        lineHeight = 15.sp,
+                        fontSize = 14.sp,
+                        lineHeight = 17.sp,
                         fontWeight = FontWeight.Bold,
                     ),
                     color = colors.ink0,
@@ -167,8 +166,8 @@ fun SearchResultCard(
                 Text(
                     text = compactResultPreviewText(model.subtitle, model.snippet),
                     style = SenkuTheme.typography.smallBody.copy(
-                        fontSize = 10.sp,
-                        lineHeight = 12.sp,
+                        fontSize = 11.sp,
+                        lineHeight = 14.sp,
                         fontWeight = FontWeight.Normal,
                     ),
                     color = colors.ink1.copy(alpha = 0.78f),
@@ -266,7 +265,6 @@ private fun ActionChip(
         },
         color = backgroundColor,
         contentColor = textColor,
-        shape = RoundedCornerShape(0.dp),
         onClick = {
             onClick?.run()
         },
@@ -315,6 +313,9 @@ internal fun compactSearchResultMetadataLabel(metadataLine: String): String {
 internal fun compactResultPreviewText(subtitle: String, snippet: String): String {
     val cleanedSubtitle = subtitle.trim()
     val cleanedSnippet = stripPreviewMarkdown(snippet).trim()
+    if (isGuideCategorySubtitle(cleanedSubtitle) && cleanedSnippet.isNotEmpty()) {
+        return collapseRepeatedPreviewLead(cleanedSnippet, "")
+    }
     if (cleanedSubtitle.isEmpty() || cleanedSnippet.startsWith(cleanedSubtitle)) {
         return collapseRepeatedPreviewLead(cleanedSnippet, cleanedSubtitle)
     }
@@ -322,6 +323,10 @@ internal fun compactResultPreviewText(subtitle: String, snippet: String): String
         return cleanedSubtitle
     }
     return "$cleanedSubtitle: ${collapseRepeatedPreviewLead(cleanedSnippet, cleanedSubtitle)}"
+}
+
+private fun isGuideCategorySubtitle(value: String): Boolean {
+    return Regex("(?i)^GD-\\d{3}\\s*[·-]\\s*[A-Z][A-Za-z ]+$").matches(value.trim())
 }
 
 private fun stripPreviewMarkdown(value: String): String {
