@@ -72,6 +72,57 @@ its focused tests, then run a role-focused state-pack proof before the next
 commit when the changed surface is high-risk. The final batch proof is the full
 four-role state pack plus mock visual diff.
 
+## 2026-04-29 Worker Wave And Guide-Frame Proof
+
+Integrated commits after the deep-review baseline:
+
+- `07fba96 polish search result density`
+- `40fe6c3 restore guide section heading styling`
+- `31f1e02 polish home chrome proportions`
+- `3a0ea33 tighten tablet thread hierarchy`
+- `bb1073d surface phone detail composer context`
+- `c8fe8fd extend tablet guide paper frame`
+
+Validation:
+
+- Worker-wave clean pass before guide-frame patch:
+  `artifacts/ui_state_pack/deep_review_worker_wave/20260429_151911/summary.json`
+  reports `22/22`, `platform_anr_count=0`, homogeneous APK
+  `1eba7c982c93498f9467c5d42c6988d3ea35ef0c9131520f3f8460366ecde29e`.
+- Guide-frame pass after `c8fe8fd`:
+  `artifacts/ui_state_pack/guide_frame_wave/20260429_153637/summary.json`
+  reports `22/22`, `platform_anr_count=0`, homogeneous APK
+  `ace978bf151964f4338122be5e5038af471c2bb3a3d70173dcb1963e419c2a9b`.
+- Visual diff validated:
+  `artifacts/ui_state_pack/guide_frame_wave/20260429_153637/visual_diff/mock_parity_visual_diff.md`.
+
+Important metric movement from the guide-frame patch:
+
+- `guide-tablet-portrait.png` MAE `51.74 -> 18.05`.
+- `guide-tablet-landscape.png` MAE `20.15 -> 16.75`.
+
+Remaining top drift after `c8fe8fd`:
+
+- `guide-phone-portrait.png` MAE `33.60`.
+- `guide-phone-landscape.png` MAE `25.10`.
+- `answer-phone-portrait.png` MAE `24.60`.
+- `answer-phone-landscape.png` MAE `20.75`.
+- `guide-tablet-portrait.png` MAE `18.05`.
+- `emergency-phone-portrait.png` MAE `16.97`.
+- `guide-tablet-landscape.png` MAE `16.75`.
+- `thread-phone-landscape.png` MAE `15.80`.
+
+Wave notes:
+
+- Search density improved phone landscape but regressed phone portrait/tablet
+  slightly; retune should be conditional or partially rollback-oriented.
+- Tablet thread hierarchy metadata/app-rail changes are functionally sensible,
+  but visual MAE worsened in tablet landscape; follow-up should decide whether
+  to keep, tune, or partially revert.
+- Phone composer context matches the newer UX direction, but phone portrait
+  answer MAE worsened; inspect whether context row placement or composer
+  height needs tighter target-specific spacing.
+
 ## Evidence Anchors
 
 - Target mocks: `artifacts/mocks`, 22 canonical PNGs.
