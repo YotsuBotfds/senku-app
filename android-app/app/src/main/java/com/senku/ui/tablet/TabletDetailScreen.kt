@@ -326,13 +326,13 @@ internal fun tabletComposerBottomPaddingDp(detailMode: TabletDetailMode, isLands
     }
 
 internal fun tabletGuidePaperMaxWidthDp(isLandscape: Boolean): Int =
-    if (isLandscape) 548 else 820
+    if (isLandscape) 520 else 700
 
 internal fun tabletGuidePaperHorizontalPaddingDp(isLandscape: Boolean): Int =
-    if (isLandscape) 10 else 24
+    if (isLandscape) 10 else 18
 
 internal fun tabletGuidePaperInnerHorizontalPaddingDp(isLandscape: Boolean): Int =
-    if (isLandscape) 26 else 42
+    if (isLandscape) 24 else 34
 
 internal fun tabletGuidePaperBottomPaddingDp(isLandscape: Boolean): Int =
     if (isLandscape) 28 else 46
@@ -1542,8 +1542,8 @@ private fun GuidePaperHeader(
         Text(
             text = state.guideTitle.trim().ifEmpty { "Guide" },
             style = typography.sectionTitle.copy(
-                fontSize = if (state.isLandscape) 34.sp else 42.sp,
-                lineHeight = if (state.isLandscape) 40.sp else 48.sp,
+                fontSize = if (state.isLandscape) 30.sp else 36.sp,
+                lineHeight = if (state.isLandscape) 36.sp else 42.sp,
                 fontWeight = FontWeight.SemiBold,
                 letterSpacing = 0.sp,
             ),

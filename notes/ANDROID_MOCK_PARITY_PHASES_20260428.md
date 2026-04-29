@@ -1489,6 +1489,39 @@ Next slice candidates:
 - Home typography/proportion refinement only if user review calls out the now
   denser recent rows.
 
+## Wave60 Checkpoint
+
+Committed scope pending at the time of this update:
+
+- Guide tablet allocation: narrowed the guide paper max width, reduced guide
+  paper horizontal/inner padding, and reduced guide paper title scale so tablet
+  guide reads more like a centered document than a cover page.
+- Kept this slice to `TabletDetailScreen.kt` constants plus policy tests; guide
+  formatter/content and rails were not changed.
+
+Fresh proof:
+
+- Pack:
+  `artifacts/ui_state_pack/wave60_guide_tablet_allocation_full/20260428_233611`
+- Canonical mocks:
+  `artifacts/ui_state_pack/wave60_guide_tablet_allocation_full/20260428_233611/mocks`
+- Zip:
+  `artifacts/ui_state_pack/wave60_guide_tablet_allocation_full/20260428_233611_mocks.zip`
+- Summary: status `pass`, states `22/22`, failures `0`, ANRs `0`, mock pack
+  `pass`, homogeneous matrix `true`, rotation mismatch `0`.
+- APK SHA:
+  `8bca7424a753b021b5f231db850a80ebd42fd4fc71dc7a9abfc1f83d7e0ada7e`
+- Validation: `StressReadingPolicyTest` passed; full 22-state mock pack passed.
+- Visual note: tablet guide portrait/landscape now have calmer paper scale.
+  Remaining gap is still structural: guide rails and top app chrome need a
+  deliberate target-matching pass, not further tiny constants.
+
+Next slice candidates:
+
+- Guide rail/top chrome structure and target width balance.
+- Answer tablet hierarchy/source rail cleanup.
+- Full visual review against morning screenshots before deeper refactors.
+
 ## Parallelization Rules
 
 - Start every worker with `git status --short`, `git log --oneline -n 8
