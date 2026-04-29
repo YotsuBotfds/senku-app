@@ -537,9 +537,10 @@ class StressReadingPolicyTest {
         )
 
         assertEquals(
-            "THREAD CONTEXT KEPT \u2022 2 TURNS \u2022 2 SOURCES",
+            "THREAD CONTEXT KEPT \u2022 2 TURNS \u2022 GD-220 ANCHOR",
             tabletComposerContextHint(state),
         )
+        assertEquals("Ask a follow-up about this thread...", tabletComposerPlaceholder(state))
         assertEquals("GD-220 anchor", tabletThreadContextAnchorLabel(state))
         assertEquals(
             listOf("GD-220", "GD-345"),
@@ -663,6 +664,16 @@ class StressReadingPolicyTest {
                 guideMode = false,
                 guideTitle = "Rain shelter",
                 turnCount = 1,
+            ),
+        )
+        assertEquals(
+            "GD-220 \u2022 Rain shelter \u2022 2 turns",
+            tabletTitleBarTitle(
+                detailMode = TabletDetailMode.Thread,
+                guideMode = false,
+                guideId = "GD-220",
+                guideTitle = "Rain shelter",
+                turnCount = 2,
             ),
         )
     }

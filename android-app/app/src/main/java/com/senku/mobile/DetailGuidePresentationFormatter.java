@@ -35,21 +35,21 @@ final class DetailGuidePresentationFormatter {
         "bloomery-furnace"
     };
     private static final int FOUNDRY_LIVE_RELATED_SECTION_COUNT = 17;
-    private static final float GUIDE_ANCHOR_TEXT_SIZE = 0.62f;
-    private static final float GUIDE_HEADING_TEXT_SIZE = 0.84f;
-    private static final float GUIDE_MANUAL_KICKER_TEXT_SIZE = 0.60f;
-    private static final float GUIDE_MANUAL_TITLE_TEXT_SIZE = 1.02f;
-    private static final float GUIDE_MANUAL_META_TEXT_SIZE = 0.60f;
-    private static final float GUIDE_REQUIRED_READING_TEXT_SIZE = 0.68f;
-    private static final float GUIDE_ADMONITION_LABEL_TEXT_SIZE = 0.62f;
-    private static final float GUIDE_BODY_TEXT_SIZE = 0.78f;
-    private static final int GUIDE_SECTION_LABEL_MARGIN_DP = 4;
-    private static final int GUIDE_ADMONITION_MARGIN_DP = 6;
-    private static final int GUIDE_ADMONITION_HANGING_MARGIN_DP = 8;
+    private static final float GUIDE_ANCHOR_TEXT_SIZE = 0.68f;
+    private static final float GUIDE_HEADING_TEXT_SIZE = 0.88f;
+    private static final float GUIDE_MANUAL_KICKER_TEXT_SIZE = 0.56f;
+    private static final float GUIDE_MANUAL_TITLE_TEXT_SIZE = 0.98f;
+    private static final float GUIDE_MANUAL_META_TEXT_SIZE = 0.58f;
+    private static final float GUIDE_REQUIRED_READING_TEXT_SIZE = 0.72f;
+    private static final float GUIDE_ADMONITION_LABEL_TEXT_SIZE = 0.68f;
+    private static final float GUIDE_BODY_TEXT_SIZE = 0.81f;
+    private static final int GUIDE_SECTION_LABEL_MARGIN_DP = 5;
+    private static final int GUIDE_ADMONITION_MARGIN_DP = 5;
+    private static final int GUIDE_ADMONITION_HANGING_MARGIN_DP = 9;
     private static final int GUIDE_ADMONITION_ACCENT_WIDTH_DP = 2;
-    private static final int GUIDE_REQUIRED_READING_MARGIN_DP = 6;
+    private static final int GUIDE_REQUIRED_READING_MARGIN_DP = 5;
     private static final int GUIDE_REQUIRED_READING_ACCENT_WIDTH_DP = 2;
-    private static final int GUIDE_REQUIRED_READING_RIGHT_INSET_DP = 18;
+    private static final int GUIDE_REQUIRED_READING_RIGHT_INSET_DP = 16;
     private static final String GUIDE_ROW_CHEVRON = "\u203a";
 
     private final Context context;
@@ -227,6 +227,14 @@ final class DetailGuidePresentationFormatter {
         return GUIDE_REQUIRED_READING_TEXT_SIZE;
     }
 
+    static float guideAdmonitionLabelTextSizeForLegacy() {
+        return GUIDE_ADMONITION_LABEL_TEXT_SIZE;
+    }
+
+    static float guideAnchorTextSizeForLegacy() {
+        return GUIDE_ANCHOR_TEXT_SIZE;
+    }
+
     static int guideAdmonitionAccentWidthDpForLegacy() {
         return GUIDE_ADMONITION_ACCENT_WIDTH_DP;
     }
@@ -273,7 +281,7 @@ final class DetailGuidePresentationFormatter {
                 color(guideAdmonitionBackgroundColorResForLegacy()),
                 color(guideAnchorValueColorResForLegacy()),
                 0,
-                dp(1),
+                0,
                 true,
                 false,
                 0,
@@ -370,7 +378,7 @@ final class DetailGuidePresentationFormatter {
                 color(guideAdmonitionBackgroundColorResForLegacy()),
                 color(guideAdmonitionWarningColorResForLegacy()),
                 dp(GUIDE_REQUIRED_READING_ACCENT_WIDTH_DP),
-                dp(1),
+                0,
                 true,
                 true,
                 dp(GUIDE_REQUIRED_READING_RIGHT_INSET_DP),

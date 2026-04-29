@@ -608,13 +608,7 @@ internal fun tabletComposerContextHint(state: TabletDetailState): String {
         else -> if (guideMode) "$count sections" else "$count turns"
     }
     if (state.isThreadMode()) {
-        val sourceCount = state.resolvedVisibleThreadSourceCount()
-        val sourceLabel = when (sourceCount) {
-            0 -> "No sources"
-            1 -> "1 source"
-            else -> "$sourceCount sources"
-        }
-        return listOf("Thread context kept", turnLabel, sourceLabel)
+        return listOf("Thread context kept", turnLabel, tabletThreadContextAnchorLabel(state))
             .joinToString(" \u2022 ")
             .uppercase()
     }
@@ -648,6 +642,13 @@ internal fun tabletComposerContextHint(state: TabletDetailState): String {
         .joinToString(" \u2022 ")
         .uppercase()
 }
+
+internal fun tabletComposerPlaceholder(state: TabletDetailState): String =
+    if (state.isThreadMode()) {
+        "Ask a follow-up about this thread..."
+    } else {
+        state.composerPlaceholder
+    }
 
 internal fun tabletThreadContextAnchorLabel(state: TabletDetailState): String {
     val anchorId = state.guideId.trim()
@@ -1223,7 +1224,7 @@ private fun DetailWorkspace(
             DockedComposer(
                 model = DockedComposerModel(
                     text = state.composerText,
-                    hint = state.composerPlaceholder,
+                    hint = tabletComposerPlaceholder(state),
                     enabled = state.composerEnabled,
                     showRetry = state.composerShowRetry,
                     retryLabel = state.composerRetryLabel,
@@ -2453,7 +2454,7 @@ private fun TitleBar(
                 color = colors.accent,
                 maxLines = 1,
             )
-            val resolvedGuideId = guideId.trim()
+            val resolvedGuideId = guideId.trim().takeUnless { detailMode == TabletDetailMode.Thread }.orEmpty()
             if (resolvedGuideId.isNotEmpty()) {
                 Text(
                     text = resolvedGuideId,
@@ -2471,6 +2472,7 @@ private fun TitleBar(
                 text = tabletTitleBarTitle(
                     detailMode = detailMode,
                     guideMode = guideMode,
+                    guideId = guideId,
                     guideTitle = guideTitle,
                     turnCount = turnCount,
                 ),
@@ -3405,13 +3407,14 @@ internal fun tabletTitleBarModeLabel(detailMode: TabletDetailMode): String =
 internal fun tabletTitleBarTitle(
     detailMode: TabletDetailMode,
     guideMode: Boolean,
+    guideId: String = "",
     guideTitle: String,
     turnCount: Int,
 ): String =
     if (guideMode || detailMode == TabletDetailMode.Answer) {
         guideTitle.trim().ifEmpty { if (guideMode) "Guide" else "Answer" }
     } else {
-        buildTitleSummary(guideTitle = guideTitle, turnCount = turnCount)
+        buildTitleSummary(guideId = guideId, guideTitle = guideTitle, turnCount = turnCount)
     }
 
 internal fun TabletDetailState.hasAnswerOwnedSourceSelection(): Boolean {
@@ -3456,15 +3459,19 @@ internal fun tabletSourceGraphXRefs(xrefs: List<XRefState>): List<XRefState> =
     xrefs.filter { it.id.isNotBlank() }
 
 private fun buildTitleSummary(
+    guideId: String,
     guideTitle: String,
     turnCount: Int,
 ): String {
     val title = guideTitle.trim().ifEmpty { "Guide evidence" }
     val turnLabel = if (turnCount == 1) "1 turn" else "$turnCount turns"
-    if (title.contains(turnLabel, ignoreCase = true)) {
-        return title
+    val titleWithTurns = if (title.contains(turnLabel, ignoreCase = true)) title else "$title \u2022 $turnLabel"
+    val normalizedGuideId = guideId.trim()
+    return if (normalizedGuideId.isEmpty() || titleWithTurns.startsWith(normalizedGuideId, ignoreCase = true)) {
+        titleWithTurns
+    } else {
+        "$normalizedGuideId \u2022 $titleWithTurns"
     }
-    return "$title - $turnLabel"
 }
 
 private fun answerAnchorLabel(content: AnswerContent): String =

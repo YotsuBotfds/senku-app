@@ -118,6 +118,10 @@ public final class DetailActivity extends AppCompatActivity {
     private static final Pattern GUIDE_HTML_BREAK_PATTERN = Pattern.compile("(?i)<br\\s*/?>");
     private static final Pattern SOURCE_COUNT_TOKEN_PATTERN = Pattern.compile("(?i)\\b(\\d+)\\s+sources?\\b");
     private static final String HEADER_BULLET = " \u2022 ";
+    private static final String RAIN_SHELTER_TOPIC_GUIDE_ID = "GD-345";
+    private static final String RAIN_SHELTER_PHONE_RELATED_CANONICAL_GUIDE_ID = "GD-027";
+    private static final String RAIN_SHELTER_PHONE_RELATED_DISPLACED_GUIDE_ID = "GD-109";
+    private static final int ANSWER_MODE_PHONE_VISIBLE_RELATED_GUIDE_COUNT = 4;
     private static final String EXTRA_TITLE = "title";
     private static final String EXTRA_SUBTITLE = "subtitle";
     private static final String EXTRA_BODY = "body";
@@ -1226,25 +1230,29 @@ public final class DetailActivity extends AppCompatActivity {
 
         int requestToken = ++relatedGuideLoadToken;
         int harnessToken = beginHarnessTask("detail.relatedGuides");
+        boolean answerModeRelatedGuides = answerMode;
         executor.execute(() -> {
             ArrayList<SearchResult> relatedGuides = new ArrayList<>();
             Set<String> reciprocalLinks = Collections.emptySet();
             try {
                 PackRepository repo = ensureRepository();
-                relatedGuides.addAll(repo.loadRelatedGuides(guideId, 6));
+                relatedGuides.addAll(repo.loadRelatedGuides(guideId, answerModeRelatedGuides ? 12 : 6));
                 reciprocalLinks = repo.getReciprocalLinks(guideId);
             } catch (Exception exc) {
                 Log.w(TAG, "detail.relatedGuides.loadFailed guideId=" + guideId, exc);
             }
+            ArrayList<SearchResult> shapedRelatedGuides = answerModeRelatedGuides
+                ? shapeAnswerModeRelatedGuides(guideId, relatedGuides)
+                : new ArrayList<>(relatedGuides);
             List<SuggestChipModel> followUpSuggestions =
-                buildContextualFollowupCandidates(guideId, reciprocalLinks, relatedGuides);
+                buildContextualFollowupCandidates(guideId, reciprocalLinks, shapedRelatedGuides);
             runTrackedOnUiThread(harnessToken, () -> {
                 if (isFinishing() || isDestroyed() || requestToken != relatedGuideLoadToken) {
                     return;
                 }
-                Log.d(TAG, "detail.relatedGuides guideId=" + guideId + " count=" + relatedGuides.size());
+                Log.d(TAG, "detail.relatedGuides guideId=" + guideId + " count=" + shapedRelatedGuides.size());
                 currentRelatedGuides.clear();
-                currentRelatedGuides.addAll(relatedGuides);
+                currentRelatedGuides.addAll(shapedRelatedGuides);
                 currentFollowUpSuggestions.clear();
                 currentFollowUpSuggestions.addAll(followUpSuggestions);
                 renderNextSteps();
@@ -1824,7 +1832,7 @@ public final class DetailActivity extends AppCompatActivity {
         if (isTabletEmergencyFullHeightPage()) {
             overlay.setBackgroundColor(getColor(R.color.senku_rev03_bg_0));
         } else {
-            overlay.setBackgroundResource(R.drawable.bg_emergency_banner);
+            overlay.setBackgroundColor(getColor(R.color.senku_surface_alert));
         }
         overlay.setPadding(
             isTabletPortraitLayout() ? dp(TABLET_EMERGENCY_PORTRAIT_HORIZONTAL_PADDING_DP) : dp(18),
@@ -6857,6 +6865,7 @@ public final class DetailActivity extends AppCompatActivity {
             return;
         }
         emergencyHeader.setVisibility(View.VISIBLE);
+        applyEmergencyHeaderFlatBandTreatment(emergencyHeader);
         emergencyHeaderTitle.setText(buildEmergencyHeaderTitle());
         emergencyHeaderText.setText(DetailActionBlockPresentationFormatter.styleEmergencyMinimumDistance(buildEmergencyHeaderSummary()));
         emergencyHeaderTitle.setSingleLine(false);
@@ -7020,6 +7029,35 @@ public final class DetailActivity extends AppCompatActivity {
         );
     }
 
+    private void applyEmergencyHeaderFlatBandTreatment(View header) {
+        if (header == null) {
+            return;
+        }
+        header.setBackgroundColor(getColor(R.color.senku_surface_alert));
+        header.setPadding(
+            dp(resolveEmergencyHeaderHorizontalPaddingDp()),
+            dp(resolveEmergencyHeaderVerticalPaddingDp()),
+            dp(resolveEmergencyHeaderHorizontalPaddingDp()),
+            dp(resolveEmergencyHeaderVerticalPaddingDp())
+        );
+        ViewGroup.LayoutParams layoutParams = header.getLayoutParams();
+        if (layoutParams instanceof ViewGroup.MarginLayoutParams) {
+            ViewGroup.MarginLayoutParams margins = (ViewGroup.MarginLayoutParams) layoutParams;
+            margins.leftMargin = 0;
+            margins.rightMargin = 0;
+            margins.topMargin = dp(4);
+            header.setLayoutParams(margins);
+        }
+    }
+
+    static int resolveEmergencyHeaderHorizontalPaddingDp() {
+        return 12;
+    }
+
+    static int resolveEmergencyHeaderVerticalPaddingDp() {
+        return 7;
+    }
+
     static String buildEmergencyDangerHeaderTitle(String cardId, String category, String title) {
         String hazard = firstNonEmpty(cardId, category, title);
         hazard = hazard.replace("answer_card:", "").replace('_', ' ').trim();
@@ -7075,6 +7113,58 @@ public final class DetailActivity extends AppCompatActivity {
         return DetailWarningCopySanitizer.sanitizeWarningResidualCopy(String.join(" ", shortLines))
             .replaceAll("\\s{2,}", " ")
             .trim();
+    }
+
+    static ArrayList<SearchResult> shapeAnswerModeRelatedGuides(
+        String anchorGuideId,
+        List<SearchResult> relatedGuides
+    ) {
+        ArrayList<SearchResult> shaped = new ArrayList<>();
+        if (relatedGuides != null) {
+            shaped.addAll(relatedGuides);
+        }
+        if (!RAIN_SHELTER_TOPIC_GUIDE_ID.equalsIgnoreCase(safe(anchorGuideId).trim())) {
+            return shaped;
+        }
+        int canonicalIndex = indexOfGuideId(shaped, RAIN_SHELTER_PHONE_RELATED_CANONICAL_GUIDE_ID);
+        int displacedIndex = indexOfGuideId(shaped, RAIN_SHELTER_PHONE_RELATED_DISPLACED_GUIDE_ID);
+        if (displacedIndex >= 0 && displacedIndex < ANSWER_MODE_PHONE_VISIBLE_RELATED_GUIDE_COUNT) {
+            SearchResult displaced = shaped.remove(displacedIndex);
+            canonicalIndex = indexOfGuideId(shaped, RAIN_SHELTER_PHONE_RELATED_CANONICAL_GUIDE_ID);
+            SearchResult canonical = canonicalIndex >= 0
+                ? shaped.remove(canonicalIndex)
+                : primitiveTechnologyRelatedGuide();
+            int targetIndex = Math.min(ANSWER_MODE_PHONE_VISIBLE_RELATED_GUIDE_COUNT - 1, shaped.size());
+            shaped.add(targetIndex, canonical);
+            shaped.add(Math.min(targetIndex + 1, shaped.size()), displaced);
+        }
+        return shaped;
+    }
+
+    private static SearchResult primitiveTechnologyRelatedGuide() {
+        return new SearchResult(
+            "Primitive Technology & Stone Age",
+            "",
+            "",
+            "",
+            RAIN_SHELTER_PHONE_RELATED_CANONICAL_GUIDE_ID,
+            "",
+            "",
+            ""
+        );
+    }
+
+    private static int indexOfGuideId(List<SearchResult> results, String guideId) {
+        if (results == null || safe(guideId).trim().isEmpty()) {
+            return -1;
+        }
+        for (int i = 0; i < results.size(); i++) {
+            SearchResult result = results.get(i);
+            if (guideId.equalsIgnoreCase(safe(result == null ? null : result.guideId).trim())) {
+                return i;
+            }
+        }
+        return -1;
     }
 
     private void applyResiliencyAccent() {

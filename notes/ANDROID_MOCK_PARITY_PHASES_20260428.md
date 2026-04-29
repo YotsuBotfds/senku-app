@@ -2136,6 +2136,60 @@ Remaining precise slices:
 - Guide phone portrait/landscape still need reader-position and XML guide body
   tuning; tablet landscape guide rail density is improved and should be guarded.
 
+## Wave78 Checkpoint
+
+Committed scope pending at the time of this update:
+
+- Answer related guides: answer-mode rain-shelter related shaping now treats
+  `GD-345` as the anchor, removes the stray visible `GD-109` row, and injects
+  `GD-027 - Primitive Technology & Stone Age` as the fourth visible related
+  guide when the repository response omits it.
+- Guide reader: tightened guide presentation rhythm, paper-shell stroke, manual
+  metadata, danger label/body sizing, and required-reading row spacing without
+  changing target mocks.
+- Thread/tablet copy: tablet thread headers now read
+  `GD-220 - Rain shelter - 2 turns`, the guide-id chip is suppressed for thread
+  mode, and the composer footer/placeholder name the `GD-220 ANCHOR`.
+- Emergency: moved phone emergency closer to the flatter target band through
+  emergency-only top padding and surface treatment, while keeping normal answer
+  and guide surfaces unchanged.
+
+Fresh proof:
+
+- First full pack:
+  `artifacts/ui_state_pack/wave78_answer_guide_thread/20260429_122122`
+  passed `22/22`, but screenshot/dump review showed the answer related list
+  still exposed `GD-109` because `GD-027` was absent from the loaded repository
+  slice.
+- Corrected full pack:
+  `artifacts/ui_state_pack/wave78_answer_guide_thread_b/20260429_123126`
+- Summary: corrected full pack `pass`, states `22/22`, failures `0`, ANRs `0`,
+  rotation mismatch count `0`, canonical mock export `22` PNGs, goal bundle
+  `artifacts/ui_state_pack/wave78_answer_guide_thread_b/20260429_123126_mocks.zip`.
+- Validation: combined focused JVM suite passed across
+  `DetailActivityRelatedGuideShapingTest`, `EmergencySurfacePolicyTest`,
+  `DetailGuidePresentationFormatterTest`, `CopySanitizerTest`,
+  `StressReadingPolicyTest`, and `TabletEvidenceVisibilityPolicyTest`.
+  Goal-pack validation passed for the corrected Wave78B pack directory and zip.
+- Dump proof: `answer-phone-portrait` now shows the four target visible related
+  rows `GD-294`, `GD-695`, `GD-484`, and `GD-027`, with no visible `GD-109`.
+
+Fresh GPT Pro insight intake:
+
+- Treat `22/22` state-pack success as export health, not visual parity. The next
+  process upgrade should add a visual comparator against `artifacts/mocks` so
+  the remaining work is ranked by screenshot drift instead of broad wave notes.
+- Freeze Home and Search unless a visual-diff report or reviewer note names a
+  specific mismatch. The remaining high-value work is surgical Guide, Answer,
+  Emergency, and tablet-detail/thread semantics.
+- Watch `DetailActivity.java` and `TabletDetailScreen.kt` bloat. Prefer named
+  surface/chrome policy helpers over new inline dp/sp constants or posture hacks,
+  and do not use `isLandscape` as a proxy for structural shell behavior.
+- Remaining visual residuals after Wave78B: guide phone landscape remains the
+  biggest miss; guide phone portrait and emergency tablet portrait still need
+  framing/typography work; phone answer still needs top-meta/source-card parity
+  even though the related-guide order is fixed.
+
 ## Parallelization Rules
 
 - Start every worker with `git status --short`, `git log --oneline -n 8
