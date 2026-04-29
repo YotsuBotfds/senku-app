@@ -349,6 +349,15 @@ public final class DetailGuidePresentationFormatterTest {
     }
 
     @Test
+    public void guideReaderRhythmMetricsStayCompactForPaperHeaderAndRows() {
+        assertEquals(0.78f, DetailGuidePresentationFormatter.guideBodyTextSizeForLegacy(), 0.001f);
+        assertEquals(1.02f, DetailGuidePresentationFormatter.guideManualTitleTextSizeForLegacy(), 0.001f);
+        assertEquals(0.68f, DetailGuidePresentationFormatter.guideRequiredReadingTextSizeForLegacy(), 0.001f);
+        assertEquals(2, DetailGuidePresentationFormatter.guideAdmonitionAccentWidthDpForLegacy());
+        assertEquals(18, DetailGuidePresentationFormatter.guideRequiredReadingRightInsetDpForLegacy());
+    }
+
+    @Test
     public void guideAdmonitionSpanColorResourcesUsePaperSeverityTokens() {
         assertEquals(
             R.color.senku_rev03_paper_danger,

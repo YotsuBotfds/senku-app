@@ -315,6 +315,16 @@ internal fun tabletThreadFlowHorizontalPaddingDp(isLandscape: Boolean): Int =
 internal fun tabletThreadComposerBottomPaddingDp(isLandscape: Boolean): Int =
     if (isLandscape) 0 else 12
 
+internal fun tabletAnswerComposerBottomPaddingDp(isLandscape: Boolean): Int =
+    if (isLandscape) 8 else 18
+
+internal fun tabletComposerBottomPaddingDp(detailMode: TabletDetailMode, isLandscape: Boolean): Int =
+    when (detailMode) {
+        TabletDetailMode.Thread -> tabletThreadComposerBottomPaddingDp(isLandscape)
+        TabletDetailMode.Answer -> tabletAnswerComposerBottomPaddingDp(isLandscape)
+        TabletDetailMode.Guide -> 0
+    }
+
 internal fun tabletGuidePaperMaxWidthDp(isLandscape: Boolean): Int =
     if (isLandscape) 548 else 820
 
@@ -928,11 +938,12 @@ private fun DetailWorkspace(
                 onTextChange = onComposerTextChange,
                 onSendClick = { onComposerSendClick(state.composerText) },
                 onRetryClick = if (state.composerShowRetry) onRetryClick else null,
-                modifier = if (state.isThreadMode()) {
-                    Modifier.padding(bottom = tabletThreadComposerBottomPaddingDp(state.isLandscape).dp)
-                } else {
-                    Modifier
-                },
+                modifier = Modifier.padding(
+                    bottom = tabletComposerBottomPaddingDp(
+                        detailMode = state.detailMode,
+                        isLandscape = state.isLandscape,
+                    ).dp,
+                ),
             )
         }
     }

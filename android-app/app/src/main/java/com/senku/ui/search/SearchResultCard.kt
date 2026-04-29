@@ -111,8 +111,8 @@ fun SearchResultCard(
             Column(
                 modifier = Modifier
                     .weight(1f)
-                    .padding(start = 7.dp, top = 12.dp, end = 8.dp, bottom = 0.dp),
-                verticalArrangement = Arrangement.spacedBy(4.dp),
+                    .padding(start = 7.dp, top = 10.dp, end = 8.dp, bottom = 0.dp),
+                verticalArrangement = Arrangement.spacedBy(3.dp),
             ) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -123,7 +123,7 @@ fun SearchResultCard(
                         modifier = Modifier.weight(1f),
                         style = SenkuTheme.typography.monoCaps.copy(
                             fontSize = 8.sp,
-                            lineHeight = 12.sp,
+                            lineHeight = 11.sp,
                             fontWeight = FontWeight.Bold,
                         ),
                         color = colors.accent,
@@ -139,8 +139,8 @@ fun SearchResultCard(
                 Text(
                     text = model.title.trim(),
                     style = SenkuTheme.typography.uiBody.copy(
-                        fontSize = 14.sp,
-                        lineHeight = 17.sp,
+                        fontSize = 13.sp,
+                        lineHeight = 16.sp,
                         fontWeight = FontWeight.Bold,
                     ),
                     color = colors.ink0,
@@ -154,7 +154,7 @@ fun SearchResultCard(
                         text = metadataLabel,
                         style = SenkuTheme.typography.monoCaps.copy(
                             fontSize = 8.sp,
-                            lineHeight = 11.sp,
+                            lineHeight = 10.sp,
                             fontWeight = FontWeight.Medium,
                         ),
                         color = colors.ink2,
@@ -167,7 +167,7 @@ fun SearchResultCard(
                     text = compactResultPreviewText(model.subtitle, model.snippet),
                     style = SenkuTheme.typography.smallBody.copy(
                         fontSize = 11.sp,
-                        lineHeight = 14.sp,
+                        lineHeight = 13.sp,
                         fontWeight = FontWeight.Normal,
                     ),
                     color = colors.ink1.copy(alpha = 0.78f),
@@ -206,7 +206,7 @@ fun SearchResultCard(
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(top = 10.dp)
+                        .padding(top = 9.dp)
                         .height(1.dp)
                         .background(colors.hairlineStrong),
                 )
@@ -227,13 +227,13 @@ private fun ScoreTick(
         Box(
             modifier = Modifier
                     .width(scoreTickTrackWidthDp(label).dp)
-                    .height(2.dp)
+                    .height(3.dp)
                     .background(color.copy(alpha = 0.30f)),
         ) {
             Box(
                 modifier = Modifier
                     .fillMaxWidth(scoreTickFillFraction(label))
-                    .height(2.dp)
+                    .height(3.dp)
                     .background(SenkuTheme.colors.accent),
             )
         }
@@ -306,8 +306,16 @@ internal fun compactSearchResultMetadataLabel(metadataLine: String): String {
     val tokens = ArrayList<String>(3)
     valuesByKey["category"]?.let { tokens.add(it.uppercase(Locale.US)) }
     valuesByKey["role"]?.let { tokens.add(it.uppercase(Locale.US)) }
-    valuesByKey["window"]?.let { tokens.add("WINDOW ${it.uppercase(Locale.US)}") }
+    valuesByKey["window"]?.let { tokens.add("WINDOW ${compactWindowMetadataToken(it).uppercase(Locale.US)}") }
     return tokens.joinToString(" \u00B7 ")
+}
+
+private fun compactWindowMetadataToken(value: String): String {
+    return when (value.trim().lowercase(Locale.US).replace("_", "-").replace(" ", "-")) {
+        "long-term", "longterm" -> "Long"
+        "short-term", "shortterm" -> "Short"
+        else -> value.trim()
+    }
 }
 
 internal fun compactResultPreviewText(subtitle: String, snippet: String): String {
@@ -358,11 +366,11 @@ internal fun scoreTickFillFraction(rankLabel: String): Float {
 internal fun scoreTickTrackWidthDp(rankLabel: String): Int {
     val score = rankLabel.trim().toIntOrNull() ?: return 16
     return when {
-        score >= 90 -> 18
-        score >= 75 -> 17
-        score >= 70 -> 16
+        score >= 90 -> 20
+        score >= 75 -> 18
+        score >= 70 -> 17
         score >= 60 -> 15
-        else -> 14
+        else -> 13
     }
 }
 

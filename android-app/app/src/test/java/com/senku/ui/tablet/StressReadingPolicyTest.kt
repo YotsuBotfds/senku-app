@@ -78,6 +78,17 @@ class StressReadingPolicyTest {
     }
 
     @Test
+    fun tabletAnswerComposerReservesNavigationBoundary() {
+        assertEquals(8, tabletAnswerComposerBottomPaddingDp(isLandscape = true))
+        assertEquals(18, tabletAnswerComposerBottomPaddingDp(isLandscape = false))
+        assertEquals(8, tabletComposerBottomPaddingDp(TabletDetailMode.Answer, isLandscape = true))
+        assertEquals(18, tabletComposerBottomPaddingDp(TabletDetailMode.Answer, isLandscape = false))
+        assertEquals(0, tabletComposerBottomPaddingDp(TabletDetailMode.Thread, isLandscape = true))
+        assertEquals(12, tabletComposerBottomPaddingDp(TabletDetailMode.Thread, isLandscape = false))
+        assertEquals(0, tabletComposerBottomPaddingDp(TabletDetailMode.Guide, isLandscape = false))
+    }
+
+    @Test
     fun tabletGuidePaperPolicyContainsPortraitReaderWithReadableLandscapeSheet() {
         assertEquals(548, tabletGuidePaperMaxWidthDp(isLandscape = true))
         assertEquals(820, tabletGuidePaperMaxWidthDp(isLandscape = false))

@@ -5,11 +5,11 @@
             <solid android:color="@color/senku_rev03_paper" />
             <stroke
                 android:width="1dp"
-                android:color="#38B9AA90" />
+                android:color="#30B9AA90" />
         </shape>
     </item>
     <item
-        android:width="3dp"
+        android:width="2dp"
         android:gravity="left">
         <shape android:shape="rectangle">
             <solid android:color="@color/senku_rev03_paper_warn" />
@@ -19,14 +19,14 @@
         android:width="7dp"
         android:height="11dp"
         android:gravity="right|center_vertical"
-        android:right="12dp">
+        android:right="10dp">
         <vector
             android:width="7dp"
             android:height="11dp"
             android:viewportWidth="8"
             android:viewportHeight="12">
             <path
-                android:fillColor="#665E48"
+                android:fillColor="#5F5844"
                 android:pathData="M2,0 L8,6 L2,12 L0.8,10.8 L5.6,6 L0.8,1.2 Z" />
         </vector>
     </item>

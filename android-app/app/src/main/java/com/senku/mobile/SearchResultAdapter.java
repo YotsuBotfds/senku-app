@@ -224,7 +224,7 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
         LinearLayout row = new LinearLayout(context);
         row.setId(R.id.result_legacy_mirror);
         row.setOrientation(LinearLayout.VERTICAL);
-        row.setPadding(dp(2), dp(8), dp(2), 0);
+        row.setPadding(dp(2), dp(7), dp(2), 0);
         root.addView(row, new FrameLayout.LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT,
             ViewGroup.LayoutParams.WRAP_CONTENT
@@ -238,7 +238,7 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
             ViewGroup.LayoutParams.WRAP_CONTENT
         ));
 
-        TextView meta = buildMonoTextView(context, 9, 12, Typeface.BOLD);
+        TextView meta = buildMonoTextView(context, 8, 11, Typeface.BOLD);
         meta.setId(R.id.result_meta);
         meta.setTextColor(ContextCompat.getColor(context, R.color.senku_rev03_accent));
         meta.setAllCaps(true);
@@ -261,11 +261,11 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
         View scoreBar = new View(context);
         scoreBar.setId(R.id.result_accent_strip);
         scoreCluster.addView(scoreBar, new LinearLayout.LayoutParams(
-            dp(18),
-            dp(2)
+            dp(20),
+            dp(3)
         ));
 
-        TextView score = buildMonoTextView(context, 9, 11, Typeface.BOLD);
+        TextView score = buildMonoTextView(context, 8, 10, Typeface.BOLD);
         score.setId(R.id.result_retrieval_badge);
         score.setTextColor(ContextCompat.getColor(context, R.color.senku_rev03_accent));
         score.setPadding(dp(2), 0, 0, 0);
@@ -278,16 +278,16 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
         title.setId(R.id.result_title);
         title.setTextColor(ContextCompat.getColor(context, R.color.senku_text_light));
         title.setTypeface(Typeface.DEFAULT, Typeface.BOLD);
-        title.setTextSize(TypedValue.COMPLEX_UNIT_SP, 15);
-        title.setLineSpacing(0, 1.04f);
+        title.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14);
+        title.setLineSpacing(0, 1.03f);
         LinearLayout.LayoutParams titleParams = new LinearLayout.LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT,
             ViewGroup.LayoutParams.WRAP_CONTENT
         );
-        titleParams.topMargin = dp(3);
+        titleParams.topMargin = dp(2);
         row.addView(title, titleParams);
 
-        TextView section = buildMonoTextView(context, 9, 12, Typeface.NORMAL);
+        TextView section = buildMonoTextView(context, 8, 11, Typeface.NORMAL);
         section.setId(R.id.result_section);
         section.setTextColor(ContextCompat.getColor(context, R.color.senku_text_muted_light));
         section.setAllCaps(true);
@@ -296,19 +296,19 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
             ViewGroup.LayoutParams.MATCH_PARENT,
             ViewGroup.LayoutParams.WRAP_CONTENT
         );
-        sectionParams.topMargin = dp(2);
+        sectionParams.topMargin = dp(1);
         row.addView(section, sectionParams);
 
         TextView snippet = new TextView(context);
         snippet.setId(R.id.result_snippet);
         snippet.setTextColor(ContextCompat.getColor(context, R.color.senku_text_muted_light));
         snippet.setTextSize(TypedValue.COMPLEX_UNIT_SP, 12);
-        snippet.setLineSpacing(0, 1.10f);
+        snippet.setLineSpacing(0, 1.06f);
         LinearLayout.LayoutParams snippetParams = new LinearLayout.LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT,
             ViewGroup.LayoutParams.WRAP_CONTENT
         );
-        snippetParams.topMargin = dp(4);
+        snippetParams.topMargin = dp(3);
         row.addView(snippet, snippetParams);
 
         LinearLayout chips = new LinearLayout(context);
@@ -352,7 +352,7 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
             ViewGroup.LayoutParams.MATCH_PARENT,
             1
         );
-        dividerParams.topMargin = dp(13);
+        dividerParams.topMargin = dp(12);
         row.addView(divider, dividerParams);
 
         ComposeView composeView = new ComposeView(context);
@@ -467,18 +467,18 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
 
     private static int scoreBarWidthDpForScore(int score) {
         if (score >= 90) {
-            return 18;
+            return 20;
         }
         if (score >= 75) {
-            return 16;
+            return 18;
         }
         if (score >= 70) {
-            return 15;
+            return 17;
         }
         if (score >= 60) {
-            return 13;
+            return 15;
         }
-        return 11;
+        return 13;
     }
 
     private GradientDrawable buildScoreBarDrawable(int score) {
@@ -901,7 +901,9 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
         ArrayList<String> tokens = new ArrayList<>();
         String category = cleanDisplayTextInternal(humanizeStatic(safe(rawCategory).trim().toLowerCase(Locale.US)), 18);
         String role = humanizeContentRoleInternal(rawRole, 18);
-        String window = cleanDisplayTextInternal(humanizeStatic(safe(rawWindow).trim().toLowerCase(Locale.US)), 18);
+        String window = compactWindowAttributeToken(
+            cleanDisplayTextInternal(humanizeStatic(safe(rawWindow).trim().toLowerCase(Locale.US)), 18)
+        );
         addTabletAttributeToken(tokens, category);
         addTabletAttributeToken(tokens, role);
         if (shouldKeepTabletAttributeToken(window)) {
@@ -939,6 +941,17 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
             builder.append(token);
         }
         return builder.toString();
+    }
+
+    private static String compactWindowAttributeToken(String value) {
+        String normalized = safe(value).trim().toLowerCase(Locale.US).replace("_", "-").replace(" ", "-");
+        if ("long-term".equals(normalized) || "longterm".equals(normalized)) {
+            return "Long";
+        }
+        if ("short-term".equals(normalized) || "shortterm".equals(normalized)) {
+            return "Short";
+        }
+        return safe(value).trim();
     }
 
     private LinkedGuidePreview resolveLinkedGuidePreview(SearchResult result) {

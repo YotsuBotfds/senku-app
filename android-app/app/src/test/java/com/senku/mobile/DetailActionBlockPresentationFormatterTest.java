@@ -302,6 +302,24 @@ public final class DetailActionBlockPresentationFormatterTest {
     }
 
     @Test
+    public void extractEmergencyActionSpecsStopsBeforeSourceWhyProofChrome() {
+        List<DetailActionBlockPresentationFormatter.EmergencyActionSpec> actions =
+            DetailActionBlockPresentationFormatter.extractEmergencyActionSpecs(
+                "Immediate actions:\n" +
+                    "1. Stop all hot work. No new charges, no new pours.\n" +
+                    "2. Clear the floor to 5 m radius. Move personnel upwind.\n\n" +
+                    "Source / why proof\n" +
+                    "1. GD-132 - Foundry & Metal Casting.\n" +
+                    "2. Backend route reviewed_card_runtime.",
+                text -> citationFormatter.stripInlineCitationText(text)
+            );
+
+        assertEquals(2, actions.size());
+        assertEquals("Stop all hot work", actions.get(0).title);
+        assertEquals("Clear the floor to 5 m radius", actions.get(1).title);
+    }
+
+    @Test
     public void extractEmergencyActionSpecsReadsGd132AnswerHeadingAsActions() {
         List<DetailActionBlockPresentationFormatter.EmergencyActionSpec> actions =
             DetailActionBlockPresentationFormatter.extractEmergencyActionSpecs(
@@ -383,10 +401,10 @@ public final class DetailActionBlockPresentationFormatterTest {
 
     @Test
     public void emergencyActionRowsKeepFlatPortraitMetrics() {
-        assertEquals(3, DetailActionBlockPresentationFormatter.EMERGENCY_ACTION_ROW_VERTICAL_PADDING_DP);
-        assertEquals(9, DetailActionBlockPresentationFormatter.EMERGENCY_ACTION_CONTENT_START_PADDING_DP);
-        assertEquals(11.5f, DetailActionBlockPresentationFormatter.EMERGENCY_ACTION_TITLE_TEXT_SIZE_SP, 0.0f);
-        assertEquals(10.5f, DetailActionBlockPresentationFormatter.EMERGENCY_ACTION_DETAIL_TEXT_SIZE_SP, 0.0f);
+        assertEquals(2, DetailActionBlockPresentationFormatter.EMERGENCY_ACTION_ROW_VERTICAL_PADDING_DP);
+        assertEquals(8, DetailActionBlockPresentationFormatter.EMERGENCY_ACTION_CONTENT_START_PADDING_DP);
+        assertEquals(11.0f, DetailActionBlockPresentationFormatter.EMERGENCY_ACTION_TITLE_TEXT_SIZE_SP, 0.0f);
+        assertEquals(10.0f, DetailActionBlockPresentationFormatter.EMERGENCY_ACTION_DETAIL_TEXT_SIZE_SP, 0.0f);
     }
 
     @Test

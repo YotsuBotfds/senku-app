@@ -45,11 +45,11 @@ public final class SearchResultAdapterTest {
 
     @Test
     public void tabletRowsUseCompactScoreBarWidths() {
-        assertEquals(18, SearchResultAdapter.scoreBarWidthDpForPositionForTest(0));
-        assertEquals(16, SearchResultAdapter.scoreBarWidthDpForPositionForTest(1));
-        assertEquals(15, SearchResultAdapter.scoreBarWidthDpForPositionForTest(2));
-        assertEquals(13, SearchResultAdapter.scoreBarWidthDpForPositionForTest(3));
-        assertEquals(11, SearchResultAdapter.scoreBarWidthDpForPositionForTest(7));
+        assertEquals(20, SearchResultAdapter.scoreBarWidthDpForPositionForTest(0));
+        assertEquals(18, SearchResultAdapter.scoreBarWidthDpForPositionForTest(1));
+        assertEquals(17, SearchResultAdapter.scoreBarWidthDpForPositionForTest(2));
+        assertEquals(15, SearchResultAdapter.scoreBarWidthDpForPositionForTest(3));
+        assertEquals(13, SearchResultAdapter.scoreBarWidthDpForPositionForTest(7));
     }
 
     @Test
@@ -91,6 +91,10 @@ public final class SearchResultAdapterTest {
         assertEquals(
             "SURVIVAL \u00b7 STARTER \u00b7 WINDOW IMMEDIATE",
             SearchResultAdapter.buildTabletAttributeLineForTest("survival", "role_starter", "immediate")
+        );
+        assertEquals(
+            "SHELTER \u00b7 TOPIC \u00b7 WINDOW LONG",
+            SearchResultAdapter.buildTabletAttributeLineForTest("shelter", "role_topic", "long-term")
         );
         assertEquals("", SearchResultAdapter.buildTabletAttributeLineForTest("general", "none", "unknown"));
     }

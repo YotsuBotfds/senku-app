@@ -1406,6 +1406,49 @@ Next slice candidates:
 - Emergency/search residual polish after guide work, staying clear of shared
   answer/tablet routing unless necessary.
 
+## Wave58 Checkpoint
+
+Committed scope pending at the time of this update:
+
+- Tablet answer: added an answer-only composer bottom reserve in
+  `TabletDetailScreen.kt` so answer mode has more navigation-boundary clearance
+  without changing guide mode and without changing thread landscape padding.
+- Guide reader: tightened legacy guide paper typography, section/admonition
+  margins, required-reading rows, and guide paper drawable tones/accents.
+- Search: tightened result row rhythm, score tick width/height, preview spacing,
+  and compacted long/short window metadata consistently in the legacy adapter
+  and Compose card helpers.
+- Emergency: compacted immediate-action rows/badges and strengthened the danger
+  banner with an alert surface plus top/left danger rails; added guards so
+  source/proof headings do not leak into action extraction.
+
+Fresh proof:
+
+- Pack:
+  `artifacts/ui_state_pack/wave58_guide_search_emergency_tablet_answer/20260428_231103`
+- Canonical mocks:
+  `artifacts/ui_state_pack/wave58_guide_search_emergency_tablet_answer/20260428_231103/mocks`
+- Zip:
+  `artifacts/ui_state_pack/wave58_guide_search_emergency_tablet_answer/20260428_231103_mocks.zip`
+- Summary: status `pass`, states `22/22`, failures `0`, ANRs `0`, mock pack
+  `pass`, homogeneous matrix `true`, rotation mismatch `0`.
+- APK SHA:
+  `e770e279958188c2d2107ee1e992c094e975def963b3c619dcb12e15e01639de`
+- Validation: focused tablet policy, search, guide, sanitizer, emergency
+  policy/action-block tests passed; `git diff --check` passed.
+- Visual note: guide/search/emergency all moved closer to the target rhythm.
+  The remaining obvious gaps are larger shell/layout allocation issues:
+  guide tablet top/rail structure, answer tablet hierarchy/rails, and full
+  target-equivalent home/guide/search proportion tuning.
+
+Next slice candidates:
+
+- Guide/tablet shell allocation and top clipping: likely `TabletDetailScreen.kt`
+  and guide rail/paper width policies, with guide-only packs.
+- Answer tablet hierarchy/source rail cleanup after the composer reserve.
+- Home/search proportion polish if another short visual slice is needed before
+  a larger guide or answer shell pass.
+
 ## Parallelization Rules
 
 - Start every worker with `git status --short`, `git log --oneline -n 8

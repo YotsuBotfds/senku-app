@@ -21,12 +21,12 @@ final class DetailActionBlockPresentationFormatter {
     static final String ACTION_LABEL_ESCALATE = "Escalate if";
     static final String EMERGENCY_ACTION_HEADING_PREFIX = "IMMEDIATE ACTIONS \u00b7 ";
     static final int EMERGENCY_DISTANCE_HIGHLIGHT_COLOR = 0xFFC4704B;
-    static final int EMERGENCY_ACTION_ROW_VERTICAL_PADDING_DP = 3;
-    static final int EMERGENCY_ACTION_CONTENT_START_PADDING_DP = 9;
-    static final float EMERGENCY_ACTION_TITLE_TEXT_SIZE_SP = 11.5f;
-    static final float EMERGENCY_ACTION_DETAIL_TEXT_SIZE_SP = 10.5f;
+    static final int EMERGENCY_ACTION_ROW_VERTICAL_PADDING_DP = 2;
+    static final int EMERGENCY_ACTION_CONTENT_START_PADDING_DP = 8;
+    static final float EMERGENCY_ACTION_TITLE_TEXT_SIZE_SP = 11.0f;
+    static final float EMERGENCY_ACTION_DETAIL_TEXT_SIZE_SP = 10.0f;
     private static final int MAX_EMERGENCY_PORTRAIT_ACTIONS = 4;
-    private static final int EMERGENCY_ACTION_BADGE_SIZE_DP = 18;
+    private static final int EMERGENCY_ACTION_BADGE_SIZE_DP = 16;
 
     enum ActionBlockKind {
         DO_FIRST,
@@ -488,9 +488,17 @@ final class DetailActionBlockPresentationFormatter {
         return normalizedLine.endsWith(":")
             || normalizedLine.startsWith("watch")
             || normalizedLine.startsWith("why this answer")
+            || normalizedLine.startsWith("why / source")
+            || normalizedLine.startsWith("why/source")
+            || normalizedLine.startsWith("why proof")
+            || normalizedLine.startsWith("why/proof")
             || normalizedLine.startsWith("evidence")
             || normalizedLine.startsWith("provenance")
             || normalizedLine.startsWith("proof")
+            || normalizedLine.startsWith("source / why")
+            || normalizedLine.startsWith("source/why")
+            || normalizedLine.startsWith("source and why")
+            || normalizedLine.startsWith("source proof")
             || normalizedLine.startsWith("route")
             || normalizedLine.startsWith("backend")
             || normalizedLine.startsWith("model")
@@ -504,6 +512,8 @@ final class DetailActionBlockPresentationFormatter {
             || normalizedLine.startsWith("meta")
             || normalizedLine.startsWith("source")
             || normalizedLine.startsWith("sources")
+            || normalizedLine.startsWith("sources and proof")
+            || normalizedLine.startsWith("sources proof")
             || normalizedLine.startsWith("guide connection")
             || normalizedLine.startsWith("emergency context");
     }

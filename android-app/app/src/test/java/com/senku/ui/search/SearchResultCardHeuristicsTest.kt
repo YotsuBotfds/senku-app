@@ -81,6 +81,10 @@ class SearchResultCardHeuristicsTest {
             "LEGACY META",
             compactSearchResultMetadataLabel("legacy meta"),
         )
+        assertEquals(
+            "SHELTER \u00B7 TOPIC \u00B7 WINDOW LONG",
+            compactSearchResultMetadataLabel("Role: Topic // Window: Long Term // Category: Shelter"),
+        )
     }
 
     @Test
@@ -142,11 +146,11 @@ class SearchResultCardHeuristicsTest {
 
     @Test
     fun scoreTickTrackWidthDp_staysCompactAndRankSensitive() {
-        assertEquals(18, scoreTickTrackWidthDp("92"))
-        assertEquals(17, scoreTickTrackWidthDp("78"))
-        assertEquals(16, scoreTickTrackWidthDp("74"))
+        assertEquals(20, scoreTickTrackWidthDp("92"))
+        assertEquals(18, scoreTickTrackWidthDp("78"))
+        assertEquals(17, scoreTickTrackWidthDp("74"))
         assertEquals(15, scoreTickTrackWidthDp("61"))
-        assertEquals(14, scoreTickTrackWidthDp("49"))
+        assertEquals(13, scoreTickTrackWidthDp("49"))
         assertEquals(16, scoreTickTrackWidthDp("#1"))
     }
 
