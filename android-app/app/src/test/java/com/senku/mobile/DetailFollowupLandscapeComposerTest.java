@@ -5,6 +5,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertTrue;
 
+import android.view.View;
+
 import com.senku.ui.primitives.MetaItem;
 import com.senku.ui.tablet.TabletDetailMode;
 
@@ -518,6 +520,9 @@ public final class DetailFollowupLandscapeComposerTest {
     public void answerModeSuppressesLegacyBodyMirror() {
         assertTrue(DetailActivity.shouldHideBodyMirrorForAnswerMode(true));
         assertFalse(DetailActivity.shouldHideBodyMirrorForAnswerMode(false));
+        assertEquals(View.GONE, DetailActivity.resolveBodyMirrorShellVisibility(true, false));
+        assertEquals(View.GONE, DetailActivity.resolveBodyMirrorShellVisibility(false, true));
+        assertEquals(View.VISIBLE, DetailActivity.resolveBodyMirrorShellVisibility(false, false));
     }
 
     @Test

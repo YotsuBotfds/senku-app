@@ -2881,16 +2881,14 @@ public final class DetailActivity extends AppCompatActivity {
             return;
         }
         ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) rawParams;
-        if (shouldHideBodyMirrorForAnswerMode(answerMode) && !phoneXmlDetailLayoutActive()) {
-            params.width = dp(1);
-            params.height = dp(1);
+        if (shouldHideBodyMirrorForAnswerMode(answerMode)) {
+            params.width = ViewGroup.LayoutParams.MATCH_PARENT;
+            params.height = ViewGroup.LayoutParams.WRAP_CONTENT;
             params.topMargin = 0;
             bodyMirrorShell.setLayoutParams(params);
-            bodyMirrorShell.setPadding(0, 0, 0, 0);
-            bodyMirrorShell.setBackground(null);
-            bodyMirrorShell.setAlpha(0.01f);
+            bodyMirrorShell.setAlpha(1f);
             bodyView.setTextColor(getColor(R.color.senku_text_light));
-            bodyView.setAlpha(0.01f);
+            bodyView.setAlpha(1f);
             bodyMirrorShell.setVisibility(View.GONE);
         } else {
             params.width = ViewGroup.LayoutParams.MATCH_PARENT;
@@ -6718,6 +6716,12 @@ public final class DetailActivity extends AppCompatActivity {
         return answerMode;
     }
 
+    static int resolveBodyMirrorShellVisibility(boolean answerMode, boolean emergencyPortrait) {
+        return emergencyPortrait || shouldHideBodyMirrorForAnswerMode(answerMode)
+            ? View.GONE
+            : View.VISIBLE;
+    }
+
     static boolean isThreadDetailRoute(boolean answerMode, int totalTurnCount) {
         return answerMode && totalTurnCount > 1;
     }
@@ -9221,11 +9225,7 @@ public final class DetailActivity extends AppCompatActivity {
             answerCardView.setVisibility(emergencyPortrait ? View.GONE : (answerMode ? View.VISIBLE : View.GONE));
         }
         if (bodyMirrorShell != null) {
-            bodyMirrorShell.setVisibility(
-                emergencyPortrait || shouldHideBodyMirrorForAnswerMode(answerMode)
-                    ? View.GONE
-                    : View.VISIBLE
-            );
+            bodyMirrorShell.setVisibility(resolveBodyMirrorShellVisibility(answerMode, emergencyPortrait));
         }
         if (bodyLabel != null) {
             bodyLabel.setVisibility(emergencyPortrait || isFlatAnswerDetailChrome() ? View.GONE : View.VISIBLE);
