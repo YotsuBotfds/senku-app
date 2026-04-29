@@ -2850,7 +2850,10 @@ public final class MainActivity extends AppCompatActivity {
         if (savedInstanceState == null) {
             return BottomTabDestination.HOME;
         }
-        String rawValue = savedInstanceState.getString(STATE_PHONE_TAB);
+        return resolveRestoredPhoneTab(savedInstanceState.getString(STATE_PHONE_TAB));
+    }
+
+    static BottomTabDestination resolveRestoredPhoneTab(String rawValue) {
         if (rawValue == null || rawValue.trim().isEmpty()) {
             return BottomTabDestination.HOME;
         }

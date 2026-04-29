@@ -110,6 +110,33 @@ public final class MainActivityPhoneNavigationTest {
     }
 
     @Test
+    public void restoredPhoneTabUsesVisibleSelectionOwner() {
+        assertEquals(
+            BottomTabDestination.ASK,
+            MainActivity.resolveRestoredPhoneTab(BottomTabDestination.THREADS.name())
+        );
+        assertEquals(
+            BottomTabDestination.ASK,
+            MainActivity.resolveRestoredPhoneTab(BottomTabDestination.ASK.name())
+        );
+        assertEquals(
+            BottomTabDestination.HOME,
+            MainActivity.resolveRestoredPhoneTab(BottomTabDestination.SEARCH.name())
+        );
+        assertEquals(
+            BottomTabDestination.PINS,
+            MainActivity.resolveRestoredPhoneTab(BottomTabDestination.PINS.name())
+        );
+    }
+
+    @Test
+    public void restoredPhoneTabFallsBackToHomeForMissingOrUnknownState() {
+        assertEquals(BottomTabDestination.HOME, MainActivity.resolveRestoredPhoneTab(null));
+        assertEquals(BottomTabDestination.HOME, MainActivity.resolveRestoredPhoneTab("   "));
+        assertEquals(BottomTabDestination.HOME, MainActivity.resolveRestoredPhoneTab("DETAIL"));
+    }
+
+    @Test
     public void sharedInputSubmitRoutesToAskWhenAskOwnsTheVisibleFlow() {
         assertEquals(
             MainActivity.SubmitTarget.ASK,
