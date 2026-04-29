@@ -1650,6 +1650,58 @@ Next slice candidates:
 - Re-run full 22-state pack after the next phone detail change or before the
   next push if home/search/tablet are touched again.
 
+## Wave64 Checkpoint
+
+Committed scope pending at the time of this update:
+
+- Composer polish: tightened the docked composer field/action/send dimensions,
+  reduced portrait follow-up panel vertical padding, and normalized the compact
+  placeholder from `Ask follow-up` to `Ask a follow-up about this answer...`.
+- Phone answer related-row polish: made answer-mode related guide rows
+  single-line, flatter, smaller, and closer to the mock list treatment.
+- Affordance isolation: added an answer-row-only single-chevron drawable/helper
+  so global send/helper/guide-row double-chevron behavior stays unchanged.
+
+Fresh proof:
+
+- Phone pack:
+  `artifacts/ui_state_pack/wave64_phone_answer_related_composer/20260429_061148`
+- Summary: phone portrait states `6/6`, ANRs `0`, rotation mismatch `0`.
+  The state pack process returned nonzero because the canonical mock bundle was
+  intentionally phone-portrait only (`6` actual PNGs vs `22` full-pack expected).
+- Validation: focused JVM suite passed for detail composer/source/related/thread
+  formatters and answer presenter behavior.
+- Visual note: the answer phone portrait now has compact related rows and target
+  composer copy. Remaining deltas are top/app chrome scale, body/source-card
+  exact density, and full-pack parity proof.
+
+## Path To 10/10 Mock Parity
+
+This read-only xhigh planner pass should guide the remaining slices:
+
+1. Land Wave64 cleanly. Re-proof the composer and related-row slice before other
+   detail/composer edits. Acceptance: `answer-phone-portrait.png` has compact
+   related rows, a single chevron, target composer hint, and no bottom collision.
+2. Finish phone answer/detail. Tune smaller app header, lighter question block,
+   flatter source cards, divider-like related rows, and visible composer context
+   label. Likely files: `DetailActivity.java`,
+   `DetailRelatedGuidePresentationFormatter.java`,
+   `DetailProofPresentationFormatter.java`, answer-card primitives, detail
+   drawables/layouts.
+3. Freeze rail/chip ownership. Thread uses conversational flow with contextual
+   source chips; answer uses source cards/support only; guide uses section and
+   cross-reference rails; search uses filter/preview rails. Acceptance: no
+   duplicate nav rails and no wrong-mode rail labels in screenshots/dumps.
+4. Polish tablet detail. Reduce left-rail heaviness, bound center article/paper
+   width, shrink oversized source cards, and keep composer reserve.
+5. Finish home/search density and chrome. Keep one nav treatment per posture,
+   target header/query copy, `4 RESULTS - 12MS`, correct result order/scores,
+   tablet filter/preview panes, and calmer text weight.
+6. Close global chrome. Verify fixed target frame/status, compact breadcrumbs,
+   no live OS leakage in canonical mocks, and no malformed separators.
+7. Run the closure pack. Full four-role state pack should produce the complete
+   22 canonical PNGs with homogeneous APK/model and zero rotation mismatches.
+
 ## Parallelization Rules
 
 - Start every worker with `git status --short`, `git log --oneline -n 8

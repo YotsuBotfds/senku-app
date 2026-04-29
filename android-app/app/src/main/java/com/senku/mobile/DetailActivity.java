@@ -4223,9 +4223,13 @@ public final class DetailActivity extends AppCompatActivity {
             button.setTextColor(getColor(R.color.senku_text_light));
             button.setMinHeight(0);
             button.setMinimumHeight(0);
-            button.setSingleLine(false);
-            button.setMaxLines(flatAnswerChrome ? 3 : 2);
-            button.setPadding(dp(flatAnswerChrome ? 0 : 14), dp(flatAnswerChrome ? 6 : 12), dp(flatAnswerChrome ? 4 : 14), dp(flatAnswerChrome ? 6 : 12));
+            button.setMinWidth(0);
+            button.setMinimumWidth(0);
+            button.setSingleLine(flatAnswerChrome);
+            button.setMaxLines(flatAnswerChrome ? 1 : 2);
+            button.setEllipsize(flatAnswerChrome ? TextUtils.TruncateAt.END : null);
+            button.setGravity(flatAnswerChrome ? Gravity.CENTER_VERTICAL : Gravity.CENTER);
+            button.setPadding(dp(flatAnswerChrome ? 0 : 14), dp(flatAnswerChrome ? 8 : 12), dp(flatAnswerChrome ? 2 : 14), dp(flatAnswerChrome ? 8 : 12));
             button.setText(detailRelatedGuidePresentationFormatter().buildAnswerModeRelatedGuideButtonLabel(relatedGuide));
             button.setContentDescription(
                 detailRelatedGuidePresentationFormatter().buildAnswerModeRelatedGuideButtonContentDescription(
@@ -4238,10 +4242,10 @@ public final class DetailActivity extends AppCompatActivity {
             );
             button.setTextAlignment(View.TEXT_ALIGNMENT_VIEW_START);
             if (flatAnswerChrome) {
-                button.setTextSize(14f);
+                button.setTextSize(13f);
                 button.setTypeface(Typeface.DEFAULT, Typeface.NORMAL);
                 button.setIncludeFontPadding(false);
-                applyDirectionalActionAffordance(button, getColor(R.color.senku_text_muted_light));
+                applySubtleDirectionalActionAffordance(button, getColor(R.color.senku_text_muted_light));
             }
             if (previewMode) {
                 button.setTag(buildRelatedGuideSelectionKey(relatedGuide));
@@ -4255,7 +4259,7 @@ public final class DetailActivity extends AppCompatActivity {
                 ViewGroup.LayoutParams.WRAP_CONTENT
             );
             if (nextStepsContainer.getChildCount() > 0) {
-                params.topMargin = dp(flatAnswerChrome ? 4 : 8);
+                params.topMargin = dp(flatAnswerChrome ? 0 : 8);
             }
             nextStepsContainer.addView(button, params);
             if (restoreSelectedPreview && safe(selectedRelatedGuideKey).equals(buildRelatedGuideSelectionKey(relatedGuide))) {
@@ -9100,6 +9104,20 @@ public final class DetailActivity extends AppCompatActivity {
         chevrons.setTint(tintColor);
         view.setCompoundDrawablePadding(dp(8));
         view.setCompoundDrawablesRelativeWithIntrinsicBounds(null, null, chevrons, null);
+    }
+
+    private void applySubtleDirectionalActionAffordance(TextView view, int tintColor) {
+        if (view == null) {
+            return;
+        }
+        Drawable chevron = getDrawable(R.drawable.ic_detail_action_chevron);
+        if (chevron == null) {
+            return;
+        }
+        chevron = chevron.mutate();
+        chevron.setTint(tintColor);
+        view.setCompoundDrawablePadding(dp(6));
+        view.setCompoundDrawablesRelativeWithIntrinsicBounds(null, null, chevron, null);
     }
 
     private int getLowCoverageAccentColor() {

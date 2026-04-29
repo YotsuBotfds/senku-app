@@ -142,13 +142,18 @@ fun DockedComposer(
     val colors = SenkuTheme.colors
     val typography = SenkuTheme.typography
     val focusRequester = remember { FocusRequester() }
-    val fieldHeight = if (landscapePhoneBudgeted) 34.dp else 36.dp
-    val fieldVerticalPadding = if (landscapePhoneBudgeted) 6.dp else 7.dp
-    val rowVerticalPadding = if (landscapePhoneBudgeted) 5.dp else 6.dp
-    val actionSize = if (landscapePhoneBudgeted) 32.dp else 34.dp
-    val sendVerticalPadding = if (landscapePhoneBudgeted) 7.dp else 8.dp
+    val fieldHeight = 34.dp
+    val fieldVerticalPadding = 6.dp
+    val rowVerticalPadding = if (landscapePhoneBudgeted) 5.dp else 4.dp
+    val actionSize = 32.dp
+    val sendVerticalPadding = if (landscapePhoneBudgeted) 7.dp else 6.dp
     val hasSendText = model.enabled && model.text.trim().isNotEmpty()
     val contextHint = model.contextHint.trim()
+    val fieldHint = if (model.hint.trim() == "Ask follow-up") {
+        "Ask a follow-up about this answer..."
+    } else {
+        model.hint
+    }
 
     LaunchedEffect(focusRequestTick, model.enabled) {
         if (focusRequestTick > 0 && model.enabled) {
@@ -275,7 +280,7 @@ fun DockedComposer(
                     ) {
                         if (model.text.isBlank()) {
                             Text(
-                                text = model.hint,
+                                text = fieldHint,
                                 style = typography.uiBody.copy(
                                     fontSize = 14.sp,
                                     lineHeight = 20.sp,
