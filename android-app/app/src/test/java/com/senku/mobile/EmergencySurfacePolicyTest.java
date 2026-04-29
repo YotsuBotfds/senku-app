@@ -127,13 +127,18 @@ public final class EmergencySurfacePolicyTest {
         DetailActivity.TabletEmergencyOverlayMargins margins =
             DetailActivity.resolveTabletEmergencyOverlayMarginsDp(true);
 
-        assertEquals(72, margins.left);
-        assertEquals(28, margins.right);
-        assertEquals(18, margins.top);
+        assertEquals(44, margins.left);
+        assertEquals(24, margins.right);
+        assertEquals(12, margins.top);
         assertEquals(
             android.view.ViewGroup.LayoutParams.MATCH_PARENT,
             DetailActivity.resolveTabletEmergencyOverlayHeight(true)
         );
+    }
+
+    @Test
+    public void tabletPortraitEmergencyChromeUsesCompactIconTargets() {
+        assertEquals(40, DetailActivity.resolveTabletEmergencyChromeNavIconSizeDp());
     }
 
     @Test
@@ -146,8 +151,9 @@ public final class EmergencySurfacePolicyTest {
     @Test
     public void emergencyPortraitSpacingKeepsActionRowsAndProofCardReadable() {
         assertEquals(10, DetailActivity.resolveEmergencyActionRowGapDp(false));
-        assertEquals(20, DetailActivity.resolveEmergencyProofCardHorizontalPaddingDp(false));
-        assertEquals(14, DetailActivity.resolveEmergencyProofCardVerticalPaddingDp(false));
+        assertEquals(14, DetailActivity.resolveEmergencyProofCardHorizontalPaddingDp(false));
+        assertEquals(10, DetailActivity.resolveEmergencyProofCardVerticalPaddingDp(false));
+        assertEquals(10.5f, DetailActivity.resolveEmergencyProofCardTextSizeSp(), 0.0f);
     }
 
     @Test

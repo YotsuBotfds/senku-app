@@ -39,7 +39,7 @@ import java.util.LinkedHashSet
 import java.util.Locale
 
 private const val WARM_THREAD_WINDOW_MS = 30L * 60L * 1000L
-private const val SCORE_TICK_TRACK_WIDTH_DP = 22
+private const val SCORE_TICK_TRACK_WIDTH_DP = 18
 
 @Immutable
 data class SearchResultCardModel(
@@ -105,15 +105,15 @@ fun SearchResultCard(
             Box(
                 modifier = Modifier
                     .width(1.dp)
-                    .heightIn(min = 82.dp)
+                    .heightIn(min = 74.dp)
                     .background(laneColor.copy(alpha = 0.60f)),
             ) {
             }
             Column(
                 modifier = Modifier
                     .weight(1f)
-                    .padding(start = 7.dp, top = 8.dp, end = 8.dp, bottom = 0.dp),
-                verticalArrangement = Arrangement.spacedBy(2.dp),
+                    .padding(start = 7.dp, top = 6.dp, end = 8.dp, bottom = 0.dp),
+                verticalArrangement = Arrangement.spacedBy(1.dp),
             ) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -140,8 +140,8 @@ fun SearchResultCard(
                 Text(
                     text = model.title.trim(),
                     style = SenkuTheme.typography.uiBody.copy(
-                        fontSize = 12.sp,
-                        lineHeight = 15.sp,
+                        fontSize = 11.sp,
+                        lineHeight = 14.sp,
                         fontWeight = FontWeight.Bold,
                     ),
                     color = colors.ink0,
@@ -167,8 +167,8 @@ fun SearchResultCard(
                 Text(
                     text = compactResultPreviewText(model.subtitle, model.snippet),
                     style = SenkuTheme.typography.smallBody.copy(
-                        fontSize = 10.sp,
-                        lineHeight = 12.sp,
+                        fontSize = 9.sp,
+                        lineHeight = 11.sp,
                         fontWeight = FontWeight.Normal,
                     ),
                     color = colors.ink1.copy(alpha = 0.78f),
@@ -207,7 +207,7 @@ fun SearchResultCard(
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(top = 8.dp)
+                        .padding(top = 6.dp)
                         .height(1.dp)
                         .background(colors.hairlineStrong),
                 )
@@ -228,13 +228,13 @@ private fun ScoreTick(
         Box(
             modifier = Modifier
                     .width(scoreTickTrackWidthDp(label).dp)
-                    .height(3.dp)
+                    .height(2.dp)
                     .background(color.copy(alpha = 0.30f)),
         ) {
             Box(
                 modifier = Modifier
                     .fillMaxWidth(scoreTickFillFraction(label))
-                    .height(3.dp)
+                    .height(2.dp)
                     .background(SenkuTheme.colors.accent),
             )
         }

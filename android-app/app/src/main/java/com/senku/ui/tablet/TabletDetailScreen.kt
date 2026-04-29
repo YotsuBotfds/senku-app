@@ -242,6 +242,19 @@ internal data class TabletGuidePaperDensityPolicy(
     val requiredRowTitleLineHeightSp: Int,
 )
 
+internal data class TabletGuideSideRailDensityPolicy(
+    val sectionRailVerticalSpacingDp: Int,
+    val sectionRowActiveMinHeightDp: Int,
+    val sectionRowInactiveMinHeightDp: Int,
+    val sectionRowHorizontalPaddingDp: Int,
+    val sectionRowVerticalPaddingDp: Int,
+    val referencePaneVerticalSpacingDp: Int,
+    val referenceCardMinHeightDp: Int,
+    val referenceCardHorizontalPaddingDp: Int,
+    val referenceCardVerticalPaddingDp: Int,
+    val referenceCardVerticalSpacingDp: Int,
+)
+
 private data class GuidePaperPalette(
     val page: Color = Color(0xFFE8DFC9),
     val pageInset: Color = Color(0xFFE1D3BA),
@@ -398,17 +411,17 @@ internal fun tabletGuideChromePolicy(isLandscape: Boolean): TabletGuideChromePol
 internal fun tabletGuidePaperDensityPolicy(isLandscape: Boolean): TabletGuidePaperDensityPolicy =
     if (isLandscape) {
         TabletGuidePaperDensityPolicy(
-            headerTitleFontSizeSp = 29,
-            headerTitleLineHeightSp = 34,
-            bodyFontSizeSp = 14,
-            bodyLineHeightSp = 21,
-            bodySpacingDp = 8,
-            dangerBodyFontSizeSp = 14,
-            dangerBodyLineHeightSp = 20,
-            dangerSpacingDp = 9,
-            requiredRowMinHeightDp = 48,
-            requiredRowTitleFontSizeSp = 14,
-            requiredRowTitleLineHeightSp = 18,
+            headerTitleFontSizeSp = 27,
+            headerTitleLineHeightSp = 32,
+            bodyFontSizeSp = 13,
+            bodyLineHeightSp = 19,
+            bodySpacingDp = 7,
+            dangerBodyFontSizeSp = 13,
+            dangerBodyLineHeightSp = 19,
+            dangerSpacingDp = 7,
+            requiredRowMinHeightDp = 44,
+            requiredRowTitleFontSizeSp = 13,
+            requiredRowTitleLineHeightSp = 17,
         )
     } else {
         TabletGuidePaperDensityPolicy(
@@ -423,6 +436,35 @@ internal fun tabletGuidePaperDensityPolicy(isLandscape: Boolean): TabletGuidePap
             requiredRowMinHeightDp = 56,
             requiredRowTitleFontSizeSp = 15,
             requiredRowTitleLineHeightSp = 19,
+        )
+    }
+
+internal fun tabletGuideSideRailDensityPolicy(isLandscape: Boolean): TabletGuideSideRailDensityPolicy =
+    if (isLandscape) {
+        TabletGuideSideRailDensityPolicy(
+            sectionRailVerticalSpacingDp = 12,
+            sectionRowActiveMinHeightDp = 46,
+            sectionRowInactiveMinHeightDp = 36,
+            sectionRowHorizontalPaddingDp = 9,
+            sectionRowVerticalPaddingDp = 5,
+            referencePaneVerticalSpacingDp = 14,
+            referenceCardMinHeightDp = 74,
+            referenceCardHorizontalPaddingDp = 16,
+            referenceCardVerticalPaddingDp = 11,
+            referenceCardVerticalSpacingDp = 7,
+        )
+    } else {
+        TabletGuideSideRailDensityPolicy(
+            sectionRailVerticalSpacingDp = 17,
+            sectionRowActiveMinHeightDp = 52,
+            sectionRowInactiveMinHeightDp = 42,
+            sectionRowHorizontalPaddingDp = 10,
+            sectionRowVerticalPaddingDp = 6,
+            referencePaneVerticalSpacingDp = 20,
+            referenceCardMinHeightDp = 90,
+            referenceCardHorizontalPaddingDp = 18,
+            referenceCardVerticalPaddingDp = 14,
+            referenceCardVerticalSpacingDp = 9,
         )
     }
 
@@ -979,6 +1021,7 @@ private fun TabletDetailBodyRow(
                 GuideSectionRail(
                     turns = state.resolvedThreadRailTurns(),
                     sectionCount = state.resolvedGuideSectionCount(),
+                    isLandscape = state.isLandscape,
                     pinVisible = state.pinVisible,
                     pinActive = state.pinActive,
                     onBackClick = onBackClick,
@@ -1433,6 +1476,7 @@ private fun SavedGlyph() {
 private fun GuideSectionRail(
     turns: List<ThreadTurnState>,
     sectionCount: Int,
+    isLandscape: Boolean,
     pinVisible: Boolean,
     pinActive: Boolean,
     onBackClick: () -> Unit,
@@ -1444,6 +1488,7 @@ private fun GuideSectionRail(
     val colors = SenkuTheme.colors
     val typography = SenkuTheme.typography
     val labels = tabletGuideNavigationLabels()
+    val densityPolicy = tabletGuideSideRailDensityPolicy(isLandscape)
     val scrollState = rememberScrollState()
 
     Column(
@@ -1451,7 +1496,7 @@ private fun GuideSectionRail(
             .background(colors.bg1)
             .verticalScroll(scrollState)
             .padding(horizontal = 20.dp, vertical = 18.dp),
-        verticalArrangement = Arrangement.spacedBy(17.dp),
+        verticalArrangement = Arrangement.spacedBy(densityPolicy.sectionRailVerticalSpacingDp.dp),
     ) {
         if (tabletGuideSectionRailShowsToolbar()) {
             GuideSectionRailToolbar(
@@ -1500,6 +1545,7 @@ private fun GuideSectionRail(
                 GuideSectionRailRow(
                     parts = tabletGuideRailRowParts(turn.question, index + 1),
                     active = turn.isActive || index == 0,
+                    isLandscape = isLandscape,
                     onClick = { onTurnClick(turn.id) },
                 )
             }
@@ -1667,10 +1713,12 @@ private fun GuideRailPinGlyph(active: Boolean) {
 private fun GuideSectionRailRow(
     parts: TabletGuideRailRowParts,
     active: Boolean,
+    isLandscape: Boolean,
     onClick: () -> Unit,
 ) {
     val colors = SenkuTheme.colors
     val typography = SenkuTheme.typography
+    val densityPolicy = tabletGuideSideRailDensityPolicy(isLandscape)
 
     Surface(
         modifier = Modifier
@@ -1683,8 +1731,17 @@ private fun GuideSectionRailRow(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .heightIn(min = if (active) 52.dp else 42.dp)
-                .padding(horizontal = 10.dp, vertical = 6.dp),
+                .heightIn(
+                    min = if (active) {
+                        densityPolicy.sectionRowActiveMinHeightDp.dp
+                    } else {
+                        densityPolicy.sectionRowInactiveMinHeightDp.dp
+                    },
+                )
+                .padding(
+                    horizontal = densityPolicy.sectionRowHorizontalPaddingDp.dp,
+                    vertical = densityPolicy.sectionRowVerticalPaddingDp.dp,
+                ),
             horizontalArrangement = Arrangement.spacedBy(12.dp),
             verticalAlignment = Alignment.Top,
         ) {
@@ -1883,6 +1940,7 @@ private fun GuideReferencePane(
 ) {
     val colors = SenkuTheme.colors
     val typography = SenkuTheme.typography
+    val densityPolicy = tabletGuideSideRailDensityPolicy(isLandscape = true)
     val scrollState = rememberScrollState()
     val referenceRows = tabletGuideReferencePaneRows(xrefs)
 
@@ -1891,7 +1949,7 @@ private fun GuideReferencePane(
             .background(colors.bg1)
             .verticalScroll(scrollState)
             .padding(horizontal = 26.dp, vertical = 26.dp),
-        verticalArrangement = Arrangement.spacedBy(20.dp),
+        verticalArrangement = Arrangement.spacedBy(densityPolicy.referencePaneVerticalSpacingDp.dp),
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -1934,6 +1992,7 @@ private fun GuideReferenceCard(
     val typography = SenkuTheme.typography
     val relation = xref.relation.trim().ifEmpty { "RELATED" }.uppercase()
     val accent = if (relation == "REQUIRED") colors.warn else colors.accent
+    val densityPolicy = tabletGuideSideRailDensityPolicy(isLandscape = true)
 
     Surface(
         modifier = Modifier.fillMaxWidth(),
@@ -1946,9 +2005,12 @@ private fun GuideReferenceCard(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .heightIn(min = 90.dp)
-                .padding(horizontal = 18.dp, vertical = 14.dp),
-            verticalArrangement = Arrangement.spacedBy(9.dp),
+                .heightIn(min = densityPolicy.referenceCardMinHeightDp.dp)
+                .padding(
+                    horizontal = densityPolicy.referenceCardHorizontalPaddingDp.dp,
+                    vertical = densityPolicy.referenceCardVerticalPaddingDp.dp,
+                ),
+            verticalArrangement = Arrangement.spacedBy(densityPolicy.referenceCardVerticalSpacingDp.dp),
         ) {
             Text(
                 text = listOf(xref.id.trim().ifEmpty { "GD-?" }, relation)

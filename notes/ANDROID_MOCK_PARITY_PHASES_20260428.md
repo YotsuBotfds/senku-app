@@ -2049,6 +2049,48 @@ Fresh proof:
   visual gap from independent review remains the broader guide family and
   phone-portrait answer/emergency detail polish.
 
+## Wave76 Checkpoint
+
+Committed scope pending at the time of this update:
+
+- Tablet portrait emergency: tightened framed emergency overlay margins,
+  compacted back/home icon targets, moved Home beside the title row, and kept
+  the full-height emergency owner scoped to tablet portrait only.
+- Phone portrait emergency: reduced proof-card padding and text size so the
+  `WHY THIS ANSWER` evidence card reads closer to the compact target.
+- Tablet guide: tightened landscape guide-paper typography, danger spacing,
+  required-reading rows, and side-rail density through named guide density
+  policies rather than posture spoofing.
+- Search: made result rows, score ticks, titles, snippets, and dividers denser;
+  treat this as trailing polish unless a later screenshot review names a
+  precise remaining mismatch.
+
+Fresh proof:
+
+- Full pack:
+  `artifacts/ui_state_pack/wave76_emergency_guide_search/20260429_113733`
+- Summary: full pack `pass`, states `22/22`, failures `0`, ANRs `0`, canonical
+  mock export `22` PNGs, goal bundle
+  `artifacts/ui_state_pack/wave76_emergency_guide_search/20260429_113733_mocks.zip`.
+- Validation: focused JVM suite passed for emergency surface policy,
+  phone-landscape composer/detail regression, tablet guide stress-reading
+  policy, and search-result card heuristics.
+- Goal-pack checks after the GPT UI insight: `scripts/validate_android_mock_goal_pack.py`
+  passed for canonical `artifacts/mocks`, the Wave76 pack directory, and the
+  Wave76 goal zip; each reported `png_count: 22`.
+
+GPT UI insight intake:
+
+- The sprint is now screenshot-goal convergence, not broad redesign.
+- Freeze Home/Search except for named screenshot mismatches; remaining closure
+  should be surgical on guide, emergency, and answer/thread detail surfaces.
+- Do not use `isLandscape` as a structural-shell proxy. Keep surface/chrome
+  decisions explicit and preserve the Wave75 tablet-portrait thread fix that
+  uses real portrait posture with app rail plus evidence pane.
+- Consolidate tunables into named per-surface policies as work continues, and
+  classify remaining deltas as content/data, layout/density, mode/behavior, or
+  export before implementation.
+
 ## Parallelization Rules
 
 - Start every worker with `git status --short`, `git log --oneline -n 8
