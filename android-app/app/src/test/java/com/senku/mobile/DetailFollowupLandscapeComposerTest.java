@@ -118,6 +118,30 @@ public final class DetailFollowupLandscapeComposerTest {
     }
 
     @Test
+    public void phoneAnswerDockedComposerCarriesContextHint() {
+        assertEquals(
+            "GD-345 \u2022 THIS DEVICE \u2022 CONTEXT KEPT",
+            DetailActivity.buildAnswerDockedComposerContextHint("GD-345")
+        );
+        assertEquals(
+            "THIS DEVICE \u2022 CONTEXT KEPT",
+            DetailActivity.buildAnswerDockedComposerContextHint("")
+        );
+    }
+
+    @Test
+    public void phoneThreadDockedComposerCarriesThreadContextHint() {
+        assertEquals(
+            "THREAD CONTEXT \u2022 2 TURNS \u2022 GD-220 ANCHOR",
+            DetailActivity.buildThreadDockedComposerContextHint("GD-220", 2)
+        );
+        assertEquals(
+            "THREAD CONTEXT \u2022 1 TURN",
+            DetailActivity.buildThreadDockedComposerContextHint("", 0)
+        );
+    }
+
+    @Test
     public void followUpPanelUsesContractEligibilityForAnswerPostures() {
         assertTrue(DetailActivity.shouldShowDetailFollowUpPanel(
             DetailSurfaceContract.answer(DetailSurfaceContract.AnswerKind.GENERATED)

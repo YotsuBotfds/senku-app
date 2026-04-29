@@ -1005,7 +1005,9 @@
             android:layout_width="1dp"
             android:layout_height="1dp"
             android:alpha="0.01"
-            android:orientation="vertical">
+            android:importantForAccessibility="noHideDescendants"
+            android:orientation="vertical"
+            android:visibility="gone">
 
             <TextView
                 android:layout_width="wrap_content"

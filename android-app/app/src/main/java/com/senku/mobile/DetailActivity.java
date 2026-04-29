@@ -3086,7 +3086,8 @@ public final class DetailActivity extends AppCompatActivity {
             followUpInput.isEnabled() && followUpSendButton != null && followUpSendButton.isEnabled(),
             showRetry,
             retryLabel,
-            compactFollowUpMode
+            compactFollowUpMode,
+            buildDockedComposerContextHint()
         );
         followUpComposeView.setLandscapePhoneBudgeted(landscapePhone);
         followUpComposeView.setVisibility(View.VISIBLE);
@@ -3182,6 +3183,54 @@ public final class DetailActivity extends AppCompatActivity {
         return compactFollowUpMode
             ? R.string.detail_followup_hint_compact
             : R.string.detail_loop4_followup_hint_compact;
+    }
+
+    private String buildDockedComposerContextHint() {
+        if (!answerMode || !phoneXmlDetailLayoutActive()) {
+            return "";
+        }
+        String guideId = resolveDisplayGuideId();
+        if (isCurrentEmergencySurfaceEligible()) {
+            return buildEmergencyDockedComposerContextHint(guideId);
+        }
+        if (isCurrentThreadDetailRoute()) {
+            return buildThreadDockedComposerContextHint(
+                resolveThreadAnchorGuideId(guideId),
+                currentAnswerThreadTurnCount()
+            );
+        }
+        return buildAnswerDockedComposerContextHint(guideId);
+    }
+
+    static String buildAnswerDockedComposerContextHint(String guideId) {
+        ArrayList<String> parts = new ArrayList<>();
+        String cleanGuideId = safe(guideId).trim();
+        if (!cleanGuideId.isEmpty()) {
+            parts.add(cleanGuideId);
+        }
+        parts.add("THIS DEVICE");
+        parts.add("CONTEXT KEPT");
+        return String.join(HEADER_BULLET, parts);
+    }
+
+    static String buildEmergencyDockedComposerContextHint(String guideId) {
+        String cleanGuideId = safe(guideId).trim();
+        if (cleanGuideId.isEmpty()) {
+            return "EMERGENCY CONTEXT";
+        }
+        return "EMERGENCY CONTEXT" + HEADER_BULLET + cleanGuideId + " ANCHOR";
+    }
+
+    static String buildThreadDockedComposerContextHint(String guideId, int totalTurnCount) {
+        ArrayList<String> parts = new ArrayList<>();
+        parts.add("THREAD CONTEXT");
+        int turns = Math.max(1, totalTurnCount);
+        parts.add(turns + (turns == 1 ? " TURN" : " TURNS"));
+        String cleanGuideId = safe(guideId).trim();
+        if (!cleanGuideId.isEmpty()) {
+            parts.add(cleanGuideId + " ANCHOR");
+        }
+        return String.join(HEADER_BULLET, parts);
     }
 
     static boolean shouldRequestLandscapeDockedComposerFocus(

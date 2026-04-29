@@ -166,6 +166,10 @@ public final class EmergencySurfacePolicyTest {
             "\u2022 DANGER \u00b7 EXTREME BURN HAZARD",
             DetailActivity.buildEmergencyDangerHeaderTitle("answer_card:burn_hazard", "foundry", "Burn hazard response")
         );
+        assertEquals(
+            "EMERGENCY CONTEXT \u2022 GD-132 ANCHOR",
+            DetailActivity.buildEmergencyDockedComposerContextHint("GD-132")
+        );
     }
 
     @Test
