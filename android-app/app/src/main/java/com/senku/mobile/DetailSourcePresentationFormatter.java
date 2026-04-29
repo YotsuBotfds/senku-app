@@ -132,13 +132,29 @@ final class DetailSourcePresentationFormatter {
             return "Open guide note";
         }
         StringBuilder builder = new StringBuilder();
+        ArrayList<String> metaParts = new ArrayList<>();
         if (!card.guideId.isEmpty()) {
-            builder.append("[").append(card.guideId).append("] ");
+            metaParts.add(card.guideId);
+        }
+        if (!card.roleLabel.isEmpty()) {
+            metaParts.add(card.roleLabel);
+        }
+        if (!card.matchLabel.isEmpty()) {
+            metaParts.add(card.matchLabel);
+        }
+        if (!metaParts.isEmpty()) {
+            builder.append(String.join(" \u00B7 ", metaParts));
         }
         String title = card.title.isEmpty() ? "Open guide note" : card.title;
+        if (builder.length() > 0) {
+            builder.append("\n");
+        }
         builder.append(title);
         if (!card.anchorLabel.isEmpty() && !sameLabel(card.anchorLabel, title)) {
             builder.append("\n").append(card.anchorLabel);
+        }
+        if (!card.quote.isEmpty()) {
+            builder.append("\n\"").append(trimSourceCardQuote(card.quote)).append("\"");
         }
         return builder.toString().trim();
     }
@@ -346,15 +362,11 @@ final class DetailSourcePresentationFormatter {
     }
 
     String buildCompactSourcesSubtitle(int sourceCount, boolean expanded, boolean generationStallNoticeVisible, String trustSummary) {
-        String label = formatCountLabel(sourceCount, "source", "sources");
-        String compactTrustSummary = safe(trustSummary).trim();
-        return compactTrustSummary.isEmpty() ? label : compactTrustSummary + " | " + label;
+        return buildAnswerSourceCardSubtitle(sourceCount);
     }
 
     String buildExpandedSourcesSubtitle(int sourceCount, boolean generationStallNoticeVisible, String trustSummary) {
-        String action = formatCountLabel(sourceCount, "source", "sources");
-        String expandedTrustSummary = safe(trustSummary).trim();
-        return expandedTrustSummary.isEmpty() ? action : expandedTrustSummary + " | " + action;
+        return buildAnswerSourceCardSubtitle(sourceCount);
     }
 
     String buildSourceButtonLabel(SearchResult result) {
@@ -673,6 +685,18 @@ final class DetailSourcePresentationFormatter {
             return cleaned;
         }
         return cleaned.substring(0, 140).trim() + "...";
+    }
+
+    private static String buildAnswerSourceCardSubtitle(int sourceCount) {
+        return "Answer " + formatCountLabel(sourceCount, "source", "sources");
+    }
+
+    private static String trimSourceCardQuote(String quote) {
+        String cleaned = safe(quote).replaceAll("\\s+", " ").trim();
+        if (cleaned.length() <= 96) {
+            return cleaned;
+        }
+        return cleaned.substring(0, 96).trim() + "...";
     }
 
     private static String formatCountLabel(int count, String singular, String plural) {

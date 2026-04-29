@@ -273,4 +273,32 @@ public final class DetailRelatedGuidePresentationFormatterTest {
             )
         );
     }
+
+    @Test
+    public void answerModeRelatedGuideLabelsPreserveWave79VisibleOrderWithoutGd109() {
+        DetailRelatedGuidePresentationFormatter formatter = new DetailRelatedGuidePresentationFormatter(null);
+        SearchResult[] guides = new SearchResult[] {
+            new SearchResult("Cave Shelter Systems and Long-Term Habitation", "", "", "", "GD-294", "", "survival", ""),
+            new SearchResult("Hurricane & Severe Storm Preparedness", "", "", "", "GD-695", "", "weather", ""),
+            new SearchResult("Insulation Materials & Thermal Design", "", "", "", "GD-484", "", "materials", ""),
+            new SearchResult("Primitive Technology and Stone Age Skills", "", "", "", "GD-027", "", "survival", "")
+        };
+
+        assertEquals(
+            "GD-294 \u00b7 Cave Shelter Systems & Cold-Weather",
+            formatter.buildAnswerModeRelatedGuideButtonLabel(guides[0])
+        );
+        assertEquals(
+            "GD-695 \u00b7 Hurricane & Severe Storm Sheltering",
+            formatter.buildAnswerModeRelatedGuideButtonLabel(guides[1])
+        );
+        assertEquals(
+            "GD-484 \u00b7 Insulation Materials & Cold-Soak",
+            formatter.buildAnswerModeRelatedGuideButtonLabel(guides[2])
+        );
+        assertEquals(
+            "GD-027 \u00b7 Primitive Technology & Stone Age",
+            formatter.buildAnswerModeRelatedGuideButtonLabel(guides[3])
+        );
+    }
 }

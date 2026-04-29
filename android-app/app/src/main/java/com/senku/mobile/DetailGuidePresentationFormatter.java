@@ -36,13 +36,13 @@ final class DetailGuidePresentationFormatter {
     };
     private static final int FOUNDRY_LIVE_RELATED_SECTION_COUNT = 17;
     private static final float GUIDE_ANCHOR_TEXT_SIZE = 0.68f;
-    private static final float GUIDE_HEADING_TEXT_SIZE = 0.88f;
+    private static final float GUIDE_HEADING_TEXT_SIZE = 0.94f;
     private static final float GUIDE_MANUAL_KICKER_TEXT_SIZE = 0.56f;
-    private static final float GUIDE_MANUAL_TITLE_TEXT_SIZE = 0.98f;
+    private static final float GUIDE_MANUAL_TITLE_TEXT_SIZE = 1.08f;
     private static final float GUIDE_MANUAL_META_TEXT_SIZE = 0.58f;
-    private static final float GUIDE_REQUIRED_READING_TEXT_SIZE = 0.72f;
+    private static final float GUIDE_REQUIRED_READING_TEXT_SIZE = 0.78f;
     private static final float GUIDE_ADMONITION_LABEL_TEXT_SIZE = 0.68f;
-    private static final float GUIDE_BODY_TEXT_SIZE = 0.81f;
+    private static final float GUIDE_BODY_TEXT_SIZE = 0.84f;
     private static final int GUIDE_SECTION_LABEL_MARGIN_DP = 5;
     private static final int GUIDE_ADMONITION_MARGIN_DP = 5;
     private static final int GUIDE_ADMONITION_HANGING_MARGIN_DP = 9;
@@ -282,7 +282,7 @@ final class DetailGuidePresentationFormatter {
                 color(guideAnchorValueColorResForLegacy()),
                 0,
                 0,
-                true,
+                false,
                 false,
                 0,
                 color(guideAnchorValueColorResForLegacy())
@@ -438,9 +438,18 @@ final class DetailGuidePresentationFormatter {
         );
         styled.setSpan(new StyleSpan(Typeface.BOLD), lineStart, lineEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         styled.setSpan(new RelativeSizeSpan(GUIDE_ADMONITION_LABEL_TEXT_SIZE), lineStart, lineEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        styled.setSpan(new TypefaceSpan("monospace"), lineStart, lineEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         if (labelEnd > lineStart) {
-            styled.setSpan(new TypefaceSpan("monospace"), lineStart, labelEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             styled.setSpan(new ForegroundColorSpan(color(accentColorRes)), lineStart, labelEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        }
+        int valueStart = firstNonWhitespaceIndex(styled.toString(), labelEnd, lineEnd);
+        if (valueStart < lineEnd) {
+            styled.setSpan(
+                new ForegroundColorSpan(color(guideAnchorValueColorResForLegacy())),
+                valueStart,
+                lineEnd,
+                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+            );
         }
     }
 
@@ -565,6 +574,9 @@ final class DetailGuidePresentationFormatter {
         for (int i = 0; i < lines.length; i++) {
             String line = safe(lines[i]);
             String trimmed = line.trim();
+            if (isGuideUiLeakageLine(trimmed)) {
+                continue;
+            }
             if (!compactedOpeningDanger && "DANGER".equalsIgnoreCase(trimmed) && i + 1 < lines.length) {
                 String dangerBody = safe(lines[i + 1]).trim();
                 Matcher dangerMatcher = GUIDE_OPENING_DANGER_TITLE_PATTERN.matcher(dangerBody);
@@ -592,6 +604,19 @@ final class DetailGuidePresentationFormatter {
             appendLine(builder, line);
         }
         return builder.toString().trim();
+    }
+
+    private static boolean isGuideUiLeakageLine(String line) {
+        String normalized = safe(line).trim().toLowerCase(Locale.US);
+        if (normalized.isEmpty()) {
+            return false;
+        }
+        return normalized.equals("show proof")
+            || normalized.equals("hide proof")
+            || normalized.equals("source proof")
+            || normalized.equals("sources proof")
+            || normalized.equals("sources and proof")
+            || normalized.matches("^(?:answer|confidence|evidence|proof|why proof)\\s*[:\\-\\u00b7].*");
     }
 
     private static void trimTrailingLineBreaks(StringBuilder builder) {

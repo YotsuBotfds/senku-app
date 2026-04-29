@@ -2190,6 +2190,66 @@ Fresh GPT Pro insight intake:
   framing/typography work; phone answer still needs top-meta/source-card parity
   even though the related-guide order is fixed.
 
+## Wave79 Checkpoint
+
+Committed scope pending at the time of this update:
+
+- Tooling: added `scripts/compare_android_mock_parity.py`, a standard-library
+  PNG comparator that validates the 22 canonical names, computes MAE/RMSE and
+  changed-pixel ratios, writes amplified diff PNGs, side-by-side review PNGs,
+  and Markdown/JSON reports sorted by worst drift.
+- Guide phone formatter: tuned guide paper text rhythm, removed boxed section
+  label styling, muted danger-title value styling, and filtered obvious
+  answer/proof UI leakage lines from guide-paper body text.
+- Answer source/related formatter tests: added expanded card-like source row
+  copy coverage and guarded the answer related visible order
+  `GD-294`, `GD-695`, `GD-484`, `GD-027`.
+- Emergency proof formatter: made the GD-132 burn-hazard emergency anchor label
+  resolve to `Burn hazard response`, with tests for primary label, preview line,
+  and source entry value.
+
+Fresh proof:
+
+- Visual diff baseline for Wave78B:
+  `artifacts/ui_state_pack/wave78_answer_guide_thread_b/20260429_123126/visual_diff/mock_parity_visual_diff.md`.
+  Worst screens were `guide-phone-portrait.png` (MAE `63.41`),
+  `guide-tablet-portrait.png` (MAE `51.74`), and
+  `guide-phone-landscape.png` (MAE `31.65`).
+- First integrated Wave79 pack:
+  `artifacts/ui_state_pack/wave79_integrated/20260429_125208` passed `22/22`,
+  but visual diff showed tablet guide changes regressed `guide-tablet-landscape`
+  from MAE `21.12` to `27.40`; the tablet guide proportion slice was reverted.
+- Corrected full pack:
+  `artifacts/ui_state_pack/wave79_mobile_formatter/20260429_130206`
+- Summary: corrected pack `pass`, states `22/22`, failures `0`, ANRs `0`,
+  rotation mismatch count `0`, canonical mock export `22` PNGs, goal bundle
+  `artifacts/ui_state_pack/wave79_mobile_formatter/20260429_130206_mocks.zip`.
+- Validation: focused JVM suite passed across
+  `DetailGuidePresentationFormatterTest`, `DetailSourcePresentationFormatterTest`,
+  `DetailRelatedGuidePresentationFormatterTest`, `DetailProofPresentationFormatterTest`,
+  `EmergencySurfacePolicyTest`, and `DetailActionBlockPresentationFormatterTest`.
+  Goal-pack validation passed for the corrected Wave79 pack zip.
+- Visual diff: corrected Wave79 report at
+  `artifacts/ui_state_pack/wave79_mobile_formatter/20260429_130206/visual_diff/mock_parity_visual_diff.md`.
+  `guide-phone-portrait.png` improved from MAE `63.41` to `61.39`; tablet guide
+  metrics returned to Wave78B levels; other canonical screenshots were unchanged
+  by this formatter-only slice.
+
+Remaining precise slices:
+
+- Guide phone and tablet drift is now confirmed by the visual comparator to be
+  structural shell/paper sizing work, not only formatter text. Future guide
+  workers should own the relevant activity/tablet shell files explicitly and
+  use visual diff before committing.
+- Tablet guide should not repeat the reverted Wave79 move of narrowing the
+  landscape paper and widening rails; it moved away from the target and worsened
+  the metric.
+- Answer and Emergency formatter-only label changes did not affect canonical
+  screenshots; further progress there needs renderer/layout ownership, not just
+  presentation string changes.
+- Home/Search remain frozen unless a named visual-diff residual is accepted as
+  in-scope.
+
 ## Parallelization Rules
 
 - Start every worker with `git status --short`, `git log --oneline -n 8

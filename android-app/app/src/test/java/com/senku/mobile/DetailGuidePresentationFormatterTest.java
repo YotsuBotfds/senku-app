@@ -350,13 +350,67 @@ public final class DetailGuidePresentationFormatterTest {
 
     @Test
     public void guideReaderRhythmMetricsStayCompactForPaperHeaderAndRows() {
-        assertEquals(0.81f, DetailGuidePresentationFormatter.guideBodyTextSizeForLegacy(), 0.001f);
-        assertEquals(0.98f, DetailGuidePresentationFormatter.guideManualTitleTextSizeForLegacy(), 0.001f);
-        assertEquals(0.72f, DetailGuidePresentationFormatter.guideRequiredReadingTextSizeForLegacy(), 0.001f);
+        assertEquals(0.84f, DetailGuidePresentationFormatter.guideBodyTextSizeForLegacy(), 0.001f);
+        assertEquals(1.08f, DetailGuidePresentationFormatter.guideManualTitleTextSizeForLegacy(), 0.001f);
+        assertEquals(0.78f, DetailGuidePresentationFormatter.guideRequiredReadingTextSizeForLegacy(), 0.001f);
         assertEquals(0.68f, DetailGuidePresentationFormatter.guideAdmonitionLabelTextSizeForLegacy(), 0.001f);
         assertEquals(0.68f, DetailGuidePresentationFormatter.guideAnchorTextSizeForLegacy(), 0.001f);
         assertEquals(2, DetailGuidePresentationFormatter.guideAdmonitionAccentWidthDpForLegacy());
         assertEquals(16, DetailGuidePresentationFormatter.guideRequiredReadingRightInsetDpForLegacy());
+    }
+
+    @Test
+    public void buildGuideBodyDropsAnswerProofUiLabelsFromGuidePaper() {
+        SearchResult result = new SearchResult(
+            "Foundry & Metal Casting",
+            "",
+            "",
+            "---\n"
+                + "id: GD-132\n"
+                + "related:\n"
+                + "  - abrasives-manufacturing\n"
+                + "  - bellows-forge-blower-construction\n"
+                + "  - bloomery-furnace\n"
+                + "  - bearing-manufacturing\n"
+                + "  - charcoal-making\n"
+                + "  - clay-processing\n"
+                + "  - crucible-making\n"
+                + "  - kiln-building\n"
+                + "  - metal-fuel-prep\n"
+                + "  - mold-prep\n"
+                + "  - ore-selection\n"
+                + "  - pattern-making\n"
+                + "  - protective-clothing\n"
+                + "  - sand-casting\n"
+                + "  - slag-handling\n"
+                + "  - tuyere-making\n"
+                + "  - ventilation\n"
+                + "---\n"
+                + ":::danger\n"
+                + "EXTREME BURN HAZARD: Keep every tool dry. Never cast alone.\n"
+                + ":::\n"
+                + "## Reviewed Answer-Card Boundary: Area readiness, hazard screen, and handoffs\n"
+                + "This is the reviewed answer-card surface for GD-132. Use it only for foundry-area readiness.\n"
+                + "Evidence: strong\n"
+                + "Proof: reviewed card source\n"
+                + "Show proof\n"
+                + "Confidence: high\n",
+            "GD-132",
+            "",
+            "metalworking",
+            "guide-focus"
+        );
+
+        String displayBody = DetailGuidePresentationFormatter.buildGuideBody(result);
+
+        assertTrue(displayBody.contains("GD-132 \u00b7 17 SECTIONS \u00b7 OPENED FROM GD-220"));
+        assertTrue(displayBody.contains("DANGER \u00b7 EXTREME BURN HAZARD"));
+        assertTrue(displayBody.contains("\u2014 \u00a7 1 \u00b7 AREA READINESS"));
+        assertTrue(displayBody.contains("\u2014 \u00a7 2 \u00b7 REQUIRED READING"));
+        assertFalse(displayBody.contains("Evidence: strong"));
+        assertFalse(displayBody.contains("Proof: reviewed card source"));
+        assertFalse(displayBody.contains("Show proof"));
+        assertFalse(displayBody.contains("Confidence: high"));
     }
 
     @Test

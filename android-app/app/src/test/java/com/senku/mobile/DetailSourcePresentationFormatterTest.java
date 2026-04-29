@@ -183,7 +183,7 @@ public final class DetailSourcePresentationFormatterTest {
         );
 
         assertEquals(
-            "[GD-444] Emergency Shelter\nRidge Line Setup",
+            "GD-444 \u00B7 ANCHOR \u00B7 78%\nEmergency Shelter\nRidge Line Setup\n\"Pitch ridgeline along prevailing wind.\"",
             formatter.buildEvidenceCardRowLabel(card)
         );
     }
@@ -221,11 +221,11 @@ public final class DetailSourcePresentationFormatterTest {
         );
 
         assertEquals(
-            "Anchor guide 1 of 2, 78% match: [GD-444] Emergency Shelter Ridge Line Setup. Shows source preview.",
+            "Anchor guide 1 of 2, 78% match: GD-444 \u00B7 ANCHOR \u00B7 78% Emergency Shelter Ridge Line Setup \"Pitch ridgeline along prevailing wind.\". Shows source preview.",
             formatter.buildEvidenceCardRowContentDescription(anchorCard, true, 0, 2)
         );
         assertEquals(
-            "Related guide 3 of 3, 56% match: [GD-215] Rainwater Catchment Storage Prep. Opens source guide.",
+            "Related guide 3 of 3, 56% match: GD-215 \u00B7 TOPIC \u00B7 56% Rainwater Catchment Storage Prep \"Use first-flush diversion before storage.\". Opens source guide.",
             formatter.buildEvidenceCardRowContentDescription(relatedCard, false, 2, 3)
         );
     }
@@ -249,7 +249,7 @@ public final class DetailSourcePresentationFormatterTest {
         );
 
         assertEquals(
-            "SOURCE 2/4 [GD-898] Reviewed source\nPoisoning unknown ingestion",
+            "SOURCE 2/4 GD-898 \u00B7 SOURCE \u00B7 76%\nReviewed source\nPoisoning unknown ingestion\n\"Reviewed quote\"",
             formatter.buildStationEvidenceCardRowLabel(card, 1, 4)
         );
     }
@@ -411,11 +411,11 @@ public final class DetailSourcePresentationFormatterTest {
         );
 
         assertEquals(
-            "TOPIC 1/3 [GD-345] Tarp & Cord Shelters",
+            "TOPIC 1/3 GD-345 \u00B7 TOPIC \u00B7 61%\nTarp & Cord Shelters\n\"A simple ridgeline shelter requires only tarp, cord, and two anchor points.\"",
             formatter.buildStationEvidenceCardRowLabel(topic, 0, 3)
         );
         assertEquals(
-            "[GD-345] Tarp & Cord Shelters",
+            "GD-345 \u00B7 TOPIC \u00B7 61%\nTarp & Cord Shelters\n\"A simple ridgeline shelter requires only tarp, cord, and two anchor points.\"",
             formatter.buildEvidenceCardRowLabel(topic)
         );
     }
@@ -430,12 +430,26 @@ public final class DetailSourcePresentationFormatterTest {
         );
 
         assertEquals(
-            "[GD-220] Abrasives Manufacturing",
+            "GD-220 \u00B7 ANCHOR \u00B7 74%\nAbrasives Manufacturing\n\"Every melt starts with a foundry safety check, not with metal charge...\"",
             formatter.buildEvidenceCardRowLabel(anchor)
         );
         assertEquals(
-            "Anchor guide 1 of 3, 74% match: [GD-220] Abrasives Manufacturing. Shows source preview.",
+            "Anchor guide 1 of 3, 74% match: GD-220 \u00B7 ANCHOR \u00B7 74% Abrasives Manufacturing \"Every melt starts with a foundry safety check, not with metal charge...\". Shows source preview.",
             formatter.buildEvidenceCardRowContentDescription(anchor, true, 0, 3)
+        );
+    }
+
+    @Test
+    public void sourceSubtitlesKeepAnswerSourcesAheadOfTrustVocabulary() {
+        DetailSourcePresentationFormatter formatter = new DetailSourcePresentationFormatter(null);
+
+        assertEquals(
+            "Answer 3 sources",
+            formatter.buildCompactSourcesSubtitle(3, false, false, "proof route verified")
+        );
+        assertEquals(
+            "Answer 1 source",
+            formatter.buildExpandedSourcesSubtitle(1, false, "provenance route verified")
         );
     }
 

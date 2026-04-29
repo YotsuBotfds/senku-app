@@ -578,6 +578,9 @@ final class DetailProofPresentationFormatter {
         if (!title.isEmpty()) {
             score += 18;
         }
+        if (!reviewedFoundryBurnHazardLabel(source, combined).isEmpty()) {
+            score += 64;
+        }
         if (title.equalsIgnoreCase(section)) {
             score += 8;
         }
@@ -605,6 +608,10 @@ final class DetailProofPresentationFormatter {
         String combined = (title + " " + section + " " + safe(source.snippet) + " "
             + safe(source.body) + " " + safe(source.topicTags) + " " + safe(source.structureType))
             .toLowerCase(Locale.US);
+        String reviewedFoundryBurnHazardLabel = reviewedFoundryBurnHazardLabel(source, combined);
+        if (!reviewedFoundryBurnHazardLabel.isEmpty()) {
+            return reviewedFoundryBurnHazardLabel;
+        }
         String reviewedRainShelterLabel = reviewedRainShelterLabel(source, combined);
         if (!reviewedRainShelterLabel.isEmpty()) {
             return reviewedRainShelterLabel;
@@ -618,6 +625,24 @@ final class DetailProofPresentationFormatter {
         SearchResult primary = bestReaderFacingSource(currentSources);
         if (primary != null && primary != source) {
             return readerFacingSourceLabel(primary, null);
+        }
+        return "";
+    }
+
+    private String reviewedFoundryBurnHazardLabel(SearchResult source, String combined) {
+        String guideId = safe(source.guideId).trim();
+        if (!"GD-132".equalsIgnoreCase(guideId)) {
+            return "";
+        }
+        if (containsAny(
+            safe(combined),
+            "burn hazard",
+            "molten metal",
+            "steam explosion",
+            "area readiness",
+            "foundry safety"
+        )) {
+            return "Burn hazard response";
         }
         return "";
     }

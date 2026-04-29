@@ -199,6 +199,31 @@ public final class DetailProofPresentationFormatterTest {
     }
 
     @Test
+    public void primarySourceLabelUsesEmergencyIdentityForGd132BurnHazardAnchor() {
+        DetailProofPresentationFormatter formatter = new DetailProofPresentationFormatter(null);
+        List<SearchResult> sources = Arrays.asList(
+            new SearchResult(
+                "Foundry & Metal Casting - \u00a71 Area readiness",
+                "",
+                "A single drop of water contacting molten metal causes a violent steam explosion.",
+                "Stop work immediately. Move to minimum 5 m from active work zone.",
+                "GD-132",
+                "Foundry & Metal Casting",
+                "metal",
+                "hybrid",
+                "reviewed_card",
+                "immediate",
+                "foundry_burn_hazard",
+                "burn hazard,area_readiness"
+            )
+        );
+
+        assertEquals("Burn hazard response", formatter.buildPrimarySourceLabel(sources));
+        assertEquals("[GD-132] - Burn hazard response", formatter.buildPrimarySourcePreviewLine(sources));
+        assertEquals("[GD-132] Burn hazard response", formatter.buildSourceEntryValue(sources.get(0), sources));
+    }
+
+    @Test
     public void compactWhySummaryUsesSourceLedArticleStackWithoutMatchDiagnostics() {
         DetailProofPresentationFormatter formatter = new DetailProofPresentationFormatter(null);
         List<SearchResult> sources = Arrays.asList(
