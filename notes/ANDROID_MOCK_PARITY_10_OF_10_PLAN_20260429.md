@@ -123,6 +123,74 @@ Wave notes:
   answer MAE worsened; inspect whether context row placement or composer
   height needs tighter target-specific spacing.
 
+## 2026-04-29 Phone/Tablet Geometry Wave And Deep-Review Input
+
+Integrated commits after the guide-frame proof:
+
+- `abf9722 retune search row density by form factor`
+- `34752b8 extend phone guide paper frame`
+- `1177a3e tighten tablet guide landscape rails`
+
+Validation:
+
+- Full state pack:
+  `artifacts/ui_state_pack/phone_tablet_geometry_wave/20260429_155255/summary.json`
+  reports `22/22`, `platform_anr_count=0`, homogeneous APK
+  `acc1455b30c189b0800b4b79816c006856ef3061b9127be432a356a88187c99c`.
+- Visual diff validated:
+  `artifacts/ui_state_pack/phone_tablet_geometry_wave/20260429_155255/visual_diff/mock_parity_visual_diff.md`.
+- Local time at this checkpoint: `2026-04-29 16:02:57 -05:00`.
+
+Metric movement from `guide_frame_wave/20260429_153637` to
+`phone_tablet_geometry_wave/20260429_155255`:
+
+- `guide-phone-portrait.png` MAE `33.60 -> 25.01`.
+- `guide-tablet-landscape.png` MAE `16.75 -> 15.08`.
+- `guide-phone-landscape.png` MAE `25.10 -> 24.38`.
+- `answer-phone-portrait.png` MAE `24.60 -> 23.97`.
+- `search-tablet-landscape.png` MAE `10.10 -> 9.98`.
+- Small regressions to watch:
+  `search-phone-portrait.png` MAE `13.65 -> 14.00` and
+  `search-tablet-portrait.png` MAE `6.69 -> 6.94`.
+
+Remaining top visual drift after this wave:
+
+- `guide-phone-portrait.png` MAE `25.01`.
+- `guide-phone-landscape.png` MAE `24.38`.
+- `answer-phone-portrait.png` MAE `23.97`.
+- `answer-phone-landscape.png` MAE `20.75`.
+- `guide-tablet-portrait.png` MAE `18.05`.
+- `emergency-phone-portrait.png` MAE `16.97`.
+- `thread-phone-landscape.png` MAE `15.80`.
+- `thread-phone-portrait.png` MAE `15.33`.
+- `guide-tablet-landscape.png` MAE `15.08`.
+
+Deep-review file now active:
+`C:\Users\tateb\Downloads\uiuxreviewdeepresearch.md`.
+
+Deep-review recommendations already addressed by recent commits:
+
+- Shared Ask/Search submit routing now goes through the centralized submit
+  path for IME and hardware Enter.
+- Tablet Ask button no longer falls through to search ownership.
+- Shared search input labels were moved toward explicit string/label
+  semantics.
+- Hidden phone answer body mirror is now removed from answer mode instead of
+  kept as a near-invisible view.
+- Restored phone tab ownership has focused unit coverage.
+- Tablet answer mode now defaults to answer-first collapsed evidence.
+
+Deep-review items still active:
+
+- Continue adding local functional regression coverage around rotation and
+  restored-state submit ownership.
+- Keep improving answer/source evidence hierarchy without reintroducing side
+  rails as the default answer surface.
+- Reduce reliance on posture-specific constants only where a small shared
+  policy can replace them without destabilizing mock parity.
+- Treat local state packs and focused tests as the required validation lane
+  instead of GitHub-hosted CI.
+
 ## Evidence Anchors
 
 - Target mocks: `artifacts/mocks`, 22 canonical PNGs.
