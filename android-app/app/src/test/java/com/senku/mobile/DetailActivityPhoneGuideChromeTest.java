@@ -43,9 +43,11 @@ public final class DetailActivityPhoneGuideChromeTest {
     @Test
     public void guidePhoneViewportUsesTargetPaperInsets() {
         assertEquals(4, DetailActivity.resolvePhoneGuideViewportTopPaddingDp(true));
-        assertEquals(16, DetailActivity.resolvePhoneGuideViewportHorizontalPaddingDp(true));
+        assertEquals(6, DetailActivity.resolvePhoneGuideViewportHorizontalPaddingDp(true));
         assertEquals(8, DetailActivity.resolvePhoneGuideViewportTopPaddingDp(false));
-        assertEquals(6, DetailActivity.resolvePhoneGuideViewportHorizontalPaddingDp(false));
+        assertEquals(0, DetailActivity.resolvePhoneGuideViewportHorizontalPaddingDp(false));
+        assertEquals(8, DetailActivity.resolvePhoneGuidePaperBottomViewportInsetDp(true));
+        assertEquals(2, DetailActivity.resolvePhoneGuidePaperBottomViewportInsetDp(false));
     }
 
     @Test

@@ -210,7 +210,7 @@ public final class DetailFollowupLandscapeComposerTest {
         assertEquals(1.65f, DetailActivity.resolveLandscapeDetailPrimaryColumnWeight(false, false), 0.0f);
         assertEquals(0.75f, DetailActivity.resolveLandscapeDetailSideColumnWeight(false, false), 0.0f);
         assertEquals(2.25f, DetailActivity.resolveLandscapeDetailPrimaryColumnWeight(true, true), 0.0f);
-        assertEquals(0.62f, DetailActivity.resolveLandscapeDetailSideColumnWeight(true, true), 0.0f);
+        assertEquals(0.71f, DetailActivity.resolveLandscapeDetailSideColumnWeight(true, true), 0.0f);
         assertEquals(4, DetailActivity.resolvePhoneLandscapeSourceRailCardVerticalPaddingDp());
         assertEquals(4, DetailActivity.resolvePhoneLandscapeSourceRailCardTopMarginDp());
         assertEquals(9.5f, DetailActivity.resolvePhoneLandscapeSourceRailCardTextSizeSp(), 0.0f);
@@ -336,20 +336,22 @@ public final class DetailFollowupLandscapeComposerTest {
 
     @Test
     public void phoneGuidePaperKeepsExtraBottomBreathingRoomForRequiredReadingRows() {
-        assertEquals(24, DetailActivity.resolvePhoneGuideBodyShellBottomPaddingDp(true, false));
-        assertEquals(14, DetailActivity.resolvePhoneGuideBodyShellBottomPaddingDp(true, true));
+        assertEquals(26, DetailActivity.resolvePhoneGuideBodyShellBottomPaddingDp(true, false));
+        assertEquals(18, DetailActivity.resolvePhoneGuideBodyShellBottomPaddingDp(true, true));
         assertEquals(18, DetailActivity.resolvePhoneGuideBodyShellBottomPaddingDp(false, false));
         assertEquals(16, DetailActivity.resolvePhoneGuideBodyShellBottomPaddingDp(false, true));
-        assertEquals(14, DetailActivity.resolvePhoneGuideBodyShellHorizontalPaddingDp(true, false));
-        assertEquals(12, DetailActivity.resolvePhoneGuideBodyShellHorizontalPaddingDp(true, true));
-        assertEquals(14, DetailActivity.resolvePhoneGuideBodyShellTopPaddingDp(true, false));
-        assertEquals(10, DetailActivity.resolvePhoneGuideBodyShellTopPaddingDp(true, true));
-        assertEquals(3, DetailActivity.resolvePhoneGuideBodyLineSpacingExtraDp(false));
-        assertEquals(2, DetailActivity.resolvePhoneGuideBodyLineSpacingExtraDp(true));
-        assertEquals(10, DetailActivity.resolvePhoneGuideViewportHorizontalPaddingDp(false));
-        assertEquals(16, DetailActivity.resolvePhoneGuideViewportHorizontalPaddingDp(true));
+        assertEquals(18, DetailActivity.resolvePhoneGuideBodyShellHorizontalPaddingDp(true, false));
+        assertEquals(18, DetailActivity.resolvePhoneGuideBodyShellHorizontalPaddingDp(true, true));
+        assertEquals(10, DetailActivity.resolvePhoneGuideBodyShellTopPaddingDp(true, false));
+        assertEquals(8, DetailActivity.resolvePhoneGuideBodyShellTopPaddingDp(true, true));
+        assertEquals(4, DetailActivity.resolvePhoneGuideBodyLineSpacingExtraDp(false));
+        assertEquals(3, DetailActivity.resolvePhoneGuideBodyLineSpacingExtraDp(true));
+        assertEquals(0, DetailActivity.resolvePhoneGuideViewportHorizontalPaddingDp(false));
+        assertEquals(6, DetailActivity.resolvePhoneGuideViewportHorizontalPaddingDp(true));
         assertEquals(8, DetailActivity.resolvePhoneGuideViewportTopPaddingDp(false));
-        assertEquals(12, DetailActivity.resolvePhoneGuideViewportTopPaddingDp(true));
+        assertEquals(4, DetailActivity.resolvePhoneGuideViewportTopPaddingDp(true));
+        assertEquals(2, DetailActivity.resolvePhoneGuidePaperBottomViewportInsetDp(false));
+        assertEquals(8, DetailActivity.resolvePhoneGuidePaperBottomViewportInsetDp(true));
     }
 
     @Test
@@ -442,7 +444,7 @@ public final class DetailFollowupLandscapeComposerTest {
         assertFalse(DetailActivity.shouldUsePhoneLandscapeGuideSectionRail(false, false));
 
         assertEquals(2.25f, DetailActivity.resolveLandscapeDetailPrimaryColumnWeight(true), 0.001f);
-        assertEquals(0.62f, DetailActivity.resolveLandscapeDetailSideColumnWeight(true), 0.001f);
+        assertEquals(0.71f, DetailActivity.resolveLandscapeDetailSideColumnWeight(true), 0.001f);
         assertEquals(1.65f, DetailActivity.resolveLandscapeDetailPrimaryColumnWeight(false), 0.001f);
         assertEquals(0.75f, DetailActivity.resolveLandscapeDetailSideColumnWeight(false), 0.001f);
     }

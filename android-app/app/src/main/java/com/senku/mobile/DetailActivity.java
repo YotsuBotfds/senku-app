@@ -9382,6 +9382,7 @@ public final class DetailActivity extends AppCompatActivity {
                 dp(resolvePhoneGuideBodyShellBottomPaddingDp(singlePaperPhoneGuide, isLandscapePhoneLayout()))
             );
             setTopMargin(bodyMirrorShell, dp(0));
+            applyPhoneGuidePaperMinimumHeight(singlePaperPhoneGuide);
         }
         if (bodyView != null) {
             bodyView.setTextColor(getColor(R.color.senku_rev03_paper_ink));
@@ -9397,6 +9398,21 @@ public final class DetailActivity extends AppCompatActivity {
         }
         setHorizontalMargins(answerBubble, 0, 0);
         setHorizontalMargins(bodyMirrorShell, 0, 0);
+    }
+
+    private void applyPhoneGuidePaperMinimumHeight(boolean singlePaperPhoneGuide) {
+        if (!singlePaperPhoneGuide || detailScroll == null || bodyMirrorShell == null) {
+            return;
+        }
+        bodyMirrorShell.post(() -> {
+            if (detailScroll == null || bodyMirrorShell == null || answerMode || !phoneXmlDetailLayoutActive()) {
+                return;
+            }
+            int minimumHeight = detailScroll.getHeight()
+                - dp(resolvePhoneGuideViewportTopPaddingDp(isLandscapePhoneLayout()))
+                - dp(resolvePhoneGuidePaperBottomViewportInsetDp(isLandscapePhoneLayout()));
+            bodyMirrorShell.setMinimumHeight(Math.max(0, minimumHeight));
+        });
     }
 
     private void applyPhoneGuideReaderViewportDensity(boolean singlePaperPhoneGuide) {
@@ -9457,11 +9473,15 @@ public final class DetailActivity extends AppCompatActivity {
     }
 
     static int resolvePhoneGuideViewportHorizontalPaddingDp(boolean landscapePhone) {
-        return landscapePhone ? 16 : 6;
+        return landscapePhone ? 6 : 0;
     }
 
     static int resolvePhoneGuideViewportTopPaddingDp(boolean landscapePhone) {
         return landscapePhone ? 4 : 8;
+    }
+
+    static int resolvePhoneGuidePaperBottomViewportInsetDp(boolean landscapePhone) {
+        return landscapePhone ? 8 : 2;
     }
 
     static int resolvePhoneGuideAnswerBubbleTopMarginDp(boolean landscapePhone) {
