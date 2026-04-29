@@ -22,16 +22,16 @@ final class DetailActionBlockPresentationFormatter {
     static final String ACTION_LABEL_ESCALATE = "Escalate if";
     static final String EMERGENCY_ACTION_HEADING_PREFIX = "IMMEDIATE ACTIONS \u00b7 ";
     static final int EMERGENCY_DISTANCE_HIGHLIGHT_COLOR = 0xFFC4704B;
-    static final int EMERGENCY_ACTION_ROW_VERTICAL_PADDING_DP = 7;
-    static final int EMERGENCY_ACTION_CONTENT_START_PADDING_DP = 13;
-    static final int EMERGENCY_ACTION_DETAIL_TOP_PADDING_DP = 4;
-    static final float EMERGENCY_ACTION_HEADING_TEXT_SIZE_SP = 9.0f;
-    static final float EMERGENCY_ACTION_TITLE_TEXT_SIZE_SP = 14.0f;
-    static final float EMERGENCY_ACTION_DETAIL_TEXT_SIZE_SP = 13.0f;
+    static final int EMERGENCY_ACTION_ROW_VERTICAL_PADDING_DP = 5;
+    static final int EMERGENCY_ACTION_CONTENT_START_PADDING_DP = 12;
+    static final int EMERGENCY_ACTION_DETAIL_TOP_PADDING_DP = 3;
+    static final float EMERGENCY_ACTION_HEADING_TEXT_SIZE_SP = 8.5f;
+    static final float EMERGENCY_ACTION_TITLE_TEXT_SIZE_SP = 13.5f;
+    static final float EMERGENCY_ACTION_DETAIL_TEXT_SIZE_SP = 12.5f;
     static final int EMERGENCY_ACTION_TITLE_MAX_LINES = 2;
     static final int EMERGENCY_ACTION_DETAIL_MAX_LINES = 2;
     private static final int MAX_EMERGENCY_PORTRAIT_ACTIONS = 4;
-    static final int EMERGENCY_ACTION_BADGE_SIZE_DP = 24;
+    static final int EMERGENCY_ACTION_BADGE_SIZE_DP = 22;
 
     enum ActionBlockKind {
         DO_FIRST,
