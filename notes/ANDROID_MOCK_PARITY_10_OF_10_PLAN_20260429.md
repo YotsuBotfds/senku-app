@@ -465,6 +465,57 @@ Acceptance:
 - Home keeps the target pack row, six category cards, and three recent threads
   without adding duplicate nav treatments.
 
+## 2026-04-29 Source/Emergency/Ask Wave Proof
+
+Integrated commits after the geometry/guide-frame baseline:
+
+- `373c800` - emergency action hierarchy and density polish.
+- `0bb79cf` - answer source card and related guide primitive polish.
+- `0d8e799` - landscape Ask-tab submit ownership fix.
+- `c32e200` - tablet portrait search state-pack wait stabilization after
+  measured offline hybrid search exceeded the old 15s capture budget.
+
+Validation:
+
+- Focused JVM/API checks passed:
+  `:app:testDebugUnitTest --tests com.senku.mobile.MainActivityPhoneNavigationTest --tests com.senku.mobile.DetailActionBlockPresentationFormatterTest --tests com.senku.mobile.DetailProofPresentationFormatterTest --tests com.senku.mobile.EmergencySurfacePolicyTest --tests com.senku.mobile.DetailSourcePresentationFormatterTest --tests com.senku.mobile.DetailRelatedGuidePresentationFormatterTest --tests com.senku.ui.sources.SourceRowModelTest :app:assembleDebug :app:assembleDebugAndroidTest`.
+- Direct tablet portrait search instrumentation passed after `c32e200`:
+  `PromptHarnessSmokeTest#searchQueryShowsResultsWithoutShellPolling`,
+  `OK (1 test)`, time `26.709s`.
+- Tablet portrait role rerun:
+  `artifacts/ui_state_pack/search_wait_patch_tablet_portrait/20260429_172559/summary.json`
+  reports role `6/6`, `platform_anr_count=0`.
+- Final full proof:
+  `artifacts/ui_state_pack/source_emergency_ask_wave_clean/20260429_173223/summary.json`
+  reports `status=pass`, `22/22`, `fail_count=0`, `platform_anr_count=0`,
+  homogeneous APK `bc02d70835a10520de6602af914388c27b65f7f1fa60264d52e6365dc8ce7cb0`,
+  host model `gemma-4-e2b-it-litert`,
+  SHA `ea1102014465edeb14b517bf270f6751d036749e3c5f517a7ff802782cb92161`.
+- Goal mock zip:
+  `artifacts/ui_state_pack/source_emergency_ask_wave_clean/20260429_173223_mocks.zip`
+  contains all 22 canonical PNGs.
+- Visual diff validated:
+  `artifacts/ui_state_pack/source_emergency_ask_wave_clean/20260429_173223/visual_diff/mock_parity_visual_diff.md`.
+
+Current worst visual drift after this wave:
+
+- `answer-phone-portrait.png` MAE `25.48`.
+- `guide-phone-portrait.png` MAE `25.01`.
+- `guide-phone-landscape.png` MAE `24.38`.
+- `answer-phone-landscape.png` MAE `21.48`.
+- `guide-tablet-portrait.png` MAE `18.05`.
+- `emergency-phone-portrait.png` MAE `16.61`.
+- `thread-phone-landscape.png` MAE `16.29`.
+- `thread-phone-portrait.png` MAE `15.33`.
+
+Known remaining design mismatch:
+
+- Home/search and detail/thread still use two separate nav rail treatments.
+  Home/search has the labeled Library/Ask/Saved rail; detail/thread still has
+  its own compact glyph rail, which caused the visually duplicated `S / = / Q /
+  []` style in user screenshots. Next slice should unify this into one shared
+  rail primitive or make the compact detail rail intentionally match the target.
+
 ## Phase 2 - Parent Integration
 
 Parent integrates workers in this order unless dirty-file reality says
