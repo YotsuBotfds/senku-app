@@ -6,6 +6,7 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
@@ -45,6 +46,7 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.sp
 import com.senku.mobile.R
 import com.senku.ui.answer.AnswerContent
@@ -399,9 +401,9 @@ internal fun tabletGuideSectionRailShowsToolbar(): Boolean = false
 internal fun tabletGuideChromePolicy(isLandscape: Boolean): TabletGuideChromePolicy =
     if (isLandscape) {
         TabletGuideChromePolicy(
-            topBarMinHeightDp = 56,
+            topBarMinHeightDp = 38,
             topBarHorizontalPaddingDp = 24,
-            topBarVerticalPaddingDp = 8,
+            topBarVerticalPaddingDp = 6,
             topBarTitleLineHeightSp = 18,
         )
     } else {
@@ -1272,10 +1274,16 @@ private fun CenterPane(
     val typeScalePolicy = tabletDetailTypeScalePolicy(state.isLandscape)
     val scrollState = rememberScrollState()
 
-    Box(
+    BoxWithConstraints(
         modifier = modifier.background(colors.bg0),
     ) {
         val verticalPagePadding = if (guideMode) 12.dp else 0.dp
+        val guidePaperMinHeight = if (guideMode) {
+            val verticalPadding = verticalPagePadding * 2
+            if (maxHeight > verticalPadding) maxHeight - verticalPadding else 0.dp
+        } else {
+            0.dp
+        }
         val horizontalPagePadding = if (guideMode) {
             tabletGuidePaperHorizontalPaddingDp(state.isLandscape).dp
         } else if (state.isThreadMode()) {
@@ -1304,7 +1312,7 @@ private fun CenterPane(
             verticalArrangement = Arrangement.spacedBy(0.dp),
         ) {
             if (guideMode) {
-                GuidePaperSurface(state = state) {
+                GuidePaperSurface(state = state, minHeight = guidePaperMinHeight) {
                     GuidePaperHeader(state = state)
                     GuidePaperDivider()
                     ThreadTurnList(
@@ -2268,13 +2276,16 @@ private fun SecondaryTurnBlock(
 @Composable
 private fun GuidePaperSurface(
     state: TabletDetailState,
+    minHeight: Dp = 0.dp,
     content: @Composable ColumnScope.() -> Unit,
 ) {
     val paperPalette = tabletGuidePaperPalette()
     val horizontalPadding = tabletGuidePaperInnerHorizontalPaddingDp(state.isLandscape).dp
 
     Surface(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .heightIn(min = minHeight),
         color = paperPalette.page,
         contentColor = paperPalette.ink,
         shape = RoundedCornerShape(4.dp),
