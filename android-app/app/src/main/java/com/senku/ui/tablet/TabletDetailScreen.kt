@@ -304,7 +304,7 @@ internal fun tabletThreadRailWidthDp(
 ): Int =
     when {
         guideMode && isLandscape -> 300
-        guideMode -> 205
+        guideMode -> 196
         threadMode -> tabletReadingLayoutPolicy(isLandscape).threadRailWidthDp
         else -> 0
     }
@@ -344,7 +344,7 @@ internal fun tabletGuidePaperHorizontalPaddingDp(isLandscape: Boolean): Int =
     if (isLandscape) 12 else 12
 
 internal fun tabletGuidePaperInnerHorizontalPaddingDp(isLandscape: Boolean): Int =
-    if (isLandscape) 42 else 42
+    if (isLandscape) 42 else 34
 
 internal fun tabletGuidePaperBottomPaddingDp(isLandscape: Boolean): Int =
     if (isLandscape) 20 else 40
@@ -353,7 +353,7 @@ internal fun tabletGuideReferenceRailWidthDp(isLandscape: Boolean): Int =
     if (isLandscape) 390 else 0
 
 internal fun tabletGuideAppRailWidthDp(isLandscape: Boolean): Int =
-    if (isLandscape) 96 else 76
+    if (isLandscape) 96 else 72
 
 internal fun tabletGuideSectionRailShowsToolbar(): Boolean = false
 
@@ -367,9 +367,9 @@ internal fun tabletGuideChromePolicy(isLandscape: Boolean): TabletGuideChromePol
         )
     } else {
         TabletGuideChromePolicy(
-            topBarMinHeightDp = 54,
-            topBarHorizontalPaddingDp = 22,
-            topBarVerticalPaddingDp = 7,
+            topBarMinHeightDp = 58,
+            topBarHorizontalPaddingDp = 20,
+            topBarVerticalPaddingDp = 9,
             topBarTitleLineHeightSp = 18,
         )
     }

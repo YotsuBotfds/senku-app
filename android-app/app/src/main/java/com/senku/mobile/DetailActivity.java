@@ -1413,7 +1413,7 @@ public final class DetailActivity extends AppCompatActivity {
             bodyView.setIncludeFontPadding(false);
         } else if (answerMode && isLandscapePhoneLayout() && !isEmergencyPortraitSurface()) {
             bodyView.setTextSize(resolvePhoneLandscapeAnswerBodyTextSizeSp());
-            bodyView.setLineSpacing(0f, 1.06f);
+            bodyView.setLineSpacing(0f, resolvePhoneLandscapeAnswerBodyLineSpacingMultiplier());
             bodyView.setIncludeFontPadding(false);
         }
         followUpPanel.setVisibility(isCurrentAnswerFollowUpEligible() ? View.VISIBLE : View.GONE);
@@ -3500,7 +3500,9 @@ public final class DetailActivity extends AppCompatActivity {
                 int btnPadH = (phonePortraitSourceCards || flatAnswerSourceCards)
                     ? dp(resolvePhonePortraitSourceCardHorizontalPaddingDp())
                     : (stationRail ? dp(10) : dp(14));
-                int btnPadV = (phonePortraitSourceCards || flatAnswerSourceCards)
+                int btnPadV = landscapePhoneSideRail
+                    ? dp(resolvePhoneLandscapeSourceRailCardVerticalPaddingDp())
+                    : (phonePortraitSourceCards || flatAnswerSourceCards)
                     ? dp(resolvePhonePortraitSourceCardVerticalPaddingDp())
                     : (stationRail ? dp(8) : dp(12));
                 button.setPadding(btnPadH, btnPadV, btnPadH, btnPadV);
@@ -3525,7 +3527,11 @@ public final class DetailActivity extends AppCompatActivity {
                 button.setGravity(Gravity.START | Gravity.CENTER_VERTICAL);
                 button.setMaxLines((phonePortraitSourceCards || flatAnswerSourceCards) ? 3 : 2);
                 button.setEllipsize(TextUtils.TruncateAt.END);
-                button.setTextSize(styledSourceCard ? resolvePhonePortraitSourceCardTextSizeSp() : 14f);
+                button.setTextSize(styledSourceCard
+                    ? (landscapePhoneSideRail
+                    ? resolvePhoneLandscapeSourceRailCardTextSizeSp()
+                    : resolvePhonePortraitSourceCardTextSizeSp())
+                    : 14f);
                 button.setLineSpacing(0f, (phonePortraitSourceCards || flatAnswerSourceCards) ? 1.0f : 1f);
                 if (styledSourceCard) {
                     button.setTypeface(Typeface.DEFAULT, Typeface.NORMAL);
@@ -3548,7 +3554,9 @@ public final class DetailActivity extends AppCompatActivity {
                     ViewGroup.LayoutParams.WRAP_CONTENT
                 );
                 if (sourcesContainer.getChildCount() > 0) {
-                    params.topMargin = (phonePortraitSourceCards || flatAnswerSourceCards)
+                    params.topMargin = landscapePhoneSideRail
+                        ? dp(resolvePhoneLandscapeSourceRailCardTopMarginDp())
+                        : (phonePortraitSourceCards || flatAnswerSourceCards)
                         ? dp(resolvePhonePortraitSourceCardTopMarginDp())
                         : (showUtilityRail() ? dp(4) : dp(8));
                 }
@@ -4026,6 +4034,18 @@ public final class DetailActivity extends AppCompatActivity {
         return 10.0f;
     }
 
+    static int resolvePhoneLandscapeSourceRailCardVerticalPaddingDp() {
+        return 4;
+    }
+
+    static int resolvePhoneLandscapeSourceRailCardTopMarginDp() {
+        return 4;
+    }
+
+    static float resolvePhoneLandscapeSourceRailCardTextSizeSp() {
+        return 9.5f;
+    }
+
     static String buildPhonePortraitSourceCardLabel(
         DetailSourcePresentationFormatter.EvidenceCard card,
         boolean emergencyContext
@@ -4468,7 +4488,15 @@ public final class DetailActivity extends AppCompatActivity {
             button.setMaxLines(flatAnswerChrome ? 1 : 2);
             button.setEllipsize(flatAnswerChrome ? TextUtils.TruncateAt.END : null);
             button.setGravity(flatAnswerChrome ? Gravity.CENTER_VERTICAL : Gravity.CENTER);
-            button.setPadding(dp(flatAnswerChrome ? 0 : 14), dp(flatAnswerChrome ? 8 : 12), dp(flatAnswerChrome ? 2 : 14), dp(flatAnswerChrome ? 8 : 12));
+            int flatVerticalPadding = isLandscapePhoneLayout()
+                ? resolvePhoneLandscapeRelatedRailButtonVerticalPaddingDp()
+                : 8;
+            button.setPadding(
+                dp(flatAnswerChrome ? 0 : 14),
+                dp(flatAnswerChrome ? flatVerticalPadding : 12),
+                dp(flatAnswerChrome ? 2 : 14),
+                dp(flatAnswerChrome ? flatVerticalPadding : 12)
+            );
             button.setText(detailRelatedGuidePresentationFormatter().buildAnswerModeRelatedGuideButtonLabel(relatedGuide));
             button.setContentDescription(
                 detailRelatedGuidePresentationFormatter().buildAnswerModeRelatedGuideButtonContentDescription(
@@ -4481,7 +4509,9 @@ public final class DetailActivity extends AppCompatActivity {
             );
             button.setTextAlignment(View.TEXT_ALIGNMENT_VIEW_START);
             if (flatAnswerChrome) {
-                button.setTextSize(13f);
+                button.setTextSize(isLandscapePhoneLayout()
+                    ? resolvePhoneLandscapeRelatedRailButtonTextSizeSp()
+                    : 13f);
                 button.setTypeface(Typeface.DEFAULT, Typeface.NORMAL);
                 button.setIncludeFontPadding(false);
                 applySubtleDirectionalActionAffordance(button, getColor(R.color.senku_text_muted_light));
@@ -4830,6 +4860,22 @@ public final class DetailActivity extends AppCompatActivity {
         return 10;
     }
 
+    static int resolvePhoneLandscapeRelatedRailTopMarginDp() {
+        return 8;
+    }
+
+    static float resolvePhoneLandscapeRelatedRailTitleTextSizeSp() {
+        return 13.0f;
+    }
+
+    static int resolvePhoneLandscapeRelatedRailButtonVerticalPaddingDp() {
+        return 5;
+    }
+
+    static float resolvePhoneLandscapeRelatedRailButtonTextSizeSp() {
+        return 12.5f;
+    }
+
     static List<String> phoneLandscapeGuideSectionRailLabels() {
         return Arrays.asList(
             "§1  Area readiness",
@@ -4923,10 +4969,18 @@ public final class DetailActivity extends AppCompatActivity {
         if (isFlatAnswerDetailChrome()) {
             nextStepsPanel.setBackgroundResource(android.R.color.transparent);
             nextStepsPanel.setPadding(0, 0, 0, 0);
-            setTopMargin(nextStepsPanel, dp(isLandscapePhoneLayout() ? 12 : 10));
+            setTopMargin(nextStepsPanel, dp(isLandscapePhoneLayout()
+                ? resolvePhoneLandscapeRelatedRailTopMarginDp()
+                : 10));
             if (nextStepsTitleText != null) {
                 nextStepsTitleText.setBackgroundResource(android.R.color.transparent);
                 nextStepsTitleText.setTextColor(getColor(R.color.senku_text_muted_light));
+                if (isLandscapePhoneLayout()) {
+                    nextStepsTitleText.setTypeface(Typeface.MONOSPACE, Typeface.BOLD);
+                    nextStepsTitleText.setTextSize(resolvePhoneLandscapeRelatedRailTitleTextSizeSp());
+                    nextStepsTitleText.setLetterSpacing(0.08f);
+                    nextStepsTitleText.setPadding(0, dp(2), 0, dp(6));
+                }
             }
             return;
         }
@@ -7397,7 +7451,7 @@ public final class DetailActivity extends AppCompatActivity {
     }
 
     static float resolvePhoneLandscapeQuestionTitleTextSizeSp() {
-        return 15.0f;
+        return 14.5f;
     }
 
     static float resolvePhonePortraitQuestionMetaTextSizeSp() {
@@ -7409,7 +7463,11 @@ public final class DetailActivity extends AppCompatActivity {
     }
 
     static float resolvePhoneLandscapeAnswerBodyTextSizeSp() {
-        return 13.0f;
+        return 12.5f;
+    }
+
+    static float resolvePhoneLandscapeAnswerBodyLineSpacingMultiplier() {
+        return 1.03f;
     }
 
     private void updateTopBarActions() {

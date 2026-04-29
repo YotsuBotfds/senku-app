@@ -185,6 +185,13 @@ public final class DetailFollowupLandscapeComposerTest {
         assertEquals(0.75f, DetailActivity.resolveLandscapeDetailSideColumnWeight(false, false), 0.0f);
         assertEquals(2.25f, DetailActivity.resolveLandscapeDetailPrimaryColumnWeight(true, true), 0.0f);
         assertEquals(0.62f, DetailActivity.resolveLandscapeDetailSideColumnWeight(true, true), 0.0f);
+        assertEquals(4, DetailActivity.resolvePhoneLandscapeSourceRailCardVerticalPaddingDp());
+        assertEquals(4, DetailActivity.resolvePhoneLandscapeSourceRailCardTopMarginDp());
+        assertEquals(9.5f, DetailActivity.resolvePhoneLandscapeSourceRailCardTextSizeSp(), 0.0f);
+        assertEquals(8, DetailActivity.resolvePhoneLandscapeRelatedRailTopMarginDp());
+        assertEquals(13.0f, DetailActivity.resolvePhoneLandscapeRelatedRailTitleTextSizeSp(), 0.0f);
+        assertEquals(5, DetailActivity.resolvePhoneLandscapeRelatedRailButtonVerticalPaddingDp());
+        assertEquals(12.5f, DetailActivity.resolvePhoneLandscapeRelatedRailButtonTextSizeSp(), 0.0f);
     }
 
     @Test
@@ -195,10 +202,11 @@ public final class DetailFollowupLandscapeComposerTest {
         assertTrue(DetailActivity.shouldShowQuestionSubtitleForLayout(true, true, false));
         assertTrue(DetailActivity.shouldShowQuestionSubtitleForLayout(true, false, true));
         assertFalse(DetailActivity.shouldShowQuestionSubtitleForLayout(true, false, false));
-        assertEquals(15.0f, DetailActivity.resolveAnswerQuestionTitleTextSizeSp(true, true, false), 0.0f);
+        assertEquals(14.5f, DetailActivity.resolveAnswerQuestionTitleTextSizeSp(true, true, false), 0.0f);
         assertEquals(16.0f, DetailActivity.resolveAnswerQuestionTitleTextSizeSp(true, false, true), 0.0f);
         assertEquals(18.0f, DetailActivity.resolveAnswerQuestionTitleTextSizeSp(false, true, false), 0.0f);
-        assertEquals(13.0f, DetailActivity.resolvePhoneLandscapeAnswerBodyTextSizeSp(), 0.0f);
+        assertEquals(12.5f, DetailActivity.resolvePhoneLandscapeAnswerBodyTextSizeSp(), 0.0f);
+        assertEquals(1.03f, DetailActivity.resolvePhoneLandscapeAnswerBodyLineSpacingMultiplier(), 0.0f);
     }
 
     @Test

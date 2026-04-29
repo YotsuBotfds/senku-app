@@ -1976,6 +1976,38 @@ Fresh proof:
   density, tablet guide portrait top-chrome clipping, and tablet search
   landscape compression.
 
+## Wave74 Checkpoint
+
+Committed scope pending at the time of this update:
+
+- Phone landscape answer/thread: reduced answer title/body scale and line
+  spacing, compacted source-card typography/padding, and tightened related-guide
+  rail spacing so more of the right rail appears in the first viewport.
+- Tablet guide portrait: narrowed the portrait guide rail/paper padding and
+  gave the top bar more portrait clearance without changing guide content or
+  landscape guide ownership.
+- Search tablet landscape: reviewed against Wave73 and kept the existing
+  `331dp` filter rail and `441dp` preview rail constants; no code change was
+  needed for this wave.
+
+Fresh proof:
+
+- Full pack:
+  `artifacts/ui_state_pack/wave74_integrated_polish/20260429_104830`
+- Summary: full pack `pass`, states `22/22`, failures `0`, ANRs `0`,
+  canonical mock export `22` PNGs, goal bundle
+  `artifacts/ui_state_pack/wave74_integrated_polish/20260429_104830_mocks.zip`.
+- Validation: integrated focused JVM suite passed across phone-landscape
+  composer/detail, tablet guide stress-reading policy, and home/search chrome.
+  The tablet-guide worker's first focused test attempt hit a transient compile
+  race while the phone-lane file was mid-edit; the settled integrated tree
+  passed cleanly.
+- Visual review: Wave74 is a safe progress checkpoint. Remaining bigger
+  parity deltas are structural: tablet portrait emergency still uses a wide
+  single-column shell instead of the compact tablet mock, and tablet portrait
+  thread still collapses too much toward the phone-like flow instead of the
+  left-rail/right-source tablet composition.
+
 ## Parallelization Rules
 
 - Start every worker with `git status --short`, `git log --oneline -n 8

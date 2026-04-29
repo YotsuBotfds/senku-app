@@ -54,7 +54,7 @@ class StressReadingPolicyTest {
         assertEquals(292, tabletThreadRailWidthDp(isLandscape = true, guideMode = false, threadMode = true))
         assertEquals(0, tabletThreadRailWidthDp(isLandscape = false, guideMode = false, threadMode = true))
         assertEquals(300, tabletThreadRailWidthDp(isLandscape = true, guideMode = true))
-        assertEquals(205, tabletThreadRailWidthDp(isLandscape = false, guideMode = true))
+        assertEquals(196, tabletThreadRailWidthDp(isLandscape = false, guideMode = true))
     }
 
     @Test
@@ -95,13 +95,13 @@ class StressReadingPolicyTest {
         assertEquals(12, tabletGuidePaperHorizontalPaddingDp(isLandscape = true))
         assertEquals(12, tabletGuidePaperHorizontalPaddingDp(isLandscape = false))
         assertEquals(42, tabletGuidePaperInnerHorizontalPaddingDp(isLandscape = true))
-        assertEquals(42, tabletGuidePaperInnerHorizontalPaddingDp(isLandscape = false))
+        assertEquals(34, tabletGuidePaperInnerHorizontalPaddingDp(isLandscape = false))
         assertEquals(20, tabletGuidePaperBottomPaddingDp(isLandscape = true))
         assertEquals(40, tabletGuidePaperBottomPaddingDp(isLandscape = false))
         assertEquals(390, tabletGuideReferenceRailWidthDp(isLandscape = true))
         assertEquals(0, tabletGuideReferenceRailWidthDp(isLandscape = false))
         assertEquals(96, tabletGuideAppRailWidthDp(isLandscape = true))
-        assertEquals(76, tabletGuideAppRailWidthDp(isLandscape = false))
+        assertEquals(72, tabletGuideAppRailWidthDp(isLandscape = false))
         assertFalse(tabletGuideSectionRailShowsToolbar())
     }
 
@@ -130,9 +130,9 @@ class StressReadingPolicyTest {
         assertEquals(24, landscapePolicy.topBarHorizontalPaddingDp)
         assertEquals(8, landscapePolicy.topBarVerticalPaddingDp)
         assertEquals(18, landscapePolicy.topBarTitleLineHeightSp)
-        assertEquals(54, portraitPolicy.topBarMinHeightDp)
-        assertEquals(7, portraitPolicy.topBarVerticalPaddingDp)
-        assertTrue(landscapePolicy.topBarMinHeightDp > portraitPolicy.topBarMinHeightDp)
+        assertEquals(58, portraitPolicy.topBarMinHeightDp)
+        assertEquals(9, portraitPolicy.topBarVerticalPaddingDp)
+        assertTrue(portraitPolicy.topBarMinHeightDp > landscapePolicy.topBarMinHeightDp)
         assertTrue(landscapePolicy.topBarHorizontalPaddingDp > portraitPolicy.topBarHorizontalPaddingDp)
     }
 
