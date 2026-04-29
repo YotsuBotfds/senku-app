@@ -53,7 +53,7 @@ class StressReadingPolicyTest {
         assertEquals(0, tabletThreadRailWidthDp(isLandscape = false, guideMode = false))
         assertEquals(292, tabletThreadRailWidthDp(isLandscape = true, guideMode = false, threadMode = true))
         assertEquals(0, tabletThreadRailWidthDp(isLandscape = false, guideMode = false, threadMode = true))
-        assertEquals(264, tabletThreadRailWidthDp(isLandscape = true, guideMode = true))
+        assertEquals(248, tabletThreadRailWidthDp(isLandscape = true, guideMode = true))
         assertEquals(330, tabletThreadRailWidthDp(isLandscape = false, guideMode = true))
     }
 
@@ -90,15 +90,15 @@ class StressReadingPolicyTest {
 
     @Test
     fun tabletGuidePaperPolicyContainsPortraitReaderWithReadableLandscapeSheet() {
-        assertEquals(584, tabletGuidePaperMaxWidthDp(isLandscape = true))
+        assertEquals(596, tabletGuidePaperMaxWidthDp(isLandscape = true))
         assertEquals(820, tabletGuidePaperMaxWidthDp(isLandscape = false))
-        assertEquals(12, tabletGuidePaperHorizontalPaddingDp(isLandscape = true))
+        assertEquals(10, tabletGuidePaperHorizontalPaddingDp(isLandscape = true))
         assertEquals(18, tabletGuidePaperHorizontalPaddingDp(isLandscape = false))
-        assertEquals(34, tabletGuidePaperInnerHorizontalPaddingDp(isLandscape = true))
+        assertEquals(28, tabletGuidePaperInnerHorizontalPaddingDp(isLandscape = true))
         assertEquals(34, tabletGuidePaperInnerHorizontalPaddingDp(isLandscape = false))
-        assertEquals(24, tabletGuidePaperBottomPaddingDp(isLandscape = true))
+        assertEquals(20, tabletGuidePaperBottomPaddingDp(isLandscape = true))
         assertEquals(40, tabletGuidePaperBottomPaddingDp(isLandscape = false))
-        assertEquals(344, tabletGuideReferenceRailWidthDp(isLandscape = true))
+        assertEquals(312, tabletGuideReferenceRailWidthDp(isLandscape = true))
         assertEquals(0, tabletGuideReferenceRailWidthDp(isLandscape = false))
     }
 
@@ -114,7 +114,8 @@ class StressReadingPolicyTest {
 
         assertTrue(readingPolicy.answerMaxWidthDp > readingPolicy.evidenceRailWidthDp)
         assertTrue(readingPolicy.threadRailWidthDp < readingPolicy.evidenceRailWidthDp)
-        assertTrue(guidePaperOuterWidth >= guideSideRails)
+        assertTrue(guidePaperOuterWidth > guideSideRails)
+        assertTrue(tabletGuideReferenceRailWidthDp(isLandscape = true) < readingPolicy.evidenceRailWidthDp)
     }
 
     @Test

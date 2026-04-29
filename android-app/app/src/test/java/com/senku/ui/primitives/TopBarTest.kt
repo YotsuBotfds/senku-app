@@ -36,4 +36,22 @@ class TopBarTest {
         assertEquals(listOf(TopBarActionKind.Back), layout.leading.map { it.kind })
         assertEquals(listOf(TopBarActionKind.Share), layout.trailing.map { it.kind })
     }
+
+    @Test
+    fun actionLayoutPlacesGuideOverflowAfterHomeAndPin() {
+        val layout = topBarActionLayout(
+            listOf(
+                TopBarActionSpec.back("Back"),
+                TopBarActionSpec.overflow("More options"),
+                TopBarActionSpec.pin("Save guide"),
+                TopBarActionSpec.home("Library"),
+            )
+        )
+
+        assertEquals(listOf(TopBarActionKind.Back), layout.leading.map { it.kind })
+        assertEquals(
+            listOf(TopBarActionKind.Home, TopBarActionKind.Pin, TopBarActionKind.Overflow),
+            layout.trailing.map { it.kind },
+        )
+    }
 }

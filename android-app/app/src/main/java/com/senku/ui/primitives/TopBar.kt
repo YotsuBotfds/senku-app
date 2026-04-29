@@ -45,6 +45,7 @@ enum class TopBarActionKind {
     Home,
     Pin,
     Share,
+    Overflow,
 }
 
 @Immutable
@@ -95,6 +96,17 @@ data class TopBarActionSpec(
             isEnabled: Boolean = true,
         ) = TopBarActionSpec(
             kind = TopBarActionKind.Share,
+            contentDescription = contentDescription,
+            isVisible = isVisible,
+            isEnabled = isEnabled,
+        )
+
+        fun overflow(
+            contentDescription: String,
+            isVisible: Boolean = true,
+            isEnabled: Boolean = true,
+        ) = TopBarActionSpec(
+            kind = TopBarActionKind.Overflow,
             contentDescription = contentDescription,
             isVisible = isVisible,
             isEnabled = isEnabled,
@@ -212,6 +224,7 @@ private fun TopBarActionKind.trailingOrder(): Int = when (this) {
     TopBarActionKind.Home -> 0
     TopBarActionKind.Share -> 1
     TopBarActionKind.Pin -> 2
+    TopBarActionKind.Overflow -> 3
     TopBarActionKind.Back -> 3
 }
 
@@ -290,6 +303,7 @@ private fun TopBarActionKind.icon(): ImageVector = when (this) {
     TopBarActionKind.Home -> SenkuTopBarIcons.Home
     TopBarActionKind.Pin -> SenkuTopBarIcons.Pin
     TopBarActionKind.Share -> SenkuTopBarIcons.Share
+    TopBarActionKind.Overflow -> SenkuTopBarIcons.Overflow
 }
 
 private object SenkuTopBarIcons {
@@ -407,6 +421,31 @@ private object SenkuTopBarIcons {
                 moveTo(18f, 19.5f)
                 arcToRelative(3f, 3f, 0f, true, false, 0f, -6f)
                 arcToRelative(3f, 3f, 0f, false, false, 0f, 6f)
+            }
+        }.build()
+    }
+
+    val Overflow: ImageVector by lazy {
+        ImageVector.Builder(
+            name = "TopBarOverflow",
+            defaultWidth = 24.dp,
+            defaultHeight = 24.dp,
+            viewportWidth = 24f,
+            viewportHeight = 24f,
+        ).apply {
+            path(
+                fill = SolidColor(Color.Black),
+                pathFillType = PathFillType.NonZero,
+            ) {
+                moveTo(12f, 8.1f)
+                arcToRelative(1.45f, 1.45f, 0f, true, false, 0f, -2.9f)
+                arcToRelative(1.45f, 1.45f, 0f, false, false, 0f, 2.9f)
+                moveTo(12f, 13.45f)
+                arcToRelative(1.45f, 1.45f, 0f, true, false, 0f, -2.9f)
+                arcToRelative(1.45f, 1.45f, 0f, false, false, 0f, 2.9f)
+                moveTo(12f, 18.8f)
+                arcToRelative(1.45f, 1.45f, 0f, true, false, 0f, -2.9f)
+                arcToRelative(1.45f, 1.45f, 0f, false, false, 0f, 2.9f)
             }
         }.build()
     }

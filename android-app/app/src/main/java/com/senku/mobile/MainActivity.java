@@ -57,6 +57,7 @@ public final class MainActivity extends AppCompatActivity {
     private static final String EXTRA_AUTO_QUERY = "auto_query";
     private static final String EXTRA_AUTO_ASK = "auto_ask";
     private static final String EXTRA_AUTO_FOLLOWUP_QUERY = "auto_followup_query";
+    static final String EXTRA_OPEN_SAVED = "open_saved";
     private static final String EXTRA_DEBUG_OPEN_DETAIL = "debug_open_detail";
     private static final String EXTRA_DEBUG_DETAIL_TITLE = "debug_detail_title";
     private static final String EXTRA_DEBUG_DETAIL_SUBTITLE = "debug_detail_subtitle";
@@ -576,6 +577,7 @@ public final class MainActivity extends AppCompatActivity {
         applyIntentQuery(getIntent());
         updateSessionPanel();
         showBrowseChrome(!hasAutoQuery(getIntent()));
+        maybeHandleOpenSavedIntent(getIntent());
         updateLandscapePhoneResultsPriority();
         maybeHandleDebugDetailIntent(getIntent());
         installPack(false);
@@ -599,6 +601,7 @@ public final class MainActivity extends AppCompatActivity {
         autoIntentHandled = false;
         debugDetailIntentHandled = false;
         applyIntentQuery(intent);
+        maybeHandleOpenSavedIntent(intent);
         updateInfoText();
         applyDeveloperToolsPanelVisibility(isBrowseModeActive(), !items.isEmpty());
         maybeHandleDebugDetailIntent(intent);
@@ -953,6 +956,12 @@ public final class MainActivity extends AppCompatActivity {
                 ? BottomTabDestination.ASK
                 : BottomTabDestination.SEARCH);
             showBrowseChrome(false);
+        }
+    }
+
+    private void maybeHandleOpenSavedIntent(Intent intent) {
+        if (intent != null && intent.getBooleanExtra(EXTRA_OPEN_SAVED, false)) {
+            openPhoneTab(BottomTabDestination.PINS, false);
         }
     }
 

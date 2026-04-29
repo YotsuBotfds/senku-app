@@ -59,6 +59,10 @@ import com.senku.ui.composer.DockedComposerModel;
 import com.senku.ui.host.SenkuMetaStripHostView;
 import com.senku.ui.host.SenkuTopBarHostView;
 import com.senku.ui.host.TopBarActionHandler;
+import com.senku.ui.primitives.BottomTabBarHostView;
+import com.senku.ui.primitives.BottomTabBarLayoutMode;
+import com.senku.ui.primitives.BottomTabDestination;
+import com.senku.ui.primitives.BottomTabModel;
 import com.senku.ui.primitives.MetaItem;
 import com.senku.ui.primitives.TopBarActionKind;
 import com.senku.ui.primitives.Tone;
@@ -232,6 +236,7 @@ public final class DetailActivity extends AppCompatActivity {
     private LinearLayout landscapeSideColumn;
     private SenkuTopBarHostView rev03TopBarHost;
     private SenkuMetaStripHostView rev03MetaStripHost;
+    private BottomTabBarHostView guidePhoneBottomTabBarView;
     private View legacyDetailTopRow;
     private View legacyDetailHeroChipRow;
     private View followUpPanel;
@@ -671,6 +676,7 @@ public final class DetailActivity extends AppCompatActivity {
         }
 
         bindViews();
+        installGuidePhoneBottomTabBarIfNeeded();
         configureFollowUpInput();
         renderDetailState();
         refreshRelatedGuides();
@@ -826,6 +832,99 @@ public final class DetailActivity extends AppCompatActivity {
         ensureRev03ComposeMounts();
         configureDetailAccessibilityLandmarks();
         updateDetailAccessibilityRegions();
+    }
+
+    private void installGuidePhoneBottomTabBarIfNeeded() {
+        if (!shouldInstallGuidePhoneBottomTabBar(!answerMode, isCompactPortraitPhoneLayout())
+            || guidePhoneBottomTabBarView != null) {
+            return;
+        }
+        ViewGroup contentRoot = findViewById(android.R.id.content);
+        if (contentRoot == null || contentRoot.getChildCount() == 0) {
+            return;
+        }
+        View existingRoot = contentRoot.getChildAt(0);
+        contentRoot.removeView(existingRoot);
+        LinearLayout wrapper = new LinearLayout(this);
+        wrapper.setOrientation(LinearLayout.VERTICAL);
+        wrapper.setLayoutParams(new ViewGroup.LayoutParams(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.MATCH_PARENT
+        ));
+        wrapper.addView(
+            existingRoot,
+            new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                0,
+                1f
+            )
+        );
+        guidePhoneBottomTabBarView = new BottomTabBarHostView(this);
+        guidePhoneBottomTabBarView.updateLayoutMode(BottomTabBarLayoutMode.HORIZONTAL_BAR);
+        guidePhoneBottomTabBarView.setTabs(
+            buildGuidePhoneBottomTabs(),
+            BottomTabDestination.HOME,
+            this::openGuidePhoneBottomTab
+        );
+        wrapper.addView(
+            guidePhoneBottomTabBarView,
+            new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+            )
+        );
+        contentRoot.addView(wrapper);
+    }
+
+    static boolean shouldInstallGuidePhoneBottomTabBar(boolean guideMode, boolean compactPortraitPhone) {
+        return guideMode && compactPortraitPhone;
+    }
+
+    static List<BottomTabDestination> buildGuidePhoneBottomTabDestinations() {
+        return Arrays.asList(
+            BottomTabDestination.HOME,
+            BottomTabDestination.ASK,
+            BottomTabDestination.PINS
+        );
+    }
+
+    private List<BottomTabModel> buildGuidePhoneBottomTabs() {
+        ArrayList<BottomTabModel> tabs = new ArrayList<>(3);
+        for (BottomTabDestination destination : buildGuidePhoneBottomTabDestinations()) {
+            String label = guidePhoneBottomTabLabel(destination);
+            tabs.add(new BottomTabModel(destination, label, label));
+        }
+        return tabs;
+    }
+
+    private String guidePhoneBottomTabLabel(BottomTabDestination destination) {
+        if (destination == BottomTabDestination.ASK) {
+            return getString(R.string.bottom_tab_ask);
+        }
+        if (destination == BottomTabDestination.PINS) {
+            return getString(R.string.bottom_tab_pins);
+        }
+        return getString(R.string.bottom_tab_home);
+    }
+
+    private void openGuidePhoneBottomTab(BottomTabDestination destination) {
+        if (destination == BottomTabDestination.ASK) {
+            navigateMainFromGuidePhoneTab("auto_ask", true);
+        } else if (destination == BottomTabDestination.PINS) {
+            navigateMainFromGuidePhoneTab(MainActivity.EXTRA_OPEN_SAVED, true);
+        } else {
+            navigateHomeFromDetail();
+        }
+    }
+
+    private void navigateMainFromGuidePhoneTab(String booleanExtra, boolean value) {
+        Intent intent = new Intent(this, MainActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        if (!safe(booleanExtra).trim().isEmpty()) {
+            intent.putExtra(booleanExtra, value);
+        }
+        startActivity(intent);
+        finish();
     }
 
     private void configureDetailScroll() {
@@ -7244,16 +7343,18 @@ public final class DetailActivity extends AppCompatActivity {
         if (rev03TopBarHost != null) {
             String pinnableGuideId = resolvePinnableGuideId();
             boolean compactPhoneAnswerChrome = shouldUseCompactPhoneAnswerChrome();
+            boolean guidePhoneChrome = !answerMode && isCompactPortraitPhoneLayout();
             boolean pinVisible = !pinnableGuideId.isEmpty() && !compactPhoneAnswerChrome;
             boolean pinActive = pinVisible && PinnedGuideStore.contains(this, pinnableGuideId);
             rev03TopBarHost.setTopBarState(
                 buildRev03TopBarTitle(),
                 buildRev03TopBarSubtitle(),
                 buildRev03TopBarDangerPillLabel(),
-                compactPhoneAnswerChrome || !isCompactPortraitPhoneLayout(),
+                guidePhoneChrome || compactPhoneAnswerChrome || !isCompactPortraitPhoneLayout(),
                 pinVisible,
                 pinActive,
                 answerMode && !buildTranscriptExportText().isEmpty(),
+                guidePhoneChrome,
                 shouldAllowRev03TopBarTitleWrap() ? 2 : 1,
                 getString(R.string.detail_back_content_description),
                 getString(R.string.detail_home_content_description),
@@ -7264,6 +7365,7 @@ public final class DetailActivity extends AppCompatActivity {
                     pinVisible ? pinnableGuideId : resolveDisplayGuideId()
                 ),
                 getString(R.string.detail_share_content_description),
+                "More options",
                 action -> {
                     if (action == TopBarActionKind.Back) {
                         finish();

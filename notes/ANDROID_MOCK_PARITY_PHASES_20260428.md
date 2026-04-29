@@ -1767,6 +1767,36 @@ Fresh proof:
   regressed by the discarded compression pass. Remaining high-impact work is
   guide phone bottom nav/topbar parity and tablet guide/source card density.
 
+## Wave67 Checkpoint
+
+Committed scope pending at the time of this update:
+
+- Phone guide chrome: guide phone portrait now gets the target-style bottom
+  Library / Ask / Saved tab bar, keeps Library selected, and uses the compact
+  guide topbar with back, home, pin, and overflow actions.
+- Saved handoff: the guide bottom Saved tab now opens the MainActivity saved
+  destination through an explicit `open_saved` intent extra instead of a
+  visual-only placeholder.
+- Topbar primitive: added an overflow action kind/spec and host plumbing so
+  guide chrome can expose the three-dot affordance without disrupting answer
+  share/pin behavior.
+- Tablet guide density: narrowed guide landscape support rails, reduced paper
+  typography/padding weight, and tightened reference rail cards to keep the
+  paper more dominant.
+
+Fresh proof:
+
+- Full pack:
+  `artifacts/ui_state_pack/wave67_guide_chrome_tablet_density/20260429_072914`
+- Summary: full pack `pass`, states `22/22`, failures `0`, ANRs `0`, rotation
+  mismatch `0`, canonical mock export `22` PNGs.
+- Validation: combined focused JVM suite passed across guide chrome, topbar,
+  phone navigation, detail formatter/thread/action/source/related behavior,
+  home/search, and tablet rail/evidence/stress policies.
+- Visual note: guide phone portrait is materially closer to target. Remaining
+  visible deltas include guide phone landscape section-header clipping, tablet
+  guide exact density, emergency hierarchy, and final home/search/answer polish.
+
 ## Parallelization Rules
 
 - Start every worker with `git status --short`, `git log --oneline -n 8

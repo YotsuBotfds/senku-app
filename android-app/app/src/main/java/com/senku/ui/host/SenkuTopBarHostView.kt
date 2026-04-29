@@ -34,11 +34,13 @@ class SenkuTopBarHostView @JvmOverloads constructor(
     private var showPin: Boolean by mutableStateOf(false)
     private var pinActive: Boolean by mutableStateOf(false)
     private var showShare: Boolean by mutableStateOf(false)
+    private var showOverflow: Boolean by mutableStateOf(false)
     private var titleMaxLines: Int by mutableStateOf(1)
     private var backDescription: String by mutableStateOf("")
     private var homeDescription: String by mutableStateOf("")
     private var pinDescription: String by mutableStateOf("")
     private var shareDescription: String by mutableStateOf("")
+    private var overflowDescription: String by mutableStateOf("")
     private var actionHandler: TopBarActionHandler? = null
 
     fun setTopBarState(
@@ -49,11 +51,13 @@ class SenkuTopBarHostView @JvmOverloads constructor(
         showPin: Boolean,
         pinActive: Boolean,
         showShare: Boolean,
+        showOverflow: Boolean,
         titleMaxLines: Int,
         backDescription: String,
         homeDescription: String,
         pinDescription: String,
         shareDescription: String,
+        overflowDescription: String,
         actionHandler: TopBarActionHandler?,
     ) {
         this.title = normalizeTopBarHeaderText(title)
@@ -63,11 +67,13 @@ class SenkuTopBarHostView @JvmOverloads constructor(
         this.showPin = showPin
         this.pinActive = pinActive
         this.showShare = showShare
+        this.showOverflow = showOverflow
         this.titleMaxLines = titleMaxLines.coerceAtLeast(1)
         this.backDescription = backDescription
         this.homeDescription = homeDescription
         this.pinDescription = pinDescription
         this.shareDescription = shareDescription
+        this.overflowDescription = overflowDescription
         this.actionHandler = actionHandler
     }
 
@@ -103,6 +109,10 @@ class SenkuTopBarHostView @JvmOverloads constructor(
         actions += TopBarActionSpec.share(
             contentDescription = shareDescription,
             isVisible = showShare,
+        )
+        actions += TopBarActionSpec.overflow(
+            contentDescription = overflowDescription,
+            isVisible = showOverflow,
         )
         return actions
     }
