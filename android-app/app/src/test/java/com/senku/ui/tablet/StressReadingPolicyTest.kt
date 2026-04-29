@@ -68,8 +68,8 @@ class StressReadingPolicyTest {
     }
 
     @Test
-    fun tabletThreadFlowUsesWiderSingleColumnBudget() {
-        assertEquals(700, tabletThreadFlowMaxWidthDp(isLandscape = true))
+    fun tabletThreadFlowUsesMockScaledTranscriptBudget() {
+        assertEquals(560, tabletThreadFlowMaxWidthDp(isLandscape = true))
         assertEquals(660, tabletThreadFlowMaxWidthDp(isLandscape = false))
         assertEquals(24, tabletThreadFlowHorizontalPaddingDp(isLandscape = true))
         assertEquals(18, tabletThreadFlowHorizontalPaddingDp(isLandscape = false))
@@ -77,6 +77,16 @@ class StressReadingPolicyTest {
         assertEquals(12, tabletThreadComposerBottomPaddingDp(isLandscape = false))
         assertEquals(360, tabletThreadEvidenceRailWidthDp(isLandscape = true))
         assertEquals(300, tabletThreadEvidenceRailWidthDp(isLandscape = false))
+    }
+
+    @Test
+    fun tabletThreadTypeScalePromotesTranscriptHierarchyOverAnswerChrome() {
+        val basePolicy = tabletLandscapeDetailTypeScalePolicy()
+        val threadPolicy = tabletThreadDetailTypeScalePolicy(basePolicy, isLandscape = true)
+
+        assertEquals(basePolicy.questionFontSizeSp + 4, threadPolicy.questionFontSizeSp)
+        assertEquals(basePolicy.answerFontSizeSp + 5, threadPolicy.answerFontSizeSp)
+        assertEquals(basePolicy.answerLineHeightSp + 7, threadPolicy.answerLineHeightSp)
     }
 
     @Test
@@ -570,7 +580,8 @@ class StressReadingPolicyTest {
         )
 
         assertEquals("Q1 \u2022 04:21 \u2022 FIELD QUESTION", tabletThreadQuestionMetaLabel(1))
-        assertEquals("A2 \u2022 04:23 \u2022 ANSWER", tabletThreadAnswerMetaLabel(2))
+        assertEquals("A2 \u2022 04:23 \u2022 ANCHOR GD-345", tabletThreadAnswerMetaLabel(2))
+        assertEquals("A2 \u2022 04:23 \u2022 ANCHOR GD-345", tabletThreadAnswerMetaLabel(2, confidentAnswer))
         assertEquals("\u2022 CONFIDENT", tabletThreadAnswerStatusLabel(confidentAnswer, Status.Done))
         assertEquals("\u2022 UNSURE", tabletThreadAnswerStatusLabel(unsureAnswer, Status.Done))
         assertEquals(
@@ -585,7 +596,8 @@ class StressReadingPolicyTest {
         )
         assertFalse(tabletThreadAnswerStatusLabel(confidentAnswer, Status.Done).contains("Rule match"))
         assertFalse(tabletThreadAnswerStatusLabel(confidentAnswer, Status.Done).contains("STRONG EVIDENCE"))
-        assertFalse(tabletThreadAnswerMetaLabel(2).contains("GD-345"))
+        assertTrue(tabletThreadAnswerMetaLabel(2).contains("GD-345"))
+        assertTrue(tabletThreadAnswerMetaLabel(2, confidentAnswer).contains("GD-345"))
     }
 
     @Test

@@ -358,7 +358,7 @@ internal fun tabletThreadRailShouldShowSourceRows(detailMode: TabletDetailMode):
     detailMode != TabletDetailMode.Thread
 
 internal fun tabletThreadFlowMaxWidthDp(isLandscape: Boolean): Int =
-    if (isLandscape) 700 else 660
+    if (isLandscape) 560 else 660
 
 internal fun tabletThreadFlowHorizontalPaddingDp(isLandscape: Boolean): Int =
     if (isLandscape) 24 else 18
@@ -710,8 +710,21 @@ internal fun tabletThreadQuestionMetaLabel(turnIndex: Int): String =
     "Q${turnIndex.coerceAtLeast(1)} \u2022 ${tabletThreadTimestampLabel(turnIndex)} \u2022 FIELD QUESTION"
 
 internal fun tabletThreadAnswerMetaLabel(turnIndex: Int, content: AnswerContent? = null): String {
-    return "A${turnIndex.coerceAtLeast(1)} \u2022 ${tabletThreadTimestampLabel(turnIndex)} \u2022 ANSWER"
+    val sourceId = tabletThreadAnswerSourceId(content, turnIndex)
+    val anchorLabel = sourceId.takeIf { it.isNotBlank() }?.let { "ANCHOR $it" } ?: "ANSWER"
+    return "A${turnIndex.coerceAtLeast(1)} \u2022 ${tabletThreadTimestampLabel(turnIndex)} \u2022 $anchorLabel"
 }
+
+internal fun tabletThreadDetailTypeScalePolicy(
+    basePolicy: TabletDetailTypeScalePolicy,
+    isLandscape: Boolean,
+): TabletDetailTypeScalePolicy =
+    basePolicy.copy(
+        questionFontSizeSp = basePolicy.questionFontSizeSp + if (isLandscape) 4 else 2,
+        questionLineHeightSp = basePolicy.questionLineHeightSp + if (isLandscape) 5 else 3,
+        answerFontSizeSp = basePolicy.answerFontSizeSp + if (isLandscape) 5 else 3,
+        answerLineHeightSp = basePolicy.answerLineHeightSp + if (isLandscape) 7 else 5,
+    )
 
 internal fun tabletThreadTimestampLabel(turnIndex: Int): String {
     val minute = 19 + (turnIndex.coerceAtLeast(1) * 2)
@@ -931,7 +944,7 @@ fun TabletDetailScreen(
                     )
                 }
             }
-        } else if (state.isThreadMode() && !state.isLandscape) {
+        } else if (state.isThreadMode()) {
             Row(
                 modifier = Modifier
                     .fillMaxSize()
@@ -941,7 +954,7 @@ fun TabletDetailScreen(
                     onLibraryClick = onHomeClick,
                     onSavedClick = onPinClick,
                     modifier = Modifier
-                        .width(tabletGuideAppRailWidthDp(isLandscape = false).dp)
+                        .width(tabletGuideAppRailWidthDp(state.isLandscape).dp)
                         .fillMaxHeight(),
                 )
 
@@ -1328,6 +1341,10 @@ private fun ThreadReadingSurface(
     onTurnClick: (String) -> Unit,
     onAnchorClick: () -> Unit,
 ) {
+    val threadTypeScalePolicy = tabletThreadDetailTypeScalePolicy(
+        basePolicy = typeScalePolicy,
+        isLandscape = state.isLandscape,
+    )
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -1336,7 +1353,7 @@ private fun ThreadReadingSurface(
     ) {
         ThreadTurnList(
             state = state,
-            typeScalePolicy = typeScalePolicy,
+            typeScalePolicy = threadTypeScalePolicy,
             guideMode = false,
             onTurnClick = onTurnClick,
             onAnchorClick = onAnchorClick,
