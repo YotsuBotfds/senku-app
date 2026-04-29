@@ -76,7 +76,7 @@ public final class DetailRelatedGuidePresentationFormatterTest {
         DetailRelatedGuidePresentationFormatter formatter = new DetailRelatedGuidePresentationFormatter(null);
 
         assertEquals(
-            "RELATED GUIDES \u2022 4",
+            "RELATED GUIDES \u00b7 4",
             formatter.buildAnswerModeRelatedGuidesTitle(4)
         );
         assertEquals(

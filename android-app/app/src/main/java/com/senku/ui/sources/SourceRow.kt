@@ -57,9 +57,8 @@ fun SourceRow(
 ) {
     val colors = SenkuTheme.colors
     val typography = SenkuTheme.typography
-    val rowCorner = dimensionResource(R.dimen.senku_rev03_corner_small)
     val rowMinHeight = dimensionResource(R.dimen.senku_rev03_identity_strip_height)
-    val horizontalPadding = dimensionResource(R.dimen.senku_rev03_space_12)
+    val horizontalPadding = dimensionResource(R.dimen.senku_rev03_space_10)
     val verticalPadding = dimensionResource(R.dimen.senku_rev03_space_6)
     val contentGap = dimensionResource(R.dimen.senku_rev03_space_6)
     val chevronGap = dimensionResource(R.dimen.senku_rev03_space_6)
@@ -69,16 +68,17 @@ fun SourceRow(
     val idColor = if (source.isAnchor) colors.accent else colors.ink2
     val metaColor = if (source.isAnchor) colors.accent else colors.ink3
     val chevronColor = if (source.isAnchor) colors.accent else colors.ink2
+    val cardShape = RoundedCornerShape(0.dp)
 
     Surface(
         modifier = modifier
             .fillMaxWidth()
             .border(
                 width = 1.dp,
-                color = colors.hairline,
-                shape = RoundedCornerShape(rowCorner),
+                color = if (source.isAnchor) colors.hairlineStrong else colors.hairline,
+                shape = cardShape,
             ),
-        shape = RoundedCornerShape(rowCorner),
+        shape = cardShape,
         color = containerColor,
         contentColor = colors.ink0,
         onClick = { onClick(source) },
@@ -86,43 +86,65 @@ fun SourceRow(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .heightIn(min = rowMinHeight)
-                .padding(horizontal = horizontalPadding, vertical = verticalPadding),
+                .heightIn(min = rowMinHeight),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Text(
-                text = source.displayGuideId(),
-                style = typography.monoCaps,
-                color = idColor,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
+            SourceAccentRule(
+                color = colors.accent,
+                modifier = Modifier
+                    .width(3.dp)
+                    .heightIn(min = rowMinHeight),
             )
-            Spacer(modifier = Modifier.width(contentGap))
-            Text(
-                text = source.displayTitle(),
-                modifier = Modifier.weight(1f),
-                style = typography.uiBody,
-                color = colors.ink0,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-            )
-            if (metaLabel.isNotEmpty()) {
-                Spacer(modifier = Modifier.width(contentGap))
+            Row(
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(horizontal = horizontalPadding, vertical = verticalPadding),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
                 Text(
-                    text = metaLabel,
-                    modifier = Modifier.widthIn(max = 96.dp),
+                    text = source.displayGuideId(),
                     style = typography.monoCaps,
-                    color = metaColor,
+                    color = idColor,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                 )
+                Spacer(modifier = Modifier.width(contentGap))
+                Text(
+                    text = source.displayTitle(),
+                    modifier = Modifier.weight(1f),
+                    style = typography.uiBody,
+                    color = colors.ink0,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                )
+                if (metaLabel.isNotEmpty()) {
+                    Spacer(modifier = Modifier.width(contentGap))
+                    Text(
+                        text = metaLabel,
+                        modifier = Modifier.widthIn(max = 96.dp),
+                        style = typography.monoCaps,
+                        color = metaColor,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                }
+                Spacer(modifier = Modifier.width(chevronGap))
+                SourceChevron(
+                    color = chevronColor,
+                    modifier = Modifier.size(chevronSize),
+                )
             }
-            Spacer(modifier = Modifier.width(chevronGap))
-            SourceChevron(
-                color = chevronColor,
-                modifier = Modifier.size(chevronSize),
-            )
         }
+    }
+}
+
+@Composable
+private fun SourceAccentRule(
+    color: Color,
+    modifier: Modifier = Modifier,
+) {
+    Canvas(modifier = modifier) {
+        drawRect(color = color)
     }
 }
 
@@ -163,7 +185,7 @@ internal fun SourceRowModel.displayTitle(): String = normalizeEvidenceSourceTitl
 
 private fun SourceRowModel.containerColor(colors: com.senku.ui.theme.SenkuColorTokens): Color =
     if (isAnchor) {
-        colors.accent.copy(alpha = 0.10f).compositeOver(colors.bg1)
+        colors.accent.copy(alpha = 0.08f).compositeOver(colors.bg1)
     } else {
         colors.bg1
     }
