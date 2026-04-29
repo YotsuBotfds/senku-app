@@ -3444,8 +3444,8 @@ internal fun tabletShouldShowEvidencePane(
     when {
         state.isThreadMode() -> state.resolvedVisibleThreadSourceRows().isNotEmpty()
         guideMode -> state.isLandscape
-        state.evidenceExpanded -> true
-        else -> state.sources.isNotEmpty()
+        state.detailMode == TabletDetailMode.Answer -> state.evidenceExpanded
+        else -> false
     }
 
 internal fun tabletSourceGraphAnchor(anchor: AnchorState): AnchorState =

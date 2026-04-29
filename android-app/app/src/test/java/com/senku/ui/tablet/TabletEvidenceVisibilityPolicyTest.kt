@@ -335,8 +335,8 @@ class TabletEvidenceVisibilityPolicyTest {
     }
 
     @Test
-    fun tabletAnswerModeShowsSourceRailWhenSourcesExist() {
-        assertTrue(
+    fun tabletAnswerModeKeepsSourceRailHiddenUntilExpanded() {
+        assertFalse(
             tabletShouldShowEvidencePane(
                 state = stateWithSources(sourceCount = 1, isLandscape = false),
                 guideMode = false,
@@ -380,6 +380,7 @@ class TabletEvidenceVisibilityPolicyTest {
     fun tabletAnswerModeWithSelectedSourceLabelsStaysAnswerArticleWithSourceRail() {
         val state = stateWithSources(
             sourceCount = 2,
+            evidenceExpanded = true,
             isLandscape = true,
             guideModeLabel = "SOURCE",
             guideModeSummary = "Selected source: GD-2",
@@ -396,6 +397,7 @@ class TabletEvidenceVisibilityPolicyTest {
     fun tabletDirectAnswerSourceSelectionStaysAnswerOwnedWhenComposerHidden() {
         val state = stateWithSources(
             sourceCount = 2,
+            evidenceExpanded = true,
             isLandscape = true,
             composerVisible = false,
             guideModeLabel = "GUIDE",
