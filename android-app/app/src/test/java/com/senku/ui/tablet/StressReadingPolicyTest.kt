@@ -75,6 +75,8 @@ class StressReadingPolicyTest {
         assertEquals(18, tabletThreadFlowHorizontalPaddingDp(isLandscape = false))
         assertEquals(0, tabletThreadComposerBottomPaddingDp(isLandscape = true))
         assertEquals(12, tabletThreadComposerBottomPaddingDp(isLandscape = false))
+        assertEquals(360, tabletThreadEvidenceRailWidthDp(isLandscape = true))
+        assertEquals(300, tabletThreadEvidenceRailWidthDp(isLandscape = false))
     }
 
     @Test
@@ -134,6 +136,30 @@ class StressReadingPolicyTest {
         assertEquals(9, portraitPolicy.topBarVerticalPaddingDp)
         assertTrue(portraitPolicy.topBarMinHeightDp > landscapePolicy.topBarMinHeightDp)
         assertTrue(landscapePolicy.topBarHorizontalPaddingDp > portraitPolicy.topBarHorizontalPaddingDp)
+    }
+
+    @Test
+    fun tabletGuidePaperDensityTightensLandscapeWithoutMovingPortraitFrame() {
+        val landscapePolicy = tabletGuidePaperDensityPolicy(isLandscape = true)
+        val portraitPolicy = tabletGuidePaperDensityPolicy(isLandscape = false)
+
+        assertEquals(29, landscapePolicy.headerTitleFontSizeSp)
+        assertEquals(34, landscapePolicy.headerTitleLineHeightSp)
+        assertEquals(14, landscapePolicy.bodyFontSizeSp)
+        assertEquals(21, landscapePolicy.bodyLineHeightSp)
+        assertEquals(8, landscapePolicy.bodySpacingDp)
+        assertEquals(14, landscapePolicy.dangerBodyFontSizeSp)
+        assertEquals(20, landscapePolicy.dangerBodyLineHeightSp)
+        assertEquals(9, landscapePolicy.dangerSpacingDp)
+        assertEquals(48, landscapePolicy.requiredRowMinHeightDp)
+        assertEquals(14, landscapePolicy.requiredRowTitleFontSizeSp)
+        assertEquals(18, landscapePolicy.requiredRowTitleLineHeightSp)
+        assertEquals(34, portraitPolicy.headerTitleFontSizeSp)
+        assertEquals(39, portraitPolicy.headerTitleLineHeightSp)
+        assertEquals(15, portraitPolicy.bodyFontSizeSp)
+        assertEquals(22, portraitPolicy.bodyLineHeightSp)
+        assertEquals(10, portraitPolicy.bodySpacingDp)
+        assertEquals(56, portraitPolicy.requiredRowMinHeightDp)
     }
 
     @Test

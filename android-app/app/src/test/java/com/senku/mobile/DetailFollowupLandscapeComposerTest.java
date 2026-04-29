@@ -537,6 +537,68 @@ public final class DetailFollowupLandscapeComposerTest {
     }
 
     @Test
+    public void tabletPortraitThreadKeepsPortraitStateForComposeRails() {
+        assertFalse(DetailActivity.shouldUseTabletPortraitCompactStructuralShell(
+            true,
+            true,
+            TabletDetailMode.Thread,
+            false
+        ));
+        assertFalse(DetailActivity.resolveTabletStateLandscapeFlag(
+            false,
+            true,
+            true,
+            TabletDetailMode.Thread,
+            false
+        ));
+        assertFalse(DetailActivity.resolveTabletStateLandscapeFlag(
+            false,
+            true,
+            true,
+            TabletDetailMode.Answer,
+            false
+        ));
+        assertFalse(DetailActivity.resolveTabletStateLandscapeFlag(
+            false,
+            false,
+            true,
+            TabletDetailMode.Thread,
+            false
+        ));
+    }
+
+    @Test
+    public void tabletPortraitEmergencyUsesCompactStructuralShellBehindOverlay() {
+        assertTrue(DetailActivity.shouldUseTabletPortraitCompactStructuralShell(
+            true,
+            true,
+            TabletDetailMode.Answer,
+            true
+        ));
+        assertTrue(DetailActivity.resolveTabletStateLandscapeFlag(
+            false,
+            true,
+            true,
+            TabletDetailMode.Answer,
+            true
+        ));
+        assertTrue(DetailActivity.resolveTabletStateLandscapeFlag(
+            true,
+            false,
+            true,
+            TabletDetailMode.Answer,
+            false
+        ));
+        assertFalse(DetailActivity.resolveTabletStateLandscapeFlag(
+            false,
+            true,
+            false,
+            TabletDetailMode.Guide,
+            true
+        ));
+    }
+
+    @Test
     public void tabletAnswerGuideModeUsesSourceLanguageInsteadOfProofRail() {
         String summary = DetailActivity.buildTabletAnswerGuideModeSummary("GD-345", "");
         String anchorLabel = DetailActivity.buildTabletAnswerGuideModeAnchorLabel(false);

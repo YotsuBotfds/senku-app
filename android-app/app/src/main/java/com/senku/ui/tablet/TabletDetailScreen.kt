@@ -228,6 +228,20 @@ internal data class TabletGuideChromePolicy(
     val topBarTitleLineHeightSp: Int,
 )
 
+internal data class TabletGuidePaperDensityPolicy(
+    val headerTitleFontSizeSp: Int,
+    val headerTitleLineHeightSp: Int,
+    val bodyFontSizeSp: Int,
+    val bodyLineHeightSp: Int,
+    val bodySpacingDp: Int,
+    val dangerBodyFontSizeSp: Int,
+    val dangerBodyLineHeightSp: Int,
+    val dangerSpacingDp: Int,
+    val requiredRowMinHeightDp: Int,
+    val requiredRowTitleFontSizeSp: Int,
+    val requiredRowTitleLineHeightSp: Int,
+)
+
 private data class GuidePaperPalette(
     val page: Color = Color(0xFFE8DFC9),
     val pageInset: Color = Color(0xFFE1D3BA),
@@ -295,6 +309,13 @@ internal fun tabletReadingLayoutPolicy(isLandscape: Boolean): TabletReadingLayou
     when (isLandscape) {
         true -> tabletLandscapeReadingLayoutPolicy()
         false -> tabletPortraitReadingLayoutPolicy()
+    }
+
+internal fun tabletThreadEvidenceRailWidthDp(isLandscape: Boolean): Int =
+    if (isLandscape) {
+        tabletLandscapeReadingLayoutPolicy().evidenceRailWidthDp
+    } else {
+        300
     }
 
 internal fun tabletThreadRailWidthDp(
@@ -371,6 +392,37 @@ internal fun tabletGuideChromePolicy(isLandscape: Boolean): TabletGuideChromePol
             topBarHorizontalPaddingDp = 20,
             topBarVerticalPaddingDp = 9,
             topBarTitleLineHeightSp = 18,
+        )
+    }
+
+internal fun tabletGuidePaperDensityPolicy(isLandscape: Boolean): TabletGuidePaperDensityPolicy =
+    if (isLandscape) {
+        TabletGuidePaperDensityPolicy(
+            headerTitleFontSizeSp = 29,
+            headerTitleLineHeightSp = 34,
+            bodyFontSizeSp = 14,
+            bodyLineHeightSp = 21,
+            bodySpacingDp = 8,
+            dangerBodyFontSizeSp = 14,
+            dangerBodyLineHeightSp = 20,
+            dangerSpacingDp = 9,
+            requiredRowMinHeightDp = 48,
+            requiredRowTitleFontSizeSp = 14,
+            requiredRowTitleLineHeightSp = 18,
+        )
+    } else {
+        TabletGuidePaperDensityPolicy(
+            headerTitleFontSizeSp = 34,
+            headerTitleLineHeightSp = 39,
+            bodyFontSizeSp = 15,
+            bodyLineHeightSp = 22,
+            bodySpacingDp = 10,
+            dangerBodyFontSizeSp = 15,
+            dangerBodyLineHeightSp = 22,
+            dangerSpacingDp = 12,
+            requiredRowMinHeightDp = 56,
+            requiredRowTitleFontSizeSp = 15,
+            requiredRowTitleLineHeightSp = 19,
         )
     }
 
@@ -810,6 +862,49 @@ fun TabletDetailScreen(
                     )
                 }
             }
+        } else if (state.isThreadMode() && !state.isLandscape) {
+            Row(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(colors.bg0),
+            ) {
+                GuideAppRail(
+                    onLibraryClick = onHomeClick,
+                    onSavedClick = onPinClick,
+                    modifier = Modifier
+                        .width(tabletGuideAppRailWidthDp(isLandscape = false).dp)
+                        .fillMaxHeight(),
+                )
+
+                Box(
+                    modifier = Modifier
+                        .width(1.dp)
+                        .fillMaxHeight()
+                        .background(colors.hairlineStrong),
+                )
+
+                TabletDetailBodyRow(
+                    state = state,
+                    onBackClick = onBackClick,
+                    onHomeClick = onHomeClick,
+                    onPinClick = onPinClick,
+                    onTurnClick = onTurnClick,
+                    onSourceClick = onSourceClick,
+                    onAnchorClick = onAnchorClick,
+                    onComposerTextChange = onComposerTextChange,
+                    onComposerSendClick = onComposerSendClick,
+                    onRetryClick = onRetryClick,
+                    onXRefClick = onXRefClick,
+                    onEvidenceToggleClick = onEvidenceToggleClick,
+                    threadPaneTitle = threadPaneTitle,
+                    answerPaneTitle = answerPaneTitle,
+                    evidencePaneTitle = evidencePaneTitle,
+                    showTitleBarInWorkspace = true,
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxHeight(),
+                )
+            }
         } else {
             TabletDetailBodyRow(
                 state = state,
@@ -1011,7 +1106,7 @@ private fun DetailWorkspace(
                         isLandscape = state.isLandscape,
                         onSourceClick = onSourceClick,
                         modifier = Modifier
-                            .width(readingPolicy.evidenceRailWidthDp.dp)
+                            .width(tabletThreadEvidenceRailWidthDp(state.isLandscape).dp)
                             .fillMaxHeight()
                             .semantics {
                                 paneTitle = evidencePaneTitle
@@ -1942,6 +2037,7 @@ private fun AnswerReadingSurface(
                     turnIndex = index + 1,
                     typeScalePolicy = typeScalePolicy,
                     onFocusTurn = { onTurnClick(turn.id) },
+                    isLandscape = state.isLandscape,
                 )
             }
         }
@@ -2034,6 +2130,7 @@ private fun SecondaryTurnBlock(
     turnIndex: Int,
     typeScalePolicy: TabletDetailTypeScalePolicy,
     onFocusTurn: () -> Unit,
+    isLandscape: Boolean,
 ) {
     Surface(
         modifier = Modifier
@@ -2053,6 +2150,7 @@ private fun SecondaryTurnBlock(
             onOpenProof = onFocusTurn,
             guideMode = false,
             threadMode = true,
+            isLandscape = isLandscape,
             modifier = Modifier.padding(horizontal = 12.dp),
         )
     }
@@ -2094,6 +2192,7 @@ private fun GuidePaperHeader(
 ) {
     val typography = SenkuTheme.typography
     val paperPalette = tabletGuidePaperPalette()
+    val densityPolicy = tabletGuidePaperDensityPolicy(state.isLandscape)
     val anchor = state.guideModeAnchorLabel.trim()
         .takeIf { it.isNotEmpty() }
         ?: if (state.isFoundryGuideReader()) "OPENED FROM GD-220" else ""
@@ -2121,8 +2220,8 @@ private fun GuidePaperHeader(
         Text(
             text = state.guideTitle.trim().ifEmpty { "Guide" },
             style = typography.sectionTitle.copy(
-                fontSize = if (state.isLandscape) 31.sp else 34.sp,
-                lineHeight = if (state.isLandscape) 36.sp else 39.sp,
+                fontSize = densityPolicy.headerTitleFontSizeSp.sp,
+                lineHeight = densityPolicy.headerTitleLineHeightSp.sp,
                 fontWeight = FontWeight.SemiBold,
                 letterSpacing = 0.sp,
             ),
@@ -2188,6 +2287,7 @@ private fun ThreadTurnList(
             onOpenProof = onAnchorClick,
             guideMode = guideMode,
             threadMode = state.isThreadMode(),
+            isLandscape = state.isLandscape,
         )
     }
 }
@@ -2398,6 +2498,7 @@ private fun ThreadTurnBlock(
     onOpenProof: () -> Unit,
     guideMode: Boolean,
     threadMode: Boolean,
+    isLandscape: Boolean,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -2425,6 +2526,7 @@ private fun ThreadTurnBlock(
             onProofClick = if (canOpenProof) onOpenProof else onFocusTurn,
             guideMode = guideMode,
             threadMode = threadMode,
+            isLandscape = isLandscape,
         )
     }
 }
@@ -2510,6 +2612,7 @@ private fun AnswerInlineBlock(
     onProofClick: () -> Unit,
     guideMode: Boolean,
     threadMode: Boolean,
+    isLandscape: Boolean,
     modifier: Modifier = Modifier,
 ) {
     val colors = SenkuTheme.colors
@@ -2561,8 +2664,8 @@ private fun AnswerInlineBlock(
         if (guideMode) {
             GuidePaperBodyText(
                 text = content.short,
-                typeScalePolicy = typeScalePolicy,
                 guideTitle = tabletGuideBodyTitleLineForSkip(content.short),
+                isLandscape = isLandscape,
             )
         } else {
             Text(
@@ -2720,13 +2823,14 @@ private fun ThreadAnswerSourceChip(label: String) {
 @Composable
 private fun GuidePaperBodyText(
     text: String,
-    typeScalePolicy: TabletDetailTypeScalePolicy,
     guideTitle: String = "",
+    isLandscape: Boolean = true,
 ) {
     val typography = SenkuTheme.typography
     val paperPalette = tabletGuidePaperPalette()
-    val bodyFontSize = (typeScalePolicy.answerFontSizeSp + 2).sp
-    val bodyLineHeight = (typeScalePolicy.answerLineHeightSp + 3).sp
+    val densityPolicy = tabletGuidePaperDensityPolicy(isLandscape)
+    val bodyFontSize = densityPolicy.bodyFontSizeSp.sp
+    val bodyLineHeight = densityPolicy.bodyLineHeightSp.sp
     val normalizedGuideTitle = normalizeGuidePaperTokenLine(guideTitle)
     val lines = text.lineSequence()
         .map { it.trim() }
@@ -2737,14 +2841,17 @@ private fun GuidePaperBodyText(
         .toList()
     Column(
         modifier = Modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(10.dp),
+        verticalArrangement = Arrangement.spacedBy(densityPolicy.bodySpacingDp.dp),
     ) {
         var index = 0
         while (index < lines.size) {
             val line = lines[index]
             when (tabletGuideBodyLineKind(line)) {
                 TabletGuideBodyLineKind.Skip -> Unit
-                TabletGuideBodyLineKind.RequiredReading -> GuideRequiredReadingRow(line)
+                TabletGuideBodyLineKind.RequiredReading -> GuideRequiredReadingRow(
+                    line = line,
+                    isLandscape = isLandscape,
+                )
                 TabletGuideBodyLineKind.Danger -> {
                     val dangerLines = mutableListOf<String>()
                     var dangerIndex = index
@@ -2754,7 +2861,10 @@ private fun GuidePaperBodyText(
                         dangerLines += lines[dangerIndex]
                         dangerIndex++
                     }
-                    GuideDangerCalloutRow(dangerLines)
+                    GuideDangerCalloutRow(
+                        lines = dangerLines,
+                        isLandscape = isLandscape,
+                    )
                     index = dangerIndex - 1
                 }
                 TabletGuideBodyLineKind.Section -> Text(
@@ -2784,9 +2894,13 @@ private fun GuidePaperBodyText(
 }
 
 @Composable
-private fun GuideDangerCalloutRow(lines: List<String>) {
+private fun GuideDangerCalloutRow(
+    lines: List<String>,
+    isLandscape: Boolean,
+) {
     val typography = SenkuTheme.typography
     val paperPalette = tabletGuidePaperPalette()
+    val densityPolicy = tabletGuidePaperDensityPolicy(isLandscape)
     val normalizedLines = lines.map { normalizeGuidePaperDangerLine(it) }
     val title = normalizedLines.firstOrNull().orEmpty()
     val body = normalizedLines.drop(1).joinToString(" ").trim()
@@ -2798,7 +2912,7 @@ private fun GuideDangerCalloutRow(lines: List<String>) {
     ) {
         Column(
             modifier = Modifier.fillMaxWidth(),
-            verticalArrangement = Arrangement.spacedBy(12.dp),
+            verticalArrangement = Arrangement.spacedBy(densityPolicy.dangerSpacingDp.dp),
         ) {
             Box(
                 modifier = Modifier
@@ -2820,10 +2934,14 @@ private fun GuideDangerCalloutRow(lines: List<String>) {
             if (body.isNotEmpty()) {
                 Text(
                     text = body,
-                    modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 14.dp),
+                    modifier = Modifier.padding(
+                        start = 16.dp,
+                        end = 16.dp,
+                        bottom = if (isLandscape) 12.dp else 14.dp,
+                    ),
                     style = typography.answerBody.copy(
-                        fontSize = 15.sp,
-                        lineHeight = 22.sp,
+                        fontSize = densityPolicy.dangerBodyFontSizeSp.sp,
+                        lineHeight = densityPolicy.dangerBodyLineHeightSp.sp,
                         fontWeight = FontWeight.Normal,
                         letterSpacing = 0.sp,
                     ),
@@ -2835,9 +2953,13 @@ private fun GuideDangerCalloutRow(lines: List<String>) {
 }
 
 @Composable
-private fun GuideRequiredReadingRow(line: String) {
+private fun GuideRequiredReadingRow(
+    line: String,
+    isLandscape: Boolean,
+) {
     val typography = SenkuTheme.typography
     val paperPalette = tabletGuidePaperPalette()
+    val densityPolicy = tabletGuidePaperDensityPolicy(isLandscape)
     val parts = parseGuideRequiredReadingParts(line)
     Surface(
         modifier = Modifier.fillMaxWidth(),
@@ -2849,7 +2971,7 @@ private fun GuideRequiredReadingRow(line: String) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .heightIn(min = 56.dp)
+                .heightIn(min = densityPolicy.requiredRowMinHeightDp.dp)
                 .padding(end = 12.dp),
             horizontalArrangement = Arrangement.spacedBy(14.dp),
             verticalAlignment = Alignment.CenterVertically,
@@ -2864,7 +2986,7 @@ private fun GuideRequiredReadingRow(line: String) {
                 text = parts.id.ifEmpty { parts.label },
                 modifier = Modifier
                     .widthIn(min = 64.dp, max = 80.dp)
-                    .padding(vertical = 14.dp),
+                    .padding(vertical = if (isLandscape) 11.dp else 14.dp),
                 style = typography.monoCaps.copy(
                     fontSize = 11.5.sp,
                     lineHeight = 15.sp,
@@ -2878,10 +3000,10 @@ private fun GuideRequiredReadingRow(line: String) {
                 text = parts.title.ifEmpty { normalizeGuidePaperRequiredReadingLine(line) },
                 modifier = Modifier
                     .weight(1f)
-                    .padding(vertical = 13.dp),
+                    .padding(vertical = if (isLandscape) 11.dp else 13.dp),
                 style = typography.uiBody.copy(
-                    fontSize = 15.sp,
-                    lineHeight = 19.sp,
+                    fontSize = densityPolicy.requiredRowTitleFontSizeSp.sp,
+                    lineHeight = densityPolicy.requiredRowTitleLineHeightSp.sp,
                     fontWeight = FontWeight.Medium,
                     letterSpacing = 0.sp,
                 ),
@@ -3226,7 +3348,7 @@ internal fun tabletShouldShowEvidencePane(
     guideMode: Boolean,
 ): Boolean =
     when {
-        state.isThreadMode() -> state.isLandscape && state.resolvedVisibleThreadSourceRows().isNotEmpty()
+        state.isThreadMode() -> state.resolvedVisibleThreadSourceRows().isNotEmpty()
         guideMode -> state.isLandscape
         state.evidenceExpanded -> true
         else -> state.sources.isNotEmpty()

@@ -112,8 +112,8 @@ fun SearchResultCard(
             Column(
                 modifier = Modifier
                     .weight(1f)
-                    .padding(start = 7.dp, top = 10.dp, end = 8.dp, bottom = 0.dp),
-                verticalArrangement = Arrangement.spacedBy(3.dp),
+                    .padding(start = 7.dp, top = 8.dp, end = 8.dp, bottom = 0.dp),
+                verticalArrangement = Arrangement.spacedBy(2.dp),
             ) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -140,8 +140,8 @@ fun SearchResultCard(
                 Text(
                     text = model.title.trim(),
                     style = SenkuTheme.typography.uiBody.copy(
-                        fontSize = 13.sp,
-                        lineHeight = 16.sp,
+                        fontSize = 12.sp,
+                        lineHeight = 15.sp,
                         fontWeight = FontWeight.Bold,
                     ),
                     color = colors.ink0,
@@ -167,8 +167,8 @@ fun SearchResultCard(
                 Text(
                     text = compactResultPreviewText(model.subtitle, model.snippet),
                     style = SenkuTheme.typography.smallBody.copy(
-                        fontSize = 11.sp,
-                        lineHeight = 13.sp,
+                        fontSize = 10.sp,
+                        lineHeight = 12.sp,
                         fontWeight = FontWeight.Normal,
                     ),
                     color = colors.ink1.copy(alpha = 0.78f),
@@ -207,7 +207,7 @@ fun SearchResultCard(
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(top = 9.dp)
+                        .padding(top = 8.dp)
                         .height(1.dp)
                         .background(colors.hairlineStrong),
                 )

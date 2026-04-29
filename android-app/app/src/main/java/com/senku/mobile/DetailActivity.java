@@ -99,9 +99,9 @@ public final class DetailActivity extends AppCompatActivity {
     private static final float STREAMING_FIRST_CHUNK_ALPHA = 0.88f;
     private static final long GENERATION_STALL_NOTICE_MS = 12000L;
     private static final long GENERATION_STALL_POLL_MS = 1000L;
-    private static final int TABLET_EMERGENCY_PORTRAIT_LEFT_MARGIN_DP = 0;
-    private static final int TABLET_EMERGENCY_PORTRAIT_RIGHT_MARGIN_DP = 0;
-    private static final int TABLET_EMERGENCY_PORTRAIT_TOP_MARGIN_DP = 0;
+    private static final int TABLET_EMERGENCY_PORTRAIT_LEFT_MARGIN_DP = 72;
+    private static final int TABLET_EMERGENCY_PORTRAIT_RIGHT_MARGIN_DP = 28;
+    private static final int TABLET_EMERGENCY_PORTRAIT_TOP_MARGIN_DP = 18;
     private static final int TABLET_EMERGENCY_LANDSCAPE_LEFT_MARGIN_DP = 336;
     private static final int TABLET_EMERGENCY_LANDSCAPE_RIGHT_MARGIN_DP = 24;
     private static final int TABLET_EMERGENCY_LANDSCAPE_TOP_MARGIN_DP = 16;
@@ -1892,7 +1892,7 @@ public final class DetailActivity extends AppCompatActivity {
     private boolean isTabletEmergencyFullHeightPage() {
         return shouldUseTabletEmergencyFullHeightPage(
             answerMode,
-            wideLayoutActive(),
+            isTabletPortraitLayout(),
             shouldShowEmergencyHeader()
         );
     }
@@ -2005,6 +2005,7 @@ public final class DetailActivity extends AppCompatActivity {
         boolean showRetry = (!tabletBusy && !safe(lastFailedQuery).isEmpty())
             || (tabletBusy && generationStallNoticeVisible && !safe(currentTitle).isEmpty());
         boolean tabletEmergencyFullHeightPage = isTabletEmergencyFullHeightPage();
+        TabletDetailMode detailMode = resolveTabletDetailMode(turnBindings);
         SearchResult displaySource = resolveTabletDisplaySource(turnBindings, visualOwnerSource);
         boolean allowGuideIdFallback = !answerMode || visualOwnerSource != null;
         return new TabletDetailState(
@@ -2024,13 +2025,19 @@ public final class DetailActivity extends AppCompatActivity {
             pinVisible,
             pinActive,
             !tabletEmergencyFullHeightPage && tabletEvidenceExpanded,
-            showUtilityRail(),
+            resolveTabletStateLandscapeFlag(
+                showUtilityRail(),
+                isTabletPortraitLayout(),
+                answerMode,
+                detailMode,
+                tabletEmergencyFullHeightPage
+            ),
             buildTabletGuideModeLabel(visualOwnerSource),
             buildTabletGuideModeSummary(visualOwnerSource, turnBindings),
             buildTabletGuideModeAnchorLabel(visualOwnerSource),
             safe(tabletStatusText),
             buildTabletGuideSectionCount(displaySource),
-            resolveTabletDetailMode(turnBindings)
+            detailMode
         );
     }
 
@@ -2052,6 +2059,33 @@ public final class DetailActivity extends AppCompatActivity {
             answerMode,
             turnBindings == null ? 0 : turnBindings.size()
         );
+    }
+
+    static boolean resolveTabletStateLandscapeFlag(
+        boolean utilityRail,
+        boolean tabletPortrait,
+        boolean answerMode,
+        TabletDetailMode detailMode,
+        boolean emergencyFullHeightPage
+    ) {
+        return utilityRail
+            || shouldUseTabletPortraitCompactStructuralShell(
+                tabletPortrait,
+                answerMode,
+                detailMode,
+                emergencyFullHeightPage
+            );
+    }
+
+    static boolean shouldUseTabletPortraitCompactStructuralShell(
+        boolean tabletPortrait,
+        boolean answerMode,
+        TabletDetailMode detailMode,
+        boolean emergencyFullHeightPage
+    ) {
+        return tabletPortrait
+            && answerMode
+            && emergencyFullHeightPage;
     }
 
     static TabletDetailMode resolveTabletDetailModeForState(boolean answerMode, int turnCount) {

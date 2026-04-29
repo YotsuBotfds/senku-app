@@ -2008,6 +2008,47 @@ Fresh proof:
   thread still collapses too much toward the phone-like flow instead of the
   left-rail/right-source tablet composition.
 
+## Wave75 Checkpoint
+
+Committed scope pending at the time of this update:
+
+- Tablet portrait thread: replaced the phone-like full-width transcript with a
+  portrait tablet composition that keeps the app rail, restores the right
+  source pane, and avoids the failed intermediate fake-landscape turn-preview
+  rail that made the center column too narrow.
+- Tablet portrait emergency: moved the full-height emergency overlay into a
+  framed tablet surface with portrait margins while keeping tablet landscape on
+  the existing landscape overlay path.
+- Tablet guide: added a guide-paper density policy and tightened landscape
+  title/body/danger/required-row metrics while preserving the Wave74 portrait
+  top-bar clearance.
+- Search: tightened search result card padding and typography so tablet search
+  rows are less oversized while keeping all results visible.
+
+Fresh proof:
+
+- Focused tablet-portrait repair pack:
+  `artifacts/ui_state_pack/wave75_tablet_portrait_fix/20260429_110956`
+  passed `6/6`; the script exited nonzero only because role-filter packs do
+  not export all `22` canonical mock PNGs.
+- First full retry:
+  `artifacts/ui_state_pack/wave75_structural_detail_retry/20260429_111541`
+  passed `21/22`; tablet portrait search hit a transient `main.search`
+  settle timeout while later attempts in the same log passed.
+- Full final pack:
+  `artifacts/ui_state_pack/wave75_structural_detail_final/20260429_112219`
+- Summary: full final pack `pass`, states `22/22`, failures `0`, ANRs `0`,
+  canonical mock export `22` PNGs, goal bundle
+  `artifacts/ui_state_pack/wave75_structural_detail_final/20260429_112219_mocks.zip`.
+- Validation: integrated focused JVM suite passed across phone/tablet detail
+  shell policy, emergency surface policy, tablet guide stress-reading policy,
+  and search-result card heuristics.
+- Visual note: tablet portrait thread is now much closer to the mock's app-rail
+  plus source-pane composition. Emergency is framed closer to the tablet mock
+  but still needs finer header/action density polish. The largest remaining
+  visual gap from independent review remains the broader guide family and
+  phone-portrait answer/emergency detail polish.
+
 ## Parallelization Rules
 
 - Start every worker with `git status --short`, `git log --oneline -n 8

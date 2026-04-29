@@ -127,9 +127,9 @@ public final class EmergencySurfacePolicyTest {
         DetailActivity.TabletEmergencyOverlayMargins margins =
             DetailActivity.resolveTabletEmergencyOverlayMarginsDp(true);
 
-        assertEquals(0, margins.left);
-        assertEquals(0, margins.right);
-        assertEquals(0, margins.top);
+        assertEquals(72, margins.left);
+        assertEquals(28, margins.right);
+        assertEquals(18, margins.top);
         assertEquals(
             android.view.ViewGroup.LayoutParams.MATCH_PARENT,
             DetailActivity.resolveTabletEmergencyOverlayHeight(true)
