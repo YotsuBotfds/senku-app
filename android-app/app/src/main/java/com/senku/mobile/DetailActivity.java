@@ -3759,7 +3759,15 @@ public final class DetailActivity extends AppCompatActivity {
         }
         StringBuilder builder = new StringBuilder();
         if (!metaParts.isEmpty()) {
-            builder.append(String.join(" \u2022 ", metaParts));
+            if (emergencyAnchor && metaParts.size() >= 3) {
+                builder.append(metaParts.get(0))
+                    .append(" \u2022 ")
+                    .append(metaParts.get(1))
+                    .append("    ")
+                    .append(metaParts.get(2));
+            } else {
+                builder.append(String.join(" \u2022 ", metaParts));
+            }
         }
         String title = emergencyAnchor
             ? "Foundry & Metal Casting \u00b7 \u00a71 Area readiness"
@@ -5818,6 +5826,9 @@ public final class DetailActivity extends AppCompatActivity {
         if (!matchLabel.isEmpty()) {
             metaParts.add(matchLabel);
         }
+        if (emergencyAnchor && metaParts.size() >= 3) {
+            return metaParts.get(0) + " \u2022 " + metaParts.get(1) + "    " + metaParts.get(2);
+        }
         return metaParts.isEmpty() ? "SOURCE GUIDE" : String.join(" \u2022 ", metaParts);
     }
 
@@ -6395,7 +6406,7 @@ public final class DetailActivity extends AppCompatActivity {
         if (normalized.contains("burn") || normalized.contains("foundry") || normalized.contains("molten")) {
             hazard = "extreme burn hazard";
         }
-        return "\u2022 DANGER \u2022 " + hazard.toUpperCase(Locale.US);
+        return "\u2022 DANGER \u00b7 " + hazard.toUpperCase(Locale.US);
     }
 
     static String extractEmergencyShortAnswer(String formattedAnswerText) {

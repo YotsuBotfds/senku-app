@@ -67,7 +67,7 @@ public final class DetailThreadHistoryRendererTest {
     }
 
     @Test
-    public void turnLabelsStayCompactForQuestionAndAnchorShift() {
+    public void turnLabelsKeepAnswerAnchorMetadata() {
         DetailThreadHistoryRenderer renderer = new DetailThreadHistoryRenderer(
             null,
             new DetailSessionPresentationFormatter(null),
@@ -79,11 +79,11 @@ public final class DetailThreadHistoryRendererTest {
             renderer.buildTurnLabel(2, true, turn("question", "GD-345", 0L), "")
         );
         assertEquals(
-            "A2 \u00B7 ANSWER",
+            "A2 \u00B7 ANCHOR GD-345",
             renderer.buildTurnLabel(2, false, turn("answer", "GD-345", 0L), "GD-220")
         );
         assertEquals(
-            "A2 \u00B7 ANSWER",
+            "A2 \u00B7 ANCHOR GD-345",
             renderer.buildTurnLabel(2, false, turn("answer", "GD-345", 0L), "GD-345")
         );
     }
@@ -108,7 +108,7 @@ public final class DetailThreadHistoryRendererTest {
             0L
         );
 
-        assertEquals("A1 \u00B7 ANSWER", renderer.buildTurnLabel(1, false, turn, ""));
+        assertEquals("A1 \u00B7 ANCHOR GD-220", renderer.buildTurnLabel(1, false, turn, ""));
         assertEquals(List.of("GD-220", "GD-132"), DetailThreadHistoryRenderer.guideChipLabelsForTurn(turn));
     }
 
@@ -127,7 +127,7 @@ public final class DetailThreadHistoryRendererTest {
             renderer.buildTurnLabel(1, true, turn("answer", "GD-220", timestamp), "")
         );
         assertEquals(
-            "A1 \u00B7 " + expectedTime + " \u00B7 ANSWER",
+            "A1 \u00B7 " + expectedTime + " \u00B7 ANCHOR GD-220",
             renderer.buildTurnLabel(1, false, turn("answer", "GD-220", timestamp), "")
         );
     }
@@ -150,7 +150,7 @@ public final class DetailThreadHistoryRendererTest {
         );
 
         assertEquals(
-            "A2 \u00B7 ANSWER",
+            "A2 \u00B7 ANCHOR GD-220",
             renderer.buildTurnLabel(2, false, turn, "GD-220")
         );
     }
@@ -421,6 +421,39 @@ public final class DetailThreadHistoryRendererTest {
         assertEquals(true, DetailThreadHistoryRenderer.shouldShowGuideChips(detailTranscript, false, 0));
         assertEquals(true, DetailThreadHistoryRenderer.shouldShowGuideChips(detailTranscript, true, 0));
         assertEquals(true, DetailThreadHistoryRenderer.shouldShowGuideChips(detailTranscript, true, 1));
+    }
+
+    @Test
+    public void phoneLandscapeTranscriptShowsOnlyContextualGuideChip() {
+        DetailThreadHistoryRenderer.State phoneLandscapeNoRail = new DetailThreadHistoryRenderer.State(
+            false,
+            true,
+            false,
+            360,
+            true
+        );
+        SessionMemory.TurnSnapshot turn = new SessionMemory.TurnSnapshot(
+            "What should I do next after the ridge line is up?",
+            "Drape the tarp evenly and tension the corners.",
+            "Drape the tarp evenly and tension the corners.",
+            List.of("GD-220 Abrasives Manufacturing", "GD-345 Rain Shelter"),
+            List.of(
+                source("GD-220", "Abrasives Manufacturing", "abrasives manufacturing"),
+                source("GD-345", "Tarp & Cord Shelters", "tarp cord rain shelter ridgeline")
+            ),
+            "",
+            0L
+        );
+
+        assertEquals(
+            List.of("GD-220", "GD-345"),
+            DetailThreadHistoryRenderer.guideChipLabelsForTurn(turn)
+        );
+        assertEquals(
+            List.of("GD-345"),
+            DetailThreadHistoryRenderer.visibleGuideChipLabelsForTurn(turn, phoneLandscapeNoRail, true)
+        );
+        assertEquals("GD-345", DetailThreadHistoryRenderer.answerAnchorGuideIdForTurn(turn, "GD-220"));
     }
 
     @Test

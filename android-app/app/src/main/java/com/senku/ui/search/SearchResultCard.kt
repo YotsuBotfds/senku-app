@@ -39,6 +39,7 @@ import java.util.LinkedHashSet
 import java.util.Locale
 
 private const val WARM_THREAD_WINDOW_MS = 30L * 60L * 1000L
+private const val SCORE_TICK_TRACK_WIDTH_DP = 22
 
 @Immutable
 data class SearchResultCardModel(
@@ -355,23 +356,16 @@ private fun stripPreviewMarkdown(value: String): String {
 internal fun scoreTickFillFraction(rankLabel: String): Float {
     val score = rankLabel.trim().toIntOrNull() ?: return 0.72f
     return when {
-        score >= 90 -> 0.95f
+        score >= 90 -> 0.94f
         score >= 75 -> 0.82f
         score >= 70 -> 0.74f
-        score >= 60 -> 0.66f
-        else -> 0.54f
+        score >= 60 -> 0.62f
+        else -> 0.52f
     }
 }
 
 internal fun scoreTickTrackWidthDp(rankLabel: String): Int {
-    val score = rankLabel.trim().toIntOrNull() ?: return 16
-    return when {
-        score >= 90 -> 20
-        score >= 75 -> 18
-        score >= 70 -> 17
-        score >= 60 -> 15
-        else -> 13
-    }
+    return SCORE_TICK_TRACK_WIDTH_DP
 }
 
 private fun collapseRepeatedPreviewLead(value: String, lead: String): String {

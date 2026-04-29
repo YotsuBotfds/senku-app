@@ -136,22 +136,22 @@ class SearchResultCardHeuristicsTest {
 
     @Test
     fun scoreTickFillFraction_tracksRankScoreWithoutPercentCopy() {
-        assertEquals(0.95f, scoreTickFillFraction("92"), 0.001f)
+        assertEquals(0.94f, scoreTickFillFraction("92"), 0.001f)
         assertEquals(0.82f, scoreTickFillFraction("78"), 0.001f)
         assertEquals(0.74f, scoreTickFillFraction("74"), 0.001f)
-        assertEquals(0.66f, scoreTickFillFraction("61"), 0.001f)
-        assertEquals(0.54f, scoreTickFillFraction("49"), 0.001f)
+        assertEquals(0.62f, scoreTickFillFraction("61"), 0.001f)
+        assertEquals(0.52f, scoreTickFillFraction("49"), 0.001f)
         assertEquals(0.72f, scoreTickFillFraction("#1"), 0.001f)
     }
 
     @Test
-    fun scoreTickTrackWidthDp_staysCompactAndRankSensitive() {
-        assertEquals(20, scoreTickTrackWidthDp("92"))
-        assertEquals(18, scoreTickTrackWidthDp("78"))
-        assertEquals(17, scoreTickTrackWidthDp("74"))
-        assertEquals(15, scoreTickTrackWidthDp("61"))
-        assertEquals(13, scoreTickTrackWidthDp("49"))
-        assertEquals(16, scoreTickTrackWidthDp("#1"))
+    fun scoreTickTrackWidthDp_keepsStableCompactTrack() {
+        assertEquals(22, scoreTickTrackWidthDp("92"))
+        assertEquals(22, scoreTickTrackWidthDp("78"))
+        assertEquals(22, scoreTickTrackWidthDp("74"))
+        assertEquals(22, scoreTickTrackWidthDp("61"))
+        assertEquals(22, scoreTickTrackWidthDp("49"))
+        assertEquals(22, scoreTickTrackWidthDp("#1"))
     }
 
     @Test

@@ -182,11 +182,11 @@ public final class MainActivityHomeChromeTest {
     public void manualHomeRecentRowsUseCompactPhoneDensityForThreeRows() {
         assertEquals(60, MainActivity.resolveManualHomeRecentThreadMinimumHeightDp(false, false, true));
         assertEquals(60, MainActivity.resolveManualHomeRecentThreadMinimumHeightDp(false, true, true));
-        assertEquals(66, MainActivity.resolveManualHomeRecentThreadMinimumHeightDp(true, false, true));
+        assertEquals(58, MainActivity.resolveManualHomeRecentThreadMinimumHeightDp(true, false, true));
         assertEquals(6, MainActivity.resolveManualHomeRecentThreadGapDp(false, true, true));
         assertEquals(5, MainActivity.resolveManualHomeRecentThreadVerticalPaddingDp(false, true, true));
-        assertEquals(10, MainActivity.resolveManualHomeRecentThreadGapDp(true, true, false));
-        assertEquals(9, MainActivity.resolveManualHomeRecentThreadVerticalPaddingDp(true, true, false));
+        assertEquals(8, MainActivity.resolveManualHomeRecentThreadGapDp(true, true, false));
+        assertEquals(7, MainActivity.resolveManualHomeRecentThreadVerticalPaddingDp(true, true, false));
     }
 
     @Test
@@ -261,7 +261,7 @@ public final class MainActivityHomeChromeTest {
         assertEquals(0, MainActivity.resolveManualHomeCategoryShelfMinimumHeightDp(0));
         assertEquals(60, MainActivity.resolveManualHomeCategoryShelfMinimumHeightDp(3));
         assertEquals(128, MainActivity.resolveManualHomeCategoryShelfMinimumHeightDp(6));
-        assertEquals(150, MainActivity.resolveTabletManualHomeCategoryShelfMinimumHeightDp(6));
+        assertEquals(120, MainActivity.resolveTabletManualHomeCategoryShelfMinimumHeightDp(6));
     }
 
     @Test

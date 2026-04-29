@@ -245,11 +245,19 @@ internal fun threadRailShouldShowSource(source: SourceState, guideMode: Boolean)
 internal fun threadRailVisibleSources(sources: List<SourceState>, guideMode: Boolean): List<SourceState> {
     val visibleSources = sources.filter { threadRailShouldShowSource(it, guideMode) }
     if (guideMode) {
-        return visibleSources.sortedByDescending { threadRailSourceContextPriority(it) }
+        return visibleSources.sortedWith(compareBy<SourceState> { threadRailGuideSourceOrder(it) })
     }
     val deterministicThreadIds = setOf("GD-220", "GD-345")
     return visibleSources.filter { it.id.uppercase() in deterministicThreadIds }
 }
+
+internal fun threadRailGuideSourceOrder(source: SourceState): Int =
+    when (source.id.trim().uppercase()) {
+        "GD-220" -> 0
+        "GD-132" -> 1
+        "GD-345" -> 2
+        else -> 10 - threadRailSourceContextPriority(source)
+    }
 
 private fun String.isConfusingSourceFallbackTitle(): Boolean =
     trim().equals("Field note summary", ignoreCase = true)

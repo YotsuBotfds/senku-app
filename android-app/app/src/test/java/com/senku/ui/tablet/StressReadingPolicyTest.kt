@@ -103,15 +103,15 @@ class StressReadingPolicyTest {
     }
 
     @Test
-    fun tabletGuideChromePolicyKeepsLandscapeTitleAboveRails() {
+    fun tabletGuideChromePolicyKeepsCompactTitleAboveRails() {
         val landscapePolicy = tabletGuideChromePolicy(isLandscape = true)
         val portraitPolicy = tabletGuideChromePolicy(isLandscape = false)
 
-        assertEquals(72, landscapePolicy.topBarMinHeightDp)
-        assertEquals(28, landscapePolicy.topBarHorizontalPaddingDp)
-        assertEquals(12, landscapePolicy.topBarVerticalPaddingDp)
-        assertEquals(20, landscapePolicy.topBarTitleLineHeightSp)
-        assertEquals(66, portraitPolicy.topBarMinHeightDp)
+        assertEquals(58, landscapePolicy.topBarMinHeightDp)
+        assertEquals(24, landscapePolicy.topBarHorizontalPaddingDp)
+        assertEquals(8, landscapePolicy.topBarVerticalPaddingDp)
+        assertEquals(18, landscapePolicy.topBarTitleLineHeightSp)
+        assertEquals(56, portraitPolicy.topBarMinHeightDp)
         assertTrue(landscapePolicy.topBarMinHeightDp > portraitPolicy.topBarMinHeightDp)
         assertTrue(landscapePolicy.topBarHorizontalPaddingDp > portraitPolicy.topBarHorizontalPaddingDp)
     }
@@ -123,6 +123,20 @@ class StressReadingPolicyTest {
     }
 
     @Test
+    fun tabletGuideReferencePanePromotesOpenedFromGuideAsAnchor() {
+        val rows = tabletGuideReferencePaneRows(
+            listOf(
+                XRefState("GD-132", "Foundry & Metal Casting", "ANCHOR"),
+                XRefState("GD-220", "Abrasives Manufacturing", "RELATED"),
+                XRefState("GD-499", "Bellows & Forge Blower", "REQUIRED"),
+            ),
+        )
+
+        assertEquals(listOf("GD-220", "GD-132", "GD-499"), rows.map { it.id })
+        assertEquals(listOf("ANCHOR", "RELATED", "REQUIRED"), rows.map { it.relation })
+    }
+
+    @Test
     fun tabletGuideNavigationLabelsUseSectionLanguage() {
         val labels = tabletGuideNavigationLabels()
 
@@ -130,6 +144,18 @@ class StressReadingPolicyTest {
         assertEquals("CROSS-REFERENCE", labels.referenceLabel)
         assertEquals("No sections yet.", labels.emptySectionLabel)
         assertEquals("No cross-references yet.", labels.emptyReferenceLabel)
+    }
+
+    @Test
+    fun tabletGuideRailRowsUseMockSectionNumberAndTitle() {
+        assertEquals(
+            TabletGuideRailRowParts("§3", "Hazard screen"),
+            tabletGuideRailRowParts("§3 Hazard screen", fallbackIndex = 9),
+        )
+        assertEquals(
+            TabletGuideRailRowParts("§2", "Required reading"),
+            tabletGuideRailRowParts("Required reading", fallbackIndex = 2),
+        )
     }
 
     @Test
@@ -392,10 +418,7 @@ class StressReadingPolicyTest {
             turns = listOf(threadTurn("q1", sourceCount = 3)),
         )
 
-        assertEquals(
-            "THREAD CONTEXT KEPT - 1 TURN - 3 SOURCES",
-            tabletComposerContextHint(state),
-        )
+        assertEquals("GD-TEST - CONTEXT KEPT - 3 SOURCES VISIBLE", tabletComposerContextHint(state))
     }
 
     @Test
@@ -523,8 +546,17 @@ class StressReadingPolicyTest {
     @Test
     fun tabletThreadChromeSuppressesAnswerEvidenceResidue() {
         assertFalse(tabletTitleBarShouldShowSupportRows(TabletDetailMode.Thread))
-        assertTrue(tabletTitleBarShouldShowSupportRows(TabletDetailMode.Answer))
+        assertFalse(tabletTitleBarShouldShowSupportRows(TabletDetailMode.Answer))
         assertTrue(tabletTitleBarShouldShowSupportRows(TabletDetailMode.Guide))
+        assertEquals(
+            "Rain shelter",
+            tabletTitleBarTitle(
+                detailMode = TabletDetailMode.Answer,
+                guideMode = false,
+                guideTitle = "Rain shelter",
+                turnCount = 1,
+            ),
+        )
     }
 
     @Test
@@ -550,7 +582,7 @@ class StressReadingPolicyTest {
     }
 
     @Test
-    fun tabletComposerContextHintKeepsThreadLanguageOutsideGuideMode() {
+    fun tabletComposerContextHintUsesAnswerFooterReserveLanguageOutsideGuideMode() {
         val state = tabletDetailState(
             guideId = "GD-FALLBACK",
             guideTitle = " ",
@@ -566,7 +598,7 @@ class StressReadingPolicyTest {
         )
 
         assertEquals(
-            "THREAD CONTEXT KEPT - NO TURNS - NO SOURCES",
+            "GD-FALLBACK - CONTEXT KEPT - NO SOURCES VISIBLE",
             tabletComposerContextHint(state),
         )
     }

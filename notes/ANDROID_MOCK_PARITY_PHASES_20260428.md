@@ -1522,6 +1522,52 @@ Next slice candidates:
 - Answer tablet hierarchy/source rail cleanup.
 - Full visual review against morning screenshots before deeper refactors.
 
+## Wave61 Checkpoint
+
+Committed scope pending at the time of this update:
+
+- Tablet guide/answer shell: added a guide-only section rail, tightened guide
+  top chrome, kept the guide paper centered, reduced answer-mode top metadata,
+  and switched answer composer context toward `GD-345 - CONTEXT KEPT - 3
+  SOURCES VISIBLE`.
+- Guide reference rail: promoted `GD-220` as the first anchor-like reference
+  for the opened-from-foundry guide context while retaining `GD-132` as related.
+- Home/search: tightened tablet home header/search/category/recent proportions,
+  restored category counts after visual review, and polished search result row
+  density/score ticks.
+- Phone detail: tightened emergency danger/why-card copy and restored thread
+  answer metadata/chip context for the phone-landscape flow.
+
+Fresh proof:
+
+- Pack:
+  `artifacts/ui_state_pack/wave61_parallel_ui_polish_final/20260429_000744`
+- Canonical mocks:
+  `artifacts/ui_state_pack/wave61_parallel_ui_polish_final/20260429_000744/mocks`
+- Zip:
+  `artifacts/ui_state_pack/wave61_parallel_ui_polish_final/20260429_000744_mocks.zip`
+- Summary: status `pass`, states `22/22`, failures `0`, ANRs `0`, mock pack
+  `pass`, homogeneous matrix `true`, rotation mismatch `0`.
+- APK SHA:
+  `a3a0cfb47910c550c9a5993d9f276f0ba87a4c42486340d7c668aae769a5739a`
+- Validation: focused integrated tests passed for tablet stress/rail policies,
+  home navigation/chrome, search row/card heuristics, and legacy detail
+  emergency/thread formatters. The broad
+  `TabletEvidenceVisibilityPolicyTest.tabletThreadModeKeepsEvidenceSupportWithoutBecomingGuideReader`
+  assertion remains a known pre-existing policy drift; method-level evidence
+  promotion coverage passed.
+- Visual note: tablet home category counts and guide `GD-220 ANCHOR` reference
+  order were spot-checked after the final integrator fix.
+
+Next slice candidates:
+
+- Tablet guide typography/rail scale still needs target-level refinement; the
+  structure is closer but still not exact.
+- Answer tablet landscape remains too tall/airy in the central article and left
+  support rail compared with the target.
+- Search/home can move to final text-size and status/nav chrome polish after
+  detail screens stabilize.
+
 ## Parallelization Rules
 
 - Start every worker with `git status --short`, `git log --oneline -n 8

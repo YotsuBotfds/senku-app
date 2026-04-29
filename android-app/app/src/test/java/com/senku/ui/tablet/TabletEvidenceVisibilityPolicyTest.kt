@@ -238,6 +238,22 @@ class TabletEvidenceVisibilityPolicyTest {
     }
 
     @Test
+    fun guideModeReferenceRowsPromoteAbrasivesAnchorForFoundryGuideContext() {
+        val rows = tabletGuideModeReferenceRows(
+            anchor = AnchorState("", "", "", "", "", false),
+            xrefs = listOf(
+                XRefState(id = "GD-132", title = "Foundry & Metal Casting", relation = "ANCHOR"),
+                XRefState(id = "GD-220", title = "Abrasives Manufacturing"),
+                XRefState(id = "GD-225", title = "Bloomery Furnace", relation = "REQUIRED"),
+                XRefState(id = "GD-499", title = "Bellows Forge Blower Construction", relation = "REQUIRED"),
+            ),
+        )
+
+        assertEquals(listOf("GD-220", "GD-132", "GD-225", "GD-499"), rows.map { it.guideId })
+        assertEquals(listOf("ANCHOR", "RELATED", "REQUIRED", "REQUIRED"), rows.map { it.relation })
+    }
+
+    @Test
     fun answerModeSourceRailTitleUsesCanonicalBulletSeparator() {
         assertEquals("SOURCES \u2022 3", answerModeSourceSectionTitle(3))
         assertEquals("SOURCES \u2022 0", answerModeSourceSectionTitle(-7))

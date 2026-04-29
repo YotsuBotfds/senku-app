@@ -45,11 +45,20 @@ public final class SearchResultAdapterTest {
 
     @Test
     public void tabletRowsUseCompactScoreBarWidths() {
-        assertEquals(20, SearchResultAdapter.scoreBarWidthDpForPositionForTest(0));
-        assertEquals(18, SearchResultAdapter.scoreBarWidthDpForPositionForTest(1));
-        assertEquals(17, SearchResultAdapter.scoreBarWidthDpForPositionForTest(2));
-        assertEquals(15, SearchResultAdapter.scoreBarWidthDpForPositionForTest(3));
-        assertEquals(13, SearchResultAdapter.scoreBarWidthDpForPositionForTest(7));
+        assertEquals(22, SearchResultAdapter.scoreBarWidthDpForPositionForTest(0));
+        assertEquals(22, SearchResultAdapter.scoreBarWidthDpForPositionForTest(1));
+        assertEquals(22, SearchResultAdapter.scoreBarWidthDpForPositionForTest(2));
+        assertEquals(22, SearchResultAdapter.scoreBarWidthDpForPositionForTest(3));
+        assertEquals(22, SearchResultAdapter.scoreBarWidthDpForPositionForTest(7));
+    }
+
+    @Test
+    public void tabletRowsUseScoreSensitiveTickFill() {
+        assertEquals(0.94f, SearchResultAdapter.scoreBarFillFractionForPositionForTest(0), 0.001f);
+        assertEquals(0.82f, SearchResultAdapter.scoreBarFillFractionForPositionForTest(1), 0.001f);
+        assertEquals(0.74f, SearchResultAdapter.scoreBarFillFractionForPositionForTest(2), 0.001f);
+        assertEquals(0.62f, SearchResultAdapter.scoreBarFillFractionForPositionForTest(3), 0.001f);
+        assertEquals(0.52f, SearchResultAdapter.scoreBarFillFractionForPositionForTest(7), 0.001f);
     }
 
     @Test

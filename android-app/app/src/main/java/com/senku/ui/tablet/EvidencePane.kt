@@ -347,6 +347,7 @@ private fun CrossReferenceSection(
 ) {
     val visibleXRefs = tabletSourceGraphVisibleXRefs(anchor, xrefs)
     val answerRows = tabletAnswerModeSourceRows(anchor, visibleXRefs)
+    val referenceRows = tabletGuideModeReferenceRows(anchor, visibleXRefs)
     val referenceCount = buildCrossReferenceCardCount(anchor, visibleXRefs)
     val sourceCount = buildAnswerModeSourceHeaderCount(
         anchor = anchor,
@@ -354,7 +355,7 @@ private fun CrossReferenceSection(
         answerSourceCount = answerSourceCount,
     )
     val headerCount = if (answerMode) sourceCount else referenceCount
-    val hasRows = if (answerMode) answerRows.isNotEmpty() else anchor.hasSource || visibleXRefs.isNotEmpty()
+    val hasRows = if (answerMode) answerRows.isNotEmpty() else referenceRows.isNotEmpty()
     Column(
         modifier = Modifier.semantics {
             isTraversalGroup = true
@@ -397,27 +398,20 @@ private fun CrossReferenceSection(
                     )
                 }
             } else {
-                if (anchor.hasSource) {
+                referenceRows.forEach { row ->
                     ManualEvidenceCard(
-                        guideId = anchor.id,
-                        relation = "ANCHOR",
-                        title = anchor.title,
-                        section = anchor.section,
-                        snippet = "",
-                        onClick = onAnchorClick,
-                        titleMaxLines = 2,
-                        snippetMaxLines = 1,
-                        density = EvidenceCardDensity.Compact,
-                    )
-                }
-                visibleXRefs.forEach { xref ->
-                    ManualEvidenceCard(
-                        guideId = xref.id,
-                        relation = xref.relation.trim().ifEmpty { "RELATED" },
-                        title = xref.title,
-                        section = "",
-                        snippet = "",
-                        onClick = { onXRefClick(xref.id) },
+                        guideId = row.guideId,
+                        relation = row.relation,
+                        title = row.title,
+                        section = row.section,
+                        snippet = row.quote,
+                        onClick = {
+                            if (row.guideId.equals(anchor.id, ignoreCase = true)) {
+                                onAnchorClick()
+                            } else {
+                                onXRefClick(row.guideId)
+                            }
+                        },
                         titleMaxLines = 2,
                         snippetMaxLines = 1,
                         density = EvidenceCardDensity.Compact,
@@ -427,6 +421,61 @@ private fun CrossReferenceSection(
         }
     }
 }
+
+internal fun tabletGuideModeReferenceRows(anchor: AnchorState, xrefs: List<XRefState>): List<TabletEvidenceCardRow> {
+    val visibleXRefs = tabletSourceGraphVisibleXRefs(anchor, xrefs)
+    val rows = mutableListOf<TabletEvidenceCardRow>()
+    val gd220 = visibleXRefs.firstOrNull { it.id.trim().equals("GD-220", ignoreCase = true) }
+    val anchorLikeGd220 = gd220 != null && hasFoundryCurrentAnchor(anchor, visibleXRefs)
+    val seenGuideIds = mutableSetOf<String>()
+
+    if (anchorLikeGd220) {
+        rows += requireNotNull(gd220).toGuideReferenceRow(relationOverride = "ANCHOR")
+        seenGuideIds += "GD-220"
+    } else if (anchor.hasSource) {
+        val anchorId = anchor.id.trim()
+        rows += TabletEvidenceCardRow(
+            guideId = anchorId,
+            relation = "ANCHOR",
+            title = anchor.title.trim(),
+            section = anchor.section.trim(),
+        )
+        if (anchorId.isNotEmpty()) {
+            seenGuideIds += anchorId.uppercase()
+        }
+    }
+
+    visibleXRefs.forEach { xref ->
+        val xrefId = xref.id.trim()
+        if (xrefId.isEmpty() || !seenGuideIds.add(xrefId.uppercase())) {
+            return@forEach
+        }
+        val relation = if (anchorLikeGd220 && xref.relation.trim().equals("ANCHOR", ignoreCase = true)) {
+            "RELATED"
+        } else {
+            xref.relation.trim().ifEmpty { "RELATED" }
+        }
+        rows += xref.toGuideReferenceRow(relationOverride = relation)
+    }
+    return rows
+}
+
+private fun hasFoundryCurrentAnchor(anchor: AnchorState, xrefs: List<XRefState>): Boolean {
+    if (anchor.id.trim().equals("GD-132", ignoreCase = true)) {
+        return true
+    }
+    return xrefs.any { xref ->
+        xref.relation.trim().equals("ANCHOR", ignoreCase = true) &&
+            xref.id.trim().equals("GD-132", ignoreCase = true)
+    }
+}
+
+private fun XRefState.toGuideReferenceRow(relationOverride: String): TabletEvidenceCardRow =
+    TabletEvidenceCardRow(
+        guideId = id.trim(),
+        relation = relationOverride.trim().ifEmpty { "RELATED" }.uppercase(),
+        title = title.trim(),
+    )
 
 internal fun buildCrossReferenceCardCount(anchor: AnchorState, xrefs: List<XRefState>): Int =
     tabletSourceGraphVisibleXRefs(anchor, xrefs).size

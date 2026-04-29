@@ -115,17 +115,19 @@ class ThreadRailPolicyTest {
     }
 
     @Test
-    fun threadRailSourceLabelsPrioritizeRainShelterContextOverAbrasivesAnchorRole() {
+    fun threadRailGuideSourceOrderKeepsAnchorLikeReferencesBeforeRainShelterContext() {
         val rainShelter = SourceState("rain", "GD-345", "Rain shelter in wet weather", isAnchor = false, isSelected = false)
         val abrasivesAnchor = SourceState("abrasives", "GD-220", "Abrasives Manufacturing", isAnchor = true, isSelected = true)
 
         assertEquals(3, threadRailSourceContextPriority(rainShelter))
         assertEquals(0, threadRailSourceContextPriority(abrasivesAnchor))
+        assertEquals(2, threadRailGuideSourceOrder(rainShelter))
+        assertEquals(0, threadRailGuideSourceOrder(abrasivesAnchor))
         assertEquals("GD-345 - RAIN SHELTER", threadRailSourceDisplayLabel(rainShelter, guideMode = true))
         assertEquals("GD-220 - ANCHOR", threadRailSourceDisplayLabel(abrasivesAnchor, guideMode = true))
         assertEquals(
-            listOf(rainShelter, abrasivesAnchor),
-            listOf(abrasivesAnchor, rainShelter).sortedByDescending { threadRailSourceContextPriority(it) },
+            listOf(abrasivesAnchor, rainShelter),
+            threadRailVisibleSources(listOf(rainShelter, abrasivesAnchor), guideMode = true),
         )
     }
 
@@ -186,7 +188,7 @@ class ThreadRailPolicyTest {
             threadRailSectionTitle("SOURCES", threadRailVisibleSources(listOf(anchor, rainShelter, extra), guideMode = false).size),
         )
         assertEquals(
-            listOf("GD-345", "GD-132", "GD-220"),
+            listOf("GD-220", "GD-132", "GD-345"),
             threadRailVisibleSources(listOf(extra, anchor, rainShelter), guideMode = true).map { it.id },
         )
     }

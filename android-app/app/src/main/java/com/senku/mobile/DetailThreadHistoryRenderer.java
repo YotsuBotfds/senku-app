@@ -255,7 +255,7 @@ final class DetailThreadHistoryRenderer {
             state
         ));
 
-        List<String> guideLabels = guideChipLabelsForTurn(turn);
+        List<String> guideLabels = visibleGuideChipLabelsForTurn(turn, state, inlineTranscriptBubble);
         if (!guideLabels.isEmpty() && shouldShowGuideChips(state, inlineTranscriptBubble, container)) {
             turnRow.addView(buildGuideChipRow(guideLabels));
         }
@@ -450,8 +450,21 @@ final class DetailThreadHistoryRenderer {
         StringBuilder builder = new StringBuilder("A")
             .append(safeTurnNumber)
             .append(time);
-        builder.append(" \u00B7 ANSWER");
+        String anchorGuideId = answerAnchorGuideIdForTurn(turn, previousAnchorGuideId);
+        if (!anchorGuideId.isEmpty()) {
+            builder.append(" \u00B7 ANCHOR ").append(anchorGuideId);
+        } else {
+            builder.append(" \u00B7 ANSWER");
+        }
         return builder.toString();
+    }
+
+    static String answerAnchorGuideIdForTurn(SessionMemory.TurnSnapshot turn, String previousAnchorGuideId) {
+        String contextualGuideId = contextualPrimaryGuideIdForTurn(turn);
+        if (!contextualGuideId.isEmpty()) {
+            return contextualGuideId;
+        }
+        return safe(previousAnchorGuideId).trim();
     }
 
     static String compactAnchorLabel(List<String> guideLabels) {
@@ -616,6 +629,22 @@ final class DetailThreadHistoryRenderer {
         return guideChipIdsForTurn(turn);
     }
 
+    static List<String> visibleGuideChipLabelsForTurn(
+        SessionMemory.TurnSnapshot turn,
+        State state,
+        boolean inlineTranscriptBubble
+    ) {
+        List<String> guideIds = guideChipLabelsForTurn(turn);
+        if (guideIds.size() <= 1 || !isPhoneLandscapeNoRailTranscript(state, inlineTranscriptBubble)) {
+            return guideIds;
+        }
+        String contextualGuideId = contextualPrimaryGuideIdForTurn(turn);
+        if (!contextualGuideId.isEmpty()) {
+            return Collections.singletonList(contextualGuideId);
+        }
+        return new ArrayList<>(guideIds.subList(0, 1));
+    }
+
     static boolean shouldShowGuideChips(State state, boolean inlineTranscriptBubble, LinearLayout container) {
         return shouldShowGuideChips(
             state,
@@ -728,6 +757,20 @@ final class DetailThreadHistoryRenderer {
             }
         }
         return -1;
+    }
+
+    private static String contextualPrimaryGuideIdForTurn(SessionMemory.TurnSnapshot turn) {
+        if (turn == null) {
+            return "";
+        }
+        for (SearchResult source : prioritizedSourceResultsForTurn(turn)) {
+            String guideId = safe(source == null ? null : source.guideId).trim();
+            if (!guideId.isEmpty()) {
+                return guideId;
+            }
+        }
+        List<String> guideIds = guideIdsForTurn(turn);
+        return guideIds.isEmpty() ? "" : guideIds.get(0);
     }
 
     private static boolean isTranscriptAnswerHeading(String line) {

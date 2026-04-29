@@ -128,15 +128,15 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="56dp"
+            android:layout_height="48dp"
             android:gravity="center_vertical"
             android:orientation="horizontal"
             android:paddingStart="32dp"
             android:paddingEnd="32dp">
 
             <ImageView
-                android:layout_width="18dp"
-                android:layout_height="18dp"
+                android:layout_width="16dp"
+                android:layout_height="16dp"
                 android:contentDescription="@null"
                 android:importantForAccessibility="no"
                 android:padding="3dp"
@@ -145,9 +145,9 @@
 
             <View
                 android:layout_width="1dp"
-                android:layout_height="18dp"
-                android:layout_marginStart="12dp"
-                android:layout_marginEnd="18dp"
+                android:layout_height="16dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="14dp"
                 android:background="@color/senku_rev03_hairline_strong" />
 
             <TextView
@@ -162,11 +162,12 @@
                 android:text="HOME SENKU &#8226; Field manual &#8226; ed.2"
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:textColor="@color/senku_rev03_ink_1"
+                android:textSize="11sp"
                 android:textStyle="bold" />
 
             <ImageView
-                android:layout_width="18dp"
-                android:layout_height="18dp"
+                android:layout_width="16dp"
+                android:layout_height="16dp"
                 android:contentDescription="@string/search_button"
                 android:padding="2dp"
                 android:src="@drawable/ic_search_magnifier"
@@ -175,7 +176,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="18dp"
+                android:layout_marginStart="14dp"
                 android:fontFamily="monospace"
                 android:includeFontPadding="false"
                 android:text="..."
@@ -217,7 +218,7 @@
                         android:text="Field manual"
                         android:textAppearance="?android:attr/textAppearanceLarge"
                         android:textColor="@color/senku_rev03_ink_0"
-                        android:textSize="30sp"
+                        android:textSize="28sp"
                         android:textStyle="bold" />
 
                     <TextView
@@ -228,12 +229,12 @@
                         android:text="754 guides &#8226; 12 categories &#8226; ready offline &#8226; ed. 2"
                         android:textAppearance="?android:attr/textAppearanceSmall"
                         android:textColor="@color/senku_rev03_ink_1"
-                        android:textSize="16sp" />
+                        android:textSize="15sp" />
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="38dp"
-                        android:layout_marginTop="28dp"
+                        android:layout_marginTop="22dp"
                         android:background="@drawable/bg_manual_home_status"
                         android:gravity="center_vertical"
                         android:orientation="horizontal"
@@ -271,7 +272,7 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="56dp"
-                        android:layout_marginTop="34dp"
+                        android:layout_marginTop="26dp"
                         android:addStatesFromChildren="true"
                         android:background="@drawable/bg_manual_home_search"
                         android:gravity="center_vertical"
@@ -280,8 +281,8 @@
                         android:paddingEnd="20dp">
 
                         <ImageView
-                            android:layout_width="42dp"
-                            android:layout_height="42dp"
+                            android:layout_width="38dp"
+                            android:layout_height="38dp"
                             android:background="@drawable/bg_manual_home_nav_shell"
                             android:contentDescription="@string/search_input_description"
                             android:padding="10dp"
@@ -308,14 +309,14 @@
                             android:padding="0dp"
                             android:textColor="@color/senku_rev03_ink_0"
                             android:textColorHint="@color/senku_rev03_ink_2"
-                            android:textSize="17sp" />
+                            android:textSize="16sp" />
                     </LinearLayout>
 
                     <HorizontalScrollView
                         android:id="@+id/search_suggestions_section"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="28dp"
+                        android:layout_marginTop="18dp"
                         android:fadingEdge="horizontal"
                         android:fadingEdgeLength="24dp"
                         android:scrollbars="none"

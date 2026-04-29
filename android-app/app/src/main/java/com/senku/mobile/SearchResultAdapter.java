@@ -3,7 +3,9 @@ package com.senku.mobile;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.graphics.Typeface;
+import android.graphics.drawable.ClipDrawable;
 import android.graphics.drawable.GradientDrawable;
+import android.graphics.drawable.LayerDrawable;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextUtils;
@@ -41,6 +43,7 @@ import static com.senku.ui.search.SearchResultCardKt.metadataLineForSearchResult
 public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResultAdapter.ResultViewHolder> {
     private static final int MAX_HIGHLIGHT_TERMS = 4;
     private static final int DEFAULT_MAX_DISPLAYED_ITEMS = 4;
+    private static final int SCORE_TICK_TRACK_WIDTH_DP = 22;
 
     public static final class LinkedGuidePreview {
         public final String guideId;
@@ -162,11 +165,7 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
         boolean smallPhonePortraitCard = isSmallPhonePortraitCard(context);
         boolean largeFontCard = isLargeFontScale(context);
         boolean stressCompactCard = landscapePhoneCard && largeFontCard;
-        holder.title.setText(formatDisplayText(
-            result.title,
-            richTabletCard ? 96 : (landscapePhoneCard ? 82 : 76),
-            2
-        ));
+        holder.title.setText(formatDisplayText(result.title, searchRowTitleBudget(richTabletCard, landscapePhoneCard), 2));
         holder.title.setMaxLines((landscapePhoneCard || stressCompactCard) ? 1 : 2);
         holder.title.setEllipsize(TextUtils.TruncateAt.END);
         holder.meta.setText(buildTabletGuideMarker(result, position));
@@ -195,7 +194,7 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
             richTabletCard ? 124 : (landscapePhoneCard ? 142 : (smallPhonePortraitCard ? 126 : 190))
         );
         holder.snippet.setText(cleanDisplayText(snippet, 0));
-        holder.snippet.setMaxLines(richTabletCard ? 3 : ((landscapePhoneCard || stressCompactCard) ? 1 : 2));
+        holder.snippet.setMaxLines(richTabletCard ? 2 : ((landscapePhoneCard || stressCompactCard) ? 1 : 2));
         holder.snippet.setEllipsize(TextUtils.TruncateAt.END);
         if (smallPhonePortraitCard || stressCompactCard) {
             holder.snippet.setAlpha(0.90f);
@@ -224,7 +223,7 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
         LinearLayout row = new LinearLayout(context);
         row.setId(R.id.result_legacy_mirror);
         row.setOrientation(LinearLayout.VERTICAL);
-        row.setPadding(dp(2), dp(7), dp(2), 0);
+        row.setPadding(dp(0), dp(8), dp(0), 0);
         root.addView(row, new FrameLayout.LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT,
             ViewGroup.LayoutParams.WRAP_CONTENT
@@ -238,7 +237,7 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
             ViewGroup.LayoutParams.WRAP_CONTENT
         ));
 
-        TextView meta = buildMonoTextView(context, 8, 11, Typeface.BOLD);
+        TextView meta = buildMonoTextView(context, 9, 12, Typeface.BOLD);
         meta.setId(R.id.result_meta);
         meta.setTextColor(ContextCompat.getColor(context, R.color.senku_rev03_accent));
         meta.setAllCaps(true);
@@ -252,7 +251,7 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
         LinearLayout scoreCluster = new LinearLayout(context);
         scoreCluster.setOrientation(LinearLayout.HORIZONTAL);
         scoreCluster.setGravity(android.view.Gravity.CENTER_VERTICAL);
-        scoreCluster.setPadding(dp(4), 0, 0, 0);
+        scoreCluster.setPadding(dp(8), 0, 0, 0);
         head.addView(scoreCluster, new LinearLayout.LayoutParams(
             ViewGroup.LayoutParams.WRAP_CONTENT,
             ViewGroup.LayoutParams.WRAP_CONTENT
@@ -261,14 +260,14 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
         View scoreBar = new View(context);
         scoreBar.setId(R.id.result_accent_strip);
         scoreCluster.addView(scoreBar, new LinearLayout.LayoutParams(
-            dp(20),
+            dp(SCORE_TICK_TRACK_WIDTH_DP),
             dp(3)
         ));
 
-        TextView score = buildMonoTextView(context, 8, 10, Typeface.BOLD);
+        TextView score = buildMonoTextView(context, 9, 11, Typeface.BOLD);
         score.setId(R.id.result_retrieval_badge);
         score.setTextColor(ContextCompat.getColor(context, R.color.senku_rev03_accent));
-        score.setPadding(dp(2), 0, 0, 0);
+        score.setPadding(dp(5), 0, 0, 0);
         scoreCluster.addView(score, new LinearLayout.LayoutParams(
             ViewGroup.LayoutParams.WRAP_CONTENT,
             ViewGroup.LayoutParams.WRAP_CONTENT
@@ -278,7 +277,7 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
         title.setId(R.id.result_title);
         title.setTextColor(ContextCompat.getColor(context, R.color.senku_text_light));
         title.setTypeface(Typeface.DEFAULT, Typeface.BOLD);
-        title.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14);
+        title.setTextSize(TypedValue.COMPLEX_UNIT_SP, 15);
         title.setLineSpacing(0, 1.03f);
         LinearLayout.LayoutParams titleParams = new LinearLayout.LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT,
@@ -289,7 +288,7 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
 
         TextView section = buildMonoTextView(context, 8, 11, Typeface.NORMAL);
         section.setId(R.id.result_section);
-        section.setTextColor(ContextCompat.getColor(context, R.color.senku_text_muted_light));
+        section.setTextColor(ContextCompat.getColor(context, R.color.senku_rev03_ink_2));
         section.setAllCaps(true);
         section.setLetterSpacing(0.04f);
         LinearLayout.LayoutParams sectionParams = new LinearLayout.LayoutParams(
@@ -301,9 +300,9 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
 
         TextView snippet = new TextView(context);
         snippet.setId(R.id.result_snippet);
-        snippet.setTextColor(ContextCompat.getColor(context, R.color.senku_text_muted_light));
+        snippet.setTextColor(ContextCompat.getColor(context, R.color.senku_rev03_ink_1));
         snippet.setTextSize(TypedValue.COMPLEX_UNIT_SP, 12);
-        snippet.setLineSpacing(0, 1.06f);
+        snippet.setLineSpacing(0, 1.10f);
         LinearLayout.LayoutParams snippetParams = new LinearLayout.LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT,
             ViewGroup.LayoutParams.WRAP_CONTENT
@@ -352,7 +351,7 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
             ViewGroup.LayoutParams.MATCH_PARENT,
             1
         );
-        dividerParams.topMargin = dp(12);
+        dividerParams.topMargin = dp(13);
         row.addView(divider, dividerParams);
 
         ComposeView composeView = new ComposeView(context);
@@ -466,29 +465,45 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
     }
 
     private static int scoreBarWidthDpForScore(int score) {
-        if (score >= 90) {
-            return 20;
-        }
-        if (score >= 75) {
-            return 18;
-        }
-        if (score >= 70) {
-            return 17;
-        }
-        if (score >= 60) {
-            return 15;
-        }
-        return 13;
+        return SCORE_TICK_TRACK_WIDTH_DP;
     }
 
-    private GradientDrawable buildScoreBarDrawable(int score) {
-        GradientDrawable drawable = new GradientDrawable();
-        drawable.setShape(GradientDrawable.RECTANGLE);
-        drawable.setCornerRadius(0f);
-        drawable.setColor(score >= 70
+    static float scoreBarFillFractionForPositionForTest(int position) {
+        return scoreBarFillFractionForScore(tabletScoreForPosition(position));
+    }
+
+    private static float scoreBarFillFractionForScore(int score) {
+        if (score >= 90) {
+            return 0.94f;
+        }
+        if (score >= 75) {
+            return 0.82f;
+        }
+        if (score >= 70) {
+            return 0.74f;
+        }
+        if (score >= 60) {
+            return 0.62f;
+        }
+        return 0.52f;
+    }
+
+    private LayerDrawable buildScoreBarDrawable(int score) {
+        GradientDrawable track = new GradientDrawable();
+        track.setShape(GradientDrawable.RECTANGLE);
+        track.setCornerRadius(dp(1));
+        track.setColor(ContextCompat.getColor(inflater.getContext(), R.color.senku_rev03_olive_40));
+
+        GradientDrawable fill = new GradientDrawable();
+        fill.setShape(GradientDrawable.RECTANGLE);
+        fill.setCornerRadius(dp(1));
+        fill.setColor(score >= 70
             ? ContextCompat.getColor(inflater.getContext(), R.color.senku_rev03_accent)
             : ContextCompat.getColor(inflater.getContext(), R.color.senku_text_muted_light));
-        return drawable;
+        ClipDrawable clippedFill = new ClipDrawable(fill, android.view.Gravity.START, ClipDrawable.HORIZONTAL);
+        clippedFill.setLevel(Math.round(scoreBarFillFractionForScore(score) * 10000f));
+
+        return new LayerDrawable(new android.graphics.drawable.Drawable[]{track, clippedFill});
     }
 
     private GradientDrawable buildFlatBadgeDrawable(Context context, int color) {
@@ -788,6 +803,16 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
             }
             : null;
         bindSearchResultCard(holder.composeView, model, cardClick, continueThreadClick, linkedGuideClick);
+    }
+
+    private static int searchRowTitleBudget(boolean richTabletCard, boolean landscapePhoneCard) {
+        if (richTabletCard) {
+            return 112;
+        }
+        if (landscapePhoneCard) {
+            return 90;
+        }
+        return 88;
     }
 
     private SearchResultCardModel buildSearchResultCardModel(SearchResult result, int position) {

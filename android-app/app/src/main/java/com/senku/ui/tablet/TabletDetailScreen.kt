@@ -2,6 +2,7 @@ package com.senku.ui.tablet
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -17,6 +18,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
@@ -28,7 +30,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
@@ -248,6 +252,11 @@ internal data class TabletGuideRequiredReadingParts(
     val title: String,
 )
 
+internal data class TabletGuideRailRowParts(
+    val section: String,
+    val title: String,
+)
+
 private val FoundryGuideRailSections = listOf(
     "Area readiness",
     "Required reading",
@@ -343,22 +352,52 @@ internal fun tabletGuideReferenceRailWidthDp(isLandscape: Boolean): Int =
 internal fun tabletGuideChromePolicy(isLandscape: Boolean): TabletGuideChromePolicy =
     if (isLandscape) {
         TabletGuideChromePolicy(
-            topBarMinHeightDp = 72,
-            topBarHorizontalPaddingDp = 28,
-            topBarVerticalPaddingDp = 12,
-            topBarTitleLineHeightSp = 20,
+            topBarMinHeightDp = 58,
+            topBarHorizontalPaddingDp = 24,
+            topBarVerticalPaddingDp = 8,
+            topBarTitleLineHeightSp = 18,
         )
     } else {
         TabletGuideChromePolicy(
-            topBarMinHeightDp = 66,
-            topBarHorizontalPaddingDp = 24,
-            topBarVerticalPaddingDp = 11,
-            topBarTitleLineHeightSp = 19,
+            topBarMinHeightDp = 56,
+            topBarHorizontalPaddingDp = 22,
+            topBarVerticalPaddingDp = 8,
+            topBarTitleLineHeightSp = 18,
         )
     }
 
 internal fun tabletGuideReferenceHeaderTitle(count: Int): String =
     "${tabletGuideNavigationLabels().referenceLabel} \u00B7 ${count.coerceAtLeast(0)}"
+
+internal fun tabletGuideReferencePaneRows(xrefs: List<XRefState>): List<XRefState> {
+    val visible = xrefs.filter { it.id.trim().isNotEmpty() }
+    val hasFoundryAnchor = visible.any {
+        it.id.trim().equals("GD-132", ignoreCase = true) &&
+            it.relation.trim().equals("ANCHOR", ignoreCase = true)
+    }
+    val abrasives = visible.firstOrNull { it.id.trim().equals("GD-220", ignoreCase = true) }
+    if (!hasFoundryAnchor || abrasives == null) {
+        return visible
+    }
+
+    val rows = mutableListOf<XRefState>()
+    val seen = mutableSetOf<String>()
+    rows += abrasives.copy(relation = "ANCHOR")
+    seen += "GD-220"
+    visible.forEach { xref ->
+        val id = xref.id.trim()
+        if (id.isEmpty() || !seen.add(id.uppercase())) {
+            return@forEach
+        }
+        val relation = if (xref.relation.trim().equals("ANCHOR", ignoreCase = true)) {
+            "RELATED"
+        } else {
+            xref.relation.trim().ifEmpty { "RELATED" }
+        }
+        rows += xref.copy(relation = relation)
+    }
+    return rows
+}
 
 internal fun tabletGuideNavigationLabels(): TabletGuideNavigationLabels =
     TabletGuideNavigationLabels(
@@ -367,6 +406,23 @@ internal fun tabletGuideNavigationLabels(): TabletGuideNavigationLabels =
         emptySectionLabel = "No sections yet.",
         emptyReferenceLabel = "No cross-references yet.",
     )
+
+internal fun tabletGuideRailRowParts(label: String, fallbackIndex: Int): TabletGuideRailRowParts {
+    val normalized = label.trim().replace(Regex("\\s+"), " ")
+    val sectionMatch = Regex("^§\\s*(\\d+)\\s+(.+)$").find(normalized)
+    if (sectionMatch != null) {
+        val number = sectionMatch.groupValues.getOrNull(1).orEmpty()
+        val title = sectionMatch.groupValues.getOrNull(2).orEmpty()
+        return TabletGuideRailRowParts(
+            section = "§$number",
+            title = title.ifEmpty { "Guide section" },
+        )
+    }
+    return TabletGuideRailRowParts(
+        section = "§${fallbackIndex.coerceAtLeast(1)}",
+        title = normalized.ifEmpty { "Guide section" },
+    )
+}
 
 internal fun tabletLandscapeDetailTypeScalePolicy(): TabletDetailTypeScalePolicy =
     TabletDetailTypeScalePolicy(
@@ -434,6 +490,24 @@ internal fun tabletComposerContextHint(state: TabletDetailState): String {
         else -> if (guideMode) "$sourceCount references" else "$sourceCount sources"
     }
 
+    if (state.detailMode == TabletDetailMode.Answer) {
+        val answerAnchor = state.guideId.trim().ifEmpty {
+            state.resolvedThreadSourceRows()
+                .firstOrNull { it.id.isNotBlank() }
+                ?.id
+                ?.trim()
+                .orEmpty()
+        }.ifEmpty { "ANSWER" }
+        val visibleSourceLabel = when (sourceCount) {
+            0 -> "NO SOURCES VISIBLE"
+            1 -> "1 SOURCE VISIBLE"
+            else -> "$sourceCount SOURCES VISIBLE"
+        }
+        return listOf(answerAnchor, "CONTEXT KEPT", visibleSourceLabel)
+            .joinToString(" - ")
+            .uppercase()
+    }
+
     return listOf(if (guideMode) "Guide context kept" else "Thread context kept", turnLabel, sourceLabel)
         .joinToString(" - ")
         .uppercase()
@@ -493,7 +567,7 @@ internal fun tabletThreadSourceSnippetLabel(source: SourceState): String =
     }
 
 internal fun tabletTitleBarShouldShowSupportRows(detailMode: TabletDetailMode): Boolean =
-    detailMode != TabletDetailMode.Thread
+    detailMode == TabletDetailMode.Guide
 
 internal fun tabletThreadQuestionMetaLabel(turnIndex: Int): String =
     "Q${turnIndex.coerceAtLeast(1)} \u2022 ${tabletThreadTimestampLabel(turnIndex)} \u2022 FIELD QUESTION"
@@ -751,33 +825,49 @@ private fun TabletDetailBodyRow(
             threadMode = state.isThreadMode(),
         )
         if (showThreadRail) {
-            ThreadRail(
-                turns = state.resolvedThreadRailTurns(),
-                sources = state.resolvedThreadRailSources(),
-                guideMode = guideMode,
-                guideSectionCount = state.resolvedGuideSectionCount(),
-                pinVisible = state.pinVisible,
-                pinActive = state.pinActive,
-                onBackClick = onBackClick,
-                onHomeClick = onHomeClick,
-                onPinClick = onPinClick,
-                onTurnClick = onTurnClick,
-                onSourceClick = onSourceClick,
-                modifier = Modifier
-                    .width(
-                        tabletThreadRailWidthDp(
-                            isLandscape = state.isLandscape,
-                            guideMode = guideMode,
-                            threadMode = state.isThreadMode(),
-                        ).dp,
-                    )
-                    .fillMaxHeight()
-                    .semantics {
-                        paneTitle = threadPaneTitle
-                        isTraversalGroup = true
-                        traversalIndex = 0f
-                    },
-            )
+            val railModifier = Modifier
+                .width(
+                    tabletThreadRailWidthDp(
+                        isLandscape = state.isLandscape,
+                        guideMode = guideMode,
+                        threadMode = state.isThreadMode(),
+                    ).dp,
+                )
+                .fillMaxHeight()
+                .semantics {
+                    paneTitle = threadPaneTitle
+                    isTraversalGroup = true
+                    traversalIndex = 0f
+                }
+
+            if (guideMode) {
+                GuideSectionRail(
+                    turns = state.resolvedThreadRailTurns(),
+                    sectionCount = state.resolvedGuideSectionCount(),
+                    pinVisible = state.pinVisible,
+                    pinActive = state.pinActive,
+                    onBackClick = onBackClick,
+                    onHomeClick = onHomeClick,
+                    onPinClick = onPinClick,
+                    onTurnClick = onTurnClick,
+                    modifier = railModifier,
+                )
+            } else {
+                ThreadRail(
+                    turns = state.resolvedThreadRailTurns(),
+                    sources = state.resolvedThreadRailSources(),
+                    guideMode = false,
+                    guideSectionCount = state.resolvedGuideSectionCount(),
+                    pinVisible = state.pinVisible,
+                    pinActive = state.pinActive,
+                    onBackClick = onBackClick,
+                    onHomeClick = onHomeClick,
+                    onPinClick = onPinClick,
+                    onTurnClick = onTurnClick,
+                    onSourceClick = onSourceClick,
+                    modifier = railModifier,
+                )
+            }
 
             Box(
                 modifier = Modifier
@@ -1050,6 +1140,263 @@ private fun ThreadReadingSurface(
 }
 
 @Composable
+private fun GuideSectionRail(
+    turns: List<ThreadTurnState>,
+    sectionCount: Int,
+    pinVisible: Boolean,
+    pinActive: Boolean,
+    onBackClick: () -> Unit,
+    onHomeClick: () -> Unit,
+    onPinClick: () -> Unit,
+    onTurnClick: (String) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val colors = SenkuTheme.colors
+    val typography = SenkuTheme.typography
+    val labels = tabletGuideNavigationLabels()
+    val scrollState = rememberScrollState()
+
+    Column(
+        modifier = modifier
+            .background(colors.bg1)
+            .verticalScroll(scrollState)
+            .padding(horizontal = 18.dp, vertical = 22.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp),
+    ) {
+        GuideSectionRailToolbar(
+            pinVisible = pinVisible,
+            pinActive = pinActive,
+            onBackClick = onBackClick,
+            onHomeClick = onHomeClick,
+            onPinClick = onPinClick,
+        )
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            HorizontalDivider(
+                modifier = Modifier.width(24.dp),
+                thickness = 1.dp,
+                color = colors.ink3,
+            )
+            Text(
+                text = "${labels.sectionLabel} \u00B7 ${sectionCount.coerceAtLeast(turns.size)}",
+                style = typography.monoCaps.copy(
+                    fontSize = 11.sp,
+                    lineHeight = 14.sp,
+                    fontWeight = FontWeight.Medium,
+                ),
+                color = colors.ink2,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
+        }
+
+        if (turns.isEmpty()) {
+            Text(
+                text = labels.emptySectionLabel,
+                style = typography.smallBody.copy(
+                    fontSize = 12.sp,
+                    lineHeight = 16.sp,
+                ),
+                color = colors.ink3,
+            )
+        } else {
+            turns.forEachIndexed { index, turn ->
+                GuideSectionRailRow(
+                    parts = tabletGuideRailRowParts(turn.question, index + 1),
+                    active = turn.isActive || index == 0,
+                    onClick = { onTurnClick(turn.id) },
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun GuideSectionRailToolbar(
+    pinVisible: Boolean,
+    pinActive: Boolean,
+    onBackClick: () -> Unit,
+    onHomeClick: () -> Unit,
+    onPinClick: () -> Unit,
+) {
+    val colors = SenkuTheme.colors
+
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(6.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        GuideSectionRailAction(
+            active = false,
+            onClick = onBackClick,
+        ) {
+            GuideRailBackGlyph()
+        }
+        GuideSectionRailAction(
+            active = false,
+            onClick = onHomeClick,
+        ) {
+            GuideRailHomeGlyph()
+        }
+        Spacer(modifier = Modifier.weight(1f))
+        if (pinVisible) {
+            GuideSectionRailAction(
+                active = pinActive,
+                onClick = onPinClick,
+            ) {
+                GuideRailPinGlyph(active = pinActive)
+            }
+        }
+    }
+    HorizontalDivider(
+        modifier = Modifier.fillMaxWidth(),
+        thickness = 1.dp,
+        color = colors.hairlineStrong,
+    )
+}
+
+@Composable
+private fun GuideSectionRailAction(
+    active: Boolean,
+    onClick: () -> Unit,
+    glyph: @Composable () -> Unit,
+) {
+    val colors = SenkuTheme.colors
+    Surface(
+        modifier = Modifier
+            .size(28.dp),
+        color = if (active) colors.bg2 else colors.bg0,
+        contentColor = colors.ink0,
+        shape = RoundedCornerShape(6.dp),
+        border = BorderStroke(1.dp, if (active) colors.accent else colors.hairlineStrong),
+        onClick = onClick,
+    ) {
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center,
+        ) {
+            glyph()
+        }
+    }
+}
+
+@Composable
+private fun GuideRailBackGlyph() {
+    val colors = SenkuTheme.colors
+    Canvas(modifier = Modifier.size(14.dp)) {
+        val stroke = 1.7.dp.toPx()
+        val startX = size.width * 0.72f
+        val midX = size.width * 0.30f
+        val topY = size.height * 0.18f
+        val middleY = size.height * 0.50f
+        val bottomY = size.height * 0.82f
+        drawLine(colors.ink0, Offset(startX, topY), Offset(midX, middleY), stroke, StrokeCap.Round)
+        drawLine(colors.ink0, Offset(startX, bottomY), Offset(midX, middleY), stroke, StrokeCap.Round)
+    }
+}
+
+@Composable
+private fun GuideRailHomeGlyph() {
+    val colors = SenkuTheme.colors
+    Canvas(modifier = Modifier.size(15.dp)) {
+        val stroke = 1.6.dp.toPx()
+        val left = size.width * 0.20f
+        val right = size.width * 0.80f
+        val top = size.height * 0.30f
+        val roof = size.height * 0.10f
+        val bottom = size.height * 0.82f
+        val center = size.width * 0.50f
+        drawLine(colors.ink0, Offset(left, top), Offset(center, roof), stroke, StrokeCap.Round)
+        drawLine(colors.ink0, Offset(center, roof), Offset(right, top), stroke, StrokeCap.Round)
+        drawLine(colors.ink0, Offset(left + 1.dp.toPx(), top), Offset(left + 1.dp.toPx(), bottom), stroke, StrokeCap.Round)
+        drawLine(colors.ink0, Offset(right - 1.dp.toPx(), top), Offset(right - 1.dp.toPx(), bottom), stroke, StrokeCap.Round)
+        drawLine(colors.ink0, Offset(left + 1.dp.toPx(), bottom), Offset(right - 1.dp.toPx(), bottom), stroke, StrokeCap.Round)
+    }
+}
+
+@Composable
+private fun GuideRailPinGlyph(active: Boolean) {
+    val colors = SenkuTheme.colors
+    val tint = if (active) colors.accent else colors.ink1
+    Canvas(modifier = Modifier.size(15.dp)) {
+        val stroke = 1.6.dp.toPx()
+        val top = size.height * 0.20f
+        val bottom = size.height * 0.84f
+        val left = size.width * 0.34f
+        val right = size.width * 0.66f
+        val center = size.width * 0.50f
+        drawLine(tint, Offset(left, top), Offset(right, top), stroke, StrokeCap.Round)
+        drawLine(tint, Offset(center, top), Offset(center, size.height * 0.58f), stroke, StrokeCap.Round)
+        drawLine(tint, Offset(left, top), Offset(center, size.height * 0.42f), stroke, StrokeCap.Round)
+        drawLine(tint, Offset(right, top), Offset(center, size.height * 0.42f), stroke, StrokeCap.Round)
+        drawLine(tint, Offset(center, size.height * 0.58f), Offset(center - 2.dp.toPx(), bottom), stroke, StrokeCap.Round)
+    }
+}
+
+@Composable
+private fun GuideSectionRailRow(
+    parts: TabletGuideRailRowParts,
+    active: Boolean,
+    onClick: () -> Unit,
+) {
+    val colors = SenkuTheme.colors
+    val typography = SenkuTheme.typography
+
+    Surface(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(onClick = onClick),
+        color = if (active) colors.bg2 else colors.bg1,
+        contentColor = colors.ink0,
+        shape = RoundedCornerShape(0.dp),
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .heightIn(min = if (active) 48.dp else 42.dp)
+                .padding(horizontal = 10.dp, vertical = 7.dp),
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+            verticalAlignment = Alignment.Top,
+        ) {
+            Box(
+                modifier = Modifier
+                    .width(3.dp)
+                    .height(if (active) 34.dp else 24.dp)
+                    .background(if (active) colors.accent else colors.hairlineStrong),
+            )
+            Text(
+                text = parts.section,
+                style = typography.monoCaps.copy(
+                    fontSize = 11.sp,
+                    lineHeight = 14.sp,
+                    fontWeight = FontWeight.Medium,
+                ),
+                color = if (active) colors.accent else colors.ink3,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
+            Text(
+                text = parts.title,
+                modifier = Modifier.weight(1f),
+                style = typography.uiBody.copy(
+                    fontSize = if (active) 14.sp else 13.sp,
+                    lineHeight = if (active) 18.sp else 17.sp,
+                    fontWeight = if (active) FontWeight.SemiBold else FontWeight.Normal,
+                    letterSpacing = 0.sp,
+                ),
+                color = if (active) colors.ink0 else colors.ink2,
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis,
+            )
+        }
+    }
+}
+
+@Composable
 private fun ThreadSourcePane(
     sources: List<SourceState>,
     isLandscape: Boolean,
@@ -1211,6 +1558,7 @@ private fun GuideReferencePane(
     val colors = SenkuTheme.colors
     val typography = SenkuTheme.typography
     val scrollState = rememberScrollState()
+    val referenceRows = tabletGuideReferencePaneRows(xrefs)
 
     Column(
         modifier = modifier
@@ -1230,7 +1578,7 @@ private fun GuideReferencePane(
                 color = colors.ink3,
             )
             Text(
-                text = tabletGuideReferenceHeaderTitle(xrefs.size),
+                text = tabletGuideReferenceHeaderTitle(referenceRows.size),
                 style = typography.monoCaps.copy(
                     fontSize = 11.sp,
                     lineHeight = 14.sp,
@@ -1242,7 +1590,7 @@ private fun GuideReferencePane(
             )
         }
 
-        xrefs.forEach { xref ->
+        referenceRows.forEach { xref ->
             GuideReferenceCard(
                 xref = xref,
                 onClick = { onXRefClick(xref.id) },
@@ -1679,11 +2027,12 @@ private fun TitleBar(
                 )
             }
             Text(
-                text = if (guideMode) {
-                    guideTitle.trim().ifEmpty { "Guide" }
-                } else {
-                    buildTitleSummary(guideTitle = guideTitle, turnCount = turnCount)
-                },
+                text = tabletTitleBarTitle(
+                    detailMode = detailMode,
+                    guideMode = guideMode,
+                    guideTitle = guideTitle,
+                    turnCount = turnCount,
+                ),
                 modifier = Modifier.weight(1f),
                 style = typography.sectionTitle.copy(
                     fontSize = if (guideMode) 15.sp else 17.sp,
@@ -1706,7 +2055,11 @@ private fun TitleBar(
         val handoffLabel = guideModeLabel.trim()
         val handoffSummary = guideModeSummary.trim()
         val handoffAnchor = guideModeAnchorLabel.trim()
-        if (!guideMode && detailMode != TabletDetailMode.Thread && (handoffLabel.isNotEmpty() || handoffSummary.isNotEmpty())) {
+        if (!guideMode &&
+            tabletTitleBarShouldShowSupportRows(detailMode) &&
+            detailMode != TabletDetailMode.Thread &&
+            (handoffLabel.isNotEmpty() || handoffSummary.isNotEmpty())
+        ) {
             Column(
                 modifier = Modifier.fillMaxWidth(),
                 verticalArrangement = Arrangement.spacedBy(2.dp),
@@ -2540,6 +2893,18 @@ internal fun tabletTitleBarModeLabel(detailMode: TabletDetailMode): String =
         TabletDetailMode.Answer -> "ANSWER"
         TabletDetailMode.Thread -> "THREAD"
         TabletDetailMode.Guide -> "GUIDE"
+    }
+
+internal fun tabletTitleBarTitle(
+    detailMode: TabletDetailMode,
+    guideMode: Boolean,
+    guideTitle: String,
+    turnCount: Int,
+): String =
+    if (guideMode || detailMode == TabletDetailMode.Answer) {
+        guideTitle.trim().ifEmpty { if (guideMode) "Guide" else "Answer" }
+    } else {
+        buildTitleSummary(guideTitle = guideTitle, turnCount = turnCount)
     }
 
 internal fun TabletDetailState.hasAnswerOwnedSourceSelection(): Boolean {
