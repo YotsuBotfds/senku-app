@@ -384,6 +384,9 @@ internal fun tabletGuidePaperMaxWidthDp(isLandscape: Boolean): Int =
 internal fun tabletGuidePaperHorizontalPaddingDp(isLandscape: Boolean): Int =
     if (isLandscape) 24 else 12
 
+internal fun tabletGuidePaperVerticalPaddingDp(isLandscape: Boolean): Int =
+    if (isLandscape) 2 else 12
+
 internal fun tabletGuidePaperInnerHorizontalPaddingDp(isLandscape: Boolean): Int =
     if (isLandscape) 42 else 34
 
@@ -455,12 +458,12 @@ internal fun tabletGuideSideRailDensityPolicy(isLandscape: Boolean): TabletGuide
             sectionRowHorizontalPaddingDp = 9,
             sectionRowVerticalPaddingDp = 5,
             referencePaneHorizontalPaddingDp = 20,
-            referencePaneVerticalPaddingDp = 18,
-            referencePaneVerticalSpacingDp = 9,
-            referenceCardMinHeightDp = 62,
+            referencePaneVerticalPaddingDp = 8,
+            referencePaneVerticalSpacingDp = 6,
+            referenceCardMinHeightDp = 44,
             referenceCardHorizontalPaddingDp = 14,
-            referenceCardVerticalPaddingDp = 8,
-            referenceCardVerticalSpacingDp = 5,
+            referenceCardVerticalPaddingDp = 6,
+            referenceCardVerticalSpacingDp = 4,
             referenceCardTitleFontSizeSp = 14,
             referenceCardTitleLineHeightSp = 17,
             referenceCardTitleMaxLines = 1,
@@ -1277,7 +1280,11 @@ private fun CenterPane(
     BoxWithConstraints(
         modifier = modifier.background(colors.bg0),
     ) {
-        val verticalPagePadding = if (guideMode) 12.dp else 0.dp
+        val verticalPagePadding = if (guideMode) {
+            tabletGuidePaperVerticalPaddingDp(state.isLandscape).dp
+        } else {
+            0.dp
+        }
         val guidePaperMinHeight = if (guideMode) {
             val verticalPadding = verticalPagePadding * 2
             if (maxHeight > verticalPadding) maxHeight - verticalPadding else 0.dp
