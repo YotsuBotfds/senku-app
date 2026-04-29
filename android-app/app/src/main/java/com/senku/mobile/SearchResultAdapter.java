@@ -44,8 +44,10 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
     private static final int MAX_HIGHLIGHT_TERMS = 4;
     private static final int DEFAULT_MAX_DISPLAYED_ITEMS = 4;
     private static final int SCORE_TICK_TRACK_WIDTH_DP = 22;
-    private static final float COMPACT_ROW_TITLE_TEXT_SIZE_SP = 16.5f;
-    private static final float COMPACT_ROW_SNIPPET_TEXT_SIZE_SP = 12.75f;
+    private static final float LANDSCAPE_ROW_TITLE_TEXT_SIZE_SP = 16.5f;
+    private static final float LANDSCAPE_ROW_SNIPPET_TEXT_SIZE_SP = 12.75f;
+    private static final float PORTRAIT_TABLET_ROW_TITLE_TEXT_SIZE_SP = 18.0f;
+    private static final float PORTRAIT_TABLET_ROW_SNIPPET_TEXT_SIZE_SP = 14.0f;
 
     public static final class LinkedGuidePreview {
         public final String guideId;
@@ -216,6 +218,7 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
     }
 
     private View buildCompactResultRow(Context context) {
+        boolean landscapePhoneCard = isLandscapePhoneCard(context);
         FrameLayout root = new FrameLayout(context);
         root.setLayoutParams(new RecyclerView.LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT,
@@ -225,7 +228,7 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
         LinearLayout row = new LinearLayout(context);
         row.setId(R.id.result_legacy_mirror);
         row.setOrientation(LinearLayout.VERTICAL);
-        row.setPadding(dp(0), dp(15), dp(0), 0);
+        row.setPadding(dp(0), dp(landscapePhoneCard ? 15 : 17), dp(0), 0);
         root.addView(row, new FrameLayout.LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT,
             ViewGroup.LayoutParams.WRAP_CONTENT
@@ -279,13 +282,16 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
         title.setId(R.id.result_title);
         title.setTextColor(ContextCompat.getColor(context, R.color.senku_text_light));
         title.setTypeface(Typeface.DEFAULT, Typeface.BOLD);
-        title.setTextSize(TypedValue.COMPLEX_UNIT_SP, COMPACT_ROW_TITLE_TEXT_SIZE_SP);
+        title.setTextSize(
+            TypedValue.COMPLEX_UNIT_SP,
+            compactRowTitleTextSizeSp(landscapePhoneCard)
+        );
         title.setLineSpacing(0, 1.08f);
         LinearLayout.LayoutParams titleParams = new LinearLayout.LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT,
             ViewGroup.LayoutParams.WRAP_CONTENT
         );
-        titleParams.topMargin = dp(5);
+        titleParams.topMargin = dp(landscapePhoneCard ? 5 : 7);
         row.addView(title, titleParams);
 
         TextView section = buildMonoTextView(context, 9, 13, Typeface.NORMAL);
@@ -303,13 +309,16 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
         TextView snippet = new TextView(context);
         snippet.setId(R.id.result_snippet);
         snippet.setTextColor(ContextCompat.getColor(context, R.color.senku_rev03_ink_1));
-        snippet.setTextSize(TypedValue.COMPLEX_UNIT_SP, COMPACT_ROW_SNIPPET_TEXT_SIZE_SP);
+        snippet.setTextSize(
+            TypedValue.COMPLEX_UNIT_SP,
+            compactRowSnippetTextSizeSp(landscapePhoneCard)
+        );
         snippet.setLineSpacing(0, 1.12f);
         LinearLayout.LayoutParams snippetParams = new LinearLayout.LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT,
             ViewGroup.LayoutParams.WRAP_CONTENT
         );
-        snippetParams.topMargin = dp(6);
+        snippetParams.topMargin = dp(landscapePhoneCard ? 6 : 7);
         row.addView(snippet, snippetParams);
 
         LinearLayout chips = new LinearLayout(context);
@@ -353,7 +362,7 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
             ViewGroup.LayoutParams.MATCH_PARENT,
             1
         );
-        dividerParams.topMargin = dp(16);
+        dividerParams.topMargin = dp(landscapePhoneCard ? 16 : 19);
         row.addView(divider, dividerParams);
 
         ComposeView composeView = new ComposeView(context);
@@ -406,11 +415,27 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
     }
 
     static float compactRowTitleTextSizeSpForTest() {
-        return COMPACT_ROW_TITLE_TEXT_SIZE_SP;
+        return compactRowTitleTextSizeSp(true);
     }
 
     static float compactRowSnippetTextSizeSpForTest() {
-        return COMPACT_ROW_SNIPPET_TEXT_SIZE_SP;
+        return compactRowSnippetTextSizeSp(true);
+    }
+
+    static float portraitTabletRowTitleTextSizeSpForTest() {
+        return compactRowTitleTextSizeSp(false);
+    }
+
+    static float portraitTabletRowSnippetTextSizeSpForTest() {
+        return compactRowSnippetTextSizeSp(false);
+    }
+
+    private static float compactRowTitleTextSizeSp(boolean landscapePhoneCard) {
+        return landscapePhoneCard ? LANDSCAPE_ROW_TITLE_TEXT_SIZE_SP : PORTRAIT_TABLET_ROW_TITLE_TEXT_SIZE_SP;
+    }
+
+    private static float compactRowSnippetTextSizeSp(boolean landscapePhoneCard) {
+        return landscapePhoneCard ? LANDSCAPE_ROW_SNIPPET_TEXT_SIZE_SP : PORTRAIT_TABLET_ROW_SNIPPET_TEXT_SIZE_SP;
     }
 
     private static int boundedItemCount(int resultCount, int maxDisplayedItems) {

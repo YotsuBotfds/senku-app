@@ -98,6 +98,12 @@ public final class SearchResultAdapterTest {
     }
 
     @Test
+    public void portraitAndTabletRowsUseBalancedTypographyScale() {
+        assertEquals(18.0f, SearchResultAdapter.portraitTabletRowTitleTextSizeSpForTest(), 0.001f);
+        assertEquals(14.0f, SearchResultAdapter.portraitTabletRowSnippetTextSizeSpForTest(), 0.001f);
+    }
+
+    @Test
     public void tabletRowsFlattenMetadataIntoPreviewRailTokens() {
         assertEquals(
             "SHELTER \u00b7 TOPIC \u00b7 WINDOW IMMEDIATE",
