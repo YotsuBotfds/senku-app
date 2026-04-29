@@ -439,6 +439,9 @@ class TabletEvidenceVisibilityPolicyTest {
         val state = stateWithSources(
             sourceCount = 2,
             isLandscape = true,
+            guideId = "GD-220",
+            guideTitle = "Rain shelter",
+            sourceIds = listOf("GD-220", "GD-345"),
             detailMode = TabletDetailMode.Thread,
         )
 
@@ -504,16 +507,19 @@ class TabletEvidenceVisibilityPolicyTest {
         guideModeSummary: String = "",
         guideModeAnchorLabel: String = "",
         selectedSourceIndex: Int = 1,
+        sourceIds: List<String>? = null,
         showQuestion: Boolean = true,
         detailMode: TabletDetailMode = TabletDetailMode.Answer,
         guideSectionCount: Int = 0,
         anchor: AnchorState? = null,
         xrefs: List<XRefState> = emptyList(),
     ): TabletDetailState {
-        val sources = (1..sourceCount).map { index ->
+        val resolvedSourceIds = sourceIds ?: (1..sourceCount).map { index -> "GD-$index" }
+        val sources = resolvedSourceIds.take(sourceCount).mapIndexed { sourceIndex, sourceId ->
+            val index = sourceIndex + 1
             SourceState(
                 key = "source-$index",
-                id = "GD-$index",
+                id = sourceId,
                 title = "Source $index",
                 isAnchor = index == 1,
                 isSelected = index == selectedSourceIndex,

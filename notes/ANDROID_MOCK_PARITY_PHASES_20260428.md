@@ -1568,6 +1568,56 @@ Next slice candidates:
 - Search/home can move to final text-size and status/nav chrome polish after
   detail screens stabilize.
 
+## Wave62 Checkpoint
+
+Committed scope pending at the time of this update:
+
+- Phone answer detail: restored the portrait question/meta scaffold for normal
+  generated answers, kept the docked composer visible for unsure generated
+  answers, changed sources/related headings to target-style bullet separators,
+  trimmed the in-page answer meta to the visible guide/source/revision tokens,
+  and reduced source-card/header typography so the first viewport lands closer
+  to the mock.
+- Tablet answer/thread/guide density: tightened answer H1 boost, narrowed the
+  thread center lane, reduced answer/thread top padding, and reduced guide paper
+  and right-rail padding/spacing.
+- Tablet detail rails: restored canonical thread source support rails and kept
+  guide reference ordering anchored on `GD-220`.
+- Home/search carry-forward: retained the Wave61 home/search density fixes and
+  XML layout balance updates.
+- Harness/policy alignment: updated stale phone answer why-panel expectations
+  now that normal answers keep source proof in the flow, and allowed uncertain
+  generated answers to remain follow-up eligible.
+
+Fresh proof:
+
+- Pack:
+  `artifacts/ui_state_pack/wave62_integrated_mock_parity/20260429_054506`
+- Follow-up phone guard pack:
+  `artifacts/ui_state_pack/wave62_final_phone_guard/20260429_055205`
+- Canonical mocks:
+  `artifacts/ui_state_pack/wave62_integrated_mock_parity/20260429_054506/mocks`
+- Zip:
+  `artifacts/ui_state_pack/wave62_integrated_mock_parity/20260429_054506_mocks.zip`
+- Summary: status `pass`, states `22/22`, failures `0`, ANRs `0`, mock pack
+  `pass`.
+- Validation: combined focused JVM suite passed across tablet rail/stress
+  policies, detail formatters/thread/composer behavior, home chrome/navigation,
+  search adapter/card heuristics, and shared top bar hosts.
+- Visual note: phone answer portrait now keeps the target question/meta block
+  and composer. It remains a little taller/heavier than the target in answer
+  body/source cards; the next pass should focus on final typography and card
+  row styling rather than routing.
+
+Next slice candidates:
+
+- Phone answer final polish: reduce body/source-card vertical scale, style
+  source cards with separate meta/title/quote spans or row containers, and tune
+  related rows to thinner separators.
+- Tablet landscape answer: compare against the target after Wave62 density
+  changes and tune central article width/left-rail proportions only if needed.
+- Guide/search final polish after the answer/detail surfaces stop moving.
+
 ## Parallelization Rules
 
 - Start every worker with `git status --short`, `git log --oneline -n 8

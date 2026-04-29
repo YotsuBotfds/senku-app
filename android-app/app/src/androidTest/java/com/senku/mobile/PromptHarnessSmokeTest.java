@@ -3513,23 +3513,26 @@ public final class PromptHarnessSmokeTest {
                     return;
                 }
 
+                boolean compactPhonePortrait = isCompactPortraitPhoneActivity(activity);
                 String whyBodyText = safe(whyBody == null ? null : String.valueOf(whyBody.getText()));
-                if (whyBody == null || !isVisible(whyBody) || whyBodyText.trim().isEmpty()) {
-                    failure[0] = "why summary should exist and stay visible";
-                    return;
-                }
-                if (!abstainSettled && !lowCoverageSettled && containsAny(
-                    whyBodyText,
-                    context.getString(R.string.detail_why_no_citations),
-                    context.getString(R.string.detail_why_no_citations_short)
-                )) {
-                    failure[0] = "why summary should not fall back to no-citation copy once sources are attached";
-                    return;
-                }
-                if (whyTitle != null && isVisible(whyTitle)
-                    && !containsAny(safe(String.valueOf(whyTitle.getText())), whyTitleLabel, whyTitleCompactLabel)) {
-                    failure[0] = "why title should keep route and proof wording visible";
-                    return;
+                if (!compactPhonePortrait) {
+                    if (whyBody == null || !isVisible(whyBody) || whyBodyText.trim().isEmpty()) {
+                        failure[0] = "why summary should exist and stay visible";
+                        return;
+                    }
+                    if (!abstainSettled && !lowCoverageSettled && containsAny(
+                        whyBodyText,
+                        context.getString(R.string.detail_why_no_citations),
+                        context.getString(R.string.detail_why_no_citations_short)
+                    )) {
+                        failure[0] = "why summary should not fall back to no-citation copy once sources are attached";
+                        return;
+                    }
+                    if (whyTitle != null && isVisible(whyTitle)
+                        && !containsAny(safe(String.valueOf(whyTitle.getText())), whyTitleLabel, whyTitleCompactLabel)) {
+                        failure[0] = "why title should keep route and proof wording visible";
+                        return;
+                    }
                 }
                 if (sourcesTitle != null && isVisible(sourcesTitle)
                     && !containsAny(safe(String.valueOf(sourcesTitle.getText())), sourcesTitleLabel, "SOURCES")) {

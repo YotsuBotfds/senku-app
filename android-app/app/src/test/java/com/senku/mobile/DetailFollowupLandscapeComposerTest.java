@@ -117,7 +117,7 @@ public final class DetailFollowupLandscapeComposerTest {
         assertFalse(DetailActivity.shouldShowDetailFollowUpPanel(
             DetailSurfaceContract.answer(DetailSurfaceContract.AnswerKind.ABSTAIN)
         ));
-        assertFalse(DetailActivity.shouldShowDetailFollowUpPanel(
+        assertTrue(DetailActivity.shouldShowDetailFollowUpPanel(
             DetailSurfaceContract.answer(DetailSurfaceContract.AnswerKind.UNCERTAIN_FIT)
         ));
     }
@@ -190,7 +190,7 @@ public final class DetailFollowupLandscapeComposerTest {
             DetailActivity.buildCompactPhoneSourcesTriggerTitle("", 0, true)
         );
         assertEquals(
-            "SOURCES - 3",
+            "SOURCES \u2022 3",
             DetailActivity.buildCompactPhoneSourcesTriggerTitle("Source guides", 3, true)
         );
     }
@@ -209,6 +209,11 @@ public final class DetailFollowupLandscapeComposerTest {
         assertFalse(DetailActivity.shouldDeferPhonePortraitProofPanelBelowSources(true, true, true));
         assertFalse(DetailActivity.shouldDeferPhonePortraitProofPanelBelowSources(true, false, false));
         assertFalse(DetailActivity.shouldDeferPhonePortraitProofPanelBelowSources(false, true, false));
+        assertTrue(DetailActivity.shouldHidePhonePortraitAnswerWhyPanel(true, true, false));
+        assertFalse(DetailActivity.shouldHidePhonePortraitAnswerWhyPanel(true, true, true));
+        assertFalse(DetailActivity.shouldHidePhonePortraitAnswerWhyPanel(true, false, false));
+        assertTrue(DetailActivity.shouldForceExpandedPhonePortraitAnswerSections(true, true, false));
+        assertFalse(DetailActivity.shouldForceExpandedPhonePortraitAnswerSections(true, true, true));
     }
 
     @Test
@@ -316,6 +321,7 @@ public final class DetailFollowupLandscapeComposerTest {
         assertTrue(DetailActivity.shouldAutoOpenProvenanceForAnswerRail(true, 1, true));
         assertEquals("SOURCES - 2", DetailActivity.buildLandscapePhoneSourceRailTitle("Sources", 2));
         assertTrue(DetailActivity.shouldHideGenericAnswerScaffoldForThread(true, 2, true));
+        assertFalse(DetailActivity.shouldHideProofRailForThreadDetail(true, 2, true, true));
     }
 
     @Test
@@ -530,6 +536,8 @@ public final class DetailFollowupLandscapeComposerTest {
     @Test
     public void phoneThreadDetailHidesProofRailBelowTranscript() {
         assertTrue(DetailActivity.shouldHideProofRailForThreadDetail(true, 2, true));
+        assertTrue(DetailActivity.shouldHideProofRailForThreadDetail(true, 2, true, false));
+        assertFalse(DetailActivity.shouldHideProofRailForThreadDetail(true, 2, true, true));
         assertFalse(DetailActivity.shouldHideProofRailForThreadDetail(true, 2, false));
         assertFalse(DetailActivity.shouldHideProofRailForThreadDetail(true, 1, true));
         assertFalse(DetailActivity.shouldHideProofRailForThreadDetail(false, 2, true));

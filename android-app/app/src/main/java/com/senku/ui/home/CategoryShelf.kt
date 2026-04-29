@@ -235,12 +235,12 @@ private fun PhoneCategoryCard(
                     fontSize = when {
                         compactGrid -> 10.5.sp
                         tabletGrid -> 13.5.sp
-                        else -> 11.sp
+                        else -> 12.sp
                     },
                     lineHeight = when {
                         compactGrid -> 12.sp
                         tabletGrid -> 16.sp
-                        else -> 15.sp
+                        else -> 14.sp
                     },
                     fontWeight = FontWeight.Medium,
                 ),
@@ -252,7 +252,7 @@ private fun PhoneCategoryCard(
                 Text(
                     text = item.countLabel,
                     style = SenkuTheme.typography.uiBody.copy(
-                        fontSize = if (tabletGrid) 12.5.sp else 9.5.sp,
+                        fontSize = if (tabletGrid) 12.5.sp else 10.sp,
                         lineHeight = if (tabletGrid) 15.sp else 14.sp,
                         fontWeight = FontWeight.Medium,
                     ),

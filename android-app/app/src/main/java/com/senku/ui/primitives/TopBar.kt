@@ -129,23 +129,23 @@ fun SenkuTopBar(
             )
         }
         if (actionLayout.leading.isNotEmpty()) {
-            Spacer(modifier = Modifier.width(8.dp))
+            Spacer(modifier = Modifier.width(6.dp))
             Box(
                 modifier = Modifier
                     .width(1.dp)
-                    .height(18.dp)
+                    .height(16.dp)
                     .background(colors.hairlineStrong),
             )
-            Spacer(modifier = Modifier.width(12.dp))
+            Spacer(modifier = Modifier.width(10.dp))
         }
 
         Column(
             modifier = Modifier.weight(1f),
-            verticalArrangement = Arrangement.spacedBy(2.dp),
+            verticalArrangement = Arrangement.spacedBy(1.dp),
         ) {
             Text(
                 text = title,
-                style = typography.uiBody.copy(fontSize = 14.sp, lineHeight = 17.sp),
+                style = typography.uiBody.copy(fontSize = 13.sp, lineHeight = 16.sp),
                 color = colors.ink0,
                 maxLines = titleMaxLines.coerceAtLeast(1),
                 overflow = TextOverflow.Ellipsis,
@@ -154,7 +154,7 @@ fun SenkuTopBar(
             if (!subtitle.isNullOrBlank()) {
                 Text(
                     text = subtitle,
-                    style = typography.monoCaps,
+                    style = typography.monoCaps.copy(fontSize = 9.sp, lineHeight = 11.sp),
                     color = colors.accent,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
@@ -163,16 +163,16 @@ fun SenkuTopBar(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 3.dp)
+                    .padding(top = 2.dp)
                     .height(1.dp)
                     .background(colors.hairlineStrong),
             )
         }
 
         if (!dangerPillLabel.isNullOrBlank() || actionLayout.trailing.isNotEmpty()) {
-            Spacer(modifier = Modifier.width(10.dp))
+            Spacer(modifier = Modifier.width(8.dp))
             Row(
-                horizontalArrangement = Arrangement.spacedBy(7.dp),
+                horizontalArrangement = Arrangement.spacedBy(5.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 if (!dangerPillLabel.isNullOrBlank()) {
@@ -225,12 +225,12 @@ private fun DangerPill(
         modifier = modifier
             .clip(RoundedCornerShape(999.dp))
             .background(colors.danger.copy(alpha = 0.14f))
-            .padding(horizontal = 9.dp, vertical = 4.dp),
+            .padding(horizontal = 8.dp, vertical = 3.dp),
         contentAlignment = Alignment.Center,
     ) {
         Text(
             text = "\u2022 ${label.uppercase()}",
-            style = SenkuTheme.typography.monoCaps.copy(fontSize = 10.sp, lineHeight = 12.sp),
+            style = SenkuTheme.typography.monoCaps.copy(fontSize = 9.sp, lineHeight = 11.sp),
             color = colors.danger,
             maxLines = 1,
             overflow = TextOverflow.Clip,
@@ -260,7 +260,7 @@ private fun TopBarActionButton(
 
     Box(
         modifier = modifier
-            .size(30.dp)
+            .size(28.dp)
             .clip(shape)
             .background(containerColor)
             .clickable(
@@ -280,7 +280,7 @@ private fun TopBarActionButton(
             imageVector = action.kind.icon(),
             contentDescription = null,
             tint = iconTint,
-            modifier = Modifier.size(20.dp),
+            modifier = Modifier.size(18.dp),
         )
     }
 }
@@ -288,7 +288,7 @@ private fun TopBarActionButton(
 private fun TopBarActionKind.icon(): ImageVector = when (this) {
     TopBarActionKind.Back -> SenkuTopBarIcons.Back
     TopBarActionKind.Home -> SenkuTopBarIcons.Home
-    TopBarActionKind.Pin -> SenkuTopBarIcons.More
+    TopBarActionKind.Pin -> SenkuTopBarIcons.Pin
     TopBarActionKind.Share -> SenkuTopBarIcons.Share
 }
 
@@ -345,33 +345,31 @@ private object SenkuTopBarIcons {
         }.build()
     }
 
-    val More: ImageVector by lazy {
+    val Pin: ImageVector by lazy {
         ImageVector.Builder(
-            name = "TopBarMore",
+            name = "TopBarPin",
             defaultWidth = 24.dp,
             defaultHeight = 24.dp,
             viewportWidth = 24f,
             viewportHeight = 24f,
         ).apply {
             path(
-                fill = SolidColor(Color.Black),
+                stroke = SolidColor(Color.Black),
+                strokeLineWidth = 1.8f,
+                strokeLineCap = StrokeCap.Round,
+                strokeLineJoin = StrokeJoin.Round,
                 pathFillType = PathFillType.NonZero,
             ) {
-                moveTo(6f, 12f)
-                lineTo(6.01f, 12f)
-                moveTo(5f, 12f)
-                arcToRelative(1f, 1f, 0f, true, false, 2f, 0f)
-                arcToRelative(1f, 1f, 0f, true, false, -2f, 0f)
-                moveTo(12f, 12f)
-                lineTo(12.01f, 12f)
-                moveTo(11f, 12f)
-                arcToRelative(1f, 1f, 0f, true, false, 2f, 0f)
-                arcToRelative(1f, 1f, 0f, true, false, -2f, 0f)
-                moveTo(18f, 12f)
-                lineTo(18.01f, 12f)
-                moveTo(17f, 12f)
-                arcToRelative(1f, 1f, 0f, true, false, 2f, 0f)
-                arcToRelative(1f, 1f, 0f, true, false, -2f, 0f)
+                moveTo(14.2f, 4.8f)
+                lineTo(19.2f, 9.8f)
+                moveTo(16.8f, 7.4f)
+                lineTo(11.8f, 12.4f)
+                moveTo(8.7f, 9.3f)
+                lineTo(14.7f, 15.3f)
+                moveTo(10.8f, 11.4f)
+                lineTo(5f, 17.2f)
+                moveTo(9.4f, 7.8f)
+                lineTo(16.2f, 14.6f)
             }
         }.build()
     }

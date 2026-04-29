@@ -277,18 +277,18 @@ internal enum class TabletGuideBodyLineKind {
 
 internal fun tabletLandscapeReadingLayoutPolicy(): TabletReadingLayoutPolicy =
     TabletReadingLayoutPolicy(
-        threadRailWidthDp = 184,
-        answerMaxWidthDp = 548,
-        evidenceRailWidthDp = 348,
-        answerHorizontalPaddingDp = 14,
+        threadRailWidthDp = 328,
+        answerMaxWidthDp = 492,
+        evidenceRailWidthDp = 478,
+        answerHorizontalPaddingDp = 42,
     )
 
 internal fun tabletPortraitReadingLayoutPolicy(): TabletReadingLayoutPolicy =
     TabletReadingLayoutPolicy(
         threadRailWidthDp = 0,
-        answerMaxWidthDp = 620,
-        evidenceRailWidthDp = 288,
-        answerHorizontalPaddingDp = 12,
+        answerMaxWidthDp = 720,
+        evidenceRailWidthDp = 420,
+        answerHorizontalPaddingDp = 42,
     )
 
 internal fun tabletReadingLayoutPolicy(isLandscape: Boolean): TabletReadingLayoutPolicy =
@@ -303,7 +303,6 @@ internal fun tabletThreadRailWidthDp(
     threadMode: Boolean = false,
 ): Int =
     when {
-        threadMode && !guideMode -> 0
         guideMode && isLandscape -> 316
         guideMode -> 330
         else -> tabletReadingLayoutPolicy(isLandscape).threadRailWidthDp
@@ -316,10 +315,10 @@ internal fun tabletShouldShowThreadRail(
 ): Boolean = tabletThreadRailWidthDp(isLandscape, guideMode, threadMode) > 0
 
 internal fun tabletThreadFlowMaxWidthDp(isLandscape: Boolean): Int =
-    if (isLandscape) 760 else 660
+    if (isLandscape) 700 else 660
 
 internal fun tabletThreadFlowHorizontalPaddingDp(isLandscape: Boolean): Int =
-    if (isLandscape) 32 else 22
+    if (isLandscape) 24 else 18
 
 internal fun tabletThreadComposerBottomPaddingDp(isLandscape: Boolean): Int =
     if (isLandscape) 0 else 12
@@ -335,19 +334,19 @@ internal fun tabletComposerBottomPaddingDp(detailMode: TabletDetailMode, isLands
     }
 
 internal fun tabletGuidePaperMaxWidthDp(isLandscape: Boolean): Int =
-    if (isLandscape) 520 else 700
+    if (isLandscape) 518 else 820
 
 internal fun tabletGuidePaperHorizontalPaddingDp(isLandscape: Boolean): Int =
     if (isLandscape) 10 else 18
 
 internal fun tabletGuidePaperInnerHorizontalPaddingDp(isLandscape: Boolean): Int =
-    if (isLandscape) 24 else 34
+    if (isLandscape) 34 else 34
 
 internal fun tabletGuidePaperBottomPaddingDp(isLandscape: Boolean): Int =
-    if (isLandscape) 28 else 46
+    if (isLandscape) 24 else 40
 
 internal fun tabletGuideReferenceRailWidthDp(isLandscape: Boolean): Int =
-    if (isLandscape) 424 else 0
+    if (isLandscape) 420 else 0
 
 internal fun tabletGuideChromePolicy(isLandscape: Boolean): TabletGuideChromePolicy =
     if (isLandscape) {
@@ -457,13 +456,13 @@ internal fun tabletDetailTypeScalePolicy(isLandscape: Boolean): TabletDetailType
 internal fun tabletAnswerReadingChromePolicy(isLandscape: Boolean): TabletAnswerReadingChromePolicy =
     if (isLandscape) {
         TabletAnswerReadingChromePolicy(
-            topPaddingDp = 18,
-            blockSpacingDp = 16,
+            topPaddingDp = 10,
+            blockSpacingDp = 14,
             bottomPaddingDp = 8,
         )
     } else {
         TabletAnswerReadingChromePolicy(
-            topPaddingDp = 12,
+            topPaddingDp = 8,
             blockSpacingDp = 12,
             bottomPaddingDp = 4,
         )
@@ -477,9 +476,14 @@ internal fun tabletComposerContextHint(state: TabletDetailState): String {
         else -> if (guideMode) "$count sections" else "$count turns"
     }
     if (state.isThreadMode()) {
-        val anchorLabel = tabletThreadContextAnchorLabel(state)
-        return listOf("Thread context", turnLabel, anchorLabel)
-            .joinToString(" - ")
+        val sourceCount = state.resolvedVisibleThreadSourceCount()
+        val sourceLabel = when (sourceCount) {
+            0 -> "No sources"
+            1 -> "1 source"
+            else -> "$sourceCount sources"
+        }
+        return listOf("Thread context kept", turnLabel, sourceLabel)
+            .joinToString(" \u2022 ")
             .uppercase()
     }
 
@@ -504,12 +508,12 @@ internal fun tabletComposerContextHint(state: TabletDetailState): String {
             else -> "$sourceCount SOURCES VISIBLE"
         }
         return listOf(answerAnchor, "CONTEXT KEPT", visibleSourceLabel)
-            .joinToString(" - ")
+            .joinToString(" \u2022 ")
             .uppercase()
     }
 
     return listOf(if (guideMode) "Guide context kept" else "Thread context kept", turnLabel, sourceLabel)
-        .joinToString(" - ")
+        .joinToString(" \u2022 ")
         .uppercase()
 }
 
@@ -966,7 +970,7 @@ private fun DetailWorkspace(
 
                 if (state.isThreadMode()) {
                     ThreadSourcePane(
-                        sources = state.resolvedThreadRailSources(),
+                        sources = state.resolvedVisibleThreadSourceRows(),
                         isLandscape = state.isLandscape,
                         onSourceClick = onSourceClick,
                         modifier = Modifier
@@ -1125,8 +1129,8 @@ private fun ThreadReadingSurface(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(top = if (state.isLandscape) 24.dp else 20.dp),
-        verticalArrangement = Arrangement.spacedBy(if (state.isLandscape) 14.dp else 12.dp),
+            .padding(top = if (state.isLandscape) 14.dp else 12.dp),
+        verticalArrangement = Arrangement.spacedBy(if (state.isLandscape) 12.dp else 10.dp),
     ) {
         ThreadTurnList(
             state = state,
@@ -1409,8 +1413,8 @@ private fun ThreadSourcePane(
         modifier = modifier
             .background(colors.bg1)
             .verticalScroll(scrollState)
-            .padding(horizontal = 10.dp, vertical = 12.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp),
+            .padding(horizontal = 8.dp, vertical = 10.dp),
+        verticalArrangement = Arrangement.spacedBy(6.dp),
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -1564,8 +1568,8 @@ private fun GuideReferencePane(
         modifier = modifier
             .background(colors.bg1)
             .verticalScroll(scrollState)
-            .padding(horizontal = 28.dp, vertical = 26.dp),
-        verticalArrangement = Arrangement.spacedBy(20.dp),
+            .padding(horizontal = 22.dp, vertical = 20.dp),
+        verticalArrangement = Arrangement.spacedBy(14.dp),
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -1620,9 +1624,9 @@ private fun GuideReferenceCard(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .heightIn(min = 88.dp)
-                .padding(horizontal = 18.dp, vertical = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(10.dp),
+                .heightIn(min = 80.dp)
+                .padding(horizontal = 14.dp, vertical = 12.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             Text(
                 text = listOf(xref.id.trim().ifEmpty { "GD-?" }, relation)
@@ -1767,8 +1771,8 @@ private fun PrimaryAnswerBlock(
             Text(
                 text = turn.question.trim().ifEmpty { "No question text recorded." },
                 style = typography.sectionTitle.copy(
-                    fontSize = (typeScalePolicy.questionFontSizeSp + 9).sp,
-                    lineHeight = (typeScalePolicy.questionLineHeightSp + 11).sp,
+                    fontSize = (typeScalePolicy.questionFontSizeSp + 10).sp,
+                    lineHeight = (typeScalePolicy.questionLineHeightSp + 12).sp,
                     fontWeight = FontWeight.SemiBold,
                     letterSpacing = 0.sp,
                 ),
@@ -1847,11 +1851,11 @@ private fun GuidePaperSurface(
                 .fillMaxWidth()
                 .padding(
                     start = horizontalPadding,
-                    top = if (state.isLandscape) 24.dp else 22.dp,
+                    top = if (state.isLandscape) 20.dp else 18.dp,
                     end = horizontalPadding,
                     bottom = tabletGuidePaperBottomPaddingDp(state.isLandscape).dp,
                 ),
-            verticalArrangement = Arrangement.spacedBy(if (state.isLandscape) 12.dp else 13.dp),
+            verticalArrangement = Arrangement.spacedBy(if (state.isLandscape) 10.dp else 11.dp),
             content = content,
         )
     }
@@ -1874,7 +1878,7 @@ private fun GuidePaperHeader(
 
     Column(
         modifier = Modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(10.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         Text(
             text = "FIELD MANUAL \u00B7 REV 04-27 \u00B7 PK 2",
@@ -1890,8 +1894,8 @@ private fun GuidePaperHeader(
         Text(
             text = state.guideTitle.trim().ifEmpty { "Guide" },
             style = typography.sectionTitle.copy(
-                fontSize = if (state.isLandscape) 30.sp else 36.sp,
-                lineHeight = if (state.isLandscape) 36.sp else 42.sp,
+                fontSize = if (state.isLandscape) 38.sp else 40.sp,
+                lineHeight = if (state.isLandscape) 44.sp else 46.sp,
                 fontWeight = FontWeight.SemiBold,
                 letterSpacing = 0.sp,
             ),
@@ -2794,6 +2798,12 @@ internal fun TabletDetailState.resolvedThreadSourceRows(): List<SourceState> {
     return rows
 }
 
+internal fun TabletDetailState.resolvedVisibleThreadSourceRows(): List<SourceState> =
+    threadRailVisibleSources(resolvedThreadRailSources(), guideMode = false)
+
+internal fun TabletDetailState.resolvedVisibleThreadSourceCount(): Int =
+    resolvedVisibleThreadSourceRows().size
+
 internal fun TabletDetailState.resolvedEvidencePaneGraph(): TabletGuideEvidencePaneGraph {
     val graphAnchor = tabletSourceGraphAnchor(anchor)
     val graphXRefs = tabletSourceGraphXRefs(xrefs)
@@ -2932,7 +2942,7 @@ internal fun tabletShouldShowEvidencePane(
     guideMode: Boolean,
 ): Boolean =
     when {
-        state.isThreadMode() -> false
+        state.isThreadMode() -> state.isLandscape && state.resolvedVisibleThreadSourceRows().isNotEmpty()
         guideMode -> state.isLandscape
         state.evidenceExpanded -> true
         else -> state.sources.isNotEmpty()

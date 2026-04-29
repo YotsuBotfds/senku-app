@@ -14,10 +14,10 @@ class StressReadingPolicyTest {
     fun tabletLandscapeReadingPolicyKeepsAnswerFirstWidthBudget() {
         val policy = tabletLandscapeReadingLayoutPolicy()
 
-        assertEquals(184, policy.threadRailWidthDp)
-        assertEquals(548, policy.answerMaxWidthDp)
-        assertEquals(348, policy.evidenceRailWidthDp)
-        assertEquals(14, policy.answerHorizontalPaddingDp)
+        assertEquals(328, policy.threadRailWidthDp)
+        assertEquals(492, policy.answerMaxWidthDp)
+        assertEquals(478, policy.evidenceRailWidthDp)
+        assertEquals(42, policy.answerHorizontalPaddingDp)
     }
 
     @Test
@@ -25,9 +25,9 @@ class StressReadingPolicyTest {
         val policy = tabletPortraitReadingLayoutPolicy()
 
         assertEquals(0, policy.threadRailWidthDp)
-        assertEquals(620, policy.answerMaxWidthDp)
-        assertEquals(288, policy.evidenceRailWidthDp)
-        assertEquals(12, policy.answerHorizontalPaddingDp)
+        assertEquals(720, policy.answerMaxWidthDp)
+        assertEquals(420, policy.evidenceRailWidthDp)
+        assertEquals(42, policy.answerHorizontalPaddingDp)
     }
 
     @Test
@@ -38,20 +38,20 @@ class StressReadingPolicyTest {
         assertEquals(tabletPortraitReadingLayoutPolicy(), portraitPolicy)
         assertEquals(tabletLandscapeReadingLayoutPolicy(), landscapePolicy)
         assertEquals(0, portraitPolicy.threadRailWidthDp)
-        assertEquals(620, portraitPolicy.answerMaxWidthDp)
-        assertEquals(288, portraitPolicy.evidenceRailWidthDp)
-        assertEquals(12, portraitPolicy.answerHorizontalPaddingDp)
-        assertEquals(184, landscapePolicy.threadRailWidthDp)
-        assertEquals(548, landscapePolicy.answerMaxWidthDp)
-        assertEquals(348, landscapePolicy.evidenceRailWidthDp)
-        assertEquals(14, landscapePolicy.answerHorizontalPaddingDp)
+        assertEquals(720, portraitPolicy.answerMaxWidthDp)
+        assertEquals(420, portraitPolicy.evidenceRailWidthDp)
+        assertEquals(42, portraitPolicy.answerHorizontalPaddingDp)
+        assertEquals(328, landscapePolicy.threadRailWidthDp)
+        assertEquals(492, landscapePolicy.answerMaxWidthDp)
+        assertEquals(478, landscapePolicy.evidenceRailWidthDp)
+        assertEquals(42, landscapePolicy.answerHorizontalPaddingDp)
     }
 
     @Test
     fun tabletGuideThreadRailUsesSectionIndexWidthWithoutChangingAnswerRails() {
-        assertEquals(184, tabletThreadRailWidthDp(isLandscape = true, guideMode = false))
+        assertEquals(328, tabletThreadRailWidthDp(isLandscape = true, guideMode = false))
         assertEquals(0, tabletThreadRailWidthDp(isLandscape = false, guideMode = false))
-        assertEquals(0, tabletThreadRailWidthDp(isLandscape = true, guideMode = false, threadMode = true))
+        assertEquals(328, tabletThreadRailWidthDp(isLandscape = true, guideMode = false, threadMode = true))
         assertEquals(0, tabletThreadRailWidthDp(isLandscape = false, guideMode = false, threadMode = true))
         assertEquals(316, tabletThreadRailWidthDp(isLandscape = true, guideMode = true))
         assertEquals(330, tabletThreadRailWidthDp(isLandscape = false, guideMode = true))
@@ -61,7 +61,7 @@ class StressReadingPolicyTest {
     fun tabletThreadRailShellHidesOnlyNonGuidePortraitRail() {
         assertTrue(tabletShouldShowThreadRail(isLandscape = true, guideMode = false))
         assertTrue(tabletShouldShowThreadRail(isLandscape = true, guideMode = true))
-        assertFalse(tabletShouldShowThreadRail(isLandscape = true, guideMode = false, threadMode = true))
+        assertTrue(tabletShouldShowThreadRail(isLandscape = true, guideMode = false, threadMode = true))
         assertFalse(tabletShouldShowThreadRail(isLandscape = false, guideMode = false))
         assertFalse(tabletShouldShowThreadRail(isLandscape = false, guideMode = false, threadMode = true))
         assertTrue(tabletShouldShowThreadRail(isLandscape = false, guideMode = true))
@@ -69,10 +69,10 @@ class StressReadingPolicyTest {
 
     @Test
     fun tabletThreadFlowUsesWiderSingleColumnBudget() {
-        assertEquals(760, tabletThreadFlowMaxWidthDp(isLandscape = true))
+        assertEquals(700, tabletThreadFlowMaxWidthDp(isLandscape = true))
         assertEquals(660, tabletThreadFlowMaxWidthDp(isLandscape = false))
-        assertEquals(32, tabletThreadFlowHorizontalPaddingDp(isLandscape = true))
-        assertEquals(22, tabletThreadFlowHorizontalPaddingDp(isLandscape = false))
+        assertEquals(24, tabletThreadFlowHorizontalPaddingDp(isLandscape = true))
+        assertEquals(18, tabletThreadFlowHorizontalPaddingDp(isLandscape = false))
         assertEquals(0, tabletThreadComposerBottomPaddingDp(isLandscape = true))
         assertEquals(12, tabletThreadComposerBottomPaddingDp(isLandscape = false))
     }
@@ -90,15 +90,15 @@ class StressReadingPolicyTest {
 
     @Test
     fun tabletGuidePaperPolicyContainsPortraitReaderWithReadableLandscapeSheet() {
-        assertEquals(520, tabletGuidePaperMaxWidthDp(isLandscape = true))
-        assertEquals(700, tabletGuidePaperMaxWidthDp(isLandscape = false))
+        assertEquals(518, tabletGuidePaperMaxWidthDp(isLandscape = true))
+        assertEquals(820, tabletGuidePaperMaxWidthDp(isLandscape = false))
         assertEquals(10, tabletGuidePaperHorizontalPaddingDp(isLandscape = true))
         assertEquals(18, tabletGuidePaperHorizontalPaddingDp(isLandscape = false))
-        assertEquals(24, tabletGuidePaperInnerHorizontalPaddingDp(isLandscape = true))
+        assertEquals(34, tabletGuidePaperInnerHorizontalPaddingDp(isLandscape = true))
         assertEquals(34, tabletGuidePaperInnerHorizontalPaddingDp(isLandscape = false))
-        assertEquals(28, tabletGuidePaperBottomPaddingDp(isLandscape = true))
-        assertEquals(46, tabletGuidePaperBottomPaddingDp(isLandscape = false))
-        assertEquals(424, tabletGuideReferenceRailWidthDp(isLandscape = true))
+        assertEquals(24, tabletGuidePaperBottomPaddingDp(isLandscape = true))
+        assertEquals(40, tabletGuidePaperBottomPaddingDp(isLandscape = false))
+        assertEquals(420, tabletGuideReferenceRailWidthDp(isLandscape = true))
         assertEquals(0, tabletGuideReferenceRailWidthDp(isLandscape = false))
     }
 
@@ -393,7 +393,7 @@ class StressReadingPolicyTest {
         )
 
         assertEquals(
-            "GUIDE CONTEXT KEPT - 2 SECTIONS - 2 REFERENCES",
+            "GUIDE CONTEXT KEPT \u2022 2 SECTIONS \u2022 2 REFERENCES",
             tabletComposerContextHint(state),
         )
     }
@@ -418,7 +418,7 @@ class StressReadingPolicyTest {
             turns = listOf(threadTurn("q1", sourceCount = 3)),
         )
 
-        assertEquals("GD-TEST - CONTEXT KEPT - 3 SOURCES VISIBLE", tabletComposerContextHint(state))
+        assertEquals("GD-TEST \u2022 CONTEXT KEPT \u2022 3 SOURCES VISIBLE", tabletComposerContextHint(state))
     }
 
     @Test
@@ -432,7 +432,7 @@ class StressReadingPolicyTest {
         )
 
         assertEquals(
-            "THREAD CONTEXT - 2 TURNS - GD-220 ANCHOR",
+            "THREAD CONTEXT KEPT \u2022 2 TURNS \u2022 2 SOURCES",
             tabletComposerContextHint(state),
         )
         assertEquals("GD-220 anchor", tabletThreadContextAnchorLabel(state))
@@ -598,7 +598,7 @@ class StressReadingPolicyTest {
         )
 
         assertEquals(
-            "GD-FALLBACK - CONTEXT KEPT - NO SOURCES VISIBLE",
+            "GD-FALLBACK \u2022 CONTEXT KEPT \u2022 NO SOURCES VISIBLE",
             tabletComposerContextHint(state),
         )
     }
@@ -622,7 +622,7 @@ class StressReadingPolicyTest {
         )
 
         assertEquals(
-            "GUIDE CONTEXT KEPT - NO SECTIONS - NO REFERENCES",
+            "GUIDE CONTEXT KEPT \u2022 NO SECTIONS \u2022 NO REFERENCES",
             tabletComposerContextHint(state),
         )
     }
@@ -664,17 +664,19 @@ class StressReadingPolicyTest {
     }
 
     @Test
-    fun tabletThreadModeSuppressesEvidencePaneAfterInlineSourceMigration() {
+    fun tabletThreadModeRestoresLandscapeSourceRailForCanonicalThreadSources() {
         val state = tabletDetailState(
             detailMode = TabletDetailMode.Thread,
             evidenceExpanded = true,
+            guideId = "GD-220",
             sources = listOf(
-                SourceState("s1", "GD-001", "Anchor guide", isAnchor = true, isSelected = true),
-                SourceState("s2", "GD-002", "Related guide", isAnchor = false, isSelected = false),
+                SourceState("s1", "GD-345", "Tarp & Cord Shelters", isAnchor = false, isSelected = false),
+                SourceState("s2", "GD-132", "Foundry & Metal Casting", isAnchor = false, isSelected = false),
             ),
         )
 
-        assertFalse(tabletShouldShowEvidencePane(state, guideMode = false))
+        assertTrue(tabletShouldShowEvidencePane(state, guideMode = false))
+        assertEquals(listOf("GD-220", "GD-345"), state.resolvedVisibleThreadSourceRows().map { it.id })
     }
 
     @Test
