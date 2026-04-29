@@ -103,6 +103,7 @@ final class DetailGuidePresentationFormatter {
         }
         String displayText = styled.toString();
         boolean insideAdmonitionBlock = false;
+        boolean nextTextLineMayBeRecoveredHeading = false;
         int admonitionAccentColorRes = guideAdmonitionWarningColorResForLegacy();
         int cursor = 0;
         for (GuideBodySanitizer.GuideBodyLine line : parsedBody.lines) {
@@ -112,28 +113,36 @@ final class DetailGuidePresentationFormatter {
             if (line.kind == GuideBodySanitizer.GuideBodyLine.Kind.SECTION) {
                 styleGuideAnchorLine(styled, displayText, lineStart, lineEnd, line.label);
                 insideAdmonitionBlock = false;
+                nextTextLineMayBeRecoveredHeading = true;
             } else if (isGuideManualKickerLine(trimmed)) {
                 styleGuideManualKickerLine(styled, lineStart, lineEnd);
                 insideAdmonitionBlock = false;
+                nextTextLineMayBeRecoveredHeading = false;
             } else if (isTabletSectionPrefixLine(trimmed)) {
                 styleGuideTabletSectionPrefixLine(styled, lineStart, lineEnd);
                 insideAdmonitionBlock = false;
+                nextTextLineMayBeRecoveredHeading = false;
             } else if (isGuideManualMetaLine(trimmed)) {
                 styleGuideManualMetaLine(styled, lineStart, lineEnd);
                 insideAdmonitionBlock = false;
+                nextTextLineMayBeRecoveredHeading = false;
             } else if (isGuideManualTitleLine(parsedBody.lines, line)) {
                 styleGuideManualTitleLine(styled, lineStart, lineEnd);
                 insideAdmonitionBlock = false;
+                nextTextLineMayBeRecoveredHeading = false;
             } else if (line.kind == GuideBodySanitizer.GuideBodyLine.Kind.REQUIRED_READING) {
                 styleRequiredReadingLine(styled, displayText, lineStart, lineEnd, line.label);
                 insideAdmonitionBlock = false;
+                nextTextLineMayBeRecoveredHeading = false;
             } else if (line.kind == GuideBodySanitizer.GuideBodyLine.Kind.HEADING) {
                 styleGuideHeadingLine(styled, lineStart, lineEnd);
                 insideAdmonitionBlock = false;
+                nextTextLineMayBeRecoveredHeading = false;
             } else if (line.kind == GuideBodySanitizer.GuideBodyLine.Kind.ADMONITION_LABEL) {
                 admonitionAccentColorRes = admonitionAccentColorRes(trimmed);
                 styleGuideAdmonitionLabelLine(styled, lineStart, lineEnd, line.label, admonitionAccentColorRes);
                 insideAdmonitionBlock = true;
+                nextTextLineMayBeRecoveredHeading = false;
             } else {
                 int prefixEnd = guideAdmonitionPrefixEnd(trimmed);
                 if (prefixEnd > 0) {
@@ -174,12 +183,19 @@ final class DetailGuidePresentationFormatter {
                         applyGuideIndentedWarningLine(styled, lineStart, lineEnd, admonitionAccentColorRes);
                     }
                     insideAdmonitionBlock = true;
+                    nextTextLineMayBeRecoveredHeading = false;
                 } else if (trimmed.isEmpty()) {
                     insideAdmonitionBlock = false;
+                    nextTextLineMayBeRecoveredHeading = false;
                 } else if (insideAdmonitionBlock) {
                     applyGuideIndentedWarningLine(styled, lineStart, lineEnd, admonitionAccentColorRes);
+                    nextTextLineMayBeRecoveredHeading = false;
+                } else if (nextTextLineMayBeRecoveredHeading && isRecoveredGuideSectionHeading(trimmed)) {
+                    styleGuideHeadingLine(styled, lineStart, lineEnd);
+                    nextTextLineMayBeRecoveredHeading = false;
                 } else {
                     styleGuideTextLine(styled, lineStart, lineEnd);
+                    nextTextLineMayBeRecoveredHeading = false;
                 }
             }
             cursor = lineEnd + 1;
@@ -943,8 +959,17 @@ final class DetailGuidePresentationFormatter {
         return isTabletSectionPrefixLine(line);
     }
 
+    static boolean isRecoveredGuideSectionHeadingForLegacy(String line) {
+        return isRecoveredGuideSectionHeading(line);
+    }
+
     private static boolean isTabletSectionPrefixLine(String line) {
         return GUIDE_TABLET_SECTION_PREFIX_PATTERN.matcher(safe(line).trim()).matches();
+    }
+
+    private static boolean isRecoveredGuideSectionHeading(String line) {
+        String cleaned = safe(line).trim();
+        return "Reviewed Answer-Card Boundary".equals(cleaned);
     }
 
     private void styleGuideTabletSectionPrefixLine(SpannableStringBuilder styled, int lineStart, int lineEnd) {

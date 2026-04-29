@@ -442,6 +442,20 @@ public final class DetailGuidePresentationFormatterTest {
     }
 
     @Test
+    public void guideFormatterRecoversSplitSectionHeadingsAfterDisplaySanitizing() {
+        assertTrue(
+            DetailGuidePresentationFormatter.isRecoveredGuideSectionHeadingForLegacy(
+                "Reviewed Answer-Card Boundary"
+            )
+        );
+        assertFalse(
+            DetailGuidePresentationFormatter.isRecoveredGuideSectionHeadingForLegacy(
+                "Use this section only for screening."
+            )
+        );
+    }
+
+    @Test
     public void guideBodySanitizerFormatsInlineAdmonitionsAsManualLabels() {
         assertEquals(
             "DANGER \u00b7 Extreme burn hazard\nKeep every tool dry.",
