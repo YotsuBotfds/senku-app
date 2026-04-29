@@ -4,6 +4,74 @@ Planner lane only. This note slices the remaining Senku Android mock-parity
 work for up to five implementation workers while the parent integrates. Do not
 edit Android source from this lane.
 
+## 2026-04-29 Deep-Review Rebaseline
+
+Current pushed head after the deep-review hardening wave:
+
+- `6cd0f2d fix tablet ask button submit target`
+- Prior hardening commits in this run:
+  - `69422d9 harden shared ask submit routing`
+  - `1e0f0e3 improve shared search input accessibility labels`
+  - `452434c hide legacy body mirror in answer mode`
+  - `23a4721 cover restored ask tab ownership`
+  - `260eb3f default tablet answers to answer-first layout`
+
+Acceptance proof:
+
+- State pack:
+  `artifacts/ui_state_pack/deep_review_hardening/20260429_144709/summary.json`
+  reports `status=pass`, `22/22`, `fail_count=0`, `platform_anr_count=0`,
+  `matrix_homogeneous=true`, `rotation_mismatch_count=0`.
+- APK SHA:
+  `c0975f08ffb7de6bcc98b0756aed5a608c50bf79403bef70984f56d4385542e7`.
+- Host model:
+  `gemma-4-e2b-it-litert`,
+  SHA `ea1102014465edeb14b517bf270f6751d036749e3c5f517a7ff802782cb92161`.
+- Visual diff:
+  `artifacts/ui_state_pack/deep_review_hardening/20260429_144709/visual_diff/mock_parity_visual_diff.md`
+  validated with `validate_android_mock_visual_diff_report.py`.
+
+Fresh worst visual-drift order:
+
+- `guide-tablet-portrait.png` MAE `51.74`.
+- `guide-phone-portrait.png` MAE `33.48`.
+- `guide-phone-landscape.png` MAE `24.89`.
+- `answer-phone-portrait.png` MAE `23.71`.
+- `answer-phone-landscape.png` MAE `21.14`.
+- `guide-tablet-landscape.png` MAE `20.15`.
+- `emergency-phone-portrait.png` MAE `16.87`.
+- `thread-phone-landscape.png` MAE `15.67`.
+
+Deep-review items already closed:
+
+- Shared Ask/Search submit routing centralized for IME and hardware Enter.
+- Explicit Search and Ask button targets added so tablet Ask button no longer
+  falls through to search ownership.
+- Shared search input labels moved to string resources with `labelFor` on the
+  existing icon labels where available, without visible mock drift.
+- Hidden answer-body mirror is now `GONE` in answer mode instead of being kept
+  alive at near-zero size.
+- Restored phone tab ownership is covered by unit tests.
+- Tablet answer mode now defaults to answer-first evidence-pane collapse unless
+  evidence is explicitly expanded.
+
+Fresh worker batch from this baseline:
+
+- Guide Reader Structure owns guide presentation formatters, guide paper
+  drawables, and guide formatter tests.
+- Phone Detail Shell / Composer owns `DetailActivity`, phone detail XML, phone
+  composer/danger shell resources, and phone detail tests.
+- Tablet Detail Compose owns `TabletDetailScreen.kt`, evidence models, and
+  tablet/evidence tests.
+- Search Results Polish owns result adapters/cards/layouts and search tests.
+- Home Shell / Nav Chrome owns main XML variants, home/nav/search drawables,
+  category/bottom-tab Compose primitives, and home chrome tests.
+
+Parent integration rule for this batch: land one worker slice at a time, run
+its focused tests, then run a role-focused state-pack proof before the next
+commit when the changed surface is high-risk. The final batch proof is the full
+four-role state pack plus mock visual diff.
+
 ## Evidence Anchors
 
 - Target mocks: `artifacts/mocks`, 22 canonical PNGs.
