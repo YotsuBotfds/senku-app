@@ -524,11 +524,11 @@ public final class MainActivity extends AppCompatActivity {
 
         searchButton.setOnClickListener(v -> {
             setPhoneTabFromFlow(BottomTabDestination.SEARCH);
-            handleSharedQuerySubmit(searchInput.getText().toString());
+            handleSharedQuerySubmit(searchInput.getText().toString(), SubmitTarget.SEARCH);
         });
         askButton.setOnClickListener(v -> {
             setPhoneTabFromFlow(BottomTabDestination.ASK);
-            handleSharedQuerySubmit(searchInput.getText().toString());
+            handleSharedQuerySubmit(searchInput.getText().toString(), SubmitTarget.ASK);
         });
         importModelButton.setOnClickListener(v -> launchModelPicker());
         hostInferenceButton.setOnClickListener(v -> toggleHostInference());
@@ -1261,8 +1261,12 @@ public final class MainActivity extends AppCompatActivity {
     }
 
     private void handleSharedQuerySubmit(String rawQuery) {
+        handleSharedQuerySubmit(rawQuery, resolveSharedSubmitTarget(activePhoneTab, askLaneActive));
+    }
+
+    private void handleSharedQuerySubmit(String rawQuery, SubmitTarget target) {
         String query = safe(rawQuery).trim();
-        if (resolveSharedSubmitTarget(activePhoneTab, askLaneActive) == SubmitTarget.ASK) {
+        if (target == SubmitTarget.ASK) {
             runAsk(query);
         } else {
             runSearch(query);
