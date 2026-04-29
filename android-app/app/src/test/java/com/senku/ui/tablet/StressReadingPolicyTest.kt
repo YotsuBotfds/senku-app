@@ -4,6 +4,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
+import com.senku.mobile.ReviewedCardMetadata
 import com.senku.ui.answer.AnswerContent
 import com.senku.ui.answer.AnswerSurfaceLabel
 import com.senku.ui.answer.Evidence
@@ -50,6 +51,8 @@ class StressReadingPolicyTest {
     fun tabletGuideThreadRailUsesSectionIndexWidthWithoutChangingAnswerRails() {
         assertEquals(184, tabletThreadRailWidthDp(isLandscape = true, guideMode = false))
         assertEquals(0, tabletThreadRailWidthDp(isLandscape = false, guideMode = false))
+        assertEquals(0, tabletThreadRailWidthDp(isLandscape = true, guideMode = false, threadMode = true))
+        assertEquals(0, tabletThreadRailWidthDp(isLandscape = false, guideMode = false, threadMode = true))
         assertEquals(316, tabletThreadRailWidthDp(isLandscape = true, guideMode = true))
         assertEquals(330, tabletThreadRailWidthDp(isLandscape = false, guideMode = true))
     }
@@ -58,8 +61,20 @@ class StressReadingPolicyTest {
     fun tabletThreadRailShellHidesOnlyNonGuidePortraitRail() {
         assertTrue(tabletShouldShowThreadRail(isLandscape = true, guideMode = false))
         assertTrue(tabletShouldShowThreadRail(isLandscape = true, guideMode = true))
+        assertFalse(tabletShouldShowThreadRail(isLandscape = true, guideMode = false, threadMode = true))
         assertFalse(tabletShouldShowThreadRail(isLandscape = false, guideMode = false))
+        assertFalse(tabletShouldShowThreadRail(isLandscape = false, guideMode = false, threadMode = true))
         assertTrue(tabletShouldShowThreadRail(isLandscape = false, guideMode = true))
+    }
+
+    @Test
+    fun tabletThreadFlowUsesWiderSingleColumnBudget() {
+        assertEquals(760, tabletThreadFlowMaxWidthDp(isLandscape = true))
+        assertEquals(660, tabletThreadFlowMaxWidthDp(isLandscape = false))
+        assertEquals(32, tabletThreadFlowHorizontalPaddingDp(isLandscape = true))
+        assertEquals(22, tabletThreadFlowHorizontalPaddingDp(isLandscape = false))
+        assertEquals(0, tabletThreadComposerBottomPaddingDp(isLandscape = true))
+        assertEquals(12, tabletThreadComposerBottomPaddingDp(isLandscape = false))
     }
 
     @Test
@@ -383,9 +398,10 @@ class StressReadingPolicyTest {
         )
 
         assertEquals(
-            "THREAD CONTEXT KEPT - 2 TURNS - 2 SOURCES",
+            "THREAD CONTEXT - 2 TURNS - GD-220 ANCHOR",
             tabletComposerContextHint(state),
         )
+        assertEquals("GD-220 anchor", tabletThreadContextAnchorLabel(state))
         assertEquals(
             listOf("GD-220", "GD-345"),
             state.resolvedThreadSourceRows().map { it.id },
@@ -412,7 +428,7 @@ class StressReadingPolicyTest {
         )
 
         assertEquals("Q1 \u2022 04:21 \u2022 FIELD QUESTION", tabletThreadQuestionMetaLabel(1))
-        assertEquals("A2 \u2022 04:23 \u2022 ANCHOR GD-345", tabletThreadAnswerMetaLabel(2))
+        assertEquals("A2 \u2022 04:23 \u2022 ANSWER", tabletThreadAnswerMetaLabel(2))
         assertEquals("\u2022 CONFIDENT", tabletThreadAnswerStatusLabel(confidentAnswer, Status.Done))
         assertEquals("\u2022 UNSURE", tabletThreadAnswerStatusLabel(unsureAnswer, Status.Done))
         assertEquals(
@@ -427,6 +443,54 @@ class StressReadingPolicyTest {
         )
         assertFalse(tabletThreadAnswerStatusLabel(confidentAnswer, Status.Done).contains("Rule match"))
         assertFalse(tabletThreadAnswerStatusLabel(confidentAnswer, Status.Done).contains("STRONG EVIDENCE"))
+        assertFalse(tabletThreadAnswerMetaLabel(2).contains("GD-345"))
+    }
+
+    @Test
+    fun tabletThreadAnswerSourceChipsUsePerTurnFallbackGuideIds() {
+        assertEquals(
+            listOf("GD-220", "GD-132"),
+            tabletThreadAnswerSourceIds(content = null, turnIndex = 1),
+        )
+        assertEquals(
+            listOf("GD-220", "GD-132"),
+            tabletThreadAnswerSourceChipLabels(content = null, turnIndex = 1),
+        )
+        assertEquals(
+            listOf("GD-345"),
+            tabletThreadAnswerSourceIds(content = null, turnIndex = 2),
+        )
+        assertEquals(
+            emptyList<String>(),
+            tabletThreadAnswerSourceIds(content = null, turnIndex = 3),
+        )
+    }
+
+    @Test
+    fun tabletThreadAnswerSourceChipsPreferReviewedMetadataGuideIds() {
+        val answer = AnswerContent(
+            short = "Use the relevant field guidance.",
+            sourceCount = 2,
+            host = "Host",
+            elapsedSeconds = 0.0,
+            reviewedCardMetadata = ReviewedCardMetadata(
+                "card",
+                "gd-777",
+                "pilot_reviewed",
+                "cite-reviewed",
+                ReviewedCardMetadata.PROVENANCE_REVIEWED_CARD_RUNTIME,
+                listOf("GD-888", "gd-777", " GD-889 "),
+            ),
+        )
+
+        assertEquals(
+            listOf("GD-777", "GD-888", "GD-889"),
+            tabletThreadAnswerSourceIds(answer, turnIndex = 1),
+        )
+        assertEquals(
+            listOf("GD-777", "GD-888", "GD-889"),
+            tabletThreadAnswerSourceChipLabels(answer, turnIndex = 1),
+        )
     }
 
     @Test
@@ -554,6 +618,20 @@ class StressReadingPolicyTest {
         )
 
         assertTrue(tabletShouldShowEvidencePane(state, guideMode = false))
+    }
+
+    @Test
+    fun tabletThreadModeSuppressesEvidencePaneAfterInlineSourceMigration() {
+        val state = tabletDetailState(
+            detailMode = TabletDetailMode.Thread,
+            evidenceExpanded = true,
+            sources = listOf(
+                SourceState("s1", "GD-001", "Anchor guide", isAnchor = true, isSelected = true),
+                SourceState("s2", "GD-002", "Related guide", isAnchor = false, isSelected = false),
+            ),
+        )
+
+        assertFalse(tabletShouldShowEvidencePane(state, guideMode = false))
     }
 
     @Test

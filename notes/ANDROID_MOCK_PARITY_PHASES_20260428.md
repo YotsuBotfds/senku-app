@@ -1245,6 +1245,46 @@ New external UI direction for next wave:
   A2 can show only `GD-345`. Next implementation should define tap behavior
   later, but first land stable visual chips and no-rail flow.
 
+## Wave54 Checkpoint
+
+Committed scope pending at the time of this update:
+
+- Tablet thread: migrated the thread detail view from the dashboard/reference
+  layout to a single-column conversational flow by suppressing the left
+  `ThreadRail` and right thread source pane only for `TabletDetailMode.Thread`.
+- Tablet thread: moved source identity into inline answer chips. A1 now resolves
+  `GD-220` and `GD-132`; A2 resolves `GD-345`; reviewed-card metadata still
+  wins and de-dupes normalized guide IDs.
+- Tablet thread: changed answer meta from `ANCHOR GD-*` to clean `ANSWER`,
+  retained visible confidence dot labels, widened the thread flow budget, and
+  changed composer footer copy to
+  `THREAD CONTEXT - 2 TURNS - GD-220 ANCHOR`.
+- Tablet thread: added portrait-only composer bottom padding so the plus/input/
+  Send row remains fully visible in the tablet portrait screenshot.
+
+Fresh proof:
+
+- Pack: `artifacts/ui_state_pack/wave54_thread_flow_b/20260428_204706`
+- Canonical mocks:
+  `artifacts/ui_state_pack/wave54_thread_flow_b/20260428_204706/mocks`
+- Zip:
+  `artifacts/ui_state_pack/wave54_thread_flow_b/20260428_204706_mocks.zip`
+- Summary: status `pass`, states `22/22`, failures `0`, ANRs `0`, mock pack
+  `pass`, homogeneous matrix `true`.
+- APK SHA:
+  `3ac16ecf9abe460d152a78086375876d9adab775cf1d36f8244950775486d71f`
+- Validation: `StressReadingPolicyTest` passed; rebuilt four-device state pack
+  passed `22/22`; visual review verified tablet thread rails are gone, inline
+  chips/footer are present, and the portrait composer is no longer clipped.
+
+Next slice candidates:
+
+- Phone thread XML path still carries older `ANCHOR GD-*` answer metadata,
+  `THREAD CONTEXT KEPT`, and phone-landscape related-source side content. Bring
+  it in line with the new evidence-in-flow direction.
+- Home/tablet polish remains open against the posted target mocks: icon scale,
+  search icon styling, and excess rounding/gradient cleanup.
+
 ## Parallelization Rules
 
 - Start every worker with `git status --short`, `git log --oneline -n 8

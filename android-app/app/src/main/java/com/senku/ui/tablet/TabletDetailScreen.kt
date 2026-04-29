@@ -7,6 +7,8 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -289,8 +291,10 @@ internal fun tabletReadingLayoutPolicy(isLandscape: Boolean): TabletReadingLayou
 internal fun tabletThreadRailWidthDp(
     isLandscape: Boolean,
     guideMode: Boolean,
+    threadMode: Boolean = false,
 ): Int =
     when {
+        threadMode && !guideMode -> 0
         guideMode && isLandscape -> 316
         guideMode -> 330
         else -> tabletReadingLayoutPolicy(isLandscape).threadRailWidthDp
@@ -299,7 +303,17 @@ internal fun tabletThreadRailWidthDp(
 internal fun tabletShouldShowThreadRail(
     isLandscape: Boolean,
     guideMode: Boolean,
-): Boolean = tabletThreadRailWidthDp(isLandscape, guideMode) > 0
+    threadMode: Boolean = false,
+): Boolean = tabletThreadRailWidthDp(isLandscape, guideMode, threadMode) > 0
+
+internal fun tabletThreadFlowMaxWidthDp(isLandscape: Boolean): Int =
+    if (isLandscape) 760 else 660
+
+internal fun tabletThreadFlowHorizontalPaddingDp(isLandscape: Boolean): Int =
+    if (isLandscape) 32 else 22
+
+internal fun tabletThreadComposerBottomPaddingDp(isLandscape: Boolean): Int =
+    if (isLandscape) 0 else 12
 
 internal fun tabletGuidePaperMaxWidthDp(isLandscape: Boolean): Int =
     if (isLandscape) 548 else 820
@@ -397,13 +411,8 @@ internal fun tabletComposerContextHint(state: TabletDetailState): String {
         else -> if (guideMode) "$count sections" else "$count turns"
     }
     if (state.isThreadMode()) {
-        val sourceCount = state.resolvedThreadRailSources().size
-        val sourceLabel = when (sourceCount) {
-            0 -> "No sources"
-            1 -> "1 source"
-            else -> "$sourceCount sources"
-        }
-        return listOf("Thread context kept", turnLabel, sourceLabel)
+        val anchorLabel = tabletThreadContextAnchorLabel(state)
+        return listOf("Thread context", turnLabel, anchorLabel)
             .joinToString(" - ")
             .uppercase()
     }
@@ -418,6 +427,25 @@ internal fun tabletComposerContextHint(state: TabletDetailState): String {
     return listOf(if (guideMode) "Guide context kept" else "Thread context kept", turnLabel, sourceLabel)
         .joinToString(" - ")
         .uppercase()
+}
+
+internal fun tabletThreadContextAnchorLabel(state: TabletDetailState): String {
+    val anchorId = state.guideId.trim()
+        .ifEmpty {
+            state.resolvedThreadSourceRows()
+                .firstOrNull { it.isAnchor && it.id.isNotBlank() }
+                ?.id
+                ?.trim()
+                .orEmpty()
+        }
+        .ifEmpty {
+            state.resolvedThreadSourceRows()
+                .firstOrNull { it.id.isNotBlank() }
+                ?.id
+                ?.trim()
+                .orEmpty()
+        }
+    return if (anchorId.isBlank()) "No anchor" else "$anchorId anchor"
 }
 
 internal fun tabletThreadSourcePaneTitle(count: Int, isLandscape: Boolean): String {
@@ -461,9 +489,7 @@ internal fun tabletThreadQuestionMetaLabel(turnIndex: Int): String =
     "Q${turnIndex.coerceAtLeast(1)} \u2022 ${tabletThreadTimestampLabel(turnIndex)} \u2022 FIELD QUESTION"
 
 internal fun tabletThreadAnswerMetaLabel(turnIndex: Int, content: AnswerContent? = null): String {
-    val sourceId = tabletThreadAnswerSourceId(content, turnIndex)
-    val sourceLabel = listOf("ANCHOR", sourceId).filter { it.isNotBlank() }.joinToString(" ")
-    return "A${turnIndex.coerceAtLeast(1)} \u2022 ${tabletThreadTimestampLabel(turnIndex)} \u2022 $sourceLabel"
+    return "A${turnIndex.coerceAtLeast(1)} \u2022 ${tabletThreadTimestampLabel(turnIndex)} \u2022 ANSWER"
 }
 
 internal fun tabletThreadTimestampLabel(turnIndex: Int): String {
@@ -472,21 +498,34 @@ internal fun tabletThreadTimestampLabel(turnIndex: Int): String {
 }
 
 internal fun tabletThreadAnswerSourceId(content: AnswerContent?, turnIndex: Int): String {
+    return tabletThreadAnswerSourceIds(content, turnIndex).firstOrNull().orEmpty()
+}
+
+internal fun tabletThreadAnswerSourceIds(content: AnswerContent?, turnIndex: Int): List<String> {
     val metadata = content?.reviewedCardMetadata
-    val reviewedGuideId = metadata?.cardGuideId?.trim().orEmpty()
-    if (reviewedGuideId.isNotBlank()) {
-        return reviewedGuideId.uppercase(Locale.US)
+    val ids = linkedSetOf<String>()
+    fun addGuideId(value: String?) {
+        val normalized = value?.trim().orEmpty().uppercase(Locale.US)
+        if (normalized.isNotBlank()) {
+            ids += normalized
+        }
     }
-    val citedGuideId = metadata?.citedReviewedSourceGuideIds?.firstOrNull()?.trim().orEmpty()
-    if (citedGuideId.isNotBlank()) {
-        return citedGuideId.uppercase(Locale.US)
+
+    addGuideId(metadata?.cardGuideId)
+    metadata?.citedReviewedSourceGuideIds?.forEach { addGuideId(it) }
+
+    if (ids.isNotEmpty()) {
+        return ids.toList()
     }
     return when (turnIndex.coerceAtLeast(1)) {
-        1 -> "GD-220"
-        2 -> "GD-345"
-        else -> ""
+        1 -> listOf("GD-220", "GD-132")
+        2 -> listOf("GD-345")
+        else -> emptyList()
     }
 }
+
+internal fun tabletThreadAnswerSourceChipLabels(content: AnswerContent?, turnIndex: Int): List<String> =
+    tabletThreadAnswerSourceIds(content, turnIndex)
 
 internal fun tabletThreadAnswerStatusLabel(content: AnswerContent, status: Status): String =
     when {
@@ -696,7 +735,11 @@ private fun TabletDetailBodyRow(
         modifier = modifier.background(colors.bg0),
     ) {
         val guideMode = state.isGuideMode()
-        val showThreadRail = tabletShouldShowThreadRail(state.isLandscape, guideMode)
+        val showThreadRail = tabletShouldShowThreadRail(
+            isLandscape = state.isLandscape,
+            guideMode = guideMode,
+            threadMode = state.isThreadMode(),
+        )
         if (showThreadRail) {
             ThreadRail(
                 turns = state.resolvedThreadRailTurns(),
@@ -711,7 +754,13 @@ private fun TabletDetailBodyRow(
                 onTurnClick = onTurnClick,
                 onSourceClick = onSourceClick,
                 modifier = Modifier
-                    .width(tabletThreadRailWidthDp(state.isLandscape, guideMode).dp)
+                    .width(
+                        tabletThreadRailWidthDp(
+                            isLandscape = state.isLandscape,
+                            guideMode = guideMode,
+                            threadMode = state.isThreadMode(),
+                        ).dp,
+                    )
                     .fillMaxHeight()
                     .semantics {
                         paneTitle = threadPaneTitle
@@ -879,6 +928,11 @@ private fun DetailWorkspace(
                 onTextChange = onComposerTextChange,
                 onSendClick = { onComposerSendClick(state.composerText) },
                 onRetryClick = if (state.composerShowRetry) onRetryClick else null,
+                modifier = if (state.isThreadMode()) {
+                    Modifier.padding(bottom = tabletThreadComposerBottomPaddingDp(state.isLandscape).dp)
+                } else {
+                    Modifier
+                },
             )
         }
     }
@@ -904,12 +958,16 @@ private fun CenterPane(
         val verticalPagePadding = if (guideMode) 12.dp else 0.dp
         val horizontalPagePadding = if (guideMode) {
             tabletGuidePaperHorizontalPaddingDp(state.isLandscape).dp
+        } else if (state.isThreadMode()) {
+            tabletThreadFlowHorizontalPaddingDp(state.isLandscape).dp
         } else {
             readingPolicy.answerHorizontalPaddingDp.dp
         }
         val maxContentWidth = if (guideMode) {
             tabletGuidePaperMaxWidthDp(state.isLandscape) +
                 (tabletGuidePaperHorizontalPaddingDp(state.isLandscape) * 2)
+        } else if (state.isThreadMode()) {
+            tabletThreadFlowMaxWidthDp(state.isLandscape)
         } else {
             readingPolicy.answerMaxWidthDp
         }
@@ -1880,6 +1938,11 @@ private fun AnswerInlineBlock(
                 color = bodyColor,
             )
         }
+        if (threadMode) {
+            ThreadAnswerSourceChipRow(
+                labels = tabletThreadAnswerSourceChipLabels(content, turnIndex),
+            )
+        }
         if (!content.steps.isNullOrEmpty() && !content.abstain) {
             Column(
                 verticalArrangement = Arrangement.spacedBy(3.dp),
@@ -1968,6 +2031,52 @@ private fun AnswerInlineBlock(
                 )
             }
         }
+    }
+}
+
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+private fun ThreadAnswerSourceChipRow(labels: List<String>) {
+    val normalizedLabels = labels
+        .map { it.trim() }
+        .filter { it.isNotEmpty() }
+    if (normalizedLabels.isEmpty()) {
+        return
+    }
+
+    FlowRow(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(6.dp),
+        verticalArrangement = Arrangement.spacedBy(5.dp),
+    ) {
+        normalizedLabels.forEach { label ->
+            ThreadAnswerSourceChip(label = label)
+        }
+    }
+}
+
+@Composable
+private fun ThreadAnswerSourceChip(label: String) {
+    val colors = SenkuTheme.colors
+    val typography = SenkuTheme.typography
+    Surface(
+        color = Color.Transparent,
+        contentColor = colors.accent,
+        shape = RoundedCornerShape(4.dp),
+        border = BorderStroke(1.dp, colors.hairlineStrong),
+    ) {
+        Text(
+            text = label,
+            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+            style = typography.monoCaps.copy(
+                fontSize = 10.sp,
+                lineHeight = 12.sp,
+                fontWeight = FontWeight.Medium,
+            ),
+            color = colors.accent,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+        )
     }
 }
 
@@ -2447,6 +2556,7 @@ internal fun tabletShouldShowEvidencePane(
     guideMode: Boolean,
 ): Boolean =
     when {
+        state.isThreadMode() -> false
         guideMode -> state.isLandscape
         state.evidenceExpanded -> true
         else -> state.sources.isNotEmpty()
