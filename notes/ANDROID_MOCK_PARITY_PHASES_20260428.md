@@ -1285,6 +1285,81 @@ Next slice candidates:
 - Home/tablet polish remains open against the posted target mocks: icon scale,
   search icon styling, and excess rounding/gradient cleanup.
 
+## Wave55 Checkpoint
+
+Committed scope pending at the time of this update:
+
+- Phone/XML thread: changed transcript answer metadata from `ANCHOR GD-*` to
+  clean `ANSWER` while preserving timestamps and inline source chips.
+- Phone/XML thread: changed session/footer wording to
+  `THREAD CONTEXT - 2 TURNS - GD-220 ANCHOR` when an anchor is known, with
+  previous-turn anchor fallback.
+- Phone/XML thread: suppressed generic answer scaffold rails for thread routes
+  in both portrait and landscape phone XML layouts, removing the landscape
+  related-source side list from the conversation screenshot.
+
+Fresh proof:
+
+- Pack: `artifacts/ui_state_pack/wave55_phone_thread_flow_b/20260428_210221`
+- Canonical mocks:
+  `artifacts/ui_state_pack/wave55_phone_thread_flow_b/20260428_210221/mocks`
+- Zip:
+  `artifacts/ui_state_pack/wave55_phone_thread_flow_b/20260428_210221_mocks.zip`
+- Summary: status `pass`, states `22/22`, failures `0`, ANRs `0`, mock pack
+  `pass`, homogeneous matrix `true`.
+- APK SHA:
+  `78320727b5f1d0f4f81fada5f39c9528ae9e6ca5c5c2ecb42d8e0255f59641bf`
+- Validation: `DetailThreadHistoryRendererTest`,
+  `DetailSessionPresentationFormatterTest`, and
+  `DetailFollowupLandscapeComposerTest` passed; rebuilt four-device state pack
+  passed `22/22`.
+
+Next slice candidates:
+
+- Home polish remains open against target mocks. Recommended sequence from
+  read-only review: phone nav icon sizing/active treatment, search icon
+  styling, flatter home surfaces, phone density, tablet portrait layout, then
+  tablet landscape layout.
+
+## Wave56 Checkpoint
+
+Committed scope pending at the time of this update:
+
+- Phone/XML thread: added an initial phone-landscape top lock for thread detail
+  renders so layout/autofocus scroll does not crop Q1/A1 out of the canonical
+  screenshot; user touch releases the lock for normal scrolling.
+- Phone/XML thread: verified the no-rail evidence-in-flow route keeps Q/A
+  labels, inline guide chips, confidence dots, and
+  `THREAD CONTEXT - 2 TURNS - GD-220 ANCHOR`.
+- Home: flattened the status/search/category/recent surfaces toward the target
+  field-manual mock, reduced the boxed phone search icon, and restored the
+  third recent thread in phone portrait.
+
+Fresh proof:
+
+- Pack: `artifacts/ui_state_pack/wave55_wave56_thread_home_c/20260428_215140`
+- Canonical mocks:
+  `artifacts/ui_state_pack/wave55_wave56_thread_home_c/20260428_215140/mocks`
+- Zip:
+  `artifacts/ui_state_pack/wave55_wave56_thread_home_c/20260428_215140_mocks.zip`
+- Summary: status `pass`, states `22/22`, failures `0`, ANRs `0`, mock pack
+  `pass`, homogeneous matrix `true`.
+- APK SHA:
+  `27c40ce685efe0b3f788b4ba62c09f5526af0e829b5937c4fdcbc9fb70810e7a`
+- Validation: `DetailFollowupLandscapeComposerTest`,
+  `DetailThreadHistoryRendererTest`, and
+  `DetailSessionPresentationFormatterTest` passed; `git diff --check` passed.
+- Visual note: phone-landscape thread now starts at Q1/A1 instead of the A1
+  tail. It still needs a density pass so the A2 body and footer do not run
+  behind the fixed composer boundary.
+
+Next slice candidates:
+
+- Phone-landscape thread density/composer boundary.
+- Home nav icon scale/active treatment and tablet home proportion pass.
+- Answer hierarchy, guide reader, emergency, and search residual polish remain
+  open per the xhigh phase map.
+
 ## Parallelization Rules
 
 - Start every worker with `git status --short`, `git log --oneline -n 8

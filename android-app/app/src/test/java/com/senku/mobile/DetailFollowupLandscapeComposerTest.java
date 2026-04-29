@@ -54,15 +54,16 @@ public final class DetailFollowupLandscapeComposerTest {
 
     @Test
     public void landscapeComposerDoesNotStealFocusFromInitialRenderLegacyFocus() {
-        assertFalse(DetailActivity.shouldRequestLandscapeDockedComposerFocus(true, true, true, false));
+        assertFalse(DetailActivity.shouldRequestLandscapeDockedComposerFocus(true, true, true, false, false));
     }
 
     @Test
     public void landscapeComposerPreservesUserLegacyInputFocus() {
-        assertTrue(DetailActivity.shouldRequestLandscapeDockedComposerFocus(true, true, true, true));
-        assertFalse(DetailActivity.shouldRequestLandscapeDockedComposerFocus(false, true, true, true));
-        assertFalse(DetailActivity.shouldRequestLandscapeDockedComposerFocus(true, false, true, true));
-        assertFalse(DetailActivity.shouldRequestLandscapeDockedComposerFocus(true, true, false, true));
+        assertTrue(DetailActivity.shouldRequestLandscapeDockedComposerFocus(true, true, true, true, false));
+        assertFalse(DetailActivity.shouldRequestLandscapeDockedComposerFocus(true, true, true, true, true));
+        assertFalse(DetailActivity.shouldRequestLandscapeDockedComposerFocus(false, true, true, true, false));
+        assertFalse(DetailActivity.shouldRequestLandscapeDockedComposerFocus(true, false, true, true, false));
+        assertFalse(DetailActivity.shouldRequestLandscapeDockedComposerFocus(true, true, false, true, false));
     }
 
     @Test
@@ -311,7 +312,6 @@ public final class DetailFollowupLandscapeComposerTest {
         assertTrue(DetailActivity.shouldKeepPhoneLandscapeThreadAtTop(true, 2, true));
         assertFalse(DetailActivity.shouldKeepPhoneLandscapeThreadAtTop(true, 1, true));
         assertFalse(DetailActivity.shouldKeepPhoneLandscapeThreadAtTop(true, 2, false));
-
         assertFalse(DetailActivity.shouldAutoOpenProvenanceForAnswerRail(true, 2, true));
         assertTrue(DetailActivity.shouldAutoOpenProvenanceForAnswerRail(true, 1, true));
         assertEquals("SOURCES - 2", DetailActivity.buildLandscapePhoneSourceRailTitle("Sources", 2));
@@ -419,7 +419,7 @@ public final class DetailFollowupLandscapeComposerTest {
         assertFalse(DetailActivity.shouldPreservePhoneLandscapeThreadTopAfterComposerFocus(true, 2, false));
         assertFalse(DetailActivity.shouldPreservePhoneLandscapeThreadTopAfterComposerFocus(false, 2, true));
         assertArrayEquals(
-            new long[] {0L, 80L, 240L, 480L},
+            new long[] {0L, 80L, 240L, 480L, 900L, 1400L},
             DetailActivity.phoneLandscapeThreadTopPreservationDelaysMs()
         );
     }

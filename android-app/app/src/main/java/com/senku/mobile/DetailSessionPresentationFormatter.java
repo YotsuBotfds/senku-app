@@ -65,7 +65,7 @@ final class DetailSessionPresentationFormatter {
 
     String buildThreadSummary(int earlierCount, int sourceCount) {
         int turnCount = Math.max(1, earlierCount + 1);
-        return "THREAD CONTEXT KEPT - " + turnCount + " TURNS - " + Math.max(0, sourceCount) + " SOURCES";
+        return buildThreadContextLabel(turnCount, "");
     }
 
     String buildSessionSummaryText(
@@ -74,7 +74,8 @@ final class DetailSessionPresentationFormatter {
         boolean stationMode,
         int sourceCount
     ) {
-        return buildThreadSummary(earlierTurns == null ? 0 : earlierTurns.size(), sourceCount);
+        int turnCount = Math.max(1, (earlierTurns == null ? 0 : earlierTurns.size()) + 1);
+        return buildThreadContextLabel(turnCount, primaryAnchorGuideId(earlierTurns, currentTurn));
     }
 
     String buildCurrentAnchorShiftSummary(
@@ -173,6 +174,36 @@ final class DetailSessionPresentationFormatter {
             }
         }
         return "";
+    }
+
+    private String primaryAnchorGuideId(
+        List<SessionMemory.TurnSnapshot> earlierTurns,
+        SessionMemory.TurnSnapshot currentTurn
+    ) {
+        String currentAnchorGuideId = primaryGuideIdForTurn(currentTurn);
+        if (!currentAnchorGuideId.isEmpty()) {
+            return currentAnchorGuideId;
+        }
+        if (earlierTurns == null) {
+            return "";
+        }
+        for (int index = earlierTurns.size() - 1; index >= 0; index--) {
+            String anchorGuideId = primaryGuideIdForTurn(earlierTurns.get(index));
+            if (!anchorGuideId.isEmpty()) {
+                return anchorGuideId;
+            }
+        }
+        return "";
+    }
+
+    private static String buildThreadContextLabel(int turnCount, String anchorGuideId) {
+        int safeTurnCount = Math.max(1, turnCount);
+        String turnLabel = safeTurnCount == 1 ? "1 TURN" : safeTurnCount + " TURNS";
+        String resolvedAnchorGuideId = safe(anchorGuideId).trim();
+        if (resolvedAnchorGuideId.isEmpty()) {
+            return "THREAD CONTEXT - " + turnLabel;
+        }
+        return "THREAD CONTEXT - " + turnLabel + " - " + resolvedAnchorGuideId + " ANCHOR";
     }
 
     private static boolean hasReviewedCardMetadata(SessionMemory.TurnSnapshot turn) {

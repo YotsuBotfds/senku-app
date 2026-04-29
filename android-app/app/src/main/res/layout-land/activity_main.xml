@@ -217,10 +217,11 @@
                 android:paddingEnd="12dp">
 
                 <ImageView
-                    android:layout_width="17dp"
-                    android:layout_height="17dp"
+                    android:layout_width="26dp"
+                    android:layout_height="26dp"
+                    android:background="@drawable/bg_manual_home_search_icon"
                     android:contentDescription="@string/search_input_description"
-                    android:padding="2dp"
+                    android:padding="6dp"
                     android:src="@drawable/ic_search_magnifier"
                     android:tint="@color/senku_rev03_accent" />
 

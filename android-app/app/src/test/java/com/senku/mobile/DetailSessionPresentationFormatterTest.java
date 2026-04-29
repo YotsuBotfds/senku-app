@@ -75,6 +75,46 @@ public final class DetailSessionPresentationFormatterTest {
     }
 
     @Test
+    public void sessionSummaryUsesThreadContextAnchorLanguage() {
+        DetailSessionPresentationFormatter formatter = new DetailSessionPresentationFormatter(null);
+        SessionMemory.TurnSnapshot earlier = turn(
+            "first",
+            List.of("GD-132"),
+            List.of(source("First", "GD-132", ""))
+        );
+        SessionMemory.TurnSnapshot current = turn(
+            "current",
+            List.of("GD-220"),
+            List.of(source("Current", "GD-220", ""))
+        );
+
+        assertEquals(
+            "THREAD CONTEXT - 2 TURNS - GD-220 ANCHOR",
+            formatter.buildSessionSummaryText(List.of(earlier), current, false, 4)
+        );
+    }
+
+    @Test
+    public void sessionSummaryFallsBackToPreviousAnchorWhenCurrentHasNone() {
+        DetailSessionPresentationFormatter formatter = new DetailSessionPresentationFormatter(null);
+        SessionMemory.TurnSnapshot earlier = turn(
+            "first",
+            List.of("GD-220"),
+            List.of(source("First", "GD-220", ""))
+        );
+        SessionMemory.TurnSnapshot current = turn("current", List.of(), List.of());
+
+        assertEquals(
+            "THREAD CONTEXT - 2 TURNS - GD-220 ANCHOR",
+            formatter.buildSessionSummaryText(List.of(earlier), current, false, 0)
+        );
+        assertEquals(
+            "THREAD CONTEXT - 1 TURN",
+            formatter.buildSessionSummaryText(List.of(), current, false, 0)
+        );
+    }
+
+    @Test
     public void reopenedReviewedCardTurnKeepsConfidentReviewedShape() {
         DetailSessionPresentationFormatter formatter = new DetailSessionPresentationFormatter(null);
         SessionMemory.TurnSnapshot reviewedTurn = new SessionMemory.TurnSnapshot(

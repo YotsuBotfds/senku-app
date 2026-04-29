@@ -79,11 +79,11 @@ public final class DetailThreadHistoryRendererTest {
             renderer.buildTurnLabel(2, true, turn("question", "GD-345", 0L), "")
         );
         assertEquals(
-            "A2 \u00B7 ANCHOR GD-345",
+            "A2 \u00B7 ANSWER",
             renderer.buildTurnLabel(2, false, turn("answer", "GD-345", 0L), "GD-220")
         );
         assertEquals(
-            "A2 \u00B7 ANCHOR GD-345",
+            "A2 \u00B7 ANSWER",
             renderer.buildTurnLabel(2, false, turn("answer", "GD-345", 0L), "GD-345")
         );
     }
@@ -108,7 +108,7 @@ public final class DetailThreadHistoryRendererTest {
             0L
         );
 
-        assertEquals("A1 \u00B7 ANCHOR GD-220", renderer.buildTurnLabel(1, false, turn, ""));
+        assertEquals("A1 \u00B7 ANSWER", renderer.buildTurnLabel(1, false, turn, ""));
         assertEquals(List.of("GD-220", "GD-132"), DetailThreadHistoryRenderer.guideChipLabelsForTurn(turn));
     }
 
@@ -127,7 +127,7 @@ public final class DetailThreadHistoryRendererTest {
             renderer.buildTurnLabel(1, true, turn("answer", "GD-220", timestamp), "")
         );
         assertEquals(
-            "A1 \u00B7 " + expectedTime + " \u00B7 ANCHOR GD-220",
+            "A1 \u00B7 " + expectedTime + " \u00B7 ANSWER",
             renderer.buildTurnLabel(1, false, turn("answer", "GD-220", timestamp), "")
         );
     }
@@ -150,7 +150,7 @@ public final class DetailThreadHistoryRendererTest {
         );
 
         assertEquals(
-            "A2 \u00B7 ANCHOR GD-220",
+            "A2 \u00B7 ANSWER",
             renderer.buildTurnLabel(2, false, turn, "GD-220")
         );
     }
@@ -298,16 +298,16 @@ public final class DetailThreadHistoryRendererTest {
     }
 
     @Test
-    public void threadContextFooterKeepsTurnCountWithoutRepeatingAnchor() {
+    public void threadContextFooterKeepsTurnCountWithDynamicAnchor() {
         assertEquals(
-            "THREAD CONTEXT KEPT \u00B7 2 TURNS",
+            "THREAD CONTEXT - 2 TURNS - GD-220 ANCHOR",
             DetailThreadHistoryRenderer.threadContextFooterLabel(
                 List.of(turn("answer", "GD-220", 0L), turn("answer", "GD-345", 0L)),
                 "GD-220"
             )
         );
         assertEquals(
-            "THREAD CONTEXT KEPT \u00B7 1 TURN",
+            "THREAD CONTEXT - 1 TURN",
             DetailThreadHistoryRenderer.threadContextFooterLabel(
                 List.of(turn("answer", "", 0L)),
                 ""

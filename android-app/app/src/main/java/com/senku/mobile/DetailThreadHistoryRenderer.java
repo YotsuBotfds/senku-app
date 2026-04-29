@@ -413,13 +413,7 @@ final class DetailThreadHistoryRenderer {
         StringBuilder builder = new StringBuilder("A")
             .append(safeTurnNumber)
             .append(time);
-        String anchorGuideId = sessionFormatter.primaryGuideIdForTurn(turn);
-        if (anchorGuideId.isEmpty()) {
-            anchorGuideId = safe(previousAnchorGuideId).trim();
-        }
-        if (!anchorGuideId.isEmpty()) {
-            builder.append(" \u00B7 ANCHOR ").append(anchorGuideId);
-        }
+        builder.append(" \u00B7 ANSWER");
         return builder.toString();
     }
 
@@ -457,9 +451,9 @@ final class DetailThreadHistoryRenderer {
         String turnLabel = turnCount == 1 ? "1 TURN" : turnCount + " TURNS";
         String anchorLabel = safe(anchorGuideId).trim();
         if (anchorLabel.isEmpty()) {
-            return "THREAD CONTEXT KEPT \u00B7 " + turnLabel;
+            return "THREAD CONTEXT - " + turnLabel;
         }
-        return "THREAD CONTEXT KEPT \u00B7 " + turnLabel;
+        return "THREAD CONTEXT - " + turnLabel + " - " + anchorLabel + " ANCHOR";
     }
 
     private String nextAnchorGuideId(String previousAnchorGuideId, SessionMemory.TurnSnapshot turn) {

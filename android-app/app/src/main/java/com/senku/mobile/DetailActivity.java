@@ -27,6 +27,7 @@ import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.KeyEvent;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
@@ -136,6 +137,7 @@ public final class DetailActivity extends AppCompatActivity {
     private TextView statusText;
     private ProgressBar progressBar;
     private ScrollView detailScroll;
+    private boolean phoneLandscapeThreadTopLockActive;
     private Button backButton;
     private Button homeButton;
     private Button pinButton;
@@ -681,6 +683,7 @@ public final class DetailActivity extends AppCompatActivity {
         statusText = findViewById(R.id.detail_status_text);
         progressBar = findViewById(R.id.detail_progress);
         detailScroll = findViewById(R.id.detail_scroll);
+        configureDetailScroll();
         backButton = findViewById(R.id.detail_back_button);
         homeButton = findViewById(R.id.detail_home_button);
         pinButton = findViewById(R.id.detail_pin_button);
@@ -823,6 +826,32 @@ public final class DetailActivity extends AppCompatActivity {
         ensureRev03ComposeMounts();
         configureDetailAccessibilityLandmarks();
         updateDetailAccessibilityRegions();
+    }
+
+    private void configureDetailScroll() {
+        if (detailScroll == null) {
+            return;
+        }
+        detailScroll.setOnTouchListener((view, event) -> {
+            if (event != null
+                && phoneLandscapeThreadTopLockActive
+                && (event.getActionMasked() == MotionEvent.ACTION_DOWN
+                    || event.getActionMasked() == MotionEvent.ACTION_MOVE)) {
+                phoneLandscapeThreadTopLockActive = false;
+            }
+            return false;
+        });
+        detailScroll.setOnScrollChangeListener((view, scrollX, scrollY, oldScrollX, oldScrollY) -> {
+            if (phoneLandscapeThreadTopLockActive
+                && scrollY > 0
+                && shouldKeepPhoneLandscapeThreadAtTop(
+                    answerMode,
+                    currentAnswerThreadTurnCount(),
+                    isLandscapePhoneLayout()
+                )) {
+                detailScroll.scrollTo(0, 0);
+            }
+        });
     }
 
     @SuppressWarnings("unchecked")
@@ -1036,7 +1065,13 @@ public final class DetailActivity extends AppCompatActivity {
         followUpInput.setImeOptions(EditorInfo.IME_ACTION_SEND | EditorInfo.IME_FLAG_NO_PERSONALIZED_LEARNING);
         followUpInput.setOnFocusChangeListener((v, hasFocus) -> {
             refreshFollowUpInputShell(hasFocus || followUpComposerFocused || hasFollowUpDraft());
-            if (shouldRequestLandscapeDockedComposerFocus(isLandscapePhoneLayout(), answerMode, hasFocus, true)) {
+            if (shouldRequestLandscapeDockedComposerFocus(
+                isLandscapePhoneLayout(),
+                answerMode,
+                hasFocus,
+                true,
+                isCurrentThreadDetailRoute()
+            )) {
                 requestLandscapeDockedComposerFocus();
             }
             renderDockedComposer();
@@ -2771,7 +2806,13 @@ public final class DetailActivity extends AppCompatActivity {
             this::onDockedComposerFocusChanged
         );
         preservePhoneLandscapeThreadTopAfterComposerSetup();
-        if (shouldRequestLandscapeDockedComposerFocus(isLandscapePhoneLayout(), answerMode, followUpInput.hasFocus(), false)) {
+        if (shouldRequestLandscapeDockedComposerFocus(
+            isLandscapePhoneLayout(),
+            answerMode,
+            followUpInput.hasFocus(),
+            false,
+            isCurrentThreadDetailRoute()
+        )) {
             followUpComposeView.post(this::requestLandscapeDockedComposerFocus);
         }
     }
@@ -2843,9 +2884,10 @@ public final class DetailActivity extends AppCompatActivity {
         boolean landscapePhone,
         boolean answerMode,
         boolean legacyInputFocused,
-        boolean focusChangeEvent
+        boolean focusChangeEvent,
+        boolean threadDetailRoute
     ) {
-        return landscapePhone && answerMode && legacyInputFocused && focusChangeEvent;
+        return landscapePhone && answerMode && legacyInputFocused && focusChangeEvent && !threadDetailRoute;
     }
 
     private void syncFollowUpDraftFromCompose(String draft) {
@@ -3002,6 +3044,7 @@ public final class DetailActivity extends AppCompatActivity {
         );
         SessionMemory.TurnSnapshot currentTurn = currentTurnSnapshot();
         if (!answerMode) {
+            phoneLandscapeThreadTopLockActive = false;
             detailThreadHistoryRenderer().clearHistory(priorTurnsContainer);
             detailThreadHistoryRenderer().clearHistory(inlineThreadContainer);
             sessionPanel.setVisibility(View.GONE);
@@ -3015,6 +3058,7 @@ public final class DetailActivity extends AppCompatActivity {
             return;
         }
         if (isLandscapePhoneLayout() && isCurrentThreadDetailRoute()) {
+            phoneLandscapeThreadTopLockActive = true;
             detailThreadHistoryRenderer().renderPriorTurnsHistory(
                 priorTurnsContainer,
                 earlierTurns,
@@ -3022,6 +3066,8 @@ public final class DetailActivity extends AppCompatActivity {
                 buildDetailThreadHistoryState(),
                 this::formatAnswerBody
             );
+            resetPhoneLandscapeAnswerScrollToHeader();
+            preservePhoneLandscapeThreadTopAfterComposerSetup();
             detailThreadHistoryRenderer().clearHistory(inlineThreadContainer);
             sessionPanel.setVisibility(View.GONE);
             sessionText.setText("");
@@ -3033,6 +3079,7 @@ public final class DetailActivity extends AppCompatActivity {
             }
             return;
         }
+        phoneLandscapeThreadTopLockActive = false;
         if (shouldUseSideThreadPanel(isLandscapePhoneLayout(), showUtilityRail(), isTabletPortraitLayout())) {
             detailThreadHistoryRenderer().clearHistory(priorTurnsContainer);
             if (earlierTurns.isEmpty()) {
@@ -3136,7 +3183,7 @@ public final class DetailActivity extends AppCompatActivity {
             if (shouldHideProofRailForThreadDetail(
                 answerMode,
                 currentAnswerThreadTurnCount(),
-                phoneXmlDetailLayoutActive() && !isLandscapePhoneLayout()
+                phoneXmlDetailLayoutActive()
             )) {
                 sourcesPanel.setVisibility(View.GONE);
                 clearProvenancePanel();
@@ -3905,7 +3952,7 @@ public final class DetailActivity extends AppCompatActivity {
             if (shouldHideGenericAnswerScaffoldForThread(
                 answerMode,
                 currentAnswerThreadTurnCount(),
-                phoneXmlDetailLayoutActive() && !isLandscapePhoneLayout()
+                phoneXmlDetailLayoutActive()
             )) {
                 nextStepsPanel.setVisibility(View.GONE);
                 clearGuideReturnContextPanel();
@@ -6026,7 +6073,7 @@ public final class DetailActivity extends AppCompatActivity {
     }
 
     static long[] phoneLandscapeThreadTopPreservationDelaysMs() {
-        return new long[] {0L, 80L, 240L, 480L};
+        return new long[] {0L, 80L, 240L, 480L, 900L, 1400L};
     }
 
     static boolean shouldAutoOpenProvenanceForAnswerRail(
