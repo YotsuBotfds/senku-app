@@ -52,7 +52,7 @@
     <string name="category_count_placeholder">0 guides</string>
     <string name="developer_tools_show">Show developer tools</string>
     <string name="developer_tools_hide">Hide developer tools</string>
-    <string name="search_input_description">Search guides input</string>
+    <string name="search_input_description">Search guide titles, IDs, or field notes</string>
     <string name="results_list_description">Guide results list</string>
     <string name="followup_input_description">Follow-up question input</string>
     <string name="detail_header_question">Field question</string>

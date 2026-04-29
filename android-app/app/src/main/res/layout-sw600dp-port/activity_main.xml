@@ -245,6 +245,7 @@
                         android:layout_width="20dp"
                         android:layout_height="20dp"
                         android:contentDescription="@string/search_input_description"
+                        android:labelFor="@id/search_input"
                         android:padding="4dp"
                         android:src="@drawable/ic_search_magnifier"
                         android:tint="@color/senku_rev03_accent" />
@@ -259,7 +260,7 @@
                         android:contentDescription="@string/search_input_description"
                         android:focusable="true"
                         android:focusableInTouchMode="true"
-                        android:hint="Search guide titles, IDs, field notes..."
+                        android:hint="@string/search_hint"
                         android:importantForAutofill="no"
                         android:imeOptions="actionSearch"
                         android:inputType="text"
@@ -448,7 +449,7 @@
                     android:fontFamily="monospace"
                     android:includeFontPadding="false"
                     android:maxLines="1"
-                    android:text="Search guide titles, IDs, field notes..."
+                    android:text="@string/search_hint"
                     android:textAppearance="?android:attr/textAppearanceSmall"
                     android:textColor="@color/senku_rev03_ink_0"
                     android:textStyle="bold" />
