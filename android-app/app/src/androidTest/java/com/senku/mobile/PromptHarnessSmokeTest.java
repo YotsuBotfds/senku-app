@@ -759,6 +759,46 @@ public final class PromptHarnessSmokeTest {
     }
 
     @Test
+    public void restoredAskTabImeActionNavigatesToAnswerDetailScreen() {
+        ActivityScenario<MainActivity> scenario = ActivityScenario.launch(MainActivity.class);
+        try {
+            awaitHarnessIdle();
+            scenario.onActivity(activity -> Assume.assumeTrue(
+                "restored Ask ownership regression applies to phone shared-input chrome",
+                isCompactPortraitPhoneActivity(activity) || isLandscapePhoneActivity(activity)
+            ));
+            Assert.assertTrue(
+                "home search input never appeared before restored ask-tab submit regression; harness signals="
+                    + HarnessTestSignals.snapshot(),
+                device.wait(Until.hasObject(By.res(APP_PACKAGE, "search_input")), SEARCH_WAIT_MS)
+            );
+            waitForMainPackReady(DETAIL_WAIT_MS);
+
+            openAskTabFromHomeChrome();
+            scenario.recreate();
+            awaitHarnessIdle();
+            waitForMainSearchInputReady(SEARCH_WAIT_MS);
+            waitForMainPackReady(DETAIL_WAIT_MS);
+
+            submitSearchInputImeActionFromResumedActivity(
+                "How do I start a fire in rain?",
+                EditorInfo.IME_ACTION_SEARCH
+            );
+
+            assertResumedDetailActivitySettled(
+                DETAIL_WAIT_MS,
+                8,
+                "",
+                false,
+                "restored ask-tab IME action should keep Ask ownership and open answer detail"
+            );
+            captureUiState("restored_ask_tab_ime_action_detail");
+        } finally {
+            closeScenarioLeniently(scenario);
+        }
+    }
+
+    @Test
     public void guideIntentFactoryCarriesRevisionStamp() {
         Context context = ApplicationProvider.getApplicationContext();
         SearchResult result = new SearchResult(
@@ -3396,6 +3436,60 @@ public final class PromptHarnessSmokeTest {
                 waitForFollowUpHistoryReady(timeoutMs)
             );
         }
+    }
+
+    private void waitForMainPackReady(long timeoutMs) {
+        long deadline = SystemClock.uptimeMillis() + timeoutMs;
+        String lastResumed = "none";
+        while (SystemClock.uptimeMillis() < deadline) {
+            final boolean[] ready = {false};
+            final String[] resumed = {"none"};
+            InstrumentationRegistry.getInstrumentation().runOnMainSync(() -> {
+                Activity activity = getResumedActivityOnMainThread();
+                if (activity != null) {
+                    resumed[0] = activity.getClass().getSimpleName();
+                }
+                ready[0] = activity instanceof MainActivity
+                    && ((MainActivity) activity).hasPackRepositoryForTesting();
+            });
+            if (ready[0]) {
+                return;
+            }
+            lastResumed = resumed[0];
+            InstrumentationRegistry.getInstrumentation().waitForIdleSync();
+            SystemClock.sleep(100L);
+        }
+        Assert.fail(
+            "main pack repository never became ready after recreate; resumedActivity="
+                + lastResumed + "; harness signals=" + HarnessTestSignals.snapshot()
+        );
+    }
+
+    private void waitForMainSearchInputReady(long timeoutMs) {
+        long deadline = SystemClock.uptimeMillis() + timeoutMs;
+        String lastResumed = "none";
+        while (SystemClock.uptimeMillis() < deadline) {
+            final boolean[] ready = {false};
+            final String[] resumed = {"none"};
+            InstrumentationRegistry.getInstrumentation().runOnMainSync(() -> {
+                Activity activity = getResumedActivityOnMainThread();
+                if (activity != null) {
+                    resumed[0] = activity.getClass().getSimpleName();
+                }
+                ready[0] = activity instanceof MainActivity
+                    && activity.findViewById(R.id.search_input) != null;
+            });
+            if (ready[0]) {
+                return;
+            }
+            lastResumed = resumed[0];
+            InstrumentationRegistry.getInstrumentation().waitForIdleSync();
+            SystemClock.sleep(100L);
+        }
+        Assert.fail(
+            "main search input view never became ready after recreate; resumedActivity="
+                + lastResumed + "; harness signals=" + HarnessTestSignals.snapshot()
+        );
     }
 
     private void assertGeneratedTrustSpineSettled(ActivityScenario<MainActivity> scenario) {

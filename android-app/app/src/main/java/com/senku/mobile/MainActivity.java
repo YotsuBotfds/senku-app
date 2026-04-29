@@ -2456,9 +2456,48 @@ public final class MainActivity extends AppCompatActivity {
         if (shouldInstallRuntimePhoneBottomTabBar(isPhoneFormFactor(), isLandscapePhoneLayout())) {
             installPhoneBottomTabBar();
         }
+        installStaticPhoneNavRail();
         activePhoneTab = restorePhoneTab(savedInstanceState);
+        askLaneActive = activePhoneTab == BottomTabDestination.ASK;
         updateIdentityStrip();
         updatePhoneTabBarState();
+    }
+
+    private void installStaticPhoneNavRail() {
+        bindStaticPhoneNavTab(
+            BottomTabDestination.HOME,
+            R.id.phone_nav_home,
+            R.id.phone_nav_home_icon,
+            R.id.phone_nav_home_label
+        );
+        bindStaticPhoneNavTab(
+            BottomTabDestination.ASK,
+            R.id.phone_nav_ask,
+            R.id.phone_nav_ask_icon,
+            R.id.phone_nav_ask_label
+        );
+        bindStaticPhoneNavTab(
+            BottomTabDestination.PINS,
+            R.id.phone_nav_pins,
+            R.id.phone_nav_pins_icon,
+            R.id.phone_nav_pins_label
+        );
+    }
+
+    private void bindStaticPhoneNavTab(BottomTabDestination destination, int... viewIds) {
+        if (!isLandscapePhoneLayout()) {
+            return;
+        }
+        View.OnClickListener listener = v -> openPhoneTabFromTap(destination);
+        for (int viewId : viewIds) {
+            View view = findViewById(viewId);
+            if (view == null) {
+                continue;
+            }
+            view.setOnClickListener(listener);
+            view.setClickable(true);
+            view.setFocusable(true);
+        }
     }
 
     private void installIdentityStrip() {
@@ -4802,6 +4841,10 @@ public final class MainActivity extends AppCompatActivity {
 
     private boolean isAskLaneActive() {
         return askLaneActive;
+    }
+
+    boolean hasPackRepositoryForTesting() {
+        return repository != null;
     }
 
     private boolean shouldUseCompactResultsHeader() {

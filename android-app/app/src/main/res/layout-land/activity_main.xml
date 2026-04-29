@@ -29,6 +29,7 @@
             android:textStyle="bold" />
 
         <FrameLayout
+            android:id="@+id/phone_nav_home"
             android:layout_width="match_parent"
             android:layout_height="58dp"
             android:layout_marginTop="18dp">
@@ -46,6 +47,7 @@
                 android:orientation="vertical">
 
                 <ImageView
+                    android:id="@+id/phone_nav_home_icon"
                     android:layout_width="22dp"
                     android:layout_height="22dp"
                     android:contentDescription="@string/browse_guides_button"
@@ -54,6 +56,7 @@
                     android:tint="@color/senku_rev03_accent" />
 
                 <TextView
+                    android:id="@+id/phone_nav_home_label"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="3dp"
@@ -68,6 +71,7 @@
         </FrameLayout>
 
         <LinearLayout
+            android:id="@+id/phone_nav_ask"
             android:layout_width="match_parent"
             android:layout_height="54dp"
             android:layout_marginTop="4dp"
@@ -75,6 +79,7 @@
             android:orientation="vertical">
 
             <ImageView
+                android:id="@+id/phone_nav_ask_icon"
                 android:layout_width="21dp"
                 android:layout_height="21dp"
                 android:contentDescription="@string/ask_button"
@@ -83,6 +88,7 @@
                 android:tint="@color/senku_rev03_ink_2" />
 
             <TextView
+                android:id="@+id/phone_nav_ask_label"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="3dp"
@@ -95,6 +101,7 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/phone_nav_pins"
             android:layout_width="match_parent"
             android:layout_height="54dp"
             android:layout_marginTop="4dp"
@@ -102,6 +109,7 @@
             android:orientation="vertical">
 
             <ImageView
+                android:id="@+id/phone_nav_pins_icon"
                 android:layout_width="21dp"
                 android:layout_height="21dp"
                 android:contentDescription="@string/bottom_tab_pins"
@@ -110,6 +118,7 @@
                 android:tint="@color/senku_rev03_ink_2" />
 
             <TextView
+                android:id="@+id/phone_nav_pins_label"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="3dp"
