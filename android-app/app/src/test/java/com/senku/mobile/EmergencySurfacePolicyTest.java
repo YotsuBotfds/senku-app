@@ -146,6 +146,26 @@ public final class EmergencySurfacePolicyTest {
         assertTrue(DetailActivity.shouldUseTabletEmergencyFullHeightPage(true, true, true));
         assertTrue(DetailActivity.shouldSuppressTabletEmergencyStaleChrome(true, true, true));
         assertTrue(DetailActivity.shouldHideTabletDetailRootBehindEmergencyOverlay(true, true, true));
+        assertTrue(DetailActivity.shouldSuppressTabletEmergencyFloatingRail(true, true, true));
+    }
+
+    @Test
+    public void emergencySurfaceCopyMatchesWave77Targets() {
+        assertEquals(
+            "Ask about safe re-entry...",
+            DetailActivity.resolveDockedComposerHint(
+                "Ask another question without leaving this thread",
+                "Ask follow-up",
+                true,
+                true
+            )
+        );
+        assertEquals("\u2014 WHY THIS ANSWER", DetailActivity.buildEmergencyWhyTitle());
+        assertEquals("ANSWER GD-132 \u2022 Burn hazard", DetailActivity.buildPhoneEmergencyHeaderTitle("GD-132"));
+        assertEquals(
+            "\u2022 DANGER \u00b7 EXTREME BURN HAZARD",
+            DetailActivity.buildEmergencyDangerHeaderTitle("answer_card:burn_hazard", "foundry", "Burn hazard response")
+        );
     }
 
     @Test
@@ -174,6 +194,9 @@ public final class EmergencySurfacePolicyTest {
         assertFalse(DetailActivity.shouldHideTabletDetailRootBehindEmergencyOverlay(true, false, true));
         assertFalse(DetailActivity.shouldHideTabletDetailRootBehindEmergencyOverlay(false, true, true));
         assertFalse(DetailActivity.shouldHideTabletDetailRootBehindEmergencyOverlay(true, true, false));
+        assertFalse(DetailActivity.shouldSuppressTabletEmergencyFloatingRail(true, false, true));
+        assertFalse(DetailActivity.shouldSuppressTabletEmergencyFloatingRail(false, true, true));
+        assertFalse(DetailActivity.shouldSuppressTabletEmergencyFloatingRail(true, true, false));
     }
 
     @Test

@@ -218,25 +218,25 @@ public final class DetailRelatedGuidePresentationFormatterTest {
         DetailRelatedGuidePresentationFormatter formatter = new DetailRelatedGuidePresentationFormatter(null);
 
         assertEquals(
-            "GD-294 \u00b7 Cave Shelter Systems",
+            "GD-294 \u00b7 Cave Shelter Systems & Cold-Weather",
             formatter.buildAnswerModeRelatedGuideButtonLabel(
                 new SearchResult("Cave Shelter Systems and Long-Term Habitation", "", "", "", "GD-294", "", "", "")
             )
         );
         assertEquals(
-            "GD-695 \u00b7 Storm Sheltering",
+            "GD-695 \u00b7 Hurricane & Severe Storm Sheltering",
             formatter.buildAnswerModeRelatedGuideButtonLabel(
                 new SearchResult("Hurricane & Severe Storm Preparedness", "", "", "", "GD-695", "", "", "")
             )
         );
         assertEquals(
-            "GD-484 \u00b7 Insulation Materials",
+            "GD-484 \u00b7 Insulation Materials & Cold-Soak",
             formatter.buildAnswerModeRelatedGuideButtonLabel(
                 new SearchResult("Insulation Materials & Thermal Design", "", "", "", "GD-484", "", "", "")
             )
         );
         assertEquals(
-            "GD-027 \u00b7 Primitive Technology",
+            "GD-027 \u00b7 Primitive Technology & Stone Age",
             formatter.buildAnswerModeRelatedGuideButtonLabel(
                 new SearchResult("Primitive Technology and Stone Age Skills", "", "", "", "GD-027", "", "", "")
             )
@@ -248,7 +248,7 @@ public final class DetailRelatedGuidePresentationFormatterTest {
         DetailRelatedGuidePresentationFormatter formatter = new DetailRelatedGuidePresentationFormatter(null);
 
         assertEquals(
-            "Related guide 1 of 4. GD-294 \u00b7 Cave Shelter Systems. Opens this related guide.",
+            "Related guide 1 of 4. GD-294 \u00b7 Cave Shelter Systems & Cold-Weather. Opens this related guide.",
             formatter.buildAnswerModeRelatedGuideButtonContentDescription(
                 new DetailRelatedGuidePresentationFormatter.State(
                     false,

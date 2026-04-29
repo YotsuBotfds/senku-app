@@ -248,11 +248,16 @@ internal data class TabletGuideSideRailDensityPolicy(
     val sectionRowInactiveMinHeightDp: Int,
     val sectionRowHorizontalPaddingDp: Int,
     val sectionRowVerticalPaddingDp: Int,
+    val referencePaneHorizontalPaddingDp: Int,
+    val referencePaneVerticalPaddingDp: Int,
     val referencePaneVerticalSpacingDp: Int,
     val referenceCardMinHeightDp: Int,
     val referenceCardHorizontalPaddingDp: Int,
     val referenceCardVerticalPaddingDp: Int,
     val referenceCardVerticalSpacingDp: Int,
+    val referenceCardTitleFontSizeSp: Int,
+    val referenceCardTitleLineHeightSp: Int,
+    val referenceCardTitleMaxLines: Int,
 )
 
 private data class GuidePaperPalette(
@@ -447,11 +452,16 @@ internal fun tabletGuideSideRailDensityPolicy(isLandscape: Boolean): TabletGuide
             sectionRowInactiveMinHeightDp = 36,
             sectionRowHorizontalPaddingDp = 9,
             sectionRowVerticalPaddingDp = 5,
-            referencePaneVerticalSpacingDp = 14,
-            referenceCardMinHeightDp = 74,
-            referenceCardHorizontalPaddingDp = 16,
-            referenceCardVerticalPaddingDp = 11,
-            referenceCardVerticalSpacingDp = 7,
+            referencePaneHorizontalPaddingDp = 20,
+            referencePaneVerticalPaddingDp = 18,
+            referencePaneVerticalSpacingDp = 9,
+            referenceCardMinHeightDp = 62,
+            referenceCardHorizontalPaddingDp = 14,
+            referenceCardVerticalPaddingDp = 8,
+            referenceCardVerticalSpacingDp = 5,
+            referenceCardTitleFontSizeSp = 14,
+            referenceCardTitleLineHeightSp = 17,
+            referenceCardTitleMaxLines = 1,
         )
     } else {
         TabletGuideSideRailDensityPolicy(
@@ -460,16 +470,32 @@ internal fun tabletGuideSideRailDensityPolicy(isLandscape: Boolean): TabletGuide
             sectionRowInactiveMinHeightDp = 42,
             sectionRowHorizontalPaddingDp = 10,
             sectionRowVerticalPaddingDp = 6,
+            referencePaneHorizontalPaddingDp = 26,
+            referencePaneVerticalPaddingDp = 26,
             referencePaneVerticalSpacingDp = 20,
             referenceCardMinHeightDp = 90,
             referenceCardHorizontalPaddingDp = 18,
             referenceCardVerticalPaddingDp = 14,
             referenceCardVerticalSpacingDp = 9,
+            referenceCardTitleFontSizeSp = 16,
+            referenceCardTitleLineHeightSp = 20,
+            referenceCardTitleMaxLines = 2,
         )
     }
 
 internal fun tabletGuideReferenceHeaderTitle(count: Int): String =
     "${tabletGuideNavigationLabels().referenceLabel} \u00B7 ${count.coerceAtLeast(0)}"
+
+internal fun tabletGuideReferencePaneSixRowHeightDp(isLandscape: Boolean): Int {
+    val policy = tabletGuideSideRailDensityPolicy(isLandscape)
+    val headerHeightDp = 14
+    val rowCount = 6
+    val childCount = rowCount + 1
+    return (policy.referencePaneVerticalPaddingDp * 2) +
+        headerHeightDp +
+        (rowCount * policy.referenceCardMinHeightDp) +
+        ((childCount - 1) * policy.referencePaneVerticalSpacingDp)
+}
 
 internal fun tabletGuideReferencePaneRows(xrefs: List<XRefState>): List<XRefState> {
     val visible = xrefs.filter { it.id.trim().isNotEmpty() }
@@ -1948,7 +1974,10 @@ private fun GuideReferencePane(
         modifier = modifier
             .background(colors.bg1)
             .verticalScroll(scrollState)
-            .padding(horizontal = 26.dp, vertical = 26.dp),
+            .padding(
+                horizontal = densityPolicy.referencePaneHorizontalPaddingDp.dp,
+                vertical = densityPolicy.referencePaneVerticalPaddingDp.dp,
+            ),
         verticalArrangement = Arrangement.spacedBy(densityPolicy.referencePaneVerticalSpacingDp.dp),
     ) {
         Row(
@@ -2027,12 +2056,12 @@ private fun GuideReferenceCard(
             Text(
                 text = xref.title.trim().ifEmpty { "Linked guide" },
                 style = typography.uiBody.copy(
-                    fontSize = 16.sp,
-                    lineHeight = 20.sp,
+                    fontSize = densityPolicy.referenceCardTitleFontSizeSp.sp,
+                    lineHeight = densityPolicy.referenceCardTitleLineHeightSp.sp,
                     fontWeight = FontWeight.SemiBold,
                 ),
                 color = colors.ink0,
-                maxLines = 2,
+                maxLines = densityPolicy.referenceCardTitleMaxLines,
                 overflow = TextOverflow.Ellipsis,
             )
         }

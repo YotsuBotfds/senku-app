@@ -2091,6 +2091,51 @@ GPT UI insight intake:
   classify remaining deltas as content/data, layout/density, mode/behavior, or
   export before implementation.
 
+## Wave77 Checkpoint
+
+Committed scope pending at the time of this update:
+
+- Emergency: preserved the compact top-bar title
+  `ANSWER GD-132 - Burn hazard`, restored the separate danger-banner title
+  `DANGER - EXTREME BURN HAZARD`, changed emergency composer copy to
+  `Ask about safe re-entry...`, added the target-style `WHY THIS ANSWER`
+  leading dash, and suppressed tablet emergency floating/source rails when the
+  full-height emergency page owns the surface.
+- Tablet guide: tightened the landscape cross-reference pane through
+  `TabletGuideSideRailDensityPolicy` so the full six-row reference set fits in
+  the rail without changing answer/thread mode ownership.
+- Answer related guides: kept the longer target-style labels for
+  `GD-294`, `GD-695`, `GD-484`, and `GD-027`. A temporary attempt to force
+  uncertain answer article chrome and source subtitles closer to the mock was
+  rolled back after screenshot review showed duplicate answer chrome and a
+  stray source subtitle row.
+
+Fresh proof:
+
+- First full pack:
+  `artifacts/ui_state_pack/wave77_surgical_closure/20260429_115541` passed
+  `22/22`, but visual review found the duplicate answer article header and
+  stray source subtitle row.
+- Corrected full pack:
+  `artifacts/ui_state_pack/wave77_surgical_closure_b/20260429_120340`
+- Summary: corrected full pack `pass`, states `22/22`, failures `0`, ANRs `0`,
+  rotation mismatch count `0`, canonical mock export `22` PNGs, goal bundle
+  `artifacts/ui_state_pack/wave77_surgical_closure_b/20260429_120340_mocks.zip`.
+- Validation: combined focused JVM suite passed across emergency surface/action
+  block policy, answer card labels, source and related-guide formatters, tablet
+  guide stress-reading policy, and tablet evidence visibility policy. Goal-pack
+  validation passed for the corrected Wave77B pack directory and zip.
+
+Remaining precise slices:
+
+- Phone answer still has a content/data mismatch in the related-guide list:
+  the fourth visible answer related guide is `GD-109 - Natural Building
+  Materials`; the target wants `GD-027 - Primitive Technology & Stone Age`.
+- Emergency portrait is closer on copy and composer, but phone/tablet banners
+  still need hierarchy/framing work to match the flatter target band.
+- Guide phone portrait/landscape still need reader-position and XML guide body
+  tuning; tablet landscape guide rail density is improved and should be guarded.
+
 ## Parallelization Rules
 
 - Start every worker with `git status --short`, `git log --oneline -n 8

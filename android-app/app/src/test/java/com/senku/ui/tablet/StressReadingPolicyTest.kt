@@ -172,16 +172,37 @@ class StressReadingPolicyTest {
         assertEquals(36, landscapePolicy.sectionRowInactiveMinHeightDp)
         assertEquals(9, landscapePolicy.sectionRowHorizontalPaddingDp)
         assertEquals(5, landscapePolicy.sectionRowVerticalPaddingDp)
-        assertEquals(14, landscapePolicy.referencePaneVerticalSpacingDp)
-        assertEquals(74, landscapePolicy.referenceCardMinHeightDp)
-        assertEquals(16, landscapePolicy.referenceCardHorizontalPaddingDp)
-        assertEquals(11, landscapePolicy.referenceCardVerticalPaddingDp)
-        assertEquals(7, landscapePolicy.referenceCardVerticalSpacingDp)
+        assertEquals(20, landscapePolicy.referencePaneHorizontalPaddingDp)
+        assertEquals(18, landscapePolicy.referencePaneVerticalPaddingDp)
+        assertEquals(9, landscapePolicy.referencePaneVerticalSpacingDp)
+        assertEquals(62, landscapePolicy.referenceCardMinHeightDp)
+        assertEquals(14, landscapePolicy.referenceCardHorizontalPaddingDp)
+        assertEquals(8, landscapePolicy.referenceCardVerticalPaddingDp)
+        assertEquals(5, landscapePolicy.referenceCardVerticalSpacingDp)
+        assertEquals(14, landscapePolicy.referenceCardTitleFontSizeSp)
+        assertEquals(17, landscapePolicy.referenceCardTitleLineHeightSp)
+        assertEquals(1, landscapePolicy.referenceCardTitleMaxLines)
         assertEquals(17, portraitPolicy.sectionRailVerticalSpacingDp)
         assertEquals(52, portraitPolicy.sectionRowActiveMinHeightDp)
         assertEquals(42, portraitPolicy.sectionRowInactiveMinHeightDp)
+        assertEquals(26, portraitPolicy.referencePaneHorizontalPaddingDp)
+        assertEquals(26, portraitPolicy.referencePaneVerticalPaddingDp)
         assertEquals(20, portraitPolicy.referencePaneVerticalSpacingDp)
         assertEquals(90, portraitPolicy.referenceCardMinHeightDp)
+        assertEquals(16, portraitPolicy.referenceCardTitleFontSizeSp)
+        assertEquals(20, portraitPolicy.referenceCardTitleLineHeightSp)
+        assertEquals(2, portraitPolicy.referenceCardTitleMaxLines)
+    }
+
+    @Test
+    fun tabletGuideReferenceRailFitsFullSixRowLandscapeSet() {
+        val landscapePolicy = tabletGuideSideRailDensityPolicy(isLandscape = true)
+        val portraitPolicy = tabletGuideSideRailDensityPolicy(isLandscape = false)
+
+        assertTrue(tabletGuideReferencePaneSixRowHeightDp(isLandscape = true) <= 480)
+        assertTrue(landscapePolicy.referenceCardMinHeightDp < portraitPolicy.referenceCardMinHeightDp)
+        assertTrue(landscapePolicy.referencePaneVerticalSpacingDp < portraitPolicy.referencePaneVerticalSpacingDp)
+        assertEquals(1, landscapePolicy.referenceCardTitleMaxLines)
     }
 
     @Test

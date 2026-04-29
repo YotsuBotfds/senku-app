@@ -352,20 +352,20 @@ final class DetailRelatedGuidePresentationFormatter {
         String normalizedTitle = cleanedTitle.toLowerCase(Locale.US);
         if ("GD-294".equalsIgnoreCase(guideId)
             && normalizedTitle.contains("cave shelter systems")) {
-            return "Cave Shelter Systems";
+            return "Cave Shelter Systems & Cold-Weather";
         }
         if ("GD-695".equalsIgnoreCase(guideId)
             && normalizedTitle.contains("hurricane")
             && normalizedTitle.contains("severe storm")) {
-            return "Storm Sheltering";
+            return "Hurricane & Severe Storm Sheltering";
         }
         if ("GD-484".equalsIgnoreCase(guideId)
             && normalizedTitle.contains("insulation materials")) {
-            return "Insulation Materials";
+            return "Insulation Materials & Cold-Soak";
         }
         if ("GD-027".equalsIgnoreCase(guideId)
             && normalizedTitle.contains("primitive technology")) {
-            return "Primitive Technology";
+            return "Primitive Technology & Stone Age";
         }
         return cleanedTitle;
     }

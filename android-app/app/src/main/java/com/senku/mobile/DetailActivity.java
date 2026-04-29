@@ -1726,7 +1726,7 @@ public final class DetailActivity extends AppCompatActivity {
         tabletEmergencyProofOverlayPanel.setPadding(dp(14), dp(12), dp(14), dp(12));
 
         tabletEmergencyProofOverlayTitle = new TextView(this);
-        tabletEmergencyProofOverlayTitle.setText(R.string.detail_why_title_emergency);
+        tabletEmergencyProofOverlayTitle.setText(buildEmergencyWhyTitle());
         tabletEmergencyProofOverlayTitle.setTextColor(getColor(R.color.senku_text_light));
         tabletEmergencyProofOverlayTitle.setTypeface(Typeface.MONOSPACE, Typeface.BOLD);
         tabletEmergencyProofOverlayTitle.setTextSize(11f);
@@ -1906,6 +1906,14 @@ public final class DetailActivity extends AppCompatActivity {
         return shouldUseTabletEmergencyFullHeightPage(answerMode, tabletPortrait, emergencySurfaceEligible);
     }
 
+    static boolean shouldSuppressTabletEmergencyFloatingRail(
+        boolean answerMode,
+        boolean tabletPortrait,
+        boolean emergencySurfaceEligible
+    ) {
+        return shouldUseTabletEmergencyFullHeightPage(answerMode, tabletPortrait, emergencySurfaceEligible);
+    }
+
     private boolean isTabletEmergencyFullHeightPage() {
         return shouldUseTabletEmergencyFullHeightPage(
             answerMode,
@@ -2022,6 +2030,11 @@ public final class DetailActivity extends AppCompatActivity {
         boolean showRetry = (!tabletBusy && !safe(lastFailedQuery).isEmpty())
             || (tabletBusy && generationStallNoticeVisible && !safe(currentTitle).isEmpty());
         boolean tabletEmergencyFullHeightPage = isTabletEmergencyFullHeightPage();
+        boolean suppressTabletEmergencyFloatingRail = shouldSuppressTabletEmergencyFloatingRail(
+            answerMode,
+            isTabletPortraitLayout(),
+            shouldShowEmergencyHeader()
+        );
         TabletDetailMode detailMode = resolveTabletDetailMode(turnBindings);
         SearchResult displaySource = resolveTabletDisplaySource(turnBindings, visualOwnerSource);
         boolean allowGuideIdFallback = !answerMode || visualOwnerSource != null;
@@ -2030,18 +2043,18 @@ public final class DetailActivity extends AppCompatActivity {
             buildTabletGuideTitle(displaySource, turnBindings),
             buildRev03MetaStripItems(),
             turns,
-            tabletEmergencyFullHeightPage ? Collections.emptyList() : sources,
-            tabletEmergencyFullHeightPage ? emptyTabletAnchorState() : buildTabletAnchorState(visualOwnerSource),
-            tabletEmergencyFullHeightPage ? Collections.emptyList() : buildTabletXRefStates(),
-            tabletEmergencyFullHeightPage ? "" : tabletComposerText,
-            getString(R.string.detail_followup_hint),
-            !tabletEmergencyFullHeightPage && !tabletBusy,
-            answerMode && !tabletEmergencyFullHeightPage,
-            !tabletEmergencyFullHeightPage && showRetry,
+            suppressTabletEmergencyFloatingRail ? Collections.emptyList() : sources,
+            suppressTabletEmergencyFloatingRail ? emptyTabletAnchorState() : buildTabletAnchorState(visualOwnerSource),
+            suppressTabletEmergencyFloatingRail ? Collections.emptyList() : buildTabletXRefStates(),
+            suppressTabletEmergencyFloatingRail ? "" : tabletComposerText,
+            isCurrentEmergencySurfaceEligible() ? "Ask about safe re-entry..." : getString(R.string.detail_followup_hint),
+            !suppressTabletEmergencyFloatingRail && !tabletBusy,
+            answerMode && !suppressTabletEmergencyFloatingRail,
+            !suppressTabletEmergencyFloatingRail && showRetry,
             getString(R.string.detail_followup_retry),
             pinVisible,
             pinActive,
-            !tabletEmergencyFullHeightPage && tabletEvidenceExpanded,
+            !suppressTabletEmergencyFloatingRail && tabletEvidenceExpanded,
             resolveTabletStateLandscapeFlag(
                 showUtilityRail(),
                 isTabletPortraitLayout(),
@@ -3058,7 +3071,12 @@ public final class DetailActivity extends AppCompatActivity {
         String compactHint = getString(resolveDockedComposerCompactHintResId(compactFollowUpMode));
         DockedComposerModel model = new DockedComposerModel(
             safe(followUpInput.getText() == null ? null : followUpInput.getText().toString()),
-            resolveDockedComposerHint(fullHint, compactHint, compactFollowUpMode),
+            resolveDockedComposerHint(
+                fullHint,
+                compactHint,
+                compactFollowUpMode,
+                isCurrentEmergencySurfaceEligible()
+            ),
             followUpInput.isEnabled() && followUpSendButton != null && followUpSendButton.isEnabled(),
             showRetry,
             retryLabel,
@@ -3134,6 +3152,18 @@ public final class DetailActivity extends AppCompatActivity {
     }
 
     static String resolveDockedComposerHint(String fullHint, String compactHint, boolean compactFollowUpMode) {
+        return resolveDockedComposerHint(fullHint, compactHint, compactFollowUpMode, false);
+    }
+
+    static String resolveDockedComposerHint(
+        String fullHint,
+        String compactHint,
+        boolean compactFollowUpMode,
+        boolean emergencySurface
+    ) {
+        if (emergencySurface) {
+            return "Ask about safe re-entry...";
+        }
         String fallback = safe(fullHint).trim();
         if (!compactFollowUpMode) {
             return fallback;
@@ -4304,7 +4334,7 @@ public final class DetailActivity extends AppCompatActivity {
         if (whyTitleText != null) {
             whyTitleText.setVisibility(View.VISIBLE);
             if (emergencyPortrait) {
-                whyTitleText.setText(R.string.detail_why_title_emergency);
+                whyTitleText.setText(buildEmergencyWhyTitle());
             } else if (showUtilityRail()) {
                 whyTitleText.setText(R.string.detail_why_title_compact);
             } else if (compactContextSections) {
@@ -6546,6 +6576,10 @@ public final class DetailActivity extends AppCompatActivity {
         return "ANSWER" + HEADER_BULLET + "Burn hazard";
     }
 
+    static String buildEmergencyWhyTitle() {
+        return "\u2014 WHY THIS ANSWER";
+    }
+
     private void applyPhonePortraitHeaderTreatment() {
         boolean compactPhoneAnswer = isCompactPortraitPhoneLayout() && answerMode;
         if (screenTitle != null) {
@@ -6979,10 +7013,18 @@ public final class DetailActivity extends AppCompatActivity {
     }
 
     private String buildEmergencyHeaderTitle() {
-        String hazard = firstNonEmpty(reviewedCardMetadataBridge.current().cardId, currentPrimarySourceCategory(), currentTitle);
+        return buildEmergencyDangerHeaderTitle(
+            reviewedCardMetadataBridge.current().cardId,
+            currentPrimarySourceCategory(),
+            currentTitle
+        );
+    }
+
+    static String buildEmergencyDangerHeaderTitle(String cardId, String category, String title) {
+        String hazard = firstNonEmpty(cardId, category, title);
         hazard = hazard.replace("answer_card:", "").replace('_', ' ').trim();
         if (hazard.isEmpty()) {
-            return getString(R.string.detail_emergency_header_title);
+            return "\u2022 DANGER \u00b7 EXTREME BURN HAZARD";
         }
         String normalized = hazard.toLowerCase(Locale.US);
         if (normalized.contains("burn") || normalized.contains("foundry") || normalized.contains("molten")) {
