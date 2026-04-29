@@ -192,6 +192,18 @@ class ThreadRailPolicyTest {
     }
 
     @Test
+    fun threadRailSourceRelationLabelsUseMockGuideRolesBeforeGenericAnchorState() {
+        val abrasives = SourceState("abrasives", "GD-220", "Abrasives Manufacturing", isAnchor = false, isSelected = false)
+        val rainShelter = SourceState("rain", "GD-345", "Tarp & Cord Shelters", isAnchor = true, isSelected = true)
+        val foundry = SourceState("foundry", "GD-132", "Foundry & Metal Casting", isAnchor = true, isSelected = true)
+
+        assertEquals("ANCHOR", threadRailSourceRelationLabel(abrasives))
+        assertEquals("TOPIC", threadRailSourceRelationLabel(rainShelter))
+        assertEquals("RELATED", threadRailSourceRelationLabel(foundry))
+        assertEquals("GD-345 \u2022 TOPIC", threadRailSourceDisplayLabel(rainShelter, guideMode = false))
+    }
+
+    @Test
     fun threadRailThreadModeDoesNotFallBackToUnrelatedSupportSources() {
         val unrelated = SourceState("extra", "GD-132", "Foundry & Metal Casting", isAnchor = false, isSelected = false)
 

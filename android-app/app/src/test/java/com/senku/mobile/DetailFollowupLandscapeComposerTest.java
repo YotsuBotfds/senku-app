@@ -354,7 +354,7 @@ public final class DetailFollowupLandscapeComposerTest {
     }
 
     @Test
-    public void answerSourceRailPromotesRainShelterTopicState() {
+    public void answerSourceRailKeepsReviewedRainShelterStackOrder() {
         List<SearchResult> railSources = DetailActivity.resolveVisibleSourceRailSourcesForState(
             true,
             false,
@@ -368,9 +368,9 @@ public final class DetailFollowupLandscapeComposerTest {
         );
 
         assertEquals(3, railSources.size());
-        assertEquals("GD-345", railSources.get(0).guideId);
-        assertEquals("GD-220", railSources.get(1).guideId);
-        assertEquals("GD-132", railSources.get(2).guideId);
+        assertEquals("GD-220", railSources.get(0).guideId);
+        assertEquals("GD-132", railSources.get(1).guideId);
+        assertEquals("GD-345", railSources.get(2).guideId);
     }
 
     @Test

@@ -91,13 +91,28 @@ final class DetailRelatedGuidePresentationFormatter {
     }
 
     String buildAnswerModeRelatedGuidesSubtitle(State state, int count) {
-        return formatCountLabel(count, "linked guide", "linked guides")
-            + " \u00b7 related support"
-            + ".";
+        return formatCountLabel(count, "guide", "guides");
     }
 
     String buildAnswerModeRelatedGuidesPanelContentDescription(State state, int count) {
         return "Related guides. " + buildAnswerModeRelatedGuidesSubtitle(state, count);
+    }
+
+    String buildAnswerModeRelatedGuideButtonLabel(SearchResult guide) {
+        String guideId = safe(guide == null ? null : guide.guideId).trim();
+        String title = safe(guide == null ? null : guide.title).trim();
+        if (!guideId.isEmpty() && !title.isEmpty()) {
+            return guideId + " " + title;
+        }
+        if (!title.isEmpty()) {
+            return title;
+        }
+        if (!guideId.isEmpty()) {
+            return guideId;
+        }
+        return context == null
+            ? "Related guide"
+            : context.getString(R.string.detail_related_guide_fallback_label);
     }
 
     String buildRelatedGuideButtonLabel(SearchResult guide) {

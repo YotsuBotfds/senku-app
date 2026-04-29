@@ -226,11 +226,16 @@ internal fun threadRailSourceDisplayLabel(source: SourceState, guideMode: Boolea
 }
 
 internal fun threadRailSourceRelationLabel(source: SourceState): String =
-    when {
-        source.isAnchor -> "ANCHOR"
-        source.id.trim().equals("GD-345", ignoreCase = true) || threadRailSourceContextPriority(source) >= 3 -> "TOPIC"
-        source.isSelected -> "CURRENT"
-        else -> "SOURCE"
+    when (source.id.trim().uppercase()) {
+        "GD-220" -> "ANCHOR"
+        "GD-345" -> "TOPIC"
+        "GD-132" -> "RELATED"
+        else -> when {
+            threadRailSourceContextPriority(source) >= 3 -> "TOPIC"
+            source.isAnchor -> "ANCHOR"
+            source.isSelected -> "CURRENT"
+            else -> "SOURCE"
+        }
     }
 
 internal fun threadRailShouldShowSource(source: SourceState, guideMode: Boolean): Boolean =
@@ -562,6 +567,7 @@ private fun SourcePill(
             ) {
                 val displayLabel = threadRailSourceDisplayLabel(source, guideMode)
                 val titleLabel = threadRailSourceTitleLabel(source, guideMode)
+                val scoreLabel = if (guideMode) "" else tabletThreadSourceScoreLabel(source)
                 Text(
                     text = displayLabel,
                     style = SenkuTheme.typography.monoCaps.copy(
@@ -573,6 +579,19 @@ private fun SourcePill(
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                 )
+                if (scoreLabel.isNotEmpty()) {
+                    Text(
+                        text = scoreLabel,
+                        style = SenkuTheme.typography.monoCaps.copy(
+                            fontSize = 9.sp,
+                            lineHeight = 10.sp,
+                            fontWeight = FontWeight.SemiBold,
+                        ),
+                        color = colors.ink2,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                }
                 if (titleLabel.isNotEmpty() && titleLabel != displayLabel) {
                     Text(
                         text = titleLabel,

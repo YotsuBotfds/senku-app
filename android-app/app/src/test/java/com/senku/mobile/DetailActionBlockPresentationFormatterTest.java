@@ -1,6 +1,7 @@
 package com.senku.mobile;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.util.List;
@@ -393,11 +394,31 @@ public final class DetailActionBlockPresentationFormatterTest {
                 true
             );
 
-        String label = DetailActivity.buildPhonePortraitSourceCardLabel(card);
+        String label = DetailActivity.buildPhonePortraitSourceCardLabel(card, true);
 
         assertTrue(label.contains("GD-132 \u2022 ANCHOR \u2022 93%"));
         assertTrue(label.contains("Foundry & Metal Casting \u00b7 \u00a71 Area readiness"));
         assertTrue(label.contains("A single drop of water contacting molten metal causes a violent steam explosion"));
+    }
+
+    @Test
+    public void gd132PhonePortraitSourceLabelOnlyUsesEmergencyCopyInEmergencyContext() {
+        DetailSourcePresentationFormatter.EvidenceCard card =
+            new DetailSourcePresentationFormatter.EvidenceCard(
+                "GD-132",
+                "RELATED",
+                "68%",
+                "Foundry & Metal Casting",
+                "Pitch the ridgeline along prevailing wind.",
+                "Reviewed Answer-Card Boundary",
+                false
+            );
+
+        String label = DetailActivity.buildPhonePortraitSourceCardLabel(card);
+
+        assertTrue(label.contains("GD-132 \u2022 RELATED \u2022 68%"));
+        assertTrue(label.contains("Foundry & Metal Casting"));
+        assertFalse(label.contains("violent steam explosion"));
     }
 
     @Test

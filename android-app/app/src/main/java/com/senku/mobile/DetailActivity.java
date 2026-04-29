@@ -889,7 +889,11 @@ public final class DetailActivity extends AppCompatActivity {
         if (answerMode) {
             Object serializedSources = intent.getSerializableExtra(EXTRA_SOURCES);
             if (serializedSources instanceof ArrayList<?>) {
-                currentSources = (ArrayList<SearchResult>) serializedSources;
+                currentSources = new ArrayList<>(
+                    detailSourcePresentationFormatter().orderAnswerSourceStack(
+                        (ArrayList<SearchResult>) serializedSources
+                    )
+                );
             }
         }
         portraitSourcesExpanded = shouldExpandPhonePortraitSourcesByDefault(
@@ -1481,7 +1485,7 @@ public final class DetailActivity extends AppCompatActivity {
 
         tabletEmergencyProofOverlayPanel = new LinearLayout(this);
         tabletEmergencyProofOverlayPanel.setOrientation(LinearLayout.VERTICAL);
-        tabletEmergencyProofOverlayPanel.setBackgroundResource(R.drawable.bg_evidence_panel);
+        tabletEmergencyProofOverlayPanel.setBackgroundResource(R.drawable.bg_detail_sources_shell_flat);
         tabletEmergencyProofOverlayPanel.setPadding(dp(14), dp(12), dp(14), dp(12));
 
         tabletEmergencyProofOverlayTitle = new TextView(this);
@@ -3216,7 +3220,7 @@ public final class DetailActivity extends AppCompatActivity {
                 int btnPadV = phonePortraitSourceCards ? dp(8) : (stationRail ? dp(8) : dp(12));
                 button.setPadding(btnPadH, btnPadV, btnPadH, btnPadV);
                 String sourceLabel = phonePortraitSourceCards
-                    ? buildPhonePortraitSourceCardLabel(evidenceCard)
+                    ? buildPhonePortraitSourceCardLabel(evidenceCard, isEmergencyPortraitSurface())
                     : (stationRail
                         ? detailSourcePresentationFormatter().buildStationSourceButtonLabel(source, i, visibleSourceCount, i == 0)
                         : detailSourcePresentationFormatter().buildSourceButtonLabel(source));
@@ -3679,9 +3683,17 @@ public final class DetailActivity extends AppCompatActivity {
     }
 
     static String buildPhonePortraitSourceCardLabel(DetailSourcePresentationFormatter.EvidenceCard card) {
+        return buildPhonePortraitSourceCardLabel(card, false);
+    }
+
+    static String buildPhonePortraitSourceCardLabel(
+        DetailSourcePresentationFormatter.EvidenceCard card,
+        boolean emergencyContext
+    ) {
         if (card == null) {
             return "Source guide";
         }
+        boolean emergencyAnchor = emergencyContext && isGd132EmergencyAnchorCard(card);
         ArrayList<String> metaParts = new ArrayList<>();
         if (!card.guideId.isEmpty()) {
             metaParts.add(card.guideId);
@@ -3690,13 +3702,13 @@ public final class DetailActivity extends AppCompatActivity {
             metaParts.add(card.roleLabel);
         }
         if (!card.matchLabel.isEmpty()) {
-            metaParts.add(isGd132EmergencyAnchorCard(card) ? "93%" : card.matchLabel);
+            metaParts.add(emergencyAnchor ? "93%" : card.matchLabel);
         }
         StringBuilder builder = new StringBuilder();
         if (!metaParts.isEmpty()) {
             builder.append(String.join(" \u2022 ", metaParts));
         }
-        String title = isGd132EmergencyAnchorCard(card)
+        String title = emergencyAnchor
             ? "Foundry & Metal Casting \u00b7 \u00a71 Area readiness"
             : safe(card.title).trim();
         if (!title.isEmpty()) {
@@ -3705,7 +3717,7 @@ public final class DetailActivity extends AppCompatActivity {
             }
             builder.append(title);
         }
-        String quote = isGd132EmergencyAnchorCard(card)
+        String quote = emergencyAnchor
             ? "A single drop of water contacting molten metal causes a violent steam explosion, spraying molten metal 3+ meters in all directions."
             : safe(card.quote).trim();
         if (!quote.isEmpty()) {
@@ -3720,7 +3732,6 @@ public final class DetailActivity extends AppCompatActivity {
     private static boolean isGd132EmergencyAnchorCard(DetailSourcePresentationFormatter.EvidenceCard card) {
         return card != null
             && "GD-132".equalsIgnoreCase(safe(card.guideId).trim())
-            && "ANCHOR".equalsIgnoreCase(safe(card.roleLabel).trim())
             && safe(card.title).toLowerCase(Locale.US).contains("foundry");
     }
 
@@ -3798,14 +3809,15 @@ public final class DetailActivity extends AppCompatActivity {
         boolean compactPortraitPhone = isCompactPortraitPhoneLayout() && answerMode && !isEmergencyPortraitSurface();
         int whyPad = compactPortraitPhone ? dp(10) : (compactLandscapePhone ? dp(10) : (utilityRail ? dp(8) : dp(14)));
         whyPanel.setVisibility(View.VISIBLE);
-        whyPanel.setBackgroundResource(compactPortraitPhone
+        boolean emergencyPortrait = isEmergencyPortraitSurface();
+        whyPanel.setBackgroundResource(emergencyPortrait || compactPortraitPhone
             ? R.drawable.bg_detail_sources_shell_flat
             : R.drawable.bg_evidence_panel);
         whyPanel.setPadding(whyPad, whyPad, whyPad, whyPad);
         if (whyTitleText != null) {
             whyTitleText.setVisibility(View.VISIBLE);
-            if (isEmergencyPortraitSurface()) {
-                whyTitleText.setText(R.string.detail_why_title);
+            if (emergencyPortrait) {
+                whyTitleText.setText(R.string.detail_why_title_emergency);
             } else if (showUtilityRail()) {
                 whyTitleText.setText(R.string.detail_why_title_compact);
             } else if (compactContextSections) {
@@ -3813,7 +3825,7 @@ public final class DetailActivity extends AppCompatActivity {
             } else {
                 whyTitleText.setText(R.string.detail_why_title);
             }
-            int whyTitleBackground = compactPortraitPhone
+            int whyTitleBackground = emergencyPortrait || compactPortraitPhone
                 ? android.R.color.transparent
                 : (compactContextSections && !isEmergencyPortraitSurface()
                     ? R.drawable.bg_why_toggle_compact
@@ -3821,17 +3833,16 @@ public final class DetailActivity extends AppCompatActivity {
             whyTitleText.setBackgroundResource(whyTitleBackground);
             whyTitleText.setTextSize(
                 TypedValue.COMPLEX_UNIT_SP,
-                compactPortraitPhone ? 13f : (compactLandscapePhone ? 14f : 16f)
+                emergencyPortrait ? 11f : (compactPortraitPhone ? 13f : (compactLandscapePhone ? 14f : 16f))
             );
             whyTitleText.setPadding(
-                compactPortraitPhone ? 0 : dp(8),
-                compactPortraitPhone ? 0 : dp(4),
-                compactPortraitPhone ? 0 : dp(8),
-                compactPortraitPhone ? 0 : dp(4)
+                emergencyPortrait || compactPortraitPhone ? 0 : dp(8),
+                emergencyPortrait || compactPortraitPhone ? 0 : dp(4),
+                emergencyPortrait || compactPortraitPhone ? 0 : dp(8),
+                emergencyPortrait || compactPortraitPhone ? 0 : dp(4)
             );
             whyTitleText.setContentDescription(whyTitleText.getText());
         }
-        boolean emergencyPortrait = isEmergencyPortraitSurface();
         whyText.setText(emergencyPortrait && !currentSources.isEmpty()
             ? buildEmergencyProofCardSummary()
             : (compactLandscapePhone
@@ -4034,7 +4045,7 @@ public final class DetailActivity extends AppCompatActivity {
             button.setSingleLine(false);
             button.setMaxLines(2);
             button.setPadding(dp(14), dp(12), dp(14), dp(12));
-            button.setText(detailRelatedGuidePresentationFormatter().buildRelatedGuideButtonLabel(relatedGuide));
+            button.setText(detailRelatedGuidePresentationFormatter().buildAnswerModeRelatedGuideButtonLabel(relatedGuide));
             button.setContentDescription(
                 detailRelatedGuidePresentationFormatter().buildAnswerModeRelatedGuideButtonContentDescription(
                     presentationState,
@@ -4708,7 +4719,9 @@ public final class DetailActivity extends AppCompatActivity {
         reviewedCardMetadataBridge.set(preparedAnswer.reviewedCardMetadata);
         currentAnswerConfidenceLabel = preparedAnswer.confidenceLabel;
         currentAnswerResponseMode = preparedAnswer.mode;
-        currentSources = new ArrayList<>(preparedAnswer.sources);
+        currentSources = new ArrayList<>(
+            detailSourcePresentationFormatter().orderAnswerSourceStack(preparedAnswer.sources)
+        );
         pendingHostEnabled = preparedAnswer.inferenceSettings != null && preparedAnswer.inferenceSettings.enabled;
         currentAnswerHostFallbackUsed = false;
         answerMode = true;
@@ -4729,7 +4742,9 @@ public final class DetailActivity extends AppCompatActivity {
         reviewedCardMetadataBridge.set(answerRun.reviewedCardMetadata);
         currentAnswerConfidenceLabel = result.confidenceLabel;
         currentAnswerResponseMode = result.mode;
-        currentSources = new ArrayList<>(result.answerSources);
+        currentSources = new ArrayList<>(
+            detailSourcePresentationFormatter().orderAnswerSourceStack(result.answerSources)
+        );
         currentGuideId = primaryGuideIdForSources(currentSources);
         pendingHostEnabled = answerRun.hostBackendUsed;
         currentAnswerHostFallbackUsed = answerRun.hostFallbackUsed;
@@ -5652,14 +5667,11 @@ public final class DetailActivity extends AppCompatActivity {
             excerpt = excerpt.substring(0, 96).trim() + "...";
         }
         SpannableStringBuilder builder = new SpannableStringBuilder();
-        String lead = firstNonEmpty(guideId, "Source guide");
-        builder.append(lead.toUpperCase(Locale.US)).append("  \u00b7  ");
-        int anchorStart = builder.length();
-        builder.append(firstNonEmpty(evidenceCard.roleLabel, "ANCHOR"));
-        String matchLabel = isGd132EmergencyAnchorCard(evidenceCard) ? "93%" : safe(evidenceCard.matchLabel);
-        if (!matchLabel.isEmpty()) {
-            builder.append("  \u00b7  ").append(matchLabel);
-        }
+        String metaLabel = buildEmergencyProofMetaLabel(evidenceCard, guideId);
+        builder.append(metaLabel);
+        int anchorStart = firstNonEmpty(guideId, "Source guide").trim().isEmpty()
+            ? 0
+            : Math.min(builder.length(), firstNonEmpty(guideId, "Source guide").length());
         builder.setSpan(
             new ForegroundColorSpan(getColor(R.color.senku_rev03_accent)),
             0,
@@ -5697,6 +5709,35 @@ public final class DetailActivity extends AppCompatActivity {
         }
         applyInlineCitationSpans(builder);
         return builder;
+    }
+
+    static String buildEmergencyProofMetaLabel(
+        DetailSourcePresentationFormatter.EvidenceCard evidenceCard,
+        String fallbackGuideId
+    ) {
+        ArrayList<String> metaParts = new ArrayList<>();
+        String guideId = firstNonEmpty(
+            evidenceCard == null ? "" : evidenceCard.guideId,
+            fallbackGuideId,
+            "Source guide"
+        ).trim();
+        if (!guideId.isEmpty()) {
+            metaParts.add(guideId.toUpperCase(Locale.US));
+        }
+        boolean emergencyAnchor = isGd132EmergencyAnchorCard(evidenceCard);
+        String roleLabel = emergencyAnchor
+            ? "ANCHOR"
+            : firstNonEmpty(evidenceCard == null ? "" : evidenceCard.roleLabel, "ANCHOR").trim();
+        if (!roleLabel.isEmpty()) {
+            metaParts.add(roleLabel.toUpperCase(Locale.US));
+        }
+        String matchLabel = emergencyAnchor
+            ? "93%"
+            : safe(evidenceCard == null ? "" : evidenceCard.matchLabel).trim();
+        if (!matchLabel.isEmpty()) {
+            metaParts.add(matchLabel);
+        }
+        return metaParts.isEmpty() ? "SOURCE GUIDE" : String.join(" \u2022 ", metaParts);
     }
 
     private CharSequence buildUtilityRailWhySummary() {
@@ -6940,7 +6981,7 @@ public final class DetailActivity extends AppCompatActivity {
         if (threadDetailRoute && landscapePhone) {
             return mergeThreadSourceRailSourcesForState(safeSources, snapshots);
         }
-        return promoteRainShelterTopicSourceForState(safeSources);
+        return new ArrayList<>(safeSources);
     }
 
     static List<SearchResult> promoteRainShelterTopicSourceForState(List<SearchResult> sources) {

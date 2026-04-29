@@ -4340,7 +4340,7 @@ public final class MainActivity extends AppCompatActivity {
             return;
         }
         if (browseMode) {
-            homeChromeTitleText.setText("HOME SENKU \u2022 Field manual \u2022 edition 2");
+            homeChromeTitleText.setText("HOME SENKU \u2022 Field manual \u2022 ed.2");
             return;
         }
         String cleanQuery = safe(query).trim();

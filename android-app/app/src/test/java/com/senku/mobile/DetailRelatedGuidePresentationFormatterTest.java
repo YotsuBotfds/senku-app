@@ -76,7 +76,7 @@ public final class DetailRelatedGuidePresentationFormatterTest {
         DetailRelatedGuidePresentationFormatter formatter = new DetailRelatedGuidePresentationFormatter(null);
 
         assertEquals(
-            "2 linked guides \u00b7 related support.",
+            "2 guides",
             formatter.buildAnswerModeRelatedGuidesSubtitle(
                 new DetailRelatedGuidePresentationFormatter.State(false, false, "", "", "[GD-214] Water Storage"),
                 2
@@ -141,7 +141,7 @@ public final class DetailRelatedGuidePresentationFormatterTest {
         SearchResult guide = new SearchResult("Rainwater Catchment", "", "", "", "GD-215", "", "", "");
 
         assertEquals(
-            "Related guides. 2 linked guides \u00b7 related support.",
+            "Related guides. 2 guides",
             formatter.buildAnswerModeRelatedGuidesPanelContentDescription(state, 2)
         );
         assertEquals(
@@ -205,6 +205,24 @@ public final class DetailRelatedGuidePresentationFormatterTest {
                     "",
                     ""
                 )
+            )
+        );
+    }
+
+    @Test
+    public void answerModeRelatedGuideLabelMatchesMockRowCopy() {
+        DetailRelatedGuidePresentationFormatter formatter = new DetailRelatedGuidePresentationFormatter(null);
+
+        assertEquals(
+            "GD-294 Cave Shelter Systems & Cold-Weather",
+            formatter.buildAnswerModeRelatedGuideButtonLabel(
+                new SearchResult("Cave Shelter Systems & Cold-Weather", "", "", "", "GD-294", "", "", "")
+            )
+        );
+        assertEquals(
+            "GD-695 Hurricane & Severe Storm Sheltering",
+            formatter.buildAnswerModeRelatedGuideButtonLabel(
+                new SearchResult("Hurricane & Severe Storm Sheltering", "", "", "", "GD-695", "", "", "")
             )
         );
     }

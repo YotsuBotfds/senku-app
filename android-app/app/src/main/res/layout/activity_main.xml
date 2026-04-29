@@ -51,7 +51,7 @@
             android:fontFamily="monospace"
             android:includeFontPadding="false"
             android:maxLines="1"
-            android:text="Home  Senku  &#8226;  ed.2"
+            android:text="HOME SENKU &#8226; Field manual &#8226; ed.2"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:textColor="@color/senku_rev03_ink_1"
             android:textSize="9sp"

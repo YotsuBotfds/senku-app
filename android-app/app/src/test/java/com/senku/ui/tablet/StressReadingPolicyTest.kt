@@ -425,6 +425,35 @@ class StressReadingPolicyTest {
     }
 
     @Test
+    fun tabletThreadChromeSuppressesAnswerEvidenceResidue() {
+        assertFalse(tabletTitleBarShouldShowSupportRows(TabletDetailMode.Thread))
+        assertTrue(tabletTitleBarShouldShowSupportRows(TabletDetailMode.Answer))
+        assertTrue(tabletTitleBarShouldShowSupportRows(TabletDetailMode.Guide))
+    }
+
+    @Test
+    fun tabletThreadSourceScoresUseMockThreadIdsOnly() {
+        assertEquals(
+            "74%",
+            tabletThreadSourceScoreLabel(
+                SourceState("anchor", "GD-220", "Abrasives Manufacturing", isAnchor = true, isSelected = true),
+            ),
+        )
+        assertEquals(
+            "68%",
+            tabletThreadSourceScoreLabel(
+                SourceState("topic", "GD-345", "Tarp & Cord Shelters", isAnchor = false, isSelected = false),
+            ),
+        )
+        assertEquals(
+            "",
+            tabletThreadSourceScoreLabel(
+                SourceState("related", "GD-132", "Foundry & Metal Casting", isAnchor = false, isSelected = false),
+            ),
+        )
+    }
+
+    @Test
     fun tabletComposerContextHintKeepsThreadLanguageOutsideGuideMode() {
         val state = tabletDetailState(
             guideId = "GD-FALLBACK",

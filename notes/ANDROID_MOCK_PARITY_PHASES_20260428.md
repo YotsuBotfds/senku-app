@@ -1147,6 +1147,59 @@ Residuals for next wave:
 - Guide landscape is much closer structurally; remaining work is exact
   typography, paper width, and row spacing rather than missing surfaces.
 
+## Wave51 Checkpoint
+
+Committed scope pending at the time of this update:
+
+- Answer sources: canonical rain-shelter stack now orders `GD-220 ANCHOR 74%`,
+  `GD-132 RELATED 68%`, `GD-345 TOPIC 61%` across answer restore/success
+  paths; the phone portrait emergency override no longer leaks into normal
+  answer source cards.
+- Emergency: proof card now forces the foundry card to `GD-132 ANCHOR 93%`
+  only in emergency context, with the target foundry readiness title/quote.
+- Tablet thread: generic support header residue is suppressed in thread mode,
+  source cards carry deterministic scores, and `GD-345` maps to `TOPIC 68%`
+  even when incoming state marks it as selected/anchor.
+- Home/search: tablet-landscape shell and list rows continued the flat target
+  pass with normalized `HOME SENKU - Field manual - ed.2`/search chrome.
+
+Fresh proof:
+
+- Pack: `artifacts/ui_state_pack/wave51_integrated_final/20260428_195122`
+- Canonical mocks:
+  `artifacts/ui_state_pack/wave51_integrated_final/20260428_195122/mocks`
+- Zip:
+  `artifacts/ui_state_pack/wave51_integrated_final/20260428_195122_mocks.zip`
+- Summary: status `pass`, states `22/22`, failures `0`, ANRs `0`, mock pack
+  `pass`, homogeneous matrix `true`.
+- APK SHA:
+  `84eceabf4fe562b926de7c8cc7a1927215794e4059327e662e8fc7fb802f12c9`
+- Host model: `gemma-4-e2b-it-litert`
+- Host model SHA:
+  `ea1102014465edeb14b517bf270f6751d036749e3c5f517a7ff802782cb92161`
+- Validation: full `:app:testDebugUnitTest` passed, Android local quality gate
+  passed, and the rebuilt four-device state pack passed `22/22`. Visual spot
+  check confirmed answer GD-132 is `RELATED 68%`, emergency GD-132 is
+  `ANCHOR 93%`, and tablet thread GD-345 is `TOPIC 68%`.
+
+Post-Wave51 xhigh slice map:
+
+- P0 Shared detail shell: align header scale, overflow/insets, emergency tablet
+  header chrome, and composer/footer copy across detail modes.
+- P1 Answer detail: remove `Field question`, `Field entry - Unsure fit`, heavy
+  `SOURCE GUIDES` wrapper, and selected-entry residue; surface related guides
+  in tablet/landscape answer.
+- P2 Guide reader: finish paper width, section rail, required-reading rows, and
+  calmer rail cards, especially phone/tablet landscape.
+- P3 Emergency: flatten the why-card affordance, remove chevron/collapsible
+  treatment, and change footer placeholder/context to safe re-entry language.
+- P4 Thread detail: align transcript metadata/status timing and footer context;
+  tablet/wide proportions still need target rhythm.
+- P5 Search: increase result/preview scale, add target count metadata in tablet
+  header, and fill preview copy closer to the mock.
+- P6 Home: tune density/type/strokes and tablet recent-rail proportions; the
+  surface is structurally stable but still smaller/tighter than target.
+
 ## Parallelization Rules
 
 - Start every worker with `git status --short`, `git log --oneline -n 8

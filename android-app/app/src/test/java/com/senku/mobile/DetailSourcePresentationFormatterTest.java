@@ -4,6 +4,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.util.List;
+
 import org.junit.Test;
 
 public final class DetailSourcePresentationFormatterTest {
@@ -257,7 +259,7 @@ public final class DetailSourcePresentationFormatterTest {
         DetailSourcePresentationFormatter formatter = new DetailSourcePresentationFormatter(null);
 
         assertEquals(
-            "GD-220 \u00B7 ANCHOR \u00B7 Abrasives Manufacturing",
+            "GD-220 \u00B7 ANCHOR \u00B7 74%\nAbrasives Manufacturing",
             formatter.buildStationSourceButtonLabel(
                 new SearchResult(
                     "Abrasives Manufacturing",
@@ -275,7 +277,7 @@ public final class DetailSourcePresentationFormatterTest {
             )
         );
         assertEquals(
-            "GD-132 \u00B7 RELATED \u00B7 Foundry & Metal Casting",
+            "GD-132 \u00B7 RELATED \u00B7 68%\nFoundry & Metal Casting",
             formatter.buildStationSourceButtonLabel(
                 new SearchResult(
                     "Foundry & Metal Casting",
@@ -293,7 +295,7 @@ public final class DetailSourcePresentationFormatterTest {
             )
         );
         assertEquals(
-            "GD-345 \u00B7 TOPIC \u00B7 Tarp & Cord Shelters",
+            "GD-345 \u00B7 TOPIC \u00B7 61%\nTarp & Cord Shelters",
             formatter.buildStationSourceButtonLabel(
                 new SearchResult(
                     "Primitive Shelter Construction Techniques",
@@ -324,15 +326,15 @@ public final class DetailSourcePresentationFormatterTest {
         SearchResult rainShelter = reviewedStackResult("GD-345", "Wood Quality Evaluation for Shelter Construction", "tarp cord rain shelter");
 
         assertEquals(
-            "GD-220 \u00B7 ANCHOR \u00B7 Abrasives Manufacturing",
+            "GD-220 \u00B7 ANCHOR \u00B7 74%\nAbrasives Manufacturing",
             formatter.buildStationSourceButtonLabel(abrasiveAnchor, 0, 3, true)
         );
         assertEquals(
-            "GD-132 \u00B7 RELATED \u00B7 Foundry & Metal Casting",
+            "GD-132 \u00B7 RELATED \u00B7 68%\nFoundry & Metal Casting",
             formatter.buildStationSourceButtonLabel(foundryRelated, 1, 3, false)
         );
         assertEquals(
-            "GD-345 \u00B7 TOPIC \u00B7 Tarp & Cord Shelters",
+            "GD-345 \u00B7 TOPIC \u00B7 61%\nTarp & Cord Shelters",
             formatter.buildStationSourceButtonLabel(rainShelter, 2, 3, false)
         );
     }
@@ -420,9 +422,38 @@ public final class DetailSourcePresentationFormatterTest {
         SearchResult rainShelter = reviewedStackResult("GD-345", "Wood Quality Evaluation for Shelter Construction", "tarp cord rain shelter");
 
         assertEquals(
-            "GD-345 \u00B7 TOPIC \u00B7 Tarp & Cord Shelters",
+            "GD-345 \u00B7 TOPIC \u00B7 61%\nTarp & Cord Shelters",
             formatter.buildStationSourceButtonLabel(rainShelter, 0, 3, true)
         );
+    }
+
+    @Test
+    public void orderAnswerSourceStackPlacesMockSourcesBeforeTopicPromotion() {
+        DetailSourcePresentationFormatter formatter = new DetailSourcePresentationFormatter(null);
+        SearchResult rainShelter = reviewedStackResult("GD-345", "Wood Quality Evaluation for Shelter Construction", "tarp cord rain shelter");
+        SearchResult unrelated = reviewedStackResult("GD-999", "Unrelated", "camp maintenance");
+        SearchResult foundryRelated = reviewedStackResult("GD-132", "Foundry & Metal Casting", "foundry metal casting");
+        SearchResult abrasiveAnchor = reviewedStackResult("GD-220", "Abrasives Manufacturing", "abrasives manufacturing");
+
+        List<SearchResult> ordered = formatter.orderAnswerSourceStack(
+            List.of(rainShelter, unrelated, foundryRelated, abrasiveAnchor)
+        );
+
+        assertEquals("GD-220", ordered.get(0).guideId);
+        assertEquals("GD-132", ordered.get(1).guideId);
+        assertEquals("GD-345", ordered.get(2).guideId);
+        assertEquals("GD-999", ordered.get(3).guideId);
+    }
+
+    @Test
+    public void orderAnswerSourceStackPreservesNonMockSourceOrder() {
+        DetailSourcePresentationFormatter formatter = new DetailSourcePresentationFormatter(null);
+        SearchResult first = new SearchResult("Water Storage", "", "", "", "GD-214", "", "", "");
+        SearchResult second = new SearchResult("Rainwater Catchment", "", "", "", "GD-215", "", "", "");
+
+        List<SearchResult> ordered = formatter.orderAnswerSourceStack(List.of(first, second));
+
+        assertEquals(List.of(first, second), ordered);
     }
 
     private static SearchResult reviewedStackResult(String guideId, String title, String text) {

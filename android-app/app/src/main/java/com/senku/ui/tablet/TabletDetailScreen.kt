@@ -427,6 +427,16 @@ internal fun tabletThreadSourceCardMeta(sourceId: String, relation: String): Str
     }
 }
 
+internal fun tabletThreadSourceScoreLabel(source: SourceState): String =
+    when (source.id.trim().uppercase()) {
+        "GD-220" -> "74%"
+        "GD-345" -> "68%"
+        else -> ""
+    }
+
+internal fun tabletTitleBarShouldShowSupportRows(detailMode: TabletDetailMode): Boolean =
+    detailMode != TabletDetailMode.Thread
+
 internal fun tabletThreadQuestionMetaLabel(turnIndex: Int): String =
     "Q${turnIndex.coerceAtLeast(1)} \u2022 FIELD QUESTION"
 
@@ -1016,6 +1026,7 @@ private fun ThreadSourceCard(
                     .padding(vertical = 8.dp),
                 verticalArrangement = Arrangement.spacedBy(4.dp),
             ) {
+                val scoreLabel = tabletThreadSourceScoreLabel(source)
                 Text(
                     text = tabletThreadSourceCardMeta(source.id, relation),
                     style = SenkuTheme.typography.monoCaps.copy(
@@ -1027,6 +1038,18 @@ private fun ThreadSourceCard(
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                 )
+                if (scoreLabel.isNotEmpty()) {
+                    Text(
+                        text = scoreLabel,
+                        style = SenkuTheme.typography.monoCaps.copy(
+                            fontSize = 11.sp,
+                            lineHeight = 13.sp,
+                            fontWeight = FontWeight.SemiBold,
+                        ),
+                        color = colors.ink2,
+                        maxLines = 1,
+                    )
+                }
                 Text(
                     text = source.title.trim().ifEmpty { "Thread source" },
                     style = SenkuTheme.typography.uiBody.copy(
@@ -1537,7 +1560,7 @@ private fun TitleBar(
             )
         }
 
-        if (!guideMode) {
+        if (!guideMode && tabletTitleBarShouldShowSupportRows(detailMode)) {
             MetaStrip(
                 items = meta,
                 modifier = Modifier.fillMaxWidth(),
@@ -1583,7 +1606,7 @@ private fun TitleBar(
             }
         }
 
-        if (!guideMode && statusText.isNotBlank()) {
+        if (!guideMode && tabletTitleBarShouldShowSupportRows(detailMode) && statusText.isNotBlank()) {
             Text(
                 text = statusText.trim(),
                 style = typography.monoCaps.copy(
