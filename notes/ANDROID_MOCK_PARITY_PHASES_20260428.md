@@ -1618,6 +1618,38 @@ Next slice candidates:
   changes and tune central article width/left-rail proportions only if needed.
 - Guide/search final polish after the answer/detail surfaces stop moving.
 
+## Wave63 Checkpoint
+
+Committed scope pending at the time of this update:
+
+- Phone answer portrait polish: reduced the in-page question title scale and
+  styled source-card text as distinct meta/title/italic quote spans so the
+  cards read closer to the target mock instead of one heavy button block.
+- Related guide list polish: kept target bullet count language and reduced flat
+  phone answer row padding/text weight so more related rows clear the docked
+  composer.
+- Search chrome polish: compacted search query copy from `Search / rain
+  shelter` to `rain shelter`, and changed top search chrome to `SEARCH rain
+  shelter`.
+
+Fresh proof:
+
+- Phone pack:
+  `artifacts/ui_state_pack/wave63_phone_answer_density/20260429_060110`
+- Summary: phone portrait state pack `pass`, states `6/6`.
+- Validation: focused JVM suite passed for detail composer/source/related/thread
+  formatters plus home chrome/navigation and search adapter/card tests.
+- Visual note: phone answer source cards now show a clearer hierarchy and more
+  related rows before the composer; remaining difference is mostly top/app chrome
+  and exact row typography.
+
+Next slice candidates:
+
+- Continue phone answer final polish by reducing related rows to thinner
+  divider-style list items and tightening composer height/copy.
+- Re-run full 22-state pack after the next phone detail change or before the
+  next push if home/search/tablet are touched again.
+
 ## Parallelization Rules
 
 - Start every worker with `git status --short`, `git log --oneline -n 8

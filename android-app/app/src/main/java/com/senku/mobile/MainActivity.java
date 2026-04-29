@@ -4289,9 +4289,9 @@ public final class MainActivity extends AppCompatActivity {
     private static String buildSearchChromeQueryLabel(String query) {
         String cleanQuery = safe(query).trim();
         if (cleanQuery.isEmpty() || "guides".equalsIgnoreCase(cleanQuery)) {
-            return "Search / guides";
+            return "guides";
         }
-        return "Search / " + cleanQuery;
+        return cleanQuery;
     }
 
     private String buildSearchChromeCountLabel(String query, int resultCount) {
@@ -4330,7 +4330,7 @@ public final class MainActivity extends AppCompatActivity {
         if (homeChromeTitleText != null && !isBrowseModeActive()) {
             String chromeQuery = cleanQuery.isEmpty() ? "guides" : cleanQuery;
             homeChromeTitleText.setText(
-                "SEARCH / " + chromeQuery + " \u2022 "
+                "SEARCH " + chromeQuery + " \u2022 "
                     + resultCount + (resultCount == 1 ? " result" : " results")
             );
         }
@@ -4368,7 +4368,7 @@ public final class MainActivity extends AppCompatActivity {
             homeChromeTitleText.setText("SEARCH SENKU");
             return;
         }
-        homeChromeTitleText.setText("SEARCH / " + cleanQuery);
+        homeChromeTitleText.setText("SEARCH " + cleanQuery);
     }
 
     private void updateTabletSearchPreview() {

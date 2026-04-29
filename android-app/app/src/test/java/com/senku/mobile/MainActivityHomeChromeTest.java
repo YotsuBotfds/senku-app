@@ -334,12 +334,12 @@ public final class MainActivityHomeChromeTest {
 
     @Test
     public void searchChromeSplitsTargetQueryAndCountLatency() {
-        assertEquals("Search / rain shelter", MainActivity.buildSearchChromeQueryLabelForTest(" rain shelter "));
+        assertEquals("rain shelter", MainActivity.buildSearchChromeQueryLabelForTest(" rain shelter "));
         assertEquals(
             "4 RESULTS \u2022 12MS",
             MainActivity.buildSearchChromeCountLabelForTest("rain shelter", 4, true)
         );
-        assertEquals("Search / guides", MainActivity.buildSearchChromeQueryLabelForTest(""));
+        assertEquals("guides", MainActivity.buildSearchChromeQueryLabelForTest(""));
         assertEquals("1 RESULT", MainActivity.buildSearchChromeCountLabelForTest("water", 1, true));
     }
 
