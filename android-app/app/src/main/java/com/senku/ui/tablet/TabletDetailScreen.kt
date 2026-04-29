@@ -343,16 +343,16 @@ internal fun tabletGuideReferenceRailWidthDp(isLandscape: Boolean): Int =
 internal fun tabletGuideChromePolicy(isLandscape: Boolean): TabletGuideChromePolicy =
     if (isLandscape) {
         TabletGuideChromePolicy(
-            topBarMinHeightDp = 64,
+            topBarMinHeightDp = 72,
             topBarHorizontalPaddingDp = 28,
-            topBarVerticalPaddingDp = 9,
+            topBarVerticalPaddingDp = 12,
             topBarTitleLineHeightSp = 20,
         )
     } else {
         TabletGuideChromePolicy(
-            topBarMinHeightDp = 58,
+            topBarMinHeightDp = 66,
             topBarHorizontalPaddingDp = 24,
-            topBarVerticalPaddingDp = 8,
+            topBarVerticalPaddingDp = 11,
             topBarTitleLineHeightSp = 19,
         )
     }

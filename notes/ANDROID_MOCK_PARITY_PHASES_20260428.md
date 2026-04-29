@@ -1449,6 +1449,46 @@ Next slice candidates:
 - Home/search proportion polish if another short visual slice is needed before
   a larger guide or answer shell pass.
 
+## Wave59 Checkpoint
+
+Committed scope pending at the time of this update:
+
+- Home phone: compacted the portrait home status/search/category/recent rhythm
+  so the first viewport can carry all three recent-thread rows while keeping
+  the bottom nav visible.
+- Home layout policy: split phone/tablet category row gap math so the phone
+  shelf can tighten without shrinking the tablet shelf.
+- Guide tablet: increased the guide top-bar reserve slightly to stop the guide
+  title/chrome from clipping in tablet guide captures. This is still a layout
+  stabilization step, not final guide-target parity.
+
+Fresh proof:
+
+- Pack:
+  `artifacts/ui_state_pack/wave59_home_guide_shell_full/20260428_232434`
+- Canonical mocks:
+  `artifacts/ui_state_pack/wave59_home_guide_shell_full/20260428_232434/mocks`
+- Zip:
+  `artifacts/ui_state_pack/wave59_home_guide_shell_full/20260428_232434_mocks.zip`
+- Summary: status `pass`, states `22/22`, failures `0`, ANRs `0`, mock pack
+  `pass`, homogeneous matrix `true`, rotation mismatch `0`.
+- APK SHA:
+  `0daf681ccadc6311fd3d30238f4d03d6a014ebae0812e92b7fd84d4a2344bdca`
+- Validation: focused home chrome/navigation and tablet stress-reading policy
+  tests passed; `git diff --check` passed.
+- Visual note: home phone now shows all three recent rows in the canonical
+  first viewport. Guide tablet no longer clips the top title, but the broader
+  guide shell still needs a deliberate width/title-scale pass rather than more
+  ad hoc top-bar tuning.
+
+Next slice candidates:
+
+- Purposeful guide-tablet allocation pass: narrow portrait paper, rebalance
+  landscape rails/paper/reference widths, and then rerun guide-only screenshots.
+- Answer tablet hierarchy/source rail cleanup.
+- Home typography/proportion refinement only if user review calls out the now
+  denser recent rows.
+
 ## Parallelization Rules
 
 - Start every worker with `git status --short`, `git log --oneline -n 8

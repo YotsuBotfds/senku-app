@@ -75,11 +75,12 @@ public final class MainActivity extends AppCompatActivity {
     private static final int MAX_RESULT_PREVIEW_BRIDGE_GUIDES = 4;
     private static final int RESULT_PREVIEW_BRIDGE_SIGNAL_LIMIT = 1;
     private static final int MANUAL_HOME_CATEGORY_COLUMNS = 3;
-    private static final int MANUAL_HOME_CATEGORY_CARD_HEIGHT_DP = 68;
+    private static final int MANUAL_HOME_CATEGORY_CARD_HEIGHT_DP = 60;
     private static final int TABLET_MANUAL_HOME_CATEGORY_CARD_HEIGHT_DP = 70;
-    private static final int MANUAL_HOME_CATEGORY_ROW_GAP_DP = 10;
-    private static final int MANUAL_HOME_RECENT_ROW_HEIGHT_DP = 72;
-    private static final int MANUAL_HOME_RECENT_ROW_GAP_DP = 10;
+    private static final int MANUAL_HOME_CATEGORY_ROW_GAP_DP = 8;
+    private static final int TABLET_MANUAL_HOME_CATEGORY_ROW_GAP_DP = 10;
+    private static final int MANUAL_HOME_RECENT_ROW_HEIGHT_DP = 60;
+    private static final int MANUAL_HOME_RECENT_ROW_GAP_DP = 6;
     private static final int TABLET_MANUAL_HOME_RECENT_ROW_GAP_DP = 10;
     private static final String REVIEW_SEARCH_QUERY = "rain shelter";
     private static final String REVIEW_SEARCH_LATENCY_LABEL = "12ms";
@@ -1890,7 +1891,7 @@ public final class MainActivity extends AppCompatActivity {
             return 9;
         }
         if (manualHomeShell) {
-            return 7;
+            return 5;
         }
         return compactPhoneHome ? 8 : 10;
     }
@@ -2491,21 +2492,33 @@ public final class MainActivity extends AppCompatActivity {
     }
 
     static int resolveManualHomeCategoryShelfMinimumHeightDp(int itemCount) {
-        return resolveManualHomeCategoryShelfMinimumHeightDp(itemCount, MANUAL_HOME_CATEGORY_CARD_HEIGHT_DP);
+        return resolveManualHomeCategoryShelfMinimumHeightDp(
+            itemCount,
+            MANUAL_HOME_CATEGORY_CARD_HEIGHT_DP,
+            MANUAL_HOME_CATEGORY_ROW_GAP_DP
+        );
     }
 
     static int resolveTabletManualHomeCategoryShelfMinimumHeightDp(int itemCount) {
-        return resolveManualHomeCategoryShelfMinimumHeightDp(itemCount, TABLET_MANUAL_HOME_CATEGORY_CARD_HEIGHT_DP);
+        return resolveManualHomeCategoryShelfMinimumHeightDp(
+            itemCount,
+            TABLET_MANUAL_HOME_CATEGORY_CARD_HEIGHT_DP,
+            TABLET_MANUAL_HOME_CATEGORY_ROW_GAP_DP
+        );
     }
 
-    private static int resolveManualHomeCategoryShelfMinimumHeightDp(int itemCount, int cardHeightDp) {
+    private static int resolveManualHomeCategoryShelfMinimumHeightDp(
+        int itemCount,
+        int cardHeightDp,
+        int rowGapDp
+    ) {
         int safeItemCount = Math.max(0, itemCount);
         if (safeItemCount == 0) {
             return 0;
         }
         int rows = (safeItemCount + MANUAL_HOME_CATEGORY_COLUMNS - 1) / MANUAL_HOME_CATEGORY_COLUMNS;
         return rows * cardHeightDp
-            + Math.max(0, rows - 1) * MANUAL_HOME_CATEGORY_ROW_GAP_DP;
+            + Math.max(0, rows - 1) * rowGapDp;
     }
 
     private void allowChildOverflow(View view) {

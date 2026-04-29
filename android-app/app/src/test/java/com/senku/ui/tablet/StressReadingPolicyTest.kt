@@ -107,11 +107,11 @@ class StressReadingPolicyTest {
         val landscapePolicy = tabletGuideChromePolicy(isLandscape = true)
         val portraitPolicy = tabletGuideChromePolicy(isLandscape = false)
 
-        assertEquals(64, landscapePolicy.topBarMinHeightDp)
+        assertEquals(72, landscapePolicy.topBarMinHeightDp)
         assertEquals(28, landscapePolicy.topBarHorizontalPaddingDp)
-        assertEquals(9, landscapePolicy.topBarVerticalPaddingDp)
+        assertEquals(12, landscapePolicy.topBarVerticalPaddingDp)
         assertEquals(20, landscapePolicy.topBarTitleLineHeightSp)
-        assertEquals(58, portraitPolicy.topBarMinHeightDp)
+        assertEquals(66, portraitPolicy.topBarMinHeightDp)
         assertTrue(landscapePolicy.topBarMinHeightDp > portraitPolicy.topBarMinHeightDp)
         assertTrue(landscapePolicy.topBarHorizontalPaddingDp > portraitPolicy.topBarHorizontalPaddingDp)
     }
