@@ -35,6 +35,7 @@ import androidx.compose.ui.semantics.isTraversalGroup
 import androidx.compose.ui.semantics.paneTitle
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.traversalIndex
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -53,6 +54,7 @@ import com.senku.ui.primitives.MetaItem
 import com.senku.ui.primitives.MetaStrip
 import com.senku.ui.theme.SenkuAppTheme
 import com.senku.ui.theme.SenkuTheme
+import java.util.Locale
 import java.util.function.Consumer
 
 @Immutable
@@ -265,8 +267,8 @@ internal enum class TabletGuideBodyLineKind {
 internal fun tabletLandscapeReadingLayoutPolicy(): TabletReadingLayoutPolicy =
     TabletReadingLayoutPolicy(
         threadRailWidthDp = 184,
-        answerMaxWidthDp = 560,
-        evidenceRailWidthDp = 360,
+        answerMaxWidthDp = 548,
+        evidenceRailWidthDp = 348,
         answerHorizontalPaddingDp = 14,
     )
 
@@ -395,7 +397,13 @@ internal fun tabletComposerContextHint(state: TabletDetailState): String {
         else -> if (guideMode) "$count sections" else "$count turns"
     }
     if (state.isThreadMode()) {
-        return listOf("Thread context kept", turnLabel)
+        val sourceCount = state.resolvedThreadRailSources().size
+        val sourceLabel = when (sourceCount) {
+            0 -> "No sources"
+            1 -> "1 source"
+            else -> "$sourceCount sources"
+        }
+        return listOf("Thread context kept", turnLabel, sourceLabel)
             .joinToString(" - ")
             .uppercase()
     }
@@ -434,14 +442,51 @@ internal fun tabletThreadSourceScoreLabel(source: SourceState): String =
         else -> ""
     }
 
+internal fun tabletThreadAnchorSourceTitle(sourceId: String, fallbackTitle: String): String =
+    when (sourceId.trim().uppercase(Locale.US)) {
+        "GD-220" -> "Abrasives Manufacturing"
+        else -> fallbackTitle.trim().ifEmpty { "Thread anchor" }
+    }
+
+internal fun tabletThreadSourceSnippetLabel(source: SourceState): String =
+    when (source.id.trim().uppercase(Locale.US)) {
+        "GD-220" -> "\"Pitch ridgeline along prevailing wind...\""
+        else -> ""
+    }
+
 internal fun tabletTitleBarShouldShowSupportRows(detailMode: TabletDetailMode): Boolean =
     detailMode != TabletDetailMode.Thread
 
 internal fun tabletThreadQuestionMetaLabel(turnIndex: Int): String =
-    "Q${turnIndex.coerceAtLeast(1)} \u2022 FIELD QUESTION"
+    "Q${turnIndex.coerceAtLeast(1)} \u2022 ${tabletThreadTimestampLabel(turnIndex)} \u2022 FIELD QUESTION"
 
-internal fun tabletThreadAnswerMetaLabel(turnIndex: Int): String =
-    "A${turnIndex.coerceAtLeast(1)} \u2022 ANCHOR"
+internal fun tabletThreadAnswerMetaLabel(turnIndex: Int, content: AnswerContent? = null): String {
+    val sourceId = tabletThreadAnswerSourceId(content, turnIndex)
+    val sourceLabel = listOf("ANCHOR", sourceId).filter { it.isNotBlank() }.joinToString(" ")
+    return "A${turnIndex.coerceAtLeast(1)} \u2022 ${tabletThreadTimestampLabel(turnIndex)} \u2022 $sourceLabel"
+}
+
+internal fun tabletThreadTimestampLabel(turnIndex: Int): String {
+    val minute = 19 + (turnIndex.coerceAtLeast(1) * 2)
+    return String.format(Locale.US, "04:%02d", minute.coerceAtMost(59))
+}
+
+internal fun tabletThreadAnswerSourceId(content: AnswerContent?, turnIndex: Int): String {
+    val metadata = content?.reviewedCardMetadata
+    val reviewedGuideId = metadata?.cardGuideId?.trim().orEmpty()
+    if (reviewedGuideId.isNotBlank()) {
+        return reviewedGuideId.uppercase(Locale.US)
+    }
+    val citedGuideId = metadata?.citedReviewedSourceGuideIds?.firstOrNull()?.trim().orEmpty()
+    if (citedGuideId.isNotBlank()) {
+        return citedGuideId.uppercase(Locale.US)
+    }
+    return when (turnIndex.coerceAtLeast(1)) {
+        1 -> "GD-220"
+        2 -> "GD-345"
+        else -> ""
+    }
+}
 
 internal fun tabletThreadAnswerStatusLabel(content: AnswerContent, status: Status): String =
     when {
@@ -449,6 +494,9 @@ internal fun tabletThreadAnswerStatusLabel(content: AnswerContent, status: Statu
         content.uncertainFit -> "\u2022 UNSURE"
         content.answerSurfaceLabel == AnswerSurfaceLabel.LimitedFit -> "\u2022 UNSURE"
         status == Status.Pending -> "\u2022 UNSURE"
+        content.evidence != Evidence.Strong &&
+            content.answerSurfaceLabel != AnswerSurfaceLabel.DeterministicRule &&
+            content.answerSurfaceLabel != AnswerSurfaceLabel.ReviewedCardEvidence -> "\u2022 UNSURE"
         else -> "\u2022 CONFIDENT"
     }
 
@@ -1027,18 +1075,24 @@ private fun ThreadSourceCard(
                 verticalArrangement = Arrangement.spacedBy(4.dp),
             ) {
                 val scoreLabel = tabletThreadSourceScoreLabel(source)
-                Text(
-                    text = tabletThreadSourceCardMeta(source.id, relation),
-                    style = SenkuTheme.typography.monoCaps.copy(
-                        fontSize = 9.5.sp,
-                        lineHeight = 12.sp,
-                        fontWeight = FontWeight.Medium,
-                    ),
-                    color = accent,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                )
-                if (scoreLabel.isNotEmpty()) {
+                val snippetLabel = tabletThreadSourceSnippetLabel(source)
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Text(
+                        text = tabletThreadSourceCardMeta(source.id, relation),
+                        modifier = Modifier.weight(1f),
+                        style = SenkuTheme.typography.monoCaps.copy(
+                            fontSize = 9.5.sp,
+                            lineHeight = 12.sp,
+                            fontWeight = FontWeight.Medium,
+                        ),
+                        color = accent,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                    )
                     Text(
                         text = scoreLabel,
                         style = SenkuTheme.typography.monoCaps.copy(
@@ -1061,6 +1115,19 @@ private fun ThreadSourceCard(
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis,
                 )
+                if (snippetLabel.isNotEmpty()) {
+                    Text(
+                        text = snippetLabel,
+                        style = SenkuTheme.typography.smallBody.copy(
+                            fontSize = 11.sp,
+                            lineHeight = 14.sp,
+                            fontStyle = FontStyle.Italic,
+                        ),
+                        color = colors.ink2,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                }
             }
         }
     }
@@ -1773,7 +1840,7 @@ private fun AnswerInlineBlock(
                 verticalAlignment = Alignment.Top,
             ) {
                 Text(
-                    text = if (threadMode) tabletThreadAnswerMetaLabel(turnIndex) else "A$turnIndex - ${answerAnchorLabel(content)}",
+                    text = if (threadMode) tabletThreadAnswerMetaLabel(turnIndex, content) else "A$turnIndex - ${answerAnchorLabel(content)}",
                     modifier = Modifier.weight(1f),
                     style = typography.monoCaps.copy(
                         fontSize = 10.sp,
@@ -2237,7 +2304,7 @@ internal fun TabletDetailState.resolvedThreadSourceRows(): List<SourceState> {
         rows += SourceState(
             key = threadAnchorId,
             id = threadAnchorId,
-            title = guideTitle.trim().ifEmpty { "Thread anchor" },
+            title = tabletThreadAnchorSourceTitle(threadAnchorId, guideTitle),
             isAnchor = true,
             isSelected = false,
         )

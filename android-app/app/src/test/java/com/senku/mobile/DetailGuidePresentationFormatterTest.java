@@ -119,7 +119,7 @@ public final class DetailGuidePresentationFormatterTest {
                 + "Use this section only for foundry-area readiness, visible hazard screening, material and source labeling, no-go triggers, access control, and expert or owner handoff.\n"
                 + "Start with the current activity status.\n\n"
                 + "\u2014 \u00a7 2 \u00b7 REQUIRED READING\n"
-                + "GD-220 \u00b7 Abrasives Manufacturing\n\n"
+                + "GD-220 \u00b7 Abrasives Manufacturing\n"
                 + "GD-499 \u00b7 Bellows & Forge Blower Construction",
             DetailGuidePresentationFormatter.buildGuideBody(result)
         );
@@ -293,8 +293,8 @@ public final class DetailGuidePresentationFormatterTest {
                 + "\u2014 \u00a7 1 \u00b7 FOUNDRY SAFETY QUICKSTART\n"
                 + "Check dry tools.\n\n"
                 + "\u2014 \u00a7 2 \u00b7 REQUIRED READING\n"
-                + "GD-220 \u00b7 Abrasives Manufacturing\n\n"
-                + "GD-499 \u00b7 Bellows & Forge Blower Construction\n\n"
+                + "GD-220 \u00b7 Abrasives Manufacturing\n"
+                + "GD-499 \u00b7 Bellows & Forge Blower Construction\n"
                 + "GD-225 \u00b7 Bloomery Furnace Construction",
             DetailGuidePresentationFormatter.buildGuideBody(result)
         );

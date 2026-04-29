@@ -21,6 +21,10 @@ final class DetailActionBlockPresentationFormatter {
     static final String ACTION_LABEL_ESCALATE = "Escalate if";
     static final String EMERGENCY_ACTION_HEADING_PREFIX = "IMMEDIATE ACTIONS \u00b7 ";
     static final int EMERGENCY_DISTANCE_HIGHLIGHT_COLOR = 0xFFC4704B;
+    static final int EMERGENCY_ACTION_ROW_VERTICAL_PADDING_DP = 3;
+    static final int EMERGENCY_ACTION_CONTENT_START_PADDING_DP = 9;
+    static final float EMERGENCY_ACTION_TITLE_TEXT_SIZE_SP = 11.5f;
+    static final float EMERGENCY_ACTION_DETAIL_TEXT_SIZE_SP = 10.5f;
     private static final int MAX_EMERGENCY_PORTRAIT_ACTIONS = 4;
     private static final int EMERGENCY_ACTION_BADGE_SIZE_DP = 18;
 
@@ -124,7 +128,7 @@ final class DetailActionBlockPresentationFormatter {
         LinearLayout headingRow = new LinearLayout(context);
         headingRow.setOrientation(LinearLayout.HORIZONTAL);
         headingRow.setGravity(android.view.Gravity.CENTER_VERTICAL);
-        headingRow.setPadding(0, 0, 0, dp(3));
+        headingRow.setPadding(0, 0, 0, dp(1));
 
         View rule = new View(context);
         rule.setBackgroundColor(context.getColor(R.color.senku_rev03_hairline_strong));
@@ -227,7 +231,12 @@ final class DetailActionBlockPresentationFormatter {
 
         LinearLayout row = new LinearLayout(context);
         row.setOrientation(LinearLayout.HORIZONTAL);
-        row.setPadding(0, dp(5), 0, dp(5));
+        row.setPadding(
+            0,
+            dp(EMERGENCY_ACTION_ROW_VERTICAL_PADDING_DP),
+            0,
+            dp(EMERGENCY_ACTION_ROW_VERTICAL_PADDING_DP)
+        );
         LinearLayout.LayoutParams rowParams = new LinearLayout.LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT,
             ViewGroup.LayoutParams.WRAP_CONTENT
@@ -249,25 +258,25 @@ final class DetailActionBlockPresentationFormatter {
 
         LinearLayout content = new LinearLayout(context);
         content.setOrientation(LinearLayout.VERTICAL);
-        content.setPadding(dp(10), 0, 0, 0);
+        content.setPadding(dp(EMERGENCY_ACTION_CONTENT_START_PADDING_DP), 0, 0, 0);
 
         TextView title = new TextView(context);
         title.setText(styleEmergencyMinimumDistance(action.title));
         title.setTextAppearance(context, android.R.style.TextAppearance_Medium);
         title.setTextColor(context.getColor(R.color.senku_text_light));
         title.setTypeface(Typeface.DEFAULT_BOLD);
-        title.setTextSize(12f);
-        title.setLineSpacing(0f, 1.02f);
+        title.setTextSize(EMERGENCY_ACTION_TITLE_TEXT_SIZE_SP);
+        title.setLineSpacing(0f, 1.0f);
         title.setIncludeFontPadding(false);
 
         TextView detail = new TextView(context);
         detail.setText(styleEmergencyMinimumDistance(action.detail));
         detail.setTextAppearance(context, android.R.style.TextAppearance_Small);
         detail.setTextColor(context.getColor(R.color.senku_text_muted_light));
-        detail.setTextSize(11f);
-        detail.setLineSpacing(0f, 1.02f);
+        detail.setTextSize(EMERGENCY_ACTION_DETAIL_TEXT_SIZE_SP);
+        detail.setLineSpacing(0f, 1.0f);
         detail.setIncludeFontPadding(false);
-        detail.setPadding(0, dp(1), 0, 0);
+        detail.setPadding(0, 0, 0, 0);
         detail.setVisibility(action.detail.isEmpty() ? View.GONE : View.VISIBLE);
 
         content.addView(title);

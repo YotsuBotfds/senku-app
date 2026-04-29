@@ -314,8 +314,16 @@ public final class DetailFollowupLandscapeComposerTest {
 
         assertFalse(DetailActivity.shouldAutoOpenProvenanceForAnswerRail(true, 2, true));
         assertTrue(DetailActivity.shouldAutoOpenProvenanceForAnswerRail(true, 1, true));
-        assertEquals("Sources - 2", DetailActivity.buildLandscapePhoneSourceRailTitle("Sources", 2));
+        assertEquals("SOURCES - 2", DetailActivity.buildLandscapePhoneSourceRailTitle("Sources", 2));
         assertTrue(DetailActivity.shouldHideGenericAnswerScaffoldForThread(true, 2, true));
+    }
+
+    @Test
+    public void phoneAnswerChromeFlattensSourceAndRelatedWrappersOutsideEmergency() {
+        assertTrue(DetailActivity.shouldUseFlatAnswerDetailChrome(true, true, false));
+        assertFalse(DetailActivity.shouldUseFlatAnswerDetailChrome(true, true, true));
+        assertFalse(DetailActivity.shouldUseFlatAnswerDetailChrome(true, false, false));
+        assertFalse(DetailActivity.shouldUseFlatAnswerDetailChrome(false, true, false));
     }
 
     @Test

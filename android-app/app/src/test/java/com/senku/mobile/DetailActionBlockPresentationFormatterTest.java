@@ -382,6 +382,14 @@ public final class DetailActionBlockPresentationFormatterTest {
     }
 
     @Test
+    public void emergencyActionRowsKeepFlatPortraitMetrics() {
+        assertEquals(3, DetailActionBlockPresentationFormatter.EMERGENCY_ACTION_ROW_VERTICAL_PADDING_DP);
+        assertEquals(9, DetailActionBlockPresentationFormatter.EMERGENCY_ACTION_CONTENT_START_PADDING_DP);
+        assertEquals(11.5f, DetailActionBlockPresentationFormatter.EMERGENCY_ACTION_TITLE_TEXT_SIZE_SP, 0.0f);
+        assertEquals(10.5f, DetailActionBlockPresentationFormatter.EMERGENCY_ACTION_DETAIL_TEXT_SIZE_SP, 0.0f);
+    }
+
+    @Test
     public void emergencyGd132AnchorSourceLabelMatchesTargetCardCopy() {
         DetailSourcePresentationFormatter.EvidenceCard card =
             new DetailSourcePresentationFormatter.EvidenceCard(

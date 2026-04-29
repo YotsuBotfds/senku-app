@@ -75,12 +75,12 @@ public final class MainActivity extends AppCompatActivity {
     private static final int MAX_RESULT_PREVIEW_BRIDGE_GUIDES = 4;
     private static final int RESULT_PREVIEW_BRIDGE_SIGNAL_LIMIT = 1;
     private static final int MANUAL_HOME_CATEGORY_COLUMNS = 3;
-    private static final int MANUAL_HOME_CATEGORY_CARD_HEIGHT_DP = 64;
-    private static final int TABLET_MANUAL_HOME_CATEGORY_CARD_HEIGHT_DP = 64;
-    private static final int MANUAL_HOME_CATEGORY_ROW_GAP_DP = 8;
+    private static final int MANUAL_HOME_CATEGORY_CARD_HEIGHT_DP = 68;
+    private static final int TABLET_MANUAL_HOME_CATEGORY_CARD_HEIGHT_DP = 70;
+    private static final int MANUAL_HOME_CATEGORY_ROW_GAP_DP = 10;
     private static final int MANUAL_HOME_RECENT_ROW_HEIGHT_DP = 72;
     private static final int MANUAL_HOME_RECENT_ROW_GAP_DP = 10;
-    private static final int TABLET_MANUAL_HOME_RECENT_ROW_GAP_DP = 8;
+    private static final int TABLET_MANUAL_HOME_RECENT_ROW_GAP_DP = 10;
     private static final String REVIEW_SEARCH_QUERY = "rain shelter";
     private static final String REVIEW_SEARCH_LATENCY_LABEL = "12ms";
     private static final ReviewSearchResultSpec[] REVIEW_RAIN_SHELTER_RESULTS = {
@@ -1862,7 +1862,7 @@ public final class MainActivity extends AppCompatActivity {
             return 0;
         }
         if (tabletSearchLayout) {
-            return 60;
+            return 66;
         }
         return MANUAL_HOME_RECENT_ROW_HEIGHT_DP;
     }
@@ -1887,7 +1887,7 @@ public final class MainActivity extends AppCompatActivity {
         boolean compactPhoneHome
     ) {
         if (tabletSearchLayout) {
-            return 8;
+            return 9;
         }
         if (manualHomeShell) {
             return 7;
@@ -4314,6 +4314,13 @@ public final class MainActivity extends AppCompatActivity {
             return;
         }
         String cleanQuery = safe(query).trim();
+        if (homeChromeTitleText != null && !isBrowseModeActive()) {
+            String chromeQuery = cleanQuery.isEmpty() ? "guides" : cleanQuery;
+            homeChromeTitleText.setText(
+                "SEARCH " + chromeQuery + " \u2022 "
+                    + resultCount + (resultCount == 1 ? " result" : " results")
+            );
+        }
         if (tabletSearchQueryText != null) {
             tabletSearchQueryText.setText(buildSearchChromeQueryLabel(cleanQuery));
         }

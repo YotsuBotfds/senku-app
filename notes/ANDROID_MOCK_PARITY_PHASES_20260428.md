@@ -1200,6 +1200,51 @@ Post-Wave51 xhigh slice map:
 - P6 Home: tune density/type/strokes and tablet recent-rail proportions; the
   surface is structurally stable but still smaller/tighter than target.
 
+## Wave52/Wave53 Checkpoint
+
+Committed scope pending at the time of this update:
+
+- Answer detail: flattened phone/XML answer chrome by hiding the `SOURCE GUIDES`
+  proof stamp/divider, suppressing non-emergency body labels in flat answer
+  chrome, keeping landscape source cards as source-guide buttons, and allowing
+  answer related guides to render under the source stack.
+- Tablet thread: tightened the thread rhythm with timestamped Q/A metadata,
+  deterministic `ANCHOR GD-220` / `ANCHOR GD-345` labels, `UNSURE` vs
+  `CONFIDENT` status dots in text, scored source cards, and footer source
+  context.
+- Home/search: increased home card and recent-thread row density, widened tablet
+  landscape search filter/preview rails, and added result-count metadata to the
+  search chrome.
+- Guide/emergency: tightened guide paper body scale and required-reading row
+  spacing; tightened emergency action-row metrics while preserving exact action
+  copy.
+
+Fresh proof:
+
+- Pack: `artifacts/ui_state_pack/wave52_wave53_integrated_c/20260428_202729`
+- Canonical mocks:
+  `artifacts/ui_state_pack/wave52_wave53_integrated_c/20260428_202729/mocks`
+- Zip:
+  `artifacts/ui_state_pack/wave52_wave53_integrated_c/20260428_202729_mocks.zip`
+- Summary: status `pass`, states `22/22`, failures `0`, ANRs `0`, mock pack
+  `pass`, homogeneous matrix `true`.
+- APK SHA:
+  `3e06b35bddaa7fa93b6f8f86d07f94500544a16b7ab4934cc08b80cab74159c9`
+- Validation: combined focused JVM tests passed, Android local quality gate
+  passed after final integration fixes, and the rebuilt four-device state pack
+  passed `22/22`.
+
+New external UI direction for next wave:
+
+- Thread/conversation should pivot from dashboard/reference layout to a
+  conversational flow layout: remove thread side rails from the conversation
+  view, place source guide IDs as outlined chips inside each answer block, add
+  colored confidence dots, and change the footer to
+  `THREAD CONTEXT - 2 TURNS - GD-220 ANCHOR`.
+- Source chips should be dynamic per answer: A1 can show `GD-220` and `GD-132`;
+  A2 can show only `GD-345`. Next implementation should define tap behavior
+  later, but first land stable visual chips and no-rail flow.
+
 ## Parallelization Rules
 
 - Start every worker with `git status --short`, `git log --oneline -n 8

@@ -76,6 +76,10 @@ public final class DetailRelatedGuidePresentationFormatterTest {
         DetailRelatedGuidePresentationFormatter formatter = new DetailRelatedGuidePresentationFormatter(null);
 
         assertEquals(
+            "RELATED GUIDES - 4",
+            formatter.buildAnswerModeRelatedGuidesTitle(4)
+        );
+        assertEquals(
             "2 guides",
             formatter.buildAnswerModeRelatedGuidesSubtitle(
                 new DetailRelatedGuidePresentationFormatter.State(false, false, "", "", "[GD-214] Water Storage"),

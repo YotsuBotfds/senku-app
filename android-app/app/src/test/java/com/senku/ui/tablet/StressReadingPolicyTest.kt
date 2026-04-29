@@ -14,8 +14,8 @@ class StressReadingPolicyTest {
         val policy = tabletLandscapeReadingLayoutPolicy()
 
         assertEquals(184, policy.threadRailWidthDp)
-        assertEquals(560, policy.answerMaxWidthDp)
-        assertEquals(360, policy.evidenceRailWidthDp)
+        assertEquals(548, policy.answerMaxWidthDp)
+        assertEquals(348, policy.evidenceRailWidthDp)
         assertEquals(14, policy.answerHorizontalPaddingDp)
     }
 
@@ -41,8 +41,8 @@ class StressReadingPolicyTest {
         assertEquals(288, portraitPolicy.evidenceRailWidthDp)
         assertEquals(12, portraitPolicy.answerHorizontalPaddingDp)
         assertEquals(184, landscapePolicy.threadRailWidthDp)
-        assertEquals(560, landscapePolicy.answerMaxWidthDp)
-        assertEquals(360, landscapePolicy.evidenceRailWidthDp)
+        assertEquals(548, landscapePolicy.answerMaxWidthDp)
+        assertEquals(348, landscapePolicy.evidenceRailWidthDp)
         assertEquals(14, landscapePolicy.answerHorizontalPaddingDp)
     }
 
@@ -383,12 +383,16 @@ class StressReadingPolicyTest {
         )
 
         assertEquals(
-            "THREAD CONTEXT KEPT - 2 TURNS",
+            "THREAD CONTEXT KEPT - 2 TURNS - 2 SOURCES",
             tabletComposerContextHint(state),
         )
         assertEquals(
             listOf("GD-220", "GD-345"),
             state.resolvedThreadSourceRows().map { it.id },
+        )
+        assertEquals(
+            listOf("Abrasives Manufacturing", "Tarp & Cord Shelters"),
+            state.resolvedThreadSourceRows().map { it.title },
         )
     }
 
@@ -407,10 +411,20 @@ class StressReadingPolicyTest {
             answerSurfaceLabel = AnswerSurfaceLabel.LimitedFit,
         )
 
-        assertEquals("Q1 \u2022 FIELD QUESTION", tabletThreadQuestionMetaLabel(1))
-        assertEquals("A2 \u2022 ANCHOR", tabletThreadAnswerMetaLabel(2))
+        assertEquals("Q1 \u2022 04:21 \u2022 FIELD QUESTION", tabletThreadQuestionMetaLabel(1))
+        assertEquals("A2 \u2022 04:23 \u2022 ANCHOR GD-345", tabletThreadAnswerMetaLabel(2))
         assertEquals("\u2022 CONFIDENT", tabletThreadAnswerStatusLabel(confidentAnswer, Status.Done))
         assertEquals("\u2022 UNSURE", tabletThreadAnswerStatusLabel(unsureAnswer, Status.Done))
+        assertEquals(
+            "\u2022 UNSURE",
+            tabletThreadAnswerStatusLabel(
+                confidentAnswer.copy(
+                    evidence = Evidence.Moderate,
+                    answerSurfaceLabel = AnswerSurfaceLabel.Unknown,
+                ),
+                Status.Done,
+            ),
+        )
         assertFalse(tabletThreadAnswerStatusLabel(confidentAnswer, Status.Done).contains("Rule match"))
         assertFalse(tabletThreadAnswerStatusLabel(confidentAnswer, Status.Done).contains("STRONG EVIDENCE"))
     }
@@ -422,6 +436,13 @@ class StressReadingPolicyTest {
         assertEquals("GD-345 \u2022 TOPIC", tabletThreadSourceCardMeta("GD-345", "TOPIC"))
         assertEquals("SOURCE", tabletThreadSourceCardMeta("", "SOURCE"))
         assertFalse(tabletThreadSourceCardMeta("", "SOURCE").contains("THREAD - 1 SOURCE"))
+        assertEquals("Abrasives Manufacturing", tabletThreadAnchorSourceTitle("GD-220", "Rain shelter - 2 turns"))
+        assertEquals(
+            "\"Pitch ridgeline along prevailing wind...\"",
+            tabletThreadSourceSnippetLabel(
+                SourceState("anchor", "GD-220", "Abrasives Manufacturing", isAnchor = true, isSelected = false),
+            ),
+        )
     }
 
     @Test
