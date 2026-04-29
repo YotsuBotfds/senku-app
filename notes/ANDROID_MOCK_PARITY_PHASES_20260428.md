@@ -1830,6 +1830,39 @@ Fresh proof:
   plan: tablet app-rail/topbar exactness, answer portrait top metadata row,
   emergency tablet chrome, and final phone landscape answer/thread parity.
 
+## Wave69 Checkpoint
+
+Committed scope pending at the time of this update:
+
+- Tablet guide: added the left app rail to the tablet guide reader, moved guide
+  back/home/pin/share chrome into the top bar, and tightened required-reading
+  rows so guide landscape/portrait are structurally closer to the paper-card
+  targets.
+- Home/search: kept the home chrome focused on `Field manual - ed.2`, hid the
+  redundant search affordance while search mode is active, and preserved the
+  denser home/search rows from Wave68.
+- Answer/thread: restored source and related-guide copy parity, removed duplicate
+  percent text from source chips, and added the first phone-landscape answer rail
+  pass.
+- Emergency: tightened action row typography and badge sizing for the immediate
+  action block.
+
+Fresh proof:
+
+- Full pack:
+  `artifacts/ui_state_pack/wave69_integrated_final/20260429_081538`
+- Summary: full pack `pass`, states `22/22`, failures `0`, ANRs `0`, rotation
+  mismatch `0`, canonical mock export `22` PNGs.
+- Validation: integrated focused JVM suite passed across phone landscape
+  follow-up/thread, emergency/action policies, answer/source/related formatters,
+  home/search, paper answer labels, and tablet stress reading policies.
+- Visual note: tablet guide now has the target app-rail structure. Remaining
+  major deltas are visual, not gate failures: phone-landscape answer still starts
+  on the answer card because `detail_question_bubble` is hidden in that state,
+  thread landscape still starts on the active follow-up turn instead of the full
+  Q1/A1 -> Q2/A2 flow, emergency proof is still crowded, and tablet guide
+  typography/proportions still need final tuning.
+
 ## Parallelization Rules
 
 - Start every worker with `git status --short`, `git log --oneline -n 8

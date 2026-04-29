@@ -220,13 +220,25 @@ public final class DetailRelatedGuidePresentationFormatterTest {
         assertEquals(
             "GD-294 Cave Shelter Systems & Cold-Weather",
             formatter.buildAnswerModeRelatedGuideButtonLabel(
-                new SearchResult("Cave Shelter Systems & Cold-Weather", "", "", "", "GD-294", "", "", "")
+                new SearchResult("Cave Shelter Systems and Long-Term Habitation", "", "", "", "GD-294", "", "", "")
             )
         );
         assertEquals(
             "GD-695 Hurricane & Severe Storm Sheltering",
             formatter.buildAnswerModeRelatedGuideButtonLabel(
-                new SearchResult("Hurricane & Severe Storm Sheltering", "", "", "", "GD-695", "", "", "")
+                new SearchResult("Hurricane & Severe Storm Preparedness", "", "", "", "GD-695", "", "", "")
+            )
+        );
+        assertEquals(
+            "GD-484 Insulation Materials & Cold-Soak",
+            formatter.buildAnswerModeRelatedGuideButtonLabel(
+                new SearchResult("Insulation Materials & Thermal Design", "", "", "", "GD-484", "", "", "")
+            )
+        );
+        assertEquals(
+            "GD-027 Primitive Technology & Stone Age",
+            formatter.buildAnswerModeRelatedGuideButtonLabel(
+                new SearchResult("Primitive Technology and Stone Age Skills", "", "", "", "GD-027", "", "", "")
             )
         );
     }

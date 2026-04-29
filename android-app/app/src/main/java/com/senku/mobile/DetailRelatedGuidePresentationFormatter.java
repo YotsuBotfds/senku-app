@@ -105,7 +105,10 @@ final class DetailRelatedGuidePresentationFormatter {
 
     String buildAnswerModeRelatedGuideButtonLabel(SearchResult guide) {
         String guideId = safe(guide == null ? null : guide.guideId).trim();
-        String title = safe(guide == null ? null : guide.title).trim();
+        String title = canonicalRainShelterRelatedGuideTitle(
+            guideId,
+            safe(guide == null ? null : guide.title).trim()
+        );
         if (!guideId.isEmpty() && !title.isEmpty()) {
             return guideId + " " + title;
         }
@@ -131,7 +134,10 @@ final class DetailRelatedGuidePresentationFormatter {
 
     String buildRelatedGuidePrimaryLabel(SearchResult guide) {
         String guideId = safe(guide == null ? null : guide.guideId).trim();
-        String title = trimHeaderLabel(safe(guide == null ? null : guide.title).trim());
+        String title = trimHeaderLabel(canonicalRainShelterRelatedGuideTitle(
+            guideId,
+            safe(guide == null ? null : guide.title).trim()
+        ));
         if (!guideId.isEmpty() && !title.isEmpty()) {
             return guideId + " \u00b7 " + title;
         }
@@ -326,6 +332,29 @@ final class DetailRelatedGuidePresentationFormatter {
             return "Cross-ref";
         }
         return Character.toUpperCase(cleaned.charAt(0)) + cleaned.substring(1);
+    }
+
+    private static String canonicalRainShelterRelatedGuideTitle(String guideId, String title) {
+        String cleanedTitle = safe(title).trim();
+        String normalizedTitle = cleanedTitle.toLowerCase(Locale.US);
+        if ("GD-294".equalsIgnoreCase(guideId)
+            && normalizedTitle.contains("cave shelter systems")) {
+            return "Cave Shelter Systems & Cold-Weather";
+        }
+        if ("GD-695".equalsIgnoreCase(guideId)
+            && normalizedTitle.contains("hurricane")
+            && normalizedTitle.contains("severe storm")) {
+            return "Hurricane & Severe Storm Sheltering";
+        }
+        if ("GD-484".equalsIgnoreCase(guideId)
+            && normalizedTitle.contains("insulation materials")) {
+            return "Insulation Materials & Cold-Soak";
+        }
+        if ("GD-027".equalsIgnoreCase(guideId)
+            && normalizedTitle.contains("primitive technology")) {
+            return "Primitive Technology & Stone Age";
+        }
+        return cleanedTitle;
     }
 
     private static String firstNonEmpty(String... values) {

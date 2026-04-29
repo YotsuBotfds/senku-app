@@ -259,7 +259,7 @@ public final class DetailSourcePresentationFormatterTest {
         DetailSourcePresentationFormatter formatter = new DetailSourcePresentationFormatter(null);
 
         assertEquals(
-            "GD-220 \u00B7 ANCHOR \u00B7 74%\nAbrasives Manufacturing",
+            "GD-220 \u00B7 ANCHOR\nAbrasives Manufacturing",
             formatter.buildStationSourceButtonLabel(
                 new SearchResult(
                     "Abrasives Manufacturing",
@@ -277,7 +277,7 @@ public final class DetailSourcePresentationFormatterTest {
             )
         );
         assertEquals(
-            "GD-132 \u00B7 RELATED \u00B7 68%\nFoundry & Metal Casting",
+            "GD-132 \u00B7 RELATED\nFoundry & Metal Casting",
             formatter.buildStationSourceButtonLabel(
                 new SearchResult(
                     "Foundry & Metal Casting",
@@ -295,7 +295,7 @@ public final class DetailSourcePresentationFormatterTest {
             )
         );
         assertEquals(
-            "GD-345 \u00B7 TOPIC \u00B7 61%\nTarp & Cord Shelters",
+            "GD-345 \u00B7 TOPIC\nTarp & Cord Shelters",
             formatter.buildStationSourceButtonLabel(
                 new SearchResult(
                     "Primitive Shelter Construction Techniques",
@@ -326,15 +326,15 @@ public final class DetailSourcePresentationFormatterTest {
         SearchResult rainShelter = reviewedStackResult("GD-345", "Wood Quality Evaluation for Shelter Construction", "tarp cord rain shelter");
 
         assertEquals(
-            "GD-220 \u00B7 ANCHOR \u00B7 74%\nAbrasives Manufacturing",
+            "GD-220 \u00B7 ANCHOR\nAbrasives Manufacturing",
             formatter.buildStationSourceButtonLabel(abrasiveAnchor, 0, 3, true)
         );
         assertEquals(
-            "GD-132 \u00B7 RELATED \u00B7 68%\nFoundry & Metal Casting",
+            "GD-132 \u00B7 RELATED\nFoundry & Metal Casting",
             formatter.buildStationSourceButtonLabel(foundryRelated, 1, 3, false)
         );
         assertEquals(
-            "GD-345 \u00B7 TOPIC \u00B7 61%\nTarp & Cord Shelters",
+            "GD-345 \u00B7 TOPIC\nTarp & Cord Shelters",
             formatter.buildStationSourceButtonLabel(rainShelter, 2, 3, false)
         );
     }
@@ -357,14 +357,14 @@ public final class DetailSourcePresentationFormatterTest {
         assertEquals("74%", anchor.matchLabel);
         assertEquals("Abrasives Manufacturing", anchor.title);
         assertEquals(
-            "Use the abrasives guide as the reviewed anchor context for line tension and abrasion-safe cord handling.",
+            "Every melt starts with a foundry safety check, not with metal charge...",
             anchor.quote
         );
         assertEquals("RELATED", related.roleLabel);
         assertEquals("68%", related.matchLabel);
         assertEquals("Foundry & Metal Casting", related.title);
         assertEquals(
-            "Keep related guide support visible for burn hazards, dry work surfaces, and tool staging near shelter work.",
+            "Pitch the ridgeline along prevailing wind. Tension corners with prusik or taut-line hitches.",
             related.quote
         );
         assertEquals("TOPIC", topic.roleLabel);
@@ -422,7 +422,7 @@ public final class DetailSourcePresentationFormatterTest {
         SearchResult rainShelter = reviewedStackResult("GD-345", "Wood Quality Evaluation for Shelter Construction", "tarp cord rain shelter");
 
         assertEquals(
-            "GD-345 \u00B7 TOPIC \u00B7 61%\nTarp & Cord Shelters",
+            "GD-345 \u00B7 TOPIC\nTarp & Cord Shelters",
             formatter.buildStationSourceButtonLabel(rainShelter, 0, 3, true)
         );
     }
@@ -500,7 +500,7 @@ public final class DetailSourcePresentationFormatterTest {
         DetailSourcePresentationFormatter formatter = new DetailSourcePresentationFormatter(null);
 
         assertEquals(
-            "GD-220 \u00B7 ANCHOR \u00B7 74%",
+            "GD-220 \u00B7 ANCHOR",
             formatter.buildInlineSourceChipLabel(
                 reviewedStackResult("GD-220", "Abrasives Manufacturing", "abrasives manufacturing"),
                 "GD-220",
@@ -508,7 +508,7 @@ public final class DetailSourcePresentationFormatterTest {
             )
         );
         assertEquals(
-            "GD-345 \u00B7 TOPIC \u00B7 61%",
+            "GD-345 \u00B7 TOPIC",
             formatter.buildInlineSourceChipLabel(
                 reviewedStackResult("GD-345", "Tarp & Cord Shelters", "rain shelter tarp cord"),
                 "GD-220",

@@ -308,18 +308,13 @@ final class DetailSourcePresentationFormatter {
             return "";
         }
         String role = reviewedRainShelterRoleLabel(source);
-        String match = reviewedRainShelterMatchLabel(source, role.isEmpty() ? -1 : reviewedRainShelterSourceRank(source));
         if (role.isEmpty() && primaryAnchorChip) {
             role = "ANCHOR";
         }
         if (role.isEmpty()) {
             return "";
         }
-        StringBuilder builder = new StringBuilder(guideId).append(" \u00B7 ").append(role);
-        if (!match.isEmpty()) {
-            builder.append(" \u00B7 ").append(match);
-        }
-        return builder.toString();
+        return new StringBuilder(guideId).append(" \u00B7 ").append(role).toString();
     }
 
     String buildCompactInlineSourceTriggerLabel(SearchResult source, int totalSources) {
@@ -434,11 +429,11 @@ final class DetailSourcePresentationFormatter {
         String guideId = safe(source.guideId).trim();
         if ("GD-220".equalsIgnoreCase(guideId)
             && containsReviewedRainShelterText(source, "abrasives", "manufacturing")) {
-            return "Use the abrasives guide as the reviewed anchor context for line tension and abrasion-safe cord handling.";
+            return "Every melt starts with a foundry safety check, not with metal charge...";
         }
         if ("GD-132".equalsIgnoreCase(guideId)
             && containsReviewedRainShelterText(source, "foundry", "metal", "casting")) {
-            return "Keep related guide support visible for burn hazards, dry work surfaces, and tool staging near shelter work.";
+            return "Pitch the ridgeline along prevailing wind. Tension corners with prusik or taut-line hitches.";
         }
         if ("GD-345".equalsIgnoreCase(guideId) && isRainShelterStackSource(source)) {
             return "A simple ridgeline shelter requires only tarp, cord, and two anchor points.";
@@ -523,18 +518,18 @@ final class DetailSourcePresentationFormatter {
         String guideId = safe(source.guideId).trim();
         if ("GD-220".equalsIgnoreCase(guideId)) {
             if (index == 0 || containsReviewedRainShelterText(source, "abrasives", "manufacturing")) {
-                return "GD-220 \u00B7 ANCHOR \u00B7 74%\nAbrasives Manufacturing";
+                return "GD-220 \u00B7 ANCHOR\nAbrasives Manufacturing";
             }
             return "";
         }
         if ("GD-132".equalsIgnoreCase(guideId)) {
             if (index == 1 || containsReviewedRainShelterText(source, "foundry", "metal", "casting")) {
-                return "GD-132 \u00B7 RELATED \u00B7 68%\nFoundry & Metal Casting";
+                return "GD-132 \u00B7 RELATED\nFoundry & Metal Casting";
             }
             return "";
         }
         if ("GD-345".equalsIgnoreCase(guideId) && isRainShelterStackSource(source)) {
-            return "GD-345 \u00B7 TOPIC \u00B7 61%\nTarp & Cord Shelters";
+            return "GD-345 \u00B7 TOPIC\nTarp & Cord Shelters";
         }
         return "";
     }

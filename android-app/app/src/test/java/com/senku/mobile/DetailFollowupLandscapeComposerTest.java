@@ -169,6 +169,32 @@ public final class DetailFollowupLandscapeComposerTest {
     }
 
     @Test
+    public void phoneLandscapeAnswerInstallsMockParityLeftRail() {
+        assertTrue(DetailActivity.shouldInstallPhoneLandscapeAnswerNavRail(true, true));
+        assertFalse(DetailActivity.shouldInstallPhoneLandscapeAnswerNavRail(true, false));
+        assertFalse(DetailActivity.shouldInstallPhoneLandscapeAnswerNavRail(false, true));
+        assertEquals(64, DetailActivity.resolvePhoneLandscapeAnswerNavRailWidthDp());
+    }
+
+    @Test
+    public void phoneLandscapeAnswerAllocatesRoomForSourceRail() {
+        assertEquals(1.28f, DetailActivity.resolveLandscapeDetailPrimaryColumnWeight(false, true), 0.0f);
+        assertEquals(1.0f, DetailActivity.resolveLandscapeDetailSideColumnWeight(false, true), 0.0f);
+        assertEquals(2.25f, DetailActivity.resolveLandscapeDetailPrimaryColumnWeight(true, true), 0.0f);
+        assertEquals(0.62f, DetailActivity.resolveLandscapeDetailSideColumnWeight(true, true), 0.0f);
+    }
+
+    @Test
+    public void phoneLandscapeAnswerRestoresQuestionMetaShell() {
+        assertTrue(DetailActivity.shouldShowQuestionHeaderLabel(true, true));
+        assertFalse(DetailActivity.shouldShowQuestionHeaderLabel(true, false));
+        assertFalse(DetailActivity.shouldShowQuestionHeaderLabel(false, true));
+        assertTrue(DetailActivity.shouldShowQuestionSubtitleForLayout(true, true, false));
+        assertTrue(DetailActivity.shouldShowQuestionSubtitleForLayout(true, false, true));
+        assertFalse(DetailActivity.shouldShowQuestionSubtitleForLayout(true, false, false));
+    }
+
+    @Test
     public void phonePortraitProofSummaryUsesTighterCollapsedBodyBudget() {
         assertEquals(2, DetailActivity.resolveWhyTextMaxLines(false, true, true));
         assertEquals(4, DetailActivity.resolveWhyTextMaxLines(false, true, false));

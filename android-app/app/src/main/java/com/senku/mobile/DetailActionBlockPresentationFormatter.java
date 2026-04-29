@@ -21,12 +21,14 @@ final class DetailActionBlockPresentationFormatter {
     static final String ACTION_LABEL_ESCALATE = "Escalate if";
     static final String EMERGENCY_ACTION_HEADING_PREFIX = "IMMEDIATE ACTIONS \u00b7 ";
     static final int EMERGENCY_DISTANCE_HIGHLIGHT_COLOR = 0xFFC4704B;
-    static final int EMERGENCY_ACTION_ROW_VERTICAL_PADDING_DP = 2;
-    static final int EMERGENCY_ACTION_CONTENT_START_PADDING_DP = 8;
-    static final float EMERGENCY_ACTION_TITLE_TEXT_SIZE_SP = 11.0f;
-    static final float EMERGENCY_ACTION_DETAIL_TEXT_SIZE_SP = 10.0f;
+    static final int EMERGENCY_ACTION_ROW_VERTICAL_PADDING_DP = 1;
+    static final int EMERGENCY_ACTION_CONTENT_START_PADDING_DP = 9;
+    static final int EMERGENCY_ACTION_DETAIL_TOP_PADDING_DP = 2;
+    static final float EMERGENCY_ACTION_HEADING_TEXT_SIZE_SP = 9.0f;
+    static final float EMERGENCY_ACTION_TITLE_TEXT_SIZE_SP = 10.5f;
+    static final float EMERGENCY_ACTION_DETAIL_TEXT_SIZE_SP = 9.5f;
     private static final int MAX_EMERGENCY_PORTRAIT_ACTIONS = 4;
-    private static final int EMERGENCY_ACTION_BADGE_SIZE_DP = 16;
+    static final int EMERGENCY_ACTION_BADGE_SIZE_DP = 15;
 
     enum ActionBlockKind {
         DO_FIRST,
@@ -142,7 +144,7 @@ final class DetailActionBlockPresentationFormatter {
         heading.setTextColor(context.getColor(R.color.senku_text_muted_light));
         heading.setTypeface(Typeface.MONOSPACE, Typeface.BOLD);
         heading.setLetterSpacing(0.10f);
-        heading.setTextSize(9.5f);
+        heading.setTextSize(EMERGENCY_ACTION_HEADING_TEXT_SIZE_SP);
         heading.setIncludeFontPadding(false);
         headingRow.addView(heading, new LinearLayout.LayoutParams(
             ViewGroup.LayoutParams.WRAP_CONTENT,
@@ -276,7 +278,7 @@ final class DetailActionBlockPresentationFormatter {
         detail.setTextSize(EMERGENCY_ACTION_DETAIL_TEXT_SIZE_SP);
         detail.setLineSpacing(0f, 1.0f);
         detail.setIncludeFontPadding(false);
-        detail.setPadding(0, 0, 0, 0);
+        detail.setPadding(0, dp(EMERGENCY_ACTION_DETAIL_TOP_PADDING_DP), 0, 0);
         detail.setVisibility(action.detail.isEmpty() ? View.GONE : View.VISIBLE);
 
         content.addView(title);

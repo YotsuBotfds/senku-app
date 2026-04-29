@@ -240,6 +240,7 @@ public final class DetailActivity extends AppCompatActivity {
     private LinearLayout landscapeContentRow;
     private LinearLayout landscapePrimaryColumn;
     private LinearLayout landscapeSideColumn;
+    private View phoneLandscapeAnswerNavRail;
     private SenkuTopBarHostView rev03TopBarHost;
     private SenkuMetaStripHostView rev03MetaStripHost;
     private BottomTabBarHostView guidePhoneBottomTabBarView;
@@ -681,6 +682,7 @@ public final class DetailActivity extends AppCompatActivity {
             return;
         }
 
+        installPhoneLandscapeAnswerNavRailIfNeeded();
         bindViews();
         installGuidePhoneBottomTabBarIfNeeded();
         configureFollowUpInput();
@@ -884,6 +886,98 @@ public final class DetailActivity extends AppCompatActivity {
 
     static boolean shouldInstallGuidePhoneBottomTabBar(boolean guideMode, boolean compactPortraitPhone) {
         return guideMode && compactPortraitPhone;
+    }
+
+    private void installPhoneLandscapeAnswerNavRailIfNeeded() {
+        if (!shouldInstallPhoneLandscapeAnswerNavRail(answerMode, isLandscapePhoneLayout())
+            || phoneLandscapeAnswerNavRail != null) {
+            return;
+        }
+        ViewGroup contentRoot = findViewById(android.R.id.content);
+        if (contentRoot == null || contentRoot.getChildCount() == 0) {
+            return;
+        }
+        View existingRoot = contentRoot.getChildAt(0);
+        contentRoot.removeView(existingRoot);
+
+        LinearLayout wrapper = new LinearLayout(this);
+        wrapper.setOrientation(LinearLayout.HORIZONTAL);
+        wrapper.setBackgroundColor(getColor(R.color.senku_rev03_bg_0));
+        wrapper.setLayoutParams(new ViewGroup.LayoutParams(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.MATCH_PARENT
+        ));
+
+        phoneLandscapeAnswerNavRail = buildPhoneLandscapeAnswerNavRail();
+        wrapper.addView(
+            phoneLandscapeAnswerNavRail,
+            new LinearLayout.LayoutParams(
+                dp(resolvePhoneLandscapeAnswerNavRailWidthDp()),
+                ViewGroup.LayoutParams.MATCH_PARENT
+            )
+        );
+        wrapper.addView(
+            existingRoot,
+            new LinearLayout.LayoutParams(
+                0,
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                1f
+            )
+        );
+        contentRoot.addView(wrapper);
+    }
+
+    static boolean shouldInstallPhoneLandscapeAnswerNavRail(boolean answerMode, boolean landscapePhone) {
+        return answerMode && landscapePhone;
+    }
+
+    static int resolvePhoneLandscapeAnswerNavRailWidthDp() {
+        return 64;
+    }
+
+    private View buildPhoneLandscapeAnswerNavRail() {
+        LinearLayout rail = new LinearLayout(this);
+        rail.setOrientation(LinearLayout.VERTICAL);
+        rail.setGravity(Gravity.CENTER_HORIZONTAL);
+        rail.setBackgroundResource(R.drawable.bg_manual_home_nav_shell);
+        rail.setPadding(dp(7), dp(14), dp(7), dp(14));
+        rail.setContentDescription("Detail navigation");
+        rail.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_YES);
+
+        TextView station = buildPhoneLandscapeNavRailItem("S", true);
+        station.setContentDescription("Senku detail");
+        rail.addView(station, navRailItemParams(0));
+
+        TextView menu = buildPhoneLandscapeNavRailItem("=", false);
+        menu.setContentDescription("Guide index");
+        rail.addView(menu, navRailItemParams(44));
+
+        TextView thread = buildPhoneLandscapeNavRailItem("Q", true);
+        thread.setContentDescription("Current answer thread");
+        rail.addView(thread, navRailItemParams(12));
+
+        TextView saved = buildPhoneLandscapeNavRailItem("[]", false);
+        saved.setContentDescription("Saved guides");
+        rail.addView(saved, navRailItemParams(12));
+        return rail;
+    }
+
+    private TextView buildPhoneLandscapeNavRailItem(String label, boolean active) {
+        TextView item = new TextView(this);
+        item.setGravity(Gravity.CENTER);
+        item.setText(label);
+        item.setTextColor(getColor(active ? R.color.senku_rev03_accent : R.color.senku_rev03_ink_2));
+        item.setTypeface(Typeface.MONOSPACE, Typeface.BOLD);
+        item.setTextSize(15f);
+        item.setBackgroundResource(active ? R.drawable.bg_detail_topbar_chip : android.R.color.transparent);
+        item.setIncludeFontPadding(false);
+        return item;
+    }
+
+    private LinearLayout.LayoutParams navRailItemParams(int topMarginDp) {
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(dp(40), dp(40));
+        params.topMargin = dp(topMarginDp);
+        return params;
     }
 
     static List<BottomTabDestination> buildGuidePhoneBottomTabDestinations() {
@@ -4613,18 +4707,19 @@ public final class DetailActivity extends AppCompatActivity {
             return;
         }
         boolean guideSectionRail = shouldUsePhoneLandscapeGuideSectionRail(answerMode, isLandscapePhoneLayout());
+        boolean answerSourceRail = shouldUseLandscapePhoneSourceRail(answerMode, isLandscapePhoneLayout());
         moveLandscapeColumn(landscapeSideColumn, guideSectionRail ? 0 : 1);
         moveLandscapeColumn(landscapePrimaryColumn, guideSectionRail ? 1 : 0);
         applyLandscapeColumnParams(
             landscapePrimaryColumn,
-            resolveLandscapeDetailPrimaryColumnWeight(guideSectionRail),
+            resolveLandscapeDetailPrimaryColumnWeight(guideSectionRail, answerSourceRail),
             guideSectionRail ? dp(8) : 0,
             guideSectionRail ? 0 : dp(6)
         );
         applyLandscapeColumnParams(
             landscapeSideColumn,
-            resolveLandscapeDetailSideColumnWeight(guideSectionRail),
-            guideSectionRail ? 0 : dp(14),
+            resolveLandscapeDetailSideColumnWeight(guideSectionRail, answerSourceRail),
+            guideSectionRail ? 0 : dp(answerSourceRail ? 10 : 14),
             guideSectionRail ? dp(8) : 0
         );
     }
@@ -4663,11 +4758,25 @@ public final class DetailActivity extends AppCompatActivity {
     }
 
     static float resolveLandscapeDetailPrimaryColumnWeight(boolean guideSectionRail) {
-        return guideSectionRail ? 2.25f : 1.65f;
+        return resolveLandscapeDetailPrimaryColumnWeight(guideSectionRail, false);
+    }
+
+    static float resolveLandscapeDetailPrimaryColumnWeight(boolean guideSectionRail, boolean answerSourceRail) {
+        if (guideSectionRail) {
+            return 2.25f;
+        }
+        return answerSourceRail ? 1.28f : 1.65f;
     }
 
     static float resolveLandscapeDetailSideColumnWeight(boolean guideSectionRail) {
-        return guideSectionRail ? 0.62f : 0.75f;
+        return resolveLandscapeDetailSideColumnWeight(guideSectionRail, false);
+    }
+
+    static float resolveLandscapeDetailSideColumnWeight(boolean guideSectionRail, boolean answerSourceRail) {
+        if (guideSectionRail) {
+            return 0.62f;
+        }
+        return answerSourceRail ? 1.0f : 0.75f;
     }
 
     static int resolvePhoneLandscapeGuideSectionRailTopPaddingDp() {
@@ -5471,11 +5580,7 @@ public final class DetailActivity extends AppCompatActivity {
         if (detailScroll == null) {
             return;
         }
-        if (shouldKeepPhoneLandscapeThreadAtTop(
-            answerMode,
-            currentAnswerThreadTurnCount(),
-            isLandscapePhoneLayout()
-        )) {
+        if (shouldResetPhoneLandscapeAnswerScroll(answerMode, isLandscapePhoneLayout())) {
             resetPhoneLandscapeAnswerScrollToHeader();
             return;
         }
@@ -7047,14 +7152,26 @@ public final class DetailActivity extends AppCompatActivity {
         if (safe(subtitleText).isEmpty()) {
             return false;
         }
+        return shouldShowQuestionSubtitleForLayout(answerMode, isLandscapePhoneLayout(), showUtilityRail());
+    }
+
+    static boolean shouldShowQuestionSubtitleForLayout(
+        boolean answerMode,
+        boolean landscapePhone,
+        boolean utilityRail
+    ) {
         if (answerMode) {
-            return showUtilityRail();
+            return utilityRail || landscapePhone;
         }
-        return !isLandscapePhoneLayout();
+        return !landscapePhone;
     }
 
     private boolean shouldShowQuestionHeaderLabel() {
-        return !answerMode && !isLandscapePhoneLayout();
+        return shouldShowQuestionHeaderLabel(answerMode, isLandscapePhoneLayout());
+    }
+
+    static boolean shouldShowQuestionHeaderLabel(boolean answerMode, boolean landscapePhone) {
+        return answerMode ? landscapePhone : !landscapePhone;
     }
 
     private void applyBubbleCompaction(View bubble, boolean compactLandscapePhone, int edgeMargin, boolean questionSide) {
@@ -8973,7 +9090,7 @@ public final class DetailActivity extends AppCompatActivity {
         setParentTopMargin(answerBubble, dp(8));
         setTopMargin(rev03MetaStripHost, dp(8));
         if (headerLabel != null) {
-            if (isCompactPortraitPhoneLayout() && answerMode) {
+            if (answerMode && (isCompactPortraitPhoneLayout() || isLandscapePhoneLayout())) {
                 headerLabel.setText("ANSWER" + HEADER_BULLET + "THIS DEVICE" + HEADER_BULLET + "1 TURN");
                 headerLabel.setVisibility(View.VISIBLE);
                 headerLabel.setTextColor(getColor(R.color.senku_rev03_accent));
@@ -9004,8 +9121,8 @@ public final class DetailActivity extends AppCompatActivity {
         if (subtitleView != null) {
             subtitleView.setTextColor(getColor(R.color.senku_text_muted_light));
             subtitleView.setTypeface(Typeface.MONOSPACE);
-            subtitleView.setLetterSpacing(isCompactPortraitPhoneLayout() && answerMode ? 0.08f : 0f);
-            if (isCompactPortraitPhoneLayout() && answerMode) {
+            subtitleView.setLetterSpacing(answerMode && (isCompactPortraitPhoneLayout() || isLandscapePhoneLayout()) ? 0.08f : 0f);
+            if (answerMode && (isCompactPortraitPhoneLayout() || isLandscapePhoneLayout())) {
                 subtitleView.setText(buildPhonePortraitAnswerQuestionMeta());
                 subtitleView.setVisibility(View.VISIBLE);
                 subtitleView.setTextSize(resolvePhonePortraitQuestionMetaTextSizeSp());

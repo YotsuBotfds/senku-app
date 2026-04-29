@@ -58,6 +58,7 @@
             android:textStyle="normal" />
 
         <ImageView
+            android:id="@+id/home_chrome_search_icon"
             android:layout_width="14dp"
             android:layout_height="14dp"
             android:contentDescription="@string/search_button"

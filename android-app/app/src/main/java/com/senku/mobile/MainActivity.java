@@ -3,11 +3,15 @@ package com.senku.mobile;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.Editable;
+import android.text.SpannableString;
+import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.text.style.StyleSpan;
 import android.view.ViewGroup;
 import android.view.ViewParent;
 import android.view.inputmethod.EditorInfo;
@@ -164,6 +168,7 @@ public final class MainActivity extends AppCompatActivity {
     private TextView homeSubtitleText;
     private TextView homeManualStampText;
     private TextView homeChromeTitleText;
+    private View homeChromeSearchIcon;
     private TextView resultsHeader;
     private ProgressBar progressBar;
     private EditText searchInput;
@@ -394,6 +399,7 @@ public final class MainActivity extends AppCompatActivity {
         homeSubtitleText = findViewById(R.id.home_subtitle);
         homeManualStampText = findViewById(R.id.home_manual_stamp);
         homeChromeTitleText = findViewById(R.id.home_chrome_title);
+        homeChromeSearchIcon = findViewById(R.id.home_chrome_search_icon);
         resultsHeader = findViewById(R.id.results_header);
         progressBar = findViewById(R.id.progress_bar);
         searchInput = findViewById(R.id.search_input);
@@ -4397,8 +4403,14 @@ public final class MainActivity extends AppCompatActivity {
             return;
         }
         if (browseMode) {
-            homeChromeTitleText.setText("HOME SENKU \u2022 Field manual \u2022 ed.2");
+            homeChromeTitleText.setText(buildHomeChromeTitleText());
+            if (homeChromeSearchIcon != null) {
+                homeChromeSearchIcon.setVisibility(View.VISIBLE);
+            }
             return;
+        }
+        if (homeChromeSearchIcon != null) {
+            homeChromeSearchIcon.setVisibility(View.GONE);
         }
         String cleanQuery = safe(query).trim();
         if (cleanQuery.isEmpty() || "guides".equalsIgnoreCase(cleanQuery)) {
@@ -4406,6 +4418,29 @@ public final class MainActivity extends AppCompatActivity {
             return;
         }
         homeChromeTitleText.setText("SEARCH " + cleanQuery);
+    }
+
+    private static CharSequence buildHomeChromeTitleText() {
+        String title = "HOME SENKU \u2022 Field manual \u2022 ed.2";
+        SpannableString styled = new SpannableString(title);
+        int fieldStart = title.indexOf("Field manual");
+        int editionStart = title.indexOf("ed.2");
+        if (fieldStart >= 0) {
+            styled.setSpan(
+                new StyleSpan(Typeface.BOLD),
+                fieldStart,
+                title.length(),
+                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+            );
+        } else if (editionStart >= 0) {
+            styled.setSpan(
+                new StyleSpan(Typeface.BOLD),
+                editionStart,
+                title.length(),
+                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+            );
+        }
+        return styled;
     }
 
     private void updateTabletSearchPreview() {
