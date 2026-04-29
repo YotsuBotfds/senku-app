@@ -510,11 +510,11 @@ Current worst visual drift after this wave:
 
 Known remaining design mismatch:
 
-- Home/search and detail/thread still use two separate nav rail treatments.
-  Home/search has the labeled Library/Ask/Saved rail; detail/thread still has
-  its own compact glyph rail, which caused the visually duplicated `S / = / Q /
-  []` style in user screenshots. Next slice should unify this into one shared
-  rail primitive or make the compact detail rail intentionally match the target.
+- Closed by the unified detail nav rail slice: phone landscape detail/thread now
+  uses the labeled `Library` / `Ask` / `Saved` app rail with the same icon
+  language and separator as home/search instead of the compact `S / = / Q / []`
+  glyph rail. Tablet detail already used a labeled Compose rail; a later
+  behavior-only follow-up can make its `Ask` rail item active if needed.
 
 ## Phase 2 - Parent Integration
 

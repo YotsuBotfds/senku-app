@@ -200,7 +200,7 @@ public final class DetailFollowupLandscapeComposerTest {
         assertTrue(DetailActivity.shouldInstallPhoneLandscapeAnswerNavRail(true, true));
         assertFalse(DetailActivity.shouldInstallPhoneLandscapeAnswerNavRail(true, false));
         assertFalse(DetailActivity.shouldInstallPhoneLandscapeAnswerNavRail(false, true));
-        assertEquals(52, DetailActivity.resolvePhoneLandscapeAnswerNavRailWidthDp());
+        assertEquals(64, DetailActivity.resolvePhoneLandscapeAnswerNavRailWidthDp());
     }
 
     @Test

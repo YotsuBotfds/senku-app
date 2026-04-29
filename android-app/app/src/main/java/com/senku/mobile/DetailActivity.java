@@ -35,6 +35,7 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.ScrollView;
@@ -924,6 +925,15 @@ public final class DetailActivity extends AppCompatActivity {
                 ViewGroup.LayoutParams.MATCH_PARENT
             )
         );
+        View divider = new View(this);
+        divider.setBackgroundColor(getColor(R.color.senku_rev03_hairline_strong));
+        wrapper.addView(
+            divider,
+            new LinearLayout.LayoutParams(
+                dp(1),
+                ViewGroup.LayoutParams.MATCH_PARENT
+            )
+        );
         wrapper.addView(
             existingRoot,
             new LinearLayout.LayoutParams(
@@ -940,50 +950,130 @@ public final class DetailActivity extends AppCompatActivity {
     }
 
     static int resolvePhoneLandscapeAnswerNavRailWidthDp() {
-        return 52;
+        return 64;
     }
 
     private View buildPhoneLandscapeAnswerNavRail() {
         LinearLayout rail = new LinearLayout(this);
         rail.setOrientation(LinearLayout.VERTICAL);
         rail.setGravity(Gravity.CENTER_HORIZONTAL);
-        rail.setBackgroundResource(R.drawable.bg_manual_home_nav_shell);
-        rail.setPadding(dp(7), dp(14), dp(7), dp(14));
+        rail.setPadding(0, dp(12), 0, 0);
         rail.setContentDescription("Detail navigation");
         rail.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_YES);
 
-        TextView station = buildPhoneLandscapeNavRailItem("S", true);
+        TextView station = buildPhoneLandscapeNavStationBadge();
         station.setContentDescription("Senku detail");
-        rail.addView(station, navRailItemParams(0));
+        rail.addView(station, stationBadgeParams());
 
-        TextView menu = buildPhoneLandscapeNavRailItem("=", false);
-        menu.setContentDescription("Guide index");
-        rail.addView(menu, navRailItemParams(44));
+        rail.addView(buildPhoneLandscapeNavRailItem(
+            R.drawable.ic_home_library,
+            getString(R.string.bottom_tab_home),
+            false,
+            v -> navigateHomeFromDetail()
+        ), navRailItemParams(18, 58));
 
-        TextView thread = buildPhoneLandscapeNavRailItem("Q", true);
-        thread.setContentDescription("Current answer thread");
-        rail.addView(thread, navRailItemParams(12));
+        rail.addView(buildPhoneLandscapeNavRailItem(
+            R.drawable.ic_home_ask,
+            getString(R.string.bottom_tab_ask),
+            true,
+            v -> focusFollowUpComposer()
+        ), navRailItemParams(4, 54));
 
-        TextView saved = buildPhoneLandscapeNavRailItem("[]", false);
-        saved.setContentDescription("Saved guides");
-        rail.addView(saved, navRailItemParams(12));
+        rail.addView(buildPhoneLandscapeNavRailItem(
+            R.drawable.ic_home_saved,
+            getString(R.string.bottom_tab_pins),
+            false,
+            v -> navigateMainFromGuidePhoneTab(MainActivity.EXTRA_OPEN_SAVED, true)
+        ), navRailItemParams(4, 54));
         return rail;
     }
 
-    private TextView buildPhoneLandscapeNavRailItem(String label, boolean active) {
+    private TextView buildPhoneLandscapeNavStationBadge() {
         TextView item = new TextView(this);
         item.setGravity(Gravity.CENTER);
-        item.setText(label);
-        item.setTextColor(getColor(active ? R.color.senku_rev03_accent : R.color.senku_rev03_ink_2));
-        item.setTypeface(Typeface.MONOSPACE, Typeface.BOLD);
-        item.setTextSize(13f);
-        item.setBackgroundResource(active ? R.drawable.bg_detail_topbar_chip : android.R.color.transparent);
+        item.setText(R.string.app_badge_letter);
+        item.setTextColor(getColor(R.color.senku_rev03_accent));
+        item.setTypeface(Typeface.DEFAULT_BOLD);
+        item.setTextSize(15f);
+        item.setBackgroundResource(R.drawable.bg_manual_home_nav_shell);
         item.setIncludeFontPadding(false);
         return item;
     }
 
-    private LinearLayout.LayoutParams navRailItemParams(int topMarginDp) {
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(dp(34), dp(34));
+    private View buildPhoneLandscapeNavRailItem(
+        int iconResId,
+        String label,
+        boolean active,
+        View.OnClickListener clickListener
+    ) {
+        FrameLayout item = new FrameLayout(this);
+        item.setContentDescription(label);
+        item.setClickable(true);
+        item.setFocusable(true);
+        item.setOnClickListener(clickListener);
+
+        if (active) {
+            View indicator = new View(this);
+            indicator.setBackgroundColor(getColor(R.color.senku_rev03_accent));
+            FrameLayout.LayoutParams indicatorParams = new FrameLayout.LayoutParams(
+                dp(2),
+                dp(28),
+                Gravity.START | Gravity.CENTER_VERTICAL
+            );
+            item.addView(indicator, indicatorParams);
+        }
+
+        LinearLayout stack = new LinearLayout(this);
+        stack.setOrientation(LinearLayout.VERTICAL);
+        stack.setGravity(Gravity.CENTER);
+
+        int color = getColor(active ? R.color.senku_rev03_accent : R.color.senku_rev03_ink_2);
+        ImageView icon = new ImageView(this);
+        icon.setImageResource(iconResId);
+        icon.setImageTintList(ColorStateList.valueOf(color));
+        icon.setPadding(dp(1), dp(1), dp(1), dp(1));
+        LinearLayout.LayoutParams iconParams = new LinearLayout.LayoutParams(dp(21), dp(21));
+        stack.addView(icon, iconParams);
+
+        TextView text = new TextView(this);
+        text.setGravity(Gravity.CENTER);
+        text.setIncludeFontPadding(false);
+        text.setText(label);
+        text.setTextColor(color);
+        text.setTextSize(10f);
+        text.setTypeface(Typeface.DEFAULT, active ? Typeface.BOLD : Typeface.NORMAL);
+        LinearLayout.LayoutParams textParams = new LinearLayout.LayoutParams(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        );
+        textParams.topMargin = dp(3);
+        stack.addView(text, textParams);
+
+        item.addView(stack, new FrameLayout.LayoutParams(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            Gravity.CENTER
+        ));
+        return item;
+    }
+
+    private void focusFollowUpComposer() {
+        if (followUpInput == null) {
+            return;
+        }
+        followUpInput.requestFocus();
+        followUpInput.setSelection(followUpInput.getText() == null ? 0 : followUpInput.getText().length());
+    }
+
+    private LinearLayout.LayoutParams stationBadgeParams() {
+        return new LinearLayout.LayoutParams(dp(36), dp(36));
+    }
+
+    private LinearLayout.LayoutParams navRailItemParams(int topMarginDp, int heightDp) {
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            dp(heightDp)
+        );
         params.topMargin = dp(topMarginDp);
         return params;
     }
