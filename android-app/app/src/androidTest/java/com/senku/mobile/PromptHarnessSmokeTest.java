@@ -5280,8 +5280,10 @@ public final class PromptHarnessSmokeTest {
             visibleButtonTextContains(sourcesContainer, "GD-345")
         );
         Assert.assertTrue(
-            "phone-landscape split answer should use source-guide rail wording, not a guide destination substitute",
-            sourcesTitle != null && containsAny(safe(String.valueOf(sourcesTitle.getText())), activity.getString(R.string.detail_sources_title))
+            "phone-landscape split answer should use canonical sources rail wording, not a guide destination substitute",
+            sourcesTitle != null
+                && containsAny(safe(String.valueOf(sourcesTitle.getText())), "SOURCES")
+                && !containsAny(safe(String.valueOf(sourcesTitle.getText())), "GUIDE")
         );
         settlePhoneLandscapeSplitProofViewport(activity, answerBubble, sourcesPanel);
         Assert.assertTrue(

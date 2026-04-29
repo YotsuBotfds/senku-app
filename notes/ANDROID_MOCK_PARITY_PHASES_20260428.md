@@ -1939,6 +1939,43 @@ Fresh proof:
   centering/width, phone-landscape answer/thread source/body balance, tablet
   search landscape proportions, and final source-heading label polish.
 
+## Wave73 Checkpoint
+
+Committed scope pending at the time of this update:
+
+- Tablet guide portrait: reduced portrait paper outer padding, made the guide
+  app rail orientation-aware, and kept the landscape guide rail width stable.
+- Phone landscape answer/thread: canonicalized the source rail heading to
+  `SOURCES`, reduced answer-body scale, rebalanced the answer/source split, and
+  slimmed composer vertical padding.
+- Tablet search landscape: tightened filter and preview rail widths to move the
+  results/preview columns closer to the canonical landscape mock.
+- Harness: updated the phone-landscape answer assertion to the new `SOURCES`
+  heading contract after the first Wave73 full pack exposed the stale smoke
+  expectation.
+
+Fresh proof:
+
+- First full pack:
+  `artifacts/ui_state_pack/wave73_integrated_final/20260429_102042`
+  failed `1/22` only because the harness still expected the old
+  source-guide wording.
+- Focused phone-landscape repair pack:
+  `artifacts/ui_state_pack/wave73_phone_landscape_fix/20260429_102729`
+  passed `5/5`.
+- Full retry:
+  `artifacts/ui_state_pack/wave73_integrated_final_retry/20260429_103209`
+- Summary: full retry `pass`, states `22/22`, failures `0`, ANRs `0`,
+  rotation mismatch `0`, canonical mock export `22` PNGs, goal bundle
+  `artifacts/ui_state_pack/wave73_integrated_final_retry/20260429_103209_mocks.zip`.
+- Validation: focused JVM suite passed across phone-landscape composer/detail,
+  home/search chrome, and tablet guide stress-reading policies.
+- Visual review: safe to commit as progress and roughly `7.3/10` versus the
+  canonical mocks. Gains are containment/framing and source-heading cleanup.
+  Remaining high-value slices are phone-landscape typography/stretch and related
+  density, tablet guide portrait top-chrome clipping, and tablet search
+  landscape compression.
+
 ## Parallelization Rules
 
 - Start every worker with `git status --short`, `git log --oneline -n 8

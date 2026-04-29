@@ -341,7 +341,7 @@ internal fun tabletGuidePaperMaxWidthDp(isLandscape: Boolean): Int =
     if (isLandscape) 560 else 820
 
 internal fun tabletGuidePaperHorizontalPaddingDp(isLandscape: Boolean): Int =
-    if (isLandscape) 12 else 24
+    if (isLandscape) 12 else 12
 
 internal fun tabletGuidePaperInnerHorizontalPaddingDp(isLandscape: Boolean): Int =
     if (isLandscape) 42 else 42
@@ -352,7 +352,8 @@ internal fun tabletGuidePaperBottomPaddingDp(isLandscape: Boolean): Int =
 internal fun tabletGuideReferenceRailWidthDp(isLandscape: Boolean): Int =
     if (isLandscape) 390 else 0
 
-internal fun tabletGuideAppRailWidthDp(): Int = 96
+internal fun tabletGuideAppRailWidthDp(isLandscape: Boolean): Int =
+    if (isLandscape) 96 else 76
 
 internal fun tabletGuideSectionRailShowsToolbar(): Boolean = false
 
@@ -756,7 +757,7 @@ fun TabletDetailScreen(
                     onLibraryClick = onHomeClick,
                     onSavedClick = onPinClick,
                     modifier = Modifier
-                        .width(tabletGuideAppRailWidthDp().dp)
+                        .width(tabletGuideAppRailWidthDp(state.isLandscape).dp)
                         .fillMaxHeight(),
                 )
 

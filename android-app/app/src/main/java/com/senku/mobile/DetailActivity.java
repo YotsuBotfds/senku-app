@@ -2077,7 +2077,7 @@ public final class DetailActivity extends AppCompatActivity {
     }
 
     static String buildDetailSourcesProofStampLabel() {
-        return "SOURCE GUIDES";
+        return "SOURCES";
     }
 
     private String buildTabletGuideModeLabel(SearchResult activeSource) {
@@ -4812,7 +4812,7 @@ public final class DetailActivity extends AppCompatActivity {
         if (guideSectionRail) {
             return 2.25f;
         }
-        return answerSourceRail ? 1.28f : 1.65f;
+        return answerSourceRail ? 1.20f : 1.65f;
     }
 
     static float resolveLandscapeDetailSideColumnWeight(boolean guideSectionRail) {
@@ -6556,7 +6556,7 @@ public final class DetailActivity extends AppCompatActivity {
 
     static String buildLandscapePhoneSourceRailTitle(String baseTitle, int sourceCount) {
         String base = safe(baseTitle).trim();
-        if (base.isEmpty()) {
+        if (base.isEmpty() || "SOURCE GUIDES".equalsIgnoreCase(base)) {
             base = "SOURCES";
         } else {
             base = base.toUpperCase(Locale.US);
@@ -7365,7 +7365,7 @@ public final class DetailActivity extends AppCompatActivity {
 
     static int resolveFollowUpPanelVerticalPaddingDp(boolean landscapePhone, boolean compactFollowUp) {
         if (landscapePhone) {
-            return 6;
+            return 3;
         }
         return compactFollowUp ? 8 : 14;
     }
@@ -7409,7 +7409,7 @@ public final class DetailActivity extends AppCompatActivity {
     }
 
     static float resolvePhoneLandscapeAnswerBodyTextSizeSp() {
-        return 13.5f;
+        return 13.0f;
     }
 
     private void updateTopBarActions() {

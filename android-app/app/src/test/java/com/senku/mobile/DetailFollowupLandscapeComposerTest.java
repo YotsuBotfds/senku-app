@@ -43,7 +43,7 @@ public final class DetailFollowupLandscapeComposerTest {
 
     @Test
     public void landscapePhoneFollowUpPanelUsesTightVerticalBudget() {
-        assertEquals(6, DetailActivity.resolveFollowUpPanelVerticalPaddingDp(true, true));
+        assertEquals(3, DetailActivity.resolveFollowUpPanelVerticalPaddingDp(true, true));
     }
 
     @Test
@@ -179,7 +179,7 @@ public final class DetailFollowupLandscapeComposerTest {
 
     @Test
     public void phoneLandscapeAnswerAllocatesRoomForSourceRail() {
-        assertEquals(1.28f, DetailActivity.resolveLandscapeDetailPrimaryColumnWeight(false, true), 0.0f);
+        assertEquals(1.20f, DetailActivity.resolveLandscapeDetailPrimaryColumnWeight(false, true), 0.0f);
         assertEquals(1.0f, DetailActivity.resolveLandscapeDetailSideColumnWeight(false, true), 0.0f);
         assertEquals(1.65f, DetailActivity.resolveLandscapeDetailPrimaryColumnWeight(false, false), 0.0f);
         assertEquals(0.75f, DetailActivity.resolveLandscapeDetailSideColumnWeight(false, false), 0.0f);
@@ -198,7 +198,7 @@ public final class DetailFollowupLandscapeComposerTest {
         assertEquals(15.0f, DetailActivity.resolveAnswerQuestionTitleTextSizeSp(true, true, false), 0.0f);
         assertEquals(16.0f, DetailActivity.resolveAnswerQuestionTitleTextSizeSp(true, false, true), 0.0f);
         assertEquals(18.0f, DetailActivity.resolveAnswerQuestionTitleTextSizeSp(false, true, false), 0.0f);
-        assertEquals(13.5f, DetailActivity.resolvePhoneLandscapeAnswerBodyTextSizeSp(), 0.0f);
+        assertEquals(13.0f, DetailActivity.resolvePhoneLandscapeAnswerBodyTextSizeSp(), 0.0f);
     }
 
     @Test
@@ -245,8 +245,9 @@ public final class DetailFollowupLandscapeComposerTest {
     public void answerSourcesStampUsesSourceLanguageInsteadOfProofRail() {
         String label = DetailActivity.buildDetailSourcesProofStampLabel();
 
-        assertEquals("SOURCE GUIDES", label);
+        assertEquals("SOURCES", label);
         assertFalse(label.contains("PROOF"));
+        assertFalse(label.contains("GUIDES"));
     }
 
     @Test
@@ -379,6 +380,7 @@ public final class DetailFollowupLandscapeComposerTest {
         assertFalse(DetailActivity.shouldAutoOpenProvenanceForAnswerRail(true, 2, true));
         assertTrue(DetailActivity.shouldAutoOpenProvenanceForAnswerRail(true, 1, true));
         assertEquals("SOURCES - 2", DetailActivity.buildLandscapePhoneSourceRailTitle("Sources", 2));
+        assertEquals("SOURCES - 2", DetailActivity.buildLandscapePhoneSourceRailTitle("Source guides", 2));
         assertTrue(DetailActivity.shouldHideGenericAnswerScaffoldForThread(true, 2, true));
         assertFalse(DetailActivity.shouldHideProofRailForThreadDetail(true, 2, true, true));
         assertTrue(DetailActivity.shouldUseCompactPhoneLandscapeThreadTranscript(true, 2, true));

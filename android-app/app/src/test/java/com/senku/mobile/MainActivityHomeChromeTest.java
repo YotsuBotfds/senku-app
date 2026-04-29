@@ -276,8 +276,8 @@ public final class MainActivityHomeChromeTest {
 
     @Test
     public void tabletLandscapeSearchRailWidthsMatchMockParityContract() {
-        assertEquals(340, MainActivity.resolveTabletSearchFilterRailWidthDp(true));
-        assertEquals(456, MainActivity.resolveTabletSearchPreviewRailWidthDp(true));
+        assertEquals(331, MainActivity.resolveTabletSearchFilterRailWidthDp(true));
+        assertEquals(441, MainActivity.resolveTabletSearchPreviewRailWidthDp(true));
         assertEquals(0, MainActivity.resolveTabletSearchFilterRailWidthDp(false));
         assertEquals(0, MainActivity.resolveTabletSearchPreviewRailWidthDp(false));
     }

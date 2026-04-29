@@ -93,14 +93,15 @@ class StressReadingPolicyTest {
         assertEquals(560, tabletGuidePaperMaxWidthDp(isLandscape = true))
         assertEquals(820, tabletGuidePaperMaxWidthDp(isLandscape = false))
         assertEquals(12, tabletGuidePaperHorizontalPaddingDp(isLandscape = true))
-        assertEquals(24, tabletGuidePaperHorizontalPaddingDp(isLandscape = false))
+        assertEquals(12, tabletGuidePaperHorizontalPaddingDp(isLandscape = false))
         assertEquals(42, tabletGuidePaperInnerHorizontalPaddingDp(isLandscape = true))
         assertEquals(42, tabletGuidePaperInnerHorizontalPaddingDp(isLandscape = false))
         assertEquals(20, tabletGuidePaperBottomPaddingDp(isLandscape = true))
         assertEquals(40, tabletGuidePaperBottomPaddingDp(isLandscape = false))
         assertEquals(390, tabletGuideReferenceRailWidthDp(isLandscape = true))
         assertEquals(0, tabletGuideReferenceRailWidthDp(isLandscape = false))
-        assertEquals(96, tabletGuideAppRailWidthDp())
+        assertEquals(96, tabletGuideAppRailWidthDp(isLandscape = true))
+        assertEquals(76, tabletGuideAppRailWidthDp(isLandscape = false))
         assertFalse(tabletGuideSectionRailShowsToolbar())
     }
 
