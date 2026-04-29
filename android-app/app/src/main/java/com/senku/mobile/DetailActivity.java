@@ -105,6 +105,12 @@ public final class DetailActivity extends AppCompatActivity {
     private static final int TABLET_EMERGENCY_LANDSCAPE_LEFT_MARGIN_DP = 336;
     private static final int TABLET_EMERGENCY_LANDSCAPE_RIGHT_MARGIN_DP = 24;
     private static final int TABLET_EMERGENCY_LANDSCAPE_TOP_MARGIN_DP = 16;
+    private static final int EMERGENCY_PORTRAIT_ACTION_ROW_GAP_DP = 10;
+    private static final int EMERGENCY_PORTRAIT_PROOF_CARD_HORIZONTAL_PADDING_DP = 20;
+    private static final int EMERGENCY_PORTRAIT_PROOF_CARD_VERTICAL_PADDING_DP = 14;
+    private static final int TABLET_EMERGENCY_ACTION_ROW_GAP_DP = 8;
+    private static final int TABLET_EMERGENCY_PROOF_CARD_HORIZONTAL_PADDING_DP = 24;
+    private static final int TABLET_EMERGENCY_PROOF_CARD_VERTICAL_PADDING_DP = 18;
     private static final Pattern GUIDE_HTML_BREAK_PATTERN = Pattern.compile("(?i)<br\\s*/?>");
     private static final Pattern SOURCE_COUNT_TOKEN_PATTERN = Pattern.compile("(?i)\\b(\\d+)\\s+sources?\\b");
     private static final String HEADER_BULLET = " \u2022 ";
@@ -1817,6 +1823,7 @@ public final class DetailActivity extends AppCompatActivity {
             currentBody,
             getColor(R.color.senku_rev03_danger)
         );
+        applyEmergencyActionListSpacing(tabletEmergencyActionsOverlayPanel, true);
         renderTabletEmergencyProofOverlay();
     }
 
@@ -1829,6 +1836,12 @@ public final class DetailActivity extends AppCompatActivity {
             return;
         }
         tabletEmergencyProofOverlayPanel.setVisibility(View.VISIBLE);
+        tabletEmergencyProofOverlayPanel.setPadding(
+            dp(resolveEmergencyProofCardHorizontalPaddingDp(true)),
+            dp(resolveEmergencyProofCardVerticalPaddingDp(true)),
+            dp(resolveEmergencyProofCardHorizontalPaddingDp(true)),
+            dp(resolveEmergencyProofCardVerticalPaddingDp(true))
+        );
         tabletEmergencyProofOverlayText.setText(buildEmergencyProofCardSummary());
         tabletEmergencyProofOverlayPanel.setContentDescription(tabletEmergencyProofOverlayText.getText());
     }
@@ -4112,10 +4125,10 @@ public final class DetailActivity extends AppCompatActivity {
             ? R.drawable.bg_detail_source_card_flat
             : android.R.color.transparent);
         whyText.setPadding(
-            emergencyPortrait ? dp(12) : 0,
-            emergencyPortrait ? dp(12) : 0,
-            emergencyPortrait ? dp(12) : 0,
-            emergencyPortrait ? dp(12) : 0
+            emergencyPortrait ? dp(resolveEmergencyProofCardHorizontalPaddingDp(false)) : 0,
+            emergencyPortrait ? dp(resolveEmergencyProofCardVerticalPaddingDp(false)) : 0,
+            emergencyPortrait ? dp(resolveEmergencyProofCardHorizontalPaddingDp(false)) : 0,
+            emergencyPortrait ? dp(resolveEmergencyProofCardVerticalPaddingDp(false)) : 0
         );
         if (whyTitleText != null) {
             whyTitleText.setVisibility(View.VISIBLE);
@@ -4650,11 +4663,15 @@ public final class DetailActivity extends AppCompatActivity {
     }
 
     static float resolveLandscapeDetailPrimaryColumnWeight(boolean guideSectionRail) {
-        return guideSectionRail ? 2.35f : 1.65f;
+        return guideSectionRail ? 2.25f : 1.65f;
     }
 
     static float resolveLandscapeDetailSideColumnWeight(boolean guideSectionRail) {
-        return guideSectionRail ? 0.52f : 0.75f;
+        return guideSectionRail ? 0.62f : 0.75f;
+    }
+
+    static int resolvePhoneLandscapeGuideSectionRailTopPaddingDp() {
+        return 10;
     }
 
     static List<String> phoneLandscapeGuideSectionRailLabels() {
@@ -4735,7 +4752,7 @@ public final class DetailActivity extends AppCompatActivity {
         }
         if (shouldUsePhoneLandscapeGuideSectionRail(answerMode, isLandscapePhoneLayout())) {
             nextStepsPanel.setBackgroundResource(android.R.color.transparent);
-            nextStepsPanel.setPadding(0, dp(2), 0, 0);
+            nextStepsPanel.setPadding(0, dp(resolvePhoneLandscapeGuideSectionRailTopPaddingDp()), 0, 0);
             setTopMargin(nextStepsPanel, dp(0));
             if (nextStepsTitleText != null) {
                 nextStepsTitleText.setBackgroundResource(android.R.color.transparent);
@@ -8692,6 +8709,7 @@ public final class DetailActivity extends AppCompatActivity {
                 currentBody,
                 getColor(R.color.senku_rev03_danger)
             );
+            applyEmergencyActionListSpacing(actionBlocksPanel, false);
             return;
         }
         if (!shouldShowHighRiskActionBlocks()) {
@@ -8707,6 +8725,43 @@ public final class DetailActivity extends AppCompatActivity {
 
     private boolean shouldShowHighRiskActionBlocks() {
         return answerMode && isHighRiskRoute() && isDeterministicRoute() && !safe(currentBody).trim().isEmpty();
+    }
+
+    private void applyEmergencyActionListSpacing(LinearLayout panel, boolean tabletPortrait) {
+        if (panel == null || panel.getChildCount() == 0) {
+            return;
+        }
+        int rowGap = dp(resolveEmergencyActionRowGapDp(tabletPortrait));
+        for (int i = 0; i < panel.getChildCount(); i++) {
+            View child = panel.getChildAt(i);
+            ViewGroup.LayoutParams rawParams = child.getLayoutParams();
+            if (!(rawParams instanceof LinearLayout.LayoutParams)) {
+                continue;
+            }
+            LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) rawParams;
+            params.topMargin = isEmergencyActionRowChild(panel, i) ? rowGap : params.topMargin;
+            child.setLayoutParams(params);
+        }
+    }
+
+    private static boolean isEmergencyActionRowChild(LinearLayout panel, int index) {
+        return panel != null && index > 0 && index < panel.getChildCount();
+    }
+
+    static int resolveEmergencyActionRowGapDp(boolean tabletPortrait) {
+        return tabletPortrait ? TABLET_EMERGENCY_ACTION_ROW_GAP_DP : EMERGENCY_PORTRAIT_ACTION_ROW_GAP_DP;
+    }
+
+    static int resolveEmergencyProofCardHorizontalPaddingDp(boolean tabletPortrait) {
+        return tabletPortrait
+            ? TABLET_EMERGENCY_PROOF_CARD_HORIZONTAL_PADDING_DP
+            : EMERGENCY_PORTRAIT_PROOF_CARD_HORIZONTAL_PADDING_DP;
+    }
+
+    static int resolveEmergencyProofCardVerticalPaddingDp(boolean tabletPortrait) {
+        return tabletPortrait
+            ? TABLET_EMERGENCY_PROOF_CARD_VERTICAL_PADDING_DP
+            : EMERGENCY_PORTRAIT_PROOF_CARD_VERTICAL_PADDING_DP;
     }
 
     private void applyEmergencyPortraitPresentation() {
@@ -8894,11 +8949,11 @@ public final class DetailActivity extends AppCompatActivity {
     }
 
     static int resolvePhoneGuideViewportHorizontalPaddingDp(boolean landscapePhone) {
-        return landscapePhone ? 12 : 10;
+        return landscapePhone ? 16 : 10;
     }
 
     static int resolvePhoneGuideViewportTopPaddingDp(boolean landscapePhone) {
-        return landscapePhone ? 4 : 8;
+        return landscapePhone ? 12 : 8;
     }
 
     private void restoreAnswerSemanticPresentation() {

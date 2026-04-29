@@ -144,6 +144,20 @@ public final class EmergencySurfacePolicyTest {
     }
 
     @Test
+    public void emergencyPortraitSpacingKeepsActionRowsAndProofCardReadable() {
+        assertEquals(10, DetailActivity.resolveEmergencyActionRowGapDp(false));
+        assertEquals(20, DetailActivity.resolveEmergencyProofCardHorizontalPaddingDp(false));
+        assertEquals(14, DetailActivity.resolveEmergencyProofCardVerticalPaddingDp(false));
+    }
+
+    @Test
+    public void tabletEmergencySpacingUsesDenserRowsButRoomierProofCard() {
+        assertEquals(8, DetailActivity.resolveEmergencyActionRowGapDp(true));
+        assertEquals(24, DetailActivity.resolveEmergencyProofCardHorizontalPaddingDp(true));
+        assertEquals(18, DetailActivity.resolveEmergencyProofCardVerticalPaddingDp(true));
+    }
+
+    @Test
     public void tabletEmergencyFullHeightDoesNotApplyToPhoneLandscapeOrNonEmergency() {
         assertFalse(DetailActivity.shouldUseTabletEmergencyFullHeightPage(true, false, true));
         assertFalse(DetailActivity.shouldUseTabletEmergencyFullHeightPage(false, true, true));

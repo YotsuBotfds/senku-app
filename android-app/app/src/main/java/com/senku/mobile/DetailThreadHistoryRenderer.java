@@ -350,7 +350,7 @@ final class DetailThreadHistoryRenderer {
         String resolvedStatus = safe(status).trim();
         if (!resolvedStatus.isEmpty()) {
             TextView statusLabel = new TextView(context);
-            statusLabel.setText("\u2022 " + compactStatusLabel(resolvedStatus));
+            statusLabel.setText(confidenceDotLabel(resolvedStatus));
             statusLabel.setTextAppearance(context, android.R.style.TextAppearance_Small);
             statusLabel.setTextColor(context.getColor(statusColorRes(resolvedStatus)));
             statusLabel.setTypeface(Typeface.MONOSPACE, Typeface.NORMAL);
@@ -593,6 +593,11 @@ final class DetailThreadHistoryRenderer {
             return "UNSURE";
         }
         return resolvedStatus.toUpperCase(Locale.US);
+    }
+
+    static String confidenceDotLabel(String status) {
+        String label = compactStatusLabel(status);
+        return label.isEmpty() ? "" : "\u2022 " + label;
     }
 
     static List<String> guideIdsForTurn(SessionMemory.TurnSnapshot turn) {

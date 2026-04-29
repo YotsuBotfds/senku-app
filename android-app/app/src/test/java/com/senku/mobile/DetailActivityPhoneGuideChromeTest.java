@@ -29,4 +29,22 @@ public final class DetailActivityPhoneGuideChromeTest {
         assertFalse(DetailActivity.shouldInstallGuidePhoneBottomTabBar(false, true));
         assertFalse(DetailActivity.shouldInstallGuidePhoneBottomTabBar(true, false));
     }
+
+    @Test
+    public void guidePhoneLandscapeSectionRailGetsReadableWidthAndTopBreathingRoom() {
+        assertTrue(DetailActivity.shouldUsePhoneLandscapeGuideSectionRail(false, true));
+        assertFalse(DetailActivity.shouldUsePhoneLandscapeGuideSectionRail(false, false));
+        assertFalse(DetailActivity.shouldUsePhoneLandscapeGuideSectionRail(true, true));
+        assertEquals(2.25f, DetailActivity.resolveLandscapeDetailPrimaryColumnWeight(true), 0.001f);
+        assertEquals(0.62f, DetailActivity.resolveLandscapeDetailSideColumnWeight(true), 0.001f);
+        assertEquals(10, DetailActivity.resolvePhoneLandscapeGuideSectionRailTopPaddingDp());
+    }
+
+    @Test
+    public void guidePhoneLandscapeViewportAddsTopInsetWithoutChangingPortraitBottomTabDensity() {
+        assertEquals(12, DetailActivity.resolvePhoneGuideViewportTopPaddingDp(true));
+        assertEquals(16, DetailActivity.resolvePhoneGuideViewportHorizontalPaddingDp(true));
+        assertEquals(8, DetailActivity.resolvePhoneGuideViewportTopPaddingDp(false));
+        assertEquals(10, DetailActivity.resolvePhoneGuideViewportHorizontalPaddingDp(false));
+    }
 }

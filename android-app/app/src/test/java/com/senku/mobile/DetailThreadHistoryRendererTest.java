@@ -197,6 +197,8 @@ public final class DetailThreadHistoryRendererTest {
         assertEquals("CONFIDENT", DetailThreadHistoryRenderer.compactStatusLabel("confident"));
         assertEquals("UNSURE", DetailThreadHistoryRenderer.compactStatusLabel("ready"));
         assertEquals("UNSURE", DetailThreadHistoryRenderer.compactStatusLabel("unsure"));
+        assertEquals("\u2022 CONFIDENT", DetailThreadHistoryRenderer.confidenceDotLabel("source-backed"));
+        assertEquals("\u2022 UNSURE", DetailThreadHistoryRenderer.confidenceDotLabel("ready"));
     }
 
     @Test

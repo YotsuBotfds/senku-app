@@ -98,6 +98,26 @@ class PaperAnswerCardLabelTest {
     }
 
     @Test
+    fun buildFooterMeta_keepsAnswerAnchorAndVisibleSourceState() {
+        val content = answer(
+            sourceCount = 3,
+            host = "This device",
+            elapsedSeconds = 1.2,
+            answerSurfaceLabel = AnswerSurfaceLabel.ReviewedCardEvidence,
+            reviewedCardMetadata = ReviewedCardMetadata(
+                "rain-shelter",
+                "GD-345",
+                "",
+                "",
+                "",
+                emptyList(),
+            ),
+        )
+
+        assertEquals("GD-345 \u2022 CONTEXT KEPT \u2022 3 SOURCES VISIBLE", buildFooterMeta(content))
+    }
+
+    @Test
     fun uncertainFitNotice_usesArticleSourceLanguage() {
         val content = answer(
             sourceCount = 3,

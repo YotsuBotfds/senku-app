@@ -478,7 +478,7 @@ public final class DetailSourcePresentationFormatterTest {
         DetailSourcePresentationFormatter formatter = new DetailSourcePresentationFormatter(null);
 
         assertEquals(
-            "GD-444 anchor guide",
+            "GD-444 \u00B7 ANCHOR",
             formatter.buildInlineSourceChipLabel(
                 new SearchResult("Emergency Shelter", "", "", "", "GD-444", "", "", "guide-focus"),
                 "GD-444",
@@ -486,10 +486,32 @@ public final class DetailSourcePresentationFormatterTest {
             )
         );
         assertEquals(
-            "GD-555 - Fire Setup",
+            "GD-555 \u00B7 Fire Setup",
             formatter.buildInlineSourceChipLabel(
                 new SearchResult("Campfire", "", "", "", "GD-555", "Fire Setup", "", "guide-focus"),
                 "GD-444",
+                false
+            )
+        );
+    }
+
+    @Test
+    public void inlineSourceChipLabelCarriesEvidenceRoleAndMatchWhenKnown() {
+        DetailSourcePresentationFormatter formatter = new DetailSourcePresentationFormatter(null);
+
+        assertEquals(
+            "GD-220 \u00B7 ANCHOR \u00B7 74%",
+            formatter.buildInlineSourceChipLabel(
+                reviewedStackResult("GD-220", "Abrasives Manufacturing", "abrasives manufacturing"),
+                "GD-220",
+                true
+            )
+        );
+        assertEquals(
+            "GD-345 \u00B7 TOPIC \u00B7 61%",
+            formatter.buildInlineSourceChipLabel(
+                reviewedStackResult("GD-345", "Tarp & Cord Shelters", "rain shelter tarp cord"),
+                "GD-220",
                 false
             )
         );

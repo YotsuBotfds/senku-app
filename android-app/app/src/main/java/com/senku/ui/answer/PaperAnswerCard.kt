@@ -494,6 +494,11 @@ internal fun buildFooterMeta(content: AnswerContent): String {
     val tokens = mutableListOf<String>()
     if (reviewedGuideId.isNotBlank()) {
         tokens += reviewedGuideId
+        if (content.sourceCount > 0) {
+            tokens += "CONTEXT KEPT"
+            tokens += "${content.sourceCount} ${sourceCountNoun(content.sourceCount).uppercase(Locale.US)} VISIBLE"
+            return tokens.joinToString(" \u2022 ")
+        }
     }
     tokens += sourceCountLabel(content.sourceCount).uppercase(Locale.US)
     if (content.elapsedSeconds > 0.0) {
@@ -503,7 +508,11 @@ internal fun buildFooterMeta(content: AnswerContent): String {
 }
 
 private fun sourceCountLabel(sourceCount: Int): String {
-    return if (sourceCount == 1) "1 source" else "$sourceCount sources"
+    return "$sourceCount ${sourceCountNoun(sourceCount)}"
+}
+
+private fun sourceCountNoun(sourceCount: Int): String {
+    return if (sourceCount == 1) "source" else "sources"
 }
 
 internal fun shouldShowUncertainFitNotice(content: AnswerContent): Boolean {

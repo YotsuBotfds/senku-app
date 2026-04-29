@@ -1797,6 +1797,39 @@ Fresh proof:
   visible deltas include guide phone landscape section-header clipping, tablet
   guide exact density, emergency hierarchy, and final home/search/answer polish.
 
+## Wave68 Checkpoint
+
+Committed scope pending at the time of this update:
+
+- Guide landscape: fixed the clipped phone landscape sections header by giving
+  the guide section rail more width and top breathing room, while keeping guide
+  portrait bottom tabs unchanged.
+- Tablet guide: tightened guide rail/reference card density, narrowed tablet
+  portrait paper, and reduced guide paper type scale so the paper reads less
+  oversized against the target.
+- Home/search: review-mode home now pads to the target three recent-thread
+  stack, search hides duplicate app-bar search controls when results are open,
+  and result rows use a larger-but-bounded rhythm that preserves landscape fit.
+- Answer/thread: inline source chips now carry guide/role/score evidence labels,
+  thread confidence labels route through a stable dot helper, and answer footer
+  metadata preserves `CONTEXT KEPT` plus visible source count.
+- Emergency: added emergency-only action row spacing and roomier proof-card
+  padding for phone and tablet portrait emergency surfaces.
+
+Fresh proof:
+
+- Full pack:
+  `artifacts/ui_state_pack/wave68_integrated_final/20260429_075219`
+- Summary: full pack `pass`, states `22/22`, failures `0`, ANRs `0`, rotation
+  mismatch `0`, canonical mock export `22` PNGs.
+- Validation: integrated focused JVM suite passed across guide chrome/composer
+  contracts, emergency/action/source/thread formatters, home/search, answer
+  footer labels, and tablet guide density policies.
+- Visual note: guide landscape clipping is fixed and search landscape no longer
+  overflows. Remaining deltas are the larger structural items from the xhigh
+  plan: tablet app-rail/topbar exactness, answer portrait top metadata row,
+  emergency tablet chrome, and final phone landscape answer/thread parity.
+
 ## Parallelization Rules
 
 - Start every worker with `git status --short`, `git log --oneline -n 8

@@ -1351,6 +1351,11 @@ public final class MainActivity extends AppCompatActivity {
         if (previews != null) {
             recentThreadPreviews.addAll(previews);
         }
+        if (productReviewMode && isManualHomeShellLayout()) {
+            while (recentThreadPreviews.size() < MAX_RECENT_THREAD_PREVIEWS) {
+                recentThreadPreviews.add(buildReviewRecentThreadPlaceholder(recentThreadPreviews.size()));
+            }
+        }
         if (recentThreadsContainer != null) {
             recentThreadsContainer.removeAllViews();
             for (int index = 0; index < recentThreadPreviews.size(); index++) {
@@ -1359,6 +1364,22 @@ public final class MainActivity extends AppCompatActivity {
         }
         refreshHomeRelatedGuidesAsync();
         updateRecentThreadsVisibility();
+    }
+
+    private static ChatSessionStore.ConversationPreview buildReviewRecentThreadPlaceholder(int index) {
+        long now = System.currentTimeMillis();
+        SessionMemory.TurnSnapshot turn = new SessionMemory.TurnSnapshot(
+            reviewManualHomeRecentThreadTitle(null, index),
+            "",
+            "",
+            Collections.emptyList(),
+            Collections.emptyList(),
+            "",
+            ReviewedCardMetadata.empty(),
+            null,
+            now
+        );
+        return new ChatSessionStore.ConversationPreview("review-home-placeholder-" + index, turn, 1, now);
     }
 
     private void refreshSearchSuggestions(String rawQuery) {
@@ -4182,6 +4203,9 @@ public final class MainActivity extends AppCompatActivity {
         }
         if (browseRail != null) {
             browseRail.setVisibility(hasResults ? View.GONE : View.VISIBLE);
+        }
+        if (searchButton != null) {
+            searchButton.setVisibility(hasResults ? View.GONE : View.VISIBLE);
         }
         updateInfoTextVisibility();
     }

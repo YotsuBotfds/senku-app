@@ -277,9 +277,13 @@ final class DetailSourcePresentationFormatter {
         String guideId = safe(source == null ? null : source.guideId).trim();
         String title = safe(source == null ? null : source.title).trim();
         String section = safe(source == null ? null : source.sectionHeading).trim();
+        String evidenceChip = buildInlineEvidenceChipLabel(source, primaryAnchorChip);
+        if (!evidenceChip.isEmpty()) {
+            return evidenceChip;
+        }
         if (primaryAnchorChip) {
             if (!guideId.isEmpty()) {
-                return guideId + " anchor guide";
+                return guideId + " \u00B7 ANCHOR";
             }
             return title.isEmpty() ? context.getString(R.string.detail_inline_sources_label) : trimHeaderLabel(title);
         }
@@ -287,12 +291,35 @@ final class DetailSourcePresentationFormatter {
             return trimChipSection(section);
         }
         if (!guideId.isEmpty() && !section.isEmpty()) {
-            return guideId + " - " + trimChipSection(section);
+            return guideId + " \u00B7 " + trimChipSection(section);
         }
         if (!guideId.isEmpty()) {
             return guideId;
         }
         return title.isEmpty() ? context.getString(R.string.detail_inline_sources_label) : title;
+    }
+
+    private static String buildInlineEvidenceChipLabel(SearchResult source, boolean primaryAnchorChip) {
+        if (source == null) {
+            return "";
+        }
+        String guideId = safe(source.guideId).trim();
+        if (guideId.isEmpty()) {
+            return "";
+        }
+        String role = reviewedRainShelterRoleLabel(source);
+        String match = reviewedRainShelterMatchLabel(source, role.isEmpty() ? -1 : reviewedRainShelterSourceRank(source));
+        if (role.isEmpty() && primaryAnchorChip) {
+            role = "ANCHOR";
+        }
+        if (role.isEmpty()) {
+            return "";
+        }
+        StringBuilder builder = new StringBuilder(guideId).append(" \u00B7 ").append(role);
+        if (!match.isEmpty()) {
+            builder.append(" \u00B7 ").append(match);
+        }
+        return builder.toString();
     }
 
     String buildCompactInlineSourceTriggerLabel(SearchResult source, int totalSources) {

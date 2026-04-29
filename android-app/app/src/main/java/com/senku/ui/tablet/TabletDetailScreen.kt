@@ -303,7 +303,7 @@ internal fun tabletThreadRailWidthDp(
     threadMode: Boolean = false,
 ): Int =
     when {
-        guideMode && isLandscape -> 248
+        guideMode && isLandscape -> 242
         guideMode -> 330
         threadMode -> tabletReadingLayoutPolicy(isLandscape).threadRailWidthDp
         else -> 0
@@ -338,19 +338,19 @@ internal fun tabletComposerBottomPaddingDp(detailMode: TabletDetailMode, isLands
     }
 
 internal fun tabletGuidePaperMaxWidthDp(isLandscape: Boolean): Int =
-    if (isLandscape) 596 else 820
+    if (isLandscape) 604 else 690
 
 internal fun tabletGuidePaperHorizontalPaddingDp(isLandscape: Boolean): Int =
     if (isLandscape) 10 else 18
 
 internal fun tabletGuidePaperInnerHorizontalPaddingDp(isLandscape: Boolean): Int =
-    if (isLandscape) 28 else 34
+    if (isLandscape) 28 else 52
 
 internal fun tabletGuidePaperBottomPaddingDp(isLandscape: Boolean): Int =
     if (isLandscape) 20 else 40
 
 internal fun tabletGuideReferenceRailWidthDp(isLandscape: Boolean): Int =
-    if (isLandscape) 312 else 0
+    if (isLandscape) 300 else 0
 
 internal fun tabletGuideChromePolicy(isLandscape: Boolean): TabletGuideChromePolicy =
     if (isLandscape) {
@@ -1169,8 +1169,8 @@ private fun GuideSectionRail(
         modifier = modifier
             .background(colors.bg1)
             .verticalScroll(scrollState)
-            .padding(horizontal = 18.dp, vertical = 22.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp),
+            .padding(horizontal = 18.dp, vertical = 18.dp),
+        verticalArrangement = Arrangement.spacedBy(14.dp),
     ) {
         GuideSectionRailToolbar(
             pinVisible = pinVisible,
@@ -1277,7 +1277,7 @@ private fun GuideSectionRailAction(
     val colors = SenkuTheme.colors
     Surface(
         modifier = Modifier
-            .size(28.dp),
+            .size(26.dp),
         color = if (active) colors.bg2 else colors.bg0,
         contentColor = colors.ink0,
         shape = RoundedCornerShape(6.dp),
@@ -1366,15 +1366,15 @@ private fun GuideSectionRailRow(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .heightIn(min = if (active) 48.dp else 42.dp)
-                .padding(horizontal = 10.dp, vertical = 7.dp),
+                .heightIn(min = if (active) 46.dp else 39.dp)
+                .padding(horizontal = 10.dp, vertical = 6.dp),
             horizontalArrangement = Arrangement.spacedBy(12.dp),
             verticalAlignment = Alignment.Top,
         ) {
             Box(
                 modifier = Modifier
                     .width(3.dp)
-                    .height(if (active) 34.dp else 24.dp)
+                    .height(if (active) 32.dp else 22.dp)
                     .background(if (active) colors.accent else colors.hairlineStrong),
             )
             Text(
@@ -1393,7 +1393,7 @@ private fun GuideSectionRailRow(
                 modifier = Modifier.weight(1f),
                 style = typography.uiBody.copy(
                     fontSize = if (active) 14.sp else 13.sp,
-                    lineHeight = if (active) 18.sp else 17.sp,
+                    lineHeight = if (active) 17.sp else 16.sp,
                     fontWeight = if (active) FontWeight.SemiBold else FontWeight.Normal,
                     letterSpacing = 0.sp,
                 ),
@@ -1574,7 +1574,7 @@ private fun GuideReferencePane(
             .background(colors.bg1)
             .verticalScroll(scrollState)
             .padding(horizontal = 14.dp, vertical = 14.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp),
+        verticalArrangement = Arrangement.spacedBy(7.dp),
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -1629,9 +1629,9 @@ private fun GuideReferenceCard(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .heightIn(min = 58.dp)
-                .padding(horizontal = 10.dp, vertical = 8.dp),
-            verticalArrangement = Arrangement.spacedBy(4.dp),
+                .heightIn(min = 52.dp)
+                .padding(horizontal = 10.dp, vertical = 7.dp),
+            verticalArrangement = Arrangement.spacedBy(3.dp),
         ) {
             Text(
                 text = listOf(xref.id.trim().ifEmpty { "GD-?" }, relation)
@@ -1648,8 +1648,8 @@ private fun GuideReferenceCard(
             Text(
                 text = xref.title.trim().ifEmpty { "Linked guide" },
                 style = typography.uiBody.copy(
-                    fontSize = 13.5.sp,
-                    lineHeight = 17.sp,
+                    fontSize = 12.5.sp,
+                    lineHeight = 16.sp,
                     fontWeight = FontWeight.SemiBold,
                 ),
                 color = colors.ink0,
@@ -1899,8 +1899,8 @@ private fun GuidePaperHeader(
         Text(
             text = state.guideTitle.trim().ifEmpty { "Guide" },
             style = typography.sectionTitle.copy(
-                fontSize = if (state.isLandscape) 32.sp else 40.sp,
-                lineHeight = if (state.isLandscape) 37.sp else 46.sp,
+                fontSize = if (state.isLandscape) 31.sp else 34.sp,
+                lineHeight = if (state.isLandscape) 36.sp else 39.sp,
                 fontWeight = FontWeight.SemiBold,
                 letterSpacing = 0.sp,
             ),
@@ -2460,8 +2460,8 @@ private fun GuidePaperBodyText(
 ) {
     val typography = SenkuTheme.typography
     val paperPalette = tabletGuidePaperPalette()
-    val bodyFontSize = (typeScalePolicy.answerFontSizeSp + 3).sp
-    val bodyLineHeight = (typeScalePolicy.answerLineHeightSp + 4).sp
+    val bodyFontSize = (typeScalePolicy.answerFontSizeSp + 2).sp
+    val bodyLineHeight = (typeScalePolicy.answerLineHeightSp + 3).sp
     val lines = text.lineSequence()
         .map { it.trim() }
         .filter { it.isNotEmpty() }
@@ -2553,8 +2553,8 @@ private fun GuideDangerCalloutRow(lines: List<String>) {
                     text = body,
                     modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 14.dp),
                     style = typography.answerBody.copy(
-                        fontSize = 16.sp,
-                        lineHeight = 24.sp,
+                        fontSize = 15.sp,
+                        lineHeight = 22.sp,
                         fontWeight = FontWeight.Normal,
                         letterSpacing = 0.sp,
                     ),
@@ -2580,7 +2580,7 @@ private fun GuideRequiredReadingRow(line: String) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .heightIn(min = 50.dp)
+                .heightIn(min = 46.dp)
                 .padding(end = 10.dp),
             horizontalArrangement = Arrangement.spacedBy(10.dp),
             verticalAlignment = Alignment.CenterVertically,
@@ -2595,10 +2595,10 @@ private fun GuideRequiredReadingRow(line: String) {
                 text = parts.id.ifEmpty { parts.label },
                 modifier = Modifier
                     .widthIn(min = 66.dp, max = 82.dp)
-                    .padding(vertical = 14.dp),
+                    .padding(vertical = 12.dp),
                 style = typography.monoCaps.copy(
-                    fontSize = 12.sp,
-                    lineHeight = 15.sp,
+                    fontSize = 11.sp,
+                    lineHeight = 14.sp,
                     fontWeight = FontWeight.Medium,
                 ),
                 color = paperPalette.accent,
@@ -2609,10 +2609,10 @@ private fun GuideRequiredReadingRow(line: String) {
                 text = parts.title.ifEmpty { normalizeGuidePaperRequiredReadingLine(line) },
                 modifier = Modifier
                     .weight(1f)
-                    .padding(vertical = 12.dp),
+                    .padding(vertical = 10.dp),
                 style = typography.uiBody.copy(
-                    fontSize = 14.5.sp,
-                    lineHeight = 18.sp,
+                    fontSize = 13.5.sp,
+                    lineHeight = 17.sp,
                     fontWeight = FontWeight.Medium,
                     letterSpacing = 0.sp,
                 ),
