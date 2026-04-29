@@ -4,6 +4,9 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import android.view.KeyEvent;
+import android.view.inputmethod.EditorInfo;
+
 import com.senku.ui.primitives.BottomTabDestination;
 
 import java.util.Arrays;
@@ -108,14 +111,47 @@ public final class MainActivityPhoneNavigationTest {
 
     @Test
     public void sharedInputSubmitRoutesToAskWhenAskOwnsTheVisibleFlow() {
+        assertEquals(
+            MainActivity.SubmitTarget.ASK,
+            MainActivity.resolveSharedSubmitTarget(BottomTabDestination.ASK, false)
+        );
+        assertEquals(
+            MainActivity.SubmitTarget.ASK,
+            MainActivity.resolveSharedSubmitTarget(BottomTabDestination.HOME, true)
+        );
         assertTrue(MainActivity.shouldSubmitSharedInputAsAsk(BottomTabDestination.ASK, false));
         assertTrue(MainActivity.shouldSubmitSharedInputAsAsk(BottomTabDestination.HOME, true));
     }
 
     @Test
     public void sharedInputSubmitStaysSearchForLibraryAndSavedFlows() {
+        assertEquals(
+            MainActivity.SubmitTarget.SEARCH,
+            MainActivity.resolveSharedSubmitTarget(BottomTabDestination.HOME, false)
+        );
+        assertEquals(
+            MainActivity.SubmitTarget.SEARCH,
+            MainActivity.resolveSharedSubmitTarget(BottomTabDestination.SEARCH, false)
+        );
+        assertEquals(
+            MainActivity.SubmitTarget.SEARCH,
+            MainActivity.resolveSharedSubmitTarget(BottomTabDestination.PINS, false)
+        );
         assertFalse(MainActivity.shouldSubmitSharedInputAsAsk(BottomTabDestination.HOME, false));
         assertFalse(MainActivity.shouldSubmitSharedInputAsAsk(BottomTabDestination.SEARCH, false));
         assertFalse(MainActivity.shouldSubmitSharedInputAsAsk(BottomTabDestination.PINS, false));
+    }
+
+    @Test
+    public void sharedInputSubmitAcceptsSearchDoneAndHardwareEnter() {
+        assertTrue(MainActivity.isImeSubmitAction(EditorInfo.IME_ACTION_SEARCH));
+        assertTrue(MainActivity.isImeSubmitAction(EditorInfo.IME_ACTION_DONE));
+        assertFalse(MainActivity.isImeSubmitAction(EditorInfo.IME_ACTION_NONE));
+
+        assertTrue(MainActivity.isHardwareEnterSubmitAction(KeyEvent.KEYCODE_ENTER, KeyEvent.ACTION_UP));
+        assertFalse(MainActivity.isHardwareEnterSubmitAction(KeyEvent.KEYCODE_ENTER, KeyEvent.ACTION_DOWN));
+        assertFalse(MainActivity.isHardwareEnterSubmitAction(KeyEvent.KEYCODE_TAB, KeyEvent.ACTION_UP));
+
+        assertTrue(MainActivity.isSharedInputSubmitAction(EditorInfo.IME_ACTION_SEARCH, null));
     }
 }

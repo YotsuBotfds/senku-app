@@ -59,6 +59,11 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public final class MainActivity extends AppCompatActivity {
+    enum SubmitTarget {
+        SEARCH,
+        ASK
+    }
+
     private static final String EXTRA_AUTO_QUERY = "auto_query";
     private static final String EXTRA_AUTO_ASK = "auto_ask";
     private static final String EXTRA_AUTO_FOLLOWUP_QUERY = "auto_followup_query";
@@ -519,11 +524,11 @@ public final class MainActivity extends AppCompatActivity {
 
         searchButton.setOnClickListener(v -> {
             setPhoneTabFromFlow(BottomTabDestination.SEARCH);
-            runSearch(searchInput.getText().toString().trim());
+            handleSharedQuerySubmit(searchInput.getText().toString());
         });
         askButton.setOnClickListener(v -> {
             setPhoneTabFromFlow(BottomTabDestination.ASK);
-            runAsk(searchInput.getText().toString().trim());
+            handleSharedQuerySubmit(searchInput.getText().toString());
         });
         importModelButton.setOnClickListener(v -> launchModelPicker());
         hostInferenceButton.setOnClickListener(v -> toggleHostInference());
@@ -562,7 +567,7 @@ public final class MainActivity extends AppCompatActivity {
         });
         searchInput.setOnEditorActionListener((v, actionId, event) -> {
             if (isSharedInputSubmitAction(actionId, event)) {
-                submitSharedInput(searchInput.getText().toString().trim());
+                handleSharedQuerySubmit(searchInput.getText().toString());
                 return true;
             }
             return false;
@@ -1255,21 +1260,29 @@ public final class MainActivity extends AppCompatActivity {
         showSearchKeyboard();
     }
 
-    private void submitSharedInput(String query) {
-        if (shouldSubmitSharedInputAsAsk(activePhoneTab, askLaneActive)) {
+    private void handleSharedQuerySubmit(String rawQuery) {
+        String query = safe(rawQuery).trim();
+        if (resolveSharedSubmitTarget(activePhoneTab, askLaneActive) == SubmitTarget.ASK) {
             runAsk(query);
         } else {
             runSearch(query);
         }
     }
 
-    private static boolean isSharedInputSubmitAction(int actionId, android.view.KeyEvent event) {
-        if (actionId == EditorInfo.IME_ACTION_SEARCH || actionId == EditorInfo.IME_ACTION_DONE) {
+    static boolean isSharedInputSubmitAction(int actionId, KeyEvent event) {
+        if (isImeSubmitAction(actionId)) {
             return true;
         }
         return event != null
-            && event.getKeyCode() == KeyEvent.KEYCODE_ENTER
-            && event.getAction() == KeyEvent.ACTION_UP;
+            && isHardwareEnterSubmitAction(event.getKeyCode(), event.getAction());
+    }
+
+    static boolean isImeSubmitAction(int actionId) {
+        return actionId == EditorInfo.IME_ACTION_SEARCH || actionId == EditorInfo.IME_ACTION_DONE;
+    }
+
+    static boolean isHardwareEnterSubmitAction(int keyCode, int action) {
+        return keyCode == KeyEvent.KEYCODE_ENTER && action == KeyEvent.ACTION_UP;
     }
 
     private void showSearchKeyboard() {
@@ -3017,7 +3030,16 @@ public final class MainActivity extends AppCompatActivity {
         BottomTabDestination activePhoneTab,
         boolean askLaneActive
     ) {
-        return askLaneActive || activePhoneTab == BottomTabDestination.ASK;
+        return resolveSharedSubmitTarget(activePhoneTab, askLaneActive) == SubmitTarget.ASK;
+    }
+
+    static SubmitTarget resolveSharedSubmitTarget(
+        BottomTabDestination activePhoneTab,
+        boolean askLaneActive
+    ) {
+        return askLaneActive || activePhoneTab == BottomTabDestination.ASK
+            ? SubmitTarget.ASK
+            : SubmitTarget.SEARCH;
     }
 
     static boolean isSavedPhoneFlowIntent(BottomTabDestination destination) {

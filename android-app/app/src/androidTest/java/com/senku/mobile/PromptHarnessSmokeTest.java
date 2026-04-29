@@ -21,6 +21,7 @@ import android.text.style.BackgroundColorSpan;
 import android.text.style.LeadingMarginSpan;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.KeyEvent;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -725,6 +726,33 @@ public final class PromptHarnessSmokeTest {
                 "ask-tab IME action should open answer detail instead of search results"
             );
             captureUiState("ask_tab_ime_action_detail");
+        } finally {
+            closeScenarioLeniently(scenario);
+        }
+    }
+
+    @Test
+    public void askTabHardwareEnterNavigatesToAnswerDetailScreen() {
+        ActivityScenario<MainActivity> scenario = ActivityScenario.launch(MainActivity.class);
+        try {
+            awaitHarnessIdle();
+            Assert.assertTrue(
+                "home search input never appeared before ask-tab hardware Enter regression; harness signals="
+                    + HarnessTestSignals.snapshot(),
+                device.wait(Until.hasObject(By.res(APP_PACKAGE, "search_input")), SEARCH_WAIT_MS)
+            );
+
+            openAskTabFromHomeChrome();
+            submitSearchInputHardwareEnterFromResumedActivity("How do I start a fire in rain?");
+
+            assertResumedDetailActivitySettled(
+                DETAIL_WAIT_MS,
+                8,
+                "",
+                false,
+                "ask-tab hardware Enter should open answer detail instead of search results"
+            );
+            captureUiState("ask_tab_hardware_enter_detail");
         } finally {
             closeScenarioLeniently(scenario);
         }
@@ -4003,6 +4031,21 @@ public final class PromptHarnessSmokeTest {
             input.setText(query);
             input.setSelection(query.length());
             input.onEditorAction(actionId);
+        });
+        InstrumentationRegistry.getInstrumentation().waitForIdleSync();
+    }
+
+    private void submitSearchInputHardwareEnterFromResumedActivity(String query) {
+        InstrumentationRegistry.getInstrumentation().runOnMainSync(() -> {
+            Activity activity = getResumedActivityOnMainThread();
+            Assert.assertNotNull("no resumed activity for hardware Enter submission", activity);
+            EditText input = activity.findViewById(R.id.search_input);
+            Assert.assertNotNull("search input should exist for hardware Enter submission", input);
+            input.requestFocus();
+            input.setText(query);
+            input.setSelection(query.length());
+            input.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_ENTER));
+            input.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_ENTER));
         });
         InstrumentationRegistry.getInstrumentation().waitForIdleSync();
     }
