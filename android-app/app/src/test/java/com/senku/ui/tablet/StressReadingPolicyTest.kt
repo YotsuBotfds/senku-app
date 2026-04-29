@@ -53,8 +53,8 @@ class StressReadingPolicyTest {
         assertEquals(0, tabletThreadRailWidthDp(isLandscape = false, guideMode = false))
         assertEquals(292, tabletThreadRailWidthDp(isLandscape = true, guideMode = false, threadMode = true))
         assertEquals(0, tabletThreadRailWidthDp(isLandscape = false, guideMode = false, threadMode = true))
-        assertEquals(316, tabletThreadRailWidthDp(isLandscape = true, guideMode = true))
-        assertEquals(330, tabletThreadRailWidthDp(isLandscape = false, guideMode = true))
+        assertEquals(300, tabletThreadRailWidthDp(isLandscape = true, guideMode = true))
+        assertEquals(205, tabletThreadRailWidthDp(isLandscape = false, guideMode = true))
     }
 
     @Test
@@ -90,15 +90,15 @@ class StressReadingPolicyTest {
 
     @Test
     fun tabletGuidePaperPolicyContainsPortraitReaderWithReadableLandscapeSheet() {
-        assertEquals(520, tabletGuidePaperMaxWidthDp(isLandscape = true))
+        assertEquals(560, tabletGuidePaperMaxWidthDp(isLandscape = true))
         assertEquals(820, tabletGuidePaperMaxWidthDp(isLandscape = false))
-        assertEquals(10, tabletGuidePaperHorizontalPaddingDp(isLandscape = true))
+        assertEquals(12, tabletGuidePaperHorizontalPaddingDp(isLandscape = true))
         assertEquals(24, tabletGuidePaperHorizontalPaddingDp(isLandscape = false))
         assertEquals(42, tabletGuidePaperInnerHorizontalPaddingDp(isLandscape = true))
         assertEquals(42, tabletGuidePaperInnerHorizontalPaddingDp(isLandscape = false))
         assertEquals(20, tabletGuidePaperBottomPaddingDp(isLandscape = true))
         assertEquals(40, tabletGuidePaperBottomPaddingDp(isLandscape = false))
-        assertEquals(420, tabletGuideReferenceRailWidthDp(isLandscape = true))
+        assertEquals(390, tabletGuideReferenceRailWidthDp(isLandscape = true))
         assertEquals(0, tabletGuideReferenceRailWidthDp(isLandscape = false))
         assertEquals(96, tabletGuideAppRailWidthDp())
         assertFalse(tabletGuideSectionRailShowsToolbar())
@@ -151,8 +151,8 @@ class StressReadingPolicyTest {
             ),
         )
 
-        assertEquals(listOf("GD-220", "GD-132", "GD-499"), rows.map { it.id })
-        assertEquals(listOf("ANCHOR", "RELATED", "REQUIRED"), rows.map { it.relation })
+        assertEquals(listOf("GD-220", "GD-499"), rows.map { it.id })
+        assertEquals(listOf("ANCHOR", "REQUIRED"), rows.map { it.relation })
     }
 
     @Test
@@ -206,6 +206,14 @@ class StressReadingPolicyTest {
         assertEquals(
             TabletGuideBodyLineKind.Section,
             tabletGuideBodyLineKindForTest("\u2014 \u00A7 1 \u00B7 AREA READINESS"),
+        )
+        assertEquals(
+            TabletGuideBodyLineKind.Body,
+            tabletGuideBodyLineKindForTest("Start with the current activity status, whether molten metal work is planned."),
+        )
+        assertEquals(
+            "Foundry & Metal Casting",
+            tabletGuideBodyTitleLineForSkip("FIELD MANUAL\nFoundry & Metal Casting\nDANGER \u00B7 EXTREME BURN HAZARD"),
         )
         assertEquals(
             TabletGuideBodyLineKind.Body,
@@ -325,8 +333,12 @@ class StressReadingPolicyTest {
 
         val graph = state.resolvedEvidencePaneGraph()
 
-        assertEquals(6, graph.xrefs.size)
-        assertEquals(listOf("GD-220", "GD-172", "GD-499", "GD-224", "GD-225", "GD-110"), graph.xrefs.map { it.id })
+        assertEquals(7, graph.xrefs.size)
+        assertEquals(listOf("GD-220", "GD-172", "GD-499", "GD-224", "GD-225", "GD-110", "GD-301"), graph.xrefs.map { it.id })
+        assertEquals(
+            listOf("GD-220", "GD-172", "GD-499", "GD-224", "GD-225", "GD-110"),
+            tabletGuideReferencePaneRows(graph.xrefs).map { it.id },
+        )
     }
 
     @Test

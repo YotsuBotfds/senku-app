@@ -265,6 +265,24 @@ public final class MainActivityHomeChromeTest {
     }
 
     @Test
+    public void tabletHomeColumnBalanceMatchesMockParityContract() {
+        assertEquals(1.42f, MainActivity.resolveTabletHomePrimaryWeight(true), 0.001f);
+        assertEquals(1.02f, MainActivity.resolveTabletHomeRecentWeight(true), 0.001f);
+        assertEquals(1.02f, MainActivity.resolveTabletHomePrimaryWeight(false), 0.001f);
+        assertEquals(0.90f, MainActivity.resolveTabletHomeRecentWeight(false), 0.001f);
+        assertEquals(18, MainActivity.resolveTabletHomeTopPaddingDp(true));
+        assertEquals(100, MainActivity.resolveTabletHomeTopPaddingDp(false));
+    }
+
+    @Test
+    public void tabletLandscapeSearchRailWidthsMatchMockParityContract() {
+        assertEquals(340, MainActivity.resolveTabletSearchFilterRailWidthDp(true));
+        assertEquals(456, MainActivity.resolveTabletSearchPreviewRailWidthDp(true));
+        assertEquals(0, MainActivity.resolveTabletSearchFilterRailWidthDp(false));
+        assertEquals(0, MainActivity.resolveTabletSearchPreviewRailWidthDp(false));
+    }
+
+    @Test
     public void reviewManualRecentThreadsUseTargetMockExamplesWhenKnown() {
         long fourHoursTwentyOneMinutesAgo = System.currentTimeMillis() - ((4L * 60L + 21L) * 60_000L);
         ChatSessionStore.ConversationPreview first = preview(

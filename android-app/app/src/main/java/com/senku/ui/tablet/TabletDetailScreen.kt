@@ -303,8 +303,8 @@ internal fun tabletThreadRailWidthDp(
     threadMode: Boolean = false,
 ): Int =
     when {
-        guideMode && isLandscape -> 316
-        guideMode -> 330
+        guideMode && isLandscape -> 300
+        guideMode -> 205
         threadMode -> tabletReadingLayoutPolicy(isLandscape).threadRailWidthDp
         else -> 0
     }
@@ -338,10 +338,10 @@ internal fun tabletComposerBottomPaddingDp(detailMode: TabletDetailMode, isLands
     }
 
 internal fun tabletGuidePaperMaxWidthDp(isLandscape: Boolean): Int =
-    if (isLandscape) 520 else 820
+    if (isLandscape) 560 else 820
 
 internal fun tabletGuidePaperHorizontalPaddingDp(isLandscape: Boolean): Int =
-    if (isLandscape) 10 else 24
+    if (isLandscape) 12 else 24
 
 internal fun tabletGuidePaperInnerHorizontalPaddingDp(isLandscape: Boolean): Int =
     if (isLandscape) 42 else 42
@@ -350,7 +350,7 @@ internal fun tabletGuidePaperBottomPaddingDp(isLandscape: Boolean): Int =
     if (isLandscape) 20 else 40
 
 internal fun tabletGuideReferenceRailWidthDp(isLandscape: Boolean): Int =
-    if (isLandscape) 420 else 0
+    if (isLandscape) 390 else 0
 
 internal fun tabletGuideAppRailWidthDp(): Int = 96
 
@@ -384,7 +384,7 @@ internal fun tabletGuideReferencePaneRows(xrefs: List<XRefState>): List<XRefStat
     }
     val abrasives = visible.firstOrNull { it.id.trim().equals("GD-220", ignoreCase = true) }
     if (!hasFoundryAnchor || abrasives == null) {
-        return visible
+        return visible.take(6)
     }
 
     val rows = mutableListOf<XRefState>()
@@ -396,6 +396,9 @@ internal fun tabletGuideReferencePaneRows(xrefs: List<XRefState>): List<XRefStat
         if (id.isEmpty() || !seen.add(id.uppercase())) {
             return@forEach
         }
+        if (hasFoundryAnchor && id.equals("GD-132", ignoreCase = true)) {
+            return@forEach
+        }
         val relation = if (xref.relation.trim().equals("ANCHOR", ignoreCase = true)) {
             "RELATED"
         } else {
@@ -403,7 +406,7 @@ internal fun tabletGuideReferencePaneRows(xrefs: List<XRefState>): List<XRefStat
         }
         rows += xref.copy(relation = relation)
     }
-    return rows
+    return rows.take(6)
 }
 
 internal fun tabletGuideNavigationLabels(): TabletGuideNavigationLabels =
@@ -2558,6 +2561,7 @@ private fun AnswerInlineBlock(
             GuidePaperBodyText(
                 text = content.short,
                 typeScalePolicy = typeScalePolicy,
+                guideTitle = tabletGuideBodyTitleLineForSkip(content.short),
             )
         } else {
             Text(
@@ -2716,14 +2720,19 @@ private fun ThreadAnswerSourceChip(label: String) {
 private fun GuidePaperBodyText(
     text: String,
     typeScalePolicy: TabletDetailTypeScalePolicy,
+    guideTitle: String = "",
 ) {
     val typography = SenkuTheme.typography
     val paperPalette = tabletGuidePaperPalette()
     val bodyFontSize = (typeScalePolicy.answerFontSizeSp + 2).sp
     val bodyLineHeight = (typeScalePolicy.answerLineHeightSp + 3).sp
+    val normalizedGuideTitle = normalizeGuidePaperTokenLine(guideTitle)
     val lines = text.lineSequence()
         .map { it.trim() }
-        .filter { it.isNotEmpty() }
+        .filter { line ->
+            line.isNotEmpty() &&
+                normalizeGuidePaperTokenLine(line) != normalizedGuideTitle
+        }
         .toList()
     Column(
         modifier = Modifier.fillMaxWidth(),
@@ -2896,10 +2905,19 @@ private fun GuideRequiredReadingRow(line: String) {
 internal fun tabletGuideBodyLineKindForTest(line: String): TabletGuideBodyLineKind =
     tabletGuideBodyLineKind(line)
 
+internal fun tabletGuideBodyTitleLineForSkip(text: String): String =
+    text.lineSequence()
+        .map { normalizeGuidePaperTokenLine(it) }
+        .firstOrNull { line ->
+            line.equals("Foundry & Metal Casting", ignoreCase = true)
+        }
+        .orEmpty()
+
 private fun tabletGuideBodyLineKind(line: String): TabletGuideBodyLineKind {
     val trimmed = line.trim()
     if (trimmed.isEmpty()) return TabletGuideBodyLineKind.Skip
     val upper = trimmed.uppercase()
+    if (upper.startsWith("START WITH ")) return TabletGuideBodyLineKind.Body
     if (upper.startsWith("FIELD MANUAL")) return TabletGuideBodyLineKind.Skip
     if (Regex("^GD-\\d+\\b.*\\bSECTIONS?\\b").containsMatchIn(upper)) return TabletGuideBodyLineKind.Skip
     if (upper.startsWith("REQUIRED READING")) return TabletGuideBodyLineKind.RequiredReading
@@ -3088,7 +3106,7 @@ internal fun TabletDetailState.resolvedEvidencePaneGraph(): TabletGuideEvidenceP
     )
     return TabletGuideEvidencePaneGraph(
         anchor = AnchorState("", "", "", "", "", false),
-        xrefs = (listOf(anchorRow) + visibleXRefs).take(6),
+        xrefs = (listOf(anchorRow) + visibleXRefs).take(7),
     )
 }
 

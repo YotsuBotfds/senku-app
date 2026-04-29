@@ -174,7 +174,7 @@ public final class DetailFollowupLandscapeComposerTest {
         assertTrue(DetailActivity.shouldInstallPhoneLandscapeAnswerNavRail(true, true));
         assertFalse(DetailActivity.shouldInstallPhoneLandscapeAnswerNavRail(true, false));
         assertFalse(DetailActivity.shouldInstallPhoneLandscapeAnswerNavRail(false, true));
-        assertEquals(64, DetailActivity.resolvePhoneLandscapeAnswerNavRailWidthDp());
+        assertEquals(52, DetailActivity.resolvePhoneLandscapeAnswerNavRailWidthDp());
     }
 
     @Test
@@ -195,6 +195,10 @@ public final class DetailFollowupLandscapeComposerTest {
         assertTrue(DetailActivity.shouldShowQuestionSubtitleForLayout(true, true, false));
         assertTrue(DetailActivity.shouldShowQuestionSubtitleForLayout(true, false, true));
         assertFalse(DetailActivity.shouldShowQuestionSubtitleForLayout(true, false, false));
+        assertEquals(15.0f, DetailActivity.resolveAnswerQuestionTitleTextSizeSp(true, true, false), 0.0f);
+        assertEquals(16.0f, DetailActivity.resolveAnswerQuestionTitleTextSizeSp(true, false, true), 0.0f);
+        assertEquals(18.0f, DetailActivity.resolveAnswerQuestionTitleTextSizeSp(false, true, false), 0.0f);
+        assertEquals(13.5f, DetailActivity.resolvePhoneLandscapeAnswerBodyTextSizeSp(), 0.0f);
     }
 
     @Test

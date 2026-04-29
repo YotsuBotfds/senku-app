@@ -73,7 +73,7 @@ final class DetailSourcePresentationFormatter {
             buildEvidenceMatchLabel(source, position),
             title.isEmpty() ? "Open guide note" : title,
             quote,
-            section,
+            sourceStackAnchorLabel(source, title, section),
             anchor
         );
     }
@@ -584,6 +584,17 @@ final class DetailSourcePresentationFormatter {
             return trimHeaderLabelStatic(title);
         }
         return trimHeaderLabelStatic(safe(source.sectionHeading).trim());
+    }
+
+    private static String sourceStackAnchorLabel(SearchResult source, String title, String section) {
+        String cleanedSection = safe(section).trim();
+        if (cleanedSection.isEmpty() || sameLabel(cleanedSection, title)) {
+            return "";
+        }
+        if (!reviewedRainShelterRoleLabel(source).isEmpty()) {
+            return "";
+        }
+        return cleanedSection;
     }
 
     private static boolean isRainShelterStackSource(SearchResult source) {

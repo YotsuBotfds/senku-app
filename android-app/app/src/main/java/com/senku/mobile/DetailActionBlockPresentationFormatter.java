@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Typeface;
 import android.text.SpannableString;
 import android.text.Spanned;
+import android.text.TextUtils;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.UnderlineSpan;
 import android.view.View;
@@ -21,12 +22,14 @@ final class DetailActionBlockPresentationFormatter {
     static final String ACTION_LABEL_ESCALATE = "Escalate if";
     static final String EMERGENCY_ACTION_HEADING_PREFIX = "IMMEDIATE ACTIONS \u00b7 ";
     static final int EMERGENCY_DISTANCE_HIGHLIGHT_COLOR = 0xFFC4704B;
-    static final int EMERGENCY_ACTION_ROW_VERTICAL_PADDING_DP = 8;
-    static final int EMERGENCY_ACTION_CONTENT_START_PADDING_DP = 14;
-    static final int EMERGENCY_ACTION_DETAIL_TOP_PADDING_DP = 5;
+    static final int EMERGENCY_ACTION_ROW_VERTICAL_PADDING_DP = 7;
+    static final int EMERGENCY_ACTION_CONTENT_START_PADDING_DP = 13;
+    static final int EMERGENCY_ACTION_DETAIL_TOP_PADDING_DP = 4;
     static final float EMERGENCY_ACTION_HEADING_TEXT_SIZE_SP = 9.0f;
     static final float EMERGENCY_ACTION_TITLE_TEXT_SIZE_SP = 14.0f;
     static final float EMERGENCY_ACTION_DETAIL_TEXT_SIZE_SP = 13.0f;
+    static final int EMERGENCY_ACTION_TITLE_MAX_LINES = 2;
+    static final int EMERGENCY_ACTION_DETAIL_MAX_LINES = 2;
     private static final int MAX_EMERGENCY_PORTRAIT_ACTIONS = 4;
     static final int EMERGENCY_ACTION_BADGE_SIZE_DP = 24;
 
@@ -270,6 +273,8 @@ final class DetailActionBlockPresentationFormatter {
         title.setTextSize(EMERGENCY_ACTION_TITLE_TEXT_SIZE_SP);
         title.setLineSpacing(0f, 1.0f);
         title.setIncludeFontPadding(false);
+        title.setMaxLines(EMERGENCY_ACTION_TITLE_MAX_LINES);
+        title.setEllipsize(TextUtils.TruncateAt.END);
 
         TextView detail = new TextView(context);
         detail.setText(styleEmergencyMinimumDistance(action.detail));
@@ -278,6 +283,8 @@ final class DetailActionBlockPresentationFormatter {
         detail.setTextSize(EMERGENCY_ACTION_DETAIL_TEXT_SIZE_SP);
         detail.setLineSpacing(0f, 1.0f);
         detail.setIncludeFontPadding(false);
+        detail.setMaxLines(EMERGENCY_ACTION_DETAIL_MAX_LINES);
+        detail.setEllipsize(TextUtils.TruncateAt.END);
         detail.setPadding(0, dp(EMERGENCY_ACTION_DETAIL_TOP_PADDING_DP), 0, 0);
         detail.setVisibility(action.detail.isEmpty() ? View.GONE : View.VISIBLE);
 

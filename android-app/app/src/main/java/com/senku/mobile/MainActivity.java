@@ -87,6 +87,14 @@ public final class MainActivity extends AppCompatActivity {
     private static final int MANUAL_HOME_RECENT_ROW_HEIGHT_DP = 60;
     private static final int MANUAL_HOME_RECENT_ROW_GAP_DP = 6;
     private static final int TABLET_MANUAL_HOME_RECENT_ROW_GAP_DP = 8;
+    private static final float TABLET_HOME_PRIMARY_LANDSCAPE_WEIGHT = 1.42f;
+    private static final float TABLET_HOME_RECENT_LANDSCAPE_WEIGHT = 1.02f;
+    private static final float TABLET_HOME_PRIMARY_PORTRAIT_WEIGHT = 1.02f;
+    private static final float TABLET_HOME_RECENT_PORTRAIT_WEIGHT = 0.90f;
+    private static final int TABLET_HOME_LANDSCAPE_TOP_PADDING_DP = 18;
+    private static final int TABLET_HOME_PORTRAIT_TOP_PADDING_DP = 100;
+    private static final int TABLET_SEARCH_FILTER_RAIL_LANDSCAPE_WIDTH_DP = 340;
+    private static final int TABLET_SEARCH_PREVIEW_RAIL_LANDSCAPE_WIDTH_DP = 456;
     private static final String REVIEW_SEARCH_QUERY = "rain shelter";
     private static final String REVIEW_SEARCH_LATENCY_LABEL = "12ms";
     private static final ReviewSearchResultSpec[] REVIEW_RAIN_SHELTER_RESULTS = {
@@ -481,6 +489,7 @@ public final class MainActivity extends AppCompatActivity {
         updateCategoryCards(Collections.emptyList());
 
         resultsList = findViewById(R.id.results_list);
+        applyTabletMockParityPolish();
         resultsList.setLayoutManager(new LinearLayoutManager(this));
         adapter = new SearchResultAdapter(this, items, this::openDetail, this::openLinkedGuidePreview);
         adapter.setActiveQuery(activeResultHighlightQuery);
@@ -2512,6 +2521,158 @@ public final class MainActivity extends AppCompatActivity {
                 }
             }
         }
+    }
+
+    private void applyTabletMockParityPolish() {
+        if (!isTabletPortraitLayout() && !isLandscapeTabletLayout()) {
+            return;
+        }
+        applyTabletHomeColumnBalance();
+        applyTabletSearchColumnBalance();
+    }
+
+    private void applyTabletHomeColumnBalance() {
+        if (browseScrollView == null) {
+            return;
+        }
+        ViewGroup homeContent = firstViewGroupChild(browseScrollView);
+        if (homeContent == null) {
+            return;
+        }
+        homeContent.setPadding(
+            homeContent.getPaddingLeft(),
+            dp(resolveTabletHomeTopPaddingDp(isLandscapeTabletLayout())),
+            homeContent.getPaddingRight(),
+            homeContent.getPaddingBottom()
+        );
+        ViewGroup recentParent = recentThreadsSection == null
+            ? null
+            : parentViewGroup(recentThreadsSection);
+        if (!(recentParent instanceof LinearLayout)) {
+            return;
+        }
+        LinearLayout columns = (LinearLayout) recentParent;
+        View primaryColumn = null;
+        for (int index = 0; index < columns.getChildCount(); index++) {
+            View child = columns.getChildAt(index);
+            if (child == recentThreadsSection || child == null || child.getVisibility() == View.GONE) {
+                continue;
+            }
+            ViewGroup.LayoutParams params = child.getLayoutParams();
+            if (params instanceof LinearLayout.LayoutParams
+                && ((LinearLayout.LayoutParams) params).weight > 0f) {
+                primaryColumn = child;
+                break;
+            }
+        }
+        setLinearWeight(primaryColumn, resolveTabletHomePrimaryWeight(isLandscapeTabletLayout()));
+        setLinearWeight(recentThreadsSection, resolveTabletHomeRecentWeight(isLandscapeTabletLayout()));
+    }
+
+    private void applyTabletSearchColumnBalance() {
+        if (resultsList == null || !isLandscapeTabletLayout()) {
+            return;
+        }
+        ViewGroup resultsParent = parentViewGroup(resultsList);
+        if (!(resultsParent instanceof LinearLayout)) {
+            return;
+        }
+        View filterRail = findWeightedSiblingBefore(resultsParent, resultsList);
+        setFixedLinearWidth(filterRail, resolveTabletSearchFilterRailWidthDp(isLandscapeTabletLayout()));
+        setFixedLinearWidth(
+            tabletSearchPreviewRail,
+            resolveTabletSearchPreviewRailWidthDp(isLandscapeTabletLayout())
+        );
+    }
+
+    private ViewGroup firstViewGroupChild(View view) {
+        if (!(view instanceof ViewGroup)) {
+            return null;
+        }
+        ViewGroup group = (ViewGroup) view;
+        if (group.getChildCount() == 0) {
+            return null;
+        }
+        View child = group.getChildAt(0);
+        return child instanceof ViewGroup ? (ViewGroup) child : null;
+    }
+
+    private ViewGroup parentViewGroup(View view) {
+        if (view == null) {
+            return null;
+        }
+        ViewParent parent = view.getParent();
+        return parent instanceof ViewGroup ? (ViewGroup) parent : null;
+    }
+
+    private View findWeightedSiblingBefore(ViewGroup parent, View anchor) {
+        if (parent == null || anchor == null) {
+            return null;
+        }
+        int anchorIndex = parent.indexOfChild(anchor);
+        for (int index = anchorIndex - 1; index >= 0; index--) {
+            View child = parent.getChildAt(index);
+            ViewGroup.LayoutParams params = child == null ? null : child.getLayoutParams();
+            if (params instanceof LinearLayout.LayoutParams
+                && ((LinearLayout.LayoutParams) params).width > dp(100)) {
+                return child;
+            }
+        }
+        return null;
+    }
+
+    private void setLinearWeight(View view, float weight) {
+        if (view == null) {
+            return;
+        }
+        ViewGroup.LayoutParams params = view.getLayoutParams();
+        if (!(params instanceof LinearLayout.LayoutParams)) {
+            return;
+        }
+        LinearLayout.LayoutParams linearParams = (LinearLayout.LayoutParams) params;
+        linearParams.width = 0;
+        linearParams.weight = weight;
+        view.setLayoutParams(linearParams);
+    }
+
+    private void setFixedLinearWidth(View view, int widthDp) {
+        if (view == null || widthDp <= 0) {
+            return;
+        }
+        ViewGroup.LayoutParams params = view.getLayoutParams();
+        if (!(params instanceof LinearLayout.LayoutParams)) {
+            return;
+        }
+        LinearLayout.LayoutParams linearParams = (LinearLayout.LayoutParams) params;
+        linearParams.width = dp(widthDp);
+        linearParams.weight = 0f;
+        view.setLayoutParams(linearParams);
+    }
+
+    static float resolveTabletHomePrimaryWeight(boolean landscapeTabletLayout) {
+        return landscapeTabletLayout
+            ? TABLET_HOME_PRIMARY_LANDSCAPE_WEIGHT
+            : TABLET_HOME_PRIMARY_PORTRAIT_WEIGHT;
+    }
+
+    static float resolveTabletHomeRecentWeight(boolean landscapeTabletLayout) {
+        return landscapeTabletLayout
+            ? TABLET_HOME_RECENT_LANDSCAPE_WEIGHT
+            : TABLET_HOME_RECENT_PORTRAIT_WEIGHT;
+    }
+
+    static int resolveTabletHomeTopPaddingDp(boolean landscapeTabletLayout) {
+        return landscapeTabletLayout
+            ? TABLET_HOME_LANDSCAPE_TOP_PADDING_DP
+            : TABLET_HOME_PORTRAIT_TOP_PADDING_DP;
+    }
+
+    static int resolveTabletSearchFilterRailWidthDp(boolean landscapeTabletLayout) {
+        return landscapeTabletLayout ? TABLET_SEARCH_FILTER_RAIL_LANDSCAPE_WIDTH_DP : 0;
+    }
+
+    static int resolveTabletSearchPreviewRailWidthDp(boolean landscapeTabletLayout) {
+        return landscapeTabletLayout ? TABLET_SEARCH_PREVIEW_RAIL_LANDSCAPE_WIDTH_DP : 0;
     }
 
     private void setTopMargin(View view, int marginDp) {

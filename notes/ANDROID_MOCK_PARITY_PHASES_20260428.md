@@ -1904,6 +1904,41 @@ Fresh proof:
   global typography/chrome still need reviewer eyes before calling the redesign
   10/10.
 
+## Wave72 Checkpoint
+
+Committed scope pending at the time of this update:
+
+- Phone landscape detail: narrowed the answer/thread left nav rail, tightened
+  phone-landscape answer title/body text scale, and preserved the canonical
+  source rail/right-pane ownership.
+- Source and related rails: shortened rain-shelter source/related labels so
+  GD-220/GD-132/GD-345 and related guide rows stay compact in landscape rails.
+- Tablet guide: retuned guide section/reference rail widths, widened the
+  landscape paper, capped visible cross-reference cards at the mock count, and
+  skipped duplicate foundry title prose in the paper body.
+- Home/search: added tablet home/search column-balance constants for tablet
+  portrait/landscape first-viewport proportions.
+- Emergency: tightened immediate-action row padding and capped emergency row
+  title/detail lines to avoid portrait overgrowth.
+
+Fresh proof:
+
+- Full pack:
+  `artifacts/ui_state_pack/wave72_integrated_final_retry/20260429_100724`
+- Summary: full pack `pass`, states `22/22`, failures `0`, ANRs `0`, rotation
+  mismatch `0`, canonical mock export `22` PNGs, goal bundle
+  `artifacts/ui_state_pack/wave72_integrated_final_retry/20260429_100724_mocks.zip`.
+- Validation: focused JVM suite passed across phone landscape composer/detail
+  policies, emergency action formatter, source/related formatters, home chrome,
+  and tablet stress-reading/guide policies. An earlier full pack produced a
+  transient tablet-portrait host-ask timeout (`main.ask.prepare`), then a
+  tablet-portrait retry passed `6/6` before the clean full pack.
+- Visual review: safe to commit; rough parity stayed around the Wave71 score,
+  with visible gains on guide tablet landscape, emergency tablet portrait, and
+  home tablet portrait. Remaining high-value slices are tablet guide portrait
+  centering/width, phone-landscape answer/thread source/body balance, tablet
+  search landscape proportions, and final source-heading label polish.
+
 ## Parallelization Rules
 
 - Start every worker with `git status --short`, `git log --oneline -n 8

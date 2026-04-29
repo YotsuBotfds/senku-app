@@ -411,8 +411,12 @@ public final class DetailSourcePresentationFormatterTest {
         );
 
         assertEquals(
-            "TOPIC 1/3 [GD-345] Tarp & Cord Shelters\nWood Quality Evaluation for Shelter Construction",
+            "TOPIC 1/3 [GD-345] Tarp & Cord Shelters",
             formatter.buildStationEvidenceCardRowLabel(topic, 0, 3)
+        );
+        assertEquals(
+            "[GD-345] Tarp & Cord Shelters",
+            formatter.buildEvidenceCardRowLabel(topic)
         );
     }
 
