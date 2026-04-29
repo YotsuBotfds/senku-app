@@ -417,6 +417,25 @@ public final class DetailSourcePresentationFormatterTest {
     }
 
     @Test
+    public void evidenceCardRowLabelDropsDuplicateAnchorLine() {
+        DetailSourcePresentationFormatter formatter = new DetailSourcePresentationFormatter(null);
+        DetailSourcePresentationFormatter.EvidenceCard anchor = formatter.buildEvidenceCard(
+            reviewedStackResult("GD-220", "Abrasives Manufacturing", "abrasives manufacturing"),
+            0,
+            "anchor"
+        );
+
+        assertEquals(
+            "[GD-220] Abrasives Manufacturing",
+            formatter.buildEvidenceCardRowLabel(anchor)
+        );
+        assertEquals(
+            "Anchor guide 1 of 3, 74% match: [GD-220] Abrasives Manufacturing. Shows source preview.",
+            formatter.buildEvidenceCardRowContentDescription(anchor, true, 0, 3)
+        );
+    }
+
+    @Test
     public void stationSourceButtonLabelDoesNotRelabelClickTargetByIndex() {
         DetailSourcePresentationFormatter formatter = new DetailSourcePresentationFormatter(null);
         SearchResult rainShelter = reviewedStackResult("GD-345", "Wood Quality Evaluation for Shelter Construction", "tarp cord rain shelter");

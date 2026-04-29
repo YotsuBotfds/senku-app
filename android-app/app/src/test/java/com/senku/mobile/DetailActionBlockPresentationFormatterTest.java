@@ -401,13 +401,13 @@ public final class DetailActionBlockPresentationFormatterTest {
 
     @Test
     public void emergencyActionRowsKeepFlatPortraitMetrics() {
-        assertEquals(1, DetailActionBlockPresentationFormatter.EMERGENCY_ACTION_ROW_VERTICAL_PADDING_DP);
-        assertEquals(9, DetailActionBlockPresentationFormatter.EMERGENCY_ACTION_CONTENT_START_PADDING_DP);
-        assertEquals(2, DetailActionBlockPresentationFormatter.EMERGENCY_ACTION_DETAIL_TOP_PADDING_DP);
+        assertEquals(8, DetailActionBlockPresentationFormatter.EMERGENCY_ACTION_ROW_VERTICAL_PADDING_DP);
+        assertEquals(14, DetailActionBlockPresentationFormatter.EMERGENCY_ACTION_CONTENT_START_PADDING_DP);
+        assertEquals(5, DetailActionBlockPresentationFormatter.EMERGENCY_ACTION_DETAIL_TOP_PADDING_DP);
         assertEquals(9.0f, DetailActionBlockPresentationFormatter.EMERGENCY_ACTION_HEADING_TEXT_SIZE_SP, 0.0f);
-        assertEquals(10.5f, DetailActionBlockPresentationFormatter.EMERGENCY_ACTION_TITLE_TEXT_SIZE_SP, 0.0f);
-        assertEquals(9.5f, DetailActionBlockPresentationFormatter.EMERGENCY_ACTION_DETAIL_TEXT_SIZE_SP, 0.0f);
-        assertEquals(15, DetailActionBlockPresentationFormatter.EMERGENCY_ACTION_BADGE_SIZE_DP);
+        assertEquals(14.0f, DetailActionBlockPresentationFormatter.EMERGENCY_ACTION_TITLE_TEXT_SIZE_SP, 0.0f);
+        assertEquals(13.0f, DetailActionBlockPresentationFormatter.EMERGENCY_ACTION_DETAIL_TEXT_SIZE_SP, 0.0f);
+        assertEquals(24, DetailActionBlockPresentationFormatter.EMERGENCY_ACTION_BADGE_SIZE_DP);
     }
 
     @Test

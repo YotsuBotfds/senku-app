@@ -472,7 +472,7 @@
         <TextView
             android:id="@+id/results_header"
             android:layout_width="match_parent"
-            android:layout_height="26dp"
+            android:layout_height="38dp"
             android:accessibilityLiveRegion="polite"
             android:ellipsize="end"
             android:fontFamily="monospace"
@@ -481,7 +481,7 @@
             android:maxLines="1"
             android:text="@string/results_header_loading"
             android:textAppearance="?android:attr/textAppearanceSmall"
-            android:textColor="@color/senku_rev03_ink_0"
+            android:textColor="@color/senku_rev03_ink_2"
             android:textSize="9sp"
             android:textStyle="bold"
             android:visibility="gone" />
@@ -515,7 +515,7 @@
                 android:fontFamily="monospace"
                 android:includeFontPadding="false"
                 android:maxLines="1"
-            android:text="Search guide titles, IDs, field notes..."
+                android:text="Search guide titles, IDs, field notes..."
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:textColor="@color/senku_rev03_ink_0"
                 android:textSize="11sp" />

@@ -4144,9 +4144,7 @@ public final class MainActivity extends AppCompatActivity {
         boolean hasResults = !items.isEmpty();
         boolean browseMode = isBrowseModeActive();
 
-        if (resultsHeader != null) {
-            resultsHeader.setVisibility(View.GONE);
-        }
+        updateLandscapePhoneSearchHeaderVisibility(browseMode, hasResults);
         if (resultsList != null) {
             resultsList.setVisibility(!browseMode && hasResults ? View.VISIBLE : View.GONE);
         }
@@ -4179,6 +4177,13 @@ public final class MainActivity extends AppCompatActivity {
             searchButton.setVisibility(View.VISIBLE);
         }
         updateInfoTextVisibility();
+    }
+
+    private void updateLandscapePhoneSearchHeaderVisibility(boolean browseMode, boolean hasResults) {
+        if (resultsHeader == null) {
+            return;
+        }
+        resultsHeader.setVisibility(!browseMode && hasResults ? View.VISIBLE : View.GONE);
     }
 
     private void updatePortraitPhoneResultsPriority() {
@@ -4390,12 +4395,25 @@ public final class MainActivity extends AppCompatActivity {
             return;
         }
         String cleanQuery = safe(query).trim();
+        if (isLandscapePhoneLayout() && resultsHeader != null) {
+            resultsHeader.setText(buildLandscapePhoneSearchChromeLabel(cleanQuery));
+        }
         if (phoneSearchQueryText != null) {
             phoneSearchQueryText.setText(buildSearchChromeQueryLabel(cleanQuery));
         }
         if (phoneSearchCountText != null) {
             phoneSearchCountText.setText(buildSearchChromeCountLabel(cleanQuery, resultCount));
         }
+    }
+
+    static String buildLandscapePhoneSearchChromeLabelForTest(String query) {
+        return buildLandscapePhoneSearchChromeLabel(query);
+    }
+
+    private static String buildLandscapePhoneSearchChromeLabel(String query) {
+        String cleanQuery = safe(query).trim();
+        String chromeQuery = cleanQuery.isEmpty() ? "guides" : cleanQuery;
+        return "\u2039  |  SEARCH " + chromeQuery;
     }
 
     private void updateHomeChromeTitle(boolean browseMode, String query) {

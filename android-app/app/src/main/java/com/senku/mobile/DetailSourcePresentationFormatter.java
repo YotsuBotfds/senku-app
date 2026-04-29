@@ -135,8 +135,9 @@ final class DetailSourcePresentationFormatter {
         if (!card.guideId.isEmpty()) {
             builder.append("[").append(card.guideId).append("] ");
         }
-        builder.append(card.title.isEmpty() ? "Open guide note" : card.title);
-        if (!card.anchorLabel.isEmpty()) {
+        String title = card.title.isEmpty() ? "Open guide note" : card.title;
+        builder.append(title);
+        if (!card.anchorLabel.isEmpty() && !sameLabel(card.anchorLabel, title)) {
             builder.append("\n").append(card.anchorLabel);
         }
         return builder.toString().trim();
@@ -690,6 +691,10 @@ final class DetailSourcePresentationFormatter {
             return cleaned;
         }
         return cleaned.substring(0, 34).trim() + "...";
+    }
+
+    private static boolean sameLabel(String left, String right) {
+        return safe(left).trim().equalsIgnoreCase(safe(right).trim());
     }
 
     private static boolean containsAny(String text, String... needles) {

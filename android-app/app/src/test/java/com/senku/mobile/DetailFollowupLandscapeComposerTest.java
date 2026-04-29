@@ -166,6 +166,7 @@ public final class DetailFollowupLandscapeComposerTest {
         assertTrue(DetailActivity.shouldHideInlineSourcesForAnswerLayout(true, false, true, false));
         assertTrue(DetailActivity.shouldHideInlineSourcesForAnswerLayout(false, false, false, false));
         assertFalse(DetailActivity.shouldHideInlineSourcesForAnswerLayout(true, false, false, false));
+        assertTrue(DetailActivity.shouldUseLandscapePhoneSourceRail(true, true));
     }
 
     @Test
@@ -180,6 +181,8 @@ public final class DetailFollowupLandscapeComposerTest {
     public void phoneLandscapeAnswerAllocatesRoomForSourceRail() {
         assertEquals(1.28f, DetailActivity.resolveLandscapeDetailPrimaryColumnWeight(false, true), 0.0f);
         assertEquals(1.0f, DetailActivity.resolveLandscapeDetailSideColumnWeight(false, true), 0.0f);
+        assertEquals(1.65f, DetailActivity.resolveLandscapeDetailPrimaryColumnWeight(false, false), 0.0f);
+        assertEquals(0.75f, DetailActivity.resolveLandscapeDetailSideColumnWeight(false, false), 0.0f);
         assertEquals(2.25f, DetailActivity.resolveLandscapeDetailPrimaryColumnWeight(true, true), 0.0f);
         assertEquals(0.62f, DetailActivity.resolveLandscapeDetailSideColumnWeight(true, true), 0.0f);
     }
@@ -374,6 +377,7 @@ public final class DetailFollowupLandscapeComposerTest {
         assertEquals("SOURCES - 2", DetailActivity.buildLandscapePhoneSourceRailTitle("Sources", 2));
         assertTrue(DetailActivity.shouldHideGenericAnswerScaffoldForThread(true, 2, true));
         assertFalse(DetailActivity.shouldHideProofRailForThreadDetail(true, 2, true, true));
+        assertTrue(DetailActivity.shouldUseCompactPhoneLandscapeThreadTranscript(true, 2, true));
     }
 
     @Test

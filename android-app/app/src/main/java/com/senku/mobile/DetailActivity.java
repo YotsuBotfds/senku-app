@@ -1431,6 +1431,7 @@ public final class DetailActivity extends AppCompatActivity {
         applyEmergencyPortraitPresentation();
         applyGuideReaderPresentation();
         applyPhoneThreadTranscriptPresentation();
+        restorePhoneLandscapeAnswerQuestionScaffold();
 
         detailScroll.post(() -> {
             if (isFinishing() || isDestroyed()) {
@@ -1452,6 +1453,7 @@ public final class DetailActivity extends AppCompatActivity {
                 updateWhyPanelPlacement();
                 renderNextSteps();
                 updateHelperSection();
+                restorePhoneLandscapeAnswerQuestionScaffold();
                 if (isEmergencyPortraitSurface()) {
                     detailScroll.scrollTo(0, 0);
                     detailScroll.post(() -> {
@@ -4627,6 +4629,47 @@ public final class DetailActivity extends AppCompatActivity {
         }
     }
 
+    private void restorePhoneLandscapeAnswerQuestionScaffold() {
+        if (!answerMode
+            || !isLandscapePhoneLayout()
+            || !isPhoneLandscapeAnswerHeader()
+            || isEmergencyPortraitSurface()) {
+            return;
+        }
+        if (questionBubble != null && questionBubble.getParent() instanceof View) {
+            ((View) questionBubble.getParent()).setVisibility(View.VISIBLE);
+        }
+        movePhoneLandscapeQuestionIntoAnswerFlow();
+        restoreAnswerSemanticPresentation();
+    }
+
+    private boolean isPhoneLandscapeAnswerHeader() {
+        if (screenTitle == null) {
+            return !isCurrentThreadDetailRoute();
+        }
+        return safe(screenTitle.getText() == null ? null : screenTitle.getText().toString())
+            .trim()
+            .toUpperCase(Locale.US)
+            .startsWith("ANSWER");
+    }
+
+    private void movePhoneLandscapeQuestionIntoAnswerFlow() {
+        if (questionBubble == null || answerBubble == null || questionBubble.getParent() == answerBubble) {
+            return;
+        }
+        ViewParent currentParent = questionBubble.getParent();
+        if (!(currentParent instanceof ViewGroup)) {
+            return;
+        }
+        ((ViewGroup) currentParent).removeView(questionBubble);
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        );
+        params.setMargins(0, 0, 0, dp(8));
+        answerBubble.addView(questionBubble, 0, params);
+    }
+
     private void renderPhoneLandscapeGuideSectionsPanel() {
         clearGuideReturnContextPanel();
         clearActiveGuideContextPanel();
@@ -5994,13 +6037,27 @@ public final class DetailActivity extends AppCompatActivity {
     }
 
     private DetailThreadHistoryRenderer.State buildPhoneLandscapeThreadHistoryState() {
+        boolean compactTranscript = shouldUseCompactPhoneLandscapeThreadTranscript(
+            answerMode,
+            currentAnswerThreadTurnCount(),
+            isLandscapePhoneLayout()
+        );
         return new DetailThreadHistoryRenderer.State(
             showUtilityRail(),
             wideLayoutActive(),
             useCompactPortraitSections(),
             responsiveBubbleWidthPx(),
-            true
+            compactTranscript
         );
+    }
+
+    static boolean shouldUseCompactPhoneLandscapeThreadTranscript(
+        boolean answerMode,
+        int totalTurnCount,
+        boolean landscapePhone
+    ) {
+        return shouldKeepPhoneLandscapeThreadAtTop(answerMode, totalTurnCount, landscapePhone)
+            && shouldUseLandscapePhoneSourceRail(answerMode, landscapePhone);
     }
 
     private DetailMetaPresentationFormatter.State buildMetaPresentationState(boolean wide) {

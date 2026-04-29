@@ -21,14 +21,14 @@ final class DetailActionBlockPresentationFormatter {
     static final String ACTION_LABEL_ESCALATE = "Escalate if";
     static final String EMERGENCY_ACTION_HEADING_PREFIX = "IMMEDIATE ACTIONS \u00b7 ";
     static final int EMERGENCY_DISTANCE_HIGHLIGHT_COLOR = 0xFFC4704B;
-    static final int EMERGENCY_ACTION_ROW_VERTICAL_PADDING_DP = 1;
-    static final int EMERGENCY_ACTION_CONTENT_START_PADDING_DP = 9;
-    static final int EMERGENCY_ACTION_DETAIL_TOP_PADDING_DP = 2;
+    static final int EMERGENCY_ACTION_ROW_VERTICAL_PADDING_DP = 8;
+    static final int EMERGENCY_ACTION_CONTENT_START_PADDING_DP = 14;
+    static final int EMERGENCY_ACTION_DETAIL_TOP_PADDING_DP = 5;
     static final float EMERGENCY_ACTION_HEADING_TEXT_SIZE_SP = 9.0f;
-    static final float EMERGENCY_ACTION_TITLE_TEXT_SIZE_SP = 10.5f;
-    static final float EMERGENCY_ACTION_DETAIL_TEXT_SIZE_SP = 9.5f;
+    static final float EMERGENCY_ACTION_TITLE_TEXT_SIZE_SP = 14.0f;
+    static final float EMERGENCY_ACTION_DETAIL_TEXT_SIZE_SP = 13.0f;
     private static final int MAX_EMERGENCY_PORTRAIT_ACTIONS = 4;
-    static final int EMERGENCY_ACTION_BADGE_SIZE_DP = 15;
+    static final int EMERGENCY_ACTION_BADGE_SIZE_DP = 24;
 
     enum ActionBlockKind {
         DO_FIRST,

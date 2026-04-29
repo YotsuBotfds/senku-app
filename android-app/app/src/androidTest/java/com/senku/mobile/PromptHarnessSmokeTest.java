@@ -338,6 +338,7 @@ public final class PromptHarnessSmokeTest {
                 Button ask = activity.findViewById(R.id.ask_button);
                 TextView laneHint = activity.findViewById(R.id.home_entry_hint);
                 TextView resultsHeader = activity.findViewById(R.id.results_header);
+                TextView phoneSearchCountText = activity.findViewById(R.id.phone_search_count_text);
                 RecyclerView resultsList = activity.findViewById(R.id.results_list);
                 View browseRail = activity.findViewById(R.id.browse_rail);
                 Assert.assertNotNull("search input should still exist after search", input);
@@ -352,10 +353,29 @@ public final class PromptHarnessSmokeTest {
                     "search results should populate the list instead of bouncing back to the browse shell",
                     resultsList.getAdapter() != null && resultsList.getAdapter().getItemCount() > 0
                 );
-                Assert.assertFalse(
-                    "target search surface should not reintroduce the duplicate results header band",
-                    isVisible(resultsHeader)
-                );
+                if (isLandscapePhoneActivity(activity)) {
+                    Assert.assertTrue(
+                        "landscape-phone search should keep the top search context row visible",
+                        isVisible(resultsHeader)
+                    );
+                    Assert.assertTrue(
+                        "landscape-phone search context should identify the search mode",
+                        containsAny(safe(resultsHeader.getText().toString()), "SEARCH")
+                    );
+                    Assert.assertTrue(
+                        "landscape-phone search count should stay in the compact count slot",
+                        isVisible(phoneSearchCountText)
+                    );
+                    Assert.assertTrue(
+                        "landscape-phone search count should keep the result count out of the context row",
+                        containsAny(safe(phoneSearchCountText.getText().toString()), "4")
+                    );
+                } else {
+                    Assert.assertFalse(
+                        "target search surface should not reintroduce the duplicate results header band",
+                        isVisible(resultsHeader)
+                    );
+                }
                 Assert.assertEquals(
                     "search results should keep browse-results helper copy visible",
                     activity.getString(R.string.home_entry_browse_results),
@@ -5236,13 +5256,20 @@ public final class PromptHarnessSmokeTest {
         );
 
         View answerCard = activity.findViewById(R.id.detail_answer_card);
+        View questionBubble = activity.findViewById(R.id.detail_question_bubble);
         View answerBubble = activity.findViewById(R.id.detail_answer_bubble);
         View sourcesPanel = activity.findViewById(R.id.detail_sources_panel);
         LinearLayout sourcesContainer = activity.findViewById(R.id.detail_sources_container);
         TextView sourcesTitle = activity.findViewById(R.id.detail_sources_title_text);
 
         Assert.assertTrue("phone-landscape split answer should show the answer card", isEffectivelyVisible(answerCard));
+        Assert.assertTrue("phone-landscape split answer should show the question scaffold", isEffectivelyVisible(questionBubble));
         Assert.assertTrue("phone-landscape split answer should show the answer column", isEffectivelyVisible(answerBubble));
+        Assert.assertSame(
+            "phone-landscape split answer should inline the question scaffold inside the answer column",
+            answerBubble,
+            questionBubble == null ? null : questionBubble.getParent()
+        );
         Assert.assertTrue("phone-landscape split answer should show the source rail", isEffectivelyVisible(sourcesPanel));
         Assert.assertTrue(
             "phone-landscape split answer should expose at least one source trigger in the rail",

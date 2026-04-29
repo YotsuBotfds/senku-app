@@ -110,7 +110,7 @@ final class DetailRelatedGuidePresentationFormatter {
             safe(guide == null ? null : guide.title).trim()
         );
         if (!guideId.isEmpty() && !title.isEmpty()) {
-            return guideId + " " + title;
+            return guideId + " \u00b7 " + title;
         }
         if (!title.isEmpty()) {
             return title;
@@ -175,7 +175,7 @@ final class DetailRelatedGuidePresentationFormatter {
         builder.append(" of ");
         builder.append(total);
         builder.append(". ");
-        builder.append(buildRelatedGuideAccessibleLabel(guide));
+        builder.append(buildRelatedGuideCompactAccessibleLabel(guide));
         String category = formatRelatedGuideCategory(guide);
         if (!category.isEmpty()) {
             builder.append(". Category ");
@@ -207,17 +207,7 @@ final class DetailRelatedGuidePresentationFormatter {
         builder.append(" of ");
         builder.append(total);
         builder.append(". ");
-        builder.append(buildRelatedGuideAccessibleLabel(guide));
-        String category = formatRelatedGuideCategory(guide);
-        if (!category.isEmpty()) {
-            builder.append(". Category ");
-            builder.append(category);
-        }
-        String anchorLabel = resolveSourceAnchorLabel(state);
-        if (!anchorLabel.isEmpty()) {
-            builder.append(". Supports ");
-            builder.append(anchorLabel);
-        }
+        builder.append(buildRelatedGuideCompactAccessibleLabel(guide));
         builder.append(opensPreview
             ? ". Previews here. Open full guide switches pages."
             : ". Opens this related guide.");
@@ -242,6 +232,21 @@ final class DetailRelatedGuidePresentationFormatter {
     private String buildRelatedGuideAccessibleLabel(SearchResult guide) {
         String guideId = safe(guide == null ? null : guide.guideId).trim();
         String title = safe(guide == null ? null : guide.title).trim();
+        if (!guideId.isEmpty() && !title.isEmpty()) {
+            return guideId + " \u00b7 " + title;
+        }
+        if (!title.isEmpty()) {
+            return title;
+        }
+        return guideId.isEmpty() ? context.getString(R.string.detail_related_guide_fallback_label) : guideId;
+    }
+
+    private String buildRelatedGuideCompactAccessibleLabel(SearchResult guide) {
+        String guideId = safe(guide == null ? null : guide.guideId).trim();
+        String title = trimRelatedGuideAccessibleLabel(canonicalRainShelterRelatedGuideTitle(
+            guideId,
+            safe(guide == null ? null : guide.title).trim()
+        ));
         if (!guideId.isEmpty() && !title.isEmpty()) {
             return guideId + " \u00b7 " + title;
         }
@@ -299,6 +304,14 @@ final class DetailRelatedGuidePresentationFormatter {
             return cleaned;
         }
         return cleaned.substring(0, 34).trim() + "...";
+    }
+
+    private static String trimRelatedGuideAccessibleLabel(String text) {
+        String cleaned = safe(text).trim();
+        if (cleaned.length() <= 42) {
+            return cleaned;
+        }
+        return cleaned.substring(0, 42).trim() + "...";
     }
 
     private static String formatRelatedGuideCategory(SearchResult guide) {

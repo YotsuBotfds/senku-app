@@ -344,6 +344,18 @@ public final class MainActivityHomeChromeTest {
     }
 
     @Test
+    public void landscapePhoneSearchChromeKeepsTopContextSeparateFromCountRow() {
+        assertEquals(
+            "\u2039  |  SEARCH rain shelter",
+            MainActivity.buildLandscapePhoneSearchChromeLabelForTest(" rain shelter ")
+        );
+        assertEquals(
+            "\u2039  |  SEARCH guides",
+            MainActivity.buildLandscapePhoneSearchChromeLabelForTest("")
+        );
+    }
+
+    @Test
     public void reviewRainShelterSearchUsesTargetOrderAndDisplayContent() {
         List<SearchResult> results = MainActivity.buildReviewSearchResultsForTest(
             "rain shelter",

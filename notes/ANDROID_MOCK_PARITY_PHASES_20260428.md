@@ -1863,6 +1863,47 @@ Fresh proof:
   Q1/A1 -> Q2/A2 flow, emergency proof is still crowded, and tablet guide
   typography/proportions still need final tuning.
 
+## Wave70 Checkpoint
+
+Committed scope pending at the time of this update:
+
+- Planning: added `notes/ANDROID_MOCK_PARITY_10_OF_10_PLAN_20260429.md` as the
+  current slice map for the remaining mock-parity push.
+- Phone landscape answer/thread: restored the canonical split-layout source
+  rail, aligned the instrumentation harness with that contract, restored the
+  answer question/meta scaffold into the first viewport, and kept the seeded
+  thread proof focused on Q2/A2 with a compact source rail.
+- Tablet guide: tuned guide paper proportions, topbar density, section rail
+  spacing, cross-reference rail cards, and boxed required-reading rows.
+- Source/related copy: shortened answer-mode related-guide labels to concise
+  guide-ID plus title text, reduced repeated source-title copy, and updated
+  formatter accessibility labels.
+- Home/search: restored the phone-landscape top search context row without
+  duplicating count/control copy.
+- Emergency: adjusted immediate-action badge and row metrics for a calmer
+  action-list rhythm.
+
+Fresh proof:
+
+- Full pack:
+  `artifacts/ui_state_pack/wave71_integrated_final/20260429_093300`
+- Summary: full pack `pass`, states `22/22`, failures `0`, ANRs `0`, rotation
+  mismatch `0`, canonical mock export `22` PNGs, goal bundle
+  `artifacts/ui_state_pack/wave71_integrated_final/20260429_093300_mocks.zip`.
+- Validation: integrated focused JVM suite passed across phone landscape
+  follow-up/thread, emergency/action policies, source/related formatters,
+  home/search, and tablet guide stress-reading policies. A focused
+  phone-landscape state pack also passed `5/5` after the full pack with
+  guard assertions for the in-answer question scaffold and compact search
+  count slot:
+  `artifacts/ui_state_pack/wave71_assertion_guard/20260429_093918`.
+- Visual note: answer phone landscape now exposes the answer meta row, question,
+  source count, body start, and three-card source rail in the first viewport.
+  Thread phone landscape is back to the target Q2/A2-focused state with the
+  right source rail. Remaining known visual debt: emergency/tablet guide and
+  global typography/chrome still need reviewer eyes before calling the redesign
+  10/10.
+
 ## Parallelization Rules
 
 - Start every worker with `git status --short`, `git log --oneline -n 8

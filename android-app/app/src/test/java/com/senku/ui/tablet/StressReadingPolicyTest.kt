@@ -91,11 +91,11 @@ class StressReadingPolicyTest {
     @Test
     fun tabletGuidePaperPolicyContainsPortraitReaderWithReadableLandscapeSheet() {
         assertEquals(520, tabletGuidePaperMaxWidthDp(isLandscape = true))
-        assertEquals(690, tabletGuidePaperMaxWidthDp(isLandscape = false))
+        assertEquals(820, tabletGuidePaperMaxWidthDp(isLandscape = false))
         assertEquals(10, tabletGuidePaperHorizontalPaddingDp(isLandscape = true))
-        assertEquals(18, tabletGuidePaperHorizontalPaddingDp(isLandscape = false))
-        assertEquals(28, tabletGuidePaperInnerHorizontalPaddingDp(isLandscape = true))
-        assertEquals(52, tabletGuidePaperInnerHorizontalPaddingDp(isLandscape = false))
+        assertEquals(24, tabletGuidePaperHorizontalPaddingDp(isLandscape = false))
+        assertEquals(42, tabletGuidePaperInnerHorizontalPaddingDp(isLandscape = true))
+        assertEquals(42, tabletGuidePaperInnerHorizontalPaddingDp(isLandscape = false))
         assertEquals(20, tabletGuidePaperBottomPaddingDp(isLandscape = true))
         assertEquals(40, tabletGuidePaperBottomPaddingDp(isLandscape = false))
         assertEquals(420, tabletGuideReferenceRailWidthDp(isLandscape = true))
@@ -125,11 +125,12 @@ class StressReadingPolicyTest {
         val landscapePolicy = tabletGuideChromePolicy(isLandscape = true)
         val portraitPolicy = tabletGuideChromePolicy(isLandscape = false)
 
-        assertEquals(58, landscapePolicy.topBarMinHeightDp)
+        assertEquals(56, landscapePolicy.topBarMinHeightDp)
         assertEquals(24, landscapePolicy.topBarHorizontalPaddingDp)
         assertEquals(8, landscapePolicy.topBarVerticalPaddingDp)
         assertEquals(18, landscapePolicy.topBarTitleLineHeightSp)
-        assertEquals(56, portraitPolicy.topBarMinHeightDp)
+        assertEquals(54, portraitPolicy.topBarMinHeightDp)
+        assertEquals(7, portraitPolicy.topBarVerticalPaddingDp)
         assertTrue(landscapePolicy.topBarMinHeightDp > portraitPolicy.topBarMinHeightDp)
         assertTrue(landscapePolicy.topBarHorizontalPaddingDp > portraitPolicy.topBarHorizontalPaddingDp)
     }

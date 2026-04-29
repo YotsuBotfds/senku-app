@@ -149,7 +149,7 @@ public final class DetailRelatedGuidePresentationFormatterTest {
             formatter.buildAnswerModeRelatedGuidesPanelContentDescription(state, 2)
         );
         assertEquals(
-            "Related guide 1 of 2. GD-215 \u00b7 Rainwater Catchment. Supports [GD-214] Water Storage. Previews here. Open full guide switches pages.",
+            "Related guide 1 of 2. GD-215 \u00b7 Rainwater Catchment. Previews here. Open full guide switches pages.",
             formatter.buildAnswerModeRelatedGuideButtonContentDescription(state, guide, 0, 2, true)
         );
     }
@@ -218,27 +218,58 @@ public final class DetailRelatedGuidePresentationFormatterTest {
         DetailRelatedGuidePresentationFormatter formatter = new DetailRelatedGuidePresentationFormatter(null);
 
         assertEquals(
-            "GD-294 Cave Shelter Systems & Cold-Weather",
+            "GD-294 \u00b7 Cave Shelter Systems & Cold-Weather",
             formatter.buildAnswerModeRelatedGuideButtonLabel(
                 new SearchResult("Cave Shelter Systems and Long-Term Habitation", "", "", "", "GD-294", "", "", "")
             )
         );
         assertEquals(
-            "GD-695 Hurricane & Severe Storm Sheltering",
+            "GD-695 \u00b7 Hurricane & Severe Storm Sheltering",
             formatter.buildAnswerModeRelatedGuideButtonLabel(
                 new SearchResult("Hurricane & Severe Storm Preparedness", "", "", "", "GD-695", "", "", "")
             )
         );
         assertEquals(
-            "GD-484 Insulation Materials & Cold-Soak",
+            "GD-484 \u00b7 Insulation Materials & Cold-Soak",
             formatter.buildAnswerModeRelatedGuideButtonLabel(
                 new SearchResult("Insulation Materials & Thermal Design", "", "", "", "GD-484", "", "", "")
             )
         );
         assertEquals(
-            "GD-027 Primitive Technology & Stone Age",
+            "GD-027 \u00b7 Primitive Technology & Stone Age",
             formatter.buildAnswerModeRelatedGuideButtonLabel(
                 new SearchResult("Primitive Technology and Stone Age Skills", "", "", "", "GD-027", "", "", "")
+            )
+        );
+    }
+
+    @Test
+    public void answerModeContentDescriptionUsesCompactCanonicalRowCopy() {
+        DetailRelatedGuidePresentationFormatter formatter = new DetailRelatedGuidePresentationFormatter(null);
+
+        assertEquals(
+            "Related guide 1 of 4. GD-294 \u00b7 Cave Shelter Systems & Cold-Weather. Opens this related guide.",
+            formatter.buildAnswerModeRelatedGuideButtonContentDescription(
+                new DetailRelatedGuidePresentationFormatter.State(
+                    false,
+                    false,
+                    "",
+                    "",
+                    "GD-345 \u00b7 Tarp & Cord Shelters"
+                ),
+                new SearchResult(
+                    "Cave Shelter Systems and Long-Term Habitation",
+                    "",
+                    "",
+                    "",
+                    "GD-294",
+                    "",
+                    "survival",
+                    ""
+                ),
+                0,
+                4,
+                false
             )
         );
     }
