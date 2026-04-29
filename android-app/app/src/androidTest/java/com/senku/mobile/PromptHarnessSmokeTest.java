@@ -81,6 +81,8 @@ public final class PromptHarnessSmokeTest {
     private static final String EXTRA_AUTO_FOLLOWUP_QUERY = "auto_followup_query";
     // Empirical: search logs ~5.8-6.2s; 10s missed three times across 48h on 5554/5556. See notes/R-SEARCH_DIAGNOSTIC_20260421.md.
     private static final long SEARCH_WAIT_MS = 15_000L;
+    // Tablet portrait full-pack runs can spend 15-20s in offline hybrid search before the UI posts results.
+    private static final long SEARCH_RESULTS_WAIT_MS = 35_000L;
     private static final long DETAIL_WAIT_MS = 15_000L;
     private static final long GENERATIVE_DETAIL_WAIT_MS = 20_000L;
     private static final double SCREENSHOT_DIMENSION_COVERAGE_THRESHOLD = 0.6d;
@@ -332,7 +334,7 @@ public final class PromptHarnessSmokeTest {
             awaitHarnessIdle();
             String query = "rain shelter";
             submitSearchFromResumedActivity(query, false);
-            assertResultsSettled(scenario, SEARCH_WAIT_MS);
+            assertResultsSettled(scenario, SEARCH_RESULTS_WAIT_MS);
             dismissMainSearchKeyboardIfVisible();
             scenario.onActivity(activity -> {
                 EditText input = activity.findViewById(R.id.search_input);
