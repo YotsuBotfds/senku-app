@@ -146,12 +146,12 @@ class SearchResultCardHeuristicsTest {
 
     @Test
     fun scoreTickTrackWidthDp_keepsStableCompactTrack() {
-        assertEquals(18, scoreTickTrackWidthDp("92"))
-        assertEquals(18, scoreTickTrackWidthDp("78"))
-        assertEquals(18, scoreTickTrackWidthDp("74"))
-        assertEquals(18, scoreTickTrackWidthDp("61"))
-        assertEquals(18, scoreTickTrackWidthDp("49"))
-        assertEquals(18, scoreTickTrackWidthDp("#1"))
+        assertEquals(22, scoreTickTrackWidthDp("92"))
+        assertEquals(22, scoreTickTrackWidthDp("78"))
+        assertEquals(22, scoreTickTrackWidthDp("74"))
+        assertEquals(22, scoreTickTrackWidthDp("61"))
+        assertEquals(22, scoreTickTrackWidthDp("49"))
+        assertEquals(22, scoreTickTrackWidthDp("#1"))
     }
 
     @Test

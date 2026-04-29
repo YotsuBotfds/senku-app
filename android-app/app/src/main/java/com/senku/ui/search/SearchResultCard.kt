@@ -39,7 +39,7 @@ import java.util.LinkedHashSet
 import java.util.Locale
 
 private const val WARM_THREAD_WINDOW_MS = 30L * 60L * 1000L
-private const val SCORE_TICK_TRACK_WIDTH_DP = 18
+private const val SCORE_TICK_TRACK_WIDTH_DP = 22
 
 @Immutable
 data class SearchResultCardModel(

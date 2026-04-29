@@ -44,8 +44,8 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
     private static final int MAX_HIGHLIGHT_TERMS = 4;
     private static final int DEFAULT_MAX_DISPLAYED_ITEMS = 4;
     private static final int SCORE_TICK_TRACK_WIDTH_DP = 22;
-    private static final float COMPACT_ROW_TITLE_TEXT_SIZE_SP = 15.75f;
-    private static final float COMPACT_ROW_SNIPPET_TEXT_SIZE_SP = 12.25f;
+    private static final float COMPACT_ROW_TITLE_TEXT_SIZE_SP = 16.5f;
+    private static final float COMPACT_ROW_SNIPPET_TEXT_SIZE_SP = 12.75f;
 
     public static final class LinkedGuidePreview {
         public final String guideId;
@@ -225,7 +225,7 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
         LinearLayout row = new LinearLayout(context);
         row.setId(R.id.result_legacy_mirror);
         row.setOrientation(LinearLayout.VERTICAL);
-        row.setPadding(dp(0), dp(13), dp(0), 0);
+        row.setPadding(dp(0), dp(15), dp(0), 0);
         root.addView(row, new FrameLayout.LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT,
             ViewGroup.LayoutParams.WRAP_CONTENT
@@ -239,7 +239,7 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
             ViewGroup.LayoutParams.WRAP_CONTENT
         ));
 
-        TextView meta = buildMonoTextView(context, 10, 12, Typeface.BOLD);
+        TextView meta = buildMonoTextView(context, 10, 13, Typeface.BOLD);
         meta.setId(R.id.result_meta);
         meta.setTextColor(ContextCompat.getColor(context, R.color.senku_rev03_accent));
         meta.setAllCaps(true);
@@ -280,15 +280,15 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
         title.setTextColor(ContextCompat.getColor(context, R.color.senku_text_light));
         title.setTypeface(Typeface.DEFAULT, Typeface.BOLD);
         title.setTextSize(TypedValue.COMPLEX_UNIT_SP, COMPACT_ROW_TITLE_TEXT_SIZE_SP);
-        title.setLineSpacing(0, 1.04f);
+        title.setLineSpacing(0, 1.08f);
         LinearLayout.LayoutParams titleParams = new LinearLayout.LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT,
             ViewGroup.LayoutParams.WRAP_CONTENT
         );
-        titleParams.topMargin = dp(4);
+        titleParams.topMargin = dp(5);
         row.addView(title, titleParams);
 
-        TextView section = buildMonoTextView(context, 9, 12, Typeface.NORMAL);
+        TextView section = buildMonoTextView(context, 9, 13, Typeface.NORMAL);
         section.setId(R.id.result_section);
         section.setTextColor(ContextCompat.getColor(context, R.color.senku_rev03_ink_2));
         section.setAllCaps(true);
@@ -297,19 +297,19 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
             ViewGroup.LayoutParams.MATCH_PARENT,
             ViewGroup.LayoutParams.WRAP_CONTENT
         );
-        sectionParams.topMargin = dp(1);
+        sectionParams.topMargin = dp(2);
         row.addView(section, sectionParams);
 
         TextView snippet = new TextView(context);
         snippet.setId(R.id.result_snippet);
         snippet.setTextColor(ContextCompat.getColor(context, R.color.senku_rev03_ink_1));
         snippet.setTextSize(TypedValue.COMPLEX_UNIT_SP, COMPACT_ROW_SNIPPET_TEXT_SIZE_SP);
-        snippet.setLineSpacing(0, 1.08f);
+        snippet.setLineSpacing(0, 1.12f);
         LinearLayout.LayoutParams snippetParams = new LinearLayout.LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT,
             ViewGroup.LayoutParams.WRAP_CONTENT
         );
-        snippetParams.topMargin = dp(5);
+        snippetParams.topMargin = dp(6);
         row.addView(snippet, snippetParams);
 
         LinearLayout chips = new LinearLayout(context);
@@ -336,7 +336,7 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
         TextView linkedPreview = new TextView(context);
         linkedPreview.setId(R.id.result_related_preview);
         linkedPreview.setTextColor(ContextCompat.getColor(context, R.color.senku_rev03_accent_moss));
-        linkedPreview.setTextSize(TypedValue.COMPLEX_UNIT_SP, 11);
+        linkedPreview.setTextSize(TypedValue.COMPLEX_UNIT_SP, 10);
         linkedPreview.setSingleLine(true);
         linkedPreview.setEllipsize(TextUtils.TruncateAt.END);
         linkedPreview.setVisibility(View.GONE);
@@ -353,7 +353,7 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
             ViewGroup.LayoutParams.MATCH_PARENT,
             1
         );
-        dividerParams.topMargin = dp(13);
+        dividerParams.topMargin = dp(16);
         row.addView(divider, dividerParams);
 
         ComposeView composeView = new ComposeView(context);
