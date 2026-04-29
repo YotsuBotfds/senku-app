@@ -342,7 +342,7 @@ internal fun tabletThreadRailWidthDp(
     threadMode: Boolean = false,
 ): Int =
     when {
-        guideMode && isLandscape -> 300
+        guideMode && isLandscape -> 292
         guideMode -> 196
         threadMode -> tabletReadingLayoutPolicy(isLandscape).threadRailWidthDp
         else -> 0
@@ -377,10 +377,10 @@ internal fun tabletComposerBottomPaddingDp(detailMode: TabletDetailMode, isLands
     }
 
 internal fun tabletGuidePaperMaxWidthDp(isLandscape: Boolean): Int =
-    if (isLandscape) 560 else 820
+    if (isLandscape) 576 else 820
 
 internal fun tabletGuidePaperHorizontalPaddingDp(isLandscape: Boolean): Int =
-    if (isLandscape) 12 else 12
+    if (isLandscape) 24 else 12
 
 internal fun tabletGuidePaperInnerHorizontalPaddingDp(isLandscape: Boolean): Int =
     if (isLandscape) 42 else 34
@@ -389,10 +389,10 @@ internal fun tabletGuidePaperBottomPaddingDp(isLandscape: Boolean): Int =
     if (isLandscape) 20 else 40
 
 internal fun tabletGuideReferenceRailWidthDp(isLandscape: Boolean): Int =
-    if (isLandscape) 390 else 0
+    if (isLandscape) 376 else 0
 
 internal fun tabletGuideAppRailWidthDp(isLandscape: Boolean): Int =
-    if (isLandscape) 96 else 72
+    if (isLandscape) 88 else 72
 
 internal fun tabletGuideSectionRailShowsToolbar(): Boolean = false
 

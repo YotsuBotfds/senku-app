@@ -4943,7 +4943,7 @@ public final class DetailActivity extends AppCompatActivity {
 
     static float resolveLandscapeDetailSideColumnWeight(boolean guideSectionRail, boolean answerSourceRail) {
         if (guideSectionRail) {
-            return 0.62f;
+            return 0.71f;
         }
         return answerSourceRail ? 1.0f : 0.75f;
     }
@@ -7515,6 +7515,20 @@ public final class DetailActivity extends AppCompatActivity {
         view.setLayoutParams(params);
     }
 
+    private void setHorizontalMargins(View view, int startMarginPx, int endMarginPx) {
+        if (view == null) {
+            return;
+        }
+        ViewGroup.LayoutParams rawParams = view.getLayoutParams();
+        if (!(rawParams instanceof ViewGroup.MarginLayoutParams)) {
+            return;
+        }
+        ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) rawParams;
+        params.setMarginStart(startMarginPx);
+        params.setMarginEnd(endMarginPx);
+        view.setLayoutParams(params);
+    }
+
     private void setParentTopMargin(View child, int topMarginPx) {
         if (child == null || !(child.getParent() instanceof View)) {
             return;
@@ -9267,6 +9281,7 @@ public final class DetailActivity extends AppCompatActivity {
         }
         boolean singlePaperPhoneGuide = shouldUseSinglePaperPhoneGuideShell();
         applyPhoneGuideReaderViewportDensity(singlePaperPhoneGuide);
+        applySinglePaperPhoneGuideShellLayout(singlePaperPhoneGuide);
         if (questionBubble != null) {
             questionBubble.setVisibility(singlePaperPhoneGuide ? View.GONE : View.VISIBLE);
             if (!singlePaperPhoneGuide) {
@@ -9279,7 +9294,9 @@ public final class DetailActivity extends AppCompatActivity {
                 );
             }
         }
-        setParentTopMargin(answerBubble, dp(singlePaperPhoneGuide ? (isLandscapePhoneLayout() ? 2 : 4) : (isLandscapePhoneLayout() ? 4 : 6)));
+        setParentTopMargin(answerBubble, dp(singlePaperPhoneGuide
+            ? resolvePhoneGuideAnswerBubbleTopMarginDp(isLandscapePhoneLayout())
+            : (isLandscapePhoneLayout() ? 4 : 6)));
         setTopMargin(rev03MetaStripHost, dp(isLandscapePhoneLayout() ? 5 : 6));
         if (headerLabel != null) {
             headerLabel.setText("FIELD MANUAL");
@@ -9319,10 +9336,18 @@ public final class DetailActivity extends AppCompatActivity {
         }
         if (bodyView != null) {
             bodyView.setTextColor(getColor(R.color.senku_rev03_paper_ink));
-            bodyView.setTextSize(isLandscapePhoneLayout() ? 15f : 16f);
+            bodyView.setTextSize(resolvePhoneGuideBodyTextSizeSp(isLandscapePhoneLayout()));
             bodyView.setLineSpacing(dp(resolvePhoneGuideBodyLineSpacingExtraDp(isLandscapePhoneLayout())), 1.08f);
             bodyView.setIncludeFontPadding(false);
         }
+    }
+
+    private void applySinglePaperPhoneGuideShellLayout(boolean singlePaperPhoneGuide) {
+        if (!singlePaperPhoneGuide) {
+            return;
+        }
+        setHorizontalMargins(answerBubble, 0, 0);
+        setHorizontalMargins(bodyMirrorShell, 0, 0);
     }
 
     private void applyPhoneGuideReaderViewportDensity(boolean singlePaperPhoneGuide) {
@@ -9359,35 +9384,43 @@ public final class DetailActivity extends AppCompatActivity {
 
     static int resolvePhoneGuideBodyShellBottomPaddingDp(boolean singlePaperPhoneGuide, boolean landscapePhone) {
         if (singlePaperPhoneGuide) {
-            return landscapePhone ? 14 : 24;
+            return landscapePhone ? 18 : 26;
         }
         return landscapePhone ? 16 : 18;
     }
 
     static int resolvePhoneGuideBodyShellHorizontalPaddingDp(boolean singlePaperPhoneGuide, boolean landscapePhone) {
         if (singlePaperPhoneGuide) {
-            return landscapePhone ? 12 : 14;
+            return 18;
         }
         return landscapePhone ? 16 : 18;
     }
 
     static int resolvePhoneGuideBodyShellTopPaddingDp(boolean singlePaperPhoneGuide, boolean landscapePhone) {
         if (singlePaperPhoneGuide) {
-            return landscapePhone ? 10 : 14;
+            return landscapePhone ? 8 : 10;
         }
         return landscapePhone ? 12 : 14;
     }
 
     static int resolvePhoneGuideBodyLineSpacingExtraDp(boolean landscapePhone) {
-        return landscapePhone ? 2 : 3;
+        return landscapePhone ? 3 : 4;
     }
 
     static int resolvePhoneGuideViewportHorizontalPaddingDp(boolean landscapePhone) {
-        return landscapePhone ? 16 : 10;
+        return landscapePhone ? 16 : 6;
     }
 
     static int resolvePhoneGuideViewportTopPaddingDp(boolean landscapePhone) {
-        return landscapePhone ? 12 : 8;
+        return landscapePhone ? 4 : 8;
+    }
+
+    static int resolvePhoneGuideAnswerBubbleTopMarginDp(boolean landscapePhone) {
+        return landscapePhone ? 0 : 4;
+    }
+
+    static float resolvePhoneGuideBodyTextSizeSp(boolean landscapePhone) {
+        return landscapePhone ? 16.0f : 17.0f;
     }
 
     private void restoreAnswerSemanticPresentation() {

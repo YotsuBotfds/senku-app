@@ -2250,6 +2250,65 @@ Remaining precise slices:
 - Home/Search remain frozen unless a named visual-diff residual is accepted as
   in-scope.
 
+## Wave80 Checkpoint
+
+Committed scope pending at the time of this update:
+
+- Phone guide shell: widened the single-paper phone guide viewport, reset
+  inherited chat-bubble horizontal margins, increased paper/body density, moved
+  the landscape paper higher, and widened the phone-landscape guide primary
+  column while preserving guide-only ownership in `DetailActivity`.
+- Tablet guide structure: slightly reduced landscape app/section/reference rails
+  and widened the landscape guide paper, explicitly avoiding the reverted Wave79
+  direction that narrowed the paper and worsened the visual diff.
+- Visual diff validation: added
+  `scripts/validate_android_mock_visual_diff_report.py` and focused tests so
+  closure packs can gate on the generated JSON/Markdown report, canonical
+  22-row coverage, descending MAE sort, and linked diff/review PNG paths.
+- Physical device note: a current debug APK was installed successfully to the
+  USB phone `RFCX607ZM8L` / `SM_S356V` with `adb -d install -r`, then launched
+  via `monkey`. The phone later dropped off ADB, so future installs may need a
+  USB/auth prompt refresh before retrying.
+
+Fresh proof:
+
+- Focused phone guide pack:
+  `artifacts/ui_state_pack/wave80_phone_guide_shell/20260429_131704`
+  passed the phone slices (`9/9`); the wrapper status is expectedly non-green
+  only because a phone-only run cannot produce the full canonical 22-PNG goal
+  bundle. Phone guide dumps preserved `GUIDE`, `GD-132`, `17 SECTIONS`,
+  `DANGER EXTREME BURN HAZARD`, `Reviewed Answer-Card Boundary`, `GD-220`,
+  `GD-499`, and `GD-225`.
+- Full pack:
+  `artifacts/ui_state_pack/wave80_guide_structure/20260429_132500`
+- Summary: full pack `pass`, states `22/22`, failures `0`, ANRs `0`, rotation
+  mismatch count `0`, canonical mock export `22` PNGs, goal bundle
+  `artifacts/ui_state_pack/wave80_guide_structure/20260429_132500_mocks.zip`.
+- Validation: focused JVM suite passed for `DetailActivityPhoneGuideChromeTest`
+  and `StressReadingPolicyTest`; Python visual-diff tooling tests passed
+  (`tests.test_android_mock_visual_diff` and
+  `tests.test_android_mock_visual_diff_report`, `6` tests). Goal-pack validation
+  passed for the Wave80 zip, and visual-diff report validation passed for
+  `artifacts/ui_state_pack/wave80_guide_structure/20260429_132500/visual_diff`.
+- Visual diff: `guide-phone-portrait.png` improved from Wave79 MAE `61.39` to
+  `33.48`; `guide-phone-landscape.png` improved from `31.73` to `24.89`;
+  `guide-tablet-landscape.png` improved from `21.12` to `20.15`; tablet portrait
+  was unchanged. `answer-phone-portrait.png` drift increased slightly from
+  `23.71` to `24.55` and should be handled by the next serialized
+  `DetailActivity` answer-renderer slice rather than by undoing the guide wins.
+
+Remaining precise slices:
+
+- The visual comparator now ranks `guide-tablet-portrait.png` as the top
+  remaining guide drift (`51.74` MAE). This needs tablet portrait-specific guide
+  composition, not another landscape-paper narrowing pass.
+- Phone Answer renderer closure should be serialized after this guide shell work
+  in `DetailActivity`: preserve `ANSWER - THIS DEVICE - 1 TURN`, `GD-345 -
+  3 SOURCES - REV 04-27`, and source/related visibility while reducing first
+  viewport drift.
+- Emergency renderer closure is also `DetailActivity` work and should be
+  sequenced after Answer if it touches overlay/header geometry.
+
 ## Parallelization Rules
 
 - Start every worker with `git status --short`, `git log --oneline -n 8
