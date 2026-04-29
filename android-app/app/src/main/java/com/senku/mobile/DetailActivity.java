@@ -1208,6 +1208,11 @@ public final class DetailActivity extends AppCompatActivity {
         scopeChip.setVisibility(answerMode || suppressGuideStateChips ? View.GONE : View.VISIBLE);
         titleView.setTextIsSelectable(answerMode);
         bodyView.setLineSpacing(0f, answerMode ? 1.14f : 1.08f);
+        if (answerMode && isCompactPortraitPhoneLayout() && !isEmergencyPortraitSurface()) {
+            bodyView.setTextSize(resolvePhonePortraitAnswerBodyTextSizeSp());
+            bodyView.setLineSpacing(0f, 1.09f);
+            bodyView.setIncludeFontPadding(false);
+        }
         followUpPanel.setVisibility(isCurrentAnswerFollowUpEligible() ? View.VISIBLE : View.GONE);
         updateFollowUpMirrorMode();
         if (answerMode && pendingAutoFollowUpQuery.isEmpty()) {
@@ -3280,8 +3285,12 @@ public final class DetailActivity extends AppCompatActivity {
                 button.setTextColor(getColor(R.color.senku_text_light));
                 button.setMinHeight(0);
                 button.setMinimumHeight(0);
-                int btnPadH = (phonePortraitSourceCards || flatAnswerSourceCards) ? dp(12) : (stationRail ? dp(10) : dp(14));
-                int btnPadV = (phonePortraitSourceCards || flatAnswerSourceCards) ? dp(6) : (stationRail ? dp(8) : dp(12));
+                int btnPadH = (phonePortraitSourceCards || flatAnswerSourceCards)
+                    ? dp(resolvePhonePortraitSourceCardHorizontalPaddingDp())
+                    : (stationRail ? dp(10) : dp(14));
+                int btnPadV = (phonePortraitSourceCards || flatAnswerSourceCards)
+                    ? dp(resolvePhonePortraitSourceCardVerticalPaddingDp())
+                    : (stationRail ? dp(8) : dp(12));
                 button.setPadding(btnPadH, btnPadV, btnPadH, btnPadV);
                 boolean styledSourceCard = phonePortraitSourceCards || flatAnswerSourceCards;
                 String sourceLabel = styledSourceCard
@@ -3302,10 +3311,10 @@ public final class DetailActivity extends AppCompatActivity {
                 );
                 button.setTextAlignment(View.TEXT_ALIGNMENT_VIEW_START);
                 button.setGravity(Gravity.START | Gravity.CENTER_VERTICAL);
-                button.setMaxLines((phonePortraitSourceCards || flatAnswerSourceCards) ? 4 : 2);
+                button.setMaxLines((phonePortraitSourceCards || flatAnswerSourceCards) ? 3 : 2);
                 button.setEllipsize(TextUtils.TruncateAt.END);
-                button.setTextSize(styledSourceCard ? 10.5f : 14f);
-                button.setLineSpacing(0f, (phonePortraitSourceCards || flatAnswerSourceCards) ? 1.04f : 1f);
+                button.setTextSize(styledSourceCard ? resolvePhonePortraitSourceCardTextSizeSp() : 14f);
+                button.setLineSpacing(0f, (phonePortraitSourceCards || flatAnswerSourceCards) ? 1.0f : 1f);
                 if (styledSourceCard) {
                     button.setTypeface(Typeface.DEFAULT, Typeface.NORMAL);
                     button.setIncludeFontPadding(false);
@@ -3327,7 +3336,9 @@ public final class DetailActivity extends AppCompatActivity {
                     ViewGroup.LayoutParams.WRAP_CONTENT
                 );
                 if (sourcesContainer.getChildCount() > 0) {
-                    params.topMargin = (phonePortraitSourceCards || flatAnswerSourceCards) ? dp(8) : (showUtilityRail() ? dp(4) : dp(8));
+                    params.topMargin = (phonePortraitSourceCards || flatAnswerSourceCards)
+                        ? dp(resolvePhonePortraitSourceCardTopMarginDp())
+                        : (showUtilityRail() ? dp(4) : dp(8));
                 }
                 sourcesContainer.addView(button, params);
             }
@@ -3787,6 +3798,22 @@ public final class DetailActivity extends AppCompatActivity {
         return buildPhonePortraitSourceCardLabel(card, false);
     }
 
+    static int resolvePhonePortraitSourceCardHorizontalPaddingDp() {
+        return 10;
+    }
+
+    static int resolvePhonePortraitSourceCardVerticalPaddingDp() {
+        return 5;
+    }
+
+    static int resolvePhonePortraitSourceCardTopMarginDp() {
+        return 5;
+    }
+
+    static float resolvePhonePortraitSourceCardTextSizeSp() {
+        return 10.0f;
+    }
+
     static String buildPhonePortraitSourceCardLabel(
         DetailSourcePresentationFormatter.EvidenceCard card,
         boolean emergencyContext
@@ -3850,7 +3877,7 @@ public final class DetailActivity extends AppCompatActivity {
         if (metaEnd > 0) {
             styled.setSpan(new TypefaceSpan("monospace"), 0, metaEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             styled.setSpan(new StyleSpan(Typeface.BOLD), 0, metaEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-            styled.setSpan(new RelativeSizeSpan(0.86f), 0, metaEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            styled.setSpan(new RelativeSizeSpan(0.82f), 0, metaEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             styled.setSpan(
                 new ForegroundColorSpan(getColor(R.color.senku_rev03_accent)),
                 0,
@@ -3863,14 +3890,14 @@ public final class DetailActivity extends AppCompatActivity {
             int titleEnd = secondBreak < 0 ? value.length() : secondBreak;
             if (titleEnd > titleStart) {
                 styled.setSpan(new StyleSpan(Typeface.BOLD), titleStart, titleEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                styled.setSpan(new RelativeSizeSpan(1.02f), titleStart, titleEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                styled.setSpan(new RelativeSizeSpan(0.98f), titleStart, titleEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             }
         }
         if (secondBreak >= 0) {
             int quoteStart = secondBreak + 1;
             if (quoteStart < value.length()) {
                 styled.setSpan(new StyleSpan(Typeface.ITALIC), quoteStart, value.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                styled.setSpan(new RelativeSizeSpan(0.88f), quoteStart, value.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                styled.setSpan(new RelativeSizeSpan(0.84f), quoteStart, value.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                 styled.setSpan(
                     new ForegroundColorSpan(getColor(R.color.senku_text_muted_light)),
                     quoteStart,
@@ -3890,10 +3917,10 @@ public final class DetailActivity extends AppCompatActivity {
 
     private static String trimPhonePortraitSourceQuote(String quote) {
         String cleaned = safe(quote).replaceAll("\\s+", " ").trim();
-        if (cleaned.length() <= 94) {
+        if (cleaned.length() <= 82) {
             return cleaned;
         }
-        return cleaned.substring(0, 94).trim() + "...";
+        return cleaned.substring(0, 82).trim() + "...";
     }
 
     private void renderMaterialsPanel() {
@@ -6135,10 +6162,17 @@ public final class DetailActivity extends AppCompatActivity {
             screenTitle.setMaxLines(compactPhoneAnswer ? 2 : 1);
             screenTitle.setEllipsize(TextUtils.TruncateAt.END);
             screenTitle.setIncludeFontPadding(!compactPhoneAnswer);
+            if (compactPhoneAnswer) {
+                screenTitle.setTextSize(resolvePhonePortraitAppHeaderTitleTextSizeSp());
+            }
         }
         if (screenMeta != null) {
             screenMeta.setMaxLines(compactPhoneAnswer ? 1 : 2);
             screenMeta.setEllipsize(TextUtils.TruncateAt.END);
+            if (compactPhoneAnswer) {
+                screenMeta.setTextSize(resolvePhonePortraitAppHeaderMetaTextSizeSp());
+                screenMeta.setIncludeFontPadding(false);
+            }
         }
         if (titleView != null) {
             titleView.setMaxLines(Integer.MAX_VALUE);
@@ -6964,8 +6998,23 @@ public final class DetailActivity extends AppCompatActivity {
         boolean compactFollowUp = compactLandscapePhone || compactPortraitPhone || compactTabletPortrait || showUtilityRail();
         boolean largeFont = isLargeFontScale();
         boolean emergencySurface = isCurrentEmergencySurfaceEligible();
+        boolean showCompactContextTitle = shouldShowCompactFollowUpContextTitle(
+            compactLandscapePhone,
+            compactPortraitPhone,
+            compactTabletPortrait,
+            showUtilityRail(),
+            emergencySurface
+        );
         if (followUpTitleText != null) {
-            followUpTitleText.setVisibility(compactFollowUp && !emergencySurface ? View.GONE : View.VISIBLE);
+            followUpTitleText.setVisibility((compactFollowUp && !emergencySurface && !showCompactContextTitle)
+                ? View.GONE
+                : View.VISIBLE);
+            if (showCompactContextTitle) {
+                followUpTitleText.setTextSize(10.5f);
+                followUpTitleText.setTypeface(Typeface.MONOSPACE, Typeface.BOLD);
+                followUpTitleText.setLetterSpacing(0.08f);
+                followUpTitleText.setTextColor(getColor(R.color.senku_text_muted_light));
+            }
         }
         if (followUpSubtitleText != null) {
             followUpSubtitleText.setVisibility(emergencySurface ? View.GONE : (compactFollowUp ? View.GONE : View.VISIBLE));
@@ -7025,6 +7074,40 @@ public final class DetailActivity extends AppCompatActivity {
             return 6;
         }
         return compactFollowUp ? 8 : 14;
+    }
+
+    static boolean shouldShowCompactFollowUpContextTitle(
+        boolean landscapePhone,
+        boolean portraitPhone,
+        boolean tabletPortrait,
+        boolean utilityRail,
+        boolean emergencySurface
+    ) {
+        return emergencySurface || (portraitPhone && !landscapePhone && !tabletPortrait && !utilityRail);
+    }
+
+    static float resolvePhonePortraitAppHeaderTitleTextSizeSp() {
+        return 12.5f;
+    }
+
+    static float resolvePhonePortraitAppHeaderMetaTextSizeSp() {
+        return 9.5f;
+    }
+
+    static float resolvePhonePortraitQuestionMetaLabelTextSizeSp() {
+        return 11.5f;
+    }
+
+    static float resolvePhonePortraitQuestionTitleTextSizeSp() {
+        return 16.0f;
+    }
+
+    static float resolvePhonePortraitQuestionMetaTextSizeSp() {
+        return 10.5f;
+    }
+
+    static float resolvePhonePortraitAnswerBodyTextSizeSp() {
+        return 15.0f;
     }
 
     private void updateTopBarActions() {
@@ -8693,6 +8776,7 @@ public final class DetailActivity extends AppCompatActivity {
             questionBubble.setBackgroundResource(R.drawable.bg_detail_question_shell);
             questionBubble.setPadding(questionPadding, questionPadding, questionPadding, questionPadding);
         }
+        setTopMargin(questionBubble, dp(isCompactPortraitPhoneLayout() ? 8 : 0));
         setParentTopMargin(answerBubble, dp(8));
         setTopMargin(rev03MetaStripHost, dp(8));
         if (headerLabel != null) {
@@ -8702,18 +8786,25 @@ public final class DetailActivity extends AppCompatActivity {
                 headerLabel.setTextColor(getColor(R.color.senku_rev03_accent));
                 headerLabel.setTypeface(Typeface.MONOSPACE, Typeface.BOLD);
                 headerLabel.setLetterSpacing(0.12f);
-                headerLabel.setTextSize(11f);
+                headerLabel.setTextSize(resolvePhonePortraitQuestionMetaLabelTextSizeSp());
                 headerLabel.setGravity(Gravity.START);
+                headerLabel.setIncludeFontPadding(true);
+                headerLabel.setMinHeight(dp(18));
+                headerLabel.setPadding(0, dp(2), 0, dp(2));
             } else {
                 headerLabel.setTextColor(getColor(R.color.senku_rev03_accent));
                 headerLabel.setTypeface(Typeface.DEFAULT_BOLD);
                 headerLabel.setLetterSpacing(0f);
+                headerLabel.setMinHeight(0);
+                headerLabel.setPadding(0, 0, 0, 0);
             }
         }
         if (titleView != null) {
             titleView.setTextColor(getColor(R.color.senku_text_light));
             titleView.setTypeface(Typeface.DEFAULT_BOLD);
-            titleView.setTextSize(isCompactPortraitPhoneLayout() && answerMode ? 18f : 18f);
+            titleView.setTextSize(isCompactPortraitPhoneLayout() && answerMode
+                ? resolvePhonePortraitQuestionTitleTextSizeSp()
+                : 18f);
             titleView.setGravity(Gravity.START);
             titleView.setTextAlignment(View.TEXT_ALIGNMENT_VIEW_START);
         }
@@ -8724,7 +8815,7 @@ public final class DetailActivity extends AppCompatActivity {
             if (isCompactPortraitPhoneLayout() && answerMode) {
                 subtitleView.setText(buildPhonePortraitAnswerQuestionMeta());
                 subtitleView.setVisibility(View.VISIBLE);
-                subtitleView.setTextSize(12f);
+                subtitleView.setTextSize(resolvePhonePortraitQuestionMetaTextSizeSp());
                 subtitleView.setGravity(Gravity.START);
                 subtitleView.setTextAlignment(View.TEXT_ALIGNMENT_VIEW_START);
             }

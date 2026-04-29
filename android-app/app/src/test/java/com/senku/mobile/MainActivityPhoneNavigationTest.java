@@ -41,6 +41,13 @@ public final class MainActivityPhoneNavigationTest {
     }
 
     @Test
+    public void runtimeBottomTabOnlyInstallsWhereThereIsNoPostureNavRail() {
+        assertTrue(MainActivity.shouldInstallRuntimePhoneBottomTabBar(true, false));
+        assertFalse(MainActivity.shouldInstallRuntimePhoneBottomTabBar(true, true));
+        assertFalse(MainActivity.shouldInstallRuntimePhoneBottomTabBar(false, false));
+    }
+
+    @Test
     public void everyVisiblePhoneTabOwnsItsSelectionRole() {
         for (BottomTabDestination visibleTab : MainActivity.buildVisiblePhoneTabDestinations()) {
             assertEquals(

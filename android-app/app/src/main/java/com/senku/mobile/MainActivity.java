@@ -2373,7 +2373,7 @@ public final class MainActivity extends AppCompatActivity {
         installIdentityStrip();
         installCategoryShelf();
         applyManualHomeShellDensityPolish();
-        if (isPhoneFormFactor() && !isLandscapePhoneLayout()) {
+        if (shouldInstallRuntimePhoneBottomTabBar(isPhoneFormFactor(), isLandscapePhoneLayout())) {
             installPhoneBottomTabBar();
         }
         activePhoneTab = restorePhoneTab(savedInstanceState);
@@ -2612,6 +2612,10 @@ public final class MainActivity extends AppCompatActivity {
             wrapper.addView(bottomTabBarView);
         }
         contentRoot.addView(wrapper);
+    }
+
+    static boolean shouldInstallRuntimePhoneBottomTabBar(boolean phoneFormFactor, boolean landscapePhone) {
+        return phoneFormFactor && !landscapePhone;
     }
 
     private BottomTabDestination restorePhoneTab(Bundle savedInstanceState) {

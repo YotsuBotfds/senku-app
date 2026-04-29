@@ -44,6 +44,8 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
     private static final int MAX_HIGHLIGHT_TERMS = 4;
     private static final int DEFAULT_MAX_DISPLAYED_ITEMS = 4;
     private static final int SCORE_TICK_TRACK_WIDTH_DP = 22;
+    private static final float COMPACT_ROW_TITLE_TEXT_SIZE_SP = 13.5f;
+    private static final float COMPACT_ROW_SNIPPET_TEXT_SIZE_SP = 11.25f;
 
     public static final class LinkedGuidePreview {
         public final String guideId;
@@ -276,9 +278,9 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
         TextView title = new TextView(context);
         title.setId(R.id.result_title);
         title.setTextColor(ContextCompat.getColor(context, R.color.senku_text_light));
-        title.setTypeface(Typeface.DEFAULT, Typeface.BOLD);
-        title.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14);
-        title.setLineSpacing(0, 1.03f);
+        title.setTypeface(Typeface.DEFAULT, Typeface.NORMAL);
+        title.setTextSize(TypedValue.COMPLEX_UNIT_SP, COMPACT_ROW_TITLE_TEXT_SIZE_SP);
+        title.setLineSpacing(0, 1.04f);
         LinearLayout.LayoutParams titleParams = new LinearLayout.LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT,
             ViewGroup.LayoutParams.WRAP_CONTENT
@@ -301,8 +303,8 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
         TextView snippet = new TextView(context);
         snippet.setId(R.id.result_snippet);
         snippet.setTextColor(ContextCompat.getColor(context, R.color.senku_rev03_ink_1));
-        snippet.setTextSize(TypedValue.COMPLEX_UNIT_SP, 11.5f);
-        snippet.setLineSpacing(0, 1.10f);
+        snippet.setTextSize(TypedValue.COMPLEX_UNIT_SP, COMPACT_ROW_SNIPPET_TEXT_SIZE_SP);
+        snippet.setLineSpacing(0, 1.08f);
         LinearLayout.LayoutParams snippetParams = new LinearLayout.LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT,
             ViewGroup.LayoutParams.WRAP_CONTENT
@@ -401,6 +403,14 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
 
     static int defaultMaxDisplayedItemsForTest() {
         return DEFAULT_MAX_DISPLAYED_ITEMS;
+    }
+
+    static float compactRowTitleTextSizeSpForTest() {
+        return COMPACT_ROW_TITLE_TEXT_SIZE_SP;
+    }
+
+    static float compactRowSnippetTextSizeSpForTest() {
+        return COMPACT_ROW_SNIPPET_TEXT_SIZE_SP;
     }
 
     private static int boundedItemCount(int resultCount, int maxDisplayedItems) {

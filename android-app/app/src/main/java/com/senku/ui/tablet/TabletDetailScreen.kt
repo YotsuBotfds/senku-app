@@ -305,7 +305,8 @@ internal fun tabletThreadRailWidthDp(
     when {
         guideMode && isLandscape -> 316
         guideMode -> 330
-        else -> tabletReadingLayoutPolicy(isLandscape).threadRailWidthDp
+        threadMode -> tabletReadingLayoutPolicy(isLandscape).threadRailWidthDp
+        else -> 0
     }
 
 internal fun tabletShouldShowThreadRail(
@@ -313,6 +314,9 @@ internal fun tabletShouldShowThreadRail(
     guideMode: Boolean,
     threadMode: Boolean = false,
 ): Boolean = tabletThreadRailWidthDp(isLandscape, guideMode, threadMode) > 0
+
+internal fun tabletThreadRailShouldShowSourceRows(detailMode: TabletDetailMode): Boolean =
+    detailMode != TabletDetailMode.Thread
 
 internal fun tabletThreadFlowMaxWidthDp(isLandscape: Boolean): Int =
     if (isLandscape) 700 else 660
@@ -862,6 +866,7 @@ private fun TabletDetailBodyRow(
                     sources = state.resolvedThreadRailSources(),
                     guideMode = false,
                     guideSectionCount = state.resolvedGuideSectionCount(),
+                    showSourceRows = tabletThreadRailShouldShowSourceRows(state.detailMode),
                     pinVisible = state.pinVisible,
                     pinActive = state.pinActive,
                     onBackClick = onBackClick,

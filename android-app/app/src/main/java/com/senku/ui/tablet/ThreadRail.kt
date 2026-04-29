@@ -280,6 +280,7 @@ fun ThreadRail(
     sources: List<SourceState>,
     guideMode: Boolean,
     guideSectionCount: Int = turns.size,
+    showSourceRows: Boolean = true,
     pinVisible: Boolean,
     pinActive: Boolean,
     onBackClick: () -> Unit,
@@ -330,20 +331,22 @@ fun ThreadRail(
 
         val visibleSources = threadRailVisibleSources(sources, guideMode)
 
-        RailSection(
-            label = if (guideMode) guideLabels.referenceLabel else "SOURCES",
-            count = visibleSources.size,
-            showHeader = threadRailShouldShowSourceSectionHeader(guideMode),
-        ) {
-            if (visibleSources.isEmpty()) {
-                PlaceholderText(if (guideMode) guideLabels.emptyReferenceLabel else "No sources yet.")
-            } else {
-                visibleSources.forEach { source ->
-                    SourcePill(
-                        source = source,
-                        guideMode = guideMode,
-                        onClick = { onSourceClick(source.key) },
-                    )
+        if (showSourceRows) {
+            RailSection(
+                label = if (guideMode) guideLabels.referenceLabel else "SOURCES",
+                count = visibleSources.size,
+                showHeader = threadRailShouldShowSourceSectionHeader(guideMode),
+            ) {
+                if (visibleSources.isEmpty()) {
+                    PlaceholderText(if (guideMode) guideLabels.emptyReferenceLabel else "No sources yet.")
+                } else {
+                    visibleSources.forEach { source ->
+                        SourcePill(
+                            source = source,
+                            guideMode = guideMode,
+                            onClick = { onSourceClick(source.key) },
+                        )
+                    }
                 }
             }
         }

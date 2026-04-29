@@ -53,6 +53,15 @@ public final class DetailFollowupLandscapeComposerTest {
     }
 
     @Test
+    public void phonePortraitFollowUpKeepsCompactContextTitleVisible() {
+        assertTrue(DetailActivity.shouldShowCompactFollowUpContextTitle(false, true, false, false, false));
+        assertTrue(DetailActivity.shouldShowCompactFollowUpContextTitle(false, false, false, false, true));
+        assertFalse(DetailActivity.shouldShowCompactFollowUpContextTitle(true, true, false, false, false));
+        assertFalse(DetailActivity.shouldShowCompactFollowUpContextTitle(false, true, true, false, false));
+        assertFalse(DetailActivity.shouldShowCompactFollowUpContextTitle(false, true, false, true, false));
+    }
+
+    @Test
     public void landscapeComposerDoesNotStealFocusFromInitialRenderLegacyFocus() {
         assertFalse(DetailActivity.shouldRequestLandscapeDockedComposerFocus(true, true, true, false, false));
     }
@@ -193,6 +202,10 @@ public final class DetailFollowupLandscapeComposerTest {
             "SOURCES \u2022 3",
             DetailActivity.buildCompactPhoneSourcesTriggerTitle("Source guides", 3, true)
         );
+        assertEquals(10, DetailActivity.resolvePhonePortraitSourceCardHorizontalPaddingDp());
+        assertEquals(5, DetailActivity.resolvePhonePortraitSourceCardVerticalPaddingDp());
+        assertEquals(5, DetailActivity.resolvePhonePortraitSourceCardTopMarginDp());
+        assertEquals(10.0f, DetailActivity.resolvePhonePortraitSourceCardTextSizeSp(), 0.0f);
     }
 
     @Test
@@ -278,6 +291,11 @@ public final class DetailFollowupLandscapeComposerTest {
         assertTrue(DetailActivity.shouldUsePhoneAnswerHeaderTitle(true, true));
         assertFalse(DetailActivity.shouldUsePhoneAnswerHeaderTitle(true, false));
         assertFalse(DetailActivity.shouldUsePhoneAnswerHeaderTitle(false, true));
+        assertEquals(12.5f, DetailActivity.resolvePhonePortraitAppHeaderTitleTextSizeSp(), 0.0f);
+        assertEquals(9.5f, DetailActivity.resolvePhonePortraitAppHeaderMetaTextSizeSp(), 0.0f);
+        assertEquals(16.0f, DetailActivity.resolvePhonePortraitQuestionTitleTextSizeSp(), 0.0f);
+        assertEquals(10.5f, DetailActivity.resolvePhonePortraitQuestionMetaTextSizeSp(), 0.0f);
+        assertEquals(15.0f, DetailActivity.resolvePhonePortraitAnswerBodyTextSizeSp(), 0.0f);
     }
 
     @Test

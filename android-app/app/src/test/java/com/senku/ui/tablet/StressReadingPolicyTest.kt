@@ -49,7 +49,7 @@ class StressReadingPolicyTest {
 
     @Test
     fun tabletGuideThreadRailUsesSectionIndexWidthWithoutChangingAnswerRails() {
-        assertEquals(328, tabletThreadRailWidthDp(isLandscape = true, guideMode = false))
+        assertEquals(0, tabletThreadRailWidthDp(isLandscape = true, guideMode = false))
         assertEquals(0, tabletThreadRailWidthDp(isLandscape = false, guideMode = false))
         assertEquals(328, tabletThreadRailWidthDp(isLandscape = true, guideMode = false, threadMode = true))
         assertEquals(0, tabletThreadRailWidthDp(isLandscape = false, guideMode = false, threadMode = true))
@@ -59,7 +59,7 @@ class StressReadingPolicyTest {
 
     @Test
     fun tabletThreadRailShellHidesOnlyNonGuidePortraitRail() {
-        assertTrue(tabletShouldShowThreadRail(isLandscape = true, guideMode = false))
+        assertFalse(tabletShouldShowThreadRail(isLandscape = true, guideMode = false))
         assertTrue(tabletShouldShowThreadRail(isLandscape = true, guideMode = true))
         assertTrue(tabletShouldShowThreadRail(isLandscape = true, guideMode = false, threadMode = true))
         assertFalse(tabletShouldShowThreadRail(isLandscape = false, guideMode = false))
@@ -545,6 +545,9 @@ class StressReadingPolicyTest {
 
     @Test
     fun tabletThreadChromeSuppressesAnswerEvidenceResidue() {
+        assertFalse(tabletThreadRailShouldShowSourceRows(TabletDetailMode.Thread))
+        assertTrue(tabletThreadRailShouldShowSourceRows(TabletDetailMode.Answer))
+        assertTrue(tabletThreadRailShouldShowSourceRows(TabletDetailMode.Guide))
         assertFalse(tabletTitleBarShouldShowSupportRows(TabletDetailMode.Thread))
         assertFalse(tabletTitleBarShouldShowSupportRows(TabletDetailMode.Answer))
         assertTrue(tabletTitleBarShouldShowSupportRows(TabletDetailMode.Guide))

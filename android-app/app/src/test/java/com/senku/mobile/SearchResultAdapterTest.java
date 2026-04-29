@@ -92,6 +92,12 @@ public final class SearchResultAdapterTest {
     }
 
     @Test
+    public void compactRowsUseCalmerMockTypographyScale() {
+        assertEquals(13.5f, SearchResultAdapter.compactRowTitleTextSizeSpForTest(), 0.001f);
+        assertEquals(11.25f, SearchResultAdapter.compactRowSnippetTextSizeSpForTest(), 0.001f);
+    }
+
+    @Test
     public void tabletRowsFlattenMetadataIntoPreviewRailTokens() {
         assertEquals(
             "SHELTER \u00b7 TOPIC \u00b7 WINDOW IMMEDIATE",

@@ -1702,6 +1702,43 @@ This read-only xhigh planner pass should guide the remaining slices:
 7. Run the closure pack. Full four-role state pack should produce the complete
    22 canonical PNGs with homogeneous APK/model and zero rotation mismatches.
 
+## Wave65 Checkpoint
+
+Committed scope pending at the time of this update:
+
+- Phone answer/detail density: restored the answer eyebrow/question/meta
+  scaffold after the Wave64 reviewer flagged its loss, tightened body/header
+  scale, compressed source-card text/padding, and kept the compact composer
+  context title visible.
+- Phone answer scaffold guard: fixed the answer eyebrow text clipping by giving
+  the compact label enough rendered height and a slightly larger phone-only
+  meta-label size.
+- Tablet rail/chip contract: answer mode no longer owns the left transcript
+  rail; thread mode keeps conversation ownership while suppressing duplicate
+  source rows there; guide mode keeps section/cross-reference ownership.
+- Home/search polish: portrait phones keep bottom tabs while landscape keeps
+  the side rail as the single nav treatment; compact search row typography is
+  calmer and lighter.
+
+Fresh proof:
+
+- Full baseline after Wave64:
+  `artifacts/ui_state_pack/wave65_full_baseline_after_wave64/20260429_061800`
+- Integrated worker full pack:
+  `artifacts/ui_state_pack/wave65_integrated_workers/20260429_062401`
+- Phone scaffold guard:
+  `artifacts/ui_state_pack/wave65_phone_header_label_guard2/20260429_065121`
+- Final integrated proof:
+  `artifacts/ui_state_pack/wave65_integrated_final/20260429_065705`
+- Summary: final integrated full pack `pass`, states `22/22`, failures `0`,
+  ANRs `0`, rotation mismatch `0`; phone guard states `6/6`.
+- Validation: combined focused JVM suite passed across detail composer/source/
+  related/thread/action formatters, home chrome/navigation, search adapter/card
+  behavior, and tablet rail/stress/evidence policies.
+- Visual note: phone answer scaffold and related rows are now visible and closer
+  to target density. Remaining deltas are primarily global phone frame/status
+  treatment, guide/emergency density, and exact typography/chrome alignment.
+
 ## Parallelization Rules
 
 - Start every worker with `git status --short`, `git log --oneline -n 8
