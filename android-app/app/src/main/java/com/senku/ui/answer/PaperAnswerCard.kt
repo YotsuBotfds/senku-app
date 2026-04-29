@@ -294,15 +294,6 @@ fun PaperAnswerCard(
                                     ),
                                     color = colors.accent,
                                 )
-                                Text(
-                                    text = ">",
-                                    style = typography.monoCaps.copy(
-                                        fontSize = PaperAnswerCardProofCtaSize,
-                                        lineHeight = PaperAnswerCardProofCtaLineHeight,
-                                        fontWeight = FontWeight.Normal,
-                                    ),
-                                    color = colors.accent,
-                                )
                             }
                         }
                     }

@@ -1360,6 +1360,52 @@ Next slice candidates:
 - Answer hierarchy, guide reader, emergency, and search residual polish remain
   open per the xhigh phase map.
 
+## Wave57 Checkpoint
+
+Committed scope pending at the time of this update:
+
+- Phone/XML thread: changed the landscape follow-up thread first viewport to
+  render the latest exchange in the main flow, preserving the `2 turns` header,
+  contextual guide chip, confidence dot, and `GD-220 ANCHOR` footer without
+  clipping behind the fixed composer.
+- Home: tightened phone search sizing, reduced boxed/rounded chrome on the
+  status/search/category/recent surfaces, and kept the left/bottom nav icons
+  visible across phone/tablet layouts.
+- Search: increased result hierarchy legibility while keeping tablet
+  filter/list/preview structure stable.
+- Answer: removed the trailing proof CTA arrow while reverting the more
+  aggressive article-chrome suppression that had regressed the phone answer
+  first viewport.
+
+Fresh proof:
+
+- Pack:
+  `artifacts/ui_state_pack/wave57_home_thread_search_answer_final/20260428_230203`
+- Canonical mocks:
+  `artifacts/ui_state_pack/wave57_home_thread_search_answer_final/20260428_230203/mocks`
+- Zip:
+  `artifacts/ui_state_pack/wave57_home_thread_search_answer_final/20260428_230203_mocks.zip`
+- Summary: status `pass`, states `22/22`, failures `0`, ANRs `0`, mock pack
+  `pass`, homogeneous matrix `true`, rotation mismatch `0`.
+- APK SHA:
+  `79f77f1930019e0d43992fa6a9d74a7509dd276aa58a6de4b4cd328393e68eda`
+- Validation: focused home/search/answer/thread unit tests passed; focused
+  phone-landscape thread pack
+  `artifacts/ui_state_pack/wave57_thread_phone_latest_turn_c/20260428_225800`
+  passed `5/5`.
+- Visual note: phone-landscape thread now opens at Q2/A2 instead of clipping
+  A2 under the composer. It still does not have the optional target source rail;
+  next high-value visual risk is tablet answer safe-area/composer crowding.
+
+Next slice candidates:
+
+- Tablet answer safe-area/composer reserve in `TabletDetailScreen.kt`, with a
+  focused tablet answer pack plus phone-landscape thread regression check.
+- Guide reader paper/header/required-reading parity as an isolated formatter
+  and guide-mode layout slice.
+- Emergency/search residual polish after guide work, staying clear of shared
+  answer/tablet routing unless necessary.
+
 ## Parallelization Rules
 
 - Start every worker with `git status --short`, `git log --oneline -n 8

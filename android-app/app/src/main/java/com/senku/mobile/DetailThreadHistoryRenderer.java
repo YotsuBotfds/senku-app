@@ -25,6 +25,7 @@ final class DetailThreadHistoryRenderer {
     private static final Pattern SIMPLE_GUIDE_ID_PATTERN = Pattern.compile("GD-\\d{3}");
     private static final int QUESTION_MAX_LINES = 2;
     private static final int ANSWER_MAX_LINES = 4;
+    private static final int PHONE_LANDSCAPE_ANSWER_MAX_LINES = 1;
     private static final int RAIL_ANSWER_MAX_LINES = 1;
     private static final int GUIDE_CHIP_LIMIT = 2;
     private static final int THREAD_ANSWER_CHAR_LIMIT = 240;
@@ -35,12 +36,24 @@ final class DetailThreadHistoryRenderer {
         final boolean wideLayout;
         final boolean compactPortraitSections;
         final int bubbleWidthPx;
+        final boolean phoneLandscapeNoRail;
 
         State(boolean utilityRail, boolean wideLayout, boolean compactPortraitSections, int bubbleWidthPx) {
+            this(utilityRail, wideLayout, compactPortraitSections, bubbleWidthPx, false);
+        }
+
+        State(
+            boolean utilityRail,
+            boolean wideLayout,
+            boolean compactPortraitSections,
+            int bubbleWidthPx,
+            boolean phoneLandscapeNoRail
+        ) {
             this.utilityRail = utilityRail;
             this.wideLayout = wideLayout;
             this.compactPortraitSections = compactPortraitSections;
             this.bubbleWidthPx = bubbleWidthPx;
+            this.phoneLandscapeNoRail = phoneLandscapeNoRail;
         }
     }
 
@@ -75,11 +88,11 @@ final class DetailThreadHistoryRenderer {
             return;
         }
         container.removeAllViews();
-        if (earlierTurns == null || earlierTurns.isEmpty()) {
+        List<SessionMemory.TurnSnapshot> transcriptTurns = transcriptTurns(earlierTurns, currentTurn);
+        if (transcriptTurns.isEmpty()) {
             container.setVisibility(View.GONE);
             return;
         }
-        List<SessionMemory.TurnSnapshot> transcriptTurns = transcriptTurns(earlierTurns, currentTurn);
         List<SessionMemory.TurnSnapshot> visibleTurns = trimPriorTurnsForInlineHistory(transcriptTurns, state);
         container.setVisibility(View.VISIBLE);
         String previousAnchorGuideId = anchorGuideIdBeforeVisibleTurns(transcriptTurns, visibleTurns);
@@ -160,6 +173,9 @@ final class DetailThreadHistoryRenderer {
         if (state == null) {
             return 2;
         }
+        if (isPhoneLandscapeNoRailTranscript(state, true)) {
+            return 1;
+        }
         if (state.compactPortraitSections) {
             return 2;
         }
@@ -220,7 +236,7 @@ final class DetailThreadHistoryRenderer {
         }
         LinearLayout turnRow = buildTurnRow(container, state, inlineTranscriptBubble);
         turnRow.addView(buildMetaLine(buildTurnLabel(turnNumber, true, turn, previousAnchorGuideId), true));
-        turnRow.addView(buildBodyLine(turn.question, true, inlineTranscriptBubble, state.utilityRail && !inlineTranscriptBubble));
+        turnRow.addView(buildBodyLine(turn.question, true, inlineTranscriptBubble, state.utilityRail && !inlineTranscriptBubble, state));
 
         String answerSummary = safe(turn.answerSummary).trim();
         if (answerSummary.isEmpty()) {
@@ -235,11 +251,12 @@ final class DetailThreadHistoryRenderer {
             compactThreadAnswer(answerSummary, state.utilityRail, answerFormatter),
             false,
             inlineTranscriptBubble,
-            state.utilityRail && !inlineTranscriptBubble
+            state.utilityRail && !inlineTranscriptBubble,
+            state
         ));
 
         List<String> guideLabels = guideChipLabelsForTurn(turn);
-        if (!guideLabels.isEmpty() && shouldShowGuideChips(state, inlineTranscriptBubble)) {
+        if (!guideLabels.isEmpty() && shouldShowGuideChips(state, inlineTranscriptBubble, container)) {
             turnRow.addView(buildGuideChipRow(guideLabels));
         }
         container.addView(turnRow);
@@ -253,11 +270,12 @@ final class DetailThreadHistoryRenderer {
         LinearLayout row = new LinearLayout(context);
         row.setOrientation(LinearLayout.VERTICAL);
         boolean railRow = state.utilityRail && !inlineTranscriptBubble;
-        int padH = railRow ? dp(6) : (state.wideLayout ? dp(8) : dp(10));
+        boolean densePhoneLandscape = isPhoneLandscapeNoRailTranscript(state, inlineTranscriptBubble);
+        int padH = railRow ? dp(6) : (state.wideLayout ? dp(8) : dp(densePhoneLandscape ? 6 : 10));
         int padTop = container != null && container.getChildCount() > 0
-            ? (railRow ? dp(6) : (state.wideLayout ? dp(8) : dp(10)))
-            : dp(5);
-        int padBottom = railRow ? dp(6) : (state.wideLayout ? dp(9) : dp(12));
+            ? (railRow ? dp(6) : (state.wideLayout ? dp(8) : dp(densePhoneLandscape ? 3 : 10)))
+            : dp(densePhoneLandscape ? 2 : 5);
+        int padBottom = railRow ? dp(6) : (state.wideLayout ? dp(9) : dp(densePhoneLandscape ? 3 : 12));
         row.setPadding(padH, padTop, padH, padBottom);
 
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
@@ -269,7 +287,7 @@ final class DetailThreadHistoryRenderer {
         }
         row.setLayoutParams(params);
         if (container != null && container.getChildCount() > 0) {
-            row.addView(buildDivider());
+            row.addView(buildDivider(densePhoneLandscape));
         }
         return row;
     }
@@ -287,20 +305,33 @@ final class DetailThreadHistoryRenderer {
         return label;
     }
 
-    private TextView buildBodyLine(String text, boolean userTurn, boolean inlineTranscriptBubble, boolean railBubble) {
+    private TextView buildBodyLine(
+        String text,
+        boolean userTurn,
+        boolean inlineTranscriptBubble,
+        boolean railBubble,
+        State state
+    ) {
         TextView body = new TextView(context);
         body.setText(text);
         body.setTextAppearance(context, android.R.style.TextAppearance_Medium);
         body.setTextColor(context.getColor(userTurn ? R.color.senku_rev03_ink_0 : R.color.senku_text_light));
         body.setTypeface(userTurn ? Typeface.DEFAULT_BOLD : Typeface.SERIF, userTurn ? Typeface.BOLD : Typeface.NORMAL);
-        body.setTextSize(userTurn ? (railBubble ? 13 : 15) : (inlineTranscriptBubble ? 15 : 13));
-        body.setLineSpacing(0f, userTurn ? 1.02f : (railBubble ? 1.02f : 1.08f));
-        body.setPadding(0, 0, 0, userTurn ? dp(8) : dp(4));
+        body.setTextSize(bodyTextSizeSp(userTurn, inlineTranscriptBubble, railBubble, state));
+        body.setLineSpacing(0f, bodyLineSpacing(userTurn, inlineTranscriptBubble, railBubble, state));
+        body.setPadding(
+            0,
+            0,
+            0,
+            userTurn
+                ? dp(questionBottomPaddingDp(inlineTranscriptBubble, railBubble, state))
+                : dp(answerBottomPaddingDp(inlineTranscriptBubble, railBubble, state))
+        );
         if (userTurn) {
-            body.setMaxLines(QUESTION_MAX_LINES);
+            body.setMaxLines(questionMaxLines(state, inlineTranscriptBubble, railBubble));
             body.setEllipsize(TextUtils.TruncateAt.END);
         } else {
-            body.setMaxLines(railBubble ? RAIL_ANSWER_MAX_LINES : ANSWER_MAX_LINES);
+            body.setMaxLines(answerMaxLines(state, inlineTranscriptBubble));
             body.setEllipsize(TextUtils.TruncateAt.END);
         }
         return body;
@@ -375,18 +406,24 @@ final class DetailThreadHistoryRenderer {
         }
         TextView label = buildMetaLine(labelText, true);
         label.setTextColor(context.getColor(R.color.senku_rev03_ink_2));
-        label.setPadding(dp(10), dp(4), dp(10), dp(2));
+        boolean densePhoneLandscape = isPhoneLandscapeNoRailTranscript(state, true);
+        label.setPadding(
+            dp(densePhoneLandscape ? 8 : 10),
+            dp(densePhoneLandscape ? 2 : 4),
+            dp(densePhoneLandscape ? 8 : 10),
+            dp(densePhoneLandscape ? 0 : 2)
+        );
         container.addView(label);
     }
 
-    private View buildDivider() {
+    private View buildDivider(boolean densePhoneLandscape) {
         View divider = new View(context);
         divider.setBackgroundColor(context.getColor(R.color.senku_rev03_hairline));
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT,
             Math.max(1, dp(1))
         );
-        params.setMargins(0, 0, 0, dp(8));
+        params.setMargins(0, 0, 0, dp(densePhoneLandscape ? 3 : 8));
         divider.setLayoutParams(params);
         return divider;
     }
@@ -579,8 +616,93 @@ final class DetailThreadHistoryRenderer {
         return guideChipIdsForTurn(turn);
     }
 
-    static boolean shouldShowGuideChips(State state, boolean inlineTranscriptBubble) {
+    static boolean shouldShowGuideChips(State state, boolean inlineTranscriptBubble, LinearLayout container) {
+        return shouldShowGuideChips(
+            state,
+            inlineTranscriptBubble,
+            container == null ? 0 : container.getChildCount()
+        );
+    }
+
+    static boolean shouldShowGuideChips(State state, boolean inlineTranscriptBubble, int existingTurnCount) {
+        if (isPhoneLandscapeNoRailTranscript(state, inlineTranscriptBubble)) {
+            return true;
+        }
         return state == null || !state.utilityRail;
+    }
+
+    static boolean isPhoneLandscapeNoRailTranscript(State state, boolean inlineTranscriptBubble) {
+        return inlineTranscriptBubble
+            && state != null
+            && !state.utilityRail
+            && !state.compactPortraitSections
+            && state.phoneLandscapeNoRail;
+    }
+
+    static int answerMaxLines(State state, boolean inlineTranscriptBubble) {
+        if (state != null && state.utilityRail && !inlineTranscriptBubble) {
+            return RAIL_ANSWER_MAX_LINES;
+        }
+        if (isPhoneLandscapeNoRailTranscript(state, inlineTranscriptBubble)) {
+            return PHONE_LANDSCAPE_ANSWER_MAX_LINES;
+        }
+        return ANSWER_MAX_LINES;
+    }
+
+    static int questionMaxLines(State state, boolean inlineTranscriptBubble, boolean railBubble) {
+        if (isPhoneLandscapeNoRailTranscript(state, inlineTranscriptBubble)) {
+            return 1;
+        }
+        return QUESTION_MAX_LINES;
+    }
+
+    static int bodyTextSizeSp(
+        boolean userTurn,
+        boolean inlineTranscriptBubble,
+        boolean railBubble,
+        State state
+    ) {
+        if (railBubble) {
+            return 13;
+        }
+        if (isPhoneLandscapeNoRailTranscript(state, inlineTranscriptBubble)) {
+            return 13;
+        }
+        return userTurn || inlineTranscriptBubble ? 15 : 13;
+    }
+
+    static float bodyLineSpacing(
+        boolean userTurn,
+        boolean inlineTranscriptBubble,
+        boolean railBubble,
+        State state
+    ) {
+        if (userTurn || railBubble || isPhoneLandscapeNoRailTranscript(state, inlineTranscriptBubble)) {
+            return 1.02f;
+        }
+        return 1.08f;
+    }
+
+    static int questionBottomPaddingDp(
+        boolean inlineTranscriptBubble,
+        boolean railBubble,
+        State state
+    ) {
+        if (isPhoneLandscapeNoRailTranscript(state, inlineTranscriptBubble)) {
+            return 3;
+        }
+        return 8;
+    }
+
+    static int answerBottomPaddingDp(
+        boolean inlineTranscriptBubble,
+        boolean railBubble,
+        State state
+    ) {
+        if (isPhoneLandscapeNoRailTranscript(state, inlineTranscriptBubble)) {
+            return 1;
+        }
+        return 4;
     }
 
     private static List<String> deterministicThreadGuideOrder(List<String> guideIds) {

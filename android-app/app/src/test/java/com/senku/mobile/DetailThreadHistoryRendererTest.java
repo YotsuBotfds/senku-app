@@ -266,6 +266,58 @@ public final class DetailThreadHistoryRendererTest {
     }
 
     @Test
+    public void phoneLandscapeNoRailTranscriptUsesDenseThreadRhythm() {
+        DetailThreadHistoryRenderer.State phoneLandscapeNoRail = new DetailThreadHistoryRenderer.State(
+            false,
+            true,
+            false,
+            360,
+            true
+        );
+
+        assertEquals(true, DetailThreadHistoryRenderer.isPhoneLandscapeNoRailTranscript(phoneLandscapeNoRail, true));
+        assertEquals(1, DetailThreadHistoryRenderer.questionMaxLines(phoneLandscapeNoRail, true, false));
+        assertEquals(1, DetailThreadHistoryRenderer.answerMaxLines(phoneLandscapeNoRail, true));
+        assertEquals(1, DetailThreadHistoryRenderer.visiblePriorTurnLimit(phoneLandscapeNoRail));
+        assertEquals(13, DetailThreadHistoryRenderer.bodyTextSizeSp(false, true, false, phoneLandscapeNoRail));
+        assertEquals(3, DetailThreadHistoryRenderer.questionBottomPaddingDp(true, false, phoneLandscapeNoRail));
+        assertEquals(1, DetailThreadHistoryRenderer.answerBottomPaddingDp(true, false, phoneLandscapeNoRail));
+    }
+
+    @Test
+    public void portraitWideAndRailKeepExistingThreadDensity() {
+        DetailThreadHistoryRenderer.State compactPortrait = new DetailThreadHistoryRenderer.State(
+            false,
+            false,
+            true,
+            320
+        );
+        DetailThreadHistoryRenderer.State wide = new DetailThreadHistoryRenderer.State(
+            false,
+            true,
+            false,
+            720
+        );
+        DetailThreadHistoryRenderer.State utilityRail = new DetailThreadHistoryRenderer.State(
+            true,
+            false,
+            false,
+            360
+        );
+
+        assertEquals(false, DetailThreadHistoryRenderer.isPhoneLandscapeNoRailTranscript(compactPortrait, true));
+        assertEquals(false, DetailThreadHistoryRenderer.isPhoneLandscapeNoRailTranscript(wide, true));
+        assertEquals(false, DetailThreadHistoryRenderer.isPhoneLandscapeNoRailTranscript(utilityRail, false));
+        assertEquals(4, DetailThreadHistoryRenderer.answerMaxLines(compactPortrait, true));
+        assertEquals(4, DetailThreadHistoryRenderer.answerMaxLines(wide, true));
+        assertEquals(2, DetailThreadHistoryRenderer.visiblePriorTurnLimit(wide));
+        assertEquals(1, DetailThreadHistoryRenderer.answerMaxLines(utilityRail, false));
+        assertEquals(15, DetailThreadHistoryRenderer.bodyTextSizeSp(false, true, false, compactPortrait));
+        assertEquals(2, DetailThreadHistoryRenderer.questionMaxLines(utilityRail, false, true));
+        assertEquals(4, DetailThreadHistoryRenderer.answerBottomPaddingDp(false, true, utilityRail));
+    }
+
+    @Test
     public void guideChipsStayInlineAndDeduplicated() {
         SessionMemory.TurnSnapshot turn = new SessionMemory.TurnSnapshot(
             "question",
@@ -350,15 +402,25 @@ public final class DetailThreadHistoryRendererTest {
         );
         DetailThreadHistoryRenderer.State detailTranscript = new DetailThreadHistoryRenderer.State(
             false,
+            true,
+            false,
+            360,
+            true
+        );
+        DetailThreadHistoryRenderer.State normalTranscript = new DetailThreadHistoryRenderer.State(
+            false,
             false,
             false,
             360
         );
 
-        assertEquals(false, DetailThreadHistoryRenderer.shouldShowGuideChips(utilityRail, false));
-        assertEquals(false, DetailThreadHistoryRenderer.shouldShowGuideChips(utilityRail, true));
-        assertEquals(true, DetailThreadHistoryRenderer.shouldShowGuideChips(detailTranscript, false));
-        assertEquals(true, DetailThreadHistoryRenderer.shouldShowGuideChips(detailTranscript, true));
+        assertEquals(false, DetailThreadHistoryRenderer.shouldShowGuideChips(utilityRail, false, 0));
+        assertEquals(false, DetailThreadHistoryRenderer.shouldShowGuideChips(utilityRail, true, 0));
+        assertEquals(true, DetailThreadHistoryRenderer.shouldShowGuideChips(normalTranscript, false, 0));
+        assertEquals(true, DetailThreadHistoryRenderer.shouldShowGuideChips(normalTranscript, true, 0));
+        assertEquals(true, DetailThreadHistoryRenderer.shouldShowGuideChips(detailTranscript, false, 0));
+        assertEquals(true, DetailThreadHistoryRenderer.shouldShowGuideChips(detailTranscript, true, 0));
+        assertEquals(true, DetailThreadHistoryRenderer.shouldShowGuideChips(detailTranscript, true, 1));
     }
 
     @Test

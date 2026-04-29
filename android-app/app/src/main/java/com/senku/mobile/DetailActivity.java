@@ -3063,7 +3063,7 @@ public final class DetailActivity extends AppCompatActivity {
                 priorTurnsContainer,
                 earlierTurns,
                 currentTurn,
-                buildDetailThreadHistoryState(),
+                buildPhoneLandscapeThreadHistoryState(),
                 this::formatAnswerBody
             );
             resetPhoneLandscapeAnswerScrollToHeader();
@@ -5601,6 +5601,16 @@ public final class DetailActivity extends AppCompatActivity {
             wideLayoutActive(),
             useCompactPortraitSections(),
             responsiveBubbleWidthPx()
+        );
+    }
+
+    private DetailThreadHistoryRenderer.State buildPhoneLandscapeThreadHistoryState() {
+        return new DetailThreadHistoryRenderer.State(
+            showUtilityRail(),
+            wideLayoutActive(),
+            useCompactPortraitSections(),
+            responsiveBubbleWidthPx(),
+            true
         );
     }
 

@@ -11,15 +11,16 @@
     android:paddingBottom="2dp">
 
     <LinearLayout
-        android:layout_width="44dp"
+        android:layout_width="64dp"
         android:layout_height="match_parent"
         android:gravity="center_horizontal"
         android:orientation="vertical"
-        android:paddingTop="4dp">
+        android:paddingTop="12dp">
 
         <TextView
-            android:layout_width="22dp"
-            android:layout_height="22dp"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:background="@drawable/bg_manual_home_nav_shell"
             android:gravity="center"
             android:includeFontPadding="false"
             android:text="@string/app_badge_letter"
@@ -27,32 +28,98 @@
             android:textColor="@color/senku_rev03_accent"
             android:textStyle="bold" />
 
-        <ImageView
-            android:layout_width="16dp"
-            android:layout_height="16dp"
-            android:layout_marginTop="12dp"
-            android:contentDescription="@string/browse_guides_button"
-            android:padding="2dp"
-            android:src="@drawable/ic_home_library"
-            android:tint="@color/senku_rev03_accent" />
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="58dp"
+            android:layout_marginTop="18dp">
 
-        <ImageView
-            android:layout_width="16dp"
-            android:layout_height="16dp"
-            android:layout_marginTop="14dp"
-            android:contentDescription="@string/ask_button"
-            android:padding="2dp"
-            android:src="@drawable/ic_home_ask"
-            android:tint="@color/senku_rev03_ink_2" />
+            <View
+                android:layout_width="2dp"
+                android:layout_height="28dp"
+                android:layout_gravity="start|center_vertical"
+                android:background="@color/senku_rev03_accent" />
 
-        <ImageView
-            android:layout_width="16dp"
-            android:layout_height="16dp"
-            android:layout_marginTop="14dp"
-            android:contentDescription="@string/bottom_tab_pins"
-            android:padding="2dp"
-            android:src="@drawable/ic_home_saved"
-            android:tint="@color/senku_rev03_ink_2" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="22dp"
+                    android:layout_height="22dp"
+                    android:contentDescription="@string/browse_guides_button"
+                    android:padding="1dp"
+                    android:src="@drawable/ic_home_library"
+                    android:tint="@color/senku_rev03_accent" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="3dp"
+                    android:gravity="center"
+                    android:includeFontPadding="false"
+                    android:text="@string/bottom_tab_home"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:textColor="@color/senku_rev03_accent"
+                    android:textSize="10sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+        </FrameLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="54dp"
+            android:layout_marginTop="4dp"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="21dp"
+                android:layout_height="21dp"
+                android:contentDescription="@string/ask_button"
+                android:padding="1dp"
+                android:src="@drawable/ic_home_ask"
+                android:tint="@color/senku_rev03_ink_2" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
+                android:gravity="center"
+                android:includeFontPadding="false"
+                android:text="@string/bottom_tab_ask"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textColor="@color/senku_rev03_ink_2"
+                android:textSize="10sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="54dp"
+            android:layout_marginTop="4dp"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="21dp"
+                android:layout_height="21dp"
+                android:contentDescription="@string/bottom_tab_pins"
+                android:padding="1dp"
+                android:src="@drawable/ic_home_saved"
+                android:tint="@color/senku_rev03_ink_2" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
+                android:gravity="center"
+                android:includeFontPadding="false"
+                android:text="@string/bottom_tab_pins"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textColor="@color/senku_rev03_ink_2"
+                android:textSize="10sp" />
+        </LinearLayout>
     </LinearLayout>
 
     <View
@@ -75,7 +142,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:paddingBottom="6dp">
+            android:paddingBottom="8dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -156,7 +223,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="24dp"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="18dp"
                 android:background="@drawable/bg_manual_home_status"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
@@ -207,8 +274,8 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="44dp"
-                android:layout_marginTop="10dp"
+                android:layout_height="64dp"
+                android:layout_marginTop="18dp"
                 android:addStatesFromChildren="true"
                 android:background="@drawable/bg_manual_home_search"
                 android:gravity="center_vertical"
@@ -217,11 +284,11 @@
                 android:paddingEnd="12dp">
 
                 <ImageView
-                    android:layout_width="26dp"
-                    android:layout_height="26dp"
+                    android:layout_width="34dp"
+                    android:layout_height="34dp"
                     android:background="@drawable/bg_manual_home_search_icon"
                     android:contentDescription="@string/search_input_description"
-                    android:padding="6dp"
+                    android:padding="9dp"
                     android:src="@drawable/ic_search_magnifier"
                     android:tint="@color/senku_rev03_accent" />
 
@@ -245,7 +312,7 @@
                     android:padding="0dp"
                     android:textColor="@color/senku_rev03_ink_0"
                     android:textColorHint="@color/senku_rev03_ink_2"
-                    android:textSize="13sp" />
+                    android:textSize="15sp" />
             </LinearLayout>
 
             <HorizontalScrollView
