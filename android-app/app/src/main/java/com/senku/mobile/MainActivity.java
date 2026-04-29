@@ -12,6 +12,7 @@ import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.text.style.StyleSpan;
+import android.view.KeyEvent;
 import android.view.ViewGroup;
 import android.view.ViewParent;
 import android.view.inputmethod.EditorInfo;
@@ -560,8 +561,8 @@ public final class MainActivity extends AppCompatActivity {
             }
         });
         searchInput.setOnEditorActionListener((v, actionId, event) -> {
-            if (actionId == EditorInfo.IME_ACTION_SEARCH || actionId == EditorInfo.IME_ACTION_DONE) {
-                runSearch(searchInput.getText().toString().trim());
+            if (isSharedInputSubmitAction(actionId, event)) {
+                submitSharedInput(searchInput.getText().toString().trim());
                 return true;
             }
             return false;
@@ -1252,6 +1253,23 @@ public final class MainActivity extends AppCompatActivity {
             searchInput.setSelection(text.length());
         }
         showSearchKeyboard();
+    }
+
+    private void submitSharedInput(String query) {
+        if (shouldSubmitSharedInputAsAsk(activePhoneTab, askLaneActive)) {
+            runAsk(query);
+        } else {
+            runSearch(query);
+        }
+    }
+
+    private static boolean isSharedInputSubmitAction(int actionId, android.view.KeyEvent event) {
+        if (actionId == EditorInfo.IME_ACTION_SEARCH || actionId == EditorInfo.IME_ACTION_DONE) {
+            return true;
+        }
+        return event != null
+            && event.getKeyCode() == KeyEvent.KEYCODE_ENTER
+            && event.getAction() == KeyEvent.ACTION_UP;
     }
 
     private void showSearchKeyboard() {
@@ -2993,6 +3011,13 @@ public final class MainActivity extends AppCompatActivity {
     static boolean isAskPhoneFlowIntent(BottomTabDestination destination) {
         return destination == BottomTabDestination.ASK
             || destination == BottomTabDestination.THREADS;
+    }
+
+    static boolean shouldSubmitSharedInputAsAsk(
+        BottomTabDestination activePhoneTab,
+        boolean askLaneActive
+    ) {
+        return askLaneActive || activePhoneTab == BottomTabDestination.ASK;
     }
 
     static boolean isSavedPhoneFlowIntent(BottomTabDestination destination) {

@@ -26,6 +26,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
+import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 
 import androidx.appcompat.content.res.AppCompatResources;
@@ -694,6 +695,36 @@ public final class PromptHarnessSmokeTest {
                 });
             }
             captureUiState("deterministic_detail");
+        } finally {
+            closeScenarioLeniently(scenario);
+        }
+    }
+
+    @Test
+    public void askTabImeActionNavigatesToAnswerDetailScreen() {
+        ActivityScenario<MainActivity> scenario = ActivityScenario.launch(MainActivity.class);
+        try {
+            awaitHarnessIdle();
+            Assert.assertTrue(
+                "home search input never appeared before ask-tab IME regression; harness signals="
+                    + HarnessTestSignals.snapshot(),
+                device.wait(Until.hasObject(By.res(APP_PACKAGE, "search_input")), SEARCH_WAIT_MS)
+            );
+
+            openAskTabFromHomeChrome();
+            submitSearchInputImeActionFromResumedActivity(
+                "How do I start a fire in rain?",
+                EditorInfo.IME_ACTION_SEARCH
+            );
+
+            assertResumedDetailActivitySettled(
+                DETAIL_WAIT_MS,
+                8,
+                "",
+                false,
+                "ask-tab IME action should open answer detail instead of search results"
+            );
+            captureUiState("ask_tab_ime_action_detail");
         } finally {
             closeScenarioLeniently(scenario);
         }
@@ -3905,6 +3936,22 @@ public final class PromptHarnessSmokeTest {
         return device.findObject(selector);
     }
 
+    private UiObject2 waitForUiObject(BySelector selector, long timeoutMs) {
+        if (selector == null) {
+            return null;
+        }
+        if (!device.wait(Until.hasObject(selector), timeoutMs)) {
+            return null;
+        }
+        awaitHarnessIdle();
+        UiObject2 view = device.findObject(selector);
+        if (view != null) {
+            return view;
+        }
+        device.waitForIdle();
+        return device.findObject(selector);
+    }
+
     private boolean hasVisibleBounds(UiObject2 object) {
         return object != null
             && object.getVisibleBounds() != null
@@ -3944,6 +3991,35 @@ public final class PromptHarnessSmokeTest {
             button.performClick();
         });
         InstrumentationRegistry.getInstrumentation().waitForIdleSync();
+    }
+
+    private void submitSearchInputImeActionFromResumedActivity(String query, int actionId) {
+        InstrumentationRegistry.getInstrumentation().runOnMainSync(() -> {
+            Activity activity = getResumedActivityOnMainThread();
+            Assert.assertNotNull("no resumed activity for IME search submission", activity);
+            EditText input = activity.findViewById(R.id.search_input);
+            Assert.assertNotNull("search input should exist for IME submission", input);
+            input.requestFocus();
+            input.setText(query);
+            input.setSelection(query.length());
+            input.onEditorAction(actionId);
+        });
+        InstrumentationRegistry.getInstrumentation().waitForIdleSync();
+    }
+
+    private void openAskTabFromHomeChrome() {
+        UiObject2 askTab = waitForUiObject(By.text("Ask"), SEARCH_WAIT_MS);
+        if (askTab == null || !hasVisibleBounds(askTab)) {
+            askTab = waitForUiObject(By.desc("Ask"), SEARCH_WAIT_MS);
+        }
+        Assert.assertNotNull(
+            "Ask tab should be visible before exercising IME submission; harness signals="
+                + HarnessTestSignals.snapshot(),
+            askTab
+        );
+        askTab.click();
+        InstrumentationRegistry.getInstrumentation().waitForIdleSync();
+        awaitHarnessIdle();
     }
 
     private void dismissMainSearchKeyboardIfVisible() {

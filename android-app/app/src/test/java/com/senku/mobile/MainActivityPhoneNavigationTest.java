@@ -105,4 +105,17 @@ public final class MainActivityPhoneNavigationTest {
         assertFalse(MainActivity.isAskPhoneFlowIntent(BottomTabDestination.SEARCH));
         assertFalse(MainActivity.isSavedPhoneFlowIntent(BottomTabDestination.HOME));
     }
+
+    @Test
+    public void sharedInputSubmitRoutesToAskWhenAskOwnsTheVisibleFlow() {
+        assertTrue(MainActivity.shouldSubmitSharedInputAsAsk(BottomTabDestination.ASK, false));
+        assertTrue(MainActivity.shouldSubmitSharedInputAsAsk(BottomTabDestination.HOME, true));
+    }
+
+    @Test
+    public void sharedInputSubmitStaysSearchForLibraryAndSavedFlows() {
+        assertFalse(MainActivity.shouldSubmitSharedInputAsAsk(BottomTabDestination.HOME, false));
+        assertFalse(MainActivity.shouldSubmitSharedInputAsAsk(BottomTabDestination.SEARCH, false));
+        assertFalse(MainActivity.shouldSubmitSharedInputAsAsk(BottomTabDestination.PINS, false));
+    }
 }
