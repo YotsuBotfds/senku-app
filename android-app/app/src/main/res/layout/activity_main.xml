@@ -148,10 +148,11 @@
                 android:paddingEnd="15dp">
 
                 <ImageView
-                    android:layout_width="17dp"
-                    android:layout_height="17dp"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:background="@drawable/bg_manual_phone_home_search_icon"
                     android:contentDescription="@string/search_input_description"
-                    android:padding="2dp"
+                    android:padding="9dp"
                     android:src="@drawable/ic_search_magnifier"
                     android:tint="@color/senku_rev03_accent" />
 

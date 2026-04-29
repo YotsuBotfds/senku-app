@@ -413,6 +413,13 @@ final class DetailThreadHistoryRenderer {
         StringBuilder builder = new StringBuilder("A")
             .append(safeTurnNumber)
             .append(time);
+        String anchorGuideId = sessionFormatter.primaryGuideIdForTurn(turn);
+        if (anchorGuideId.isEmpty()) {
+            anchorGuideId = safe(previousAnchorGuideId).trim();
+        }
+        if (!anchorGuideId.isEmpty()) {
+            builder.append(" \u00B7 ANCHOR ").append(anchorGuideId);
+        }
         return builder.toString();
     }
 

@@ -25,6 +25,7 @@ import android.text.style.StyleSpan;
 import android.text.style.TypefaceSpan;
 import android.util.Log;
 import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -73,6 +74,7 @@ import com.senku.ui.tablet.XRefState;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -223,6 +225,9 @@ public final class DetailActivity extends AppCompatActivity {
     private Button relatedGuidePreviewToggleButton;
     private Button relatedGuidePreviewOpenButton;
     private LinearLayout stationRail;
+    private LinearLayout landscapeContentRow;
+    private LinearLayout landscapePrimaryColumn;
+    private LinearLayout landscapeSideColumn;
     private SenkuTopBarHostView rev03TopBarHost;
     private SenkuMetaStripHostView rev03MetaStripHost;
     private View legacyDetailTopRow;
@@ -761,6 +766,9 @@ public final class DetailActivity extends AppCompatActivity {
         relatedGuidePreviewOpenButton = findViewById(R.id.detail_related_guide_preview_open);
         applyRelatedGuidePreviewIdentity();
         stationRail = findViewById(R.id.detail_station_rail);
+        landscapeContentRow = findViewById(R.id.detail_landscape_content_row);
+        landscapePrimaryColumn = findViewById(R.id.detail_landscape_primary_column);
+        landscapeSideColumn = findViewById(R.id.detail_landscape_side_column);
         followUpPanel = findViewById(R.id.detail_followup_panel);
         followUpComposeView = findViewById(R.id.detail_followup_compose);
         ensureFollowUpSuggestMount();
@@ -3932,6 +3940,7 @@ public final class DetailActivity extends AppCompatActivity {
                     : getString(R.string.detail_next_steps_title));
                 nextStepsTitleText.setContentDescription(nextStepsTitleText.getText());
             }
+            setNextStepsSubtitleVisible(true);
             String nextStepsSubtitle = compactContextSections
                 ? buildCompactNextStepsSubtitle(nextSteps.size())
                 : getString(R.string.detail_next_steps_subtitle);
@@ -4001,6 +4010,7 @@ public final class DetailActivity extends AppCompatActivity {
                 : getString(titleResId));
             nextStepsTitleText.setContentDescription(panelContentDescription);
         }
+        setNextStepsSubtitleVisible(true);
         if (nextStepsSubtitleText != null) {
             nextStepsSubtitleText.setText(subtitleText);
             nextStepsSubtitleText.setContentDescription(subtitleText);
@@ -4066,6 +4076,11 @@ public final class DetailActivity extends AppCompatActivity {
     }
 
     private void renderRelatedGuidesPanel() {
+        if (shouldUsePhoneLandscapeGuideSectionRail(answerMode, isLandscapePhoneLayout())) {
+            nextStepsPanel.setVisibility(View.VISIBLE);
+            renderPhoneLandscapeGuideSectionsPanel();
+            return;
+        }
         if (currentRelatedGuides.isEmpty()) {
             nextStepsPanel.setVisibility(View.GONE);
             clearActiveGuideContextPanel();
@@ -4104,6 +4119,7 @@ public final class DetailActivity extends AppCompatActivity {
                     : getString(R.string.detail_next_steps_title)));
             nextStepsTitleText.setContentDescription(panelContentDescription);
         }
+        setNextStepsSubtitleVisible(true);
         if (nextStepsSubtitleText != null) {
             nextStepsSubtitleText.setText(subtitleText);
             nextStepsSubtitleText.setContentDescription(subtitleText);
@@ -4176,10 +4192,55 @@ public final class DetailActivity extends AppCompatActivity {
         }
     }
 
+    private void renderPhoneLandscapeGuideSectionsPanel() {
+        clearGuideReturnContextPanel();
+        clearActiveGuideContextPanel();
+        clearRelatedGuidePreviewPanel();
+        applyNextStepsPanelStyling(false);
+        if (nextStepsTitleText != null) {
+            nextStepsTitleText.setText("— SECTIONS • 17");
+            nextStepsTitleText.setContentDescription("Guide sections, 17 sections");
+        }
+        setNextStepsSubtitleVisible(false);
+        if (nextStepsSubtitleText != null) {
+            nextStepsSubtitleText.setText("");
+            nextStepsSubtitleText.setContentDescription("");
+        }
+        String panelContentDescription = "Guide sections. 17 sections. Area readiness selected.";
+        nextStepsPanel.setContentDescription(panelContentDescription);
+        nextStepsContainer.setContentDescription(panelContentDescription);
+
+        List<String> labels = phoneLandscapeGuideSectionRailLabels();
+        for (int i = 0; i < labels.size(); i++) {
+            TextView row = new TextView(this);
+            row.setText(labels.get(i));
+            row.setTextColor(getColor(i == 0 ? R.color.senku_text_light : R.color.senku_text_muted_light));
+            row.setTypeface(i == 0 ? Typeface.DEFAULT_BOLD : Typeface.DEFAULT);
+            row.setTextSize(14f);
+            row.setSingleLine(false);
+            row.setMaxLines(2);
+            row.setGravity(Gravity.CENTER_VERTICAL);
+            row.setPadding(dp(8), dp(i == 0 ? 10 : 8), dp(8), dp(i == 0 ? 10 : 8));
+            row.setBackgroundResource(i == 0 ? R.drawable.bg_helper_pill : android.R.color.transparent);
+            row.setContentDescription(labels.get(i));
+
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+            );
+            if (nextStepsContainer.getChildCount() > 0) {
+                params.topMargin = dp(4);
+            }
+            nextStepsContainer.addView(row, params);
+        }
+        nextStepsContainer.setVisibility(View.VISIBLE);
+    }
+
     private void updateNextStepsPanelPlacement() {
         if (nextStepsPanel == null) {
             return;
         }
+        updateLandscapePhoneGuideShellColumns();
         if (shouldKeepGuideRelatedRailInPlace(answerMode, showUtilityRail())) {
             return;
         }
@@ -4201,6 +4262,86 @@ public final class DetailActivity extends AppCompatActivity {
 
     private boolean shouldUseNonRailGuideCrossReferenceCopy() {
         return !answerMode && !showUtilityRail();
+    }
+
+    private void updateLandscapePhoneGuideShellColumns() {
+        if (landscapeContentRow == null || landscapePrimaryColumn == null || landscapeSideColumn == null) {
+            return;
+        }
+        boolean guideSectionRail = shouldUsePhoneLandscapeGuideSectionRail(answerMode, isLandscapePhoneLayout());
+        moveLandscapeColumn(landscapeSideColumn, guideSectionRail ? 0 : 1);
+        moveLandscapeColumn(landscapePrimaryColumn, guideSectionRail ? 1 : 0);
+        applyLandscapeColumnParams(
+            landscapePrimaryColumn,
+            resolveLandscapeDetailPrimaryColumnWeight(guideSectionRail),
+            guideSectionRail ? dp(8) : 0,
+            guideSectionRail ? 0 : dp(6)
+        );
+        applyLandscapeColumnParams(
+            landscapeSideColumn,
+            resolveLandscapeDetailSideColumnWeight(guideSectionRail),
+            guideSectionRail ? 0 : dp(14),
+            guideSectionRail ? dp(8) : 0
+        );
+    }
+
+    private void moveLandscapeColumn(View column, int targetIndex) {
+        if (column == null || column.getParent() != landscapeContentRow) {
+            return;
+        }
+        int currentIndex = landscapeContentRow.indexOfChild(column);
+        int boundedTarget = Math.max(0, Math.min(targetIndex, landscapeContentRow.getChildCount() - 1));
+        if (currentIndex == boundedTarget) {
+            return;
+        }
+        landscapeContentRow.removeView(column);
+        landscapeContentRow.addView(column, Math.min(boundedTarget, landscapeContentRow.getChildCount()));
+    }
+
+    private void applyLandscapeColumnParams(View column, float weight, int marginStart, int marginEnd) {
+        if (column == null) {
+            return;
+        }
+        ViewGroup.LayoutParams rawParams = column.getLayoutParams();
+        if (!(rawParams instanceof LinearLayout.LayoutParams)) {
+            return;
+        }
+        LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) rawParams;
+        params.width = 0;
+        params.weight = weight;
+        params.setMarginStart(marginStart);
+        params.setMarginEnd(marginEnd);
+        column.setLayoutParams(params);
+    }
+
+    static boolean shouldUsePhoneLandscapeGuideSectionRail(boolean answerMode, boolean landscapePhone) {
+        return !answerMode && landscapePhone;
+    }
+
+    static float resolveLandscapeDetailPrimaryColumnWeight(boolean guideSectionRail) {
+        return guideSectionRail ? 2.35f : 1.65f;
+    }
+
+    static float resolveLandscapeDetailSideColumnWeight(boolean guideSectionRail) {
+        return guideSectionRail ? 0.52f : 0.75f;
+    }
+
+    static List<String> phoneLandscapeGuideSectionRailLabels() {
+        return Arrays.asList(
+            "§1  Area readiness",
+            "§2  Required reading",
+            "§3  Hazard screen",
+            "§4  Material labeling",
+            "§5  No-go triggers",
+            "§6  Access control",
+            "§7  Owner handoff"
+        );
+    }
+
+    private void setNextStepsSubtitleVisible(boolean visible) {
+        if (nextStepsSubtitleText != null) {
+            nextStepsSubtitleText.setVisibility(visible ? View.VISIBLE : View.GONE);
+        }
     }
 
     private void moveNextStepsPanelToStationRail(ViewParent currentParent) {
@@ -4261,6 +4402,16 @@ public final class DetailActivity extends AppCompatActivity {
         if (nextStepsPanel == null) {
             return;
         }
+        if (shouldUsePhoneLandscapeGuideSectionRail(answerMode, isLandscapePhoneLayout())) {
+            nextStepsPanel.setBackgroundResource(android.R.color.transparent);
+            nextStepsPanel.setPadding(0, dp(2), 0, 0);
+            setTopMargin(nextStepsPanel, dp(0));
+            if (nextStepsTitleText != null) {
+                nextStepsTitleText.setBackgroundResource(android.R.color.transparent);
+                nextStepsTitleText.setTextColor(getColor(R.color.senku_text_muted_light));
+            }
+            return;
+        }
         if (showUtilityRail()) {
             nextStepsPanel.setBackgroundResource(promotedCrossReferenceRail
                 ? R.drawable.bg_sources_stack_shell
@@ -4272,12 +4423,16 @@ public final class DetailActivity extends AppCompatActivity {
                 nextStepsTitleText.setBackgroundResource(promotedCrossReferenceRail
                     ? R.drawable.bg_sources_section_pill
                     : R.drawable.bg_helper_pill);
+                nextStepsTitleText.setTextColor(getColor(R.color.senku_text_light));
             }
             return;
         }
         nextStepsPanel.setBackgroundResource(isTabletPortraitLayout()
             ? android.R.color.transparent
             : R.drawable.bg_helper_panel);
+        if (nextStepsTitleText != null) {
+            nextStepsTitleText.setTextColor(getColor(R.color.senku_text_light));
+        }
     }
 
     private void updateLandscapePhoneInlineOrdering() {

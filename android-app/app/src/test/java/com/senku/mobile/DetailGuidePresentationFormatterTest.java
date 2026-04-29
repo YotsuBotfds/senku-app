@@ -111,7 +111,7 @@ public final class DetailGuidePresentationFormatterTest {
         assertEquals(
             "FIELD MANUAL \u00b7 REV 04-27 \u00b7 PK 2\n"
                 + "Foundry & Metal Casting\n"
-                + "GD-132 \u00b7 3 SECTIONS\n\n"
+                + "GD-132 \u00b7 3 SECTIONS \u00b7 OPENED FROM GD-220\n\n"
                 + "DANGER \u00b7 EXTREME BURN HAZARD\n"
                 + "A single drop of water contacting molten metal causes a violent steam explosion. Every tool, mold, crucible, and surface that contacts molten metal must be completely dry.\n"
                 + "\u2014 \u00a7 1 \u00b7 AREA READINESS\n"
@@ -156,7 +156,7 @@ public final class DetailGuidePresentationFormatterTest {
 
         String displayBody = DetailGuidePresentationFormatter.buildGuideBody(result);
 
-        assertTrue(displayBody.contains("GD-132 \u00b7 17 SECTIONS"));
+        assertTrue(displayBody.contains("GD-132 \u00b7 17 SECTIONS \u00b7 OPENED FROM GD-220"));
         assertFalse(displayBody.contains("GD-132 \u00b7 26 SECTIONS"));
     }
 
@@ -217,7 +217,7 @@ public final class DetailGuidePresentationFormatterTest {
 
         String displayBody = DetailGuidePresentationFormatter.buildGuideBody(result);
 
-        assertTrue(displayBody.contains("GD-132 \u00b7 17 SECTIONS"));
+        assertTrue(displayBody.contains("GD-132 \u00b7 17 SECTIONS \u00b7 OPENED FROM GD-220"));
         assertFalse(displayBody.contains("GD-132 \u00b7 26 SECTIONS"));
     }
 
@@ -248,7 +248,7 @@ public final class DetailGuidePresentationFormatterTest {
 
         String displayBody = DetailGuidePresentationFormatter.buildGuideBody(result);
 
-        assertTrue(displayBody.contains("GD-132 \u00b7 17 SECTIONS"));
+        assertTrue(displayBody.contains("GD-132 \u00b7 17 SECTIONS \u00b7 OPENED FROM GD-220"));
         assertFalse(displayBody.contains("GD-132 \u00b7 26 SECTIONS"));
         assertTrue(displayBody.contains("GD-220 \u00b7 Abrasives Manufacturing"));
         assertTrue(displayBody.contains("GD-499 \u00b7 Bellows & Forge Blower Construction"));
@@ -287,7 +287,7 @@ public final class DetailGuidePresentationFormatterTest {
         assertEquals(
             "FIELD MANUAL \u00b7 REV 04-27 \u00b7 PK 2\n"
                 + "Foundry & Metal Casting\n"
-                + "GD-132 \u00b7 4 SECTIONS\n\n"
+                + "GD-132 \u00b7 4 SECTIONS \u00b7 OPENED FROM GD-220\n\n"
                 + "DANGER \u00b7 EXTREME BURN HAZARD\n"
                 + "Keep tools dry.\n"
                 + "\u2014 \u00a7 1 \u00b7 FOUNDRY SAFETY QUICKSTART\n"

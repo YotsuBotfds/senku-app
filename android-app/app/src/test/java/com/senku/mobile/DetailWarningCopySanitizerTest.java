@@ -89,7 +89,7 @@ public final class DetailWarningCopySanitizerTest {
 
         assertEquals(
             "Stop work immediately. Move to minimum 5 m from active work zone. "
-                + "Clear the floor to minimum 5 m radius. "
+                + "Clear the floor to 5 m radius. "
                 + "Door and roll-up open and unobstructed. "
                 + "GD-132 lists current owner.",
             cleaned
@@ -106,7 +106,7 @@ public final class DetailWarningCopySanitizerTest {
 
         assertEquals(
             "Move to minimum 5 m from active work zone. "
-                + "Clear the floor to minimum 5 m radius. "
+                + "Clear the floor to 5 m radius. "
                 + "GD-132 lists current owner.",
             cleaned
         );
@@ -148,6 +148,6 @@ public final class DetailWarningCopySanitizerTest {
 
         assertTrue(cleaned.contains("FIELD STEPS"));
         assertTrue(cleaned.contains("1. Stop all hot work."));
-        assertTrue(cleaned.contains("2. Clear the floor to minimum 5 m radius."));
+        assertTrue(cleaned.contains("2. Clear the floor to 5 m radius."));
     }
 }

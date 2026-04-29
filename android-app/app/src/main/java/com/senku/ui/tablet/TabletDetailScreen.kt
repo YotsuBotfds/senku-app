@@ -412,6 +412,36 @@ internal fun tabletComposerContextHint(state: TabletDetailState): String {
         .uppercase()
 }
 
+internal fun tabletThreadSourcePaneTitle(count: Int, isLandscape: Boolean): String {
+    val label = if (isLandscape) "SOURCES IN THREAD" else "SOURCES"
+    return "$label \u2022 ${count.coerceAtLeast(0)}"
+}
+
+internal fun tabletThreadSourceCardMeta(sourceId: String, relation: String): String {
+    val normalizedRelation = relation.trim().ifEmpty { "SOURCE" }
+    val normalizedId = sourceId.trim()
+    return if (normalizedId.isEmpty()) {
+        normalizedRelation
+    } else {
+        "$normalizedId \u2022 $normalizedRelation"
+    }
+}
+
+internal fun tabletThreadQuestionMetaLabel(turnIndex: Int): String =
+    "Q${turnIndex.coerceAtLeast(1)} \u2022 FIELD QUESTION"
+
+internal fun tabletThreadAnswerMetaLabel(turnIndex: Int): String =
+    "A${turnIndex.coerceAtLeast(1)} \u2022 ANCHOR"
+
+internal fun tabletThreadAnswerStatusLabel(content: AnswerContent, status: Status): String =
+    when {
+        content.abstain -> "NO MATCH"
+        content.uncertainFit -> "\u2022 UNSURE"
+        content.answerSurfaceLabel == AnswerSurfaceLabel.LimitedFit -> "\u2022 UNSURE"
+        status == Status.Pending -> "\u2022 UNSURE"
+        else -> "\u2022 CONFIDENT"
+    }
+
 internal data class PhoneStressReadingPolicy(
     val compactComposer: Boolean,
     val suppressRetryChrome: Boolean,
@@ -730,6 +760,7 @@ private fun DetailWorkspace(
                 if (state.isThreadMode()) {
                     ThreadSourcePane(
                         sources = state.resolvedThreadRailSources(),
+                        isLandscape = state.isLandscape,
                         onSourceClick = onSourceClick,
                         modifier = Modifier
                             .width(readingPolicy.evidenceRailWidthDp.dp)
@@ -880,17 +911,6 @@ private fun ThreadReadingSurface(
             .padding(top = if (state.isLandscape) 24.dp else 20.dp),
         verticalArrangement = Arrangement.spacedBy(if (state.isLandscape) 14.dp else 12.dp),
     ) {
-        Text(
-            text = "THREAD TRANSCRIPT - ${state.turns.size} TURNS",
-            style = SenkuTheme.typography.monoCaps.copy(
-                fontSize = 10.sp,
-                lineHeight = 13.sp,
-                fontWeight = FontWeight.Medium,
-            ),
-            color = SenkuTheme.colors.ink3,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-        )
         ThreadTurnList(
             state = state,
             typeScalePolicy = typeScalePolicy,
@@ -905,6 +925,7 @@ private fun ThreadReadingSurface(
 @Composable
 private fun ThreadSourcePane(
     sources: List<SourceState>,
+    isLandscape: Boolean,
     onSourceClick: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -928,7 +949,7 @@ private fun ThreadSourcePane(
                 color = colors.ink3,
             )
             Text(
-                text = "SOURCES IN THREAD - ${sources.size}",
+                text = tabletThreadSourcePaneTitle(sources.size, isLandscape = isLandscape),
                 style = SenkuTheme.typography.monoCaps.copy(
                     fontSize = 10.sp,
                     lineHeight = 12.sp,
@@ -965,11 +986,7 @@ private fun ThreadSourceCard(
     onClick: () -> Unit,
 ) {
     val colors = SenkuTheme.colors
-    val relation = when {
-        source.isAnchor -> "ANCHOR"
-        source.isSelected -> "CURRENT"
-        else -> "SOURCE"
-    }
+    val relation = threadRailSourceRelationLabel(source)
     val accent = if (source.isAnchor) colors.ok else colors.accent
     Surface(
         modifier = Modifier.fillMaxWidth(),
@@ -1000,8 +1017,7 @@ private fun ThreadSourceCard(
                 verticalArrangement = Arrangement.spacedBy(4.dp),
             ) {
                 Text(
-                    text = listOf(source.id.trim().ifEmpty { "THREAD" }, relation)
-                        .joinToString(" - "),
+                    text = tabletThreadSourceCardMeta(source.id, relation),
                     style = SenkuTheme.typography.monoCaps.copy(
                         fontSize = 9.5.sp,
                         lineHeight = 12.sp,
@@ -1298,6 +1314,7 @@ private fun SecondaryTurnBlock(
             onFocusTurn = onFocusTurn,
             onOpenProof = onFocusTurn,
             guideMode = false,
+            threadMode = true,
             modifier = Modifier.padding(horizontal = 12.dp),
         )
     }
@@ -1432,6 +1449,7 @@ private fun ThreadTurnList(
             onFocusTurn = { onTurnClick(turn.id) },
             onOpenProof = onAnchorClick,
             guideMode = guideMode,
+            threadMode = state.isThreadMode(),
         )
     }
 }
@@ -1595,6 +1613,7 @@ private fun ThreadTurnBlock(
     onFocusTurn: () -> Unit,
     onOpenProof: () -> Unit,
     guideMode: Boolean,
+    threadMode: Boolean,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -1609,16 +1628,19 @@ private fun ThreadTurnBlock(
                 turnIndex = turnIndex,
                 typeScalePolicy = typeScalePolicy,
                 guideMode = guideMode,
+                threadMode = threadMode,
             )
         }
 
         AnswerInlineBlock(
             content = turn.answer,
+            turnStatus = turn.status,
             turnIndex = turnIndex,
             typeScalePolicy = typeScalePolicy,
             proofLabel = if (canOpenProof) "Open proof" else "Focus turn",
             onProofClick = if (canOpenProof) onOpenProof else onFocusTurn,
             guideMode = guideMode,
+            threadMode = threadMode,
         )
     }
 }
@@ -1629,6 +1651,7 @@ private fun QuestionInlineBlock(
     turnIndex: Int,
     typeScalePolicy: TabletDetailTypeScalePolicy,
     guideMode: Boolean,
+    threadMode: Boolean,
     modifier: Modifier = Modifier,
 ) {
     val colors = SenkuTheme.colors
@@ -1648,7 +1671,7 @@ private fun QuestionInlineBlock(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
-                text = if (guideMode) "SECTION" else "QUESTION",
+                text = if (threadMode) tabletThreadQuestionMetaLabel(turnIndex) else if (guideMode) "SECTION" else "QUESTION",
                 style = typography.monoCaps.copy(
                     fontSize = 10.sp,
                     lineHeight = 13.sp,
@@ -1657,26 +1680,28 @@ private fun QuestionInlineBlock(
                 color = metaColor,
                 maxLines = 1,
             )
-            Text(
-                text = if (guideMode) "GUIDE PAGE" else "USER",
-                style = typography.monoCaps.copy(
-                    fontSize = 10.sp,
-                    lineHeight = 13.sp,
-                    fontWeight = FontWeight.Medium,
-                ),
-                color = secondaryColor,
-                maxLines = 1,
-            )
-            Text(
-                text = if (guideMode) "SEC $turnIndex" else "Q$turnIndex",
-                style = typography.monoCaps.copy(
-                    fontSize = 10.sp,
-                    lineHeight = 13.sp,
-                    fontWeight = FontWeight.Medium,
-                ),
-                color = secondaryColor,
-                maxLines = 1,
-            )
+            if (!threadMode) {
+                Text(
+                    text = if (guideMode) "GUIDE PAGE" else "USER",
+                    style = typography.monoCaps.copy(
+                        fontSize = 10.sp,
+                        lineHeight = 13.sp,
+                        fontWeight = FontWeight.Medium,
+                    ),
+                    color = secondaryColor,
+                    maxLines = 1,
+                )
+                Text(
+                    text = if (guideMode) "SEC $turnIndex" else "Q$turnIndex",
+                    style = typography.monoCaps.copy(
+                        fontSize = 10.sp,
+                        lineHeight = 13.sp,
+                        fontWeight = FontWeight.Medium,
+                    ),
+                    color = secondaryColor,
+                    maxLines = 1,
+                )
+            }
         }
         Text(
             text = question.trim().ifEmpty { "No question text recorded." },
@@ -1694,11 +1719,13 @@ private fun QuestionInlineBlock(
 @Composable
 private fun AnswerInlineBlock(
     content: AnswerContent,
+    turnStatus: Status,
     turnIndex: Int,
     typeScalePolicy: TabletDetailTypeScalePolicy,
     proofLabel: String,
     onProofClick: () -> Unit,
     guideMode: Boolean,
+    threadMode: Boolean,
     modifier: Modifier = Modifier,
 ) {
     val colors = SenkuTheme.colors
@@ -1713,7 +1740,7 @@ private fun AnswerInlineBlock(
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .then(if (guideMode) Modifier else Modifier.clickable(onClick = onProofClick)),
+            .then(if (guideMode || threadMode) Modifier else Modifier.clickable(onClick = onProofClick)),
         verticalArrangement = Arrangement.spacedBy(7.dp),
     ) {
         if (!guideMode) {
@@ -1723,7 +1750,7 @@ private fun AnswerInlineBlock(
                 verticalAlignment = Alignment.Top,
             ) {
                 Text(
-                    text = "A$turnIndex - ${answerAnchorLabel(content)}",
+                    text = if (threadMode) tabletThreadAnswerMetaLabel(turnIndex) else "A$turnIndex - ${answerAnchorLabel(content)}",
                     modifier = Modifier.weight(1f),
                     style = typography.monoCaps.copy(
                         fontSize = 10.sp,
@@ -1735,7 +1762,7 @@ private fun AnswerInlineBlock(
                     overflow = TextOverflow.Ellipsis,
                 )
                 Text(
-                    text = compactEvidenceLabel(content),
+                    text = if (threadMode) tabletThreadAnswerStatusLabel(content, turnStatus) else compactEvidenceLabel(content),
                     style = typography.monoCaps.copy(
                         fontSize = 10.sp,
                         lineHeight = 13.sp,
@@ -1821,7 +1848,7 @@ private fun AnswerInlineBlock(
                 }
             }
         }
-        if (!guideMode) {
+        if (!guideMode && !threadMode) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,

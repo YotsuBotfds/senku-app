@@ -125,20 +125,20 @@ final class DetailWarningCopySanitizer {
             "Move to minimum 5 m from active work zone."
         );
         cleaned = cleaned.replace(
-            "Clear the floor to 5 m radius",
-            "Clear the floor to minimum 5 m radius"
+            "Clear the floor to a minimum 5 m radius",
+            "Clear the floor to 5 m radius"
         );
         cleaned = cleaned.replace(
             "Clear the floor to a 5 m radius",
-            "Clear the floor to minimum 5 m radius"
-        );
-        cleaned = cleaned.replace(
-            "Clear the floor to a minimum 5 m radius",
-            "Clear the floor to minimum 5 m radius"
+            "Clear the floor to 5 m radius"
         );
         cleaned = cleaned.replace(
             "Clear the floor to minimum 5 m radius",
-            "Clear the floor to minimum 5 m radius"
+            "Clear the floor to 5 m radius"
+        );
+        cleaned = cleaned.replace(
+            "Clear the floor to 5 m radius",
+            "Clear the floor to 5 m radius"
         );
         cleaned = cleaned.replace(
             "Doors and roll-up openings must be unobstructed.",

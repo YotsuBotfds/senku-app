@@ -4,6 +4,9 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
+import com.senku.ui.answer.AnswerContent
+import com.senku.ui.answer.AnswerSurfaceLabel
+import com.senku.ui.answer.Evidence
 
 class StressReadingPolicyTest {
     @Test
@@ -387,6 +390,38 @@ class StressReadingPolicyTest {
             listOf("GD-220", "GD-345"),
             state.resolvedThreadSourceRows().map { it.id },
         )
+    }
+
+    @Test
+    fun tabletThreadLabelsAvoidProofWorkflowLanguage() {
+        val confidentAnswer = AnswerContent(
+            short = "Drape the tarp evenly across the ridge.",
+            sourceCount = 1,
+            host = "Rule match",
+            elapsedSeconds = 0.0,
+            evidence = Evidence.Strong,
+            answerSurfaceLabel = AnswerSurfaceLabel.DeterministicRule,
+        )
+        val unsureAnswer = confidentAnswer.copy(
+            uncertainFit = true,
+            answerSurfaceLabel = AnswerSurfaceLabel.LimitedFit,
+        )
+
+        assertEquals("Q1 \u2022 FIELD QUESTION", tabletThreadQuestionMetaLabel(1))
+        assertEquals("A2 \u2022 ANCHOR", tabletThreadAnswerMetaLabel(2))
+        assertEquals("\u2022 CONFIDENT", tabletThreadAnswerStatusLabel(confidentAnswer, Status.Done))
+        assertEquals("\u2022 UNSURE", tabletThreadAnswerStatusLabel(unsureAnswer, Status.Done))
+        assertFalse(tabletThreadAnswerStatusLabel(confidentAnswer, Status.Done).contains("Rule match"))
+        assertFalse(tabletThreadAnswerStatusLabel(confidentAnswer, Status.Done).contains("STRONG EVIDENCE"))
+    }
+
+    @Test
+    fun tabletThreadSourceLabelsUseMockSeparators() {
+        assertEquals("SOURCES \u2022 2", tabletThreadSourcePaneTitle(2, isLandscape = false))
+        assertEquals("SOURCES IN THREAD \u2022 2", tabletThreadSourcePaneTitle(2, isLandscape = true))
+        assertEquals("GD-345 \u2022 TOPIC", tabletThreadSourceCardMeta("GD-345", "TOPIC"))
+        assertEquals("SOURCE", tabletThreadSourceCardMeta("", "SOURCE"))
+        assertFalse(tabletThreadSourceCardMeta("", "SOURCE").contains("THREAD - 1 SOURCE"))
     }
 
     @Test

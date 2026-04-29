@@ -1561,6 +1561,7 @@ public final class PromptHarnessSmokeTest {
             );
             captureCanonicalGuideReaderState(scenario);
             final boolean[] previewFirstMode = {false};
+            final boolean[] guideSectionsMode = {false};
             scenario.onActivity(activity -> {
                 DetailSettleSignals signals = collectDetailSettleSignals(activity);
                 if (signals.tabletCompose) {
@@ -1611,6 +1612,29 @@ public final class PromptHarnessSmokeTest {
                 Assert.assertNotNull("related guides subtitle should exist", subtitle);
                 Assert.assertNotNull("related guides container should exist", container);
                 Assert.assertTrue("expected at least one related guide button", container.getChildCount() > 0);
+                String panelDescription =
+                    safe(String.valueOf(panel.getContentDescription())).toLowerCase(Locale.US);
+                String firstChildText = "";
+                if (container.getChildAt(0) instanceof TextView) {
+                    firstChildText = safe(((TextView) container.getChildAt(0)).getText().toString())
+                        .toLowerCase(Locale.US);
+                }
+                if (panelDescription.contains("guide sections") || firstChildText.contains("area readiness")) {
+                    guideSectionsMode[0] = true;
+                    Assert.assertTrue(
+                        "phone landscape guide rail should identify guide sections",
+                        panelDescription.contains("guide sections")
+                    );
+                    Assert.assertTrue(
+                        "phone landscape guide rail should keep area-readiness section visible",
+                        panelDescription.contains("area readiness") || firstChildText.contains("area readiness")
+                    );
+                    Assert.assertFalse(
+                        "guide sections rail should not reuse answer helper-prompt copy",
+                        panelDescription.contains("helper prompts")
+                    );
+                    return;
+                }
                 Assert.assertTrue("first related guide row should be a button", container.getChildAt(0) instanceof Button);
                 Assert.assertTrue(
                     "guide-mode subtitle should read as linked-guide or cross-reference navigation",
@@ -1719,6 +1743,13 @@ public final class PromptHarnessSmokeTest {
                     firstButton.performClick();
                 }
             });
+            if (guideSectionsMode[0]) {
+                Assert.assertTrue(
+                    "phone landscape guide sections rail should keep the guide detail visible",
+                    waitForDetailTitleContains(seed.guide.title, DETAIL_WAIT_MS)
+                );
+                return;
+            }
             Assert.assertTrue(
                 previewFirstMode[0]
                     ? "tapping preview open should open the related guide detail screen"
@@ -4643,14 +4674,22 @@ public final class PromptHarnessSmokeTest {
         LinearLayout container = activity.findViewById(R.id.detail_next_steps_container);
         if (!isVisible(panel)
             || container == null
-            || container.getChildCount() <= 0
-            || !(container.getChildAt(0) instanceof Button)) {
+            || container.getChildCount() <= 0) {
             return false;
         }
-        Button firstButton = (Button) container.getChildAt(0);
         String titleText = safe(title == null ? null : String.valueOf(title.getText())).toLowerCase(Locale.US);
         String subtitleText = safe(subtitle == null ? null : String.valueOf(subtitle.getText())).toLowerCase(Locale.US);
         String panelDescription = safe(String.valueOf(panel.getContentDescription())).toLowerCase(Locale.US);
+        if (container.getChildAt(0) instanceof TextView && titleText.contains("sections")) {
+            String firstRowText = safe(((TextView) container.getChildAt(0)).getText().toString()).toLowerCase(Locale.US);
+            return panelDescription.contains("guide sections")
+                && firstRowText.contains("area readiness")
+                && !containsAny(titleText + " | " + panelDescription, "helper prompts");
+        }
+        if (!(container.getChildAt(0) instanceof Button)) {
+            return false;
+        }
+        Button firstButton = (Button) container.getChildAt(0);
         String firstButtonText = safe(firstButton.getText().toString()).toLowerCase(Locale.US);
         String firstButtonDescription = safe(String.valueOf(firstButton.getContentDescription())).toLowerCase(Locale.US);
         boolean guideCopyVisible = containsAny(

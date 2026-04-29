@@ -183,4 +183,29 @@ public final class DetailRelatedGuidePresentationFormatterTest {
             )
         );
     }
+
+    @Test
+    public void foundryAbrasivesCrossReferencePresentsAsAnchor() {
+        DetailRelatedGuidePresentationFormatter formatter = new DetailRelatedGuidePresentationFormatter(null);
+
+        assertEquals(
+            "GD-220 \u00b7 Abrasives Manufacturing\nAnchor",
+            formatter.buildRelatedGuideButtonLabel(
+                new SearchResult(
+                    "Abrasives Manufacturing",
+                    "",
+                    "",
+                    "",
+                    "GD-220",
+                    "",
+                    "",
+                    "",
+                    "cross_reference",
+                    "",
+                    "",
+                    ""
+                )
+            )
+        );
+    }
 }

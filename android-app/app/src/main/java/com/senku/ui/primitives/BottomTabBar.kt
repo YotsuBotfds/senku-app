@@ -267,34 +267,15 @@ private fun BottomTabIcon(
         )
         when (destination) {
             BottomTabDestination.HOME -> {
-                drawRoundRect(
-                    color = tint,
-                    topLeft = Offset(size.width * 0.18f, size.height * 0.18f),
-                    size = Size(size.width * 0.64f, size.height * 0.66f),
-                    cornerRadius = CornerRadius(size.width * 0.04f, size.width * 0.04f),
-                    style = stroke,
-                )
-                drawLine(
-                    color = tint,
-                    start = Offset(size.width * 0.50f, size.height * 0.20f),
-                    end = Offset(size.width * 0.50f, size.height * 0.82f),
-                    strokeWidth = strokeWidth,
-                    cap = StrokeCap.Round,
-                )
-                drawLine(
-                    color = tint,
-                    start = Offset(size.width * 0.28f, size.height * 0.35f),
-                    end = Offset(size.width * 0.42f, size.height * 0.35f),
-                    strokeWidth = strokeWidth,
-                    cap = StrokeCap.Round,
-                )
-                drawLine(
-                    color = tint,
-                    start = Offset(size.width * 0.58f, size.height * 0.35f),
-                    end = Offset(size.width * 0.72f, size.height * 0.35f),
-                    strokeWidth = strokeWidth,
-                    cap = StrokeCap.Round,
-                )
+                listOf(0.34f, 0.50f, 0.66f).forEach { y ->
+                    drawLine(
+                        color = tint,
+                        start = Offset(size.width * 0.28f, size.height * y),
+                        end = Offset(size.width * 0.72f, size.height * y),
+                        strokeWidth = strokeWidth,
+                        cap = StrokeCap.Round,
+                    )
+                }
             }
 
             BottomTabDestination.SEARCH -> {

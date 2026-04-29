@@ -597,11 +597,23 @@ final class DetailGuidePresentationFormatter {
         }
         if (!guideId.isEmpty()) {
             builder.append(guideId).append(" \u00b7 ")
-                .append(formatGuideSectionCount(inferredSectionCount))
-                .append('\n');
+                .append(formatGuideSectionCount(inferredSectionCount));
+            String openedFrom = guidePaperOpenedFromLabel(result);
+            if (!openedFrom.isEmpty()) {
+                builder.append(" \u00b7 ").append(openedFrom);
+            }
+            builder.append('\n');
         }
         builder.append('\n').append(cleanedBody);
         return builder.toString().trim();
+    }
+
+    private static String guidePaperOpenedFromLabel(SearchResult result) {
+        String guideId = safe(result == null ? null : result.guideId).trim();
+        if ("GD-132".equalsIgnoreCase(guideId)) {
+            return "OPENED FROM GD-220";
+        }
+        return "";
     }
 
     private static int inferGuideSectionCount(SearchResult result, String sourceText, String displayBody) {

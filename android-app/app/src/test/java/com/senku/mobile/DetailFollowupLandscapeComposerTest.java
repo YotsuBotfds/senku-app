@@ -326,6 +326,34 @@ public final class DetailFollowupLandscapeComposerTest {
     }
 
     @Test
+    public void phoneLandscapeGuideUsesSectionRailInsteadOfCrossReferenceDrawer() {
+        assertTrue(DetailActivity.shouldUsePhoneLandscapeGuideSectionRail(false, true));
+        assertFalse(DetailActivity.shouldUsePhoneLandscapeGuideSectionRail(true, true));
+        assertFalse(DetailActivity.shouldUsePhoneLandscapeGuideSectionRail(false, false));
+
+        assertEquals(2.35f, DetailActivity.resolveLandscapeDetailPrimaryColumnWeight(true), 0.001f);
+        assertEquals(0.52f, DetailActivity.resolveLandscapeDetailSideColumnWeight(true), 0.001f);
+        assertEquals(1.65f, DetailActivity.resolveLandscapeDetailPrimaryColumnWeight(false), 0.001f);
+        assertEquals(0.75f, DetailActivity.resolveLandscapeDetailSideColumnWeight(false), 0.001f);
+    }
+
+    @Test
+    public void phoneLandscapeGuideSectionRailMatchesTargetFirstViewport() {
+        assertEquals(
+            Arrays.asList(
+                "\u00A71  Area readiness",
+                "\u00A72  Required reading",
+                "\u00A73  Hazard screen",
+                "\u00A74  Material labeling",
+                "\u00A75  No-go triggers",
+                "\u00A76  Access control",
+                "\u00A77  Owner handoff"
+            ),
+            DetailActivity.phoneLandscapeGuideSectionRailLabels()
+        );
+    }
+
+    @Test
     public void answerSourceRailPromotesRainShelterTopicState() {
         List<SearchResult> railSources = DetailActivity.resolveVisibleSourceRailSourcesForState(
             true,

@@ -346,6 +346,7 @@
         android:fillViewport="true">
 
         <LinearLayout
+            android:id="@+id/detail_landscape_content_row"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:baselineAligned="false"
@@ -356,6 +357,7 @@
             android:paddingBottom="10dp">
 
             <LinearLayout
+                android:id="@+id/detail_landscape_primary_column"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="6dp"
@@ -642,6 +644,7 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/detail_landscape_side_column"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="14dp"

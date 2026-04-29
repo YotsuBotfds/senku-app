@@ -215,7 +215,7 @@ internal fun threadRailSourceDisplayLabel(source: SourceState, guideMode: Boolea
         return threadRailSourceTitleLabel(source, guideMode)
     }
     if (!guideMode) {
-        return sourceId
+        return "$sourceId \u2022 ${threadRailSourceRelationLabel(source)}"
     }
     return when {
         threadRailSourceContextPriority(source) >= 3 -> "$sourceId - RAIN SHELTER"
@@ -224,6 +224,14 @@ internal fun threadRailSourceDisplayLabel(source: SourceState, guideMode: Boolea
         else -> "$sourceId - RELATED"
     }
 }
+
+internal fun threadRailSourceRelationLabel(source: SourceState): String =
+    when {
+        source.isAnchor -> "ANCHOR"
+        source.id.trim().equals("GD-345", ignoreCase = true) || threadRailSourceContextPriority(source) >= 3 -> "TOPIC"
+        source.isSelected -> "CURRENT"
+        else -> "SOURCE"
+    }
 
 internal fun threadRailShouldShowSource(source: SourceState, guideMode: Boolean): Boolean =
     threadRailSourceDisplayLabel(source, guideMode).isNotEmpty() ||

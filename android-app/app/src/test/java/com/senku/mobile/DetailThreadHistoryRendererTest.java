@@ -79,11 +79,11 @@ public final class DetailThreadHistoryRendererTest {
             renderer.buildTurnLabel(2, true, turn("question", "GD-345", 0L), "")
         );
         assertEquals(
-            "A2",
+            "A2 \u00B7 ANCHOR GD-345",
             renderer.buildTurnLabel(2, false, turn("answer", "GD-345", 0L), "GD-220")
         );
         assertEquals(
-            "A2",
+            "A2 \u00B7 ANCHOR GD-345",
             renderer.buildTurnLabel(2, false, turn("answer", "GD-345", 0L), "GD-345")
         );
     }
@@ -108,7 +108,7 @@ public final class DetailThreadHistoryRendererTest {
             0L
         );
 
-        assertEquals("A1", renderer.buildTurnLabel(1, false, turn, ""));
+        assertEquals("A1 \u00B7 ANCHOR GD-220", renderer.buildTurnLabel(1, false, turn, ""));
         assertEquals(List.of("GD-220", "GD-132"), DetailThreadHistoryRenderer.guideChipLabelsForTurn(turn));
     }
 
@@ -127,8 +127,31 @@ public final class DetailThreadHistoryRendererTest {
             renderer.buildTurnLabel(1, true, turn("answer", "GD-220", timestamp), "")
         );
         assertEquals(
-            "A1 \u00B7 " + expectedTime,
+            "A1 \u00B7 " + expectedTime + " \u00B7 ANCHOR GD-220",
             renderer.buildTurnLabel(1, false, turn("answer", "GD-220", timestamp), "")
+        );
+    }
+
+    @Test
+    public void answerTurnLabelFallsBackToPreviousAnchorWhenTurnHasNoGuide() {
+        DetailThreadHistoryRenderer renderer = new DetailThreadHistoryRenderer(
+            null,
+            new DetailSessionPresentationFormatter(null),
+            null
+        );
+        SessionMemory.TurnSnapshot turn = new SessionMemory.TurnSnapshot(
+            "What next?",
+            "Keep the tarp tension even.",
+            "Keep the tarp tension even.",
+            List.of(),
+            List.of(),
+            "",
+            0L
+        );
+
+        assertEquals(
+            "A2 \u00B7 ANCHOR GD-220",
+            renderer.buildTurnLabel(2, false, turn, "GD-220")
         );
     }
 

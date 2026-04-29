@@ -2372,7 +2372,7 @@ public final class MainActivity extends AppCompatActivity {
         installIdentityStrip();
         installCategoryShelf();
         applyManualHomeShellDensityPolish();
-        if (isPhoneFormFactor()) {
+        if (isPhoneFormFactor() && !isLandscapePhoneLayout()) {
             installPhoneBottomTabBar();
         }
         activePhoneTab = restorePhoneTab(savedInstanceState);

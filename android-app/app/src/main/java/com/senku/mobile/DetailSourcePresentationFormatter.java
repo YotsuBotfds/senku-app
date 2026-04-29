@@ -59,10 +59,15 @@ final class DetailSourcePresentationFormatter {
             quote = firstBodyLine(source == null ? null : source.body);
         }
 
-        boolean anchor = isAnchorEvidenceCard(position, mode);
+        String reviewedRainShelterRole = reviewedRainShelterRoleLabel(source);
+        boolean anchor = reviewedRainShelterRole.isEmpty()
+            ? isAnchorEvidenceCard(position, mode)
+            : "ANCHOR".equals(reviewedRainShelterRole);
         return new EvidenceCard(
             guideId,
-            buildEvidenceRoleLabel(anchor, mode, position),
+            reviewedRainShelterRole.isEmpty()
+                ? buildEvidenceRoleLabel(anchor, mode, position)
+                : reviewedRainShelterRole,
             buildEvidenceMatchLabel(source, position),
             title.isEmpty() ? "Open guide note" : title,
             quote,
@@ -435,7 +440,10 @@ final class DetailSourcePresentationFormatter {
             return "ANCHOR";
         }
         String role = safe(card.roleLabel).trim().toUpperCase(Locale.US);
-        if ("TOPIC".equals(role) || "RELATED".equals(role)) {
+        if ("TOPIC".equals(role)) {
+            return "TOPIC";
+        }
+        if ("RELATED".equals(role)) {
             return "RELATED";
         }
         return "SOURCE";
@@ -479,6 +487,25 @@ final class DetailSourcePresentationFormatter {
         }
         if ("GD-345".equalsIgnoreCase(guideId) && isRainShelterStackSource(source)) {
             return "GD-345 \u00B7 TOPIC \u00B7 Tarp & Cord Shelters";
+        }
+        return "";
+    }
+
+    private static String reviewedRainShelterRoleLabel(SearchResult source) {
+        if (source == null) {
+            return "";
+        }
+        String guideId = safe(source.guideId).trim();
+        if ("GD-220".equalsIgnoreCase(guideId)
+            && containsReviewedRainShelterText(source, "abrasives", "manufacturing")) {
+            return "ANCHOR";
+        }
+        if ("GD-132".equalsIgnoreCase(guideId)
+            && containsReviewedRainShelterText(source, "foundry", "metal", "casting")) {
+            return "RELATED";
+        }
+        if ("GD-345".equalsIgnoreCase(guideId) && isRainShelterStackSource(source)) {
+            return "TOPIC";
         }
         return "";
     }

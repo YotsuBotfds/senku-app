@@ -372,6 +372,49 @@ public final class DetailSourcePresentationFormatterTest {
     }
 
     @Test
+    public void evidenceCardsKeepRainShelterRolesWhenLiveStackArrivesTopicFirst() {
+        DetailSourcePresentationFormatter formatter = new DetailSourcePresentationFormatter(null);
+        SearchResult rainShelter = reviewedStackResult("GD-345", "Wood Quality Evaluation for Shelter Construction", "tarp cord rain shelter");
+        SearchResult abrasiveAnchor = reviewedStackResult("GD-220", "Abrasives Manufacturing", "abrasives manufacturing");
+        SearchResult foundryRelated = reviewedStackResult("GD-132", "Foundry & Metal Casting", "foundry metal casting");
+
+        DetailSourcePresentationFormatter.EvidenceCard topic =
+            formatter.buildEvidenceCard(rainShelter, 0, "anchor");
+        DetailSourcePresentationFormatter.EvidenceCard anchor =
+            formatter.buildEvidenceCard(abrasiveAnchor, 1, "related");
+        DetailSourcePresentationFormatter.EvidenceCard related =
+            formatter.buildEvidenceCard(foundryRelated, 2, "related");
+
+        assertEquals("TOPIC", topic.roleLabel);
+        assertEquals("61%", topic.matchLabel);
+        assertEquals("Tarp & Cord Shelters", topic.title);
+        assertFalse(topic.isAnchor);
+        assertEquals("ANCHOR", anchor.roleLabel);
+        assertEquals("74%", anchor.matchLabel);
+        assertEquals("Abrasives Manufacturing", anchor.title);
+        assertTrue(anchor.isAnchor);
+        assertEquals("RELATED", related.roleLabel);
+        assertEquals("68%", related.matchLabel);
+        assertEquals("Foundry & Metal Casting", related.title);
+        assertFalse(related.isAnchor);
+    }
+
+    @Test
+    public void stationEvidenceCardRowLabelPreservesRainShelterTopicRole() {
+        DetailSourcePresentationFormatter formatter = new DetailSourcePresentationFormatter(null);
+        DetailSourcePresentationFormatter.EvidenceCard topic = formatter.buildEvidenceCard(
+            reviewedStackResult("GD-345", "Wood Quality Evaluation for Shelter Construction", "tarp cord rain shelter"),
+            0,
+            "anchor"
+        );
+
+        assertEquals(
+            "TOPIC 1/3 [GD-345] Tarp & Cord Shelters\nWood Quality Evaluation for Shelter Construction",
+            formatter.buildStationEvidenceCardRowLabel(topic, 0, 3)
+        );
+    }
+
+    @Test
     public void stationSourceButtonLabelDoesNotRelabelClickTargetByIndex() {
         DetailSourcePresentationFormatter formatter = new DetailSourcePresentationFormatter(null);
         SearchResult rainShelter = reviewedStackResult("GD-345", "Wood Quality Evaluation for Shelter Construction", "tarp cord rain shelter");

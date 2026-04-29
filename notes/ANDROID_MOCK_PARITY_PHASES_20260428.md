@@ -1097,6 +1097,56 @@ Residuals for next wave:
 - Emergency remains close but needs the next P7 pass for flatter why-card shape
   and exact composer placeholder/context copy.
 
+## Wave49/Wave50 Checkpoint
+
+Committed scope pending at the time of this update:
+
+- Guide reader: restored phone-landscape canonical export with a true left
+  sections rail and paper-style guide page, plus guide formatter metadata for
+  `OPENED FROM GD-220` and required-reading cross-reference rows.
+- Answer sources: added role-aware rain-shelter source labels (`ANCHOR`,
+  `RELATED`, `TOPIC`) and tightened source-card presentation tests.
+- Thread transcript: moved tablet thread rows toward mock labels (`Q1 -
+  FIELD QUESTION`, `A2 - ANCHOR`, confidence bullets) and removed several
+  proof-workflow affordances from the transcript body.
+- Emergency: normalized the second action copy to `Clear the floor to 5 m
+  radius` while preserving the top banner's `minimum 5 m` instruction.
+- Home/search: removed the duplicate phone-landscape navigation rail, flattened
+  several row surfaces, restored the boxed search icon treatment, and fixed
+  tablet search filter checkbox spacing.
+- Planning: added `notes/ANDROID_MOCK_PARITY_WAVE50_XHIGH_SLICES.md` as the
+  current xhigh slice map for the remaining redesign push.
+
+Fresh proof:
+
+- Pack: `artifacts/ui_state_pack/wave49_wave50_integrated/20260428_190854`
+- Canonical mocks:
+  `artifacts/ui_state_pack/wave49_wave50_integrated/20260428_190854/mocks`
+- Zip:
+  `artifacts/ui_state_pack/wave49_wave50_integrated/20260428_190854_mocks.zip`
+- Summary: status `pass`, states `22/22`, failures `0`, ANRs `0`, mock pack
+  `pass`, deterministic frame export `true`.
+- APK SHA:
+  `b9f63a5a6420acf165ba4ec2d5b643635689b592ff750b244f56fa676a03e8f2`
+- Host model: `gemma-4-e2b-it-litert`
+- Host model SHA:
+  `ea1102014465edeb14b517bf270f6751d036749e3c5f517a7ff802782cb92161`
+- Validation: full `:app:testDebugUnitTest` passed, Android local quality gate
+  passed, and the full four-device state pack passed `22/22`. Visual spot check
+  confirmed the user-reported duplicate navigation rail is gone in fresh home
+  landscape captures.
+
+Residuals for next wave:
+
+- Thread tablet landscape still exposes top header residue (`1 SOURCE`,
+  `STRONG EVIDENCE`) even after transcript-row cleanup.
+- Answer phone portrait still has a heavy `SOURCE GUIDES` wrapper; target wants
+  the answer/source hierarchy to feel flatter and closer to the evidence cards.
+- Home tablet landscape is stable and no longer duplicated, but still needs
+  exact density/type/rail proportions against the target.
+- Guide landscape is much closer structurally; remaining work is exact
+  typography, paper width, and row spacing rather than missing surfaces.
+
 ## Parallelization Rules
 
 - Start every worker with `git status --short`, `git log --oneline -n 8

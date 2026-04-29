@@ -80,7 +80,7 @@ public final class DetailActionBlockPresentationFormatterTest {
         assertEquals(4, actions.size());
         assertEquals("Stop all hot work", actions.get(0).title);
         assertEquals("No new charges, no new pours.", actions.get(0).detail);
-        assertEquals("Clear the floor to minimum 5 m radius", actions.get(1).title);
+        assertEquals("Clear the floor to 5 m radius", actions.get(1).title);
         assertEquals("Move personnel upwind.", actions.get(1).detail);
         assertEquals("Confirm two paths of egress", actions.get(2).title);
         assertEquals("", actions.get(2).detail);
@@ -125,7 +125,7 @@ public final class DetailActionBlockPresentationFormatterTest {
         assertEquals(4, actions.size());
         assertEquals("Stop all hot work", actions.get(0).title);
         assertEquals("No new charges, no new pours.", actions.get(0).detail);
-        assertEquals("Clear the floor to minimum 5 m radius", actions.get(1).title);
+        assertEquals("Clear the floor to 5 m radius", actions.get(1).title);
         assertEquals("Move personnel upwind.", actions.get(1).detail);
         assertEquals("Confirm two paths of egress", actions.get(2).title);
         assertEquals("Door and roll-up open and unobstructed.", actions.get(2).detail);
@@ -149,7 +149,7 @@ public final class DetailActionBlockPresentationFormatterTest {
 
         assertEquals(4, actions.size());
         assertEquals("Stop all hot work", actions.get(0).title);
-        assertEquals("Clear the floor to minimum 5 m radius", actions.get(1).title);
+        assertEquals("Clear the floor to 5 m radius", actions.get(1).title);
         assertEquals("Door and roll-up open and unobstructed.", actions.get(2).detail);
         assertEquals("GD-132 lists current owner.", actions.get(3).detail);
     }
@@ -175,7 +175,7 @@ public final class DetailActionBlockPresentationFormatterTest {
 
         assertEquals(2, immediateActions.size());
         assertEquals("Stop all hot work", immediateActions.get(0).title);
-        assertEquals("Clear the floor to minimum 5 m radius", immediateActions.get(1).title);
+        assertEquals("Clear the floor to 5 m radius", immediateActions.get(1).title);
         assertEquals(2, emergencyActions.size());
         assertEquals("Confirm two paths of egress", emergencyActions.get(0).title);
         assertEquals("Notify the area owner", emergencyActions.get(1).title);
@@ -201,7 +201,7 @@ public final class DetailActionBlockPresentationFormatterTest {
 
         assertEquals(4, actions.size());
         assertEquals("Stop all hot work", actions.get(0).title);
-        assertEquals("Clear the floor to minimum 5 m radius", actions.get(1).title);
+        assertEquals("Clear the floor to 5 m radius", actions.get(1).title);
         assertEquals("Door and roll-up open and unobstructed.", actions.get(2).detail);
         assertEquals("GD-132 lists current owner.", actions.get(3).detail);
     }
@@ -236,7 +236,7 @@ public final class DetailActionBlockPresentationFormatterTest {
 
         assertEquals(2, actions.size());
         assertEquals("Stop all hot work", actions.get(0).title);
-        assertEquals("Clear the floor to minimum 5 m radius", actions.get(1).title);
+        assertEquals("Clear the floor to 5 m radius", actions.get(1).title);
     }
 
     @Test
@@ -257,7 +257,7 @@ public final class DetailActionBlockPresentationFormatterTest {
 
         assertEquals(4, actions.size());
         assertEquals("Stop all hot work", actions.get(0).title);
-        assertEquals("Clear the floor to minimum 5 m radius", actions.get(1).title);
+        assertEquals("Clear the floor to 5 m radius", actions.get(1).title);
         assertEquals("Notify the area owner", actions.get(3).title);
         assertEquals("GD-132 lists current owner.", actions.get(3).detail);
     }
@@ -278,7 +278,7 @@ public final class DetailActionBlockPresentationFormatterTest {
 
         assertEquals(2, actions.size());
         assertEquals("Stop all hot work", actions.get(0).title);
-        assertEquals("Clear the floor to minimum 5 m radius", actions.get(1).title);
+        assertEquals("Clear the floor to 5 m radius", actions.get(1).title);
     }
 
     @Test
@@ -297,7 +297,7 @@ public final class DetailActionBlockPresentationFormatterTest {
 
         assertEquals(2, actions.size());
         assertEquals("Stop all hot work", actions.get(0).title);
-        assertEquals("Clear the floor to minimum 5 m radius", actions.get(1).title);
+        assertEquals("Clear the floor to 5 m radius", actions.get(1).title);
     }
 
     @Test
@@ -316,7 +316,7 @@ public final class DetailActionBlockPresentationFormatterTest {
 
         assertEquals(4, actions.size());
         assertEquals("Stop all hot work", actions.get(0).title);
-        assertEquals("Clear the floor to minimum 5 m radius", actions.get(1).title);
+        assertEquals("Clear the floor to 5 m radius", actions.get(1).title);
         assertEquals("Door and roll-up open and unobstructed.", actions.get(2).detail);
         assertEquals("GD-132 lists current owner.", actions.get(3).detail);
     }
@@ -333,7 +333,7 @@ public final class DetailActionBlockPresentationFormatterTest {
             );
 
         assertEquals(3, actions.size());
-        assertEquals("Clear the floor to minimum 5 m radius", actions.get(0).title);
+        assertEquals("Clear the floor to 5 m radius", actions.get(0).title);
         assertEquals("Door and roll-up open and unobstructed.", actions.get(1).detail);
         assertEquals("GD-132 lists current owner.", actions.get(2).detail);
     }
@@ -344,14 +344,14 @@ public final class DetailActionBlockPresentationFormatterTest {
             DetailActionBlockPresentationFormatter.extractEmergencyActionSpecs(
                 "Immediate actions:\n" +
                     "1. Move everyone to minimum 5 m from active work zone. Confirm two paths of egress.\n" +
-                    "2. Clear the floor to minimum 5 m radius. Move personnel upwind.\n" +
+                    "2. Clear the floor to 5 m radius. Move personnel upwind.\n" +
                     "3. Notify the area owner. The guide lists the current owner.",
                 text -> citationFormatter.stripInlineCitationText(text)
             );
 
         assertEquals(3, actions.size());
         assertEquals("Move to minimum 5 m from active work zone", actions.get(0).title);
-        assertEquals("Clear the floor to minimum 5 m radius", actions.get(1).title);
+        assertEquals("Clear the floor to 5 m radius", actions.get(1).title);
         assertEquals("GD-132 lists current owner.", actions.get(2).detail);
     }
 
@@ -361,7 +361,7 @@ public final class DetailActionBlockPresentationFormatterTest {
             DetailActionBlockPresentationFormatter.extractEmergencyActionSpecs(
                 "Immediate actions:\n" +
                     "1. Stop all hot work. No new charges, no new pours.\n" +
-                    "2. Clear the floor to minimum 5 m radius. Move personnel upwind.\n" +
+                    "2. Clear the floor to 5 m radius. Move personnel upwind.\n" +
                     "3. Confirm two paths of egress. Door and roll-up open and unobstructed.\n" +
                     "4. Notify the area owner. GD-132 lists current owner.",
                 text -> citationFormatter.stripInlineCitationText(text)
@@ -429,14 +429,13 @@ public final class DetailActionBlockPresentationFormatterTest {
     }
 
     @Test
-    public void styleEmergencyMinimumDistanceUnderlinesActionMinimumDistanceRows() {
-        String text = "Clear the floor to minimum 5 m radius.";
-        int[] range = DetailActionBlockPresentationFormatter.emergencyMinimumDistanceSpanRangeForTest(text);
+    public void styleEmergencyMinimumDistanceLeavesTargetRadiusActionPlain() {
+        String text = "Clear the floor to 5 m radius.";
 
-        assertTrue(DetailActionBlockPresentationFormatter.shouldStyleEmergencyMinimumDistance(
+        assertTrue(!DetailActionBlockPresentationFormatter.shouldStyleEmergencyMinimumDistance(
             text
         ));
-        assertEquals("minimum 5 m", text.substring(range[0], range[1]));
+        assertEquals(text, DetailActionBlockPresentationFormatter.styleEmergencyMinimumDistance(text).toString());
     }
 
     @Test
