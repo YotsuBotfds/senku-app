@@ -183,7 +183,7 @@ fun SenkuBottomTabBar(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(start = 8.dp, top = 4.dp, end = 8.dp, bottom = 6.dp),
+                    .padding(start = 8.dp, top = 5.dp, end = 8.dp, bottom = 7.dp),
                 horizontalArrangement = Arrangement.spacedBy(4.dp),
             ) {
                 tabs.forEach { tab ->
@@ -212,7 +212,7 @@ private fun BottomTabItem(
     val colors = SenkuTheme.colors
     val tint = if (selected) colors.accent else colors.ink3
     val verticalRail = layoutMode == BottomTabBarLayoutMode.VERTICAL_RAIL
-    val itemHeight = if (verticalRail) 46.dp else 40.dp
+    val itemHeight = if (verticalRail) 48.dp else 48.dp
 
     Column(
         modifier = modifier
@@ -222,20 +222,20 @@ private fun BottomTabItem(
                 onClick = onClick,
                 role = Role.Tab,
             )
-            .padding(horizontal = if (verticalRail) 2.dp else 4.dp, vertical = if (verticalRail) 2.dp else 3.dp),
+            .padding(horizontal = if (verticalRail) 2.dp else 4.dp, vertical = if (verticalRail) 2.dp else 4.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(2.dp, Alignment.CenterVertically),
     ) {
         BottomTabIcon(
             destination = tab.destination,
             tint = tint,
-            modifier = Modifier.size(if (verticalRail) 15.dp else 16.dp),
+            modifier = Modifier.size(if (verticalRail) 17.dp else 20.dp),
         )
         Text(
             text = tab.label,
             style = SenkuTheme.typography.tag.copy(
-                    fontSize = if (verticalRail) 9.5.sp else 9.5.sp,
-                    lineHeight = if (verticalRail) 10.5.sp else 11.sp,
+                    fontSize = if (verticalRail) 9.75.sp else 10.5.sp,
+                    lineHeight = if (verticalRail) 10.75.sp else 12.sp,
                     fontWeight = if (selected) FontWeight.Bold else FontWeight.Normal,
             ),
             color = tint,

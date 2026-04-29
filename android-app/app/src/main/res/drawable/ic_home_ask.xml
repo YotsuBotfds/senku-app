@@ -10,11 +10,11 @@
         android:strokeColor="@color/senku_rev03_ink_2"
         android:strokeLineCap="round"
         android:strokeLineJoin="round"
-        android:strokeWidth="1.45" />
+        android:strokeWidth="1.7" />
     <path
         android:fillColor="@android:color/transparent"
         android:pathData="M8.8,10.3h6.4"
         android:strokeColor="@color/senku_rev03_ink_2"
         android:strokeLineCap="round"
-        android:strokeWidth="1.25" />
+        android:strokeWidth="1.45" />
 </vector>

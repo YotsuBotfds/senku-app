@@ -113,7 +113,7 @@ fun CategoryShelf(
                 CategoryGrid(
                     items = items,
                     columns = 3,
-                    cardHeight = 64.dp,
+                    cardHeight = 74.dp,
                     tabletGrid = false,
                     selectionEnabled = selectionEnabled,
                     onCategorySelected = onCategorySelected,
@@ -124,7 +124,7 @@ fun CategoryShelf(
                 CategoryGrid(
                     items = items,
                     columns = 3,
-                    cardHeight = 56.dp,
+                    cardHeight = 68.dp,
                     tabletGrid = true,
                     selectionEnabled = selectionEnabled,
                     onCategorySelected = onCategorySelected,
@@ -153,7 +153,7 @@ private fun CategoryGrid(
     selectionEnabled: Boolean,
     onCategorySelected: (CategoryShelfItemModel) -> Unit,
 ) {
-    val gap = 8.dp
+    val gap = if (tabletGrid) 10.dp else 9.dp
     items.chunked(columns).forEach { rowItems ->
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -191,12 +191,12 @@ private fun PhoneCategoryCard(
     val horizontalPadding = when {
         compactGrid -> 8.dp
         tabletGrid -> 12.dp
-        else -> 12.dp
+        else -> 14.dp
     }
     val verticalPadding = when {
         compactGrid -> 5.dp
         tabletGrid -> 8.dp
-        else -> 8.dp
+        else -> 10.dp
     }
     val enabled = selectionEnabled && item.enabled
     val accent = Color(item.accentColor)
@@ -234,13 +234,13 @@ private fun PhoneCategoryCard(
                 style = SenkuTheme.typography.uiBody.copy(
                     fontSize = when {
                         compactGrid -> 10.5.sp
-                        tabletGrid -> 13.5.sp
-                        else -> 12.sp
+                        tabletGrid -> 14.sp
+                        else -> 13.sp
                     },
                     lineHeight = when {
                         compactGrid -> 12.sp
-                        tabletGrid -> 16.sp
-                        else -> 14.sp
+                        tabletGrid -> 17.sp
+                        else -> 16.sp
                     },
                     fontWeight = FontWeight.Medium,
                 ),
@@ -252,8 +252,8 @@ private fun PhoneCategoryCard(
                 Text(
                     text = item.countLabel,
                     style = SenkuTheme.typography.uiBody.copy(
-                        fontSize = if (tabletGrid) 12.5.sp else 10.sp,
-                        lineHeight = if (tabletGrid) 15.sp else 14.sp,
+                        fontSize = if (tabletGrid) 13.sp else 11.sp,
+                        lineHeight = if (tabletGrid) 16.sp else 15.sp,
                         fontWeight = FontWeight.Medium,
                     ),
                     color = colors.ink2,
