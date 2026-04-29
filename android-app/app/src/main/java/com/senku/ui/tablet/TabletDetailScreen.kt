@@ -277,10 +277,10 @@ internal enum class TabletGuideBodyLineKind {
 
 internal fun tabletLandscapeReadingLayoutPolicy(): TabletReadingLayoutPolicy =
     TabletReadingLayoutPolicy(
-        threadRailWidthDp = 328,
-        answerMaxWidthDp = 492,
-        evidenceRailWidthDp = 478,
-        answerHorizontalPaddingDp = 42,
+        threadRailWidthDp = 292,
+        answerMaxWidthDp = 560,
+        evidenceRailWidthDp = 360,
+        answerHorizontalPaddingDp = 34,
     )
 
 internal fun tabletPortraitReadingLayoutPolicy(): TabletReadingLayoutPolicy =
@@ -303,7 +303,7 @@ internal fun tabletThreadRailWidthDp(
     threadMode: Boolean = false,
 ): Int =
     when {
-        guideMode && isLandscape -> 316
+        guideMode && isLandscape -> 264
         guideMode -> 330
         threadMode -> tabletReadingLayoutPolicy(isLandscape).threadRailWidthDp
         else -> 0
@@ -338,10 +338,10 @@ internal fun tabletComposerBottomPaddingDp(detailMode: TabletDetailMode, isLands
     }
 
 internal fun tabletGuidePaperMaxWidthDp(isLandscape: Boolean): Int =
-    if (isLandscape) 518 else 820
+    if (isLandscape) 584 else 820
 
 internal fun tabletGuidePaperHorizontalPaddingDp(isLandscape: Boolean): Int =
-    if (isLandscape) 10 else 18
+    if (isLandscape) 12 else 18
 
 internal fun tabletGuidePaperInnerHorizontalPaddingDp(isLandscape: Boolean): Int =
     if (isLandscape) 34 else 34
@@ -350,7 +350,7 @@ internal fun tabletGuidePaperBottomPaddingDp(isLandscape: Boolean): Int =
     if (isLandscape) 24 else 40
 
 internal fun tabletGuideReferenceRailWidthDp(isLandscape: Boolean): Int =
-    if (isLandscape) 420 else 0
+    if (isLandscape) 344 else 0
 
 internal fun tabletGuideChromePolicy(isLandscape: Boolean): TabletGuideChromePolicy =
     if (isLandscape) {

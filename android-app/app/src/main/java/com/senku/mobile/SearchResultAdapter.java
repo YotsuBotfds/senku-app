@@ -44,7 +44,7 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
     private static final int MAX_HIGHLIGHT_TERMS = 4;
     private static final int DEFAULT_MAX_DISPLAYED_ITEMS = 4;
     private static final int SCORE_TICK_TRACK_WIDTH_DP = 22;
-    private static final float COMPACT_ROW_TITLE_TEXT_SIZE_SP = 13.5f;
+    private static final float COMPACT_ROW_TITLE_TEXT_SIZE_SP = 13.75f;
     private static final float COMPACT_ROW_SNIPPET_TEXT_SIZE_SP = 11.25f;
 
     public static final class LinkedGuidePreview {
@@ -225,7 +225,7 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
         LinearLayout row = new LinearLayout(context);
         row.setId(R.id.result_legacy_mirror);
         row.setOrientation(LinearLayout.VERTICAL);
-        row.setPadding(dp(0), dp(6), dp(0), 0);
+        row.setPadding(dp(0), dp(5), dp(0), 0);
         root.addView(row, new FrameLayout.LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT,
             ViewGroup.LayoutParams.WRAP_CONTENT
@@ -278,14 +278,14 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
         TextView title = new TextView(context);
         title.setId(R.id.result_title);
         title.setTextColor(ContextCompat.getColor(context, R.color.senku_text_light));
-        title.setTypeface(Typeface.DEFAULT, Typeface.NORMAL);
+        title.setTypeface(Typeface.DEFAULT, Typeface.BOLD);
         title.setTextSize(TypedValue.COMPLEX_UNIT_SP, COMPACT_ROW_TITLE_TEXT_SIZE_SP);
         title.setLineSpacing(0, 1.04f);
         LinearLayout.LayoutParams titleParams = new LinearLayout.LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT,
             ViewGroup.LayoutParams.WRAP_CONTENT
         );
-        titleParams.topMargin = dp(2);
+        titleParams.topMargin = dp(1);
         row.addView(title, titleParams);
 
         TextView section = buildMonoTextView(context, 8, 11, Typeface.NORMAL);
@@ -309,7 +309,7 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
             ViewGroup.LayoutParams.MATCH_PARENT,
             ViewGroup.LayoutParams.WRAP_CONTENT
         );
-        snippetParams.topMargin = dp(3);
+        snippetParams.topMargin = dp(2);
         row.addView(snippet, snippetParams);
 
         LinearLayout chips = new LinearLayout(context);
@@ -353,7 +353,7 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
             ViewGroup.LayoutParams.MATCH_PARENT,
             1
         );
-        dividerParams.topMargin = dp(10);
+        dividerParams.topMargin = dp(8);
         row.addView(divider, dividerParams);
 
         ComposeView composeView = new ComposeView(context);

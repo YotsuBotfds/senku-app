@@ -1739,6 +1739,34 @@ Fresh proof:
   to target density. Remaining deltas are primarily global phone frame/status
   treatment, guide/emergency density, and exact typography/chrome alignment.
 
+## Wave66 Checkpoint
+
+Committed scope pending at the time of this update:
+
+- Phone guide polish: widened the phone guide paper by tightening the guide
+  viewport padding, added a little more paper breathing room, and increased
+  guide body line spacing where the target read more like a paper card.
+- Tablet proportion polish: narrowed landscape support rails and widened the
+  bounded center reading surfaces so answer/guide content has more visual
+  ownership than the rails.
+- Search polish: tightened result row spacing and adjusted tablet filter/
+  preview rail widths so the results column gets more room.
+- Integration correction: rejected the attempted emergency-density compression
+  because the target emergency state needs stronger hierarchy, not a tiny alert
+  block. Emergency remains on the prior safer treatment.
+
+Fresh proof:
+
+- Full pack:
+  `artifacts/ui_state_pack/wave66_integrated_final/20260429_071450`
+- Summary: full pack `pass`, states `22/22`, failures `0`, ANRs `0`, rotation
+  mismatch `0`, canonical mock export `22` PNGs.
+- Validation: combined focused JVM suite passed across detail, home/search, and
+  tablet policy tests.
+- Visual note: guide phone portrait is closer on paper width; emergency is not
+  regressed by the discarded compression pass. Remaining high-impact work is
+  guide phone bottom nav/topbar parity and tablet guide/source card density.
+
 ## Parallelization Rules
 
 - Start every worker with `git status --short`, `git log --oneline -n 8

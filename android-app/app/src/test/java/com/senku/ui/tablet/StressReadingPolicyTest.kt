@@ -14,10 +14,10 @@ class StressReadingPolicyTest {
     fun tabletLandscapeReadingPolicyKeepsAnswerFirstWidthBudget() {
         val policy = tabletLandscapeReadingLayoutPolicy()
 
-        assertEquals(328, policy.threadRailWidthDp)
-        assertEquals(492, policy.answerMaxWidthDp)
-        assertEquals(478, policy.evidenceRailWidthDp)
-        assertEquals(42, policy.answerHorizontalPaddingDp)
+        assertEquals(292, policy.threadRailWidthDp)
+        assertEquals(560, policy.answerMaxWidthDp)
+        assertEquals(360, policy.evidenceRailWidthDp)
+        assertEquals(34, policy.answerHorizontalPaddingDp)
     }
 
     @Test
@@ -41,19 +41,19 @@ class StressReadingPolicyTest {
         assertEquals(720, portraitPolicy.answerMaxWidthDp)
         assertEquals(420, portraitPolicy.evidenceRailWidthDp)
         assertEquals(42, portraitPolicy.answerHorizontalPaddingDp)
-        assertEquals(328, landscapePolicy.threadRailWidthDp)
-        assertEquals(492, landscapePolicy.answerMaxWidthDp)
-        assertEquals(478, landscapePolicy.evidenceRailWidthDp)
-        assertEquals(42, landscapePolicy.answerHorizontalPaddingDp)
+        assertEquals(292, landscapePolicy.threadRailWidthDp)
+        assertEquals(560, landscapePolicy.answerMaxWidthDp)
+        assertEquals(360, landscapePolicy.evidenceRailWidthDp)
+        assertEquals(34, landscapePolicy.answerHorizontalPaddingDp)
     }
 
     @Test
     fun tabletGuideThreadRailUsesSectionIndexWidthWithoutChangingAnswerRails() {
         assertEquals(0, tabletThreadRailWidthDp(isLandscape = true, guideMode = false))
         assertEquals(0, tabletThreadRailWidthDp(isLandscape = false, guideMode = false))
-        assertEquals(328, tabletThreadRailWidthDp(isLandscape = true, guideMode = false, threadMode = true))
+        assertEquals(292, tabletThreadRailWidthDp(isLandscape = true, guideMode = false, threadMode = true))
         assertEquals(0, tabletThreadRailWidthDp(isLandscape = false, guideMode = false, threadMode = true))
-        assertEquals(316, tabletThreadRailWidthDp(isLandscape = true, guideMode = true))
+        assertEquals(264, tabletThreadRailWidthDp(isLandscape = true, guideMode = true))
         assertEquals(330, tabletThreadRailWidthDp(isLandscape = false, guideMode = true))
     }
 
@@ -90,16 +90,31 @@ class StressReadingPolicyTest {
 
     @Test
     fun tabletGuidePaperPolicyContainsPortraitReaderWithReadableLandscapeSheet() {
-        assertEquals(518, tabletGuidePaperMaxWidthDp(isLandscape = true))
+        assertEquals(584, tabletGuidePaperMaxWidthDp(isLandscape = true))
         assertEquals(820, tabletGuidePaperMaxWidthDp(isLandscape = false))
-        assertEquals(10, tabletGuidePaperHorizontalPaddingDp(isLandscape = true))
+        assertEquals(12, tabletGuidePaperHorizontalPaddingDp(isLandscape = true))
         assertEquals(18, tabletGuidePaperHorizontalPaddingDp(isLandscape = false))
         assertEquals(34, tabletGuidePaperInnerHorizontalPaddingDp(isLandscape = true))
         assertEquals(34, tabletGuidePaperInnerHorizontalPaddingDp(isLandscape = false))
         assertEquals(24, tabletGuidePaperBottomPaddingDp(isLandscape = true))
         assertEquals(40, tabletGuidePaperBottomPaddingDp(isLandscape = false))
-        assertEquals(420, tabletGuideReferenceRailWidthDp(isLandscape = true))
+        assertEquals(344, tabletGuideReferenceRailWidthDp(isLandscape = true))
         assertEquals(0, tabletGuideReferenceRailWidthDp(isLandscape = false))
+    }
+
+    @Test
+    fun tabletLandscapeProportionsKeepCenterDominantOverSupportRails() {
+        val readingPolicy = tabletLandscapeReadingLayoutPolicy()
+        val guideSideRails =
+            tabletThreadRailWidthDp(isLandscape = true, guideMode = true) +
+                tabletGuideReferenceRailWidthDp(isLandscape = true)
+        val guidePaperOuterWidth =
+            tabletGuidePaperMaxWidthDp(isLandscape = true) +
+                (tabletGuidePaperHorizontalPaddingDp(isLandscape = true) * 2)
+
+        assertTrue(readingPolicy.answerMaxWidthDp > readingPolicy.evidenceRailWidthDp)
+        assertTrue(readingPolicy.threadRailWidthDp < readingPolicy.evidenceRailWidthDp)
+        assertTrue(guidePaperOuterWidth >= guideSideRails)
     }
 
     @Test

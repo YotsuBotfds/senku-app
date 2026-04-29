@@ -8675,6 +8675,7 @@ public final class DetailActivity extends AppCompatActivity {
             return;
         }
         boolean singlePaperPhoneGuide = shouldUseSinglePaperPhoneGuideShell();
+        applyPhoneGuideReaderViewportDensity(singlePaperPhoneGuide);
         if (questionBubble != null) {
             questionBubble.setVisibility(singlePaperPhoneGuide ? View.GONE : View.VISIBLE);
             if (!singlePaperPhoneGuide) {
@@ -8718,9 +8719,9 @@ public final class DetailActivity extends AppCompatActivity {
         if (bodyMirrorShell != null) {
             bodyMirrorShell.setBackgroundResource(R.drawable.bg_detail_guide_paper_shell);
             bodyMirrorShell.setPadding(
-                dp(singlePaperPhoneGuide ? 12 : 16),
-                dp(singlePaperPhoneGuide ? (isLandscapePhoneLayout() ? 8 : 10) : (isLandscapePhoneLayout() ? 10 : 12)),
-                dp(singlePaperPhoneGuide ? 12 : 16),
+                dp(resolvePhoneGuideBodyShellHorizontalPaddingDp(singlePaperPhoneGuide, isLandscapePhoneLayout())),
+                dp(resolvePhoneGuideBodyShellTopPaddingDp(singlePaperPhoneGuide, isLandscapePhoneLayout())),
+                dp(resolvePhoneGuideBodyShellHorizontalPaddingDp(singlePaperPhoneGuide, isLandscapePhoneLayout())),
                 dp(resolvePhoneGuideBodyShellBottomPaddingDp(singlePaperPhoneGuide, isLandscapePhoneLayout()))
             );
             setTopMargin(bodyMirrorShell, dp(0));
@@ -8731,6 +8732,19 @@ public final class DetailActivity extends AppCompatActivity {
             bodyView.setLineSpacing(dp(resolvePhoneGuideBodyLineSpacingExtraDp(isLandscapePhoneLayout())), 1.08f);
             bodyView.setIncludeFontPadding(false);
         }
+    }
+
+    private void applyPhoneGuideReaderViewportDensity(boolean singlePaperPhoneGuide) {
+        if (!singlePaperPhoneGuide || detailScroll == null || detailScroll.getChildCount() == 0) {
+            return;
+        }
+        View content = detailScroll.getChildAt(0);
+        content.setPadding(
+            dp(resolvePhoneGuideViewportHorizontalPaddingDp(isLandscapePhoneLayout())),
+            dp(resolvePhoneGuideViewportTopPaddingDp(isLandscapePhoneLayout())),
+            dp(resolvePhoneGuideViewportHorizontalPaddingDp(isLandscapePhoneLayout())),
+            content.getPaddingBottom()
+        );
     }
 
     static boolean shouldRestoreAnswerSemanticPresentation(boolean answerMode, boolean emergencyPortrait) {
@@ -8754,13 +8768,35 @@ public final class DetailActivity extends AppCompatActivity {
 
     static int resolvePhoneGuideBodyShellBottomPaddingDp(boolean singlePaperPhoneGuide, boolean landscapePhone) {
         if (singlePaperPhoneGuide) {
-            return landscapePhone ? 12 : 20;
+            return landscapePhone ? 14 : 24;
         }
-        return landscapePhone ? 14 : 16;
+        return landscapePhone ? 16 : 18;
+    }
+
+    static int resolvePhoneGuideBodyShellHorizontalPaddingDp(boolean singlePaperPhoneGuide, boolean landscapePhone) {
+        if (singlePaperPhoneGuide) {
+            return landscapePhone ? 12 : 14;
+        }
+        return landscapePhone ? 16 : 18;
+    }
+
+    static int resolvePhoneGuideBodyShellTopPaddingDp(boolean singlePaperPhoneGuide, boolean landscapePhone) {
+        if (singlePaperPhoneGuide) {
+            return landscapePhone ? 10 : 14;
+        }
+        return landscapePhone ? 12 : 14;
     }
 
     static int resolvePhoneGuideBodyLineSpacingExtraDp(boolean landscapePhone) {
-        return landscapePhone ? 2 : 2;
+        return landscapePhone ? 2 : 3;
+    }
+
+    static int resolvePhoneGuideViewportHorizontalPaddingDp(boolean landscapePhone) {
+        return landscapePhone ? 12 : 10;
+    }
+
+    static int resolvePhoneGuideViewportTopPaddingDp(boolean landscapePhone) {
+        return landscapePhone ? 4 : 8;
     }
 
     private void restoreAnswerSemanticPresentation() {

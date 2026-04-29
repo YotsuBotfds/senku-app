@@ -92,8 +92,8 @@ public final class SearchResultAdapterTest {
     }
 
     @Test
-    public void compactRowsUseCalmerMockTypographyScale() {
-        assertEquals(13.5f, SearchResultAdapter.compactRowTitleTextSizeSpForTest(), 0.001f);
+    public void compactRowsUseFinalMockTypographyScale() {
+        assertEquals(13.75f, SearchResultAdapter.compactRowTitleTextSizeSpForTest(), 0.001f);
         assertEquals(11.25f, SearchResultAdapter.compactRowSnippetTextSizeSpForTest(), 0.001f);
     }
 
