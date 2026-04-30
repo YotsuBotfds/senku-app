@@ -143,12 +143,16 @@ public final class EmergencySurfacePolicyTest {
     @Test
     public void tabletPortraitEmergencyChromeUsesCompactIconTargets() {
         assertEquals(28, DetailActivity.resolveTabletEmergencyChromeNavIconSizeDp());
+        assertEquals(1, DetailActivity.resolveTabletEmergencyChromeRuleHeightDp());
     }
 
     @Test
     public void tabletPortraitEmergencyUsesSharedAppRailColumn() {
         assertEquals(72, DetailActivity.resolveTabletEmergencyAppRailWidthDp());
         assertEquals(1, DetailActivity.resolveTabletEmergencyAppRailDividerWidthDp());
+        assertEquals(10.0f, DetailActivity.resolveTabletEmergencyAppRailLabelTextSizeSp(), 0.0f);
+        assertEquals(13.0f, DetailActivity.resolveTabletEmergencyAppRailLabelLineHeightSp(), 0.0f);
+        assertEquals(0.0f, DetailActivity.resolveTabletEmergencyAppRailLabelLetterSpacing(), 0.0f);
         assertTrue(DetailActivity.shouldShowTabletEmergencyAppRailOverlay(true, true, true));
         assertFalse(DetailActivity.shouldShowTabletEmergencyAppRailOverlay(true, false, true));
         assertFalse(DetailActivity.shouldShowTabletEmergencyAppRailOverlay(false, true, true));
@@ -266,7 +270,7 @@ public final class EmergencySurfacePolicyTest {
         assertEquals("Back", DetailActivity.tabletEmergencyBackButtonLabel());
         assertEquals("Back", DetailActivity.tabletEmergencyBackButtonLabel(false));
         assertEquals("Back", DetailActivity.tabletEmergencyBackButtonLabel(true));
-        assertEquals(64, DetailActivity.resolveTabletEmergencyBackButtonMinWidthDp());
+        assertEquals(60, DetailActivity.resolveTabletEmergencyBackButtonMinWidthDp());
         assertTrue(
             DetailActivity.resolveTabletEmergencyBackButtonMinWidthDp()
                 > DetailActivity.resolveTabletEmergencyChromeNavIconSizeDp()

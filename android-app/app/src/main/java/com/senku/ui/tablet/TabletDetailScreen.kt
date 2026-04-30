@@ -1919,7 +1919,7 @@ private fun GuideTopBarBackAction(
     Surface(
         modifier = Modifier
             .height(28.dp)
-            .widthIn(min = 54.dp, max = 60.dp)
+            .width(60.dp)
             .semantics(mergeDescendants = true) {
                 contentDescription = "Back to previous screen"
             }
@@ -2725,7 +2725,7 @@ private fun TitleBar(
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(if (guideMode) 12.dp else 10.dp),
+            horizontalArrangement = Arrangement.spacedBy(10.dp),
         ) {
             GuideTopBarBackAction(onClick = onBackClick)
             Box(

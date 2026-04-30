@@ -121,9 +121,22 @@ public final class DetailActivity extends AppCompatActivity {
     private static final float DETAIL_TOP_CHROME_TITLE_TEXT_SIZE_SP = 13.0f;
     private static final float DETAIL_TOP_CHROME_LABEL_TEXT_SIZE_SP = 9.5f;
     private static final int DETAIL_TOP_CHROME_ICON_ACTION_SIZE_DP = 28;
-    private static final int DETAIL_TOP_CHROME_BACK_ACTION_MIN_WIDTH_DP = 64;
+    private static final int TABLET_HEADER_BACK_ACTION_WIDTH_DP = 60;
+    private static final int TABLET_HEADER_BACK_ICON_SIZE_DP = 14;
+    private static final int TABLET_HEADER_BACK_HORIZONTAL_PADDING_DP = 6;
+    private static final int TABLET_HEADER_BACK_LABEL_GAP_DP = 2;
+    private static final int TABLET_HEADER_DIVIDER_GAP_DP = 10;
+    private static final int TABLET_HEADER_DIVIDER_HEIGHT_DP = 24;
+    private static final int TABLET_HEADER_RULE_HEIGHT_DP = 1;
+    private static final float TABLET_HEADER_BACK_LABEL_TEXT_SIZE_SP = 10.0f;
+    private static final float TABLET_HEADER_BACK_LABEL_LINE_HEIGHT_SP = 12.0f;
+    private static final float TABLET_HEADER_BACK_LABEL_LETTER_SPACING = 0.09f;
+    private static final int DETAIL_TOP_CHROME_BACK_ACTION_MIN_WIDTH_DP = TABLET_HEADER_BACK_ACTION_WIDTH_DP;
     private static final String DETAIL_TOP_CHROME_BACK_ACTION_LABEL = "Back";
     private static final int TABLET_EMERGENCY_CHROME_NAV_ICON_SIZE_DP = DETAIL_TOP_CHROME_ICON_ACTION_SIZE_DP;
+    private static final float TABLET_APP_RAIL_LABEL_TEXT_SIZE_SP = 10.0f;
+    private static final float TABLET_APP_RAIL_LABEL_LINE_HEIGHT_SP = 13.0f;
+    private static final float TABLET_APP_RAIL_LABEL_LETTER_SPACING = 0.0f;
     private static final int TABLET_EMERGENCY_LANDSCAPE_LEFT_MARGIN_DP = 336;
     private static final int TABLET_EMERGENCY_LANDSCAPE_RIGHT_MARGIN_DP = 24;
     private static final int TABLET_EMERGENCY_LANDSCAPE_TOP_MARGIN_DP = 16;
@@ -1767,16 +1780,23 @@ public final class DetailActivity extends AppCompatActivity {
             ViewGroup.LayoutParams.MATCH_PARENT,
             ViewGroup.LayoutParams.WRAP_CONTENT
         );
-        chromeParams.bottomMargin = dp(TABLET_EMERGENCY_CHROME_BOTTOM_MARGIN_DP);
 
-        Button back = new Button(this);
-        back.setContentDescription(getString(resolveTabletEmergencyBackContentDescriptionResource(isTaskRoot())));
-        applyTabletEmergencyChromeBackButton(back);
+        View back = buildTabletEmergencyChromeBackAction();
         back.setOnClickListener(v -> navigateBackFromDetail());
         tabletEmergencyChromeOverlayPanel.addView(back, new LinearLayout.LayoutParams(
             dp(resolveTabletEmergencyBackButtonMinWidthDp()),
             dp(resolveTabletEmergencyChromeNavIconSizeDp())
         ));
+
+        View divider = new View(this);
+        divider.setBackgroundColor(getColor(R.color.senku_rev03_hairline_strong));
+        LinearLayout.LayoutParams dividerParams = new LinearLayout.LayoutParams(
+            dp(TABLET_APP_RAIL_DIVIDER_WIDTH_DP),
+            dp(TABLET_HEADER_DIVIDER_HEIGHT_DP)
+        );
+        dividerParams.leftMargin = dp(TABLET_HEADER_DIVIDER_GAP_DP);
+        dividerParams.rightMargin = dp(TABLET_HEADER_DIVIDER_GAP_DP);
+        tabletEmergencyChromeOverlayPanel.addView(divider, dividerParams);
 
         LinearLayout chromeText = new LinearLayout(this);
         chromeText.setOrientation(LinearLayout.VERTICAL);
@@ -1785,11 +1805,10 @@ public final class DetailActivity extends AppCompatActivity {
             ViewGroup.LayoutParams.WRAP_CONTENT,
             1f
         );
-        chromeTextParams.leftMargin = dp(12);
 
         tabletEmergencyChromeOverlayTitle = new TextView(this);
         tabletEmergencyChromeOverlayTitle.setTextColor(getColor(R.color.senku_rev03_ink_0));
-        tabletEmergencyChromeOverlayTitle.setTypeface(rev03UiTypeface(Typeface.BOLD));
+        tabletEmergencyChromeOverlayTitle.setTypeface(rev03UiTypefaceWeight(600));
         tabletEmergencyChromeOverlayTitle.setTextSize(resolveDetailTopChromeTitleTextSizeSp());
         tabletEmergencyChromeOverlayTitle.setMaxLines(1);
         tabletEmergencyChromeOverlayTitle.setEllipsize(TextUtils.TruncateAt.END);
@@ -1802,6 +1821,7 @@ public final class DetailActivity extends AppCompatActivity {
         tabletEmergencyChromeOverlayMeta.setTextColor(getColor(R.color.senku_rev03_ink_2));
         tabletEmergencyChromeOverlayMeta.setTypeface(rev03MonoTypeface(Typeface.NORMAL));
         tabletEmergencyChromeOverlayMeta.setTextSize(resolveDetailTopChromeLabelTextSizeSp());
+        tabletEmergencyChromeOverlayMeta.setLetterSpacing(TABLET_HEADER_BACK_LABEL_LETTER_SPACING);
         tabletEmergencyChromeOverlayMeta.setMaxLines(1);
         tabletEmergencyChromeOverlayMeta.setEllipsize(TextUtils.TruncateAt.END);
         chromeText.addView(tabletEmergencyChromeOverlayMeta, new LinearLayout.LayoutParams(
@@ -1824,6 +1844,15 @@ public final class DetailActivity extends AppCompatActivity {
             tabletEmergencyChromeOverlayPanel.addView(home, homeParams);
         }
         overlay.addView(tabletEmergencyChromeOverlayPanel, chromeParams);
+
+        View chromeRule = new View(this);
+        chromeRule.setBackgroundColor(getColor(R.color.senku_rev03_hairline_strong));
+        LinearLayout.LayoutParams chromeRuleParams = new LinearLayout.LayoutParams(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            dp(TABLET_HEADER_RULE_HEIGHT_DP)
+        );
+        chromeRuleParams.bottomMargin = dp(TABLET_EMERGENCY_CHROME_BOTTOM_MARGIN_DP);
+        overlay.addView(chromeRule, chromeRuleParams);
 
         TextView title = new TextView(this);
         title.setId(R.id.detail_emergency_header_title);
@@ -1934,7 +1963,7 @@ public final class DetailActivity extends AppCompatActivity {
         station.setGravity(Gravity.CENTER);
         station.setText(R.string.app_badge_letter);
         station.setTextColor(getColor(R.color.senku_rev03_accent));
-        station.setTypeface(rev03UiTypeface(Typeface.BOLD));
+        station.setTypeface(rev03MonoTypeface(Typeface.BOLD));
         station.setTextSize(14f);
         station.setBackgroundResource(R.drawable.bg_manual_home_nav_shell);
         station.setIncludeFontPadding(false);
@@ -1999,7 +2028,9 @@ public final class DetailActivity extends AppCompatActivity {
         text.setIncludeFontPadding(false);
         text.setText(label);
         text.setTextColor(color);
-        text.setTextSize(12f);
+        text.setTextSize(resolveTabletEmergencyAppRailLabelTextSizeSp());
+        setTextLineHeightSp(text, resolveTabletEmergencyAppRailLabelLineHeightSp());
+        text.setLetterSpacing(resolveTabletEmergencyAppRailLabelLetterSpacing());
         text.setTypeface(rev03UiTypeface(active ? Typeface.BOLD : Typeface.NORMAL));
         LinearLayout.LayoutParams textParams = new LinearLayout.LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT,
@@ -2008,6 +2039,50 @@ public final class DetailActivity extends AppCompatActivity {
         textParams.topMargin = dp(3);
         item.addView(text, textParams);
         return item;
+    }
+
+    private View buildTabletEmergencyChromeBackAction() {
+        LinearLayout action = new LinearLayout(this);
+        action.setOrientation(LinearLayout.HORIZONTAL);
+        action.setGravity(Gravity.CENTER);
+        action.setClickable(true);
+        action.setFocusable(true);
+        action.setPadding(
+            dp(TABLET_HEADER_BACK_HORIZONTAL_PADDING_DP),
+            0,
+            dp(TABLET_HEADER_BACK_HORIZONTAL_PADDING_DP),
+            0
+        );
+        action.setContentDescription(getString(resolveTabletEmergencyBackContentDescriptionResource(isTaskRoot())));
+
+        ImageView icon = new ImageView(this);
+        icon.setImageResource(R.drawable.ic_home_back_chevron);
+        icon.setImageTintList(ColorStateList.valueOf(getColor(R.color.senku_rev03_ink_0)));
+        icon.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
+        action.addView(icon, new LinearLayout.LayoutParams(
+            dp(TABLET_HEADER_BACK_ICON_SIZE_DP),
+            dp(TABLET_HEADER_BACK_ICON_SIZE_DP)
+        ));
+
+        TextView label = new TextView(this);
+        label.setGravity(Gravity.CENTER);
+        label.setIncludeFontPadding(false);
+        label.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
+        label.setSingleLine(true);
+        label.setMaxLines(1);
+        label.setText(tabletEmergencyBackButtonLabel(isTaskRoot()));
+        label.setTextColor(getColor(R.color.senku_rev03_ink_0));
+        label.setTypeface(rev03MonoTypefaceWeight(500));
+        label.setTextSize(TABLET_HEADER_BACK_LABEL_TEXT_SIZE_SP);
+        label.setLetterSpacing(TABLET_HEADER_BACK_LABEL_LETTER_SPACING);
+        setTextLineHeightSp(label, TABLET_HEADER_BACK_LABEL_LINE_HEIGHT_SP);
+        LinearLayout.LayoutParams labelParams = new LinearLayout.LayoutParams(
+            ViewGroup.LayoutParams.WRAP_CONTENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        );
+        labelParams.leftMargin = dp(TABLET_HEADER_BACK_LABEL_GAP_DP);
+        action.addView(label, labelParams);
+        return action;
     }
 
     private LinearLayout.LayoutParams tabletAppRailItemParams(int topMarginDp) {
@@ -2128,8 +2203,16 @@ public final class DetailActivity extends AppCompatActivity {
         return rev03Typeface(R.font.inter_tight, style, Typeface.DEFAULT);
     }
 
+    private Typeface rev03UiTypefaceWeight(int weight) {
+        return rev03TypefaceWeight(R.font.inter_tight, weight, Typeface.DEFAULT);
+    }
+
     private Typeface rev03MonoTypeface(int style) {
         return rev03Typeface(R.font.jetbrains_mono, style, Typeface.MONOSPACE);
+    }
+
+    private Typeface rev03MonoTypefaceWeight(int weight) {
+        return rev03TypefaceWeight(R.font.jetbrains_mono, weight, Typeface.MONOSPACE);
     }
 
     private Typeface rev03SerifTypeface(int style) {
@@ -2139,6 +2222,15 @@ public final class DetailActivity extends AppCompatActivity {
     private Typeface rev03Typeface(int fontResId, int style, Typeface fallback) {
         Typeface typeface = ResourcesCompat.getFont(this, fontResId);
         return Typeface.create(typeface != null ? typeface : fallback, style);
+    }
+
+    private Typeface rev03TypefaceWeight(int fontResId, int weight, Typeface fallback) {
+        Typeface typeface = ResourcesCompat.getFont(this, fontResId);
+        Typeface family = typeface != null ? typeface : fallback;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.P) {
+            return Typeface.create(family, weight, false);
+        }
+        return Typeface.create(family, weight >= 600 ? Typeface.BOLD : Typeface.NORMAL);
     }
 
     private String buildTabletEmergencyOverlayChromeTitle() {
@@ -2255,6 +2347,10 @@ public final class DetailActivity extends AppCompatActivity {
         return TABLET_EMERGENCY_CHROME_NAV_ICON_SIZE_DP;
     }
 
+    static int resolveTabletEmergencyChromeRuleHeightDp() {
+        return TABLET_HEADER_RULE_HEIGHT_DP;
+    }
+
     static int resolveTabletEmergencyAppRailWidthDp() {
         return TABLET_APP_RAIL_WIDTH_DP;
     }
@@ -2273,6 +2369,18 @@ public final class DetailActivity extends AppCompatActivity {
 
     static int resolveTabletEmergencyAppRailHomeContentDescriptionResource() {
         return R.string.detail_emergency_app_rail_manual_content_description;
+    }
+
+    static float resolveTabletEmergencyAppRailLabelTextSizeSp() {
+        return TABLET_APP_RAIL_LABEL_TEXT_SIZE_SP;
+    }
+
+    static float resolveTabletEmergencyAppRailLabelLineHeightSp() {
+        return TABLET_APP_RAIL_LABEL_LINE_HEIGHT_SP;
+    }
+
+    static float resolveTabletEmergencyAppRailLabelLetterSpacing() {
+        return TABLET_APP_RAIL_LABEL_LETTER_SPACING;
     }
 
     static boolean shouldShowTabletEmergencyAppRailOverlay(
@@ -9440,6 +9548,26 @@ public final class DetailActivity extends AppCompatActivity {
     private int dp(int value) {
         float density = getResources().getDisplayMetrics().density;
         return Math.round(value * density);
+    }
+
+    private int sp(float value) {
+        return Math.round(TypedValue.applyDimension(
+            TypedValue.COMPLEX_UNIT_SP,
+            value,
+            getResources().getDisplayMetrics()
+        ));
+    }
+
+    private void setTextLineHeightSp(TextView textView, float lineHeightSp) {
+        if (textView == null) {
+            return;
+        }
+        int lineHeightPx = sp(lineHeightSp);
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.P) {
+            textView.setLineHeight(lineHeightPx);
+            return;
+        }
+        textView.setLineSpacing(lineHeightPx - textView.getTextSize(), 1.0f);
     }
 
     private static String buildGuideBody(SearchResult result) {

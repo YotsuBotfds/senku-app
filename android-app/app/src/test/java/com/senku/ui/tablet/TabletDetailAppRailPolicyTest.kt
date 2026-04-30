@@ -55,7 +55,7 @@ class TabletDetailAppRailPolicyTest {
         ).readText()
 
         assertSourceContains(source, ".height(28.dp)")
-        assertSourceContains(source, ".widthIn(min = 54.dp, max = 60.dp)")
+        assertSourceContains(source, ".width(60.dp)")
         assertSourceContains(source, "contentDescription = \"Back to previous screen\"")
         assertSourceContains(source, "Modifier.padding(horizontal = 6.dp)")
         assertSourceContains(source, "horizontalArrangement = Arrangement.spacedBy(2.dp)")
