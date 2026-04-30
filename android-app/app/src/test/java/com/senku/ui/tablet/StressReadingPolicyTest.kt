@@ -800,13 +800,21 @@ class StressReadingPolicyTest {
     }
 
     @Test
-    fun tabletAnswerModeKeepsEvidencePaneHiddenUntilExpanded() {
+    fun tabletAnswerModeShowsEvidencePaneWhenSourcesExist() {
         val state = tabletDetailState(
             sources = listOf(
                 SourceState("s1", "GD-001", "Anchor guide", isAnchor = true, isSelected = true),
                 SourceState("s2", "GD-002", "Related guide", isAnchor = false, isSelected = false),
             ),
         )
+
+        assertTrue(tabletShouldShowEvidencePane(state, guideMode = false))
+        assertEquals(2, state.resolvedAnswerSourceCount())
+    }
+
+    @Test
+    fun tabletAnswerModeKeepsEvidencePaneHiddenWithoutSourcesUntilExpanded() {
+        val state = tabletDetailState()
 
         assertFalse(tabletShouldShowEvidencePane(state, guideMode = false))
     }

@@ -3712,7 +3712,8 @@ internal fun tabletShouldShowEvidencePane(
             sourceCount = state.resolvedVisibleThreadSourceCount(),
         )
         guideMode -> state.isLandscape
-        state.detailMode == TabletDetailMode.Answer -> state.evidenceExpanded
+        state.detailMode == TabletDetailMode.Answer ->
+            state.evidenceExpanded || state.resolvedAnswerSourceCount() > 0
         else -> false
     }
 

@@ -335,17 +335,21 @@ class TabletEvidenceVisibilityPolicyTest {
     }
 
     @Test
-    fun tabletAnswerModeKeepsSourceRailHiddenUntilExpanded() {
-        assertFalse(
+    fun tabletAnswerModeShowsPortraitSourceRailWhenSourcesExist() {
+        val state = stateWithSources(sourceCount = 3, isLandscape = false)
+
+        assertTrue(
             tabletShouldShowEvidencePane(
-                state = stateWithSources(sourceCount = 1, isLandscape = false),
+                state = state,
                 guideMode = false,
             )
         )
+        assertEquals(3, state.resolvedAnswerSourceCount())
+        assertEquals("SOURCES \u2022 3", answerModeSourceSectionTitle(state.resolvedAnswerSourceCount()))
     }
 
     @Test
-    fun tabletAnswerModeKeepsEvidenceRailHiddenWithoutSourcesUnlessExpanded() {
+    fun tabletAnswerModeKeepsEvidenceRailHiddenWithoutSourcesUntilExpanded() {
         assertFalse(
             tabletShouldShowEvidencePane(
                 state = stateWithSources(sourceCount = 0, isLandscape = true),
