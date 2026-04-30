@@ -51,9 +51,7 @@ import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -78,9 +76,7 @@ public final class MainActivity extends AppCompatActivity {
     private static final String STATE_MAIN_ROUTE_ASK_LANE_ACTIVE = "main_route_ask_lane_active";
     static final int SEARCH_RESULT_LIMIT = 4;
     private static final int ALL_GUIDES = 0;
-    private static final int MIN_SEARCH_SUGGESTION_QUERY = 2;
-    private static final int MAX_SEARCH_SUGGESTIONS = 6;
-    private static final int MAX_CATEGORY_SUGGESTIONS = 2;
+    private static final int MIN_SEARCH_SUGGESTION_QUERY = MainSearchSuggestionPolicy.MIN_QUERY_LENGTH;
     private static final int MAX_SAVED_GUIDES = 12;
     private static final int MAX_RECENT_THREAD_PREVIEWS = 3;
     private static final int MAX_HOME_RELATED_GUIDES = 4;
@@ -224,32 +220,6 @@ public final class MainActivity extends AppCompatActivity {
     private boolean showHomeInfoCard = true;
     private BottomTabDestination activePhoneTab = BottomTabDestination.HOME;
     private final ArrayList<BottomTabDestination> phoneTabBackStack = new ArrayList<>();
-
-    private static final class SearchSuggestion {
-        final String label;
-        final String contentDescription;
-        final String searchQuery;
-        final String categoryKey;
-        final String categoryLabel;
-
-        SearchSuggestion(
-            String label,
-            String contentDescription,
-            String searchQuery,
-            String categoryKey,
-            String categoryLabel
-        ) {
-            this.label = label == null ? "" : label;
-            this.contentDescription = contentDescription == null ? "" : contentDescription;
-            this.searchQuery = searchQuery == null ? "" : searchQuery;
-            this.categoryKey = categoryKey == null ? "" : categoryKey;
-            this.categoryLabel = categoryLabel == null ? "" : categoryLabel;
-        }
-
-        boolean isCategory() {
-            return !categoryKey.isEmpty();
-        }
-    }
 
     static final class HomeGuideAnchor {
         final String guideId;
@@ -1525,7 +1495,7 @@ public final class MainActivity extends AppCompatActivity {
             searchSuggestionsSection.setVisibility(View.GONE);
             return;
         }
-        List<SearchSuggestion> suggestions = buildSearchSuggestions(query);
+        List<MainSearchSuggestionPolicy.SearchSuggestion> suggestions = buildSearchSuggestions(query);
         searchSuggestionsContainer.removeAllViews();
         for (int index = 0; index < suggestions.size(); index++) {
             searchSuggestionsContainer.addView(createSearchSuggestionButton(suggestions.get(index), index));
@@ -1533,93 +1503,11 @@ public final class MainActivity extends AppCompatActivity {
         searchSuggestionsSection.setVisibility(suggestions.isEmpty() ? View.GONE : View.VISIBLE);
     }
 
-    private List<SearchSuggestion> buildSearchSuggestions(String query) {
-        String normalizedQuery = presentationFormatter().normalizeBucketText(query);
-        if (normalizedQuery.length() < MIN_SEARCH_SUGGESTION_QUERY) {
-            return Collections.emptyList();
-        }
-        ArrayList<SearchResult> matches = new ArrayList<>();
-        for (SearchResult result : allGuides) {
-            if (matchesSuggestionQuery(result, normalizedQuery)) {
-                matches.add(result);
-            }
-        }
-        if (matches.isEmpty()) {
-            return Collections.emptyList();
-        }
-        matches.sort(Comparator
-            .comparingInt((SearchResult result) -> suggestionScore(result, normalizedQuery))
-            .thenComparing(result -> safe(result.title), String.CASE_INSENSITIVE_ORDER));
-        ArrayList<SearchSuggestion> suggestions = new ArrayList<>();
-        addCategorySuggestions(suggestions, matches, normalizedQuery);
-        LinkedHashSet<String> seenGuideKeys = new LinkedHashSet<>();
-        for (SearchResult result : matches) {
-            if (suggestions.size() >= MAX_SEARCH_SUGGESTIONS) {
-                break;
-            }
-            String guideId = safe(result == null ? null : result.guideId).trim();
-            String title = safe(result == null ? null : result.title).trim();
-            String uniqueKey = !guideId.isEmpty() ? guideId : title.toLowerCase(Locale.US);
-            if (uniqueKey.isEmpty() || !seenGuideKeys.add(uniqueKey)) {
-                continue;
-            }
-            String label = presentationFormatter().buildGuideButtonLabel(result);
-            if (label.isEmpty()) {
-                continue;
-            }
-            String searchQuery = !guideId.isEmpty() ? guideId : title;
-            suggestions.add(new SearchSuggestion(
-                label,
-                "Suggested guide: " + title + ". Tap to browse matching guides.",
-                searchQuery,
-                "",
-                ""
-            ));
-        }
-        return suggestions;
+    private List<MainSearchSuggestionPolicy.SearchSuggestion> buildSearchSuggestions(String query) {
+        return MainSearchSuggestionPolicy.buildSuggestions(query, allGuides);
     }
 
-    private void addCategorySuggestions(
-        List<SearchSuggestion> suggestions,
-        List<SearchResult> matches,
-        String normalizedQuery
-    ) {
-        LinkedHashMap<String, Integer> bucketCounts = new LinkedHashMap<>();
-        for (SearchResult result : matches) {
-            String bucket = primaryCategoryBucket(result);
-            if (bucket.isEmpty()) {
-                continue;
-            }
-            bucketCounts.put(bucket, bucketCounts.getOrDefault(bucket, 0) + 1);
-        }
-        if (bucketCounts.isEmpty()) {
-            return;
-        }
-        ArrayList<Map.Entry<String, Integer>> rankedBuckets = new ArrayList<>(bucketCounts.entrySet());
-        rankedBuckets.sort((left, right) -> Integer.compare(right.getValue(), left.getValue()));
-        int added = 0;
-        for (Map.Entry<String, Integer> entry : rankedBuckets) {
-            if (added >= MAX_CATEGORY_SUGGESTIONS || suggestions.size() >= MAX_SEARCH_SUGGESTIONS) {
-                break;
-            }
-            String bucketKey = entry.getKey();
-            int count = entry.getValue();
-            if (count < 3 && !queryMatchesBucketHint(normalizedQuery, bucketKey)) {
-                continue;
-            }
-            String bucketLabel = presentationFormatter().categoryLabelForBucket(bucketKey);
-            suggestions.add(new SearchSuggestion(
-                bucketLabel + " (" + count + ")",
-                "Suggested category: " + bucketLabel + ". Tap to browse matching guides.",
-                "",
-                bucketKey,
-                bucketLabel
-            ));
-            added += 1;
-        }
-    }
-
-    private Button createSearchSuggestionButton(SearchSuggestion suggestion, int index) {
+    private Button createSearchSuggestionButton(MainSearchSuggestionPolicy.SearchSuggestion suggestion, int index) {
         Button button = new Button(this);
         button.setAllCaps(false);
         boolean manualHomeShell = isManualHomeShellLayout();
@@ -1654,7 +1542,7 @@ public final class MainActivity extends AppCompatActivity {
         return button;
     }
 
-    private void applySearchSuggestion(SearchSuggestion suggestion) {
+    private void applySearchSuggestion(MainSearchSuggestionPolicy.SearchSuggestion suggestion) {
         if (suggestion == null) {
             return;
         }
@@ -1669,87 +1557,6 @@ public final class MainActivity extends AppCompatActivity {
         searchInput.setText(query);
         searchInput.setSelection(query.length());
         runSearch(query);
-    }
-
-    private boolean matchesSuggestionQuery(SearchResult result, String normalizedQuery) {
-        if (result == null || normalizedQuery.isEmpty()) {
-            return false;
-        }
-        String searchable = presentationFormatter().normalizeBucketText(
-            safe(result.guideId) + " " +
-                safe(result.title) + " " +
-                safe(result.sectionHeading) + " " +
-                safe(result.category) + " " +
-                safe(result.topicTags) + " " +
-                safe(result.subtitle)
-        );
-        return searchable.contains(normalizedQuery);
-    }
-
-    private int suggestionScore(SearchResult result, String normalizedQuery) {
-        String guideId = presentationFormatter().normalizeBucketText(result == null ? null : result.guideId);
-        String title = presentationFormatter().normalizeBucketText(result == null ? null : result.title);
-        String section = presentationFormatter().normalizeBucketText(result == null ? null : result.sectionHeading);
-        String tags = presentationFormatter().normalizeBucketText(result == null ? null : result.topicTags);
-        String category = presentationFormatter().normalizeBucketText(result == null ? null : result.category);
-        if (guideId.equals(normalizedQuery)) {
-            return 0;
-        }
-        if (title.startsWith(normalizedQuery)) {
-            return 1;
-        }
-        if (title.contains(normalizedQuery)) {
-            return 2;
-        }
-        if (section.startsWith(normalizedQuery) || section.contains(normalizedQuery)) {
-            return 3;
-        }
-        if (tags.contains(normalizedQuery) || category.contains(normalizedQuery)) {
-            return 4;
-        }
-        return 5;
-    }
-
-    private String primaryCategoryBucket(SearchResult result) {
-        String[] orderedBuckets = new String[] {
-            "water",
-            "shelter",
-            "fire",
-            "medicine",
-            "food",
-            "tools",
-            "communications",
-            "community"
-        };
-        for (String bucket : orderedBuckets) {
-            if (matchesCategoryBucket(result, bucket)) {
-                return bucket;
-            }
-        }
-        return "";
-    }
-
-    private boolean queryMatchesBucketHint(String normalizedQuery, String bucketKey) {
-        switch (safe(bucketKey).trim()) {
-            case "water":
-                return containsAnyBucketToken(normalizedQuery, "water", "rain", "purify", "filter", "sanitation");
-            case "shelter":
-                return containsAnyBucketToken(normalizedQuery, "shelter", "roof", "build", "cabin", "weather");
-            case "fire":
-                return containsAnyBucketToken(normalizedQuery, "fire", "fuel", "cook", "heat", "signal");
-            case "medicine":
-                return containsAnyBucketToken(normalizedQuery, "medicine", "medical", "first aid", "wound", "bite");
-            case "food":
-                return containsAnyBucketToken(normalizedQuery, "food", "garden", "crop", "seed", "cook");
-            case "tools":
-                return containsAnyBucketToken(normalizedQuery, "tool", "craft", "rope", "forge", "repair");
-            case "communications":
-                return containsAnyBucketToken(normalizedQuery, "radio", "signal", "message", "communications");
-            case "community":
-                return containsAnyBucketToken(normalizedQuery, "security", "community", "defense", "governance");
-            default:
-                return false;
-        }
     }
 
     private Button createPinnedGuideButton(SearchResult result, int index, int total) {
@@ -2063,7 +1870,7 @@ public final class MainActivity extends AppCompatActivity {
     }
 
     private String buildManualHomeRecentThreadLabel(ChatSessionStore.ConversationPreview preview) {
-        return buildManualHomeRecentThreadLabelStatic(preview);
+        return ManualHomeRecentThreadFormatter.buildLabel(preview);
     }
 
     private android.text.SpannableString buildManualHomeRecentThreadLabelSpannable(
@@ -2129,84 +1936,7 @@ public final class MainActivity extends AppCompatActivity {
     }
 
     static String buildManualHomeRecentThreadLabelForTest(ChatSessionStore.ConversationPreview preview) {
-        return buildManualHomeRecentThreadLabelStatic(preview);
-    }
-
-    private static String buildManualHomeRecentThreadLabelStatic(ChatSessionStore.ConversationPreview preview) {
-        SessionMemory.TurnSnapshot turn = preview == null ? null : preview.latestTurn;
-        if (turn == null) {
-            return "";
-        }
-        String question = clipManualHomeRecentThreadQuestion(turn.question);
-        String meta = buildManualHomeRecentThreadMeta(preview);
-        if (meta.isEmpty()) {
-            return question;
-        }
-        return question + "\n" + meta;
-    }
-
-    private static String clipManualHomeRecentThreadQuestion(String question) {
-        String value = safe(question).trim();
-        if (value.length() <= 34) {
-            return value;
-        }
-        return value.substring(0, 31).trim() + "...";
-    }
-
-    private static String buildManualHomeRecentThreadMeta(ChatSessionStore.ConversationPreview preview) {
-        SessionMemory.TurnSnapshot turn = preview == null ? null : preview.latestTurn;
-        if (turn == null) {
-            return "";
-        }
-        ArrayList<String> parts = new ArrayList<>();
-        String guideId = resolveManualHomeRecentThreadGuideId(turn);
-        if (!guideId.isEmpty()) {
-            parts.add(guideId);
-        }
-        String timeLabel = buildManualHomeRecentThreadTimeLabel(preview == null ? 0L : preview.lastActivityEpoch);
-        if (!timeLabel.isEmpty()) {
-            parts.add(timeLabel);
-        }
-        parts.add(buildManualHomeRecentThreadConfidenceLabel(turn));
-        return String.join(" \u2022 ", parts);
-    }
-
-    private static String resolveManualHomeRecentThreadGuideId(SessionMemory.TurnSnapshot turn) {
-        if (turn == null || turn.sourceResults == null) {
-            return "";
-        }
-        for (SearchResult source : turn.sourceResults) {
-            String guideId = safe(source == null ? null : source.guideId).trim();
-            if (!guideId.isEmpty()) {
-                return guideId;
-            }
-        }
-        return "";
-    }
-
-    private static String buildManualHomeRecentThreadTimeLabel(long recordedAtEpoch) {
-        if (recordedAtEpoch <= 0L) {
-            return "";
-        }
-        long elapsedMillis = Math.max(0L, System.currentTimeMillis() - recordedAtEpoch);
-        long totalMinutes = elapsedMillis / 60_000L;
-        long totalHours = totalMinutes / 60L;
-        long days = totalHours / 24L;
-        if (days == 1L) {
-            return "YESTERDAY";
-        }
-        if (days > 1L) {
-            return days + "D";
-        }
-        return String.format(Locale.US, "%02d:%02d", totalHours, totalMinutes % 60L);
-    }
-
-    private static String buildManualHomeRecentThreadConfidenceLabel(SessionMemory.TurnSnapshot turn) {
-        if (turn == null) {
-            return "UNSURE";
-        }
-        ReviewedCardMetadata metadata = ReviewedCardMetadata.normalize(turn.reviewedCardMetadata);
-        return !safe(turn.ruleId).trim().isEmpty() || metadata.isPresent() ? "CONFIDENT" : "UNSURE";
+        return ManualHomeRecentThreadFormatter.buildLabel(preview);
     }
 
     private void refreshHomeRelatedGuidesAsync() {
@@ -4370,15 +4100,6 @@ public final class MainActivity extends AppCompatActivity {
 
     private static boolean matchesCategoryBucket(SearchResult result, String bucket) {
         return HomeCategoryPolicy.matchesBucket(result, bucket);
-    }
-
-    private static boolean containsAnyBucketToken(String searchable, String... tokens) {
-        for (String token : tokens) {
-            if (searchable.contains(token)) {
-                return true;
-            }
-        }
-        return false;
     }
 
     static String categoryLabelForBucket(String bucketKey) {
