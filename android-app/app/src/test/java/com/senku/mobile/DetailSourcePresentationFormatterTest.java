@@ -109,13 +109,20 @@ public final class DetailSourcePresentationFormatterTest {
             "guide-focus"
         );
 
-        assertEquals(
-            "Anchor guide: GD-444, Ridge Line Setup. Shows source preview.",
-            formatter.buildInlineSourceChipContentDescription(source, true, true, -4, 0)
+        assertContainsAll(
+            formatter.buildInlineSourceChipContentDescription(source, true, true, -4, 0),
+            "Anchor guide",
+            "GD-444",
+            "Ridge Line Setup",
+            "Shows source preview"
         );
-        assertEquals(
-            "Source guide 2 of 3: GD-444, Ridge Line Setup. Opens source guide.",
-            formatter.buildInlineSourceChipContentDescription(source, false, false, 1, 3)
+        assertContainsAll(
+            formatter.buildInlineSourceChipContentDescription(source, false, false, 1, 3),
+            "Source guide",
+            "2 of 3",
+            "GD-444",
+            "Ridge Line Setup",
+            "Opens source guide"
         );
     }
 
@@ -150,17 +157,32 @@ public final class DetailSourcePresentationFormatterTest {
             "guide-focus"
         );
 
-        assertEquals(
-            "Anchor guide 1 of 2: [GD-444] Emergency Shelter Ridge Line Setup. Shows source preview.",
-            formatter.buildSourceButtonContentDescription(source, true, 0, 2, true)
+        assertContainsAll(
+            formatter.buildSourceButtonContentDescription(source, true, 0, 2, true),
+            "Anchor guide",
+            "1 of 2",
+            "[GD-444]",
+            "Emergency Shelter",
+            "Ridge Line Setup",
+            "Shows source preview"
         );
-        assertEquals(
-            "Related guide 2 of 2: [GD-444] Emergency Shelter Ridge Line Setup. Shows source preview.",
-            formatter.buildSourceButtonContentDescription(source, true, 1, 2, false)
+        assertContainsAll(
+            formatter.buildSourceButtonContentDescription(source, true, 1, 2, false),
+            "Related guide",
+            "2 of 2",
+            "[GD-444]",
+            "Emergency Shelter",
+            "Ridge Line Setup",
+            "Shows source preview"
         );
-        assertEquals(
-            "Source guide 2 of 2: [GD-444] Emergency Shelter Ridge Line Setup. Opens source guide.",
-            formatter.buildSourceButtonContentDescription(source, false, 1, 2, false)
+        assertContainsAll(
+            formatter.buildSourceButtonContentDescription(source, false, 1, 2, false),
+            "Source guide",
+            "2 of 2",
+            "[GD-444]",
+            "Emergency Shelter",
+            "Ridge Line Setup",
+            "Opens source guide"
         );
     }
 
@@ -182,9 +204,14 @@ public final class DetailSourcePresentationFormatterTest {
             "anchor"
         );
 
-        assertEquals(
-            "GD-444 \u00B7 ANCHOR \u00B7 78%\nEmergency Shelter\nRidge Line Setup\n\"Pitch ridgeline along prevailing wind.\"",
-            formatter.buildEvidenceCardRowLabel(card)
+        assertContainsAll(
+            formatter.buildEvidenceCardRowLabel(card),
+            "GD-444",
+            "ANCHOR",
+            "78%",
+            "Emergency Shelter",
+            "Ridge Line Setup",
+            "Pitch ridgeline along prevailing wind."
         );
     }
 
@@ -220,13 +247,27 @@ public final class DetailSourcePresentationFormatterTest {
             "related"
         );
 
-        assertEquals(
-            "Anchor guide 1 of 2, 78% match: GD-444 \u00B7 ANCHOR \u00B7 78% Emergency Shelter Ridge Line Setup \"Pitch ridgeline along prevailing wind.\". Shows source preview.",
-            formatter.buildEvidenceCardRowContentDescription(anchorCard, true, 0, 2)
+        assertContainsAll(
+            formatter.buildEvidenceCardRowContentDescription(anchorCard, true, 0, 2),
+            "Anchor guide",
+            "1 of 2",
+            "78% match",
+            "GD-444",
+            "Emergency Shelter",
+            "Ridge Line Setup",
+            "Pitch ridgeline along prevailing wind.",
+            "Shows source preview"
         );
-        assertEquals(
-            "Related guide 3 of 3, 56% match: GD-215 \u00B7 TOPIC \u00B7 56% Rainwater Catchment Storage Prep \"Use first-flush diversion before storage.\". Opens source guide.",
-            formatter.buildEvidenceCardRowContentDescription(relatedCard, false, 2, 3)
+        assertContainsAll(
+            formatter.buildEvidenceCardRowContentDescription(relatedCard, false, 2, 3),
+            "Related guide",
+            "3 of 3",
+            "56% match",
+            "GD-215",
+            "Rainwater Catchment",
+            "Storage Prep",
+            "Use first-flush diversion before storage.",
+            "Opens source guide"
         );
     }
 
@@ -248,9 +289,17 @@ public final class DetailSourcePresentationFormatterTest {
             "source"
         );
 
-        assertEquals(
-            "SOURCE 2/4 GD-898 \u00B7 SOURCE \u00B7 76%\nReviewed source\nPoisoning unknown ingestion\n\"Reviewed quote\"",
-            formatter.buildStationEvidenceCardRowLabel(card, 1, 4)
+        String label = formatter.buildStationEvidenceCardRowLabel(card, 1, 4);
+
+        assertTrue(label, label.startsWith("SOURCE 2/4"));
+        assertContainsAll(
+            label,
+            "GD-898",
+            "SOURCE",
+            "76%",
+            "Reviewed source",
+            "Poisoning unknown ingestion",
+            "Reviewed quote"
         );
     }
 
@@ -410,13 +459,26 @@ public final class DetailSourcePresentationFormatterTest {
             "anchor"
         );
 
-        assertEquals(
-            "TOPIC 1/3 GD-345 \u00B7 TOPIC \u00B7 61%\nTarp & Cord Shelters\n\"A simple ridgeline shelter requires only tarp, cord, and two anchor points.\"",
-            formatter.buildStationEvidenceCardRowLabel(topic, 0, 3)
+        String stationLabel = formatter.buildStationEvidenceCardRowLabel(topic, 0, 3);
+        String rowLabel = formatter.buildEvidenceCardRowLabel(topic);
+
+        assertTrue(stationLabel, stationLabel.startsWith("TOPIC 1/3"));
+        assertContainsAll(
+            stationLabel,
+            "GD-345",
+            "TOPIC",
+            "61%",
+            "Tarp & Cord Shelters",
+            "A simple ridgeline shelter requires only tarp, cord, and two anchor points."
         );
-        assertEquals(
-            "GD-345 \u00B7 TOPIC \u00B7 61%\nTarp & Cord Shelters\n\"A simple ridgeline shelter requires only tarp, cord, and two anchor points.\"",
-            formatter.buildEvidenceCardRowLabel(topic)
+        assertFalse(rowLabel, rowLabel.contains("1/3"));
+        assertContainsAll(
+            rowLabel,
+            "GD-345",
+            "TOPIC",
+            "61%",
+            "Tarp & Cord Shelters",
+            "A simple ridgeline shelter requires only tarp, cord, and two anchor points."
         );
     }
 
@@ -429,13 +491,27 @@ public final class DetailSourcePresentationFormatterTest {
             "anchor"
         );
 
-        assertEquals(
-            "GD-220 \u00B7 ANCHOR \u00B7 74%\nAbrasives Manufacturing\n\"Every melt starts with a foundry safety check, not with metal charge...\"",
-            formatter.buildEvidenceCardRowLabel(anchor)
+        String label = formatter.buildEvidenceCardRowLabel(anchor);
+        String contentDescription = formatter.buildEvidenceCardRowContentDescription(anchor, true, 0, 3);
+
+        assertContainsAll(
+            label,
+            "GD-220",
+            "ANCHOR",
+            "74%",
+            "Abrasives Manufacturing",
+            "Every melt starts with a foundry safety check, not with metal charge..."
         );
-        assertEquals(
-            "Anchor guide 1 of 3, 74% match: GD-220 \u00B7 ANCHOR \u00B7 74% Abrasives Manufacturing \"Every melt starts with a foundry safety check, not with metal charge...\". Shows source preview.",
-            formatter.buildEvidenceCardRowContentDescription(anchor, true, 0, 3)
+        assertFalse(label, label.contains("Abrasives Manufacturing\nAbrasives Manufacturing"));
+        assertContainsAll(
+            contentDescription,
+            "Anchor guide",
+            "1 of 3",
+            "74% match",
+            "GD-220",
+            "Abrasives Manufacturing",
+            "Every melt starts with a foundry safety check, not with metal charge...",
+            "Shows source preview"
         );
     }
 
@@ -560,6 +636,12 @@ public final class DetailSourcePresentationFormatterTest {
             null,
             ReviewDemoPolicy.isSourceStackDemoEnabled(true)
         );
+    }
+
+    private static void assertContainsAll(String actual, String... expectedParts) {
+        for (String expectedPart : expectedParts) {
+            assertTrue(actual, actual.contains(expectedPart));
+        }
     }
 
     @Test

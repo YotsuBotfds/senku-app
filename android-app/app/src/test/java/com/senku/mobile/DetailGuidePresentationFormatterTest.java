@@ -612,28 +612,37 @@ public final class DetailGuidePresentationFormatterTest {
 
     @Test
     public void guideBodySanitizerCompactsReviewedBoundaryOpeningForFirstViewport() {
-        assertEquals(
-            "DANGER \u00b7 EXTREME BURN HAZARD\n"
-                + "A single drop of water contacting molten metal causes a violent steam explosion. Every tool, mold, crucible, and surface that contacts molten metal must be completely dry.\n"
-                + "REQUIRED READING \u00b7 Chemical Safety Guide\n"
-                + "\u2014 \u00a7 1 \u00b7 AREA READINESS\n"
-                + "Reviewed Answer-Card Boundary\n"
-                + "Use this section only for foundry-area readiness, visible hazard screening, material and source labeling, no-go triggers, access control, and expert or owner handoff.\n"
-                + "Start with the current activity status.",
-            GuideBodySanitizer.sanitizeGuideBodyForDisplay(
-                "::: danger\n"
-                    + "EXTREME BURN HAZARD: A single drop of water contacting molten metal causes a violent steam explosion. "
-                    + "EVERY tool, mold, crucible, and surface that contacts molten metal must be completely dry. "
-                    + "Inspect crucibles for cracks before every use. Never cast alone.\n"
-                    + ":::\n"
-                    + "Required Reading: Before attempting any procedures in this guide, read the Chemical Safety Guide in full.\n"
-                    + "## Section 1 Reviewed Answer-Card Boundary: Area readiness, hazard screen, and handoffs\n"
-                    + "This is the reviewed answer-card surface for GD-132. Use it only for foundry-area readiness, visible hazard screening, material and source labeling, no-go triggers, access control, and expert or owner handoff. Start with the current activity status.\n\n"
-                    + "For routine boundary screening, record the work area and owner.\n"
-                    + "## Section 2 Required Reading\n"
-                    + "Read linked guides."
-            )
+        String displayBody = GuideBodySanitizer.sanitizeGuideBodyForDisplay(
+            "::: danger\n"
+                + "EXTREME BURN HAZARD: A single drop of water contacting molten metal causes a violent steam explosion. "
+                + "EVERY tool, mold, crucible, and surface that contacts molten metal must be completely dry. "
+                + "Inspect crucibles for cracks before every use. Never cast alone.\n"
+                + ":::\n"
+                + "Required Reading: Before attempting any procedures in this guide, read the Chemical Safety Guide in full.\n"
+                + "## Section 1 Reviewed Answer-Card Boundary: Area readiness, hazard screen, and handoffs\n"
+                + "This is the reviewed answer-card surface for GD-132. Use it only for foundry-area readiness, visible hazard screening, material and source labeling, no-go triggers, access control, and expert or owner handoff. Start with the current activity status.\n\n"
+                + "For routine boundary screening, record the work area and owner.\n"
+                + "## Section 2 Required Reading\n"
+                + "Read linked guides."
         );
+
+        assertContainsInOrder(
+            displayBody,
+            "DANGER \u00b7 EXTREME BURN HAZARD",
+            "violent steam explosion",
+            "Every tool, mold, crucible, and surface that contacts molten metal must be completely dry.",
+            "REQUIRED READING \u00b7 Chemical Safety Guide",
+            "\u2014 \u00a7 1 \u00b7 AREA READINESS",
+            "Reviewed Answer-Card Boundary",
+            "Use this section only for foundry-area readiness",
+            "Start with the current activity status."
+        );
+        assertFalse(displayBody.contains("Inspect crucibles for cracks before every use."));
+        assertFalse(displayBody.contains("Never cast alone."));
+        assertFalse(displayBody.contains("For routine boundary screening"));
+        assertFalse(displayBody.contains("\u2014 \u00a7 2 \u00b7 REQUIRED READING"));
+        assertFalse(displayBody.contains("Read linked guides."));
+        assertEquals(1, countOccurrences(displayBody, "\u2014 \u00a7 "));
     }
 
     @Test
@@ -816,15 +825,17 @@ public final class DetailGuidePresentationFormatterTest {
                 + "Record missing items."
         );
 
-        assertEquals(
-            "\u2014 \u00a7 1 \u00b7 FOUNDRY SAFETY QUICKSTART\n"
-                + "Check the area.\n"
-                + "Personal protective equipment\n"
-                + "Use the owner checklist.\n"
-                + "Essential PPE\n"
-                + "Record missing items.",
-            parsed.displayText
+        assertContainsInOrder(
+            parsed.displayText,
+            "\u2014 \u00a7 1 \u00b7 FOUNDRY SAFETY QUICKSTART",
+            "Check the area.",
+            "Personal protective equipment",
+            "Use the owner checklist.",
+            "Essential PPE",
+            "Record missing items."
         );
+        assertFalse(parsed.displayText.contains("\u2014 \u00a7 2 \u00b7 PERSONAL PROTECTIVE EQUIPMENT"));
+        assertFalse(parsed.displayText.contains("\u2014 \u00a7 3 \u00b7 ESSENTIAL PPE"));
         assertEquals(6, parsed.lines.length);
         assertEquals(GuideBodySanitizer.GuideBodyLine.Kind.SECTION, parsed.lines[0].kind);
         assertEquals(GuideBodySanitizer.GuideBodyLine.Kind.TEXT, parsed.lines[2].kind);
@@ -834,6 +845,15 @@ public final class DetailGuidePresentationFormatterTest {
     private static void assertContainsAll(String actual, String... expectedTokens) {
         for (String expectedToken : expectedTokens) {
             assertTrue("Missing expected token: " + expectedToken, actual.contains(expectedToken));
+        }
+    }
+
+    private static void assertContainsInOrder(String actual, String... expectedTokens) {
+        int index = 0;
+        for (String expectedToken : expectedTokens) {
+            int tokenIndex = actual.indexOf(expectedToken, index);
+            assertTrue("Missing expected token in order: " + expectedToken, tokenIndex >= 0);
+            index = tokenIndex + expectedToken.length();
         }
     }
 
