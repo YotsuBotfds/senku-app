@@ -32,8 +32,8 @@
         <shape android:shape="rectangle">
             <gradient
                 android:angle="270"
-                android:endColor="#00000000"
-                android:startColor="#14E8DCC8" />
+                android:endColor="@android:color/transparent"
+                android:startColor="@color/senku_rev03_glow_parchment_soft" />
             <corners android:radius="11dp" />
         </shape>
     </item>
@@ -46,8 +46,8 @@
         <shape android:shape="rectangle">
             <gradient
                 android:angle="0"
-                android:endColor="#00FFFFFF"
-                android:startColor="#18FFFFFF" />
+                android:endColor="@android:color/transparent"
+                android:startColor="@color/senku_rev03_glow_white_soft" />
             <corners android:radius="8dp" />
         </shape>
     </item>

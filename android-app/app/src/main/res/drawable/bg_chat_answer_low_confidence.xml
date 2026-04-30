@@ -54,7 +54,7 @@
         <shape android:shape="rectangle">
             <gradient
                 android:angle="270"
-                android:endColor="#00000000"
+                android:endColor="@android:color/transparent"
                 android:startColor="@color/senku_surface_glow_parchment" />
             <corners android:radius="14dp" />
         </shape>

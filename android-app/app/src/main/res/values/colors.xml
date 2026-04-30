@@ -59,6 +59,7 @@
     <color name="senku_rev03_paper_ink_muted">#646456</color>
     <color name="senku_rev03_paper_rule">#34B9AA90</color>
     <color name="senku_rev03_paper_rule_soft">#18B9AA90</color>
+    <color name="senku_rev03_paper_glaze">#03F7F0DF</color>
     <color name="senku_rev03_accent">#C9B682</color>
     <color name="senku_rev03_danger">#C4704B</color>
     <color name="senku_rev03_warn">#C49A4B</color>
@@ -70,4 +71,8 @@
     <color name="senku_rev03_hairline_strong">#24F1EEE2</color>
     <color name="senku_rev03_accent_copper">#C48A5A</color>
     <color name="senku_rev03_accent_moss">#9BAB6A</color>
+    <color name="senku_rev03_glow_parchment_faint">#08E8DCC8</color>
+    <color name="senku_rev03_glow_parchment_soft">#14E8DCC8</color>
+    <color name="senku_rev03_glow_olive_soft">#144A5238</color>
+    <color name="senku_rev03_glow_white_soft">#18FFFFFF</color>
 </resources>

@@ -18,8 +18,8 @@
         <shape android:shape="rectangle">
             <gradient
                 android:angle="0"
-                android:endColor="#08E8DCC8"
-                android:startColor="#144A5238" />
+                android:endColor="@color/senku_rev03_glow_parchment_faint"
+                android:startColor="@color/senku_rev03_glow_olive_soft" />
             <corners android:radius="11dp" />
         </shape>
     </item>
