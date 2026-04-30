@@ -135,7 +135,6 @@ public final class DetailActivity extends AppCompatActivity {
     private static final float TABLET_HEADER_BACK_LABEL_LINE_HEIGHT_SP = 12.0f;
     private static final float TABLET_HEADER_BACK_LABEL_LETTER_SPACING = 0.09f;
     private static final int DETAIL_TOP_CHROME_BACK_ACTION_MIN_WIDTH_DP = TABLET_HEADER_BACK_ACTION_WIDTH_DP;
-    private static final String DETAIL_TOP_CHROME_BACK_ACTION_LABEL = "Back";
     private static final int TABLET_EMERGENCY_CHROME_NAV_ICON_SIZE_DP = DETAIL_TOP_CHROME_ICON_ACTION_SIZE_DP;
     private static final float TABLET_APP_RAIL_LABEL_TEXT_SIZE_SP = 10.0f;
     private static final float TABLET_APP_RAIL_LABEL_LINE_HEIGHT_SP = 13.0f;
@@ -2191,12 +2190,12 @@ public final class DetailActivity extends AppCompatActivity {
         button.setCompoundDrawablesRelativeWithIntrinsicBounds(icon, null, null, null);
     }
 
-    static String tabletEmergencyBackButtonLabel() {
+    static int tabletEmergencyBackButtonLabel() {
         return tabletEmergencyBackButtonLabel(false);
     }
 
-    static String tabletEmergencyBackButtonLabel(boolean taskRoot) {
-        return DETAIL_TOP_CHROME_BACK_ACTION_LABEL;
+    static int tabletEmergencyBackButtonLabel(boolean taskRoot) {
+        return resolveDetailVisibleBackLabelResource(taskRoot);
     }
 
     static int resolveTabletEmergencyBackButtonMinWidthDp() {
@@ -2224,7 +2223,7 @@ public final class DetailActivity extends AppCompatActivity {
     }
 
     static int resolveTabletEmergencyBackContentDescriptionResource(boolean taskRoot) {
-        return R.string.detail_back_content_description;
+        return resolveDetailVisibleBackContentDescriptionResource(taskRoot);
     }
 
     private Typeface rev03UiTypeface(int style) {
