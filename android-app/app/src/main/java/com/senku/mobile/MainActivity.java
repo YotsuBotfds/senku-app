@@ -2797,13 +2797,6 @@ public final class MainActivity extends AppCompatActivity {
         );
     }
 
-    private BottomTabDestination restorePhoneTab(Bundle savedInstanceState) {
-        if (savedInstanceState == null) {
-            return BottomTabDestination.HOME;
-        }
-        return resolveRestoredPhoneTab(savedInstanceState.getString(MainRouteDecisionHelper.STATE_PHONE_TAB));
-    }
-
     static BottomTabDestination resolveRestoredPhoneTab(String rawValue) {
         return MainRouteDecisionHelper.resolveRestoredPhoneTab(rawValue);
     }
