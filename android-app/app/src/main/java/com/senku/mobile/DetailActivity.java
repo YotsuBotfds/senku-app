@@ -6354,29 +6354,29 @@ public final class DetailActivity extends AppCompatActivity {
     }
 
     private void runFollowUp() {
-        FollowUpComposerState composerState = buildPhoneFollowUpComposerState();
-        String query = composerState.submitQuery();
-        if (resolveFollowUpSubmitRoute(query) == FollowUpSubmitRoute.EMPTY_INPUT) {
+        FollowUpComposerController.SubmitDecision decision =
+            FollowUpComposerController.resolveSubmit(buildPhoneFollowUpComposerState());
+        if (decision.action == FollowUpComposerController.SubmitAction.EMPTY) {
             setBusy(getString(R.string.detail_followup_empty), false);
             return;
         }
-        if (!composerState.canSubmit()) {
+        if (decision.action == FollowUpComposerController.SubmitAction.BLOCKED) {
             return;
         }
-        startFollowUpGeneration(AnswerPresenter.Kind.PHONE_FOLLOWUP, query);
+        startFollowUpGeneration(AnswerPresenter.Kind.PHONE_FOLLOWUP, decision.query);
     }
 
     private void runTabletFollowUp(String rawQuery) {
-        FollowUpComposerState composerState = buildTabletFollowUpComposerState().withDraft(rawQuery);
-        String query = composerState.submitQuery();
-        if (query.isEmpty()) {
+        FollowUpComposerController.SubmitDecision decision =
+            FollowUpComposerController.resolveSubmit(buildTabletFollowUpComposerState().withDraft(rawQuery));
+        if (decision.action == FollowUpComposerController.SubmitAction.EMPTY) {
             setBusy(getString(R.string.detail_followup_empty), false);
             return;
         }
-        if (!composerState.canSubmit()) {
+        if (decision.action == FollowUpComposerController.SubmitAction.BLOCKED) {
             return;
         }
-        startFollowUpGeneration(AnswerPresenter.Kind.TABLET_FOLLOWUP, query);
+        startFollowUpGeneration(AnswerPresenter.Kind.TABLET_FOLLOWUP, decision.query);
     }
 
     private void startFollowUpGeneration(AnswerPresenter.Kind kind, String query) {
@@ -6482,31 +6482,29 @@ public final class DetailActivity extends AppCompatActivity {
     String buildGenerationFailureStatus(Throwable exc) { return "Offline answer failed: " + (exc == null ? null : exc.getMessage()); }
 
     private void retryLastFailedQuery() {
-        String retryQuery = tabletComposeMode
-            ? buildTabletFollowUpComposerState().retryQuery()
-            : buildPhoneFollowUpComposerState().retryQuery();
         if (tabletComposeMode) {
-            if (retryQuery.isEmpty()) {
-                retryQuery = normalizeFollowUpQuery(tabletComposerText);
-            }
-            if (retryQuery.isEmpty()) {
+            FollowUpComposerController.RetryDecision decision =
+                FollowUpComposerController.resolveRetry(buildTabletFollowUpComposerState(), tabletComposerText);
+            if (decision.action == FollowUpComposerController.RetryAction.EMPTY) {
                 setBusy(getString(R.string.detail_followup_empty), false);
                 return;
             }
-            tabletComposerText = retryQuery;
-            runTabletFollowUp(retryQuery);
+            tabletComposerText = decision.query;
+            runTabletFollowUp(decision.query);
             return;
         }
-        if (retryQuery.isEmpty()) {
-            retryQuery = normalizeFollowUpQuery(followUpInput == null ? null : followUpInput.getText().toString());
-        }
-        if (retryQuery.isEmpty()) {
+        FollowUpComposerController.RetryDecision decision =
+            FollowUpComposerController.resolveRetry(
+                buildPhoneFollowUpComposerState(),
+                followUpInput == null ? null : followUpInput.getText().toString()
+            );
+        if (decision.action == FollowUpComposerController.RetryAction.EMPTY) {
             setBusy(getString(R.string.detail_followup_empty), false);
             return;
         }
         if (followUpInput != null) {
-            followUpInput.setText(retryQuery);
-            followUpInput.setSelection(retryQuery.length());
+            followUpInput.setText(decision.query);
+            followUpInput.setSelection(decision.query.length());
         }
         runFollowUp();
     }
