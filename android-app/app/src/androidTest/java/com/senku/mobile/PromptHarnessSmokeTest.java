@@ -526,6 +526,55 @@ public final class PromptHarnessSmokeTest {
     }
 
     @Test
+    public void tabletDetailRailLibraryTapReturnsManualHome() {
+        try (ActivityScenario<DetailActivity> scenario = launchTabletRailProofDetail()) {
+            awaitHarnessIdle();
+            assumeTabletDetailRailVisible(scenario);
+
+            tapTabletDetailRailDestination("Library");
+
+            waitForMainSearchInputReady(DETAIL_WAIT_MS);
+            assertResumedManualHomeDestination("tablet detail Library rail tap should return to manual home");
+            captureUiState("tablet_detail_rail_library_home");
+        }
+    }
+
+    @Test
+    public void tabletDetailRailSavedTapOpensSavedDestination() {
+        clearPinnedGuidesForTest();
+        try (ActivityScenario<DetailActivity> scenario = launchTabletRailProofDetail()) {
+            awaitHarnessIdle();
+            assumeTabletDetailRailVisible(scenario);
+
+            tapTabletDetailRailDestination("Saved");
+
+            waitForMainSearchInputReady(DETAIL_WAIT_MS);
+            waitForSavedGuidesDestination(false, DETAIL_WAIT_MS);
+            captureUiState("tablet_detail_rail_saved");
+        } finally {
+            clearPinnedGuidesForTest();
+        }
+    }
+
+    @Test
+    public void tabletDetailRailAskTapOpensEmptyAskLane() {
+        try (ActivityScenario<DetailActivity> scenario = launchTabletRailProofDetail()) {
+            awaitHarnessIdle();
+            assumeTabletDetailRailVisible(scenario);
+            Assert.assertTrue(
+                "detail rail Ask uses the documented empty auto_ask handoff into MainActivity",
+                MainActivity.shouldOpenEmptyAutoAskLaneForTest(null, true)
+            );
+
+            tapTabletDetailRailDestination("Ask");
+
+            waitForMainSearchInputReady(DETAIL_WAIT_MS);
+            assertResumedEmptyAskDestination("tablet detail Ask rail tap should open the empty Ask lane");
+            captureUiState("tablet_detail_rail_ask");
+        }
+    }
+
+    @Test
     public void searchQueryShowsResultsWithoutShellPolling() {
         try (ActivityScenario<MainActivity> scenario = launchProductReviewMainActivity()) {
             awaitHarnessIdle();
@@ -3231,6 +3280,148 @@ public final class PromptHarnessSmokeTest {
             SystemClock.sleep(75L);
         }
         Assert.fail(lastFailure[0] + "; harness signals=" + HarnessTestSignals.snapshot());
+    }
+
+    private void waitForSavedGuidesDestination(boolean expectSavedGuide, long timeoutMs) {
+        long deadline = SystemClock.uptimeMillis() + timeoutMs;
+        String[] lastFailure = {"saved guide destination never became ready"};
+        while (SystemClock.uptimeMillis() < deadline) {
+            boolean[] matched = {false};
+            InstrumentationRegistry.getInstrumentation().runOnMainSync(() -> {
+                Activity activity = getResumedActivityOnMainThread();
+                try {
+                    Assert.assertTrue("saved rail handoff should resume MainActivity", activity instanceof MainActivity);
+                    assertSavedGuidesDestination(activity, expectSavedGuide);
+                    matched[0] = true;
+                } catch (AssertionError assertionError) {
+                    lastFailure[0] = assertionError.getMessage();
+                }
+            });
+            if (matched[0]) {
+                return;
+            }
+            awaitHarnessIdle();
+            SystemClock.sleep(75L);
+        }
+        Assert.fail(lastFailure[0] + "; harness signals=" + HarnessTestSignals.snapshot());
+    }
+
+    private ActivityScenario<DetailActivity> launchTabletRailProofDetail() {
+        Context context = ApplicationProvider.getApplicationContext();
+        SearchResult guide = new SearchResult(
+            "Tablet rail proof guide",
+            "Field manual proof",
+            "Small deterministic guide used by the tablet detail rail smoke.",
+            "FIELD MANUAL\n\nSTART WITH the safest nearby shelter plan.\n\nKeep the route simple and visible.",
+            "GD-RAIL-PROOF",
+            "Rail routing",
+            "shelter",
+            "instrumentation"
+        );
+        Intent intent = DetailActivity.newGuideIntent(context, guide, "tablet-detail-rail-proof");
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        return ActivityScenario.launch(intent);
+    }
+
+    private void assumeTabletDetailRailVisible(ActivityScenario<DetailActivity> scenario) {
+        Assert.assertTrue(
+            "tablet detail rail proof should settle on DetailActivity first; harness signals="
+                + HarnessTestSignals.snapshot(),
+            waitForDetailBodyReady(DETAIL_WAIT_MS, 8)
+        );
+        scenario.onActivity(activity -> {
+            DetailSettleSignals signals = collectDetailSettleSignals(activity);
+            Assume.assumeTrue(
+                "tablet detail rail proof requires the tablet Compose detail rail",
+                signals.tabletCompose && signals.tabletRootVisible
+            );
+        });
+    }
+
+    private void tapTabletDetailRailDestination(String label) {
+        UiObject2 destination = waitForUiObject(By.desc(label), SEARCH_WAIT_MS);
+        if (destination == null || !hasVisibleBounds(destination)) {
+            destination = waitForUiObject(By.text(label), SEARCH_WAIT_MS);
+        }
+        Assert.assertNotNull(
+            "tablet detail rail destination should be visible: " + label
+                + "; harness signals=" + HarnessTestSignals.snapshot(),
+            destination
+        );
+        destination.click();
+        InstrumentationRegistry.getInstrumentation().waitForIdleSync();
+        awaitHarnessIdle();
+    }
+
+    private void assertResumedManualHomeDestination(String failureLabel) {
+        Assert.assertTrue(
+            failureLabel + "; MainActivity never resumed; harness signals=" + HarnessTestSignals.snapshot(),
+            waitForResumedActivity(MainActivity.class, DETAIL_WAIT_MS)
+        );
+        InstrumentationRegistry.getInstrumentation().runOnMainSync(() -> {
+            Activity activity = getResumedActivityOnMainThread();
+            Assert.assertTrue(failureLabel, activity instanceof MainActivity);
+            EditText input = activity.findViewById(R.id.search_input);
+            RecyclerView resultsList = activity.findViewById(R.id.results_list);
+            View pinnedSection = activity.findViewById(R.id.pinned_section);
+            Assert.assertNotNull("manual home should keep the shared input mounted", input);
+            Assert.assertEquals(
+                "manual home should select the Library lane",
+                BottomTabDestination.HOME,
+                readPrivateField(activity, "activePhoneTab")
+            );
+            Assert.assertFalse(
+                "manual home should clear Ask submit semantics",
+                readPrivateBooleanField(activity, "askLaneActive")
+            );
+            Assert.assertEquals(
+                "manual home should use guide-search input semantics",
+                activity.getString(R.string.search_hint),
+                safe(input.getHint() == null ? null : input.getHint().toString())
+            );
+            if (resultsList != null) {
+                Assert.assertFalse("manual home should not land on search results", isVisible(resultsList));
+            }
+            if (pinnedSection != null) {
+                Assert.assertFalse("manual home should not land on Saved semantics", isVisible(pinnedSection));
+            }
+        });
+    }
+
+    private void assertResumedEmptyAskDestination(String failureLabel) {
+        Assert.assertTrue(
+            failureLabel + "; MainActivity never resumed; harness signals=" + HarnessTestSignals.snapshot(),
+            waitForResumedActivity(MainActivity.class, DETAIL_WAIT_MS)
+        );
+        InstrumentationRegistry.getInstrumentation().runOnMainSync(() -> {
+            Activity activity = getResumedActivityOnMainThread();
+            Assert.assertTrue(failureLabel, activity instanceof MainActivity);
+            EditText input = activity.findViewById(R.id.search_input);
+            RecyclerView resultsList = activity.findViewById(R.id.results_list);
+            Assert.assertNotNull("empty Ask lane should keep the shared input mounted", input);
+            Assert.assertEquals(
+                "empty Ask rail handoff should select the Ask lane",
+                BottomTabDestination.ASK,
+                readPrivateField(activity, "activePhoneTab")
+            );
+            Assert.assertTrue(
+                "empty Ask rail handoff should activate Ask submit semantics",
+                readPrivateBooleanField(activity, "askLaneActive")
+            );
+            Assert.assertEquals(
+                "empty Ask rail handoff should use question input semantics",
+                activity.getString(R.string.ask_hint),
+                safe(input.getHint() == null ? null : input.getHint().toString())
+            );
+            Assert.assertEquals(
+                "empty Ask rail handoff should expose Ask accessibility ownership",
+                activity.getString(R.string.ask_input_description),
+                safe(input.getContentDescription() == null ? null : input.getContentDescription().toString())
+            );
+            if (resultsList != null) {
+                Assert.assertFalse("empty Ask rail handoff should not open guide results", isVisible(resultsList));
+            }
+        });
     }
 
     private boolean tapSavedNavigationFromMain() {
