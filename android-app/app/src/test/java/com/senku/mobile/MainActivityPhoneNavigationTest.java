@@ -124,6 +124,26 @@ public final class MainActivityPhoneNavigationTest {
     }
 
     @Test
+    public void savedPinsAndRecentThreadsStayInSeparateBrowseLanes() {
+        MainRouteDecisionHelper.RouteState browse =
+            MainActivity.routeStateForModeForTest(true, BottomTabDestination.HOME, false);
+
+        MainRouteDecisionHelper.Transition saved =
+            MainRouteDecisionHelper.openPhoneTab(browse, BottomTabDestination.PINS);
+        MainRouteDecisionHelper.Transition recentThreads =
+            MainRouteDecisionHelper.openPhoneTab(browse, BottomTabDestination.THREADS);
+
+        assertEquals(MainRouteDecisionHelper.Effect.SHOW_SAVED_GUIDES, saved.effect);
+        assertEquals(MainRouteDecisionHelper.Surface.SAVED_GUIDES, saved.routeState.surface);
+        assertEquals(BottomTabDestination.PINS, saved.routeState.activePhoneTab);
+        assertFalse(saved.routeState.askLaneActive);
+        assertEquals(MainRouteDecisionHelper.Effect.SHOW_RECENT_THREADS, recentThreads.effect);
+        assertEquals(MainRouteDecisionHelper.Surface.RECENT_THREADS, recentThreads.routeState.surface);
+        assertEquals(BottomTabDestination.ASK, recentThreads.routeState.activePhoneTab);
+        assertFalse(recentThreads.routeState.askLaneActive);
+    }
+
+    @Test
     public void openSavedExtraRequestsSavedDestination() {
         assertTrue(MainActivity.shouldOpenSavedDestination(true));
     }

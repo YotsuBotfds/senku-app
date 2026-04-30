@@ -1,6 +1,6 @@
 # Backend Cleanup Phase Tracker
 
-Last updated against master `c17fe46`.
+Last updated against master `c07fe78`.
 
 Purpose: prevent future agents from rerunning Ask/query backend cleanup that is already complete. Keep this note short; implementation detail belongs in commits and tests.
 
@@ -24,6 +24,11 @@ Purpose: prevent future agents from rerunning Ask/query backend cleanup that is 
   follow-up backend cleanup confidence.
 - Black-box Ask backend route tests now cover deterministic, reviewed-card,
   generative host, unavailable, and stale-request paths.
+- UI stabilization cleanup is complete for model-less reviewed-card preflight
+  gating by supported query, first-class main route-state persistence,
+  `ReviewDemoFixtureSet` boundary, Pack support/anchor/route-search helpers,
+  physical phone smoke summary/latest validation, and detail/home overflow
+  policy clarification.
 
 ## Remaining Next Slices
 
