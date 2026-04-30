@@ -130,6 +130,10 @@ final class ReviewDemoPolicy {
         );
     }
 
+    static boolean isRainShelterUncertainFitBackendDemoEnabled() {
+        return false;
+    }
+
     static boolean isAnswerProductReviewModeEnabled() {
         return false;
     }

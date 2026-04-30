@@ -57,6 +57,11 @@ public final class ReviewDemoPolicyTest {
     }
 
     @Test
+    public void rainShelterUncertainFitBackendDemoDefaultsOffUntilWiredByCaller() {
+        assertFalse(ReviewDemoPolicy.isRainShelterUncertainFitBackendDemoEnabled());
+    }
+
+    @Test
     public void answerProductReviewModeDefaultsOffUntilWiredByCaller() {
         assertFalse(ReviewDemoPolicy.isAnswerProductReviewModeEnabled());
     }

@@ -1873,7 +1873,7 @@ public final class OfflineAnswerEngine {
             topChunks,
             confidenceLabel,
             safetyCritical,
-            ReviewDemoPolicy.isAnswerProductReviewModeEnabled()
+            ReviewDemoPolicy.isRainShelterUncertainFitBackendDemoEnabled()
         );
     }
 
@@ -1885,14 +1885,16 @@ public final class OfflineAnswerEngine {
         boolean productReviewMode
     ) {
         List<SearchResult> adjacent = topAbstainChunks(topChunks);
-        String reviewDemoAnswer = ReviewDemoPolicy.buildRainShelterUncertainFitAnswerBody(
-            productReviewMode,
-            query,
-            adjacent,
-            safetyCritical
-        );
-        if (!reviewDemoAnswer.isEmpty()) {
-            return reviewDemoAnswer;
+        if (productReviewMode) {
+            String reviewDemoAnswer = ReviewDemoPolicy.buildRainShelterUncertainFitAnswerBody(
+                true,
+                query,
+                adjacent,
+                safetyCritical
+            );
+            if (!reviewDemoAnswer.isEmpty()) {
+                return reviewDemoAnswer;
+            }
         }
         List<String> queryTokens = queryTokens(query);
         StringBuilder builder = new StringBuilder();
@@ -1949,7 +1951,7 @@ public final class OfflineAnswerEngine {
             query,
             adjacent,
             safetyCritical,
-            ReviewDemoPolicy.isAnswerProductReviewModeEnabled()
+            ReviewDemoPolicy.isRainShelterUncertainFitBackendDemoEnabled()
         );
     }
 
@@ -1959,8 +1961,11 @@ public final class OfflineAnswerEngine {
         boolean safetyCritical,
         boolean productReviewMode
     ) {
+        if (!productReviewMode) {
+            return adjacent == null ? Collections.emptyList() : new ArrayList<>(adjacent);
+        }
         return ReviewDemoPolicy.shapeRainShelterUncertainFitSources(
-            productReviewMode,
+            true,
             query,
             adjacent,
             safetyCritical
