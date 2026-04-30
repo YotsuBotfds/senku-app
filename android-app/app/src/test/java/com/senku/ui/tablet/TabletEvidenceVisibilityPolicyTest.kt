@@ -278,7 +278,7 @@ class TabletEvidenceVisibilityPolicyTest {
     }
 
     @Test
-    fun guideModeReferenceRowsPromoteAbrasivesAnchorForFoundryGuideContext() {
+    fun guideModeReferenceRowsKeepFoundryGraphGenericByDefault() {
         val rows = tabletGuideModeReferenceRows(
             anchor = AnchorState("", "", "", "", "", false),
             xrefs = listOf(
@@ -287,6 +287,23 @@ class TabletEvidenceVisibilityPolicyTest {
                 XRefState(id = "GD-225", title = "Bloomery Furnace", relation = "REQUIRED"),
                 XRefState(id = "GD-499", title = "Bellows Forge Blower Construction", relation = "REQUIRED"),
             ),
+        )
+
+        assertEquals(listOf("GD-132", "GD-220", "GD-225", "GD-499"), rows.map { it.guideId })
+        assertEquals(listOf("ANCHOR", "RELATED", "REQUIRED", "REQUIRED"), rows.map { it.relation })
+    }
+
+    @Test
+    fun guideModeReferenceRowsPromoteAbrasivesAnchorForFoundryGuideContextOnlyWhenReviewDemoEnabled() {
+        val rows = tabletGuideModeReferenceRows(
+            anchor = AnchorState("", "", "", "", "", false),
+            xrefs = listOf(
+                XRefState(id = "GD-132", title = "Foundry & Metal Casting", relation = "ANCHOR"),
+                XRefState(id = "GD-220", title = "Abrasives Manufacturing"),
+                XRefState(id = "GD-225", title = "Bloomery Furnace", relation = "REQUIRED"),
+                XRefState(id = "GD-499", title = "Bellows Forge Blower Construction", relation = "REQUIRED"),
+            ),
+            reviewDemoEvidenceStackEnabled = true,
         )
 
         assertEquals(listOf("GD-220", "GD-132", "GD-225", "GD-499"), rows.map { it.guideId })

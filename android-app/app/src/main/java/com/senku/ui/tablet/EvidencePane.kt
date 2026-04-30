@@ -361,7 +361,11 @@ private fun CrossReferenceSection(
         xrefs = visibleXRefs,
         reviewDemoEvidenceStackEnabled = reviewDemoEvidenceStackEnabled,
     )
-    val referenceRows = tabletGuideModeReferenceRows(anchor, visibleXRefs)
+    val referenceRows = tabletGuideModeReferenceRows(
+        anchor = anchor,
+        xrefs = visibleXRefs,
+        reviewDemoEvidenceStackEnabled = reviewDemoEvidenceStackEnabled,
+    )
     val referenceCount = buildCrossReferenceCardCount(anchor, visibleXRefs)
     val sourceCount = buildAnswerModeSourceHeaderCount(
         anchor = anchor,
@@ -438,11 +442,15 @@ private fun CrossReferenceSection(
     }
 }
 
-internal fun tabletGuideModeReferenceRows(anchor: AnchorState, xrefs: List<XRefState>): List<TabletEvidenceCardRow> {
+internal fun tabletGuideModeReferenceRows(
+    anchor: AnchorState,
+    xrefs: List<XRefState>,
+    reviewDemoEvidenceStackEnabled: Boolean = false,
+): List<TabletEvidenceCardRow> {
     val visibleXRefs = tabletSourceGraphVisibleXRefs(anchor, xrefs)
     val rows = mutableListOf<TabletEvidenceCardRow>()
     val gd220 = visibleXRefs.firstOrNull { it.id.trim().equals("GD-220", ignoreCase = true) }
-    val anchorLikeGd220 = gd220 != null && hasFoundryCurrentAnchor(anchor, visibleXRefs)
+    val anchorLikeGd220 = reviewDemoEvidenceStackEnabled && gd220 != null && hasFoundryCurrentAnchor(anchor, visibleXRefs)
     val seenGuideIds = mutableSetOf<String>()
 
     if (anchorLikeGd220) {
