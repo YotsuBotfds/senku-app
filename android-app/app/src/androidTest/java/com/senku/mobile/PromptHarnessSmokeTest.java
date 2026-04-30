@@ -471,6 +471,28 @@ public final class PromptHarnessSmokeTest {
     }
 
     @Test
+    public void savedNavigationTapOpensSavedGuideDestination() {
+        clearPinnedGuidesForTest();
+        try (ActivityScenario<MainActivity> scenario = ActivityScenario.launch(MainActivity.class)) {
+            awaitHarnessIdle();
+            Assert.assertTrue(
+                "home launch should settle before tapping Saved; harness signals=" + HarnessTestSignals.snapshot(),
+                device.wait(Until.hasObject(By.res(APP_PACKAGE, "search_input")), SEARCH_WAIT_MS)
+            );
+
+            Assert.assertTrue(
+                "Saved navigation tab should be tappable from the main surface",
+                tapSavedNavigationFromMain()
+            );
+            waitForSavedGuidesDestination(scenario, false, DETAIL_WAIT_MS);
+            scenario.onActivity(activity -> assertSavedGuidesDestination(activity, false));
+            captureUiState("saved_guides_nav_empty");
+        } finally {
+            clearPinnedGuidesForTest();
+        }
+    }
+
+    @Test
     public void savedTabPinnedGuideStateOpensSavedGuideDestination() {
         clearPinnedGuidesForTest();
         Context context = ApplicationProvider.getApplicationContext();
@@ -3201,6 +3223,43 @@ public final class PromptHarnessSmokeTest {
         Assert.fail(lastFailure[0] + "; harness signals=" + HarnessTestSignals.snapshot());
     }
 
+    private boolean tapSavedNavigationFromMain() {
+        BySelector savedGuidesDescription = By.desc("Saved guides");
+        if (clickUiObject(savedGuidesDescription, 1_500L)) {
+            return true;
+        }
+        if (clickUiObject(By.text("Saved"), 1_500L)) {
+            return true;
+        }
+
+        final boolean[] clicked = {false};
+        InstrumentationRegistry.getInstrumentation().runOnMainSync(() -> {
+            Activity activity = getResumedActivityOnMainThread();
+            if (activity == null) {
+                return;
+            }
+            View staticSavedTab = activity.findViewById(R.id.phone_nav_pins);
+            if (staticSavedTab != null && isVisible(staticSavedTab)) {
+                staticSavedTab.performClick();
+                clicked[0] = true;
+            }
+        });
+        if (clicked[0]) {
+            InstrumentationRegistry.getInstrumentation().waitForIdleSync();
+        }
+        return clicked[0];
+    }
+
+    private boolean clickUiObject(BySelector selector, long timeoutMs) {
+        UiObject2 object = device.wait(Until.findObject(selector), timeoutMs);
+        if (object == null || !object.isEnabled()) {
+            return false;
+        }
+        object.click();
+        InstrumentationRegistry.getInstrumentation().waitForIdleSync();
+        return true;
+    }
+
     private void assertSavedGuidesDestination(Activity activity, boolean expectSavedGuide) {
         Assert.assertNotNull("saved destination activity should exist", activity);
         EditText input = activity.findViewById(R.id.search_input);
@@ -3265,16 +3324,16 @@ public final class PromptHarnessSmokeTest {
 
         Assert.assertTrue(
             "saved destination should make the Saved Guides section visible for dumps/screenshots",
-            isEffectivelyVisible(pinnedSection)
+            isVisible(pinnedSection)
         );
         if (expectSavedGuide) {
             Assert.assertFalse(
                 "non-empty saved destination should hide the empty Saved copy",
-                isEffectivelyVisible(pinnedEmptyText)
+                isVisible(pinnedEmptyText)
             );
             Assert.assertTrue(
                 "non-empty saved destination should show the saved-guide rail",
-                isEffectivelyVisible(pinnedScroll)
+                isVisible(pinnedScroll)
             );
             Assert.assertTrue(
                 "non-empty saved destination should render at least one saved guide button",
@@ -3294,7 +3353,7 @@ public final class PromptHarnessSmokeTest {
         } else {
             Assert.assertTrue(
                 "empty saved destination should show Saved Guides empty copy",
-                isEffectivelyVisible(pinnedEmptyText)
+                isVisible(pinnedEmptyText)
             );
             Assert.assertEquals(
                 "empty saved destination should identify itself as Saved Guides, not Search or Ask",
@@ -3309,7 +3368,7 @@ public final class PromptHarnessSmokeTest {
         if (resultsList != null) {
             Assert.assertFalse(
                 "saved destination should not present the search-results lane as the active surface",
-                isEffectivelyVisible(resultsList)
+                isVisible(resultsList)
             );
         }
     }
