@@ -18,6 +18,38 @@ final class PackAnswerContextPolicy {
         return diversifyContext && hasExplicitWaterDistributionTopic(queryTerms);
     }
 
+    static boolean shouldKeepGuideSectionForContext(
+        String preferredStructure,
+        boolean isAnchorSection,
+        int sectionBonus,
+        boolean prefersRoofWeatherproofRouteAnchor,
+        boolean hasRoofWeatherproofDistractorSignal,
+        boolean prefersGovernanceTrustRepairContext,
+        boolean hasGovernanceSupportMixDistractor,
+        boolean hasGovernanceTrustRepairSignal
+    ) {
+        if (isAnchorSection) {
+            return true;
+        }
+        if (("water_storage".equals(preferredStructure) || "water_distribution".equals(preferredStructure))
+            && sectionBonus < 0) {
+            return false;
+        }
+        if ("cabin_house".equals(preferredStructure)
+            && prefersRoofWeatherproofRouteAnchor
+            && sectionBonus <= 0
+            && hasRoofWeatherproofDistractorSignal) {
+            return false;
+        }
+        if ("community_governance".equals(preferredStructure)
+            && prefersGovernanceTrustRepairContext
+            && hasGovernanceSupportMixDistractor
+            && !hasGovernanceTrustRepairSignal) {
+            return false;
+        }
+        return true;
+    }
+
     private static boolean hasExplicitWaterDistributionTopic(PackRepository.QueryTerms queryTerms) {
         return queryTerms != null
             && queryTerms.metadataProfile != null

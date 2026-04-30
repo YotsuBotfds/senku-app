@@ -19,7 +19,7 @@ public final class PackRepositoryTelemetryTest {
             searchResult("GD-727", "Practical Survival Apps", "general", "utility", "maintenance,storage")
         );
 
-        String line = PackRepository.buildSearchResultCandidateTelemetryLineForTest(
+        String line = buildSearchResultCandidateTelemetryLine(
             "lexical",
             "how do i build a rain shelter",
             results,
@@ -51,7 +51,7 @@ public final class PackRepositoryTelemetryTest {
             scores.add((double) index);
         }
 
-        String line = PackRepository.buildSearchResultCandidateTelemetryLineForTest(
+        String line = buildSearchResultCandidateTelemetryLine(
             "lexical",
             "rain shelter",
             results,
@@ -85,7 +85,7 @@ public final class PackRepositoryTelemetryTest {
             scores.add(50.0 - index);
         }
 
-        String line = PackRepository.buildSearchResultCandidateTelemetryLineForTest(
+        String line = buildSearchResultCandidateTelemetryLine(
             "lexical",
             "how do i build a rain shelter",
             results,
@@ -100,7 +100,7 @@ public final class PackRepositoryTelemetryTest {
 
     @Test
     public void searchResultTelemetryLineHandlesEmptyInput() {
-        String line = PackRepository.buildSearchResultCandidateTelemetryLineForTest(
+        String line = buildSearchResultCandidateTelemetryLine(
             "lexical",
             "rain shelter",
             Collections.emptyList(),
@@ -511,6 +511,20 @@ public final class PackRepositoryTelemetryTest {
             return 0;
         }
         return body.split(" \\|\\| ").length;
+    }
+
+    private static String buildSearchResultCandidateTelemetryLine(
+        String stage,
+        String query,
+        List<SearchResult> results,
+        List<Double> scores
+    ) {
+        ArrayList<String> rows = new ArrayList<>();
+        int capped = Math.min(results == null ? 0 : results.size(), scores == null ? 0 : scores.size());
+        for (int index = 0; index < capped; index++) {
+            rows.add(CandidateTelemetryFormatter.formatRow(index + 1, results.get(index), scores.get(index)));
+        }
+        return CandidateTelemetryFormatter.buildLine(stage, query, rows);
     }
 
     private static String repeat(char value, int count) {

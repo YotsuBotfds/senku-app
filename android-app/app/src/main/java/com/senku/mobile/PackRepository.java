@@ -3395,27 +3395,17 @@ public final class PackRepository implements AutoCloseable {
         boolean isAnchorSection,
         int sectionBonus
     ) {
-        if (isAnchorSection) {
-            return true;
-        }
         String preferredStructure = emptySafe(queryTerms.metadataProfile.preferredStructureType()).trim().toLowerCase(QUERY_LOCALE);
-        if (("water_storage".equals(preferredStructure) || "water_distribution".equals(preferredStructure))
-            && sectionBonus < 0) {
-            return false;
-        }
-        if ("cabin_house".equals(preferredStructure)
-            && prefersRoofWeatherproofRouteAnchor(queryTerms)
-            && sectionBonus <= 0
-            && hasRoofWeatherproofDistractorSignal(candidate)) {
-            return false;
-        }
-        if ("community_governance".equals(preferredStructure)
-            && prefersGovernanceTrustRepairContext(queryTerms.metadataProfile)
-            && hasGovernanceSupportMixDistractor(candidate)
-            && !hasGovernanceTrustRepairSignal(candidate)) {
-            return false;
-        }
-        return true;
+        return PackAnswerContextPolicy.shouldKeepGuideSectionForContext(
+            preferredStructure,
+            isAnchorSection,
+            sectionBonus,
+            prefersRoofWeatherproofRouteAnchor(queryTerms),
+            hasRoofWeatherproofDistractorSignal(candidate),
+            prefersGovernanceTrustRepairContext(queryTerms.metadataProfile),
+            hasGovernanceSupportMixDistractor(candidate),
+            hasGovernanceTrustRepairSignal(candidate)
+        );
     }
 
     static SupportBreakdown supportBreakdownForTest(String query, SearchResult result) {
@@ -3917,20 +3907,6 @@ public final class PackRepository implements AutoCloseable {
 
     static String buildFtsQueryForTest(String query) {
         return buildFtsQuery(QueryTerms.fromQuery(query));
-    }
-
-    static String buildSearchResultCandidateTelemetryLineForTest(
-        String stage,
-        String query,
-        List<SearchResult> results,
-        List<Double> scores
-    ) {
-        ArrayList<String> rows = new ArrayList<>();
-        int capped = Math.min(results == null ? 0 : results.size(), scores == null ? 0 : scores.size());
-        for (int index = 0; index < capped; index++) {
-            rows.add(CandidateTelemetryFormatter.formatRow(index + 1, results.get(index), scores.get(index)));
-        }
-        return CandidateTelemetryFormatter.buildLine(stage, query, rows);
     }
 
     private static void addFtsExpression(Set<String> expressions, String token) {
