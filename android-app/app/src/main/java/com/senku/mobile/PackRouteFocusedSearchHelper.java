@@ -48,6 +48,19 @@ final class PackRouteFocusedSearchHelper {
         return new RouteSearchStep(routeSpec, specTerms, tokens, categories);
     }
 
+    static boolean shouldScanFullRouteCursor(PackRepository.QueryTerms queryTerms) {
+        if (queryTerms == null || queryTerms.metadataProfile == null) {
+            return false;
+        }
+        String preferredStructureType = queryTerms.metadataProfile.preferredStructureType();
+        if ("community_security".equals(preferredStructureType)
+            || "community_governance".equals(preferredStructureType)) {
+            return false;
+        }
+        return queryTerms.metadataProfile.hasExplicitTopicFocus()
+            && RetrievalRoutePolicy.requiresSpecializedRouteAnchorSignal(preferredStructureType);
+    }
+
     private static List<String> limitTokens(List<String> tokens, int max) {
         if (tokens == null || tokens.isEmpty() || max <= 0 || tokens.size() <= max) {
             return tokens;

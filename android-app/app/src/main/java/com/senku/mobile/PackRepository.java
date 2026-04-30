@@ -3023,16 +3023,7 @@ public final class PackRepository implements AutoCloseable {
     }
 
     private static boolean shouldScanFullRouteCursor(QueryTerms queryTerms) {
-        if (queryTerms == null || queryTerms.metadataProfile == null) {
-            return false;
-        }
-        String preferredStructureType = queryTerms.metadataProfile.preferredStructureType();
-        if ("community_security".equals(preferredStructureType)
-            || "community_governance".equals(preferredStructureType)) {
-            return false;
-        }
-        return queryTerms.metadataProfile.hasExplicitTopicFocus()
-            && requiresSpecializedRouteAnchorSignal(preferredStructureType);
+        return PackRouteFocusedSearchHelper.shouldScanFullRouteCursor(queryTerms);
     }
 
     static boolean shouldScanFullRouteCursorForTest(String query) {
