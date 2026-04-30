@@ -3,6 +3,8 @@ package com.senku.mobile;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 public final class HostInferenceClientTest {
     @Test
@@ -66,5 +68,21 @@ public final class HostInferenceClientTest {
         assertEquals("Ready", result.answer);
         assertEquals("host", result.backend);
         assertEquals(0.0d, result.elapsedSeconds, 0.0001d);
+    }
+
+    @Test
+    public void generateRejectsNonLocalCleartextBeforeConnecting() throws Exception {
+        HostInferenceConfig.Settings settings = new HostInferenceConfig.Settings(
+            true,
+            "http://host.local:1235/v1",
+            "gemma-4-e2b-it-litert"
+        );
+
+        try {
+            HostInferenceClient.generate(settings, "", "ping", null);
+            fail("Expected non-local cleartext host to be rejected");
+        } catch (IllegalStateException exception) {
+            assertTrue(exception.getMessage().contains("NON_LOCAL_CLEARTEXT_REJECTED"));
+        }
     }
 }

@@ -27,6 +27,13 @@ public final class HostInferenceClient {
     }
 
     public static Result generate(HostInferenceConfig.Settings settings, String systemPrompt, String prompt, Integer maxTokens) throws Exception {
+        HostInferencePolicy.Decision policyDecision = HostInferencePolicy.evaluate(settings.baseUrl);
+        if (!policyDecision.allowed) {
+            throw new IllegalStateException(
+                "Host inference endpoint rejected by policy (" + policyDecision.reason + "): " + settings.baseUrl
+            );
+        }
+
         URI uri = URI.create(settings.baseUrl + "/chat/completions");
         String scheme = uri.getScheme() == null ? "http" : uri.getScheme().trim().toLowerCase(Locale.US);
         if (!"http".equals(scheme)) {
@@ -35,9 +42,6 @@ public final class HostInferenceClient {
         String host = uri.getHost();
         if (host == null || host.trim().isEmpty()) {
             throw new IllegalStateException("Host inference URL has no host: " + settings.baseUrl);
-        }
-        if (!isLocalCleartextHost(host)) {
-            Log.w(TAG, "host.cleartextNonLocal url=" + settings.baseUrl + " host=" + host);
         }
         int port = uri.getPort() > 0 ? uri.getPort() : 80;
         String path = uri.getRawPath();
@@ -168,14 +172,6 @@ public final class HostInferenceClient {
             return builder.toString();
         }
         return "";
-    }
-
-    private static boolean isLocalCleartextHost(String host) {
-        String normalized = host == null ? "" : host.trim().toLowerCase(Locale.US);
-        return "localhost".equals(normalized)
-            || "127.0.0.1".equals(normalized)
-            || "10.0.2.2".equals(normalized)
-            || "10.0.3.2".equals(normalized);
     }
 
     private static RawHttpResponse readResponse(InputStream input) throws Exception {
