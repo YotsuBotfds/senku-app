@@ -167,6 +167,12 @@ public final class DetailActivity extends AppCompatActivity {
     private static final int ANSWER_MODE_PHONE_VISIBLE_RELATED_GUIDE_COUNT = 4;
     private static final int DETAIL_OVERFLOW_MENU_SAVE_GUIDE_ID = 1;
     private static final int DETAIL_OVERFLOW_MENU_HOME_ID = 2;
+
+    enum FollowUpSubmitRoute {
+        EMPTY_INPUT,
+        PHONE_FOLLOWUP
+    }
+
     private static final String EXTRA_TITLE = "title";
     private static final String EXTRA_SUBTITLE = "subtitle";
     private static final String EXTRA_BODY = "body";
@@ -1465,9 +1471,7 @@ public final class DetailActivity extends AppCompatActivity {
             followUpRetryButton.setOnClickListener(v -> retryLastFailedQuery());
         }
         followUpInput.setOnEditorActionListener((v, actionId, event) -> {
-            if (actionId == EditorInfo.IME_ACTION_SEND ||
-                actionId == EditorInfo.IME_ACTION_DONE ||
-                (event != null && event.getAction() == KeyEvent.ACTION_UP && event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) {
+            if (isFollowUpSubmitAction(actionId, event)) {
                 runFollowUp();
                 return true;
             }
@@ -6086,8 +6090,8 @@ public final class DetailActivity extends AppCompatActivity {
     }
 
     private void runFollowUp() {
-        String query = safe(followUpInput.getText().toString()).trim();
-        if (query.isEmpty()) {
+        String query = normalizeFollowUpQuery(followUpInput.getText().toString());
+        if (resolveFollowUpSubmitRoute(query) == FollowUpSubmitRoute.EMPTY_INPUT) {
             setBusy(getString(R.string.detail_followup_empty), false);
             return;
         }
@@ -6115,6 +6119,28 @@ public final class DetailActivity extends AppCompatActivity {
         reviewedCardMetadataBridge.reset();
         setBusy(OfflineAnswerEngine.buildRetrievalStatus(query, sessionMemory), true);
         answerPresenter.prepareThenGenerate(requestToken, kind, repository, query);
+    }
+
+    static boolean isFollowUpSubmitAction(int actionId, KeyEvent event) {
+        if (actionId == EditorInfo.IME_ACTION_SEND || actionId == EditorInfo.IME_ACTION_DONE) {
+            return true;
+        }
+        return event != null
+            && isFollowUpHardwareEnterSubmitAction(event.getKeyCode(), event.getAction());
+    }
+
+    static boolean isFollowUpHardwareEnterSubmitAction(int keyCode, int action) {
+        return keyCode == KeyEvent.KEYCODE_ENTER && action == KeyEvent.ACTION_UP;
+    }
+
+    static FollowUpSubmitRoute resolveFollowUpSubmitRoute(String rawQuery) {
+        return normalizeFollowUpQuery(rawQuery).isEmpty()
+            ? FollowUpSubmitRoute.EMPTY_INPUT
+            : FollowUpSubmitRoute.PHONE_FOLLOWUP;
+    }
+
+    static String normalizeFollowUpQuery(String rawQuery) {
+        return safe(rawQuery).trim();
     }
 
     void applyPreparedPreviewState(OfflineAnswerEngine.PreparedAnswer preparedAnswer) {

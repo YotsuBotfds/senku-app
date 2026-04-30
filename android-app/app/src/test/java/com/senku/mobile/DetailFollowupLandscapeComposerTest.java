@@ -6,6 +6,8 @@ import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertTrue;
 
 import android.view.View;
+import android.view.KeyEvent;
+import android.view.inputmethod.EditorInfo;
 
 import com.senku.ui.primitives.MetaItem;
 import com.senku.ui.tablet.TabletDetailMode;
@@ -17,6 +19,53 @@ import java.util.List;
 import org.junit.Test;
 
 public final class DetailFollowupLandscapeComposerTest {
+    @Test
+    public void followUpComposerSubmitAcceptsSendDoneAndHardwareEnterUp() {
+        assertTrue(DetailActivity.isFollowUpSubmitAction(EditorInfo.IME_ACTION_SEND, null));
+        assertTrue(DetailActivity.isFollowUpSubmitAction(EditorInfo.IME_ACTION_DONE, null));
+        assertTrue(DetailActivity.isFollowUpHardwareEnterSubmitAction(
+            KeyEvent.KEYCODE_ENTER,
+            KeyEvent.ACTION_UP
+        ));
+    }
+
+    @Test
+    public void followUpComposerSubmitRejectsNonSubmitActions() {
+        assertFalse(DetailActivity.isFollowUpSubmitAction(EditorInfo.IME_ACTION_NONE, null));
+        assertFalse(DetailActivity.isFollowUpHardwareEnterSubmitAction(
+            KeyEvent.KEYCODE_ENTER,
+            KeyEvent.ACTION_DOWN
+        ));
+        assertFalse(DetailActivity.isFollowUpHardwareEnterSubmitAction(
+            KeyEvent.KEYCODE_TAB,
+            KeyEvent.ACTION_UP
+        ));
+    }
+
+    @Test
+    public void followUpComposerEmptyInputStaysOnEmptyPolicyPath() {
+        assertEquals(
+            DetailActivity.FollowUpSubmitRoute.EMPTY_INPUT,
+            DetailActivity.resolveFollowUpSubmitRoute("")
+        );
+        assertEquals(
+            DetailActivity.FollowUpSubmitRoute.EMPTY_INPUT,
+            DetailActivity.resolveFollowUpSubmitRoute("   \n\t  ")
+        );
+    }
+
+    @Test
+    public void followUpComposerSendableInputRoutesToPhoneFollowUpPath() {
+        assertEquals(
+            DetailActivity.FollowUpSubmitRoute.PHONE_FOLLOWUP,
+            DetailActivity.resolveFollowUpSubmitRoute("  what should I do next?  ")
+        );
+        assertEquals(
+            "what should I do next?",
+            DetailActivity.normalizeFollowUpQuery("  what should I do next?  ")
+        );
+    }
+
     @Test
     public void dockedComposerHidesRetryChromeOnLandscapePhone() {
         assertFalse(DetailActivity.shouldShowDockedComposerRetry(true, true));
