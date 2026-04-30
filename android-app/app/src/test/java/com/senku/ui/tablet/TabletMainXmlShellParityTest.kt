@@ -161,7 +161,7 @@ class TabletMainXmlShellParityTest {
                 assertEquals(expectedLabelColor, label.android("textColor"))
                 if (qualifier == "layout-sw600dp-port") {
                     assertEquals("500", label.android("textFontWeight"))
-                    assertEquals("7dp", label.android("drawablePadding"))
+                    assertEquals("10dp", label.android("drawablePadding"))
                 }
             }
         }

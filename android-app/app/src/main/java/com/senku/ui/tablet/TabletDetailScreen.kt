@@ -1465,22 +1465,29 @@ private fun DetailWorkspace(
                     )
                 } else {
                     val evidenceGraph = state.resolvedEvidencePaneGraph()
-                    EvidencePane(
-                        anchor = evidenceGraph.anchor,
-                        xrefs = evidenceGraph.xrefs,
-                        answerMode = state.isAnswerOrThreadMode(),
-                        answerSourceCount = state.resolvedAnswerSourceCount(),
-                        onAnchorClick = onAnchorClick,
-                        onXRefClick = onXRefClick,
+                    Box(
                         modifier = Modifier
                             .width(readingPolicy.evidenceRailWidthDp.dp)
                             .fillMaxHeight()
+                            .background(colors.bg1)
                             .semantics {
                                 paneTitle = evidencePaneTitle
                                 isTraversalGroup = true
                                 traversalIndex = 2f
                             },
-                    )
+                    ) {
+                        EvidencePane(
+                            anchor = evidenceGraph.anchor,
+                            xrefs = evidenceGraph.xrefs,
+                            answerMode = state.isAnswerOrThreadMode(),
+                            answerSourceCount = state.resolvedAnswerSourceCount(),
+                            onAnchorClick = onAnchorClick,
+                            onXRefClick = onXRefClick,
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(start = 12.dp, top = 12.dp, end = 12.dp),
+                        )
+                    }
                 }
             }
         }
@@ -2135,7 +2142,7 @@ private fun ThreadSourcePane(
         modifier = modifier
             .background(colors.bg1)
             .verticalScroll(scrollState)
-            .padding(horizontal = 8.dp, vertical = 10.dp),
+            .padding(horizontal = 12.dp, vertical = 12.dp),
         verticalArrangement = Arrangement.spacedBy(6.dp),
     ) {
         Row(
@@ -2294,8 +2301,8 @@ private fun GuideReferencePane(
             .background(colors.bg1)
             .verticalScroll(scrollState)
             .padding(
-                horizontal = densityPolicy.referencePaneHorizontalPaddingDp.dp,
-                vertical = densityPolicy.referencePaneVerticalPaddingDp.dp,
+                horizontal = (densityPolicy.referencePaneHorizontalPaddingDp + 2).dp,
+                vertical = (densityPolicy.referencePaneVerticalPaddingDp + 4).dp,
             ),
         verticalArrangement = Arrangement.spacedBy(densityPolicy.referencePaneVerticalSpacingDp.dp),
     ) {
