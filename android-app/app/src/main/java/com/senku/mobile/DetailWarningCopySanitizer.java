@@ -148,10 +148,6 @@ final class DetailWarningCopySanitizer {
             "GD-132 \u00a71 is current owner.",
             "GD-132 lists current owner."
         );
-        cleaned = cleaned.replace(
-            "The guide lists the current owner.",
-            "GD-132 lists current owner."
-        );
         return cleaned;
     }
 

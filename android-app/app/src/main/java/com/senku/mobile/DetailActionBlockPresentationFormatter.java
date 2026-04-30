@@ -385,10 +385,6 @@ final class DetailActionBlockPresentationFormatter {
             "GD-132 \u00a71 is current owner.",
             "GD-132 lists current owner."
         );
-        detail = detail.replace(
-            "The guide lists the current owner.",
-            "GD-132 lists current owner."
-        );
         return detail;
     }
 

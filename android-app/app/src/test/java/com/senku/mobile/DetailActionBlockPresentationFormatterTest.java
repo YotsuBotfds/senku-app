@@ -371,7 +371,21 @@ public final class DetailActionBlockPresentationFormatterTest {
         assertEquals(3, actions.size());
         assertEquals("Move to minimum 5 m from active work zone", actions.get(0).title);
         assertEquals("Clear the floor to 5 m radius", actions.get(1).title);
-        assertEquals("GD-132 lists current owner.", actions.get(2).detail);
+        assertEquals("The guide lists the current owner.", actions.get(2).detail);
+    }
+
+    @Test
+    public void extractEmergencyActionSpecsPreservesGenericOwnerGuideWording() {
+        List<DetailActionBlockPresentationFormatter.EmergencyActionSpec> actions =
+            DetailActionBlockPresentationFormatter.extractEmergencyActionSpecs(
+                "Immediate actions:\n" +
+                    "1. Notify the area owner. The guide lists the current owner.",
+                text -> citationFormatter.stripInlineCitationText(text)
+            );
+
+        assertEquals(1, actions.size());
+        assertEquals("Notify the area owner", actions.get(0).title);
+        assertEquals("The guide lists the current owner.", actions.get(0).detail);
     }
 
     @Test

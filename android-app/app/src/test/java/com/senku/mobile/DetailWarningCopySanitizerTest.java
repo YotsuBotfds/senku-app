@@ -107,9 +107,18 @@ public final class DetailWarningCopySanitizerTest {
         assertEquals(
             "Move to minimum 5 m from active work zone. "
                 + "Clear the floor to 5 m radius. "
-                + "GD-132 lists current owner.",
+                + "The guide lists the current owner.",
             cleaned
         );
+    }
+
+    @Test
+    public void sanitizeWarningResidualCopy_preservesGenericOwnerGuideWording() {
+        String cleaned = DetailWarningCopySanitizer.sanitizeWarningResidualCopy(
+            "The guide lists the current owner."
+        );
+
+        assertEquals("The guide lists the current owner.", cleaned);
     }
 
     @Test
