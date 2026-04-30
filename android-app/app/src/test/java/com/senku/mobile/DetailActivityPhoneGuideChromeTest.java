@@ -102,58 +102,6 @@ public final class DetailActivityPhoneGuideChromeTest {
     }
 
     @Test
-    public void routeAwareDetailBackChromeNamesTaskRootHomeDestination() {
-        assertEquals(
-            R.string.detail_back,
-            DetailActivity.resolveDetailVisibleBackLabelResource(
-                false,
-                DetailBackPolicy.SourceRoute.GUIDE
-            )
-        );
-        assertEquals(
-            R.string.detail_back_content_description,
-            DetailActivity.resolveDetailVisibleBackContentDescriptionResource(
-                false,
-                DetailBackPolicy.SourceRoute.GUIDE
-            )
-        );
-        assertEquals(
-            R.string.home_button,
-            DetailActivity.resolveDetailVisibleBackLabelResource(
-                true,
-                DetailBackPolicy.SourceRoute.HOME_GUIDE
-            )
-        );
-        assertEquals(
-            R.string.detail_home_content_description,
-            DetailActivity.resolveDetailVisibleBackContentDescriptionResource(
-                true,
-                DetailBackPolicy.SourceRoute.HOME_GUIDE
-            )
-        );
-    }
-
-    @Test
-    public void legacyDetailBackChromeHelpersNameTaskRootHomeDestination() {
-        assertEquals(R.string.detail_back, DetailActivity.resolveDetailVisibleBackLabelResource(false));
-        assertEquals(R.string.home_button, DetailActivity.resolveDetailVisibleBackLabelResource(true));
-        assertEquals(
-            R.string.detail_back_content_description,
-            DetailActivity.resolveDetailVisibleBackContentDescriptionResource(false)
-        );
-        assertEquals(
-            R.string.detail_home_content_description,
-            DetailActivity.resolveDetailVisibleBackContentDescriptionResource(true)
-        );
-        assertEquals(
-            R.string.detail_home_content_description,
-            DetailActivity.resolveTabletEmergencyBackContentDescriptionResource(true)
-        );
-        assertEquals(R.string.home_button, DetailActivity.tabletEmergencyBackButtonLabel(true));
-    }
-
-
-    @Test
     public void productReviewModeRequiresAuthorizedDetailIntentExtra() {
         assertFalse(DetailActivity.resolveProductReviewModeForTest(false, false));
         assertFalse(DetailActivity.resolveProductReviewModeForTest(false, true));

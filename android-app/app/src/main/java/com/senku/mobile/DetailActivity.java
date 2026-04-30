@@ -2215,7 +2215,9 @@ public final class DetailActivity extends AppCompatActivity {
             dp(TABLET_HEADER_BACK_HORIZONTAL_PADDING_DP),
             0
         );
-        action.setContentDescription(getString(resolveTabletEmergencyBackContentDescriptionResource(isTaskRoot())));
+        action.setContentDescription(getString(
+            detailVisibleBackAffordance(DetailBackPolicy.BackTrigger.VISIBLE_BACK_BUTTON).contentDescriptionResource
+        ));
 
         ImageView icon = new ImageView(this);
         icon.setImageResource(R.drawable.ic_home_back_chevron);
@@ -2301,7 +2303,7 @@ public final class DetailActivity extends AppCompatActivity {
             return;
         }
         button.setAllCaps(false);
-        button.setText(tabletEmergencyBackButtonLabel(isTaskRoot()));
+        button.setText(detailVisibleBackAffordance(DetailBackPolicy.BackTrigger.VISIBLE_BACK_BUTTON).labelResource);
         button.setSingleLine(true);
         button.setMaxLines(1);
         button.setGravity(Gravity.CENTER);
@@ -2323,14 +2325,6 @@ public final class DetailActivity extends AppCompatActivity {
         button.setCompoundDrawablesRelativeWithIntrinsicBounds(icon, null, null, null);
     }
 
-    static int tabletEmergencyBackButtonLabel() {
-        return tabletEmergencyBackButtonLabel(false);
-    }
-
-    static int tabletEmergencyBackButtonLabel(boolean taskRoot) {
-        return resolveDetailVisibleBackLabelResource(taskRoot);
-    }
-
     static int resolveTabletEmergencyBackButtonMinWidthDp() {
         return DETAIL_TOP_CHROME_BACK_ACTION_MIN_WIDTH_DP;
     }
@@ -2349,14 +2343,6 @@ public final class DetailActivity extends AppCompatActivity {
 
     static float resolveTabletEmergencyChromeTitleLineHeightSp() {
         return TABLET_EMERGENCY_CHROME_TITLE_LINE_HEIGHT_SP;
-    }
-
-    static int resolveTabletEmergencyBackContentDescriptionResource() {
-        return resolveTabletEmergencyBackContentDescriptionResource(false);
-    }
-
-    static int resolveTabletEmergencyBackContentDescriptionResource(boolean taskRoot) {
-        return resolveDetailVisibleBackContentDescriptionResource(taskRoot);
     }
 
     private Typeface rev03UiTypeface(int style) {
@@ -8972,10 +8958,10 @@ public final class DetailActivity extends AppCompatActivity {
                 answerMode && !buildTranscriptExportText().isEmpty(),
                 overflowVisible,
                 shouldAllowRev03TopBarTitleWrap() ? 2 : 1,
-                getString(resolveDetailVisibleBackContentDescriptionResource(
-                    isTaskRoot(),
-                    currentDetailSourceRoute
-                )),
+                getString(
+                    detailVisibleBackAffordance(DetailBackPolicy.BackTrigger.VISIBLE_BACK_BUTTON)
+                        .contentDescriptionResource
+                ),
                 getString(R.string.detail_home_content_description),
                 getString(
                     pinActive
@@ -9333,56 +9319,6 @@ public final class DetailActivity extends AppCompatActivity {
             return;
         }
         finish();
-    }
-
-    static boolean shouldFallbackDetailBackToHome(boolean taskRoot) {
-        return DetailBackPolicy.shouldFallbackToHome(taskRoot);
-    }
-
-    static int resolveDetailVisibleBackLabelResource() {
-        return resolveDetailVisibleBackLabelResource(false);
-    }
-
-    static int resolveDetailVisibleBackLabelResource(boolean taskRoot) {
-        return DetailBackPolicy.visibleBackAffordance(taskRoot).labelResource;
-    }
-
-    static int resolveDetailVisibleBackLabelResource(
-        boolean taskRoot,
-        DetailBackPolicy.SourceRoute sourceRoute
-    ) {
-        return DetailBackPolicy.visibleBackAffordance(
-            new DetailBackPolicy.Inputs(
-                taskRoot,
-                sourceRoute,
-                DetailBackPolicy.BackTrigger.VISIBLE_BACK_BUTTON
-            )
-        ).labelResource;
-    }
-
-    static int resolveDetailVisibleBackContentDescriptionResource() {
-        return resolveDetailVisibleBackContentDescriptionResource(false);
-    }
-
-    static int resolveDetailVisibleBackContentDescriptionResource(boolean taskRoot) {
-        return DetailBackPolicy.visibleBackAffordance(taskRoot).contentDescriptionResource;
-    }
-
-    static int resolveDetailVisibleBackContentDescriptionResource(
-        boolean taskRoot,
-        DetailBackPolicy.SourceRoute sourceRoute
-    ) {
-        return DetailBackPolicy.visibleBackAffordance(
-            new DetailBackPolicy.Inputs(
-                taskRoot,
-                sourceRoute,
-                DetailBackPolicy.BackTrigger.VISIBLE_BACK_BUTTON
-            )
-        ).contentDescriptionResource;
-    }
-
-    static boolean shouldEnableDetailBackLongPressHomeShortcut() {
-        return DetailBackPolicy.visibleBackAffordance(false).longPressHomeShortcutEnabled;
     }
 
     static boolean shouldShowDetailOverflowAction() {

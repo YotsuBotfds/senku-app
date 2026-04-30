@@ -158,6 +158,32 @@ public final class DetailBackPolicyTest {
     }
 
     @Test
+    public void visibleBackAffordanceCoversDetailAndEmergencyChromeResources() {
+        DetailBackPolicy.VisibleBackAffordance stackedGuide = DetailBackPolicy.visibleBackAffordance(
+            new DetailBackPolicy.Inputs(
+                false,
+                DetailBackPolicy.SourceRoute.GUIDE,
+                DetailBackPolicy.BackTrigger.VISIBLE_BACK_BUTTON
+            )
+        );
+        DetailBackPolicy.VisibleBackAffordance taskRootHomeGuide = DetailBackPolicy.visibleBackAffordance(
+            new DetailBackPolicy.Inputs(
+                true,
+                DetailBackPolicy.SourceRoute.HOME_GUIDE,
+                DetailBackPolicy.BackTrigger.VISIBLE_BACK_BUTTON
+            )
+        );
+
+        assertEquals(R.string.detail_back, stackedGuide.labelResource);
+        assertEquals(R.string.detail_back_content_description, stackedGuide.contentDescriptionResource);
+        assertFalse(stackedGuide.longPressHomeShortcutEnabled);
+
+        assertEquals(R.string.home_button, taskRootHomeGuide.labelResource);
+        assertEquals(R.string.detail_home_content_description, taskRootHomeGuide.contentDescriptionResource);
+        assertFalse(taskRootHomeGuide.longPressHomeShortcutEnabled);
+    }
+
+    @Test
     public void nullAffordanceInputsNormalizeToStackedSystemBack() {
         DetailBackPolicy.VisibleBackAffordance affordance = DetailBackPolicy.visibleBackAffordance(
             (DetailBackPolicy.Inputs) null

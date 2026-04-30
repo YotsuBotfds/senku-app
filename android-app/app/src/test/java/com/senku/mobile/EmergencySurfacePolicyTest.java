@@ -220,48 +220,6 @@ public final class EmergencySurfacePolicyTest {
     }
 
     @Test
-    public void detailBackFallsHomeOnlyWhenDetailIsTaskRoot() {
-        assertTrue(DetailActivity.shouldFallbackDetailBackToHome(true));
-        assertFalse(DetailActivity.shouldFallbackDetailBackToHome(false));
-    }
-
-    @Test
-    public void detailVisibleBackUsesSamePredicateAsSystemBack() {
-        assertEquals(R.string.detail_back, DetailActivity.resolveDetailVisibleBackLabelResource());
-        assertEquals(
-            R.string.detail_back_content_description,
-            DetailActivity.resolveDetailVisibleBackContentDescriptionResource()
-        );
-        assertEquals(R.string.detail_back, DetailActivity.resolveDetailVisibleBackLabelResource(false));
-        assertEquals(R.string.home_button, DetailActivity.resolveDetailVisibleBackLabelResource(true));
-        assertEquals(
-            R.string.detail_home_content_description,
-            DetailActivity.resolveDetailVisibleBackContentDescriptionResource(true)
-        );
-        assertEquals(
-            R.string.detail_back_content_description,
-            DetailActivity.resolveTabletEmergencyBackContentDescriptionResource()
-        );
-        assertEquals(
-            R.string.detail_home_content_description,
-            DetailActivity.resolveTabletEmergencyBackContentDescriptionResource(true)
-        );
-        assertEquals(
-            R.string.detail_back,
-            DetailActivity.tabletEmergencyBackButtonLabel()
-        );
-        assertEquals(
-            R.string.detail_back,
-            DetailActivity.tabletEmergencyBackButtonLabel(false)
-        );
-        assertEquals(
-            R.string.home_button,
-            DetailActivity.tabletEmergencyBackButtonLabel(true)
-        );
-        assertFalse(DetailActivity.shouldEnableDetailBackLongPressHomeShortcut());
-    }
-
-    @Test
     public void detailOverflowActionStaysHiddenUntilFunctional() {
         assertFalse(DetailActivity.shouldShowDetailOverflowAction());
     }
@@ -444,9 +402,6 @@ public final class EmergencySurfacePolicyTest {
 
     @Test
     public void tabletEmergencyBackAffordanceUsesSharedIconOnlyChrome() {
-        assertEquals(R.string.detail_back, DetailActivity.tabletEmergencyBackButtonLabel());
-        assertEquals(R.string.detail_back, DetailActivity.tabletEmergencyBackButtonLabel(false));
-        assertEquals(R.string.home_button, DetailActivity.tabletEmergencyBackButtonLabel(true));
         assertEquals(28, DetailActivity.resolveTabletEmergencyBackButtonMinWidthDp());
         assertEquals(28, DetailActivity.resolveTabletEmergencyChromeNavIconSizeDp());
         assertEquals(10.0f, DetailActivity.resolveTabletEmergencyBackLabelTextSizeSp(), 0.0f);
