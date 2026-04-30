@@ -7,6 +7,7 @@ import static org.junit.Assert.assertTrue;
 import android.view.KeyEvent;
 import android.view.inputmethod.EditorInfo;
 
+import com.senku.mobile.AskSearchCoordinator.SubmitTarget;
 import com.senku.ui.primitives.BottomTabDestination;
 
 import java.util.Arrays;
@@ -230,11 +231,11 @@ public final class MainActivityPhoneNavigationTest {
     @Test
     public void sharedInputSubmitRoutesToAskWhenAskOwnsTheVisibleFlow() {
         assertEquals(
-            MainActivity.SubmitTarget.ASK,
+            SubmitTarget.ASK,
             MainActivity.resolveSharedSubmitTarget(BottomTabDestination.ASK, false)
         );
         assertEquals(
-            MainActivity.SubmitTarget.ASK,
+            SubmitTarget.ASK,
             MainActivity.resolveSharedSubmitTarget(BottomTabDestination.HOME, true)
         );
         assertTrue(MainActivity.shouldSubmitSharedInputAsAsk(BottomTabDestination.ASK, false));
@@ -244,21 +245,43 @@ public final class MainActivityPhoneNavigationTest {
     @Test
     public void searchButtonSubmitUsesAskTargetWhenAskOwnsSharedInput() {
         assertEquals(
-            MainActivity.SubmitTarget.ASK,
+            SubmitTarget.ASK,
             MainActivity.resolveSearchButtonSubmitTarget(BottomTabDestination.ASK, false)
         );
         assertEquals(
-            MainActivity.SubmitTarget.ASK,
+            SubmitTarget.ASK,
             MainActivity.resolveSearchButtonSubmitTarget(BottomTabDestination.HOME, true)
         );
         assertEquals(
-            MainActivity.SubmitTarget.SEARCH,
+            SubmitTarget.SEARCH,
             MainActivity.resolveSearchButtonSubmitTarget(BottomTabDestination.HOME, false)
         );
         assertEquals(
-            MainActivity.SubmitTarget.SEARCH,
+            SubmitTarget.SEARCH,
             MainActivity.resolveSearchButtonSubmitTarget(BottomTabDestination.PINS, false)
         );
+    }
+
+    @Test
+    public void mainActivitySubmitHelpersDelegateToAskSearchCoordinator() {
+        for (BottomTabDestination destination : BottomTabDestination.values()) {
+            for (boolean askLaneActive : Arrays.asList(false, true)) {
+                SubmitTarget coordinatorTarget = AskSearchCoordinator.resolveSubmitTarget(destination, askLaneActive);
+
+                assertEquals(
+                    coordinatorTarget,
+                    MainActivity.resolveSharedSubmitTarget(destination, askLaneActive)
+                );
+                assertEquals(
+                    coordinatorTarget,
+                    MainActivity.resolveSearchButtonSubmitTarget(destination, askLaneActive)
+                );
+                assertEquals(
+                    AskSearchCoordinator.shouldSubmitAsAsk(destination, askLaneActive),
+                    MainActivity.shouldSubmitSharedInputAsAsk(destination, askLaneActive)
+                );
+            }
+        }
     }
 
     @Test
@@ -274,51 +297,51 @@ public final class MainActivityPhoneNavigationTest {
     public void sharedInputChromeUsesQuestionSemanticsInAskMode() {
         assertEquals(
             R.string.ask_hint,
-            MainActivity.resolveSharedInputHintResourceForTest(MainActivity.SubmitTarget.ASK)
+            MainActivity.resolveSharedInputHintResourceForTest(SubmitTarget.ASK)
         );
         assertEquals(
             R.string.ask_input_description,
-            MainActivity.resolveSharedInputDescriptionResourceForTest(MainActivity.SubmitTarget.ASK)
+            MainActivity.resolveSharedInputDescriptionResourceForTest(SubmitTarget.ASK)
         );
         assertEquals(
             EditorInfo.IME_ACTION_DONE,
-            MainActivity.resolveSharedInputImeActionForTest(MainActivity.SubmitTarget.ASK)
+            MainActivity.resolveSharedInputImeActionForTest(SubmitTarget.ASK)
         );
         assertEquals(
             R.string.ask_button_description,
-            MainActivity.resolveSubmitButtonDescriptionResourceForTest(MainActivity.SubmitTarget.ASK)
+            MainActivity.resolveSubmitButtonDescriptionResourceForTest(SubmitTarget.ASK)
         );
 
         assertEquals(
             R.string.search_hint,
-            MainActivity.resolveSharedInputHintResourceForTest(MainActivity.SubmitTarget.SEARCH)
+            MainActivity.resolveSharedInputHintResourceForTest(SubmitTarget.SEARCH)
         );
         assertEquals(
             R.string.search_input_description,
-            MainActivity.resolveSharedInputDescriptionResourceForTest(MainActivity.SubmitTarget.SEARCH)
+            MainActivity.resolveSharedInputDescriptionResourceForTest(SubmitTarget.SEARCH)
         );
         assertEquals(
             EditorInfo.IME_ACTION_SEARCH,
-            MainActivity.resolveSharedInputImeActionForTest(MainActivity.SubmitTarget.SEARCH)
+            MainActivity.resolveSharedInputImeActionForTest(SubmitTarget.SEARCH)
         );
         assertEquals(
             R.string.search_button_description,
-            MainActivity.resolveSubmitButtonDescriptionResourceForTest(MainActivity.SubmitTarget.SEARCH)
+            MainActivity.resolveSubmitButtonDescriptionResourceForTest(SubmitTarget.SEARCH)
         );
     }
 
     @Test
     public void sharedInputSubmitStaysSearchForLibraryAndSavedFlows() {
         assertEquals(
-            MainActivity.SubmitTarget.SEARCH,
+            SubmitTarget.SEARCH,
             MainActivity.resolveSharedSubmitTarget(BottomTabDestination.HOME, false)
         );
         assertEquals(
-            MainActivity.SubmitTarget.SEARCH,
+            SubmitTarget.SEARCH,
             MainActivity.resolveSharedSubmitTarget(BottomTabDestination.SEARCH, false)
         );
         assertEquals(
-            MainActivity.SubmitTarget.SEARCH,
+            SubmitTarget.SEARCH,
             MainActivity.resolveSharedSubmitTarget(BottomTabDestination.PINS, false)
         );
         assertFalse(MainActivity.shouldSubmitSharedInputAsAsk(BottomTabDestination.HOME, false));

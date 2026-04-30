@@ -44,6 +44,7 @@ import com.senku.ui.primitives.BottomTabBarHostView;
 import com.senku.ui.primitives.BottomTabBarLayoutMode;
 import com.senku.ui.primitives.BottomTabDestination;
 import com.senku.ui.primitives.BottomTabModel;
+import com.senku.mobile.AskSearchCoordinator.SubmitTarget;
 
 import java.io.File;
 import java.text.NumberFormat;
@@ -60,11 +61,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public final class MainActivity extends AppCompatActivity {
-    enum SubmitTarget {
-        SEARCH,
-        ASK
-    }
-
     enum HomeChromeBackAction {
         RETURN_TO_BROWSE,
         NO_OP
@@ -462,7 +458,7 @@ public final class MainActivity extends AppCompatActivity {
 
         searchButton.setOnClickListener(v -> {
             SubmitTarget target = resolveSearchButtonSubmitTarget(activePhoneTab, askLaneActive);
-            setPhoneTabFromFlow(target == SubmitTarget.ASK ? BottomTabDestination.ASK : BottomTabDestination.SEARCH);
+            setPhoneTabFromFlow(AskSearchCoordinator.tabForSubmitTarget(target));
             handleSharedQuerySubmit(searchInput.getText().toString(), target);
         });
         askButton.setOnClickListener(v -> {
@@ -3062,23 +3058,21 @@ public final class MainActivity extends AppCompatActivity {
         BottomTabDestination activePhoneTab,
         boolean askLaneActive
     ) {
-        return resolveSharedSubmitTarget(activePhoneTab, askLaneActive) == SubmitTarget.ASK;
+        return AskSearchCoordinator.shouldSubmitAsAsk(activePhoneTab, askLaneActive);
     }
 
     static SubmitTarget resolveSharedSubmitTarget(
         BottomTabDestination activePhoneTab,
         boolean askLaneActive
     ) {
-        return askLaneActive || activePhoneTab == BottomTabDestination.ASK
-            ? SubmitTarget.ASK
-            : SubmitTarget.SEARCH;
+        return AskSearchCoordinator.resolveSubmitTarget(activePhoneTab, askLaneActive);
     }
 
     static SubmitTarget resolveSearchButtonSubmitTarget(
         BottomTabDestination activePhoneTab,
         boolean askLaneActive
     ) {
-        return resolveSharedSubmitTarget(activePhoneTab, askLaneActive);
+        return AskSearchCoordinator.resolveSubmitTarget(activePhoneTab, askLaneActive);
     }
 
     static int resolveSharedInputHintResourceForTest(SubmitTarget target) {
