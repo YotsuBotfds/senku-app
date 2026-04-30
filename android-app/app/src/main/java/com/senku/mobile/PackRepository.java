@@ -1199,7 +1199,7 @@ public final class PackRepository implements AutoCloseable {
 
     private List<SearchResult> searchRouteFocusedResults(QueryTerms queryTerms, int limit) {
         long startedAt = System.currentTimeMillis();
-        List<QueryRouteProfile.RouteSearchSpec> routeSpecs = queryTerms.routeProfile.routeSearchSpecs(queryTerms.queryLower);
+        List<QueryRouteProfile.RouteSearchSpec> routeSpecs = PackRouteFocusedSearchHelper.routeSearchSpecs(queryTerms);
         if (routeSpecs.isEmpty()) {
             return Collections.emptyList();
         }
@@ -1219,19 +1219,16 @@ public final class PackRepository implements AutoCloseable {
             if (bestBySection.size() >= candidateTarget) {
                 break;
             }
-            QueryTerms specTerms = QueryTerms.fromText(routeSpec.text(), queryTerms.routeProfile);
-            List<String> tokens = limitTokens(specTerms.primaryKeywordTokens(), 6);
-            List<String> categories = routeSpec.categories().isEmpty()
-                ? new ArrayList<>(queryTerms.routeProfile.preferredCategories())
-                : new ArrayList<>(routeSpec.categories());
-            if (tokens.isEmpty() || categories.isEmpty()) {
+            PackRouteFocusedSearchHelper.RouteSearchStep routeStep =
+                PackRouteFocusedSearchHelper.routeSearchStep(queryTerms, routeSpec, 6);
+            if (routeStep == null) {
                 continue;
             }
             int addedWithFts = collectRouteFocusedChunkResultsFts(
                 queryTerms,
-                specTerms,
-                routeSpec,
-                categories,
+                routeStep.specTerms,
+                routeStep.routeSpec,
+                routeStep.categories,
                 candidateLimit,
                 candidateTarget,
                 bestBySection
@@ -1241,10 +1238,10 @@ public final class PackRepository implements AutoCloseable {
             }
             collectRouteFocusedChunkResultsLike(
                 queryTerms,
-                specTerms,
-                routeSpec,
-                tokens,
-                categories,
+                routeStep.specTerms,
+                routeStep.routeSpec,
+                routeStep.tokens,
+                routeStep.categories,
                 candidateLimit,
                 candidateTarget,
                 bestBySection
@@ -1702,19 +1699,16 @@ public final class PackRepository implements AutoCloseable {
             if (bestBySection.size() >= targetTotal) {
                 break;
             }
-            QueryTerms specTerms = QueryTerms.fromText(routeSpec.text(), queryTerms.routeProfile);
-            List<String> tokens = limitTokens(specTerms.primaryKeywordTokens(), 6);
-            List<String> categories = routeSpec.categories().isEmpty()
-                ? new ArrayList<>(queryTerms.routeProfile.preferredCategories())
-                : new ArrayList<>(routeSpec.categories());
-            if (tokens.isEmpty() || categories.isEmpty()) {
+            PackRouteFocusedSearchHelper.RouteSearchStep routeStep =
+                PackRouteFocusedSearchHelper.routeSearchStep(queryTerms, routeSpec, 6);
+            if (routeStep == null) {
                 continue;
             }
             int addedWithFts = collectRouteFocusedGuideResultsFts(
                 queryTerms,
-                specTerms,
-                routeSpec,
-                categories,
+                routeStep.specTerms,
+                routeStep.routeSpec,
+                routeStep.categories,
                 candidateLimit,
                 targetTotal,
                 bestBySection
@@ -1724,10 +1718,10 @@ public final class PackRepository implements AutoCloseable {
             }
             collectRouteFocusedGuideResultsLike(
                 queryTerms,
-                specTerms,
-                routeSpec,
-                tokens,
-                categories,
+                routeStep.specTerms,
+                routeStep.routeSpec,
+                routeStep.tokens,
+                routeStep.categories,
                 candidateLimit,
                 targetTotal,
                 bestBySection
@@ -4216,13 +4210,6 @@ public final class PackRepository implements AutoCloseable {
             return normalizedText.contains(normalizedTerm);
         }
         return (" " + normalizedText + " ").contains(" " + normalizedTerm + " ");
-    }
-
-    private static List<String> limitTokens(List<String> tokens, int max) {
-        if (tokens == null || tokens.isEmpty() || max <= 0 || tokens.size() <= max) {
-            return tokens;
-        }
-        return new ArrayList<>(tokens.subList(0, max));
     }
 
     private static String normalizeMatchText(String text) {
