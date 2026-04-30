@@ -1439,85 +1439,14 @@ public final class PackRepository implements AutoCloseable {
         LinkedHashMap<String, ScoredSearchResult> bestBySection,
         int candidateTarget
     ) {
-        int beforeCount = bestBySection.size();
-        boolean scanFullCursor = shouldScanFullRouteCursor(queryTerms);
-        while (cursor.moveToNext()) {
-            String title = cursor.getString(0);
-            String guideId = emptySafe(cursor.getString(1));
-            String section = emptySafe(cursor.getString(2));
-            String category = emptySafe(cursor.getString(3));
-            String document = emptySafe(cursor.getString(4));
-            String tags = emptySafe(cursor.getString(5));
-            String description = emptySafe(cursor.getString(6));
-            String contentRole = emptySafe(cursor.getString(7));
-            String timeHorizon = emptySafe(cursor.getString(8));
-            String structureType = emptySafe(cursor.getString(9));
-            String topicTags = emptySafe(cursor.getString(10));
-
-            if (!matchesSpecializedExplicitTopicRow(queryTerms, structureType, topicTags)) {
-                continue;
-            }
-            if (!queryTerms.routeProfile.supportsRouteResult(
-                title.toLowerCase(QUERY_LOCALE),
-                section.toLowerCase(QUERY_LOCALE),
-                category.toLowerCase(QUERY_LOCALE),
-                tags.toLowerCase(QUERY_LOCALE),
-                description.toLowerCase(QUERY_LOCALE),
-                document.toLowerCase(QUERY_LOCALE)
-            )) {
-                continue;
-            }
-            if (!matchesSpecializedRouteMetadata(queryTerms, section, structureType, topicTags)) {
-                continue;
-            }
-
-            int sectionHeadingScore = queryTerms.metadataProfile.sectionHeadingBonus(section);
-            if (!shouldKeepBroadWaterRouteRow(queryTerms, section, contentRole, structureType, topicTags, sectionHeadingScore)) {
-                continue;
-            }
-            if (!shouldKeepBroadHouseRouteRow(queryTerms, section, category, structureType, topicTags, sectionHeadingScore)) {
-                continue;
-            }
-
-            String combinedTags = combineTags(tags, topicTags);
-            int specScore = lexicalKeywordScore(specTerms, title, section, category, combinedTags, description, document);
-            specScore += metadataBonus(specTerms, category, contentRole, timeHorizon, structureType, topicTags);
-            int queryScore = lexicalKeywordScore(queryTerms, title, section, category, combinedTags, description, document);
-            queryScore += metadataBonus(queryTerms, category, contentRole, timeHorizon, structureType, topicTags);
-            int score = specScore + Math.max(0, queryScore / 2) + routeSpec.bonus() + sectionHeadingScore;
-            if (score <= 0) {
-                continue;
-            }
-            SearchResult result = new SearchResult(
-                title,
-                guideId + " | " + category + " | " + section + " | route-focus",
-                clip(document, 220),
-                document,
-                guideId,
-                section,
-                category,
-                "route-focus",
-                contentRole,
-                timeHorizon,
-                structureType,
-                topicTags
-            );
-            if (!shouldKeepSpecializedDirectSignalRouteResult(queryTerms, result)) {
-                continue;
-            }
-            String sectionKey = buildGuideSectionKey(guideId, title, section);
-            ScoredSearchResult existing = bestBySection.get(sectionKey);
-            ScoredSearchResult candidate = new ScoredSearchResult(result, bestBySection.size(), score + 18);
-            if (existing == null ||
-                candidate.score > existing.score ||
-                (candidate.score == existing.score && result.body.length() > existing.result.body.length())) {
-                bestBySection.put(sectionKey, candidate);
-            }
-            if (!scanFullCursor && bestBySection.size() >= candidateTarget) {
-                break;
-            }
-        }
-        return bestBySection.size() - beforeCount;
+        return PackRouteFocusedCandidateCollector.collectChunkCursor(
+            cursor,
+            queryTerms,
+            specTerms,
+            routeSpec,
+            bestBySection,
+            candidateTarget
+        );
     }
 
     static int routeGuideSearchThreshold(
@@ -1739,95 +1668,14 @@ public final class PackRepository implements AutoCloseable {
         LinkedHashMap<String, ScoredSearchResult> bestBySection,
         int targetTotal
     ) {
-        int beforeCount = bestBySection.size();
-        boolean scanFullCursor = shouldScanFullRouteCursor(queryTerms);
-        while (cursor.moveToNext()) {
-            String guideId = emptySafe(cursor.getString(0));
-            String title = emptySafe(cursor.getString(1));
-            String section = cursor.getColumnCount() > 9 ? emptySafe(cursor.getString(2)) : "";
-            int categoryIndex = cursor.getColumnCount() > 9 ? 3 : 2;
-            int descriptionIndex = cursor.getColumnCount() > 9 ? 4 : 3;
-            int bodyIndex = cursor.getColumnCount() > 9 ? 5 : 4;
-            int contentRoleIndex = cursor.getColumnCount() > 9 ? 6 : 5;
-            int timeHorizonIndex = cursor.getColumnCount() > 9 ? 7 : 6;
-            int structureTypeIndex = cursor.getColumnCount() > 9 ? 8 : 7;
-            int topicTagsIndex = cursor.getColumnCount() > 9 ? 9 : 8;
-            int tagsIndex = cursor.getColumnCount() > 10 ? 10 : -1;
-
-            String category = emptySafe(cursor.getString(categoryIndex));
-            String description = emptySafe(cursor.getString(descriptionIndex));
-            String body = emptySafe(cursor.getString(bodyIndex));
-            String contentRole = emptySafe(cursor.getString(contentRoleIndex));
-            String timeHorizon = emptySafe(cursor.getString(timeHorizonIndex));
-            String structureType = emptySafe(cursor.getString(structureTypeIndex));
-            String topicTags = emptySafe(cursor.getString(topicTagsIndex));
-            String tags = tagsIndex >= 0 ? emptySafe(cursor.getString(tagsIndex)) : "";
-
-            if (!matchesSpecializedExplicitTopicRow(queryTerms, structureType, topicTags)) {
-                continue;
-            }
-            if (!queryTerms.routeProfile.supportsRouteResult(
-                title.toLowerCase(QUERY_LOCALE),
-                section.toLowerCase(QUERY_LOCALE),
-                category.toLowerCase(QUERY_LOCALE),
-                tags.toLowerCase(QUERY_LOCALE),
-                description.toLowerCase(QUERY_LOCALE),
-                body.toLowerCase(QUERY_LOCALE)
-            )) {
-                continue;
-            }
-            if (!matchesSpecializedRouteMetadata(queryTerms, section, structureType, topicTags)) {
-                continue;
-            }
-
-            int sectionHeadingScore = queryTerms.metadataProfile.sectionHeadingBonus(section);
-            if (!shouldKeepBroadWaterRouteRow(queryTerms, section, contentRole, structureType, topicTags, sectionHeadingScore)) {
-                continue;
-            }
-            if (!shouldKeepBroadHouseRouteRow(queryTerms, section, category, structureType, topicTags, sectionHeadingScore)) {
-                continue;
-            }
-
-            String combinedTags = combineTags(tags, topicTags);
-            int specScore = lexicalKeywordScore(specTerms, title, section, category, combinedTags, description, body);
-            specScore += metadataBonus(specTerms, category, contentRole, timeHorizon, structureType, topicTags);
-            int queryScore = lexicalKeywordScore(queryTerms, title, section, category, combinedTags, description, body);
-            queryScore += metadataBonus(queryTerms, category, contentRole, timeHorizon, structureType, topicTags);
-            int score = specScore + Math.max(0, queryScore / 2) + routeSpec.bonus() + sectionHeadingScore + 20;
-            if (score <= 0) {
-                continue;
-            }
-
-            SearchResult result = new SearchResult(
-                title,
-                guideId + " | " + category + " | guide-focus",
-                clip(body, 220),
-                body,
-                guideId,
-                "",
-                category,
-                "guide-focus",
-                contentRole,
-                timeHorizon,
-                structureType,
-                topicTags
-            );
-            if (!shouldKeepSpecializedDirectSignalRouteResult(queryTerms, result)) {
-                continue;
-            }
-            String sectionKey = buildGuideSectionKey(guideId, title, "");
-            ScoredSearchResult existing = bestBySection.get(sectionKey);
-            ScoredSearchResult candidate = new ScoredSearchResult(result, bestBySection.size(), score);
-            if (existing == null ||
-                candidate.score > existing.score ||
-                (candidate.score == existing.score && result.body.length() > existing.result.body.length())) {
-                bestBySection.put(sectionKey, candidate);
-            }
-            if (!scanFullCursor && bestBySection.size() >= targetTotal) {
-                break;
-            }
-        }
-        return bestBySection.size() - beforeCount;
+        return PackRouteFocusedCandidateCollector.collectGuideCursor(
+            cursor,
+            queryTerms,
+            specTerms,
+            routeSpec,
+            bestBySection,
+            targetTotal
+        );
     }
 
     static List<SearchResult> mergeResultsWhenCentroidMissingForTest(
@@ -2246,7 +2094,7 @@ public final class PackRepository implements AutoCloseable {
         return shouldKeepSpecializedDirectSignalRouteResult(QueryTerms.fromQuery(query), result);
     }
 
-    private static boolean shouldKeepSpecializedDirectSignalRouteResult(QueryTerms queryTerms, SearchResult result) {
+    static boolean shouldKeepSpecializedDirectSignalRouteResult(QueryTerms queryTerms, SearchResult result) {
         if (queryTerms == null || result == null || queryTerms.metadataProfile == null) {
             return true;
         }
@@ -2364,7 +2212,7 @@ public final class PackRepository implements AutoCloseable {
         return broadWaterRouteRefinementBonus(QueryTerms.fromQuery(query), result);
     }
 
-    private static boolean matchesSpecializedRouteMetadata(
+    static boolean matchesSpecializedRouteMetadata(
         QueryTerms queryTerms,
         String sectionHeading,
         String structureType,
@@ -2497,7 +2345,7 @@ public final class PackRepository implements AutoCloseable {
         );
     }
 
-    private static boolean shouldKeepBroadWaterRouteRow(
+    static boolean shouldKeepBroadWaterRouteRow(
         QueryTerms queryTerms,
         String sectionHeading,
         String contentRole,
@@ -2534,7 +2382,7 @@ public final class PackRepository implements AutoCloseable {
         return true;
     }
 
-    private static boolean shouldKeepBroadHouseRouteRow(
+    static boolean shouldKeepBroadHouseRouteRow(
         QueryTerms queryTerms,
         String sectionHeading,
         String category,
@@ -2743,7 +2591,7 @@ public final class PackRepository implements AutoCloseable {
         return matchesSpecializedExplicitTopicRow(QueryTerms.fromQuery(query), structureType, topicTags);
     }
 
-    private static boolean matchesSpecializedExplicitTopicRow(
+    static boolean matchesSpecializedExplicitTopicRow(
         QueryTerms queryTerms,
         String structureType,
         String topicTags
@@ -3392,7 +3240,7 @@ public final class PackRepository implements AutoCloseable {
         return results;
     }
 
-    private static String buildGuideSectionKey(String guideId, String guideTitle, String sectionHeading) {
+    static String buildGuideSectionKey(String guideId, String guideTitle, String sectionHeading) {
         return PackQueryPipelineHelper.guideSectionKey(guideId, guideTitle, sectionHeading);
     }
 
@@ -3669,7 +3517,7 @@ public final class PackRepository implements AutoCloseable {
         return false;
     }
 
-    private static String clip(String text, int limit) {
+    static String clip(String text, int limit) {
         String safe = emptySafe(text).replaceAll("\\s+", " ").trim();
         if (safe.length() <= limit) {
             return safe;
@@ -3701,7 +3549,7 @@ public final class PackRepository implements AutoCloseable {
             .trim();
     }
 
-    private static String combineTags(String tags, String topicTags) {
+    static String combineTags(String tags, String topicTags) {
         String safeTags = emptySafe(tags).trim();
         String safeTopicTags = emptySafe(topicTags).trim();
         if (safeTags.isEmpty()) {
@@ -4554,7 +4402,7 @@ public final class PackRepository implements AutoCloseable {
         }
     }
 
-    private static final class ScoredSearchResult {
+    static final class ScoredSearchResult {
         final SearchResult result;
         final int originalIndex;
         int score;
