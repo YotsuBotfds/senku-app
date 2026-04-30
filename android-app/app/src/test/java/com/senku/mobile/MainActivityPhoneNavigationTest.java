@@ -232,6 +232,26 @@ public final class MainActivityPhoneNavigationTest {
     }
 
     @Test
+    public void searchButtonSubmitUsesAskTargetWhenAskOwnsSharedInput() {
+        assertEquals(
+            MainActivity.SubmitTarget.ASK,
+            MainActivity.resolveSearchButtonSubmitTarget(BottomTabDestination.ASK, false)
+        );
+        assertEquals(
+            MainActivity.SubmitTarget.ASK,
+            MainActivity.resolveSearchButtonSubmitTarget(BottomTabDestination.HOME, true)
+        );
+        assertEquals(
+            MainActivity.SubmitTarget.SEARCH,
+            MainActivity.resolveSearchButtonSubmitTarget(BottomTabDestination.HOME, false)
+        );
+        assertEquals(
+            MainActivity.SubmitTarget.SEARCH,
+            MainActivity.resolveSearchButtonSubmitTarget(BottomTabDestination.PINS, false)
+        );
+    }
+
+    @Test
     public void autoAskWithoutQueryOpensAskLaneInsteadOfSearchAutomation() {
         assertTrue(MainActivity.shouldOpenEmptyAutoAskLaneForTest(null, true));
         assertTrue(MainActivity.shouldOpenEmptyAutoAskLaneForTest("   ", true));

@@ -543,8 +543,9 @@ public final class MainActivity extends AppCompatActivity {
         );
 
         searchButton.setOnClickListener(v -> {
-            setPhoneTabFromFlow(BottomTabDestination.SEARCH);
-            handleSharedQuerySubmit(searchInput.getText().toString(), SubmitTarget.SEARCH);
+            SubmitTarget target = resolveSearchButtonSubmitTarget(activePhoneTab, askLaneActive);
+            setPhoneTabFromFlow(target == SubmitTarget.ASK ? BottomTabDestination.ASK : BottomTabDestination.SEARCH);
+            handleSharedQuerySubmit(searchInput.getText().toString(), target);
         });
         askButton.setOnClickListener(v -> {
             setPhoneTabFromFlow(BottomTabDestination.ASK);
@@ -3256,6 +3257,13 @@ public final class MainActivity extends AppCompatActivity {
         return askLaneActive || activePhoneTab == BottomTabDestination.ASK
             ? SubmitTarget.ASK
             : SubmitTarget.SEARCH;
+    }
+
+    static SubmitTarget resolveSearchButtonSubmitTarget(
+        BottomTabDestination activePhoneTab,
+        boolean askLaneActive
+    ) {
+        return resolveSharedSubmitTarget(activePhoneTab, askLaneActive);
     }
 
     static int resolveSharedInputHintResourceForTest(SubmitTarget target) {
