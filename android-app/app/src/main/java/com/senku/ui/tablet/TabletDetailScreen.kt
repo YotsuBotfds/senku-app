@@ -1837,6 +1837,42 @@ private fun GuideSectionRailAction(
 }
 
 @Composable
+private fun GuideTopBarBackAction(
+    onClick: () -> Unit,
+) {
+    val colors = SenkuTheme.colors
+    val typography = SenkuTheme.typography
+    Surface(
+        modifier = Modifier
+            .height(28.dp)
+            .widthIn(min = 54.dp, max = 60.dp),
+        color = Color.Transparent,
+        contentColor = colors.ink0,
+        shape = RoundedCornerShape(6.dp),
+        onClick = onClick,
+    ) {
+        Row(
+            modifier = Modifier.padding(horizontal = 6.dp),
+            horizontalArrangement = Arrangement.spacedBy(2.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            GuideRailBackGlyph()
+            Text(
+                text = "Back",
+                style = typography.monoCaps.copy(
+                    fontSize = 10.sp,
+                    lineHeight = 12.sp,
+                    fontWeight = FontWeight.Medium,
+                ),
+                color = colors.ink0,
+                maxLines = 1,
+                overflow = TextOverflow.Clip,
+            )
+        }
+    }
+}
+
+@Composable
 private fun GuideTopBarAction(
     active: Boolean,
     onClick: () -> Unit,
@@ -2609,12 +2645,7 @@ private fun TitleBar(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(if (guideMode) 12.dp else 10.dp),
         ) {
-            GuideTopBarAction(
-                active = false,
-                onClick = onBackClick,
-            ) {
-                GuideRailBackGlyph()
-            }
+            GuideTopBarBackAction(onClick = onBackClick)
             Box(
                 modifier = Modifier
                     .width(1.dp)

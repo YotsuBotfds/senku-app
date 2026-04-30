@@ -233,6 +233,16 @@ public final class EmergencySurfacePolicyTest {
     }
 
     @Test
+    public void tabletEmergencyBackAffordanceUsesVisibleBackLabel() {
+        assertEquals("Back", DetailActivity.tabletEmergencyBackButtonLabel());
+        assertEquals(64, DetailActivity.resolveTabletEmergencyBackButtonMinWidthDp());
+        assertTrue(
+            DetailActivity.resolveTabletEmergencyBackButtonMinWidthDp()
+                > DetailActivity.resolveTabletEmergencyChromeNavIconSizeDp()
+        );
+    }
+
+    @Test
     public void tabletEmergencyFullHeightDoesNotApplyToPhoneLandscapeOrNonEmergency() {
         assertFalse(DetailActivity.shouldUseTabletEmergencyFullHeightPage(true, false, true));
         assertFalse(DetailActivity.shouldUseTabletEmergencyFullHeightPage(false, true, true));

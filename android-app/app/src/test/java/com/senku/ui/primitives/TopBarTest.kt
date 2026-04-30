@@ -54,4 +54,12 @@ class TopBarTest {
             layout.trailing.map { it.kind },
         )
     }
+
+    @Test
+    fun backActionUsesVisibleCompactLabelPolicy() {
+        assertEquals("Back", topBarBackActionLabelForTest())
+        assertEquals(52, topBarActionWidthDpForTest(TopBarActionKind.Back))
+        assertEquals(28, topBarActionWidthDpForTest(TopBarActionKind.Home))
+        assertEquals(28, topBarActionWidthDpForTest(TopBarActionKind.Share))
+    }
 }

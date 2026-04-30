@@ -57,6 +57,8 @@
     <color name="senku_rev03_paper">#E9E1CF</color>
     <color name="senku_rev03_paper_ink">#1F2318</color>
     <color name="senku_rev03_paper_ink_muted">#646456</color>
+    <color name="senku_rev03_paper_rule">#34B9AA90</color>
+    <color name="senku_rev03_paper_rule_soft">#18B9AA90</color>
     <color name="senku_rev03_accent">#C9B682</color>
     <color name="senku_rev03_danger">#C4704B</color>
     <color name="senku_rev03_warn">#C49A4B</color>

@@ -1763,10 +1763,10 @@ public final class DetailActivity extends AppCompatActivity {
 
         Button back = new Button(this);
         back.setContentDescription(getString(R.string.detail_back_content_description));
-        applyTabletEmergencyChromeIconButton(back, R.drawable.ic_home_back_chevron);
+        applyTabletEmergencyChromeBackButton(back);
         back.setOnClickListener(v -> navigateBackFromDetail());
         tabletEmergencyChromeOverlayPanel.addView(back, new LinearLayout.LayoutParams(
-            dp(resolveTabletEmergencyChromeNavIconSizeDp()),
+            dp(resolveTabletEmergencyBackButtonMinWidthDp()),
             dp(resolveTabletEmergencyChromeNavIconSizeDp())
         ));
 
@@ -2065,6 +2065,38 @@ public final class DetailActivity extends AppCompatActivity {
             icon.setTint(getColor(R.color.senku_rev03_ink_2));
         }
         button.setCompoundDrawablesRelativeWithIntrinsicBounds(icon, null, null, null);
+    }
+
+    private void applyTabletEmergencyChromeBackButton(Button button) {
+        if (button == null) {
+            return;
+        }
+        button.setAllCaps(false);
+        button.setText(tabletEmergencyBackButtonLabel());
+        button.setTextColor(getColor(R.color.senku_rev03_ink_0));
+        button.setTypeface(rev03MonoTypeface(Typeface.BOLD));
+        button.setTextSize(10f);
+        button.setBackgroundResource(R.drawable.bg_detail_topbar_chip);
+        button.setMinWidth(0);
+        button.setMinimumWidth(0);
+        button.setMinHeight(0);
+        button.setMinimumHeight(0);
+        button.setPadding(dp(7), 0, dp(8), 0);
+        Drawable icon = getDrawable(R.drawable.ic_home_back_chevron);
+        if (icon != null) {
+            icon = icon.mutate();
+            icon.setTint(getColor(R.color.senku_rev03_ink_2));
+        }
+        button.setCompoundDrawablePadding(dp(2));
+        button.setCompoundDrawablesRelativeWithIntrinsicBounds(icon, null, null, null);
+    }
+
+    static String tabletEmergencyBackButtonLabel() {
+        return "Back";
+    }
+
+    static int resolveTabletEmergencyBackButtonMinWidthDp() {
+        return 64;
     }
 
     private Typeface rev03UiTypeface(int style) {

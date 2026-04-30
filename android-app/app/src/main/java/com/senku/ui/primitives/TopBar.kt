@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
@@ -52,6 +53,10 @@ private val TopBarTitleFontSize = 13.sp
 private val TopBarTitleLineHeight = 16.sp
 private val TopBarChromeLabelFontSize = 9.sp
 private val TopBarChromeLabelLineHeight = 11.sp
+private val TopBarIconActionSize = 28.dp
+private val TopBarBackActionMinWidth = 52.dp
+private val TopBarBackActionMaxWidth = 58.dp
+private const val TopBarBackActionLabel = "Back"
 
 @Immutable
 data class TopBarActionSpec(
@@ -287,7 +292,18 @@ private fun TopBarActionButton(
 
     Box(
         modifier = modifier
-            .size(28.dp)
+            .then(
+                if (action.kind == TopBarActionKind.Back) {
+                    Modifier
+                        .height(TopBarIconActionSize)
+                        .widthIn(
+                            min = TopBarBackActionMinWidth,
+                            max = TopBarBackActionMaxWidth,
+                        )
+                } else {
+                    Modifier.size(TopBarIconActionSize)
+                }
+            )
             .clip(shape)
             .background(containerColor)
             .clickable(
@@ -303,14 +319,48 @@ private fun TopBarActionButton(
             },
         contentAlignment = Alignment.Center,
     ) {
-        Icon(
-            imageVector = action.kind.icon(),
-            contentDescription = null,
-            tint = iconTint,
-            modifier = Modifier.size(18.dp),
-        )
+        if (action.kind == TopBarActionKind.Back) {
+            Row(
+                modifier = Modifier.padding(horizontal = 6.dp),
+                horizontalArrangement = Arrangement.spacedBy(1.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Icon(
+                    imageVector = action.kind.icon(),
+                    contentDescription = null,
+                    tint = iconTint,
+                    modifier = Modifier.size(16.dp),
+                )
+                Text(
+                    text = TopBarBackActionLabel,
+                    style = SenkuTheme.typography.monoCaps.copy(
+                        fontSize = TopBarChromeLabelFontSize,
+                        lineHeight = TopBarChromeLabelLineHeight,
+                    ),
+                    color = iconTint,
+                    maxLines = 1,
+                    overflow = TextOverflow.Clip,
+                )
+            }
+        } else {
+            Icon(
+                imageVector = action.kind.icon(),
+                contentDescription = null,
+                tint = iconTint,
+                modifier = Modifier.size(18.dp),
+            )
+        }
     }
 }
+
+internal fun topBarBackActionLabelForTest(): String = TopBarBackActionLabel
+
+internal fun topBarActionWidthDpForTest(kind: TopBarActionKind): Int =
+    if (kind == TopBarActionKind.Back) {
+        TopBarBackActionMinWidth.value.toInt()
+    } else {
+        TopBarIconActionSize.value.toInt()
+    }
 
 private fun TopBarActionKind.icon(): ImageVector = when (this) {
     TopBarActionKind.Back -> SenkuTopBarIcons.Back

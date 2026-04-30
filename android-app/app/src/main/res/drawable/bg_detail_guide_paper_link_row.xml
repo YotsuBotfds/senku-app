@@ -26,7 +26,7 @@
             android:viewportWidth="8"
             android:viewportHeight="12">
             <path
-                android:fillColor="#5F5844"
+                android:fillColor="@color/senku_rev03_paper_ink_muted"
                 android:pathData="M2,0 L8,6 L2,12 L0.8,10.8 L5.6,6 L0.8,1.2 Z" />
         </vector>
     </item>
