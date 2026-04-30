@@ -1,10 +1,11 @@
 import json
+import os
 import subprocess
 import tempfile
 import unittest
 from pathlib import Path
 
-from scripts.validate_android_physical_phone_smoke_summary import validate_summary
+from scripts.validate_android_physical_phone_smoke_summary import find_latest_summary, validate_summary
 
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
@@ -165,6 +166,52 @@ class ValidateAndroidPhysicalPhoneSmokeSummaryTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stderr + result.stdout)
         self.assertIn("android_physical_phone_smoke_summary: ok", result.stdout)
         self.assertIn("status: completed", result.stdout)
+
+    def test_find_latest_summary_uses_newest_timestamped_summary(self):
+        temp_dir = tempfile.TemporaryDirectory()
+        self.addCleanup(temp_dir.cleanup)
+        root = Path(temp_dir.name)
+        older = root / "20260430_155113" / "summary.json"
+        newer = root / "20260430_155156" / "summary.json"
+        older.parent.mkdir()
+        newer.parent.mkdir()
+        older.write_text(json.dumps(make_summary()), encoding="utf-8")
+        newer.write_text(json.dumps(make_summary(completed=True)), encoding="utf-8")
+        os.utime(older, (1_777_575_000, 1_777_575_000))
+        os.utime(newer, (1_777_575_100, 1_777_575_100))
+
+        path, errors = find_latest_summary(root)
+
+        self.assertEqual(errors, [])
+        self.assertEqual(path, newer)
+
+    def test_cli_latest_validates_newest_summary_without_phone(self):
+        temp_dir = tempfile.TemporaryDirectory()
+        self.addCleanup(temp_dir.cleanup)
+        root = Path(temp_dir.name)
+        older = root / "20260430_155113" / "summary.json"
+        newer = root / "20260430_155156" / "summary.json"
+        older.parent.mkdir()
+        newer.parent.mkdir()
+        bad_summary = make_summary(completed=True)
+        bad_summary["evidence"]["focus_contains_launch_activity"] = False
+        older.write_text(json.dumps(bad_summary), encoding="utf-8")
+        newer.write_text(json.dumps(make_summary(completed=True)), encoding="utf-8")
+        os.utime(older, (1_777_575_000, 1_777_575_000))
+        os.utime(newer, (1_777_575_100, 1_777_575_100))
+        python_path = REPO_ROOT / ".venvs" / "senku-validate" / "Scripts" / "python.exe"
+
+        result = subprocess.run(
+            [str(python_path), "-B", str(SCRIPT_PATH), "--latest", "--summary-root", str(root)],
+            cwd=REPO_ROOT,
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+
+        self.assertEqual(result.returncode, 0, result.stderr + result.stdout)
+        self.assertIn("android_physical_phone_smoke_summary: ok", result.stdout)
+        self.assertIn(str(newer), result.stdout)
 
     def test_cli_reports_failure(self):
         summary = make_summary(completed=True)

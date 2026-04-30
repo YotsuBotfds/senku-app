@@ -13,6 +13,9 @@ from typing import Any
 
 EXPECTED_PACKAGE = "com.senku.mobile"
 EXPECTED_LAUNCH_ACTIVITY = "com.senku.mobile/.MainActivity"
+DEFAULT_SUMMARY_ROOT = (
+    Path(__file__).resolve().parents[1] / "artifacts" / "bench" / "android_physical_phone_smoke"
+)
 
 REQUIRED_TYPES: dict[str, type | tuple[type, ...]] = {
     "status": str,
@@ -151,12 +154,55 @@ def validate_summary(path: Path) -> tuple[dict[str, Any] | None, list[str]]:
     return data, errors
 
 
+def find_latest_summary(summary_root: Path) -> tuple[Path | None, list[str]]:
+    if not summary_root.exists():
+        return None, [f"summary root not found: {summary_root}"]
+    if not summary_root.is_dir():
+        return None, [f"summary root is not a directory: {summary_root}"]
+
+    candidates = [path for path in summary_root.glob("*/summary.json") if path.is_file()]
+    root_summary = summary_root / "summary.json"
+    if root_summary.is_file():
+        candidates.append(root_summary)
+
+    if not candidates:
+        return None, [f"no summary.json files found under: {summary_root}"]
+
+    return max(candidates, key=lambda path: (path.stat().st_mtime_ns, str(path))), []
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("summary_path", help="Path to run_android_physical_phone_smoke.ps1 summary.json.")
+    parser.add_argument(
+        "summary_path",
+        nargs="?",
+        help="Path to run_android_physical_phone_smoke.ps1 summary.json.",
+    )
+    parser.add_argument(
+        "--latest",
+        action="store_true",
+        help="Validate the newest summary.json under --summary-root.",
+    )
+    parser.add_argument(
+        "--summary-root",
+        default=str(DEFAULT_SUMMARY_ROOT),
+        help="Root containing timestamped physical-phone smoke output directories.",
+    )
     args = parser.parse_args(argv)
 
-    data, errors = validate_summary(Path(args.summary_path))
+    if args.latest:
+        summary_path, errors = find_latest_summary(Path(args.summary_root))
+        if errors:
+            for error in errors:
+                print(f"ERROR: {error}")
+            return 1
+        assert summary_path is not None
+    elif args.summary_path:
+        summary_path = Path(args.summary_path)
+    else:
+        parser.error("summary_path is required unless --latest is set")
+
+    data, errors = validate_summary(summary_path)
     if errors:
         for error in errors:
             print(f"ERROR: {error}")
@@ -164,6 +210,7 @@ def main(argv: list[str] | None = None) -> int:
 
     assert data is not None
     print("android_physical_phone_smoke_summary: ok")
+    print(f"summary_path: {summary_path}")
     print(f"status: {data.get('status')}")
     print(f"physical_device: {data.get('physical_device')}")
     print(f"launches_emulators: {data.get('launches_emulators')}")
