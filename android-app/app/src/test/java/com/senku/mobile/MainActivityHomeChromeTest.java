@@ -6,8 +6,6 @@ import static org.junit.Assert.assertTrue;
 
 import com.senku.ui.home.CategoryShelfItemModel;
 import com.senku.ui.home.CategoryShelfLayoutMode;
-import com.senku.ui.primitives.BottomTabDestination;
-
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -309,30 +307,6 @@ public final class MainActivityHomeChromeTest {
         assertEquals(0.90f, MainActivity.resolveTabletHomeRecentWeight(false), 0.001f);
         assertEquals(12, MainActivity.resolveTabletHomeTopPaddingDp(true));
         assertEquals(24, MainActivity.resolveTabletHomeTopPaddingDp(false));
-    }
-
-    @Test
-    public void homeChromeBackReturnsSearchToBrowseButKeepsBrowseInPlace() {
-        assertEquals(
-            MainRouteDecisionHelper.Effect.RETURN_TO_BROWSE,
-            MainActivity.resolveHomeChromeBackEffectForTest(false)
-        );
-        assertEquals(
-            MainRouteDecisionHelper.Effect.NONE,
-            MainActivity.resolveHomeChromeBackEffectForTest(true)
-        );
-    }
-
-    @Test
-    public void homeChromeBackReturnsAskResultsToBrowse() {
-        MainRouteDecisionHelper.Transition transition = MainRouteDecisionHelper.homeChromeBack(
-            MainActivity.routeStateForModeForTest(false, BottomTabDestination.ASK, true)
-        );
-
-        assertEquals(MainRouteDecisionHelper.Effect.RETURN_TO_BROWSE, transition.effect);
-        assertEquals(MainRouteDecisionHelper.Surface.BROWSE, transition.routeState.surface);
-        assertEquals(BottomTabDestination.HOME, transition.routeState.activePhoneTab);
-        assertFalse(transition.routeState.askLaneActive);
     }
 
     @Test

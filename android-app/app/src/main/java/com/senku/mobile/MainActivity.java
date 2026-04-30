@@ -605,7 +605,7 @@ public final class MainActivity extends AppCompatActivity {
                     refreshPinnedGuidesAsync();
                     setResultHighlightQuery("");
                     boolean autoQueryPending = hasAutoQuery(getIntent());
-                    boolean publishBrowseGuides = shouldPublishInstalledBrowseGuidesAfterInstall(
+                    boolean publishBrowseGuides = MainRouteDecisionHelper.shouldPublishInstalledBrowseGuides(
                         autoQueryPending,
                         currentMainRouteState()
                     );
@@ -986,18 +986,6 @@ public final class MainActivity extends AppCompatActivity {
             == MainRouteDecisionHelper.Effect.SHOW_BROWSE_HOME;
     }
 
-    static MainRouteDecisionHelper.Transition resolveOpenHomeDestinationForTest(
-        boolean openHomeExtra,
-        boolean browseMode,
-        BottomTabDestination activePhoneTab,
-        boolean askLaneActive
-    ) {
-        return resolveOpenHomeDestination(
-            openHomeExtra,
-            routeStateForMode(browseMode, activePhoneTab, askLaneActive)
-        );
-    }
-
     private static MainRouteDecisionHelper.Transition resolveOpenHomeDestination(
         boolean openHomeExtra,
         MainRouteDecisionHelper.RouteState routeState
@@ -1010,35 +998,11 @@ public final class MainActivity extends AppCompatActivity {
             == MainRouteDecisionHelper.Effect.SHOW_SAVED_GUIDES;
     }
 
-    static MainRouteDecisionHelper.Transition resolveOpenSavedDestinationForTest(
-        boolean openSavedExtra,
-        boolean browseMode,
-        BottomTabDestination activePhoneTab,
-        boolean askLaneActive
-    ) {
-        return resolveOpenSavedDestination(
-            openSavedExtra,
-            routeStateForMode(browseMode, activePhoneTab, askLaneActive)
-        );
-    }
-
     private static MainRouteDecisionHelper.Transition resolveOpenSavedDestination(
         boolean openSavedExtra,
         MainRouteDecisionHelper.RouteState routeState
     ) {
         return MainRouteDecisionHelper.openSavedIntent(openSavedExtra, routeState);
-    }
-
-    static MainRouteDecisionHelper.Transition resolveSystemBackForTest(
-        boolean browseMode,
-        BottomTabDestination activePhoneTab,
-        boolean askLaneActive,
-        BottomTabDestination previousPhoneTab
-    ) {
-        return MainRouteDecisionHelper.systemBack(
-            routeStateForMode(browseMode, activePhoneTab, askLaneActive),
-            previousPhoneTab
-        );
     }
 
     private void maybeHandleAutomation() {
@@ -2598,10 +2562,6 @@ public final class MainActivity extends AppCompatActivity {
             : TABLET_HOME_PORTRAIT_TOP_PADDING_DP;
     }
 
-    static MainRouteDecisionHelper.Effect resolveHomeChromeBackEffectForTest(boolean browseMode) {
-        return MainRouteDecisionHelper.homeChromeBack(routeStateForMode(browseMode, BottomTabDestination.HOME, false)).effect;
-    }
-
     static int resolveTabletSearchFilterRailWidthDp(boolean landscapeTabletLayout) {
         return landscapeTabletLayout ? TABLET_SEARCH_FILTER_RAIL_LANDSCAPE_WIDTH_DP : 0;
     }
@@ -3015,7 +2975,7 @@ public final class MainActivity extends AppCompatActivity {
         return destinations;
     }
 
-    static BottomTabDestination phoneTabSelectionOwner(BottomTabDestination destination) {
+    private static BottomTabDestination phoneTabSelectionOwner(BottomTabDestination destination) {
         return MainRouteDecisionHelper.phoneTabSelectionOwner(destination);
     }
 
@@ -3197,14 +3157,6 @@ public final class MainActivity extends AppCompatActivity {
         applyMainRouteState(MainRouteDecisionHelper.enterAsk(currentMainRouteState()).routeState);
     }
 
-    static MainRouteDecisionHelper.RouteState routeStateForModeForTest(
-        boolean browseMode,
-        BottomTabDestination activePhoneTab,
-        boolean askLaneActive
-    ) {
-        return routeStateForMode(browseMode, activePhoneTab, askLaneActive);
-    }
-
     private static MainRouteDecisionHelper.RouteState routeStateForMode(
         boolean browseMode,
         BottomTabDestination activePhoneTab,
@@ -3268,13 +3220,6 @@ public final class MainActivity extends AppCompatActivity {
 
     static boolean shouldLoadBrowseGuidesForSavedDestination(boolean repositoryReady, int loadedGuideCount) {
         return repositoryReady && loadedGuideCount <= 0;
-    }
-
-    static boolean shouldPublishInstalledBrowseGuidesAfterInstall(
-        boolean autoQueryPending,
-        MainRouteDecisionHelper.RouteState routeState
-    ) {
-        return MainRouteDecisionHelper.shouldPublishInstalledBrowseGuides(autoQueryPending, routeState);
     }
 
     private void scrollBrowseToTop() {

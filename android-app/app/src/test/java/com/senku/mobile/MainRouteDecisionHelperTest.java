@@ -200,6 +200,16 @@ public final class MainRouteDecisionHelperTest {
     }
 
     @Test
+    public void phoneTabSelectionOwnerMapsVirtualDestinationsToVisibleOwners() {
+        assertEquals(BottomTabDestination.HOME, MainRouteDecisionHelper.phoneTabSelectionOwner(null));
+        assertEquals(BottomTabDestination.HOME, MainRouteDecisionHelper.phoneTabSelectionOwner(BottomTabDestination.HOME));
+        assertEquals(BottomTabDestination.HOME, MainRouteDecisionHelper.phoneTabSelectionOwner(BottomTabDestination.SEARCH));
+        assertEquals(BottomTabDestination.ASK, MainRouteDecisionHelper.phoneTabSelectionOwner(BottomTabDestination.ASK));
+        assertEquals(BottomTabDestination.ASK, MainRouteDecisionHelper.phoneTabSelectionOwner(BottomTabDestination.THREADS));
+        assertEquals(BottomTabDestination.PINS, MainRouteDecisionHelper.phoneTabSelectionOwner(BottomTabDestination.PINS));
+    }
+
+    @Test
     public void openingPhoneTabsUsesExistingDestinationOwnership() {
         MainRouteDecisionHelper.RouteState searchResults =
             new MainRouteDecisionHelper.RouteState(

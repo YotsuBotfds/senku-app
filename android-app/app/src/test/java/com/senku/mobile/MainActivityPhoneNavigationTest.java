@@ -78,72 +78,6 @@ public final class MainActivityPhoneNavigationTest {
     }
 
     @Test
-    public void everyVisiblePhoneTabOwnsItsSelectionRole() {
-        for (BottomTabDestination visibleTab : MainActivity.buildVisiblePhoneTabDestinations()) {
-            assertEquals(
-                visibleTab,
-                MainActivity.phoneTabSelectionOwner(visibleTab)
-            );
-        }
-    }
-
-    @Test
-    public void askOwnsRecentThreadSelectionRole() {
-        assertEquals(
-            BottomTabDestination.ASK,
-            MainActivity.phoneTabSelectionOwner(BottomTabDestination.THREADS)
-        );
-    }
-
-    @Test
-    public void askOwnsAskSelectionRole() {
-        assertEquals(
-            BottomTabDestination.ASK,
-            MainActivity.phoneTabSelectionOwner(BottomTabDestination.ASK)
-        );
-    }
-
-    @Test
-    public void libraryOwnsBrowseAndSearchGuideResultRoles() {
-        assertEquals(
-            BottomTabDestination.HOME,
-            MainActivity.phoneTabSelectionOwner(BottomTabDestination.HOME)
-        );
-        assertEquals(
-            BottomTabDestination.HOME,
-            MainActivity.phoneTabSelectionOwner(BottomTabDestination.SEARCH)
-        );
-    }
-
-    @Test
-    public void savedOwnsPinnedGuideRole() {
-        assertEquals(
-            BottomTabDestination.PINS,
-            MainActivity.phoneTabSelectionOwner(BottomTabDestination.PINS)
-        );
-    }
-
-    @Test
-    public void savedPinsAndRecentThreadsStayInSeparateBrowseLanes() {
-        MainRouteDecisionHelper.RouteState browse =
-            MainActivity.routeStateForModeForTest(true, BottomTabDestination.HOME, false);
-
-        MainRouteDecisionHelper.Transition saved =
-            MainRouteDecisionHelper.openPhoneTab(browse, BottomTabDestination.PINS);
-        MainRouteDecisionHelper.Transition recentThreads =
-            MainRouteDecisionHelper.openPhoneTab(browse, BottomTabDestination.THREADS);
-
-        assertEquals(MainRouteDecisionHelper.Effect.SHOW_SAVED_GUIDES, saved.effect);
-        assertEquals(MainRouteDecisionHelper.Surface.SAVED_GUIDES, saved.routeState.surface);
-        assertEquals(BottomTabDestination.PINS, saved.routeState.activePhoneTab);
-        assertFalse(saved.routeState.askLaneActive);
-        assertEquals(MainRouteDecisionHelper.Effect.SHOW_RECENT_THREADS, recentThreads.effect);
-        assertEquals(MainRouteDecisionHelper.Surface.RECENT_THREADS, recentThreads.routeState.surface);
-        assertEquals(BottomTabDestination.ASK, recentThreads.routeState.activePhoneTab);
-        assertFalse(recentThreads.routeState.askLaneActive);
-    }
-
-    @Test
     public void openSavedExtraRequestsSavedDestination() {
         assertTrue(MainActivity.shouldOpenSavedDestination(true));
     }
@@ -161,200 +95,6 @@ public final class MainActivityPhoneNavigationTest {
     @Test
     public void missingOpenHomeExtraDoesNotRequestManualHomeDestination() {
         assertFalse(MainActivity.shouldOpenHomeDestination(false));
-    }
-
-    @Test
-    public void openHomeExtraClearsStaleSearchOrAskResultsUnderDetail() {
-        MainRouteDecisionHelper.Transition fromSearch =
-            MainActivity.resolveOpenHomeDestinationForTest(
-                true,
-                false,
-                BottomTabDestination.HOME,
-                false
-            );
-        MainRouteDecisionHelper.Transition fromAsk =
-            MainActivity.resolveOpenHomeDestinationForTest(
-                true,
-                false,
-                BottomTabDestination.ASK,
-                true
-            );
-
-        assertEquals(MainRouteDecisionHelper.Effect.SHOW_BROWSE_HOME, fromSearch.effect);
-        assertEquals(MainRouteDecisionHelper.Surface.BROWSE, fromSearch.routeState.surface);
-        assertEquals(BottomTabDestination.HOME, fromSearch.routeState.activePhoneTab);
-        assertFalse(fromSearch.routeState.askLaneActive);
-        assertEquals(MainRouteDecisionHelper.Effect.SHOW_BROWSE_HOME, fromAsk.effect);
-        assertEquals(MainRouteDecisionHelper.Surface.BROWSE, fromAsk.routeState.surface);
-        assertEquals(BottomTabDestination.HOME, fromAsk.routeState.activePhoneTab);
-        assertFalse(fromAsk.routeState.askLaneActive);
-    }
-
-    @Test
-    public void missingOpenHomeExtraKeepsStaleRouteStateForOtherIntents() {
-        MainRouteDecisionHelper.Transition transition =
-            MainActivity.resolveOpenHomeDestinationForTest(
-                false,
-                false,
-                BottomTabDestination.ASK,
-                true
-            );
-
-        assertEquals(MainRouteDecisionHelper.Effect.NONE, transition.effect);
-        assertEquals(MainRouteDecisionHelper.Surface.ASK_RESULTS, transition.routeState.surface);
-        assertEquals(BottomTabDestination.ASK, transition.routeState.activePhoneTab);
-        assertTrue(transition.routeState.askLaneActive);
-    }
-
-    @Test
-    public void openSavedExtraRoutesThroughSavedDestinationFromBrowse() {
-        MainRouteDecisionHelper.Transition transition =
-            MainActivity.resolveOpenSavedDestinationForTest(
-                true,
-                true,
-                BottomTabDestination.HOME,
-                false
-            );
-
-        assertEquals(MainRouteDecisionHelper.Effect.SHOW_SAVED_GUIDES, transition.effect);
-        assertEquals(MainRouteDecisionHelper.Surface.SAVED_GUIDES, transition.routeState.surface);
-        assertEquals(BottomTabDestination.PINS, transition.routeState.activePhoneTab);
-        assertFalse(transition.routeState.askLaneActive);
-    }
-
-    @Test
-    public void openSavedExtraClearsResultSurfaceAndAskState() {
-        MainRouteDecisionHelper.Transition fromSearch =
-            MainActivity.resolveOpenSavedDestinationForTest(
-                true,
-                false,
-                BottomTabDestination.HOME,
-                false
-            );
-        MainRouteDecisionHelper.Transition fromAsk =
-            MainActivity.resolveOpenSavedDestinationForTest(
-                true,
-                false,
-                BottomTabDestination.ASK,
-                true
-            );
-
-        assertEquals(MainRouteDecisionHelper.Effect.SHOW_SAVED_GUIDES, fromSearch.effect);
-        assertEquals(MainRouteDecisionHelper.Surface.SAVED_GUIDES, fromSearch.routeState.surface);
-        assertEquals(BottomTabDestination.PINS, fromSearch.routeState.activePhoneTab);
-        assertFalse(fromSearch.routeState.askLaneActive);
-        assertEquals(MainRouteDecisionHelper.Effect.SHOW_SAVED_GUIDES, fromAsk.effect);
-        assertEquals(MainRouteDecisionHelper.Surface.SAVED_GUIDES, fromAsk.routeState.surface);
-        assertEquals(BottomTabDestination.PINS, fromAsk.routeState.activePhoneTab);
-        assertFalse(fromAsk.routeState.askLaneActive);
-    }
-
-    @Test
-    public void missingOpenSavedExtraKeepsCurrentRouteState() {
-        MainRouteDecisionHelper.Transition transition =
-            MainActivity.resolveOpenSavedDestinationForTest(
-                false,
-                false,
-                BottomTabDestination.ASK,
-                true
-            );
-
-        assertEquals(MainRouteDecisionHelper.Effect.NONE, transition.effect);
-        assertEquals(MainRouteDecisionHelper.Surface.ASK_RESULTS, transition.routeState.surface);
-        assertEquals(BottomTabDestination.ASK, transition.routeState.activePhoneTab);
-        assertTrue(transition.routeState.askLaneActive);
-    }
-
-    @Test
-    public void openSavedExtraUsesSavedPinsRouteSemanticsFromAskResults() {
-        MainRouteDecisionHelper.Transition transition =
-            MainActivity.resolveOpenSavedDestinationForTest(
-                true,
-                false,
-                BottomTabDestination.ASK,
-                true
-            );
-
-        assertEquals(MainRouteDecisionHelper.Effect.SHOW_SAVED_GUIDES, transition.effect);
-        assertEquals(MainRouteDecisionHelper.Surface.SAVED_GUIDES, transition.routeState.surface);
-        assertEquals(BottomTabDestination.PINS, transition.routeState.activePhoneTab);
-        assertFalse(transition.routeState.askLaneActive);
-    }
-
-    @Test
-    public void systemBackFromZeroResultSearchRouteReturnsBrowse() {
-        MainRouteDecisionHelper.Transition transition =
-            MainActivity.resolveSystemBackForTest(
-                false,
-                BottomTabDestination.HOME,
-                false,
-                null
-            );
-
-        assertEquals(MainRouteDecisionHelper.Effect.RETURN_TO_BROWSE, transition.effect);
-        assertEquals(MainRouteDecisionHelper.Surface.BROWSE, transition.routeState.surface);
-        assertEquals(BottomTabDestination.HOME, transition.routeState.activePhoneTab);
-        assertFalse(transition.routeState.askLaneActive);
-    }
-
-    @Test
-    public void systemBackFromAskUnavailableBrowseStateReturnsHome() {
-        MainRouteDecisionHelper.Transition transition =
-            MainActivity.resolveSystemBackForTest(
-                true,
-                BottomTabDestination.ASK,
-                false,
-                null
-            );
-
-        assertEquals(MainRouteDecisionHelper.Effect.SHOW_PREVIOUS_TAB, transition.effect);
-        assertEquals(MainRouteDecisionHelper.Surface.BROWSE, transition.routeState.surface);
-        assertEquals(BottomTabDestination.HOME, transition.routeState.activePhoneTab);
-        assertFalse(transition.routeState.askLaneActive);
-    }
-
-    @Test
-    public void systemBackFromSavedReturnsPreviousTabOwner() {
-        MainRouteDecisionHelper.Transition transition =
-            MainActivity.resolveSystemBackForTest(
-                true,
-                BottomTabDestination.PINS,
-                false,
-                BottomTabDestination.ASK
-            );
-
-        assertEquals(MainRouteDecisionHelper.Effect.SHOW_PREVIOUS_TAB, transition.effect);
-        assertEquals(MainRouteDecisionHelper.Surface.RECENT_THREADS, transition.routeState.surface);
-        assertEquals(BottomTabDestination.ASK, transition.routeState.activePhoneTab);
-        assertFalse(transition.routeState.askLaneActive);
-    }
-
-    @Test
-    public void mainActivityRouteStateKeepsSavedThreadsSearchAndAskFirstClass() {
-        assertRouteState(
-            MainActivity.routeStateForModeForTest(true, BottomTabDestination.PINS, false),
-            MainRouteDecisionHelper.Surface.SAVED_GUIDES,
-            BottomTabDestination.PINS,
-            false
-        );
-        assertRouteState(
-            MainActivity.routeStateForModeForTest(true, BottomTabDestination.THREADS, false),
-            MainRouteDecisionHelper.Surface.RECENT_THREADS,
-            BottomTabDestination.ASK,
-            false
-        );
-        assertRouteState(
-            MainActivity.routeStateForModeForTest(false, BottomTabDestination.SEARCH, false),
-            MainRouteDecisionHelper.Surface.SEARCH_RESULTS,
-            BottomTabDestination.HOME,
-            false
-        );
-        assertRouteState(
-            MainActivity.routeStateForModeForTest(false, BottomTabDestination.ASK, true),
-            MainRouteDecisionHelper.Surface.ASK_RESULTS,
-            BottomTabDestination.ASK,
-            true
-        );
     }
 
     @Test
@@ -407,21 +147,15 @@ public final class MainActivityPhoneNavigationTest {
             int matchingPredicateCount = 0;
             if (MainActivity.isLibraryPhoneFlowIntent(destination)) {
                 matchingPredicateCount++;
-                assertEquals(BottomTabDestination.HOME, MainActivity.phoneTabSelectionOwner(destination));
             }
             if (MainActivity.isAskPhoneFlowIntent(destination)) {
                 matchingPredicateCount++;
-                assertEquals(BottomTabDestination.ASK, MainActivity.phoneTabSelectionOwner(destination));
             }
             if (MainActivity.isSavedPhoneFlowIntent(destination)) {
                 matchingPredicateCount++;
-                assertEquals(BottomTabDestination.PINS, MainActivity.phoneTabSelectionOwner(destination));
             }
 
             assertEquals(1, matchingPredicateCount);
-            assertTrue(MainActivity.buildVisiblePhoneTabDestinations().contains(
-                MainActivity.phoneTabSelectionOwner(destination)
-            ));
         }
     }
 
@@ -569,35 +303,6 @@ public final class MainActivityPhoneNavigationTest {
             false,
             true,
             BottomTabDestination.PINS.name()
-        ));
-    }
-
-    @Test
-    public void installPackCompletionDoesNotPublishHomeGuidesOverRestoredSearchOrAskRoutes() {
-        assertFalse(MainActivity.shouldPublishInstalledBrowseGuidesAfterInstall(
-            false,
-            MainActivity.routeStateForModeForTest(false, BottomTabDestination.HOME, false)
-        ));
-        assertFalse(MainActivity.shouldPublishInstalledBrowseGuidesAfterInstall(
-            false,
-            MainActivity.routeStateForModeForTest(false, BottomTabDestination.ASK, true)
-        ));
-    }
-
-    @Test
-    public void installPackCompletionStillPublishesBrowseAndSavedRoutesWithoutAutoQuery() {
-        assertTrue(MainActivity.shouldPublishInstalledBrowseGuidesAfterInstall(
-            false,
-            MainActivity.routeStateForModeForTest(true, BottomTabDestination.HOME, false)
-        ));
-        assertTrue(MainActivity.shouldPublishInstalledBrowseGuidesAfterInstall(
-            false,
-            MainActivity.routeStateForModeForTest(true, BottomTabDestination.PINS, false)
-        ));
-
-        assertFalse(MainActivity.shouldPublishInstalledBrowseGuidesAfterInstall(
-            true,
-            MainActivity.routeStateForModeForTest(true, BottomTabDestination.HOME, false)
         ));
     }
 
