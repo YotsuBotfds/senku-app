@@ -28,9 +28,15 @@ final class DetailRelatedGuidePresentationFormatter {
     }
 
     private final Context context;
+    private final boolean reviewDemoCategoryShapingEnabled;
 
     DetailRelatedGuidePresentationFormatter(Context context) {
+        this(context, ReviewDemoPolicy.isAnswerProductReviewModeEnabled());
+    }
+
+    DetailRelatedGuidePresentationFormatter(Context context, boolean productReviewMode) {
         this.context = context;
+        this.reviewDemoCategoryShapingEnabled = ReviewDemoPolicy.isSourceStackDemoEnabled(productReviewMode);
     }
 
     String buildRelatedGuidesSubtitle(int count) {
@@ -314,7 +320,7 @@ final class DetailRelatedGuidePresentationFormatter {
         return cleaned.substring(0, 42).trim() + "...";
     }
 
-    private static String formatRelatedGuideCategory(SearchResult guide) {
+    private String formatRelatedGuideCategory(SearchResult guide) {
         String guideId = safe(guide == null ? null : guide.guideId).trim();
         String cleaned = firstNonEmpty(
             guide == null ? null : guide.category,
@@ -330,7 +336,8 @@ final class DetailRelatedGuidePresentationFormatter {
         }
         String normalized = cleaned.toLowerCase(Locale.US);
         String title = safe(guide == null ? null : guide.title).trim().toLowerCase(Locale.US);
-        if ("GD-220".equalsIgnoreCase(guideId)
+        if (reviewDemoCategoryShapingEnabled
+            && "GD-220".equalsIgnoreCase(guideId)
             && title.contains("abrasives")
             && (normalized.contains("related") || normalized.contains("cross reference") || normalized.contains("crossref"))) {
             return "Anchor";

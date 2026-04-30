@@ -189,8 +189,56 @@ public final class DetailRelatedGuidePresentationFormatterTest {
     }
 
     @Test
-    public void foundryAbrasivesCrossReferencePresentsAsAnchor() {
+    public void foundryAbrasivesCrossReferenceUsesGenericMetadataByDefault() {
         DetailRelatedGuidePresentationFormatter formatter = new DetailRelatedGuidePresentationFormatter(null);
+
+        assertEquals(
+            "GD-220 \u00b7 Abrasives Manufacturing\nCross-ref",
+            formatter.buildRelatedGuideButtonLabel(
+                new SearchResult(
+                    "Abrasives Manufacturing",
+                    "",
+                    "",
+                    "",
+                    "GD-220",
+                    "",
+                    "",
+                    "",
+                    "cross_reference",
+                    "",
+                    "",
+                    ""
+                )
+            )
+        );
+        assertEquals(
+            "Open related guide 1 of 1. GD-220 \u00b7 Abrasives Manufacturing. Category Cross-ref. Opens the linked guide page in the installed pack.",
+            formatter.buildRelatedGuideButtonContentDescription(
+                new DetailRelatedGuidePresentationFormatter.State(false, false, "", "", ""),
+                new SearchResult(
+                    "Abrasives Manufacturing",
+                    "",
+                    "",
+                    "",
+                    "GD-220",
+                    "",
+                    "",
+                    "",
+                    "cross_reference",
+                    "",
+                    "",
+                    ""
+                ),
+                0,
+                1,
+                false
+            )
+        );
+    }
+
+    @Test
+    public void foundryAbrasivesCrossReferencePresentsAsAnchorInReviewDemoMode() {
+        DetailRelatedGuidePresentationFormatter formatter = new DetailRelatedGuidePresentationFormatter(null, true);
 
         assertEquals(
             "GD-220 \u00b7 Abrasives Manufacturing\nAnchor",
@@ -209,6 +257,29 @@ public final class DetailRelatedGuidePresentationFormatterTest {
                     "",
                     ""
                 )
+            )
+        );
+        assertEquals(
+            "Open related guide 1 of 1. GD-220 \u00b7 Abrasives Manufacturing. Category Anchor. Opens the linked guide page in the installed pack.",
+            formatter.buildRelatedGuideButtonContentDescription(
+                new DetailRelatedGuidePresentationFormatter.State(false, false, "", "", ""),
+                new SearchResult(
+                    "Abrasives Manufacturing",
+                    "",
+                    "",
+                    "",
+                    "GD-220",
+                    "",
+                    "",
+                    "",
+                    "cross_reference",
+                    "",
+                    "",
+                    ""
+                ),
+                0,
+                1,
+                false
             )
         );
     }
