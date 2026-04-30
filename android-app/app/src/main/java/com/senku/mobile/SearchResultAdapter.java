@@ -39,7 +39,6 @@ import static com.senku.ui.search.SearchResultCardKt.bindSearchResultCard;
 import static com.senku.ui.search.SearchResultCardKt.buildWarmThreadGuideIds;
 import static com.senku.ui.search.SearchResultCardKt.continueConversationContentDescription;
 import static com.senku.ui.search.SearchResultCardKt.laneLabelForRetrievalMode;
-import static com.senku.ui.search.SearchResultCardKt.metadataLineForSearchResultCard;
 
 public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResultAdapter.ResultViewHolder> {
     private static final int MAX_HIGHLIGHT_TERMS = 4;
@@ -942,17 +941,6 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
     }
 
     private SearchResultCardModel buildSearchResultCardModel(SearchResult result, int position) {
-        String title = cleanDisplayText(
-            result == null ? null : result.title,
-            isRichTabletCard(inflater.getContext()) ? 110 : 104
-        );
-        String subtitle = buildCardSubtitle(result);
-        String snippet = buildCardSnippet(result);
-        String laneLabel = laneLabelForRetrievalMode(safe(result == null ? null : result.retrievalMode));
-        int laneColor = colorForRetrievalMode(safe(result == null ? null : result.retrievalMode).trim().toLowerCase(Locale.US));
-        String rankLabel = buildRankLabel(position);
-        String guideIdLabel = cleanDisplayText(result == null ? null : result.guideId, 32);
-        String metadataLine = buildCardMetadataLine(result);
         LinkedGuidePreview linkedPreview = resolveLinkedGuidePreview(result);
         String linkedLabel = linkedPreview != null && linkedPreview.hasTargetGuide()
             ? buildLinkedGuideChipLabel()
@@ -961,20 +949,18 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
             ? buildLinkedGuideOpenDescription(buildLinkedGuidePreviewLabel(linkedPreview))
             : null;
         boolean showContinueThreadChip = shouldShowContinueThreadChip(result);
-        return new SearchResultCardModel(
-            title,
-            subtitle,
-            snippet,
-            laneLabel,
-            laneColor,
-            rankLabel,
-            guideIdLabel,
-            metadataLine,
-            showContinueThreadChip,
-            "Continue",
-            showContinueThreadChip ? buildContinueThreadContentDescription(result) : continueConversationContentDescription(""),
-            linkedLabel,
-            linkedDescription
+        return SearchResultCardModelMapper.map(
+            result,
+            position,
+            new SearchResultCardModelMapper.Options(
+                isRichTabletCard(inflater.getContext()),
+                isLandscapePhoneCard(inflater.getContext()),
+                isSmallPhonePortraitCard(inflater.getContext()),
+                colorForRetrievalMode(safe(result == null ? null : result.retrievalMode).trim().toLowerCase(Locale.US)),
+                showContinueThreadChip,
+                linkedLabel,
+                linkedDescription
+            )
         );
     }
 
@@ -983,11 +969,11 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
     }
 
     static String buildRankLabelForTest(int position) {
-        return Integer.toString(tabletScoreForPosition(position));
+        return SearchResultCardModelMapper.buildRankLabelForTest(position);
     }
 
     static String buildTabletScoreLabelForTest(int position) {
-        return buildTabletScoreLabel(position);
+        return SearchResultCardModelMapper.buildTabletScoreLabelForTest(position);
     }
 
     private static String buildTabletScoreLabel(int position) {
@@ -1011,19 +997,11 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
     }
 
     static String buildTabletGuideMarkerForTest(String guideId, int position) {
-        return buildTabletGuideMarkerInternal(guideId, position);
+        return SearchResultCardModelMapper.buildTabletGuideMarkerForTest(guideId, position);
     }
 
     private String buildTabletGuideMarker(SearchResult result, int position) {
-        return buildTabletGuideMarkerInternal(result == null ? null : result.guideId, position);
-    }
-
-    private static String buildTabletGuideMarkerInternal(String guideId, int position) {
-        String cleanedGuideId = cleanDisplayTextInternal(guideId, 18);
-        if (!cleanedGuideId.isEmpty()) {
-            return cleanedGuideId;
-        }
-        return buildOrdinalRankLabel(position);
+        return SearchResultCardModelMapper.buildTabletGuideMarker(result == null ? null : result.guideId, position);
     }
 
     private static String buildOrdinalRankLabel(int position) {
@@ -1031,7 +1009,7 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
     }
 
     static String buildTabletAttributeLineForTest(String category, String contentRole, String timeHorizon) {
-        return buildTabletAttributeLineInternal(category, contentRole, timeHorizon);
+        return SearchResultCardModelMapper.buildTabletAttributeLineForTest(category, contentRole, timeHorizon);
     }
 
     static String buildTabletAttributeLineForResultForTest(
@@ -1040,11 +1018,12 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
         String timeHorizon,
         String retrievalMode
     ) {
-        String line = buildTabletAttributeLineInternal(category, contentRole, timeHorizon);
-        if (!line.isEmpty()) {
-            return line;
-        }
-        return displayLabelForRetrievalMode(safe(retrievalMode)).toUpperCase(Locale.US);
+        return SearchResultCardModelMapper.buildTabletAttributeLineForResultForTest(
+            category,
+            contentRole,
+            timeHorizon,
+            retrievalMode
+        );
     }
 
     private void bindTabletAttributeLine(TextView sectionView, SearchResult result) {
@@ -1060,63 +1039,6 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
         }
         sectionView.setVisibility(View.VISIBLE);
         sectionView.setText(line);
-    }
-
-    private static String buildTabletAttributeLineInternal(String rawCategory, String rawRole, String rawWindow) {
-        ArrayList<String> tokens = new ArrayList<>();
-        String category = cleanDisplayTextInternal(humanizeStatic(safe(rawCategory).trim().toLowerCase(Locale.US)), 18);
-        String role = humanizeContentRoleInternal(rawRole, 18);
-        String window = compactWindowAttributeToken(
-            cleanDisplayTextInternal(humanizeStatic(safe(rawWindow).trim().toLowerCase(Locale.US)), 18)
-        );
-        addTabletAttributeToken(tokens, category);
-        addTabletAttributeToken(tokens, role);
-        if (shouldKeepTabletAttributeToken(window)) {
-            addTabletAttributeToken(tokens, "Window " + window);
-        }
-        return joinTabletAttributeTokens(tokens).toUpperCase(Locale.US);
-    }
-
-    private static void addTabletAttributeToken(ArrayList<String> tokens, String value) {
-        String normalized = safe(value).trim();
-        if (!shouldKeepTabletAttributeToken(normalized)) {
-            return;
-        }
-        tokens.add(normalized);
-    }
-
-    private static boolean shouldKeepTabletAttributeToken(String value) {
-        String normalized = safe(value).trim();
-        String lowered = normalized.toLowerCase(Locale.US);
-        return !normalized.isEmpty()
-            && !"general".equals(lowered)
-            && !"unknown".equals(lowered)
-            && !"none".equals(lowered);
-    }
-
-    private static String joinTabletAttributeTokens(ArrayList<String> tokens) {
-        if (tokens == null || tokens.isEmpty()) {
-            return "";
-        }
-        StringBuilder builder = new StringBuilder();
-        for (String token : tokens) {
-            if (builder.length() > 0) {
-                builder.append(" \u00b7 ");
-            }
-            builder.append(token);
-        }
-        return builder.toString();
-    }
-
-    private static String compactWindowAttributeToken(String value) {
-        String normalized = safe(value).trim().toLowerCase(Locale.US).replace("_", "-").replace(" ", "-");
-        if ("long-term".equals(normalized) || "longterm".equals(normalized)) {
-            return "Long";
-        }
-        if ("short-term".equals(normalized) || "shortterm".equals(normalized)) {
-            return "Short";
-        }
-        return safe(value).trim();
     }
 
     private LinkedGuidePreview resolveLinkedGuidePreview(SearchResult result) {
@@ -1162,10 +1084,7 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
     }
 
     static String buildCardMetadataLineForTest(String rawRole, String rawWindow, String rawCategory) {
-        String role = humanizeContentRoleInternal(rawRole, 22);
-        String window = cleanDisplayTextInternal(humanizeStatic(safe(rawWindow).trim().toLowerCase(Locale.US)), 22);
-        String category = cleanDisplayTextInternal(humanizeStatic(safe(rawCategory).trim().toLowerCase(Locale.US)), 24);
-        return metadataLineForSearchResultCard(role, window, category);
+        return SearchResultCardModelMapper.buildCardMetadataLineForTest(rawRole, rawWindow, rawCategory);
     }
 
     private String buildCardSnippet(SearchResult result) {
@@ -1372,7 +1291,7 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
     }
 
     static String humanizeContentRoleForTest(String raw, int maxLen) {
-        return humanizeContentRoleInternal(raw, maxLen);
+        return SearchResultCardModelMapper.humanizeContentRoleForTest(raw, maxLen);
     }
 
     private String humanizeContentRole(String raw, int maxLen) {
@@ -1390,16 +1309,7 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
     }
 
     static String buildCompactRowSnippetForTest(String rawSnippet, String sectionHeading, int maxLen) {
-        String cleaned = cleanDisplayTextInternal(rawSnippet, 0);
-        if (cleaned.isEmpty()) {
-            return "";
-        }
-        cleaned = stripCompactSearchRowNoise(cleaned, sectionHeading);
-        cleaned = collapseRepeatedLeadingSection(cleaned, sectionHeading);
-        if (maxLen > 0 && cleaned.length() > maxLen) {
-            return cleaned.substring(0, Math.max(0, maxLen - 1)).trim() + "\u2026";
-        }
-        return cleaned;
+        return SearchResultCardModelMapper.buildCompactRowSnippetForTest(rawSnippet, sectionHeading, maxLen);
     }
 
     private String buildCompactRowSnippet(SearchResult result, int maxLen) {
