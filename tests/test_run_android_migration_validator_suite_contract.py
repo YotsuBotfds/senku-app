@@ -29,6 +29,7 @@ class RunAndroidMigrationValidatorSuiteContractTests(unittest.TestCase):
             "tests.test_validate_android_asset_pack_parity_summary",
             "tests.test_validate_android_fts_fallback_summary",
             "tests.test_validate_android_managed_device_smoke_summary",
+            "tests.test_validate_android_physical_phone_smoke_summary",
             "tests.test_validate_android_litert_readiness_summary",
             "tests.test_validate_android_orchestrator_smoke_summary",
             "tests.test_validate_android_harness_matrix_plan",
