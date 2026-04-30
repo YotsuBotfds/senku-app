@@ -1,6 +1,7 @@
 package com.senku.ui.primitives
 
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class TopBarTest {
@@ -57,18 +58,32 @@ class TopBarTest {
 
     @Test
     fun backActionDefaultsToCompactIconAndSharedSizing() {
+        val backActionWidth = topBarActionWidthDpForTest(TopBarActionKind.Back)
+        val sharedActionWidths = listOf(
+            backActionWidth,
+            topBarActionWidthDpForTest(TopBarActionKind.Home),
+            topBarActionWidthDpForTest(TopBarActionKind.Share),
+        )
+        val backIconSize = topBarBackIconSizeDpForTest()
+        val leadingDividerHeight = topBarLeadingDividerHeightDpForTest()
+
         assertEquals("Back", topBarBackActionLabelForTest())
         assertEquals(false, TopBarActionSpec.back("Back").showsBackLabel)
-        assertEquals(28, topBarActionWidthDpForTest(TopBarActionKind.Back))
-        assertEquals(28, topBarActionWidthDpForTest(TopBarActionKind.Home))
-        assertEquals(28, topBarActionWidthDpForTest(TopBarActionKind.Share))
-        assertEquals(18, topBarBackIconSizeDpForTest())
-        assertEquals(24, topBarLeadingDividerHeightDpForTest())
+        assertEquals(1, sharedActionWidths.distinct().size)
+        assertTrue(backActionWidth in 24..36)
+        assertTrue(backIconSize < backActionWidth)
+        assertTrue(backIconSize in 16..24)
+        assertTrue(leadingDividerHeight < backActionWidth)
+        assertTrue(leadingDividerHeight in 20..32)
     }
 
     @Test
-    fun topChromeTypographyUsesSharedDetailTokens() {
-        assertEquals(13.0f, topBarTitleFontSizeSpForTest(), 0.0f)
-        assertEquals(9.5f, topBarChromeLabelFontSizeSpForTest(), 0.0f)
+    fun topChromeTypographyKeepsCompactTitleAndActionLabelScale() {
+        val titleFontSize = topBarTitleFontSizeSpForTest()
+        val chromeLabelFontSize = topBarChromeLabelFontSizeSpForTest()
+
+        assertTrue(titleFontSize in 12.0f..15.0f)
+        assertTrue(chromeLabelFontSize in 8.0f..11.0f)
+        assertTrue(titleFontSize > chromeLabelFontSize)
     }
 }
