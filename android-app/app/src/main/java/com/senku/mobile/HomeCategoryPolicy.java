@@ -232,7 +232,12 @@ final class HomeCategoryPolicy {
                         "heat", "thermal", "combustion", "boiler", "steam"
                     );
             case "medicine":
-                return "medical".equals(category) || "medicine".equals(category) || "health".equals(category);
+                return "medical".equals(category)
+                    || "medicine".equals(category)
+                    || "health".equals(category)
+                    || containsAnyBucketToken(searchable,
+                        "medicine", "medical", "health", "first aid", "wound", "clinic"
+                    );
             case "food":
                 return "food".equals(category)
                     || "agriculture".equals(category)
@@ -321,11 +326,39 @@ final class HomeCategoryPolicy {
 
     private static boolean containsAnyBucketToken(String searchable, String... tokens) {
         for (String token : tokens) {
-            if (searchable.contains(token)) {
+            if (containsBucketToken(searchable, token)) {
                 return true;
             }
         }
         return false;
+    }
+
+    private static boolean containsBucketToken(String searchable, String token) {
+        String normalizedSearchable = safe(searchable);
+        String normalizedToken = safe(token).trim();
+        if (normalizedSearchable.isEmpty() || normalizedToken.isEmpty()) {
+            return false;
+        }
+        int searchStart = 0;
+        while (searchStart < normalizedSearchable.length()) {
+            int matchStart = normalizedSearchable.indexOf(normalizedToken, searchStart);
+            if (matchStart < 0) {
+                return false;
+            }
+            int matchEnd = matchStart + normalizedToken.length();
+            if (isBucketTokenBoundary(normalizedSearchable, matchStart - 1)
+                && isBucketTokenBoundary(normalizedSearchable, matchEnd)) {
+                return true;
+            }
+            searchStart = matchStart + 1;
+        }
+        return false;
+    }
+
+    private static boolean isBucketTokenBoundary(String text, int index) {
+        return index < 0
+            || index >= text.length()
+            || !Character.isLetterOrDigit(text.charAt(index));
     }
 
     private static CategoryDefinition categoryDefinitionForBucket(String bucketKey) {

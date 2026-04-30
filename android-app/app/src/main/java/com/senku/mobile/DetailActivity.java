@@ -7129,7 +7129,10 @@ public final class DetailActivity extends AppCompatActivity {
 
     private DetailProofPresentationFormatter detailProofPresentationFormatter() {
         if (detailProofPresentationFormatter == null) {
-            detailProofPresentationFormatter = new DetailProofPresentationFormatter(this);
+            detailProofPresentationFormatter = createDetailProofPresentationFormatter(
+                this,
+                productReviewMode
+            );
         }
         return detailProofPresentationFormatter;
     }
@@ -7199,9 +7202,29 @@ public final class DetailActivity extends AppCompatActivity {
 
     private DetailRelatedGuidePresentationFormatter detailRelatedGuidePresentationFormatter() {
         if (detailRelatedGuidePresentationFormatter == null) {
-            detailRelatedGuidePresentationFormatter = new DetailRelatedGuidePresentationFormatter(this);
+            detailRelatedGuidePresentationFormatter = createDetailRelatedGuidePresentationFormatter(
+                this,
+                productReviewMode
+            );
         }
         return detailRelatedGuidePresentationFormatter;
+    }
+
+    static DetailProofPresentationFormatter createDetailProofPresentationFormatter(
+        Context context,
+        boolean productReviewMode
+    ) {
+        return new DetailProofPresentationFormatter(
+            context,
+            ReviewDemoPolicy.isSourceStackDemoEnabled(productReviewMode)
+        );
+    }
+
+    static DetailRelatedGuidePresentationFormatter createDetailRelatedGuidePresentationFormatter(
+        Context context,
+        boolean productReviewMode
+    ) {
+        return new DetailRelatedGuidePresentationFormatter(context, productReviewMode);
     }
 
     private DetailRecommendationFormatter detailRecommendationFormatter() {
@@ -9177,6 +9200,7 @@ public final class DetailActivity extends AppCompatActivity {
     private void navigateHomeFromDetail() {
         Intent homeIntent = new Intent(this, MainActivity.class);
         homeIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        homeIntent.putExtra(MainActivity.EXTRA_OPEN_HOME, true);
         startActivity(homeIntent);
         finish();
     }

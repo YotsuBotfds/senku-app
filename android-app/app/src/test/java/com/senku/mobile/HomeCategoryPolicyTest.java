@@ -31,6 +31,42 @@ public final class HomeCategoryPolicyTest {
     }
 
     @Test
+    public void bucketMatchingRejectsSubstringNearMisses() {
+        assertFalse(HomeCategoryPolicy.matchesBucket(guide("Wire repair", "", ""), "fire"));
+        assertFalse(HomeCategoryPolicy.matchesBucket(guide("Fireproof storage", "", ""), "fire"));
+        assertFalse(HomeCategoryPolicy.matchesBucket(guide("Medication inventory", "", ""), "medicine"));
+        assertFalse(HomeCategoryPolicy.matchesBucket(guide("Herbal medicinal notes", "", ""), "medicine"));
+        assertFalse(HomeCategoryPolicy.matchesBucket(guide("Broadcasting spool", "", ""), "food"));
+        assertFalse(HomeCategoryPolicy.matchesBucket(guide("Craftsman schedule", "", ""), "tools"));
+    }
+
+    @Test
+    public void bucketMatchingKeepsWordAndPhraseMatches() {
+        assertTrue(HomeCategoryPolicy.matchesBucket(guide("Fire starter", "", ""), "fire"));
+        assertTrue(HomeCategoryPolicy.matchesBucket(guide("Wire-safe lamp", "", ""), "fire"));
+        assertTrue(HomeCategoryPolicy.matchesBucket(guide("Rain barrel", "", ""), "water"));
+        assertTrue(HomeCategoryPolicy.matchesBucket(guide("Goat pen", "", "animal husbandry"), "food"));
+        assertTrue(HomeCategoryPolicy.matchesBucket(guide("Field clinic", "", ""), "medicine"));
+        assertTrue(HomeCategoryPolicy.matchesBucket(guide("First aid kit", "", ""), "medicine"));
+    }
+
+    @Test
+    public void categoryCountsUseBoundaryMatchingWhenFiltering() {
+        List<SearchResult> guides = Arrays.asList(
+            guide("Wire repair", "", ""),
+            guide("Fire starter", "", ""),
+            guide("Medication inventory", "", ""),
+            guide("First aid kit", "", ""),
+            guide("Broadcasting spool", "", ""),
+            guide("Seed saving", "", "")
+        );
+
+        assertEquals(1, HomeCategoryPolicy.countForBucket(guides, "fire"));
+        assertEquals(1, HomeCategoryPolicy.countForBucket(guides, "medicine"));
+        assertEquals(1, HomeCategoryPolicy.countForBucket(guides, "food"));
+    }
+
+    @Test
     public void manualHomeModelKeepsContractOrderAndDropsEmptyBuckets() {
         List<HomeCategoryPolicy.HomeCategoryModel> models = Arrays.asList(
             new HomeCategoryPolicy.HomeCategoryModel("water", 0, 2),

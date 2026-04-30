@@ -64,6 +64,7 @@ public final class MainActivity extends AppCompatActivity {
     private static final String EXTRA_AUTO_QUERY = "auto_query";
     private static final String EXTRA_AUTO_ASK = "auto_ask";
     private static final String EXTRA_AUTO_FOLLOWUP_QUERY = "auto_followup_query";
+    static final String EXTRA_OPEN_HOME = "open_home";
     static final String EXTRA_OPEN_SAVED = "open_saved";
     private static final String EXTRA_DEBUG_OPEN_DETAIL = "debug_open_detail";
     private static final String EXTRA_DEBUG_DETAIL_TITLE = "debug_detail_title";
@@ -518,6 +519,7 @@ public final class MainActivity extends AppCompatActivity {
         applyIntentQuery(getIntent());
         updateSessionPanel();
         showBrowseChrome(!hasAutoQuery(getIntent()));
+        maybeHandleOpenHomeIntent(getIntent());
         maybeHandleOpenSavedIntent(getIntent());
         updateLandscapePhoneResultsPriority();
         maybeHandleDebugDetailIntent(getIntent());
@@ -543,6 +545,7 @@ public final class MainActivity extends AppCompatActivity {
         autoIntentHandled = false;
         debugDetailIntentHandled = false;
         applyIntentQuery(intent);
+        maybeHandleOpenHomeIntent(intent);
         maybeHandleOpenSavedIntent(intent);
         updateInfoText();
         applyDeveloperToolsPanelVisibility(isBrowseModeActive(), !items.isEmpty());
@@ -981,6 +984,44 @@ public final class MainActivity extends AppCompatActivity {
             currentMainRouteState()
         );
         applyPhoneTabTransition(transition, false);
+    }
+
+    private void maybeHandleOpenHomeIntent(Intent intent) {
+        MainRouteDecisionHelper.Transition transition = resolveOpenHomeDestination(
+            intent != null && intent.getBooleanExtra(EXTRA_OPEN_HOME, false),
+            currentMainRouteState()
+        );
+        applyPhoneTabTransition(transition, false);
+    }
+
+    static boolean shouldOpenHomeDestination(boolean openHomeExtra) {
+        return resolveOpenHomeDestination(openHomeExtra, MainRouteDecisionHelper.browseHome()).effect
+            == MainRouteDecisionHelper.Effect.SHOW_BROWSE_HOME;
+    }
+
+    static MainRouteDecisionHelper.Transition resolveOpenHomeDestinationForTest(
+        boolean openHomeExtra,
+        boolean browseMode,
+        BottomTabDestination activePhoneTab,
+        boolean askLaneActive
+    ) {
+        return resolveOpenHomeDestination(
+            openHomeExtra,
+            routeStateForMode(browseMode, activePhoneTab, askLaneActive)
+        );
+    }
+
+    private static MainRouteDecisionHelper.Transition resolveOpenHomeDestination(
+        boolean openHomeExtra,
+        MainRouteDecisionHelper.RouteState routeState
+    ) {
+        if (!openHomeExtra) {
+            return new MainRouteDecisionHelper.Transition(
+                routeState == null ? MainRouteDecisionHelper.browseHome() : routeState,
+                MainRouteDecisionHelper.Effect.NONE
+            );
+        }
+        return MainRouteDecisionHelper.returnHome(routeState);
     }
 
     static boolean shouldOpenSavedDestination(boolean openSavedExtra) {
@@ -3391,6 +3432,8 @@ public final class MainActivity extends AppCompatActivity {
     }
 
     private void ensureBrowseHomeVisible() {
+        showBrowseChrome(true);
+        updateSessionPanel();
         if (repository == null) {
             return;
         }
@@ -3398,8 +3441,6 @@ public final class MainActivity extends AppCompatActivity {
             browseGuides();
             return;
         }
-        showBrowseChrome(true);
-        updateSessionPanel();
     }
 
     private void ensureSavedGuidesDestinationVisible() {

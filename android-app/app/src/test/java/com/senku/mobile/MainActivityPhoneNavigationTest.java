@@ -134,6 +134,59 @@ public final class MainActivityPhoneNavigationTest {
     }
 
     @Test
+    public void openHomeExtraRequestsManualHomeDestination() {
+        assertTrue(MainActivity.shouldOpenHomeDestination(true));
+    }
+
+    @Test
+    public void missingOpenHomeExtraDoesNotRequestManualHomeDestination() {
+        assertFalse(MainActivity.shouldOpenHomeDestination(false));
+    }
+
+    @Test
+    public void openHomeExtraClearsStaleSearchOrAskResultsUnderDetail() {
+        MainRouteDecisionHelper.Transition fromSearch =
+            MainActivity.resolveOpenHomeDestinationForTest(
+                true,
+                false,
+                BottomTabDestination.HOME,
+                false
+            );
+        MainRouteDecisionHelper.Transition fromAsk =
+            MainActivity.resolveOpenHomeDestinationForTest(
+                true,
+                false,
+                BottomTabDestination.ASK,
+                true
+            );
+
+        assertEquals(MainRouteDecisionHelper.Effect.SHOW_BROWSE_HOME, fromSearch.effect);
+        assertEquals(MainRouteDecisionHelper.Surface.BROWSE, fromSearch.routeState.surface);
+        assertEquals(BottomTabDestination.HOME, fromSearch.routeState.activePhoneTab);
+        assertFalse(fromSearch.routeState.askLaneActive);
+        assertEquals(MainRouteDecisionHelper.Effect.SHOW_BROWSE_HOME, fromAsk.effect);
+        assertEquals(MainRouteDecisionHelper.Surface.BROWSE, fromAsk.routeState.surface);
+        assertEquals(BottomTabDestination.HOME, fromAsk.routeState.activePhoneTab);
+        assertFalse(fromAsk.routeState.askLaneActive);
+    }
+
+    @Test
+    public void missingOpenHomeExtraKeepsStaleRouteStateForOtherIntents() {
+        MainRouteDecisionHelper.Transition transition =
+            MainActivity.resolveOpenHomeDestinationForTest(
+                false,
+                false,
+                BottomTabDestination.ASK,
+                true
+            );
+
+        assertEquals(MainRouteDecisionHelper.Effect.NONE, transition.effect);
+        assertEquals(MainRouteDecisionHelper.Surface.ASK_RESULTS, transition.routeState.surface);
+        assertEquals(BottomTabDestination.ASK, transition.routeState.activePhoneTab);
+        assertTrue(transition.routeState.askLaneActive);
+    }
+
+    @Test
     public void openSavedExtraRoutesThroughSavedDestinationFromBrowse() {
         MainRouteDecisionHelper.Transition transition =
             MainActivity.resolveOpenSavedDestinationForTest(

@@ -94,6 +94,64 @@ public final class DetailActivityPhoneGuideChromeTest {
     }
 
     @Test
+    public void detailActivityProofFormatterFactoryThreadsProductReviewMode() {
+        SearchResult source = new SearchResult(
+            "Primitive Shelter Construction Techniques",
+            "",
+            "Use tarp and cord to form a simple ridgeline shelter.",
+            "How do I build a simple rain shelter from tarp and cord?",
+            "GD-345",
+            "Wood Quality Evaluation for Shelter Construction",
+            "survival",
+            "lexical",
+            "",
+            "",
+            "emergency_shelter",
+            "foundation,weatherproofing,site_selection"
+        );
+
+        assertEquals(
+            "[GD-345] Primitive Shelter Construction Tec...",
+            DetailActivity.createDetailProofPresentationFormatter(null, false)
+                .buildSourceEntryValue(source, Arrays.asList(source))
+        );
+        assertEquals(
+            "[GD-345] Tarp & Cord Shelters",
+            DetailActivity.createDetailProofPresentationFormatter(null, true)
+                .buildSourceEntryValue(source, Arrays.asList(source))
+        );
+    }
+
+    @Test
+    public void detailActivityRelatedGuideFormatterFactoryThreadsProductReviewMode() {
+        SearchResult guide = new SearchResult(
+            "Abrasives Manufacturing",
+            "",
+            "",
+            "",
+            "GD-220",
+            "",
+            "",
+            "",
+            "cross_reference",
+            "",
+            "",
+            ""
+        );
+
+        assertEquals(
+            "GD-220 \u00b7 Abrasives Manufacturing\nCross-ref",
+            DetailActivity.createDetailRelatedGuidePresentationFormatter(null, false)
+                .buildRelatedGuideButtonLabel(guide)
+        );
+        assertEquals(
+            "GD-220 \u00b7 Abrasives Manufacturing\nAnchor",
+            DetailActivity.createDetailRelatedGuidePresentationFormatter(null, true)
+                .buildRelatedGuideButtonLabel(guide)
+        );
+    }
+
+    @Test
     public void portraitGuidePaperKeepsOuterInsetWiderThanLandscape() {
         assertTrue(
             DetailActivity.resolvePhoneGuideViewportHorizontalPaddingDp(false) >
