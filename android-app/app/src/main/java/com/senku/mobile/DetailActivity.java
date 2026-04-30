@@ -1965,6 +1965,8 @@ public final class DetailActivity extends AppCompatActivity {
         station.setTextColor(getColor(R.color.senku_rev03_accent));
         station.setTypeface(rev03MonoTypeface(Typeface.BOLD));
         station.setTextSize(14f);
+        station.setLetterSpacing(TABLET_HEADER_BACK_LABEL_LETTER_SPACING);
+        setTextLineHeightSp(station, 18f);
         station.setBackgroundResource(R.drawable.bg_manual_home_nav_shell);
         station.setIncludeFontPadding(false);
         station.setContentDescription("Senku detail");
@@ -2194,9 +2196,7 @@ public final class DetailActivity extends AppCompatActivity {
     }
 
     static int resolveTabletEmergencyBackContentDescriptionResource(boolean taskRoot) {
-        return taskRoot
-            ? R.string.detail_emergency_app_rail_manual_content_description
-            : R.string.detail_back_content_description;
+        return R.string.detail_back_content_description;
     }
 
     private Typeface rev03UiTypeface(int style) {
@@ -2476,8 +2476,14 @@ public final class DetailActivity extends AppCompatActivity {
             dp(resolveEmergencyProofCardHorizontalPaddingDp(true)),
             dp(resolveEmergencyProofCardVerticalPaddingDp(true))
         );
-        tabletEmergencyProofOverlayText.setText(buildEmergencyProofCardSummary());
-        tabletEmergencyProofOverlayPanel.setContentDescription(tabletEmergencyProofOverlayText.getText());
+        CharSequence proofSummary = buildEmergencyProofCardSummary();
+        tabletEmergencyProofOverlayText.setText(proofSummary);
+        CharSequence proofTitle = tabletEmergencyProofOverlayTitle == null
+            ? buildEmergencyWhyTitle()
+            : tabletEmergencyProofOverlayTitle.getText();
+        tabletEmergencyProofOverlayPanel.setContentDescription(
+            buildEmergencyProofCardContentDescription(proofTitle, proofSummary)
+        );
     }
 
     private void removeTabletEmergencyHeaderOverlay() {
@@ -7153,6 +7159,18 @@ public final class DetailActivity extends AppCompatActivity {
 
     static String buildEmergencyWhyTitle() {
         return "\u2014 WHY THIS ANSWER";
+    }
+
+    static CharSequence buildEmergencyProofCardContentDescription(CharSequence title, CharSequence body) {
+        String cleanTitle = safe(title == null ? "" : title.toString()).trim();
+        String cleanBody = safe(body == null ? "" : body.toString()).trim();
+        if (cleanTitle.isEmpty()) {
+            return cleanBody;
+        }
+        if (cleanBody.isEmpty()) {
+            return cleanTitle;
+        }
+        return cleanTitle + "\n" + cleanBody;
     }
 
     private void applyPhonePortraitHeaderTreatment() {

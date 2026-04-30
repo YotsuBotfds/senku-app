@@ -30,13 +30,15 @@
             android:layout_width="36dp"
             android:layout_height="36dp"
             android:background="@drawable/bg_manual_home_nav_shell"
+            android:fontFamily="@font/jetbrains_mono"
             android:gravity="center"
-            android:fontFamily="@font/inter_tight"
             android:includeFontPadding="false"
+            android:letterSpacing="0.09"
+            android:lineHeight="18sp"
             android:text="@string/app_badge_letter"
-            android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="@color/senku_rev03_accent"
-            android:textStyle="bold" />
+            android:textFontWeight="700"
+            android:textSize="14sp" />
 
         <LinearLayout
             android:id="@+id/phone_nav_home"

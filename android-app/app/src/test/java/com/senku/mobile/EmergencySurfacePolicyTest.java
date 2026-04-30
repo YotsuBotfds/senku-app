@@ -208,7 +208,7 @@ public final class EmergencySurfacePolicyTest {
             DetailActivity.resolveTabletEmergencyBackContentDescriptionResource()
         );
         assertEquals(
-            R.string.detail_emergency_app_rail_manual_content_description,
+            R.string.detail_back_content_description,
             DetailActivity.resolveTabletEmergencyBackContentDescriptionResource(true)
         );
         assertFalse(DetailActivity.shouldEnableDetailBackLongPressHomeShortcut());
@@ -247,6 +247,17 @@ public final class EmergencySurfacePolicyTest {
         assertEquals(
             "EMERGENCY CONTEXT \u2022 GD-132 ANCHOR",
             DetailActivity.buildEmergencyDockedComposerContextHint("GD-132")
+        );
+        assertEquals(
+            "\u2014 WHY THIS ANSWER\nGD-132 \u2022 ANCHOR \u2022 93%\nFoundry & Metal Casting",
+            DetailActivity.buildEmergencyProofCardContentDescription(
+                DetailActivity.buildEmergencyWhyTitle(),
+                "GD-132 \u2022 ANCHOR \u2022 93%\nFoundry & Metal Casting"
+            )
+        );
+        assertEquals(
+            "GD-132 \u2022 ANCHOR",
+            DetailActivity.buildEmergencyProofCardContentDescription("", "GD-132 \u2022 ANCHOR")
         );
     }
 
