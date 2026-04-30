@@ -144,6 +144,8 @@ public final class EmergencySurfacePolicyTest {
     public void tabletPortraitEmergencyChromeUsesCompactIconTargets() {
         assertEquals(28, DetailActivity.resolveTabletEmergencyChromeNavIconSizeDp());
         assertEquals(1, DetailActivity.resolveTabletEmergencyChromeRuleHeightDp());
+        assertEquals(-16, DetailActivity.resolveTabletEmergencyChromeRuleHorizontalInsetDp(true));
+        assertEquals(-18, DetailActivity.resolveTabletEmergencyChromeRuleHorizontalInsetDp(false));
     }
 
     @Test
@@ -295,6 +297,8 @@ public final class EmergencySurfacePolicyTest {
         assertEquals("Back", DetailActivity.tabletEmergencyBackButtonLabel(false));
         assertEquals("Back", DetailActivity.tabletEmergencyBackButtonLabel(true));
         assertEquals(60, DetailActivity.resolveTabletEmergencyBackButtonMinWidthDp());
+        assertEquals(10.0f, DetailActivity.resolveTabletEmergencyBackLabelTextSizeSp(), 0.0f);
+        assertEquals(12.0f, DetailActivity.resolveTabletEmergencyBackLabelLineHeightSp(), 0.0f);
         assertTrue(
             DetailActivity.resolveTabletEmergencyBackButtonMinWidthDp()
                 > DetailActivity.resolveTabletEmergencyChromeNavIconSizeDp()
@@ -305,6 +309,9 @@ public final class EmergencySurfacePolicyTest {
     public void detailAndEmergencyChromeUseSharedTypeTokens() {
         assertEquals(13.0f, DetailActivity.resolveDetailTopChromeTitleTextSizeSp(), 0.0f);
         assertEquals(9.5f, DetailActivity.resolveDetailTopChromeLabelTextSizeSp(), 0.0f);
+        assertEquals(11.0f, DetailActivity.resolveDetailTopChromeLabelLineHeightSp(), 0.0f);
+        assertEquals(14.0f, DetailActivity.resolveTabletEmergencyChromeTitleTextSizeSp(), 0.0f);
+        assertEquals(18.0f, DetailActivity.resolveTabletEmergencyChromeTitleLineHeightSp(), 0.0f);
         assertEquals(
             DetailActivity.resolveDetailTopChromeTitleTextSizeSp(),
             DetailActivity.resolvePhonePortraitAppHeaderTitleTextSizeSp(),

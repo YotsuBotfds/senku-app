@@ -120,6 +120,9 @@ public final class DetailActivity extends AppCompatActivity {
     private static final int TABLET_EMERGENCY_CHROME_BOTTOM_MARGIN_DP = 12;
     private static final float DETAIL_TOP_CHROME_TITLE_TEXT_SIZE_SP = 13.0f;
     private static final float DETAIL_TOP_CHROME_LABEL_TEXT_SIZE_SP = 9.5f;
+    private static final float DETAIL_TOP_CHROME_LABEL_LINE_HEIGHT_SP = 11.0f;
+    private static final float TABLET_EMERGENCY_CHROME_TITLE_TEXT_SIZE_SP = 14.0f;
+    private static final float TABLET_EMERGENCY_CHROME_TITLE_LINE_HEIGHT_SP = 18.0f;
     private static final int DETAIL_TOP_CHROME_ICON_ACTION_SIZE_DP = 28;
     private static final int TABLET_HEADER_BACK_ACTION_WIDTH_DP = 60;
     private static final int TABLET_HEADER_BACK_ICON_SIZE_DP = 14;
@@ -204,6 +207,7 @@ public final class DetailActivity extends AppCompatActivity {
     private LinearLayout tabletEmergencyChromeOverlayPanel;
     private TextView tabletEmergencyChromeOverlayTitle;
     private TextView tabletEmergencyChromeOverlayMeta;
+    private View tabletEmergencyChromeOverlayRule;
     private LinearLayout tabletEmergencyActionsOverlayPanel;
     private LinearLayout tabletEmergencyProofOverlayPanel;
     private TextView tabletEmergencyProofOverlayTitle;
@@ -1809,7 +1813,8 @@ public final class DetailActivity extends AppCompatActivity {
         tabletEmergencyChromeOverlayTitle = new TextView(this);
         tabletEmergencyChromeOverlayTitle.setTextColor(getColor(R.color.senku_rev03_ink_0));
         tabletEmergencyChromeOverlayTitle.setTypeface(rev03UiTypefaceWeight(600));
-        tabletEmergencyChromeOverlayTitle.setTextSize(resolveDetailTopChromeTitleTextSizeSp());
+        tabletEmergencyChromeOverlayTitle.setTextSize(resolveTabletEmergencyChromeTitleTextSizeSp());
+        setTextLineHeightSp(tabletEmergencyChromeOverlayTitle, resolveTabletEmergencyChromeTitleLineHeightSp());
         tabletEmergencyChromeOverlayTitle.setMaxLines(1);
         tabletEmergencyChromeOverlayTitle.setEllipsize(TextUtils.TruncateAt.END);
         chromeText.addView(tabletEmergencyChromeOverlayTitle, new LinearLayout.LayoutParams(
@@ -1821,6 +1826,7 @@ public final class DetailActivity extends AppCompatActivity {
         tabletEmergencyChromeOverlayMeta.setTextColor(getColor(R.color.senku_rev03_ink_2));
         tabletEmergencyChromeOverlayMeta.setTypeface(rev03MonoTypeface(Typeface.NORMAL));
         tabletEmergencyChromeOverlayMeta.setTextSize(resolveDetailTopChromeLabelTextSizeSp());
+        setTextLineHeightSp(tabletEmergencyChromeOverlayMeta, resolveDetailTopChromeLabelLineHeightSp());
         tabletEmergencyChromeOverlayMeta.setLetterSpacing(TABLET_HEADER_BACK_LABEL_LETTER_SPACING);
         tabletEmergencyChromeOverlayMeta.setMaxLines(1);
         tabletEmergencyChromeOverlayMeta.setEllipsize(TextUtils.TruncateAt.END);
@@ -1845,14 +1851,17 @@ public final class DetailActivity extends AppCompatActivity {
         }
         overlay.addView(tabletEmergencyChromeOverlayPanel, chromeParams);
 
-        View chromeRule = new View(this);
-        chromeRule.setBackgroundColor(getColor(R.color.senku_rev03_hairline_strong));
+        tabletEmergencyChromeOverlayRule = new View(this);
+        tabletEmergencyChromeOverlayRule.setBackgroundColor(getColor(R.color.senku_rev03_hairline_strong));
         LinearLayout.LayoutParams chromeRuleParams = new LinearLayout.LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT,
             dp(TABLET_HEADER_RULE_HEIGHT_DP)
         );
+        int chromeRuleInset = resolveTabletEmergencyChromeRuleHorizontalInsetDp(isTabletPortraitLayout());
+        chromeRuleParams.leftMargin = dp(chromeRuleInset);
+        chromeRuleParams.rightMargin = dp(chromeRuleInset);
         chromeRuleParams.bottomMargin = dp(TABLET_EMERGENCY_CHROME_BOTTOM_MARGIN_DP);
-        overlay.addView(chromeRule, chromeRuleParams);
+        overlay.addView(tabletEmergencyChromeOverlayRule, chromeRuleParams);
 
         TextView title = new TextView(this);
         title.setId(R.id.detail_emergency_header_title);
@@ -2075,9 +2084,9 @@ public final class DetailActivity extends AppCompatActivity {
         label.setText(tabletEmergencyBackButtonLabel(isTaskRoot()));
         label.setTextColor(getColor(R.color.senku_rev03_ink_0));
         label.setTypeface(rev03MonoTypefaceWeight(500));
-        label.setTextSize(TABLET_HEADER_BACK_LABEL_TEXT_SIZE_SP);
+        label.setTextSize(resolveTabletEmergencyBackLabelTextSizeSp());
         label.setLetterSpacing(TABLET_HEADER_BACK_LABEL_LETTER_SPACING);
-        setTextLineHeightSp(label, TABLET_HEADER_BACK_LABEL_LINE_HEIGHT_SP);
+        setTextLineHeightSp(label, resolveTabletEmergencyBackLabelLineHeightSp());
         LinearLayout.LayoutParams labelParams = new LinearLayout.LayoutParams(
             ViewGroup.LayoutParams.WRAP_CONTENT,
             ViewGroup.LayoutParams.WRAP_CONTENT
@@ -2120,6 +2129,9 @@ public final class DetailActivity extends AppCompatActivity {
         }
         boolean showChrome = emergencyFullHeightPage && isTabletPortraitLayout();
         tabletEmergencyChromeOverlayPanel.setVisibility(showChrome ? View.VISIBLE : View.GONE);
+        if (tabletEmergencyChromeOverlayRule != null) {
+            tabletEmergencyChromeOverlayRule.setVisibility(showChrome ? View.VISIBLE : View.GONE);
+        }
         if (!showChrome) {
             return;
         }
@@ -2189,6 +2201,22 @@ public final class DetailActivity extends AppCompatActivity {
 
     static int resolveTabletEmergencyBackButtonMinWidthDp() {
         return DETAIL_TOP_CHROME_BACK_ACTION_MIN_WIDTH_DP;
+    }
+
+    static float resolveTabletEmergencyBackLabelTextSizeSp() {
+        return TABLET_HEADER_BACK_LABEL_TEXT_SIZE_SP;
+    }
+
+    static float resolveTabletEmergencyBackLabelLineHeightSp() {
+        return TABLET_HEADER_BACK_LABEL_LINE_HEIGHT_SP;
+    }
+
+    static float resolveTabletEmergencyChromeTitleTextSizeSp() {
+        return TABLET_EMERGENCY_CHROME_TITLE_TEXT_SIZE_SP;
+    }
+
+    static float resolveTabletEmergencyChromeTitleLineHeightSp() {
+        return TABLET_EMERGENCY_CHROME_TITLE_LINE_HEIGHT_SP;
     }
 
     static int resolveTabletEmergencyBackContentDescriptionResource() {
@@ -2278,6 +2306,14 @@ public final class DetailActivity extends AppCompatActivity {
             isTabletPortraitLayout() ? dp(TABLET_EMERGENCY_PORTRAIT_HORIZONTAL_PADDING_DP) : dp(18),
             isTabletPortraitLayout() ? dp(TABLET_EMERGENCY_PORTRAIT_VERTICAL_PADDING_DP) : dp(12)
         );
+        if (tabletEmergencyChromeOverlayRule != null) {
+            LinearLayout.LayoutParams ruleParams =
+                (LinearLayout.LayoutParams) tabletEmergencyChromeOverlayRule.getLayoutParams();
+            int chromeRuleInset = resolveTabletEmergencyChromeRuleHorizontalInsetDp(isTabletPortraitLayout());
+            ruleParams.leftMargin = dp(chromeRuleInset);
+            ruleParams.rightMargin = dp(chromeRuleInset);
+            tabletEmergencyChromeOverlayRule.setLayoutParams(ruleParams);
+        }
         ViewGroup.LayoutParams currentParams = overlay.getLayoutParams();
         if (currentParams instanceof FrameLayout.LayoutParams) {
             FrameLayout.LayoutParams desiredParams = tabletEmergencyHeaderOverlayParams();
@@ -2362,6 +2398,10 @@ public final class DetailActivity extends AppCompatActivity {
 
     static int resolveTabletEmergencyChromeRuleHeightDp() {
         return TABLET_HEADER_RULE_HEIGHT_DP;
+    }
+
+    static int resolveTabletEmergencyChromeRuleHorizontalInsetDp(boolean tabletPortrait) {
+        return tabletPortrait ? -TABLET_EMERGENCY_PORTRAIT_HORIZONTAL_PADDING_DP : -18;
     }
 
     static int resolveTabletEmergencyAppRailWidthDp() {
@@ -2517,6 +2557,7 @@ public final class DetailActivity extends AppCompatActivity {
         tabletEmergencyProofOverlayPanel = null;
         tabletEmergencyProofOverlayTitle = null;
         tabletEmergencyProofOverlayText = null;
+        tabletEmergencyChromeOverlayRule = null;
         applyTabletEmergencyRootVisibility(false);
     }
 
@@ -8260,6 +8301,10 @@ public final class DetailActivity extends AppCompatActivity {
 
     static float resolveDetailTopChromeLabelTextSizeSp() {
         return DETAIL_TOP_CHROME_LABEL_TEXT_SIZE_SP;
+    }
+
+    static float resolveDetailTopChromeLabelLineHeightSp() {
+        return DETAIL_TOP_CHROME_LABEL_LINE_HEIGHT_SP;
     }
 
     static float resolvePhonePortraitQuestionMetaLabelTextSizeSp() {
