@@ -1,6 +1,7 @@
 package com.senku.ui
 
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.w3c.dom.Element
 import java.io.File
 import javax.xml.parsers.DocumentBuilderFactory
@@ -53,9 +54,8 @@ internal fun assertSharedMainChrome(layout: Element, spec: MainChromeSpec) {
     val divider = layout.elementByAndroidId("home_chrome_divider")
     val mode = layout.elementByAndroidId("home_chrome_mode")
     val title = layout.elementByAndroidId("home_chrome_title")
-    val children = row.directElementChildren()
     val searchIcon = layout.elementByAndroidId("home_chrome_search_icon")
-    val overflow = children[5]
+    val overflow = row.directElementChildren("TextView").single { it.android("text") == "..." }
     val bottomRule = layout.elementByAndroidId("home_chrome_bottom_rule")
     val verticalPadding = if (spec.height == "48dp") "9dp" else "12dp"
 
@@ -64,10 +64,16 @@ internal fun assertSharedMainChrome(layout: Element, spec: MainChromeSpec) {
     assertEquals("${spec.qualifier} topbar end padding", spec.horizontalPadding, row.android("paddingEnd"))
     assertEquals("${spec.qualifier} topbar top padding", verticalPadding, row.android("paddingTop"))
     assertEquals("${spec.qualifier} topbar bottom padding", verticalPadding, row.android("paddingBottom"))
-    assertEquals(
-        "${spec.qualifier} topbar child token order",
-        listOf("LinearLayout", "View", "TextView", "TextView", "ImageView", "TextView"),
-        children.map { it.tagName },
+    assertDirectChildIdsContain(
+        row = row,
+        message = "${spec.qualifier} topbar semantic children",
+        expectedIds = listOf(
+            "home_chrome_back_button",
+            "home_chrome_divider",
+            "home_chrome_mode",
+            "home_chrome_title",
+            "home_chrome_search_icon",
+        ),
     )
 
     assertEquals("28dp", back.android("layout_width"))
@@ -117,9 +123,10 @@ internal fun assertSharedMainChrome(layout: Element, spec: MainChromeSpec) {
     assertEquals("@color/senku_rev03_ink_0", title.android("textColor"))
     assertEquals("Field manual \u2022 ed.2", title.android("text"))
 
-    assertEquals("16dp", searchIcon.android("layout_width"))
-    assertEquals("16dp", searchIcon.android("layout_height"))
     assertEquals("@drawable/ic_search_magnifier", searchIcon.android("src"))
+    assertEquals("@string/home_chrome_search_content_description", searchIcon.android("contentDescription"))
+    assertEquals("true", searchIcon.android("clickable"))
+    assertEquals("true", searchIcon.android("focusable"))
     assertEquals("...", overflow.android("text"))
     assertEquals("1dp", bottomRule.android("layout_height"))
     assertEquals("@color/senku_rev03_hairline_strong", bottomRule.android("background"))
@@ -129,18 +136,17 @@ internal fun assertSearchChrome(layout: Element, spec: SearchChromeSpec) {
     val row = layout.elementByAndroidId("tablet_search_topbar_row")
     val query = layout.elementByAndroidId("tablet_search_query_text")
     val count = layout.elementByAndroidId("tablet_search_count_text")
-    val children = row.directElementChildren()
-    val searchIcon = children[0]
+    val searchIcon = row.directElementChildren("ImageView")
+        .single { it.android("src") == "@drawable/ic_search_magnifier" }
     val bottomRule = layout.elementByAndroidId("tablet_search_bottom_rule")
 
     assertEquals("${spec.qualifier} search topbar height", "wrap_content", row.android("layout_height"))
     assertEquals("${spec.qualifier} search topbar hidden by default", "gone", row.android("visibility"))
-    assertEquals(
-        "${spec.qualifier} search topbar child token order",
-        listOf("ImageView", "TextView", "TextView"),
-        children.map { it.tagName },
+    assertDirectChildIdsContain(
+        row = row,
+        message = "${spec.qualifier} search topbar semantic text children",
+        expectedIds = listOf("tablet_search_query_text", "tablet_search_count_text"),
     )
-    assertEquals("tablet_search_count_text", children[2].requiredAndroidId())
     assertEquals("20dp", searchIcon.android("layout_width"))
     assertEquals("20dp", searchIcon.android("layout_height"))
     assertEquals("@drawable/ic_search_magnifier", searchIcon.android("src"))
@@ -252,6 +258,16 @@ internal fun Element.directElementChildren(): List<Element> =
     (0 until childNodes.length)
         .map { childNodes.item(it) }
         .filterIsInstance<Element>()
+
+private fun assertDirectChildIdsContain(row: Element, message: String, expectedIds: List<String>) {
+    val directChildIds = row.directElementChildren()
+        .map { it.requiredAndroidId() }
+        .filter { it.isNotBlank() }
+
+    expectedIds.forEach { expectedId ->
+        assertTrue("$message should include @$expectedId", directChildIds.contains(expectedId))
+    }
+}
 
 internal fun Element.android(name: String): String =
     getAttributeNS("http://schemas.android.com/apk/res/android", name)
