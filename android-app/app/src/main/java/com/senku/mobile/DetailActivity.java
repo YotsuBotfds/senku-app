@@ -857,11 +857,11 @@ public final class DetailActivity extends AppCompatActivity {
                 }
             });
         }
+        backButton.setText(resolveDetailVisibleBackLabelResource());
+        backButton.setContentDescription(getString(resolveDetailVisibleBackContentDescriptionResource()));
         backButton.setOnClickListener(v -> navigateBackFromDetail());
-        backButton.setOnLongClickListener(v -> {
-            navigateHomeFromDetail();
-            return true;
-        });
+        backButton.setOnLongClickListener(null);
+        backButton.setLongClickable(shouldEnableDetailBackLongPressHomeShortcut());
         if (homeButton != null) {
             homeButton.setOnClickListener(v -> navigateHomeFromDetail());
         }
@@ -8263,7 +8263,7 @@ public final class DetailActivity extends AppCompatActivity {
                 pinVisible,
                 pinActive,
                 answerMode && !buildTranscriptExportText().isEmpty(),
-                false,
+                shouldShowDetailOverflowAction(),
                 shouldAllowRev03TopBarTitleWrap() ? 2 : 1,
                 getString(R.string.detail_back_content_description),
                 getString(R.string.detail_home_content_description),
@@ -8274,7 +8274,7 @@ public final class DetailActivity extends AppCompatActivity {
                     pinVisible ? pinnableGuideId : resolveDisplayGuideId()
                 ),
                 getString(R.string.detail_share_content_description),
-                "More options",
+                getString(R.string.detail_overflow_content_description),
                 action -> {
                     if (action == TopBarActionKind.Back) {
                         navigateBackFromDetail();
@@ -8573,6 +8573,22 @@ public final class DetailActivity extends AppCompatActivity {
 
     static boolean shouldFallbackDetailBackToHome(boolean taskRoot) {
         return taskRoot;
+    }
+
+    static int resolveDetailVisibleBackLabelResource() {
+        return R.string.detail_back;
+    }
+
+    static int resolveDetailVisibleBackContentDescriptionResource() {
+        return R.string.detail_back_content_description;
+    }
+
+    static boolean shouldEnableDetailBackLongPressHomeShortcut() {
+        return false;
+    }
+
+    static boolean shouldShowDetailOverflowAction() {
+        return false;
     }
 
     private void shareTranscriptFromDetail() {

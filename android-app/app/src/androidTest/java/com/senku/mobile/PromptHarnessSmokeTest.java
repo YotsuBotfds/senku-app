@@ -346,11 +346,13 @@ public final class PromptHarnessSmokeTest {
             scenario.onActivity(activity -> {
                 EditText input = activity.findViewById(R.id.search_input);
                 Button browse = activity.findViewById(R.id.browse_button);
+                Button search = activity.findViewById(R.id.search_button);
                 Button ask = activity.findViewById(R.id.ask_button);
                 TextView laneHint = activity.findViewById(R.id.home_entry_hint);
                 RecyclerView resultsList = activity.findViewById(R.id.results_list);
                 Assert.assertNotNull("shared input should exist after empty auto ask launch", input);
                 Assert.assertNotNull("browse action should exist after empty auto ask launch", browse);
+                Assert.assertNotNull("search action should exist after empty auto ask launch", search);
                 Assert.assertNotNull("ask action should exist after empty auto ask launch", ask);
                 Assert.assertNotNull("lane hint should exist after empty auto ask launch", laneHint);
 
@@ -414,6 +416,16 @@ public final class PromptHarnessSmokeTest {
                     "empty auto ask should show ask-specific helper copy",
                     activity.getString(R.string.home_entry_ask_lane),
                     safe(laneHint.getText().toString())
+                );
+                Assert.assertEquals(
+                    "ask submit button should keep question-flow accessibility ownership",
+                    activity.getString(R.string.ask_button_description),
+                    safe(ask.getContentDescription() == null ? null : ask.getContentDescription().toString())
+                );
+                Assert.assertEquals(
+                    "search submit button should keep guide-result accessibility ownership",
+                    activity.getString(R.string.search_button_description),
+                    safe(search.getContentDescription() == null ? null : search.getContentDescription().toString())
                 );
                 Assert.assertEquals(
                     "ask should carry the primary lane emphasis after empty auto ask launch",
@@ -515,6 +527,51 @@ public final class PromptHarnessSmokeTest {
                 }
             });
             captureUiState("search_results");
+        }
+    }
+
+    @Test
+    public void searchButtonFromAskLaneStaysGuideResultSearch() {
+        ActivityScenario<MainActivity> scenario = ActivityScenario.launch(MainActivity.class);
+        try {
+            awaitHarnessIdle();
+            Assert.assertTrue(
+                "home search input never appeared before search-button ownership regression; harness signals="
+                    + HarnessTestSignals.snapshot(),
+                device.wait(Until.hasObject(By.res(APP_PACKAGE, "search_input")), SEARCH_WAIT_MS)
+            );
+
+            openAskTabFromHomeChrome();
+            submitSearchFromResumedActivity("rain shelter", false);
+            assertResultsSettled(scenario, SEARCH_RESULTS_WAIT_MS);
+            dismissMainSearchKeyboardIfVisible();
+
+            scenario.onActivity(activity -> {
+                Assert.assertEquals(
+                    "Search button should return visible selection ownership to the library lane",
+                    BottomTabDestination.HOME,
+                    readPrivateField(activity, "activePhoneTab")
+                );
+                Assert.assertFalse(
+                    "Search button should clear Ask submit ownership before submitting guide search",
+                    readPrivateBooleanField(activity, "askLaneActive")
+                );
+                RecyclerView resultsList = activity.findViewById(R.id.results_list);
+                Assert.assertNotNull("guide-result list should exist after Search button submit", resultsList);
+                Assert.assertTrue(
+                    "Search button should show guide results instead of answer detail",
+                    isVisible(resultsList)
+                        && resultsList.getAdapter() != null
+                        && resultsList.getAdapter().getItemCount() > 0
+                );
+            });
+            Assert.assertFalse(
+                "Search button from Ask lane must not navigate to answer detail",
+                isResumedActivity(DetailActivity.class)
+            );
+            captureUiState("search_button_from_ask_lane_results");
+        } finally {
+            closeScenarioLeniently(scenario);
         }
     }
 

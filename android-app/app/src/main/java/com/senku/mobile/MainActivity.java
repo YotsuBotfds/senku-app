@@ -3225,6 +3225,16 @@ public final class MainActivity extends AppCompatActivity {
         return target == SubmitTarget.ASK ? EditorInfo.IME_ACTION_DONE : EditorInfo.IME_ACTION_SEARCH;
     }
 
+    static int resolveSubmitButtonDescriptionResourceForTest(SubmitTarget target) {
+        return resolveSubmitButtonDescriptionResource(target);
+    }
+
+    private static int resolveSubmitButtonDescriptionResource(SubmitTarget target) {
+        return target == SubmitTarget.ASK
+            ? R.string.ask_button_description
+            : R.string.search_button_description;
+    }
+
     static boolean isSavedPhoneFlowIntent(BottomTabDestination destination) {
         return destination == BottomTabDestination.PINS;
     }
@@ -3746,7 +3756,9 @@ public final class MainActivity extends AppCompatActivity {
     private void updateActionLabels() {
         boolean answerReady = ModelFileStore.getImportedModelFile(this) != null || HostInferenceConfig.resolve(this).enabled;
         askButton.setText(answerReady ? R.string.ask_button_ready : R.string.ask_button);
+        askButton.setContentDescription(getString(resolveSubmitButtonDescriptionResource(SubmitTarget.ASK)));
         searchButton.setText(R.string.external_review_home_search_button);
+        searchButton.setContentDescription(getString(resolveSubmitButtonDescriptionResource(SubmitTarget.SEARCH)));
         boolean askMode = isAskLaneActive();
         updateSharedInputChrome(askMode ? SubmitTarget.ASK : SubmitTarget.SEARCH);
         if (browseButton != null) {

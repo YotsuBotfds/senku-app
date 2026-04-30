@@ -220,6 +220,10 @@ public final class MainActivityPhoneNavigationTest {
             EditorInfo.IME_ACTION_DONE,
             MainActivity.resolveSharedInputImeActionForTest(MainActivity.SubmitTarget.ASK)
         );
+        assertEquals(
+            R.string.ask_button_description,
+            MainActivity.resolveSubmitButtonDescriptionResourceForTest(MainActivity.SubmitTarget.ASK)
+        );
 
         assertEquals(
             R.string.search_hint,
@@ -232,6 +236,10 @@ public final class MainActivityPhoneNavigationTest {
         assertEquals(
             EditorInfo.IME_ACTION_SEARCH,
             MainActivity.resolveSharedInputImeActionForTest(MainActivity.SubmitTarget.SEARCH)
+        );
+        assertEquals(
+            R.string.search_button_description,
+            MainActivity.resolveSubmitButtonDescriptionResourceForTest(MainActivity.SubmitTarget.SEARCH)
         );
     }
 

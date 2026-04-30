@@ -187,6 +187,21 @@ public final class EmergencySurfacePolicyTest {
     }
 
     @Test
+    public void detailVisibleBackUsesSamePredicateAsSystemBack() {
+        assertEquals(R.string.detail_back, DetailActivity.resolveDetailVisibleBackLabelResource());
+        assertEquals(
+            R.string.detail_back_content_description,
+            DetailActivity.resolveDetailVisibleBackContentDescriptionResource()
+        );
+        assertFalse(DetailActivity.shouldEnableDetailBackLongPressHomeShortcut());
+    }
+
+    @Test
+    public void detailOverflowActionStaysHiddenUntilFunctional() {
+        assertFalse(DetailActivity.shouldShowDetailOverflowAction());
+    }
+
+    @Test
     public void tabletPortraitEmergencySurfaceOwnsFullHeightPageChrome() {
         assertTrue(DetailActivity.shouldUseTabletEmergencyFullHeightPage(true, true, true));
         assertTrue(DetailActivity.shouldSuppressTabletEmergencyStaleChrome(true, true, true));

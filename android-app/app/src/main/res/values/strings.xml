@@ -9,6 +9,8 @@
     <string name="search_button">Search</string>
     <string name="ask_button">Ask Manual</string>
     <string name="ask_button_ready">Ask Manual</string>
+    <string name="search_button_description">Search guide results</string>
+    <string name="ask_button_description">Ask the manual a question</string>
     <string name="import_model_button">Import Model</string>
     <string name="host_inference_off_button">Use Host GPU</string>
     <string name="host_inference_on_button">Host GPU On</string>
@@ -74,6 +76,7 @@
     <string name="detail_pin_removed">Removed %1$s from saved guides</string>
     <string name="detail_share">Share</string>
     <string name="detail_share_content_description">Share transcript</string>
+    <string name="detail_overflow_content_description">More detail actions</string>
     <string name="detail_share_chooser">Share transcript</string>
     <string name="detail_share_unavailable">No transcript is ready to share yet.</string>
     <string name="recent_threads_title">Recent threads</string>
