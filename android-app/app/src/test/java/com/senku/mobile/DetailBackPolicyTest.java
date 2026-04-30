@@ -184,6 +184,114 @@ public final class DetailBackPolicyTest {
     }
 
     @Test
+    public void answerSourceVisibleBackUsesBackChromeAndFinishesStackedActivity() {
+        DetailBackPolicy.Inputs answerStack = new DetailBackPolicy.Inputs(
+            false,
+            DetailBackPolicy.SourceRoute.ANSWER,
+            DetailBackPolicy.BackTrigger.VISIBLE_BACK_BUTTON
+        );
+
+        DetailBackPolicy.Decision decision = DetailBackPolicy.decide(answerStack);
+        DetailBackPolicy.VisibleBackAffordance affordance = DetailBackPolicy.visibleBackAffordance(answerStack);
+
+        assertEquals(DetailBackPolicy.Effect.FINISH_ACTIVITY, decision.effect);
+        assertEquals(DetailBackPolicy.FinishBehavior.FINISH, decision.finishBehavior);
+        assertEquals(R.string.detail_back, affordance.labelResource);
+        assertEquals(R.string.detail_back_content_description, affordance.contentDescriptionResource);
+        assertFalse(affordance.longPressHomeShortcutEnabled);
+    }
+
+    @Test
+    public void answerSourceVisibleBackUsesHomeChromeAndNavigatesHomeAtTaskRoot() {
+        DetailBackPolicy.Inputs answerTaskRoot = new DetailBackPolicy.Inputs(
+            true,
+            DetailBackPolicy.SourceRoute.ANSWER,
+            DetailBackPolicy.BackTrigger.VISIBLE_BACK_BUTTON
+        );
+
+        DetailBackPolicy.Decision decision = DetailBackPolicy.decide(answerTaskRoot);
+        DetailBackPolicy.VisibleBackAffordance affordance = DetailBackPolicy.visibleBackAffordance(answerTaskRoot);
+
+        assertEquals(DetailBackPolicy.Effect.NAVIGATE_HOME, decision.effect);
+        assertEquals(DetailBackPolicy.FinishBehavior.FINISH, decision.finishBehavior);
+        assertEquals(R.string.home_button, affordance.labelResource);
+        assertEquals(R.string.detail_home_content_description, affordance.contentDescriptionResource);
+        assertFalse(affordance.longPressHomeShortcutEnabled);
+    }
+
+    @Test
+    public void guideSourceVisibleBackUsesBackChromeAndFinishesStackedActivity() {
+        DetailBackPolicy.Inputs guideStack = new DetailBackPolicy.Inputs(
+            false,
+            DetailBackPolicy.SourceRoute.GUIDE,
+            DetailBackPolicy.BackTrigger.VISIBLE_BACK_BUTTON
+        );
+
+        DetailBackPolicy.Decision decision = DetailBackPolicy.decide(guideStack);
+        DetailBackPolicy.VisibleBackAffordance affordance = DetailBackPolicy.visibleBackAffordance(guideStack);
+
+        assertEquals(DetailBackPolicy.Effect.FINISH_ACTIVITY, decision.effect);
+        assertEquals(DetailBackPolicy.FinishBehavior.FINISH, decision.finishBehavior);
+        assertEquals(R.string.detail_back, affordance.labelResource);
+        assertEquals(R.string.detail_back_content_description, affordance.contentDescriptionResource);
+        assertFalse(affordance.longPressHomeShortcutEnabled);
+    }
+
+    @Test
+    public void guideSourceVisibleBackUsesHomeChromeAndNavigatesHomeAtTaskRoot() {
+        DetailBackPolicy.Inputs guideTaskRoot = new DetailBackPolicy.Inputs(
+            true,
+            DetailBackPolicy.SourceRoute.GUIDE,
+            DetailBackPolicy.BackTrigger.VISIBLE_BACK_BUTTON
+        );
+
+        DetailBackPolicy.Decision decision = DetailBackPolicy.decide(guideTaskRoot);
+        DetailBackPolicy.VisibleBackAffordance affordance = DetailBackPolicy.visibleBackAffordance(guideTaskRoot);
+
+        assertEquals(DetailBackPolicy.Effect.NAVIGATE_HOME, decision.effect);
+        assertEquals(DetailBackPolicy.FinishBehavior.FINISH, decision.finishBehavior);
+        assertEquals(R.string.home_button, affordance.labelResource);
+        assertEquals(R.string.detail_home_content_description, affordance.contentDescriptionResource);
+        assertFalse(affordance.longPressHomeShortcutEnabled);
+    }
+
+    @Test
+    public void unknownSourceVisibleBackUsesDefaultBackChromeAndFinishesStackedActivity() {
+        DetailBackPolicy.Inputs unknownStack = new DetailBackPolicy.Inputs(
+            false,
+            DetailBackPolicy.SourceRoute.UNKNOWN,
+            DetailBackPolicy.BackTrigger.VISIBLE_BACK_BUTTON
+        );
+
+        DetailBackPolicy.Decision decision = DetailBackPolicy.decide(unknownStack);
+        DetailBackPolicy.VisibleBackAffordance affordance = DetailBackPolicy.visibleBackAffordance(unknownStack);
+
+        assertEquals(DetailBackPolicy.Effect.FINISH_ACTIVITY, decision.effect);
+        assertEquals(DetailBackPolicy.FinishBehavior.FINISH, decision.finishBehavior);
+        assertEquals(R.string.detail_back, affordance.labelResource);
+        assertEquals(R.string.detail_back_content_description, affordance.contentDescriptionResource);
+        assertFalse(affordance.longPressHomeShortcutEnabled);
+    }
+
+    @Test
+    public void unknownSourceVisibleBackUsesHomeChromeAndNavigatesHomeAtTaskRoot() {
+        DetailBackPolicy.Inputs unknownTaskRoot = new DetailBackPolicy.Inputs(
+            true,
+            DetailBackPolicy.SourceRoute.UNKNOWN,
+            DetailBackPolicy.BackTrigger.VISIBLE_BACK_BUTTON
+        );
+
+        DetailBackPolicy.Decision decision = DetailBackPolicy.decide(unknownTaskRoot);
+        DetailBackPolicy.VisibleBackAffordance affordance = DetailBackPolicy.visibleBackAffordance(unknownTaskRoot);
+
+        assertEquals(DetailBackPolicy.Effect.NAVIGATE_HOME, decision.effect);
+        assertEquals(DetailBackPolicy.FinishBehavior.FINISH, decision.finishBehavior);
+        assertEquals(R.string.home_button, affordance.labelResource);
+        assertEquals(R.string.detail_home_content_description, affordance.contentDescriptionResource);
+        assertFalse(affordance.longPressHomeShortcutEnabled);
+    }
+
+    @Test
     public void nullAffordanceInputsNormalizeToStackedSystemBack() {
         DetailBackPolicy.VisibleBackAffordance affordance = DetailBackPolicy.visibleBackAffordance(
             (DetailBackPolicy.Inputs) null
