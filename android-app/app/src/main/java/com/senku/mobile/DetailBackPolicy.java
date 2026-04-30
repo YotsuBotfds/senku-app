@@ -50,6 +50,23 @@ public final class DetailBackPolicy {
         );
     }
 
+    static VisibleBackAffordance visibleBackAffordance(Inputs inputs) {
+        Inputs normalized = inputs == null ? Inputs.defaultState() : inputs.normalized();
+        Decision decision = decide(normalized);
+        if (decision.effect == Effect.NAVIGATE_HOME) {
+            return new VisibleBackAffordance(
+                R.string.home_button,
+                R.string.detail_home_content_description,
+                false
+            );
+        }
+        return new VisibleBackAffordance(
+            R.string.detail_back,
+            R.string.detail_back_content_description,
+            false
+        );
+    }
+
     static boolean shouldFallbackToHome(boolean taskRoot) {
         return decide(taskRoot).effect == Effect.NAVIGATE_HOME;
     }

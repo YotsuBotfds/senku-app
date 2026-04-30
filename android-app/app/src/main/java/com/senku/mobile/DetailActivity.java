@@ -912,7 +912,7 @@ public final class DetailActivity extends AppCompatActivity {
             });
         }
         DetailBackPolicy.VisibleBackAffordance backAffordance =
-            DetailBackPolicy.visibleBackAffordance(isTaskRoot());
+            detailVisibleBackAffordance(DetailBackPolicy.BackTrigger.VISIBLE_BACK_BUTTON);
         backButton.setText(backAffordance.labelResource);
         backButton.setContentDescription(getString(backAffordance.contentDescriptionResource));
         backButton.setOnClickListener(v -> navigateBackFromDetail(DetailBackPolicy.BackTrigger.VISIBLE_BACK_BUTTON));
@@ -8899,7 +8899,10 @@ public final class DetailActivity extends AppCompatActivity {
                 answerMode && !buildTranscriptExportText().isEmpty(),
                 overflowVisible,
                 shouldAllowRev03TopBarTitleWrap() ? 2 : 1,
-                getString(resolveDetailVisibleBackContentDescriptionResource(isTaskRoot())),
+                getString(resolveDetailVisibleBackContentDescriptionResource(
+                    isTaskRoot(),
+                    currentDetailSourceRoute
+                )),
                 getString(R.string.detail_home_content_description),
                 getString(
                     pinActive
@@ -9223,6 +9226,12 @@ public final class DetailActivity extends AppCompatActivity {
         );
     }
 
+    private DetailBackPolicy.VisibleBackAffordance detailVisibleBackAffordance(
+        DetailBackPolicy.BackTrigger trigger
+    ) {
+        return DetailBackPolicy.visibleBackAffordance(detailBackPolicyInputs(trigger));
+    }
+
     private static DetailBackPolicy.SourceRoute sourceRouteFromIntent(Intent intent, boolean answerMode) {
         if (intent == null) {
             return DetailBackPolicy.SourceRoute.UNKNOWN;
@@ -9265,12 +9274,38 @@ public final class DetailActivity extends AppCompatActivity {
         return DetailBackPolicy.visibleBackAffordance(taskRoot).labelResource;
     }
 
+    static int resolveDetailVisibleBackLabelResource(
+        boolean taskRoot,
+        DetailBackPolicy.SourceRoute sourceRoute
+    ) {
+        return DetailBackPolicy.visibleBackAffordance(
+            new DetailBackPolicy.Inputs(
+                taskRoot,
+                sourceRoute,
+                DetailBackPolicy.BackTrigger.VISIBLE_BACK_BUTTON
+            )
+        ).labelResource;
+    }
+
     static int resolveDetailVisibleBackContentDescriptionResource() {
         return resolveDetailVisibleBackContentDescriptionResource(false);
     }
 
     static int resolveDetailVisibleBackContentDescriptionResource(boolean taskRoot) {
         return DetailBackPolicy.visibleBackAffordance(taskRoot).contentDescriptionResource;
+    }
+
+    static int resolveDetailVisibleBackContentDescriptionResource(
+        boolean taskRoot,
+        DetailBackPolicy.SourceRoute sourceRoute
+    ) {
+        return DetailBackPolicy.visibleBackAffordance(
+            new DetailBackPolicy.Inputs(
+                taskRoot,
+                sourceRoute,
+                DetailBackPolicy.BackTrigger.VISIBLE_BACK_BUTTON
+            )
+        ).contentDescriptionResource;
     }
 
     static boolean shouldEnableDetailBackLongPressHomeShortcut() {
@@ -9785,10 +9820,10 @@ public final class DetailActivity extends AppCompatActivity {
         guideReturnMeta.setText(anchorLabel);
         guideReturnMeta.setVisibility(anchorLabel.isEmpty() ? View.GONE : View.VISIBLE);
         guideReturnBody.setText(summary);
-        guideReturnButton.setText(R.string.detail_back);
-        guideReturnButton.setContentDescription(summary.isEmpty()
-            ? getString(R.string.detail_back_content_description)
-            : summary);
+        DetailBackPolicy.VisibleBackAffordance returnAffordance =
+            detailVisibleBackAffordance(DetailBackPolicy.BackTrigger.GUIDE_RETURN);
+        guideReturnButton.setText(returnAffordance.labelResource);
+        guideReturnButton.setContentDescription(getString(returnAffordance.contentDescriptionResource));
         guideReturnButton.setOnClickListener(v -> returnFromGuideNavigationContext());
         guideReturnPanel.setContentDescription(summary.isEmpty() ? buildGuideModeChipText() : summary);
     }

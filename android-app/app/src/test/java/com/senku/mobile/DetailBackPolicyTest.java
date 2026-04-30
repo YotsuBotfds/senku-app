@@ -136,6 +136,39 @@ public final class DetailBackPolicyTest {
     }
 
     @Test
+    public void routeAwareVisibleBackAffordanceNamesHomeWhenBackNavigatesHome() {
+        for (DetailBackPolicy.SourceRoute sourceRoute : DetailBackPolicy.SourceRoute.values()) {
+            for (DetailBackPolicy.BackTrigger trigger : DetailBackPolicy.BackTrigger.values()) {
+                DetailBackPolicy.VisibleBackAffordance stacked = DetailBackPolicy.visibleBackAffordance(
+                    new DetailBackPolicy.Inputs(false, sourceRoute, trigger)
+                );
+                DetailBackPolicy.VisibleBackAffordance taskRoot = DetailBackPolicy.visibleBackAffordance(
+                    new DetailBackPolicy.Inputs(true, sourceRoute, trigger)
+                );
+
+                assertEquals(R.string.detail_back, stacked.labelResource);
+                assertEquals(R.string.detail_back_content_description, stacked.contentDescriptionResource);
+                assertFalse(stacked.longPressHomeShortcutEnabled);
+
+                assertEquals(R.string.home_button, taskRoot.labelResource);
+                assertEquals(R.string.detail_home_content_description, taskRoot.contentDescriptionResource);
+                assertFalse(taskRoot.longPressHomeShortcutEnabled);
+            }
+        }
+    }
+
+    @Test
+    public void nullAffordanceInputsNormalizeToStackedSystemBack() {
+        DetailBackPolicy.VisibleBackAffordance affordance = DetailBackPolicy.visibleBackAffordance(
+            (DetailBackPolicy.Inputs) null
+        );
+
+        assertEquals(R.string.detail_back, affordance.labelResource);
+        assertEquals(R.string.detail_back_content_description, affordance.contentDescriptionResource);
+        assertFalse(affordance.longPressHomeShortcutEnabled);
+    }
+
+    @Test
     public void fallbackPredicateIsTaskRootOnly() {
         assertTrue(DetailBackPolicy.shouldFallbackToHome(true));
         assertFalse(DetailBackPolicy.shouldFallbackToHome(false));
