@@ -877,15 +877,7 @@ public final class PackRepository implements AutoCloseable {
     }
 
     private static int anchorGuideBudget(QueryTerms queryTerms, boolean diversifyContext, int limit) {
-        if (!diversifyContext) {
-            return Math.max(1, limit - 1);
-        }
-        if (queryTerms != null
-            && queryTerms.metadataProfile != null
-            && queryTerms.metadataProfile.hasExplicitTopic("water_distribution")) {
-            return Math.min(limit, 3);
-        }
-        return Math.min(limit, 2);
+        return PackAnswerContextPolicy.anchorGuideBudget(queryTerms, diversifyContext, limit);
     }
 
     static boolean shouldSeedAnchorBeforeSupportForTest(String query, boolean diversifyContext) {
@@ -893,10 +885,7 @@ public final class PackRepository implements AutoCloseable {
     }
 
     private static boolean shouldSeedAnchorBeforeSupport(QueryTerms queryTerms, boolean diversifyContext) {
-        return diversifyContext
-            && queryTerms != null
-            && queryTerms.metadataProfile != null
-            && queryTerms.metadataProfile.hasExplicitTopic("water_distribution");
+        return PackAnswerContextPolicy.shouldSeedAnchorBeforeSupport(queryTerms, diversifyContext);
     }
 
     static boolean shouldApplyMetadataRerankForTest(String query) {

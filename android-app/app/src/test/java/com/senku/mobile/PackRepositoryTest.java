@@ -2737,6 +2737,22 @@ public final class PackRepositoryTest {
     }
 
     @Test
+    public void answerContextAnchorBudgetKeepsDefaultOrderingRules() {
+        assertEquals(
+            3,
+            PackRepository.anchorGuideBudgetForTest("how do i build a tarp shelter", false, 4)
+        );
+        assertEquals(
+            2,
+            PackRepository.anchorGuideBudgetForTest("how do i build a tarp shelter", true, 4)
+        );
+        assertEquals(
+            false,
+            PackRepository.shouldSeedAnchorBeforeSupportForTest("how do i build a tarp shelter", true)
+        );
+    }
+
+    @Test
     public void buildGuideAnswerContextAdmitsMetadataMatchedVectorSupportRow() {
         String query = "How do I build a simple rain shelter from tarp and cord?";
         SearchResult anchor = new SearchResult(
