@@ -473,6 +473,34 @@ final class RetrievalRoutePolicy {
         return Math.max(limit * 4, 160);
     }
 
+    static boolean allowsWaterDistributionSupportCandidate(
+        boolean distributionTagged,
+        int sectionBonus,
+        boolean strongGuideSignal,
+        String retrievalMode,
+        boolean missingSectionHeading,
+        String contentRole,
+        boolean hasDistractorSignal
+    ) {
+        if (!distributionTagged && sectionBonus <= 0 && !strongGuideSignal) {
+            return false;
+        }
+        if (sectionBonus < 0 && !strongGuideSignal) {
+            return false;
+        }
+        String mode = safe(retrievalMode).trim().toLowerCase(QUERY_LOCALE);
+        String role = safe(contentRole).trim().toLowerCase(QUERY_LOCALE);
+        if ("guide-focus".equals(mode) && missingSectionHeading) {
+            if (("reference".equals(role) || "safety".equals(role)) && sectionBonus <= 0) {
+                return false;
+            }
+            if (hasDistractorSignal) {
+                return false;
+            }
+        }
+        return !hasDistractorSignal || sectionBonus > 0;
+    }
+
     static int supportStructurePenalty(boolean diversifyContext, String retrievalMode, String sectionHeading) {
         if (!safe(sectionHeading).trim().isEmpty()) {
             return 0;

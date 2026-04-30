@@ -112,4 +112,72 @@ public final class RetrievalRoutePolicyTest {
         assertEquals(-18, RetrievalRoutePolicy.supportStructurePenalty(true, "route-focus", ""));
         assertEquals(0, RetrievalRoutePolicy.supportStructurePenalty(true, "route-focus", "Water Storage"));
     }
+
+    @Test
+    public void waterDistributionSupportRequiresRouteSignal() {
+        assertEquals(
+            false,
+            RetrievalRoutePolicy.allowsWaterDistributionSupportCandidate(
+                false,
+                0,
+                false,
+                "route-focus",
+                false,
+                "",
+                false
+            )
+        );
+        assertEquals(
+            true,
+            RetrievalRoutePolicy.allowsWaterDistributionSupportCandidate(
+                true,
+                0,
+                false,
+                "route-focus",
+                false,
+                "",
+                false
+            )
+        );
+    }
+
+    @Test
+    public void waterDistributionSupportFiltersGuideFocusDistractors() {
+        assertEquals(
+            false,
+            RetrievalRoutePolicy.allowsWaterDistributionSupportCandidate(
+                true,
+                0,
+                false,
+                "guide-focus",
+                true,
+                "reference",
+                false
+            )
+        );
+        assertEquals(
+            false,
+            RetrievalRoutePolicy.allowsWaterDistributionSupportCandidate(
+                true,
+                0,
+                true,
+                "guide-focus",
+                true,
+                "",
+                true
+            )
+        );
+        assertEquals(
+            true,
+            RetrievalRoutePolicy.allowsWaterDistributionSupportCandidate(
+                false,
+                1,
+                false,
+                "route-focus",
+                false,
+                "",
+                true
+            )
+        );
+    }
 }

@@ -4550,24 +4550,15 @@ public final class PackRepository implements AutoCloseable {
         if ("water_distribution".equals(metadataProfile.preferredStructureType())) {
             boolean distributionTagged = containsTerm(candidate.topicTags, "water_distribution");
             boolean strongGuideSignal = hasStrongWaterDistributionGuideSignal(candidate);
-            if (!distributionTagged && sectionBonus <= 0 && !strongGuideSignal) {
-                return false;
-            }
-            if (sectionBonus < 0 && !strongGuideSignal) {
-                return false;
-            }
-            String normalizedRole = emptySafe(candidate.contentRole).trim().toLowerCase(QUERY_LOCALE);
-            if ("guide-focus".equals(retrievalMode) && emptySafe(candidate.sectionHeading).trim().isEmpty()) {
-                if (("reference".equals(normalizedRole) || "safety".equals(normalizedRole))
-                    && sectionBonus <= 0) {
-                    return false;
-                }
-                if (containsAnyMarker(candidateText, WATER_DISTRIBUTION_DISTRACTOR_MARKERS)) {
-                    return false;
-                }
-            }
-            if (containsAnyMarker(candidateText, WATER_DISTRIBUTION_DISTRACTOR_MARKERS)
-                && sectionBonus <= 0) {
+            if (!RetrievalRoutePolicy.allowsWaterDistributionSupportCandidate(
+                distributionTagged,
+                sectionBonus,
+                strongGuideSignal,
+                retrievalMode,
+                emptySafe(candidate.sectionHeading).trim().isEmpty(),
+                candidate.contentRole,
+                containsAnyMarker(candidateText, WATER_DISTRIBUTION_DISTRACTOR_MARKERS)
+            )) {
                 return false;
             }
         }
