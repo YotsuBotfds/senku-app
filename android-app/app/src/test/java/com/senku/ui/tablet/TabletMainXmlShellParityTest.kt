@@ -87,16 +87,8 @@ class TabletMainXmlShellParityTest {
             height = "48dp",
             horizontalPadding = "32dp",
         )
-        assertSearchChromeRow(
-            qualifier = "layout-sw600dp-port",
-            height = "54dp",
-            horizontalPadding = "18dp",
-        )
-        assertSearchChromeRow(
-            qualifier = "layout-sw600dp-land",
-            height = "48dp",
-            horizontalPadding = "32dp",
-        )
+        assertSearchChromeRowHidden(qualifier = "layout-sw600dp-port")
+        assertSearchChromeRowHidden(qualifier = "layout-sw600dp-land")
     }
 
     @Test
@@ -228,11 +220,7 @@ class TabletMainXmlShellParityTest {
         assertEquals("@color/senku_rev03_hairline_strong", bottomRule.android("background"))
     }
 
-    private fun assertSearchChromeRow(
-        qualifier: String,
-        height: String,
-        horizontalPadding: String,
-    ) {
+    private fun assertSearchChromeRowHidden(qualifier: String) {
         val layout = layout(qualifier)
         val row = layout.elementByAndroidId("tablet_search_topbar_row")
         val query = layout.elementByAndroidId("tablet_search_query_text")
@@ -240,13 +228,9 @@ class TabletMainXmlShellParityTest {
         val searchIcon = children[0]
         val count = children[2]
         val bottomRule = layout.elementByAndroidId("tablet_search_bottom_rule")
-        val verticalPadding = if (height == "48dp") "9dp" else "12dp"
 
-        assertEquals("$qualifier search topbar height", height, row.android("layout_height"))
-        assertEquals("$qualifier search topbar start padding", horizontalPadding, row.android("paddingStart"))
-        assertEquals("$qualifier search topbar end padding", horizontalPadding, row.android("paddingEnd"))
-        assertEquals("$qualifier search topbar top padding", verticalPadding, row.android("paddingTop"))
-        assertEquals("$qualifier search topbar bottom padding", verticalPadding, row.android("paddingBottom"))
+        assertEquals("$qualifier search topbar height", "0dp", row.android("layout_height"))
+        assertEquals("$qualifier search topbar hidden", "gone", row.android("visibility"))
         assertEquals(
             "$qualifier search topbar child token order",
             listOf("ImageView", "TextView", "TextView"),
@@ -268,7 +252,8 @@ class TabletMainXmlShellParityTest {
         assertEquals("@font/jetbrains_mono", count.android("fontFamily"))
         assertEquals("12sp", count.android("textSize"))
         assertEquals("16sp", count.android("lineHeight"))
-        assertEquals("1dp", bottomRule.android("layout_height"))
+        assertEquals("0dp", bottomRule.android("layout_height"))
+        assertEquals("gone", bottomRule.android("visibility"))
         assertEquals("@color/senku_rev03_hairline_strong", bottomRule.android("background"))
     }
 

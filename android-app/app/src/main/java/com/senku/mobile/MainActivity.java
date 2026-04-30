@@ -65,6 +65,11 @@ public final class MainActivity extends AppCompatActivity {
         ASK
     }
 
+    enum HomeChromeBackAction {
+        RETURN_TO_BROWSE,
+        NO_OP
+    }
+
     private static final String EXTRA_AUTO_QUERY = "auto_query";
     private static final String EXTRA_AUTO_ASK = "auto_ask";
     private static final String EXTRA_AUTO_FOLLOWUP_QUERY = "auto_followup_query";
@@ -99,8 +104,8 @@ public final class MainActivity extends AppCompatActivity {
     private static final float TABLET_HOME_RECENT_LANDSCAPE_WEIGHT = 1.02f;
     private static final float TABLET_HOME_PRIMARY_PORTRAIT_WEIGHT = 1.02f;
     private static final float TABLET_HOME_RECENT_PORTRAIT_WEIGHT = 0.90f;
-    private static final int TABLET_HOME_LANDSCAPE_TOP_PADDING_DP = 18;
-    private static final int TABLET_HOME_PORTRAIT_TOP_PADDING_DP = 42;
+    private static final int TABLET_HOME_LANDSCAPE_TOP_PADDING_DP = 12;
+    private static final int TABLET_HOME_PORTRAIT_TOP_PADDING_DP = 24;
     private static final int TABLET_SEARCH_FILTER_RAIL_LANDSCAPE_WIDTH_DP = 331;
     private static final int TABLET_SEARCH_PREVIEW_RAIL_LANDSCAPE_WIDTH_DP = 441;
     private static final String REVIEW_SEARCH_QUERY = "rain shelter";
@@ -2878,6 +2883,14 @@ public final class MainActivity extends AppCompatActivity {
             : TABLET_HOME_PORTRAIT_TOP_PADDING_DP;
     }
 
+    static HomeChromeBackAction resolveHomeChromeBackActionForTest(boolean browseMode) {
+        return resolveHomeChromeBackAction(browseMode);
+    }
+
+    private static HomeChromeBackAction resolveHomeChromeBackAction(boolean browseMode) {
+        return browseMode ? HomeChromeBackAction.NO_OP : HomeChromeBackAction.RETURN_TO_BROWSE;
+    }
+
     static int resolveTabletSearchFilterRailWidthDp(boolean landscapeTabletLayout) {
         return landscapeTabletLayout ? TABLET_SEARCH_FILTER_RAIL_LANDSCAPE_WIDTH_DP : 0;
     }
@@ -4964,12 +4977,10 @@ public final class MainActivity extends AppCompatActivity {
     }
 
     private void handleHomeChromeBack() {
-        if (!isBrowseModeActive()) {
+        if (resolveHomeChromeBackAction(isBrowseModeActive()) == HomeChromeBackAction.RETURN_TO_BROWSE) {
             setPhoneTabFromFlow(BottomTabDestination.HOME);
             showBrowseChrome(true);
-            return;
         }
-        moveTaskToBack(true);
     }
 
     private void updateTabletSearchPreview() {

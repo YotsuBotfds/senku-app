@@ -270,8 +270,20 @@ public final class MainActivityHomeChromeTest {
         assertEquals(1.02f, MainActivity.resolveTabletHomeRecentWeight(true), 0.001f);
         assertEquals(1.02f, MainActivity.resolveTabletHomePrimaryWeight(false), 0.001f);
         assertEquals(0.90f, MainActivity.resolveTabletHomeRecentWeight(false), 0.001f);
-        assertEquals(18, MainActivity.resolveTabletHomeTopPaddingDp(true));
-        assertEquals(42, MainActivity.resolveTabletHomeTopPaddingDp(false));
+        assertEquals(12, MainActivity.resolveTabletHomeTopPaddingDp(true));
+        assertEquals(24, MainActivity.resolveTabletHomeTopPaddingDp(false));
+    }
+
+    @Test
+    public void homeChromeBackReturnsSearchToBrowseButKeepsBrowseInPlace() {
+        assertEquals(
+            MainActivity.HomeChromeBackAction.RETURN_TO_BROWSE,
+            MainActivity.resolveHomeChromeBackActionForTest(false)
+        );
+        assertEquals(
+            MainActivity.HomeChromeBackAction.NO_OP,
+            MainActivity.resolveHomeChromeBackActionForTest(true)
+        );
     }
 
     @Test
