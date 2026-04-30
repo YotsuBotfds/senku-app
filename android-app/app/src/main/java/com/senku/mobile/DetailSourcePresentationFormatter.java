@@ -390,6 +390,27 @@ final class DetailSourcePresentationFormatter {
         return builder.toString().trim();
     }
 
+    SearchResult mergeGuideForSourceNavigation(SearchResult source, SearchResult loadedGuide) {
+        if (loadedGuide == null) {
+            return source;
+        }
+        String sectionHeading = safe(source == null ? null : source.sectionHeading).trim();
+        return new SearchResult(
+            safe(loadedGuide.title),
+            safe(loadedGuide.subtitle),
+            safe(loadedGuide.snippet),
+            safe(loadedGuide.body),
+            safe(loadedGuide.guideId),
+            sectionHeading,
+            safe(loadedGuide.category),
+            safe(loadedGuide.retrievalMode),
+            safe(loadedGuide.contentRole),
+            safe(loadedGuide.timeHorizon),
+            safe(loadedGuide.structureType),
+            safe(loadedGuide.topicTags)
+        );
+    }
+
     private static boolean isAnchorEvidenceCard(int position, String mode) {
         String normalized = safe(mode).trim().toLowerCase(Locale.US);
         return position <= 0 || "anchor".equals(normalized) || "primary".equals(normalized);

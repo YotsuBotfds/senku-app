@@ -9015,7 +9015,7 @@ public final class DetailActivity extends AppCompatActivity {
         if (!ReviewDemoPolicy.isSourceStackDemoEnabled(productReviewMode)) {
             return safeSources;
         }
-        SearchResult topicSource = rainShelterTopicSource(safeSources);
+        SearchResult topicSource = DetailRelatedGuidePresentationFormatter.rainShelterTopicSource(safeSources);
         if (topicSource == null) {
             return safeSources;
         }
@@ -9679,55 +9679,8 @@ public final class DetailActivity extends AppCompatActivity {
         String selectedSourceKey,
         List<SearchResult> currentSources
     ) {
-        List<SearchResult> safeSources = currentSources == null ? Collections.emptyList() : currentSources;
-        if (!safe(selectedSourceKey).isEmpty()) {
-            for (SearchResult source : safeSources) {
-                if (safe(buildStaticSourceSelectionKey(source)).equals(selectedSourceKey)) {
-                    return safe(source == null ? null : source.guideId).trim().isEmpty()
-                        ? null
-                        : source;
-                }
-            }
-        }
-        SearchResult topicSource = answerMode && ReviewDemoPolicy.isSourceStackDemoEnabled(productReviewMode)
-            ? rainShelterTopicSource(safeSources)
-            : null;
-        if (topicSource != null) {
-            return topicSource;
-        }
-        for (SearchResult source : safeSources) {
-            if (!safe(source == null ? null : source.guideId).trim().isEmpty()) {
-                return source;
-            }
-        }
-        return null;
-    }
-
-    private static SearchResult rainShelterTopicSource(List<SearchResult> sources) {
-        if (sources == null || sources.isEmpty()) {
-            return null;
-        }
-        for (SearchResult source : sources) {
-            String guideId = safe(source == null ? null : source.guideId).trim();
-            if (!"GD-345".equalsIgnoreCase(guideId)) {
-                continue;
-            }
-            String combined = (
-                safe(source.title) + " " +
-                    safe(source.sectionHeading) + " " +
-                    safe(source.snippet) + " " +
-                    safe(source.body) + " " +
-                    safe(source.topicTags) + " " +
-                    safe(source.structureType)
-            ).toLowerCase(Locale.US);
-            if (combined.contains("tarp")
-                || combined.contains("cord")
-                || combined.contains("rain shelter")
-                || combined.contains("primitive shelter")) {
-                return source;
-            }
-        }
-        return null;
+        return new DetailRelatedGuidePresentationFormatter(null, productReviewMode)
+            .selectedSourceForRelatedGuideGraph(answerMode, productReviewMode, selectedSourceKey, currentSources);
     }
 
     private String buildCompactNextStepsSubtitle(int nextStepCount) {
@@ -9918,7 +9871,7 @@ public final class DetailActivity extends AppCompatActivity {
                 PackRepository repo = ensureRepository();
                 SearchResult loadedGuide = repo.loadGuideById(guideId);
                 if (loadedGuide != null) {
-                    previewGuide = mergeRelatedGuideForPreview(relatedGuide, loadedGuide);
+                    previewGuide = detailRelatedGuidePresentationFormatter().mergeRelatedGuideForPreview(relatedGuide, loadedGuide);
                 }
             } catch (Exception exc) {
                 Log.w(TAG, "detail.relatedGuidePreview.loadFailed guideId=" + guideId, exc);
@@ -9943,26 +9896,6 @@ public final class DetailActivity extends AppCompatActivity {
                 }
             });
         });
-    }
-
-    private SearchResult mergeRelatedGuideForPreview(SearchResult relatedGuide, SearchResult loadedGuide) {
-        if (loadedGuide == null) {
-            return relatedGuide;
-        }
-        return new SearchResult(
-            safe(loadedGuide.title).isEmpty() ? safe(relatedGuide == null ? null : relatedGuide.title) : safe(loadedGuide.title),
-            safe(loadedGuide.subtitle).isEmpty() ? safe(relatedGuide == null ? null : relatedGuide.subtitle) : safe(loadedGuide.subtitle),
-            safe(loadedGuide.snippet).isEmpty() ? safe(relatedGuide == null ? null : relatedGuide.snippet) : safe(loadedGuide.snippet),
-            safe(loadedGuide.body).isEmpty() ? safe(relatedGuide == null ? null : relatedGuide.body) : safe(loadedGuide.body),
-            safe(loadedGuide.guideId).isEmpty() ? safe(relatedGuide == null ? null : relatedGuide.guideId) : safe(loadedGuide.guideId),
-            safe(loadedGuide.sectionHeading).isEmpty() ? safe(relatedGuide == null ? null : relatedGuide.sectionHeading) : safe(loadedGuide.sectionHeading),
-            safe(loadedGuide.category).isEmpty() ? safe(relatedGuide == null ? null : relatedGuide.category) : safe(loadedGuide.category),
-            safe(loadedGuide.retrievalMode).isEmpty() ? safe(relatedGuide == null ? null : relatedGuide.retrievalMode) : safe(loadedGuide.retrievalMode),
-            safe(loadedGuide.contentRole).isEmpty() ? safe(relatedGuide == null ? null : relatedGuide.contentRole) : safe(loadedGuide.contentRole),
-            safe(loadedGuide.timeHorizon).isEmpty() ? safe(relatedGuide == null ? null : relatedGuide.timeHorizon) : safe(loadedGuide.timeHorizon),
-            safe(loadedGuide.structureType).isEmpty() ? safe(relatedGuide == null ? null : relatedGuide.structureType) : safe(loadedGuide.structureType),
-            safe(loadedGuide.topicTags).isEmpty() ? safe(relatedGuide == null ? null : relatedGuide.topicTags) : safe(loadedGuide.topicTags)
-        );
     }
 
     private String buildRelatedGuidePreviewBody(SearchResult relatedGuide, boolean loadingFallbackAllowed) {
@@ -11601,7 +11534,7 @@ public final class DetailActivity extends AppCompatActivity {
                 PackRepository repo = ensureRepository();
                 SearchResult loadedGuide = repo.loadGuideById(guideId);
                 if (loadedGuide != null) {
-                    target = mergeGuideForSourceNavigation(fallback, loadedGuide);
+                    target = detailSourcePresentationFormatter().mergeGuideForSourceNavigation(fallback, loadedGuide);
                 }
             } catch (Exception exc) {
                 Log.w(TAG, "openSourceGuide.loadFailed guideId=" + guideId, exc);
@@ -11645,7 +11578,7 @@ public final class DetailActivity extends AppCompatActivity {
                 PackRepository repo = ensureRepository();
                 SearchResult loadedGuide = repo.loadGuideById(guideId);
                 if (loadedGuide != null) {
-                    target = mergeGuideForSourceNavigation(fallback, loadedGuide);
+                    target = detailSourcePresentationFormatter().mergeGuideForSourceNavigation(fallback, loadedGuide);
                 }
             } catch (Exception exc) {
                 Log.w(TAG, "openCrossReferenceGuide.loadFailed guideId=" + guideId, exc);
@@ -11664,27 +11597,6 @@ public final class DetailActivity extends AppCompatActivity {
                 ));
             });
         });
-    }
-
-    private static SearchResult mergeGuideForSourceNavigation(SearchResult source, SearchResult loadedGuide) {
-        if (loadedGuide == null) {
-            return source;
-        }
-        String sectionHeading = safe(source == null ? null : source.sectionHeading).trim();
-        return new SearchResult(
-            safe(loadedGuide.title),
-            safe(loadedGuide.subtitle),
-            safe(loadedGuide.snippet),
-            safe(loadedGuide.body),
-            safe(loadedGuide.guideId),
-            sectionHeading,
-            safe(loadedGuide.category),
-            safe(loadedGuide.retrievalMode),
-            safe(loadedGuide.contentRole),
-            safe(loadedGuide.timeHorizon),
-            safe(loadedGuide.structureType),
-            safe(loadedGuide.topicTags)
-        );
     }
 
     static final class ActionBlockRenderPolicy {

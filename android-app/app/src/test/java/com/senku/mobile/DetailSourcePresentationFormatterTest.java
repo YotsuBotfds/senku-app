@@ -493,6 +493,51 @@ public final class DetailSourcePresentationFormatterTest {
         assertEquals(List.of(first, second), ordered);
     }
 
+    @Test
+    public void sourceNavigationMergeUsesLoadedGuideButPreservesTappedSection() {
+        DetailSourcePresentationFormatter formatter = new DetailSourcePresentationFormatter(null);
+
+        SearchResult merged = formatter.mergeGuideForSourceNavigation(
+            new SearchResult(
+                "Card title",
+                "Card subtitle",
+                "Card snippet",
+                "Card body",
+                "GD-214",
+                "Tapped section",
+                "card-category",
+                "vector"
+            ),
+            new SearchResult(
+                "Loaded title",
+                "Loaded subtitle",
+                "Loaded snippet",
+                "Loaded body",
+                "GD-214",
+                "Loaded section",
+                "water",
+                "guide-focus",
+                "source_anchor",
+                "long",
+                "howto",
+                "storage"
+            )
+        );
+
+        assertEquals("Loaded title", merged.title);
+        assertEquals("Loaded subtitle", merged.subtitle);
+        assertEquals("Loaded snippet", merged.snippet);
+        assertEquals("Loaded body", merged.body);
+        assertEquals("GD-214", merged.guideId);
+        assertEquals("Tapped section", merged.sectionHeading);
+        assertEquals("water", merged.category);
+        assertEquals("guide-focus", merged.retrievalMode);
+        assertEquals("source_anchor", merged.contentRole);
+        assertEquals("long", merged.timeHorizon);
+        assertEquals("howto", merged.structureType);
+        assertEquals("storage", merged.topicTags);
+    }
+
     private static SearchResult reviewedStackResult(String guideId, String title, String text) {
         return new SearchResult(
             text,

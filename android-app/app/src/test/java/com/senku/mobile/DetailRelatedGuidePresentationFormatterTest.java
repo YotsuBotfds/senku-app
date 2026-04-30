@@ -1,6 +1,9 @@
 package com.senku.mobile;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+
+import java.util.Arrays;
 
 import org.junit.Test;
 
@@ -371,5 +374,124 @@ public final class DetailRelatedGuidePresentationFormatterTest {
             "GD-027 \u00b7 Primitive Technology & Stone Age",
             formatter.buildAnswerModeRelatedGuideButtonLabel(guides[3])
         );
+    }
+
+    @Test
+    public void relatedGuideGraphAnchorUsesSelectedSourceWhenItHasGuideId() {
+        DetailRelatedGuidePresentationFormatter formatter = new DetailRelatedGuidePresentationFormatter(null, false);
+        SearchResult selected = new SearchResult("Rainwater Catchment", "", "", "", "GD-215", "Storage", "", "");
+        String selectedKey = DetailProvenancePresentationFormatter.buildSourceSelectionKey(selected);
+
+        assertEquals(
+            "GD-215",
+            formatter.selectedSourceForRelatedGuideGraph(
+                true,
+                false,
+                selectedKey,
+                Arrays.asList(
+                    new SearchResult("Water Storage", "", "", "", "GD-214", "", "", ""),
+                    selected
+                )
+            ).guideId
+        );
+    }
+
+    @Test
+    public void relatedGuideGraphAnchorRejectsSelectedPlaceholder() {
+        DetailRelatedGuidePresentationFormatter formatter = new DetailRelatedGuidePresentationFormatter(null, false);
+        SearchResult placeholder = new SearchResult("Placeholder", "", "", "", "", "", "", "");
+        String selectedKey = DetailProvenancePresentationFormatter.buildSourceSelectionKey(placeholder);
+
+        assertNull(
+            formatter.selectedSourceForRelatedGuideGraph(
+                true,
+                false,
+                selectedKey,
+                Arrays.asList(
+                    placeholder,
+                    new SearchResult("Water Storage", "", "", "", "GD-214", "", "", "")
+                )
+            )
+        );
+    }
+
+    @Test
+    public void relatedGuideGraphAnchorPromotesRainShelterOnlyInReviewMode() {
+        SearchResult anchor = new SearchResult("Abrasives Manufacturing", "", "", "", "GD-220", "", "", "");
+        SearchResult rainShelter = new SearchResult(
+            "Tarp & Cord Shelters",
+            "",
+            "",
+            "",
+            "GD-345",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "rain shelter tarp cord"
+        );
+
+        assertEquals(
+            "GD-220",
+            new DetailRelatedGuidePresentationFormatter(null, false)
+                .selectedSourceForRelatedGuideGraph(true, false, "", Arrays.asList(anchor, rainShelter))
+                .guideId
+        );
+        assertEquals(
+            "GD-345",
+            new DetailRelatedGuidePresentationFormatter(null, true)
+                .selectedSourceForRelatedGuideGraph(true, true, "", Arrays.asList(anchor, rainShelter))
+                .guideId
+        );
+    }
+
+    @Test
+    public void relatedGuidePreviewMergeKeepsListMetadataWhenLoadedGuideOmitsFields() {
+        DetailRelatedGuidePresentationFormatter formatter = new DetailRelatedGuidePresentationFormatter(null);
+
+        SearchResult merged = formatter.mergeRelatedGuideForPreview(
+            new SearchResult(
+                "List title",
+                "List subtitle",
+                "List snippet",
+                "List body",
+                "GD-215",
+                "List section",
+                "water",
+                "related",
+                "cross_reference",
+                "",
+                "",
+                "rainwater"
+            ),
+            new SearchResult(
+                "Loaded title",
+                "",
+                "",
+                "Loaded body",
+                "GD-215",
+                "",
+                "",
+                "guide-focus",
+                "",
+                "long",
+                "howto",
+                ""
+            )
+        );
+
+        assertEquals("Loaded title", merged.title);
+        assertEquals("List subtitle", merged.subtitle);
+        assertEquals("List snippet", merged.snippet);
+        assertEquals("Loaded body", merged.body);
+        assertEquals("List section", merged.sectionHeading);
+        assertEquals("water", merged.category);
+        assertEquals("guide-focus", merged.retrievalMode);
+        assertEquals("cross_reference", merged.contentRole);
+        assertEquals("long", merged.timeHorizon);
+        assertEquals("howto", merged.structureType);
+        assertEquals("rainwater", merged.topicTags);
     }
 }
