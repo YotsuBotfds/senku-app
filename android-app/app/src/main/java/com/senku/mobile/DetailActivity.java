@@ -9165,7 +9165,9 @@ public final class DetailActivity extends AppCompatActivity {
         boolean compactPortraitPhone,
         String pinnableGuideId
     ) {
-        return false;
+        return answerMode
+            && phoneXmlDetailLayoutActive
+            && !safe(pinnableGuideId).trim().isEmpty();
     }
 
     private void showDetailOverflowMenu() {

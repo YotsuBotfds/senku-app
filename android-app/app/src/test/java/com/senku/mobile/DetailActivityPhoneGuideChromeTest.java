@@ -69,10 +69,18 @@ public final class DetailActivityPhoneGuideChromeTest {
     @Test
     public void phonePortraitGuideOverflowStaysHiddenBecauseActionsAreExplicit() {
         assertFalse(DetailActivity.shouldShowDetailOverflowAction(false, true, true, "GD-132"));
-        assertFalse(DetailActivity.shouldShowDetailOverflowAction(true, true, true, "GD-132"));
         assertFalse(DetailActivity.shouldShowDetailOverflowAction(false, false, true, "GD-132"));
         assertFalse(DetailActivity.shouldShowDetailOverflowAction(false, true, false, "GD-132"));
         assertFalse(DetailActivity.shouldShowDetailOverflowAction(false, true, true, ""));
+    }
+
+    @Test
+    public void phoneAnswerOverflowProvidesSavePathWhenDirectPinIsSuppressed() {
+        assertTrue(DetailActivity.shouldShowDetailOverflowAction(true, true, true, "GD-132"));
+        assertTrue(DetailActivity.shouldShowDetailOverflowAction(true, true, false, "GD-132"));
+        assertFalse(DetailActivity.shouldShowDetailOverflowAction(true, true, true, ""));
+        assertFalse(DetailActivity.shouldShowDetailOverflowAction(true, true, true, "   "));
+        assertFalse(DetailActivity.shouldShowDetailOverflowAction(true, false, true, "GD-132"));
     }
 
     @Test
