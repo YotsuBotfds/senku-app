@@ -43,14 +43,15 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
+            android:contentDescription="@string/bottom_tab_home"
             android:gravity="center"
             android:orientation="vertical">
 
             <ImageView
                 android:id="@+id/phone_nav_home_icon"
-                android:layout_width="22dp"
-                android:layout_height="22dp"
-                android:contentDescription="@string/browse_guides_button"
+                android:layout_width="@dimen/senku_rev03_nav_rail_icon"
+                android:layout_height="@dimen/senku_rev03_nav_rail_icon"
+                android:contentDescription="@string/bottom_tab_home"
                 android:src="@drawable/ic_home_library"
                 android:tint="@color/senku_rev03_accent" />
 
@@ -62,7 +63,7 @@
                 android:fontFamily="@font/inter_tight"
                 android:gravity="center"
                 android:includeFontPadding="false"
-                android:text="Library"
+                android:text="@string/bottom_tab_home"
                 android:textAppearance="@style/TextAppearance.Senku.Rev03.NavLabel"
                 android:textColor="@color/senku_rev03_accent"
                 android:textStyle="bold" />
@@ -73,14 +74,15 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="18dp"
+            android:contentDescription="@string/bottom_tab_ask"
             android:gravity="center"
             android:orientation="vertical">
 
             <ImageView
                 android:id="@+id/phone_nav_ask_icon"
-                android:layout_width="22dp"
-                android:layout_height="22dp"
-                android:contentDescription="@string/ask_button"
+                android:layout_width="@dimen/senku_rev03_nav_rail_icon"
+                android:layout_height="@dimen/senku_rev03_nav_rail_icon"
+                android:contentDescription="@string/bottom_tab_ask"
                 android:src="@drawable/ic_home_ask"
                 android:tint="@color/senku_rev03_ink_2" />
 
@@ -92,7 +94,7 @@
                 android:fontFamily="@font/inter_tight"
                 android:gravity="center"
                 android:includeFontPadding="false"
-                android:text="Ask"
+                android:text="@string/bottom_tab_ask"
                 android:textAppearance="@style/TextAppearance.Senku.Rev03.NavLabel"
                 android:textColor="@color/senku_rev03_ink_2" />
         </LinearLayout>
@@ -102,13 +104,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="18dp"
+            android:contentDescription="@string/bottom_tab_pins"
             android:gravity="center"
             android:orientation="vertical">
 
             <ImageView
                 android:id="@+id/phone_nav_pins_icon"
-                android:layout_width="22dp"
-                android:layout_height="22dp"
+                android:layout_width="@dimen/senku_rev03_nav_rail_icon"
+                android:layout_height="@dimen/senku_rev03_nav_rail_icon"
                 android:contentDescription="@string/bottom_tab_pins"
                 android:src="@drawable/ic_home_saved"
                 android:tint="@color/senku_rev03_ink_2" />

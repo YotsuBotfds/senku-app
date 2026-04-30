@@ -35,5 +35,6 @@
     <dimen name="senku_rev03_corner_medium">14dp</dimen>
     <dimen name="senku_rev03_toolbar_button">34dp</dimen>
     <dimen name="senku_rev03_identity_strip_height">36dp</dimen>
+    <dimen name="senku_rev03_nav_rail_icon">22dp</dimen>
     <dimen name="senku_rev03_bottom_tab_icon">19dp</dimen>
 </resources>

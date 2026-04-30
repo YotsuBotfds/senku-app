@@ -100,8 +100,8 @@ class TabletMainXmlShellParityTest {
 
         listOf("phone_nav_home_icon", "phone_nav_ask_icon", "phone_nav_pins_icon").forEach { id ->
             val icon = layout.elementByAndroidId(id)
-            assertEquals("22dp", icon.android("layout_width"))
-            assertEquals("22dp", icon.android("layout_height"))
+            assertEquals("@dimen/senku_rev03_nav_rail_icon", icon.android("layout_width"))
+            assertEquals("@dimen/senku_rev03_nav_rail_icon", icon.android("layout_height"))
         }
 
         listOf("phone_nav_home_label", "phone_nav_ask_label", "phone_nav_pins_label").forEach { id ->

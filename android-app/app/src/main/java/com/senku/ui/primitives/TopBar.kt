@@ -305,18 +305,18 @@ private fun TopBarActionButton(
                 }
             )
             .clip(shape)
-            .background(containerColor)
-            .clickable(
-                enabled = action.isEnabled,
-                role = Role.Button,
-                onClick = onClick,
-            )
             .semantics(mergeDescendants = true) {
                 contentDescription = action.contentDescription
                 if (action.kind == TopBarActionKind.Pin) {
                     selected = action.isActive
                 }
-            },
+            }
+            .background(containerColor)
+            .clickable(
+                enabled = action.isEnabled,
+                role = Role.Button,
+                onClick = onClick,
+            ),
         contentAlignment = Alignment.Center,
     ) {
         if (action.kind == TopBarActionKind.Back) {

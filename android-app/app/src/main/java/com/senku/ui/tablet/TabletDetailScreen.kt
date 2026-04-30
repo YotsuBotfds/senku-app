@@ -40,8 +40,11 @@ import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.isTraversalGroup
 import androidx.compose.ui.semantics.paneTitle
+import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.traversalIndex
 import androidx.compose.ui.text.font.FontStyle
@@ -1783,12 +1786,14 @@ private fun GuideSectionRailToolbar(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         GuideSectionRailAction(
+            contentDescription = "Back to previous screen",
             active = false,
             onClick = onBackClick,
         ) {
             GuideRailBackGlyph()
         }
         GuideSectionRailAction(
+            contentDescription = "Return to library",
             active = false,
             onClick = onHomeClick,
         ) {
@@ -1797,6 +1802,11 @@ private fun GuideSectionRailToolbar(
         Spacer(modifier = Modifier.weight(1f))
         if (pinVisible) {
             GuideSectionRailAction(
+                contentDescription = if (pinActive) {
+                    "Remove guide from quick access"
+                } else {
+                    "Pin guide for quick access"
+                },
                 active = pinActive,
                 onClick = onPinClick,
             ) {
@@ -1813,6 +1823,7 @@ private fun GuideSectionRailToolbar(
 
 @Composable
 private fun GuideSectionRailAction(
+    contentDescription: String,
     active: Boolean,
     onClick: () -> Unit,
     glyph: @Composable () -> Unit,
@@ -1820,12 +1831,19 @@ private fun GuideSectionRailAction(
     val colors = SenkuTheme.colors
     Surface(
         modifier = Modifier
-            .size(26.dp),
+            .size(26.dp)
+            .semantics(mergeDescendants = true) {
+                this.contentDescription = contentDescription
+                selected = active
+            }
+            .clickable(
+                role = Role.Button,
+                onClick = onClick,
+            ),
         color = if (active) colors.bg2 else colors.bg0,
         contentColor = colors.ink0,
         shape = RoundedCornerShape(6.dp),
         border = BorderStroke(1.dp, if (active) colors.accent else colors.hairlineStrong),
-        onClick = onClick,
     ) {
         Box(
             modifier = Modifier.fillMaxSize(),
@@ -1845,11 +1863,17 @@ private fun GuideTopBarBackAction(
     Surface(
         modifier = Modifier
             .height(28.dp)
-            .widthIn(min = 54.dp, max = 60.dp),
+            .widthIn(min = 54.dp, max = 60.dp)
+            .semantics(mergeDescendants = true) {
+                contentDescription = "Back to previous screen"
+            }
+            .clickable(
+                role = Role.Button,
+                onClick = onClick,
+            ),
         color = Color.Transparent,
         contentColor = colors.ink0,
         shape = RoundedCornerShape(6.dp),
-        onClick = onClick,
     ) {
         Row(
             modifier = Modifier.padding(horizontal = 6.dp),
@@ -1874,6 +1898,7 @@ private fun GuideTopBarBackAction(
 
 @Composable
 private fun GuideTopBarAction(
+    contentDescription: String,
     active: Boolean,
     onClick: () -> Unit,
     glyph: @Composable () -> Unit,
@@ -1882,8 +1907,15 @@ private fun GuideTopBarAction(
     Box(
         modifier = Modifier
             .size(28.dp)
+            .semantics(mergeDescendants = true) {
+                this.contentDescription = contentDescription
+                selected = active
+            }
             .background(if (active) colors.bg2 else Color.Transparent)
-            .clickable(onClick = onClick),
+            .clickable(
+                role = Role.Button,
+                onClick = onClick,
+            ),
         contentAlignment = Alignment.Center,
     ) {
         glyph()
@@ -2696,6 +2728,7 @@ private fun TitleBar(
             )
             if (guideMode) {
                 GuideTopBarAction(
+                    contentDescription = "Return to library",
                     active = false,
                     onClick = onHomeClick,
                 ) {
@@ -2703,6 +2736,11 @@ private fun TitleBar(
                 }
                 if (pinVisible) {
                     GuideTopBarAction(
+                        contentDescription = if (pinActive) {
+                            "Remove guide from quick access"
+                        } else {
+                            "Pin guide for quick access"
+                        },
                         active = pinActive,
                         onClick = onPinClick,
                     ) {
