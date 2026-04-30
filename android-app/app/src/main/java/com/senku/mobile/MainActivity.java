@@ -451,6 +451,12 @@ public final class MainActivity extends AppCompatActivity {
         if (homeChromeBackButton != null) {
             homeChromeBackButton.setOnClickListener(v -> handleHomeChromeBack());
         }
+        if (homeChromeSearchIcon != null) {
+            homeChromeSearchIcon.setOnClickListener(v -> {
+                setPhoneTabFromFlow(BottomTabDestination.SEARCH);
+                focusSearchInput();
+            });
+        }
         reinstallButton.setOnClickListener(v -> installPack(true));
         clearChatButton.setOnClickListener(v -> clearChatSession());
         developerToggleButton.setOnClickListener(v -> toggleDeveloperPanel());

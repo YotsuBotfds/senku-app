@@ -230,10 +230,13 @@
 
             <ImageView
                 android:id="@+id/home_chrome_search_icon"
-                android:layout_width="16dp"
-                android:layout_height="16dp"
-                android:importantForAccessibility="no"
-                android:padding="2dp"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:clickable="true"
+                android:contentDescription="@string/home_chrome_search_content_description"
+                android:focusable="true"
+                android:padding="8dp"
                 android:src="@drawable/ic_search_magnifier"
                 android:tint="@color/senku_rev03_ink_2" />
 
@@ -242,11 +245,13 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="14dp"
                 android:fontFamily="@font/jetbrains_mono"
+                android:importantForAccessibility="no"
                 android:includeFontPadding="false"
                 android:text="..."
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:textColor="@color/senku_rev03_ink_2"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                android:visibility="gone" />
         </LinearLayout>
 
         <View

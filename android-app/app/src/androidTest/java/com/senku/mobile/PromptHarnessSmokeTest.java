@@ -341,6 +341,49 @@ public final class PromptHarnessSmokeTest {
     }
 
     @Test
+    public void homeTopbarSearchGlyphFocusesSearchAndDecorativeOverflowStaysHidden() {
+        try (ActivityScenario<MainActivity> scenario = launchProductReviewMainActivity()) {
+            awaitHarnessIdle();
+            Assert.assertTrue(
+                "home search input never appeared before topbar action validation; harness signals="
+                    + HarnessTestSignals.snapshot(),
+                device.wait(Until.hasObject(By.res(APP_PACKAGE, "search_input")), SEARCH_WAIT_MS)
+            );
+
+            scenario.onActivity(activity -> {
+                View searchGlyph = activity.findViewById(R.id.home_chrome_search_icon);
+                EditText input = activity.findViewById(R.id.search_input);
+                View root = activity.findViewById(android.R.id.content);
+                Assert.assertNotNull("home topbar search glyph should exist", searchGlyph);
+                Assert.assertNotNull("home search input should exist", input);
+                Assert.assertTrue("home topbar search glyph should be visible", isEffectivelyVisible(searchGlyph));
+                Assert.assertTrue("home topbar search glyph should be clickable", searchGlyph.isClickable());
+                Assert.assertTrue("home topbar search glyph should be focusable", searchGlyph.isFocusable());
+                Assert.assertTrue("home topbar search glyph should have a click listener", searchGlyph.hasOnClickListeners());
+                Assert.assertEquals(
+                    "home topbar search glyph should carry a stable action label",
+                    activity.getString(R.string.home_chrome_search_content_description),
+                    safe(String.valueOf(searchGlyph.getContentDescription()))
+                );
+                Assert.assertFalse(
+                    "decorative overflow ellipsis should not remain visible as an action-looking control",
+                    hasEffectivelyVisibleText(root, "...")
+                );
+
+                input.clearFocus();
+                searchGlyph.performClick();
+                Assert.assertTrue("home topbar search glyph should move focus into Search", input.hasFocus());
+                Assert.assertEquals(
+                    "home topbar search glyph should enter Search semantics",
+                    activity.getString(R.string.search_input_description),
+                    safe(String.valueOf(input.getContentDescription()))
+                );
+            });
+            captureUiState("home_topbar_search_glyph");
+        }
+    }
+
+    @Test
     public void autoAskWithoutAutoQueryOpensAskLaneAfterInitialLoad() {
         Intent intent = productReviewMainActivityIntent();
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -7031,6 +7074,27 @@ public final class PromptHarnessSmokeTest {
             && view.getVisibility() == android.view.View.VISIBLE
             && view.isAttachedToWindow()
             && view.isShown();
+    }
+
+    private boolean hasEffectivelyVisibleText(android.view.View view, String expectedText) {
+        if (view == null || expectedText == null) {
+            return false;
+        }
+        if (view instanceof TextView
+            && isEffectivelyVisible(view)
+            && expectedText.equals(safe(((TextView) view).getText().toString()).trim())) {
+            return true;
+        }
+        if (!(view instanceof ViewGroup)) {
+            return false;
+        }
+        ViewGroup group = (ViewGroup) view;
+        for (int index = 0; index < group.getChildCount(); index++) {
+            if (hasEffectivelyVisibleText(group.getChildAt(index), expectedText)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private void openFirstAvailableAnswerSource(Activity activity) {

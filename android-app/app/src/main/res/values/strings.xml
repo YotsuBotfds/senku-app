@@ -10,6 +10,7 @@
     <string name="ask_button">Ask Manual</string>
     <string name="ask_button_ready">Ask Manual</string>
     <string name="search_button_description">Search guide results</string>
+    <string name="home_chrome_search_content_description">Focus search</string>
     <string name="ask_button_description">Ask the manual a question</string>
     <string name="import_model_button">Import Model</string>
     <string name="host_inference_off_button">Use Host GPU</string>
