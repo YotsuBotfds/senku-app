@@ -577,16 +577,18 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
         if (badge == null) {
             return;
         }
-        int score = tabletScoreForPosition(position);
+        int score = SearchResultCardModelMapper.tabletScoreForPosition(position);
         badge.setVisibility(View.VISIBLE);
-        badge.setText(buildTabletScoreLabel(position));
+        badge.setText(SearchResultCardModelMapper.buildTabletScoreLabel(position));
         badge.setTextColor(score >= 70
             ? ContextCompat.getColor(badge.getContext(), R.color.senku_rev03_accent)
             : ContextCompat.getColor(badge.getContext(), R.color.senku_rev03_ink_2));
         badge.setTypeface(rev03MonoTypeface(badge.getContext(), Typeface.BOLD));
         badge.setBackground(null);
         badge.setCompoundDrawablesRelativeWithIntrinsicBounds(0, 0, 0, 0);
-        badge.setContentDescription("Rank " + buildOrdinalRankLabel(position) + ", score marker " + score);
+        badge.setContentDescription(
+            "Rank " + SearchResultCardModelMapper.buildOrdinalRankLabel(position) + ", score marker " + score
+        );
         if (scoreBar != null) {
             scoreBar.setVisibility(View.VISIBLE);
             scoreBar.setBackground(buildScoreBarDrawable(score));
@@ -599,7 +601,7 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
     }
 
     static int scoreBarWidthDpForPositionForTest(int position) {
-        return scoreBarWidthDpForScore(tabletScoreForPosition(position));
+        return scoreBarWidthDpForScore(SearchResultCardModelMapper.tabletScoreForPosition(position));
     }
 
     private static int scoreBarWidthDpForScore(int score) {
@@ -607,7 +609,7 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
     }
 
     static float scoreBarFillFractionForPositionForTest(int position) {
-        return scoreBarFillFractionForScore(tabletScoreForPosition(position));
+        return scoreBarFillFractionForScore(SearchResultCardModelMapper.tabletScoreForPosition(position));
     }
 
     private static float scoreBarFillFractionForScore(int score) {
@@ -977,10 +979,6 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
         );
     }
 
-    private String buildRankLabel(int position) {
-        return buildRankLabelForTest(position);
-    }
-
     static String buildRankLabelForTest(int position) {
         return SearchResultCardModelMapper.buildRankLabelForTest(position);
     }
@@ -989,36 +987,12 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
         return SearchResultCardModelMapper.buildTabletScoreLabelForTest(position);
     }
 
-    private static String buildTabletScoreLabel(int position) {
-        return Integer.toString(tabletScoreForPosition(position));
-    }
-
-    private static int tabletScoreForPosition(int position) {
-        int rank = Math.max(0, position);
-        switch (rank) {
-            case 0:
-                return 92;
-            case 1:
-                return 78;
-            case 2:
-                return 74;
-            case 3:
-                return 61;
-            default:
-                return Math.max(42, 61 - ((rank - 3) * 6));
-        }
-    }
-
     static String buildTabletGuideMarkerForTest(String guideId, int position) {
         return SearchResultCardModelMapper.buildTabletGuideMarkerForTest(guideId, position);
     }
 
     private String buildTabletGuideMarker(SearchResult result, int position) {
         return SearchResultCardModelMapper.buildTabletGuideMarker(result == null ? null : result.guideId, position);
-    }
-
-    private static String buildOrdinalRankLabel(int position) {
-        return "#" + Math.max(1, position + 1);
     }
 
     static String buildTabletAttributeLineForTest(String category, String contentRole, String timeHorizon) {
@@ -1308,13 +1282,7 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
     }
 
     private String humanizeContentRole(String raw, int maxLen) {
-        return humanizeContentRoleInternal(raw, maxLen);
-    }
-
-    private static String humanizeContentRoleInternal(String raw, int maxLen) {
-        String normalized = safe(raw).trim().toLowerCase(Locale.US);
-        normalized = normalized.replaceFirst("^role[\\s_-]+", "");
-        return cleanDisplayTextInternal(humanizeStatic(normalized), maxLen);
+        return SearchResultCardModelMapper.humanizeContentRoleForTest(raw, maxLen);
     }
 
     private String humanizeMetadataValue(String raw, int maxLen) {
@@ -1326,60 +1294,11 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
     }
 
     private String buildCompactRowSnippet(SearchResult result, int maxLen) {
-        return buildCompactRowSnippetForTest(
+        return SearchResultCardModelMapper.buildCompactRowSnippet(
             result == null ? null : result.snippet,
             result == null ? null : result.sectionHeading,
             maxLen
         );
-    }
-
-    private static String collapseRepeatedLeadingSection(String cleaned, String sectionHeading) {
-        String section = cleanDisplayTextInternal(sectionHeading, 0);
-        if (section.isEmpty() || !startsWithIgnoreCase(cleaned, section)) {
-            return cleaned;
-        }
-        String remainder = stripLeadingSnippetJoiners(cleaned.substring(section.length()));
-        if (!startsWithIgnoreCase(remainder, section)) {
-            return cleaned;
-        }
-        String secondRemainder = stripLeadingSnippetJoiners(remainder.substring(section.length()));
-        if (secondRemainder.isEmpty()) {
-            return section;
-        }
-        return section + ": " + secondRemainder;
-    }
-
-    private static String stripCompactSearchRowNoise(String value, String sectionHeading) {
-        String cleaned = safe(value).trim();
-        if (cleaned.isEmpty()) {
-            return "";
-        }
-        String section = cleanDisplayTextInternal(sectionHeading, 0);
-        if (!section.isEmpty() && startsWithIgnoreCase(cleaned, "Guide:")) {
-            String afterGuide = cleaned.substring("Guide:".length()).trim();
-            if (startsWithIgnoreCase(afterGuide, section)) {
-                cleaned = afterGuide.substring(section.length()).trim();
-            }
-        }
-        cleaned = cleaned.replaceAll("(?i)^Guide\\s*:\\s*\\S+\\s+", "");
-        cleaned = cleaned.replaceAll("\\s+", " ").trim();
-        return cleaned;
-    }
-
-    private static String stripLeadingSnippetJoiners(String value) {
-        String cleaned = safe(value).trim();
-        while (!cleaned.isEmpty()) {
-            char first = cleaned.charAt(0);
-            if (first != ':' && first != '-' && first != '\u2013' && first != '\u2014') {
-                break;
-            }
-            cleaned = cleaned.substring(1).trim();
-        }
-        return cleaned;
-    }
-
-    private static boolean startsWithIgnoreCase(String value, String prefix) {
-        return safe(value).regionMatches(true, 0, safe(prefix), 0, safe(prefix).length());
     }
 
     static String buildLinkedGuidePreviewLineForTest() {

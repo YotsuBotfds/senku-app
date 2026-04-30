@@ -80,7 +80,7 @@ public final class SearchResultCardModelMapper {
         return buildRankLabel(position);
     }
 
-    private static String buildRankLabel(int position) {
+    static String buildRankLabel(int position) {
         return Integer.toString(tabletScoreForPosition(position));
     }
 
@@ -88,7 +88,7 @@ public final class SearchResultCardModelMapper {
         return buildTabletScoreLabel(position);
     }
 
-    private static String buildTabletScoreLabel(int position) {
+    static String buildTabletScoreLabel(int position) {
         return Integer.toString(tabletScoreForPosition(position));
     }
 
@@ -96,7 +96,7 @@ public final class SearchResultCardModelMapper {
         return tabletScoreForPosition(position);
     }
 
-    private static int tabletScoreForPosition(int position) {
+    static int tabletScoreForPosition(int position) {
         int rank = Math.max(0, position);
         switch (rank) {
             case 0:
@@ -128,7 +128,7 @@ public final class SearchResultCardModelMapper {
         return buildOrdinalRankLabel(position);
     }
 
-    private static String buildOrdinalRankLabel(int position) {
+    static String buildOrdinalRankLabel(int position) {
         return "#" + Math.max(1, position + 1);
     }
 
@@ -311,7 +311,7 @@ public final class SearchResultCardModelMapper {
         return buildCompactRowSnippet(rawSnippet, sectionHeading, maxLen);
     }
 
-    private static String buildCompactRowSnippet(String rawSnippet, String sectionHeading, int maxLen) {
+    static String buildCompactRowSnippet(String rawSnippet, String sectionHeading, int maxLen) {
         String cleaned = cleanDisplayText(rawSnippet, 0);
         if (cleaned.isEmpty()) {
             return "";

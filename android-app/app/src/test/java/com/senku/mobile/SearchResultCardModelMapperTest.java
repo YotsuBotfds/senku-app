@@ -95,4 +95,51 @@ public final class SearchResultCardModelMapperTest {
         assertNull(model.getLinkedGuideLabel());
         assertNull(model.getLinkedGuideContentDescription());
     }
+
+    @Test
+    public void rowRankScoreAndGuideMarkersMatchAdapterSearchRowContract() {
+        assertEquals("92", SearchResultCardModelMapper.buildRankLabelForTest(0));
+        assertEquals("61", SearchResultCardModelMapper.buildRankLabelForTest(3));
+        assertEquals("92", SearchResultCardModelMapper.buildRankLabelForTest(-1));
+        assertEquals("49", SearchResultCardModelMapper.buildTabletScoreLabelForTest(5));
+        assertEquals("GD-345", SearchResultCardModelMapper.buildTabletGuideMarkerForTest("GD-345", 2));
+        assertEquals("#3", SearchResultCardModelMapper.buildTabletGuideMarkerForTest("", 2));
+    }
+
+    @Test
+    public void rowAttributeLineMatchesAdapterPreviewRailContract() {
+        assertEquals(
+            "SHELTER \u00b7 TOPIC \u00b7 WINDOW IMMEDIATE",
+            SearchResultCardModelMapper.buildTabletAttributeLineForTest("shelter", "role_topic", "immediate")
+        );
+        assertEquals(
+            "SHELTER \u00b7 TOPIC \u00b7 WINDOW LONG",
+            SearchResultCardModelMapper.buildTabletAttributeLineForTest("shelter", "role_topic", "long-term")
+        );
+        assertEquals("", SearchResultCardModelMapper.buildTabletAttributeLineForTest("general", "none", "unknown"));
+        assertEquals(
+            "CONCEPT MATCH",
+            SearchResultCardModelMapper.buildTabletAttributeLineForResultForTest("general", "none", "unknown", "vector")
+        );
+    }
+
+    @Test
+    public void rowPreviewSnippetMatchesAdapterCleanupContract() {
+        assertEquals(
+            "Shelter Building: Protection from the Elements Day\u2026",
+            SearchResultCardModelMapper.buildCompactRowSnippetForTest(
+                "Shelter Building: Shelter Building: Protection from the Elements Day signaling vs. night signaling.",
+                "Shelter Building",
+                52
+            )
+        );
+        assertEquals(
+            "Use a ridgeline to shed rain.",
+            SearchResultCardModelMapper.buildCompactRowSnippetForTest(
+                "Guide: Tarp & Cord Shelters Use a ridgeline to shed rain.",
+                "Tarp & Cord Shelters",
+                120
+            )
+        );
+    }
 }
