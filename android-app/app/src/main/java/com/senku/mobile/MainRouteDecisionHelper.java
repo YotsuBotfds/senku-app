@@ -51,6 +51,10 @@ public final class MainRouteDecisionHelper {
         return new Transition(browseHome(), Effect.RETURN_TO_BROWSE);
     }
 
+    static boolean shouldShowHomeChromeBack(RouteState state) {
+        return normalize(state).surface != Surface.BROWSE;
+    }
+
     static Transition openPhoneTab(RouteState state, BottomTabDestination destination) {
         RouteState route = normalize(state);
         switch (destination == null ? BottomTabDestination.HOME : destination) {

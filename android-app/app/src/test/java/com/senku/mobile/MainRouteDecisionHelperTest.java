@@ -2,6 +2,7 @@ package com.senku.mobile;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import com.senku.ui.primitives.BottomTabDestination;
 
@@ -135,6 +136,27 @@ public final class MainRouteDecisionHelperTest {
         assertRoute(browse.routeState, MainRouteDecisionHelper.Surface.BROWSE, BottomTabDestination.HOME, false);
         assertEquals(MainRouteDecisionHelper.Effect.RETURN_TO_BROWSE, search.effect);
         assertRoute(search.routeState, MainRouteDecisionHelper.Surface.BROWSE, BottomTabDestination.HOME, false);
+    }
+
+    @Test
+    public void homeChromeBackIsOnlyVisibleForNonBrowseRoutes() {
+        assertFalse(MainRouteDecisionHelper.shouldShowHomeChromeBack(MainRouteDecisionHelper.browseHome()));
+        assertFalse(MainRouteDecisionHelper.shouldShowHomeChromeBack(
+            new MainRouteDecisionHelper.RouteState(
+                MainRouteDecisionHelper.Surface.BROWSE,
+                BottomTabDestination.PINS,
+                false
+            )
+        ));
+        assertTrue(
+            MainRouteDecisionHelper.shouldShowHomeChromeBack(
+                new MainRouteDecisionHelper.RouteState(
+                    MainRouteDecisionHelper.Surface.SEARCH_RESULTS,
+                    BottomTabDestination.HOME,
+                    false
+                )
+            )
+        );
     }
 
     @Test

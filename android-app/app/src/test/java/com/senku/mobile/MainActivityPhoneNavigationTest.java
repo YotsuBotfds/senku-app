@@ -386,6 +386,21 @@ public final class MainActivityPhoneNavigationTest {
     }
 
     @Test
+    public void searchButtonSubmitActionUsesSameTargetAndVisibleCopy() {
+        MainActivity.SharedSubmitAction askAction =
+            MainActivity.resolveSearchButtonSubmitActionForTest(BottomTabDestination.ASK, false, true);
+        MainActivity.SharedSubmitAction searchAction =
+            MainActivity.resolveSearchButtonSubmitActionForTest(BottomTabDestination.HOME, false, true);
+
+        assertEquals(SubmitTarget.ASK, askAction.target);
+        assertEquals(R.string.ask_button_ready, askAction.buttonTextResource);
+        assertEquals(R.string.ask_button_description, askAction.buttonDescriptionResource);
+        assertEquals(SubmitTarget.SEARCH, searchAction.target);
+        assertEquals(R.string.external_review_home_search_button, searchAction.buttonTextResource);
+        assertEquals(R.string.search_button_description, searchAction.buttonDescriptionResource);
+    }
+
+    @Test
     public void mainActivitySubmitHelpersDelegateToAskSearchCoordinator() {
         for (BottomTabDestination destination : BottomTabDestination.values()) {
             for (boolean askLaneActive : Arrays.asList(false, true)) {

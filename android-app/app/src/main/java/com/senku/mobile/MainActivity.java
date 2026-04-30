@@ -454,9 +454,13 @@ public final class MainActivity extends AppCompatActivity {
         );
 
         searchButton.setOnClickListener(v -> {
-            SubmitTarget target = resolveSearchButtonSubmitTarget(activePhoneTab, askLaneActive);
-            setPhoneTabFromFlow(AskSearchCoordinator.tabForSubmitTarget(target));
-            handleSharedQuerySubmit(searchInput.getText().toString(), target);
+            SharedSubmitAction action = resolveSearchButtonSubmitAction(
+                activePhoneTab,
+                askLaneActive,
+                isAnswerRuntimeReady()
+            );
+            setPhoneTabFromFlow(AskSearchCoordinator.tabForSubmitTarget(action.target));
+            handleSharedQuerySubmit(searchInput.getText().toString(), action.target);
         });
         askButton.setOnClickListener(v -> {
             setPhoneTabFromFlow(BottomTabDestination.ASK);
@@ -1309,6 +1313,10 @@ public final class MainActivity extends AppCompatActivity {
 
     private void handleSharedQuerySubmit(String rawQuery) {
         handleSharedQuerySubmit(rawQuery, resolveSharedSubmitTarget(activePhoneTab, askLaneActive));
+    }
+
+    private boolean isAnswerRuntimeReady() {
+        return ModelFileStore.getImportedModelFile(this) != null || HostInferenceConfig.resolve(this).enabled;
     }
 
     private void handleSharedQuerySubmit(String rawQuery, SubmitTarget target) {
@@ -3177,7 +3185,28 @@ public final class MainActivity extends AppCompatActivity {
         BottomTabDestination activePhoneTab,
         boolean askLaneActive
     ) {
-        return AskSearchCoordinator.resolveSubmitTarget(activePhoneTab, askLaneActive);
+        return resolveSearchButtonSubmitAction(activePhoneTab, askLaneActive, false).target;
+    }
+
+    static SharedSubmitAction resolveSearchButtonSubmitActionForTest(
+        BottomTabDestination activePhoneTab,
+        boolean askLaneActive,
+        boolean answerReady
+    ) {
+        return resolveSearchButtonSubmitAction(activePhoneTab, askLaneActive, answerReady);
+    }
+
+    private static SharedSubmitAction resolveSearchButtonSubmitAction(
+        BottomTabDestination activePhoneTab,
+        boolean askLaneActive,
+        boolean answerReady
+    ) {
+        SubmitTarget target = AskSearchCoordinator.resolveSubmitTarget(activePhoneTab, askLaneActive);
+        return new SharedSubmitAction(
+            target,
+            resolveSubmitButtonLabelResource(target, answerReady),
+            resolveSubmitButtonDescriptionResource(target)
+        );
     }
 
     static int resolveSharedInputHintResourceForTest(SubmitTarget target) {
@@ -3206,6 +3235,13 @@ public final class MainActivity extends AppCompatActivity {
 
     static int resolveSubmitButtonDescriptionResourceForTest(SubmitTarget target) {
         return resolveSubmitButtonDescriptionResource(target);
+    }
+
+    private static int resolveSubmitButtonLabelResource(SubmitTarget target, boolean answerReady) {
+        if (target == SubmitTarget.ASK) {
+            return answerReady ? R.string.ask_button_ready : R.string.ask_button;
+        }
+        return R.string.external_review_home_search_button;
     }
 
     private static int resolveSubmitButtonDescriptionResource(SubmitTarget target) {
@@ -3781,11 +3817,12 @@ public final class MainActivity extends AppCompatActivity {
     }
 
     private void updateActionLabels() {
-        boolean answerReady = ModelFileStore.getImportedModelFile(this) != null || HostInferenceConfig.resolve(this).enabled;
+        boolean answerReady = isAnswerRuntimeReady();
+        SharedSubmitAction searchAction = resolveSearchButtonSubmitAction(activePhoneTab, askLaneActive, answerReady);
         askButton.setText(answerReady ? R.string.ask_button_ready : R.string.ask_button);
         askButton.setContentDescription(getString(resolveSubmitButtonDescriptionResource(SubmitTarget.ASK)));
-        searchButton.setText(R.string.external_review_home_search_button);
-        searchButton.setContentDescription(getString(resolveSubmitButtonDescriptionResource(SubmitTarget.SEARCH)));
+        searchButton.setText(searchAction.buttonTextResource);
+        searchButton.setContentDescription(getString(searchAction.buttonDescriptionResource));
         boolean askMode = isAskLaneActive();
         updateSharedInputChrome(askMode ? SubmitTarget.ASK : SubmitTarget.SEARCH);
         if (browseButton != null) {
@@ -4870,6 +4907,9 @@ public final class MainActivity extends AppCompatActivity {
     }
 
     private void updateHomeChromeTitle(boolean browseMode, String query) {
+        updateHomeChromeBackAvailability(
+            MainRouteDecisionHelper.shouldShowHomeChromeBack(currentMainRouteState())
+        );
         if (homeChromeTitleText == null && homeChromeModeText == null) {
             return;
         }
@@ -4928,6 +4968,31 @@ public final class MainActivity extends AppCompatActivity {
         if (transition.effect == MainRouteDecisionHelper.Effect.RETURN_TO_BROWSE) {
             applyMainRouteState(transition.routeState);
             showBrowseChrome(true);
+        }
+    }
+
+    private void updateHomeChromeBackAvailability(boolean available) {
+        if (homeChromeBackButton == null) {
+            return;
+        }
+        homeChromeBackButton.setVisibility(available ? View.VISIBLE : View.GONE);
+        homeChromeBackButton.setEnabled(available);
+        homeChromeBackButton.setClickable(available);
+    }
+
+    static final class SharedSubmitAction {
+        final SubmitTarget target;
+        final int buttonTextResource;
+        final int buttonDescriptionResource;
+
+        SharedSubmitAction(
+            SubmitTarget target,
+            int buttonTextResource,
+            int buttonDescriptionResource
+        ) {
+            this.target = target == null ? SubmitTarget.SEARCH : target;
+            this.buttonTextResource = buttonTextResource;
+            this.buttonDescriptionResource = buttonDescriptionResource;
         }
     }
 
