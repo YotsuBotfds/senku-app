@@ -61,6 +61,58 @@ public final class DetailTabletSourceOwnershipTest {
     }
 
     @Test
+    public void productionTabletVisualOwnerUsesGenericQuestionSourceOverlap() {
+        SearchResult abrasives = source(
+            "GD-220",
+            "Abrasives Manufacturing",
+            "materials abrasives grinding"
+        );
+        SearchResult kiln = source(
+            "GD-812",
+            "Clay Kiln Firing",
+            "clay kiln firing masonry"
+        );
+
+        assertEquals(
+            "GD-812",
+            DetailActivity.resolveTabletVisualOwnerGuideIdForTest(
+                true,
+                false,
+                false,
+                List.of("How should I fire a clay kiln after the masonry dries?"),
+                abrasives,
+                List.of(abrasives, kiln)
+            )
+        );
+    }
+
+    @Test
+    public void reviewDemoTabletVisualOwnerKeepsRainShelterTopicGate() {
+        SearchResult abrasives = source(
+            "GD-220",
+            "Abrasives Manufacturing",
+            "materials abrasives grinding"
+        );
+        SearchResult kiln = source(
+            "GD-812",
+            "Clay Kiln Firing",
+            "clay kiln firing masonry"
+        );
+
+        assertEquals(
+            "GD-220",
+            DetailActivity.resolveTabletVisualOwnerGuideIdForTest(
+                true,
+                false,
+                true,
+                List.of("How should I fire a clay kiln after the masonry dries?"),
+                abrasives,
+                List.of(abrasives, kiln)
+            )
+        );
+    }
+
+    @Test
     public void explicitTabletSourceSelectionPreservesSelectedSourceOwner() {
         SearchResult abrasives = source(
             "GD-220",

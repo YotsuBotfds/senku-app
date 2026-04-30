@@ -3154,12 +3154,17 @@ public final class DetailActivity extends AppCompatActivity {
             return activeSource;
         }
         ArrayList<String> questions = tabletTurnQuestions(turnBindings);
-        if (!tabletQuestionsHaveOwnedShelterTopic(questions)) {
+        if (productReviewMode && !tabletQuestionsHaveOwnedShelterTopic(questions)) {
             return activeSource;
         }
         ArrayList<SearchResult> sources = tabletTurnSources(turnBindings);
-        SearchResult bestSource = bestTabletThreadTopicSource(activeSource, sources, questions);
-        int bestScore = tabletSourceThreadTopicScore(bestSource, questions);
+        SearchResult bestSource = bestTabletThreadTopicSource(
+            activeSource,
+            sources,
+            questions,
+            productReviewMode
+        );
+        int bestScore = tabletSourceThreadTopicScore(bestSource, questions, productReviewMode);
         return bestScore > 0 ? bestSource : null;
     }
 
@@ -3170,9 +3175,28 @@ public final class DetailActivity extends AppCompatActivity {
         SearchResult activeSource,
         List<SearchResult> sources
     ) {
+        return resolveTabletVisualOwnerGuideIdForTest(
+            answerMode,
+            explicitSelection,
+            false,
+            questions,
+            activeSource,
+            sources
+        );
+    }
+
+    static String resolveTabletVisualOwnerGuideIdForTest(
+        boolean answerMode,
+        boolean explicitSelection,
+        boolean reviewDemoMode,
+        List<String> questions,
+        SearchResult activeSource,
+        List<SearchResult> sources
+    ) {
         SearchResult owner = resolveTabletVisualOwnerSourceForInputs(
             answerMode,
             explicitSelection,
+            reviewDemoMode,
             questions,
             activeSource,
             sources
@@ -3183,30 +3207,34 @@ public final class DetailActivity extends AppCompatActivity {
     private static SearchResult resolveTabletVisualOwnerSourceForInputs(
         boolean answerMode,
         boolean explicitSelection,
+        boolean reviewDemoMode,
         List<String> questions,
         SearchResult activeSource,
         List<SearchResult> sources
     ) {
-        if (!answerMode || explicitSelection || !tabletQuestionsHaveOwnedShelterTopic(questions)) {
+        if (!answerMode
+            || explicitSelection
+            || (reviewDemoMode && !tabletQuestionsHaveOwnedShelterTopic(questions))) {
             return activeSource;
         }
-        SearchResult bestSource = bestTabletThreadTopicSource(activeSource, sources, questions);
-        int bestScore = tabletSourceThreadTopicScore(bestSource, questions);
+        SearchResult bestSource = bestTabletThreadTopicSource(activeSource, sources, questions, reviewDemoMode);
+        int bestScore = tabletSourceThreadTopicScore(bestSource, questions, reviewDemoMode);
         return bestScore > 0 ? bestSource : null;
     }
 
     private static SearchResult bestTabletThreadTopicSource(
         SearchResult activeSource,
         List<SearchResult> sources,
-        List<String> questions
+        List<String> questions,
+        boolean reviewDemoMode
     ) {
         SearchResult best = activeSource;
-        int bestScore = tabletSourceThreadTopicScore(activeSource, questions);
+        int bestScore = tabletSourceThreadTopicScore(activeSource, questions, reviewDemoMode);
         if (sources == null) {
             return best;
         }
         for (SearchResult source : sources) {
-            int score = tabletSourceThreadTopicScore(source, questions);
+            int score = tabletSourceThreadTopicScore(source, questions, reviewDemoMode);
             if (score > bestScore) {
                 best = source;
                 bestScore = score;
@@ -3215,7 +3243,11 @@ public final class DetailActivity extends AppCompatActivity {
         return best;
     }
 
-    private static int tabletSourceThreadTopicScore(SearchResult source, List<String> questions) {
+    private static int tabletSourceThreadTopicScore(
+        SearchResult source,
+        List<String> questions,
+        boolean reviewDemoMode
+    ) {
         if (source == null || questions == null || questions.isEmpty()) {
             return 0;
         }
@@ -3227,6 +3259,9 @@ public final class DetailActivity extends AppCompatActivity {
                 safe(source.structureType) + " " +
                 safe(source.topicTags)
         ).replace('_', ' ').toLowerCase(Locale.US);
+        if (!reviewDemoMode) {
+            return genericTabletSourceQuestionOverlapScore(haystack, questions);
+        }
         int score = 0;
         for (String rawQuestion : questions) {
             String question = safe(rawQuestion).toLowerCase(Locale.US);
@@ -3247,6 +3282,47 @@ public final class DetailActivity extends AppCompatActivity {
             }
         }
         return score;
+    }
+
+    private static int genericTabletSourceQuestionOverlapScore(String haystack, List<String> questions) {
+        if (safe(haystack).trim().isEmpty() || questions == null || questions.isEmpty()) {
+            return 0;
+        }
+        LinkedHashSet<String> tokens = new LinkedHashSet<>();
+        for (String rawQuestion : questions) {
+            String question = safe(rawQuestion).replace('_', ' ').toLowerCase(Locale.US);
+            for (String token : question.split("[^a-z0-9]+")) {
+                if (isTabletQuestionTopicToken(token)) {
+                    tokens.add(token);
+                }
+            }
+        }
+        int score = 0;
+        for (String token : tokens) {
+            if (haystack.contains(token)) {
+                score += 4;
+            }
+        }
+        return score;
+    }
+
+    private static boolean isTabletQuestionTopicToken(String token) {
+        String clean = safe(token).trim();
+        if (clean.length() < 4) {
+            return false;
+        }
+        return !("about".equals(clean)
+            || "after".equals(clean)
+            || "build".equals(clean)
+            || "from".equals(clean)
+            || "have".equals(clean)
+            || "next".equals(clean)
+            || "should".equals(clean)
+            || "simple".equals(clean)
+            || "what".equals(clean)
+            || "when".equals(clean)
+            || "where".equals(clean)
+            || "with".equals(clean));
     }
 
     private static boolean tabletQuestionsHaveOwnedShelterTopic(List<String> questions) {
@@ -8866,8 +8942,14 @@ public final class DetailActivity extends AppCompatActivity {
         return new ArrayList<>(safeSources);
     }
 
-    static List<SearchResult> promoteRainShelterTopicSourceForState(List<SearchResult> sources) {
+    static List<SearchResult> promoteRainShelterTopicSourceForState(
+        boolean productReviewMode,
+        List<SearchResult> sources
+    ) {
         ArrayList<SearchResult> safeSources = new ArrayList<>(sources == null ? Collections.emptyList() : sources);
+        if (!ReviewDemoPolicy.isSourceStackDemoEnabled(productReviewMode)) {
+            return safeSources;
+        }
         SearchResult topicSource = rainShelterTopicSource(safeSources);
         if (topicSource == null) {
             return safeSources;
@@ -9503,20 +9585,37 @@ public final class DetailActivity extends AppCompatActivity {
     }
 
     private SearchResult selectedSourceForRelatedGuideGraph() {
+        return selectedSourceForRelatedGuideGraphForState(
+            answerMode,
+            productReviewMode,
+            selectedSourceKey,
+            currentSources
+        );
+    }
+
+    static SearchResult selectedSourceForRelatedGuideGraphForState(
+        boolean answerMode,
+        boolean productReviewMode,
+        String selectedSourceKey,
+        List<SearchResult> currentSources
+    ) {
+        List<SearchResult> safeSources = currentSources == null ? Collections.emptyList() : currentSources;
         if (!safe(selectedSourceKey).isEmpty()) {
-            for (SearchResult source : currentSources) {
-                if (safe(buildSourceSelectionKey(source)).equals(selectedSourceKey)) {
+            for (SearchResult source : safeSources) {
+                if (safe(buildStaticSourceSelectionKey(source)).equals(selectedSourceKey)) {
                     return safe(source == null ? null : source.guideId).trim().isEmpty()
                         ? null
                         : source;
                 }
             }
         }
-        SearchResult topicSource = answerMode ? rainShelterTopicSource(currentSources) : null;
+        SearchResult topicSource = answerMode && ReviewDemoPolicy.isSourceStackDemoEnabled(productReviewMode)
+            ? rainShelterTopicSource(safeSources)
+            : null;
         if (topicSource != null) {
             return topicSource;
         }
-        for (SearchResult source : currentSources) {
+        for (SearchResult source : safeSources) {
             if (!safe(source == null ? null : source.guideId).trim().isEmpty()) {
                 return source;
             }

@@ -84,6 +84,44 @@ public final class DetailActivityRelatedGuideShapingTest {
     }
 
     @Test
+    public void productionRelatedGuideAnchorUsesFirstSourceWithoutRainShelterPromotion() {
+        SearchResult anchor = result("GD-220", "Abrasives Manufacturing");
+        SearchResult rainShelter = resultWithTopicTags(
+            "GD-345",
+            "Tarp & Cord Shelters",
+            "rain shelter tarp cord"
+        );
+
+        SearchResult selected = DetailActivity.selectedSourceForRelatedGuideGraphForState(
+            true,
+            false,
+            "",
+            Arrays.asList(anchor, rainShelter)
+        );
+
+        assertEquals("GD-220", selected.guideId);
+    }
+
+    @Test
+    public void reviewModeRelatedGuideAnchorKeepsRainShelterPromotion() {
+        SearchResult anchor = result("GD-220", "Abrasives Manufacturing");
+        SearchResult rainShelter = resultWithTopicTags(
+            "GD-345",
+            "Tarp & Cord Shelters",
+            "rain shelter tarp cord"
+        );
+
+        SearchResult selected = DetailActivity.selectedSourceForRelatedGuideGraphForState(
+            true,
+            true,
+            "",
+            Arrays.asList(anchor, rainShelter)
+        );
+
+        assertEquals("GD-345", selected.guideId);
+    }
+
+    @Test
     public void emergencyHeaderFlatBandKeepsCompactPadding() {
         assertEquals(12, DetailActivity.resolveEmergencyHeaderHorizontalPaddingDp());
         assertEquals(7, DetailActivity.resolveEmergencyHeaderVerticalPaddingDp());
@@ -91,5 +129,9 @@ public final class DetailActivityRelatedGuideShapingTest {
 
     private static SearchResult result(String guideId, String title) {
         return new SearchResult(title, "", "", "", guideId, "", "", "");
+    }
+
+    private static SearchResult resultWithTopicTags(String guideId, String title, String topicTags) {
+        return new SearchResult(title, "", "", "", guideId, "", "", "", "", "", "", topicTags);
     }
 }
