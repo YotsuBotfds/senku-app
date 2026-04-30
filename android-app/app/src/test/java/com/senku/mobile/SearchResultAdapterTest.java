@@ -92,15 +92,15 @@ public final class SearchResultAdapterTest {
     }
 
     @Test
-    public void compactRowsUseFinalMockTypographyScale() {
-        assertEquals(15.0f, SearchResultAdapter.compactRowTitleTextSizeSpForTest(), 0.001f);
-        assertEquals(12.0f, SearchResultAdapter.compactRowSnippetTextSizeSpForTest(), 0.001f);
+    public void compactRowsUseSecondPassDenseTypographyScale() {
+        assertEquals(14.5f, SearchResultAdapter.compactRowTitleTextSizeSpForTest(), 0.001f);
+        assertEquals(11.5f, SearchResultAdapter.compactRowSnippetTextSizeSpForTest(), 0.001f);
     }
 
     @Test
-    public void portraitAndTabletRowsUseBalancedTypographyScale() {
-        assertEquals(15.0f, SearchResultAdapter.portraitTabletRowTitleTextSizeSpForTest(), 0.001f);
-        assertEquals(12.5f, SearchResultAdapter.portraitTabletRowSnippetTextSizeSpForTest(), 0.001f);
+    public void portraitAndTabletRowsUseSecondPassDenseTypographyScale() {
+        assertEquals(14.5f, SearchResultAdapter.portraitTabletRowTitleTextSizeSpForTest(), 0.001f);
+        assertEquals(12.0f, SearchResultAdapter.portraitTabletRowSnippetTextSizeSpForTest(), 0.001f);
     }
 
     @Test
@@ -117,7 +117,19 @@ public final class SearchResultAdapterTest {
         assertTrue(portraitSnippet > landscapeSnippet);
         assertTrue(landscapeSnippet > section);
         assertEquals(section, chip, 0.001f);
-        assertEquals(9.5f, section, 0.001f);
+        assertEquals(9.0f, section, 0.001f);
+    }
+
+    @Test
+    public void compactRowsUseSecondPassDenseVerticalRhythm() {
+        assertEquals(13, SearchResultAdapter.compactRowTopPaddingDpForTest());
+        assertEquals(15, SearchResultAdapter.portraitTabletRowTopPaddingDpForTest());
+        assertEquals(4, SearchResultAdapter.compactRowTitleTopMarginDpForTest());
+        assertEquals(6, SearchResultAdapter.portraitTabletRowTitleTopMarginDpForTest());
+        assertEquals(5, SearchResultAdapter.compactRowSnippetTopMarginDpForTest());
+        assertEquals(6, SearchResultAdapter.portraitTabletRowSnippetTopMarginDpForTest());
+        assertEquals(14, SearchResultAdapter.compactRowDividerTopMarginDpForTest());
+        assertEquals(17, SearchResultAdapter.portraitTabletRowDividerTopMarginDpForTest());
     }
 
     @Test

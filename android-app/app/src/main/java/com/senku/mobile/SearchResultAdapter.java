@@ -45,12 +45,20 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
     private static final int MAX_HIGHLIGHT_TERMS = 4;
     private static final int DEFAULT_MAX_DISPLAYED_ITEMS = 4;
     private static final int SCORE_TICK_TRACK_WIDTH_DP = 22;
-    private static final float LANDSCAPE_ROW_TITLE_TEXT_SIZE_SP = 15.0f;
-    private static final float LANDSCAPE_ROW_SNIPPET_TEXT_SIZE_SP = 12.0f;
-    private static final float PORTRAIT_TABLET_ROW_TITLE_TEXT_SIZE_SP = 15.0f;
-    private static final float PORTRAIT_TABLET_ROW_SNIPPET_TEXT_SIZE_SP = 12.5f;
-    private static final float COMPACT_ROW_SECTION_TEXT_SIZE_SP = 9.5f;
-    private static final float COMPACT_ROW_CHIP_TEXT_SIZE_SP = 9.5f;
+    private static final int LANDSCAPE_ROW_TOP_PADDING_DP = 13;
+    private static final int PORTRAIT_TABLET_ROW_TOP_PADDING_DP = 15;
+    private static final int LANDSCAPE_ROW_TITLE_TOP_MARGIN_DP = 4;
+    private static final int PORTRAIT_TABLET_ROW_TITLE_TOP_MARGIN_DP = 6;
+    private static final int LANDSCAPE_ROW_SNIPPET_TOP_MARGIN_DP = 5;
+    private static final int PORTRAIT_TABLET_ROW_SNIPPET_TOP_MARGIN_DP = 6;
+    private static final int LANDSCAPE_ROW_DIVIDER_TOP_MARGIN_DP = 14;
+    private static final int PORTRAIT_TABLET_ROW_DIVIDER_TOP_MARGIN_DP = 17;
+    private static final float LANDSCAPE_ROW_TITLE_TEXT_SIZE_SP = 14.5f;
+    private static final float LANDSCAPE_ROW_SNIPPET_TEXT_SIZE_SP = 11.5f;
+    private static final float PORTRAIT_TABLET_ROW_TITLE_TEXT_SIZE_SP = 14.5f;
+    private static final float PORTRAIT_TABLET_ROW_SNIPPET_TEXT_SIZE_SP = 12.0f;
+    private static final float COMPACT_ROW_SECTION_TEXT_SIZE_SP = 9.0f;
+    private static final float COMPACT_ROW_CHIP_TEXT_SIZE_SP = 9.0f;
 
     public static final class LinkedGuidePreview {
         public final String guideId;
@@ -231,7 +239,7 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
         LinearLayout row = new LinearLayout(context);
         row.setId(R.id.result_legacy_mirror);
         row.setOrientation(LinearLayout.VERTICAL);
-        row.setPadding(dp(0), dp(landscapePhoneCard ? 15 : 17), dp(0), 0);
+        row.setPadding(dp(0), dp(compactRowTopPaddingDp(landscapePhoneCard)), dp(0), 0);
         root.addView(row, new FrameLayout.LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT,
             ViewGroup.LayoutParams.WRAP_CONTENT
@@ -295,7 +303,7 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
             ViewGroup.LayoutParams.MATCH_PARENT,
             ViewGroup.LayoutParams.WRAP_CONTENT
         );
-        titleParams.topMargin = dp(landscapePhoneCard ? 5 : 7);
+        titleParams.topMargin = dp(compactRowTitleTopMarginDp(landscapePhoneCard));
         row.addView(title, titleParams);
 
         TextView section = buildMonoTextView(context, COMPACT_ROW_SECTION_TEXT_SIZE_SP, 13, Typeface.NORMAL);
@@ -324,7 +332,7 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
             ViewGroup.LayoutParams.MATCH_PARENT,
             ViewGroup.LayoutParams.WRAP_CONTENT
         );
-        snippetParams.topMargin = dp(landscapePhoneCard ? 6 : 7);
+        snippetParams.topMargin = dp(compactRowSnippetTopMarginDp(landscapePhoneCard));
         row.addView(snippet, snippetParams);
 
         LinearLayout chips = new LinearLayout(context);
@@ -369,7 +377,7 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
             ViewGroup.LayoutParams.MATCH_PARENT,
             1
         );
-        dividerParams.topMargin = dp(landscapePhoneCard ? 16 : 19);
+        dividerParams.topMargin = dp(compactRowDividerTopMarginDp(landscapePhoneCard));
         row.addView(divider, dividerParams);
 
         ComposeView composeView = new ComposeView(context);
@@ -445,12 +453,60 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
         return COMPACT_ROW_CHIP_TEXT_SIZE_SP;
     }
 
+    static int compactRowTopPaddingDpForTest() {
+        return compactRowTopPaddingDp(true);
+    }
+
+    static int portraitTabletRowTopPaddingDpForTest() {
+        return compactRowTopPaddingDp(false);
+    }
+
+    static int compactRowTitleTopMarginDpForTest() {
+        return compactRowTitleTopMarginDp(true);
+    }
+
+    static int portraitTabletRowTitleTopMarginDpForTest() {
+        return compactRowTitleTopMarginDp(false);
+    }
+
+    static int compactRowSnippetTopMarginDpForTest() {
+        return compactRowSnippetTopMarginDp(true);
+    }
+
+    static int portraitTabletRowSnippetTopMarginDpForTest() {
+        return compactRowSnippetTopMarginDp(false);
+    }
+
+    static int compactRowDividerTopMarginDpForTest() {
+        return compactRowDividerTopMarginDp(true);
+    }
+
+    static int portraitTabletRowDividerTopMarginDpForTest() {
+        return compactRowDividerTopMarginDp(false);
+    }
+
     private static float compactRowTitleTextSizeSp(boolean landscapePhoneCard) {
         return landscapePhoneCard ? LANDSCAPE_ROW_TITLE_TEXT_SIZE_SP : PORTRAIT_TABLET_ROW_TITLE_TEXT_SIZE_SP;
     }
 
     private static float compactRowSnippetTextSizeSp(boolean landscapePhoneCard) {
         return landscapePhoneCard ? LANDSCAPE_ROW_SNIPPET_TEXT_SIZE_SP : PORTRAIT_TABLET_ROW_SNIPPET_TEXT_SIZE_SP;
+    }
+
+    private static int compactRowTopPaddingDp(boolean landscapePhoneCard) {
+        return landscapePhoneCard ? LANDSCAPE_ROW_TOP_PADDING_DP : PORTRAIT_TABLET_ROW_TOP_PADDING_DP;
+    }
+
+    private static int compactRowTitleTopMarginDp(boolean landscapePhoneCard) {
+        return landscapePhoneCard ? LANDSCAPE_ROW_TITLE_TOP_MARGIN_DP : PORTRAIT_TABLET_ROW_TITLE_TOP_MARGIN_DP;
+    }
+
+    private static int compactRowSnippetTopMarginDp(boolean landscapePhoneCard) {
+        return landscapePhoneCard ? LANDSCAPE_ROW_SNIPPET_TOP_MARGIN_DP : PORTRAIT_TABLET_ROW_SNIPPET_TOP_MARGIN_DP;
+    }
+
+    private static int compactRowDividerTopMarginDp(boolean landscapePhoneCard) {
+        return landscapePhoneCard ? LANDSCAPE_ROW_DIVIDER_TOP_MARGIN_DP : PORTRAIT_TABLET_ROW_DIVIDER_TOP_MARGIN_DP;
     }
 
     private static Typeface rev03UiTypeface(Context context, int style) {
