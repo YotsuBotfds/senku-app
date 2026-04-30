@@ -2749,8 +2749,7 @@ public final class DetailActivity extends AppCompatActivity {
         boolean pinVisible = !resolvePinnableGuideId().isEmpty();
         boolean pinActive = pinVisible && PinnedGuideStore.contains(this, resolvePinnableGuideId());
         FollowUpComposerState tabletComposerState = buildTabletFollowUpComposerState();
-        boolean showRetry = (!tabletBusy && !tabletComposerState.retryQuery().isEmpty())
-            || isGenerationStallRetryAvailable(tabletBusy);
+        boolean showRetry = tabletComposerState.retryVisible();
         boolean tabletEmergencyFullHeightPage = isTabletEmergencyFullHeightPage();
         boolean suppressTabletEmergencyFloatingRail = shouldSuppressTabletEmergencyFloatingRail(
             answerMode,
@@ -3794,13 +3793,12 @@ public final class DetailActivity extends AppCompatActivity {
             return;
         }
         boolean landscapePhone = isLandscapePhoneLayout();
-        boolean retryAvailable = followUpRetryButton != null && followUpRetryButton.getVisibility() == View.VISIBLE;
-        boolean showRetry = shouldShowDockedComposerRetry(retryAvailable, landscapePhone);
         String retryLabel = followUpRetryButton == null ? getString(R.string.detail_followup_retry) : safe(followUpRetryButton.getText().toString());
         boolean compactFollowUpMode = isCompactFollowUpMode();
         String fullHint = safe(String.valueOf(followUpInput.getHint()));
         String compactHint = getString(resolveDockedComposerCompactHintResId(compactFollowUpMode));
         FollowUpComposerState composerState = buildPhoneFollowUpComposerState();
+        boolean showRetry = shouldShowDockedComposerRetry(composerState.retryVisible(), landscapePhone);
         DockedComposerModel model = new DockedComposerModel(
             composerState.draftText,
             resolveDockedComposerHint(
@@ -3821,7 +3819,7 @@ public final class DetailActivity extends AppCompatActivity {
             model,
             this::syncFollowUpDraftFromCompose,
             this::runFollowUp,
-            showRetry ? this::retryLastFailedQuery : null,
+            showRetry && composerState.retryActionEnabled() ? this::retryLastFailedQuery : null,
             this::onDockedComposerFocusChanged
         );
         preservePhoneLandscapeThreadTopAfterComposerSetup();
@@ -6110,18 +6108,26 @@ public final class DetailActivity extends AppCompatActivity {
     }
 
     private void runFollowUp() {
-        String query = buildPhoneFollowUpComposerState().submitQuery();
+        FollowUpComposerState composerState = buildPhoneFollowUpComposerState();
+        String query = composerState.submitQuery();
         if (resolveFollowUpSubmitRoute(query) == FollowUpSubmitRoute.EMPTY_INPUT) {
             setBusy(getString(R.string.detail_followup_empty), false);
+            return;
+        }
+        if (!composerState.canSubmit()) {
             return;
         }
         startFollowUpGeneration(AnswerPresenter.Kind.PHONE_FOLLOWUP, query);
     }
 
     private void runTabletFollowUp(String rawQuery) {
-        String query = FollowUpComposerState.idle(rawQuery, FollowUpComposerState.Surface.TABLET).submitQuery();
+        FollowUpComposerState composerState = buildTabletFollowUpComposerState().withDraft(rawQuery);
+        String query = composerState.submitQuery();
         if (query.isEmpty()) {
             setBusy(getString(R.string.detail_followup_empty), false);
+            return;
+        }
+        if (!composerState.canSubmit()) {
             return;
         }
         startFollowUpGeneration(AnswerPresenter.Kind.TABLET_FOLLOWUP, query);
@@ -6538,11 +6544,8 @@ public final class DetailActivity extends AppCompatActivity {
         refreshFollowUpInputShell(isFollowUpInputShellActive());
         if (followUpRetryButton != null) {
             FollowUpComposerState composerState = buildPhoneFollowUpComposerState();
-            boolean retryAvailable = !busy && !composerState.retryQuery().isEmpty();
-            boolean stalled = isGenerationStallRetryAvailable(busy);
-            followUpRetryButton.setEnabled(retryAvailable || stalled);
-            boolean showRetry = retryAvailable || stalled;
-            followUpRetryButton.setVisibility(showRetry ? View.VISIBLE : View.GONE);
+            followUpRetryButton.setEnabled(composerState.retryActionEnabled());
+            followUpRetryButton.setVisibility(composerState.retryVisible() ? View.VISIBLE : View.GONE);
         }
         renderDockedComposer();
         updateHeroPanelVisibility();
@@ -10067,10 +10070,9 @@ public final class DetailActivity extends AppCompatActivity {
             }
         }
         if (followUpRetryButton != null) {
-            boolean showRetry = (stalled && !safe(currentTitle).isEmpty())
-                || (!safe(lastFailedQuery).isEmpty() && progressBar != null && progressBar.getVisibility() != View.VISIBLE);
-            followUpRetryButton.setEnabled(stalled || !safe(lastFailedQuery).isEmpty());
-            followUpRetryButton.setVisibility(showRetry ? View.VISIBLE : View.GONE);
+            FollowUpComposerState composerState = buildPhoneFollowUpComposerState();
+            followUpRetryButton.setEnabled(composerState.retryActionEnabled());
+            followUpRetryButton.setVisibility(composerState.retryVisible() ? View.VISIBLE : View.GONE);
         }
         renderDockedComposer();
         if (stalled) {
@@ -11088,8 +11090,7 @@ public final class DetailActivity extends AppCompatActivity {
     }
 
     private boolean hasFollowUpDraft() {
-        return followUpInput != null
-            && !safe(followUpInput.getText() == null ? null : followUpInput.getText().toString()).trim().isEmpty();
+        return buildPhoneFollowUpComposerState().hasDraft();
     }
 
     private void refreshFollowUpCopy() {

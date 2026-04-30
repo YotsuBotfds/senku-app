@@ -110,6 +110,18 @@ public final class FollowUpComposerState {
         return !isBlocked() && !retryQuery().isEmpty();
     }
 
+    public boolean retryVisible() {
+        return retryEnabled() || hasActiveRetryQuery();
+    }
+
+    public boolean retryActionEnabled() {
+        return retryEnabled() || hasActiveRetryQuery();
+    }
+
+    public boolean canSubmit() {
+        return submitEnabled();
+    }
+
     public String submitQuery() {
         return draftText;
     }
@@ -124,6 +136,10 @@ public final class FollowUpComposerState {
             return failed;
         }
         return normalizeDraft(activeRetryQuery);
+    }
+
+    private boolean hasActiveRetryQuery() {
+        return !activeRetryQuery.isEmpty();
     }
 
     static String normalizeDraft(String value) {

@@ -52,12 +52,51 @@ public final class FollowUpComposerStateTest {
         assertTrue(busy.isBlocked());
         assertFalse(busy.inputEnabled());
         assertFalse(busy.submitEnabled());
+        assertFalse(busy.canSubmit());
         assertFalse(busy.retryEnabled());
 
         assertTrue(submitting.isBlocked());
         assertFalse(submitting.inputEnabled());
         assertFalse(submitting.submitEnabled());
+        assertFalse(submitting.canSubmit());
         assertFalse(submitting.retryEnabled());
+    }
+
+    @Test
+    public void retryVisibilityStaysAvailableForActiveStallRetryWhileBlocked() {
+        FollowUpComposerState state = new FollowUpComposerState(
+            "draft",
+            true,
+            true,
+            null,
+            FollowUpComposerState.Surface.PHONE,
+            null,
+            "current question"
+        );
+
+        assertTrue(state.isBlocked());
+        assertFalse(state.retryEnabled());
+        assertTrue(state.retryVisible());
+        assertTrue(state.retryActionEnabled());
+        assertEquals("current question", state.retryQuery());
+    }
+
+    @Test
+    public void retryVisibilityHidesStaleFailureWhileBlockedWithoutActiveRetry() {
+        FollowUpComposerState state = new FollowUpComposerState(
+            "draft",
+            true,
+            true,
+            null,
+            FollowUpComposerState.Surface.PHONE,
+            "old failed question",
+            null
+        );
+
+        assertFalse(state.retryEnabled());
+        assertFalse(state.retryVisible());
+        assertFalse(state.retryActionEnabled());
+        assertEquals("old failed question", state.retryQuery());
     }
 
     @Test
@@ -129,5 +168,31 @@ public final class FollowUpComposerStateTest {
 
         assertFalse(busy.submitEnabled());
         assertFalse(busy.retryEnabled());
+    }
+
+    @Test
+    public void failureStatePreservesNewDraftInsteadOfRestoringStaleRetryQuery() {
+        FollowUpComposerState state = FollowUpComposerState.idle(
+            "new draft",
+            FollowUpComposerState.Surface.PHONE
+        ).withFailure("failed", "stale failed query");
+
+        assertEquals("new draft", state.draftText);
+        assertEquals("new draft", state.submitQuery());
+        assertEquals("stale failed query", state.retryQuery());
+        assertTrue(state.canSubmit());
+        assertTrue(state.retryVisible());
+    }
+
+    @Test
+    public void canSubmitGuardsDoubleSubmitWhenBusyEvenWithDraft() {
+        FollowUpComposerState state = FollowUpComposerState.idle(
+            "send this once",
+            FollowUpComposerState.Surface.TABLET
+        ).withBusy(true);
+
+        assertTrue(state.hasDraft());
+        assertEquals("send this once", state.submitQuery());
+        assertFalse(state.canSubmit());
     }
 }
