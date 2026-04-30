@@ -311,6 +311,14 @@ public final class SearchResultCardModelMapper {
         return buildCompactRowSnippet(rawSnippet, sectionHeading, maxLen);
     }
 
+    static boolean shouldShowLinkedGuidePreviewLineForTest() {
+        return shouldShowLinkedGuidePreviewLine();
+    }
+
+    static boolean shouldShowLinkedGuidePreviewLine() {
+        return false;
+    }
+
     static String buildCompactRowSnippet(String rawSnippet, String sectionHeading, int maxLen) {
         String cleaned = cleanDisplayText(rawSnippet, 0);
         if (cleaned.isEmpty()) {

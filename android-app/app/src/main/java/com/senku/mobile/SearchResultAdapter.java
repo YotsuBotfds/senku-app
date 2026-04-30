@@ -1310,7 +1310,7 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
     }
 
     private static boolean shouldShowLinkedGuidePreviewLine() {
-        return false;
+        return SearchResultCardModelMapper.shouldShowLinkedGuidePreviewLine();
     }
 
     static boolean shouldSuppressLinkedGuideCueForQueryForTest(boolean reviewDemoEnabled, String query) {

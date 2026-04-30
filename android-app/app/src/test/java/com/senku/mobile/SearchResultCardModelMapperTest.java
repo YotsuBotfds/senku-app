@@ -141,6 +141,11 @@ public final class SearchResultCardModelMapperTest {
         );
     }
 
+    @Test
+    public void linkedGuidePreviewLinePolicyKeepsSearchRowsCompact() {
+        assertFalse(SearchResultCardModelMapper.shouldShowLinkedGuidePreviewLineForTest());
+    }
+
     private static void assertNormalizedContains(String actual, String expectedToken) {
         assertTrue(
             "Expected <" + actual + "> to contain <" + expectedToken + ">",
