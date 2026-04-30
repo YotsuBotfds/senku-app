@@ -762,27 +762,91 @@ public final class MainActivity extends AppCompatActivity {
     }
 
     private void runAsk(String query) {
-        PackRepository repo = repository;
-        if (repo == null) {
-            setBusy(presentationFormatter().buildPackUnavailableStatus(), false);
-            return;
+        new AskQueryController(new MainAskQueryHost()).runAsk(query);
+    }
+
+    private final class MainAskQueryHost implements AskQueryController.Host {
+        @Override
+        public Context applicationContext() {
+            return getApplicationContext();
         }
-        dismissSearchKeyboard();
-        setPhoneTabFromFlow(BottomTabDestination.ASK);
-        if (query.isEmpty()) {
+
+        @Override
+        public ExecutorService executor() {
+            return executor;
+        }
+
+        @Override
+        public SessionMemory sessionMemory() {
+            return sessionMemory;
+        }
+
+        @Override
+        public boolean isRepositoryAvailable() {
+            return repository != null;
+        }
+
+        @Override
+        public PackRepository repository() {
+            return repository;
+        }
+
+        @Override
+        public File modelFile() {
+            return ModelFileStore.getImportedModelFile(MainActivity.this);
+        }
+
+        @Override
+        public HostInferenceConfig.Settings hostInferenceSettings() {
+            return HostInferenceConfig.resolve(MainActivity.this);
+        }
+
+        @Override
+        public boolean reviewedCardRuntimeEnabled() {
+            return ReviewedCardRuntimeConfig.isEnabled(MainActivity.this);
+        }
+
+        @Override
+        public boolean hasAutoQuery() {
+            return MainActivity.this.hasAutoQuery(getIntent());
+        }
+
+        @Override
+        public int beginHarnessTask(String label) {
+            return MainActivity.this.beginHarnessTask(label);
+        }
+
+        @Override
+        public void runTrackedOnUiThread(int harnessToken, Runnable action) {
+            MainActivity.this.runTrackedOnUiThread(harnessToken, action);
+        }
+
+        @Override
+        public void onPackUnavailable() {
+            setBusy(presentationFormatter().buildPackUnavailableStatus(), false);
+        }
+
+        @Override
+        public void onBlankQuery() {
+            dismissSearchKeyboard();
+            setPhoneTabFromFlow(BottomTabDestination.ASK);
             askLaneActive = true;
             updateActionLabels();
             focusSearchInput();
             setBusy("Enter a question first", false);
-            return;
         }
 
-        DeterministicAnswerRouter.DeterministicAnswer deterministic = DeterministicAnswerRouter.match(query);
-        if (deterministic != null) {
+        @Override
+        public void onDeterministicAnswer(
+            String query,
+            DeterministicAnswerRouter.DeterministicAnswer deterministic,
+            String answerBody
+        ) {
+            dismissSearchKeyboard();
+            setPhoneTabFromFlow(BottomTabDestination.ASK);
             askLaneActive = true;
-            String answerBody = PromptBuilder.buildAnswerBody(deterministic.answerText, deterministic.sources, 0);
             sessionMemory.recordTurn(query, answerBody, deterministic.sources, deterministic.ruleId);
-            ChatSessionStore.persist(this);
+            ChatSessionStore.persist(MainActivity.this);
             setBusy("Deterministic offline answer ready", false);
             setResultHighlightQuery(query);
             replaceItems(deterministic.sources);
@@ -800,80 +864,77 @@ public final class MainActivity extends AppCompatActivity {
                 OfflineAnswerEngine.AnswerMode.CONFIDENT,
                 OfflineAnswerEngine.ConfidenceLabel.HIGH
             );
-            return;
         }
 
-        File modelFile = ModelFileStore.getImportedModelFile(this);
-        HostInferenceConfig.Settings inferenceSettings = HostInferenceConfig.resolve(this);
-        if (!ReviewedCardRuntimeConfig.isEnabled(this) && !inferenceSettings.enabled && modelFile == null) {
+        @Override
+        public void onModelUnavailable(boolean hasAutoQuery) {
+            dismissSearchKeyboard();
+            setPhoneTabFromFlow(BottomTabDestination.ASK);
             askLaneActive = false;
             setBusy(presentationFormatter().buildModelUnavailableStatus(), false);
-            if (!hasAutoQuery(getIntent())) {
+            if (!hasAutoQuery) {
                 showBrowseChrome(true);
             }
             updateInfoText();
-            return;
         }
 
-        askLaneActive = true;
-        showBrowseChrome(false);
-        setBusy(OfflineAnswerEngine.buildRetrievalStatus(query, sessionMemory), true);
-        int harnessToken = beginHarnessTask("main.ask.prepare");
-        executor.execute(() -> {
-            OfflineAnswerEngine.PreparedAnswer prepared = null;
-            try {
-                prepared = OfflineAnswerEngine.prepare(
-                    getApplicationContext(),
-                    repo,
-                    sessionMemory,
-                    modelFile,
-                    query
-                );
-                OfflineAnswerEngine.PreparedAnswer preparedAnswer = prepared;
-                runTrackedOnUiThread(harnessToken, () -> {
-                    String status = preparedAnswer.sources.isEmpty()
-                        ? OfflineAnswerEngine.buildGeneratingStatus(getApplicationContext())
-                        : OfflineAnswerEngine.buildSourcesReadyStatus(MainActivity.this, preparedAnswer.sources.size());
-                    setBusy(status, false);
-                    setResultHighlightQuery(preparedAnswer.query);
-                    replaceItems(preparedAnswer.sources);
-                    showBrowseChrome(false);
-                    resultsHeader.setText(presentationFormatter().buildAnswerContextHeader(
-                        preparedAnswer.query,
-                        preparedAnswer.sources.size(),
-                        preparedAnswer.sessionUsed
-                    ));
-                    updateInfoText();
-                    updateSessionPanel();
-                    openPendingAnswerDetail(preparedAnswer);
-                });
-            } catch (Exception exc) {
-                OfflineAnswerEngine.PreparedAnswer failedPrepared = prepared;
-                runTrackedOnUiThread(harnessToken, () -> {
-                    setBusy("Offline answer failed", false);
-                    if (failedPrepared != null && !failedPrepared.sources.isEmpty()) {
-                        setResultHighlightQuery(failedPrepared.query);
-                        replaceItems(failedPrepared.sources);
-                        showBrowseChrome(false);
-                        resultsHeader.setText(presentationFormatter().buildAnswerContextHeader(
-                            failedPrepared.query,
-                            failedPrepared.sources.size(),
-                            failedPrepared.sessionUsed
-                        ));
-                    } else {
-                        askLaneActive = false;
-                        setResultHighlightQuery(query);
-                        replaceItems(Collections.emptyList());
-                        if (!hasAutoQuery(getIntent())) {
-                            showBrowseChrome(true);
-                        }
-                        resultsHeader.setText("Offline answer failed");
-                    }
-                    updateInfoText();
-                    setInfoTextMessage(buildInfoWithError(exc), true);
-                });
+        @Override
+        public void onPrepareStarted(String query) {
+            dismissSearchKeyboard();
+            setPhoneTabFromFlow(BottomTabDestination.ASK);
+            askLaneActive = true;
+            showBrowseChrome(false);
+            setBusy(OfflineAnswerEngine.buildRetrievalStatus(query, sessionMemory), true);
+        }
+
+        @Override
+        public void onPrepareSuccess(OfflineAnswerEngine.PreparedAnswer preparedAnswer) {
+            String status = preparedAnswer.sources.isEmpty()
+                ? OfflineAnswerEngine.buildGeneratingStatus(getApplicationContext())
+                : OfflineAnswerEngine.buildSourcesReadyStatus(MainActivity.this, preparedAnswer.sources.size());
+            setBusy(status, false);
+            setResultHighlightQuery(preparedAnswer.query);
+            replaceItems(preparedAnswer.sources);
+            showBrowseChrome(false);
+            resultsHeader.setText(presentationFormatter().buildAnswerContextHeader(
+                preparedAnswer.query,
+                preparedAnswer.sources.size(),
+                preparedAnswer.sessionUsed
+            ));
+            updateInfoText();
+            updateSessionPanel();
+            openPendingAnswerDetail(preparedAnswer);
+        }
+
+        @Override
+        public void onPrepareFailure(
+            String query,
+            OfflineAnswerEngine.PreparedAnswer failedPrepared,
+            Exception exc,
+            boolean hasAutoQuery
+        ) {
+            setBusy("Offline answer failed", false);
+            if (failedPrepared != null && !failedPrepared.sources.isEmpty()) {
+                setResultHighlightQuery(failedPrepared.query);
+                replaceItems(failedPrepared.sources);
+                showBrowseChrome(false);
+                resultsHeader.setText(presentationFormatter().buildAnswerContextHeader(
+                    failedPrepared.query,
+                    failedPrepared.sources.size(),
+                    failedPrepared.sessionUsed
+                ));
+            } else {
+                askLaneActive = false;
+                setResultHighlightQuery(query);
+                replaceItems(Collections.emptyList());
+                if (!hasAutoQuery) {
+                    showBrowseChrome(true);
+                }
+                resultsHeader.setText("Offline answer failed");
             }
-        });
+            updateInfoText();
+            setInfoTextMessage(buildInfoWithError(exc), true);
+        }
     }
 
     private void importSelectedModel(Uri uri) {

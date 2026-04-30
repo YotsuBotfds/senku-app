@@ -1,0 +1,326 @@
+package com.senku.mobile;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
+
+import android.content.Context;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.Executor;
+
+import org.junit.Test;
+
+public final class AskQueryControllerTest {
+    @Test
+    public void repositoryUnavailableStopsBeforeUiLaneOrEngineWork() {
+        FakeHost host = new FakeHost();
+        host.repositoryAvailable = false;
+        FakeEngine engine = new FakeEngine();
+        AskQueryController controller = new AskQueryController(host, engine, query -> null);
+
+        controller.runAsk("how do I make water safe");
+
+        assertEquals(List.of("pack-unavailable"), host.events);
+        assertEquals(0, engine.prepareCalls);
+        assertEquals(List.of(), host.begunHarnessTags);
+    }
+
+    @Test
+    public void blankQueryUsesHostBlankQueryCallback() {
+        FakeHost host = readyHost();
+        FakeEngine engine = new FakeEngine();
+        AskQueryController controller = new AskQueryController(host, engine, query -> null);
+
+        controller.runAsk("   ");
+
+        assertEquals(List.of("blank-query"), host.events);
+        assertEquals(0, engine.prepareCalls);
+        assertEquals(List.of(), host.begunHarnessTags);
+    }
+
+    @Test
+    public void deterministicAnswerSkipsModelAndPrepare() {
+        FakeHost host = readyHost();
+        host.modelFile = null;
+        host.hostInferenceSettings = settings(false);
+        FakeEngine engine = new FakeEngine();
+        DeterministicAnswerRouter.DeterministicAnswer deterministic =
+            new DeterministicAnswerRouter.DeterministicAnswer(
+                "rule-id",
+                "Use a proven shortcut.",
+                List.of(sampleSource())
+            );
+        AskQueryController controller = new AskQueryController(host, engine, query -> deterministic);
+
+        controller.runAsk("  shortcut please  ");
+
+        assertEquals(List.of("deterministic"), host.events);
+        assertEquals("shortcut please", host.lastDeterministicQuery);
+        assertSame(deterministic, host.lastDeterministicAnswer);
+        assertTrue(host.lastDeterministicBody.contains("Use a proven shortcut."));
+        assertEquals(0, engine.prepareCalls);
+        assertEquals(List.of(), host.begunHarnessTags);
+    }
+
+    @Test
+    public void modelUnavailableStopsBeforePrepareWhenNoRuntimePathExists() {
+        FakeHost host = readyHost();
+        host.modelFile = null;
+        host.hostInferenceSettings = settings(false);
+        host.reviewedCardRuntimeEnabled = false;
+        host.hasAutoQuery = true;
+        FakeEngine engine = new FakeEngine();
+        AskQueryController controller = new AskQueryController(host, engine, query -> null);
+
+        controller.runAsk("need generated answer");
+
+        assertEquals(List.of("model-unavailable:true"), host.events);
+        assertEquals(0, engine.prepareCalls);
+        assertEquals(List.of(), host.begunHarnessTags);
+    }
+
+    @Test
+    public void prepareSuccessRunsAsyncPrepareAndPostsSuccess() {
+        FakeHost host = readyHost();
+        host.hostInferenceSettings = settings(true);
+        FakeEngine engine = new FakeEngine();
+        engine.preparedToReturn = generativePrepared("prepared question");
+        AskQueryController controller = new AskQueryController(host, engine, query -> null);
+
+        controller.runAsk(" prepared question ");
+
+        assertEquals(
+            List.of("prepare-started:prepared question", "prepare-success"),
+            host.events
+        );
+        assertEquals(List.of(AskQueryController.HARNESS_PREPARE), host.begunHarnessTags);
+        assertEquals(List.of(1), host.uiHarnessTokens);
+        assertEquals(1, engine.prepareCalls);
+        assertEquals("prepared question", engine.lastQuery);
+        assertSame(host.sessionMemory, engine.lastSessionMemory);
+        assertSame(engine.preparedToReturn, host.lastPreparedSuccess);
+    }
+
+    @Test
+    public void prepareFailurePostsFailureWithAutoQueryState() {
+        FakeHost host = readyHost();
+        host.modelFile = new File("model.task");
+        host.hasAutoQuery = false;
+        FakeEngine engine = new FakeEngine();
+        engine.prepareException = new IllegalStateException("prepare failed");
+        AskQueryController controller = new AskQueryController(host, engine, query -> null);
+
+        controller.runAsk("broken ask");
+
+        assertEquals(
+            List.of("prepare-started:broken ask", "prepare-failure:false"),
+            host.events
+        );
+        assertEquals(List.of(AskQueryController.HARNESS_PREPARE), host.begunHarnessTags);
+        assertEquals(1, engine.prepareCalls);
+        assertEquals("broken ask", host.lastFailureQuery);
+        assertSame(engine.prepareException, host.lastFailure);
+        assertNull(host.lastFailedPrepared);
+    }
+
+    private static FakeHost readyHost() {
+        FakeHost host = new FakeHost();
+        host.repositoryAvailable = true;
+        host.modelFile = new File("model.task");
+        host.hostInferenceSettings = settings(false);
+        return host;
+    }
+
+    private static HostInferenceConfig.Settings settings(boolean enabled) {
+        return new HostInferenceConfig.Settings(enabled, "http://127.0.0.1:1235/v1", "test-model");
+    }
+
+    private static OfflineAnswerEngine.PreparedAnswer generativePrepared(String query) {
+        return OfflineAnswerEngine.PreparedAnswer.restoredGenerative(
+            query,
+            List.of(sampleSource()),
+            false,
+            System.currentTimeMillis() - 500L,
+            false,
+            "",
+            "",
+            "system",
+            "prompt"
+        );
+    }
+
+    private static SearchResult sampleSource() {
+        return new SearchResult(
+            "Emergency Shelter",
+            "",
+            "Lean-to snippet",
+            "Lean-to body",
+            "GD-001",
+            "Lean-To",
+            "survival",
+            "guide-focus"
+        );
+    }
+
+    private static final class FakeHost implements AskQueryController.Host {
+        final ArrayList<String> events = new ArrayList<>();
+        final ArrayList<String> begunHarnessTags = new ArrayList<>();
+        final ArrayList<Integer> uiHarnessTokens = new ArrayList<>();
+        final SessionMemory sessionMemory = new SessionMemory();
+        final Executor executor = Runnable::run;
+
+        boolean repositoryAvailable;
+        File modelFile;
+        HostInferenceConfig.Settings hostInferenceSettings = settings(false);
+        boolean reviewedCardRuntimeEnabled;
+        boolean hasAutoQuery;
+        int nextHarnessToken = 1;
+
+        String lastDeterministicQuery;
+        String lastDeterministicBody;
+        String lastFailureQuery;
+        DeterministicAnswerRouter.DeterministicAnswer lastDeterministicAnswer;
+        OfflineAnswerEngine.PreparedAnswer lastPreparedSuccess;
+        OfflineAnswerEngine.PreparedAnswer lastFailedPrepared;
+        Exception lastFailure;
+
+        @Override
+        public Context applicationContext() {
+            return null;
+        }
+
+        @Override
+        public Executor executor() {
+            return executor;
+        }
+
+        @Override
+        public SessionMemory sessionMemory() {
+            return sessionMemory;
+        }
+
+        @Override
+        public boolean isRepositoryAvailable() {
+            return repositoryAvailable;
+        }
+
+        @Override
+        public PackRepository repository() {
+            return null;
+        }
+
+        @Override
+        public File modelFile() {
+            return modelFile;
+        }
+
+        @Override
+        public HostInferenceConfig.Settings hostInferenceSettings() {
+            return hostInferenceSettings;
+        }
+
+        @Override
+        public boolean reviewedCardRuntimeEnabled() {
+            return reviewedCardRuntimeEnabled;
+        }
+
+        @Override
+        public boolean hasAutoQuery() {
+            return hasAutoQuery;
+        }
+
+        @Override
+        public int beginHarnessTask(String label) {
+            begunHarnessTags.add(label);
+            return nextHarnessToken++;
+        }
+
+        @Override
+        public void runTrackedOnUiThread(int harnessToken, Runnable action) {
+            uiHarnessTokens.add(harnessToken);
+            if (action != null) {
+                action.run();
+            }
+        }
+
+        @Override
+        public void onPackUnavailable() {
+            events.add("pack-unavailable");
+        }
+
+        @Override
+        public void onBlankQuery() {
+            events.add("blank-query");
+        }
+
+        @Override
+        public void onDeterministicAnswer(
+            String query,
+            DeterministicAnswerRouter.DeterministicAnswer deterministic,
+            String answerBody
+        ) {
+            events.add("deterministic");
+            lastDeterministicQuery = query;
+            lastDeterministicAnswer = deterministic;
+            lastDeterministicBody = answerBody;
+        }
+
+        @Override
+        public void onModelUnavailable(boolean hasAutoQuery) {
+            events.add("model-unavailable:" + hasAutoQuery);
+        }
+
+        @Override
+        public void onPrepareStarted(String query) {
+            events.add("prepare-started:" + query);
+        }
+
+        @Override
+        public void onPrepareSuccess(OfflineAnswerEngine.PreparedAnswer preparedAnswer) {
+            events.add("prepare-success");
+            lastPreparedSuccess = preparedAnswer;
+        }
+
+        @Override
+        public void onPrepareFailure(
+            String query,
+            OfflineAnswerEngine.PreparedAnswer failedPrepared,
+            Exception exception,
+            boolean hasAutoQuery
+        ) {
+            events.add("prepare-failure:" + hasAutoQuery);
+            lastFailureQuery = query;
+            lastFailedPrepared = failedPrepared;
+            lastFailure = exception;
+        }
+    }
+
+    private static final class FakeEngine implements AskQueryController.Engine {
+        OfflineAnswerEngine.PreparedAnswer preparedToReturn;
+        Exception prepareException;
+        int prepareCalls;
+        String lastQuery;
+        SessionMemory lastSessionMemory;
+
+        @Override
+        public OfflineAnswerEngine.PreparedAnswer prepare(
+            Context context,
+            PackRepository repo,
+            SessionMemory sessionMemory,
+            File modelFile,
+            String query
+        ) throws Exception {
+            prepareCalls += 1;
+            lastQuery = query;
+            lastSessionMemory = sessionMemory;
+            if (prepareException != null) {
+                throw prepareException;
+            }
+            return preparedToReturn;
+        }
+    }
+}
