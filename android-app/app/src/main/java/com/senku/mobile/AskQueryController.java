@@ -58,6 +58,8 @@ final class AskQueryController {
     private final Host host;
     private final Engine engine;
     private final DeterministicMatcher deterministicMatcher;
+    private final Object jobLock = new Object();
+    private long currentJobToken;
 
     AskQueryController(Host host) {
         this(host, DEFAULT_ENGINE, DEFAULT_MATCHER);
@@ -70,6 +72,7 @@ final class AskQueryController {
     }
 
     void runAsk(String rawQuery) {
+        long jobToken = nextJobToken();
         String query = safe(rawQuery).trim();
         if (!host.isRepositoryAvailable()) {
             host.onPackUnavailable();
@@ -107,15 +110,36 @@ final class AskQueryController {
             try {
                 prepared = engine.prepare(context, repo, sessionMemory, modelFile, query);
                 OfflineAnswerEngine.PreparedAnswer preparedAnswer = prepared;
-                host.runTrackedOnUiThread(harnessToken, () -> host.onPrepareSuccess(preparedAnswer));
+                host.runTrackedOnUiThread(harnessToken, () -> {
+                    if (isCurrentJob(jobToken)) {
+                        host.onPrepareSuccess(preparedAnswer);
+                    }
+                });
             } catch (Exception exc) {
                 OfflineAnswerEngine.PreparedAnswer failedPrepared = prepared;
                 host.runTrackedOnUiThread(
                     harnessToken,
-                    () -> host.onPrepareFailure(query, failedPrepared, exc, hasAutoQuery)
+                    () -> {
+                        if (isCurrentJob(jobToken)) {
+                            host.onPrepareFailure(query, failedPrepared, exc, hasAutoQuery);
+                        }
+                    }
                 );
             }
         });
+    }
+
+    private long nextJobToken() {
+        synchronized (jobLock) {
+            currentJobToken += 1;
+            return currentJobToken;
+        }
+    }
+
+    private boolean isCurrentJob(long jobToken) {
+        synchronized (jobLock) {
+            return currentJobToken == jobToken;
+        }
     }
 
     private static String safe(String value) {

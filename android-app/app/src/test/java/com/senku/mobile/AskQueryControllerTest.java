@@ -9,7 +9,9 @@ import android.content.Context;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Executor;
 
 import org.junit.Test;
@@ -127,6 +129,74 @@ public final class AskQueryControllerTest {
         assertNull(host.lastFailedPrepared);
     }
 
+    @Test
+    public void stalePrepareSuccessIsIgnoredAfterNewerAskStarts() {
+        FakeHost host = readyHost();
+        host.queueUiActions = true;
+        FakeEngine engine = new FakeEngine();
+        OfflineAnswerEngine.PreparedAnswer firstPrepared = generativePrepared("first ask");
+        OfflineAnswerEngine.PreparedAnswer secondPrepared = generativePrepared("second ask");
+        engine.preparedAnswers.put("first ask", firstPrepared);
+        engine.preparedAnswers.put("second ask", secondPrepared);
+        AskQueryController controller = new AskQueryController(host, engine, query -> null);
+
+        controller.runAsk("first ask");
+        controller.runAsk("second ask");
+        host.runQueuedUiAction(0);
+        host.runQueuedUiAction(1);
+
+        assertEquals(
+            List.of("prepare-started:first ask", "prepare-started:second ask", "prepare-success"),
+            host.events
+        );
+        assertSame(secondPrepared, host.lastPreparedSuccess);
+        assertEquals(2, engine.prepareCalls);
+    }
+
+    @Test
+    public void stalePrepareFailureIsIgnoredAfterNewerAskStarts() {
+        FakeHost host = readyHost();
+        host.queueUiActions = true;
+        FakeEngine engine = new FakeEngine();
+        IllegalStateException firstFailure = new IllegalStateException("old failure");
+        OfflineAnswerEngine.PreparedAnswer secondPrepared = generativePrepared("second ask");
+        engine.prepareExceptions.put("first ask", firstFailure);
+        engine.preparedAnswers.put("second ask", secondPrepared);
+        AskQueryController controller = new AskQueryController(host, engine, query -> null);
+
+        controller.runAsk("first ask");
+        controller.runAsk("second ask");
+        host.runQueuedUiAction(0);
+        host.runQueuedUiAction(1);
+
+        assertEquals(
+            List.of("prepare-started:first ask", "prepare-started:second ask", "prepare-success"),
+            host.events
+        );
+        assertSame(secondPrepared, host.lastPreparedSuccess);
+        assertNull(host.lastFailure);
+    }
+
+    @Test
+    public void currentPrepareFailureStillPosts() {
+        FakeHost host = readyHost();
+        host.queueUiActions = true;
+        FakeEngine engine = new FakeEngine();
+        IllegalStateException currentFailure = new IllegalStateException("current failure");
+        engine.prepareExceptions.put("current ask", currentFailure);
+        AskQueryController controller = new AskQueryController(host, engine, query -> null);
+
+        controller.runAsk("current ask");
+        host.runQueuedUiAction(0);
+
+        assertEquals(
+            List.of("prepare-started:current ask", "prepare-failure:false"),
+            host.events
+        );
+        assertSame(currentFailure, host.lastFailure);
+        assertEquals("current ask", host.lastFailureQuery);
+    }
+
     private static FakeHost readyHost() {
         FakeHost host = new FakeHost();
         host.repositoryAvailable = true;
@@ -170,6 +240,7 @@ public final class AskQueryControllerTest {
         final ArrayList<String> events = new ArrayList<>();
         final ArrayList<String> begunHarnessTags = new ArrayList<>();
         final ArrayList<Integer> uiHarnessTokens = new ArrayList<>();
+        final ArrayList<Runnable> queuedUiActions = new ArrayList<>();
         final SessionMemory sessionMemory = new SessionMemory();
         final Executor executor = Runnable::run;
 
@@ -178,6 +249,7 @@ public final class AskQueryControllerTest {
         HostInferenceConfig.Settings hostInferenceSettings = settings(false);
         boolean reviewedCardRuntimeEnabled;
         boolean hasAutoQuery;
+        boolean queueUiActions;
         int nextHarnessToken = 1;
 
         String lastDeterministicQuery;
@@ -242,6 +314,17 @@ public final class AskQueryControllerTest {
         @Override
         public void runTrackedOnUiThread(int harnessToken, Runnable action) {
             uiHarnessTokens.add(harnessToken);
+            if (queueUiActions) {
+                queuedUiActions.add(action);
+                return;
+            }
+            if (action != null) {
+                action.run();
+            }
+        }
+
+        void runQueuedUiAction(int index) {
+            Runnable action = queuedUiActions.get(index);
             if (action != null) {
                 action.run();
             }
@@ -300,6 +383,8 @@ public final class AskQueryControllerTest {
     }
 
     private static final class FakeEngine implements AskQueryController.Engine {
+        final Map<String, OfflineAnswerEngine.PreparedAnswer> preparedAnswers = new HashMap<>();
+        final Map<String, Exception> prepareExceptions = new HashMap<>();
         OfflineAnswerEngine.PreparedAnswer preparedToReturn;
         Exception prepareException;
         int prepareCalls;
@@ -317,8 +402,14 @@ public final class AskQueryControllerTest {
             prepareCalls += 1;
             lastQuery = query;
             lastSessionMemory = sessionMemory;
+            if (prepareExceptions.containsKey(query)) {
+                throw prepareExceptions.get(query);
+            }
             if (prepareException != null) {
                 throw prepareException;
+            }
+            if (preparedAnswers.containsKey(query)) {
+                return preparedAnswers.get(query);
             }
             return preparedToReturn;
         }

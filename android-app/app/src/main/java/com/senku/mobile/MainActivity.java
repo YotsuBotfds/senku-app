@@ -121,6 +121,7 @@ public final class MainActivity extends AppCompatActivity {
     private final ArrayList<SearchResult> homeRelatedGuides = new ArrayList<>();
     private final LinkedHashMap<String, SearchResultAdapter.LinkedGuidePreview> resultPreviewBridgeMap =
         new LinkedHashMap<>();
+    private final AskQueryController askQueryController = new AskQueryController(new MainAskQueryHost());
 
     private MainPresentationFormatter presentationFormatter;
     private HomeGuidePresentationFormatter homeGuidePresentationFormatter;
@@ -762,7 +763,7 @@ public final class MainActivity extends AppCompatActivity {
     }
 
     private void runAsk(String query) {
-        new AskQueryController(new MainAskQueryHost()).runAsk(query);
+        askQueryController.runAsk(query);
     }
 
     private final class MainAskQueryHost implements AskQueryController.Host {
