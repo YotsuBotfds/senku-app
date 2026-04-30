@@ -26,7 +26,6 @@ public final class PackRepository implements AutoCloseable {
     private static final double ANCHOR_BASE_BONUS = 0.08;
     private static final double ANCHOR_PRIOR_MAX_BONUS = 0.10;
     private static final String ANCHOR_PRIOR_PREFIX = "__anchor_prior__:";
-    private static final int ANCHOR_SNIPPET_LIMIT = 280;
     private static final int LEXICAL_CANDIDATE_LIMIT = 72;
     private static final int VECTOR_NEIGHBOR_LIMIT = 28;
     private static final int VECTOR_SEED_COUNT = 6;
@@ -457,7 +456,7 @@ public final class PackRepository implements AutoCloseable {
             return "";
         }
 
-        String snippet = resolveAnchorSnippet(
+        String snippet = AnchorSnippetFormatter.resolve(
             loadChunkDocumentForGuide(sessionChunkId, guideId),
             loadLeadingChunkDocumentForGuide(guideId),
             ""
@@ -467,7 +466,7 @@ public final class PackRepository implements AutoCloseable {
         }
 
         SearchResult guide = loadGuideById(guideId);
-        return resolveAnchorSnippet("", "", guide == null ? "" : guide.body);
+        return AnchorSnippetFormatter.resolve("", "", guide == null ? "" : guide.body);
     }
 
     public Set<String> getReciprocalLinks(String guideId) {
@@ -2088,11 +2087,11 @@ public final class PackRepository implements AutoCloseable {
     }
 
     static String resolveAnchorSnippetForTest(String sessionChunkText, String guideChunkText, String guideBody) {
-        return resolveAnchorSnippet(sessionChunkText, guideChunkText, guideBody);
+        return AnchorSnippetFormatter.resolve(sessionChunkText, guideChunkText, guideBody);
     }
 
     static String firstParagraphSnippetForTest(String guideBody) {
-        return firstParagraphSnippet(guideBody);
+        return AnchorSnippetFormatter.firstParagraph(guideBody);
     }
 
     private static RankedChunk buildAnchorPriorTestChunk(String guideId, String mode, int rank) {
@@ -5049,86 +5048,6 @@ public final class PackRepository implements AutoCloseable {
 
     private static long elapsedRealtimeMsSince(long startedAtNs) {
         return Math.max(0L, elapsedRealtimeNanosSafe() - startedAtNs) / 1_000_000L;
-    }
-
-    private static String resolveAnchorSnippet(String sessionChunkText, String guideChunkText, String guideBody) {
-        String sessionSnippet = anchorSnippetFromChunkText(sessionChunkText);
-        if (!sessionSnippet.isEmpty()) {
-            return sessionSnippet;
-        }
-        String guideChunkSnippet = anchorSnippetFromChunkText(guideChunkText);
-        if (!guideChunkSnippet.isEmpty()) {
-            return guideChunkSnippet;
-        }
-        return firstParagraphSnippet(guideBody);
-    }
-
-    private static String anchorSnippetFromChunkText(String chunkText) {
-        return clip(normalizeAnchorSnippetText(chunkText), ANCHOR_SNIPPET_LIMIT);
-    }
-
-    private static String firstParagraphSnippet(String guideBody) {
-        String normalized = emptySafe(guideBody).replace("\r\n", "\n").replace('\r', '\n');
-        if (normalized.trim().isEmpty()) {
-            return "";
-        }
-
-        StringBuilder paragraph = new StringBuilder();
-        for (String rawLine : normalized.split("\n", -1)) {
-            String cleaned = sanitizeAnchorSnippetLine(rawLine);
-            if (cleaned.isEmpty()) {
-                if (paragraph.length() > 0) {
-                    break;
-                }
-                continue;
-            }
-            if (paragraph.length() > 0) {
-                paragraph.append(' ');
-            }
-            paragraph.append(cleaned);
-        }
-        return clip(paragraph.toString(), ANCHOR_SNIPPET_LIMIT);
-    }
-
-    private static String normalizeAnchorSnippetText(String text) {
-        String normalized = emptySafe(text).replace("\r\n", "\n").replace('\r', '\n');
-        if (normalized.trim().isEmpty()) {
-            return "";
-        }
-
-        StringBuilder builder = new StringBuilder();
-        for (String rawLine : normalized.split("\n", -1)) {
-            String cleaned = sanitizeAnchorSnippetLine(rawLine);
-            if (cleaned.isEmpty()) {
-                continue;
-            }
-            if (builder.length() > 0) {
-                builder.append(' ');
-            }
-            builder.append(cleaned);
-        }
-        return builder.toString().replaceAll("\\s+", " ").trim();
-    }
-
-    private static String sanitizeAnchorSnippetLine(String rawLine) {
-        String trimmed = emptySafe(rawLine).trim();
-        if (trimmed.isEmpty()
-            || trimmed.startsWith("#")
-            || trimmed.startsWith("```")
-            || trimmed.matches("^[-*_]{3,}$")) {
-            return "";
-        }
-
-        String cleaned = trimmed;
-        cleaned = cleaned.replaceFirst("^>+\\s*", "");
-        cleaned = cleaned.replaceFirst("^[-*+]\\s+", "");
-        cleaned = cleaned.replaceFirst("^\\d+[.)]\\s+", "");
-        cleaned = cleaned.replaceFirst("^\\[![^\\]]+\\]\\s*", "");
-        cleaned = cleaned.replaceAll("\\[(.+?)\\]\\((.+?)\\)", "$1");
-        cleaned = cleaned.replace("**", "");
-        cleaned = cleaned.replace("__", "");
-        cleaned = cleaned.replace("`", "");
-        return cleaned.replaceAll("\\s+", " ").trim();
     }
 
     private boolean tableExistsInSchema(String tableName) {
