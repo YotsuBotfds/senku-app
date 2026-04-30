@@ -9,6 +9,10 @@ import java.util.Locale;
 final class ReviewDemoPolicy {
     private static final String REVIEW_SEARCH_QUERY = "rain shelter";
     private static final String REVIEW_SEARCH_LATENCY_LABEL = "12ms";
+    private static final String RAIN_SHELTER_TOPIC_GUIDE_ID = "GD-345";
+    private static final String RAIN_SHELTER_PHONE_RELATED_CANONICAL_GUIDE_ID = "GD-027";
+    private static final String RAIN_SHELTER_PHONE_RELATED_DISPLACED_GUIDE_ID = "GD-109";
+    private static final int ANSWER_MODE_PHONE_VISIBLE_RELATED_GUIDE_COUNT = 4;
     private static final ReviewSearchResultSpec[] REVIEW_RAIN_SHELTER_RESULTS = {
         new ReviewSearchResultSpec(
             "GD-023",
@@ -182,6 +186,33 @@ final class ReviewDemoPolicy {
         return reviewResults;
     }
 
+    static ArrayList<SearchResult> shapeAnswerModeRelatedGuides(
+        boolean productReviewMode,
+        String anchorGuideId,
+        List<SearchResult> relatedGuides
+    ) {
+        ArrayList<SearchResult> shaped = new ArrayList<>();
+        if (relatedGuides != null) {
+            shaped.addAll(relatedGuides);
+        }
+        if (!productReviewMode || !RAIN_SHELTER_TOPIC_GUIDE_ID.equalsIgnoreCase(safe(anchorGuideId).trim())) {
+            return shaped;
+        }
+        int canonicalIndex = indexOfGuideId(shaped, RAIN_SHELTER_PHONE_RELATED_CANONICAL_GUIDE_ID);
+        int displacedIndex = indexOfGuideId(shaped, RAIN_SHELTER_PHONE_RELATED_DISPLACED_GUIDE_ID);
+        if (displacedIndex >= 0 && displacedIndex < ANSWER_MODE_PHONE_VISIBLE_RELATED_GUIDE_COUNT) {
+            SearchResult displaced = shaped.remove(displacedIndex);
+            canonicalIndex = indexOfGuideId(shaped, RAIN_SHELTER_PHONE_RELATED_CANONICAL_GUIDE_ID);
+            SearchResult canonical = canonicalIndex >= 0
+                ? shaped.remove(canonicalIndex)
+                : primitiveTechnologyRelatedGuide();
+            int targetIndex = Math.min(ANSWER_MODE_PHONE_VISIBLE_RELATED_GUIDE_COUNT - 1, shaped.size());
+            shaped.add(targetIndex, canonical);
+            shaped.add(Math.min(targetIndex + 1, shaped.size()), displaced);
+        }
+        return shaped;
+    }
+
     static int displayHomeCategoryCount(boolean productReviewMode, String bucketKey, int actualCount) {
         if (!productReviewMode) {
             return actualCount;
@@ -256,6 +287,32 @@ final class ReviewDemoPolicy {
             spec.structureType,
             spec.topicTags
         );
+    }
+
+    private static SearchResult primitiveTechnologyRelatedGuide() {
+        return new SearchResult(
+            "Primitive Technology & Stone Age",
+            "",
+            "",
+            "",
+            RAIN_SHELTER_PHONE_RELATED_CANONICAL_GUIDE_ID,
+            "",
+            "",
+            ""
+        );
+    }
+
+    private static int indexOfGuideId(List<SearchResult> results, String guideId) {
+        if (results == null || safe(guideId).trim().isEmpty()) {
+            return -1;
+        }
+        for (int i = 0; i < results.size(); i++) {
+            SearchResult result = results.get(i);
+            if (guideId.equalsIgnoreCase(safe(result == null ? null : result.guideId).trim())) {
+                return i;
+            }
+        }
+        return -1;
     }
 
     private static String reviewManualHomeRecentThreadLabel(int index) {

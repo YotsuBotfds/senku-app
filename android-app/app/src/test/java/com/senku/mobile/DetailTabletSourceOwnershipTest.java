@@ -85,6 +85,43 @@ public final class DetailTabletSourceOwnershipTest {
         );
     }
 
+    @Test
+    public void primaryGuideUsesGenericTopicSourceMetadataInsteadOfRainShelterGuideId() {
+        assertEquals(
+            "GD-777",
+            DetailActivity.primaryGuideIdForSources(List.of(
+                new SearchResult(
+                    "Reviewed Anchor",
+                    "",
+                    "Use this as the reviewed anchor context.",
+                    "",
+                    "GD-220",
+                    "",
+                    "materials",
+                    "hybrid",
+                    "reviewed_source_anchor",
+                    "immediate",
+                    "materials_processing",
+                    "abrasives,manufacturing"
+                ),
+                new SearchResult(
+                    "Storm tarp rigging",
+                    "",
+                    "A ridgeline tarp keeps rain off the sleeping area.",
+                    "",
+                    "GD-777",
+                    "",
+                    "shelter",
+                    "guide-focus",
+                    "topic",
+                    "immediate",
+                    "emergency_shelter",
+                    "rain,shelter,tarp,cord"
+                )
+            ))
+        );
+    }
+
     private static SearchResult source(String guideId, String title, String topicTags) {
         return new SearchResult(title, "", "", "", guideId, "", "", "", "", "", "", topicTags);
     }

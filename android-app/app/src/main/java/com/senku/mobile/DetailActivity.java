@@ -161,10 +161,6 @@ public final class DetailActivity extends AppCompatActivity {
     private static final Pattern GUIDE_HTML_BREAK_PATTERN = Pattern.compile("(?i)<br\\s*/?>");
     private static final Pattern SOURCE_COUNT_TOKEN_PATTERN = Pattern.compile("(?i)\\b(\\d+)\\s+sources?\\b");
     private static final String HEADER_BULLET = " \u2022 ";
-    private static final String RAIN_SHELTER_TOPIC_GUIDE_ID = "GD-345";
-    private static final String RAIN_SHELTER_PHONE_RELATED_CANONICAL_GUIDE_ID = "GD-027";
-    private static final String RAIN_SHELTER_PHONE_RELATED_DISPLACED_GUIDE_ID = "GD-109";
-    private static final int ANSWER_MODE_PHONE_VISIBLE_RELATED_GUIDE_COUNT = 4;
     private static final int DETAIL_OVERFLOW_MENU_SAVE_GUIDE_ID = 1;
     private static final int DETAIL_OVERFLOW_MENU_HOME_ID = 2;
 
@@ -1418,7 +1414,7 @@ public final class DetailActivity extends AppCompatActivity {
                 Log.w(TAG, "detail.relatedGuides.loadFailed guideId=" + guideId, exc);
             }
             ArrayList<SearchResult> shapedRelatedGuides = answerModeRelatedGuides
-                ? shapeAnswerModeRelatedGuides(guideId, relatedGuides)
+                ? ReviewDemoPolicy.shapeAnswerModeRelatedGuides(productReviewMode, guideId, relatedGuides)
                 : new ArrayList<>(relatedGuides);
             List<SuggestChipModel> followUpSuggestions =
                 buildContextualFollowupCandidates(guideId, reciprocalLinks, shapedRelatedGuides);
@@ -7964,58 +7960,6 @@ public final class DetailActivity extends AppCompatActivity {
             .trim();
     }
 
-    static ArrayList<SearchResult> shapeAnswerModeRelatedGuides(
-        String anchorGuideId,
-        List<SearchResult> relatedGuides
-    ) {
-        ArrayList<SearchResult> shaped = new ArrayList<>();
-        if (relatedGuides != null) {
-            shaped.addAll(relatedGuides);
-        }
-        if (!RAIN_SHELTER_TOPIC_GUIDE_ID.equalsIgnoreCase(safe(anchorGuideId).trim())) {
-            return shaped;
-        }
-        int canonicalIndex = indexOfGuideId(shaped, RAIN_SHELTER_PHONE_RELATED_CANONICAL_GUIDE_ID);
-        int displacedIndex = indexOfGuideId(shaped, RAIN_SHELTER_PHONE_RELATED_DISPLACED_GUIDE_ID);
-        if (displacedIndex >= 0 && displacedIndex < ANSWER_MODE_PHONE_VISIBLE_RELATED_GUIDE_COUNT) {
-            SearchResult displaced = shaped.remove(displacedIndex);
-            canonicalIndex = indexOfGuideId(shaped, RAIN_SHELTER_PHONE_RELATED_CANONICAL_GUIDE_ID);
-            SearchResult canonical = canonicalIndex >= 0
-                ? shaped.remove(canonicalIndex)
-                : primitiveTechnologyRelatedGuide();
-            int targetIndex = Math.min(ANSWER_MODE_PHONE_VISIBLE_RELATED_GUIDE_COUNT - 1, shaped.size());
-            shaped.add(targetIndex, canonical);
-            shaped.add(Math.min(targetIndex + 1, shaped.size()), displaced);
-        }
-        return shaped;
-    }
-
-    private static SearchResult primitiveTechnologyRelatedGuide() {
-        return new SearchResult(
-            "Primitive Technology & Stone Age",
-            "",
-            "",
-            "",
-            RAIN_SHELTER_PHONE_RELATED_CANONICAL_GUIDE_ID,
-            "",
-            "",
-            ""
-        );
-    }
-
-    private static int indexOfGuideId(List<SearchResult> results, String guideId) {
-        if (results == null || safe(guideId).trim().isEmpty()) {
-            return -1;
-        }
-        for (int i = 0; i < results.size(); i++) {
-            SearchResult result = results.get(i);
-            if (guideId.equalsIgnoreCase(safe(result == null ? null : result.guideId).trim())) {
-                return i;
-            }
-        }
-        return -1;
-    }
-
     private void applyResiliencyAccent() {
         int severityColor = getSeverityAccentColor();
         boolean highRisk = isHighRiskRoute();
@@ -11199,7 +11143,7 @@ public final class DetailActivity extends AppCompatActivity {
         return value.substring(0, 8);
     }
 
-    private static String primaryGuideIdForSources(List<SearchResult> sources) {
+    static String primaryGuideIdForSources(List<SearchResult> sources) {
         if (sources == null) {
             return "";
         }
@@ -11238,18 +11182,26 @@ public final class DetailActivity extends AppCompatActivity {
     }
 
     private static int readerFacingSourceScoreForGuideId(SearchResult source, int index) {
-        String guideId = safe(source == null ? null : source.guideId).trim();
+        String role = safe(source == null ? null : source.contentRole).replace('_', ' ').toLowerCase(Locale.US);
+        String retrievalMode = safe(source == null ? null : source.retrievalMode).replace('_', ' ').toLowerCase(Locale.US);
         String combined = (
             safe(source == null ? null : source.title) + " " +
                 safe(source == null ? null : source.sectionHeading) + " " +
                 safe(source == null ? null : source.snippet) + " " +
                 safe(source == null ? null : source.body) + " " +
                 safe(source == null ? null : source.topicTags) + " " +
+                safe(source == null ? null : source.category) + " " +
                 safe(source == null ? null : source.structureType)
         ).replace('_', ' ').toLowerCase(Locale.US);
         int score = Math.max(0, 16 - index);
-        if ("GD-345".equalsIgnoreCase(guideId)) {
-            score += 32;
+        if ("topic".equals(role)) {
+            score += 22;
+        }
+        if (role.contains("reviewed source")) {
+            score -= 14;
+        }
+        if (retrievalMode.contains("guide-focus") || retrievalMode.contains("guide focus")) {
+            score += 6;
         }
         if (combined.contains("rain") && combined.contains("shelter")) {
             score += 24;

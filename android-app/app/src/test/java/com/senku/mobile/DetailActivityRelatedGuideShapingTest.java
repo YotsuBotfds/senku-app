@@ -10,7 +10,8 @@ import org.junit.Test;
 public final class DetailActivityRelatedGuideShapingTest {
     @Test
     public void rainShelterAnswerModeShowsPrimitiveTechnologyAsFourthPhoneGuide() {
-        List<SearchResult> shaped = DetailActivity.shapeAnswerModeRelatedGuides(
+        List<SearchResult> shaped = ReviewDemoPolicy.shapeAnswerModeRelatedGuides(
+            true,
             "GD-345",
             Arrays.asList(
                 result("GD-294", "Cave Shelter Systems & Cold-Weather"),
@@ -30,7 +31,8 @@ public final class DetailActivityRelatedGuideShapingTest {
 
     @Test
     public void unrelatedAnchorKeepsRepositoryOrder() {
-        List<SearchResult> shaped = DetailActivity.shapeAnswerModeRelatedGuides(
+        List<SearchResult> shaped = ReviewDemoPolicy.shapeAnswerModeRelatedGuides(
+            true,
             "GD-214",
             Arrays.asList(
                 result("GD-109", "Natural Building Materials"),
@@ -44,7 +46,8 @@ public final class DetailActivityRelatedGuideShapingTest {
 
     @Test
     public void rainShelterAnswerModeInjectsPrimitiveTechnologyWhenRepositoryOmitsIt() {
-        List<SearchResult> shaped = DetailActivity.shapeAnswerModeRelatedGuides(
+        List<SearchResult> shaped = ReviewDemoPolicy.shapeAnswerModeRelatedGuides(
+            true,
             "GD-345",
             Arrays.asList(
                 result("GD-294", "Cave Shelter Systems & Cold-Weather"),
@@ -60,6 +63,24 @@ public final class DetailActivityRelatedGuideShapingTest {
         assertEquals("GD-027", shaped.get(3).guideId);
         assertEquals("Primitive Technology & Stone Age", shaped.get(3).title);
         assertEquals("GD-109", shaped.get(4).guideId);
+    }
+
+    @Test
+    public void disabledReviewModeKeepsRainShelterRelatedGuideOrder() {
+        List<SearchResult> shaped = ReviewDemoPolicy.shapeAnswerModeRelatedGuides(
+            false,
+            "GD-345",
+            Arrays.asList(
+                result("GD-294", "Cave Shelter Systems & Cold-Weather"),
+                result("GD-695", "Hurricane & Severe Storm Sheltering"),
+                result("GD-484", "Insulation Materials & Cold-Soak"),
+                result("GD-109", "Natural Building Materials"),
+                result("GD-027", "Primitive Technology & Stone Age")
+            )
+        );
+
+        assertEquals("GD-109", shaped.get(3).guideId);
+        assertEquals("GD-027", shaped.get(4).guideId);
     }
 
     @Test
