@@ -1456,31 +1456,21 @@ public final class PackRepository implements AutoCloseable {
     }
 
     private static int routeChunkCandidateLimit(QueryTerms queryTerms, int limit, boolean compactGuideSweep) {
-        if (queryTerms.routeProfile.isStarterBuildProject()) {
-            if (compactGuideSweep
-                && "cabin_house".equals(queryTerms.metadataProfile.preferredStructureType())
-                && queryTerms.metadataProfile.hasExplicitTopic("site_selection")) {
-                return Math.max(limit * 5, 128);
-            }
-            return Math.max(limit * 24, 600);
-        }
-        return compactGuideSweep ? Math.max(limit * 8, 160) : Math.max(limit * 12, 240);
+        return RetrievalRoutePolicy.routeChunkCandidateLimit(
+            queryTerms.routeProfile,
+            queryTerms.metadataProfile,
+            limit,
+            compactGuideSweep
+        );
     }
 
     private static int routeChunkCandidateTarget(QueryTerms queryTerms, int limit, boolean compactGuideSweep) {
-        if (queryTerms.routeProfile.isStarterBuildProject()) {
-            if (compactGuideSweep
-                && "cabin_house".equals(queryTerms.metadataProfile.preferredStructureType())
-                && queryTerms.metadataProfile.hasExplicitTopic("site_selection")) {
-                return Math.max(limit + 4, 16);
-            }
-            return Math.max(limit * 3, 42);
-        }
-        String preferredStructureType = queryTerms.metadataProfile.preferredStructureType();
-        if ("soapmaking".equals(preferredStructureType) || "glassmaking".equals(preferredStructureType)) {
-            return compactGuideSweep ? Math.max(limit + 2, 14) : Math.max(limit + 6, 18);
-        }
-        return compactGuideSweep ? Math.max(limit + 4, 16) : Math.max(limit * 3, 24);
+        return RetrievalRoutePolicy.routeChunkCandidateTarget(
+            queryTerms.routeProfile,
+            queryTerms.metadataProfile,
+            limit,
+            compactGuideSweep
+        );
     }
 
     static boolean shouldBackfillLikeAfterFtsForTest(String query, int addedWithFts, int totalSections, int targetTotal) {
@@ -1521,312 +1511,11 @@ public final class PackRepository implements AutoCloseable {
     }
 
     private static RouteFtsOrderSpec noBm25RouteFtsOrder(QueryTerms queryTerms) {
-        if (queryTerms != null
-            && queryTerms.metadataProfile != null
-            && "soapmaking".equals(queryTerms.metadataProfile.preferredStructureType())) {
-            ArrayList<String> args = new ArrayList<>();
-            Collections.addAll(
-                args,
-                "%soap making - cold process%",
-                "%making soap%",
-                "%soap making - hot process%",
-                "%homestead chemistry%",
-                "%everyday compounds%",
-                "%making lye from wood ash%",
-                "%lye from wood ash%",
-                "subsystem",
-                "%rendering fats%",
-                "%tallow%",
-                "%cleaning product chemistry%",
-                "%chemical safety%"
-            );
-            return new RouteFtsOrderSpec(
-                " ORDER BY CASE " +
-                    "WHEN lower(c.section_heading) LIKE ? THEN 0 " +
-                    "WHEN lower(c.section_heading) LIKE ? THEN 0 " +
-                    "WHEN lower(c.section_heading) LIKE ? THEN 0 " +
-                    "WHEN lower(c.guide_title) LIKE ? THEN 1 " +
-                    "WHEN lower(c.guide_title) LIKE ? THEN 1 " +
-                    "WHEN lower(c.section_heading) LIKE ? THEN 2 " +
-                    "WHEN lower(c.section_heading) LIKE ? THEN 2 " +
-                    "WHEN lower(c.content_role) = ? THEN 3 " +
-                    "WHEN lower(c.section_heading) LIKE ? THEN 4 " +
-                    "WHEN lower(c.section_heading) LIKE ? THEN 4 " +
-                    "WHEN lower(c.section_heading) LIKE ? THEN 8 " +
-                    "WHEN lower(c.guide_title) LIKE ? THEN 8 " +
-                    "ELSE 9 END, c.row_id ",
-                args,
-                "soapmaking_priority"
-            );
-        }
-        if (queryTerms != null
-            && queryTerms.metadataProfile != null
-            && "water_distribution".equals(queryTerms.metadataProfile.preferredStructureType())) {
-            ArrayList<String> args = new ArrayList<>();
-            Collections.addAll(
-                args,
-                "%gravity-fed%",
-                "%distribution%",
-                "%household taps%",
-                "%spring box%",
-                "%storage tank%",
-                "%system components%",
-                "%layout%",
-                "%network%",
-                "%overflow%",
-                "%water tower%"
-            );
-            return new RouteFtsOrderSpec(
-                " ORDER BY CASE " +
-                    "WHEN lower(c.section_heading) LIKE ? THEN 0 " +
-                    "WHEN lower(c.section_heading) LIKE ? THEN 0 " +
-                    "WHEN lower(c.section_heading) LIKE ? THEN 1 " +
-                    "WHEN lower(c.section_heading) LIKE ? THEN 1 " +
-                    "WHEN lower(c.section_heading) LIKE ? THEN 2 " +
-                    "WHEN lower(c.section_heading) LIKE ? THEN 2 " +
-                    "WHEN lower(c.section_heading) LIKE ? THEN 3 " +
-                    "WHEN lower(c.section_heading) LIKE ? THEN 3 " +
-                    "WHEN lower(c.section_heading) LIKE ? THEN 4 " +
-                    "WHEN lower(c.guide_title) LIKE ? THEN 5 " +
-                    "ELSE 9 END, c.row_id ",
-                args,
-                "water_distribution_priority"
-            );
-        }
-        if (queryTerms != null
-            && queryTerms.metadataProfile != null
-            && "clay_oven".equals(queryTerms.metadataProfile.preferredStructureType())) {
-            ArrayList<String> args = new ArrayList<>();
-            Collections.addAll(
-                args,
-                "%cob oven%",
-                "%clay oven%",
-                "%bread oven%",
-                "%earth oven%",
-                "%masonry oven%",
-                "%hearth%",
-                "%foundation%",
-                "%curing%",
-                "%thermal mass%",
-                "%chimney%",
-                "%draft%",
-                "%clay bread oven%"
-            );
-            return new RouteFtsOrderSpec(
-                " ORDER BY CASE " +
-                    "WHEN lower(c.section_heading) LIKE ? THEN 0 " +
-                    "WHEN lower(c.section_heading) LIKE ? THEN 0 " +
-                    "WHEN lower(c.section_heading) LIKE ? THEN 0 " +
-                    "WHEN lower(c.section_heading) LIKE ? THEN 1 " +
-                    "WHEN lower(c.section_heading) LIKE ? THEN 1 " +
-                    "WHEN lower(c.section_heading) LIKE ? THEN 2 " +
-                    "WHEN lower(c.section_heading) LIKE ? THEN 2 " +
-                    "WHEN lower(c.section_heading) LIKE ? THEN 3 " +
-                    "WHEN lower(c.section_heading) LIKE ? THEN 3 " +
-                    "WHEN lower(c.section_heading) LIKE ? THEN 4 " +
-                    "WHEN lower(c.section_heading) LIKE ? THEN 4 " +
-                    "WHEN lower(c.guide_title) LIKE ? THEN 5 " +
-                    "ELSE 9 END, c.row_id ",
-                args,
-                "clay_oven_priority"
-            );
-        }
-        if (queryTerms != null
-            && queryTerms.metadataProfile != null
-            && "community_governance".equals(queryTerms.metadataProfile.preferredStructureType())) {
-            ArrayList<String> args = new ArrayList<>();
-            Collections.addAll(
-                args,
-                "%graduated sanctions%",
-                "%mediation%",
-                "%membership%",
-                "%boundaries%",
-                "%conflict%",
-                "%restitution%",
-                "%commons management%",
-                "%resource governance%",
-                "%restorative%",
-                "%reputation%",
-                "%insurance%",
-                "%mutual aid%"
-            );
-            return new RouteFtsOrderSpec(
-                " ORDER BY CASE " +
-                    "WHEN lower(c.section_heading) LIKE ? THEN 0 " +
-                    "WHEN lower(c.section_heading) LIKE ? THEN 1 " +
-                    "WHEN lower(c.section_heading) LIKE ? THEN 1 " +
-                    "WHEN lower(c.section_heading) LIKE ? THEN 2 " +
-                    "WHEN lower(c.section_heading) LIKE ? THEN 2 " +
-                    "WHEN lower(c.section_heading) LIKE ? THEN 3 " +
-                    "WHEN lower(c.guide_title) LIKE ? THEN 3 " +
-                    "WHEN lower(c.guide_title) LIKE ? THEN 4 " +
-                    "WHEN lower(c.section_heading) LIKE ? THEN 4 " +
-                    "WHEN lower(c.section_heading) LIKE ? THEN 5 " +
-                    "WHEN lower(c.guide_title) LIKE ? THEN 8 " +
-                    "WHEN lower(c.section_heading) LIKE ? THEN 8 " +
-                    "ELSE 9 END, c.row_id ",
-                args,
-                "community_governance_priority"
-            );
-        }
-        if (queryTerms != null
-            && queryTerms.metadataProfile != null
-            && "cabin_house".equals(queryTerms.metadataProfile.preferredStructureType())
-            && queryTerms.metadataProfile.hasExplicitTopic("site_selection")) {
-            String queryLower = emptySafe(queryTerms.queryLower);
-            boolean seasonalExposureFocus = queryLower.contains("winter")
-                || queryLower.contains("summer")
-                || queryLower.contains("shade")
-                || queryLower.contains("microclimate")
-                || queryLower.contains("orientation");
-            if (seasonalExposureFocus) {
-                ArrayList<String> args = new ArrayList<>();
-                Collections.addAll(
-                    args,
-                    "%wind exposure%",
-                    "%microclimate%",
-                    "%seasonal%",
-                    "%sun exposure%",
-                    "%site assessment%",
-                    "%terrain analysis%",
-                    "%site selection%",
-                    "%natural hazards%",
-                    "%foundation%",
-                    "%drainage%"
-                );
-                return new RouteFtsOrderSpec(
-                    " ORDER BY CASE " +
-                        "WHEN lower(c.section_heading) LIKE ? THEN 0 " +
-                        "WHEN lower(c.section_heading) LIKE ? THEN 0 " +
-                        "WHEN lower(c.section_heading) LIKE ? THEN 0 " +
-                        "WHEN lower(c.section_heading) LIKE ? THEN 0 " +
-                        "WHEN lower(c.section_heading) LIKE ? THEN 1 " +
-                        "WHEN lower(c.section_heading) LIKE ? THEN 1 " +
-                        "WHEN lower(c.guide_title) LIKE ? THEN 1 " +
-                        "WHEN lower(c.section_heading) LIKE ? THEN 2 " +
-                        "WHEN lower(c.section_heading) LIKE ? THEN 3 " +
-                        "WHEN lower(c.section_heading) LIKE ? THEN 4 " +
-                        "ELSE 9 END, c.row_id ",
-                    args,
-                    "site_selection_microclimate_priority"
-                );
-            }
-            ArrayList<String> args = new ArrayList<>();
-            Collections.addAll(
-                args,
-                "%site assessment%",
-                "%terrain analysis%",
-                "%wind exposure%",
-                "%water proximity%",
-                "%site assessment checklist%",
-                "%site selection%",
-                "%natural hazards%",
-                "%foundation%",
-                "%drainage%"
-            );
-            return new RouteFtsOrderSpec(
-                " ORDER BY CASE " +
-                    "WHEN lower(c.section_heading) LIKE ? THEN 0 " +
-                    "WHEN lower(c.section_heading) LIKE ? THEN 0 " +
-                    "WHEN lower(c.section_heading) LIKE ? THEN 0 " +
-                    "WHEN lower(c.section_heading) LIKE ? THEN 0 " +
-                    "WHEN lower(c.section_heading) LIKE ? THEN 0 " +
-                    "WHEN lower(c.guide_title) LIKE ? THEN 1 " +
-                    "WHEN lower(c.section_heading) LIKE ? THEN 1 " +
-                    "WHEN lower(c.section_heading) LIKE ? THEN 2 " +
-                    "WHEN lower(c.section_heading) LIKE ? THEN 3 " +
-                    "ELSE 9 END, c.row_id ",
-                args,
-                "site_selection_priority"
-            );
-        }
-        if (queryTerms != null
-            && queryTerms.metadataProfile != null
-            && "cabin_house".equals(queryTerms.metadataProfile.preferredStructureType())
-            && (queryTerms.metadataProfile.hasExplicitTopic("roofing")
-                || queryTerms.metadataProfile.hasExplicitTopic("weatherproofing"))) {
-            ArrayList<String> args = new ArrayList<>();
-            Collections.addAll(
-                args,
-                "%roofing%",
-                "%roof waterproofing%",
-                "%rainproofing and water shedding%",
-                "%waterproofing and sealants%",
-                "%weatherproofing%",
-                "%roof framing%",
-                "%roofing materials%",
-                "%construction & carpentry%"
-            );
-            return new RouteFtsOrderSpec(
-                " ORDER BY CASE " +
-                    "WHEN lower(c.section_heading) LIKE ? THEN 0 " +
-                    "WHEN lower(c.section_heading) LIKE ? THEN 0 " +
-                    "WHEN lower(c.section_heading) LIKE ? THEN 1 " +
-                    "WHEN lower(c.section_heading) LIKE ? THEN 1 " +
-                    "WHEN lower(c.guide_title) LIKE ? THEN 2 " +
-                    "WHEN lower(c.section_heading) LIKE ? THEN 2 " +
-                    "WHEN lower(c.guide_title) LIKE ? THEN 3 " +
-                    "WHEN lower(c.guide_title) LIKE ? THEN 4 " +
-                    "ELSE 9 END, c.row_id ",
-                args,
-                "roofing_priority"
-            );
-        }
-        if (queryTerms != null
-            && queryTerms.metadataProfile != null
-            && "cabin_house".equals(queryTerms.metadataProfile.preferredStructureType())
-            && queryTerms.metadataProfile.hasExplicitTopic("wall_construction")) {
-            ArrayList<String> args = new ArrayList<>();
-            Collections.addAll(
-                args,
-                "%wall framing%",
-                "%wall construction%",
-                "%walls%",
-                "%timber frame%",
-                "%window and door assembly%",
-                "%construction & carpentry%"
-            );
-            return new RouteFtsOrderSpec(
-                " ORDER BY CASE " +
-                    "WHEN lower(c.section_heading) LIKE ? THEN 0 " +
-                    "WHEN lower(c.section_heading) LIKE ? THEN 0 " +
-                    "WHEN lower(c.section_heading) LIKE ? THEN 1 " +
-                    "WHEN lower(c.section_heading) LIKE ? THEN 1 " +
-                    "WHEN lower(c.guide_title) LIKE ? THEN 2 " +
-                    "WHEN lower(c.guide_title) LIKE ? THEN 3 " +
-                    "ELSE 9 END, c.row_id ",
-                args,
-                "wall_construction_priority"
-            );
-        }
-        if (queryTerms != null
-            && queryTerms.metadataProfile != null
-            && "cabin_house".equals(queryTerms.metadataProfile.preferredStructureType())
-            && queryTerms.metadataProfile.hasExplicitTopic("foundation")) {
-            ArrayList<String> args = new ArrayList<>();
-            Collections.addAll(
-                args,
-                "%foundations%",
-                "%footings%",
-                "%frost line%",
-                "%drainage%",
-                "%site drainage%",
-                "%construction & carpentry%"
-            );
-            return new RouteFtsOrderSpec(
-                " ORDER BY CASE " +
-                    "WHEN lower(c.section_heading) LIKE ? THEN 0 " +
-                    "WHEN lower(c.section_heading) LIKE ? THEN 0 " +
-                    "WHEN lower(c.section_heading) LIKE ? THEN 1 " +
-                    "WHEN lower(c.section_heading) LIKE ? THEN 2 " +
-                    "WHEN lower(c.section_heading) LIKE ? THEN 3 " +
-                    "WHEN lower(c.guide_title) LIKE ? THEN 4 " +
-                    "ELSE 9 END, c.row_id ",
-                args,
-                "foundation_priority"
-            );
-        }
-        return new RouteFtsOrderSpec(" ORDER BY c.row_id ", Collections.emptyList(), "rowid");
+        RetrievalRoutePolicy.RouteFtsOrderSpec orderSpec = RetrievalRoutePolicy.noBm25RouteFtsOrder(
+            queryTerms == null ? "" : queryTerms.queryLower,
+            queryTerms == null ? null : queryTerms.metadataProfile
+        );
+        return new RouteFtsOrderSpec(orderSpec.clause, orderSpec.args, orderSpec.label);
     }
 
     static String noBm25RouteFtsOrderLabelForTest(String query) {
@@ -2042,32 +1731,12 @@ public final class PackRepository implements AutoCloseable {
         boolean compactGuideSweep,
         int limit
     ) {
-        if (routeProfile == null || metadataProfile == null) {
-            return compactGuideSweep ? Math.max(limit + 4, 16) : Math.max(limit * 2, 18);
-        }
-        if (routeProfile.isStarterBuildProject()) {
-            if (compactGuideSweep
-                && "cabin_house".equals(metadataProfile.preferredStructureType())
-                && metadataProfile.hasExplicitTopic("site_selection")) {
-                return Math.min(Math.max(limit, 10), 12);
-            }
-            return Math.max(limit * 2, 24);
-        }
-        if ("soapmaking".equals(metadataProfile.preferredStructureType())
-            || "glassmaking".equals(metadataProfile.preferredStructureType())) {
-            return compactGuideSweep ? Math.max(limit, 18) : Math.max(limit, 24);
-        }
-        if ("community_security".equals(metadataProfile.preferredStructureType())
-            || "community_governance".equals(metadataProfile.preferredStructureType())) {
-            return compactGuideSweep
-                ? Math.min(Math.max(limit / 2, 8), 12)
-                : Math.min(Math.max(limit / 2, 10), 15);
-        }
-        if ("water_storage".equals(metadataProfile.preferredStructureType())
-            && !metadataProfile.hasExplicitTopic("water_distribution")) {
-            return compactGuideSweep ? Math.min(Math.max(limit, 4), 6) : Math.min(Math.max(limit, 7), 9);
-        }
-        return compactGuideSweep ? Math.max(limit + 4, 16) : Math.max(limit * 2, 18);
+        return RetrievalRoutePolicy.routeGuideSearchThreshold(
+            routeProfile,
+            metadataProfile,
+            compactGuideSweep,
+            limit
+        );
     }
 
     static int runtimeRouteGuideSearchThreshold(
@@ -2075,12 +1744,7 @@ public final class PackRepository implements AutoCloseable {
         boolean ftsSupportsBm25,
         int threshold
     ) {
-        if (!ftsSupportsBm25
-            && metadataProfile != null
-            && "water_distribution".equals(metadataProfile.preferredStructureType())) {
-            return Math.min(threshold, 5);
-        }
-        return threshold;
+        return RetrievalRoutePolicy.runtimeRouteGuideSearchThreshold(metadataProfile, ftsSupportsBm25, threshold);
     }
 
     static int lexicalCandidateLimit(
@@ -2089,24 +1753,13 @@ public final class PackRepository implements AutoCloseable {
         int limit,
         int routeResultCount
     ) {
-        int base = Math.max(limit, LEXICAL_CANDIDATE_LIMIT);
-        if (routeProfile == null || metadataProfile == null || !routeProfile.isRouteFocused()) {
-            return base;
-        }
-
-        int strongRouteThreshold = Math.max(Math.max(limit / 2, 1), 6);
-        if (routeResultCount < strongRouteThreshold) {
-            return base;
-        }
-
-        if ("water_storage".equals(metadataProfile.preferredStructureType())
-            && !metadataProfile.hasExplicitTopic("water_distribution")) {
-            return Math.min(base, Math.max(limit * 3, 48));
-        }
-        if (routeProfile.isStarterBuildProject()) {
-            return Math.min(base, Math.max(limit * 4, 64));
-        }
-        return Math.min(base, Math.max(limit * 4, 60));
+        return RetrievalRoutePolicy.lexicalCandidateLimit(
+            routeProfile,
+            metadataProfile,
+            limit,
+            routeResultCount,
+            LEXICAL_CANDIDATE_LIMIT
+        );
     }
 
     static int keywordSqlLimitForTest(String query, int limit) {
@@ -2114,10 +1767,7 @@ public final class PackRepository implements AutoCloseable {
     }
 
     private static int keywordSqlLimit(QueryTerms queryTerms, int limit) {
-        if (queryTerms != null && queryTerms.routeProfile != null && queryTerms.routeProfile.isStarterBuildProject()) {
-            return Math.max(limit * 2, 96);
-        }
-        return Math.max(limit * 4, 160);
+        return RetrievalRoutePolicy.keywordSqlLimit(queryTerms == null ? null : queryTerms.routeProfile, limit);
     }
 
     private void collectRouteFocusedGuideResults(
@@ -5023,19 +4673,7 @@ public final class PackRepository implements AutoCloseable {
     }
 
     static int supportStructurePenalty(boolean diversifyContext, String retrievalMode, String sectionHeading) {
-        if (!emptySafe(sectionHeading).trim().isEmpty()) {
-            return 0;
-        }
-        if (!diversifyContext) {
-            return -10;
-        }
-        String mode = emptySafe(retrievalMode).trim().toLowerCase(QUERY_LOCALE);
-        return switch (mode) {
-            case "guide-focus" -> -40;
-            case "route-focus" -> -18;
-            case "hybrid", "lexical" -> -24;
-            default -> -18;
-        };
+        return RetrievalRoutePolicy.supportStructurePenalty(diversifyContext, retrievalMode, sectionHeading);
     }
 
     private static String guideGroupKey(SearchResult result) {
