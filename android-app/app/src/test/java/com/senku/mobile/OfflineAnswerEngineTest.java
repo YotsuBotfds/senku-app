@@ -3087,7 +3087,7 @@ public final class OfflineAnswerEngineTest {
             "tarp_shelter,repair"
         );
 
-        List<SearchResult> selectedContext = PackRepository.rankSupportCandidatesForTest(
+        List<SearchResult> selectedContext = PackAnswerContextPolicy.rankSupportCandidatesForTest(
             query,
             anchor,
             List.of(anchor, offTopicLexical, vectorRepair)

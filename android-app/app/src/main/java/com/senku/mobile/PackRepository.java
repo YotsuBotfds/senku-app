@@ -777,18 +777,19 @@ public final class PackRepository implements AutoCloseable {
             }
         }
 
-        ArrayList<ScoredSearchResult> supportingCandidates = rankSupportCandidates(
-            queryTerms,
-            routeProfile,
-            diversifyContext,
-            anchor,
-            rankedResults
-        );
+        ArrayList<PackAnswerContextPolicy.SupportCandidate> supportingCandidates =
+            PackAnswerContextPolicy.rankSupportCandidates(
+                queryTerms,
+                routeProfile,
+                diversifyContext,
+                anchor,
+                rankedResults
+            );
         if (!supportingCandidates.isEmpty()) {
             StringBuilder debug = new StringBuilder();
             int previewCount = Math.min(6, supportingCandidates.size());
             for (int index = 0; index < previewCount; index++) {
-                ScoredSearchResult candidate = supportingCandidates.get(index);
+                PackAnswerContextPolicy.SupportCandidate candidate = supportingCandidates.get(index);
                 if (debug.length() > 0) {
                     debug.append(" || ");
                 }
@@ -808,7 +809,7 @@ public final class PackRepository implements AutoCloseable {
             );
         }
 
-        for (ScoredSearchResult scoredCandidate : supportingCandidates) {
+        for (PackAnswerContextPolicy.SupportCandidate scoredCandidate : supportingCandidates) {
             if (context.size() >= limit) {
                 break;
             }
@@ -872,16 +873,8 @@ public final class PackRepository implements AutoCloseable {
         return context;
     }
 
-    static int anchorGuideBudgetForTest(String query, boolean diversifyContext, int limit) {
-        return anchorGuideBudget(QueryTerms.fromQuery(query), diversifyContext, limit);
-    }
-
     private static int anchorGuideBudget(QueryTerms queryTerms, boolean diversifyContext, int limit) {
         return PackAnswerContextPolicy.anchorGuideBudget(queryTerms, diversifyContext, limit);
-    }
-
-    static boolean shouldSeedAnchorBeforeSupportForTest(String query, boolean diversifyContext) {
-        return shouldSeedAnchorBeforeSupport(QueryTerms.fromQuery(query), diversifyContext);
     }
 
     private static boolean shouldSeedAnchorBeforeSupport(QueryTerms queryTerms, boolean diversifyContext) {
@@ -894,70 +887,6 @@ public final class PackRepository implements AutoCloseable {
 
     static List<RerankedResult> maybeRerankResultsDetailedForTest(String query, List<SearchResult> results, int limit) {
         return maybeRerankResultsDetailed(QueryTerms.fromQuery(query), results, limit);
-    }
-
-    /**
-     * Test-only seam over buildGuideAnswerContext's post-anchor support-candidate scoring path.
-     * Callers must supply a non-null anchor and the ranked rows from a non-empty production-style list.
-     */
-    static List<SearchResult> rankSupportCandidatesForTest(String query, SearchResult anchor, List<SearchResult> rankedResults) {
-        QueryTerms queryTerms = QueryTerms.fromQuery(query);
-        QueryRouteProfile routeProfile = queryTerms.routeProfile;
-        boolean diversifyContext = routeProfile.prefersDiversifiedAnswerContext()
-            || queryTerms.metadataProfile.prefersDiversifiedContext();
-        ArrayList<ScoredSearchResult> ranked = rankSupportCandidates(
-            queryTerms,
-            routeProfile,
-            diversifyContext,
-            anchor,
-            rankedResults
-        );
-        ArrayList<SearchResult> ordered = new ArrayList<>(ranked.size());
-        for (ScoredSearchResult scored : ranked) {
-            ordered.add(scored.result);
-        }
-        return ordered;
-    }
-
-    private static ArrayList<ScoredSearchResult> rankSupportCandidates(
-        QueryTerms queryTerms,
-        QueryRouteProfile routeProfile,
-        boolean diversifyContext,
-        SearchResult anchor,
-        List<SearchResult> rankedResults
-    ) {
-        ArrayList<ScoredSearchResult> supportingCandidates = new ArrayList<>();
-        for (int index = 1; index < rankedResults.size(); index++) {
-            SearchResult candidate = rankedResults.get(index);
-            if (emptySafe(candidate.guideId).equals(emptySafe(anchor.guideId))) {
-                continue;
-            }
-            if (!supportCandidateMatchesRoute(routeProfile, queryTerms.metadataProfile, diversifyContext, candidate)) {
-                continue;
-            }
-            PackSupportScoringPolicy.SupportBreakdown support =
-                PackSupportScoringPolicy.supportBreakdown(queryTerms, candidate);
-            int score = support.supportWithMetadata();
-            if (score <= 0) {
-                continue;
-            }
-            supportingCandidates.add(new ScoredSearchResult(candidate, index, score));
-        }
-        supportingCandidates.sort((left, right) -> {
-            int scoreOrder = Integer.compare(right.score, left.score);
-            if (scoreOrder != 0) {
-                return scoreOrder;
-            }
-            int modeOrder = Integer.compare(
-                PackSupportScoringPolicy.supportRetrievalRank(right.result.retrievalMode),
-                PackSupportScoringPolicy.supportRetrievalRank(left.result.retrievalMode)
-            );
-            if (modeOrder != 0) {
-                return modeOrder;
-            }
-            return Integer.compare(left.originalIndex, right.originalIndex);
-        });
-        return supportingCandidates;
     }
 
     private List<SearchResult> maybeRerankResults(QueryTerms queryTerms, List<SearchResult> results, int limit) {
