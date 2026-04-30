@@ -20,6 +20,53 @@ import org.junit.Test;
 
 public final class DetailFollowupLandscapeComposerTest {
     @Test
+    public void followUpSendButtonSubmitsThroughPhoneFollowUpPath() {
+        FollowUpInteractionHarness harness = new FollowUpInteractionHarness();
+
+        harness.clickSend("  what should I check next?  ");
+
+        assertEquals(1, harness.submitCount);
+        assertEquals(DetailActivity.FollowUpSubmitRoute.PHONE_FOLLOWUP, harness.lastRoute);
+        assertEquals("what should I check next?", harness.lastQuery);
+    }
+
+    @Test
+    public void followUpImeSubmitUsesSamePhoneFollowUpPathAsSendButton() {
+        FollowUpInteractionHarness harness = new FollowUpInteractionHarness();
+
+        assertTrue(harness.editorAction(EditorInfo.IME_ACTION_SEND, null, "  what should I do next?  "));
+
+        assertEquals(1, harness.submitCount);
+        assertEquals(DetailActivity.FollowUpSubmitRoute.PHONE_FOLLOWUP, harness.lastRoute);
+        assertEquals("what should I do next?", harness.lastQuery);
+    }
+
+    @Test
+    public void followUpEmptySendAndImeSubmitStayOnEmptyInputPath() {
+        FollowUpInteractionHarness sendHarness = new FollowUpInteractionHarness();
+        FollowUpInteractionHarness imeHarness = new FollowUpInteractionHarness();
+
+        sendHarness.clickSend("   \n\t  ");
+        assertTrue(imeHarness.editorAction(EditorInfo.IME_ACTION_SEND, null, ""));
+
+        assertEquals(1, sendHarness.submitCount);
+        assertEquals(DetailActivity.FollowUpSubmitRoute.EMPTY_INPUT, sendHarness.lastRoute);
+        assertEquals("", sendHarness.lastQuery);
+        assertEquals(1, imeHarness.submitCount);
+        assertEquals(DetailActivity.FollowUpSubmitRoute.EMPTY_INPUT, imeHarness.lastRoute);
+        assertEquals("", imeHarness.lastQuery);
+    }
+
+    @Test
+    public void followUpNonSubmitImeActionDoesNotDispatchFollowUp() {
+        FollowUpInteractionHarness harness = new FollowUpInteractionHarness();
+
+        assertFalse(harness.editorAction(EditorInfo.IME_ACTION_NONE, null, "what next?"));
+
+        assertEquals(0, harness.submitCount);
+    }
+
+    @Test
     public void followUpComposerSubmitAcceptsSendDoneAndHardwareEnterUp() {
         assertTrue(DetailActivity.isFollowUpSubmitAction(EditorInfo.IME_ACTION_SEND, null));
         assertTrue(DetailActivity.isFollowUpSubmitAction(EditorInfo.IME_ACTION_DONE, null));
@@ -873,5 +920,29 @@ public final class DetailFollowupLandscapeComposerTest {
 
     private static SearchResult source(String guideId, String title, String topicTags) {
         return new SearchResult(title, "", "", "", guideId, "", "", "", "", "", "", topicTags);
+    }
+
+    private static final class FollowUpInteractionHarness {
+        int submitCount;
+        DetailActivity.FollowUpSubmitRoute lastRoute;
+        String lastQuery;
+
+        void clickSend(String draft) {
+            dispatchSubmit(draft);
+        }
+
+        boolean editorAction(int actionId, KeyEvent event, String draft) {
+            if (!DetailActivity.isFollowUpSubmitAction(actionId, event)) {
+                return false;
+            }
+            dispatchSubmit(draft);
+            return true;
+        }
+
+        private void dispatchSubmit(String draft) {
+            submitCount += 1;
+            lastQuery = DetailActivity.normalizeFollowUpQuery(draft);
+            lastRoute = DetailActivity.resolveFollowUpSubmitRoute(draft);
+        }
     }
 }
