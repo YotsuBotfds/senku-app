@@ -41,6 +41,17 @@ class RunAndroidInstrumentedUiSmokeSummaryContractTests(unittest.TestCase):
         self.assertIn("host_adb_platform_tools_version = $hostAdbPlatformToolsVersion", self.script)
         self.assertIn("installed_pack = $installedPackMetadata", self.script)
 
+    def test_physical_install_retries_with_no_streaming_and_reports_summary_flag(self):
+        self.assertIn("function Invoke-ApkInstallWithPhysicalNoStreamingFallback", self.script)
+        self.assertIn('"install", "-r", $ApkPath', self.script)
+        self.assertIn('if ($Device -like "emulator-*") {', self.script)
+        self.assertIn('"install", "--no-streaming", "-r", $ApkPath', self.script)
+        self.assertIn("$script:InstallNoStreamingFallbackAttempted = $true", self.script)
+        self.assertIn("$script:InstallNoStreamingFallbackAttempted = $false", self.script)
+        self.assertIn("install_no_streaming_fallback_attempted = [bool]$script:InstallNoStreamingFallbackAttempted", self.script)
+        self.assertIn('Invoke-ApkInstallWithPhysicalNoStreamingFallback -ApkPath $appApk -FailureMessage "App APK install failed"', self.script)
+        self.assertIn('Invoke-ApkInstallWithPhysicalNoStreamingFallback -ApkPath $testApk -FailureMessage "Test APK install failed"', self.script)
+
     def test_parser_gate_passes(self):
         result = subprocess.run(
             [

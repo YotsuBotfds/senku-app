@@ -214,6 +214,31 @@ function Invoke-AdbChecked {
     return $output
 }
 
+function Invoke-ApkInstallWithPhysicalNoStreamingFallback {
+    param(
+        [string]$ApkPath,
+        [string]$FailureMessage
+    )
+
+    try {
+        [void](Invoke-AdbChecked -Arguments @("-s", $Device, "install", "-r", $ApkPath) -FailureMessage $FailureMessage)
+        return
+    } catch {
+        $streamingInstallError = $_.Exception.Message
+        if ($Device -like "emulator-*") {
+            throw
+        }
+    }
+
+    $script:InstallNoStreamingFallbackAttempted = $true
+    Write-Warning ("{0}; retrying with adb install --no-streaming on physical device {1}" -f $streamingInstallError, $Device)
+    try {
+        [void](Invoke-AdbChecked -Arguments @("-s", $Device, "install", "--no-streaming", "-r", $ApkPath) -FailureMessage $FailureMessage)
+    } catch {
+        throw ("{0}; --no-streaming retry failed: {1}" -f $streamingInstallError, $_.Exception.Message)
+    }
+}
+
 function Test-PackageInstalled {
     param([string]$PackageName)
 
@@ -1326,6 +1351,7 @@ $appFingerprint = Get-ApkFingerprint -Path $appApk
 $testFingerprint = Get-ApkFingerprint -Path $testApk
 $InstallCacheMatches = Test-InstallCacheMatch -StatePath $installStatePath -AppFingerprint $appFingerprint -TestFingerprint $testFingerprint
 $EffectiveSkipInstall = [bool]$SkipInstall
+$script:InstallNoStreamingFallbackAttempted = $false
 $EffectiveTestClass = if (Use-ScriptedPromptRun) {
     "${TestClass}#scriptedPromptFlowCompletes"
 } else {
@@ -1342,8 +1368,8 @@ if ($LASTEXITCODE -ne 0) {
 }
 Wait-ForDeviceReadiness
 if (-not $EffectiveSkipInstall) {
-    [void](Invoke-AdbChecked -Arguments @("-s", $Device, "install", "-r", $appApk) -FailureMessage "App APK install failed")
-    [void](Invoke-AdbChecked -Arguments @("-s", $Device, "install", "-r", $testApk) -FailureMessage "Test APK install failed")
+    Invoke-ApkInstallWithPhysicalNoStreamingFallback -ApkPath $appApk -FailureMessage "App APK install failed"
+    Invoke-ApkInstallWithPhysicalNoStreamingFallback -ApkPath $testApk -FailureMessage "Test APK install failed"
 } else {
     if (-not (Test-PackageInstalled -PackageName "com.senku.mobile")) {
         throw "SkipInstall requested but com.senku.mobile is not installed on $Device."
@@ -1730,6 +1756,7 @@ try {
         skip_build = [bool]$SkipBuild
         skip_install = [bool]$EffectiveSkipInstall
         install_cache_matches = [bool]$InstallCacheMatches
+        install_no_streaming_fallback_attempted = [bool]$script:InstallNoStreamingFallbackAttempted
         scripted_query = $ScriptedQuery
         scripted_ask = [bool]$ScriptedAsk
         scripted_followup_query = $ScriptedFollowUpQuery
