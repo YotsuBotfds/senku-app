@@ -27,11 +27,11 @@ public final class PackRepository implements AutoCloseable {
     private static final int VECTOR_NEIGHBOR_LIMIT = 28;
     private static final int VECTOR_SEED_COUNT = 6;
     private static final int MIN_GENERAL_SUPPORT_METADATA_SCORE = 12;
-    private static final String FTS5_TABLE = "lexical_chunks_fts";
-    private static final String FTS4_TABLE = "lexical_chunks_fts4";
+    private static final String FTS5_TABLE = PackFtsRuntimeDetector.FTS5_TABLE;
+    private static final String FTS4_TABLE = PackFtsRuntimeDetector.FTS4_TABLE;
     private static final long FTS_RUNTIME_PROBE_BUDGET_MS = 25L;
     private static final Object FTS_RUNTIME_LOCK = new Object();
-    private static volatile FtsRuntime cachedFtsRuntime;
+    private static volatile PackFtsRuntimeDetector.Runtime cachedFtsRuntime;
     private final Object closeLock = new Object();
     private static final Set<String> HOUSE_ACCESSIBILITY_MARKERS = buildMarkerSet(
         "accessible shelter",
@@ -235,7 +235,7 @@ public final class PackRepository implements AutoCloseable {
             }
         }
         this.vectorStore = loadedStore;
-        FtsRuntime ftsRuntime = detectFtsAvailability();
+        PackFtsRuntimeDetector.Runtime ftsRuntime = detectFtsAvailability();
         this.ftsAvailable = ftsRuntime.available;
         this.ftsTableName = ftsRuntime.tableName;
         this.ftsSupportsBm25 = ftsRuntime.supportsBm25;
@@ -1111,21 +1111,14 @@ public final class PackRepository implements AutoCloseable {
         boolean runtimeFts5,
         boolean runtimeFts4
     ) {
-        FtsRuntime runtime = selectFtsRuntime(
+        return PackFtsRuntimeDetector.buildDebugLine(
+            supportsFts5Compile,
+            supportsFts4Compile,
             hasFts5Table,
             hasFts4Table,
             runtimeFts5,
             runtimeFts4
         );
-        return "available=" + runtime.available +
-            " table=" + runtime.tableName +
-            " supportsBm25=" + runtime.supportsBm25 +
-            " compile5=" + supportsFts5Compile +
-            " compile4=" + supportsFts4Compile +
-            " runtime5=" + runtimeFts5 +
-            " runtime4=" + runtimeFts4 +
-            " schema5=" + hasFts5Table +
-            " schema4=" + hasFts4Table;
     }
 
     static String buildSearchSummaryLineForTest(
@@ -4640,8 +4633,8 @@ public final class PackRepository implements AutoCloseable {
         return bonus;
     }
 
-    private FtsRuntime detectFtsAvailability() {
-        FtsRuntime cached = cachedFtsRuntime;
+    private PackFtsRuntimeDetector.Runtime detectFtsAvailability() {
+        PackFtsRuntimeDetector.Runtime cached = cachedFtsRuntime;
         if (cached != null) {
             return cached;
         }
@@ -4651,24 +4644,24 @@ public final class PackRepository implements AutoCloseable {
                 return cachedFtsRuntime;
             }
 
-            FtsRuntime detected = detectFtsAvailabilityInternal();
+            PackFtsRuntimeDetector.Runtime detected = detectFtsAvailabilityInternal();
             cachedFtsRuntime = detected;
             return detected;
         }
     }
 
-    private FtsRuntime detectFtsAvailabilityInternal() {
+    private PackFtsRuntimeDetector.Runtime detectFtsAvailabilityInternal() {
         boolean supportsFts5 = hasCompileOption("ENABLE_FTS5");
         boolean supportsFts4 = hasCompileOption("ENABLE_FTS4");
         boolean hasFts5Table = tableExistsInSchema(FTS5_TABLE);
         boolean hasFts4Table = tableExistsInSchema(FTS4_TABLE);
-        FtsRuntimeProbeResult runtimeFts5 = hasFts5Table
+        PackFtsRuntimeDetector.ProbeResult runtimeFts5 = hasFts5Table
             ? supportsFtsMatchRuntime(FTS5_TABLE)
-            : FtsRuntimeProbeResult.notRun();
-        FtsRuntimeProbeResult runtimeFts4 = hasFts4Table
+            : PackFtsRuntimeDetector.ProbeResult.notRun();
+        PackFtsRuntimeDetector.ProbeResult runtimeFts4 = hasFts4Table
             ? supportsFtsMatchRuntime(FTS4_TABLE)
-            : FtsRuntimeProbeResult.notRun();
-        FtsRuntime detected = selectFtsRuntime(
+            : PackFtsRuntimeDetector.ProbeResult.notRun();
+        PackFtsRuntimeDetector.Runtime detected = selectFtsRuntime(
             hasFts5Table,
             hasFts4Table,
             runtimeFts5.supported,
@@ -4703,27 +4696,21 @@ public final class PackRepository implements AutoCloseable {
                 " schema4=" + hasFts4Table +
                 " fallback=like"
         );
-        return new FtsRuntime(false, "", false);
+        return PackFtsRuntimeDetector.Runtime.unavailable();
     }
 
-    private static FtsRuntime selectFtsRuntime(
+    private static PackFtsRuntimeDetector.Runtime selectFtsRuntime(
         boolean hasFts5Table,
         boolean hasFts4Table,
         boolean runtimeFts5,
         boolean runtimeFts4
     ) {
-        if (hasFts5Table && runtimeFts5) {
-            return new FtsRuntime(true, FTS5_TABLE, true);
-        }
-        if (hasFts4Table && runtimeFts4) {
-            return new FtsRuntime(true, FTS4_TABLE, false);
-        }
-        return new FtsRuntime(false, "", false);
+        return PackFtsRuntimeDetector.selectRuntime(hasFts5Table, hasFts4Table, runtimeFts5, runtimeFts4);
     }
 
-    private FtsRuntimeProbeResult supportsFtsMatchRuntime(String tableName) {
+    private PackFtsRuntimeDetector.ProbeResult supportsFtsMatchRuntime(String tableName) {
         if (emptySafe(tableName).trim().isEmpty()) {
-            return FtsRuntimeProbeResult.notRun();
+            return PackFtsRuntimeDetector.ProbeResult.notRun();
         }
 
         long startedAtNs = elapsedRealtimeNanosSafe();
@@ -4750,7 +4737,7 @@ public final class PackRepository implements AutoCloseable {
                     " budgetMs=" + FTS_RUNTIME_PROBE_BUDGET_MS
             );
         }
-        return new FtsRuntimeProbeResult(supported, elapsedMs);
+        return new PackFtsRuntimeDetector.ProbeResult(supported, elapsedMs);
     }
 
     private boolean hasCompileOption(String optionName) {
@@ -5008,51 +4995,6 @@ public final class PackRepository implements AutoCloseable {
 
         LexicalCombinedHit(RankedChunk chunk) {
             this.chunk = chunk;
-        }
-    }
-
-    /**
-     * Runtime lexical search capability for the installed pack.
-     *
-     * FTS5 is the preferred path when the `lexical_chunks_fts5` table exists
-     * and the installed SQLite runtime accepts MATCH queries against it.
-     *
-     * FTS4 is the fallback when `lexical_chunks_fts4` exists but FTS5 is not
-     * available in-process. This keeps MATCH-based lookup working, but BM25
-     * ranking remains unavailable on that path.
-     *
-     * LIKE is the final fallback when neither FTS table is usable at runtime.
-     * That path exists as a correctness net so lexical retrieval still works
-     * on devices without a usable FTS module.
-     *
-     * Performance expectation: FTS5 is the fastest path, FTS4 is typically
-     * within roughly 5-10 percent of FTS5 for the same query shape, and LIKE
-     * is usually an order of magnitude slower. Treat LIKE as a safety net, not
-     * a preferred steady-state search mode.
-     */
-    private static final class FtsRuntime {
-        final boolean available;
-        final String tableName;
-        final boolean supportsBm25;
-
-        FtsRuntime(boolean available, String tableName, boolean supportsBm25) {
-            this.available = available;
-            this.tableName = tableName;
-            this.supportsBm25 = supportsBm25;
-        }
-    }
-
-    private static final class FtsRuntimeProbeResult {
-        final boolean supported;
-        final long elapsedMs;
-
-        FtsRuntimeProbeResult(boolean supported, long elapsedMs) {
-            this.supported = supported;
-            this.elapsedMs = Math.max(0L, elapsedMs);
-        }
-
-        static FtsRuntimeProbeResult notRun() {
-            return new FtsRuntimeProbeResult(false, 0L);
         }
     }
 
