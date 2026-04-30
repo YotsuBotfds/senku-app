@@ -62,7 +62,7 @@ final class PackAnswerContextPolicy {
             if (PackRepository.emptySafe(candidate.guideId).equals(PackRepository.emptySafe(anchor.guideId))) {
                 continue;
             }
-            if (!PackRepository.supportCandidateMatchesRoute(
+            if (!PackRouteSupportPolicy.supportCandidateMatchesRoute(
                 routeProfile,
                 queryTerms.metadataProfile,
                 diversifyContext,

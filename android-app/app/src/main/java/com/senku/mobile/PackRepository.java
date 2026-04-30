@@ -26,34 +26,12 @@ public final class PackRepository implements AutoCloseable {
     private static final int LEXICAL_CANDIDATE_LIMIT = 72;
     private static final int VECTOR_NEIGHBOR_LIMIT = 28;
     private static final int VECTOR_SEED_COUNT = 6;
-    private static final int MIN_GENERAL_SUPPORT_METADATA_SCORE = 12;
     private static final String FTS5_TABLE = PackFtsRuntimeDetector.FTS5_TABLE;
     private static final String FTS4_TABLE = PackFtsRuntimeDetector.FTS4_TABLE;
     private static final long FTS_RUNTIME_PROBE_BUDGET_MS = 25L;
     private static final Object FTS_RUNTIME_LOCK = new Object();
     private static volatile PackFtsRuntimeDetector.Runtime cachedFtsRuntime;
     private final Object closeLock = new Object();
-    private static final Set<String> HOUSE_ACCESSIBILITY_MARKERS = buildMarkerSet(
-        "accessible shelter",
-        "universal design",
-        "elderly-friendly design",
-        "one-handed operation design",
-        "grab bars",
-        "mobility impairment",
-        "wheelchair"
-    );
-    private static final Set<String> HOUSE_CLIMATE_MARKERS = buildMarkerSet(
-        "desert",
-        "arid",
-        "wetland",
-        "swamp",
-        "jungle",
-        "tropical",
-        "alpine",
-        "mountain",
-        "snow shelter",
-        "winter"
-    );
     private static final Set<String> HOUSE_SITE_SELECTION_ANCHOR_MARKERS = buildMarkerSet(
         "terrain analysis",
         "site assessment checklist",
@@ -161,16 +139,6 @@ public final class PackRepository implements AutoCloseable {
         "spring box",
         "household taps",
         "community water"
-    );
-    private static final Set<String> WATER_DISTRIBUTION_DISTRACTOR_MARKERS = buildMarkerSet(
-        "failure analysis",
-        "troubleshooting",
-        "irrigation",
-        "sanitation",
-        "waste management",
-        "bridges",
-        "dams",
-        "infrastructure"
     );
     private static final Set<String> WATER_STORAGE_CONTAINER_MAKING_MARKERS = buildMarkerSet(
         "make",
@@ -2181,359 +2149,21 @@ public final class PackRepository implements AutoCloseable {
         QueryTerms queryTerms,
         List<SearchResult> rankedResults
     ) {
-        if (queryTerms == null
-            || rankedResults == null
-            || rankedResults.isEmpty()
-            || queryTerms.metadataProfile == null) {
-            return null;
-        }
-        QueryMetadataProfile metadataProfile = queryTerms.metadataProfile;
-        if (!"water_storage".equals(metadataProfile.preferredStructureType())
-            || metadataProfile.hasExplicitTopic("water_distribution")
-            || !metadataProfile.hasExplicitTopicFocus()) {
-            return null;
-        }
-
-        boolean containerMakingIntent = hasWaterStorageContainerMakingIntent(queryTerms.queryLower);
-        boolean hasNonInventoryCandidate = false;
-        for (SearchResult candidate : rankedResults) {
-            String normalizedTitle = emptySafe(candidate.title).trim().toLowerCase(QUERY_LOCALE);
-            boolean structureMatch = "water_storage".equals(
-                emptySafe(candidate.structureType).trim().toLowerCase(QUERY_LOCALE)
-            );
-            boolean topicMatch = metadataProfile.hasExplicitTopicOverlap(candidate.topicTags);
-            if ((structureMatch || topicMatch) && !normalizedTitle.contains("inventory")) {
-                hasNonInventoryCandidate = true;
-                break;
-            }
-        }
-        SearchResult best = null;
-        int bestScore = Integer.MIN_VALUE;
-        for (int index = 0; index < rankedResults.size(); index++) {
-            SearchResult candidate = rankedResults.get(index);
-            boolean structureMatch = "water_storage".equals(
-                emptySafe(candidate.structureType).trim().toLowerCase(QUERY_LOCALE)
-            );
-            boolean topicMatch = metadataProfile.hasExplicitTopicOverlap(candidate.topicTags);
-            if (!structureMatch && !topicMatch) {
-                continue;
-            }
-
-            int sectionBonus = metadataProfile.sectionHeadingBonus(candidate.sectionHeading);
-            if (sectionBonus < 0) {
-                continue;
-            }
-
-            int score = Math.max(1, PackSupportScoringPolicy.supportBreakdown(queryTerms, candidate).supportWithMetadata())
-                + Math.max(0, 12 - index);
-            int overlap = metadataProfile.preferredTopicOverlapCount(candidate.topicTags);
-            String normalizedRole = emptySafe(candidate.contentRole).trim().toLowerCase(QUERY_LOCALE);
-            String normalizedMode = emptySafe(candidate.retrievalMode).trim().toLowerCase(QUERY_LOCALE);
-            String normalizedCategory = emptySafe(candidate.category).trim().toLowerCase(QUERY_LOCALE);
-            String normalizedTitle = emptySafe(candidate.title).trim().toLowerCase(QUERY_LOCALE);
-            if (hasNonInventoryCandidate && normalizedTitle.contains("inventory")) {
-                continue;
-            }
-            if (normalizedTitle.contains("inventory") && overlap < 2) {
-                continue;
-            }
-
-            if ("planning".equals(normalizedRole) || "subsystem".equals(normalizedRole)) {
-                score += 14;
-            } else if ("safety".equals(normalizedRole)) {
-                score += 8;
-            } else if ("starter".equals(normalizedRole)) {
-                boolean genericInventoryGuide = normalizedTitle.contains("inventory");
-                if ("guide-focus".equals(normalizedMode) && structureMatch && !genericInventoryGuide) {
-                    score -= 2;
-                } else {
-                    score -= 16;
-                }
-            } else if ("reference".equals(normalizedRole)) {
-                score -= 10;
-            }
-
-            if ("guide-focus".equals(normalizedMode)) {
-                score += 12;
-            } else if ("route-focus".equals(normalizedMode)) {
-                score += 4;
-            }
-
-            if (overlap >= 2) {
-                score += 10;
-            } else if (overlap == 1) {
-                score += 4;
-            }
-            if (sectionBonus > 0) {
-                score += 6;
-            }
-            if ("resource-management".equals(normalizedCategory)) {
-                score += containerMakingIntent ? 8 : 18;
-            } else if ("survival".equals(normalizedCategory)) {
-                score += 8;
-            } else if (!containerMakingIntent && "building".equals(normalizedCategory)) {
-                score -= 10;
-            }
-            if (!containerMakingIntent && "crafts".equals(normalizedCategory)) {
-                score -= 8;
-            }
-            if (!containerMakingIntent
-                && (normalizedTitle.contains("making")
-                    || normalizedTitle.contains("container")
-                    || normalizedTitle.contains("vessel"))) {
-                score -= 30;
-            }
-            if (normalizedTitle.contains("inventory") && overlap < 2) {
-                score -= 18;
-            }
-
-            if (score > bestScore) {
-                bestScore = score;
-                best = candidate;
-            }
-        }
-        return best;
+        return PackStructuredAnchorPolicy.selectExplicitWaterStorageAnchor(queryTerms, rankedResults);
     }
 
     private static SearchResult selectSpecializedStructuredAnchor(
         QueryTerms queryTerms,
         List<SearchResult> rankedResults
     ) {
-        if (queryTerms == null
-            || rankedResults == null
-            || rankedResults.isEmpty()
-            || queryTerms.metadataProfile == null) {
-            return null;
-        }
-        QueryMetadataProfile metadataProfile = queryTerms.metadataProfile;
-        String preferredStructureType = metadataProfile.preferredStructureType();
-        if (!metadataProfile.hasExplicitTopicFocus() || !requiresSpecializedRouteAnchorSignal(preferredStructureType)) {
-            return null;
-        }
-
-        SearchResult best = null;
-        int bestScore = Integer.MIN_VALUE;
-        for (int index = 0; index < rankedResults.size(); index++) {
-            SearchResult candidate = rankedResults.get(index);
-            boolean structureMatch = preferredStructureType.equals(
-                emptySafe(candidate.structureType).trim().toLowerCase(QUERY_LOCALE)
-            );
-            boolean topicMatch = metadataProfile.hasExplicitTopicOverlap(candidate.topicTags);
-            if (!structureMatch && !topicMatch) {
-                continue;
-            }
-
-            int score = Math.max(1, PackSupportScoringPolicy.supportBreakdown(queryTerms, candidate).supportWithMetadata());
-            score += Math.max(0, 12 - index);
-            score += PackSupportScoringPolicy.anchorAlignmentBonus(queryTerms, candidate);
-            String retrievalMode = emptySafe(candidate.retrievalMode).trim().toLowerCase(QUERY_LOCALE);
-            if ("route-focus".equals(retrievalMode)) {
-                score += 10;
-            } else if ("guide-focus".equals(retrievalMode)) {
-                score += emptySafe(candidate.sectionHeading).trim().isEmpty() ? 4 : 8;
-            } else if ("hybrid".equals(retrievalMode)) {
-                score += 4;
-            }
-            score += specializedStructuredAnchorBias(queryTerms, candidate);
-
-            if (score > bestScore) {
-                bestScore = score;
-                best = candidate;
-            }
-        }
-        return best;
+        return PackStructuredAnchorPolicy.selectSpecializedStructuredAnchor(queryTerms, rankedResults);
     }
 
     private static SearchResult selectBroadHouseAnchor(
         QueryTerms queryTerms,
         List<SearchResult> rankedResults
     ) {
-        if (queryTerms == null
-            || rankedResults == null
-            || rankedResults.isEmpty()
-            || queryTerms.metadataProfile == null) {
-            return null;
-        }
-
-        QueryMetadataProfile metadataProfile = queryTerms.metadataProfile;
-        if (!"cabin_house".equals(metadataProfile.preferredStructureType())
-            || metadataProfile.hasExplicitTopicFocus()) {
-            return null;
-        }
-
-        SearchResult best = null;
-        int bestScore = Integer.MIN_VALUE;
-        for (int index = 0; index < rankedResults.size(); index++) {
-            SearchResult candidate = rankedResults.get(index);
-            int sectionBonus = metadataProfile.sectionHeadingBonus(candidate.sectionHeading);
-            if (sectionBonus < 0) {
-                continue;
-            }
-
-            String normalizedStructure = emptySafe(candidate.structureType).trim().toLowerCase(QUERY_LOCALE);
-            String normalizedCategory = emptySafe(candidate.category).trim().toLowerCase(QUERY_LOCALE);
-            boolean structureMatch = "cabin_house".equals(normalizedStructure);
-            int overlap = metadataProfile.preferredTopicOverlapCount(candidate.topicTags);
-            if (!structureMatch && (!"building".equals(normalizedCategory) || overlap < 2)) {
-                continue;
-            }
-
-            int score = Math.max(1, PackSupportScoringPolicy.supportBreakdown(queryTerms, candidate).supportWithMetadata())
-                + Math.max(0, 12 - index);
-            score += broadHouseAnchorFocusBonus(candidate, sectionBonus, structureMatch);
-            String retrievalMode = emptySafe(candidate.retrievalMode).trim().toLowerCase(QUERY_LOCALE);
-            if ("route-focus".equals(retrievalMode)) {
-                score += 8;
-            } else if ("guide-focus".equals(retrievalMode)) {
-                score += emptySafe(candidate.sectionHeading).trim().isEmpty() ? -10 : 6;
-            }
-
-            if (score > bestScore) {
-                bestScore = score;
-                best = candidate;
-            }
-        }
-        return best;
-    }
-
-    private static int specializedStructuredAnchorBias(QueryTerms queryTerms, SearchResult candidate) {
-        if (queryTerms == null || candidate == null || queryTerms.metadataProfile == null) {
-            return 0;
-        }
-        String preferredStructureType = queryTerms.metadataProfile.preferredStructureType();
-        if ("soapmaking".equals(preferredStructureType)) {
-            return soapmakingStructuredAnchorBias(queryTerms, candidate);
-        }
-        if ("community_governance".equals(preferredStructureType)) {
-            return communityGovernanceStructuredAnchorBias(queryTerms, candidate);
-        }
-        return 0;
-    }
-
-    private static int soapmakingStructuredAnchorBias(QueryTerms queryTerms, SearchResult candidate) {
-        String normalizedTitle = emptySafe(candidate.title).trim().toLowerCase(QUERY_LOCALE);
-        String normalizedSection = emptySafe(candidate.sectionHeading).trim().toLowerCase(QUERY_LOCALE);
-        String normalizedMode = emptySafe(candidate.retrievalMode).trim().toLowerCase(QUERY_LOCALE);
-        String normalizedRole = emptySafe(candidate.contentRole).trim().toLowerCase(QUERY_LOCALE);
-        String normalizedStructure = emptySafe(candidate.structureType).trim().toLowerCase(QUERY_LOCALE);
-        String combined = normalizeMatchText(
-            emptySafe(candidate.title) + " "
-                + emptySafe(candidate.sectionHeading) + " "
-                + emptySafe(candidate.snippet) + " "
-                + emptySafe(candidate.body)
-        );
-
-        int score = 0;
-        if (hasStrongSoapmakingGuideSignal(candidate)) {
-            score += 18;
-        }
-        if ("subsystem".equals(normalizedRole)) {
-            score += 6;
-        } else if ("safety".equals(normalizedRole)) {
-            score -= 4;
-        }
-        if ("route-focus".equals(normalizedMode) && queryTerms.metadataProfile.sectionHeadingBonus(candidate.sectionHeading) > 0) {
-            score += 10;
-        }
-        if (!"soapmaking".equals(normalizedStructure)) {
-            score -= 8;
-        }
-        if (containsAnyMarker(normalizedTitle, SOAP_GENERIC_CHEMISTRY_MARKERS)
-            || containsAnyMarker(normalizedSection, SOAP_GENERIC_CHEMISTRY_MARKERS)) {
-            score -= 22;
-        }
-        if (containsAnyMarker(combined, SOAP_PROCESS_MARKERS)) {
-            score += 6;
-        }
-        return score;
-    }
-
-    private static int broadHouseAnchorFocusBonus(SearchResult candidate, int sectionBonus, boolean structureMatch) {
-        String normalized = normalizeMatchText(emptySafe(candidate.title) + " " + emptySafe(candidate.sectionHeading));
-        String contentRole = emptySafe(candidate.contentRole).trim().toLowerCase(QUERY_LOCALE);
-        String normalizedStructure = emptySafe(candidate.structureType).trim().toLowerCase(QUERY_LOCALE);
-        int bonus = structureMatch ? 24 : 0;
-
-        if ("starter".equals(contentRole) || "planning".equals(contentRole)) {
-            bonus += 12;
-        } else if ("reference".equals(contentRole)) {
-            bonus -= 12;
-        }
-
-        if ("general".equals(normalizedStructure)) {
-            bonus -= 10;
-        }
-        if (normalized.contains("construction carpentry")) {
-            bonus += 12;
-        }
-        if (normalized.contains("foundation")) {
-            bonus += 8;
-        }
-        if (normalized.contains("wall construction") || normalized.contains("wall framing")) {
-            bonus += 8;
-        }
-        if (normalized.contains("roofing") || normalized.contains("weatherproofing")) {
-            bonus += 6;
-        }
-        if (normalized.contains("site selection") || normalized.contains("drainage")) {
-            bonus += 6;
-        }
-        if (normalized.contains("frost line")
-            || normalized.contains("foundation repair")
-            || normalized.contains("footing sizing")) {
-            bonus -= 8;
-        }
-        if (sectionBonus == 0) {
-            bonus -= 4;
-        }
-        return bonus;
-    }
-
-    private static int communityGovernanceStructuredAnchorBias(QueryTerms queryTerms, SearchResult candidate) {
-        String queryLower = emptySafe(queryTerms.queryLower);
-        String normalizedTitle = emptySafe(candidate.title).trim().toLowerCase(QUERY_LOCALE);
-        String normalizedSection = emptySafe(candidate.sectionHeading).trim().toLowerCase(QUERY_LOCALE);
-        String normalizedMode = emptySafe(candidate.retrievalMode).trim().toLowerCase(QUERY_LOCALE);
-        boolean financialIntent = containsAnyMarker(
-            queryLower,
-            buildMarkerSet(
-                "insurance", "insured", "fund", "funds", "premium", "premiums", "pool", "pooling",
-                "risk transfer", "reinsurance", "claim", "claims", "contribution", "contributions",
-                "accounting", "ledger", "record", "records", "compensation"
-            )
-        );
-        boolean trustRepairIntent = queryTerms.metadataProfile != null
-            && queryTerms.metadataProfile.trustRepairMergeIntent();
-
-        int score = 0;
-        if ("route-focus".equals(normalizedMode) && queryTerms.metadataProfile.sectionHeadingBonus(candidate.sectionHeading) > 0) {
-            score += 12;
-        } else if ("guide-focus".equals(normalizedMode) && !normalizedSection.isEmpty()) {
-            score -= 6;
-        }
-
-        boolean financeDistractor = containsAnyMarker(normalizedTitle, COMMUNITY_GOVERNANCE_FINANCE_DISTRACTOR_MARKERS)
-            || containsAnyMarker(normalizedSection, COMMUNITY_GOVERNANCE_FINANCE_DISTRACTOR_MARKERS)
-            || normalizedSection.contains("historical mutual aid");
-        boolean monitoringDistractor = containsAnyMarker(normalizedSection, COMMUNITY_GOVERNANCE_MONITORING_DISTRACTOR_MARKERS);
-        boolean trustRepairSignal = containsAnyMarker(normalizedSection, COMMUNITY_GOVERNANCE_TRUST_REPAIR_SECTION_MARKERS);
-
-        if (!financialIntent && financeDistractor) {
-            score -= 28;
-        }
-
-        if (trustRepairIntent && trustRepairSignal) {
-            score += 12;
-        }
-        if (trustRepairIntent && monitoringDistractor) {
-            score -= trustRepairSignal ? 6 : 12;
-        }
-
-        if (financialIntent && financeDistractor) {
-            score += 18;
-        }
-
-        return score;
+        return PackStructuredAnchorPolicy.selectBroadHouseAnchor(queryTerms, rankedResults);
     }
 
     static LinkedHashMap<String, GuideScore> buildAnchorGuideScoresForTest(
@@ -2834,7 +2464,7 @@ public final class PackRepository implements AutoCloseable {
     }
 
     private static boolean hasWaterStorageContainerMakingIntent(String queryLower) {
-        return containsAnyMarker(queryLower, WATER_STORAGE_CONTAINER_MAKING_MARKERS);
+        return PackStructuredAnchorPolicy.hasWaterStorageContainerMakingIntent(queryLower);
     }
 
     static boolean shouldKeepBroadWaterRouteRowForTest(String query, SearchResult result) {
@@ -4089,198 +3719,12 @@ public final class PackRepository implements AutoCloseable {
         boolean diversifyContext,
         SearchResult candidate
     ) {
-        if (!diversifyContext || routeProfile == null || !routeProfile.isRouteFocused()) {
-            return true;
-        }
-        boolean supported = routeProfile.supportsRouteResult(
-            candidate.title,
-            candidate.sectionHeading,
-            candidate.category,
-            candidate.topicTags,
-            candidate.snippet,
-            candidate.body
+        return PackRouteSupportPolicy.supportCandidateMatchesRoute(
+            routeProfile,
+            metadataProfile,
+            diversifyContext,
+            candidate
         );
-        if (!supported) {
-            return false;
-        }
-        if (metadataProfile == null) {
-            return true;
-        }
-        String category = emptySafe(candidate.category).trim().toLowerCase(QUERY_LOCALE);
-        String structureType = emptySafe(candidate.structureType).trim().toLowerCase(QUERY_LOCALE);
-        boolean structuredMatch = !structureType.isEmpty() && !"general".equals(structureType);
-        String retrievalMode = emptySafe(candidate.retrievalMode).trim().toLowerCase(QUERY_LOCALE);
-        String candidateText = emptySafe(candidate.title) + " " + emptySafe(candidate.sectionHeading) + " " +
-            emptySafe(candidate.snippet) + " " + emptySafe(candidate.body);
-        int sectionBonus = metadataProfile.sectionHeadingBonus(candidate.sectionHeading);
-        int metadataScore = metadataProfile.metadataBonus(
-            candidate.category,
-            candidate.contentRole,
-            candidate.timeHorizon,
-            candidate.structureType,
-            candidate.topicTags
-        );
-        if (metadataProfile.hasExplicitTopic("water_distribution")
-            && !matchesExplicitWaterDistributionSupport(category, structureType, candidate, sectionBonus)) {
-            return false;
-        }
-        if ("water_storage".equals(metadataProfile.preferredStructureType())
-            && "guide-focus".equals(retrievalMode)
-            && emptySafe(candidate.sectionHeading).trim().isEmpty()
-            && containsTerm(candidate.topicTags, "water_distribution")
-            && !metadataProfile.hasExplicitTopic("water_distribution")
-            && !containsTerm(candidate.topicTags, "container_sanitation")
-            && !containsTerm(candidate.topicTags, "water_rotation")) {
-            return false;
-        }
-        if ("water_storage".equals(metadataProfile.preferredStructureType())
-            && !metadataProfile.hasExplicitTopic("water_distribution")
-            && containsTerm(candidate.topicTags, "water_distribution")
-            && !containsTerm(candidate.topicTags, "container_sanitation")
-            && !containsTerm(candidate.topicTags, "water_rotation")
-            && sectionBonus <= 0) {
-            return false;
-        }
-        if ("water_storage".equals(metadataProfile.preferredStructureType())
-            && !metadataProfile.hasExplicitTopic("water_distribution")
-            && "guide-focus".equals(retrievalMode)
-            && emptySafe(candidate.sectionHeading).trim().isEmpty()
-            && !"water_storage".equals(structureType)
-            && metadataProfile.preferredTopicOverlapCount(candidate.topicTags) < 2
-            && metadataProfile.sectionHeadingBonus(candidate.sectionHeading) <= 0) {
-            return false;
-        }
-        if ("water_storage".equals(metadataProfile.preferredStructureType())
-            && !metadataProfile.hasExplicitTopic("water_distribution")
-            && "guide-focus".equals(retrievalMode)
-            && emptySafe(candidate.sectionHeading).trim().isEmpty()
-            && !metadataProfile.waterStorageContainerMakingIntent()
-            && ("building".equals(category) || "crafts".equals(category))
-            && containsAnyMarker(candidateText, WATER_STORAGE_CONTAINER_MAKING_MARKERS)) {
-            return false;
-        }
-        if ("water_storage".equals(metadataProfile.preferredStructureType())
-            && metadataProfile.hasExplicitTopic("water_distribution")
-            && "guide-focus".equals(retrievalMode)
-            && emptySafe(candidate.sectionHeading).trim().isEmpty()
-            && !hasWaterDistributionTitleSignal(candidate)) {
-            return false;
-        }
-        if ("water_storage".equals(metadataProfile.preferredStructureType())
-            && metadataProfile.hasExplicitTopic("water_distribution")
-            && !containsTerm(candidate.topicTags, "water_distribution")
-            && metadataProfile.sectionHeadingBonus(candidate.sectionHeading) <= 0) {
-            return false;
-        }
-        if ("water_distribution".equals(metadataProfile.preferredStructureType())) {
-            boolean distributionTagged = containsTerm(candidate.topicTags, "water_distribution");
-            boolean strongGuideSignal = hasStrongWaterDistributionGuideSignal(candidate);
-            if (!RetrievalRoutePolicy.allowsWaterDistributionSupportCandidate(
-                distributionTagged,
-                sectionBonus,
-                strongGuideSignal,
-                retrievalMode,
-                emptySafe(candidate.sectionHeading).trim().isEmpty(),
-                candidate.contentRole,
-                containsAnyMarker(candidateText, WATER_DISTRIBUTION_DISTRACTOR_MARKERS)
-            )) {
-                return false;
-            }
-        }
-        if (prefersRoofWeatherproofContext(metadataProfile)) {
-            if ("guide-focus".equals(retrievalMode)
-                && emptySafe(candidate.sectionHeading).trim().isEmpty()
-                && !hasRoofWeatherproofAnchorSignal(candidate)) {
-                return false;
-            }
-            if (sectionBonus <= 0 && hasRoofWeatherproofDistractorSignal(candidate)) {
-                return false;
-            }
-        }
-        if (prefersGovernanceTrustRepairContext(metadataProfile)
-            && hasGovernanceSupportMixDistractor(candidate)
-            && !hasGovernanceTrustRepairSignal(candidate)) {
-            return false;
-        }
-        if (requiresSpecializedRouteAnchorSignal(metadataProfile.preferredStructureType())
-            && "guide-focus".equals(retrievalMode)
-            && emptySafe(candidate.sectionHeading).trim().isEmpty()
-            && !metadataProfile.preferredStructureType().equals(structureType)) {
-            return false;
-        }
-        if (metadataScore > 0) {
-            if ("cabin_house".equals(metadataProfile.preferredStructureType())) {
-                if (!metadataProfile.accessibilityIntent() && containsAnyMarker(candidateText, HOUSE_ACCESSIBILITY_MARKERS)) {
-                    return false;
-                }
-                if (!metadataProfile.climateContextIntent()
-                    && containsAnyMarker(candidateText, HOUSE_CLIMATE_MARKERS)) {
-                    return false;
-                }
-                if (!metadataProfile.hasExplicitTopicFocus() && sectionBonus < 0) {
-                    return false;
-                }
-            }
-            if (structuredMatch) {
-                return true;
-            }
-            if (!routeProfile.preferredCategories().contains(category)) {
-                return false;
-            }
-            if (metadataScore < MIN_GENERAL_SUPPORT_METADATA_SCORE) {
-                return false;
-            }
-            if ("cabin_house".equals(metadataProfile.preferredStructureType())
-                && metadataProfile.preferredTopicOverlapCount(candidate.topicTags) < 2
-                && sectionBonus <= 0) {
-                return false;
-            }
-            if ("cabin_house".equals(metadataProfile.preferredStructureType())
-                && metadataProfile.hasExplicitTopicFocus()
-                && sectionBonus <= 0
-                && !metadataProfile.hasExplicitTopicOverlap(candidate.topicTags)) {
-                return false;
-            }
-            return true;
-        }
-        boolean preferredCategory = routeProfile.preferredCategories().contains(category);
-        return preferredCategory && !structuredMatch && metadataScore >= MIN_GENERAL_SUPPORT_METADATA_SCORE;
-    }
-
-    private static boolean matchesExplicitWaterDistributionSupport(
-        String category,
-        String structureType,
-        SearchResult candidate,
-        int sectionBonus
-    ) {
-        String normalizedText = normalizeMatchText(emptySafe(candidate.title) + " " + emptySafe(candidate.sectionHeading));
-        boolean structureMatch = "water_distribution".equals(structureType);
-        boolean topicMatch = containsTerm(candidate.topicTags, "water_distribution");
-        boolean sectionMatch = sectionBonus > 0;
-        boolean signalMatch = hasWaterDistributionTitleSignal(candidate) || hasWaterDistributionDetailSignal(candidate);
-        boolean strongGuideSignal = hasStrongWaterDistributionGuideSignal(candidate);
-        boolean lifecycleMetaSection = sectionBonus <= 0
-            && (normalizedText.contains("lifecycle")
-                || normalizedText.contains("see also")
-                || normalizedText.contains("checklist")
-                || normalizedText.contains("preventive maintenance")
-                || normalizedText.contains("system care"));
-        if (!structureMatch && !topicMatch && !sectionMatch && !signalMatch) {
-            return false;
-        }
-        if (lifecycleMetaSection) {
-            return false;
-        }
-        if (sectionBonus < 0 && !strongGuideSignal) {
-            return false;
-        }
-        if ("resource-management".equals(category)) {
-            return structureMatch || sectionMatch || strongGuideSignal;
-        }
-        return "building".equals(category)
-            || "utility".equals(category)
-            || structureMatch
-            || (topicMatch && strongGuideSignal);
     }
 
     static int supportStructurePenalty(boolean diversifyContext, String retrievalMode, String sectionHeading) {
