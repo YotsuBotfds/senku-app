@@ -54,6 +54,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.TextUnit
+import androidx.compose.ui.unit.em
 import com.senku.mobile.R
 import com.senku.ui.answer.AnswerContent
 import com.senku.ui.answer.AnswerSurfaceLabel
@@ -1936,13 +1937,19 @@ private fun GuideTopBarBackAction(
             horizontalArrangement = Arrangement.spacedBy(2.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            GuideRailBackGlyph()
+            Icon(
+                painter = painterResource(R.drawable.ic_home_back_chevron),
+                contentDescription = null,
+                modifier = Modifier.size(14.dp),
+                tint = colors.ink0,
+            )
             Text(
                 text = "Back",
                 style = typography.monoCaps.copy(
                     fontSize = 10.sp,
                     lineHeight = 12.sp,
                     fontWeight = FontWeight.Medium,
+                    letterSpacing = 0.09.em,
                 ),
                 color = colors.ink0,
                 maxLines = 1,
@@ -1981,16 +1988,12 @@ private fun GuideTopBarAction(
 @Composable
 private fun GuideRailBackGlyph() {
     val colors = SenkuTheme.colors
-    Canvas(modifier = Modifier.size(14.dp)) {
-        val stroke = 1.7.dp.toPx()
-        val startX = size.width * 0.72f
-        val midX = size.width * 0.30f
-        val topY = size.height * 0.18f
-        val middleY = size.height * 0.50f
-        val bottomY = size.height * 0.82f
-        drawLine(colors.ink0, Offset(startX, topY), Offset(midX, middleY), stroke, StrokeCap.Round)
-        drawLine(colors.ink0, Offset(startX, bottomY), Offset(midX, middleY), stroke, StrokeCap.Round)
-    }
+    Icon(
+        painter = painterResource(R.drawable.ic_home_back_chevron),
+        contentDescription = null,
+        modifier = Modifier.size(14.dp),
+        tint = colors.ink0,
+    )
 }
 
 @Composable
@@ -2715,13 +2718,17 @@ private fun TitleBar(
         modifier = modifier
             .fillMaxWidth()
             .background(colors.bg0)
-            .heightIn(min = guideChromePolicy.topBarMinHeightDp.dp)
-            .padding(
-                horizontal = guideChromePolicy.topBarHorizontalPaddingDp.dp,
-                vertical = guideChromePolicy.topBarVerticalPaddingDp.dp,
-            ),
-        verticalArrangement = Arrangement.spacedBy(if (guideMode) 2.dp else 3.dp),
+            .heightIn(min = guideChromePolicy.topBarMinHeightDp.dp),
     ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(
+                    horizontal = guideChromePolicy.topBarHorizontalPaddingDp.dp,
+                    vertical = guideChromePolicy.topBarVerticalPaddingDp.dp,
+                ),
+            verticalArrangement = Arrangement.spacedBy(if (guideMode) 2.dp else 3.dp),
+        ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
@@ -2740,6 +2747,7 @@ private fun TitleBar(
                     fontSize = 11.sp,
                     lineHeight = 14.sp,
                     fontWeight = FontWeight.Medium,
+                    letterSpacing = 0.09.em,
                 ),
                 color = colors.accent,
                 maxLines = 1,
@@ -2752,6 +2760,7 @@ private fun TitleBar(
                         fontSize = 11.sp,
                         lineHeight = 14.sp,
                         fontWeight = FontWeight.Medium,
+                        letterSpacing = 0.09.em,
                     ),
                     color = colors.accent,
                     maxLines = 1,
@@ -2768,9 +2777,10 @@ private fun TitleBar(
                 ),
                 modifier = Modifier.weight(1f),
                 style = typography.sectionTitle.copy(
-                    fontSize = if (guideMode) guideChromePolicy.topBarTitleFontSizeSp.sp else 17.sp,
-                    lineHeight = if (guideMode) guideChromePolicy.topBarTitleLineHeightSp.sp else 20.sp,
+                    fontSize = guideChromePolicy.topBarTitleFontSizeSp.sp,
+                    lineHeight = guideChromePolicy.topBarTitleLineHeightSp.sp,
                     fontWeight = FontWeight.SemiBold,
+                    letterSpacing = 0.em,
                 ),
                 color = colors.ink0,
                 maxLines = 1,
@@ -2861,6 +2871,7 @@ private fun TitleBar(
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis,
             )
+        }
         }
 
         HorizontalDivider(

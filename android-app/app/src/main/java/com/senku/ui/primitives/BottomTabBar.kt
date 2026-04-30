@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.selection.selectable
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -32,6 +33,7 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.AbstractComposeView
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -39,6 +41,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.senku.mobile.R
 import com.senku.ui.theme.SenkuAppTheme
 import com.senku.ui.theme.SenkuTheme
 
@@ -60,6 +63,7 @@ private val BottomTabLabelLineHeight = 12.sp
 internal const val Rev03ComposeNavRailIconSizeDp = 22
 internal const val Rev03ComposeNavRailLabelFontSizeSp = 10
 internal const val Rev03ComposeNavRailLabelLineHeightSp = 13
+internal const val Rev03ComposeNavRailIconLabelGapDp = 3
 
 data class BottomTabModel(
     val destination: BottomTabDestination,
@@ -216,7 +220,7 @@ private fun BottomTabItem(
     modifier: Modifier = Modifier,
 ) {
     val colors = SenkuTheme.colors
-    val tint = if (selected) colors.accent else colors.ink3
+    val tint = if (selected) colors.accent else colors.ink2
     val verticalRail = layoutMode == BottomTabBarLayoutMode.VERTICAL_RAIL
     val itemHeight = if (verticalRail) 48.dp else 48.dp
 
@@ -230,7 +234,10 @@ private fun BottomTabItem(
             )
             .padding(horizontal = if (verticalRail) 2.dp else 4.dp, vertical = if (verticalRail) 2.dp else 4.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(2.dp, Alignment.CenterVertically),
+        verticalArrangement = Arrangement.spacedBy(
+            if (verticalRail) Rev03ComposeNavRailIconLabelGapDp.dp else 2.dp,
+            Alignment.CenterVertically,
+        ),
     ) {
         BottomTabIcon(
             destination = tab.destination,
@@ -264,6 +271,15 @@ private fun BottomTabIcon(
     tint: Color,
     modifier: Modifier = Modifier,
 ) {
+    if (destination == BottomTabDestination.PINS) {
+        Icon(
+            painter = painterResource(R.drawable.ic_home_saved),
+            contentDescription = null,
+            modifier = modifier,
+            tint = tint,
+        )
+        return
+    }
     Canvas(modifier = modifier) {
         val strokeWidth = 1.8.dp.toPx()
         val stroke = Stroke(
@@ -358,21 +374,7 @@ private fun BottomTabIcon(
                 )
             }
 
-            BottomTabDestination.PINS -> {
-                val bookmark = Path().apply {
-                    moveTo(size.width * 0.32f, size.height * 0.20f)
-                    lineTo(size.width * 0.68f, size.height * 0.20f)
-                    lineTo(size.width * 0.68f, size.height * 0.78f)
-                    lineTo(size.width * 0.50f, size.height * 0.64f)
-                    lineTo(size.width * 0.32f, size.height * 0.78f)
-                    close()
-                }
-                drawPath(
-                    path = bookmark,
-                    color = tint,
-                    style = stroke,
-                )
-            }
+            BottomTabDestination.PINS -> Unit
         }
     }
 }

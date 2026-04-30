@@ -123,7 +123,7 @@ class TabletMainXmlShellParityTest {
                 assertEquals("10sp", header.android("textSize"))
             }
 
-            assertEquals("13sp", layout.elementByAndroidId("tablet_search_query_text").android("textSize"))
+            assertEquals("14sp", layout.elementByAndroidId("tablet_search_query_text").android("textSize"))
             assertFalse(
                 "$qualifier search count text should use an explicit text size",
                 layout.elementByAndroidId("tablet_search_count_text").android("textSize").isBlank(),
@@ -214,9 +214,9 @@ class TabletMainXmlShellParityTest {
         assertEquals("1", title.android("maxLines"))
         assertEquals("end", title.android("ellipsize"))
         assertEquals("@font/inter_tight", title.android("fontFamily"))
-        assertEquals("17sp", title.android("textSize"))
+        assertEquals("14sp", title.android("textSize"))
         assertEquals("600", title.android("textFontWeight"))
-        assertEquals("20sp", title.android("lineHeight"))
+        assertEquals("18sp", title.android("lineHeight"))
         assertEquals("@color/senku_rev03_ink_0", title.android("textColor"))
         assertEquals("Field manual \u2022 ed.2", title.android("text"))
 
@@ -260,8 +260,10 @@ class TabletMainXmlShellParityTest {
         assertEquals("1", query.android("layout_weight"))
         assertEquals("1", query.android("maxLines"))
         assertEquals("end", query.android("ellipsize"))
-        assertEquals("@font/jetbrains_mono", query.android("fontFamily"))
-        assertEquals("13sp", query.android("textSize"))
+        assertEquals("@font/inter_tight", query.android("fontFamily"))
+        assertEquals("14sp", query.android("textSize"))
+        assertEquals("600", query.android("textFontWeight"))
+        assertEquals("", query.android("textStyle"))
         assertEquals("18sp", query.android("lineHeight"))
         assertEquals("@font/jetbrains_mono", count.android("fontFamily"))
         assertEquals("12sp", count.android("textSize"))

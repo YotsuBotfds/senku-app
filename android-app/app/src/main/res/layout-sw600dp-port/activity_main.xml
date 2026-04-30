@@ -222,12 +222,12 @@
                 android:ellipsize="end"
                 android:fontFamily="@font/inter_tight"
                 android:includeFontPadding="false"
-                android:lineHeight="20sp"
+                android:lineHeight="18sp"
                 android:maxLines="1"
                 android:text="Field manual &#8226; ed.2"
                 android:textColor="@color/senku_rev03_ink_0"
                 android:textFontWeight="600"
-                android:textSize="17sp" />
+                android:textSize="14sp" />
 
             <ImageView
                 android:id="@+id/home_chrome_search_icon"
@@ -555,15 +555,15 @@
                     android:layout_marginStart="14dp"
                     android:layout_weight="1"
                     android:ellipsize="end"
-                    android:fontFamily="@font/jetbrains_mono"
+                    android:fontFamily="@font/inter_tight"
                     android:includeFontPadding="false"
                     android:lineHeight="18sp"
                     android:maxLines="1"
                     android:text="@string/search_hint"
                     android:textAppearance="?android:attr/textAppearanceSmall"
                     android:textColor="@color/senku_rev03_ink_0"
-                    android:textSize="13sp"
-                    android:textStyle="bold" />
+                    android:textFontWeight="600"
+                    android:textSize="14sp" />
 
                 <TextView
                     android:id="@+id/tablet_search_count_text"

@@ -9,5 +9,6 @@ class BottomTabBarTest {
         assertEquals(22, Rev03ComposeNavRailIconSizeDp)
         assertEquals(10, Rev03ComposeNavRailLabelFontSizeSp)
         assertEquals(13, Rev03ComposeNavRailLabelLineHeightSp)
+        assertEquals(3, Rev03ComposeNavRailIconLabelGapDp)
     }
 }

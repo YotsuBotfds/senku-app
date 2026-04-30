@@ -66,6 +66,19 @@ class TabletDetailAppRailPolicyTest {
     }
 
     @Test
+    fun tabletTitlebarUsesOneSharedTitleScaleAcrossModes() {
+        val source = locateFile(
+            "android-app/app/src/main/java/com/senku/ui/tablet/TabletDetailScreen.kt",
+            "app/src/main/java/com/senku/ui/tablet/TabletDetailScreen.kt",
+        ).readText()
+
+        assertSourceContains(source, "fontSize = guideChromePolicy.topBarTitleFontSizeSp.sp")
+        assertSourceContains(source, "lineHeight = guideChromePolicy.topBarTitleLineHeightSp.sp")
+        assertEquals("Tablet title chrome should not keep the old non-guide 17sp branch", false, source.contains("else 17.sp"))
+        assertEquals("Tablet title chrome should not keep the old non-guide 20sp branch", false, source.contains("else 20.sp"))
+    }
+
+    @Test
     fun tabletDetailAppRailReusesComposeNavRailVisualTokens() {
         listOf(false, true).forEach { isLandscape ->
             assertEquals(Rev03ComposeNavRailIconSizeDp, tabletGuideAppRailIconSizeDp(isLandscape))

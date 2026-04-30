@@ -114,7 +114,7 @@ public final class DetailActivity extends AppCompatActivity {
     private static final int TABLET_EMERGENCY_PORTRAIT_LEFT_MARGIN_DP =
         TABLET_APP_RAIL_WIDTH_DP + TABLET_APP_RAIL_DIVIDER_WIDTH_DP;
     private static final int TABLET_EMERGENCY_PORTRAIT_RIGHT_MARGIN_DP = 24;
-    private static final int TABLET_EMERGENCY_PORTRAIT_TOP_MARGIN_DP = 12;
+    private static final int TABLET_EMERGENCY_PORTRAIT_TOP_MARGIN_DP = 0;
     private static final int TABLET_EMERGENCY_PORTRAIT_HORIZONTAL_PADDING_DP = 16;
     private static final int TABLET_EMERGENCY_PORTRAIT_VERTICAL_PADDING_DP = 12;
     private static final int TABLET_EMERGENCY_CHROME_BOTTOM_MARGIN_DP = 12;
@@ -2250,7 +2250,20 @@ public final class DetailActivity extends AppCompatActivity {
         if (!safe(evidenceLabel).trim().isEmpty()) {
             labels.add(safe(evidenceLabel).trim());
         }
-        return TextUtils.join(" - ", labels).toUpperCase(Locale.US);
+        return buildTabletEmergencyOverlayChromeMeta(labels);
+    }
+
+    static String buildTabletEmergencyOverlayChromeMeta(List<String> labels) {
+        ArrayList<String> cleanedLabels = new ArrayList<>();
+        if (labels != null) {
+            for (String label : labels) {
+                String cleaned = safe(label).trim();
+                if (!cleaned.isEmpty()) {
+                    cleanedLabels.add(cleaned);
+                }
+            }
+        }
+        return String.join(HEADER_BULLET, cleanedLabels).toUpperCase(Locale.US);
     }
 
     private void updateTabletEmergencyHeaderOverlayLayout(LinearLayout overlay) {

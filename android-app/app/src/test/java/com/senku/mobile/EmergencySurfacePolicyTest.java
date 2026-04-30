@@ -133,7 +133,7 @@ public final class EmergencySurfacePolicyTest {
             margins.left
         );
         assertEquals(24, margins.right);
-        assertEquals(12, margins.top);
+        assertEquals(0, margins.top);
         assertEquals(
             android.view.ViewGroup.LayoutParams.MATCH_PARENT,
             DetailActivity.resolveTabletEmergencyOverlayHeight(true)
@@ -144,6 +144,19 @@ public final class EmergencySurfacePolicyTest {
     public void tabletPortraitEmergencyChromeUsesCompactIconTargets() {
         assertEquals(28, DetailActivity.resolveTabletEmergencyChromeNavIconSizeDp());
         assertEquals(1, DetailActivity.resolveTabletEmergencyChromeRuleHeightDp());
+    }
+
+    @Test
+    public void tabletPortraitEmergencyChromeMetaUsesSharedBulletSeparators() {
+        assertEquals(
+            "GD-898 \u2022 DANGER \u2022 REVIEWED EVIDENCE",
+            DetailActivity.buildTabletEmergencyOverlayChromeMeta(List.of(
+                "GD-898",
+                "danger",
+                "",
+                "reviewed evidence"
+            ))
+        );
     }
 
     @Test
