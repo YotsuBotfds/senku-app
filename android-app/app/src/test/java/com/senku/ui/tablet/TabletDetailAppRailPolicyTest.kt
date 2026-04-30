@@ -26,6 +26,7 @@ class TabletDetailAppRailPolicyTest {
         assertEquals(10, tabletGuideAppRailLabelFontSizeSp(isLandscape = true))
         assertEquals(13, tabletGuideAppRailLabelLineHeightSp(isLandscape = false))
         assertEquals(13, tabletGuideAppRailLabelLineHeightSp(isLandscape = true))
+        assertEquals(0, tabletGuideAppRailLabelLetterSpacingSp())
     }
 
     @Test

@@ -394,7 +394,7 @@ internal fun tabletPortraitReadingLayoutPolicy(): TabletReadingLayoutPolicy =
     TabletReadingLayoutPolicy(
         threadRailWidthDp = 0,
         answerMaxWidthDp = 720,
-        evidenceRailWidthDp = 420,
+        evidenceRailWidthDp = 300,
         answerHorizontalPaddingDp = 42,
     )
 
@@ -503,6 +503,9 @@ internal fun tabletGuideAppRailLabelFontSizeSp(isLandscape: Boolean): Int =
 
 internal fun tabletGuideAppRailLabelLineHeightSp(isLandscape: Boolean): Int =
     13
+
+internal fun tabletGuideAppRailLabelLetterSpacingSp(): Int =
+    0
 
 internal fun tabletDetailAppRailActiveDestination(detailMode: TabletDetailMode): TabletDetailAppRailDestination =
     when (detailMode) {
@@ -1701,6 +1704,7 @@ private fun GuideAppRailItem(
                 fontSize = labelFontSize,
                 lineHeight = labelLineHeight,
                 fontWeight = if (active) FontWeight.Bold else FontWeight.Normal,
+                letterSpacing = tabletGuideAppRailLabelLetterSpacingSp().sp,
             ),
             color = itemColor,
             maxLines = 1,

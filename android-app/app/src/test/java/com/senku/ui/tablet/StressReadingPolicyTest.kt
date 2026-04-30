@@ -26,7 +26,7 @@ class StressReadingPolicyTest {
 
         assertEquals(0, policy.threadRailWidthDp)
         assertEquals(720, policy.answerMaxWidthDp)
-        assertEquals(420, policy.evidenceRailWidthDp)
+        assertEquals(300, policy.evidenceRailWidthDp)
         assertEquals(42, policy.answerHorizontalPaddingDp)
     }
 
@@ -39,7 +39,7 @@ class StressReadingPolicyTest {
         assertEquals(tabletLandscapeReadingLayoutPolicy(), landscapePolicy)
         assertEquals(0, portraitPolicy.threadRailWidthDp)
         assertEquals(720, portraitPolicy.answerMaxWidthDp)
-        assertEquals(420, portraitPolicy.evidenceRailWidthDp)
+        assertEquals(300, portraitPolicy.evidenceRailWidthDp)
         assertEquals(42, portraitPolicy.answerHorizontalPaddingDp)
         assertEquals(292, landscapePolicy.threadRailWidthDp)
         assertEquals(560, landscapePolicy.answerMaxWidthDp)
