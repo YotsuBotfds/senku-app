@@ -20,12 +20,6 @@ final class DetailAnswerBodyFormatter {
     static final int SECTION_SEPARATOR_NEWLINE_COUNT = 1;
     private static final String STEPS_LABEL = "Steps:";
     private static final String LIMITS_OR_SAFETY_LABEL = "Limits or safety:";
-    private static final String RAIN_SHELTER_ARTICLE_BODY =
-        "Build a ridgeline first, then drape and tension the tarp around it. "
-            + "A ridgeline is a single taut cord run between two anchor points (trees, poles, or bombproof rocks) "
-            + "at roughly chest height; it carries the load while the tarp only sheds water.\n\n"
-            + "Pitch the tarp ridge along the prevailing wind, with the low edge facing windward. "
-            + "Tension corners with prusik or taut-line hitches so the rig stays adjustable through the night.";
 
     private static final class AnswerBodySection {
         final String label;
@@ -51,23 +45,9 @@ final class DetailAnswerBodyFormatter {
         if (sourcesIndex >= 0) {
             cleaned = cleaned.substring(0, sourcesIndex).trim();
         }
-        if (isRainShelterUncertainFitFallback(cleaned)) {
-            return RAIN_SHELTER_ARTICLE_BODY;
-        }
         cleaned = collapseEmptyAnswerSections(cleaned);
         cleaned = addSectionLabelSpacing(cleaned);
         return cleaned;
-    }
-
-    private static boolean isRainShelterUncertainFitFallback(String body) {
-        String normalized = safe(body).trim().toLowerCase(Locale.US);
-        return normalized.contains("build a ridgeline first, then drape and tension the tarp around it")
-            && ((normalized.contains("field steps")
-                && normalized.contains("tie a taut ridgeline")
-                && normalized.contains("rain sheds instead of pooling"))
-                || normalized.contains("pitch the tarp ridge along the prevailing wind")
-                || normalized.contains("gd-345")
-                || normalized.contains("tarp & cord shelters"));
     }
 
     private String collapseEmptyAnswerSections(String body) {

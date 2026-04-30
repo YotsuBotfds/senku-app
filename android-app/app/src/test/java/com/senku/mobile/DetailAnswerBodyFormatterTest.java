@@ -61,15 +61,16 @@ public final class DetailAnswerBodyFormatterTest {
     }
 
     @Test
-    public void formatAnswerBodyNormalizesRainShelterFallbackToArticleProse() {
+    public void formatAnswerBodyPreservesRainShelterFieldStepsInDefaultProduction() {
         DetailAnswerBodyFormatter formatter = new DetailAnswerBodyFormatter(null);
 
         assertEquals(
             "Build a ridgeline first, then drape and tension the tarp around it. "
-                + "A ridgeline is a single taut cord run between two anchor points (trees, poles, or bombproof rocks) "
-                + "at roughly chest height; it carries the load while the tarp only sheds water.\n\n"
-                + "Pitch the tarp ridge along the prevailing wind, with the low edge facing windward. "
-                + "Tension corners with prusik or taut-line hitches so the rig stays adjustable through the night.",
+                + "Keep the low edge toward the weather and leave runoff a clear path away from the sheltered area.\n\n"
+                + "STEPS\n"
+                + "1. Tie a taut ridgeline between two solid anchor points.\n"
+                + "2. Drape the tarp over the line and stake or tie the windward edge low.\n"
+                + "3. Tension the corners evenly, then adjust the pitch so rain sheds instead of pooling.",
             formatter.formatAnswerBody(
                 "ANSWER\n"
                     + "Build a ridgeline first, then drape and tension the tarp around it. "
@@ -83,7 +84,7 @@ public final class DetailAnswerBodyFormatterTest {
     }
 
     @Test
-    public void formatAnswerBodyKeepsCanonicalRainShelterArticleCleanWhenSupportChromeIsPresent() {
+    public void formatAnswerBodyPreservesRainShelterSupportChromeInDefaultProduction() {
         DetailAnswerBodyFormatter formatter = new DetailAnswerBodyFormatter(null);
 
         assertEquals(
@@ -91,7 +92,9 @@ public final class DetailAnswerBodyFormatterTest {
                 + "A ridgeline is a single taut cord run between two anchor points (trees, poles, or bombproof rocks) "
                 + "at roughly chest height; it carries the load while the tarp only sheds water.\n\n"
                 + "Pitch the tarp ridge along the prevailing wind, with the low edge facing windward. "
-                + "Tension corners with prusik or taut-line hitches so the rig stays adjustable through the night.",
+                + "Tension corners with prusik or taut-line hitches so the rig stays adjustable through the night.\n\n"
+                + "UNSURE FIT\n"
+                + "See GD-345 Tarp & Cord Shelters before relying on this.",
             formatter.formatAnswerBody(
                 "ANSWER\n"
                     + "Build a ridgeline first, then drape and tension the tarp around it. "
