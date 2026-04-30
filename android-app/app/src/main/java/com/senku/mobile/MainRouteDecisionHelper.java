@@ -5,6 +5,8 @@ import com.senku.ui.primitives.BottomTabDestination;
 public final class MainRouteDecisionHelper {
     enum Surface {
         BROWSE,
+        RECENT_THREADS,
+        SAVED_GUIDES,
         SEARCH_RESULTS,
         ASK_RESULTS
     }
@@ -30,14 +32,14 @@ public final class MainRouteDecisionHelper {
 
     static Transition systemBack(RouteState state, BottomTabDestination previousPhoneTab) {
         RouteState route = normalize(state);
-        if (route.surface == Surface.BROWSE && route.activePhoneTab != BottomTabDestination.HOME) {
+        if (isBrowseSurface(route.surface) && route.activePhoneTab != BottomTabDestination.HOME) {
             BottomTabDestination previous = phoneTabSelectionOwner(previousPhoneTab);
             return new Transition(
-                new RouteState(Surface.BROWSE, previous == route.activePhoneTab ? BottomTabDestination.HOME : previous, false),
+                routeForBrowseDestination(previous == route.activePhoneTab ? BottomTabDestination.HOME : previous),
                 Effect.SHOW_PREVIOUS_TAB
             );
         }
-        if (route.surface != Surface.BROWSE) {
+        if (!isBrowseSurface(route.surface)) {
             return new Transition(browseHome(), Effect.RETURN_TO_BROWSE);
         }
         return new Transition(route, Effect.EXIT_ACTIVITY);
@@ -45,14 +47,14 @@ public final class MainRouteDecisionHelper {
 
     static Transition homeChromeBack(RouteState state) {
         RouteState route = normalize(state);
-        if (route.surface == Surface.BROWSE) {
+        if (isBrowseSurface(route.surface)) {
             return new Transition(route, Effect.NONE);
         }
         return new Transition(browseHome(), Effect.RETURN_TO_BROWSE);
     }
 
     static boolean shouldShowHomeChromeBack(RouteState state) {
-        return normalize(state).surface != Surface.BROWSE;
+        return !isBrowseSurface(normalize(state).surface);
     }
 
     static Transition openPhoneTab(RouteState state, BottomTabDestination destination) {
@@ -70,12 +72,12 @@ public final class MainRouteDecisionHelper {
                 );
             case THREADS:
                 return new Transition(
-                    new RouteState(Surface.BROWSE, BottomTabDestination.ASK, false),
+                    routeForBrowseDestination(BottomTabDestination.THREADS),
                     Effect.SHOW_RECENT_THREADS
                 );
             case PINS:
                 return new Transition(
-                    new RouteState(Surface.BROWSE, BottomTabDestination.PINS, false),
+                    routeForBrowseDestination(BottomTabDestination.PINS),
                     Effect.SHOW_SAVED_GUIDES
                 );
             case HOME:
@@ -111,7 +113,7 @@ public final class MainRouteDecisionHelper {
         boolean askLaneActive
     ) {
         Surface surface = browseMode
-            ? Surface.BROWSE
+            ? browseSurfaceForPhoneTab(activePhoneTab)
             : (askLaneActive || activePhoneTab == BottomTabDestination.ASK
                 ? Surface.ASK_RESULTS
                 : Surface.SEARCH_RESULTS);
@@ -137,6 +139,29 @@ public final class MainRouteDecisionHelper {
         }
     }
 
+    private static RouteState routeForBrowseDestination(BottomTabDestination destination) {
+        return new RouteState(browseSurfaceForPhoneTab(destination), destination, false);
+    }
+
+    private static Surface browseSurfaceForPhoneTab(BottomTabDestination destination) {
+        BottomTabDestination owner = phoneTabSelectionOwner(destination);
+        switch (owner) {
+            case ASK:
+                return Surface.RECENT_THREADS;
+            case PINS:
+                return Surface.SAVED_GUIDES;
+            case HOME:
+            default:
+                return Surface.BROWSE;
+        }
+    }
+
+    private static boolean isBrowseSurface(Surface surface) {
+        return surface == Surface.BROWSE
+            || surface == Surface.RECENT_THREADS
+            || surface == Surface.SAVED_GUIDES;
+    }
+
     private static RouteState normalize(RouteState state) {
         return state == null ? browseHome() : state.normalized();
     }
@@ -147,8 +172,10 @@ public final class MainRouteDecisionHelper {
         final boolean askLaneActive;
 
         RouteState(Surface surface, BottomTabDestination activePhoneTab, boolean askLaneActive) {
-            this.surface = surface == null ? Surface.BROWSE : surface;
-            this.activePhoneTab = phoneTabSelectionOwner(activePhoneTab);
+            Surface safeSurface = surface == null ? Surface.BROWSE : surface;
+            BottomTabDestination owner = phoneTabSelectionOwner(activePhoneTab);
+            this.surface = isBrowseSurface(safeSurface) ? browseSurfaceForPhoneTab(owner) : safeSurface;
+            this.activePhoneTab = owner;
             this.askLaneActive = askLaneActive;
         }
 

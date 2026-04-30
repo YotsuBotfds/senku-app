@@ -197,7 +197,7 @@ public final class MainActivityPhoneNavigationTest {
             );
 
         assertEquals(MainRouteDecisionHelper.Effect.SHOW_SAVED_GUIDES, transition.effect);
-        assertEquals(MainRouteDecisionHelper.Surface.BROWSE, transition.routeState.surface);
+        assertEquals(MainRouteDecisionHelper.Surface.SAVED_GUIDES, transition.routeState.surface);
         assertEquals(BottomTabDestination.PINS, transition.routeState.activePhoneTab);
         assertFalse(transition.routeState.askLaneActive);
     }
@@ -220,11 +220,11 @@ public final class MainActivityPhoneNavigationTest {
             );
 
         assertEquals(MainRouteDecisionHelper.Effect.SHOW_SAVED_GUIDES, fromSearch.effect);
-        assertEquals(MainRouteDecisionHelper.Surface.BROWSE, fromSearch.routeState.surface);
+        assertEquals(MainRouteDecisionHelper.Surface.SAVED_GUIDES, fromSearch.routeState.surface);
         assertEquals(BottomTabDestination.PINS, fromSearch.routeState.activePhoneTab);
         assertFalse(fromSearch.routeState.askLaneActive);
         assertEquals(MainRouteDecisionHelper.Effect.SHOW_SAVED_GUIDES, fromAsk.effect);
-        assertEquals(MainRouteDecisionHelper.Surface.BROWSE, fromAsk.routeState.surface);
+        assertEquals(MainRouteDecisionHelper.Surface.SAVED_GUIDES, fromAsk.routeState.surface);
         assertEquals(BottomTabDestination.PINS, fromAsk.routeState.activePhoneTab);
         assertFalse(fromAsk.routeState.askLaneActive);
     }
@@ -256,7 +256,7 @@ public final class MainActivityPhoneNavigationTest {
             );
 
         assertEquals(MainRouteDecisionHelper.Effect.SHOW_SAVED_GUIDES, transition.effect);
-        assertEquals(MainRouteDecisionHelper.Surface.BROWSE, transition.routeState.surface);
+        assertEquals(MainRouteDecisionHelper.Surface.SAVED_GUIDES, transition.routeState.surface);
         assertEquals(BottomTabDestination.PINS, transition.routeState.activePhoneTab);
         assertFalse(transition.routeState.askLaneActive);
     }
@@ -304,7 +304,7 @@ public final class MainActivityPhoneNavigationTest {
             );
 
         assertEquals(MainRouteDecisionHelper.Effect.SHOW_PREVIOUS_TAB, transition.effect);
-        assertEquals(MainRouteDecisionHelper.Surface.BROWSE, transition.routeState.surface);
+        assertEquals(MainRouteDecisionHelper.Surface.RECENT_THREADS, transition.routeState.surface);
         assertEquals(BottomTabDestination.ASK, transition.routeState.activePhoneTab);
         assertFalse(transition.routeState.askLaneActive);
     }

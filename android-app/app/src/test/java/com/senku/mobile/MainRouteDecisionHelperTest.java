@@ -38,7 +38,7 @@ public final class MainRouteDecisionHelperTest {
         assertEquals(MainRouteDecisionHelper.Effect.SHOW_PREVIOUS_TAB, transition.effect);
         assertRoute(
             transition.routeState,
-            MainRouteDecisionHelper.Surface.BROWSE,
+            MainRouteDecisionHelper.Surface.RECENT_THREADS,
             BottomTabDestination.ASK,
             false
         );
@@ -114,7 +114,12 @@ public final class MainRouteDecisionHelperTest {
             MainRouteDecisionHelper.systemBack(saved, null);
 
         assertEquals(MainRouteDecisionHelper.Effect.SHOW_PREVIOUS_TAB, previousAsk.effect);
-        assertRoute(previousAsk.routeState, MainRouteDecisionHelper.Surface.BROWSE, BottomTabDestination.ASK, false);
+        assertRoute(
+            previousAsk.routeState,
+            MainRouteDecisionHelper.Surface.RECENT_THREADS,
+            BottomTabDestination.ASK,
+            false
+        );
         assertEquals(MainRouteDecisionHelper.Effect.SHOW_PREVIOUS_TAB, missingPrevious.effect);
         assertRoute(missingPrevious.routeState, MainRouteDecisionHelper.Surface.BROWSE, BottomTabDestination.HOME, false);
     }
@@ -143,7 +148,7 @@ public final class MainRouteDecisionHelperTest {
         assertFalse(MainRouteDecisionHelper.shouldShowHomeChromeBack(MainRouteDecisionHelper.browseHome()));
         assertFalse(MainRouteDecisionHelper.shouldShowHomeChromeBack(
             new MainRouteDecisionHelper.RouteState(
-                MainRouteDecisionHelper.Surface.BROWSE,
+                MainRouteDecisionHelper.Surface.SAVED_GUIDES,
                 BottomTabDestination.PINS,
                 false
             )
@@ -184,14 +189,14 @@ public final class MainRouteDecisionHelperTest {
         );
         assertTransition(
             MainRouteDecisionHelper.openPhoneTab(searchResults, BottomTabDestination.THREADS),
-            MainRouteDecisionHelper.Surface.BROWSE,
+            MainRouteDecisionHelper.Surface.RECENT_THREADS,
             BottomTabDestination.ASK,
             false,
             MainRouteDecisionHelper.Effect.SHOW_RECENT_THREADS
         );
         assertTransition(
             MainRouteDecisionHelper.openPhoneTab(searchResults, BottomTabDestination.PINS),
-            MainRouteDecisionHelper.Surface.BROWSE,
+            MainRouteDecisionHelper.Surface.SAVED_GUIDES,
             BottomTabDestination.PINS,
             false,
             MainRouteDecisionHelper.Effect.SHOW_SAVED_GUIDES
@@ -248,20 +253,37 @@ public final class MainRouteDecisionHelperTest {
                 BottomTabDestination.THREADS,
                 false
             );
+        MainRouteDecisionHelper.RouteState saved =
+            new MainRouteDecisionHelper.RouteState(
+                MainRouteDecisionHelper.Surface.BROWSE,
+                BottomTabDestination.PINS,
+                false
+            );
 
+        assertEquals(MainRouteDecisionHelper.Surface.BROWSE, search.surface);
         assertEquals(BottomTabDestination.HOME, search.activePhoneTab);
         assertFalse(search.askLaneActive);
+        assertEquals(MainRouteDecisionHelper.Surface.RECENT_THREADS, threads.surface);
         assertEquals(BottomTabDestination.ASK, threads.activePhoneTab);
         assertFalse(threads.askLaneActive);
+        assertEquals(MainRouteDecisionHelper.Surface.SAVED_GUIDES, saved.surface);
+        assertEquals(BottomTabDestination.PINS, saved.activePhoneTab);
+        assertFalse(saved.askLaneActive);
     }
 
     @Test
     public void routeStateForModeResolvesBrowseSearchAndAskSurfaces() {
         assertRoute(
             MainRouteDecisionHelper.routeStateForMode(true, BottomTabDestination.ASK, true),
-            MainRouteDecisionHelper.Surface.BROWSE,
+            MainRouteDecisionHelper.Surface.RECENT_THREADS,
             BottomTabDestination.ASK,
             true
+        );
+        assertRoute(
+            MainRouteDecisionHelper.routeStateForMode(true, BottomTabDestination.PINS, false),
+            MainRouteDecisionHelper.Surface.SAVED_GUIDES,
+            BottomTabDestination.PINS,
+            false
         );
         assertRoute(
             MainRouteDecisionHelper.routeStateForMode(false, BottomTabDestination.HOME, false),
