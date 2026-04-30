@@ -1781,6 +1781,46 @@ public final class PromptHarnessSmokeTest {
     }
 
     @Test
+    public void answerSourceChipsPreviewCorrectSeededGuideSources() throws Exception {
+        SearchResult abrasiveSource = loadGuideByIdForTest("GD-220");
+        SearchResult foundrySource = loadGuideByIdForTest("GD-132");
+        Assume.assumeNotNull("GD-220 should be available for source-chip correctness smoke", abrasiveSource);
+        Assume.assumeNotNull("GD-132 should be available for source-chip correctness smoke", foundrySource);
+
+        ArrayList<SearchResult> sources = new ArrayList<>();
+        sources.add(abrasiveSource);
+        sources.add(foundrySource);
+
+        Intent intent = DetailActivity.newAnswerIntent(
+            ApplicationProvider.getApplicationContext(),
+            "Source chip correctness smoke",
+            "Offline answer | 2 sources | deterministic smoke",
+            "Short answer:\nCompare the two cited guide sources before acting.\n\n"
+                + "Steps:\n1. Inspect the anchor source [" + safe(abrasiveSource.guideId) + "].\n"
+                + "2. Inspect the related evidence source [" + safe(foundrySource.guideId) + "].\n\n"
+                + "Limits or safety:\nThis seeded answer exists to prove each source chip opens the matching guide.",
+            sources,
+            null,
+            "answer-source-chip-correctness"
+        );
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+
+        try (ActivityScenario<DetailActivity> scenario = ActivityScenario.launch(intent)) {
+            awaitHarnessIdle();
+            Assert.assertTrue(
+                "seeded answer should render before source-chip label validation",
+                waitForDetailBodyReady(DETAIL_WAIT_MS, 8)
+            );
+            assertAnswerSourceChipLabelVisible(scenario, abrasiveSource);
+            assertAnswerSourceChipLabelVisible(scenario, foundrySource);
+            captureUiState("answer_source_chip_labels");
+        }
+
+        assertSeededSourceChipPreviewOrOpen(intent, abrasiveSource, "answer_source_chip_gd_220");
+        assertSeededSourceChipPreviewOrOpen(intent, foundrySource, "answer_source_chip_gd_132");
+    }
+
+    @Test
     public void emergencyPortraitAnswerShowsImmediateActionState() {
         Context context = ApplicationProvider.getApplicationContext();
         ArrayList<SearchResult> sources = new ArrayList<>();
@@ -6366,6 +6406,153 @@ public final class PromptHarnessSmokeTest {
             SystemClock.sleep(50L);
         }
         return false;
+    }
+
+    private void assertSeededSourceChipPreviewOrOpen(
+        Intent answerIntent,
+        SearchResult expectedSource,
+        String captureLabel
+    ) {
+        try (ActivityScenario<DetailActivity> scenario = ActivityScenario.launch(answerIntent)) {
+            awaitHarnessIdle();
+            Assert.assertTrue(
+                "seeded answer should render before selecting " + displayLabel(expectedSource),
+                waitForDetailBodyReady(DETAIL_WAIT_MS, 8)
+            );
+            assertAnswerSourceChipLabelVisible(scenario, expectedSource);
+            selectAnswerSourcePreview(scenario, expectedSource);
+            Assert.assertTrue(
+                "selecting source chip should preview or open the matching guide for "
+                    + expectedSource.guideId
+                    + " / "
+                    + displayLabel(expectedSource)
+                    + "; "
+                    + describeResumedActivityAndHarnessSignals(),
+                waitForSourcePreviewOrOpenedGuide(expectedSource, DETAIL_WAIT_MS)
+            );
+            captureUiState(captureLabel);
+        }
+    }
+
+    private void assertAnswerSourceChipLabelVisible(
+        ActivityScenario<DetailActivity> scenario,
+        SearchResult expectedSource
+    ) {
+        scenario.onActivity(activity -> {
+            DetailSettleSignals signals = collectDetailSettleSignals(activity);
+            if (signals.tabletCompose) {
+                Object tabletState = invokePrivateNoArgMethod(activity, "buildTabletState");
+                Collection<?> sourceStates =
+                    asCollection(tabletState == null ? null : invokeNoArgMethod(tabletState, "getSources"));
+                Assert.assertTrue(
+                    "tablet source list should include " + expectedSource.guideId + " / " + displayLabel(expectedSource),
+                    hasTabletSourceStateMatch(sourceStates, expectedSource, false)
+                );
+                return;
+            }
+            Button sourceButton = findMatchingSourceButton(activity, expectedSource);
+            Assert.assertNotNull(
+                "seeded answer should expose a visible source chip for "
+                    + expectedSource.guideId
+                    + " / "
+                    + displayLabel(expectedSource),
+                sourceButton
+            );
+            String label = safe(sourceButton.getText().toString()).toLowerCase(Locale.US);
+            String description = safe(String.valueOf(sourceButton.getContentDescription())).toLowerCase(Locale.US);
+            String expectedGuideId = safe(expectedSource.guideId).toLowerCase(Locale.US);
+            String expectedTitle = safe(expectedSource.title).toLowerCase(Locale.US);
+            Assert.assertTrue(
+                "source chip label/description should identify the seeded source; label="
+                    + quoteForDiagnostics(label)
+                    + " description="
+                    + quoteForDiagnostics(description),
+                (!expectedGuideId.isEmpty() && (label.contains(expectedGuideId) || description.contains(expectedGuideId)))
+                    || (!expectedTitle.isEmpty() && (label.contains(expectedTitle) || description.contains(expectedTitle)))
+            );
+        });
+    }
+
+    private boolean waitForSourcePreviewOrOpenedGuide(SearchResult expectedSource, long timeoutMs) {
+        long deadline = SystemClock.uptimeMillis() + timeoutMs;
+        while (SystemClock.uptimeMillis() < deadline) {
+            final boolean[] matched = {false};
+            InstrumentationRegistry.getInstrumentation().runOnMainSync(() -> {
+                Activity activity = getResumedActivityOnMainThread();
+                if (!(activity instanceof DetailActivity)) {
+                    return;
+                }
+                DetailSettleSignals signals = collectDetailSettleSignals(activity);
+                if (sourceOpenedAsGuide(activity, expectedSource, signals)) {
+                    matched[0] = true;
+                    return;
+                }
+                if (signals.tabletCompose) {
+                    Object tabletState = invokePrivateNoArgMethod(activity, "buildTabletState");
+                    Collection<?> sourceStates =
+                        asCollection(tabletState == null ? null : invokeNoArgMethod(tabletState, "getSources"));
+                    Object anchor = tabletState == null ? null : invokeNoArgMethod(tabletState, "getAnchor");
+                    matched[0] = signals.answerMode
+                        && hasTabletSourceStateMatch(sourceStates, expectedSource, true)
+                        && sourceAnchorMatches(anchor, expectedSource);
+                    return;
+                }
+                matched[0] = sourcePreviewPanelMatches(activity, expectedSource);
+            });
+            if (matched[0]) {
+                return true;
+            }
+            InstrumentationRegistry.getInstrumentation().waitForIdleSync();
+            SystemClock.sleep(50L);
+        }
+        return false;
+    }
+
+    private boolean sourceOpenedAsGuide(Activity activity, SearchResult expectedSource, DetailSettleSignals signals) {
+        if (activity == null || expectedSource == null || signals == null || signals.answerMode) {
+            return false;
+        }
+        String expectedGuideId = safe(expectedSource.guideId).trim().toLowerCase(Locale.US);
+        String expectedTitle = safe(expectedSource.title).trim().toLowerCase(Locale.US);
+        String currentGuideId = readPrivateStringField(activity, "currentGuideId").toLowerCase(Locale.US);
+        String currentTitle = firstNonEmpty(
+            readPrivateStringField(activity, "currentTitle"),
+            visibleText(activity.findViewById(R.id.detail_screen_title)),
+            visibleText(activity.findViewById(R.id.detail_title))
+        ).toLowerCase(Locale.US);
+        return (!expectedGuideId.isEmpty() && currentGuideId.contains(expectedGuideId))
+            || (!expectedTitle.isEmpty() && currentTitle.contains(expectedTitle));
+    }
+
+    private boolean sourcePreviewPanelMatches(Activity activity, SearchResult expectedSource) {
+        if (activity == null || expectedSource == null) {
+            return false;
+        }
+        android.view.View provenancePanel = activity.findViewById(R.id.detail_provenance_panel);
+        if (!isEffectivelyVisible(provenancePanel)) {
+            return false;
+        }
+        String expectedGuideId = safe(expectedSource.guideId).trim().toLowerCase(Locale.US);
+        String expectedTitle = safe(expectedSource.title).trim().toLowerCase(Locale.US);
+        String previewCopy = (
+            visibleText(activity.findViewById(R.id.detail_provenance_meta))
+                + " "
+                + visibleText(activity.findViewById(R.id.detail_provenance_body))
+        ).toLowerCase(Locale.US);
+        return (!expectedGuideId.isEmpty() && previewCopy.contains(expectedGuideId))
+            || (!expectedTitle.isEmpty() && previewCopy.contains(expectedTitle));
+    }
+
+    private boolean sourceAnchorMatches(Object anchor, SearchResult expectedSource) {
+        if (anchor == null || expectedSource == null) {
+            return false;
+        }
+        String expectedGuideId = safe(expectedSource.guideId).trim().toLowerCase(Locale.US);
+        String expectedTitle = safe(expectedSource.title).trim().toLowerCase(Locale.US);
+        String anchorId = invokeStringMethod(anchor, "getId").toLowerCase(Locale.US);
+        String anchorTitle = invokeStringMethod(anchor, "getTitle").toLowerCase(Locale.US);
+        return (!expectedGuideId.isEmpty() && anchorId.contains(expectedGuideId))
+            || (!expectedTitle.isEmpty() && anchorTitle.contains(expectedTitle));
     }
 
     private void selectAnswerSourcePreview(ActivityScenario<DetailActivity> scenario) {
