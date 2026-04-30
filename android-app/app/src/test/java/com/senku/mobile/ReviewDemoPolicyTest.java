@@ -47,6 +47,48 @@ public final class ReviewDemoPolicyTest {
     }
 
     @Test
+    public void unauthorizedProductReviewModeCannotEnableAnswerOrPreviewFixtures() {
+        boolean productReviewMode = ReviewDemoPolicy.resolveProductReviewModeForTest(true, true, false, true);
+        List<SearchResult> adjacent = rainShelterAdjacentGuides();
+        SearchResult reviewRow = guideWithSubtitle("GD-023 | survival | review");
+
+        assertEquals(
+            "",
+            ReviewDemoPolicy.buildRainShelterUncertainFitAnswerBody(
+                productReviewMode,
+                "How do I build a simple rain shelter from tarp and cord?",
+                adjacent,
+                false
+            )
+        );
+        assertEquals(
+            adjacent,
+            ReviewDemoPolicy.shapeRainShelterUncertainFitSources(
+                productReviewMode,
+                "How do I build a simple rain shelter from tarp and cord?",
+                adjacent,
+                false
+            )
+        );
+        assertEquals(
+            "Original recent thread",
+            ReviewDemoPolicy.shapeRecentThreadLabel(productReviewMode, null, 0, "Original recent thread")
+        );
+        assertEquals(
+            "starter \u2022 immediate \u2022 survival",
+            ReviewDemoPolicy.shapeTabletPreviewMeta(
+                productReviewMode,
+                reviewRow,
+                "starter \u2022 immediate \u2022 survival"
+            )
+        );
+        assertEquals(
+            "live snippet",
+            ReviewDemoPolicy.shapeTabletPreviewBody(productReviewMode, reviewRow, "live snippet")
+        );
+    }
+
+    @Test
     public void reviewHomeCategoryCountsMatchTargetMockContractWhenEnabled() {
         assertEquals(84, ReviewDemoPolicy.displayHomeCategoryCount(true, "shelter", 7));
         assertEquals(67, ReviewDemoPolicy.displayHomeCategoryCount(true, "water", 7));

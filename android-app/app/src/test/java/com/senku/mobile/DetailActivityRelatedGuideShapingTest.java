@@ -84,6 +84,23 @@ public final class DetailActivityRelatedGuideShapingTest {
     }
 
     @Test
+    public void disabledReviewModeDoesNotInjectPrimitiveTechnologyWhenRepositoryOmitsIt() {
+        List<SearchResult> shaped = ReviewDemoPolicy.shapeAnswerModeRelatedGuides(
+            false,
+            "GD-345",
+            Arrays.asList(
+                result("GD-294", "Cave Shelter Systems & Cold-Weather"),
+                result("GD-695", "Hurricane & Severe Storm Sheltering"),
+                result("GD-484", "Insulation Materials & Cold-Soak"),
+                result("GD-109", "Natural Building Materials")
+            )
+        );
+
+        assertEquals(4, shaped.size());
+        assertEquals("GD-109", shaped.get(3).guideId);
+    }
+
+    @Test
     public void productionRelatedGuideAnchorUsesFirstSourceWithoutRainShelterPromotion() {
         SearchResult anchor = result("GD-220", "Abrasives Manufacturing");
         SearchResult rainShelter = resultWithTopicTags(
