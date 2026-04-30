@@ -57,8 +57,9 @@ enum class BottomTabBarLayoutMode {
 
 private val BottomTabLabelFontSize = 10.5.sp
 private val BottomTabLabelLineHeight = 12.sp
-private val BottomTabRailLabelFontSize = 9.75.sp
-private val BottomTabRailLabelLineHeight = 10.75.sp
+internal const val Rev03ComposeNavRailIconSizeDp = 22
+internal const val Rev03ComposeNavRailLabelFontSizeSp = 10
+internal const val Rev03ComposeNavRailLabelLineHeightSp = 13
 
 data class BottomTabModel(
     val destination: BottomTabDestination,
@@ -234,13 +235,13 @@ private fun BottomTabItem(
         BottomTabIcon(
             destination = tab.destination,
             tint = tint,
-            modifier = Modifier.size(if (verticalRail) 17.dp else 20.dp),
+            modifier = Modifier.size(if (verticalRail) Rev03ComposeNavRailIconSizeDp.dp else 20.dp),
         )
         Text(
             text = tab.label,
             style = SenkuTheme.typography.tag.copy(
-                fontSize = if (verticalRail) BottomTabRailLabelFontSize else BottomTabLabelFontSize,
-                lineHeight = if (verticalRail) BottomTabRailLabelLineHeight else BottomTabLabelLineHeight,
+                fontSize = if (verticalRail) Rev03ComposeNavRailLabelFontSizeSp.sp else BottomTabLabelFontSize,
+                lineHeight = if (verticalRail) Rev03ComposeNavRailLabelLineHeightSp.sp else BottomTabLabelLineHeight,
                 fontWeight = if (selected) FontWeight.Bold else FontWeight.Normal,
             ),
             color = tint,
