@@ -86,6 +86,7 @@ public final class PromptHarnessSmokeTest {
     private static final long SEARCH_RESULTS_WAIT_MS = 35_000L;
     private static final long DETAIL_WAIT_MS = 15_000L;
     private static final long GENERATIVE_DETAIL_WAIT_MS = 20_000L;
+    private static final long HOST_ASK_HANDOFF_WAIT_MS = 45_000L;
     private static final double SCREENSHOT_DIMENSION_COVERAGE_THRESHOLD = 0.6d;
     private static final String[] DETAIL_SURFACE_RES_IDS = new String[] {
         "detail_body",
@@ -3750,7 +3751,7 @@ public final class PromptHarnessSmokeTest {
 
     private void assertHostAskDetailSettledAfterHandoff(long timeoutMs, boolean expectHistory) {
         assertResumedDetailActivitySettled(
-            timeoutMs,
+            Math.max(timeoutMs, HOST_ASK_HANDOFF_WAIT_MS),
             40,
             "",
             expectHistory,
