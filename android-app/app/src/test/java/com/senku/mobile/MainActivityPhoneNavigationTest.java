@@ -310,6 +310,34 @@ public final class MainActivityPhoneNavigationTest {
     }
 
     @Test
+    public void mainActivityRouteStateKeepsSavedThreadsSearchAndAskFirstClass() {
+        assertRouteState(
+            MainActivity.routeStateForModeForTest(true, BottomTabDestination.PINS, false),
+            MainRouteDecisionHelper.Surface.SAVED_GUIDES,
+            BottomTabDestination.PINS,
+            false
+        );
+        assertRouteState(
+            MainActivity.routeStateForModeForTest(true, BottomTabDestination.THREADS, false),
+            MainRouteDecisionHelper.Surface.RECENT_THREADS,
+            BottomTabDestination.ASK,
+            false
+        );
+        assertRouteState(
+            MainActivity.routeStateForModeForTest(false, BottomTabDestination.SEARCH, false),
+            MainRouteDecisionHelper.Surface.SEARCH_RESULTS,
+            BottomTabDestination.HOME,
+            false
+        );
+        assertRouteState(
+            MainActivity.routeStateForModeForTest(false, BottomTabDestination.ASK, true),
+            MainRouteDecisionHelper.Surface.ASK_RESULTS,
+            BottomTabDestination.ASK,
+            true
+        );
+    }
+
+    @Test
     public void savedGuideSectionShowsEmptyStateOnlyForSavedFlow() {
         assertTrue(MainActivity.shouldShowSavedGuideSection(true, BottomTabDestination.PINS, 0));
 
@@ -551,5 +579,16 @@ public final class MainActivityPhoneNavigationTest {
         assertFalse(MainActivity.isHardwareEnterSubmitAction(KeyEvent.KEYCODE_TAB, KeyEvent.ACTION_UP));
 
         assertTrue(MainActivity.isSharedInputSubmitAction(EditorInfo.IME_ACTION_SEARCH, null));
+    }
+
+    private static void assertRouteState(
+        MainRouteDecisionHelper.RouteState routeState,
+        MainRouteDecisionHelper.Surface surface,
+        BottomTabDestination activePhoneTab,
+        boolean askLaneActive
+    ) {
+        assertEquals(surface, routeState.surface);
+        assertEquals(activePhoneTab, routeState.activePhoneTab);
+        assertEquals(askLaneActive, routeState.askLaneActive);
     }
 }
