@@ -52,7 +52,7 @@ final class PackSupportScoringPolicy {
         QueryMetadataProfile metadataProfile = queryTerms.metadataProfile;
         String preferredStructureType = metadataProfile.preferredStructureType();
         if (!metadataProfile.hasExplicitTopicFocus()
-            || !PackRepository.requiresSpecializedRouteAnchorSignal(preferredStructureType)) {
+            || !RetrievalRoutePolicy.requiresSpecializedRouteAnchorSignal(preferredStructureType)) {
             return 0;
         }
         boolean structureMatch = preferredStructureType.equals(
@@ -78,7 +78,7 @@ final class PackSupportScoringPolicy {
         QueryMetadataProfile metadataProfile = queryTerms.metadataProfile;
         String preferredStructureType = metadataProfile.preferredStructureType();
         if (!metadataProfile.hasExplicitTopicFocus()
-            || !PackRepository.requiresSpecializedRouteAnchorSignal(preferredStructureType)) {
+            || !RetrievalRoutePolicy.requiresSpecializedRouteAnchorSignal(preferredStructureType)) {
             return 0;
         }
         boolean structureMatch = preferredStructureType.equals(

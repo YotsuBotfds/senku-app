@@ -72,6 +72,26 @@ public final class RetrievalRoutePolicyTest {
     }
 
     @Test
+    public void directAnchorRequirementMatchesPackRepositoryCompatibilityWrapper() {
+        String query = "how do i make soap from animal fat and ash";
+        QueryRouteProfile routeProfile = QueryRouteProfile.fromQuery(query);
+        QueryMetadataProfile metadataProfile = QueryMetadataProfile.fromQuery(query);
+
+        assertEquals(
+            PackRepository.shouldRequireDirectAnchorSignalForTest(query),
+            RetrievalRoutePolicy.shouldRequireDirectAnchorSignal(
+                routeProfile,
+                metadataProfile,
+                PackRepository.QueryTerms.fromQuery(query).primaryKeywordTokens().size()
+            )
+        );
+        assertEquals(
+            PackRepository.requiresSpecializedRouteAnchorSignal("soapmaking"),
+            RetrievalRoutePolicy.requiresSpecializedRouteAnchorSignal("soapmaking")
+        );
+    }
+
+    @Test
     public void likeBackfillSkipsWhenRouteDoesNotRequireSpecializedAnchorSignal() {
         String query = "how do i build a storage shelf";
 

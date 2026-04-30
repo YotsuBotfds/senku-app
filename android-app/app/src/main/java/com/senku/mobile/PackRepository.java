@@ -2662,21 +2662,15 @@ public final class PackRepository implements AutoCloseable {
     }
 
     private static boolean shouldRequireDirectAnchorSignal(QueryTerms queryTerms) {
-        return queryTerms.metadataProfile.hasExplicitTopic("water_distribution")
-            || (queryTerms.routeProfile.isRouteFocused()
-                && requiresSpecializedRouteAnchorSignal(queryTerms.metadataProfile.preferredStructureType()))
-            || (!queryTerms.routeProfile.isRouteFocused()
-                && (queryTerms.metadataProfile.hasExplicitTopicFocus() || queryTerms.primaryKeywordTokens().size() >= 2));
+        return RetrievalRoutePolicy.shouldRequireDirectAnchorSignal(
+            queryTerms.routeProfile,
+            queryTerms.metadataProfile,
+            queryTerms.primaryKeywordTokens().size()
+        );
     }
 
     static boolean requiresSpecializedRouteAnchorSignal(String preferredStructureType) {
-        return "water_distribution".equals(preferredStructureType)
-            || "message_auth".equals(preferredStructureType)
-            || "community_security".equals(preferredStructureType)
-            || "community_governance".equals(preferredStructureType)
-            || "soapmaking".equals(preferredStructureType)
-            || "glassmaking".equals(preferredStructureType)
-            || "fair_trial".equals(preferredStructureType);
+        return RetrievalRoutePolicy.requiresSpecializedRouteAnchorSignal(preferredStructureType);
     }
 
     static boolean hasDirectAnchorSignalForTest(String query, SearchResult result) {

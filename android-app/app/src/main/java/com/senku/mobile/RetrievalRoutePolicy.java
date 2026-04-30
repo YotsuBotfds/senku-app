@@ -371,18 +371,21 @@ final class RetrievalRoutePolicy {
         return new RouteFtsOrderSpec(" ORDER BY c.row_id ", Collections.emptyList(), "rowid");
     }
 
-    private static boolean shouldRequireDirectAnchorSignal(
+    static boolean shouldRequireDirectAnchorSignal(
         QueryRouteProfile routeProfile,
         QueryMetadataProfile metadataProfile,
         int primaryKeywordTokenCount
     ) {
+        if (metadataProfile == null) {
+            return false;
+        }
         boolean routeFocused = routeProfile != null && routeProfile.isRouteFocused();
         return metadataProfile.hasExplicitTopic("water_distribution")
             || (routeFocused && requiresSpecializedRouteAnchorSignal(metadataProfile.preferredStructureType()))
             || (!routeFocused && (metadataProfile.hasExplicitTopicFocus() || primaryKeywordTokenCount >= 2));
     }
 
-    private static boolean requiresSpecializedRouteAnchorSignal(String preferredStructureType) {
+    static boolean requiresSpecializedRouteAnchorSignal(String preferredStructureType) {
         return "water_distribution".equals(preferredStructureType)
             || "message_auth".equals(preferredStructureType)
             || "community_security".equals(preferredStructureType)
