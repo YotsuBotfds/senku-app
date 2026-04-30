@@ -247,8 +247,7 @@ internal fun threadRailVisibleSources(sources: List<SourceState>, guideMode: Boo
     if (guideMode) {
         return visibleSources.sortedWith(compareBy<SourceState> { threadRailGuideSourceOrder(it) })
     }
-    val deterministicThreadIds = setOf("GD-220", "GD-345")
-    return visibleSources.filter { it.id.uppercase() in deterministicThreadIds }
+    return visibleSources
 }
 
 internal fun threadRailGuideSourceOrder(source: SourceState): Int =

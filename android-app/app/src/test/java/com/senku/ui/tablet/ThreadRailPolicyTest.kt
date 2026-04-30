@@ -170,21 +170,23 @@ class ThreadRailPolicyTest {
     }
 
     @Test
-    fun threadRailThreadModeKeepsDeterministicSupportSourcesWhenPresent() {
+    fun threadRailThreadModeKeepsMeaningfulSupportSourcesWhenPresent() {
         val anchor = SourceState("anchor", "GD-220", "Abrasives Manufacturing", isAnchor = true, isSelected = true)
         val rainShelter = SourceState("rain", "GD-345", "Tarp & Cord Shelters", isAnchor = false, isSelected = false)
         val extra = SourceState("extra", "GD-132", "Foundry & Metal Casting", isAnchor = false, isSelected = false)
 
         assertEquals(
-            listOf("GD-220", "GD-345"),
+            listOf("GD-220", "GD-345", "GD-132"),
             threadRailVisibleSources(listOf(anchor, rainShelter, extra), guideMode = false).map { it.id },
         )
         assertEquals("ANCHOR", threadRailSourceRelationLabel(anchor))
         assertEquals("TOPIC", threadRailSourceRelationLabel(rainShelter))
+        assertEquals("RELATED", threadRailSourceRelationLabel(extra))
         assertEquals("GD-220 \u2022 ANCHOR", threadRailSourceDisplayLabel(anchor, guideMode = false))
         assertEquals("GD-345 \u2022 TOPIC", threadRailSourceDisplayLabel(rainShelter, guideMode = false))
+        assertEquals("GD-132 \u2022 RELATED", threadRailSourceDisplayLabel(extra, guideMode = false))
         assertEquals(
-            "SOURCES \u2022 2",
+            "SOURCES \u2022 3",
             threadRailSectionTitle("SOURCES", threadRailVisibleSources(listOf(anchor, rainShelter, extra), guideMode = false).size),
         )
         assertEquals(
@@ -206,12 +208,12 @@ class ThreadRailPolicyTest {
     }
 
     @Test
-    fun threadRailThreadModeDoesNotFallBackToUnrelatedSupportSources() {
-        val unrelated = SourceState("extra", "GD-132", "Foundry & Metal Casting", isAnchor = false, isSelected = false)
+    fun threadRailThreadModeKeepsNoncanonicalSupportSourcesVisible() {
+        val related = SourceState("extra", "GD-132", "Foundry & Metal Casting", isAnchor = false, isSelected = false)
 
         assertEquals(
-            emptyList<String>(),
-            threadRailVisibleSources(listOf(unrelated), guideMode = false).map { it.id },
+            listOf("GD-132"),
+            threadRailVisibleSources(listOf(related), guideMode = false).map { it.id },
         )
     }
 

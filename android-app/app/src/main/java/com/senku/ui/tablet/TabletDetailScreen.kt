@@ -437,7 +437,6 @@ internal fun tabletShouldShowThreadSourceRail(
     sourceCount: Int,
 ): Boolean =
     detailMode == TabletDetailMode.Thread &&
-        isLandscape &&
         sourceCount > 0
 
 internal fun tabletThreadFlowMaxWidthDp(isLandscape: Boolean): Int =

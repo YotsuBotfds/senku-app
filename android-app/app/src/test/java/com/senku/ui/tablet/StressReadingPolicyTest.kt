@@ -682,7 +682,7 @@ class StressReadingPolicyTest {
                 sourceCount = 2,
             ),
         )
-        assertFalse(
+        assertTrue(
             tabletShouldShowThreadSourceRail(
                 isLandscape = false,
                 detailMode = TabletDetailMode.Thread,
@@ -846,11 +846,11 @@ class StressReadingPolicyTest {
         )
 
         assertTrue(tabletShouldShowEvidencePane(state, guideMode = false))
-        assertEquals(listOf("GD-220", "GD-345"), state.resolvedVisibleThreadSourceRows().map { it.id })
+        assertEquals(listOf("GD-220", "GD-345", "GD-132"), state.resolvedVisibleThreadSourceRows().map { it.id })
     }
 
     @Test
-    fun tabletThreadModeHidesPortraitSourceRailForInlineEvidenceFlow() {
+    fun tabletThreadModeShowsPortraitSourceRailAlongsideInlineEvidenceFlow() {
         val state = tabletDetailState(
             detailMode = TabletDetailMode.Thread,
             evidenceExpanded = true,
@@ -862,8 +862,10 @@ class StressReadingPolicyTest {
             ),
         )
 
-        assertFalse(tabletShouldShowEvidencePane(state, guideMode = false))
-        assertEquals(listOf("GD-220", "GD-345"), state.resolvedVisibleThreadSourceRows().map { it.id })
+        assertTrue(tabletShouldShowEvidencePane(state, guideMode = false))
+        assertEquals(listOf("GD-220", "GD-345", "GD-132"), state.resolvedVisibleThreadSourceRows().map { it.id })
+        assertEquals("SOURCES \u2022 3", tabletThreadSourcePaneTitle(3, isLandscape = false))
+        assertEquals(300, tabletThreadEvidenceRailWidthDp(isLandscape = false))
     }
 
     @Test
