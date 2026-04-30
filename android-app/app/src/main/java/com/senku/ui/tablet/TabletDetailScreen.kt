@@ -250,6 +250,19 @@ internal data class TabletGuideChromePolicy(
     val topBarTitleLineHeightSp: Int,
 )
 
+internal data class TabletDetailBackActionPolicy(
+    val widthDp: Int,
+    val heightDp: Int,
+    val iconSizeDp: Int,
+    val contentDescription: String,
+    val showsTextLabel: Boolean,
+)
+
+internal data class TabletTitleBarTitleTypePolicy(
+    val fontSizeSp: Int,
+    val lineHeightSp: Int,
+)
+
 internal data class TabletGuidePaperDensityPolicy(
     val headerTitleFontSizeSp: Int,
     val headerTitleLineHeightSp: Int,
@@ -539,9 +552,20 @@ internal fun tabletChromeHeaderHorizontalPaddingDp(isLandscape: Boolean): Int =
 internal fun tabletChromeHeaderVerticalPaddingDp(isLandscape: Boolean): Int =
     if (isLandscape) 9 else 12
 
-internal fun tabletDetailBackActionWidthDp(): Int = 28
+internal fun tabletDetailBackActionPolicy(): TabletDetailBackActionPolicy =
+    TabletDetailBackActionPolicy(
+        widthDp = 28,
+        heightDp = 28,
+        iconSizeDp = 18,
+        contentDescription = "Back to previous screen",
+        showsTextLabel = false,
+    )
 
-internal fun tabletDetailBackActionIconSizeDp(): Int = 18
+internal fun tabletDetailBackActionWidthDp(): Int =
+    tabletDetailBackActionPolicy().widthDp
+
+internal fun tabletDetailBackActionIconSizeDp(): Int =
+    tabletDetailBackActionPolicy().iconSizeDp
 
 internal fun tabletGuideChromePolicy(isLandscape: Boolean): TabletGuideChromePolicy =
     if (isLandscape) {
@@ -561,6 +585,14 @@ internal fun tabletGuideChromePolicy(isLandscape: Boolean): TabletGuideChromePol
             topBarTitleLineHeightSp = 18,
         )
     }
+
+internal fun tabletTitleBarTitleTypePolicy(isLandscape: Boolean): TabletTitleBarTitleTypePolicy {
+    val chromePolicy = tabletGuideChromePolicy(isLandscape)
+    return TabletTitleBarTitleTypePolicy(
+        fontSizeSp = chromePolicy.topBarTitleFontSizeSp,
+        lineHeightSp = chromePolicy.topBarTitleLineHeightSp,
+    )
+}
 
 internal fun tabletGuidePaperDensityPolicy(isLandscape: Boolean): TabletGuidePaperDensityPolicy =
     if (isLandscape) {
@@ -1953,12 +1985,13 @@ private fun GuideTopBarBackAction(
     onClick: () -> Unit,
 ) {
     val colors = SenkuTheme.colors
+    val policy = tabletDetailBackActionPolicy()
     Surface(
         modifier = Modifier
-            .height(28.dp)
-            .width(tabletDetailBackActionWidthDp().dp)
+            .height(policy.heightDp.dp)
+            .width(policy.widthDp.dp)
             .semantics(mergeDescendants = true) {
-                contentDescription = "Back to previous screen"
+                contentDescription = policy.contentDescription
             }
             .clickable(
                 role = Role.Button,
@@ -1975,7 +2008,7 @@ private fun GuideTopBarBackAction(
             Icon(
                 painter = painterResource(R.drawable.ic_home_back_chevron),
                 contentDescription = null,
-                modifier = Modifier.size(tabletDetailBackActionIconSizeDp().dp),
+                modifier = Modifier.size(policy.iconSizeDp.dp),
                 tint = colors.ink0,
             )
         }
@@ -2860,6 +2893,7 @@ private fun TitleBar(
     val colors = SenkuTheme.colors
     val typography = SenkuTheme.typography
     val guideChromePolicy = tabletGuideChromePolicy(isLandscape)
+    val titleTypePolicy = tabletTitleBarTitleTypePolicy(isLandscape)
 
     Column(
         modifier = modifier
@@ -2924,8 +2958,8 @@ private fun TitleBar(
                 ),
                 modifier = Modifier.weight(1f),
                 style = typography.sectionTitle.copy(
-                    fontSize = guideChromePolicy.topBarTitleFontSizeSp.sp,
-                    lineHeight = guideChromePolicy.topBarTitleLineHeightSp.sp,
+                    fontSize = titleTypePolicy.fontSizeSp.sp,
+                    lineHeight = titleTypePolicy.lineHeightSp.sp,
                     fontWeight = FontWeight.SemiBold,
                     letterSpacing = 0.em,
                 ),

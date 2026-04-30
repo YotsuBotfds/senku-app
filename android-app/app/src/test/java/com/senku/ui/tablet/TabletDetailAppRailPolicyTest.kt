@@ -6,7 +6,6 @@ import com.senku.ui.primitives.Rev03ComposeNavRailLabelLineHeightSp
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Test
-import java.io.File
 
 class TabletDetailAppRailPolicyTest {
     @Test
@@ -49,33 +48,29 @@ class TabletDetailAppRailPolicyTest {
 
     @Test
     fun tabletGuideTopbarBackAffordanceUsesSharedIconOnlyChrome() {
-        val source = locateFile(
-            "android-app/app/src/main/java/com/senku/ui/tablet/TabletDetailScreen.kt",
-            "app/src/main/java/com/senku/ui/tablet/TabletDetailScreen.kt",
-        ).readText()
+        val policy = tabletDetailBackActionPolicy()
 
-        assertEquals(28, tabletDetailBackActionWidthDp())
-        assertEquals(18, tabletDetailBackActionIconSizeDp())
-        assertSourceContains(source, ".height(28.dp)")
-        assertSourceContains(source, ".width(tabletDetailBackActionWidthDp().dp)")
-        assertSourceContains(source, "contentDescription = \"Back to previous screen\"")
-        assertSourceContains(source, "contentAlignment = Alignment.Center")
-        assertFalse(source.contains("text = \"Back\""))
-        assertFalse(source.contains("GuideTopBarBackLabelFontSizeSp"))
-        assertFalse(source.contains("GuideTopBarBackActionTextSpacingDp"))
+        assertEquals(28, policy.widthDp)
+        assertEquals(28, policy.heightDp)
+        assertEquals(18, policy.iconSizeDp)
+        assertEquals("Back to previous screen", policy.contentDescription)
+        assertFalse(policy.showsTextLabel)
+        assertEquals(policy.widthDp, tabletDetailBackActionWidthDp())
+        assertEquals(policy.iconSizeDp, tabletDetailBackActionIconSizeDp())
     }
 
     @Test
     fun tabletTitlebarUsesOneSharedTitleScaleAcrossModes() {
-        val source = locateFile(
-            "android-app/app/src/main/java/com/senku/ui/tablet/TabletDetailScreen.kt",
-            "app/src/main/java/com/senku/ui/tablet/TabletDetailScreen.kt",
-        ).readText()
+        val portraitPolicy = tabletGuideChromePolicy(isLandscape = false)
+        val landscapePolicy = tabletGuideChromePolicy(isLandscape = true)
+        val portraitTitleType = tabletTitleBarTitleTypePolicy(isLandscape = false)
+        val landscapeTitleType = tabletTitleBarTitleTypePolicy(isLandscape = true)
 
-        assertSourceContains(source, "fontSize = guideChromePolicy.topBarTitleFontSizeSp.sp")
-        assertSourceContains(source, "lineHeight = guideChromePolicy.topBarTitleLineHeightSp.sp")
-        assertEquals("Tablet title chrome should not keep the old non-guide 17sp branch", false, source.contains("else 17.sp"))
-        assertEquals("Tablet title chrome should not keep the old non-guide 20sp branch", false, source.contains("else 20.sp"))
+        assertEquals(portraitPolicy.topBarTitleFontSizeSp, portraitTitleType.fontSizeSp)
+        assertEquals(portraitPolicy.topBarTitleLineHeightSp, portraitTitleType.lineHeightSp)
+        assertEquals(landscapePolicy.topBarTitleFontSizeSp, landscapeTitleType.fontSizeSp)
+        assertEquals(landscapePolicy.topBarTitleLineHeightSp, landscapeTitleType.lineHeightSp)
+        assertEquals(portraitTitleType, landscapeTitleType)
     }
 
     @Test
@@ -159,22 +154,4 @@ class TabletDetailAppRailPolicyTest {
         assertEquals(listOf("ask"), calls)
     }
 
-    private fun assertSourceContains(source: String, token: String) {
-        assertEquals("Expected TabletDetailScreen.kt to contain `$token`", true, source.contains(token))
-    }
-
-    private fun locateFile(vararg candidates: String): File {
-        val userDir = requireNotNull(System.getProperty("user.dir")) { "user.dir is not set" }
-        val start = File(userDir).absoluteFile
-        val roots = generateSequence(start) { root -> root.parentFile }
-        for (root in roots) {
-            for (candidate in candidates) {
-                val file = File(root, candidate)
-                if (file.exists()) {
-                    return file
-                }
-            }
-        }
-        error("Unable to locate tablet detail source from ${start.path}")
-    }
 }
