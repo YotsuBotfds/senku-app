@@ -57,6 +57,16 @@ REQUIRED_INTERACTION_STEP_TYPES: dict[str, type | tuple[type, ...]] = {
     "status": str,
 }
 
+REQUIRED_POST_CHECK_TYPES: dict[str, type | tuple[type, ...]] = {
+    "passed": bool,
+    "expected_any_text": list,
+    "matched_text": list,
+    "ui_text_sample": list,
+    "dump_length": int,
+    "dump_sha256": str,
+    "captured_at_utc": str,
+}
+
 EXPECTED_INTERACTION_STEPS = [
     "tap_saved",
     "tap_query_field",
@@ -64,6 +74,7 @@ EXPECTED_INTERACTION_STEPS = [
     "submit_query",
     "back",
 ]
+POST_CHECK_REQUIRED_STEPS = {"tap_saved", "submit_query", "back"}
 VALID_INTERACTION_STATUSES = {"success", "failed", "skipped"}
 
 
@@ -198,10 +209,69 @@ def _validate_interaction(interaction: dict[str, Any], errors: list[str]) -> Non
         message = step.get("message")
         if message is not None and (not isinstance(message, str) or not message.strip()):
             errors.append(f"expected {scope}.message to be non-empty str when present")
+        post_check = step.get("post_check")
+        if post_check is not None:
+            _validate_post_check(post_check, errors, scope=f"{scope}.post_check")
 
     missing_names = [name for name in EXPECTED_INTERACTION_STEPS if name not in seen_names]
     if missing_names:
         errors.append(f"expected root.interaction.steps to include: {', '.join(missing_names)}")
+
+
+def _validate_post_check(post_check: Any, errors: list[str], *, scope: str) -> None:
+    if not isinstance(post_check, dict):
+        errors.append(f"expected {scope} to be dict, got {type(post_check).__name__}")
+        return
+
+    for key, expected_type in REQUIRED_POST_CHECK_TYPES.items():
+        _expect_type(post_check, key, expected_type, errors, scope=scope)
+
+    expected = _expect_interaction_string_list(
+        post_check.get("expected_any_text"), errors, key=f"{scope}.expected_any_text"
+    )
+    matched = _expect_interaction_string_list(
+        post_check.get("matched_text"), errors, key=f"{scope}.matched_text", allow_empty=True
+    )
+    _expect_interaction_string_list(
+        post_check.get("ui_text_sample"), errors, key=f"{scope}.ui_text_sample", allow_empty=True
+    )
+
+    for fragment in matched:
+        if fragment not in expected:
+            errors.append(f"expected {scope}.matched_text item to be expected: {fragment!r}")
+
+    dump_length = post_check.get("dump_length")
+    if isinstance(dump_length, int) and dump_length <= 0:
+        errors.append(f"expected {scope}.dump_length to be positive")
+
+    dump_sha256 = post_check.get("dump_sha256")
+    if isinstance(dump_sha256, str) and not re.fullmatch(r"[0-9a-f]{64}", dump_sha256):
+        errors.append(f"expected {scope}.dump_sha256 to be a lowercase sha256 hex digest")
+
+
+def _expect_interaction_string_list(
+    value: Any,
+    errors: list[str],
+    *,
+    key: str,
+    allow_empty: bool = False,
+) -> list[str]:
+    if not isinstance(value, list):
+        return []
+
+    if not value and not allow_empty:
+        errors.append(f"expected {key} to be non-empty")
+        return []
+
+    strings: list[str] = []
+    for index, item in enumerate(value):
+        if not isinstance(item, str):
+            errors.append(f"expected {key}[{index}] to be str, got {type(item).__name__}")
+        elif not item.strip():
+            errors.append(f"expected {key}[{index}] to be non-empty")
+        else:
+            strings.append(item)
+    return strings
 
 
 def _validate_dry_run(data: dict[str, Any], errors: list[str]) -> None:
@@ -231,6 +301,10 @@ def _validate_dry_run(data: dict[str, Any], errors: list[str]) -> None:
             if isinstance(step, dict) and step.get("status") != "skipped":
                 errors.append(
                     f"expected root.interaction.steps[{index}].status to be skipped for dry-run summaries"
+                )
+            if isinstance(step, dict) and step.get("post_check") is not None:
+                errors.append(
+                    f"expected root.interaction.steps[{index}].post_check to be absent for dry-run summaries"
                 )
 
 
@@ -276,6 +350,24 @@ def _validate_completed(data: dict[str, Any], errors: list[str]) -> None:
                 errors.append(
                     f"expected root.interaction.steps[{index}].status to be success for completed summaries"
                 )
+            if (
+                isinstance(step, dict)
+                and step.get("name") in POST_CHECK_REQUIRED_STEPS
+                and step.get("status") == "success"
+            ):
+                post_check = step.get("post_check")
+                if not isinstance(post_check, dict):
+                    errors.append(
+                        f"expected root.interaction.steps[{index}].post_check for completed {step.get('name')!r}"
+                    )
+                elif post_check.get("passed") is not True:
+                    errors.append(
+                        f"expected root.interaction.steps[{index}].post_check.passed to be True"
+                    )
+                elif not post_check.get("matched_text"):
+                    errors.append(
+                        f"expected root.interaction.steps[{index}].post_check.matched_text to be non-empty"
+                    )
 
 
 def validate_summary(path: Path) -> tuple[dict[str, Any] | None, list[str]]:

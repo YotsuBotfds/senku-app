@@ -58,13 +58,27 @@ def add_text_checks(summary: dict, *, missing: list[str] | None = None) -> dict:
 def add_interaction(summary: dict, *, statuses: list[str] | None = None) -> dict:
     statuses = statuses or ["success", "success", "success", "success", "success"]
     names = ["tap_saved", "tap_query_field", "enter_query", "submit_query", "back"]
+    post_check_steps = {"tap_saved", "submit_query", "back"}
+    steps = []
+    for name, status in zip(names, statuses):
+        step = {"name": name, "status": status}
+        if status == "failed":
+            step["message"] = "not found"
+        if summary["status"] == "completed" and status == "success" and name in post_check_steps:
+            step["post_check"] = {
+                "passed": True,
+                "expected_any_text": ["Saved" if name != "submit_query" else "Search"],
+                "matched_text": ["Saved" if name != "submit_query" else "Search"],
+                "ui_text_sample": ["Saved", "Search"],
+                "dump_length": 128,
+                "dump_sha256": "a" * 64,
+                "captured_at_utc": "2026-04-30T00:00:01.0000000Z",
+            }
+        steps.append(step)
     summary["interaction"] = {
         "enabled": True,
         "query": "boil water",
-        "steps": [
-            {"name": name, "status": status, **({"message": "not found"} if status == "failed" else {})}
-            for name, status in zip(names, statuses)
-        ],
+        "steps": steps,
     }
     return summary
 
@@ -144,6 +158,51 @@ class ValidateAndroidPhysicalPhoneSmokeSummaryTests(unittest.TestCase):
 
         self.assertIn(
             "expected root.interaction.steps[1].status to be success for completed summaries",
+            errors,
+        )
+
+    def test_completed_interaction_requires_post_step_ui_evidence(self):
+        summary = add_interaction(make_summary(completed=True))
+        del summary["interaction"]["steps"][0]["post_check"]
+        summary["interaction"]["steps"][3]["post_check"]["passed"] = False
+        summary["interaction"]["steps"][4]["post_check"]["matched_text"] = []
+
+        _, errors = validate_summary(self.write_summary(summary))
+
+        self.assertIn(
+            "expected root.interaction.steps[0].post_check for completed 'tap_saved'",
+            errors,
+        )
+        self.assertIn(
+            "expected root.interaction.steps[3].post_check.passed to be True",
+            errors,
+        )
+        self.assertIn(
+            "expected root.interaction.steps[4].post_check.matched_text to be non-empty",
+            errors,
+        )
+
+    def test_post_step_ui_evidence_validates_shape(self):
+        summary = add_interaction(make_summary(completed=True))
+        post_check = summary["interaction"]["steps"][0]["post_check"]
+        post_check["expected_any_text"] = []
+        post_check["matched_text"] = ["Other"]
+        post_check["dump_length"] = 0
+        post_check["dump_sha256"] = "not-a-sha"
+
+        _, errors = validate_summary(self.write_summary(summary))
+
+        self.assertIn(
+            "expected root.interaction.steps[0].post_check.expected_any_text to be non-empty",
+            errors,
+        )
+        self.assertIn(
+            "expected root.interaction.steps[0].post_check.matched_text item to be expected: 'Other'",
+            errors,
+        )
+        self.assertIn("expected root.interaction.steps[0].post_check.dump_length to be positive", errors)
+        self.assertIn(
+            "expected root.interaction.steps[0].post_check.dump_sha256 to be a lowercase sha256 hex digest",
             errors,
         )
 

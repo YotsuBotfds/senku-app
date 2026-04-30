@@ -250,6 +250,86 @@ function Get-TextCheckSummary {
     }
 }
 
+function Get-UiDumpHash {
+    param([string]$DumpText)
+
+    $sha256 = [System.Security.Cryptography.SHA256]::Create()
+    try {
+        $bytes = [System.Text.Encoding]::UTF8.GetBytes($DumpText)
+        return ([System.BitConverter]::ToString($sha256.ComputeHash($bytes)) -replace "-", "").ToLowerInvariant()
+    } finally {
+        $sha256.Dispose()
+    }
+}
+
+function Get-UiDumpTextFragments {
+    param([string]$DumpText)
+
+    $fragments = [System.Collections.ArrayList]::new()
+    foreach ($match in [regex]::Matches($DumpText, '<node\b[^>]*>')) {
+        $attributes = Get-UiNodeAttributeMap -NodeText $match.Value
+        foreach ($key in @("text", "content-desc", "resource-id")) {
+            $value = [string]$attributes[$key]
+            if ([string]::IsNullOrWhiteSpace($value)) {
+                continue
+            }
+            if (-not $fragments.Contains($value)) {
+                [void]$fragments.Add($value)
+            }
+        }
+    }
+    return @($fragments)
+}
+
+function Get-UiPostStepEvidence {
+    param(
+        [string]$DumpText,
+        [string[]]$ExpectedAnyText
+    )
+
+    $expected = @($ExpectedAnyText | Where-Object { -not [string]::IsNullOrWhiteSpace($_) })
+    $matched = @()
+    foreach ($fragment in $expected) {
+        if ($DumpText.IndexOf($fragment, [System.StringComparison]::OrdinalIgnoreCase) -ge 0) {
+            $matched += $fragment
+        }
+    }
+
+    $textFragments = @(Get-UiDumpTextFragments -DumpText $DumpText | Select-Object -First 25)
+    return [ordered]@{
+        passed = ($expected.Count -eq 0) -or ($matched.Count -gt 0)
+        expected_any_text = $expected
+        matched_text = $matched
+        ui_text_sample = $textFragments
+        dump_length = $DumpText.Length
+        dump_sha256 = Get-UiDumpHash -DumpText $DumpText
+        captured_at_utc = (Get-Date).ToUniversalTime().ToString("o")
+    }
+}
+
+function Wait-UiPostStepEvidence {
+    param(
+        [string]$ResolvedAdbPath,
+        [string]$DeviceSerial,
+        [string[]]$ExpectedAnyText,
+        [int]$TimeoutMs = 3000,
+        [int]$PollMs = 500
+    )
+
+    $deadline = [DateTime]::UtcNow.AddMilliseconds($TimeoutMs)
+    $lastEvidence = $null
+    do {
+        $dumpText = Read-UiAutomatorDump -ResolvedAdbPath $ResolvedAdbPath -DeviceSerial $DeviceSerial
+        $lastEvidence = Get-UiPostStepEvidence -DumpText $dumpText -ExpectedAnyText $ExpectedAnyText
+        if ($lastEvidence.passed) {
+            return $lastEvidence
+        }
+        Start-Sleep -Milliseconds $PollMs
+    } while ([DateTime]::UtcNow -lt $deadline)
+
+    return $lastEvidence
+}
+
 function Expand-RequiredTextFragments {
     param([string[]]$Fragments)
 
@@ -334,7 +414,8 @@ function New-InteractionStep {
     param(
         [string]$Name,
         [string]$Status,
-        [string]$Message = $null
+        [string]$Message = $null,
+        $PostCheck = $null
     )
 
     $step = [ordered]@{
@@ -344,6 +425,9 @@ function New-InteractionStep {
     if (-not [string]::IsNullOrWhiteSpace($Message)) {
         $step.message = $Message
     }
+    if ($null -ne $PostCheck) {
+        $step.post_check = $PostCheck
+    }
     return $step
 }
 
@@ -351,12 +435,20 @@ function Invoke-InteractionStep {
     param(
         [System.Collections.ArrayList]$Steps,
         [string]$Name,
-        [scriptblock]$Action
+        [scriptblock]$Action,
+        [string[]]$ExpectedAnyText = @()
     )
 
     try {
         & $Action
-        [void]$Steps.Add((New-InteractionStep -Name $Name -Status "success"))
+        $postCheck = $null
+        if ($ExpectedAnyText.Count -gt 0) {
+            $postCheck = Wait-UiPostStepEvidence -ResolvedAdbPath $ResolvedAdbPath -DeviceSerial $DeviceSerial -ExpectedAnyText $ExpectedAnyText
+            if (-not $postCheck.passed) {
+                throw "Post-step UI check for '$Name' did not find expected text fragment(s): $($ExpectedAnyText -join ', ')"
+            }
+        }
+        [void]$Steps.Add((New-InteractionStep -Name $Name -Status "success" -PostCheck $postCheck))
         return $true
     } catch {
         [void]$Steps.Add((New-InteractionStep -Name $Name -Status "failed" -Message $_.Exception.Message))
@@ -373,7 +465,7 @@ function Invoke-SenkuSimpleInteraction {
 
     $steps = [System.Collections.ArrayList]::new()
 
-    [void](Invoke-InteractionStep -Steps $steps -Name "tap_saved" -Action {
+    [void](Invoke-InteractionStep -Steps $steps -Name "tap_saved" -ExpectedAnyText @("Saved") -Action {
         $dumpText = Read-UiAutomatorDump -ResolvedAdbPath $ResolvedAdbPath -DeviceSerial $DeviceSerial
         $center = Find-UiNodeCenter -DumpText $dumpText -Predicate {
             param($attributes)
@@ -422,12 +514,12 @@ function Invoke-SenkuSimpleInteraction {
     [void](Invoke-InteractionStep -Steps $steps -Name "submit_query" -Action {
         Invoke-AdbChecked -ResolvedAdbPath $ResolvedAdbPath -Arguments @("-s", $DeviceSerial, "shell", "input", "keyevent", "ENTER")
         Start-Sleep -Milliseconds 1000
-    })
+    } -ExpectedAnyText @($QueryText, "Answer", "Results", "Search", "Ask"))
 
     [void](Invoke-InteractionStep -Steps $steps -Name "back" -Action {
         Invoke-AdbChecked -ResolvedAdbPath $ResolvedAdbPath -Arguments @("-s", $DeviceSerial, "shell", "input", "keyevent", "BACK")
         Start-Sleep -Milliseconds 500
-    })
+    } -ExpectedAnyText @("Saved", "Search", "Ask"))
 
     return @($steps)
 }

@@ -49,6 +49,9 @@ class AndroidPhysicalPhoneSmokeContractTests(unittest.TestCase):
         self.assertIn("/sdcard/senku_physical_smoke_ui.xml", self.script)
         self.assertIn("function Get-TextCheckSummary", self.script)
         self.assertIn("text_checks", self.script)
+        self.assertIn("function Wait-UiPostStepEvidence", self.script)
+        self.assertIn("post_check", self.script)
+        self.assertIn("dump_sha256", self.script)
         self.assertIn("function Invoke-SenkuSimpleInteraction", self.script)
         self.assertIn("tap_saved", self.script)
         self.assertIn("tap_query_field", self.script)
@@ -386,6 +389,17 @@ class AndroidPhysicalPhoneSmokeContractTests(unittest.TestCase):
                     ("back", "success"),
                 ],
             )
+            step_by_name = {step["name"]: step for step in summary["interaction"]["steps"]}
+            for step_name in ["tap_saved", "submit_query", "back"]:
+                self.assertIn("post_check", step_by_name[step_name])
+                self.assertTrue(step_by_name[step_name]["post_check"]["passed"])
+                self.assertGreater(step_by_name[step_name]["post_check"]["dump_length"], 0)
+                self.assertRegex(step_by_name[step_name]["post_check"]["dump_sha256"], r"^[0-9a-f]{64}$")
+                self.assertGreaterEqual(len(step_by_name[step_name]["post_check"]["matched_text"]), 1)
+                self.assertIn("Saved", step_by_name[step_name]["post_check"]["ui_text_sample"])
+            self.assertIn("Search", step_by_name["submit_query"]["post_check"]["matched_text"])
+            self.assertNotIn("post_check", step_by_name["tap_query_field"])
+            self.assertNotIn("post_check", step_by_name["enter_query"])
             call_text = calls.read_text(encoding="utf-8")
             self.assertIn("-s R5CT123456A shell input tap 60 70", call_text)
             self.assertIn("-s R5CT123456A shell input tap 180 230", call_text)
