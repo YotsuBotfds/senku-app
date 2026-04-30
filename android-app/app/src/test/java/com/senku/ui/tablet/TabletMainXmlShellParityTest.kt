@@ -87,6 +87,16 @@ class TabletMainXmlShellParityTest {
             height = "48dp",
             horizontalPadding = "32dp",
         )
+        assertSearchChromeRow(
+            qualifier = "layout-sw600dp-port",
+            height = "54dp",
+            horizontalPadding = "18dp",
+        )
+        assertSearchChromeRow(
+            qualifier = "layout-sw600dp-land",
+            height = "48dp",
+            horizontalPadding = "32dp",
+        )
     }
 
     @Test
@@ -178,6 +188,40 @@ class TabletMainXmlShellParityTest {
         assertEquals("16dp", searchIcon.android("layout_height"))
         assertEquals("@drawable/ic_search_magnifier", searchIcon.android("src"))
         assertEquals("...", overflow.android("text"))
+    }
+
+    private fun assertSearchChromeRow(
+        qualifier: String,
+        height: String,
+        horizontalPadding: String,
+    ) {
+        val layout = layout(qualifier)
+        val query = layout.elementByAndroidId("tablet_search_query_text")
+        val row = query.parentNode as Element
+        val children = row.directElementChildren()
+        val searchIcon = children[0]
+        val count = children[2]
+
+        assertEquals("$qualifier search topbar height", height, row.android("layout_height"))
+        assertEquals("$qualifier search topbar start padding", horizontalPadding, row.android("paddingStart"))
+        assertEquals("$qualifier search topbar end padding", horizontalPadding, row.android("paddingEnd"))
+        assertEquals(
+            "$qualifier search topbar child token order",
+            listOf("ImageView", "TextView", "TextView"),
+            children.map { it.tagName },
+        )
+        assertEquals("20dp", searchIcon.android("layout_width"))
+        assertEquals("20dp", searchIcon.android("layout_height"))
+        assertEquals("@drawable/ic_search_magnifier", searchIcon.android("src"))
+        assertEquals("0dp", query.android("layout_width"))
+        assertEquals("14dp", query.android("layout_marginStart"))
+        assertEquals("1", query.android("layout_weight"))
+        assertEquals("1", query.android("maxLines"))
+        assertEquals("end", query.android("ellipsize"))
+        assertEquals("@font/jetbrains_mono", query.android("fontFamily"))
+        assertEquals("13sp", query.android("textSize"))
+        assertEquals("@font/jetbrains_mono", count.android("fontFamily"))
+        assertEquals("12sp", count.android("textSize"))
     }
 
     private fun assertRailShell(

@@ -529,20 +529,29 @@ internal fun tabletDetailAppRailDispatchAction(
 
 internal fun tabletGuideSectionRailShowsToolbar(): Boolean = false
 
+internal fun tabletChromeHeaderHeightDp(isLandscape: Boolean): Int =
+    if (isLandscape) 48 else 54
+
+internal fun tabletChromeHeaderHorizontalPaddingDp(isLandscape: Boolean): Int =
+    if (isLandscape) 32 else 18
+
+internal fun tabletChromeHeaderVerticalPaddingDp(isLandscape: Boolean): Int =
+    if (isLandscape) 9 else 12
+
 internal fun tabletGuideChromePolicy(isLandscape: Boolean): TabletGuideChromePolicy =
     if (isLandscape) {
         TabletGuideChromePolicy(
-            topBarMinHeightDp = 38,
-            topBarHorizontalPaddingDp = 24,
-            topBarVerticalPaddingDp = 6,
+            topBarMinHeightDp = tabletChromeHeaderHeightDp(isLandscape),
+            topBarHorizontalPaddingDp = tabletChromeHeaderHorizontalPaddingDp(isLandscape),
+            topBarVerticalPaddingDp = tabletChromeHeaderVerticalPaddingDp(isLandscape),
             topBarTitleFontSizeSp = 14,
             topBarTitleLineHeightSp = 18,
         )
     } else {
         TabletGuideChromePolicy(
-            topBarMinHeightDp = 58,
-            topBarHorizontalPaddingDp = 20,
-            topBarVerticalPaddingDp = 9,
+            topBarMinHeightDp = tabletChromeHeaderHeightDp(isLandscape),
+            topBarHorizontalPaddingDp = tabletChromeHeaderHorizontalPaddingDp(isLandscape),
+            topBarVerticalPaddingDp = tabletChromeHeaderVerticalPaddingDp(isLandscape),
             topBarTitleFontSizeSp = 14,
             topBarTitleLineHeightSp = 18,
         )
@@ -2684,16 +2693,10 @@ private fun TitleBar(
         modifier = modifier
             .fillMaxWidth()
             .background(colors.bg0)
-            .then(
-                if (guideMode) {
-                    Modifier.heightIn(min = guideChromePolicy.topBarMinHeightDp.dp)
-                } else {
-                    Modifier
-                }
-            )
+            .heightIn(min = guideChromePolicy.topBarMinHeightDp.dp)
             .padding(
-                horizontal = if (guideMode) guideChromePolicy.topBarHorizontalPaddingDp.dp else 16.dp,
-                vertical = if (guideMode) guideChromePolicy.topBarVerticalPaddingDp.dp else 5.dp,
+                horizontal = guideChromePolicy.topBarHorizontalPaddingDp.dp,
+                vertical = guideChromePolicy.topBarVerticalPaddingDp.dp,
             ),
         verticalArrangement = Arrangement.spacedBy(if (guideMode) 2.dp else 3.dp),
     ) {
