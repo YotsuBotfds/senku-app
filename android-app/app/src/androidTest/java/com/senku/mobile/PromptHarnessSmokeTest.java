@@ -614,6 +614,52 @@ public final class PromptHarnessSmokeTest {
     }
 
     @Test
+    public void savedTabImeSubmitRoutesToSearchResultsNotAnswerDetail() {
+        clearPinnedGuidesForTest();
+        Intent intent = productReviewMainActivityIntent();
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        intent.putExtra(MainActivity.EXTRA_OPEN_SAVED, true);
+
+        ActivityScenario<MainActivity> scenario = ActivityScenario.launch(intent);
+        try {
+            awaitHarnessIdle();
+            Assert.assertTrue(
+                "saved launch should settle before shared-input submit; harness signals="
+                    + HarnessTestSignals.snapshot(),
+                device.wait(Until.hasObject(By.res(APP_PACKAGE, "search_input")), SEARCH_WAIT_MS)
+            );
+            waitForSavedGuidesDestination(scenario, false, DETAIL_WAIT_MS);
+
+            submitSearchInputImeActionFromResumedActivity("rain shelter", EditorInfo.IME_ACTION_SEARCH);
+            assertResultsSettled(scenario, SEARCH_RESULTS_WAIT_MS);
+            dismissMainSearchKeyboardIfVisible();
+
+            scenario.onActivity(activity -> {
+                Assert.assertFalse(
+                    "Saved shared-input submit should clear Ask ownership before routing to guide search",
+                    readPrivateBooleanField(activity, "askLaneActive")
+                );
+                RecyclerView resultsList = activity.findViewById(R.id.results_list);
+                Assert.assertNotNull("Saved submit should keep the guide-result list mounted", resultsList);
+                Assert.assertTrue(
+                    "Saved submit should show guide search results",
+                    isVisible(resultsList)
+                        && resultsList.getAdapter() != null
+                        && resultsList.getAdapter().getItemCount() > 0
+                );
+            });
+            Assert.assertFalse(
+                "Saved shared-input submit must not navigate to answer detail",
+                isResumedActivity(DetailActivity.class)
+            );
+            captureUiState("saved_tab_ime_submit_search_results");
+        } finally {
+            closeScenarioLeniently(scenario);
+            clearPinnedGuidesForTest();
+        }
+    }
+
+    @Test
     public void tabletDetailRailLibraryTapReturnsManualHome() {
         try (ActivityScenario<DetailActivity> scenario = launchTabletRailProofDetail()) {
             awaitHarnessIdle();
@@ -741,6 +787,71 @@ public final class PromptHarnessSmokeTest {
                 }
             });
             captureUiState("search_results");
+        }
+    }
+
+    @Test
+    public void homeAndAskImeSubmitRouteToSearchResultsAndAnswerDetail() {
+        ActivityScenario<MainActivity> homeScenario = launchProductReviewMainActivity();
+        try {
+            awaitHarnessIdle();
+            Assert.assertTrue(
+                "home search input never appeared before home IME submit; harness signals="
+                    + HarnessTestSignals.snapshot(),
+                device.wait(Until.hasObject(By.res(APP_PACKAGE, "search_input")), SEARCH_WAIT_MS)
+            );
+
+            submitSearchInputImeActionFromResumedActivity("rain shelter", EditorInfo.IME_ACTION_SEARCH);
+            assertResultsSettled(homeScenario, SEARCH_RESULTS_WAIT_MS);
+            dismissMainSearchKeyboardIfVisible();
+            homeScenario.onActivity(activity -> {
+                Assert.assertFalse(
+                    "Home shared-input submit should keep Ask ownership inactive",
+                    readPrivateBooleanField(activity, "askLaneActive")
+                );
+                RecyclerView resultsList = activity.findViewById(R.id.results_list);
+                Assert.assertNotNull("Home submit should keep the guide-result list mounted", resultsList);
+                Assert.assertTrue(
+                    "Home submit should show guide results instead of answer detail",
+                    isVisible(resultsList)
+                        && resultsList.getAdapter() != null
+                        && resultsList.getAdapter().getItemCount() > 0
+                );
+            });
+            Assert.assertFalse(
+                "Home shared-input submit must not navigate to answer detail",
+                isResumedActivity(DetailActivity.class)
+            );
+            captureUiState("home_ime_submit_search_results");
+        } finally {
+            closeScenarioLeniently(homeScenario);
+        }
+
+        ActivityScenario<MainActivity> askScenario = launchProductReviewMainActivity();
+        try {
+            awaitHarnessIdle();
+            Assert.assertTrue(
+                "home search input never appeared before Ask IME submit; harness signals="
+                    + HarnessTestSignals.snapshot(),
+                device.wait(Until.hasObject(By.res(APP_PACKAGE, "search_input")), SEARCH_WAIT_MS)
+            );
+
+            openAskTabFromHomeChrome();
+            submitSearchInputImeActionFromResumedActivity(
+                "How do I start a fire in rain?",
+                EditorInfo.IME_ACTION_SEARCH
+            );
+
+            assertResumedDetailActivitySettled(
+                DETAIL_WAIT_MS,
+                8,
+                "",
+                false,
+                "Ask shared-input submit should open answer detail instead of guide search"
+            );
+            captureUiState("ask_ime_submit_answer_detail");
+        } finally {
+            closeScenarioLeniently(askScenario);
         }
     }
 
