@@ -262,11 +262,11 @@ public final class DetailFollowupLandscapeComposerTest {
             DetailActivity.buildCompactPhoneSourcesTriggerTitle("Source guides", 3, false)
         );
         assertEquals(
-            "SOURCES",
+            "\u2014 SOURCES",
             DetailActivity.buildCompactPhoneSourcesTriggerTitle("", 0, true)
         );
         assertEquals(
-            "SOURCES \u2022 3",
+            "\u2014 SOURCES \u2022 3",
             DetailActivity.buildCompactPhoneSourcesTriggerTitle("Source guides", 3, true)
         );
         assertEquals(10, DetailActivity.resolvePhonePortraitSourceCardHorizontalPaddingDp());

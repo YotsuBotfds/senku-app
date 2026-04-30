@@ -5206,12 +5206,12 @@ public final class DetailActivity extends AppCompatActivity {
             if (nextStepsTitleText != null) {
                 nextStepsTitleText.setBackgroundResource(android.R.color.transparent);
                 nextStepsTitleText.setTextColor(getColor(R.color.senku_text_muted_light));
-                if (isLandscapePhoneLayout()) {
-                    nextStepsTitleText.setTypeface(Typeface.MONOSPACE, Typeface.BOLD);
-                    nextStepsTitleText.setTextSize(resolvePhoneLandscapeRelatedRailTitleTextSizeSp());
-                    nextStepsTitleText.setLetterSpacing(0.08f);
-                    nextStepsTitleText.setPadding(0, dp(2), 0, dp(6));
-                }
+                nextStepsTitleText.setTypeface(Typeface.MONOSPACE, Typeface.BOLD);
+                nextStepsTitleText.setTextSize(isLandscapePhoneLayout()
+                    ? resolvePhoneLandscapeRelatedRailTitleTextSizeSp()
+                    : 13f);
+                nextStepsTitleText.setLetterSpacing(0.08f);
+                nextStepsTitleText.setPadding(0, dp(2), 0, dp(6));
             }
             return;
         }
@@ -8461,7 +8461,7 @@ public final class DetailActivity extends AppCompatActivity {
 
     static String buildCompactPhoneSourcesTriggerTitle(String baseTitle, int sourceCount, boolean expanded) {
         if (expanded) {
-            return sourceCount > 0 ? "SOURCES" + HEADER_BULLET + sourceCount : "SOURCES";
+            return sourceCount > 0 ? "\u2014 SOURCES" + HEADER_BULLET + sourceCount : "\u2014 SOURCES";
         }
         ArrayList<String> parts = new ArrayList<>();
         String title = safe(baseTitle).trim();

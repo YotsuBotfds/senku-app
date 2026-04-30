@@ -96,7 +96,7 @@ final class DetailRelatedGuidePresentationFormatter {
 
     String buildAnswerModeRelatedGuidesTitle(int count) {
         int safeCount = Math.max(count, 0);
-        return safeCount > 0 ? "RELATED GUIDES \u00b7 " + safeCount : "RELATED GUIDES";
+        return safeCount > 0 ? "\u2014 RELATED GUIDES \u00b7 " + safeCount : "\u2014 RELATED GUIDES";
     }
 
     String buildAnswerModeRelatedGuidesPanelContentDescription(State state, int count) {
