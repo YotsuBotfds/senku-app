@@ -91,6 +91,33 @@ Post-4am delegation order:
 6. Closure worker: run the local quality gate and final full mock parity pack,
    then update the older phase tracker with a pointer to the winning proof.
 
+### 2026-04-30 03:46 Integrator Addendum
+
+Additional pushed commits after the 03:32 rebaseline:
+
+- `8e01be2` - test: lock tablet rail navigation parity.
+- `702f590` - Update mock parity tracking for latest proof.
+- `a84861c` - Tighten tablet answer rail balance.
+
+Latest post-push tablet-only proof:
+
+- `artifacts/ui_state_pack/post_push_0346_visual_proof/20260430_034645`.
+- Summary reports `total_states=6`, `pass_count=6`, `fail_count=0`,
+  `platform_anr_count=0`, `matrix_homogeneous=true`, and
+  `rotation_mismatch_count=0`.
+- Pack status is still expected `fail` because this is a tablet-portrait-only
+  filtered proof with 6/22 canonical PNGs.
+- `answer-tablet-portrait.png` confirms the source pane is visible and narrowed
+  from the earlier 420dp portrait rail to 300dp, restoring answer-first width.
+
+Next high-signal detail slice:
+
+- Tablet answer target still shows related guide rows under the warning block;
+  the current Compose answer surface does not yet render those rows in-flow.
+  This likely needs a deliberate state/model slice from `DetailActivity`'s
+  `currentRelatedGuides` into `TabletDetailState`, then a Compose list below
+  `PrimaryAnswerBlock`.
+
 ## 2026-04-29 Deep-Review Rebaseline
 
 Current pushed head after the deep-review hardening wave:
