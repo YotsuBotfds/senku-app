@@ -125,8 +125,8 @@ public final class DetailActivity extends AppCompatActivity {
     private static final float TABLET_EMERGENCY_CHROME_TITLE_TEXT_SIZE_SP = 14.0f;
     private static final float TABLET_EMERGENCY_CHROME_TITLE_LINE_HEIGHT_SP = 18.0f;
     private static final int DETAIL_TOP_CHROME_ICON_ACTION_SIZE_DP = 28;
-    private static final int TABLET_HEADER_BACK_ACTION_WIDTH_DP = 60;
-    private static final int TABLET_HEADER_BACK_ICON_SIZE_DP = 14;
+    private static final int TABLET_HEADER_BACK_ACTION_WIDTH_DP = 28;
+    private static final int TABLET_HEADER_BACK_ICON_SIZE_DP = 18;
     private static final int TABLET_HEADER_BACK_HORIZONTAL_PADDING_DP = 6;
     private static final int TABLET_HEADER_BACK_LABEL_GAP_DP = 2;
     private static final int TABLET_HEADER_DIVIDER_GAP_DP = 10;
@@ -2135,25 +2135,6 @@ public final class DetailActivity extends AppCompatActivity {
             dp(TABLET_HEADER_BACK_ICON_SIZE_DP),
             dp(TABLET_HEADER_BACK_ICON_SIZE_DP)
         ));
-
-        TextView label = new TextView(this);
-        label.setGravity(Gravity.CENTER);
-        label.setIncludeFontPadding(false);
-        label.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
-        label.setSingleLine(true);
-        label.setMaxLines(1);
-        label.setText(tabletEmergencyBackButtonLabel(isTaskRoot()));
-        label.setTextColor(getColor(R.color.senku_rev03_ink_0));
-        label.setTypeface(rev03MonoTypefaceWeight(500));
-        label.setTextSize(resolveTabletEmergencyBackLabelTextSizeSp());
-        label.setLetterSpacing(TABLET_HEADER_BACK_LABEL_LETTER_SPACING);
-        setTextLineHeightSp(label, resolveTabletEmergencyBackLabelLineHeightSp());
-        LinearLayout.LayoutParams labelParams = new LinearLayout.LayoutParams(
-            ViewGroup.LayoutParams.WRAP_CONTENT,
-            ViewGroup.LayoutParams.WRAP_CONTENT
-        );
-        labelParams.leftMargin = dp(TABLET_HEADER_BACK_LABEL_GAP_DP);
-        action.addView(label, labelParams);
         return action;
     }
 

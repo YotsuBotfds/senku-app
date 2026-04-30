@@ -336,16 +336,17 @@ public final class EmergencySurfacePolicyTest {
     }
 
     @Test
-    public void tabletEmergencyBackAffordanceUsesVisibleBackLabel() {
+    public void tabletEmergencyBackAffordanceUsesSharedIconOnlyChrome() {
         assertEquals(R.string.detail_back, DetailActivity.tabletEmergencyBackButtonLabel());
         assertEquals(R.string.detail_back, DetailActivity.tabletEmergencyBackButtonLabel(false));
         assertEquals(R.string.home_button, DetailActivity.tabletEmergencyBackButtonLabel(true));
-        assertEquals(60, DetailActivity.resolveTabletEmergencyBackButtonMinWidthDp());
+        assertEquals(28, DetailActivity.resolveTabletEmergencyBackButtonMinWidthDp());
+        assertEquals(28, DetailActivity.resolveTabletEmergencyChromeNavIconSizeDp());
         assertEquals(10.0f, DetailActivity.resolveTabletEmergencyBackLabelTextSizeSp(), 0.0f);
         assertEquals(12.0f, DetailActivity.resolveTabletEmergencyBackLabelLineHeightSp(), 0.0f);
-        assertTrue(
-            DetailActivity.resolveTabletEmergencyBackButtonMinWidthDp()
-                > DetailActivity.resolveTabletEmergencyChromeNavIconSizeDp()
+        assertEquals(
+            DetailActivity.resolveTabletEmergencyBackButtonMinWidthDp(),
+            DetailActivity.resolveTabletEmergencyChromeNavIconSizeDp()
         );
     }
 

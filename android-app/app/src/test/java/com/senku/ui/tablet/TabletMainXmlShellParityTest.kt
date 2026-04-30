@@ -110,17 +110,34 @@ class TabletMainXmlShellParityTest {
             val layout = layout(qualifier)
             val xml = layoutFile(qualifier).readText()
 
-            listOf("15sp", "28sp", "9sp").forEach { size ->
+            listOf("28sp", "9sp").forEach { size ->
                 assertFalse("$qualifier should not use $size text", xml.contains("android:textSize=\"$size\""))
             }
+
+            val expectedFilterColor = if (qualifier == "layout-sw600dp-port") {
+                "@color/senku_rev03_ink_3"
+            } else {
+                "@color/senku_rev03_ink_2"
+            }
+            val expectedLabelColor = if (qualifier == "layout-sw600dp-port") {
+                "@color/senku_rev03_ink_1"
+            } else {
+                "@color/senku_rev03_ink_0"
+            }
+            val expectedLabelSize = if (qualifier == "layout-sw600dp-port") "12sp" else "13sp"
+            val expectedLabelLineHeight = if (qualifier == "layout-sw600dp-port") "15sp" else "16sp"
 
             listOf("FILTER \u2022 CATEGORY", "WINDOW").forEach { text ->
                 val header = layout.elementByText(text)
                 assertEquals("@font/jetbrains_mono", header.android("fontFamily"))
                 assertEquals("10sp", header.android("textSize"))
+                assertEquals(expectedFilterColor, header.android("textColor"))
             }
 
-            assertEquals("14sp", layout.elementByAndroidId("tablet_search_query_text").android("textSize"))
+            assertEquals(
+                if (qualifier == "layout-sw600dp-port") "13sp" else "14sp",
+                layout.elementByAndroidId("tablet_search_query_text").android("textSize"),
+            )
             assertFalse(
                 "$qualifier search count text should use an explicit text size",
                 layout.elementByAndroidId("tablet_search_count_text").android("textSize").isBlank(),
@@ -138,10 +155,35 @@ class TabletMainXmlShellParityTest {
             ).forEach { text ->
                 val label = layout.elementByText(text)
                 assertEquals("@font/inter_tight", label.android("fontFamily"))
-                assertEquals("13sp", label.android("textSize"))
-                assertEquals("16sp", label.android("lineHeight"))
+                assertEquals(expectedLabelSize, label.android("textSize"))
+                assertEquals(expectedLabelLineHeight, label.android("lineHeight"))
+                assertEquals(expectedLabelColor, label.android("textColor"))
+                if (qualifier == "layout-sw600dp-port") {
+                    assertEquals("500", label.android("textFontWeight"))
+                    assertEquals("7dp", label.android("drawablePadding"))
+                }
             }
         }
+    }
+
+    @Test
+    fun portraitTabletHomeSearchInputUsesLighterUnboxedDensity() {
+        val layout = layout("layout-sw600dp-port")
+        val input = layout.elementByAndroidId("search_input")
+        val shell = input.parentNode as Element
+        val icon = shell.firstElementChild("ImageView")
+
+        assertEquals("48dp", shell.android("layout_height"))
+        assertEquals("14dp", shell.android("layout_marginTop"))
+        assertEquals("@android:color/transparent", shell.android("background"))
+        assertEquals("2dp", shell.android("paddingStart"))
+        assertEquals("2dp", shell.android("paddingEnd"))
+        assertEquals("18dp", icon.android("layout_width"))
+        assertEquals("18dp", icon.android("layout_height"))
+        assertEquals("3dp", icon.android("padding"))
+        assertEquals("@color/senku_rev03_ink_2", icon.android("tint"))
+        assertEquals("8dp", input.android("layout_marginStart"))
+        assertEquals("15sp", input.android("textSize"))
     }
 
     private fun assertMainChromeRow(
@@ -242,22 +284,31 @@ class TabletMainXmlShellParityTest {
             listOf("ImageView", "TextView", "TextView"),
             children.map { it.tagName },
         )
-        assertEquals("20dp", searchIcon.android("layout_width"))
-        assertEquals("20dp", searchIcon.android("layout_height"))
+        val isPortrait = qualifier == "layout-sw600dp-port"
+        assertEquals(if (isPortrait) "18dp" else "20dp", searchIcon.android("layout_width"))
+        assertEquals(if (isPortrait) "18dp" else "20dp", searchIcon.android("layout_height"))
         assertEquals("@drawable/ic_search_magnifier", searchIcon.android("src"))
+        assertEquals(
+            if (isPortrait) "@color/senku_rev03_ink_2" else "@color/senku_rev03_accent",
+            searchIcon.android("tint"),
+        )
         assertEquals("0dp", query.android("layout_width"))
-        assertEquals("14dp", query.android("layout_marginStart"))
+        assertEquals(if (isPortrait) "10dp" else "14dp", query.android("layout_marginStart"))
         assertEquals("1", query.android("layout_weight"))
         assertEquals("1", query.android("maxLines"))
         assertEquals("end", query.android("ellipsize"))
         assertEquals("@font/inter_tight", query.android("fontFamily"))
-        assertEquals("14sp", query.android("textSize"))
-        assertEquals("600", query.android("textFontWeight"))
+        assertEquals(if (isPortrait) "13sp" else "14sp", query.android("textSize"))
+        assertEquals(if (isPortrait) "500" else "600", query.android("textFontWeight"))
         assertEquals("", query.android("textStyle"))
-        assertEquals("18sp", query.android("lineHeight"))
+        assertEquals(if (isPortrait) "17sp" else "18sp", query.android("lineHeight"))
         assertEquals("@font/jetbrains_mono", count.android("fontFamily"))
-        assertEquals("12sp", count.android("textSize"))
-        assertEquals("16sp", count.android("lineHeight"))
+        assertEquals(if (isPortrait) "11sp" else "12sp", count.android("textSize"))
+        assertEquals(if (isPortrait) "15sp" else "16sp", count.android("lineHeight"))
+        assertEquals(
+            if (isPortrait) "@color/senku_rev03_ink_2" else "@color/senku_rev03_accent",
+            count.android("textColor"),
+        )
         assertEquals("1dp", bottomRule.android("layout_height"))
         assertEquals("gone", bottomRule.android("visibility"))
         assertEquals("@color/senku_rev03_hairline_strong", bottomRule.android("background"))
