@@ -546,6 +546,32 @@ public final class PromptHarnessSmokeTest {
     }
 
     @Test
+    public void savedNavigationBackReturnsManualHomeDestination() {
+        clearPinnedGuidesForTest();
+        try (ActivityScenario<MainActivity> scenario = launchProductReviewMainActivity()) {
+            awaitHarnessIdle();
+            Assert.assertTrue(
+                "home launch should settle before Saved back smoke; harness signals=" + HarnessTestSignals.snapshot(),
+                device.wait(Until.hasObject(By.res(APP_PACKAGE, "search_input")), SEARCH_WAIT_MS)
+            );
+
+            Assert.assertTrue(
+                "Saved navigation tab should be tappable before back smoke",
+                tapSavedNavigationFromMain()
+            );
+            waitForSavedGuidesDestination(scenario, false, DETAIL_WAIT_MS);
+            scenario.onActivity(activity -> assertSavedGuidesDestination(activity, false));
+
+            device.pressBack();
+            InstrumentationRegistry.getInstrumentation().waitForIdleSync();
+            assertResumedManualHomeDestination("system back from Saved should return to manual home");
+            captureUiState("saved_tab_back_home");
+        } finally {
+            clearPinnedGuidesForTest();
+        }
+    }
+
+    @Test
     public void savedTabPinnedGuideStateOpensSavedGuideDestination() {
         clearPinnedGuidesForTest();
         Context context = ApplicationProvider.getApplicationContext();
@@ -895,6 +921,31 @@ public final class PromptHarnessSmokeTest {
                 isResumedActivity(DetailActivity.class)
             );
             captureUiState("search_button_from_ask_lane_results");
+        } finally {
+            closeScenarioLeniently(scenario);
+        }
+    }
+
+    @Test
+    public void searchResultsSystemBackReturnsBrowseWithoutAskOwnership() {
+        ActivityScenario<MainActivity> scenario = launchProductReviewMainActivity();
+        try {
+            awaitHarnessIdle();
+            Assert.assertTrue(
+                "home search input never appeared before search-results back smoke; harness signals="
+                    + HarnessTestSignals.snapshot(),
+                device.wait(Until.hasObject(By.res(APP_PACKAGE, "search_input")), SEARCH_WAIT_MS)
+            );
+
+            openAskTabFromHomeChrome();
+            submitSearchFromResumedActivity("rain shelter", false);
+            assertResultsSettled(scenario, SEARCH_RESULTS_WAIT_MS);
+            dismissMainSearchKeyboardIfVisible();
+
+            device.pressBack();
+            InstrumentationRegistry.getInstrumentation().waitForIdleSync();
+            assertResumedManualHomeDestination("system back from search results should return to Browse/Home");
+            captureUiState("search_results_back_home");
         } finally {
             closeScenarioLeniently(scenario);
         }
@@ -3037,6 +3088,84 @@ public final class PromptHarnessSmokeTest {
                 isGuideReturnPanelVisible()
             );
             captureUiState("answer_provenance_neutral");
+        } finally {
+            closeScenarioLeniently(scenario);
+        }
+    }
+
+    @Test
+    public void answerModeProvenanceOpenBackReturnsAnswerContext() throws Exception {
+        RelatedGuideSeed seed = findGuideWithRelations();
+        Assume.assumeNotNull("no guide available for provenance back smoke", seed);
+
+        ArrayList<SearchResult> sources = new ArrayList<>();
+        sources.add(seed.guide);
+
+        Intent intent = DetailActivity.newAnswerIntent(
+            ApplicationProvider.getApplicationContext(),
+            "Answer provenance back smoke",
+            "Source preview back should return to the answer",
+            "Short answer:\nUse the linked source guide, then return here with Back.",
+            sources,
+            null,
+            "answer-provenance-back"
+        );
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+
+        ActivityScenario<DetailActivity> scenario = ActivityScenario.launch(intent);
+        try {
+            awaitHarnessIdle();
+            Assert.assertTrue(
+                "answer detail should render before provenance back navigation",
+                waitForDetailBodyReady(DETAIL_WAIT_MS, 8)
+            );
+            selectAnswerSourcePreview(scenario);
+            final boolean[] tabletCompose = {false};
+            scenario.onActivity(activity -> tabletCompose[0] = collectDetailSettleSignals(activity).tabletCompose);
+            if (tabletCompose[0]) {
+                InstrumentationRegistry.getInstrumentation().runOnMainSync(() -> {
+                    Activity activity = getResumedActivityOnMainThread();
+                    Assert.assertNotNull("tablet provenance back detail should be resumed", activity);
+                    Object selectedSource = invokePrivateNoArgMethod(activity, "selectedTabletSourceForAction");
+                    Assert.assertTrue(
+                        "tablet provenance back flow should resolve the selected source before opening the guide",
+                        selectedSource instanceof SearchResult
+                    );
+                    invokePrivateMethod(
+                        activity,
+                        "openSourceGuide",
+                        new Class<?>[] { SearchResult.class },
+                        selectedSource
+                    );
+                });
+            } else {
+                Assert.assertTrue(
+                    "answer provenance back flow should surface an Open full guide action after source selection",
+                    clickVisibleButton("detail_provenance_open", DETAIL_WAIT_MS)
+                );
+            }
+            Assert.assertTrue(
+                "answer provenance open should land on the source guide detail before back",
+                waitForDetailTitleContains(seed.guide.title, DETAIL_WAIT_MS)
+            );
+
+            device.pressBack();
+            InstrumentationRegistry.getInstrumentation().waitForIdleSync();
+            Assert.assertTrue(
+                "system back from source guide should return to the answer detail",
+                waitForDetailTitleContains("Answer provenance back smoke", DETAIL_WAIT_MS)
+            );
+            InstrumentationRegistry.getInstrumentation().runOnMainSync(() -> {
+                Activity activity = getResumedActivityOnMainThread();
+                Assert.assertTrue("source guide back should leave DetailActivity resumed", activity instanceof DetailActivity);
+                DetailSettleSignals signals = collectDetailSettleSignals(activity);
+                Assert.assertTrue("source guide back should return to answer mode", signals.answerMode);
+                Assert.assertTrue(
+                    "source guide back should restore the answer body",
+                    containsAny(signals.bodyText, "Short answer", "return here")
+                );
+            });
+            captureUiState("answer_provenance_open_back_answer");
         } finally {
             closeScenarioLeniently(scenario);
         }
