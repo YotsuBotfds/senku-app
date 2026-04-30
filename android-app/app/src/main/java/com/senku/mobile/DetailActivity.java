@@ -207,6 +207,7 @@ public final class DetailActivity extends AppCompatActivity {
     private TextView tabletEmergencyChromeOverlayTitle;
     private TextView tabletEmergencyChromeOverlayMeta;
     private View tabletEmergencyChromeOverlayRule;
+    private LinearLayout tabletEmergencyDangerOverlayPanel;
     private LinearLayout tabletEmergencyActionsOverlayPanel;
     private LinearLayout tabletEmergencyProofOverlayPanel;
     private TextView tabletEmergencyProofOverlayTitle;
@@ -1862,13 +1863,22 @@ public final class DetailActivity extends AppCompatActivity {
         chromeRuleParams.bottomMargin = dp(TABLET_EMERGENCY_CHROME_BOTTOM_MARGIN_DP);
         overlay.addView(tabletEmergencyChromeOverlayRule, chromeRuleParams);
 
+        tabletEmergencyDangerOverlayPanel = new LinearLayout(this);
+        tabletEmergencyDangerOverlayPanel.setOrientation(LinearLayout.VERTICAL);
+        tabletEmergencyDangerOverlayPanel.setBackgroundResource(R.drawable.bg_emergency_banner);
+        tabletEmergencyDangerOverlayPanel.setPadding(dp(24), dp(18), dp(24), dp(20));
+        overlay.addView(tabletEmergencyDangerOverlayPanel, new LinearLayout.LayoutParams(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        ));
+
         TextView title = new TextView(this);
         title.setId(R.id.detail_emergency_header_title);
         title.setTextColor(getColor(R.color.senku_rev03_ink_0));
         title.setTypeface(rev03UiTypeface(Typeface.BOLD));
         title.setTextSize(16f);
         title.setIncludeFontPadding(false);
-        overlay.addView(title, new LinearLayout.LayoutParams(
+        tabletEmergencyDangerOverlayPanel.addView(title, new LinearLayout.LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT,
             ViewGroup.LayoutParams.WRAP_CONTENT
         ));
@@ -1885,7 +1895,7 @@ public final class DetailActivity extends AppCompatActivity {
             ViewGroup.LayoutParams.WRAP_CONTENT
         );
         textParams.topMargin = dp(6);
-        overlay.addView(text, textParams);
+        tabletEmergencyDangerOverlayPanel.addView(text, textParams);
 
         tabletEmergencyActionsOverlayPanel = new LinearLayout(this);
         tabletEmergencyActionsOverlayPanel.setOrientation(LinearLayout.VERTICAL);
@@ -2313,6 +2323,14 @@ public final class DetailActivity extends AppCompatActivity {
             ruleParams.rightMargin = dp(chromeRuleInset);
             tabletEmergencyChromeOverlayRule.setLayoutParams(ruleParams);
         }
+        if (tabletEmergencyDangerOverlayPanel != null) {
+            tabletEmergencyDangerOverlayPanel.setPadding(
+                isTabletPortraitLayout() ? dp(24) : dp(18),
+                isTabletPortraitLayout() ? dp(18) : dp(12),
+                isTabletPortraitLayout() ? dp(24) : dp(18),
+                isTabletPortraitLayout() ? dp(20) : dp(12)
+            );
+        }
         ViewGroup.LayoutParams currentParams = overlay.getLayoutParams();
         if (currentParams instanceof FrameLayout.LayoutParams) {
             FrameLayout.LayoutParams desiredParams = tabletEmergencyHeaderOverlayParams();
@@ -2552,6 +2570,7 @@ public final class DetailActivity extends AppCompatActivity {
         tabletEmergencyChromeOverlayPanel = null;
         tabletEmergencyChromeOverlayTitle = null;
         tabletEmergencyChromeOverlayMeta = null;
+        tabletEmergencyDangerOverlayPanel = null;
         tabletEmergencyActionsOverlayPanel = null;
         tabletEmergencyProofOverlayPanel = null;
         tabletEmergencyProofOverlayTitle = null;
@@ -2634,7 +2653,7 @@ public final class DetailActivity extends AppCompatActivity {
             suppressTabletEmergencyFloatingRail ? emptyTabletAnchorState() : buildTabletAnchorState(visualOwnerSource),
             suppressTabletEmergencyFloatingRail ? Collections.emptyList() : buildTabletXRefStates(),
             suppressTabletEmergencyFloatingRail ? "" : tabletComposerText,
-            isCurrentEmergencySurfaceEligible() ? "Ask about safe re-entry..." : getString(R.string.detail_followup_hint),
+            resolveTabletComposerPlaceholder(),
             !suppressTabletEmergencyFloatingRail && !tabletBusy,
             answerMode && !suppressTabletEmergencyFloatingRail,
             !suppressTabletEmergencyFloatingRail && showRetry,
@@ -2656,6 +2675,16 @@ public final class DetailActivity extends AppCompatActivity {
             buildTabletGuideSectionCount(displaySource),
             detailMode
         );
+    }
+
+    private String resolveTabletComposerPlaceholder() {
+        if (isCurrentEmergencySurfaceEligible()) {
+            return "Ask about safe re-entry...";
+        }
+        if (answerMode) {
+            return getString(R.string.detail_followup_hint_answer);
+        }
+        return getString(R.string.detail_followup_hint);
     }
 
     private int buildTabletGuideSectionCount(SearchResult displaySource) {

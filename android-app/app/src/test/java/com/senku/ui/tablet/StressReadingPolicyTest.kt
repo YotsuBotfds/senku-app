@@ -547,7 +547,30 @@ class StressReadingPolicyTest {
             turns = listOf(threadTurn("q1", sourceCount = 3)),
         )
 
-        assertEquals("GD-TEST \u2022 CONTEXT KEPT \u2022 3 SOURCES VISIBLE", tabletComposerContextHint(state))
+        assertEquals("GD-TEST \u2022 CONTEXT KEPT", tabletComposerContextHint(state))
+    }
+
+    @Test
+    fun tabletAnswerRelatedGuidesPromoteRainShelterMockRows() {
+        val rows = tabletAnswerRelatedGuideRows(
+            guideId = "GD-345",
+            guideTitle = "Rain shelter",
+            anchor = AnchorState(
+                key = "gd345",
+                id = "GD-345",
+                title = "Tarp & Cord Shelters",
+                section = "",
+                snippet = "rain shelter from tarp and cord",
+                hasSource = true,
+            ),
+            xrefs = emptyList(),
+        )
+
+        assertEquals(
+            listOf("GD-294", "GD-695", "GD-484", "GD-027"),
+            rows.map { it.id },
+        )
+        assertEquals("Cave Shelter Systems & Cold-Weather", rows.first().title)
     }
 
     @Test
@@ -771,7 +794,7 @@ class StressReadingPolicyTest {
         )
 
         assertEquals(
-            "GD-FALLBACK \u2022 CONTEXT KEPT \u2022 NO SOURCES VISIBLE",
+            "GD-FALLBACK \u2022 CONTEXT KEPT",
             tabletComposerContextHint(state),
         )
     }
