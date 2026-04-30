@@ -53,12 +53,14 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
     private static final int PORTRAIT_TABLET_ROW_SNIPPET_TOP_MARGIN_DP = 6;
     private static final int LANDSCAPE_ROW_DIVIDER_TOP_MARGIN_DP = 10;
     private static final int PORTRAIT_TABLET_ROW_DIVIDER_TOP_MARGIN_DP = 12;
-    private static final float LANDSCAPE_ROW_TITLE_TEXT_SIZE_SP = 14.5f;
-    private static final float LANDSCAPE_ROW_SNIPPET_TEXT_SIZE_SP = 11.5f;
-    private static final float PORTRAIT_TABLET_ROW_TITLE_TEXT_SIZE_SP = 14.5f;
-    private static final float PORTRAIT_TABLET_ROW_SNIPPET_TEXT_SIZE_SP = 12.0f;
-    private static final float COMPACT_ROW_SECTION_TEXT_SIZE_SP = 9.0f;
-    private static final float COMPACT_ROW_CHIP_TEXT_SIZE_SP = 9.0f;
+    private static final float LANDSCAPE_ROW_TITLE_TEXT_SIZE_SP = 14.0f;
+    private static final float LANDSCAPE_ROW_SNIPPET_TEXT_SIZE_SP = 11.0f;
+    private static final float PORTRAIT_TABLET_ROW_TITLE_TEXT_SIZE_SP = 13.5f;
+    private static final float PORTRAIT_TABLET_ROW_SNIPPET_TEXT_SIZE_SP = 11.5f;
+    private static final float COMPACT_ROW_SECTION_TEXT_SIZE_SP = 8.5f;
+    private static final float COMPACT_ROW_CHIP_TEXT_SIZE_SP = 8.5f;
+    private static final float COMPACT_ROW_META_TEXT_SIZE_SP = 9.0f;
+    private static final int COMPACT_ROW_META_LINE_HEIGHT_SP = 11;
 
     public static final class LinkedGuidePreview {
         public final String guideId;
@@ -253,7 +255,12 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
             ViewGroup.LayoutParams.WRAP_CONTENT
         ));
 
-        TextView meta = buildMonoTextView(context, 10, 13, Typeface.BOLD);
+        TextView meta = buildMonoTextView(
+            context,
+            COMPACT_ROW_META_TEXT_SIZE_SP,
+            COMPACT_ROW_META_LINE_HEIGHT_SP,
+            Typeface.BOLD
+        );
         meta.setId(R.id.result_meta);
         meta.setTextColor(ContextCompat.getColor(context, R.color.senku_rev03_accent));
         meta.setAllCaps(true);
@@ -306,7 +313,7 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
         titleParams.topMargin = dp(compactRowTitleTopMarginDp(landscapePhoneCard));
         row.addView(title, titleParams);
 
-        TextView section = buildMonoTextView(context, COMPACT_ROW_SECTION_TEXT_SIZE_SP, 13, Typeface.NORMAL);
+        TextView section = buildMonoTextView(context, COMPACT_ROW_SECTION_TEXT_SIZE_SP, 11, Typeface.NORMAL);
         section.setId(R.id.result_section);
         section.setTextColor(ContextCompat.getColor(context, R.color.senku_rev03_ink_2));
         section.setAllCaps(true);

@@ -93,14 +93,14 @@ public final class SearchResultAdapterTest {
 
     @Test
     public void compactRowsUseSecondPassDenseTypographyScale() {
-        assertEquals(14.5f, SearchResultAdapter.compactRowTitleTextSizeSpForTest(), 0.001f);
-        assertEquals(11.5f, SearchResultAdapter.compactRowSnippetTextSizeSpForTest(), 0.001f);
+        assertEquals(14.0f, SearchResultAdapter.compactRowTitleTextSizeSpForTest(), 0.001f);
+        assertEquals(11.0f, SearchResultAdapter.compactRowSnippetTextSizeSpForTest(), 0.001f);
     }
 
     @Test
     public void portraitAndTabletRowsUseSecondPassDenseTypographyScale() {
-        assertEquals(14.5f, SearchResultAdapter.portraitTabletRowTitleTextSizeSpForTest(), 0.001f);
-        assertEquals(12.0f, SearchResultAdapter.portraitTabletRowSnippetTextSizeSpForTest(), 0.001f);
+        assertEquals(13.5f, SearchResultAdapter.portraitTabletRowTitleTextSizeSpForTest(), 0.001f);
+        assertEquals(11.5f, SearchResultAdapter.portraitTabletRowSnippetTextSizeSpForTest(), 0.001f);
     }
 
     @Test
@@ -112,12 +112,13 @@ public final class SearchResultAdapterTest {
         float section = SearchResultAdapter.compactRowSectionTextSizeSpForTest();
         float chip = SearchResultAdapter.compactRowChipTextSizeSpForTest();
 
-        assertEquals(portraitTitle, landscapeTitle, 0.001f);
+        assertEquals(14.0f, landscapeTitle, 0.001f);
+        assertEquals(13.5f, portraitTitle, 0.001f);
         assertTrue(landscapeTitle > portraitSnippet);
         assertTrue(portraitSnippet > landscapeSnippet);
         assertTrue(landscapeSnippet > section);
         assertEquals(section, chip, 0.001f);
-        assertEquals(9.0f, section, 0.001f);
+        assertEquals(8.5f, section, 0.001f);
     }
 
     @Test
