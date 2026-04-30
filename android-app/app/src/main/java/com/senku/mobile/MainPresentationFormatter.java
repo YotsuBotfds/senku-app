@@ -2,6 +2,8 @@ package com.senku.mobile;
 
 import android.content.Context;
 
+import com.senku.ui.primitives.BottomTabDestination;
+
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -311,6 +313,30 @@ final class MainPresentationFormatter {
             label = "Category";
         }
         return label + ", " + formatCategoryCount(count) + ". Tap to filter.";
+    }
+
+    String buildMainNavigationLabel(BottomTabDestination destination) {
+        if (destination == BottomTabDestination.ASK) {
+            return "Ask";
+        }
+        if (destination == BottomTabDestination.PINS) {
+            return "Saved";
+        }
+        return "Library";
+    }
+
+    String buildMainNavigationContentDescription(BottomTabDestination destination) {
+        if (destination == BottomTabDestination.ASK) {
+            return "Ask the manual";
+        }
+        if (destination == BottomTabDestination.PINS) {
+            return "Open saved guides";
+        }
+        return "Open Library";
+    }
+
+    String buildSavedGuidesEmptyState() {
+        return "No saved guides yet. This tab only shows saved guides, not threads or sections.";
     }
 
     String buildHomeReadyStatus(int guideCount) {

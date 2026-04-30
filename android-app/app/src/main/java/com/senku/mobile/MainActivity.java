@@ -2482,7 +2482,7 @@ public final class MainActivity extends AppCompatActivity {
         boolean hasSavedGuides = !pinnedGuides.isEmpty();
         if (pinnedEmptyText != null) {
             pinnedEmptyText.setVisibility(hasSavedGuides ? View.GONE : View.VISIBLE);
-            pinnedEmptyText.setText(R.string.saved_guides_empty);
+            pinnedEmptyText.setText(presentationFormatter().buildSavedGuidesEmptyState());
         }
         if (pinnedScroll != null) {
             pinnedScroll.setVisibility(hasSavedGuides ? View.VISIBLE : View.GONE);
@@ -2551,15 +2551,28 @@ public final class MainActivity extends AppCompatActivity {
         if (!shouldBindStaticNavigationRail(isLandscapePhoneLayout(), isTabletSearchLayout())) {
             return;
         }
-        View.OnClickListener listener = v -> openPhoneTabFromTap(destination);
-        for (int viewId : viewIds) {
-            View view = findViewById(viewId);
-            if (view == null) {
+        if (viewIds == null || viewIds.length == 0) {
+            return;
+        }
+        View tabView = findViewById(viewIds[0]);
+        if (tabView != null) {
+            tabView.setOnClickListener(v -> openPhoneTabFromTap(destination));
+            tabView.setClickable(true);
+            tabView.setFocusable(true);
+            tabView.setContentDescription(
+                presentationFormatter().buildMainNavigationContentDescription(destination)
+            );
+        }
+        for (int index = 1; index < viewIds.length; index++) {
+            View child = findViewById(viewIds[index]);
+            if (child == null) {
                 continue;
             }
-            view.setOnClickListener(listener);
-            view.setClickable(true);
-            view.setFocusable(true);
+            child.setOnClickListener(null);
+            child.setClickable(false);
+            child.setFocusable(false);
+            child.setContentDescription(null);
+            child.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
         }
     }
 
@@ -2569,16 +2582,19 @@ public final class MainActivity extends AppCompatActivity {
         }
         updateStaticPhoneNavTabState(
             BottomTabDestination.HOME,
+            R.id.phone_nav_home,
             R.id.phone_nav_home_icon,
             R.id.phone_nav_home_label
         );
         updateStaticPhoneNavTabState(
             BottomTabDestination.ASK,
+            R.id.phone_nav_ask,
             R.id.phone_nav_ask_icon,
             R.id.phone_nav_ask_label
         );
         updateStaticPhoneNavTabState(
             BottomTabDestination.PINS,
+            R.id.phone_nav_pins,
             R.id.phone_nav_pins_icon,
             R.id.phone_nav_pins_label
         );
@@ -2586,11 +2602,19 @@ public final class MainActivity extends AppCompatActivity {
 
     private void updateStaticPhoneNavTabState(
         BottomTabDestination destination,
+        int tabId,
         int iconId,
         int labelId
     ) {
         boolean selected = phoneTabSelectionOwner(destination) == activePhoneTab;
         int color = getColor(selected ? R.color.senku_rev03_accent : R.color.senku_rev03_ink_2);
+        View tabView = findViewById(tabId);
+        if (tabView != null) {
+            tabView.setSelected(selected);
+            tabView.setContentDescription(
+                presentationFormatter().buildMainNavigationContentDescription(destination)
+            );
+        }
         View iconView = findViewById(iconId);
         if (iconView instanceof ImageView) {
             ((ImageView) iconView).setColorFilter(color);
@@ -2599,6 +2623,7 @@ public final class MainActivity extends AppCompatActivity {
         View labelView = findViewById(labelId);
         if (labelView instanceof TextView) {
             TextView label = (TextView) labelView;
+            label.setText(presentationFormatter().buildMainNavigationLabel(destination));
             label.setTextColor(color);
             label.setTypeface(null, selected ? Typeface.BOLD : Typeface.NORMAL);
             label.setSelected(selected);
@@ -3126,8 +3151,16 @@ public final class MainActivity extends AppCompatActivity {
         ArrayList<BottomTabModel> tabs = new ArrayList<>(visibleDestinations.size());
         for (BottomTabDestination destination : visibleDestinations) {
             int labelRes = phoneTabLabelResource(destination);
-            String label = getString(labelRes);
-            tabs.add(new BottomTabModel(destination, label, label));
+            String fallbackLabel = getString(labelRes);
+            String label = presentationFormatter().buildMainNavigationLabel(destination);
+            if (label.isEmpty()) {
+                label = fallbackLabel;
+            }
+            tabs.add(new BottomTabModel(
+                destination,
+                label,
+                presentationFormatter().buildMainNavigationContentDescription(destination)
+            ));
         }
         return tabs;
     }

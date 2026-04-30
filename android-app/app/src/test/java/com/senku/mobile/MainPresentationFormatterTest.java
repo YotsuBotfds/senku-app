@@ -2,6 +2,8 @@ package com.senku.mobile;
 
 import static org.junit.Assert.assertEquals;
 
+import com.senku.ui.primitives.BottomTabDestination;
+
 import java.util.Collections;
 import java.util.List;
 
@@ -96,6 +98,31 @@ public final class MainPresentationFormatterTest {
         assertEquals(
             "Answer model unavailable. Import a model or enable Host GPU.",
             formatter.buildModelUnavailableStatus()
+        );
+    }
+
+    @Test
+    public void mainNavigationCopyUsesConcreteLibraryAskSavedDestinations() {
+        MainPresentationFormatter formatter = new MainPresentationFormatter(null);
+
+        assertEquals("Library", formatter.buildMainNavigationLabel(BottomTabDestination.HOME));
+        assertEquals("Ask", formatter.buildMainNavigationLabel(BottomTabDestination.ASK));
+        assertEquals("Saved", formatter.buildMainNavigationLabel(BottomTabDestination.PINS));
+        assertEquals("Open Library", formatter.buildMainNavigationContentDescription(BottomTabDestination.HOME));
+        assertEquals("Ask the manual", formatter.buildMainNavigationContentDescription(BottomTabDestination.ASK));
+        assertEquals(
+            "Open saved guides",
+            formatter.buildMainNavigationContentDescription(BottomTabDestination.PINS)
+        );
+    }
+
+    @Test
+    public void savedEmptyStateNamesTheConcreteDestination() {
+        MainPresentationFormatter formatter = new MainPresentationFormatter(null);
+
+        assertEquals(
+            "No saved guides yet. This tab only shows saved guides, not threads or sections.",
+            formatter.buildSavedGuidesEmptyState()
         );
     }
 

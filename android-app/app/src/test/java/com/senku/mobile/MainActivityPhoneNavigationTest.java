@@ -51,6 +51,16 @@ public final class MainActivityPhoneNavigationTest {
     }
 
     @Test
+    public void eachPostureUsesOnlyOnePrimaryNavigationSurface() {
+        assertFalse(MainActivity.shouldInstallRuntimePhoneBottomTabBar(true, false)
+            && MainActivity.shouldBindStaticNavigationRail(false, false));
+        assertFalse(MainActivity.shouldInstallRuntimePhoneBottomTabBar(true, true)
+            && MainActivity.shouldBindStaticNavigationRail(true, false));
+        assertFalse(MainActivity.shouldInstallRuntimePhoneBottomTabBar(false, false)
+            && MainActivity.shouldBindStaticNavigationRail(false, true));
+    }
+
+    @Test
     public void staticNavigationRailBindsOnLandscapePhoneAndTabletShells() {
         assertTrue(MainActivity.shouldBindStaticNavigationRail(true, false));
         assertTrue(MainActivity.shouldBindStaticNavigationRail(false, true));
