@@ -154,4 +154,18 @@ class TabletDetailAppRailPolicyTest {
         assertEquals(listOf("ask"), calls)
     }
 
+    @Test
+    fun tabletDetailAppRailLibraryActionUsesLibraryNavigationCallbackOnly() {
+        val calls = mutableListOf<String>()
+
+        tabletDetailAppRailDispatchAction(
+            TabletDetailAppRailAction.Library,
+            onLibraryClick = { calls += "library" },
+            onAskClick = { calls += "ask" },
+            onSavedClick = { calls += "saved" },
+        )
+
+        assertEquals(listOf("library"), calls)
+    }
+
 }

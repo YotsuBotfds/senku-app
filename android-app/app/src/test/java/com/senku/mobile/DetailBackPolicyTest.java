@@ -47,6 +47,55 @@ public final class DetailBackPolicyTest {
     }
 
     @Test
+    public void answerRouteVisibleBackAndSystemBackShareTaskRootPolicy() {
+        assertAnswerBackDecision(
+            false,
+            DetailBackPolicy.BackTrigger.VISIBLE_BACK_BUTTON,
+            DetailBackPolicy.Effect.FINISH_ACTIVITY
+        );
+        assertAnswerBackDecision(
+            false,
+            DetailBackPolicy.BackTrigger.SYSTEM_BACK,
+            DetailBackPolicy.Effect.FINISH_ACTIVITY
+        );
+        assertAnswerBackDecision(
+            true,
+            DetailBackPolicy.BackTrigger.VISIBLE_BACK_BUTTON,
+            DetailBackPolicy.Effect.NAVIGATE_HOME
+        );
+        assertAnswerBackDecision(
+            true,
+            DetailBackPolicy.BackTrigger.SYSTEM_BACK,
+            DetailBackPolicy.Effect.NAVIGATE_HOME
+        );
+    }
+
+    @Test
+    public void emergencyAnswerSurfacesKeepExplicitBackAffordanceAndTaskRootFallback() {
+        DetailBackPolicy.VisibleBackAffordance stacked = DetailBackPolicy.visibleBackAffordance(false);
+        DetailBackPolicy.VisibleBackAffordance taskRoot = DetailBackPolicy.visibleBackAffordance(true);
+
+        assertEquals(R.string.detail_back, stacked.labelResource);
+        assertEquals(R.string.detail_back_content_description, stacked.contentDescriptionResource);
+        assertFalse(stacked.longPressHomeShortcutEnabled);
+
+        assertEquals(R.string.detail_back, taskRoot.labelResource);
+        assertEquals(R.string.detail_back_content_description, taskRoot.contentDescriptionResource);
+        assertFalse(taskRoot.longPressHomeShortcutEnabled);
+
+        assertAnswerBackDecision(
+            false,
+            DetailBackPolicy.BackTrigger.VISIBLE_BACK_BUTTON,
+            DetailBackPolicy.Effect.FINISH_ACTIVITY
+        );
+        assertAnswerBackDecision(
+            true,
+            DetailBackPolicy.BackTrigger.SYSTEM_BACK,
+            DetailBackPolicy.Effect.NAVIGATE_HOME
+        );
+    }
+
+    @Test
     public void visibleBackAffordanceMatchesCurrentTaskRootLabels() {
         DetailBackPolicy.VisibleBackAffordance stacked = DetailBackPolicy.visibleBackAffordance(false);
         DetailBackPolicy.VisibleBackAffordance taskRoot = DetailBackPolicy.visibleBackAffordance(true);
@@ -79,5 +128,18 @@ public final class DetailBackPolicyTest {
 
         assertEquals(explicit.effect, decision.effect);
         assertEquals(explicit.finishBehavior, decision.finishBehavior);
+    }
+
+    private static void assertAnswerBackDecision(
+        boolean taskRoot,
+        DetailBackPolicy.BackTrigger trigger,
+        DetailBackPolicy.Effect expectedEffect
+    ) {
+        DetailBackPolicy.Decision decision = DetailBackPolicy.decide(
+            new DetailBackPolicy.Inputs(taskRoot, DetailBackPolicy.SourceRoute.ANSWER, trigger)
+        );
+
+        assertEquals(expectedEffect, decision.effect);
+        assertEquals(DetailBackPolicy.FinishBehavior.FINISH, decision.finishBehavior);
     }
 }
