@@ -82,9 +82,15 @@ final class DetailProofPresentationFormatter {
     }
 
     private final Context context;
+    private final boolean reviewDemoSourceLabelsEnabled;
 
     DetailProofPresentationFormatter(Context context) {
+        this(context, false);
+    }
+
+    DetailProofPresentationFormatter(Context context, boolean reviewDemoSourceLabelsEnabled) {
         this.context = context;
+        this.reviewDemoSourceLabelsEnabled = reviewDemoSourceLabelsEnabled;
     }
 
     private String text(int resId) {
@@ -578,7 +584,7 @@ final class DetailProofPresentationFormatter {
         if (!title.isEmpty()) {
             score += 18;
         }
-        if (!reviewedFoundryBurnHazardLabel(source, combined).isEmpty()) {
+        if (reviewDemoSourceLabelsEnabled && !reviewedFoundryBurnHazardLabel(source, combined).isEmpty()) {
             score += 64;
         }
         if (title.equalsIgnoreCase(section)) {
@@ -587,7 +593,7 @@ final class DetailProofPresentationFormatter {
         if (containsAny(combined, "rain", "tarp", "cord", "ridgeline", "water shedding", "rainproof")) {
             score += 28;
         }
-        if (!reviewedRainShelterLabel(source, combined).isEmpty()) {
+        if (reviewDemoSourceLabelsEnabled && !reviewedRainShelterLabel(source, combined).isEmpty()) {
             score += 52;
         }
         if (containsAny(combined, "shelter", "weatherproofing", "drainage")) {
@@ -608,13 +614,15 @@ final class DetailProofPresentationFormatter {
         String combined = (title + " " + section + " " + safe(source.snippet) + " "
             + safe(source.body) + " " + safe(source.topicTags) + " " + safe(source.structureType))
             .toLowerCase(Locale.US);
-        String reviewedFoundryBurnHazardLabel = reviewedFoundryBurnHazardLabel(source, combined);
-        if (!reviewedFoundryBurnHazardLabel.isEmpty()) {
-            return reviewedFoundryBurnHazardLabel;
-        }
-        String reviewedRainShelterLabel = reviewedRainShelterLabel(source, combined);
-        if (!reviewedRainShelterLabel.isEmpty()) {
-            return reviewedRainShelterLabel;
+        if (reviewDemoSourceLabelsEnabled) {
+            String reviewedFoundryBurnHazardLabel = reviewedFoundryBurnHazardLabel(source, combined);
+            if (!reviewedFoundryBurnHazardLabel.isEmpty()) {
+                return reviewedFoundryBurnHazardLabel;
+            }
+            String reviewedRainShelterLabel = reviewedRainShelterLabel(source, combined);
+            if (!reviewedRainShelterLabel.isEmpty()) {
+                return reviewedRainShelterLabel;
+            }
         }
         if (!title.isEmpty()) {
             return title;

@@ -119,8 +119,49 @@ public final class DetailProofPresentationFormatterTest {
     }
 
     @Test
-    public void primarySourceLabelPrefersRainShelterArticleIdentityOverSectionTakeover() {
+    public void primarySourceLabelDefaultsToDataDrivenLabelsWithoutRainShelterCanonicalization() {
         DetailProofPresentationFormatter formatter = new DetailProofPresentationFormatter(null);
+        List<SearchResult> sources = Arrays.asList(
+            new SearchResult(
+                "Primitive Shelter Construction Techniques",
+                "",
+                "Use tarp and cord to form a simple ridgeline shelter.",
+                "How do I build a simple rain shelter from tarp and cord?",
+                "GD-345",
+                "Wood Quality Evaluation for Shelter Construction",
+                "survival",
+                "lexical",
+                "",
+                "",
+                "emergency_shelter",
+                "foundation,weatherproofing,site_selection"
+            ),
+            new SearchResult(
+                "Shelter Site Selection & Hazard Assessment",
+                "",
+                "Choose drainage before pitching a tarp.",
+                "",
+                "GD-446",
+                "Identifying Natural Hazards",
+                "survival",
+                "hybrid"
+            )
+        );
+
+        assertEquals("Shelter Site Selection & Hazard As...", formatter.buildPrimarySourceLabel(sources));
+        assertEquals(
+            "[GD-446] - Shelter Site Selection & Hazard Assessment",
+            formatter.buildPrimarySourcePreviewLine(sources)
+        );
+        assertEquals(
+            "[GD-345] Primitive Shelter Construction Tec...",
+            formatter.buildSourceEntryValue(sources.get(0), sources)
+        );
+    }
+
+    @Test
+    public void primarySourceLabelUsesRainShelterDemoIdentityOnlyInReviewMode() {
+        DetailProofPresentationFormatter formatter = new DetailProofPresentationFormatter(null, true);
         List<SearchResult> sources = Arrays.asList(
             new SearchResult(
                 "Primitive Shelter Construction Techniques",
@@ -199,8 +240,39 @@ public final class DetailProofPresentationFormatterTest {
     }
 
     @Test
-    public void primarySourceLabelUsesEmergencyIdentityForGd132BurnHazardAnchor() {
+    public void primarySourceLabelDefaultsToDataDrivenGd132BurnHazardAnchor() {
         DetailProofPresentationFormatter formatter = new DetailProofPresentationFormatter(null);
+        List<SearchResult> sources = Arrays.asList(
+            new SearchResult(
+                "Foundry & Metal Casting - \u00a71 Area readiness",
+                "",
+                "A single drop of water contacting molten metal causes a violent steam explosion.",
+                "Stop work immediately. Move to minimum 5 m from active work zone.",
+                "GD-132",
+                "Foundry & Metal Casting",
+                "metal",
+                "hybrid",
+                "reviewed_card",
+                "immediate",
+                "foundry_burn_hazard",
+                "burn hazard,area_readiness"
+            )
+        );
+
+        assertEquals("Foundry & Metal Casting - \u00a71 Area...", formatter.buildPrimarySourceLabel(sources));
+        assertEquals(
+            "[GD-132] - Foundry & Metal Casting - \u00a71 Area readiness",
+            formatter.buildPrimarySourcePreviewLine(sources)
+        );
+        assertEquals(
+            "[GD-132] Foundry & Metal Casting - \u00a71 Area...",
+            formatter.buildSourceEntryValue(sources.get(0), sources)
+        );
+    }
+
+    @Test
+    public void primarySourceLabelUsesEmergencyDemoIdentityOnlyInReviewMode() {
+        DetailProofPresentationFormatter formatter = new DetailProofPresentationFormatter(null, true);
         List<SearchResult> sources = Arrays.asList(
             new SearchResult(
                 "Foundry & Metal Casting - \u00a71 Area readiness",
