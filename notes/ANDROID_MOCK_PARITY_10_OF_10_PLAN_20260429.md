@@ -4,6 +4,93 @@ Planner lane only. This note slices the remaining Senku Android mock-parity
 work for up to five implementation workers while the parent integrates. Do not
 edit Android source from this lane.
 
+## 2026-04-30 03:32 Current-Head Rebaseline
+
+Current pushed head for this tracker:
+
+- `6aaf2e9` - Add Saved navigation harness proof.
+- Commits integrated since the 2026-04-29 source/emergency/Ask wave include:
+  `7e61fd6`, `96eee1a`, `12aa170`, `9f3a7f8`, `bd2b8db`,
+  `38cc3c5`, `7ca3717`, `6df609b`, `c653297`, `b582b22`,
+  `99b3c89`, `d2b8403`, `e18665e`, `986350f`, `1c3fcc9`,
+  `d8ae733`, `ae00092`, `e2d3092`, `7e49e6c`, `204d907`,
+  `3838421`, `7fb42cc`, `07fa0d8`, and `6aaf2e9`.
+
+Latest proof artifact:
+
+- `artifacts/ui_state_pack/post_push_0323_visual_proof/20260430_033244`.
+- Summary reports `total_states=12`, `pass_count=12`, `fail_count=0`,
+  `platform_anr_count=0`, `matrix_homogeneous=true`, and
+  `rotation_mismatch_count=0`.
+- Matrix APK SHA:
+  `6e1380d0510e03fda7083b3b36d3a488786f31e520f9ef52783c8d505ebcdee2`.
+- Host model remains `gemma-4-e2b-it-litert`, SHA
+  `ea1102014465edeb14b517bf270f6751d036749e3c5f517a7ff802782cb92161`.
+- Important status interpretation: the pack status is `fail` only because this
+  is a filtered portrait proof with 12/22 canonical PNGs. The captured states
+  passed; full normalized review and mock zip were skipped because the 10
+  landscape targets were not present.
+- Human review aid:
+  `artifacts/ui_state_pack/post_push_0323_visual_proof/20260430_033244/filtered_normalized_review/`.
+
+Captured canonical targets in the latest proof:
+
+- Phone portrait: home, search, thread, guide, answer, emergency.
+- Tablet portrait: home, search, thread, guide, answer, emergency.
+
+Missing from the latest filtered proof and still required for closure:
+
+- `answer-phone-landscape.png`, `answer-tablet-landscape.png`,
+  `guide-phone-landscape.png`, `guide-tablet-landscape.png`,
+  `home-phone-landscape.png`, `home-tablet-landscape.png`,
+  `search-phone-landscape.png`, `search-tablet-landscape.png`,
+  `thread-phone-landscape.png`, and `thread-tablet-landscape.png`.
+
+Latest full 22-target visual-diff baseline remains:
+
+- `artifacts/ui_state_pack/source_emergency_ask_wave_clean/20260429_173223`.
+- Use that pack's validated `visual_diff/mock_parity_visual_diff.md` as the
+  last complete MAE ordering until a new full four-role pack is captured.
+
+High-signal deltas after the current-head commits:
+
+- Tablet answer/thread source panes are now intentionally visible in portrait;
+  verify they match the target hierarchy without crowding the answer body.
+- XML and Compose typography/color/navigation tokens have been normalized; the
+  next full proof should check rail label scale, selected state, and chrome
+  consistency across XML and Compose surfaces.
+- Phone guide chrome density was tightened; confirm phone portrait improved
+  without making phone landscape guide/detail too compressed.
+- Search row density was tightened after a reverted tablet home/search shell
+  geometry attempt; recheck all home/search postures before any more shell
+  geometry work.
+- State-pack review artifacts now include filtered normalized review aids; keep
+  the distinction between raw screenshots, filtered review PNGs, and full
+  canonical mock parity artifacts.
+- Saved navigation now has harness proof through `6aaf2e9`; include Saved in
+  functional/back-stack proof, but do not treat it as one of the 22 visual mock
+  closure targets unless the canonical mock set expands.
+
+Post-4am delegation order:
+
+1. Full proof worker: run a four-role, 22-target state pack from `6aaf2e9`
+   before assigning more visual source edits. Acceptance is `22/22`, homogeneous
+   APK/model, `0` ANRs, `0` rotation mismatches, and complete mock zip or
+   normalized review.
+2. Visual triage worker: compare the new full pack against `artifacts/mocks`
+   and the last full baseline above. Produce a short ranked list by target,
+   separating pure visual drift from functional UX/back-stack behavior.
+3. Detail/source worker: if the full proof shows the source panes are still a
+   high drift item, tune tablet answer/thread source hierarchy first, then phone
+   guide/detail density. Do not reopen home/search shell geometry in this slice.
+4. Home/search worker: only after detail/source is stable, retune home/search
+   density and rail/chrome tokens across all four postures.
+5. Functional UX worker: run Saved, Ask/Search submit ownership, Emergency exit
+   labeling, and Back-stack checks as a companion proof. Keep these findings out
+   of the 22-target MAE list unless they visibly alter canonical screenshots.
+6. Closure worker: run the local quality gate and final full mock parity pack,
+   then update the older phase tracker with a pointer to the winning proof.
+
 ## 2026-04-29 Deep-Review Rebaseline
 
 Current pushed head after the deep-review hardening wave:
@@ -195,12 +282,18 @@ Deep-review items still active:
 
 - Target mocks: `artifacts/mocks`, 22 canonical PNGs.
 - Current best proof:
-  `artifacts/ui_state_pack/wave69_integrated_final/20260429_081538`.
+  `artifacts/ui_state_pack/post_push_0323_visual_proof/20260430_033244`.
+  Captured states are clean (`12/12`, `fail_count=0`, homogeneous APK
+  `6e1380d0510e03fda7083b3b36d3a488786f31e520f9ef52783c8d505ebcdee2`,
+  model `gemma-4-e2b-it-litert`, rotation mismatch `0`), but the pack-level
+  status is `fail` because this filtered portrait proof is missing the 10
+  landscape canonical PNGs.
+- Latest complete 22-target comparison proof:
+  `artifacts/ui_state_pack/source_emergency_ask_wave_clean/20260429_173223`.
   Summary is `pass`, `22/22`, homogeneous APK
-  `aa30ddeecae6b62696ad4896f51ecc6daf7cef73e9e67cb228fd60362967d793`,
-  model `gemma-4-e2b-it-litert`, rotation mismatch `0`.
-- Previous comparison proof:
-  `artifacts/ui_state_pack/wave68_integrated_final/20260429_075219`.
+  `bc02d70835a10520de6602af914388c27b65f7f1fa60264d52e6365dc8ce7cb0`,
+  model `gemma-4-e2b-it-litert`, rotation mismatch `0`, with validated
+  `visual_diff/mock_parity_visual_diff.md`.
 - External direction:
   `codex_screenshot_alignment_notes.md`.
 - Existing tracker:
