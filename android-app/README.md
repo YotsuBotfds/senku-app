@@ -319,7 +319,8 @@ Artifacts:
 - optional device logcat is copied into `logcat.txt`
 - a machine-readable `summary.json` is written next to the run artifacts
 - treat that `summary.json` as the authoritative contract for wrapper scripts; when richer posture, role, or orientation facts are present there, wrappers should trust them before trying shell-side rechecks
-- on physical devices, the runner automatically applies `adb reverse` when the host URL points at `10.0.2.2`
+- app defaults stay emulator-friendly at `http://10.0.2.2:1235/v1`
+- on physical devices, pass the emulator-friendly host URL to the runner; it automatically applies `adb reverse` and injects `http://127.0.0.1:<port>/v1` into the app
 
 Fast-lane options:
 - `-SmokeProfile basic` runs only search + deterministic ask

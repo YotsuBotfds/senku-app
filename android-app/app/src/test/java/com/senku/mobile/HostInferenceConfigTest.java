@@ -40,6 +40,14 @@ public final class HostInferenceConfigTest {
     }
 
     @Test
+    public void defaultBaseUrlRemainsEmulatorFriendly() {
+        assertEquals(
+            "http://10.0.2.2:1235/v1",
+            HostInferenceConfig.normalizeBaseUrl(null)
+        );
+    }
+
+    @Test
     public void normalizeBaseUrlAppendsV1ForHostOnlyValue() {
         assertEquals(
             "http://localhost:1235/v1",
