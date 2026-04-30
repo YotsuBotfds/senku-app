@@ -6,8 +6,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.util.Log;
 
-import com.senku.mobile.PackQueryPipelineHelper.SearchLatencyBreakdown;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;

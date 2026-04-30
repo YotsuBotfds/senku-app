@@ -83,8 +83,8 @@ public final class PackQueryPipelineHelperTest {
 
     @Test
     public void slowTripwirePrefersFirstSlowStageAndClampsNegativeDurations() {
-        PackQueryPipelineHelper.SearchLatencyBreakdown breakdown =
-            new PackQueryPipelineHelper.SearchLatencyBreakdown(-1L, 130L, 999L, 0L, 0L, 0L, "fts_path");
+        SearchLatencyBreakdown breakdown =
+            new SearchLatencyBreakdown(-1L, 130L, 999L, 0L, 0L, 0L, "fts_path");
 
         String line = PackQueryPipelineHelper.buildSlowQueryTripwireDebugLine("rain shelter", breakdown);
 
