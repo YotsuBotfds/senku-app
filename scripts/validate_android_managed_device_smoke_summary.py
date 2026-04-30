@@ -57,6 +57,7 @@ REQUIRED_TYPES: dict[str, type | tuple[type, ...]] = {
     "observed_gradle_task_names": list,
     "observed_expected_gradle_task_names": list,
     "planned_result_evidence_schema": dict,
+    "physical_device_smoke": dict,
     "task_inventory_source": str,
     "task_inventory_probe_ran": bool,
     "task_inventory": (dict, type(None)),
@@ -384,6 +385,118 @@ def _validate_planned_result_evidence_schema(schema: Any, errors: list[str]) -> 
                 )
 
 
+def _validate_physical_device_smoke(physical_smoke: Any, errors: list[str]) -> None:
+    if not isinstance(physical_smoke, dict):
+        return
+
+    required_types: dict[str, type] = {
+        "schema_version": int,
+        "status": str,
+        "device_profile": str,
+        "physical_device": bool,
+        "dry_run": bool,
+        "launches_emulators": bool,
+        "acceptance_evidence": bool,
+        "non_acceptance_evidence": bool,
+        "evidence_fields": dict,
+    }
+    for key, expected_type in required_types.items():
+        _expect_type(physical_smoke, key, expected_type, errors, scope="root.physical_device_smoke")
+
+    if "physical_serial" not in physical_smoke:
+        errors.append("missing root.physical_device_smoke.physical_serial")
+    elif physical_smoke["physical_serial"] is not None and not isinstance(
+        physical_smoke["physical_serial"], str
+    ):
+        errors.append(
+            "expected root.physical_device_smoke.physical_serial to be str|None, "
+            f"got {type(physical_smoke['physical_serial']).__name__}"
+        )
+
+    _expect_equal(physical_smoke, "schema_version", 1, errors, scope="root.physical_device_smoke")
+    _expect_equal(physical_smoke, "device_profile", "phone-full", errors, scope="root.physical_device_smoke")
+    _expect_equal(physical_smoke, "physical_device", True, errors, scope="root.physical_device_smoke")
+    _expect_equal(physical_smoke, "dry_run", True, errors, scope="root.physical_device_smoke")
+    _expect_equal(
+        physical_smoke,
+        "launches_emulators",
+        False,
+        errors,
+        scope="root.physical_device_smoke",
+    )
+    _expect_equal(
+        physical_smoke,
+        "acceptance_evidence",
+        False,
+        errors,
+        scope="root.physical_device_smoke",
+    )
+    _expect_equal(
+        physical_smoke,
+        "non_acceptance_evidence",
+        True,
+        errors,
+        scope="root.physical_device_smoke",
+    )
+
+    status = physical_smoke.get("status")
+    if status not in ("not_collected", "evidence_paths_recorded"):
+        errors.append(
+            "expected root.physical_device_smoke.status to be 'not_collected' or "
+            f"'evidence_paths_recorded', got {status!r}"
+        )
+
+    evidence_fields = physical_smoke.get("evidence_fields")
+    if not isinstance(evidence_fields, dict):
+        return
+
+    expected_path_keys = (
+        "installed_apk_path",
+        "focus_path",
+        "screenshot_path",
+        "dump_path",
+        "logcat_path",
+    )
+    recorded_values: list[str] = []
+    for key in expected_path_keys:
+        if key not in evidence_fields:
+            errors.append(f"missing root.physical_device_smoke.evidence_fields.{key}")
+            continue
+        value = evidence_fields[key]
+        if value is None:
+            continue
+        if not isinstance(value, str):
+            errors.append(
+                "expected root.physical_device_smoke.evidence_fields."
+                f"{key} to be str|None, got {type(value).__name__}"
+            )
+            continue
+        if not value.strip():
+            errors.append(f"expected root.physical_device_smoke.evidence_fields.{key} to be non-empty")
+            continue
+        recorded_values.append(value)
+
+    serial = physical_smoke.get("physical_serial")
+    has_recorded_evidence = bool(serial) or bool(recorded_values)
+    if status == "not_collected" and has_recorded_evidence:
+        errors.append(
+            "expected root.physical_device_smoke.status to be 'evidence_paths_recorded' "
+            "when physical serial or evidence paths are present"
+        )
+    if status == "evidence_paths_recorded":
+        if not isinstance(serial, str) or not serial.strip():
+            errors.append(
+                "expected root.physical_device_smoke.physical_serial to be non-empty "
+                "when physical evidence paths are recorded"
+            )
+        missing = [key for key in expected_path_keys if not evidence_fields.get(key)]
+        if missing:
+            errors.append(
+                "expected root.physical_device_smoke.evidence_fields to include all "
+                f"phone-full evidence paths when recorded, missing {missing!r}"
+            )
+
+
 def validate_summary(path: Path) -> tuple[dict[str, Any] | None, list[str]]:
     if not path.exists():
         return None, [f"summary file not found: {path}"]
@@ -436,6 +549,7 @@ def validate_summary(path: Path) -> tuple[dict[str, Any] | None, list[str]]:
     _validate_scaffold(data.get("managed_device_scaffold"), errors)
     _validate_task_inventory(data, errors)
     _validate_planned_result_evidence_schema(data.get("planned_result_evidence_schema"), errors)
+    _validate_physical_device_smoke(data.get("physical_device_smoke"), errors)
     return data, errors
 
 

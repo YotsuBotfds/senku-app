@@ -81,6 +81,24 @@ def make_summary() -> dict:
                 "stderr_path": None,
             },
         },
+        "physical_device_smoke": {
+            "schema_version": 1,
+            "status": "not_collected",
+            "device_profile": "phone-full",
+            "physical_device": True,
+            "physical_serial": None,
+            "dry_run": True,
+            "launches_emulators": False,
+            "acceptance_evidence": False,
+            "non_acceptance_evidence": True,
+            "evidence_fields": {
+                "installed_apk_path": None,
+                "focus_path": None,
+                "screenshot_path": None,
+                "dump_path": None,
+                "logcat_path": None,
+            },
+        },
         "task_inventory_source": "not_collected",
         "task_inventory_probe_ran": False,
         "task_inventory": None,
@@ -142,6 +160,10 @@ class ValidateAndroidManagedDeviceSmokeSummaryTests(unittest.TestCase):
         summary["managed_devices_launched"] = True
         summary["planned_result_evidence_schema"]["non_acceptance_evidence"] = False
         summary["planned_result_evidence_schema"]["acceptance_evidence"] = True
+        summary["physical_device_smoke"]["dry_run"] = False
+        summary["physical_device_smoke"]["launches_emulators"] = True
+        summary["physical_device_smoke"]["acceptance_evidence"] = True
+        summary["physical_device_smoke"]["non_acceptance_evidence"] = False
 
         _, errors = validate_summary(self.write_summary(summary))
 
@@ -156,6 +178,19 @@ class ValidateAndroidManagedDeviceSmokeSummaryTests(unittest.TestCase):
         )
         self.assertIn(
             "expected root.planned_result_evidence_schema.acceptance_evidence to be False, got True",
+            errors,
+        )
+        self.assertIn("expected root.physical_device_smoke.dry_run to be True, got False", errors)
+        self.assertIn(
+            "expected root.physical_device_smoke.launches_emulators to be False, got True",
+            errors,
+        )
+        self.assertIn(
+            "expected root.physical_device_smoke.acceptance_evidence to be False, got True",
+            errors,
+        )
+        self.assertIn(
+            "expected root.physical_device_smoke.non_acceptance_evidence to be True, got False",
             errors,
         )
 
@@ -298,6 +333,70 @@ class ValidateAndroidManagedDeviceSmokeSummaryTests(unittest.TestCase):
         self.assertIn(
             "expected root.planned_result_evidence_schema.evidence_fields.stdout_path "
             "to be None until real managed-device smoke runs",
+            errors,
+        )
+
+    def test_accepts_phone_full_physical_evidence_paths(self):
+        summary = make_summary()
+        summary["physical_device_smoke"] = {
+            "schema_version": 1,
+            "status": "evidence_paths_recorded",
+            "device_profile": "phone-full",
+            "physical_device": True,
+            "physical_serial": "R5CT123456A",
+            "dry_run": True,
+            "launches_emulators": False,
+            "acceptance_evidence": False,
+            "non_acceptance_evidence": True,
+            "evidence_fields": {
+                "installed_apk_path": "artifacts/bench/physical/app-debug.apk",
+                "focus_path": "artifacts/bench/physical/focus.txt",
+                "screenshot_path": "artifacts/bench/physical/screen.png",
+                "dump_path": "artifacts/bench/physical/window_dump.xml",
+                "logcat_path": "artifacts/bench/physical/logcat.txt",
+            },
+        }
+
+        _, errors = validate_summary(self.write_summary(summary))
+
+        self.assertEqual(errors, [])
+
+    def test_rejects_incomplete_phone_full_physical_evidence(self):
+        summary = make_summary()
+        summary["physical_device_smoke"]["status"] = "evidence_paths_recorded"
+        summary["physical_device_smoke"]["physical_serial"] = ""
+        summary["physical_device_smoke"]["evidence_fields"]["installed_apk_path"] = "app-debug.apk"
+        summary["physical_device_smoke"]["evidence_fields"]["screenshot_path"] = "screen.png"
+        summary["physical_device_smoke"]["device_profile"] = "tablet"
+
+        _, errors = validate_summary(self.write_summary(summary))
+
+        self.assertIn(
+            "expected root.physical_device_smoke.device_profile to be 'phone-full', got 'tablet'",
+            errors,
+        )
+        self.assertIn(
+            "expected root.physical_device_smoke.physical_serial to be non-empty "
+            "when physical evidence paths are recorded",
+            errors,
+        )
+        self.assertIn(
+            "expected root.physical_device_smoke.evidence_fields to include all "
+            "phone-full evidence paths when recorded, missing ['focus_path', 'dump_path', 'logcat_path']",
+            errors,
+        )
+
+    def test_rejects_physical_status_drift(self):
+        summary = make_summary()
+        summary["physical_device_smoke"]["status"] = "not_collected"
+        summary["physical_device_smoke"]["physical_serial"] = "R5CT123456A"
+        summary["physical_device_smoke"]["evidence_fields"]["logcat_path"] = "logcat.txt"
+
+        _, errors = validate_summary(self.write_summary(summary))
+
+        self.assertIn(
+            "expected root.physical_device_smoke.status to be 'evidence_paths_recorded' "
+            "when physical serial or evidence paths are present",
             errors,
         )
 

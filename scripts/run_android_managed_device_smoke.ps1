@@ -2,7 +2,13 @@ param(
     [string]$OutputDir = "artifacts\bench\android_managed_device_smoke",
     [switch]$DryRun,
     [string]$TaskInventoryPath,
-    [switch]$ProbeTaskInventory
+    [switch]$ProbeTaskInventory,
+    [string]$PhysicalSerial,
+    [string]$PhysicalInstalledApkPath,
+    [string]$PhysicalFocusPath,
+    [string]$PhysicalScreenshotPath,
+    [string]$PhysicalDumpPath,
+    [string]$PhysicalLogcatPath
 )
 
 $ErrorActionPreference = "Stop"
@@ -215,6 +221,54 @@ function Build-PlannedResultEvidenceSchema {
     }
 }
 
+function Convert-OptionalEvidencePath {
+    param([string]$Path)
+
+    if ([string]::IsNullOrWhiteSpace($Path)) {
+        return $null
+    }
+
+    return (Convert-ToRepoRelativePath -Path (Resolve-TargetPath -Path $Path))
+}
+
+function Build-PhysicalDeviceSmokeEvidence {
+    param(
+        [string]$Serial,
+        [string]$InstalledApkPath,
+        [string]$FocusPath,
+        [string]$ScreenshotPath,
+        [string]$DumpPath,
+        [string]$LogcatPath
+    )
+
+    $evidenceFields = [ordered]@{
+        installed_apk_path = Convert-OptionalEvidencePath -Path $InstalledApkPath
+        focus_path = Convert-OptionalEvidencePath -Path $FocusPath
+        screenshot_path = Convert-OptionalEvidencePath -Path $ScreenshotPath
+        dump_path = Convert-OptionalEvidencePath -Path $DumpPath
+        logcat_path = Convert-OptionalEvidencePath -Path $LogcatPath
+    }
+    $hasEvidence = -not [string]::IsNullOrWhiteSpace($Serial)
+    foreach ($value in $evidenceFields.Values) {
+        if ($null -ne $value) {
+            $hasEvidence = $true
+        }
+    }
+
+    return [ordered]@{
+        schema_version = 1
+        status = if ($hasEvidence) { "evidence_paths_recorded" } else { "not_collected" }
+        device_profile = "phone-full"
+        physical_device = $true
+        physical_serial = if ([string]::IsNullOrWhiteSpace($Serial)) { $null } else { $Serial }
+        dry_run = $true
+        launches_emulators = $false
+        acceptance_evidence = $false
+        non_acceptance_evidence = $true
+        evidence_fields = $evidenceFields
+    }
+}
+
 function Convert-ObservedGradleTaskName {
     param([string]$TaskName)
 
@@ -373,6 +427,13 @@ function Write-SummaryMarkdown {
         "- observed_gradle_task_names: $($Summary.observed_gradle_task_names -join ', ')",
         "- observed_expected_gradle_task_names: $($Summary.observed_expected_gradle_task_names -join ', ')",
         "- planned_result_evidence_schema: $($Summary.planned_result_evidence_schema.status) v$($Summary.planned_result_evidence_schema.schema_version)",
+        "- physical_device_smoke: $($Summary.physical_device_smoke.status) $($Summary.physical_device_smoke.device_profile)",
+        "- physical_serial: $($Summary.physical_device_smoke.physical_serial)",
+        "- physical_installed_apk_path: $($Summary.physical_device_smoke.evidence_fields.installed_apk_path)",
+        "- physical_focus_path: $($Summary.physical_device_smoke.evidence_fields.focus_path)",
+        "- physical_screenshot_path: $($Summary.physical_device_smoke.evidence_fields.screenshot_path)",
+        "- physical_dump_path: $($Summary.physical_device_smoke.evidence_fields.dump_path)",
+        "- physical_logcat_path: $($Summary.physical_device_smoke.evidence_fields.logcat_path)",
         "- task_inventory_source: $($Summary.task_inventory_source)",
         "- task_inventory_probe_ran: $($Summary.task_inventory_probe_ran)",
         "- comparison_baseline: $($Summary.comparison_baseline)",
@@ -415,6 +476,13 @@ if ($null -ne $taskInventory) {
 }
 
 $finishedAt = (Get-Date).ToUniversalTime()
+$physicalDeviceSmoke = Build-PhysicalDeviceSmokeEvidence `
+    -Serial $PhysicalSerial `
+    -InstalledApkPath $PhysicalInstalledApkPath `
+    -FocusPath $PhysicalFocusPath `
+    -ScreenshotPath $PhysicalScreenshotPath `
+    -DumpPath $PhysicalDumpPath `
+    -LogcatPath $PhysicalLogcatPath
 
 $summary = [pscustomobject]@{
     status = "dry_run_only"
@@ -431,6 +499,7 @@ $summary = [pscustomobject]@{
     observed_gradle_task_names = $observedGradleTaskNames
     observed_expected_gradle_task_names = $observedExpectedGradleTaskNames
     planned_result_evidence_schema = $plannedResultEvidenceSchema
+    physical_device_smoke = $physicalDeviceSmoke
     task_inventory_source = if ($null -eq $taskInventory) { "not_collected" } else { $taskInventory.source }
     task_inventory_probe_ran = ($null -ne $taskInventory -and $taskInventory.gradle_invoked)
     task_inventory = $taskInventorySummary

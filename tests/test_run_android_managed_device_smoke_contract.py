@@ -20,6 +20,12 @@ class AndroidManagedDeviceSmokeContractTests(unittest.TestCase):
         self.assertIn("[switch]$DryRun", self.script)
         self.assertIn("[string]$TaskInventoryPath", self.script)
         self.assertIn("[switch]$ProbeTaskInventory", self.script)
+        self.assertIn("[string]$PhysicalSerial", self.script)
+        self.assertIn("[string]$PhysicalInstalledApkPath", self.script)
+        self.assertIn("[string]$PhysicalFocusPath", self.script)
+        self.assertIn("[string]$PhysicalScreenshotPath", self.script)
+        self.assertIn("[string]$PhysicalDumpPath", self.script)
+        self.assertIn("[string]$PhysicalLogcatPath", self.script)
         self.assertIn("if (-not $DryRun)", self.script)
         self.assertIn("dry-run-only", self.script)
         self.assertIn("must not launch Gradle Managed Devices yet", self.script)
@@ -33,6 +39,8 @@ class AndroidManagedDeviceSmokeContractTests(unittest.TestCase):
         self.assertIn("function Expand-ArtifactRoots", self.script)
         self.assertIn("function Build-ExpectedGradleTaskNames", self.script)
         self.assertIn("function Build-PlannedResultEvidenceSchema", self.script)
+        self.assertIn("function Build-PhysicalDeviceSmokeEvidence", self.script)
+        self.assertIn("function Convert-OptionalEvidencePath", self.script)
         self.assertIn("function Parse-GradleTaskInventory", self.script)
         self.assertIn("function Read-TaskInventory", self.script)
         self.assertIn("function Invoke-TaskInventoryProbe", self.script)
@@ -46,6 +54,15 @@ class AndroidManagedDeviceSmokeContractTests(unittest.TestCase):
         self.assertIn("observed_gradle_task_names", self.script)
         self.assertIn("observed_expected_gradle_task_names", self.script)
         self.assertIn("planned_result_evidence_schema", self.script)
+        self.assertIn("physical_device_smoke", self.script)
+        self.assertIn("phone-full", self.script)
+        self.assertIn("physical_serial", self.script)
+        self.assertIn("installed_apk_path", self.script)
+        self.assertIn("focus_path", self.script)
+        self.assertIn("screenshot_path", self.script)
+        self.assertIn("dump_path", self.script)
+        self.assertIn("logcat_path", self.script)
+        self.assertIn("launches_emulators = $false", self.script)
         self.assertIn("planned_not_collected", self.script)
         self.assertIn("total_test_count", self.script)
         self.assertIn("failure_count", self.script)
@@ -172,6 +189,26 @@ class AndroidManagedDeviceSmokeContractTests(unittest.TestCase):
             self.assertEqual(planned_schema["evidence_fields"]["screenshot_paths"], [])
             self.assertIsNone(planned_schema["evidence_fields"]["stdout_path"])
             self.assertIsNone(planned_schema["evidence_fields"]["stderr_path"])
+            physical_smoke = summary["physical_device_smoke"]
+            self.assertEqual(physical_smoke["schema_version"], 1)
+            self.assertEqual(physical_smoke["status"], "not_collected")
+            self.assertEqual(physical_smoke["device_profile"], "phone-full")
+            self.assertTrue(physical_smoke["physical_device"])
+            self.assertIsNone(physical_smoke["physical_serial"])
+            self.assertTrue(physical_smoke["dry_run"])
+            self.assertFalse(physical_smoke["launches_emulators"])
+            self.assertFalse(physical_smoke["acceptance_evidence"])
+            self.assertTrue(physical_smoke["non_acceptance_evidence"])
+            self.assertEqual(
+                physical_smoke["evidence_fields"],
+                {
+                    "installed_apk_path": None,
+                    "focus_path": None,
+                    "screenshot_path": None,
+                    "dump_path": None,
+                    "logcat_path": None,
+                },
+            )
             self.assertEqual(summary["task_inventory_source"], "not_collected")
             self.assertFalse(summary["task_inventory_probe_ran"])
             self.assertIsNone(summary["task_inventory"])
@@ -304,6 +341,76 @@ class AndroidManagedDeviceSmokeContractTests(unittest.TestCase):
             )
             self.assertIn("- task_inventory_source: path", summary_md)
             self.assertIn("- task_inventory_probe_ran: False", summary_md)
+        finally:
+            shutil.rmtree(output_dir, ignore_errors=True)
+
+    def test_dry_run_can_record_phone_full_physical_evidence_paths(self):
+        output_dir = Path(tempfile.mkdtemp(prefix="managed_device_smoke_physical_"))
+        try:
+            evidence_dir = output_dir / "physical"
+            evidence_dir.mkdir()
+            paths = {
+                "installed": evidence_dir / "app-debug.apk",
+                "focus": evidence_dir / "focus.txt",
+                "screenshot": evidence_dir / "screen.png",
+                "dump": evidence_dir / "window_dump.xml",
+                "logcat": evidence_dir / "logcat.txt",
+            }
+            for path in paths.values():
+                path.write_text("evidence", encoding="utf-8")
+
+            result = subprocess.run(
+                [
+                    "powershell",
+                    "-NoProfile",
+                    "-ExecutionPolicy",
+                    "Bypass",
+                    "-File",
+                    str(SCRIPT),
+                    "-OutputDir",
+                    str(output_dir / "out"),
+                    "-DryRun",
+                    "-PhysicalSerial",
+                    "R5CT123456A",
+                    "-PhysicalInstalledApkPath",
+                    str(paths["installed"]),
+                    "-PhysicalFocusPath",
+                    str(paths["focus"]),
+                    "-PhysicalScreenshotPath",
+                    str(paths["screenshot"]),
+                    "-PhysicalDumpPath",
+                    str(paths["dump"]),
+                    "-PhysicalLogcatPath",
+                    str(paths["logcat"]),
+                ],
+                cwd=REPO_ROOT,
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+
+            self.assertEqual(result.returncode, 0, result.stderr + result.stdout)
+            summary = json.loads((output_dir / "out" / "summary.json").read_text(encoding="utf-8-sig"))
+            self.assertEqual(summary["status"], "dry_run_only")
+            self.assertFalse(summary["would_launch_emulators"])
+            self.assertFalse(summary["managed_devices_launched"])
+            physical_smoke = summary["physical_device_smoke"]
+            self.assertEqual(physical_smoke["status"], "evidence_paths_recorded")
+            self.assertEqual(physical_smoke["device_profile"], "phone-full")
+            self.assertEqual(physical_smoke["physical_serial"], "R5CT123456A")
+            self.assertFalse(physical_smoke["launches_emulators"])
+            self.assertFalse(physical_smoke["acceptance_evidence"])
+            evidence_fields = physical_smoke["evidence_fields"]
+            self.assertTrue(evidence_fields["installed_apk_path"].endswith("app-debug.apk"))
+            self.assertTrue(evidence_fields["focus_path"].endswith("focus.txt"))
+            self.assertTrue(evidence_fields["screenshot_path"].endswith("screen.png"))
+            self.assertTrue(evidence_fields["dump_path"].endswith("window_dump.xml"))
+            self.assertTrue(evidence_fields["logcat_path"].endswith("logcat.txt"))
+            summary_md = (output_dir / "out" / "summary.md").read_text(encoding="utf-8-sig")
+            self.assertIn("- physical_device_smoke: evidence_paths_recorded phone-full", summary_md)
+            self.assertIn("- physical_serial: R5CT123456A", summary_md)
+            self.assertIn("app-debug.apk", summary_md)
+            self.assertIn("logcat.txt", summary_md)
         finally:
             shutil.rmtree(output_dir, ignore_errors=True)
 
