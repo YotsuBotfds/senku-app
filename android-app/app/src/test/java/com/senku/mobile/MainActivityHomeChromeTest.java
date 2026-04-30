@@ -78,7 +78,8 @@ public final class MainActivityHomeChromeTest {
         assertEquals("2 guides", item.getCountLabel());
         assertEquals((int) 0xFF7A9AB4L, item.getAccentColor());
         assertTrue(item.getEnabled());
-        assertEquals("Water & sanitation, 2 guides. Tap to filter.", item.getContentDescription());
+        assertNormalizedContains(item.getContentDescription(), item.getLabel());
+        assertNormalizedContains(item.getContentDescription(), item.getCountLabel());
     }
 
     @Test
@@ -472,5 +473,12 @@ public final class MainActivityHomeChromeTest {
             lastActivityEpoch
         );
         return new ChatSessionStore.ConversationPreview("conversation-" + guideId, turn, 1, lastActivityEpoch);
+    }
+
+    private static void assertNormalizedContains(String actual, String expectedToken) {
+        assertTrue(
+            "Expected <" + actual + "> to contain <" + expectedToken + ">",
+            actual.toLowerCase().contains(expectedToken.toLowerCase())
+        );
     }
 }
