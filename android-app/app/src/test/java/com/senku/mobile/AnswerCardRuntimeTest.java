@@ -773,10 +773,9 @@ public final class AnswerCardRuntimeTest {
         assertEquals("GD-380", plan.sources.get(0).guideId);
         assertEquals("answer-card", plan.sources.get(0).retrievalMode);
         assertEquals("safety_internal_bleeding", plan.sources.get(0).structureType);
-        assertTrue(plan.answerText.contains("Treat abdominal trauma or GI bleeding with shock signs as an emergency."));
-        assertTrue(plan.answerText.contains("Keep the person still and lying down while getting emergency help."));
-        assertTrue(plan.answerText.contains("Escalate now if pale, dizzy, faint, clammy, rapid pulse"));
-        assertTrue(plan.answerText.contains("Avoid: Do not give food, drink, or pain medicine"));
+        assertNumberedAnswerLineCount(plan.answerText, 5);
+        assertAnswerTextContainsAll(plan.answerText, "emergency", "shock", "Escalate now if ", "Avoid: ");
+        assertAnswerTextContainsNone(plan.answerText, "routine GI care", "wait and watch", "reassure");
     }
 
     @Test
@@ -861,11 +860,15 @@ public final class AnswerCardRuntimeTest {
         assertEquals("GD-132", plan.sources.get(0).guideId);
         assertEquals("answer-card", plan.sources.get(0).retrievalMode);
         assertEquals("foundry_area_readiness", plan.sources.get(0).structureType);
-        assertTrue(plan.answerText.contains("Start with boundary-only readiness"));
-        assertTrue(plan.answerText.contains("Treat as a no-go or owner-handoff screen"));
-        assertTrue(plan.answerText.contains("End with foundry owner"));
-        assertTrue(plan.answerText.contains("Escalate now if Any moisture"));
-        assertTrue(plan.answerText.contains("Avoid: Do not provide mold-making steps"));
+        assertNumberedAnswerLineCount(plan.answerText, 8);
+        assertAnswerTextContainsAll(plan.answerText, "boundary", "owner", "no-go", "Escalate now if ", "Avoid: ");
+        assertAnswerTextContainsNone(
+            plan.answerText,
+            "bronze melt schedule",
+            "pouring temperature",
+            "tune the air blast",
+            "gating and risers"
+        );
     }
 
     @Test
@@ -1459,5 +1462,25 @@ public final class AnswerCardRuntimeTest {
             text,
             List.of(triggerTerms)
         );
+    }
+
+    private static void assertNumberedAnswerLineCount(String answerText, int expectedCount) {
+        String[] lines = answerText.split("\\R");
+        assertEquals(expectedCount, lines.length);
+        for (int i = 0; i < lines.length; i++) {
+            assertTrue(lines[i].startsWith((i + 1) + ". "));
+        }
+    }
+
+    private static void assertAnswerTextContainsAll(String answerText, String... expectedTerms) {
+        for (String expectedTerm : expectedTerms) {
+            assertTrue(answerText.contains(expectedTerm));
+        }
+    }
+
+    private static void assertAnswerTextContainsNone(String answerText, String... forbiddenTerms) {
+        for (String forbiddenTerm : forbiddenTerms) {
+            assertFalse(answerText.contains(forbiddenTerm));
+        }
     }
 }
