@@ -19,14 +19,7 @@ public final class PinnedGuideStore {
     public static List<String> listGuideIds(Context context) {
         SharedPreferences preferences = preferences(context);
         String stored = safe(preferences.getString(KEY_GUIDE_IDS, ""));
-        LinkedHashSet<String> ordered = new LinkedHashSet<>();
-        for (String rawValue : stored.split(",")) {
-            String guideId = normalizeGuideId(rawValue);
-            if (!guideId.isEmpty()) {
-                ordered.add(guideId);
-            }
-        }
-        return new ArrayList<>(ordered);
+        return guideIdsFromStoredValue(stored);
     }
 
     public static boolean contains(Context context, String rawGuideId) {
@@ -47,13 +40,7 @@ public final class PinnedGuideStore {
         if (guideId.isEmpty()) {
             return false;
         }
-        ArrayList<String> guideIds = new ArrayList<>(listGuideIds(context));
-        guideIds.remove(guideId);
-        guideIds.add(0, guideId);
-        while (guideIds.size() > MAX_PINS) {
-            guideIds.remove(guideIds.size() - 1);
-        }
-        save(context, guideIds);
+        save(context, guideIdsAfterAdd(listGuideIds(context), guideId));
         return true;
     }
 
@@ -71,7 +58,55 @@ public final class PinnedGuideStore {
     }
 
     private static void save(Context context, List<String> guideIds) {
+        preferences(context).edit().putString(KEY_GUIDE_IDS, storedValueForGuideIds(guideIds)).apply();
+    }
+
+    static List<String> guideIdsFromStoredValueForTest(String storedValue) {
+        return guideIdsFromStoredValue(storedValue);
+    }
+
+    static List<String> guideIdsAfterAddForTest(List<String> currentGuideIds, String rawGuideId) {
+        return guideIdsAfterAdd(currentGuideIds, rawGuideId);
+    }
+
+    static String storedValueForGuideIdsForTest(List<String> guideIds) {
+        return storedValueForGuideIds(guideIds);
+    }
+
+    private static List<String> guideIdsFromStoredValue(String storedValue) {
+        LinkedHashSet<String> ordered = new LinkedHashSet<>();
+        for (String rawValue : safe(storedValue).split(",")) {
+            String guideId = normalizeGuideId(rawValue);
+            if (!guideId.isEmpty()) {
+                ordered.add(guideId);
+            }
+        }
+        return new ArrayList<>(ordered);
+    }
+
+    private static List<String> guideIdsAfterAdd(List<String> currentGuideIds, String rawGuideId) {
+        String guideId = normalizeGuideId(rawGuideId);
+        ArrayList<String> guideIds = new ArrayList<>(cleanGuideIds(currentGuideIds));
+        if (guideId.isEmpty()) {
+            return guideIds;
+        }
+        guideIds.remove(guideId);
+        guideIds.add(0, guideId);
+        while (guideIds.size() > MAX_PINS) {
+            guideIds.remove(guideIds.size() - 1);
+        }
+        return guideIds;
+    }
+
+    private static String storedValueForGuideIds(List<String> guideIds) {
+        return String.join(",", cleanGuideIds(guideIds));
+    }
+
+    private static ArrayList<String> cleanGuideIds(List<String> guideIds) {
         ArrayList<String> cleaned = new ArrayList<>();
+        if (guideIds == null) {
+            return cleaned;
+        }
         LinkedHashSet<String> seen = new LinkedHashSet<>();
         for (String rawGuideId : guideIds) {
             String guideId = normalizeGuideId(rawGuideId);
@@ -82,7 +117,7 @@ public final class PinnedGuideStore {
                 break;
             }
         }
-        preferences(context).edit().putString(KEY_GUIDE_IDS, String.join(",", cleaned)).apply();
+        return cleaned;
     }
 
     private static SharedPreferences preferences(Context context) {
