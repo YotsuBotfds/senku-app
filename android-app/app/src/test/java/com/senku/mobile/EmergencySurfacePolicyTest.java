@@ -339,6 +339,54 @@ public final class EmergencySurfacePolicyTest {
     }
 
     @Test
+    public void emergencyPortraitActionBlocksTakePriorityOverHighRiskBlocks() {
+        assertEquals(
+            DetailActivity.ActionBlockRenderPolicy.Decision.EMERGENCY_PORTRAIT,
+            DetailActivity.resolveActionBlockRenderDecision(
+                true,
+                true,
+                true,
+                true,
+                "1. Stop the hazard."
+            )
+        );
+    }
+
+    @Test
+    public void deterministicHighRiskAnswerWithBodyShowsHighRiskActionBlocks() {
+        assertEquals(
+            DetailActivity.ActionBlockRenderPolicy.Decision.HIGH_RISK,
+            DetailActivity.resolveActionBlockRenderDecision(
+                false,
+                true,
+                true,
+                true,
+                "1. Apply pressure. 2. Escalate."
+            )
+        );
+    }
+
+    @Test
+    public void highRiskActionBlocksStayHiddenOutsideOriginalEligibility() {
+        assertEquals(
+            DetailActivity.ActionBlockRenderPolicy.Decision.NONE,
+            DetailActivity.resolveActionBlockRenderDecision(false, false, true, true, "1. Apply pressure.")
+        );
+        assertEquals(
+            DetailActivity.ActionBlockRenderPolicy.Decision.NONE,
+            DetailActivity.resolveActionBlockRenderDecision(false, true, false, true, "1. Apply pressure.")
+        );
+        assertEquals(
+            DetailActivity.ActionBlockRenderPolicy.Decision.NONE,
+            DetailActivity.resolveActionBlockRenderDecision(false, true, true, false, "1. Apply pressure.")
+        );
+        assertEquals(
+            DetailActivity.ActionBlockRenderPolicy.Decision.NONE,
+            DetailActivity.resolveActionBlockRenderDecision(false, true, true, true, "   ")
+        );
+    }
+
+    @Test
     public void tabletEmergencyBackAffordanceUsesSharedIconOnlyChrome() {
         assertEquals(R.string.detail_back, DetailActivity.tabletEmergencyBackButtonLabel());
         assertEquals(R.string.detail_back, DetailActivity.tabletEmergencyBackButtonLabel(false));
