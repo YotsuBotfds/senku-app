@@ -47,6 +47,14 @@ final class FollowUpComposerController {
         return new SubmitDecision(SubmitAction.SUBMIT, query);
     }
 
+    static SubmitDecision resolveSubmit(
+        String rawQuery,
+        FollowUpComposerState.Surface surface,
+        boolean busy
+    ) {
+        return resolveSubmit(new FollowUpComposerState(rawQuery, busy, busy, "", surface, null, null));
+    }
+
     static RetryDecision resolveRetry(FollowUpComposerState state, String visibleDraftFallback) {
         FollowUpComposerState safeState = safeState(state);
         String query = safeState.retryQuery();

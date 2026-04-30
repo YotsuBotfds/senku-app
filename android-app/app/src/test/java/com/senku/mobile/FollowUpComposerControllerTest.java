@@ -53,6 +53,45 @@ public final class FollowUpComposerControllerTest {
     }
 
     @Test
+    public void rawSubmitDecisionNormalizesEmptyPhoneDraft() {
+        FollowUpComposerController.SubmitDecision decision =
+            FollowUpComposerController.resolveSubmit(
+                " \r\n\t ",
+                FollowUpComposerState.Surface.PHONE,
+                false
+            );
+
+        assertEquals(FollowUpComposerController.SubmitAction.EMPTY, decision.action);
+        assertEquals("", decision.query);
+    }
+
+    @Test
+    public void rawSubmitDecisionBlocksBusyTabletDraft() {
+        FollowUpComposerController.SubmitDecision decision =
+            FollowUpComposerController.resolveSubmit(
+                "  inspect the guyline tension  ",
+                FollowUpComposerState.Surface.TABLET,
+                true
+            );
+
+        assertEquals(FollowUpComposerController.SubmitAction.BLOCKED, decision.action);
+        assertEquals("inspect the guyline tension", decision.query);
+    }
+
+    @Test
+    public void rawSubmitDecisionAllowsSendablePhoneDraft() {
+        FollowUpComposerController.SubmitDecision decision =
+            FollowUpComposerController.resolveSubmit(
+                "  what should I check next?\r ",
+                FollowUpComposerState.Surface.PHONE,
+                false
+            );
+
+        assertEquals(FollowUpComposerController.SubmitAction.SUBMIT, decision.action);
+        assertEquals("what should I check next?", decision.query);
+    }
+
+    @Test
     public void retryDecisionUsesComposerRetryBeforeVisibleDraftFallback() {
         FollowUpComposerState state = new FollowUpComposerState(
             "visible draft",

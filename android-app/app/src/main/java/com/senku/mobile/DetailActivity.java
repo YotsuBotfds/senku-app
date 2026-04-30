@@ -6404,7 +6404,9 @@ public final class DetailActivity extends AppCompatActivity {
     }
 
     static FollowUpSubmitRoute resolveFollowUpSubmitRoute(String rawQuery) {
-        return normalizeFollowUpQuery(rawQuery).isEmpty()
+        FollowUpComposerController.SubmitDecision decision =
+            FollowUpComposerController.resolveSubmit(rawQuery, FollowUpComposerState.Surface.PHONE, false);
+        return decision.action == FollowUpComposerController.SubmitAction.EMPTY
             ? FollowUpSubmitRoute.EMPTY_INPUT
             : FollowUpSubmitRoute.PHONE_FOLLOWUP;
     }
