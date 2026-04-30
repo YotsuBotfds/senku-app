@@ -256,7 +256,7 @@ public final class DetailSourcePresentationFormatterTest {
 
     @Test
     public void stationSourceButtonLabelUsesAnswerSourceStackContract() {
-        DetailSourcePresentationFormatter formatter = new DetailSourcePresentationFormatter(null);
+        DetailSourcePresentationFormatter formatter = reviewDemoFormatter();
 
         assertEquals(
             "GD-220 \u00B7 ANCHOR\nAbrasives Manufacturing",
@@ -320,7 +320,7 @@ public final class DetailSourcePresentationFormatterTest {
 
     @Test
     public void stationSourceButtonLabelNormalizesRainShelterLiveStack() {
-        DetailSourcePresentationFormatter formatter = new DetailSourcePresentationFormatter(null);
+        DetailSourcePresentationFormatter formatter = reviewDemoFormatter();
         SearchResult abrasiveAnchor = reviewedStackResult("GD-220", "Abrasives Manufacturing", "abrasives manufacturing");
         SearchResult foundryRelated = reviewedStackResult("GD-132", "Foundry & Metal Casting", "foundry metal casting");
         SearchResult rainShelter = reviewedStackResult("GD-345", "Wood Quality Evaluation for Shelter Construction", "tarp cord rain shelter");
@@ -341,7 +341,7 @@ public final class DetailSourcePresentationFormatterTest {
 
     @Test
     public void evidenceCardsUseRainShelterMockRolesAndScores() {
-        DetailSourcePresentationFormatter formatter = new DetailSourcePresentationFormatter(null);
+        DetailSourcePresentationFormatter formatter = reviewDemoFormatter();
         SearchResult abrasiveAnchor = reviewedStackResult("GD-220", "Abrasives Manufacturing", "abrasives manufacturing");
         SearchResult foundryRelated = reviewedStackResult("GD-132", "Foundry & Metal Casting", "foundry metal casting");
         SearchResult rainShelter = reviewedStackResult("GD-345", "Wood Quality Evaluation for Shelter Construction", "tarp cord rain shelter");
@@ -375,7 +375,7 @@ public final class DetailSourcePresentationFormatterTest {
 
     @Test
     public void evidenceCardsKeepRainShelterRolesWhenLiveStackArrivesTopicFirst() {
-        DetailSourcePresentationFormatter formatter = new DetailSourcePresentationFormatter(null);
+        DetailSourcePresentationFormatter formatter = reviewDemoFormatter();
         SearchResult rainShelter = reviewedStackResult("GD-345", "Wood Quality Evaluation for Shelter Construction", "tarp cord rain shelter");
         SearchResult abrasiveAnchor = reviewedStackResult("GD-220", "Abrasives Manufacturing", "abrasives manufacturing");
         SearchResult foundryRelated = reviewedStackResult("GD-132", "Foundry & Metal Casting", "foundry metal casting");
@@ -403,7 +403,7 @@ public final class DetailSourcePresentationFormatterTest {
 
     @Test
     public void stationEvidenceCardRowLabelPreservesRainShelterTopicRole() {
-        DetailSourcePresentationFormatter formatter = new DetailSourcePresentationFormatter(null);
+        DetailSourcePresentationFormatter formatter = reviewDemoFormatter();
         DetailSourcePresentationFormatter.EvidenceCard topic = formatter.buildEvidenceCard(
             reviewedStackResult("GD-345", "Wood Quality Evaluation for Shelter Construction", "tarp cord rain shelter"),
             0,
@@ -422,7 +422,7 @@ public final class DetailSourcePresentationFormatterTest {
 
     @Test
     public void evidenceCardRowLabelDropsDuplicateAnchorLine() {
-        DetailSourcePresentationFormatter formatter = new DetailSourcePresentationFormatter(null);
+        DetailSourcePresentationFormatter formatter = reviewDemoFormatter();
         DetailSourcePresentationFormatter.EvidenceCard anchor = formatter.buildEvidenceCard(
             reviewedStackResult("GD-220", "Abrasives Manufacturing", "abrasives manufacturing"),
             0,
@@ -455,7 +455,7 @@ public final class DetailSourcePresentationFormatterTest {
 
     @Test
     public void stationSourceButtonLabelDoesNotRelabelClickTargetByIndex() {
-        DetailSourcePresentationFormatter formatter = new DetailSourcePresentationFormatter(null);
+        DetailSourcePresentationFormatter formatter = reviewDemoFormatter();
         SearchResult rainShelter = reviewedStackResult("GD-345", "Wood Quality Evaluation for Shelter Construction", "tarp cord rain shelter");
 
         assertEquals(
@@ -466,7 +466,7 @@ public final class DetailSourcePresentationFormatterTest {
 
     @Test
     public void orderAnswerSourceStackPlacesMockSourcesBeforeTopicPromotion() {
-        DetailSourcePresentationFormatter formatter = new DetailSourcePresentationFormatter(null);
+        DetailSourcePresentationFormatter formatter = reviewDemoFormatter();
         SearchResult rainShelter = reviewedStackResult("GD-345", "Wood Quality Evaluation for Shelter Construction", "tarp cord rain shelter");
         SearchResult unrelated = reviewedStackResult("GD-999", "Unrelated", "camp maintenance");
         SearchResult foundryRelated = reviewedStackResult("GD-132", "Foundry & Metal Casting", "foundry metal casting");
@@ -510,6 +510,13 @@ public final class DetailSourcePresentationFormatterTest {
         );
     }
 
+    private static DetailSourcePresentationFormatter reviewDemoFormatter() {
+        return new DetailSourcePresentationFormatter(
+            null,
+            ReviewDemoPolicy.isSourceStackDemoEnabled(true)
+        );
+    }
+
     @Test
     public void inlineSourceChipLabelUsesAnchorGuideAndPlainSeparator() {
         DetailSourcePresentationFormatter formatter = new DetailSourcePresentationFormatter(null);
@@ -534,7 +541,7 @@ public final class DetailSourcePresentationFormatterTest {
 
     @Test
     public void inlineSourceChipLabelCarriesEvidenceRoleAndMatchWhenKnown() {
-        DetailSourcePresentationFormatter formatter = new DetailSourcePresentationFormatter(null);
+        DetailSourcePresentationFormatter formatter = reviewDemoFormatter();
 
         assertEquals(
             "GD-220 \u00B7 ANCHOR",
@@ -551,6 +558,56 @@ public final class DetailSourcePresentationFormatterTest {
                 "GD-220",
                 false
             )
+        );
+    }
+
+    @Test
+    public void defaultFormatterDoesNotApplyRainShelterReviewedSourceStack() {
+        DetailSourcePresentationFormatter formatter = new DetailSourcePresentationFormatter(null);
+        SearchResult abrasiveAnchor = reviewedStackResult("GD-220", "Live Abrasive Surface Prep", "abrasives manufacturing");
+        SearchResult foundryRelated = reviewedStackResult("GD-132", "Live Casting Boundary", "foundry metal casting");
+        SearchResult rainShelter = reviewedStackResult("GD-345", "Wood Quality Evaluation for Shelter Construction", "tarp cord rain shelter");
+
+        DetailSourcePresentationFormatter.EvidenceCard anchor =
+            formatter.buildEvidenceCard(abrasiveAnchor, 0, "anchor");
+        DetailSourcePresentationFormatter.EvidenceCard related =
+            formatter.buildEvidenceCard(foundryRelated, 1, "related");
+        DetailSourcePresentationFormatter.EvidenceCard topic =
+            formatter.buildEvidenceCard(rainShelter, 2, "related");
+
+        assertEquals("ANCHOR", anchor.roleLabel);
+        assertEquals("68%", anchor.matchLabel);
+        assertEquals("abrasives manufacturing", anchor.title);
+        assertEquals("A simple ridgeline shelter requires only tarp, cord, and two anchor points.", anchor.quote);
+        assertEquals("RELATED", related.roleLabel);
+        assertEquals("62%", related.matchLabel);
+        assertEquals("foundry metal casting", related.title);
+        assertEquals("A simple ridgeline shelter requires only tarp, cord, and two anchor points.", related.quote);
+        assertEquals("TOPIC", topic.roleLabel);
+        assertEquals("56%", topic.matchLabel);
+        assertEquals("tarp cord rain shelter", topic.title);
+        assertEquals("A simple ridgeline shelter requires only tarp, cord, and two anchor points.", topic.quote);
+    }
+
+    @Test
+    public void defaultFormatterKeepsRainShelterSourceStackOrderAndGenericLabels() {
+        DetailSourcePresentationFormatter formatter = new DetailSourcePresentationFormatter(null);
+        SearchResult rainShelter = reviewedStackResult("GD-345", "Wood Quality Evaluation for Shelter Construction", "tarp cord rain shelter");
+        SearchResult foundryRelated = reviewedStackResult("GD-132", "Foundry & Metal Casting", "foundry metal casting");
+        SearchResult abrasiveAnchor = reviewedStackResult("GD-220", "Abrasives Manufacturing", "abrasives manufacturing");
+
+        List<SearchResult> ordered = formatter.orderAnswerSourceStack(
+            List.of(rainShelter, foundryRelated, abrasiveAnchor)
+        );
+
+        assertEquals(List.of(rainShelter, foundryRelated, abrasiveAnchor), ordered);
+        assertEquals(
+            "GD-345 \u00B7 ANCHOR \u00B7 tarp cord rain shelter",
+            formatter.buildStationSourceButtonLabel(rainShelter, 0, 3, true)
+        );
+        assertEquals(
+            "GD-220 \u00B7 TOPIC \u00B7 abrasives manufacturing",
+            formatter.buildStationSourceButtonLabel(abrasiveAnchor, 2, 3, false)
         );
     }
 }

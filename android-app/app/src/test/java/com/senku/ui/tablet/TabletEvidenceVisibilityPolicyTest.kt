@@ -164,7 +164,7 @@ class TabletEvidenceVisibilityPolicyTest {
     }
 
     @Test
-    fun answerModeSourceRowsCollapseRainShelterStackToThreeMockCards() {
+    fun answerModeSourceRowsUseRealRainShelterGraphByDefault() {
         val anchor = AnchorState(
             key = "gd-345",
             id = "GD-345",
@@ -185,34 +185,38 @@ class TabletEvidenceVisibilityPolicyTest {
         assertEquals(
             listOf(
                 TabletEvidenceCardRow(
-                    guideId = "GD-220",
+                    guideId = "GD-345",
                     relation = "ANCHOR",
+                    title = "Tarp & Cord Shelters",
+                ),
+                TabletEvidenceCardRow(
+                    guideId = "GD-294",
+                    relation = "RELATED",
+                    title = "Cave Shelter Systems & Cold-Weather",
+                ),
+                TabletEvidenceCardRow(
+                    guideId = "GD-220",
+                    relation = "RELATED",
                     title = "Abrasives Manufacturing",
-                    match = "74%",
-                    quote = "Every melt starts with a foundry safety check, not with metal charge...",
                 ),
                 TabletEvidenceCardRow(
                     guideId = "GD-132",
                     relation = "RELATED",
                     title = "Foundry & Metal Casting",
-                    match = "68%",
-                    quote = "Pitch the ridgeline along prevailing wind. Tension corners with prusik or taut-line hitches.",
                 ),
                 TabletEvidenceCardRow(
-                    guideId = "GD-345",
-                    relation = "TOPIC",
-                    title = "Tarp & Cord Shelters",
-                    match = "61%",
-                    quote = "A simple ridgeline shelter requires only tarp, cord, and two anchor points.",
+                    guideId = "GD-695",
+                    relation = "RELATED",
+                    title = "Hurricane & Severe Storm Sheltering",
                 ),
             ),
             rows,
         )
-        assertEquals(3, buildAnswerModeSourceHeaderCount(anchor, xrefs, answerSourceCount = 7))
+        assertEquals(7, buildAnswerModeSourceHeaderCount(anchor, xrefs, answerSourceCount = 7))
     }
 
     @Test
-    fun answerModeSourceRowsForceCanonicalRainShelterRailFromGd345Anchor() {
+    fun answerModeSourceRowsDoNotForceCanonicalRainShelterRailFromGd345AnchorByDefault() {
         val anchor = AnchorState(
             key = "gd-345",
             id = "GD-345",
@@ -232,9 +236,45 @@ class TabletEvidenceVisibilityPolicyTest {
 
         val rows = tabletAnswerModeSourceRows(anchor, xrefs)
 
+        assertEquals(listOf("GD-345", "GD-294", "GD-618", "GD-446", "GD-695", "GD-484", "GD-109"), rows.map { it.guideId })
+        assertEquals(List(7) { "" }, rows.map { it.match })
+        assertEquals(7, buildAnswerModeSourceHeaderCount(anchor, xrefs, answerSourceCount = 7))
+    }
+
+    @Test
+    fun answerModeSourceRowsCollapseRainShelterStackOnlyWhenReviewDemoEnabled() {
+        val anchor = AnchorState(
+            key = "gd-345",
+            id = "GD-345",
+            title = "Tarp & Cord Shelters",
+            section = "",
+            snippet = "",
+            hasSource = true,
+        )
+        val xrefs = listOf(
+            XRefState(id = "GD-294", title = "Cave Shelter Systems & Cold-Weather"),
+            XRefState(id = "GD-220", title = "Abrasives Manufacturing"),
+            XRefState(id = "GD-132", title = "Foundry & Metal Casting"),
+            XRefState(id = "GD-695", title = "Hurricane & Severe Storm Sheltering"),
+        )
+
+        val rows = tabletAnswerModeSourceRows(
+            anchor = anchor,
+            xrefs = xrefs,
+            reviewDemoEvidenceStackEnabled = true,
+        )
+
         assertEquals(listOf("GD-220", "GD-132", "GD-345"), rows.map { it.guideId })
         assertEquals(listOf("74%", "68%", "61%"), rows.map { it.match })
-        assertEquals(3, buildAnswerModeSourceHeaderCount(anchor, xrefs, answerSourceCount = 7))
+        assertEquals(
+            3,
+            buildAnswerModeSourceHeaderCount(
+                anchor = anchor,
+                xrefs = xrefs,
+                answerSourceCount = 7,
+                reviewDemoEvidenceStackEnabled = true,
+            ),
+        )
     }
 
     @Test
@@ -271,7 +311,7 @@ class TabletEvidenceVisibilityPolicyTest {
     }
 
     @Test
-    fun answerModeSourceRowsKeepMatchScoresSeparateFromReferenceRelation() {
+    fun answerModeSourceRowsKeepReviewDemoMatchScoresSeparateFromReferenceRelation() {
         val rows = tabletAnswerModeSourceRows(
             anchor = AnchorState(
                 key = "gd-345",
@@ -282,6 +322,7 @@ class TabletEvidenceVisibilityPolicyTest {
                 hasSource = true,
             ),
             xrefs = emptyList(),
+            reviewDemoEvidenceStackEnabled = true,
         )
 
         assertEquals(listOf("74%", "68%", "61%"), rows.map { it.match })

@@ -198,6 +198,7 @@ public final class DetailActivity extends AppCompatActivity {
     private static final String EXTRA_GUIDE_MODE_LABEL = "guide_mode_label";
     private static final String EXTRA_GUIDE_MODE_SUMMARY = "guide_mode_summary";
     private static final String EXTRA_GUIDE_MODE_ANCHOR_LABEL = "guide_mode_anchor_label";
+    private static final String EXTRA_PRODUCT_REVIEW_MODE = MainActivity.EXTRA_PRODUCT_REVIEW_MODE;
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
     private final Handler uiHandler = new Handler(Looper.getMainLooper());
     private final AnswerPresenter answerPresenter =
@@ -350,6 +351,7 @@ public final class DetailActivity extends AppCompatActivity {
     private DetailThreadHistoryRenderer detailThreadHistoryRenderer;
 
     private boolean answerMode;
+    private boolean productReviewMode;
     private String currentTitle;
     private String currentSubtitle;
     private String currentBody;
@@ -1222,6 +1224,18 @@ public final class DetailActivity extends AppCompatActivity {
         });
     }
 
+    static boolean resolveProductReviewModeForTest(boolean hasReviewModeExtra, boolean reviewModeEnabled) {
+        return hasReviewModeExtra && reviewModeEnabled;
+    }
+
+    private static boolean resolveProductReviewMode(Intent intent) {
+        return intent != null
+            && resolveProductReviewModeForTest(
+                intent.hasExtra(EXTRA_PRODUCT_REVIEW_MODE),
+                intent.getBooleanExtra(EXTRA_PRODUCT_REVIEW_MODE, false)
+            );
+    }
+
     @SuppressWarnings("unchecked")
     private void readIntent() {
         Intent intent = getIntent();
@@ -1237,6 +1251,7 @@ public final class DetailActivity extends AppCompatActivity {
         currentAnswerConfidenceLabel = confidenceLabelFromExtra(intent.getStringExtra(EXTRA_CONFIDENCE_LABEL));
         currentAnswerResponseMode = answerModeFromExtra(intent.getStringExtra(EXTRA_ANSWER_MODE));
         answerMode = intent.getBooleanExtra(EXTRA_IS_ANSWER, false);
+        productReviewMode = resolveProductReviewMode(intent);
         pendingAutoFollowUpQuery = safe(intent.getStringExtra(EXTRA_AUTO_FOLLOWUP_QUERY)).trim();
         pendingGeneration = intent.getBooleanExtra(EXTRA_PENDING_GENERATION, false);
         pendingSessionUsed = intent.getBooleanExtra(EXTRA_PENDING_SESSION_USED, false);
@@ -2774,7 +2789,8 @@ public final class DetailActivity extends AppCompatActivity {
             buildTabletGuideModeAnchorLabel(visualOwnerSource),
             safe(tabletStatusText),
             buildTabletGuideSectionCount(displaySource),
-            detailMode
+            detailMode,
+            productReviewMode
         );
     }
 
@@ -6921,7 +6937,10 @@ public final class DetailActivity extends AppCompatActivity {
 
     private DetailSourcePresentationFormatter detailSourcePresentationFormatter() {
         if (detailSourcePresentationFormatter == null) {
-            detailSourcePresentationFormatter = new DetailSourcePresentationFormatter(this);
+            detailSourcePresentationFormatter = new DetailSourcePresentationFormatter(
+                this,
+                ReviewDemoPolicy.isSourceStackDemoEnabled(productReviewMode)
+            );
         }
         return detailSourcePresentationFormatter;
     }

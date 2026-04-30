@@ -76,6 +76,14 @@ public final class DetailActivityPhoneGuideChromeTest {
     }
 
     @Test
+    public void productReviewModeRequiresExplicitDetailIntentExtra() {
+        assertFalse(DetailActivity.resolveProductReviewModeForTest(false, false));
+        assertFalse(DetailActivity.resolveProductReviewModeForTest(false, true));
+        assertFalse(DetailActivity.resolveProductReviewModeForTest(true, false));
+        assertTrue(DetailActivity.resolveProductReviewModeForTest(true, true));
+    }
+
+    @Test
     public void portraitGuidePaperKeepsOuterInsetWiderThanLandscape() {
         assertTrue(
             DetailActivity.resolvePhoneGuideViewportHorizontalPaddingDp(false) >

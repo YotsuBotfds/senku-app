@@ -209,53 +209,83 @@ internal fun threadRailSourceTitleLabel(source: SourceState, guideMode: Boolean)
     }
 }
 
-internal fun threadRailSourceDisplayLabel(source: SourceState, guideMode: Boolean): String {
+internal fun threadRailSourceDisplayLabel(
+    source: SourceState,
+    guideMode: Boolean,
+    reviewDemoSourcePolicy: Boolean = false,
+): String {
     val sourceId = source.id.trim()
     if (sourceId.isEmpty()) {
         return threadRailSourceTitleLabel(source, guideMode)
     }
     if (!guideMode) {
-        return "$sourceId \u2022 ${threadRailSourceRelationLabel(source)}"
+        return "$sourceId \u2022 ${threadRailSourceRelationLabel(source, reviewDemoSourcePolicy)}"
     }
     return when {
-        threadRailSourceContextPriority(source) >= 3 -> "$sourceId - RAIN SHELTER"
+        reviewDemoSourcePolicy && threadRailSourceContextPriority(source) >= 3 -> "$sourceId - RAIN SHELTER"
         source.isAnchor -> "$sourceId - ANCHOR"
         source.isSelected -> "$sourceId - OPEN"
         else -> "$sourceId - RELATED"
     }
 }
 
-internal fun threadRailSourceRelationLabel(source: SourceState): String =
-    when (source.id.trim().uppercase()) {
-        "GD-220" -> "ANCHOR"
-        "GD-345" -> "TOPIC"
-        "GD-132" -> "RELATED"
-        else -> when {
-            threadRailSourceContextPriority(source) >= 3 -> "TOPIC"
-            source.isAnchor -> "ANCHOR"
-            source.isSelected -> "CURRENT"
-            else -> "SOURCE"
+internal fun threadRailSourceRelationLabel(
+    source: SourceState,
+    reviewDemoSourcePolicy: Boolean = false,
+): String =
+    if (reviewDemoSourcePolicy) {
+        when (source.id.trim().uppercase()) {
+            "GD-220" -> "ANCHOR"
+            "GD-345" -> "TOPIC"
+            "GD-132" -> "RELATED"
+            else -> threadRailGenericSourceRelationLabel(source)
         }
+    } else {
+        threadRailGenericSourceRelationLabel(source)
     }
 
-internal fun threadRailShouldShowSource(source: SourceState, guideMode: Boolean): Boolean =
-    threadRailSourceDisplayLabel(source, guideMode).isNotEmpty() ||
+internal fun threadRailGenericSourceRelationLabel(source: SourceState): String =
+    when {
+        source.isAnchor -> "ANCHOR"
+        source.isSelected -> "CURRENT"
+        else -> "SOURCE"
+    }
+
+internal fun threadRailShouldShowSource(
+    source: SourceState,
+    guideMode: Boolean,
+    reviewDemoSourcePolicy: Boolean = false,
+): Boolean =
+    threadRailSourceDisplayLabel(source, guideMode, reviewDemoSourcePolicy).isNotEmpty() ||
         threadRailSourceTitleLabel(source, guideMode).isNotEmpty()
 
-internal fun threadRailVisibleSources(sources: List<SourceState>, guideMode: Boolean): List<SourceState> {
-    val visibleSources = sources.filter { threadRailShouldShowSource(it, guideMode) }
-    if (guideMode) {
-        return visibleSources.sortedWith(compareBy<SourceState> { threadRailGuideSourceOrder(it) })
+internal fun threadRailVisibleSources(
+    sources: List<SourceState>,
+    guideMode: Boolean,
+    reviewDemoSourcePolicy: Boolean = false,
+): List<SourceState> {
+    val visibleSources = sources.filter { threadRailShouldShowSource(it, guideMode, reviewDemoSourcePolicy) }
+    if (guideMode && reviewDemoSourcePolicy) {
+        return visibleSources.sortedWith(compareBy<SourceState> {
+            threadRailGuideSourceOrder(it, reviewDemoSourcePolicy = true)
+        })
     }
     return visibleSources
 }
 
-internal fun threadRailGuideSourceOrder(source: SourceState): Int =
-    when (source.id.trim().uppercase()) {
-        "GD-220" -> 0
-        "GD-132" -> 1
-        "GD-345" -> 2
-        else -> 10 - threadRailSourceContextPriority(source)
+internal fun threadRailGuideSourceOrder(
+    source: SourceState,
+    reviewDemoSourcePolicy: Boolean = false,
+): Int =
+    if (reviewDemoSourcePolicy) {
+        when (source.id.trim().uppercase()) {
+            "GD-220" -> 0
+            "GD-132" -> 1
+            "GD-345" -> 2
+            else -> 10 - threadRailSourceContextPriority(source)
+        }
+    } else {
+        0
     }
 
 private fun String.isConfusingSourceFallbackTitle(): Boolean =
@@ -288,6 +318,7 @@ fun ThreadRail(
     onTurnClick: (String) -> Unit,
     onSourceClick: (String) -> Unit,
     modifier: Modifier = Modifier,
+    reviewDemoSourcePolicy: Boolean = false,
 ) {
     val colors = SenkuTheme.colors
     val scrollState = rememberScrollState()
@@ -328,7 +359,7 @@ fun ThreadRail(
             }
         }
 
-        val visibleSources = threadRailVisibleSources(sources, guideMode)
+        val visibleSources = threadRailVisibleSources(sources, guideMode, reviewDemoSourcePolicy)
 
         if (showSourceRows) {
             RailSection(
@@ -343,6 +374,7 @@ fun ThreadRail(
                         SourcePill(
                             source = source,
                             guideMode = guideMode,
+                            reviewDemoSourcePolicy = reviewDemoSourcePolicy,
                             onClick = { onSourceClick(source.key) },
                         )
                     }
@@ -536,6 +568,7 @@ private fun ThreadTurnRow(
 private fun SourcePill(
     source: SourceState,
     guideMode: Boolean,
+    reviewDemoSourcePolicy: Boolean,
     onClick: () -> Unit,
 ) {
     val colors = SenkuTheme.colors
@@ -575,7 +608,7 @@ private fun SourcePill(
                 modifier = Modifier.weight(1f),
                 verticalArrangement = Arrangement.spacedBy(2.dp),
             ) {
-                val displayLabel = threadRailSourceDisplayLabel(source, guideMode)
+                val displayLabel = threadRailSourceDisplayLabel(source, guideMode, reviewDemoSourcePolicy)
                 val titleLabel = threadRailSourceTitleLabel(source, guideMode)
                 val scoreLabel = if (guideMode) "" else tabletThreadSourceScoreLabel(source)
                 Text(

@@ -16,6 +16,7 @@ import java.util.Locale;
 
 final class DetailSourcePresentationFormatter {
     private final Context context;
+    private final boolean reviewDemoSourceStackEnabled;
 
     static final class EvidenceCard {
         final String guideId;
@@ -46,7 +47,12 @@ final class DetailSourcePresentationFormatter {
     }
 
     DetailSourcePresentationFormatter(Context context) {
+        this(context, false);
+    }
+
+    DetailSourcePresentationFormatter(Context context, boolean reviewDemoSourceStackEnabled) {
         this.context = context;
+        this.reviewDemoSourceStackEnabled = reviewDemoSourceStackEnabled;
     }
 
     EvidenceCard buildEvidenceCard(SearchResult source, int position, String mode) {
@@ -316,7 +322,7 @@ final class DetailSourcePresentationFormatter {
         return title.isEmpty() ? context.getString(R.string.detail_inline_sources_label) : title;
     }
 
-    private static String buildInlineEvidenceChipLabel(SearchResult source, boolean primaryAnchorChip) {
+    private String buildInlineEvidenceChipLabel(SearchResult source, boolean primaryAnchorChip) {
         if (source == null) {
             return "";
         }
@@ -406,7 +412,7 @@ final class DetailSourcePresentationFormatter {
         return "RELATED";
     }
 
-    private static String buildEvidenceMatchLabel(SearchResult source, int position) {
+    private String buildEvidenceMatchLabel(SearchResult source, int position) {
         String reviewedRainShelterMatch = reviewedRainShelterMatchLabel(source, position);
         if (!reviewedRainShelterMatch.isEmpty()) {
             return reviewedRainShelterMatch;
@@ -416,8 +422,8 @@ final class DetailSourcePresentationFormatter {
         return Math.max(55, Math.min(99, score)) + "%";
     }
 
-    private static String reviewedRainShelterMatchLabel(SearchResult source, int position) {
-        if (source == null || position < 0 || position > 2) {
+    private String reviewedRainShelterMatchLabel(SearchResult source, int position) {
+        if (!reviewDemoSourceStackEnabled || source == null || position < 0 || position > 2) {
             return "";
         }
         String guideId = safe(source.guideId).trim();
@@ -435,8 +441,8 @@ final class DetailSourcePresentationFormatter {
         return "";
     }
 
-    private static String reviewedRainShelterQuote(SearchResult source) {
-        if (source == null) {
+    private String reviewedRainShelterQuote(SearchResult source) {
+        if (!reviewDemoSourceStackEnabled || source == null) {
             return "";
         }
         String guideId = safe(source.guideId).trim();
@@ -524,8 +530,8 @@ final class DetailSourcePresentationFormatter {
         return "RELATED";
     }
 
-    private static String reviewedRainShelterStackLabel(SearchResult source, int index, int total) {
-        if (source == null || total < 3 || index < 0 || index > 2) {
+    private String reviewedRainShelterStackLabel(SearchResult source, int index, int total) {
+        if (!reviewDemoSourceStackEnabled || source == null || total < 3 || index < 0 || index > 2) {
             return "";
         }
         String guideId = safe(source.guideId).trim();
@@ -547,8 +553,8 @@ final class DetailSourcePresentationFormatter {
         return "";
     }
 
-    private static String reviewedRainShelterRoleLabel(SearchResult source) {
-        if (source == null) {
+    private String reviewedRainShelterRoleLabel(SearchResult source) {
+        if (!reviewDemoSourceStackEnabled || source == null) {
             return "";
         }
         String guideId = safe(source.guideId).trim();
@@ -566,7 +572,7 @@ final class DetailSourcePresentationFormatter {
         return "";
     }
 
-    private static String sourceStackTitle(SearchResult source) {
+    private String sourceStackTitle(SearchResult source) {
         if (source == null) {
             return "";
         }
@@ -579,17 +585,19 @@ final class DetailSourcePresentationFormatter {
                 safe(source.topicTags) + " " +
                 safe(source.structureType)
         ).toLowerCase(Locale.US);
-        if ("GD-220".equalsIgnoreCase(guideId) && containsAll(combined, "abrasives", "manufacturing")) {
-            return "Abrasives Manufacturing";
-        }
-        if ("GD-132".equalsIgnoreCase(guideId) && containsAll(combined, "foundry", "metal", "casting")) {
-            return "Foundry & Metal Casting";
-        }
-        if ("GD-345".equalsIgnoreCase(guideId)
-            && (containsAll(combined, "tarp", "cord")
-                || containsAll(combined, "rain", "shelter")
-                || combined.contains("ridgeline shelter"))) {
-            return "Tarp & Cord Shelters";
+        if (reviewDemoSourceStackEnabled) {
+            if ("GD-220".equalsIgnoreCase(guideId) && containsAll(combined, "abrasives", "manufacturing")) {
+                return "Abrasives Manufacturing";
+            }
+            if ("GD-132".equalsIgnoreCase(guideId) && containsAll(combined, "foundry", "metal", "casting")) {
+                return "Foundry & Metal Casting";
+            }
+            if ("GD-345".equalsIgnoreCase(guideId)
+                && (containsAll(combined, "tarp", "cord")
+                    || containsAll(combined, "rain", "shelter")
+                    || combined.contains("ridgeline shelter"))) {
+                return "Tarp & Cord Shelters";
+            }
         }
         String title = safe(source.title).trim();
         if (!title.isEmpty()) {
@@ -598,7 +606,7 @@ final class DetailSourcePresentationFormatter {
         return trimHeaderLabelStatic(safe(source.sectionHeading).trim());
     }
 
-    private static String sourceStackAnchorLabel(SearchResult source, String title, String section) {
+    private String sourceStackAnchorLabel(SearchResult source, String title, String section) {
         String cleanedSection = safe(section).trim();
         if (cleanedSection.isEmpty() || sameLabel(cleanedSection, title)) {
             return "";
@@ -641,7 +649,7 @@ final class DetailSourcePresentationFormatter {
         return containsAll(combined, terms);
     }
 
-    private static boolean containsReviewedRainShelterSource(List<SearchResult> sources) {
+    private boolean containsReviewedRainShelterSource(List<SearchResult> sources) {
         if (sources == null) {
             return false;
         }
@@ -653,8 +661,8 @@ final class DetailSourcePresentationFormatter {
         return false;
     }
 
-    private static int reviewedRainShelterSourceRank(SearchResult source) {
-        if (source == null) {
+    private int reviewedRainShelterSourceRank(SearchResult source) {
+        if (!reviewDemoSourceStackEnabled || source == null) {
             return Integer.MAX_VALUE;
         }
         String guideId = safe(source.guideId).trim();

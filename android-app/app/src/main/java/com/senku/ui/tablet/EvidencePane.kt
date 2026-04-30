@@ -92,6 +92,8 @@ fun EvidencePane(
     xrefs: List<XRefState>,
     answerMode: Boolean,
     answerSourceCount: Int = 0,
+    // Future call sites that intentionally render review/demo fixtures should set this explicitly.
+    reviewDemoEvidenceStackEnabled: Boolean = false,
     onAnchorClick: () -> Unit,
     onXRefClick: (String) -> Unit,
     modifier: Modifier = Modifier,
@@ -114,6 +116,7 @@ fun EvidencePane(
             xrefs = xrefs,
             answerMode = answerMode,
             answerSourceCount = answerSourceCount,
+            reviewDemoEvidenceStackEnabled = reviewDemoEvidenceStackEnabled,
             onAnchorClick = onAnchorClick,
             onXRefClick = onXRefClick,
             landmark = sourceGraphLandmark,
@@ -346,19 +349,25 @@ private fun CrossReferenceSection(
     xrefs: List<XRefState>,
     answerMode: Boolean,
     answerSourceCount: Int = 0,
+    reviewDemoEvidenceStackEnabled: Boolean = false,
     onAnchorClick: () -> Unit,
     onXRefClick: (String) -> Unit,
     landmark: String,
     emptyDescription: String,
 ) {
     val visibleXRefs = tabletSourceGraphVisibleXRefs(anchor, xrefs)
-    val answerRows = tabletAnswerModeSourceRows(anchor, visibleXRefs)
+    val answerRows = tabletAnswerModeSourceRows(
+        anchor = anchor,
+        xrefs = visibleXRefs,
+        reviewDemoEvidenceStackEnabled = reviewDemoEvidenceStackEnabled,
+    )
     val referenceRows = tabletGuideModeReferenceRows(anchor, visibleXRefs)
     val referenceCount = buildCrossReferenceCardCount(anchor, visibleXRefs)
     val sourceCount = buildAnswerModeSourceHeaderCount(
         anchor = anchor,
         xrefs = visibleXRefs,
         answerSourceCount = answerSourceCount,
+        reviewDemoEvidenceStackEnabled = reviewDemoEvidenceStackEnabled,
     )
     val headerCount = if (answerMode) sourceCount else referenceCount
     val hasRows = if (answerMode) answerRows.isNotEmpty() else referenceRows.isNotEmpty()
@@ -491,10 +500,15 @@ internal fun buildAnswerModeSourceHeaderCount(
     anchor: AnchorState,
     xrefs: List<XRefState>,
     answerSourceCount: Int,
+    reviewDemoEvidenceStackEnabled: Boolean = false,
 ): Int {
     val visibleXRefs = tabletSourceGraphVisibleXRefs(anchor, xrefs)
-    val answerRows = tabletAnswerModeSourceRows(anchor, visibleXRefs)
-    if (answerRows.size == 3 && containsRainShelterAnswerStack(anchor, visibleXRefs)) {
+    val answerRows = tabletAnswerModeSourceRows(
+        anchor = anchor,
+        xrefs = visibleXRefs,
+        reviewDemoEvidenceStackEnabled = reviewDemoEvidenceStackEnabled,
+    )
+    if (reviewDemoEvidenceStackEnabled && answerRows.size == 3 && containsRainShelterAnswerStack(anchor, visibleXRefs)) {
         return 3
     }
     return maxOf(
@@ -506,9 +520,13 @@ internal fun buildAnswerModeSourceHeaderCount(
 internal fun answerModeSourceSectionTitle(sourceCount: Int): String =
     "SOURCES \u2022 ${sourceCount.coerceAtLeast(0)}"
 
-internal fun tabletAnswerModeSourceRows(anchor: AnchorState, xrefs: List<XRefState>): List<TabletEvidenceCardRow> {
+internal fun tabletAnswerModeSourceRows(
+    anchor: AnchorState,
+    xrefs: List<XRefState>,
+    reviewDemoEvidenceStackEnabled: Boolean = false,
+): List<TabletEvidenceCardRow> {
     val visibleXRefs = tabletSourceGraphVisibleXRefs(anchor, xrefs)
-    if (containsRainShelterAnswerStack(anchor, visibleXRefs)) {
+    if (reviewDemoEvidenceStackEnabled && containsRainShelterAnswerStack(anchor, visibleXRefs)) {
         return listOf(
             TabletEvidenceCardRow(
                 guideId = "GD-220",

@@ -30,6 +30,12 @@ public final class ReviewDemoPolicyTest {
     }
 
     @Test
+    public void sourceStackDemoRequiresExplicitReviewMode() {
+        assertFalse(ReviewDemoPolicy.isSourceStackDemoEnabled(false));
+        assertTrue(ReviewDemoPolicy.isSourceStackDemoEnabled(true));
+    }
+
+    @Test
     public void reviewSearchLatencyOnlyAppliesToTargetMockQueryWhenEnabled() {
         assertEquals(
             "Search  rain shelter - 4 results \u2022 12MS",

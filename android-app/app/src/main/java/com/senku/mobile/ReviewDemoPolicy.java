@@ -63,6 +63,10 @@ final class ReviewDemoPolicy {
         SearchResult loadGuideById(String guideId);
     }
 
+    static boolean isSourceStackDemoEnabled(boolean productReviewMode) {
+        return productReviewMode;
+    }
+
     static String buildRainShelterUncertainFitAnswerBody(
         boolean productReviewMode,
         String query,

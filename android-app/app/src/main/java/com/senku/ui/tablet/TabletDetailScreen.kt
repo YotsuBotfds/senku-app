@@ -104,6 +104,7 @@ data class TabletDetailState(
     val statusText: String = "",
     val guideSectionCount: Int = 0,
     val detailMode: TabletDetailMode = TabletDetailMode.Answer,
+    val reviewDemoMode: Boolean = false,
 ) {
     constructor(
         guideId: String,
@@ -128,6 +129,7 @@ data class TabletDetailState(
         guideModeAnchorLabel: String = "",
         statusText: String = "",
         guideSectionCount: Int = 0,
+        reviewDemoMode: Boolean = false,
     ) : this(
         guideId = guideId,
         guideTitle = guideTitle,
@@ -152,6 +154,7 @@ data class TabletDetailState(
         statusText = statusText,
         guideSectionCount = guideSectionCount,
         detailMode = TabletDetailMode.Answer,
+        reviewDemoMode = reviewDemoMode,
     )
 }
 
@@ -1357,6 +1360,7 @@ private fun TabletDetailBodyRow(
                     onTurnClick = onTurnClick,
                     onSourceClick = onSourceClick,
                     modifier = railModifier,
+                    reviewDemoSourcePolicy = state.reviewDemoMode,
                 )
             }
 
@@ -1513,6 +1517,7 @@ private fun DetailWorkspace(
                             xrefs = evidenceGraph.xrefs,
                             answerMode = state.isAnswerOrThreadMode(),
                             answerSourceCount = state.resolvedAnswerSourceCount(),
+                            reviewDemoEvidenceStackEnabled = state.reviewDemoMode,
                             onAnchorClick = onAnchorClick,
                             onXRefClick = onXRefClick,
                             modifier = Modifier

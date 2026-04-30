@@ -3488,7 +3488,11 @@ public final class MainActivity extends AppCompatActivity {
     }
 
     private void applyPackDetailExtras(Intent intent) {
-        if (intent == null || installedPack == null || installedPack.manifest == null) {
+        if (intent == null) {
+            return;
+        }
+        intent.putExtra(EXTRA_PRODUCT_REVIEW_MODE, productReviewMode);
+        if (installedPack == null || installedPack.manifest == null) {
             return;
         }
         PackManifest manifest = installedPack.manifest;
