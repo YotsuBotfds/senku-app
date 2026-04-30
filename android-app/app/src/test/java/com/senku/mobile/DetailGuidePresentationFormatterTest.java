@@ -121,7 +121,7 @@ public final class DetailGuidePresentationFormatterTest {
                 + "\u2014 \u00a7 2 \u00b7 REQUIRED READING\n"
                 + "GD-220 \u00b7 Abrasives Manufacturing\n"
                 + "GD-499 \u00b7 Bellows & Forge Blower Construction",
-            DetailGuidePresentationFormatter.buildGuideBody(result)
+            DetailGuidePresentationFormatter.buildGuideBody(result, true)
         );
     }
 
@@ -154,7 +154,7 @@ public final class DetailGuidePresentationFormatterTest {
             "guide-focus"
         );
 
-        String displayBody = DetailGuidePresentationFormatter.buildGuideBody(result);
+        String displayBody = DetailGuidePresentationFormatter.buildGuideBody(result, true);
 
         assertTrue(displayBody.contains("GD-132 \u00b7 17 SECTIONS \u00b7 OPENED FROM GD-220"));
         assertFalse(displayBody.contains("GD-132 \u00b7 26 SECTIONS"));
@@ -215,7 +215,7 @@ public final class DetailGuidePresentationFormatterTest {
             "guide-focus"
         );
 
-        String displayBody = DetailGuidePresentationFormatter.buildGuideBody(result);
+        String displayBody = DetailGuidePresentationFormatter.buildGuideBody(result, true);
 
         assertTrue(displayBody.contains("GD-132 \u00b7 17 SECTIONS \u00b7 OPENED FROM GD-220"));
         assertFalse(displayBody.contains("GD-132 \u00b7 26 SECTIONS"));
@@ -246,7 +246,7 @@ public final class DetailGuidePresentationFormatterTest {
             "guide"
         );
 
-        String displayBody = DetailGuidePresentationFormatter.buildGuideBody(result);
+        String displayBody = DetailGuidePresentationFormatter.buildGuideBody(result, true);
 
         assertTrue(displayBody.contains("GD-132 \u00b7 17 SECTIONS \u00b7 OPENED FROM GD-220"));
         assertFalse(displayBody.contains("GD-132 \u00b7 26 SECTIONS"));
@@ -254,6 +254,41 @@ public final class DetailGuidePresentationFormatterTest {
         assertTrue(displayBody.contains("GD-499 \u00b7 Bellows & Forge Blower Construction"));
         assertTrue(displayBody.contains("GD-225 \u00b7 Bloomery Furnace Construction"));
         assertFalse(displayBody.contains("REQUIRED READING \u00b7 Chemical Safety Guide"));
+    }
+
+    @Test
+    public void buildGuideBodyKeepsFoundryReviewFixturePathsDisabledByDefault() {
+        StringBuilder body = new StringBuilder();
+        body.append(":::danger\n")
+            .append("**EXTREME BURN HAZARD:** Keep every tool dry. Never cast alone.\n")
+            .append(":::\n\n")
+            .append(":::warning\n")
+            .append("**Required Reading:** Before attempting any procedures in this guide, read the [Chemical Safety Guide](chemical-safety.html) in full.\n")
+            .append(":::\n\n");
+        for (int i = 1; i <= 26; i++) {
+            body.append("## Section ").append(i).append(" Mock heading\n")
+                .append("Body ").append(i).append(".\n");
+        }
+
+        SearchResult result = new SearchResult(
+            "Foundry & Metal Casting",
+            "",
+            "",
+            body.toString(),
+            "GD-132",
+            "",
+            "metalworking",
+            "guide"
+        );
+
+        String displayBody = DetailGuidePresentationFormatter.buildGuideBody(result);
+
+        assertTrue(displayBody.contains("GD-132 \u00b7 26 SECTIONS"));
+        assertFalse(displayBody.contains("OPENED FROM GD-220"));
+        assertFalse(displayBody.contains("GD-220 \u00b7 Abrasives Manufacturing"));
+        assertFalse(displayBody.contains("GD-499 \u00b7 Bellows & Forge Blower Construction"));
+        assertFalse(displayBody.contains("GD-225 \u00b7 Bloomery Furnace Construction"));
+        assertTrue(displayBody.contains("REQUIRED READING \u00b7 Chemical Safety Guide"));
     }
 
     @Test
@@ -296,7 +331,7 @@ public final class DetailGuidePresentationFormatterTest {
                 + "GD-220 \u00b7 Abrasives Manufacturing\n"
                 + "GD-499 \u00b7 Bellows & Forge Blower Construction\n"
                 + "GD-225 \u00b7 Bloomery Furnace Construction",
-            DetailGuidePresentationFormatter.buildGuideBody(result)
+            DetailGuidePresentationFormatter.buildGuideBody(result, true)
         );
     }
 
@@ -401,7 +436,7 @@ public final class DetailGuidePresentationFormatterTest {
             "guide-focus"
         );
 
-        String displayBody = DetailGuidePresentationFormatter.buildGuideBody(result);
+        String displayBody = DetailGuidePresentationFormatter.buildGuideBody(result, true);
 
         assertTrue(displayBody.contains("GD-132 \u00b7 17 SECTIONS \u00b7 OPENED FROM GD-220"));
         assertTrue(displayBody.contains("DANGER \u00b7 EXTREME BURN HAZARD"));

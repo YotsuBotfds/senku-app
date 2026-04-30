@@ -59,6 +59,10 @@ final class DetailGuidePresentationFormatter {
     }
 
     static String buildGuideBody(SearchResult result) {
+        return buildGuideBody(result, false);
+    }
+
+    static String buildGuideBody(SearchResult result, boolean reviewDemoPresentationEnabled) {
         if (result == null) {
             return "";
         }
@@ -67,18 +71,28 @@ final class DetailGuidePresentationFormatter {
         String body = buildGuideBodyWithSection(sectionHeading, sourceBody);
         if (!body.isEmpty()) {
             body = polishGuideDisplayBody(body);
-            body = applyGuideRequiredReadingRows(result, sourceBody, body);
-            return prependGuidePaperHeader(result, body, inferGuideSectionCount(result, sourceBody, body));
+            body = applyGuideRequiredReadingRows(result, sourceBody, body, reviewDemoPresentationEnabled);
+            return prependGuidePaperHeader(
+                result,
+                body,
+                inferGuideSectionCount(result, sourceBody, body, reviewDemoPresentationEnabled),
+                reviewDemoPresentationEnabled
+            );
         }
         String sourceSnippet = safe(result.snippet);
         String snippetBody = buildGuideBodyWithSection(sectionHeading, sourceSnippet);
         snippetBody = polishGuideDisplayBody(snippetBody);
-        snippetBody = applyGuideRequiredReadingRows(result, sourceSnippet, snippetBody);
-        return prependGuidePaperHeader(result, snippetBody, inferGuideSectionCount(result, sourceSnippet, snippetBody));
+        snippetBody = applyGuideRequiredReadingRows(result, sourceSnippet, snippetBody, reviewDemoPresentationEnabled);
+        return prependGuidePaperHeader(
+            result,
+            snippetBody,
+            inferGuideSectionCount(result, sourceSnippet, snippetBody, reviewDemoPresentationEnabled),
+            reviewDemoPresentationEnabled
+        );
     }
 
     static int inferGuideSectionCountForRail(SearchResult result, String sourceText, String displayBody) {
-        return inferGuideSectionCount(result, sourceText, displayBody);
+        return inferGuideSectionCount(result, sourceText, displayBody, false);
     }
 
     static String normalizeGuideDisplayTextForLegacy(String text) {
@@ -677,7 +691,12 @@ final class DetailGuidePresentationFormatter {
         return !normalizedSection.isEmpty() && normalizedFirstLine.equals(normalizedSection);
     }
 
-    private static String prependGuidePaperHeader(SearchResult result, String body, int inferredSectionCount) {
+    private static String prependGuidePaperHeader(
+        SearchResult result,
+        String body,
+        int inferredSectionCount,
+        boolean reviewDemoPresentationEnabled
+    ) {
         String cleanedBody = safe(body).trim();
         if (cleanedBody.isEmpty()) {
             return "";
@@ -695,7 +714,7 @@ final class DetailGuidePresentationFormatter {
         if (!guideId.isEmpty()) {
             builder.append(guideId).append(" \u00b7 ")
                 .append(formatGuideSectionCount(inferredSectionCount));
-            String openedFrom = guidePaperOpenedFromLabel(result);
+            String openedFrom = guidePaperOpenedFromLabel(result, reviewDemoPresentationEnabled);
             if (!openedFrom.isEmpty()) {
                 builder.append(" \u00b7 ").append(openedFrom);
             }
@@ -705,7 +724,10 @@ final class DetailGuidePresentationFormatter {
         return builder.toString().trim();
     }
 
-    private static String guidePaperOpenedFromLabel(SearchResult result) {
+    private static String guidePaperOpenedFromLabel(SearchResult result, boolean reviewDemoPresentationEnabled) {
+        if (!reviewDemoPresentationEnabled) {
+            return "";
+        }
         String guideId = safe(result == null ? null : result.guideId).trim();
         if ("GD-132".equalsIgnoreCase(guideId)) {
             return "OPENED FROM GD-220";
@@ -713,15 +735,22 @@ final class DetailGuidePresentationFormatter {
         return "";
     }
 
-    private static int inferGuideSectionCount(SearchResult result, String sourceText, String displayBody) {
+    private static int inferGuideSectionCount(
+        SearchResult result,
+        String sourceText,
+        String displayBody,
+        boolean reviewDemoPresentationEnabled
+    ) {
         int displaySections = countGuideSections(displayBody);
         int sourceSections = countRawGuideSections(sourceText);
         int frontMatterRelatedCount = countFrontMatterListEntries(sourceText, "related");
-        if (isFoundryGuide(result) && frontMatterRelatedCount > 0) {
-            return frontMatterRelatedCount;
-        }
-        if (isFoundryGuide(result) && sourceSections >= FOUNDRY_LIVE_RELATED_SECTION_COUNT) {
-            return FOUNDRY_LIVE_RELATED_SECTION_COUNT;
+        if (reviewDemoPresentationEnabled) {
+            if (isFoundryGuide(result) && frontMatterRelatedCount > 0) {
+                return frontMatterRelatedCount;
+            }
+            if (isFoundryGuide(result) && sourceSections >= FOUNDRY_LIVE_RELATED_SECTION_COUNT) {
+                return FOUNDRY_LIVE_RELATED_SECTION_COUNT;
+            }
         }
         return Math.max(displaySections, sourceSections);
     }
@@ -802,12 +831,17 @@ final class DetailGuidePresentationFormatter {
         return count;
     }
 
-    private static String applyGuideRequiredReadingRows(SearchResult result, String sourceText, String displayBody) {
+    private static String applyGuideRequiredReadingRows(
+        SearchResult result,
+        String sourceText,
+        String displayBody,
+        boolean reviewDemoPresentationEnabled
+    ) {
         String cleanedBody = safe(displayBody).trim();
         if (cleanedBody.isEmpty()) {
             return cleanedBody;
         }
-        String requiredRows = buildGuideRequiredReadingRows(result, sourceText);
+        String requiredRows = buildGuideRequiredReadingRows(result, sourceText, reviewDemoPresentationEnabled);
         if (requiredRows.isEmpty()) {
             return cleanedBody;
         }
@@ -839,13 +873,17 @@ final class DetailGuidePresentationFormatter {
         return builder.toString().trim();
     }
 
-    private static String buildGuideRequiredReadingRows(SearchResult result, String sourceText) {
+    private static String buildGuideRequiredReadingRows(
+        SearchResult result,
+        String sourceText,
+        boolean reviewDemoPresentationEnabled
+    ) {
         String guideId = safe(result == null ? null : result.guideId).trim();
         if (!"GD-132".equals(guideId)) {
             return "";
         }
         java.util.ArrayList<String> slugs = frontMatterListEntries(sourceText, "related");
-        if (slugs.isEmpty() && isFoundryGuide(result)) {
+        if (slugs.isEmpty() && reviewDemoPresentationEnabled && isFoundryGuide(result)) {
             slugs.add("abrasives-manufacturing");
             slugs.add("bellows-forge-blower-construction");
             slugs.add("bloomery-furnace");
