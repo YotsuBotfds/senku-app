@@ -40,12 +40,6 @@ public final class PackRepository implements AutoCloseable {
     private static final long SEARCH_RERANK_BUDGET_MS = 60L;
     private static final long SEARCH_TOTAL_BUDGET_MS = 280L;
     private static final long FTS_RUNTIME_PROBE_BUDGET_MS = 25L;
-    private static final int CANDIDATE_TELEMETRY_TOP_N = 20;
-    private static final int CANDIDATE_TELEMETRY_FALLBACK_TOP_N = 10;
-    private static final int CANDIDATE_TELEMETRY_QUERY_LIMIT = 120;
-    private static final int CANDIDATE_TELEMETRY_SECTION_LIMIT = 40;
-    private static final int CANDIDATE_TELEMETRY_TOPIC_LIMIT = 60;
-    private static final int CANDIDATE_TELEMETRY_MAX_LINE_LENGTH = 4096;
     private static final Object FTS_RUNTIME_LOCK = new Object();
     private static volatile FtsRuntime cachedFtsRuntime;
     private final Object closeLock = new Object();
@@ -4149,9 +4143,9 @@ public final class PackRepository implements AutoCloseable {
         ArrayList<String> rows = new ArrayList<>();
         int capped = Math.min(results == null ? 0 : results.size(), scores == null ? 0 : scores.size());
         for (int index = 0; index < capped; index++) {
-            rows.add(formatTelemetryRow(index + 1, results.get(index), scores.get(index)));
+            rows.add(CandidateTelemetryFormatter.formatRow(index + 1, results.get(index), scores.get(index)));
         }
-        return buildCandidateTelemetryLine(stage, query, rows);
+        return CandidateTelemetryFormatter.buildLine(stage, query, rows);
     }
 
     private static void addFtsExpression(Set<String> expressions, String token) {
@@ -4694,11 +4688,11 @@ public final class PackRepository implements AutoCloseable {
     private static String buildLexicalCandidateTelemetryLine(String query, List<RankedChunk> hits) {
         ArrayList<String> rows = new ArrayList<>();
         if (hits != null) {
-            int capped = Math.min(CANDIDATE_TELEMETRY_TOP_N, hits.size());
+            int capped = CandidateTelemetryFormatter.limitedRowCount(hits.size());
             for (int index = 0; index < capped; index++) {
                 RankedChunk hit = hits.get(index);
                 rows.add(
-                    formatTelemetryRow(
+                    CandidateTelemetryFormatter.formatRow(
                         index + 1,
                         hit.guideId,
                         hit.sectionHeading,
@@ -4710,17 +4704,17 @@ public final class PackRepository implements AutoCloseable {
                 );
             }
         }
-        return buildCandidateTelemetryLine("lexical", query, rows);
+        return CandidateTelemetryFormatter.buildLine("lexical", query, rows);
     }
 
     private static String buildVectorCandidateTelemetryLine(String query, List<RankedChunk> hits) {
         ArrayList<String> rows = new ArrayList<>();
         if (hits != null) {
-            int capped = Math.min(CANDIDATE_TELEMETRY_TOP_N, hits.size());
+            int capped = CandidateTelemetryFormatter.limitedRowCount(hits.size());
             for (int index = 0; index < capped; index++) {
                 RankedChunk hit = hits.get(index);
                 rows.add(
-                    formatTelemetryRow(
+                    CandidateTelemetryFormatter.formatRow(
                         index + 1,
                         hit.guideId,
                         hit.sectionHeading,
@@ -4732,7 +4726,7 @@ public final class PackRepository implements AutoCloseable {
                 );
             }
         }
-        return buildCandidateTelemetryLine("vector", query, rows);
+        return CandidateTelemetryFormatter.buildLine("vector", query, rows);
     }
 
     private static String buildPrerankCandidateTelemetryLine(
@@ -4742,13 +4736,11 @@ public final class PackRepository implements AutoCloseable {
     ) {
         ArrayList<String> rows = new ArrayList<>();
         if (hits != null) {
-            int capped = limit <= 0
-                ? Math.min(CANDIDATE_TELEMETRY_TOP_N, hits.size())
-                : Math.min(Math.min(limit, CANDIDATE_TELEMETRY_TOP_N), hits.size());
+            int capped = CandidateTelemetryFormatter.limitedRowCount(hits.size(), limit);
             for (int index = 0; index < capped; index++) {
                 CombinedHit hit = hits.get(index);
                 rows.add(
-                    formatTelemetryRow(
+                    CandidateTelemetryFormatter.formatRow(
                         index + 1,
                         hit.chunk.guideId,
                         hit.chunk.sectionHeading,
@@ -4760,17 +4752,17 @@ public final class PackRepository implements AutoCloseable {
                 );
             }
         }
-        return buildCandidateTelemetryLine("prerank", query, rows);
+        return CandidateTelemetryFormatter.buildLine("prerank", query, rows);
     }
 
     private static String buildRerankedCandidateTelemetryLine(String query, List<RerankedResult> results) {
         ArrayList<String> rows = new ArrayList<>();
         if (results != null) {
-            int capped = Math.min(CANDIDATE_TELEMETRY_TOP_N, results.size());
+            int capped = CandidateTelemetryFormatter.limitedRowCount(results.size());
             for (int index = 0; index < capped; index++) {
                 RerankedResult result = results.get(index);
                 rows.add(
-                    formatTelemetryRow(
+                    CandidateTelemetryFormatter.formatRerankedRow(
                         index + 1,
                         result.result,
                         result.finalScore,
@@ -4780,132 +4772,7 @@ public final class PackRepository implements AutoCloseable {
                 );
             }
         }
-        return buildCandidateTelemetryLine("reranked", query, rows);
-    }
-
-    private static String buildCandidateTelemetryLine(String stage, String query, List<String> rows) {
-        int available = rows == null ? 0 : rows.size();
-        if (available == 0) {
-            return composeCandidateTelemetryLine(stage, query, Collections.emptyList(), false);
-        }
-
-        int rowCount = Math.min(CANDIDATE_TELEMETRY_TOP_N, available);
-        String line = composeCandidateTelemetryLine(stage, query, rows.subList(0, rowCount), false);
-        if (line.length() <= CANDIDATE_TELEMETRY_MAX_LINE_LENGTH) {
-            return line;
-        }
-
-        rowCount = Math.min(CANDIDATE_TELEMETRY_FALLBACK_TOP_N, available);
-        while (rowCount > 0) {
-            line = composeCandidateTelemetryLine(stage, query, rows.subList(0, rowCount), true);
-            if (line.length() <= CANDIDATE_TELEMETRY_MAX_LINE_LENGTH) {
-                return line;
-            }
-            rowCount -= 1;
-        }
-        return composeCandidateTelemetryLine(stage, query, Collections.emptyList(), true);
-    }
-
-    private static String composeCandidateTelemetryLine(
-        String stage,
-        String query,
-        List<String> rows,
-        boolean truncated
-    ) {
-        StringBuilder builder = new StringBuilder();
-        builder.append("search.candidates.")
-            .append(emptySafe(stage).trim())
-            .append(" query=\"")
-            .append(escapeTelemetryQuery(query))
-            .append("\" n=")
-            .append(rows == null ? 0 : rows.size());
-        if (truncated) {
-            builder.append(" truncated=true");
-        }
-        builder.append(" rows=[");
-        if (rows != null) {
-            for (int index = 0; index < rows.size(); index++) {
-                if (index > 0) {
-                    builder.append(" || ");
-                }
-                builder.append(rows.get(index));
-            }
-        }
-        builder.append("]");
-        return builder.toString();
-    }
-
-    private static String formatTelemetryRow(
-        int rank,
-        SearchResult result,
-        double score
-    ) {
-        return formatTelemetryRow(
-            rank,
-            result == null ? "" : result.guideId,
-            result == null ? "" : result.sectionHeading,
-            score,
-            result == null ? "" : result.structureType,
-            result == null ? "" : result.category,
-            result == null ? "" : result.topicTags
-        );
-    }
-
-    private static String formatTelemetryRow(
-        int rank,
-        SearchResult result,
-        double finalScore,
-        double baseScore,
-        int metadataBonus
-    ) {
-        return formatTelemetryRow(rank, result, finalScore) +
-            "|" + formatTelemetryNumber(baseScore) +
-            "|" + metadataBonus +
-            "|" + formatTelemetryNumber(finalScore);
-    }
-
-    private static String formatTelemetryRow(
-        int rank,
-        String guideId,
-        String sectionHeading,
-        double score,
-        String structureType,
-        String category,
-        String topicTags
-    ) {
-        return rank +
-            "|" + escapeTelemetryField(guideId, 24) +
-            "|" + escapeTelemetryField(sectionHeading, CANDIDATE_TELEMETRY_SECTION_LIMIT) +
-            "|" + formatTelemetryNumber(score) +
-            "|" + escapeTelemetryField(structureType, 24) +
-            "|" + escapeTelemetryField(category, 24) +
-            "|" + escapeTelemetryField(topicTags, CANDIDATE_TELEMETRY_TOPIC_LIMIT);
-    }
-
-    private static String formatTelemetryNumber(double value) {
-        if (!Double.isFinite(value)) {
-            return "";
-        }
-        return String.format(QUERY_LOCALE, "%.3f", value);
-    }
-
-    private static String escapeTelemetryQuery(String query) {
-        return escapeTelemetryValue(query, CANDIDATE_TELEMETRY_QUERY_LIMIT, true);
-    }
-
-    private static String escapeTelemetryField(String value, int limit) {
-        return escapeTelemetryValue(value, limit, false);
-    }
-
-    private static String escapeTelemetryValue(String value, int limit, boolean escapeQuotes) {
-        String safe = clip(value, limit)
-            .replace("\\", "\\\\")
-            .replace("|", "\\|")
-            .replace("]", "\\]");
-        if (escapeQuotes) {
-            safe = safe.replace("\"", "\\\"");
-        }
-        return safe;
+        return CandidateTelemetryFormatter.buildLine("reranked", query, rows);
     }
 
     private static void safeLogDebug(String message) {
