@@ -45,6 +45,16 @@ def make_summary(*, completed: bool = False) -> dict:
     }
 
 
+def add_text_checks(summary: dict, *, missing: list[str] | None = None) -> dict:
+    missing = [] if missing is None else missing
+    summary["text_checks"] = {
+        "requested": ["Senku", "Library"],
+        "passed": ["Senku"] if missing else ["Senku", "Library"],
+        "missing": missing,
+    }
+    return summary
+
+
 class ValidateAndroidPhysicalPhoneSmokeSummaryTests(unittest.TestCase):
     def write_summary(self, payload: object) -> Path:
         temp_dir = tempfile.TemporaryDirectory()
@@ -68,6 +78,50 @@ class ValidateAndroidPhysicalPhoneSmokeSummaryTests(unittest.TestCase):
         self.assertIsNotNone(data)
         self.assertEqual(data["status"], "completed")
         self.assertFalse(data["dry_run"])
+
+    def test_valid_dry_run_with_requested_text_checks_passes(self):
+        summary = make_summary()
+        summary["text_checks"] = {
+            "requested": ["Field manual", "Senku"],
+            "passed": [],
+            "missing": [],
+        }
+
+        data, errors = validate_summary(self.write_summary(summary))
+
+        self.assertEqual(errors, [])
+        self.assertIsNotNone(data)
+        self.assertEqual(data["text_checks"]["requested"], ["Field manual", "Senku"])
+
+    def test_valid_completed_text_checks_pass(self):
+        data, errors = validate_summary(
+            self.write_summary(add_text_checks(make_summary(completed=True)))
+        )
+
+        self.assertEqual(errors, [])
+        self.assertIsNotNone(data)
+        self.assertEqual(data["text_checks"]["passed"], ["Senku", "Library"])
+
+    def test_completed_text_checks_reject_missing_fragments(self):
+        summary = add_text_checks(make_summary(completed=True), missing=["Library"])
+
+        _, errors = validate_summary(self.write_summary(summary))
+
+        self.assertIn("expected root.text_checks.missing to be empty for completed summaries", errors)
+
+    def test_text_checks_validate_shape_and_membership(self):
+        summary = make_summary(completed=True)
+        summary["text_checks"] = {
+            "requested": ["Senku", ""],
+            "passed": ["Senku", "Other"],
+            "missing": [123],
+        }
+
+        _, errors = validate_summary(self.write_summary(summary))
+
+        self.assertIn("expected root.text_checks.requested[1] to be non-empty", errors)
+        self.assertIn("expected root.text_checks.passed item to be requested: 'Other'", errors)
+        self.assertIn("expected root.text_checks.missing[0] to be str, got int", errors)
 
     def test_completed_summary_requires_physical_contract_fields(self):
         summary = make_summary(completed=True)

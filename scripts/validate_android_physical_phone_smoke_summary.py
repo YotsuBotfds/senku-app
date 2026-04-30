@@ -40,6 +40,12 @@ REQUIRED_EVIDENCE_TYPES: dict[str, type | tuple[type, ...]] = {
     "focus_contains_launch_activity": (bool, type(None)),
 }
 
+REQUIRED_TEXT_CHECK_TYPES: dict[str, type | tuple[type, ...]] = {
+    "requested": list,
+    "passed": list,
+    "missing": list,
+}
+
 
 def _expect_type(
     data: dict[str, Any],
@@ -91,6 +97,46 @@ def _validate_common_contract(data: dict[str, Any], errors: list[str]) -> None:
         for key, expected_type in REQUIRED_EVIDENCE_TYPES.items():
             _expect_type(evidence, key, expected_type, errors, scope="root.evidence")
 
+    text_checks = data.get("text_checks")
+    if text_checks is not None:
+        if not isinstance(text_checks, dict):
+            errors.append(f"expected root.text_checks to be dict, got {type(text_checks).__name__}")
+        else:
+            for key, expected_type in REQUIRED_TEXT_CHECK_TYPES.items():
+                _expect_type(text_checks, key, expected_type, errors, scope="root.text_checks")
+            _validate_text_checks(text_checks, errors)
+
+
+def _expect_string_list(value: Any, key: str, errors: list[str]) -> list[str]:
+    if not isinstance(value, list):
+        return []
+
+    strings: list[str] = []
+    for index, item in enumerate(value):
+        if not isinstance(item, str):
+            errors.append(
+                f"expected root.text_checks.{key}[{index}] to be str, got {type(item).__name__}"
+            )
+        elif not item.strip():
+            errors.append(f"expected root.text_checks.{key}[{index}] to be non-empty")
+        else:
+            strings.append(item)
+    return strings
+
+
+def _validate_text_checks(text_checks: dict[str, Any], errors: list[str]) -> None:
+    requested = _expect_string_list(text_checks.get("requested"), "requested", errors)
+    passed = _expect_string_list(text_checks.get("passed"), "passed", errors)
+    missing = _expect_string_list(text_checks.get("missing"), "missing", errors)
+
+    requested_set = set(requested)
+    for fragment in passed:
+        if fragment not in requested_set:
+            errors.append(f"expected root.text_checks.passed item to be requested: {fragment!r}")
+    for fragment in missing:
+        if fragment not in requested_set:
+            errors.append(f"expected root.text_checks.missing item to be requested: {fragment!r}")
+
 
 def _validate_dry_run(data: dict[str, Any], errors: list[str]) -> None:
     _expect_equal(data, "status", "dry_run_only", errors)
@@ -105,6 +151,13 @@ def _validate_dry_run(data: dict[str, Any], errors: list[str]) -> None:
         errors.append(
             "expected root.evidence.focus_contains_launch_activity not to be true for dry-run summaries"
         )
+
+    text_checks = data.get("text_checks")
+    if isinstance(text_checks, dict):
+        if text_checks.get("passed"):
+            errors.append("expected root.text_checks.passed to be empty for dry-run summaries")
+        if text_checks.get("missing"):
+            errors.append("expected root.text_checks.missing to be empty for dry-run summaries")
 
 
 def _validate_completed(data: dict[str, Any], errors: list[str]) -> None:
@@ -126,6 +179,21 @@ def _validate_completed(data: dict[str, Any], errors: list[str]) -> None:
             errors,
             scope="root.evidence",
         )
+
+    text_checks = data.get("text_checks")
+    if isinstance(text_checks, dict):
+        requested = text_checks.get("requested")
+        passed = text_checks.get("passed")
+        missing = text_checks.get("missing")
+        if isinstance(requested, list) and isinstance(passed, list) and isinstance(missing, list):
+            accounted_for = set(passed) | set(missing)
+            for fragment in requested:
+                if isinstance(fragment, str) and fragment not in accounted_for:
+                    errors.append(
+                        f"expected requested text fragment to be passed or missing: {fragment!r}"
+                    )
+        if missing:
+            errors.append("expected root.text_checks.missing to be empty for completed summaries")
 
 
 def validate_summary(path: Path) -> tuple[dict[str, Any] | None, list[str]]:

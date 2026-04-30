@@ -7,7 +7,8 @@ param(
     [string]$FocusPath,
     [string]$ScreenshotPath,
     [string]$DumpPath,
-    [string]$LogcatPath
+    [string]$LogcatPath,
+    [string[]]$RequiredText = @()
 )
 
 $ErrorActionPreference = "Stop"
@@ -190,6 +191,48 @@ function Test-FocusContainsLaunchActivity {
         -or $Text -match "ResumedActivity:.*com\.senku\.mobile"
 }
 
+function Get-TextCheckSummary {
+    param(
+        [string[]]$Fragments,
+        [string]$DumpText
+    )
+
+    $requested = @($Fragments | Where-Object { -not [string]::IsNullOrWhiteSpace($_) })
+    $passed = @()
+    $missing = @()
+
+    foreach ($fragment in $requested) {
+        if ($DumpText.IndexOf($fragment, [System.StringComparison]::OrdinalIgnoreCase) -ge 0) {
+            $passed += $fragment
+        } else {
+            $missing += $fragment
+        }
+    }
+
+    return [ordered]@{
+        requested = $requested
+        passed = $passed
+        missing = $missing
+    }
+}
+
+function Expand-RequiredTextFragments {
+    param([string[]]$Fragments)
+
+    $expanded = @()
+    foreach ($fragmentGroup in $Fragments) {
+        if ([string]::IsNullOrWhiteSpace($fragmentGroup)) {
+            continue
+        }
+        foreach ($fragment in ($fragmentGroup -split ",")) {
+            if (-not [string]::IsNullOrWhiteSpace($fragment)) {
+                $expanded += $fragment.Trim()
+            }
+        }
+    }
+    return $expanded
+}
+
 $resolvedOutputDir = Resolve-TargetPath -Path $OutputDir
 New-Item -ItemType Directory -Force -Path $resolvedOutputDir | Out-Null
 
@@ -205,6 +248,17 @@ $launchCommandText = "adb -s $Serial shell am start -n $launchActivity"
 $startedAt = (Get-Date).ToUniversalTime()
 $status = "dry_run_only"
 $focusText = $null
+$textCheckFailureMessage = $null
+$requestedTextFragments = @(Expand-RequiredTextFragments -Fragments $RequiredText)
+$textChecks = if ($requestedTextFragments.Count -gt 0) {
+    [ordered]@{
+        requested = $requestedTextFragments
+        passed = @()
+        missing = @()
+    }
+} else {
+    $null
+}
 
 if (-not $DryRun) {
     Assert-PhysicalSerial -DeviceSerial $Serial
@@ -246,9 +300,17 @@ if (-not $DryRun) {
         }
     }
 
-    if ($null -ne $resolvedDumpPath) {
+    if (($null -ne $resolvedDumpPath) -or ($requestedTextFragments.Count -gt 0)) {
         $dumpText = Invoke-AdbCapture -ResolvedAdbPath $resolvedAdbPath -Arguments @("-s", $Serial, "shell", "uiautomator", "dump", "/dev/tty")
-        Write-Utf8Text -Path $resolvedDumpPath -Content $dumpText
+        if ($null -ne $resolvedDumpPath) {
+            Write-Utf8Text -Path $resolvedDumpPath -Content $dumpText
+        }
+        if ($requestedTextFragments.Count -gt 0) {
+            $textChecks = Get-TextCheckSummary -Fragments $requestedTextFragments -DumpText $dumpText
+            if ($textChecks.missing.Count -gt 0) {
+                $textCheckFailureMessage = "Physical phone smoke UIAutomator dump is missing required text fragment(s): $($textChecks.missing -join ', ')"
+            }
+        }
     }
 
     if ($null -ne $resolvedLogcatPath) {
@@ -263,7 +325,7 @@ $finishedAt = (Get-Date).ToUniversalTime()
 $summaryJsonPath = Join-Path $resolvedOutputDir "summary.json"
 $summaryMarkdownPath = Join-Path $resolvedOutputDir "summary.md"
 
-$summary = [pscustomobject]@{
+$summaryData = [ordered]@{
     status = $status
     dry_run = [bool]$DryRun
     physical_device = $true
@@ -296,6 +358,10 @@ $summary = [pscustomobject]@{
     started_at_utc = $startedAt.ToString("o")
     finished_at_utc = $finishedAt.ToString("o")
 }
+if ($null -ne $textChecks) {
+    $summaryData.text_checks = $textChecks
+}
+$summary = [pscustomobject]$summaryData
 
 Write-JsonFile -Path $summaryJsonPath -Value $summary
 Write-SummaryMarkdown -Path $summaryMarkdownPath -Summary $summary
@@ -303,4 +369,7 @@ Write-SummaryMarkdown -Path $summaryMarkdownPath -Summary $summary
 Write-Host "Wrote Android physical phone smoke summary: $summaryJsonPath"
 if ($DryRun) {
     Write-Host "Dry run only. Planned install command: $installCommandText"
+}
+if ($null -ne $textCheckFailureMessage) {
+    throw $textCheckFailureMessage
 }
