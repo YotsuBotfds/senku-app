@@ -63,9 +63,8 @@
                     android:gravity="center"
                     android:includeFontPadding="false"
                     android:text="@string/bottom_tab_home"
-                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:textAppearance="@style/TextAppearance.Senku.Rev03.NavLabel"
                     android:textColor="@color/senku_rev03_accent"
-                    android:textSize="10sp"
                     android:textStyle="bold" />
             </LinearLayout>
         </FrameLayout>
@@ -95,9 +94,8 @@
                 android:gravity="center"
                 android:includeFontPadding="false"
                 android:text="@string/bottom_tab_ask"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:textColor="@color/senku_rev03_ink_2"
-                android:textSize="10sp" />
+                android:textAppearance="@style/TextAppearance.Senku.Rev03.NavLabel"
+                android:textColor="@color/senku_rev03_ink_2" />
         </LinearLayout>
 
         <LinearLayout
@@ -125,9 +123,8 @@
                 android:gravity="center"
                 android:includeFontPadding="false"
                 android:text="@string/bottom_tab_pins"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:textColor="@color/senku_rev03_ink_2"
-                android:textSize="10sp" />
+                android:textAppearance="@style/TextAppearance.Senku.Rev03.NavLabel"
+                android:textColor="@color/senku_rev03_ink_2" />
         </LinearLayout>
     </LinearLayout>
 
@@ -206,13 +203,11 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:ellipsize="end"
-                    android:fontFamily="monospace"
                     android:includeFontPadding="false"
                     android:maxLines="1"
                     android:text="HOME SENKU &#8226; Field manual &#8226; ed.2"
-                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:textAppearance="@style/TextAppearance.Senku.Rev03.ChromeMono"
                     android:textColor="@color/senku_rev03_ink_1"
-                    android:textSize="9sp"
                     android:textStyle="bold" />
 
                 <ImageView

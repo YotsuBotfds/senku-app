@@ -48,13 +48,11 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:ellipsize="end"
-            android:fontFamily="monospace"
             android:includeFontPadding="false"
             android:maxLines="1"
             android:text="HOME SENKU &#8226; Field manual &#8226; ed.2"
-            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textAppearance="@style/TextAppearance.Senku.Rev03.ChromeMono"
             android:textColor="@color/senku_rev03_ink_1"
-            android:textSize="9sp"
             android:textStyle="normal" />
 
         <ImageView

@@ -55,6 +55,11 @@ enum class BottomTabBarLayoutMode {
     VERTICAL_RAIL,
 }
 
+private val BottomTabLabelFontSize = 10.5.sp
+private val BottomTabLabelLineHeight = 12.sp
+private val BottomTabRailLabelFontSize = 9.75.sp
+private val BottomTabRailLabelLineHeight = 10.75.sp
+
 data class BottomTabModel(
     val destination: BottomTabDestination,
     val label: String,
@@ -234,9 +239,9 @@ private fun BottomTabItem(
         Text(
             text = tab.label,
             style = SenkuTheme.typography.tag.copy(
-                    fontSize = if (verticalRail) 9.75.sp else 10.5.sp,
-                    lineHeight = if (verticalRail) 10.75.sp else 12.sp,
-                    fontWeight = if (selected) FontWeight.Bold else FontWeight.Normal,
+                fontSize = if (verticalRail) BottomTabRailLabelFontSize else BottomTabLabelFontSize,
+                lineHeight = if (verticalRail) BottomTabRailLabelLineHeight else BottomTabLabelLineHeight,
+                fontWeight = if (selected) FontWeight.Bold else FontWeight.Normal,
             ),
             color = tint,
             maxLines = if (verticalRail) 2 else 1,

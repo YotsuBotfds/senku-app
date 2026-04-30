@@ -59,13 +59,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
-                android:fontFamily="@font/inter_tight"
                 android:gravity="center"
                 android:includeFontPadding="false"
                 android:text="Library"
-                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textAppearance="@style/TextAppearance.Senku.Rev03.NavLabel"
                 android:textColor="@color/senku_rev03_accent"
-                android:textSize="12sp"
                 android:textStyle="bold" />
         </LinearLayout>
 
@@ -90,11 +88,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
-                android:fontFamily="@font/inter_tight"
                 android:gravity="center"
                 android:includeFontPadding="false"
                 android:text="Ask"
-                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textAppearance="@style/TextAppearance.Senku.Rev03.NavLabel"
                 android:textColor="@color/senku_rev03_ink_2" />
         </LinearLayout>
 
@@ -119,11 +116,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
-                android:fontFamily="@font/inter_tight"
                 android:gravity="center"
                 android:includeFontPadding="false"
                 android:text="@string/bottom_tab_pins"
-                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textAppearance="@style/TextAppearance.Senku.Rev03.NavLabel"
                 android:textColor="@color/senku_rev03_ink_2" />
         </LinearLayout>
     </LinearLayout>
@@ -169,13 +165,11 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:ellipsize="end"
-                android:fontFamily="@font/jetbrains_mono"
                 android:includeFontPadding="false"
                 android:maxLines="1"
                 android:text="HOME SENKU &#8226; Field manual &#8226; ed.2"
-                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textAppearance="@style/TextAppearance.Senku.Rev03.ChromeMono"
                 android:textColor="@color/senku_rev03_ink_1"
-                android:textSize="11sp"
                 android:textStyle="bold" />
 
             <ImageView

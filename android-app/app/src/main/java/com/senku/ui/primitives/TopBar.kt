@@ -48,6 +48,11 @@ enum class TopBarActionKind {
     Overflow,
 }
 
+private val TopBarTitleFontSize = 13.sp
+private val TopBarTitleLineHeight = 16.sp
+private val TopBarChromeLabelFontSize = 9.sp
+private val TopBarChromeLabelLineHeight = 11.sp
+
 @Immutable
 data class TopBarActionSpec(
     val kind: TopBarActionKind,
@@ -157,7 +162,10 @@ fun SenkuTopBar(
         ) {
             Text(
                 text = title,
-                style = typography.uiBody.copy(fontSize = 13.sp, lineHeight = 16.sp),
+                style = typography.uiBody.copy(
+                    fontSize = TopBarTitleFontSize,
+                    lineHeight = TopBarTitleLineHeight,
+                ),
                 color = colors.ink0,
                 maxLines = titleMaxLines.coerceAtLeast(1),
                 overflow = TextOverflow.Ellipsis,
@@ -166,7 +174,10 @@ fun SenkuTopBar(
             if (!subtitle.isNullOrBlank()) {
                 Text(
                     text = subtitle,
-                    style = typography.monoCaps.copy(fontSize = 9.sp, lineHeight = 11.sp),
+                    style = typography.monoCaps.copy(
+                        fontSize = TopBarChromeLabelFontSize,
+                        lineHeight = TopBarChromeLabelLineHeight,
+                    ),
                     color = colors.accent,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
@@ -243,7 +254,10 @@ private fun DangerPill(
     ) {
         Text(
             text = "\u2022 ${label.uppercase()}",
-            style = SenkuTheme.typography.monoCaps.copy(fontSize = 9.sp, lineHeight = 11.sp),
+            style = SenkuTheme.typography.monoCaps.copy(
+                fontSize = TopBarChromeLabelFontSize,
+                lineHeight = TopBarChromeLabelLineHeight,
+            ),
             color = colors.danger,
             maxLines = 1,
             overflow = TextOverflow.Clip,
