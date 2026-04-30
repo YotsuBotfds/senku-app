@@ -8,13 +8,38 @@ param(
     [string[]]$RoleFilter = @(),
     [string]$RunId = "",
     [switch]$SkipFinalize,
-    [switch]$FinalizeOnly
+    [switch]$FinalizeOnly,
+    [object]$NormalizeFilteredReview = $true
 )
 
 $ErrorActionPreference = "Stop"
 if ($null -ne (Get-Variable -Name PSNativeCommandUseErrorActionPreference -ErrorAction SilentlyContinue)) {
     $PSNativeCommandUseErrorActionPreference = $false
 }
+
+function ConvertTo-BoolParameter {
+    param(
+        [object]$Value,
+        [string]$Name
+    )
+
+    if ($Value -is [bool]) {
+        return [bool]$Value
+    }
+
+    $text = ([string]$Value).Trim()
+    switch ($text.ToLowerInvariant()) {
+        "true" { return $true }
+        "1" { return $true }
+        "yes" { return $true }
+        "false" { return $false }
+        "0" { return $false }
+        "no" { return $false }
+        default { throw ("{0} must be true or false; got '{1}'" -f $Name, $text) }
+    }
+}
+
+$NormalizeFilteredReview = ConvertTo-BoolParameter -Value $NormalizeFilteredReview -Name "NormalizeFilteredReview"
 
 $repoRoot = (Resolve-Path (Join-Path $PSScriptRoot "..")).Path
 $androidRoot = Join-Path $repoRoot "android-app"
@@ -134,13 +159,17 @@ function Invoke-GoalMockValidator {
 function Invoke-GoalMockFrameExporter {
     param(
         [string]$MocksDir,
-        [string]$MetadataPath
+        [string]$MetadataPath,
+        [string[]]$TargetNames = @(),
+        [bool]$AllowPartial = $false
     )
 
     $referenceDir = Join-Path $repoRoot "artifacts\mocks"
     $exportOutput = & powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File $goalMockFrameExporter `
         -MocksDir $MocksDir `
         -MetadataPath $MetadataPath `
+        -TargetNames $TargetNames `
+        -AllowPartial:$AllowPartial `
         -ReferenceDir $referenceDir 2>&1
     if ($LASTEXITCODE -ne 0) {
         throw ("Goal mock deterministic frame export failed for {0}: {1}" -f $MocksDir, (($exportOutput | Out-String).Trim()))
@@ -261,18 +290,66 @@ function Export-FilteredNormalizedReviewSet {
         [string[]]$ExpectedNames,
         [string[]]$ActualNames,
         [string[]]$MissingNames,
-        [string[]]$Failures
+        [string[]]$Failures,
+        [bool]$Normalize
     )
-
     $reviewDir = Join-Path $OutputDir "filtered_normalized_review"
     if (Test-Path -LiteralPath $reviewDir) {
         Remove-Item -LiteralPath $reviewDir -Recurse -Force
     }
     New-Item -ItemType Directory -Force -Path $reviewDir | Out-Null
 
+    $failureAccumulator = New-Object System.Collections.Generic.List[string]
+    foreach ($message in @($Failures)) {
+        if (-not [string]::IsNullOrWhiteSpace([string]$message)) {
+            $failureAccumulator.Add([string]$message)
+        }
+    }
+
+    $targetMockNames = @($ActualNames | Where-Object { $ExpectedNames -contains $_ } | Sort-Object)
+    $sourceDirForReview = $MocksDir
+    $sourcePolicy = "copy available canonical-named mocks from an incomplete filtered pack; no raw screenshot rewrite"
+    $liveChromePolicy = "review PNGs are copied raw"
+    $exportedMetadataPath = Join-Path $OutputDir "filtered_normalized_review_metadata.json"
+    $normalizationDir = $null
+
+    if ($Normalize -and $targetMockNames.Count -gt 0) {
+        $normalizationDir = Join-Path $OutputDir "filtered_normalized_review_frame_tmp"
+        if (Test-Path -LiteralPath $normalizationDir) {
+            Remove-Item -LiteralPath $normalizationDir -Recurse -Force
+        }
+        New-Item -ItemType Directory -Force -Path $normalizationDir | Out-Null
+
+        try {
+            foreach ($mockName in @($targetMockNames)) {
+                $sourcePath = Join-Path $MocksDir $mockName
+                if (Test-Path -LiteralPath $sourcePath) {
+                    Copy-Item -LiteralPath $sourcePath -Destination (Join-Path $normalizationDir $mockName) -Force
+                }
+            }
+
+            Invoke-GoalMockFrameExporter `
+                -MocksDir $normalizationDir `
+                -MetadataPath $exportedMetadataPath `
+                -TargetNames $targetMockNames `
+                -AllowPartial $true
+            $sourceDirForReview = $normalizationDir
+            $sourcePolicy = "deterministically frame-export filtered canonical mocks for OS chrome removal"
+            $liveChromePolicy = "review PNGs inherit deterministic crop/frame normalization from canonical mocks"
+        } catch {
+            $failureAccumulator.Add(("filtered normalized review chrome-crop pass failed; using raw filtered mocks: {0}" -f $_.Exception.Message))
+            if (Test-Path -LiteralPath $exportedMetadataPath) {
+                Remove-Item -LiteralPath $exportedMetadataPath -Force
+            }
+        }
+    }
+
     $copied = New-Object System.Collections.Generic.List[object]
-    $mocks = @(Get-ChildItem -LiteralPath $MocksDir -Filter "*.png" -File | Sort-Object Name)
+    $mocks = @(Get-ChildItem -LiteralPath $sourceDirForReview -Filter "*.png" -File | Sort-Object Name)
     foreach ($mock in $mocks) {
+        if ($ExpectedNames -notcontains $mock.Name) {
+            continue
+        }
         $destination = Join-Path $reviewDir $mock.Name
         Copy-Item -LiteralPath $mock.FullName -Destination $destination -Force
         $copied.Add([pscustomobject]@{
@@ -301,11 +378,20 @@ function Export-FilteredNormalizedReviewSet {
         canonical_pack_status = "fail"
         canonical_review_status = "skipped"
         raw_state_pack_screenshots_unchanged = $true
-        source_policy = "copy available canonical-named mocks from an incomplete filtered pack; no raw screenshot rewrite"
+        source_policy = $sourcePolicy
+        source_exporter = "scripts/export_android_goal_mock_frame.ps1"
+        live_os_chrome_policy = $liveChromePolicy
         review_policy = "human convenience artifact only; full normalized_review and mock ZIP remain available only for complete 22-PNG canonical packs"
-        failures = @($Failures)
+        failures = @($failureAccumulator.ToArray())
         files = @($copied.ToArray())
     } | ConvertTo-Json -Depth 8) | Set-Content -LiteralPath $metadataPath -Encoding UTF8
+
+    if ($null -ne $normalizationDir -and (Test-Path -LiteralPath $normalizationDir)) {
+        Remove-Item -LiteralPath $normalizationDir -Recurse -Force
+    }
+    if (Test-Path -LiteralPath $exportedMetadataPath) {
+        Remove-Item -LiteralPath $exportedMetadataPath -Force
+    }
 
     return [pscustomobject]@{
         status = "skipped_canonical_incomplete"
@@ -317,6 +403,8 @@ function Export-FilteredNormalizedReviewSet {
         missing_count = [int]$MissingNames.Count
         png_names = @($copied | ForEach-Object { $_.name })
         raw_state_pack_screenshots_unchanged = $true
+        source_policy = $sourcePolicy
+        source_exporter = "scripts/export_android_goal_mock_frame.ps1"
         review_policy = "human convenience artifact only; full-pack parity contract unchanged"
     }
 }
@@ -422,7 +510,8 @@ function Export-GoalMockPack {
                 -ExpectedNames $expectedNames `
                 -ActualNames $actualNames `
                 -MissingNames $missing `
-                -Failures $failures
+                -Failures $failures `
+                -Normalize $NormalizeFilteredReview
         } else {
             (New-SkippedNormalizedReviewSet -Reason "canonical mock pack incomplete and no canonical-named PNGs were available for filtered review")
         }
@@ -1570,6 +1659,7 @@ $summary = [pscustomobject]@{
         raw_screenshot_policy = "diagnostics_only; may include live emulator OS chrome"
         parity_policy = "use deterministic framed mocks, mock ZIP, or normalized review artifacts for mock parity"
         filtered_pack_policy = "filtered role packs can have pass_count equal total_states while summary status is fail because the 22-PNG canonical mock pack is incomplete; filtered_normalized_review is a human convenience artifact only"
+        filtered_review_normalize_chrome = [bool]$NormalizeFilteredReview
         raw_state_pack_screenshots_unchanged = $true
     }
     manifest_path = $manifestPath
@@ -1604,7 +1694,7 @@ $readme = @(
     '- full normalized review PNGs under `normalized_review/` (`goal_mock_pack.normalized_review`) when a full canonical mock pack is available',
     '- tablet-only normalized review PNGs under `normalized_tablet_review/` (`goal_mock_pack.normalized_tablet_review`) when a full canonical mock pack is available; filtered packs mark this as skipped and raw screenshots remain unchanged',
     '- filtered role packs may report `Status: fail` even when `pass_count == total_states`, because the full 22-PNG canonical mock pack is incomplete',
-    '- filtered role packs with available canonical-named mocks also write `filtered_normalized_review/` (`goal_mock_pack.filtered_normalized_review`) as a human review aid; it is marked skipped/incomplete and does not replace the full-pack parity contract',
+    '- filtered role packs with available canonical-named mocks also write `filtered_normalized_review/` (`goal_mock_pack.filtered_normalized_review`) as a human review aid; by default it is chrome-normalized via deterministic frame export',
     '- source screenshots by posture under `screenshots/` are raw diagnostic captures and may include live emulator OS chrome; do not use them for mock parity review',
     '- matching XML dumps under `dumps/`',
     '- per-state summaries under `summaries/`',
@@ -1614,6 +1704,8 @@ $readme = @(
     'Review contract:',
     '- mock parity review uses `mocks/`, `goal_mock_pack.zip_path`, `normalized_review/`, or `normalized_tablet_review/` only',
     '- `filtered_normalized_review/` is for filtered-pack convenience review only and remains `skipped_canonical_incomplete` until all 22 canonical PNGs are present',
+    '- `-NormalizeFilteredReview $true` applies deterministic frame export to `filtered_normalized_review/` to remove emulator status/navigation chrome while keeping raw captures untouched',
+    '- `-NormalizeFilteredReview $false` keeps raw filtered review captures when needed for troubleshooting',
     '- `screenshots/` and `raw/` are diagnostics for state capture/debugging, not deterministic parity artifacts'
 )
 $readme | Set-Content -LiteralPath $readmePath -Encoding UTF8

@@ -7,13 +7,38 @@ param(
     [string]$HostInferenceModel = "gemma-4-e2b-it-litert",
     [int]$MaxParallelDevices = 4,
     [string[]]$RoleFilter = @(),
-    [switch]$PlanOnly
+    [switch]$PlanOnly,
+    [object]$NormalizeFilteredReview = $true
 )
 
 $ErrorActionPreference = "Stop"
 if ($null -ne (Get-Variable -Name PSNativeCommandUseErrorActionPreference -ErrorAction SilentlyContinue)) {
     $PSNativeCommandUseErrorActionPreference = $false
 }
+
+function ConvertTo-BoolParameter {
+    param(
+        [object]$Value,
+        [string]$Name
+    )
+
+    if ($Value -is [bool]) {
+        return [bool]$Value
+    }
+
+    $text = ([string]$Value).Trim()
+    switch ($text.ToLowerInvariant()) {
+        "true" { return $true }
+        "1" { return $true }
+        "yes" { return $true }
+        "false" { return $false }
+        "0" { return $false }
+        "no" { return $false }
+        default { throw ("{0} must be true or false; got '{1}'" -f $Name, $text) }
+    }
+}
+
+$NormalizeFilteredReview = ConvertTo-BoolParameter -Value $NormalizeFilteredReview -Name "NormalizeFilteredReview"
 
 $repoRoot = (Resolve-Path (Join-Path $PSScriptRoot "..")).Path
 $buildScript = Join-Path $PSScriptRoot "build_android_ui_state_pack.ps1"
@@ -75,7 +100,7 @@ $logsDir = Join-Path $repoRoot (Join-Path (Join-Path $OutputRoot $runId) "parall
 function New-RoleInvokeLine {
     param([string]$Role)
 
-    return '& "{0}" -OutputRoot "{1}" -RunId "{2}" -RoleFilter "{3}" -SkipFinalize -SkipBuild{4} -HostInferenceUrl "{5}" -HostInferenceModel "{6}"{7}' -f `
+    return '& "{0}" -OutputRoot "{1}" -RunId "{2}" -RoleFilter "{3}" -SkipFinalize -SkipBuild{4} -HostInferenceUrl "{5}" -HostInferenceModel "{6}"{7} -NormalizeFilteredReview {8}' -f `
         $buildScript,
         $OutputRoot,
         $runId,
@@ -83,7 +108,8 @@ function New-RoleInvokeLine {
         $(if ($SkipInstall) { ' -SkipInstall' } else { '' }),
         $HostInferenceUrl,
         $HostInferenceModel,
-        $(if ($SkipHostStates) { ' -SkipHostStates' } else { '' })
+        $(if ($SkipHostStates) { ' -SkipHostStates' } else { '' }),
+        $(if ($NormalizeFilteredReview) { '$true' } else { '$false' })
 }
 
 if ($PlanOnly) {
@@ -125,6 +151,7 @@ if ($PlanOnly) {
             normalized_tablet_review_directory = "normalized_tablet_review"
             normalized_tablet_review_metadata = "normalized_tablet_review/metadata.json"
             normalized_tablet_review_source = "canonical framed mocks"
+            normalize_filtered_review = [bool]$NormalizeFilteredReview
             raw_state_pack_screenshots_unchanged = $true
         }
         migration_checklist_intent = [pscustomobject]@{

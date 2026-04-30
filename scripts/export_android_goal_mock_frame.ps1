@@ -3,7 +3,9 @@ param(
     [string]$MocksDir,
     [Parameter(Mandatory = $true)]
     [string]$MetadataPath,
-    [string]$ReferenceDir = ""
+    [string]$ReferenceDir = "",
+    [string[]]$TargetNames = @(),
+    [switch]$AllowPartial
 )
 
 $ErrorActionPreference = "Stop"
@@ -241,11 +243,45 @@ if (-not (Test-Path -LiteralPath $MocksDir)) {
 }
 
 $files = Get-ChildItem -LiteralPath $MocksDir -Filter "*.png" -File | Sort-Object Name
-$actualNames = @($files | ForEach-Object { $_.Name })
-$missing = @($ExpectedNames | Where-Object { $actualNames -notcontains $_ })
-$extra = @($actualNames | Where-Object { $ExpectedNames -notcontains $_ })
-if ($missing.Count -gt 0 -or $extra.Count -gt 0) {
-    throw ("Cannot frame incomplete canonical mock set. Missing: {0}; Extra: {1}" -f ($missing -join ", "), ($extra -join ", "))
+$allPngNames = @($files | ForEach-Object { $_.Name })
+$actualNames = @($allPngNames)
+$targetLookup = New-Object System.Collections.Generic.HashSet[string]
+foreach ($name in @($TargetNames)) {
+    $trimmed = [string]$name
+    if ([string]::IsNullOrWhiteSpace($trimmed)) {
+        continue
+    }
+    $baseName = [System.IO.Path]::GetFileName($trimmed)
+    if ([string]::IsNullOrWhiteSpace($baseName)) {
+        continue
+    }
+    $null = $targetLookup.Add($baseName)
+}
+
+if ($AllowPartial) {
+    if ($targetLookup.Count -eq 0) {
+        foreach ($expected in @($ExpectedNames)) {
+            $null = $targetLookup.Add($expected)
+        }
+    }
+
+    $targetNames = @($targetLookup | Where-Object { $allPngNames -contains $_ } | Sort-Object)
+    $files = @($files | Where-Object { $targetNames -contains $_.Name })
+    $missingTargetNames = @($targetLookup | Where-Object { $allPngNames -notcontains $_ } | Sort-Object)
+    if ($missingTargetNames.Count -gt 0) {
+        Write-Host ("Skipping missing target PNG(s) in partial mode: {0}" -f ($missingTargetNames -join ", "))
+    }
+} else {
+    $missing = @($ExpectedNames | Where-Object { $actualNames -notcontains $_ })
+    $extra = @($actualNames | Where-Object { $ExpectedNames -notcontains $_ })
+    if ($missing.Count -gt 0 -or $extra.Count -gt 0) {
+        throw ("Cannot frame incomplete canonical mock set. Missing: {0}; Extra: {1}" -f ($missing -join ", "), ($extra -join ", "))
+    }
+    $files = @($files | Where-Object { $ExpectedNames -contains $_.Name })
+}
+
+if ($files.Count -eq 0) {
+    throw "No target PNGs selected for frame export."
 }
 
 $processed = New-Object System.Collections.Generic.List[object]
@@ -273,9 +309,12 @@ try {
 $metadata = [pscustomobject]@{
     schema_version = 1
     output_mode = "deterministic_mock_frame"
+    processing_mode = $(if ($AllowPartial) { "partial" } else { "full" })
     generated_at_utc = (Get-Date).ToUniversalTime().ToString("o")
     mocks_dir = (Resolve-Path -LiteralPath $MocksDir).Path
     reference_dir = $(if (-not [string]::IsNullOrWhiteSpace($ReferenceDir) -and (Test-Path -LiteralPath $ReferenceDir)) { (Resolve-Path -LiteralPath $ReferenceDir).Path } else { $null })
+    target_names = @($files | ForEach-Object Name)
+    requested_names = if ($targetLookup.Count -gt 0) { @($targetLookup) } else { @() }
     png_count = [int]$processed.Count
     deterministic_status_time = "4:21"
     deterministic_status_right = "OFFLINE"
