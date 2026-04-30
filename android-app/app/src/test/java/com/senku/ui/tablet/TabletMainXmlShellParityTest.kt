@@ -126,16 +126,17 @@ class TabletMainXmlShellParityTest {
             }
             val expectedLabelSize = if (qualifier == "layout-sw600dp-port") "12sp" else "13sp"
             val expectedLabelLineHeight = if (qualifier == "layout-sw600dp-port") "15sp" else "16sp"
+            val expectedFilterHeaderSize = if (qualifier == "layout-sw600dp-port") "11sp" else "10sp"
 
             listOf("FILTER \u2022 CATEGORY", "WINDOW").forEach { text ->
                 val header = layout.elementByText(text)
                 assertEquals("@font/jetbrains_mono", header.android("fontFamily"))
-                assertEquals("10sp", header.android("textSize"))
+                assertEquals(expectedFilterHeaderSize, header.android("textSize"))
                 assertEquals(expectedFilterColor, header.android("textColor"))
             }
 
             assertEquals(
-                if (qualifier == "layout-sw600dp-port") "13sp" else "14sp",
+                "14sp",
                 layout.elementByAndroidId("tablet_search_query_text").android("textSize"),
             )
             assertFalse(
@@ -175,15 +176,20 @@ class TabletMainXmlShellParityTest {
 
         assertEquals("48dp", shell.android("layout_height"))
         assertEquals("14dp", shell.android("layout_marginTop"))
-        assertEquals("@android:color/transparent", shell.android("background"))
-        assertEquals("2dp", shell.android("paddingStart"))
-        assertEquals("2dp", shell.android("paddingEnd"))
+        assertEquals("@color/senku_rev03_bg_0", shell.android("background"))
+        assertEquals("12dp", shell.android("paddingStart"))
+        assertEquals("8dp", shell.android("paddingTop"))
+        assertEquals("12dp", shell.android("paddingEnd"))
+        assertEquals("8dp", shell.android("paddingBottom"))
         assertEquals("18dp", icon.android("layout_width"))
         assertEquals("18dp", icon.android("layout_height"))
         assertEquals("3dp", icon.android("padding"))
         assertEquals("@color/senku_rev03_ink_2", icon.android("tint"))
         assertEquals("8dp", input.android("layout_marginStart"))
-        assertEquals("15sp", input.android("textSize"))
+        assertEquals("@font/inter_tight", input.android("fontFamily"))
+        assertEquals("500", input.android("textFontWeight"))
+        assertEquals("18sp", input.android("lineHeight"))
+        assertEquals("14sp", input.android("textSize"))
     }
 
     private fun assertMainChromeRow(
@@ -285,8 +291,8 @@ class TabletMainXmlShellParityTest {
             children.map { it.tagName },
         )
         val isPortrait = qualifier == "layout-sw600dp-port"
-        assertEquals(if (isPortrait) "18dp" else "20dp", searchIcon.android("layout_width"))
-        assertEquals(if (isPortrait) "18dp" else "20dp", searchIcon.android("layout_height"))
+        assertEquals("20dp", searchIcon.android("layout_width"))
+        assertEquals("20dp", searchIcon.android("layout_height"))
         assertEquals("@drawable/ic_search_magnifier", searchIcon.android("src"))
         assertEquals(
             if (isPortrait) "@color/senku_rev03_ink_2" else "@color/senku_rev03_accent",
@@ -298,13 +304,13 @@ class TabletMainXmlShellParityTest {
         assertEquals("1", query.android("maxLines"))
         assertEquals("end", query.android("ellipsize"))
         assertEquals("@font/inter_tight", query.android("fontFamily"))
-        assertEquals(if (isPortrait) "13sp" else "14sp", query.android("textSize"))
-        assertEquals(if (isPortrait) "500" else "600", query.android("textFontWeight"))
+        assertEquals("14sp", query.android("textSize"))
+        assertEquals("600", query.android("textFontWeight"))
         assertEquals("", query.android("textStyle"))
-        assertEquals(if (isPortrait) "17sp" else "18sp", query.android("lineHeight"))
+        assertEquals("18sp", query.android("lineHeight"))
         assertEquals("@font/jetbrains_mono", count.android("fontFamily"))
-        assertEquals(if (isPortrait) "11sp" else "12sp", count.android("textSize"))
-        assertEquals(if (isPortrait) "15sp" else "16sp", count.android("lineHeight"))
+        assertEquals("12sp", count.android("textSize"))
+        assertEquals("16sp", count.android("lineHeight"))
         assertEquals(
             if (isPortrait) "@color/senku_rev03_ink_2" else "@color/senku_rev03_accent",
             count.android("textColor"),

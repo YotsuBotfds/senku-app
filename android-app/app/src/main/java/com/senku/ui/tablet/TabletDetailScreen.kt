@@ -579,17 +579,17 @@ internal fun tabletGuidePaperDensityPolicy(isLandscape: Boolean): TabletGuidePap
         )
     } else {
         TabletGuidePaperDensityPolicy(
-            headerTitleFontSizeSp = 32,
-            headerTitleLineHeightSp = 38,
-            bodyFontSizeSp = 13,
-            bodyLineHeightSp = 20,
-            bodySpacingDp = 10,
-            dangerBodyFontSizeSp = 14,
-            dangerBodyLineHeightSp = 21,
-            dangerSpacingDp = 12,
-            requiredRowMinHeightDp = 56,
-            requiredRowTitleFontSizeSp = 14,
-            requiredRowTitleLineHeightSp = 18,
+            headerTitleFontSizeSp = 30,
+            headerTitleLineHeightSp = 36,
+            bodyFontSizeSp = 12,
+            bodyLineHeightSp = 19,
+            bodySpacingDp = 8,
+            dangerBodyFontSizeSp = 13,
+            dangerBodyLineHeightSp = 19,
+            dangerSpacingDp = 10,
+            requiredRowMinHeightDp = 52,
+            requiredRowTitleFontSizeSp = 13,
+            requiredRowTitleLineHeightSp = 17,
         )
     }
 
@@ -614,18 +614,18 @@ internal fun tabletGuideSideRailDensityPolicy(isLandscape: Boolean): TabletGuide
         )
     } else {
         TabletGuideSideRailDensityPolicy(
-            sectionRailVerticalSpacingDp = 14,
-            sectionRowActiveMinHeightDp = 46,
-            sectionRowInactiveMinHeightDp = 36,
+            sectionRailVerticalSpacingDp = 12,
+            sectionRowActiveMinHeightDp = 42,
+            sectionRowInactiveMinHeightDp = 34,
             sectionRowHorizontalPaddingDp = 10,
-            sectionRowVerticalPaddingDp = 6,
-            referencePaneHorizontalPaddingDp = 26,
-            referencePaneVerticalPaddingDp = 26,
-            referencePaneVerticalSpacingDp = 20,
-            referenceCardMinHeightDp = 90,
+            sectionRowVerticalPaddingDp = 5,
+            referencePaneHorizontalPaddingDp = 24,
+            referencePaneVerticalPaddingDp = 22,
+            referencePaneVerticalSpacingDp = 16,
+            referenceCardMinHeightDp = 76,
             referenceCardHorizontalPaddingDp = 18,
-            referenceCardVerticalPaddingDp = 14,
-            referenceCardVerticalSpacingDp = 9,
+            referenceCardVerticalPaddingDp = 12,
+            referenceCardVerticalSpacingDp = 8,
             referenceCardTitleFontSizeSp = 14,
             referenceCardTitleLineHeightSp = 18,
             referenceCardTitleMaxLines = 2,
@@ -1792,12 +1792,14 @@ private fun GuideSectionRail(
     val densityPolicy = tabletGuideSideRailDensityPolicy(isLandscape)
     val typePolicy = tabletGuideRailTypePolicy()
     val scrollState = rememberScrollState()
+    val outerHorizontalPaddingDp = if (isLandscape) 16 else 14
+    val outerVerticalPaddingDp = 12
 
     Column(
         modifier = modifier
             .background(colors.bg1)
             .verticalScroll(scrollState)
-            .padding(horizontal = 20.dp, vertical = 18.dp),
+            .padding(horizontal = outerHorizontalPaddingDp.dp, vertical = outerVerticalPaddingDp.dp),
         verticalArrangement = Arrangement.spacedBy(densityPolicy.sectionRailVerticalSpacingDp.dp),
     ) {
         if (tabletGuideSectionRailShowsToolbar()) {
@@ -1916,7 +1918,7 @@ private fun GuideSectionRailAction(
     val colors = SenkuTheme.colors
     Surface(
         modifier = Modifier
-            .size(26.dp)
+            .size(28.dp)
             .semantics(mergeDescendants = true) {
                 this.contentDescription = contentDescription
                 selected = active
@@ -1926,7 +1928,7 @@ private fun GuideSectionRailAction(
                 onClick = onClick,
             ),
         color = if (active) colors.bg2 else colors.bg0,
-        contentColor = colors.ink0,
+        contentColor = colors.ink1,
         shape = RoundedCornerShape(6.dp),
         border = BorderStroke(1.dp, if (active) colors.accent else colors.hairlineStrong),
     ) {
@@ -2005,27 +2007,28 @@ private fun GuideRailBackGlyph() {
     Icon(
         painter = painterResource(R.drawable.ic_home_back_chevron),
         contentDescription = null,
-        modifier = Modifier.size(14.dp),
-        tint = colors.ink0,
+        modifier = Modifier.size(16.dp),
+        tint = colors.ink1,
     )
 }
 
 @Composable
 private fun GuideRailHomeGlyph() {
     val colors = SenkuTheme.colors
-    Canvas(modifier = Modifier.size(15.dp)) {
+    Canvas(modifier = Modifier.size(16.dp)) {
         val stroke = 1.6.dp.toPx()
-        val left = size.width * 0.20f
-        val right = size.width * 0.80f
+        val left = size.width * 0.18f
+        val right = size.width * 0.82f
         val top = size.height * 0.30f
-        val roof = size.height * 0.10f
+        val roof = size.height * 0.12f
         val bottom = size.height * 0.82f
         val center = size.width * 0.50f
-        drawLine(colors.ink0, Offset(left, top), Offset(center, roof), stroke, StrokeCap.Round)
-        drawLine(colors.ink0, Offset(center, roof), Offset(right, top), stroke, StrokeCap.Round)
-        drawLine(colors.ink0, Offset(left + 1.dp.toPx(), top), Offset(left + 1.dp.toPx(), bottom), stroke, StrokeCap.Round)
-        drawLine(colors.ink0, Offset(right - 1.dp.toPx(), top), Offset(right - 1.dp.toPx(), bottom), stroke, StrokeCap.Round)
-        drawLine(colors.ink0, Offset(left + 1.dp.toPx(), bottom), Offset(right - 1.dp.toPx(), bottom), stroke, StrokeCap.Round)
+        val insetX = 1.dp.toPx()
+        drawLine(colors.ink1, Offset(left, top), Offset(center, roof), stroke, StrokeCap.Round)
+        drawLine(colors.ink1, Offset(center, roof), Offset(right, top), stroke, StrokeCap.Round)
+        drawLine(colors.ink1, Offset(left + insetX, top), Offset(left + insetX, bottom), stroke, StrokeCap.Round)
+        drawLine(colors.ink1, Offset(right - insetX, top), Offset(right - insetX, bottom), stroke, StrokeCap.Round)
+        drawLine(colors.ink1, Offset(left + insetX, bottom), Offset(right - insetX, bottom), stroke, StrokeCap.Round)
     }
 }
 
@@ -2033,7 +2036,7 @@ private fun GuideRailHomeGlyph() {
 private fun GuideRailPinGlyph(active: Boolean) {
     val colors = SenkuTheme.colors
     val tint = if (active) colors.accent else colors.ink1
-    Canvas(modifier = Modifier.size(15.dp)) {
+    Canvas(modifier = Modifier.size(16.dp)) {
         val stroke = 1.6.dp.toPx()
         val top = size.height * 0.20f
         val bottom = size.height * 0.84f
@@ -2710,11 +2713,11 @@ private fun GuidePaperSurface(
                 .fillMaxWidth()
                 .padding(
                     start = horizontalPadding,
-                    top = if (state.isLandscape) 16.dp else 18.dp,
+                    top = if (state.isLandscape) 16.dp else 14.dp,
                     end = horizontalPadding,
                     bottom = tabletGuidePaperBottomPaddingDp(state.isLandscape).dp,
                 ),
-            verticalArrangement = Arrangement.spacedBy(if (state.isLandscape) 8.dp else 11.dp),
+            verticalArrangement = Arrangement.spacedBy(if (state.isLandscape) 8.dp else 10.dp),
             content = content,
         )
     }
@@ -2739,7 +2742,7 @@ private fun GuidePaperHeader(
 
     Column(
         modifier = Modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(8.dp),
+        verticalArrangement = Arrangement.spacedBy(7.dp),
     ) {
         Text(
             text = "FIELD MANUAL \u00B7 REV 04-27 \u00B7 PK 2",
@@ -2765,8 +2768,8 @@ private fun GuidePaperHeader(
         Text(
             text = metaLine.uppercase(),
             style = typography.monoCaps.copy(
-                fontSize = typePolicy.metaFontSizeSp.sp,
-                lineHeight = typePolicy.metaLineHeightSp.sp,
+                fontSize = if (state.isLandscape) typePolicy.metaFontSizeSp.sp else 10.sp,
+                lineHeight = if (state.isLandscape) typePolicy.metaLineHeightSp.sp else 13.sp,
                 fontWeight = FontWeight.Medium,
             ),
             color = paperPalette.inkSoft,
@@ -2869,7 +2872,7 @@ private fun TitleBar(
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(10.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             GuideTopBarBackAction(onClick = onBackClick)
             Box(
@@ -3518,7 +3521,7 @@ private fun GuideRequiredReadingRow(
                 .fillMaxWidth()
                 .heightIn(min = densityPolicy.requiredRowMinHeightDp.dp)
                 .padding(end = 12.dp),
-            horizontalArrangement = Arrangement.spacedBy(14.dp),
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Box(
@@ -3531,7 +3534,7 @@ private fun GuideRequiredReadingRow(
                 text = parts.id.ifEmpty { parts.label },
                 modifier = Modifier
                     .widthIn(min = 64.dp, max = 80.dp)
-                    .padding(vertical = if (isLandscape) 11.dp else 14.dp),
+                    .padding(vertical = if (isLandscape) 11.dp else 12.dp),
                 style = typography.monoCaps.copy(
                     fontSize = typePolicy.requiredIdFontSizeSp.sp,
                     lineHeight = typePolicy.requiredIdLineHeightSp.sp,
@@ -3545,7 +3548,7 @@ private fun GuideRequiredReadingRow(
                 text = parts.title.ifEmpty { normalizeGuidePaperRequiredReadingLine(line) },
                 modifier = Modifier
                     .weight(1f)
-                    .padding(vertical = if (isLandscape) 11.dp else 13.dp),
+                    .padding(vertical = if (isLandscape) 11.dp else 12.dp),
                 style = typography.uiBody.copy(
                     fontSize = densityPolicy.requiredRowTitleFontSizeSp.sp,
                     lineHeight = densityPolicy.requiredRowTitleLineHeightSp.sp,
@@ -3559,7 +3562,7 @@ private fun GuideRequiredReadingRow(
             Text(
                 text = ">",
                 style = typography.sectionTitle.copy(
-                    fontSize = typePolicy.requiredArrowFontSizeSp.sp,
+                    fontSize = (typePolicy.requiredArrowFontSizeSp - 2).sp,
                     lineHeight = typePolicy.requiredArrowLineHeightSp.sp,
                     fontWeight = FontWeight.SemiBold,
                 ),

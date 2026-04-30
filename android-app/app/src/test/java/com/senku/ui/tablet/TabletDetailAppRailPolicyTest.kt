@@ -48,21 +48,21 @@ class TabletDetailAppRailPolicyTest {
     }
 
     @Test
-    fun tabletGuideTopbarBackAffordanceKeepsCompactWidthAndVisibleLabel() {
+    fun tabletGuideTopbarBackAffordanceUsesSharedIconOnlyChrome() {
         val source = locateFile(
             "android-app/app/src/main/java/com/senku/ui/tablet/TabletDetailScreen.kt",
             "app/src/main/java/com/senku/ui/tablet/TabletDetailScreen.kt",
         ).readText()
 
+        assertEquals(28, tabletDetailBackActionWidthDp())
+        assertEquals(18, tabletDetailBackActionIconSizeDp())
         assertSourceContains(source, ".height(28.dp)")
-        assertSourceContains(source, ".width(60.dp)")
+        assertSourceContains(source, ".width(tabletDetailBackActionWidthDp().dp)")
         assertSourceContains(source, "contentDescription = \"Back to previous screen\"")
-        assertSourceContains(source, "Modifier.padding(horizontal = 6.dp)")
-        assertSourceContains(source, "horizontalArrangement = Arrangement.spacedBy(2.dp)")
-        assertSourceContains(source, "text = \"Back\"")
-        assertSourceContains(source, "fontSize = 10.sp")
-        assertSourceContains(source, "lineHeight = 12.sp")
-        assertSourceContains(source, "overflow = TextOverflow.Clip")
+        assertSourceContains(source, "contentAlignment = Alignment.Center")
+        assertFalse(source.contains("text = \"Back\""))
+        assertFalse(source.contains("GuideTopBarBackLabelFontSizeSp"))
+        assertFalse(source.contains("GuideTopBarBackActionTextSpacingDp"))
     }
 
     @Test
