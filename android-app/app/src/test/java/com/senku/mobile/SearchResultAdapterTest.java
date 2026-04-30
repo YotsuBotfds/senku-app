@@ -29,18 +29,18 @@ public final class SearchResultAdapterTest {
 
     @Test
     public void composeBridgeUsesCompactScoreMarkers() {
-        assertEquals("92", SearchResultAdapter.buildRankLabelForTest(0));
-        assertEquals("61", SearchResultAdapter.buildRankLabelForTest(3));
-        assertEquals("92", SearchResultAdapter.buildRankLabelForTest(-1));
+        assertEquals("92", SearchResultCardModelMapper.buildRankLabelForTest(0));
+        assertEquals("61", SearchResultCardModelMapper.buildRankLabelForTest(3));
+        assertEquals("92", SearchResultCardModelMapper.buildRankLabelForTest(-1));
     }
 
     @Test
     public void tabletRowsUseCompactScoreMarkers() {
-        assertEquals("92", SearchResultAdapter.buildTabletScoreLabelForTest(0));
-        assertEquals("78", SearchResultAdapter.buildTabletScoreLabelForTest(1));
-        assertEquals("74", SearchResultAdapter.buildTabletScoreLabelForTest(2));
-        assertEquals("61", SearchResultAdapter.buildTabletScoreLabelForTest(3));
-        assertEquals("49", SearchResultAdapter.buildTabletScoreLabelForTest(5));
+        assertEquals("92", SearchResultCardModelMapper.buildTabletScoreLabelForTest(0));
+        assertEquals("78", SearchResultCardModelMapper.buildTabletScoreLabelForTest(1));
+        assertEquals("74", SearchResultCardModelMapper.buildTabletScoreLabelForTest(2));
+        assertEquals("61", SearchResultCardModelMapper.buildTabletScoreLabelForTest(3));
+        assertEquals("49", SearchResultCardModelMapper.buildTabletScoreLabelForTest(5));
     }
 
     @Test
@@ -63,8 +63,8 @@ public final class SearchResultAdapterTest {
 
     @Test
     public void tabletRowsPreferGuideIdAsRankMarker() {
-        assertEquals("GD-345", SearchResultAdapter.buildTabletGuideMarkerForTest("GD-345", 2));
-        assertEquals("#3", SearchResultAdapter.buildTabletGuideMarkerForTest("", 2));
+        assertEquals("GD-345", SearchResultCardModelMapper.buildTabletGuideMarkerForTest("GD-345", 2));
+        assertEquals("#3", SearchResultCardModelMapper.buildTabletGuideMarkerForTest("", 2));
     }
 
     @Test
@@ -73,8 +73,8 @@ public final class SearchResultAdapterTest {
         String[] scoreLabels = {"92", "78", "74", "61"};
 
         for (int i = 0; i < guideIds.length; i++) {
-            assertEquals(guideIds[i], SearchResultAdapter.buildTabletGuideMarkerForTest(guideIds[i], i));
-            assertEquals(scoreLabels[i], SearchResultAdapter.buildTabletScoreLabelForTest(i));
+            assertEquals(guideIds[i], SearchResultCardModelMapper.buildTabletGuideMarkerForTest(guideIds[i], i));
+            assertEquals(scoreLabels[i], SearchResultCardModelMapper.buildTabletScoreLabelForTest(i));
         }
     }
 

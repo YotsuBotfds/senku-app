@@ -979,18 +979,6 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
         );
     }
 
-    static String buildRankLabelForTest(int position) {
-        return SearchResultCardModelMapper.buildRankLabelForTest(position);
-    }
-
-    static String buildTabletScoreLabelForTest(int position) {
-        return SearchResultCardModelMapper.buildTabletScoreLabelForTest(position);
-    }
-
-    static String buildTabletGuideMarkerForTest(String guideId, int position) {
-        return SearchResultCardModelMapper.buildTabletGuideMarkerForTest(guideId, position);
-    }
-
     private String buildTabletGuideMarker(SearchResult result, int position) {
         return SearchResultCardModelMapper.buildTabletGuideMarker(result == null ? null : result.guideId, position);
     }
