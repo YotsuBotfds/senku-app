@@ -2213,18 +2213,10 @@ public final class PackRepository implements AutoCloseable {
     }
 
     private static boolean shouldPreferRouteAnchorOverRankedGuide(QueryTerms queryTerms, SearchResult rankedAnchor) {
-        String preferredStructureType = queryTerms.metadataProfile.preferredStructureType();
-        if (!requiresSpecializedRouteAnchorSignal(preferredStructureType)) {
-            return false;
-        }
-        if (!"guide-focus".equals(emptySafe(rankedAnchor.retrievalMode).trim().toLowerCase(QUERY_LOCALE))) {
-            return false;
-        }
-        if (!emptySafe(rankedAnchor.sectionHeading).trim().isEmpty()) {
-            return false;
-        }
-        String normalizedStructure = emptySafe(rankedAnchor.structureType).trim().toLowerCase(QUERY_LOCALE);
-        return !preferredStructureType.equals(normalizedStructure);
+        return AnswerAnchorPolicy.shouldPreferRouteAnchorOverRankedGuide(
+            queryTerms.metadataProfile.preferredStructureType(),
+            rankedAnchor
+        );
     }
 
     static boolean shouldPreferRouteAnchorOverRankedGuideForTest(String query, SearchResult rankedAnchor) {
@@ -2247,33 +2239,28 @@ public final class PackRepository implements AutoCloseable {
         if (!queryTerms.routeProfile.isRouteFocused()) {
             return rankedAnchor;
         }
-        if (shouldPreferRouteAnchorOverRankedGuide(queryTerms, rankedAnchor)) {
-            return routedAnchor;
-        }
-        if (prefersCabinSiteSelectionRouteAnchor(queryTerms)
-            && hasCabinSiteSelectionAnchorSignal(routedAnchor)
-            && !hasCabinSiteSelectionAnchorSignal(rankedAnchor)) {
-            return routedAnchor;
-        }
-        if (prefersRoofWeatherproofRouteAnchor(queryTerms)
-            && hasRoofWeatherproofAnchorSignal(routedAnchor)
-            && (hasRoofWeatherproofDistractorSignal(rankedAnchor)
-                || !hasRoofWeatherproofAnchorSignal(rankedAnchor))) {
-            return routedAnchor;
-        }
-        if (queryTerms.metadataProfile.hasExplicitTopic("water_distribution")
-            && "guide-focus".equals(emptySafe(rankedAnchor.retrievalMode).trim().toLowerCase(QUERY_LOCALE))
-            && emptySafe(rankedAnchor.sectionHeading).trim().isEmpty()
-            && !hasWaterDistributionTitleSignal(rankedAnchor)) {
-            return routedAnchor;
-        }
-        if (guideGroupKey(routedAnchor).equals(guideGroupKey(rankedAnchor))) {
-            return routedAnchor;
-        }
-
-        int rankedScore = Math.max(1, supportBreakdown(queryTerms, rankedAnchor).supportWithMetadata());
-        int routedScore = Math.max(1, supportBreakdown(queryTerms, routedAnchor).supportWithMetadata());
-        return rankedScore >= routedScore + 12 ? rankedAnchor : routedAnchor;
+        boolean rankedGuideFocusWaterDistributionFallback =
+            queryTerms.metadataProfile.hasExplicitTopic("water_distribution")
+                && "guide-focus".equals(emptySafe(rankedAnchor.retrievalMode).trim().toLowerCase(QUERY_LOCALE))
+                && emptySafe(rankedAnchor.sectionHeading).trim().isEmpty()
+                && !hasWaterDistributionTitleSignal(rankedAnchor);
+        return AnswerAnchorPolicy.chooseRankedOrRoutedAnchor(new AnswerAnchorPolicy.AnchorChoice(
+            rankedAnchor,
+            routedAnchor,
+            queryTerms.routeProfile.isRouteFocused(),
+            shouldPreferRouteAnchorOverRankedGuide(queryTerms, rankedAnchor),
+            prefersCabinSiteSelectionRouteAnchor(queryTerms),
+            hasCabinSiteSelectionAnchorSignal(routedAnchor),
+            hasCabinSiteSelectionAnchorSignal(rankedAnchor),
+            prefersRoofWeatherproofRouteAnchor(queryTerms),
+            hasRoofWeatherproofAnchorSignal(routedAnchor),
+            hasRoofWeatherproofDistractorSignal(rankedAnchor),
+            hasRoofWeatherproofAnchorSignal(rankedAnchor),
+            rankedGuideFocusWaterDistributionFallback,
+            guideGroupKey(routedAnchor).equals(guideGroupKey(rankedAnchor)),
+            supportBreakdown(queryTerms, rankedAnchor).supportWithMetadata(),
+            supportBreakdown(queryTerms, routedAnchor).supportWithMetadata()
+        ));
     }
 
     static SearchResult selectExplicitWaterDistributionAnchorForTest(String query, SearchResult... results) {
@@ -3182,12 +3169,14 @@ public final class PackRepository implements AutoCloseable {
                 continue;
             }
 
-            int score = Math.max(1, supportBreakdown(queryTerms, candidate).supportWithMetadata());
-            score += Math.max(0, 12 - index);
-            score += anchorAlignmentBonus(queryTerms, candidate);
-            score += broadRouteSectionPreferenceBonus(queryTerms, candidate);
-            score += cabinSiteSelectionAnchorBias(queryTerms, candidate);
-            score += roofWeatherproofAnchorBias(queryTerms, candidate);
+            int score = AnswerAnchorPolicy.routeFocusedAnchorScore(
+                supportBreakdown(queryTerms, candidate).supportWithMetadata(),
+                index,
+                anchorAlignmentBonus(queryTerms, candidate),
+                broadRouteSectionPreferenceBonus(queryTerms, candidate),
+                cabinSiteSelectionAnchorBias(queryTerms, candidate),
+                roofWeatherproofAnchorBias(queryTerms, candidate)
+            );
             if (score > bestScore) {
                 bestScore = score;
                 best = candidate;
