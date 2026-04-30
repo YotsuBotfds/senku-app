@@ -153,41 +153,76 @@ class TabletMainXmlShellParityTest {
         horizontalPadding: String,
     ) {
         val layout = layout(qualifier)
+        val row = layout.elementByAndroidId("home_chrome_row")
+        val back = layout.elementByAndroidId("home_chrome_back_button")
+        val backIcon = layout.elementByAndroidId("home_chrome_back_icon")
+        val backLabel = layout.elementByAndroidId("home_chrome_back_label")
+        val divider = layout.elementByAndroidId("home_chrome_divider")
+        val mode = layout.elementByAndroidId("home_chrome_mode")
         val title = layout.elementByAndroidId("home_chrome_title")
-        val row = title.parentNode as Element
         val children = row.directElementChildren()
-        val backIcon = children[0]
-        val divider = children[1]
-        val searchIcon = children[3]
-        val overflow = children[4]
+        val searchIcon = layout.elementByAndroidId("home_chrome_search_icon")
+        val overflow = children[5]
+        val bottomRule = layout.elementByAndroidId("home_chrome_bottom_rule")
+        val verticalPadding = if (height == "48dp") "9dp" else "12dp"
 
         assertEquals("$qualifier topbar height", height, row.android("layout_height"))
         assertEquals("$qualifier topbar start padding", horizontalPadding, row.android("paddingStart"))
         assertEquals("$qualifier topbar end padding", horizontalPadding, row.android("paddingEnd"))
-        assertEquals("$qualifier topbar child token order", listOf("ImageView", "View", "TextView", "ImageView", "TextView"), children.map { it.tagName })
+        assertEquals("$qualifier topbar top padding", verticalPadding, row.android("paddingTop"))
+        assertEquals("$qualifier topbar bottom padding", verticalPadding, row.android("paddingBottom"))
+        assertEquals(
+            "$qualifier topbar child token order",
+            listOf("LinearLayout", "View", "TextView", "TextView", "ImageView", "TextView"),
+            children.map { it.tagName },
+        )
 
-        assertEquals("16dp", backIcon.android("layout_width"))
-        assertEquals("16dp", backIcon.android("layout_height"))
-        assertEquals("@null", backIcon.android("contentDescription"))
+        assertEquals("60dp", back.android("layout_width"))
+        assertEquals("28dp", back.android("layout_height"))
+        assertEquals("@string/detail_back_content_description", back.android("contentDescription"))
+        assertEquals("horizontal", back.android("orientation"))
+        assertEquals("center", back.android("gravity"))
+        assertEquals("6dp", back.android("paddingStart"))
+        assertEquals("6dp", back.android("paddingEnd"))
+        assertEquals("14dp", backIcon.android("layout_width"))
+        assertEquals("14dp", backIcon.android("layout_height"))
         assertEquals("@drawable/ic_home_back_chevron", backIcon.android("src"))
-        assertEquals("@color/senku_rev03_ink_2", backIcon.android("tint"))
+        assertEquals("@color/senku_rev03_ink_0", backIcon.android("tint"))
+        assertEquals("@string/detail_back", backLabel.android("text"))
+        assertEquals("2dp", backLabel.android("layout_marginStart"))
+        assertEquals("@font/jetbrains_mono", backLabel.android("fontFamily"))
+        assertEquals("10sp", backLabel.android("textSize"))
+        assertEquals("12sp", backLabel.android("lineHeight"))
+        assertEquals("0.09", backLabel.android("letterSpacing"))
 
         assertEquals("1dp", divider.android("layout_width"))
-        assertEquals("16dp", divider.android("layout_height"))
-        assertEquals("10dp", divider.android("layout_marginStart"))
-        assertEquals("14dp", divider.android("layout_marginEnd"))
+        assertEquals("24dp", divider.android("layout_height"))
+        assertEquals("12dp", divider.android("layout_marginStart"))
+        assertEquals("12dp", divider.android("layout_marginEnd"))
+
+        assertEquals("wrap_content", mode.android("layout_width"))
+        assertEquals("@style/TextAppearance.Senku.Rev03.MonoCaps", mode.android("textAppearance"))
+        assertEquals("HOME SENKU", mode.android("text"))
+        assertEquals("@color/senku_rev03_accent", mode.android("textColor"))
+        assertEquals("", mode.android("textStyle"))
 
         assertEquals("0dp", title.android("layout_width"))
+        assertEquals("10dp", title.android("layout_marginStart"))
         assertEquals("1", title.android("layout_weight"))
         assertEquals("1", title.android("maxLines"))
         assertEquals("end", title.android("ellipsize"))
-        assertEquals("@style/TextAppearance.Senku.Rev03.ChromeMono", title.android("textAppearance"))
-        assertEquals("HOME SENKU \u2022 Field manual \u2022 ed.2", title.android("text"))
+        assertEquals("@font/inter_tight", title.android("fontFamily"))
+        assertEquals("17sp", title.android("textSize"))
+        assertEquals("20sp", title.android("lineHeight"))
+        assertEquals("@color/senku_rev03_ink_0", title.android("textColor"))
+        assertEquals("Field manual \u2022 ed.2", title.android("text"))
 
         assertEquals("16dp", searchIcon.android("layout_width"))
         assertEquals("16dp", searchIcon.android("layout_height"))
         assertEquals("@drawable/ic_search_magnifier", searchIcon.android("src"))
         assertEquals("...", overflow.android("text"))
+        assertEquals("1dp", bottomRule.android("layout_height"))
+        assertEquals("@color/senku_rev03_hairline_strong", bottomRule.android("background"))
     }
 
     private fun assertSearchChromeRow(
@@ -196,15 +231,19 @@ class TabletMainXmlShellParityTest {
         horizontalPadding: String,
     ) {
         val layout = layout(qualifier)
+        val row = layout.elementByAndroidId("tablet_search_topbar_row")
         val query = layout.elementByAndroidId("tablet_search_query_text")
-        val row = query.parentNode as Element
         val children = row.directElementChildren()
         val searchIcon = children[0]
         val count = children[2]
+        val bottomRule = layout.elementByAndroidId("tablet_search_bottom_rule")
+        val verticalPadding = if (height == "48dp") "9dp" else "12dp"
 
         assertEquals("$qualifier search topbar height", height, row.android("layout_height"))
         assertEquals("$qualifier search topbar start padding", horizontalPadding, row.android("paddingStart"))
         assertEquals("$qualifier search topbar end padding", horizontalPadding, row.android("paddingEnd"))
+        assertEquals("$qualifier search topbar top padding", verticalPadding, row.android("paddingTop"))
+        assertEquals("$qualifier search topbar bottom padding", verticalPadding, row.android("paddingBottom"))
         assertEquals(
             "$qualifier search topbar child token order",
             listOf("ImageView", "TextView", "TextView"),
@@ -220,8 +259,12 @@ class TabletMainXmlShellParityTest {
         assertEquals("end", query.android("ellipsize"))
         assertEquals("@font/jetbrains_mono", query.android("fontFamily"))
         assertEquals("13sp", query.android("textSize"))
+        assertEquals("18sp", query.android("lineHeight"))
         assertEquals("@font/jetbrains_mono", count.android("fontFamily"))
         assertEquals("12sp", count.android("textSize"))
+        assertEquals("16sp", count.android("lineHeight"))
+        assertEquals("1dp", bottomRule.android("layout_height"))
+        assertEquals("@color/senku_rev03_hairline_strong", bottomRule.android("background"))
     }
 
     private fun assertRailShell(

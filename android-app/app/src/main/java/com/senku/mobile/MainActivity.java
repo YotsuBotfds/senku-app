@@ -183,7 +183,9 @@ public final class MainActivity extends AppCompatActivity {
     private TextView infoText;
     private TextView homeSubtitleText;
     private TextView homeManualStampText;
+    private TextView homeChromeModeText;
     private TextView homeChromeTitleText;
+    private View homeChromeBackButton;
     private View homeChromeSearchIcon;
     private TextView resultsHeader;
     private ProgressBar progressBar;
@@ -417,7 +419,9 @@ public final class MainActivity extends AppCompatActivity {
         infoText = findViewById(R.id.info_text);
         homeSubtitleText = findViewById(R.id.home_subtitle);
         homeManualStampText = findViewById(R.id.home_manual_stamp);
+        homeChromeModeText = findViewById(R.id.home_chrome_mode);
         homeChromeTitleText = findViewById(R.id.home_chrome_title);
+        homeChromeBackButton = findViewById(R.id.home_chrome_back_button);
         homeChromeSearchIcon = findViewById(R.id.home_chrome_search_icon);
         resultsHeader = findViewById(R.id.results_header);
         progressBar = findViewById(R.id.progress_bar);
@@ -544,6 +548,9 @@ public final class MainActivity extends AppCompatActivity {
             setPhoneTabFromFlow(BottomTabDestination.HOME);
             browseGuides();
         });
+        if (homeChromeBackButton != null) {
+            homeChromeBackButton.setOnClickListener(v -> handleHomeChromeBack());
+        }
         reinstallButton.setOnClickListener(v -> installPack(true));
         clearChatButton.setOnClickListener(v -> clearChatSession());
         developerToggleButton.setOnClickListener(v -> toggleDeveloperPanel());
@@ -4861,11 +4868,11 @@ public final class MainActivity extends AppCompatActivity {
             return;
         }
         String cleanQuery = safe(query).trim();
-        if (homeChromeTitleText != null && !isBrowseModeActive()) {
+        if (!isBrowseModeActive()) {
             String chromeQuery = cleanQuery.isEmpty() ? "guides" : cleanQuery;
-            homeChromeTitleText.setText(
-                "SEARCH " + chromeQuery + " \u2022 "
-                    + resultCount + (resultCount == 1 ? " result" : " results")
+            setHomeChromeModeAndTitle(
+                "SEARCH",
+                chromeQuery + " \u2022 " + resultCount + (resultCount == 1 ? " result" : " results")
             );
         }
         if (tabletSearchQueryText != null) {
@@ -4903,11 +4910,11 @@ public final class MainActivity extends AppCompatActivity {
     }
 
     private void updateHomeChromeTitle(boolean browseMode, String query) {
-        if (homeChromeTitleText == null) {
+        if (homeChromeTitleText == null && homeChromeModeText == null) {
             return;
         }
         if (browseMode) {
-            homeChromeTitleText.setText(buildHomeChromeTitleText());
+            setHomeChromeModeAndTitle("HOME SENKU", buildHomeChromeTitleText());
             if (homeChromeSearchIcon != null) {
                 homeChromeSearchIcon.setVisibility(View.VISIBLE);
             }
@@ -4918,14 +4925,23 @@ public final class MainActivity extends AppCompatActivity {
         }
         String cleanQuery = safe(query).trim();
         if (cleanQuery.isEmpty() || "guides".equalsIgnoreCase(cleanQuery)) {
-            homeChromeTitleText.setText("SEARCH SENKU");
+            setHomeChromeModeAndTitle("SEARCH", "Senku");
             return;
         }
-        homeChromeTitleText.setText("SEARCH " + cleanQuery);
+        setHomeChromeModeAndTitle("SEARCH", cleanQuery);
+    }
+
+    private void setHomeChromeModeAndTitle(CharSequence mode, CharSequence title) {
+        if (homeChromeModeText != null) {
+            homeChromeModeText.setText(mode);
+        }
+        if (homeChromeTitleText != null) {
+            homeChromeTitleText.setText(title);
+        }
     }
 
     private static CharSequence buildHomeChromeTitleText() {
-        String title = "HOME SENKU \u2022 Field manual \u2022 ed.2";
+        String title = "Field manual \u2022 ed.2";
         SpannableString styled = new SpannableString(title);
         int fieldStart = title.indexOf("Field manual");
         int editionStart = title.indexOf("ed.2");
@@ -4945,6 +4961,15 @@ public final class MainActivity extends AppCompatActivity {
             );
         }
         return styled;
+    }
+
+    private void handleHomeChromeBack() {
+        if (!isBrowseModeActive()) {
+            setPhoneTabFromFlow(BottomTabDestination.HOME);
+            showBrowseChrome(true);
+            return;
+        }
+        moveTaskToBack(true);
     }
 
     private void updateTabletSearchPreview() {

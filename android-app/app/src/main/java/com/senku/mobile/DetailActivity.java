@@ -123,7 +123,6 @@ public final class DetailActivity extends AppCompatActivity {
     private static final int DETAIL_TOP_CHROME_ICON_ACTION_SIZE_DP = 28;
     private static final int DETAIL_TOP_CHROME_BACK_ACTION_MIN_WIDTH_DP = 64;
     private static final String DETAIL_TOP_CHROME_BACK_ACTION_LABEL = "Back";
-    private static final String DETAIL_TOP_CHROME_MANUAL_ACTION_LABEL = "Manual";
     private static final int TABLET_EMERGENCY_CHROME_NAV_ICON_SIZE_DP = DETAIL_TOP_CHROME_ICON_ACTION_SIZE_DP;
     private static final int TABLET_EMERGENCY_LANDSCAPE_LEFT_MARGIN_DP = 336;
     private static final int TABLET_EMERGENCY_LANDSCAPE_RIGHT_MARGIN_DP = 24;
@@ -2082,6 +2081,9 @@ public final class DetailActivity extends AppCompatActivity {
         }
         button.setAllCaps(false);
         button.setText(tabletEmergencyBackButtonLabel(isTaskRoot()));
+        button.setSingleLine(true);
+        button.setMaxLines(1);
+        button.setGravity(Gravity.CENTER);
         button.setTextColor(getColor(R.color.senku_rev03_ink_0));
         button.setTypeface(rev03MonoTypeface(Typeface.BOLD));
         button.setTextSize(resolveDetailTopChromeLabelTextSizeSp());
@@ -2105,7 +2107,7 @@ public final class DetailActivity extends AppCompatActivity {
     }
 
     static String tabletEmergencyBackButtonLabel(boolean taskRoot) {
-        return taskRoot ? DETAIL_TOP_CHROME_MANUAL_ACTION_LABEL : DETAIL_TOP_CHROME_BACK_ACTION_LABEL;
+        return DETAIL_TOP_CHROME_BACK_ACTION_LABEL;
     }
 
     static int resolveTabletEmergencyBackButtonMinWidthDp() {
@@ -2266,7 +2268,7 @@ public final class DetailActivity extends AppCompatActivity {
     }
 
     static int resolveTabletEmergencyAppRailHomeLabelResource() {
-        return R.string.detail_emergency_app_rail_manual_label;
+        return R.string.bottom_tab_home;
     }
 
     static int resolveTabletEmergencyAppRailHomeContentDescriptionResource() {

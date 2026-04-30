@@ -1128,28 +1128,50 @@ fun TabletDetailScreen(
                         .background(colors.hairlineStrong),
                 )
 
-                TabletDetailBodyRow(
-                    state = state,
-                    onBackClick = onBackClick,
-                    onHomeClick = onHomeClick,
-                    onPinClick = onPinClick,
-                    onSavedClick = onSavedClick,
-                    onTurnClick = onTurnClick,
-                    onSourceClick = onSourceClick,
-                    onAnchorClick = onAnchorClick,
-                    onComposerTextChange = onComposerTextChange,
-                    onComposerSendClick = onComposerSendClick,
-                    onRetryClick = onRetryClick,
-                    onXRefClick = onXRefClick,
-                    onEvidenceToggleClick = onEvidenceToggleClick,
-                    threadPaneTitle = threadPaneTitle,
-                    answerPaneTitle = answerPaneTitle,
-                    evidencePaneTitle = evidencePaneTitle,
-                    showTitleBarInWorkspace = true,
-                    modifier = Modifier
-                        .weight(1f)
-                        .fillMaxHeight(),
-                )
+                Column(
+                    modifier = Modifier.weight(1f),
+                ) {
+                    TitleBar(
+                        detailMode = state.detailMode,
+                        guideId = state.guideId,
+                        guideTitle = state.guideTitle,
+                        meta = state.meta,
+                        turnCount = state.turns.size,
+                        guideModeLabel = state.guideModeLabel,
+                        guideModeSummary = state.guideModeSummary,
+                        guideModeAnchorLabel = state.guideModeAnchorLabel,
+                        statusText = state.statusText,
+                        guideMode = false,
+                        isLandscape = state.isLandscape,
+                        pinVisible = state.pinVisible,
+                        pinActive = state.pinActive,
+                        onBackClick = onBackClick,
+                        onHomeClick = onHomeClick,
+                        onPinClick = onPinClick,
+                    )
+                    TabletDetailBodyRow(
+                        state = state,
+                        onBackClick = onBackClick,
+                        onHomeClick = onHomeClick,
+                        onPinClick = onPinClick,
+                        onSavedClick = onSavedClick,
+                        onTurnClick = onTurnClick,
+                        onSourceClick = onSourceClick,
+                        onAnchorClick = onAnchorClick,
+                        onComposerTextChange = onComposerTextChange,
+                        onComposerSendClick = onComposerSendClick,
+                        onRetryClick = onRetryClick,
+                        onXRefClick = onXRefClick,
+                        onEvidenceToggleClick = onEvidenceToggleClick,
+                        threadPaneTitle = threadPaneTitle,
+                        answerPaneTitle = answerPaneTitle,
+                        evidencePaneTitle = evidencePaneTitle,
+                        showTitleBarInWorkspace = false,
+                        modifier = Modifier
+                            .weight(1f)
+                            .fillMaxHeight(),
+                    )
+                }
             }
         } else {
             Row(

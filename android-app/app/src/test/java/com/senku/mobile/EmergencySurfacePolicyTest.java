@@ -161,9 +161,9 @@ public final class EmergencySurfacePolicyTest {
     }
 
     @Test
-    public void tabletPortraitEmergencyAppRailHomeActionNamesManualExit() {
+    public void tabletPortraitEmergencyAppRailHomeActionNamesLibraryExit() {
         assertEquals(
-            R.string.detail_emergency_app_rail_manual_label,
+            R.string.bottom_tab_home,
             DetailActivity.resolveTabletEmergencyAppRailHomeLabelResource()
         );
         assertEquals(
@@ -265,7 +265,7 @@ public final class EmergencySurfacePolicyTest {
     public void tabletEmergencyBackAffordanceUsesVisibleBackLabel() {
         assertEquals("Back", DetailActivity.tabletEmergencyBackButtonLabel());
         assertEquals("Back", DetailActivity.tabletEmergencyBackButtonLabel(false));
-        assertEquals("Manual", DetailActivity.tabletEmergencyBackButtonLabel(true));
+        assertEquals("Back", DetailActivity.tabletEmergencyBackButtonLabel(true));
         assertEquals(64, DetailActivity.resolveTabletEmergencyBackButtonMinWidthDp());
         assertTrue(
             DetailActivity.resolveTabletEmergencyBackButtonMinWidthDp()
