@@ -670,8 +670,7 @@ public final class MainActivity extends AppCompatActivity {
                 return;
             }
         }
-        askLaneActive = false;
-        setPhoneTabFromFlow(BottomTabDestination.SEARCH);
+        enterSearchResultsRoute();
         SessionMemory.RetrievalPlan retrievalPlan = sessionMemory.buildRetrievalPlan(query);
         boolean sessionUsed = retrievalPlan.sessionUsed;
         String displayQuery = query.isEmpty() ? "guides" : query;
@@ -740,8 +739,7 @@ public final class MainActivity extends AppCompatActivity {
     }
 
     private void showDeterministicSearch(String query, DeterministicAnswerRouter.DeterministicAnswer deterministic) {
-        askLaneActive = false;
-        setPhoneTabFromFlow(BottomTabDestination.SEARCH);
+        enterSearchResultsRoute();
         setBusy("Deterministic search ready", false);
         setResultHighlightQuery(query);
         replaceItems(deterministic.sources);
@@ -830,8 +828,7 @@ public final class MainActivity extends AppCompatActivity {
         @Override
         public void onBlankQuery() {
             dismissSearchKeyboard();
-            setPhoneTabFromFlow(BottomTabDestination.ASK);
-            askLaneActive = true;
+            enterAskResultsRoute();
             updateActionLabels();
             focusSearchInput();
             setBusy("Enter a question first", false);
@@ -844,8 +841,7 @@ public final class MainActivity extends AppCompatActivity {
             String answerBody
         ) {
             dismissSearchKeyboard();
-            setPhoneTabFromFlow(BottomTabDestination.ASK);
-            askLaneActive = true;
+            enterAskResultsRoute();
             sessionMemory.recordTurn(query, answerBody, deterministic.sources, deterministic.ruleId);
             ChatSessionStore.persist(MainActivity.this);
             setBusy("Deterministic offline answer ready", false);
@@ -870,8 +866,11 @@ public final class MainActivity extends AppCompatActivity {
         @Override
         public void onModelUnavailable(boolean hasAutoQuery) {
             dismissSearchKeyboard();
-            setPhoneTabFromFlow(BottomTabDestination.ASK);
-            askLaneActive = false;
+            applyMainRouteState(new MainRouteDecisionHelper.RouteState(
+                MainRouteDecisionHelper.Surface.BROWSE,
+                BottomTabDestination.ASK,
+                false
+            ));
             setBusy(presentationFormatter().buildModelUnavailableStatus(), false);
             if (!hasAutoQuery) {
                 showBrowseChrome(true);
@@ -882,8 +881,7 @@ public final class MainActivity extends AppCompatActivity {
         @Override
         public void onPrepareStarted(String query) {
             dismissSearchKeyboard();
-            setPhoneTabFromFlow(BottomTabDestination.ASK);
-            askLaneActive = true;
+            enterAskResultsRoute();
             showBrowseChrome(false);
             setBusy(OfflineAnswerEngine.buildRetrievalStatus(query, sessionMemory), true);
         }
@@ -925,7 +923,11 @@ public final class MainActivity extends AppCompatActivity {
                     failedPrepared.sessionUsed
                 ));
             } else {
-                askLaneActive = false;
+                applyMainRouteState(new MainRouteDecisionHelper.RouteState(
+                    MainRouteDecisionHelper.Surface.BROWSE,
+                    BottomTabDestination.ASK,
+                    false
+                ));
                 setResultHighlightQuery(query);
                 replaceItems(Collections.emptyList());
                 if (!hasAutoQuery) {
@@ -1058,10 +1060,10 @@ public final class MainActivity extends AppCompatActivity {
         autoIntentHandled = true;
         suppressSearchFocusForAutomation = true;
         if (autoAsk) {
-            setPhoneTabFromFlow(BottomTabDestination.ASK);
+            enterAskResultsRoute();
             runAsk(trimmedQuery);
         } else {
-            setPhoneTabFromFlow(BottomTabDestination.SEARCH);
+            enterSearchResultsRoute();
             runSearch(trimmedQuery);
         }
     }
@@ -3286,6 +3288,14 @@ public final class MainActivity extends AppCompatActivity {
 
     private MainRouteDecisionHelper.RouteState currentMainRouteState() {
         return routeStateForMode(isBrowseModeActive(), activePhoneTab, askLaneActive);
+    }
+
+    private void enterSearchResultsRoute() {
+        applyMainRouteState(MainRouteDecisionHelper.enterSearch(currentMainRouteState()).routeState);
+    }
+
+    private void enterAskResultsRoute() {
+        applyMainRouteState(MainRouteDecisionHelper.enterAsk(currentMainRouteState()).routeState);
     }
 
     static MainRouteDecisionHelper.RouteState routeStateForModeForTest(
