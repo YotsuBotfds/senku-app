@@ -43,6 +43,8 @@ class AndroidPhysicalPhoneSmokeContractTests(unittest.TestCase):
         self.assertIn("focus evidence did not show", self.script)
         self.assertIn('"exec-out" "screencap" "-p"', self.script)
         self.assertIn('"uiautomator", "dump", "/dev/tty"', self.script)
+        self.assertIn("function Read-UiAutomatorDump", self.script)
+        self.assertIn("/sdcard/senku_physical_smoke_ui.xml", self.script)
         self.assertIn("function Get-TextCheckSummary", self.script)
         self.assertIn("text_checks", self.script)
         self.assertIn('"logcat", "-d", "-v", "time"', self.script)
@@ -235,7 +237,7 @@ class AndroidPhysicalPhoneSmokeContractTests(unittest.TestCase):
                         "if \"%4\"==\"dumpsys\" if \"%5\"==\"window\" (echo mCurrentFocus=Window{u0 com.senku.mobile/.MainActivity}& exit /b 0)",
                         "if \"%4\"==\"dumpsys\" if \"%5\"==\"activity\" (echo topResumedActivity=com.senku.mobile/.MainActivity& exit /b 0)",
                         "if \"%3\"==\"exec-out\" (echo PNGDATA& exit /b 0)",
-                        "if \"%4\"==\"uiautomator\" (echo UI hierarchy dumped to: /dev/tty Senku Library& exit /b 0)",
+                        "if \"%4\"==\"uiautomator\" (echo ^<hierarchy^>^<node text=Senku /^>^<node text=Library /^>^</hierarchy^>& exit /b 0)",
                         "if \"%3\"==\"logcat\" (echo 04-30 Senku log line& exit /b 0)",
                         "echo unexpected args: %*",
                         "exit /b 1",
@@ -286,7 +288,7 @@ class AndroidPhysicalPhoneSmokeContractTests(unittest.TestCase):
             self.assertTrue((output_dir / "focus.txt").exists())
             self.assertIn("mCurrentFocus", (output_dir / "focus.txt").read_text(encoding="utf-8-sig"))
             self.assertTrue(screenshot.exists())
-            self.assertIn("UI hierarchy", dump.read_text(encoding="utf-8-sig"))
+            self.assertIn("<hierarchy>", dump.read_text(encoding="utf-8-sig"))
             self.assertEqual(summary["text_checks"]["requested"], ["Senku", "Library"])
             self.assertEqual(summary["text_checks"]["passed"], ["Senku", "Library"])
             self.assertEqual(summary["text_checks"]["missing"], [])
@@ -296,6 +298,83 @@ class AndroidPhysicalPhoneSmokeContractTests(unittest.TestCase):
             self.assertIn("-s R5CT123456A install --no-streaming -r", call_text)
             self.assertIn("-s R5CT123456A shell am start -n com.senku.mobile/.MainActivity", call_text)
             self.assertIn("-s R5CT123456A exec-out screencap -p", call_text)
+        finally:
+            shutil.rmtree(root, ignore_errors=True)
+
+    def test_fake_adb_real_run_falls_back_to_device_dump_file(self):
+        root = Path(tempfile.mkdtemp(prefix="physical_phone_smoke_dump_fallback_"))
+        try:
+            output_dir = root / "out"
+            apk = root / "app-debug.apk"
+            adb = root / "adb.cmd"
+            calls = root / "adb_calls.txt"
+            dump = root / "dump.xml"
+            device_dump_path = "/sdcard/senku_physical_smoke_ui.xml"
+            apk.write_text("apk", encoding="utf-8")
+            adb.write_text(
+                "\r\n".join(
+                    [
+                        "@echo off",
+                        f"echo %*>> \"{calls}\"",
+                        "if \"%1\"==\"devices\" (",
+                        "  echo List of devices attached",
+                        "  echo R5CT123456A\tdevice",
+                        "  exit /b 0",
+                        ")",
+                        "if \"%5\"==\"ro.kernel.qemu\" (echo 0& exit /b 0)",
+                        "if \"%5\"==\"ro.boot.qemu\" (echo 0& exit /b 0)",
+                        "if \"%3\"==\"install\" (echo Success& exit /b 0)",
+                        "if \"%4\"==\"am\" (echo Starting: Intent& exit /b 0)",
+                        "if \"%4\"==\"dumpsys\" if \"%5\"==\"window\" (echo mCurrentFocus=Window{u0 com.senku.mobile/.MainActivity}& exit /b 0)",
+                        "if \"%4\"==\"dumpsys\" if \"%5\"==\"activity\" (echo topResumedActivity=com.senku.mobile/.MainActivity& exit /b 0)",
+                        "if \"%4\"==\"uiautomator\" if \"%6\"==\"/dev/tty\" (echo direct dump unavailable& exit /b 1)",
+                        f"if \"%4\"==\"uiautomator\" if \"%6\"==\"{device_dump_path}\" (echo UI hierarchy dumped to: {device_dump_path}& exit /b 0)",
+                        f"if \"%4\"==\"cat\" if \"%5\"==\"{device_dump_path}\" (echo ^<hierarchy^>^<node text=Senku /^>^<node text=Library /^>^</hierarchy^>& exit /b 0)",
+                        f"if \"%4\"==\"rm\" if \"%6\"==\"{device_dump_path}\" (exit /b 0)",
+                        "exit /b 1",
+                    ]
+                ),
+                encoding="utf-8",
+            )
+
+            result = subprocess.run(
+                [
+                    "powershell",
+                    "-NoProfile",
+                    "-ExecutionPolicy",
+                    "Bypass",
+                    "-File",
+                    str(SCRIPT),
+                    "-OutputDir",
+                    str(output_dir),
+                    "-Serial",
+                    "R5CT123456A",
+                    "-ApkPath",
+                    str(apk),
+                    "-AdbPath",
+                    str(adb),
+                    "-DumpPath",
+                    str(dump),
+                    "-RequiredText",
+                    "Senku,Library",
+                ],
+                cwd=REPO_ROOT,
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+
+            self.assertEqual(result.returncode, 0, result.stderr + result.stdout)
+            summary = json.loads((output_dir / "summary.json").read_text(encoding="utf-8-sig"))
+            self.assertEqual(summary["status"], "completed")
+            self.assertEqual(summary["text_checks"]["passed"], ["Senku", "Library"])
+            self.assertEqual(summary["text_checks"]["missing"], [])
+            self.assertIn("<hierarchy>", dump.read_text(encoding="utf-8-sig"))
+            call_text = calls.read_text(encoding="utf-8")
+            self.assertIn("-s R5CT123456A shell uiautomator dump /dev/tty", call_text)
+            self.assertIn(f"-s R5CT123456A shell uiautomator dump {device_dump_path}", call_text)
+            self.assertIn(f"-s R5CT123456A shell cat {device_dump_path}", call_text)
+            self.assertIn(f"-s R5CT123456A shell rm -f {device_dump_path}", call_text)
         finally:
             shutil.rmtree(root, ignore_errors=True)
 
@@ -321,7 +400,7 @@ class AndroidPhysicalPhoneSmokeContractTests(unittest.TestCase):
                         "if \"%4\"==\"am\" (echo Starting: Intent& exit /b 0)",
                         "if \"%4\"==\"dumpsys\" if \"%5\"==\"window\" (echo mCurrentFocus=Window{u0 com.senku.mobile/.MainActivity}& exit /b 0)",
                         "if \"%4\"==\"dumpsys\" if \"%5\"==\"activity\" (echo topResumedActivity=com.senku.mobile/.MainActivity& exit /b 0)",
-                        "if \"%4\"==\"uiautomator\" (echo UI hierarchy dumped to: /dev/tty Senku& exit /b 0)",
+                        "if \"%4\"==\"uiautomator\" (echo ^<hierarchy^>^<node text=Senku /^>^</hierarchy^>& exit /b 0)",
                         "exit /b 1",
                     ]
                 ),

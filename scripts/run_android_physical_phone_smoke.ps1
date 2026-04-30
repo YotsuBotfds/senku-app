@@ -191,6 +191,28 @@ function Test-FocusContainsLaunchActivity {
         -or $Text -match "ResumedActivity:.*com\.senku\.mobile"
 }
 
+function Read-UiAutomatorDump {
+    param(
+        [string]$ResolvedAdbPath,
+        [string]$DeviceSerial
+    )
+
+    try {
+        $directDump = Invoke-AdbCapture -ResolvedAdbPath $ResolvedAdbPath -Arguments @("-s", $DeviceSerial, "shell", "uiautomator", "dump", "/dev/tty")
+        if ($directDump -match "<hierarchy") {
+            return $directDump
+        }
+    } catch {
+        # Some physical devices do not stream /dev/tty dumps reliably; fall back below.
+    }
+
+    $deviceDumpPath = "/sdcard/senku_physical_smoke_ui.xml"
+    Invoke-AdbCapture -ResolvedAdbPath $ResolvedAdbPath -Arguments @("-s", $DeviceSerial, "shell", "uiautomator", "dump", $deviceDumpPath) | Out-Null
+    $dumpText = Invoke-AdbCapture -ResolvedAdbPath $ResolvedAdbPath -Arguments @("-s", $DeviceSerial, "shell", "cat", $deviceDumpPath)
+    Invoke-AdbChecked -ResolvedAdbPath $ResolvedAdbPath -Arguments @("-s", $DeviceSerial, "shell", "rm", "-f", $deviceDumpPath)
+    return $dumpText
+}
+
 function Get-TextCheckSummary {
     param(
         [string[]]$Fragments,
@@ -301,7 +323,7 @@ if (-not $DryRun) {
     }
 
     if (($null -ne $resolvedDumpPath) -or ($requestedTextFragments.Count -gt 0)) {
-        $dumpText = Invoke-AdbCapture -ResolvedAdbPath $resolvedAdbPath -Arguments @("-s", $Serial, "shell", "uiautomator", "dump", "/dev/tty")
+        $dumpText = Read-UiAutomatorDump -ResolvedAdbPath $resolvedAdbPath -DeviceSerial $Serial
         if ($null -ne $resolvedDumpPath) {
             Write-Utf8Text -Path $resolvedDumpPath -Content $dumpText
         }
@@ -350,7 +372,7 @@ $summaryData = [ordered]@{
         launch = $launchCommandText
         focus = "adb -s $Serial shell dumpsys window windows; adb -s $Serial shell dumpsys activity activities"
         screenshot = if ($null -eq $resolvedScreenshotPath) { $null } else { "adb -s $Serial exec-out screencap -p > `"$resolvedScreenshotPath`"" }
-        dump = if ($null -eq $resolvedDumpPath) { $null } else { "adb -s $Serial shell uiautomator dump /dev/tty" }
+        dump = if ($null -eq $resolvedDumpPath -and $requestedTextFragments.Count -eq 0) { $null } else { "adb -s $Serial shell uiautomator dump /dev/tty || dump /sdcard/senku_physical_smoke_ui.xml" }
         logcat = if ($null -eq $resolvedLogcatPath) { $null } else { "adb -s $Serial logcat -d -v time" }
     }
     summary_json = (Convert-ToRepoRelativePath -Path $summaryJsonPath)
