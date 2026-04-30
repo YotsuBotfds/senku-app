@@ -20,6 +20,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.ScrollView;
@@ -81,6 +82,7 @@ public final class MainActivity extends AppCompatActivity {
     private static final int MAX_SEARCH_SUGGESTIONS = 6;
     private static final int MAX_CATEGORY_SUGGESTIONS = 2;
     private static final int MAX_COMPACT_HOME_CATEGORY_TILES = 6;
+    private static final int MAX_SAVED_GUIDES = 12;
     private static final int MAX_RECENT_THREAD_PREVIEWS = 3;
     private static final int MAX_HOME_RELATED_GUIDES = 4;
     private static final int MAX_RESULT_PREVIEW_BRIDGE_GUIDES = 4;
@@ -202,6 +204,8 @@ public final class MainActivity extends AppCompatActivity {
     private View recentThreadsSection;
     private LinearLayout recentThreadsContainer;
     private View pinnedSection;
+    private TextView pinnedEmptyText;
+    private View pinnedScroll;
     private LinearLayout pinnedContainer;
     private View homeRelatedSection;
     private TextView homeRelatedSubtitleText;
@@ -268,6 +272,7 @@ public final class MainActivity extends AppCompatActivity {
     private boolean initialSearchFocusApplied;
     private boolean askLaneActive;
     private boolean browseChromeActive = true;
+    private boolean pendingSavedGuideSectionFocus;
     private boolean productReviewMode = true;
     private HomeGuideAnchor homeGuideAnchor;
     private int homeRelatedRequestVersion;
@@ -433,6 +438,8 @@ public final class MainActivity extends AppCompatActivity {
         recentThreadsSection = findViewById(R.id.recent_threads_section);
         recentThreadsContainer = findViewById(R.id.recent_threads_container);
         pinnedSection = findViewById(R.id.pinned_section);
+        pinnedEmptyText = findViewById(R.id.pinned_empty_text);
+        pinnedScroll = findViewById(R.id.pinned_scroll);
         pinnedContainer = findViewById(R.id.pinned_container);
         homeRelatedSection = findViewById(R.id.home_related_section);
         homeRelatedSubtitleText = findViewById(R.id.home_related_subtitle_text);
@@ -654,7 +661,9 @@ public final class MainActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        if (isPhoneFormFactor() && isBrowseModeActive() && activePhoneTab != BottomTabDestination.HOME) {
+        if (shouldHandleMainSurfaceNavigationTabs(isPhoneFormFactor(), isTabletSearchLayout())
+            && isBrowseModeActive()
+            && activePhoneTab != BottomTabDestination.HOME) {
             BottomTabDestination previousTab = popPreviousPhoneTab();
             openPhoneTab(previousTab == null ? BottomTabDestination.HOME : previousTab, false);
             return;
@@ -1368,6 +1377,9 @@ public final class MainActivity extends AppCompatActivity {
         executor.execute(() -> {
             ArrayList<SearchResult> loaded = new ArrayList<>();
             for (String guideId : pinnedGuideIds) {
+                if (loaded.size() >= MAX_SAVED_GUIDES) {
+                    break;
+                }
                 SearchResult result = repo.loadGuideById(guideId);
                 if (result != null) {
                     loaded.add(result);
@@ -1388,6 +1400,7 @@ public final class MainActivity extends AppCompatActivity {
                 pinnedContainer.addView(createPinnedGuideButton(pinnedGuides.get(index), index, pinnedGuides.size()));
             }
         }
+        updatePinnedEmptyState();
         refreshHomeRelatedGuidesAsync();
         updatePinnedSectionVisibility();
     }
@@ -2422,8 +2435,23 @@ public final class MainActivity extends AppCompatActivity {
         if (pinnedSection == null) {
             return;
         }
-        boolean browseMode = isBrowseModeActive();
-        pinnedSection.setVisibility(browseMode && !pinnedGuides.isEmpty() ? View.VISIBLE : View.GONE);
+        pinnedSection.setVisibility(shouldShowSavedGuideSection(
+            isBrowseModeActive(),
+            activePhoneTab,
+            pinnedGuides.size()
+        ) ? View.VISIBLE : View.GONE);
+        updatePinnedEmptyState();
+    }
+
+    private void updatePinnedEmptyState() {
+        boolean hasSavedGuides = !pinnedGuides.isEmpty();
+        if (pinnedEmptyText != null) {
+            pinnedEmptyText.setVisibility(hasSavedGuides ? View.GONE : View.VISIBLE);
+            pinnedEmptyText.setText(R.string.saved_guides_empty);
+        }
+        if (pinnedScroll != null) {
+            pinnedScroll.setVisibility(hasSavedGuides ? View.VISIBLE : View.GONE);
+        }
     }
 
     private void updateHomeRelatedSectionVisibility() {
@@ -2485,7 +2513,7 @@ public final class MainActivity extends AppCompatActivity {
     }
 
     private void bindStaticPhoneNavTab(BottomTabDestination destination, int... viewIds) {
-        if (!isLandscapePhoneLayout()) {
+        if (!shouldBindStaticNavigationRail(isLandscapePhoneLayout(), isTabletSearchLayout())) {
             return;
         }
         View.OnClickListener listener = v -> openPhoneTabFromTap(destination);
@@ -2497,6 +2525,48 @@ public final class MainActivity extends AppCompatActivity {
             view.setOnClickListener(listener);
             view.setClickable(true);
             view.setFocusable(true);
+        }
+    }
+
+    private void updateStaticPhoneNavRailState() {
+        if (!shouldBindStaticNavigationRail(isLandscapePhoneLayout(), isTabletSearchLayout())) {
+            return;
+        }
+        updateStaticPhoneNavTabState(
+            BottomTabDestination.HOME,
+            R.id.phone_nav_home_icon,
+            R.id.phone_nav_home_label
+        );
+        updateStaticPhoneNavTabState(
+            BottomTabDestination.ASK,
+            R.id.phone_nav_ask_icon,
+            R.id.phone_nav_ask_label
+        );
+        updateStaticPhoneNavTabState(
+            BottomTabDestination.PINS,
+            R.id.phone_nav_pins_icon,
+            R.id.phone_nav_pins_label
+        );
+    }
+
+    private void updateStaticPhoneNavTabState(
+        BottomTabDestination destination,
+        int iconId,
+        int labelId
+    ) {
+        boolean selected = phoneTabSelectionOwner(destination) == activePhoneTab;
+        int color = getColor(selected ? R.color.senku_rev03_accent : R.color.senku_rev03_ink_2);
+        View iconView = findViewById(iconId);
+        if (iconView instanceof ImageView) {
+            ((ImageView) iconView).setColorFilter(color);
+            iconView.setSelected(selected);
+        }
+        View labelView = findViewById(labelId);
+        if (labelView instanceof TextView) {
+            TextView label = (TextView) labelView;
+            label.setTextColor(color);
+            label.setTypeface(null, selected ? Typeface.BOLD : Typeface.NORMAL);
+            label.setSelected(selected);
         }
     }
 
@@ -2889,6 +2959,14 @@ public final class MainActivity extends AppCompatActivity {
         return phoneFormFactor && !landscapePhone;
     }
 
+    static boolean shouldBindStaticNavigationRail(boolean landscapePhoneLayout, boolean tabletSearchLayout) {
+        return landscapePhoneLayout || tabletSearchLayout;
+    }
+
+    static boolean shouldHandleMainSurfaceNavigationTabs(boolean phoneFormFactor, boolean tabletSearchLayout) {
+        return phoneFormFactor || tabletSearchLayout;
+    }
+
     private BottomTabDestination restorePhoneTab(Bundle savedInstanceState) {
         if (savedInstanceState == null) {
             return BottomTabDestination.HOME;
@@ -2993,19 +3071,19 @@ public final class MainActivity extends AppCompatActivity {
     }
 
     private void updatePhoneTabBarState() {
-        if (bottomTabBarView == null) {
-            return;
+        if (bottomTabBarView != null) {
+            bottomTabBarView.updateLayoutMode(
+                isLandscapePhoneLayout()
+                    ? BottomTabBarLayoutMode.VERTICAL_RAIL
+                    : BottomTabBarLayoutMode.HORIZONTAL_BAR
+            );
+            bottomTabBarView.setTabs(
+                buildPhoneTabs(),
+                activePhoneTab,
+                this::openPhoneTabFromTap
+            );
         }
-        bottomTabBarView.updateLayoutMode(
-            isLandscapePhoneLayout()
-                ? BottomTabBarLayoutMode.VERTICAL_RAIL
-                : BottomTabBarLayoutMode.HORIZONTAL_BAR
-        );
-        bottomTabBarView.setTabs(
-            buildPhoneTabs(),
-            activePhoneTab,
-            this::openPhoneTabFromTap
-        );
+        updateStaticPhoneNavRailState();
     }
 
     private List<BottomTabModel> buildPhoneTabs() {
@@ -3092,6 +3170,17 @@ public final class MainActivity extends AppCompatActivity {
         return destination == BottomTabDestination.PINS;
     }
 
+    static boolean shouldShowSavedGuideSection(
+        boolean browseMode,
+        BottomTabDestination activePhoneTab,
+        int savedGuideCount
+    ) {
+        if (!browseMode) {
+            return false;
+        }
+        return savedGuideCount > 0 || activePhoneTab == BottomTabDestination.PINS;
+    }
+
     private static int phoneTabLabelResource(BottomTabDestination destination) {
         switch (destination) {
             case HOME:
@@ -3114,7 +3203,7 @@ public final class MainActivity extends AppCompatActivity {
     }
 
     private void openPhoneTab(BottomTabDestination destination, boolean pushHistory) {
-        if (!isPhoneFormFactor()) {
+        if (!shouldHandleMainSurfaceNavigationTabs(isPhoneFormFactor(), isTabletSearchLayout())) {
             return;
         }
         BottomTabDestination selectionOwner = phoneTabSelectionOwner(destination);
@@ -3158,8 +3247,9 @@ public final class MainActivity extends AppCompatActivity {
                 askLaneActive = false;
                 updateActionLabels();
                 dismissSearchKeyboard();
+                pendingSavedGuideSectionFocus = true;
                 ensureBrowseHomeVisible();
-                scrollBrowseSectionIntoView(pinnedSection);
+                focusSavedGuideSectionIfReady();
                 break;
             default:
                 break;
@@ -3167,7 +3257,7 @@ public final class MainActivity extends AppCompatActivity {
     }
 
     private void setPhoneTabFromFlow(BottomTabDestination destination) {
-        if (!isPhoneFormFactor()) {
+        if (!shouldHandleMainSurfaceNavigationTabs(isPhoneFormFactor(), isTabletSearchLayout())) {
             return;
         }
         activePhoneTab = phoneTabSelectionOwner(destination);
@@ -3236,6 +3326,18 @@ public final class MainActivity extends AppCompatActivity {
             }
             scrollView.smoothScrollTo(0, Math.max(0, top - dp(8)));
         });
+    }
+
+    private void focusSavedGuideSectionIfReady() {
+        if (!pendingSavedGuideSectionFocus || !isBrowseModeActive()) {
+            return;
+        }
+        updatePinnedSectionVisibility();
+        if (pinnedSection == null || pinnedSection.getVisibility() != View.VISIBLE) {
+            return;
+        }
+        pendingSavedGuideSectionFocus = false;
+        scrollBrowseSectionIntoView(pinnedSection);
     }
 
     private ScrollView resolveBrowseScrollView() {
@@ -4279,6 +4381,9 @@ public final class MainActivity extends AppCompatActivity {
         updateRecentThreadsVisibility();
         updatePinnedSectionVisibility();
         updateHomeRelatedSectionVisibility();
+        if (show) {
+            focusSavedGuideSectionIfReady();
+        }
         if (categorySectionHeader != null) {
             categorySectionHeader.setVisibility(visibility);
         }

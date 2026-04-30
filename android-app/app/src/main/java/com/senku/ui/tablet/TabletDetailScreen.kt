@@ -26,6 +26,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -37,6 +38,7 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.isTraversalGroup
 import androidx.compose.ui.semantics.paneTitle
@@ -190,6 +192,18 @@ enum class Status {
     Done,
     Active,
     Pending,
+}
+
+internal enum class TabletDetailAppRailDestination {
+    Library,
+    Ask,
+    Saved,
+}
+
+internal enum class TabletDetailAppRailAction {
+    Library,
+    Ask,
+    Saved,
 }
 
 internal data class TabletReadingLayoutPolicy(
@@ -398,6 +412,26 @@ internal fun tabletGuideReferenceRailWidthDp(isLandscape: Boolean): Int =
 
 internal fun tabletGuideAppRailWidthDp(isLandscape: Boolean): Int =
     if (isLandscape) 88 else 72
+
+internal fun tabletDetailAppRailActiveDestination(detailMode: TabletDetailMode): TabletDetailAppRailDestination =
+    when (detailMode) {
+        TabletDetailMode.Guide -> TabletDetailAppRailDestination.Library
+        TabletDetailMode.Answer,
+        TabletDetailMode.Thread -> TabletDetailAppRailDestination.Ask
+    }
+
+internal fun tabletDetailAppRailDispatchAction(
+    action: TabletDetailAppRailAction,
+    onLibraryClick: () -> Unit,
+    onAskClick: () -> Unit,
+    onSavedClick: () -> Unit,
+) {
+    when (action) {
+        TabletDetailAppRailAction.Library -> onLibraryClick()
+        TabletDetailAppRailAction.Ask -> onAskClick()
+        TabletDetailAppRailAction.Saved -> onSavedClick()
+    }
+}
 
 internal fun tabletGuideSectionRailShowsToolbar(): Boolean = false
 
@@ -829,6 +863,8 @@ fun bindTabletDetailScreen(
     onBackClick: Runnable,
     onHomeClick: Runnable,
     onPinClick: Runnable?,
+    onAskClick: Runnable?,
+    onSavedClick: Runnable?,
     onTurnClick: Consumer<String>?,
     onSourceClick: Consumer<String>?,
     onAnchorClick: Runnable?,
@@ -846,6 +882,8 @@ fun bindTabletDetailScreen(
                 onBackClick = { onBackClick.run() },
                 onHomeClick = { onHomeClick.run() },
                 onPinClick = { onPinClick?.run() },
+                onAskClick = { onAskClick?.run() },
+                onSavedClick = { onSavedClick?.run() },
                 onTurnClick = { onTurnClick?.accept(it) },
                 onSourceClick = { onSourceClick?.accept(it) },
                 onAnchorClick = { onAnchorClick?.run() },
@@ -865,6 +903,8 @@ fun TabletDetailScreen(
     onBackClick: () -> Unit,
     onHomeClick: () -> Unit,
     onPinClick: () -> Unit,
+    onAskClick: () -> Unit,
+    onSavedClick: () -> Unit,
     onTurnClick: (String) -> Unit,
     onSourceClick: (String) -> Unit,
     onAnchorClick: () -> Unit,
@@ -893,8 +933,10 @@ fun TabletDetailScreen(
                     .background(colors.bg0),
             ) {
                 GuideAppRail(
+                    activeDestination = tabletDetailAppRailActiveDestination(state.detailMode),
                     onLibraryClick = onHomeClick,
-                    onSavedClick = onPinClick,
+                    onAskClick = onAskClick,
+                    onSavedClick = onSavedClick,
                     modifier = Modifier
                         .width(tabletGuideAppRailWidthDp(state.isLandscape).dp)
                         .fillMaxHeight(),
@@ -933,6 +975,7 @@ fun TabletDetailScreen(
                         onBackClick = onBackClick,
                         onHomeClick = onHomeClick,
                         onPinClick = onPinClick,
+                        onSavedClick = onSavedClick,
                         onTurnClick = onTurnClick,
                         onSourceClick = onSourceClick,
                         onAnchorClick = onAnchorClick,
@@ -956,8 +999,10 @@ fun TabletDetailScreen(
                     .background(colors.bg0),
             ) {
                 GuideAppRail(
+                    activeDestination = tabletDetailAppRailActiveDestination(state.detailMode),
                     onLibraryClick = onHomeClick,
-                    onSavedClick = onPinClick,
+                    onAskClick = onAskClick,
+                    onSavedClick = onSavedClick,
                     modifier = Modifier
                         .width(tabletGuideAppRailWidthDp(state.isLandscape).dp)
                         .fillMaxHeight(),
@@ -975,6 +1020,7 @@ fun TabletDetailScreen(
                     onBackClick = onBackClick,
                     onHomeClick = onHomeClick,
                     onPinClick = onPinClick,
+                    onSavedClick = onSavedClick,
                     onTurnClick = onTurnClick,
                     onSourceClick = onSourceClick,
                     onAnchorClick = onAnchorClick,
@@ -993,25 +1039,51 @@ fun TabletDetailScreen(
                 )
             }
         } else {
-            TabletDetailBodyRow(
-                state = state,
-                onBackClick = onBackClick,
-                onHomeClick = onHomeClick,
-                onPinClick = onPinClick,
-                onTurnClick = onTurnClick,
-                onSourceClick = onSourceClick,
-                onAnchorClick = onAnchorClick,
-                onComposerTextChange = onComposerTextChange,
-                onComposerSendClick = onComposerSendClick,
-                onRetryClick = onRetryClick,
-                onXRefClick = onXRefClick,
-                onEvidenceToggleClick = onEvidenceToggleClick,
-                threadPaneTitle = threadPaneTitle,
-                answerPaneTitle = answerPaneTitle,
-                evidencePaneTitle = evidencePaneTitle,
-                showTitleBarInWorkspace = true,
-                modifier = Modifier.fillMaxSize(),
-            )
+            Row(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(colors.bg0),
+            ) {
+                GuideAppRail(
+                    activeDestination = tabletDetailAppRailActiveDestination(state.detailMode),
+                    onLibraryClick = onHomeClick,
+                    onAskClick = onAskClick,
+                    onSavedClick = onSavedClick,
+                    modifier = Modifier
+                        .width(tabletGuideAppRailWidthDp(state.isLandscape).dp)
+                        .fillMaxHeight(),
+                )
+
+                Box(
+                    modifier = Modifier
+                        .width(1.dp)
+                        .fillMaxHeight()
+                        .background(colors.hairlineStrong),
+                )
+
+                TabletDetailBodyRow(
+                    state = state,
+                    onBackClick = onBackClick,
+                    onHomeClick = onHomeClick,
+                    onPinClick = onPinClick,
+                    onSavedClick = onSavedClick,
+                    onTurnClick = onTurnClick,
+                    onSourceClick = onSourceClick,
+                    onAnchorClick = onAnchorClick,
+                    onComposerTextChange = onComposerTextChange,
+                    onComposerSendClick = onComposerSendClick,
+                    onRetryClick = onRetryClick,
+                    onXRefClick = onXRefClick,
+                    onEvidenceToggleClick = onEvidenceToggleClick,
+                    threadPaneTitle = threadPaneTitle,
+                    answerPaneTitle = answerPaneTitle,
+                    evidencePaneTitle = evidencePaneTitle,
+                    showTitleBarInWorkspace = true,
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxHeight(),
+                )
+            }
         }
     }
 }
@@ -1022,6 +1094,7 @@ private fun TabletDetailBodyRow(
     onBackClick: () -> Unit,
     onHomeClick: () -> Unit,
     onPinClick: () -> Unit,
+    onSavedClick: () -> Unit,
     onTurnClick: (String) -> Unit,
     onSourceClick: (String) -> Unit,
     onAnchorClick: () -> Unit,
@@ -1105,6 +1178,9 @@ private fun TabletDetailBodyRow(
             state = state,
             onTurnClick = onTurnClick,
             onSourceClick = onSourceClick,
+            onBackClick = onBackClick,
+            onHomeClick = onHomeClick,
+            onPinClick = onPinClick,
             onAnchorClick = onAnchorClick,
             onComposerTextChange = onComposerTextChange,
             onComposerSendClick = onComposerSendClick,
@@ -1130,6 +1206,9 @@ private fun DetailWorkspace(
     state: TabletDetailState,
     onTurnClick: (String) -> Unit,
     onSourceClick: (String) -> Unit,
+    onBackClick: () -> Unit,
+    onHomeClick: () -> Unit,
+    onPinClick: () -> Unit,
     onAnchorClick: () -> Unit,
     onComposerTextChange: (String) -> Unit,
     onComposerSendClick: (String) -> Unit,
@@ -1159,6 +1238,11 @@ private fun DetailWorkspace(
                 statusText = state.statusText,
                 guideMode = guideMode,
                 isLandscape = state.isLandscape,
+                pinVisible = state.pinVisible,
+                pinActive = state.pinActive,
+                onBackClick = onBackClick,
+                onHomeClick = onHomeClick,
+                onPinClick = onPinClick,
             )
         }
 
@@ -1379,7 +1463,9 @@ private fun ThreadReadingSurface(
 
 @Composable
 private fun GuideAppRail(
+    activeDestination: TabletDetailAppRailDestination,
     onLibraryClick: () -> Unit,
+    onAskClick: () -> Unit,
     onSavedClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -1389,12 +1475,12 @@ private fun GuideAppRail(
     Column(
         modifier = modifier
             .background(colors.bg1)
-            .padding(top = 30.dp),
+            .padding(top = 20.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(30.dp),
+        verticalArrangement = Arrangement.spacedBy(18.dp),
     ) {
         Surface(
-            modifier = Modifier.size(46.dp),
+            modifier = Modifier.size(36.dp),
             color = colors.bg2,
             contentColor = colors.accent,
             shape = RoundedCornerShape(8.dp),
@@ -1405,7 +1491,7 @@ private fun GuideAppRail(
                 contentAlignment = Alignment.Center,
             ) {
                 Text(
-                    text = "S",
+                    text = stringResource(R.string.app_badge_letter),
                     style = typography.monoCaps.copy(
                         fontSize = 15.sp,
                         lineHeight = 18.sp,
@@ -1418,116 +1504,82 @@ private fun GuideAppRail(
         }
 
         GuideAppRailItem(
-            label = "Library",
-            active = true,
-            onClick = onLibraryClick,
-        ) {
-            LibraryGlyph()
-        }
+            label = stringResource(R.string.bottom_tab_home),
+            iconRes = R.drawable.ic_home_library,
+            active = activeDestination == TabletDetailAppRailDestination.Library,
+            onClick = {
+                tabletDetailAppRailDispatchAction(
+                    TabletDetailAppRailAction.Library,
+                    onLibraryClick,
+                    onAskClick,
+                    onSavedClick,
+                )
+            },
+        )
         GuideAppRailItem(
-            label = "Ask",
-            active = false,
-            onClick = {},
-        ) {
-            AskGlyph()
-        }
+            label = stringResource(R.string.bottom_tab_ask),
+            iconRes = R.drawable.ic_home_ask,
+            active = activeDestination == TabletDetailAppRailDestination.Ask,
+            onClick = {
+                tabletDetailAppRailDispatchAction(
+                    TabletDetailAppRailAction.Ask,
+                    onLibraryClick,
+                    onAskClick,
+                    onSavedClick,
+                )
+            },
+        )
         GuideAppRailItem(
-            label = "Saved",
-            active = false,
-            onClick = onSavedClick,
-        ) {
-            SavedGlyph()
-        }
+            label = stringResource(R.string.bottom_tab_pins),
+            iconRes = R.drawable.ic_home_saved,
+            active = activeDestination == TabletDetailAppRailDestination.Saved,
+            onClick = {
+                tabletDetailAppRailDispatchAction(
+                    TabletDetailAppRailAction.Saved,
+                    onLibraryClick,
+                    onAskClick,
+                    onSavedClick,
+                )
+            },
+        )
     }
 }
 
 @Composable
 private fun GuideAppRailItem(
     label: String,
+    iconRes: Int,
     active: Boolean,
     onClick: () -> Unit,
-    glyph: @Composable () -> Unit,
 ) {
     val colors = SenkuTheme.colors
     val typography = SenkuTheme.typography
+    val itemColor = if (active) colors.accent else colors.ink2
 
     Column(
         modifier = Modifier
             .width(76.dp)
             .clickable(onClick = onClick),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(7.dp),
+        verticalArrangement = Arrangement.spacedBy(4.dp),
     ) {
-        Box(
-            modifier = Modifier.size(24.dp),
-            contentAlignment = Alignment.Center,
-        ) {
-            glyph()
-        }
+        Icon(
+            painter = painterResource(iconRes),
+            contentDescription = label,
+            modifier = Modifier.size(22.dp),
+            tint = itemColor,
+        )
         Text(
             text = label,
             style = typography.smallBody.copy(
                 fontSize = 12.sp,
                 lineHeight = 14.sp,
-                fontWeight = if (active) FontWeight.Medium else FontWeight.Normal,
+                fontWeight = if (active) FontWeight.Bold else FontWeight.Normal,
             ),
-            color = if (active) colors.accent else colors.ink3,
+            color = itemColor,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
         )
-    }
-}
-
-@Composable
-private fun LibraryGlyph() {
-    val colors = SenkuTheme.colors
-    Canvas(modifier = Modifier.size(24.dp)) {
-        val stroke = 2.dp.toPx()
-        val left = size.width * 0.22f
-        val right = size.width * 0.78f
-        val top = size.height * 0.28f
-        val middle = size.height * 0.50f
-        val bottom = size.height * 0.72f
-        drawLine(colors.accent, Offset(left, top), Offset(right, top), stroke, StrokeCap.Round)
-        drawLine(colors.accent, Offset(left, middle), Offset(right, middle), stroke, StrokeCap.Round)
-        drawLine(colors.accent, Offset(left, bottom), Offset(right, bottom), stroke, StrokeCap.Round)
-    }
-}
-
-@Composable
-private fun AskGlyph() {
-    val colors = SenkuTheme.colors
-    Canvas(modifier = Modifier.size(24.dp)) {
-        val stroke = 1.8.dp.toPx()
-        val left = size.width * 0.22f
-        val right = size.width * 0.80f
-        val top = size.height * 0.24f
-        val bottom = size.height * 0.68f
-        drawLine(colors.ink3, Offset(left, top), Offset(right, top), stroke, StrokeCap.Round)
-        drawLine(colors.ink3, Offset(right, top), Offset(right, bottom), stroke, StrokeCap.Round)
-        drawLine(colors.ink3, Offset(right, bottom), Offset(size.width * 0.42f, bottom), stroke, StrokeCap.Round)
-        drawLine(colors.ink3, Offset(size.width * 0.42f, bottom), Offset(size.width * 0.30f, size.height * 0.82f), stroke, StrokeCap.Round)
-        drawLine(colors.ink3, Offset(size.width * 0.30f, size.height * 0.82f), Offset(size.width * 0.30f, bottom), stroke, StrokeCap.Round)
-        drawLine(colors.ink3, Offset(size.width * 0.30f, bottom), Offset(left, bottom), stroke, StrokeCap.Round)
-        drawLine(colors.ink3, Offset(left, bottom), Offset(left, top), stroke, StrokeCap.Round)
-    }
-}
-
-@Composable
-private fun SavedGlyph() {
-    val colors = SenkuTheme.colors
-    Canvas(modifier = Modifier.size(24.dp)) {
-        val stroke = 1.8.dp.toPx()
-        val left = size.width * 0.32f
-        val right = size.width * 0.68f
-        val top = size.height * 0.20f
-        val bottom = size.height * 0.82f
-        val notch = size.height * 0.64f
-        drawLine(colors.ink3, Offset(left, top), Offset(right, top), stroke, StrokeCap.Round)
-        drawLine(colors.ink3, Offset(left, top), Offset(left, bottom), stroke, StrokeCap.Round)
-        drawLine(colors.ink3, Offset(right, top), Offset(right, bottom), stroke, StrokeCap.Round)
-        drawLine(colors.ink3, Offset(left, bottom), Offset(size.width * 0.50f, notch), stroke, StrokeCap.Round)
-        drawLine(colors.ink3, Offset(right, bottom), Offset(size.width * 0.50f, notch), stroke, StrokeCap.Round)
     }
 }
 
@@ -1711,22 +1763,6 @@ private fun GuideRailBackGlyph() {
         val bottomY = size.height * 0.82f
         drawLine(colors.ink0, Offset(startX, topY), Offset(midX, middleY), stroke, StrokeCap.Round)
         drawLine(colors.ink0, Offset(startX, bottomY), Offset(midX, middleY), stroke, StrokeCap.Round)
-    }
-}
-
-@Composable
-private fun GuideRailShareGlyph() {
-    val colors = SenkuTheme.colors
-    Canvas(modifier = Modifier.size(16.dp)) {
-        val stroke = 1.6.dp.toPx()
-        val left = Offset(size.width * 0.22f, size.height * 0.52f)
-        val top = Offset(size.width * 0.70f, size.height * 0.28f)
-        val bottom = Offset(size.width * 0.70f, size.height * 0.76f)
-        drawLine(colors.ink1, left, top, stroke, StrokeCap.Round)
-        drawLine(colors.ink1, left, bottom, stroke, StrokeCap.Round)
-        drawCircle(colors.ink1, radius = 2.2.dp.toPx(), center = left)
-        drawCircle(colors.ink1, radius = 2.2.dp.toPx(), center = top)
-        drawCircle(colors.ink1, radius = 2.2.dp.toPx(), center = bottom)
     }
 }
 
@@ -2465,20 +2501,18 @@ private fun TitleBar(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(if (guideMode) 12.dp else 10.dp),
         ) {
-            if (guideMode) {
-                GuideTopBarAction(
-                    active = false,
-                    onClick = onBackClick,
-                ) {
-                    GuideRailBackGlyph()
-                }
-                Box(
-                    modifier = Modifier
-                        .width(1.dp)
-                        .height(24.dp)
-                        .background(colors.hairlineStrong),
-                )
+            GuideTopBarAction(
+                active = false,
+                onClick = onBackClick,
+            ) {
+                GuideRailBackGlyph()
             }
+            Box(
+                modifier = Modifier
+                    .width(1.dp)
+                    .height(24.dp)
+                    .background(colors.hairlineStrong),
+            )
             Text(
                 text = tabletTitleBarModeLabel(detailMode),
                 style = typography.monoCaps.copy(
@@ -2535,12 +2569,6 @@ private fun TitleBar(
                     ) {
                         GuideRailPinGlyph(active = pinActive)
                     }
-                }
-                GuideTopBarAction(
-                    active = false,
-                    onClick = {},
-                ) {
-                    GuideRailShareGlyph()
                 }
             }
         }

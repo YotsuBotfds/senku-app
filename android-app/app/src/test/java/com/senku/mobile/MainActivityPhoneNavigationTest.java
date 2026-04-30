@@ -51,6 +51,22 @@ public final class MainActivityPhoneNavigationTest {
     }
 
     @Test
+    public void staticNavigationRailBindsOnLandscapePhoneAndTabletShells() {
+        assertTrue(MainActivity.shouldBindStaticNavigationRail(true, false));
+        assertTrue(MainActivity.shouldBindStaticNavigationRail(false, true));
+
+        assertFalse(MainActivity.shouldBindStaticNavigationRail(false, false));
+    }
+
+    @Test
+    public void mainSurfaceNavigationHandlesPhoneAndTabletShells() {
+        assertTrue(MainActivity.shouldHandleMainSurfaceNavigationTabs(true, false));
+        assertTrue(MainActivity.shouldHandleMainSurfaceNavigationTabs(false, true));
+
+        assertFalse(MainActivity.shouldHandleMainSurfaceNavigationTabs(false, false));
+    }
+
+    @Test
     public void everyVisiblePhoneTabOwnsItsSelectionRole() {
         for (BottomTabDestination visibleTab : MainActivity.buildVisiblePhoneTabDestinations()) {
             assertEquals(
@@ -94,6 +110,23 @@ public final class MainActivityPhoneNavigationTest {
             BottomTabDestination.PINS,
             MainActivity.phoneTabSelectionOwner(BottomTabDestination.PINS)
         );
+    }
+
+    @Test
+    public void savedGuideSectionShowsEmptyStateOnlyForSavedFlow() {
+        assertTrue(MainActivity.shouldShowSavedGuideSection(true, BottomTabDestination.PINS, 0));
+
+        assertFalse(MainActivity.shouldShowSavedGuideSection(true, BottomTabDestination.HOME, 0));
+        assertFalse(MainActivity.shouldShowSavedGuideSection(true, BottomTabDestination.ASK, 0));
+        assertFalse(MainActivity.shouldShowSavedGuideSection(false, BottomTabDestination.PINS, 0));
+    }
+
+    @Test
+    public void savedGuideSectionShowsNonEmptySavedGuidesAcrossBrowseFlows() {
+        assertTrue(MainActivity.shouldShowSavedGuideSection(true, BottomTabDestination.HOME, 1));
+        assertTrue(MainActivity.shouldShowSavedGuideSection(true, BottomTabDestination.PINS, 12));
+
+        assertFalse(MainActivity.shouldShowSavedGuideSection(false, BottomTabDestination.HOME, 1));
     }
 
     @Test

@@ -413,7 +413,18 @@
                         android:textColor="@color/senku_rev03_ink_2"
                         android:textStyle="bold" />
 
+                    <TextView
+                        android:id="@+id/pinned_empty_text"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="6dp"
+                        android:text="@string/saved_guides_empty"
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:textColor="@color/senku_rev03_ink_2"
+                        android:visibility="gone" />
+
                     <HorizontalScrollView
+                        android:id="@+id/pinned_scroll"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="6dp"

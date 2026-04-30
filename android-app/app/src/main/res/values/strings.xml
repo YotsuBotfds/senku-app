@@ -79,6 +79,7 @@
     <string name="recent_thread_resume_title">Recent thread</string>
     <string name="recent_thread_removed">Removed thread: %1$s</string>
     <string name="pinned_section_title">Saved guides</string>
+    <string name="saved_guides_empty">No saved guides yet.</string>
     <string name="home_related_section_title">Guide connections</string>
     <string name="home_related_section_subtitle_recent_empty">Your latest thread is still steering this shelf. Open the pivot guide or save another guide to branch out.</string>
     <string name="home_related_section_subtitle_pinned_empty">Your saved guide is steering this shelf right now. Open it directly or save another guide to shift the path.</string>

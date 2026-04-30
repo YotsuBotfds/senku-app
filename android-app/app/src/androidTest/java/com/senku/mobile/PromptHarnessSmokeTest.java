@@ -636,8 +636,8 @@ public final class PromptHarnessSmokeTest {
                 );
                 Assert.assertTrue("anchor chip should be visible", isVisible(anchorChip));
                 Assert.assertEquals(
-                    "detail header should use field-manual wording",
-                    activity.getString(R.string.detail_header_question),
+                    "detail header should use answer-flow context wording",
+                    "ANSWER \u2022 THIS DEVICE \u2022 1 TURN",
                     safe(headerLabel.getText().toString())
                 );
                 String bodyLabelText = safe(bodyLabel.getText().toString());

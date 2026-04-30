@@ -310,15 +310,15 @@ public final class DetailSurfaceContract {
                     TitleRole.USER_QUESTION,
                     BodyRole.UNCERTAIN_FIT_BODY,
                     TrustProvenanceVisibility.UNCERTAIN_FIT_PROVENANCE,
-                    FollowUpVisibility.VISIBLE,
+                    FollowUpVisibility.HIDDEN,
                     RelatedGuidePosture.SUPPORTING_GUIDE_CHOICES,
-                    PrimaryAction.ASK_FOLLOW_UP,
+                    PrimaryAction.REVIEW_SUPPORTING_GUIDES,
                     EvidenceRegionRole.UNCERTAIN_FIT_RATIONALE,
                     RelatedGuideRole.ANSWER_SUPPORTING_CHOICES,
-                    FollowUpEligibility.ELIGIBLE,
+                    FollowUpEligibility.INELIGIBLE,
                     SurfaceTreatment.ANSWER_CANVAS,
-                    ComposerEligibility.ELIGIBLE,
-                    ChromePlan.ANSWER_CANVAS_WITH_COMPOSER
+                    ComposerEligibility.INELIGIBLE,
+                    ChromePlan.ANSWER_CANVAS_SUPPORT_ONLY
                 );
             case GENERATED:
             default:

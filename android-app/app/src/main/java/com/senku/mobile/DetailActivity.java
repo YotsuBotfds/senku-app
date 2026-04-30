@@ -834,7 +834,7 @@ public final class DetailActivity extends AppCompatActivity {
                 }
             });
         }
-        backButton.setOnClickListener(v -> finish());
+        backButton.setOnClickListener(v -> navigateBackFromDetail());
         backButton.setOnLongClickListener(v -> {
             navigateHomeFromDetail();
             return true;
@@ -1590,9 +1590,11 @@ public final class DetailActivity extends AppCompatActivity {
         TabletDetailScreenKt.bindTabletDetailScreen(
             tabletDetailRoot,
             state,
-            this::finish,
+            this::navigateBackFromDetail,
             this::navigateHomeFromDetail,
             !state.getPinVisible() ? null : this::togglePinnedGuide,
+            () -> navigateMainFromGuidePhoneTab("auto_ask", true),
+            () -> navigateMainFromGuidePhoneTab(MainActivity.EXTRA_OPEN_SAVED, true),
             turnId -> {
                 selectedTabletTurnId = safe(turnId).trim();
                 selectedSourceKey = "";
@@ -1736,7 +1738,7 @@ public final class DetailActivity extends AppCompatActivity {
         Button back = new Button(this);
         back.setContentDescription(getString(R.string.detail_back_content_description));
         applyTabletEmergencyChromeIconButton(back, R.drawable.ic_home_back_chevron);
-        back.setOnClickListener(v -> finish());
+        back.setOnClickListener(v -> navigateBackFromDetail());
         tabletEmergencyChromeOverlayPanel.addView(back, new LinearLayout.LayoutParams(
             dp(resolveTabletEmergencyChromeNavIconSizeDp()),
             dp(resolveTabletEmergencyChromeNavIconSizeDp())
@@ -1775,16 +1777,18 @@ public final class DetailActivity extends AppCompatActivity {
 
         tabletEmergencyChromeOverlayPanel.addView(chromeText, chromeTextParams);
 
-        Button home = new Button(this);
-        home.setContentDescription(getString(R.string.detail_home_content_description));
-        applyTabletEmergencyChromeIconButton(home, R.drawable.ic_home_library);
-        home.setOnClickListener(v -> navigateHomeFromDetail());
-        LinearLayout.LayoutParams homeParams = new LinearLayout.LayoutParams(
-            dp(resolveTabletEmergencyChromeNavIconSizeDp()),
-            dp(resolveTabletEmergencyChromeNavIconSizeDp())
-        );
-        homeParams.leftMargin = dp(8);
-        tabletEmergencyChromeOverlayPanel.addView(home, homeParams);
+        if (shouldShowTabletEmergencyHomeChromeAction()) {
+            Button home = new Button(this);
+            home.setContentDescription(getString(R.string.detail_home_content_description));
+            applyTabletEmergencyChromeIconButton(home, R.drawable.ic_home_library);
+            home.setOnClickListener(v -> navigateHomeFromDetail());
+            LinearLayout.LayoutParams homeParams = new LinearLayout.LayoutParams(
+                dp(resolveTabletEmergencyChromeNavIconSizeDp()),
+                dp(resolveTabletEmergencyChromeNavIconSizeDp())
+            );
+            homeParams.leftMargin = dp(8);
+            tabletEmergencyChromeOverlayPanel.addView(home, homeParams);
+        }
         overlay.addView(tabletEmergencyChromeOverlayPanel, chromeParams);
 
         TextView title = new TextView(this);
@@ -1980,6 +1984,10 @@ public final class DetailActivity extends AppCompatActivity {
 
     static int resolveTabletEmergencyChromeNavIconSizeDp() {
         return TABLET_EMERGENCY_CHROME_NAV_ICON_SIZE_DP;
+    }
+
+    static boolean shouldShowTabletEmergencyHomeChromeAction() {
+        return false;
     }
 
     static boolean shouldUseTabletEmergencyFullHeightPage(
@@ -7968,7 +7976,7 @@ public final class DetailActivity extends AppCompatActivity {
                 pinVisible,
                 pinActive,
                 answerMode && !buildTranscriptExportText().isEmpty(),
-                guidePhoneChrome,
+                false,
                 shouldAllowRev03TopBarTitleWrap() ? 2 : 1,
                 getString(R.string.detail_back_content_description),
                 getString(R.string.detail_home_content_description),
@@ -7982,7 +7990,7 @@ public final class DetailActivity extends AppCompatActivity {
                 "More options",
                 action -> {
                     if (action == TopBarActionKind.Back) {
-                        finish();
+                        navigateBackFromDetail();
                     } else if (action == TopBarActionKind.Home) {
                         navigateHomeFromDetail();
                     } else if (action == TopBarActionKind.Pin) {
@@ -8266,6 +8274,18 @@ public final class DetailActivity extends AppCompatActivity {
         homeIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
         startActivity(homeIntent);
         finish();
+    }
+
+    private void navigateBackFromDetail() {
+        if (shouldFallbackDetailBackToHome(isTaskRoot())) {
+            navigateHomeFromDetail();
+            return;
+        }
+        finish();
+    }
+
+    static boolean shouldFallbackDetailBackToHome(boolean taskRoot) {
+        return taskRoot;
     }
 
     private void shareTranscriptFromDetail() {
@@ -10472,7 +10492,7 @@ public final class DetailActivity extends AppCompatActivity {
 
     @Override
     public boolean onSupportNavigateUp() {
-        finish();
+        navigateBackFromDetail();
         return true;
     }
 }

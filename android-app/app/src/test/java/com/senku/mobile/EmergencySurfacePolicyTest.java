@@ -142,6 +142,17 @@ public final class EmergencySurfacePolicyTest {
     }
 
     @Test
+    public void tabletPortraitEmergencyChromeDoesNotShowMisleadingHomeMenuGlyph() {
+        assertFalse(DetailActivity.shouldShowTabletEmergencyHomeChromeAction());
+    }
+
+    @Test
+    public void detailBackFallsHomeOnlyWhenDetailIsTaskRoot() {
+        assertTrue(DetailActivity.shouldFallbackDetailBackToHome(true));
+        assertFalse(DetailActivity.shouldFallbackDetailBackToHome(false));
+    }
+
+    @Test
     public void tabletPortraitEmergencySurfaceOwnsFullHeightPageChrome() {
         assertTrue(DetailActivity.shouldUseTabletEmergencyFullHeightPage(true, true, true));
         assertTrue(DetailActivity.shouldSuppressTabletEmergencyStaleChrome(true, true, true));

@@ -152,7 +152,7 @@ public final class DetailFollowupLandscapeComposerTest {
         assertFalse(DetailActivity.shouldShowDetailFollowUpPanel(
             DetailSurfaceContract.answer(DetailSurfaceContract.AnswerKind.ABSTAIN)
         ));
-        assertTrue(DetailActivity.shouldShowDetailFollowUpPanel(
+        assertFalse(DetailActivity.shouldShowDetailFollowUpPanel(
             DetailSurfaceContract.answer(DetailSurfaceContract.AnswerKind.UNCERTAIN_FIT)
         ));
     }
