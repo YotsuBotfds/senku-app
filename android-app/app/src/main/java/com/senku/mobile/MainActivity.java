@@ -980,11 +980,14 @@ public final class MainActivity extends AppCompatActivity {
             return;
         }
         String query = decodeAutoQuery(intent.getStringExtra(EXTRA_AUTO_QUERY));
+        boolean autoAsk = intent.getBooleanExtra(EXTRA_AUTO_ASK, false);
+        if (shouldOpenEmptyAutoAskLane(query, autoAsk)) {
+            openEmptyAskLane(false);
+            return;
+        }
         if (query != null && !query.trim().isEmpty()) {
             searchInput.setText(query.trim());
-            setPhoneTabFromFlow(intent.getBooleanExtra(EXTRA_AUTO_ASK, false)
-                ? BottomTabDestination.ASK
-                : BottomTabDestination.SEARCH);
+            setPhoneTabFromFlow(autoAsk ? BottomTabDestination.ASK : BottomTabDestination.SEARCH);
             showBrowseChrome(false);
         }
     }
@@ -1004,6 +1007,14 @@ public final class MainActivity extends AppCompatActivity {
             return;
         }
         String query = decodeAutoQuery(intent.getStringExtra(EXTRA_AUTO_QUERY));
+        boolean autoAsk = intent.getBooleanExtra(EXTRA_AUTO_ASK, false);
+        if (shouldOpenEmptyAutoAskLane(query, autoAsk)) {
+            autoIntentHandled = true;
+            suppressSearchFocusForAutomation = true;
+            showBrowseChrome(true);
+            openEmptyAskLane(true);
+            return;
+        }
         if (query == null) {
             return;
         }
@@ -1020,12 +1031,24 @@ public final class MainActivity extends AppCompatActivity {
 
         autoIntentHandled = true;
         suppressSearchFocusForAutomation = true;
-        if (intent.getBooleanExtra(EXTRA_AUTO_ASK, false)) {
+        if (autoAsk) {
             setPhoneTabFromFlow(BottomTabDestination.ASK);
             runAsk(trimmedQuery);
         } else {
             setPhoneTabFromFlow(BottomTabDestination.SEARCH);
             runSearch(trimmedQuery);
+        }
+    }
+
+    private void openEmptyAskLane(boolean focusInput) {
+        askLaneActive = true;
+        setPhoneTabFromFlow(BottomTabDestination.ASK);
+        if (searchInput != null) {
+            searchInput.setText("");
+        }
+        updateActionLabels();
+        if (focusInput) {
+            focusSearchInput();
         }
     }
 
@@ -1085,6 +1108,14 @@ public final class MainActivity extends AppCompatActivity {
     private boolean hasAutoQuery(Intent intent) {
         String query = intent == null ? null : decodeAutoQuery(intent.getStringExtra(EXTRA_AUTO_QUERY));
         return query != null && !query.trim().isEmpty();
+    }
+
+    private static boolean shouldOpenEmptyAutoAskLane(String decodedAutoQuery, boolean autoAsk) {
+        return autoAsk && safe(decodedAutoQuery).trim().isEmpty();
+    }
+
+    static boolean shouldOpenEmptyAutoAskLaneForTest(String decodedAutoQuery, boolean autoAsk) {
+        return shouldOpenEmptyAutoAskLane(decodedAutoQuery, autoAsk);
     }
 
     private boolean resolveProductReviewMode(Intent intent) {
@@ -3166,6 +3197,30 @@ public final class MainActivity extends AppCompatActivity {
             : SubmitTarget.SEARCH;
     }
 
+    static int resolveSharedInputHintResourceForTest(SubmitTarget target) {
+        return resolveSharedInputHintResource(target);
+    }
+
+    private static int resolveSharedInputHintResource(SubmitTarget target) {
+        return target == SubmitTarget.ASK ? R.string.ask_hint : R.string.search_hint;
+    }
+
+    static int resolveSharedInputDescriptionResourceForTest(SubmitTarget target) {
+        return resolveSharedInputDescriptionResource(target);
+    }
+
+    private static int resolveSharedInputDescriptionResource(SubmitTarget target) {
+        return target == SubmitTarget.ASK ? R.string.ask_input_description : R.string.search_input_description;
+    }
+
+    static int resolveSharedInputImeActionForTest(SubmitTarget target) {
+        return resolveSharedInputImeAction(target);
+    }
+
+    private static int resolveSharedInputImeAction(SubmitTarget target) {
+        return target == SubmitTarget.ASK ? EditorInfo.IME_ACTION_DONE : EditorInfo.IME_ACTION_SEARCH;
+    }
+
     static boolean isSavedPhoneFlowIntent(BottomTabDestination destination) {
         return destination == BottomTabDestination.PINS;
     }
@@ -3676,6 +3731,7 @@ public final class MainActivity extends AppCompatActivity {
         askButton.setText(answerReady ? R.string.ask_button_ready : R.string.ask_button);
         searchButton.setText(R.string.external_review_home_search_button);
         boolean askMode = isAskLaneActive();
+        updateSharedInputChrome(askMode ? SubmitTarget.ASK : SubmitTarget.SEARCH);
         if (browseButton != null) {
             browseButton.setText(isBrowseModeActive() ? R.string.browse_guides_button : R.string.home_button);
             boolean browsePrimary = !askMode;
@@ -3689,6 +3745,15 @@ public final class MainActivity extends AppCompatActivity {
         }
         updatePhoneTabBarState();
         updateHomeEntryHint();
+    }
+
+    private void updateSharedInputChrome(SubmitTarget target) {
+        if (searchInput == null) {
+            return;
+        }
+        searchInput.setHint(resolveSharedInputHintResource(target));
+        searchInput.setContentDescription(getString(resolveSharedInputDescriptionResource(target)));
+        searchInput.setImeOptions(resolveSharedInputImeAction(target));
     }
 
     private void updateHomeEntryHint() {

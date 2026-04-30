@@ -184,6 +184,44 @@ public final class MainActivityPhoneNavigationTest {
     }
 
     @Test
+    public void autoAskWithoutQueryOpensAskLaneInsteadOfSearchAutomation() {
+        assertTrue(MainActivity.shouldOpenEmptyAutoAskLaneForTest(null, true));
+        assertTrue(MainActivity.shouldOpenEmptyAutoAskLaneForTest("   ", true));
+
+        assertFalse(MainActivity.shouldOpenEmptyAutoAskLaneForTest("how do I boil water", true));
+        assertFalse(MainActivity.shouldOpenEmptyAutoAskLaneForTest(null, false));
+    }
+
+    @Test
+    public void sharedInputChromeUsesQuestionSemanticsInAskMode() {
+        assertEquals(
+            R.string.ask_hint,
+            MainActivity.resolveSharedInputHintResourceForTest(MainActivity.SubmitTarget.ASK)
+        );
+        assertEquals(
+            R.string.ask_input_description,
+            MainActivity.resolveSharedInputDescriptionResourceForTest(MainActivity.SubmitTarget.ASK)
+        );
+        assertEquals(
+            EditorInfo.IME_ACTION_DONE,
+            MainActivity.resolveSharedInputImeActionForTest(MainActivity.SubmitTarget.ASK)
+        );
+
+        assertEquals(
+            R.string.search_hint,
+            MainActivity.resolveSharedInputHintResourceForTest(MainActivity.SubmitTarget.SEARCH)
+        );
+        assertEquals(
+            R.string.search_input_description,
+            MainActivity.resolveSharedInputDescriptionResourceForTest(MainActivity.SubmitTarget.SEARCH)
+        );
+        assertEquals(
+            EditorInfo.IME_ACTION_SEARCH,
+            MainActivity.resolveSharedInputImeActionForTest(MainActivity.SubmitTarget.SEARCH)
+        );
+    }
+
+    @Test
     public void sharedInputSubmitStaysSearchForLibraryAndSavedFlows() {
         assertEquals(
             MainActivity.SubmitTarget.SEARCH,

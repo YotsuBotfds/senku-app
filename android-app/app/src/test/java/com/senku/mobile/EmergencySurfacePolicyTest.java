@@ -161,6 +161,15 @@ public final class EmergencySurfacePolicyTest {
     }
 
     @Test
+    public void tabletPortraitEmergencyAppRailHomeActionNamesManualExit() {
+        assertEquals("Manual", DetailActivity.resolveTabletEmergencyAppRailHomeLabel());
+        assertEquals(
+            "Open Manual library home",
+            DetailActivity.resolveTabletEmergencyAppRailHomeContentDescription()
+        );
+    }
+
+    @Test
     public void detailBackFallsHomeOnlyWhenDetailIsTaskRoot() {
         assertTrue(DetailActivity.shouldFallbackDetailBackToHome(true));
         assertFalse(DetailActivity.shouldFallbackDetailBackToHome(false));

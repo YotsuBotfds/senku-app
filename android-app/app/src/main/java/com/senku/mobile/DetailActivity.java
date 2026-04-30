@@ -43,6 +43,7 @@ import android.widget.TextView;
 import android.widget.HorizontalScrollView;
 import android.widget.Toast;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.compose.ui.platform.ComposeView;
 import androidx.core.content.res.ResourcesCompat;
@@ -683,6 +684,7 @@ public final class DetailActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
+        installDetailBackDispatcher();
 
         if (getSupportActionBar() != null) {
             getSupportActionBar().hide();
@@ -713,6 +715,15 @@ public final class DetailActivity extends AppCompatActivity {
         if (!maybeStartPendingGeneration()) {
             maybeStartAutoFollowUp();
         }
+    }
+
+    private void installDetailBackDispatcher() {
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                navigateBackFromDetail();
+            }
+        });
     }
 
     private void bindViews() {
@@ -1927,7 +1938,8 @@ public final class DetailActivity extends AppCompatActivity {
 
         rail.addView(buildTabletEmergencyAppRailItem(
             R.drawable.ic_home_library,
-            getString(R.string.bottom_tab_home),
+            resolveTabletEmergencyAppRailHomeLabel(),
+            resolveTabletEmergencyAppRailHomeContentDescription(),
             false,
             v -> navigateHomeFromDetail()
         ), tabletAppRailItemParams(TABLET_APP_RAIL_FIRST_ITEM_TOP_MARGIN_DP));
@@ -1935,12 +1947,14 @@ public final class DetailActivity extends AppCompatActivity {
         rail.addView(buildTabletEmergencyAppRailItem(
             R.drawable.ic_home_ask,
             getString(R.string.bottom_tab_ask),
+            getString(R.string.bottom_tab_ask),
             true,
             v -> navigateMainFromGuidePhoneTab("auto_ask", true)
         ), tabletAppRailItemParams(TABLET_APP_RAIL_ITEM_TOP_MARGIN_DP));
 
         rail.addView(buildTabletEmergencyAppRailItem(
             R.drawable.ic_home_saved,
+            getString(R.string.bottom_tab_pins),
             getString(R.string.bottom_tab_pins),
             false,
             v -> navigateMainFromGuidePhoneTab(MainActivity.EXTRA_OPEN_SAVED, true)
@@ -1951,13 +1965,14 @@ public final class DetailActivity extends AppCompatActivity {
     private View buildTabletEmergencyAppRailItem(
         int iconResId,
         String label,
+        String contentDescription,
         boolean active,
         View.OnClickListener clickListener
     ) {
         LinearLayout item = new LinearLayout(this);
         item.setOrientation(LinearLayout.VERTICAL);
         item.setGravity(Gravity.CENTER);
-        item.setContentDescription(label);
+        item.setContentDescription(contentDescription);
         item.setClickable(true);
         item.setFocusable(true);
         item.setOnClickListener(clickListener);
@@ -2193,6 +2208,14 @@ public final class DetailActivity extends AppCompatActivity {
 
     static boolean shouldShowTabletEmergencyHomeChromeAction() {
         return false;
+    }
+
+    static String resolveTabletEmergencyAppRailHomeLabel() {
+        return "Manual";
+    }
+
+    static String resolveTabletEmergencyAppRailHomeContentDescription() {
+        return "Open Manual library home";
     }
 
     static boolean shouldShowTabletEmergencyAppRailOverlay(
