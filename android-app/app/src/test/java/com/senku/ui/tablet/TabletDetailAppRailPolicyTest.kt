@@ -1,6 +1,10 @@
 package com.senku.ui.tablet
 
+import com.senku.ui.primitives.Rev03ComposeNavRailIconSizeDp
+import com.senku.ui.primitives.Rev03ComposeNavRailLabelFontSizeSp
+import com.senku.ui.primitives.Rev03ComposeNavRailLabelLineHeightSp
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Test
 
 class TabletDetailAppRailPolicyTest {
@@ -25,6 +29,35 @@ class TabletDetailAppRailPolicyTest {
     }
 
     @Test
+    fun tabletDetailAppRailReusesComposeNavRailVisualTokens() {
+        listOf(false, true).forEach { isLandscape ->
+            assertEquals(Rev03ComposeNavRailIconSizeDp, tabletGuideAppRailIconSizeDp(isLandscape))
+            assertEquals(Rev03ComposeNavRailLabelFontSizeSp, tabletGuideAppRailLabelFontSizeSp(isLandscape))
+            assertEquals(Rev03ComposeNavRailLabelLineHeightSp, tabletGuideAppRailLabelLineHeightSp(isLandscape))
+        }
+    }
+
+    @Test
+    fun tabletDetailAppRailDestinationsKeepLibraryAskSavedOrder() {
+        assertEquals(
+            listOf(
+                TabletDetailAppRailDestination.Library,
+                TabletDetailAppRailDestination.Ask,
+                TabletDetailAppRailDestination.Saved,
+            ),
+            TabletDetailAppRailDestination.entries,
+        )
+        assertEquals(
+            listOf(
+                TabletDetailAppRailAction.Library,
+                TabletDetailAppRailAction.Ask,
+                TabletDetailAppRailAction.Saved,
+            ),
+            TabletDetailAppRailAction.entries,
+        )
+    }
+
+    @Test
     fun tabletDetailAppRailActiveDestinationFollowsDetailMode() {
         assertEquals(
             TabletDetailAppRailDestination.Library,
@@ -38,6 +71,14 @@ class TabletDetailAppRailPolicyTest {
             TabletDetailAppRailDestination.Ask,
             tabletDetailAppRailActiveDestination(TabletDetailMode.Thread),
         )
+    }
+
+    @Test
+    fun tabletPortraitDoesNotExposeDuplicateGuideRailModes() {
+        assertEquals(72, tabletGuideAppRailWidthDp(isLandscape = false))
+        assertEquals(196, tabletThreadRailWidthDp(isLandscape = false, guideMode = true))
+        assertEquals(0, tabletGuideReferenceRailWidthDp(isLandscape = false))
+        assertFalse(tabletGuideSectionRailShowsToolbar())
     }
 
     @Test

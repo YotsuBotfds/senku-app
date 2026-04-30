@@ -30,6 +30,52 @@ class TabletMainXmlShellParityTest {
     }
 
     @Test
+    fun portraitAndLandscapeAppRailKeepLibraryAskSavedOrderAndTokens() {
+        listOf("layout-sw600dp-port", "layout-sw600dp-land").forEach { qualifier ->
+            val layout = layout(qualifier)
+            val home = layout.elementByAndroidId("phone_nav_home")
+            val ask = layout.elementByAndroidId("phone_nav_ask")
+            val pins = layout.elementByAndroidId("phone_nav_pins")
+            val rail = home.parentNode as Element
+            val navItems = rail.directElementChildren("LinearLayout")
+
+            assertEquals(
+                "$qualifier should keep the tablet rail in Library, Ask, Saved order",
+                listOf("phone_nav_home", "phone_nav_ask", "phone_nav_pins"),
+                navItems.map { it.requiredAndroidId() },
+            )
+
+            assertRailItemTokens(
+                layout = layout,
+                itemId = "phone_nav_home",
+                labelId = "phone_nav_home_label",
+                iconId = "phone_nav_home_icon",
+                expectedText = "@string/bottom_tab_home",
+                expectedIcon = "@drawable/ic_home_library",
+                expectedTint = "@color/senku_rev03_accent",
+            )
+            assertRailItemTokens(
+                layout = layout,
+                itemId = "phone_nav_ask",
+                labelId = "phone_nav_ask_label",
+                iconId = "phone_nav_ask_icon",
+                expectedText = "@string/bottom_tab_ask",
+                expectedIcon = "@drawable/ic_home_ask",
+                expectedTint = "@color/senku_rev03_ink_2",
+            )
+            assertRailItemTokens(
+                layout = layout,
+                itemId = "phone_nav_pins",
+                labelId = "phone_nav_pins_label",
+                iconId = "phone_nav_pins_icon",
+                expectedText = "@string/bottom_tab_pins",
+                expectedIcon = "@drawable/ic_home_saved",
+                expectedTint = "@color/senku_rev03_ink_2",
+            )
+        }
+    }
+
+    @Test
     fun portraitAndLandscapeTabletShellsDoNotUsePlatformMonospaceAlias() {
         listOf("layout-sw600dp-port", "layout-sw600dp-land").forEach { qualifier ->
             val xml = layoutFile(qualifier).readText()
@@ -111,6 +157,27 @@ class TabletMainXmlShellParityTest {
         }
     }
 
+    private fun assertRailItemTokens(
+        layout: Element,
+        itemId: String,
+        labelId: String,
+        iconId: String,
+        expectedText: String,
+        expectedIcon: String,
+        expectedTint: String,
+    ) {
+        val item = layout.elementByAndroidId(itemId)
+        val label = layout.elementByAndroidId(labelId)
+        val icon = layout.elementByAndroidId(iconId)
+
+        assertEquals(expectedText, item.android("contentDescription"))
+        assertEquals(expectedText, label.android("text"))
+        assertEquals(expectedText, icon.android("contentDescription"))
+        assertEquals(expectedIcon, icon.android("src"))
+        assertEquals(expectedTint, icon.android("tint"))
+        assertEquals(expectedTint, label.android("textColor"))
+    }
+
     private fun layout(qualifier: String): Element =
         DocumentBuilderFactory.newInstance()
             .apply { isNamespaceAware = true }
@@ -145,6 +212,12 @@ class TabletMainXmlShellParityTest {
         error("Unable to locate child <$tagName>")
     }
 
+    private fun Element.directElementChildren(tagName: String): List<Element> =
+        (0 until childNodes.length)
+            .map { childNodes.item(it) }
+            .filterIsInstance<Element>()
+            .filter { it.tagName == tagName }
+
     private fun Element.elementByText(text: String): Element {
         val nodes = getElementsByTagName("*")
         for (index in 0 until nodes.length) {
@@ -158,6 +231,9 @@ class TabletMainXmlShellParityTest {
 
     private fun Element.android(name: String): String =
         getAttributeNS("http://schemas.android.com/apk/res/android", name)
+
+    private fun Element.requiredAndroidId(): String =
+        android("id").removePrefix("@+id/").removePrefix("@id/")
 
     private fun locateFile(vararg candidates: String): File {
         val userDir = requireNotNull(System.getProperty("user.dir")) { "user.dir is not set" }
