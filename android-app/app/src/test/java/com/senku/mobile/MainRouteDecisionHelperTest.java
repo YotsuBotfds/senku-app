@@ -240,6 +240,120 @@ public final class MainRouteDecisionHelperTest {
     }
 
     @Test
+    public void openHomeIntentTrueClearsStaleSearchAndAskRoutes() {
+        assertTransition(
+            MainRouteDecisionHelper.openHomeIntent(
+                true,
+                new MainRouteDecisionHelper.RouteState(
+                    MainRouteDecisionHelper.Surface.SEARCH_RESULTS,
+                    BottomTabDestination.HOME,
+                    false
+                )
+            ),
+            MainRouteDecisionHelper.Surface.BROWSE,
+            BottomTabDestination.HOME,
+            false,
+            MainRouteDecisionHelper.Effect.SHOW_BROWSE_HOME
+        );
+        assertTransition(
+            MainRouteDecisionHelper.openHomeIntent(
+                true,
+                new MainRouteDecisionHelper.RouteState(
+                    MainRouteDecisionHelper.Surface.ASK_RESULTS,
+                    BottomTabDestination.ASK,
+                    true
+                )
+            ),
+            MainRouteDecisionHelper.Surface.BROWSE,
+            BottomTabDestination.HOME,
+            false,
+            MainRouteDecisionHelper.Effect.SHOW_BROWSE_HOME
+        );
+    }
+
+    @Test
+    public void openHomeIntentFalseKeepsCurrentRouteState() {
+        assertTransition(
+            MainRouteDecisionHelper.openHomeIntent(
+                false,
+                new MainRouteDecisionHelper.RouteState(
+                    MainRouteDecisionHelper.Surface.ASK_RESULTS,
+                    BottomTabDestination.ASK,
+                    true
+                )
+            ),
+            MainRouteDecisionHelper.Surface.ASK_RESULTS,
+            BottomTabDestination.ASK,
+            true,
+            MainRouteDecisionHelper.Effect.NONE
+        );
+    }
+
+    @Test
+    public void openSavedIntentTrueRoutesBrowseSearchAndAskToSavedPins() {
+        assertTransition(
+            MainRouteDecisionHelper.openSavedIntent(
+                true,
+                new MainRouteDecisionHelper.RouteState(
+                    MainRouteDecisionHelper.Surface.BROWSE,
+                    BottomTabDestination.HOME,
+                    false
+                )
+            ),
+            MainRouteDecisionHelper.Surface.SAVED_GUIDES,
+            BottomTabDestination.PINS,
+            false,
+            MainRouteDecisionHelper.Effect.SHOW_SAVED_GUIDES
+        );
+        assertTransition(
+            MainRouteDecisionHelper.openSavedIntent(
+                true,
+                new MainRouteDecisionHelper.RouteState(
+                    MainRouteDecisionHelper.Surface.SEARCH_RESULTS,
+                    BottomTabDestination.HOME,
+                    false
+                )
+            ),
+            MainRouteDecisionHelper.Surface.SAVED_GUIDES,
+            BottomTabDestination.PINS,
+            false,
+            MainRouteDecisionHelper.Effect.SHOW_SAVED_GUIDES
+        );
+        assertTransition(
+            MainRouteDecisionHelper.openSavedIntent(
+                true,
+                new MainRouteDecisionHelper.RouteState(
+                    MainRouteDecisionHelper.Surface.ASK_RESULTS,
+                    BottomTabDestination.ASK,
+                    true
+                )
+            ),
+            MainRouteDecisionHelper.Surface.SAVED_GUIDES,
+            BottomTabDestination.PINS,
+            false,
+            MainRouteDecisionHelper.Effect.SHOW_SAVED_GUIDES
+        );
+    }
+
+    @Test
+    public void openSavedIntentFalseKeepsCurrentRouteState() {
+        assertTransition(
+            MainRouteDecisionHelper.openSavedIntent(
+                false,
+                new MainRouteDecisionHelper.RouteState(
+                    MainRouteDecisionHelper.Surface.ASK_RESULTS,
+                    BottomTabDestination.ASK,
+                    true
+                )
+            ),
+            MainRouteDecisionHelper.Surface.ASK_RESULTS,
+            BottomTabDestination.ASK,
+            true,
+            MainRouteDecisionHelper.Effect.NONE
+        );
+    }
+
+    @Test
     public void routeStateNormalizesVirtualDestinationsToVisibleOwners() {
         MainRouteDecisionHelper.RouteState search =
             new MainRouteDecisionHelper.RouteState(

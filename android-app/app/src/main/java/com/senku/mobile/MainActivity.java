@@ -1015,13 +1015,7 @@ public final class MainActivity extends AppCompatActivity {
         boolean openHomeExtra,
         MainRouteDecisionHelper.RouteState routeState
     ) {
-        if (!openHomeExtra) {
-            return new MainRouteDecisionHelper.Transition(
-                routeState == null ? MainRouteDecisionHelper.browseHome() : routeState,
-                MainRouteDecisionHelper.Effect.NONE
-            );
-        }
-        return MainRouteDecisionHelper.returnHome(routeState);
+        return MainRouteDecisionHelper.openHomeIntent(openHomeExtra, routeState);
     }
 
     static boolean shouldOpenSavedDestination(boolean openSavedExtra) {
@@ -1045,13 +1039,7 @@ public final class MainActivity extends AppCompatActivity {
         boolean openSavedExtra,
         MainRouteDecisionHelper.RouteState routeState
     ) {
-        if (!openSavedExtra) {
-            return new MainRouteDecisionHelper.Transition(
-                routeState == null ? MainRouteDecisionHelper.browseHome() : routeState,
-                MainRouteDecisionHelper.Effect.NONE
-            );
-        }
-        return MainRouteDecisionHelper.openPhoneTab(routeState, BottomTabDestination.PINS);
+        return MainRouteDecisionHelper.openSavedIntent(openSavedExtra, routeState);
     }
 
     static MainRouteDecisionHelper.Transition resolveSystemBackForTest(
@@ -1213,14 +1201,24 @@ public final class MainActivity extends AppCompatActivity {
         boolean browseMode,
         boolean hasResults
     ) {
-        return !productReviewMode && browseMode;
+        return DeveloperToolsPolicy.shouldShowDeveloperToolsPanel(
+            true,
+            productReviewMode,
+            browseMode,
+            hasResults
+        );
     }
 
     private void applyDeveloperToolsPanelVisibility(boolean browseMode, boolean hasResults) {
         if (developerPanel == null) {
             return;
         }
-        boolean showDeveloperPanel = shouldShowDeveloperToolsPanel(productReviewMode, browseMode, hasResults);
+        boolean showDeveloperPanel = DeveloperToolsPolicy.shouldShowDeveloperToolsPanel(
+            DeveloperToolsPolicy.isDebuggableBuild(this),
+            productReviewMode,
+            browseMode,
+            hasResults
+        );
         developerPanel.setVisibility(showDeveloperPanel ? View.VISIBLE : View.GONE);
         if (!showDeveloperPanel) {
             collapseDeveloperToolsPanel();
@@ -3868,7 +3866,12 @@ public final class MainActivity extends AppCompatActivity {
     private void toggleDeveloperPanel() {
         if (developerPanel != null
             && developerPanel.getVisibility() != View.VISIBLE
-            && !shouldShowDeveloperToolsPanel(productReviewMode, isBrowseModeActive(), !items.isEmpty())) {
+            && !DeveloperToolsPolicy.shouldShowDeveloperToolsPanel(
+                DeveloperToolsPolicy.isDebuggableBuild(this),
+                productReviewMode,
+                isBrowseModeActive(),
+                !items.isEmpty()
+            )) {
             return;
         }
         boolean show = developerContent.getVisibility() != View.VISIBLE;

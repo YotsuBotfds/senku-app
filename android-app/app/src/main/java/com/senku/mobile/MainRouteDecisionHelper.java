@@ -107,6 +107,22 @@ public final class MainRouteDecisionHelper {
         return new Transition(browseHome(), Effect.SHOW_BROWSE_HOME);
     }
 
+    static Transition openHomeIntent(boolean openHomeExtra, RouteState state) {
+        RouteState route = normalize(state);
+        if (!openHomeExtra) {
+            return new Transition(route, Effect.NONE);
+        }
+        return returnHome(route);
+    }
+
+    static Transition openSavedIntent(boolean openSavedExtra, RouteState state) {
+        RouteState route = normalize(state);
+        if (!openSavedExtra) {
+            return new Transition(route, Effect.NONE);
+        }
+        return openPhoneTab(route, BottomTabDestination.PINS);
+    }
+
     static RouteState routeStateForMode(
         boolean browseMode,
         BottomTabDestination activePhoneTab,
