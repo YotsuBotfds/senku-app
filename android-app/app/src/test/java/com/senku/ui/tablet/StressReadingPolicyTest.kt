@@ -76,7 +76,11 @@ class StressReadingPolicyTest {
         assertEquals(0, tabletThreadComposerBottomPaddingDp(isLandscape = true))
         assertEquals(12, tabletThreadComposerBottomPaddingDp(isLandscape = false))
         assertEquals(360, tabletThreadEvidenceRailWidthDp(isLandscape = true))
-        assertEquals(300, tabletThreadEvidenceRailWidthDp(isLandscape = false))
+        assertEquals(240, tabletThreadEvidenceRailWidthDp(isLandscape = false))
+        assertTrue(
+            tabletThreadEvidenceRailWidthDp(isLandscape = false) <
+                tabletThreadEvidenceRailWidthDp(isLandscape = true),
+        )
     }
 
     @Test
@@ -865,7 +869,12 @@ class StressReadingPolicyTest {
         assertTrue(tabletShouldShowEvidencePane(state, guideMode = false))
         assertEquals(listOf("GD-220", "GD-345", "GD-132"), state.resolvedVisibleThreadSourceRows().map { it.id })
         assertEquals("SOURCES \u2022 3", tabletThreadSourcePaneTitle(3, isLandscape = false))
-        assertEquals(300, tabletThreadEvidenceRailWidthDp(isLandscape = false))
+        assertEquals(240, tabletThreadEvidenceRailWidthDp(isLandscape = false))
+        assertEquals(360, tabletThreadEvidenceRailWidthDp(isLandscape = true))
+        assertTrue(
+            tabletThreadEvidenceRailWidthDp(isLandscape = false) <=
+                tabletThreadFlowMaxWidthDp(isLandscape = false) / 3,
+        )
     }
 
     @Test

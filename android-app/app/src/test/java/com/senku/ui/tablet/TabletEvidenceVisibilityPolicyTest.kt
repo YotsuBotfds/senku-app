@@ -467,7 +467,8 @@ class TabletEvidenceVisibilityPolicyTest {
         assertTrue(tabletShouldShowEvidencePane(state, guideMode = state.isGuideMode()))
         assertEquals(listOf("GD-220", "GD-345"), state.resolvedVisibleThreadSourceRows().map { it.id })
         assertEquals("SOURCES \u2022 2", tabletThreadSourcePaneTitle(2, isLandscape = false))
-        assertEquals(300, tabletThreadEvidenceRailWidthDp(isLandscape = false))
+        assertEquals(240, tabletThreadEvidenceRailWidthDp(isLandscape = false))
+        assertEquals(360, tabletThreadEvidenceRailWidthDp(isLandscape = true))
     }
 
     @Test

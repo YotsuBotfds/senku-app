@@ -408,7 +408,7 @@ internal fun tabletThreadEvidenceRailWidthDp(isLandscape: Boolean): Int =
     if (isLandscape) {
         tabletLandscapeReadingLayoutPolicy().evidenceRailWidthDp
     } else {
-        300
+        240
     }
 
 internal fun tabletThreadRailWidthDp(
