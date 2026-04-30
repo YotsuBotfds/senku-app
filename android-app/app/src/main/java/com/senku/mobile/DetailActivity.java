@@ -2733,8 +2733,9 @@ public final class DetailActivity extends AppCompatActivity {
 
         boolean pinVisible = !resolvePinnableGuideId().isEmpty();
         boolean pinActive = pinVisible && PinnedGuideStore.contains(this, resolvePinnableGuideId());
-        boolean showRetry = (!tabletBusy && !safe(lastFailedQuery).isEmpty())
-            || (tabletBusy && generationStallNoticeVisible && !safe(currentTitle).isEmpty());
+        FollowUpComposerState tabletComposerState = buildTabletFollowUpComposerState();
+        boolean showRetry = (!tabletBusy && !tabletComposerState.retryQuery().isEmpty())
+            || isGenerationStallRetryAvailable(tabletBusy);
         boolean tabletEmergencyFullHeightPage = isTabletEmergencyFullHeightPage();
         boolean suppressTabletEmergencyFloatingRail = shouldSuppressTabletEmergencyFloatingRail(
             answerMode,
@@ -2752,9 +2753,9 @@ public final class DetailActivity extends AppCompatActivity {
             suppressTabletEmergencyFloatingRail ? Collections.emptyList() : sources,
             suppressTabletEmergencyFloatingRail ? emptyTabletAnchorState() : buildTabletAnchorState(visualOwnerSource),
             suppressTabletEmergencyFloatingRail ? Collections.emptyList() : buildTabletXRefStates(),
-            suppressTabletEmergencyFloatingRail ? "" : tabletComposerText,
+            suppressTabletEmergencyFloatingRail ? "" : tabletComposerState.draftText,
             resolveTabletComposerPlaceholder(),
-            !suppressTabletEmergencyFloatingRail && !tabletBusy,
+            !suppressTabletEmergencyFloatingRail && tabletComposerState.inputEnabled(),
             answerMode && !suppressTabletEmergencyFloatingRail,
             !suppressTabletEmergencyFloatingRail && showRetry,
             getString(R.string.detail_followup_retry),
@@ -3783,15 +3784,16 @@ public final class DetailActivity extends AppCompatActivity {
         boolean compactFollowUpMode = isCompactFollowUpMode();
         String fullHint = safe(String.valueOf(followUpInput.getHint()));
         String compactHint = getString(resolveDockedComposerCompactHintResId(compactFollowUpMode));
+        FollowUpComposerState composerState = buildPhoneFollowUpComposerState();
         DockedComposerModel model = new DockedComposerModel(
-            safe(followUpInput.getText() == null ? null : followUpInput.getText().toString()),
+            composerState.draftText,
             resolveDockedComposerHint(
                 fullHint,
                 compactHint,
                 compactFollowUpMode,
                 isCurrentEmergencySurfaceEligible()
             ),
-            followUpInput.isEnabled() && followUpSendButton != null && followUpSendButton.isEnabled(),
+            composerState.inputEnabled() && followUpInput.isEnabled() && followUpSendButton != null && followUpSendButton.isEnabled(),
             showRetry,
             retryLabel,
             compactFollowUpMode,
@@ -6092,7 +6094,7 @@ public final class DetailActivity extends AppCompatActivity {
     }
 
     private void runFollowUp() {
-        String query = normalizeFollowUpQuery(followUpInput.getText().toString());
+        String query = buildPhoneFollowUpComposerState().submitQuery();
         if (resolveFollowUpSubmitRoute(query) == FollowUpSubmitRoute.EMPTY_INPUT) {
             setBusy(getString(R.string.detail_followup_empty), false);
             return;
@@ -6101,7 +6103,7 @@ public final class DetailActivity extends AppCompatActivity {
     }
 
     private void runTabletFollowUp(String rawQuery) {
-        String query = safe(rawQuery).trim();
+        String query = FollowUpComposerState.idle(rawQuery, FollowUpComposerState.Surface.TABLET).submitQuery();
         if (query.isEmpty()) {
             setBusy(getString(R.string.detail_followup_empty), false);
             return;
@@ -6142,7 +6144,7 @@ public final class DetailActivity extends AppCompatActivity {
     }
 
     static String normalizeFollowUpQuery(String rawQuery) {
-        return safe(rawQuery).trim();
+        return FollowUpComposerState.normalizeDraft(rawQuery);
     }
 
     void applyPreparedPreviewState(OfflineAnswerEngine.PreparedAnswer preparedAnswer) {
@@ -6212,13 +6214,12 @@ public final class DetailActivity extends AppCompatActivity {
     String buildGenerationFailureStatus(Throwable exc) { return "Offline answer failed: " + (exc == null ? null : exc.getMessage()); }
 
     private void retryLastFailedQuery() {
-        String retryQuery = safe(lastFailedQuery).trim();
-        if (retryQuery.isEmpty()) {
-            retryQuery = safe(currentTitle).trim();
-        }
+        String retryQuery = tabletComposeMode
+            ? buildTabletFollowUpComposerState().retryQuery()
+            : buildPhoneFollowUpComposerState().retryQuery();
         if (tabletComposeMode) {
             if (retryQuery.isEmpty()) {
-                retryQuery = safe(tabletComposerText).trim();
+                retryQuery = normalizeFollowUpQuery(tabletComposerText);
             }
             if (retryQuery.isEmpty()) {
                 setBusy(getString(R.string.detail_followup_empty), false);
@@ -6229,7 +6230,7 @@ public final class DetailActivity extends AppCompatActivity {
             return;
         }
         if (retryQuery.isEmpty()) {
-            retryQuery = safe(followUpInput == null ? null : followUpInput.getText().toString()).trim();
+            retryQuery = normalizeFollowUpQuery(followUpInput == null ? null : followUpInput.getText().toString());
         }
         if (retryQuery.isEmpty()) {
             setBusy(getString(R.string.detail_followup_empty), false);
@@ -6469,6 +6470,35 @@ public final class DetailActivity extends AppCompatActivity {
 
     String lastFailedQuery() { return lastFailedQuery; }
 
+    private FollowUpComposerState buildPhoneFollowUpComposerState() {
+        boolean busy = progressBar != null && progressBar.getVisibility() == View.VISIBLE;
+        return new FollowUpComposerState(
+            followUpInput == null || followUpInput.getText() == null ? "" : followUpInput.getText().toString(),
+            busy,
+            busy,
+            "",
+            FollowUpComposerState.Surface.PHONE,
+            lastFailedQuery,
+            isGenerationStallRetryAvailable(busy) ? currentTitle : ""
+        );
+    }
+
+    private FollowUpComposerState buildTabletFollowUpComposerState() {
+        return new FollowUpComposerState(
+            tabletComposerText,
+            tabletBusy,
+            tabletBusy,
+            "",
+            FollowUpComposerState.Surface.TABLET,
+            lastFailedQuery,
+            isGenerationStallRetryAvailable(tabletBusy) ? currentTitle : ""
+        );
+    }
+
+    private boolean isGenerationStallRetryAvailable(boolean busy) {
+        return busy && generationStallNoticeVisible && !safe(currentTitle).trim().isEmpty();
+    }
+
     void setBusy(String status, boolean busy) {
         if (tabletComposeMode) {
             tabletStatusText = safe(status);
@@ -6491,9 +6521,11 @@ public final class DetailActivity extends AppCompatActivity {
         followUpSendButton.setEnabled(!busy);
         refreshFollowUpInputShell(isFollowUpInputShellActive());
         if (followUpRetryButton != null) {
-            followUpRetryButton.setEnabled(!busy);
-            boolean showRetry = (!busy && !safe(lastFailedQuery).isEmpty())
-                || (busy && generationStallNoticeVisible && !safe(currentTitle).isEmpty());
+            FollowUpComposerState composerState = buildPhoneFollowUpComposerState();
+            boolean retryAvailable = !busy && !composerState.retryQuery().isEmpty();
+            boolean stalled = isGenerationStallRetryAvailable(busy);
+            followUpRetryButton.setEnabled(retryAvailable || stalled);
+            boolean showRetry = retryAvailable || stalled;
             followUpRetryButton.setVisibility(showRetry ? View.VISIBLE : View.GONE);
         }
         renderDockedComposer();
