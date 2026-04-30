@@ -15,6 +15,18 @@ import org.junit.Test;
 
 public final class MainActivityHomeChromeTest {
     @Test
+    public void productReviewModeDefaultsOffWithoutExplicitIntentExtra() {
+        assertFalse(MainActivity.resolveProductReviewModeForTest(false, false));
+        assertFalse(MainActivity.resolveProductReviewModeForTest(false, true));
+    }
+
+    @Test
+    public void productReviewModeRequiresExplicitTrueIntentExtra() {
+        assertFalse(MainActivity.resolveProductReviewModeForTest(true, false));
+        assertTrue(MainActivity.resolveProductReviewModeForTest(true, true));
+    }
+
+    @Test
     public void categoryShelfModelsAreSortedByCountThenContractOrder() {
         List<CategoryShelfItemModel> items = MainActivity.buildHomeChromeCategoryShelfItems(
             Arrays.asList(

@@ -80,6 +80,7 @@ public final class PromptHarnessSmokeTest {
     private static final String EXTRA_AUTO_QUERY = "auto_query";
     private static final String EXTRA_AUTO_ASK = "auto_ask";
     private static final String EXTRA_AUTO_FOLLOWUP_QUERY = "auto_followup_query";
+    private static final String EXTRA_PRODUCT_REVIEW_MODE = MainActivity.EXTRA_PRODUCT_REVIEW_MODE;
     // Empirical: search logs ~5.8-6.2s; 10s missed three times across 48h on 5554/5556. See notes/R-SEARCH_DIAGNOSTIC_20260421.md.
     private static final long SEARCH_WAIT_MS = 15_000L;
     // Tablet portrait full-pack runs can spend 15-20s in offline hybrid search before the UI posts results.
@@ -143,9 +144,19 @@ public final class PromptHarnessSmokeTest {
         }
     }
 
+    private static ActivityScenario<MainActivity> launchProductReviewMainActivity() {
+        return ActivityScenario.launch(productReviewMainActivityIntent());
+    }
+
+    private static Intent productReviewMainActivityIntent() {
+        Intent intent = new Intent(ApplicationProvider.getApplicationContext(), MainActivity.class);
+        intent.putExtra(EXTRA_PRODUCT_REVIEW_MODE, true);
+        return intent;
+    }
+
     @Test
     public void homeEntryShowsPrimaryBrowseAndAskLanes() {
-        try (ActivityScenario<MainActivity> scenario = ActivityScenario.launch(MainActivity.class)) {
+        try (ActivityScenario<MainActivity> scenario = launchProductReviewMainActivity()) {
             awaitHarnessIdle();
             Assert.assertTrue(
                 "home search input never appeared; harness signals=" + HarnessTestSignals.snapshot(),
@@ -332,7 +343,7 @@ public final class PromptHarnessSmokeTest {
 
     @Test
     public void autoAskWithoutAutoQueryOpensAskLaneAfterInitialLoad() {
-        Intent intent = new Intent(ApplicationProvider.getApplicationContext(), MainActivity.class);
+        Intent intent = productReviewMainActivityIntent();
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         intent.putExtra(EXTRA_AUTO_ASK, true);
 
@@ -452,7 +463,7 @@ public final class PromptHarnessSmokeTest {
     @Test
     public void savedTabEmptyStateOpensSavedGuideDestination() {
         clearPinnedGuidesForTest();
-        Intent intent = new Intent(ApplicationProvider.getApplicationContext(), MainActivity.class);
+        Intent intent = productReviewMainActivityIntent();
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         intent.putExtra(MainActivity.EXTRA_OPEN_SAVED, true);
 
@@ -473,7 +484,7 @@ public final class PromptHarnessSmokeTest {
     @Test
     public void savedNavigationTapOpensSavedGuideDestination() {
         clearPinnedGuidesForTest();
-        try (ActivityScenario<MainActivity> scenario = ActivityScenario.launch(MainActivity.class)) {
+        try (ActivityScenario<MainActivity> scenario = launchProductReviewMainActivity()) {
             awaitHarnessIdle();
             Assert.assertTrue(
                 "home launch should settle before tapping Saved; harness signals=" + HarnessTestSignals.snapshot(),
@@ -497,7 +508,7 @@ public final class PromptHarnessSmokeTest {
         clearPinnedGuidesForTest();
         Context context = ApplicationProvider.getApplicationContext();
         Assert.assertTrue("test seed guide should be accepted as a saved guide", PinnedGuideStore.add(context, "GD-345"));
-        Intent intent = new Intent(context, MainActivity.class);
+        Intent intent = productReviewMainActivityIntent();
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         intent.putExtra(MainActivity.EXTRA_OPEN_SAVED, true);
 
@@ -517,7 +528,7 @@ public final class PromptHarnessSmokeTest {
 
     @Test
     public void searchQueryShowsResultsWithoutShellPolling() {
-        try (ActivityScenario<MainActivity> scenario = ActivityScenario.launch(MainActivity.class)) {
+        try (ActivityScenario<MainActivity> scenario = launchProductReviewMainActivity()) {
             awaitHarnessIdle();
             String query = "rain shelter";
             submitSearchFromResumedActivity(query, false);
@@ -599,7 +610,7 @@ public final class PromptHarnessSmokeTest {
 
     @Test
     public void searchButtonFromAskLaneStaysGuideResultSearch() {
-        ActivityScenario<MainActivity> scenario = ActivityScenario.launch(MainActivity.class);
+        ActivityScenario<MainActivity> scenario = launchProductReviewMainActivity();
         try {
             awaitHarnessIdle();
             Assert.assertTrue(
@@ -652,7 +663,7 @@ public final class PromptHarnessSmokeTest {
         }
         Assume.assumeFalse("no stable browse query available for linked-guide handoff smoke", searchQuery.isEmpty());
 
-        ActivityScenario<MainActivity> scenario = ActivityScenario.launch(MainActivity.class);
+        ActivityScenario<MainActivity> scenario = launchProductReviewMainActivity();
         try {
             awaitHarnessIdle();
             submitSearchFromResumedActivity(searchQuery, false);
@@ -800,7 +811,7 @@ public final class PromptHarnessSmokeTest {
 
     @Test
     public void deterministicAskNavigatesToDetailScreen() {
-        ActivityScenario<MainActivity> scenario = ActivityScenario.launch(MainActivity.class);
+        ActivityScenario<MainActivity> scenario = launchProductReviewMainActivity();
         try {
             awaitHarnessIdle();
             submitSearchFromResumedActivity("How do I start a fire in rain?", true);
@@ -937,7 +948,7 @@ public final class PromptHarnessSmokeTest {
 
     @Test
     public void askTabImeActionNavigatesToAnswerDetailScreen() {
-        ActivityScenario<MainActivity> scenario = ActivityScenario.launch(MainActivity.class);
+        ActivityScenario<MainActivity> scenario = launchProductReviewMainActivity();
         try {
             awaitHarnessIdle();
             Assert.assertTrue(
@@ -967,7 +978,7 @@ public final class PromptHarnessSmokeTest {
 
     @Test
     public void askTabHardwareEnterNavigatesToAnswerDetailScreen() {
-        ActivityScenario<MainActivity> scenario = ActivityScenario.launch(MainActivity.class);
+        ActivityScenario<MainActivity> scenario = launchProductReviewMainActivity();
         try {
             awaitHarnessIdle();
             Assert.assertTrue(
@@ -994,7 +1005,7 @@ public final class PromptHarnessSmokeTest {
 
     @Test
     public void restoredAskTabImeActionNavigatesToAnswerDetailScreen() {
-        ActivityScenario<MainActivity> scenario = ActivityScenario.launch(MainActivity.class);
+        ActivityScenario<MainActivity> scenario = launchProductReviewMainActivity();
         try {
             awaitHarnessIdle();
             scenario.onActivity(activity -> Assume.assumeTrue(
@@ -1577,7 +1588,7 @@ public final class PromptHarnessSmokeTest {
 
     @Test
     public void returningFromAnswerKeepsAskLaneEmphasis() {
-        try (ActivityScenario<MainActivity> scenario = ActivityScenario.launch(MainActivity.class)) {
+        try (ActivityScenario<MainActivity> scenario = launchProductReviewMainActivity()) {
             awaitHarnessIdle();
             String query = "How do I start a fire in rain?";
             submitSearchFromResumedActivity(query, true);
@@ -1636,7 +1647,7 @@ public final class PromptHarnessSmokeTest {
         Assume.assumeTrue("host inference url missing", !hostUrl.isEmpty());
         Assume.assumeTrue("host inference endpoint unreachable: " + hostUrl, isHostReachable(hostUrl));
 
-        Intent intent = new Intent(ApplicationProvider.getApplicationContext(), MainActivity.class);
+        Intent intent = productReviewMainActivityIntent();
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         intent.putExtra(HostInferenceConfig.EXTRA_HOST_INFERENCE_ENABLED, true);
         intent.putExtra(HostInferenceConfig.EXTRA_HOST_INFERENCE_URL, hostUrl);
@@ -1709,7 +1720,7 @@ public final class PromptHarnessSmokeTest {
         Assume.assumeTrue("host inference url missing", !hostUrl.isEmpty());
         Assume.assumeTrue("host inference endpoint unreachable: " + hostUrl, isHostReachable(hostUrl));
 
-        Intent intent = new Intent(ApplicationProvider.getApplicationContext(), MainActivity.class);
+        Intent intent = productReviewMainActivityIntent();
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         intent.putExtra(HostInferenceConfig.EXTRA_HOST_INFERENCE_ENABLED, true);
         intent.putExtra(HostInferenceConfig.EXTRA_HOST_INFERENCE_URL, hostUrl);
@@ -1751,7 +1762,7 @@ public final class PromptHarnessSmokeTest {
         Assume.assumeTrue("host inference url missing", !hostUrl.isEmpty());
         Assume.assumeTrue("host inference endpoint unreachable: " + hostUrl, isHostReachable(hostUrl));
 
-        Intent intent = new Intent(ApplicationProvider.getApplicationContext(), MainActivity.class);
+        Intent intent = productReviewMainActivityIntent();
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         intent.putExtra(HostInferenceConfig.EXTRA_HOST_INFERENCE_ENABLED, true);
         intent.putExtra(HostInferenceConfig.EXTRA_HOST_INFERENCE_URL, hostUrl);
@@ -3125,7 +3136,7 @@ public final class PromptHarnessSmokeTest {
             scriptedContract.reviewedCardRuntimeEnabled
         );
 
-        Intent intent = new Intent(ApplicationProvider.getApplicationContext(), MainActivity.class);
+        Intent intent = productReviewMainActivityIntent();
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         intent.putExtra(EXTRA_AUTO_QUERY, Uri.encode(query));
         if (ask) {

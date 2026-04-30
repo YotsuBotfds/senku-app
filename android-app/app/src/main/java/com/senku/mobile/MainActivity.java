@@ -78,7 +78,7 @@ public final class MainActivity extends AppCompatActivity {
     private static final String EXTRA_DEBUG_DETAIL_TITLE = "debug_detail_title";
     private static final String EXTRA_DEBUG_DETAIL_SUBTITLE = "debug_detail_subtitle";
     private static final String EXTRA_DEBUG_DETAIL_BODY = "debug_detail_body";
-    private static final String EXTRA_PRODUCT_REVIEW_MODE = "product_review_mode";
+    static final String EXTRA_PRODUCT_REVIEW_MODE = "product_review_mode";
     private static final String STATE_CONVERSATION_ID = "conversation_id";
     private static final String STATE_PHONE_TAB = "phone_tab";
     static final int SEARCH_RESULT_LIMIT = 4;
@@ -282,7 +282,7 @@ public final class MainActivity extends AppCompatActivity {
     private boolean askLaneActive;
     private boolean browseChromeActive = true;
     private boolean pendingSavedGuideSectionFocus;
-    private boolean productReviewMode = true;
+    private boolean productReviewMode = false;
     private HomeGuideAnchor homeGuideAnchor;
     private int homeRelatedRequestVersion;
     private int resultPreviewBridgeRequestVersion;
@@ -1139,8 +1139,18 @@ public final class MainActivity extends AppCompatActivity {
         return shouldOpenEmptyAutoAskLane(decodedAutoQuery, autoAsk);
     }
 
-    private boolean resolveProductReviewMode(Intent intent) {
-        return intent == null || intent.getBooleanExtra(EXTRA_PRODUCT_REVIEW_MODE, true);
+    static boolean resolveProductReviewMode(Intent intent) {
+        boolean hasReviewModeExtra = intent != null && intent.hasExtra(EXTRA_PRODUCT_REVIEW_MODE);
+        boolean reviewModeEnabled = intent != null && intent.getBooleanExtra(EXTRA_PRODUCT_REVIEW_MODE, false);
+        return resolveProductReviewMode(hasReviewModeExtra, reviewModeEnabled);
+    }
+
+    private static boolean resolveProductReviewMode(boolean hasReviewModeExtra, boolean reviewModeEnabled) {
+        return hasReviewModeExtra && reviewModeEnabled;
+    }
+
+    static boolean resolveProductReviewModeForTest(boolean hasReviewModeExtra, boolean reviewModeEnabled) {
+        return resolveProductReviewMode(hasReviewModeExtra, reviewModeEnabled);
     }
 
     static boolean shouldShowDeveloperToolsPanel(
