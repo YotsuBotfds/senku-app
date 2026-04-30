@@ -149,6 +149,56 @@ public final class OfflineAnswerEngineTest {
     }
 
     @Test
+    public void retrievalStageNamesSessionPlanAndRecentSources() {
+        SessionMemory memory = new SessionMemory();
+        memory.recordTurn(
+            "how do I build a tarp shelter",
+            "Use a ridgeline and pitch runoff away.",
+            List.of(
+                new SearchResult(
+                    "Tarp & Cord Shelters",
+                    "",
+                    "",
+                    "",
+                    "GD-345",
+                    "Ridgeline shelter",
+                    "survival",
+                    "guide-focus",
+                    "topic",
+                    "immediate",
+                    "emergency_shelter",
+                    "tarp,cord,ridgeline"
+                )
+            )
+        );
+
+        OfflineAnswerEngine.RetrievalStage stage = OfflineAnswerEngine.buildRetrievalStage(
+            memory,
+            "what next"
+        );
+
+        assertTrue(stage.sessionUsed);
+        assertEquals(stage.retrievalPlan.searchQuery.trim(), stage.retrievalQuery);
+        assertFalse(stage.contextSelectionQuery.isEmpty());
+        assertTrue(stage.sessionPromptContext.contains("recent questions:"));
+        assertEquals(1, stage.recentSources.size());
+        assertEquals("GD-345", stage.recentSources.get(0).guideId);
+    }
+
+    @Test
+    public void retrievalStageFallsBackContextSelectionToTrimmedQueryWithoutSession() {
+        OfflineAnswerEngine.RetrievalStage stage = OfflineAnswerEngine.buildRetrievalStage(
+            new SessionMemory(),
+            "how do I store drinking water"
+        );
+
+        assertFalse(stage.sessionUsed);
+        assertEquals("how do I store drinking water", stage.retrievalQuery);
+        assertEquals("how do I store drinking water", stage.contextSelectionQuery);
+        assertTrue(stage.recentSources.isEmpty());
+    }
+
+    @Test
     public void confidenceLabelReturnsHighForHybridGroundedMatch() {
         OfflineAnswerEngine.ConfidenceLabel label = OfflineAnswerEngine.confidenceLabel(
             List.of(
@@ -3130,6 +3180,19 @@ public final class OfflineAnswerEngineTest {
             )
         );
         QueryMetadataProfile metadataProfile = QueryMetadataProfile.fromQuery(query);
+        OfflineAnswerEngine.AnswerModeStage stage = OfflineAnswerEngine.buildAnswerModeStage(
+            query,
+            query,
+            metadataProfile,
+            rawTopChunks,
+            selectedContext
+        );
+
+        assertEquals(3, stage.modeCandidates.size());
+        assertEquals("GD-110", stage.modeCandidates.get(0).guideId);
+        assertEquals(3, stage.gateContext.size());
+        assertEquals("GD-110", stage.gateContext.get(0).guideId);
+        assertEquals(OfflineAnswerEngine.AnswerMode.ABSTAIN, stage.answerMode);
 
         assertTrue(
             OfflineAnswerEngine.shouldAbstain(

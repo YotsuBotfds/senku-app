@@ -262,13 +262,11 @@ public final class OfflineAnswerEngine {
         long prepareStartedAtMs = System.currentTimeMillis();
         long prepareStartedAtNs = SystemClock.elapsedRealtimeNanos();
         long rerankNs = 0L;
-        SessionMemory.RetrievalPlan retrievalPlan = sessionMemory.buildRetrievalPlan(trimmedQuery);
-        String retrievalQuery = safe(retrievalPlan.searchQuery).trim();
-        boolean sessionUsed = retrievalPlan.sessionUsed;
-        String contextSelectionQuery = safe(retrievalPlan.contextSelectionQuery).trim();
-        if (contextSelectionQuery.isEmpty()) {
-            contextSelectionQuery = trimmedQuery;
-        }
+        RetrievalStage retrievalStage = buildRetrievalStage(sessionMemory, trimmedQuery);
+        SessionMemory.RetrievalPlan retrievalPlan = retrievalStage.retrievalPlan;
+        String retrievalQuery = retrievalStage.retrievalQuery;
+        boolean sessionUsed = retrievalStage.sessionUsed;
+        String contextSelectionQuery = retrievalStage.contextSelectionQuery;
 
         DeterministicAnswerRouter.DeterministicAnswer deterministic = selectDeterministicAnswer(
             trimmedQuery,
@@ -308,10 +306,8 @@ public final class OfflineAnswerEngine {
             throw new IllegalStateException("Import a .litertlm or .task model first");
         }
 
-        String sessionPromptContext = retrievalPlan.promptContext;
-        List<SearchResult> recentSources = sessionUsed
-            ? prioritizeRecentSources(trimmedQuery, retrievalPlan.recentSources)
-            : Collections.emptyList();
+        String sessionPromptContext = retrievalStage.sessionPromptContext;
+        List<SearchResult> recentSources = retrievalStage.recentSources;
 
         long startedAt = System.currentTimeMillis();
         Log.d(TAG, "ask.start query=\"" + trimmedQuery + "\" sessionUsed=" + sessionUsed);
@@ -372,22 +368,17 @@ public final class OfflineAnswerEngine {
         }
         contextResults = trimWeakSessionContext(contextSelectionQuery, sessionUsed, contextResults, recentSources);
 
-        List<SearchResult> modeCandidates = answerCandidates.isEmpty() ? contextResults : answerCandidates;
-        List<SearchResult> gateContext = contextResults.isEmpty() ? modeCandidates : contextResults;
-        ConfidenceLabel confidenceLabel = confidenceLabel(
-            gateContext,
-            contextSelectionQuery,
-            retrievalPlan.metadataProfile
-        );
-        boolean safetyCritical = isSafetyCriticalQuery(trimmedQuery, gateContext);
-        AnswerMode answerMode = resolveAnswerMode(
-            gateContext,
-            modeCandidates,
+        AnswerModeStage answerModeStage = buildAnswerModeStage(
+            trimmedQuery,
             contextSelectionQuery,
             retrievalPlan.metadataProfile,
-            confidenceLabel,
-            safetyCritical
+            answerCandidates,
+            contextResults
         );
+        List<SearchResult> gateContext = answerModeStage.gateContext;
+        ConfidenceLabel confidenceLabel = answerModeStage.confidenceLabel;
+        boolean safetyCritical = answerModeStage.safetyCritical;
+        AnswerMode answerMode = answerModeStage.answerMode;
         if (answerMode == AnswerMode.ABSTAIN) {
             List<SearchResult> adjacentGuides = topAbstainChunks(gateContext);
             logDebug(
@@ -509,6 +500,67 @@ public final class OfflineAnswerEngine {
             prepareStartedAtMs,
             plan.reviewedCardMetadata
         );
+    }
+
+    static RetrievalStage buildRetrievalStage(SessionMemory sessionMemory, String trimmedQuery) {
+        SessionMemory.RetrievalPlan retrievalPlan = sessionMemory.buildRetrievalPlan(trimmedQuery);
+        String retrievalQuery = safe(retrievalPlan.searchQuery).trim();
+        boolean sessionUsed = retrievalPlan.sessionUsed;
+        String contextSelectionQuery = safe(retrievalPlan.contextSelectionQuery).trim();
+        if (contextSelectionQuery.isEmpty()) {
+            contextSelectionQuery = trimmedQuery;
+        }
+        List<SearchResult> recentSources = sessionUsed
+            ? prioritizeRecentSources(trimmedQuery, retrievalPlan.recentSources)
+            : Collections.emptyList();
+        return new RetrievalStage(
+            retrievalPlan,
+            retrievalQuery,
+            contextSelectionQuery,
+            sessionUsed,
+            safe(retrievalPlan.promptContext),
+            recentSources
+        );
+    }
+
+    static AnswerModeStage buildAnswerModeStage(
+        String trimmedQuery,
+        String contextSelectionQuery,
+        QueryMetadataProfile metadataProfile,
+        List<SearchResult> answerCandidates,
+        List<SearchResult> contextResults
+    ) {
+        List<SearchResult> modeCandidates = answerCandidates == null || answerCandidates.isEmpty()
+            ? safeSearchResults(contextResults)
+            : safeSearchResults(answerCandidates);
+        List<SearchResult> gateContext = contextResults == null || contextResults.isEmpty()
+            ? modeCandidates
+            : safeSearchResults(contextResults);
+        ConfidenceLabel confidenceLabel = confidenceLabel(
+            gateContext,
+            contextSelectionQuery,
+            metadataProfile
+        );
+        boolean safetyCritical = isSafetyCriticalQuery(trimmedQuery, gateContext);
+        AnswerMode answerMode = resolveAnswerMode(
+            gateContext,
+            modeCandidates,
+            contextSelectionQuery,
+            metadataProfile,
+            confidenceLabel,
+            safetyCritical
+        );
+        return new AnswerModeStage(
+            modeCandidates,
+            gateContext,
+            confidenceLabel,
+            safetyCritical,
+            answerMode
+        );
+    }
+
+    private static List<SearchResult> safeSearchResults(List<SearchResult> results) {
+        return results == null ? Collections.emptyList() : results;
     }
 
     public static AnswerRun generate(Context context, File modelFile, PreparedAnswer prepared)
@@ -1816,7 +1868,13 @@ public final class OfflineAnswerEngine {
         ConfidenceLabel confidenceLabel,
         boolean safetyCritical
     ) {
-        return buildUncertainFitAnswerBody(query, topChunks, confidenceLabel, safetyCritical, false);
+        return buildUncertainFitAnswerBody(
+            query,
+            topChunks,
+            confidenceLabel,
+            safetyCritical,
+            ReviewDemoPolicy.isAnswerProductReviewModeEnabled()
+        );
     }
 
     static String buildUncertainFitAnswerBody(
@@ -1887,7 +1945,12 @@ public final class OfflineAnswerEngine {
         List<SearchResult> adjacent,
         boolean safetyCritical
     ) {
-        return shapeUncertainFitSourcesForPresentation(query, adjacent, safetyCritical, false);
+        return shapeUncertainFitSourcesForPresentation(
+            query,
+            adjacent,
+            safetyCritical,
+            ReviewDemoPolicy.isAnswerProductReviewModeEnabled()
+        );
     }
 
     static List<SearchResult> shapeUncertainFitSourcesForPresentation(
@@ -2796,6 +2859,53 @@ public final class OfflineAnswerEngine {
             this.firstTokenMs = Math.max(0L, firstTokenMs);
             this.decodeMs = Math.max(0L, decodeMs);
             this.totalMs = Math.max(0L, totalMs);
+        }
+    }
+
+    static final class RetrievalStage {
+        final SessionMemory.RetrievalPlan retrievalPlan;
+        final String retrievalQuery;
+        final String contextSelectionQuery;
+        final boolean sessionUsed;
+        final String sessionPromptContext;
+        final List<SearchResult> recentSources;
+
+        RetrievalStage(
+            SessionMemory.RetrievalPlan retrievalPlan,
+            String retrievalQuery,
+            String contextSelectionQuery,
+            boolean sessionUsed,
+            String sessionPromptContext,
+            List<SearchResult> recentSources
+        ) {
+            this.retrievalPlan = retrievalPlan;
+            this.retrievalQuery = safe(retrievalQuery).trim();
+            this.contextSelectionQuery = safe(contextSelectionQuery).trim();
+            this.sessionUsed = sessionUsed;
+            this.sessionPromptContext = safe(sessionPromptContext);
+            this.recentSources = recentSources == null ? Collections.emptyList() : new ArrayList<>(recentSources);
+        }
+    }
+
+    static final class AnswerModeStage {
+        final List<SearchResult> modeCandidates;
+        final List<SearchResult> gateContext;
+        final ConfidenceLabel confidenceLabel;
+        final boolean safetyCritical;
+        final AnswerMode answerMode;
+
+        AnswerModeStage(
+            List<SearchResult> modeCandidates,
+            List<SearchResult> gateContext,
+            ConfidenceLabel confidenceLabel,
+            boolean safetyCritical,
+            AnswerMode answerMode
+        ) {
+            this.modeCandidates = modeCandidates == null ? Collections.emptyList() : new ArrayList<>(modeCandidates);
+            this.gateContext = gateContext == null ? Collections.emptyList() : new ArrayList<>(gateContext);
+            this.confidenceLabel = normalizeConfidenceLabel(confidenceLabel, false, answerMode == AnswerMode.ABSTAIN);
+            this.safetyCritical = safetyCritical;
+            this.answerMode = answerMode == null ? AnswerMode.CONFIDENT : answerMode;
         }
     }
 

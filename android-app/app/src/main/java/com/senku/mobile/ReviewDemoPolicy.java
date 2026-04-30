@@ -67,6 +67,10 @@ final class ReviewDemoPolicy {
         return productReviewMode;
     }
 
+    static boolean isAnswerProductReviewModeEnabled() {
+        return false;
+    }
+
     static String buildRainShelterUncertainFitAnswerBody(
         boolean productReviewMode,
         String query,

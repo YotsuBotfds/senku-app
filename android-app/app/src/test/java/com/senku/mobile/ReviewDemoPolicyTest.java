@@ -36,6 +36,11 @@ public final class ReviewDemoPolicyTest {
     }
 
     @Test
+    public void answerProductReviewModeDefaultsOffUntilWiredByCaller() {
+        assertFalse(ReviewDemoPolicy.isAnswerProductReviewModeEnabled());
+    }
+
+    @Test
     public void reviewSearchLatencyOnlyAppliesToTargetMockQueryWhenEnabled() {
         assertEquals(
             "Search  rain shelter - 4 results \u2022 12MS",
