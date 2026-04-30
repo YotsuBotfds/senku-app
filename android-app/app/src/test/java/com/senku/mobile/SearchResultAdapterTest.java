@@ -93,14 +93,14 @@ public final class SearchResultAdapterTest {
 
     @Test
     public void compactRowsUseFinalMockTypographyScale() {
-        assertEquals(16.0f, SearchResultAdapter.compactRowTitleTextSizeSpForTest(), 0.001f);
-        assertEquals(12.5f, SearchResultAdapter.compactRowSnippetTextSizeSpForTest(), 0.001f);
+        assertEquals(15.0f, SearchResultAdapter.compactRowTitleTextSizeSpForTest(), 0.001f);
+        assertEquals(12.0f, SearchResultAdapter.compactRowSnippetTextSizeSpForTest(), 0.001f);
     }
 
     @Test
     public void portraitAndTabletRowsUseBalancedTypographyScale() {
-        assertEquals(16.0f, SearchResultAdapter.portraitTabletRowTitleTextSizeSpForTest(), 0.001f);
-        assertEquals(13.0f, SearchResultAdapter.portraitTabletRowSnippetTextSizeSpForTest(), 0.001f);
+        assertEquals(15.0f, SearchResultAdapter.portraitTabletRowTitleTextSizeSpForTest(), 0.001f);
+        assertEquals(12.5f, SearchResultAdapter.portraitTabletRowSnippetTextSizeSpForTest(), 0.001f);
     }
 
     @Test
@@ -117,7 +117,7 @@ public final class SearchResultAdapterTest {
         assertTrue(portraitSnippet > landscapeSnippet);
         assertTrue(landscapeSnippet > section);
         assertEquals(section, chip, 0.001f);
-        assertEquals(10.0f, section, 0.001f);
+        assertEquals(9.5f, section, 0.001f);
     }
 
     @Test
@@ -135,6 +135,18 @@ public final class SearchResultAdapterTest {
             SearchResultAdapter.buildTabletAttributeLineForTest("shelter", "role_topic", "long-term")
         );
         assertEquals("", SearchResultAdapter.buildTabletAttributeLineForTest("general", "none", "unknown"));
+    }
+
+    @Test
+    public void tabletRowsFallbackToRetrievalLaneForStableMetadataRhythm() {
+        assertEquals(
+            "CONCEPT MATCH",
+            SearchResultAdapter.buildTabletAttributeLineForResultForTest("general", "none", "unknown", "vector")
+        );
+        assertEquals(
+            "BEST MATCH",
+            SearchResultAdapter.buildTabletAttributeLineForResultForTest("", "", "", "")
+        );
     }
 
     @Test

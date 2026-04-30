@@ -45,12 +45,12 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
     private static final int MAX_HIGHLIGHT_TERMS = 4;
     private static final int DEFAULT_MAX_DISPLAYED_ITEMS = 4;
     private static final int SCORE_TICK_TRACK_WIDTH_DP = 22;
-    private static final float LANDSCAPE_ROW_TITLE_TEXT_SIZE_SP = 16.0f;
-    private static final float LANDSCAPE_ROW_SNIPPET_TEXT_SIZE_SP = 12.5f;
-    private static final float PORTRAIT_TABLET_ROW_TITLE_TEXT_SIZE_SP = 16.0f;
-    private static final float PORTRAIT_TABLET_ROW_SNIPPET_TEXT_SIZE_SP = 13.0f;
-    private static final float COMPACT_ROW_SECTION_TEXT_SIZE_SP = 10.0f;
-    private static final float COMPACT_ROW_CHIP_TEXT_SIZE_SP = 10.0f;
+    private static final float LANDSCAPE_ROW_TITLE_TEXT_SIZE_SP = 15.0f;
+    private static final float LANDSCAPE_ROW_SNIPPET_TEXT_SIZE_SP = 12.0f;
+    private static final float PORTRAIT_TABLET_ROW_TITLE_TEXT_SIZE_SP = 15.0f;
+    private static final float PORTRAIT_TABLET_ROW_SNIPPET_TEXT_SIZE_SP = 12.5f;
+    private static final float COMPACT_ROW_SECTION_TEXT_SIZE_SP = 9.5f;
+    private static final float COMPACT_ROW_CHIP_TEXT_SIZE_SP = 9.5f;
 
     public static final class LinkedGuidePreview {
         public final String guideId;
@@ -285,6 +285,7 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
         title.setId(R.id.result_title);
         title.setTextColor(ContextCompat.getColor(context, R.color.senku_rev03_ink_0));
         title.setTypeface(rev03UiTypeface(context, Typeface.BOLD));
+        title.setIncludeFontPadding(false);
         title.setTextSize(
             TypedValue.COMPLEX_UNIT_SP,
             compactRowTitleTextSizeSp(landscapePhoneCard)
@@ -313,6 +314,7 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
         snippet.setId(R.id.result_snippet);
         snippet.setTextColor(ContextCompat.getColor(context, R.color.senku_rev03_ink_1));
         snippet.setTypeface(rev03UiTypeface(context, Typeface.NORMAL));
+        snippet.setIncludeFontPadding(false);
         snippet.setTextSize(
             TypedValue.COMPLEX_UNIT_SP,
             compactRowSnippetTextSizeSp(landscapePhoneCard)
@@ -969,11 +971,25 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
         return buildTabletAttributeLineInternal(category, contentRole, timeHorizon);
     }
 
+    static String buildTabletAttributeLineForResultForTest(
+        String category,
+        String contentRole,
+        String timeHorizon,
+        String retrievalMode
+    ) {
+        String line = buildTabletAttributeLineInternal(category, contentRole, timeHorizon);
+        if (!line.isEmpty()) {
+            return line;
+        }
+        return displayLabelForRetrievalMode(safe(retrievalMode)).toUpperCase(Locale.US);
+    }
+
     private void bindTabletAttributeLine(TextView sectionView, SearchResult result) {
-        String line = buildTabletAttributeLineInternal(
+        String line = buildTabletAttributeLineForResultForTest(
             result == null ? null : result.category,
             result == null ? null : result.contentRole,
-            result == null ? null : result.timeHorizon
+            result == null ? null : result.timeHorizon,
+            result == null ? null : result.retrievalMode
         );
         if (line.isEmpty()) {
             sectionView.setVisibility(View.GONE);
