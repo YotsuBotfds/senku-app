@@ -6,6 +6,23 @@ category: building
 difficulty: beginner
 tags:
   - essential
+aliases:
+  - how to build a house
+  - build a cabin
+  - starter house construction
+  - one room cabin
+  - basic house build sequence
+  - site drainage foundation frame roof sequence
+routing_cues:
+  - "starter shelter or small cabin build order from site selection through roof"
+  - "broad house construction sequence: site, drainage, foundation, frame, roof"
+  - "basic one-room house or cabin construction before specialist handoffs"
+applicability: >
+  Broad starter house, cabin, outbuilding, and one-room structure sequencing
+  prompts covering site choice, drainage, foundations, framing, roofing, and
+  habitability handoff points; route specialized joinery, natural building,
+  waterproofing, utilities, accessibility, and inspection questions to the
+  companion guides when they are the user's main focus.
 icon: 🏗️
 description: Foundations, wall framing, roofing systems, concrete & masonry, doors & windows, outbuildings, and structural engineering basics for off-grid construction.
 related:

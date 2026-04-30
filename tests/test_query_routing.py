@@ -82,12 +82,31 @@ class QueryRoutingTests(unittest.TestCase):
     def test_house_build_prompt_gets_construction_domain_and_building_specs(self):
         frame = query.build_scenario_frame("how do i build a house")
         self.assertIn("construction", frame["domains"])
+        self.assertEqual(
+            query._retrieval_profile_for_question("how do i build a house"),
+            "how_to_task",
+        )
 
         specs = query._supplemental_retrieval_specs("how do i build a house", 10)
         self.assertTrue(any(spec["category"] == "building" for spec in specs))
+        self.assertEqual(specs[0].get("where"), {"slug": "construction"})
+        self.assertIn("Construction & Carpentry broad house construction", specs[0]["text"])
         self.assertTrue(any("one room house" in spec["text"] for spec in specs))
-        self.assertTrue(any("window door assembly" in spec["text"] for spec in specs))
-        self.assertTrue(any("roof waterproofing foundation drainage" in spec["text"] for spec in specs))
+        self.assertFalse(any("window door assembly" in spec["text"] for spec in specs))
+        self.assertFalse(
+            any("roof waterproofing foundation drainage" in spec["text"] for spec in specs)
+        )
+
+        explicit_specs = query._supplemental_retrieval_specs(
+            "how do i build a house with windows and roof waterproofing", 10
+        )
+        self.assertTrue(any("window door assembly" in spec["text"] for spec in explicit_specs))
+        self.assertTrue(
+            any(
+                "roof waterproofing foundation drainage" in spec["text"]
+                for spec in explicit_specs
+            )
+        )
 
     def test_canoe_prompt_gets_construction_domain_and_transport_specs(self):
         frame = query.build_scenario_frame("how do i build a canoe")
@@ -836,6 +855,39 @@ class QueryRoutingTests(unittest.TestCase):
             query._metadata_rerank_delta(question, building_meta),
             query._metadata_rerank_delta(question, census_meta),
         )
+        construction_meta = {
+            "guide_title": "Construction & Carpentry",
+            "slug": "construction",
+            "guide_id": "GD-094",
+            "description": "Foundations, wall framing, roofing systems, doors and windows.",
+            "category": "building",
+            "tags": "essential",
+            "routing_cues": "broad house construction sequence",
+        }
+        window_meta = {
+            "guide_title": "Doors & Window Construction",
+            "slug": "doors-window-construction",
+            "guide_id": "GD-414",
+            "description": "Window and door assembly, weatherstripping, sill, and threshold.",
+            "category": "building",
+            "tags": "window and door assembly",
+        }
+        waterproof_meta = {
+            "guide_title": "Waterproofing and Sealants",
+            "slug": "waterproofing-sealants",
+            "guide_id": "GD-457",
+            "description": "Roof waterproofing, weatherproofing, and sealants.",
+            "category": "building",
+            "tags": "waterproofing and sealants, roof waterproofing",
+        }
+        self.assertLess(
+            query._metadata_rerank_delta(question, construction_meta),
+            query._metadata_rerank_delta(question, window_meta),
+        )
+        self.assertLess(
+            query._metadata_rerank_delta(question, construction_meta),
+            query._metadata_rerank_delta(question, waterproof_meta),
+        )
 
     def test_water_purification_metadata_rerank_prefers_purification_over_alkali(self):
         question = "how do i build a charcoal sand water filter"
@@ -1514,6 +1566,30 @@ class QueryRoutingTests(unittest.TestCase):
         building_prompt = query.build_prompt(building_question, basic_results)
         self.assertIn("lead with no-entry triage", building_prompt)
         self.assertIn("soft/bouncy floor", building_prompt)
+
+    def test_group_food_theft_gets_commons_governance_specs(self):
+        question = "someone is stealing food from the group what do we do"
+        self.assertTrue(query._is_group_food_theft_special_case(question))
+
+        specs = query._supplemental_retrieval_specs(question, 8)
+
+        self.assertTrue(
+            any(
+                spec["category"] == "resource-management"
+                and spec.get("where") == {"slug": "commons-management-resource-governance"}
+                and "shared food stores theft" in spec["text"]
+                for spec in specs
+            ),
+            [spec["text"] for spec in specs],
+        )
+        self.assertTrue(
+            any(
+                spec["category"] == "society"
+                and spec.get("where") == {"slug": "community-governance-leadership"}
+                for spec in specs
+            ),
+            [spec["text"] for spec in specs],
+        )
 
     def test_food_and_market_space_routing_boundaries(self):
         basic_results = {

@@ -8,6 +8,22 @@ tags:
   - resource-management
   - governance
   - sustainability
+aliases:
+  - stealing food from group
+  - shared food stores theft
+  - commons violation
+  - monitoring shared resources
+  - restitution for resource theft
+  - graduated sanctions
+routing_cues:
+  - "someone is stealing from shared food stores or violating commons rules"
+  - "monitoring shared stores, proving violations, restitution, and graduated sanctions"
+  - "commons rule enforcement before police-style punishment or leadership succession"
+applicability: >
+  Shared-resource governance prompts about food-store theft, commons violations,
+  monitoring, restitution, conflict resolution, and graduated sanctions; use
+  governance, contract, reputation, or emergency rationing guides when authority,
+  agreements, trust standing, or scarce-food allocation is the main issue.
 icon: 📊
 description: Tragedy of the commons explained, Ostrom's 8 design principles for managing shared resources, defining community boundaries and legitimate users, rule-making participation and enforcement, monitoring and graduated sanctions, conflict resolution mechanisms, common resource types (forests, fisheries, water, pasture, salvage sites), quota systems design, seasonal restrictions and rotational harvesting, enforcement without police, record-keeping systems, preventing elite capture, and scaling governance as communities grow.
 related:

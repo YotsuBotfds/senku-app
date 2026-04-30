@@ -3814,6 +3814,54 @@ _HOUSE_BUILD_POSITIVE_METADATA_MARKERS = {
     "shelter site selection & hazard assessment",
 }
 
+_HOUSE_BUILD_WINDOW_DOOR_QUERY_MARKERS = {
+    "window",
+    "windows",
+    "door",
+    "doors",
+    "sill",
+    "threshold",
+    "weatherstrip",
+    "weatherstripping",
+}
+
+_HOUSE_BUILD_WATERPROOF_QUERY_MARKERS = {
+    "waterproof",
+    "waterproofing",
+    "weatherproof",
+    "weatherproofing",
+    "rainproof",
+    "rainproofing",
+    "leak",
+    "leaks",
+    "leaking",
+    "sealant",
+    "sealants",
+    "roof leak",
+    "roof leaked",
+}
+
+_HOUSE_BUILD_MATERIAL_QUERY_MARKERS = {
+    "material",
+    "materials",
+    "salvage",
+    "salvaged",
+    "lumber",
+    "timber",
+    "boards",
+    "roofing",
+    "shingles",
+    "windows",
+    "doors",
+}
+
+_HOUSE_BUILD_SPECIALIST_METADATA_MARKERS = {
+    "waterproofing and sealants",
+    "window and door assembly",
+    "roof waterproofing",
+    "doors & window construction",
+}
+
 _HOUSE_BUILD_DISTRACTOR_METADATA_MARKERS = {
     "population census",
     "household surveys",
@@ -10601,7 +10649,17 @@ def _metadata_rerank_delta(question, meta):
         elif category in {"medical", "society"}:
             apply_delta("house_build_medical_society_distractor", 0.08)
 
-        if _text_has_marker(meta_text, _HOUSE_BUILD_POSITIVE_METADATA_MARKERS):
+        if guide_id == "GD-094" or "construction" == str(meta.get("slug", "")).strip().lower():
+            apply_delta("house_build_broad_owner", -0.08)
+
+        positive_markers = set(_HOUSE_BUILD_POSITIVE_METADATA_MARKERS)
+        if not (
+            _text_has_marker(question_lower, _HOUSE_BUILD_WINDOW_DOOR_QUERY_MARKERS)
+            or _text_has_marker(question_lower, _HOUSE_BUILD_WATERPROOF_QUERY_MARKERS)
+        ):
+            positive_markers -= _HOUSE_BUILD_SPECIALIST_METADATA_MARKERS
+
+        if _text_has_marker(meta_text, positive_markers):
             apply_delta("house_build_positive_metadata", -0.055)
         if _text_has_marker(meta_text, _HOUSE_BUILD_DISTRACTOR_METADATA_MARKERS):
             apply_delta("house_build_distractor_metadata", 0.18)
@@ -12083,6 +12141,8 @@ def _retrieval_profile_for_question(question, frame=None):
         return "normal_vs_urgent"
     if any(marker in lower for marker in (" or ", "versus", "vs ", "which")):
         return "compare_or_boundary"
+    if _is_house_build_query(lower):
+        return "how_to_task"
     if len(_content_tokens(question)) <= 3:
         return "low_support"
     return "how_to_task"
@@ -13901,6 +13961,33 @@ def _supplemental_retrieval_specs(
                 ]
             )
 
+    if _is_group_food_theft_special_case(question_lower):
+        specs.extend(
+            [
+                {
+                    "text": (
+                        f"{question} commons-management-resource-governance "
+                        "community_governance shared food stores theft commons "
+                        "violation monitoring restitution graduated sanctions "
+                        "conflict resolution"
+                    ),
+                    "category": "resource-management",
+                    "where": {"slug": "commons-management-resource-governance"},
+                    "limit": supplemental_limit,
+                },
+                {
+                    "text": (
+                        f"{question} community governance leadership shared "
+                        "resource rule enforcement fair process accountable "
+                        "steward appeal"
+                    ),
+                    "category": "society",
+                    "where": {"slug": "community-governance-leadership"},
+                    "limit": supplemental_limit,
+                },
+            ]
+        )
+
     if _is_supply_conflict_query(question_lower):
         specs.extend(
             [
@@ -13959,8 +14046,27 @@ def _supplemental_retrieval_specs(
         )
 
     if _is_house_build_query(question_lower):
+        has_window_or_door_focus = _text_has_marker(
+            question_lower, _HOUSE_BUILD_WINDOW_DOOR_QUERY_MARKERS
+        )
+        has_waterproof_focus = _text_has_marker(
+            question_lower, _HOUSE_BUILD_WATERPROOF_QUERY_MARKERS
+        )
+        has_material_focus = _text_has_marker(
+            question_lower, _HOUSE_BUILD_MATERIAL_QUERY_MARKERS
+        )
         specs.extend(
             [
+                {
+                    "text": (
+                        "Construction & Carpentry broad house construction "
+                        "sequence site drainage foundation frame roof one room "
+                        "cabin starter house"
+                    ),
+                    "category": "building",
+                    "where": {"slug": "construction"},
+                    "limit": supplemental_limit,
+                },
                 {
                     "text": "simple one room house site drainage foundation frame roof weatherproofing",
                     "category": "building",
@@ -13981,23 +14087,32 @@ def _supplemental_retrieval_specs(
                     "category": "survival",
                     "limit": supplemental_limit,
                 },
+            ]
+        )
+        if has_window_or_door_focus:
+            specs.append(
                 {
                     "text": "window door assembly weatherstripping timber wall sill threshold",
                     "category": "building",
                     "limit": supplemental_limit,
-                },
+                }
+            )
+        if has_waterproof_focus:
+            specs.append(
                 {
                     "text": "roof waterproofing foundation drainage sealants low resource structure",
                     "category": "building",
                     "limit": supplemental_limit,
-                },
+                }
+            )
+        if has_material_focus:
+            specs.append(
                 {
                     "text": "building materials salvage framing lumber roofing windows doors",
                     "category": "building",
                     "limit": supplemental_limit,
-                },
-            ]
-        )
+                }
+            )
 
     if _is_small_watercraft_query(question_lower):
         specs.extend(
