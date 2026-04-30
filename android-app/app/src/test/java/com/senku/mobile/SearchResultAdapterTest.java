@@ -128,8 +128,8 @@ public final class SearchResultAdapterTest {
         assertEquals(6, SearchResultAdapter.portraitTabletRowTitleTopMarginDpForTest());
         assertEquals(5, SearchResultAdapter.compactRowSnippetTopMarginDpForTest());
         assertEquals(6, SearchResultAdapter.portraitTabletRowSnippetTopMarginDpForTest());
-        assertEquals(14, SearchResultAdapter.compactRowDividerTopMarginDpForTest());
-        assertEquals(17, SearchResultAdapter.portraitTabletRowDividerTopMarginDpForTest());
+        assertEquals(10, SearchResultAdapter.compactRowDividerTopMarginDpForTest());
+        assertEquals(12, SearchResultAdapter.portraitTabletRowDividerTopMarginDpForTest());
     }
 
     @Test

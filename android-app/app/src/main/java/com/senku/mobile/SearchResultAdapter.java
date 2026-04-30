@@ -51,8 +51,8 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
     private static final int PORTRAIT_TABLET_ROW_TITLE_TOP_MARGIN_DP = 6;
     private static final int LANDSCAPE_ROW_SNIPPET_TOP_MARGIN_DP = 5;
     private static final int PORTRAIT_TABLET_ROW_SNIPPET_TOP_MARGIN_DP = 6;
-    private static final int LANDSCAPE_ROW_DIVIDER_TOP_MARGIN_DP = 14;
-    private static final int PORTRAIT_TABLET_ROW_DIVIDER_TOP_MARGIN_DP = 17;
+    private static final int LANDSCAPE_ROW_DIVIDER_TOP_MARGIN_DP = 10;
+    private static final int PORTRAIT_TABLET_ROW_DIVIDER_TOP_MARGIN_DP = 12;
     private static final float LANDSCAPE_ROW_TITLE_TEXT_SIZE_SP = 14.5f;
     private static final float LANDSCAPE_ROW_SNIPPET_TEXT_SIZE_SP = 11.5f;
     private static final float PORTRAIT_TABLET_ROW_TITLE_TEXT_SIZE_SP = 14.5f;

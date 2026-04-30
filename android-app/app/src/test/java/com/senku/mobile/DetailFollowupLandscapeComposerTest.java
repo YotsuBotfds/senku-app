@@ -87,6 +87,14 @@ public final class DetailFollowupLandscapeComposerTest {
                 true
             )
         );
+        assertEquals(
+            "Ask follow-up",
+            DetailActivity.resolveDockedComposerHint(
+                "Ask follow-up",
+                "Ask follow-up",
+                true
+            )
+        );
     }
 
     @Test

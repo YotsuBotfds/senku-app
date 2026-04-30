@@ -17,7 +17,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -149,11 +148,7 @@ fun DockedComposer(
     val sendVerticalPadding = if (landscapePhoneBudgeted) 7.dp else 6.dp
     val hasSendText = model.enabled && model.text.trim().isNotEmpty()
     val contextHint = model.contextHint.trim()
-    val fieldHint = if (model.hint.trim() == "Ask follow-up") {
-        "Ask a follow-up about this answer..."
-    } else {
-        model.hint
-    }
+    val fieldHint = model.hint
 
     LaunchedEffect(focusRequestTick, model.enabled) {
         if (focusRequestTick > 0 && model.enabled) {
@@ -166,11 +161,6 @@ fun DockedComposer(
             .fillMaxWidth()
             .background(colors.bg0),
     ) {
-        HorizontalDivider(
-            modifier = Modifier.fillMaxWidth(),
-            thickness = 1.dp,
-            color = colors.hairline,
-        )
         if (contextHint.isNotEmpty()) {
             Text(
                 text = contextHint,

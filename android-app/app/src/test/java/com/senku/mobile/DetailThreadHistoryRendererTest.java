@@ -354,14 +354,14 @@ public final class DetailThreadHistoryRendererTest {
     @Test
     public void threadContextFooterKeepsTurnCountWithDynamicAnchor() {
         assertEquals(
-            "THREAD CONTEXT - 2 TURNS - GD-220 ANCHOR",
+            "THREAD CONTEXT \u2022 2 TURNS \u2022 GD-220 ANCHOR",
             DetailThreadHistoryRenderer.threadContextFooterLabel(
                 List.of(turn("answer", "GD-220", 0L), turn("answer", "GD-345", 0L)),
                 "GD-220"
             )
         );
         assertEquals(
-            "THREAD CONTEXT - 1 TURN",
+            "THREAD CONTEXT \u2022 1 TURN",
             DetailThreadHistoryRenderer.threadContextFooterLabel(
                 List.of(turn("answer", "", 0L)),
                 ""

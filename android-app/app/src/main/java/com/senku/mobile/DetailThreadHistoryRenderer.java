@@ -22,6 +22,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 final class DetailThreadHistoryRenderer {
+    private static final String FOOTER_METADATA_SEPARATOR = " • ";
     private static final Pattern SIMPLE_GUIDE_ID_PATTERN = Pattern.compile("GD-\\d{3}");
     private static final int QUESTION_MAX_LINES = 2;
     private static final int ANSWER_MAX_LINES = 4;
@@ -406,6 +407,10 @@ final class DetailThreadHistoryRenderer {
         }
         TextView label = buildMetaLine(labelText, true);
         label.setTextColor(context.getColor(R.color.senku_rev03_ink_2));
+        label.setLayoutParams(new LinearLayout.LayoutParams(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        ));
         boolean densePhoneLandscape = isPhoneLandscapeNoRailTranscript(state, true);
         label.setPadding(
             dp(densePhoneLandscape ? 8 : 10),
@@ -501,9 +506,10 @@ final class DetailThreadHistoryRenderer {
         String turnLabel = turnCount == 1 ? "1 TURN" : turnCount + " TURNS";
         String anchorLabel = safe(anchorGuideId).trim();
         if (anchorLabel.isEmpty()) {
-            return "THREAD CONTEXT - " + turnLabel;
+            return "THREAD CONTEXT" + FOOTER_METADATA_SEPARATOR + turnLabel;
         }
-        return "THREAD CONTEXT - " + turnLabel + " - " + anchorLabel + " ANCHOR";
+        return "THREAD CONTEXT" + FOOTER_METADATA_SEPARATOR + turnLabel + FOOTER_METADATA_SEPARATOR
+            + anchorLabel + " ANCHOR";
     }
 
     private String nextAnchorGuideId(String previousAnchorGuideId, SessionMemory.TurnSnapshot turn) {
