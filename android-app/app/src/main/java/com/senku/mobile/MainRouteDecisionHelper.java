@@ -172,7 +172,7 @@ public final class MainRouteDecisionHelper {
         }
     }
 
-    private static boolean isBrowseSurface(Surface surface) {
+    static boolean isBrowseSurface(Surface surface) {
         return surface == Surface.BROWSE
             || surface == Surface.RECENT_THREADS
             || surface == Surface.SAVED_GUIDES;

@@ -433,6 +433,126 @@ public final class MainActivityPhoneNavigationTest {
     }
 
     @Test
+    public void restoredMainRouteStateKeepsFirstClassResultSurfaces() {
+        assertRouteState(
+            MainActivity.resolveRestoredMainRouteState(
+                MainRouteDecisionHelper.Surface.SEARCH_RESULTS.name(),
+                BottomTabDestination.HOME.name(),
+                false,
+                true,
+                BottomTabDestination.HOME.name()
+            ),
+            MainRouteDecisionHelper.Surface.SEARCH_RESULTS,
+            BottomTabDestination.HOME,
+            false
+        );
+        assertRouteState(
+            MainActivity.resolveRestoredMainRouteState(
+                MainRouteDecisionHelper.Surface.ASK_RESULTS.name(),
+                BottomTabDestination.ASK.name(),
+                true,
+                true,
+                BottomTabDestination.HOME.name()
+            ),
+            MainRouteDecisionHelper.Surface.ASK_RESULTS,
+            BottomTabDestination.ASK,
+            true
+        );
+    }
+
+    @Test
+    public void restoredMainRouteStateKeepsSavedAndRecentBrowseSurfaces() {
+        assertRouteState(
+            MainActivity.resolveRestoredMainRouteState(
+                MainRouteDecisionHelper.Surface.SAVED_GUIDES.name(),
+                BottomTabDestination.PINS.name(),
+                false,
+                true,
+                BottomTabDestination.HOME.name()
+            ),
+            MainRouteDecisionHelper.Surface.SAVED_GUIDES,
+            BottomTabDestination.PINS,
+            false
+        );
+        assertRouteState(
+            MainActivity.resolveRestoredMainRouteState(
+                MainRouteDecisionHelper.Surface.RECENT_THREADS.name(),
+                BottomTabDestination.ASK.name(),
+                false,
+                true,
+                BottomTabDestination.HOME.name()
+            ),
+            MainRouteDecisionHelper.Surface.RECENT_THREADS,
+            BottomTabDestination.ASK,
+            false
+        );
+    }
+
+    @Test
+    public void restoredMainRouteStateFallsBackToLegacyPhoneTabWhenFirstClassStateIsMissingOrInvalid() {
+        assertRouteState(
+            MainActivity.resolveRestoredMainRouteState(
+                null,
+                null,
+                false,
+                false,
+                BottomTabDestination.ASK.name()
+            ),
+            MainRouteDecisionHelper.Surface.RECENT_THREADS,
+            BottomTabDestination.ASK,
+            true
+        );
+        assertRouteState(
+            MainActivity.resolveRestoredMainRouteState(
+                "DETAIL",
+                BottomTabDestination.HOME.name(),
+                false,
+                true,
+                BottomTabDestination.PINS.name()
+            ),
+            MainRouteDecisionHelper.Surface.SAVED_GUIDES,
+            BottomTabDestination.PINS,
+            false
+        );
+    }
+
+    @Test
+    public void restoredMainRouteStateControlsInitialBrowseChromeForResultSurfaces() {
+        assertFalse(MainActivity.resolveInitialBrowseChromeVisibleForTest(
+            false,
+            MainRouteDecisionHelper.Surface.SEARCH_RESULTS.name(),
+            BottomTabDestination.HOME.name(),
+            false,
+            true,
+            BottomTabDestination.HOME.name()
+        ));
+        assertFalse(MainActivity.resolveInitialBrowseChromeVisibleForTest(
+            false,
+            MainRouteDecisionHelper.Surface.ASK_RESULTS.name(),
+            BottomTabDestination.ASK.name(),
+            true,
+            true,
+            BottomTabDestination.HOME.name()
+        ));
+        assertTrue(MainActivity.resolveInitialBrowseChromeVisibleForTest(
+            false,
+            MainRouteDecisionHelper.Surface.SAVED_GUIDES.name(),
+            BottomTabDestination.PINS.name(),
+            false,
+            true,
+            BottomTabDestination.HOME.name()
+        ));
+        assertFalse(MainActivity.resolveInitialBrowseChromeVisibleForTest(
+            true,
+            MainRouteDecisionHelper.Surface.SAVED_GUIDES.name(),
+            BottomTabDestination.PINS.name(),
+            false,
+            true,
+            BottomTabDestination.PINS.name()
+        ));
+    }
+
+    @Test
     public void sharedInputSubmitRoutesToAskWhenAskOwnsTheVisibleFlow() {
         assertEquals(
             SubmitTarget.ASK,

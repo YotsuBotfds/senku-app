@@ -73,6 +73,9 @@ public final class MainActivity extends AppCompatActivity {
     static final String EXTRA_PRODUCT_REVIEW_MODE = ReviewDemoPolicy.EXTRA_PRODUCT_REVIEW_MODE;
     private static final String STATE_CONVERSATION_ID = "conversation_id";
     private static final String STATE_PHONE_TAB = "phone_tab";
+    private static final String STATE_MAIN_ROUTE_SURFACE = "main_route_surface";
+    private static final String STATE_MAIN_ROUTE_ACTIVE_TAB = "main_route_active_tab";
+    private static final String STATE_MAIN_ROUTE_ASK_LANE_ACTIVE = "main_route_ask_lane_active";
     static final int SEARCH_RESULT_LIMIT = 4;
     private static final int ALL_GUIDES = 0;
     private static final int MIN_SEARCH_SUGGESTION_QUERY = 2;
@@ -518,7 +521,7 @@ public final class MainActivity extends AppCompatActivity {
 
         applyIntentQuery(getIntent());
         updateSessionPanel();
-        showBrowseChrome(!hasAutoQuery(getIntent()));
+        showBrowseChrome(resolveInitialBrowseChromeVisible(savedInstanceState, getIntent()));
         maybeHandleOpenHomeIntent(getIntent());
         maybeHandleOpenSavedIntent(getIntent());
         updateLandscapePhoneResultsPriority();
@@ -573,7 +576,7 @@ public final class MainActivity extends AppCompatActivity {
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putString(STATE_CONVERSATION_ID, conversationId);
-        outState.putString(STATE_PHONE_TAB, activePhoneTab.name());
+        saveMainRouteState(outState, currentMainRouteState());
     }
 
     @Override
@@ -2497,8 +2500,10 @@ public final class MainActivity extends AppCompatActivity {
             installPhoneBottomTabBar();
         }
         installStaticPhoneNavRail();
-        activePhoneTab = restorePhoneTab(savedInstanceState);
-        askLaneActive = activePhoneTab == BottomTabDestination.ASK;
+        MainRouteDecisionHelper.RouteState restoredRouteState = restoreMainRouteState(savedInstanceState);
+        activePhoneTab = restoredRouteState.activePhoneTab;
+        askLaneActive = restoredRouteState.askLaneActive;
+        browseChromeActive = isBrowseMainRouteSurface(restoredRouteState.surface);
         updateIdentityStrip();
         updatePhoneTabBarState();
     }
@@ -3002,6 +3007,82 @@ public final class MainActivity extends AppCompatActivity {
         return phoneFormFactor || tabletSearchLayout;
     }
 
+    private boolean resolveInitialBrowseChromeVisible(Bundle savedInstanceState, Intent intent) {
+        if (hasAutoQuery(intent)) {
+            return false;
+        }
+        return isBrowseMainRouteSurface(restoreMainRouteState(savedInstanceState).surface);
+    }
+
+    private static void saveMainRouteState(Bundle outState, MainRouteDecisionHelper.RouteState routeState) {
+        MainRouteDecisionHelper.RouteState safeRouteState = routeState == null
+            ? MainRouteDecisionHelper.browseHome()
+            : routeState;
+        outState.putString(STATE_PHONE_TAB, safeRouteState.activePhoneTab.name());
+        outState.putString(STATE_MAIN_ROUTE_SURFACE, safeRouteState.surface.name());
+        outState.putString(STATE_MAIN_ROUTE_ACTIVE_TAB, safeRouteState.activePhoneTab.name());
+        outState.putBoolean(STATE_MAIN_ROUTE_ASK_LANE_ACTIVE, safeRouteState.askLaneActive);
+    }
+
+    private static boolean isBrowseMainRouteSurface(MainRouteDecisionHelper.Surface surface) {
+        return MainRouteDecisionHelper.isBrowseSurface(surface);
+    }
+
+    private MainRouteDecisionHelper.RouteState restoreMainRouteState(Bundle savedInstanceState) {
+        if (savedInstanceState == null) {
+            return MainRouteDecisionHelper.browseHome();
+        }
+        boolean hasFirstClassRouteState =
+            savedInstanceState.containsKey(STATE_MAIN_ROUTE_SURFACE)
+                && savedInstanceState.containsKey(STATE_MAIN_ROUTE_ACTIVE_TAB)
+                && savedInstanceState.containsKey(STATE_MAIN_ROUTE_ASK_LANE_ACTIVE);
+        return resolveRestoredMainRouteState(
+            savedInstanceState.getString(STATE_MAIN_ROUTE_SURFACE),
+            savedInstanceState.getString(STATE_MAIN_ROUTE_ACTIVE_TAB),
+            savedInstanceState.getBoolean(STATE_MAIN_ROUTE_ASK_LANE_ACTIVE, false),
+            hasFirstClassRouteState,
+            savedInstanceState.getString(STATE_PHONE_TAB)
+        );
+    }
+
+    static MainRouteDecisionHelper.RouteState resolveRestoredMainRouteState(
+        String rawSurface,
+        String rawActivePhoneTab,
+        boolean askLaneActive,
+        boolean hasFirstClassRouteState,
+        String legacyPhoneTab
+    ) {
+        if (hasFirstClassRouteState) {
+            MainRouteDecisionHelper.Surface surface = parseRouteSurface(rawSurface);
+            BottomTabDestination activeTab = parsePhoneTab(rawActivePhoneTab);
+            if (surface != null && activeTab != null) {
+                return new MainRouteDecisionHelper.RouteState(surface, activeTab, askLaneActive);
+            }
+        }
+        BottomTabDestination legacyTab = resolveRestoredPhoneTab(legacyPhoneTab);
+        return routeStateForMode(true, legacyTab, legacyTab == BottomTabDestination.ASK);
+    }
+
+    static boolean resolveInitialBrowseChromeVisibleForTest(
+        boolean autoQueryPending,
+        String rawSurface,
+        String rawActivePhoneTab,
+        boolean askLaneActive,
+        boolean hasFirstClassRouteState,
+        String legacyPhoneTab
+    ) {
+        if (autoQueryPending) {
+            return false;
+        }
+        return isBrowseMainRouteSurface(resolveRestoredMainRouteState(
+            rawSurface,
+            rawActivePhoneTab,
+            askLaneActive,
+            hasFirstClassRouteState,
+            legacyPhoneTab
+        ).surface);
+    }
+
     private BottomTabDestination restorePhoneTab(Bundle savedInstanceState) {
         if (savedInstanceState == null) {
             return BottomTabDestination.HOME;
@@ -3017,6 +3098,28 @@ public final class MainActivity extends AppCompatActivity {
             return phoneTabSelectionOwner(BottomTabDestination.valueOf(rawValue));
         } catch (IllegalArgumentException ignored) {
             return BottomTabDestination.HOME;
+        }
+    }
+
+    private static MainRouteDecisionHelper.Surface parseRouteSurface(String rawValue) {
+        if (rawValue == null || rawValue.trim().isEmpty()) {
+            return null;
+        }
+        try {
+            return MainRouteDecisionHelper.Surface.valueOf(rawValue);
+        } catch (IllegalArgumentException ignored) {
+            return null;
+        }
+    }
+
+    private static BottomTabDestination parsePhoneTab(String rawValue) {
+        if (rawValue == null || rawValue.trim().isEmpty()) {
+            return null;
+        }
+        try {
+            return BottomTabDestination.valueOf(rawValue);
+        } catch (IllegalArgumentException ignored) {
+            return null;
         }
     }
 

@@ -165,6 +165,16 @@ public final class MainRouteDecisionHelperTest {
     }
 
     @Test
+    public void browseSurfaceClassifierCoversBrowseRecentAndSavedOnly() {
+        assertTrue(MainRouteDecisionHelper.isBrowseSurface(MainRouteDecisionHelper.Surface.BROWSE));
+        assertTrue(MainRouteDecisionHelper.isBrowseSurface(MainRouteDecisionHelper.Surface.RECENT_THREADS));
+        assertTrue(MainRouteDecisionHelper.isBrowseSurface(MainRouteDecisionHelper.Surface.SAVED_GUIDES));
+
+        assertFalse(MainRouteDecisionHelper.isBrowseSurface(MainRouteDecisionHelper.Surface.SEARCH_RESULTS));
+        assertFalse(MainRouteDecisionHelper.isBrowseSurface(MainRouteDecisionHelper.Surface.ASK_RESULTS));
+    }
+
+    @Test
     public void openingPhoneTabsUsesExistingDestinationOwnership() {
         MainRouteDecisionHelper.RouteState searchResults =
             new MainRouteDecisionHelper.RouteState(
