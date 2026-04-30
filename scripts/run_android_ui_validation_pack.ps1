@@ -845,6 +845,15 @@ function Install-SenkuApk {
     }
 
     $installOutput = $installResult.output
+    if ($Device -notlike "emulator-*") {
+        Write-Warning ("[{0}] APK install failed; retrying with adb install --no-streaming on physical device." -f $Device)
+        $noStreamingResult = Invoke-AdbCommandCapture -Arguments @("-s", $Device, "install", "--no-streaming", "-r", $Apk)
+        if ($noStreamingResult.exit_code -eq 0) {
+            return $true
+        }
+        $installOutput = "{0}; --no-streaming retry failed: {1}" -f $installOutput, $noStreamingResult.output
+    }
+
     $storagePressureMarkers = @(
         "not enough space",
         "install_failed_insufficient_storage",
