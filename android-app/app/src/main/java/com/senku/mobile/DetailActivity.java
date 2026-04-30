@@ -122,7 +122,7 @@ public final class DetailActivity extends AppCompatActivity {
     private static final float DETAIL_TOP_CHROME_TITLE_TEXT_SIZE_SP = 13.0f;
     private static final float DETAIL_TOP_CHROME_LABEL_TEXT_SIZE_SP = 9.5f;
     private static final float DETAIL_TOP_CHROME_LABEL_LINE_HEIGHT_SP = 11.0f;
-    private static final float TABLET_EMERGENCY_CHROME_TITLE_TEXT_SIZE_SP = 14.0f;
+    private static final float TABLET_EMERGENCY_CHROME_TITLE_TEXT_SIZE_SP = DETAIL_TOP_CHROME_TITLE_TEXT_SIZE_SP;
     private static final float TABLET_EMERGENCY_CHROME_TITLE_LINE_HEIGHT_SP = 18.0f;
     private static final int DETAIL_TOP_CHROME_ICON_ACTION_SIZE_DP = 28;
     private static final int TABLET_HEADER_BACK_ACTION_WIDTH_DP = 28;

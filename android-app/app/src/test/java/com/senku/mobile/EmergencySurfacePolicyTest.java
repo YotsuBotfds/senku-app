@@ -358,7 +358,7 @@ public final class EmergencySurfacePolicyTest {
         assertEquals(13.0f, DetailActivity.resolveDetailTopChromeTitleTextSizeSp(), 0.0f);
         assertEquals(9.5f, DetailActivity.resolveDetailTopChromeLabelTextSizeSp(), 0.0f);
         assertEquals(11.0f, DetailActivity.resolveDetailTopChromeLabelLineHeightSp(), 0.0f);
-        assertEquals(14.0f, DetailActivity.resolveTabletEmergencyChromeTitleTextSizeSp(), 0.0f);
+        assertEquals(13.0f, DetailActivity.resolveTabletEmergencyChromeTitleTextSizeSp(), 0.0f);
         assertEquals(18.0f, DetailActivity.resolveTabletEmergencyChromeTitleLineHeightSp(), 0.0f);
         assertEquals(
             DetailActivity.resolveDetailTopChromeTitleTextSizeSp(),
