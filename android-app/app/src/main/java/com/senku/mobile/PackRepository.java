@@ -2073,24 +2073,30 @@ public final class PackRepository implements AutoCloseable {
                 && "guide-focus".equals(emptySafe(rankedAnchor.retrievalMode).trim().toLowerCase(QUERY_LOCALE))
                 && emptySafe(rankedAnchor.sectionHeading).trim().isEmpty()
                 && !hasWaterDistributionTitleSignal(rankedAnchor);
-        return AnswerAnchorPolicy.chooseRankedOrRoutedAnchor(new AnswerAnchorPolicy.AnchorChoice(
-            rankedAnchor,
-            routedAnchor,
-            queryTerms.routeProfile.isRouteFocused(),
-            shouldPreferRouteAnchorOverRankedGuide(queryTerms, rankedAnchor),
-            prefersCabinSiteSelectionRouteAnchor(queryTerms),
-            hasCabinSiteSelectionAnchorSignal(routedAnchor),
-            hasCabinSiteSelectionAnchorSignal(rankedAnchor),
-            prefersRoofWeatherproofRouteAnchor(queryTerms),
-            hasRoofWeatherproofAnchorSignal(routedAnchor),
-            hasRoofWeatherproofDistractorSignal(rankedAnchor),
-            hasRoofWeatherproofAnchorSignal(rankedAnchor),
-            rankedGuideFocusWaterDistributionFallback,
-            PackSupportScoringPolicy.guideGroupKey(routedAnchor)
-                .equals(PackSupportScoringPolicy.guideGroupKey(rankedAnchor)),
-            PackSupportScoringPolicy.supportBreakdown(queryTerms, rankedAnchor).supportWithMetadata(),
-            PackSupportScoringPolicy.supportBreakdown(queryTerms, routedAnchor).supportWithMetadata()
-        ));
+        return AnswerAnchorPolicy.chooseRankedOrRoutedAnchor(
+            AnswerAnchorPolicy.anchorChoice(rankedAnchor, routedAnchor)
+                .routeFocused(queryTerms.routeProfile.isRouteFocused())
+                .preferRouteAnchorOverRankedGuide(shouldPreferRouteAnchorOverRankedGuide(queryTerms, rankedAnchor))
+                .preferCabinSiteSelectionRouteAnchor(prefersCabinSiteSelectionRouteAnchor(queryTerms))
+                .routedHasCabinSiteSelectionSignal(hasCabinSiteSelectionAnchorSignal(routedAnchor))
+                .rankedHasCabinSiteSelectionSignal(hasCabinSiteSelectionAnchorSignal(rankedAnchor))
+                .preferRoofWeatherproofRouteAnchor(prefersRoofWeatherproofRouteAnchor(queryTerms))
+                .routedHasRoofWeatherproofSignal(hasRoofWeatherproofAnchorSignal(routedAnchor))
+                .rankedHasRoofWeatherproofDistractorSignal(hasRoofWeatherproofDistractorSignal(rankedAnchor))
+                .rankedHasRoofWeatherproofSignal(hasRoofWeatherproofAnchorSignal(rankedAnchor))
+                .rankedGuideFocusWaterDistributionFallback(rankedGuideFocusWaterDistributionFallback)
+                .sameGuideGroup(
+                    PackSupportScoringPolicy.guideGroupKey(routedAnchor)
+                        .equals(PackSupportScoringPolicy.guideGroupKey(rankedAnchor))
+                )
+                .rankedSupportWithMetadata(
+                    PackSupportScoringPolicy.supportBreakdown(queryTerms, rankedAnchor).supportWithMetadata()
+                )
+                .routedSupportWithMetadata(
+                    PackSupportScoringPolicy.supportBreakdown(queryTerms, routedAnchor).supportWithMetadata()
+                )
+                .build()
+        );
     }
 
     static SearchResult selectExplicitWaterDistributionAnchorForTest(String query, SearchResult... results) {

@@ -77,8 +77,124 @@ final class AnswerAnchorPolicy {
             : choice.routedAnchor;
     }
 
+    static AnchorChoiceBuilder anchorChoice(SearchResult rankedAnchor, SearchResult routedAnchor) {
+        return new AnchorChoiceBuilder(rankedAnchor, routedAnchor);
+    }
+
     private static String safe(String value) {
         return value == null ? "" : value;
+    }
+
+    static final class AnchorChoiceBuilder {
+        private final SearchResult rankedAnchor;
+        private final SearchResult routedAnchor;
+        private boolean routeFocused;
+        private boolean preferRouteAnchorOverRankedGuide;
+        private boolean preferCabinSiteSelectionRouteAnchor;
+        private boolean routedHasCabinSiteSelectionSignal;
+        private boolean rankedHasCabinSiteSelectionSignal;
+        private boolean preferRoofWeatherproofRouteAnchor;
+        private boolean routedHasRoofWeatherproofSignal;
+        private boolean rankedHasRoofWeatherproofDistractorSignal;
+        private boolean rankedHasRoofWeatherproofSignal;
+        private boolean rankedGuideFocusWaterDistributionFallback;
+        private boolean sameGuideGroup;
+        private int rankedSupportWithMetadata;
+        private int routedSupportWithMetadata;
+
+        private AnchorChoiceBuilder(SearchResult rankedAnchor, SearchResult routedAnchor) {
+            this.rankedAnchor = rankedAnchor;
+            this.routedAnchor = routedAnchor;
+        }
+
+        AnchorChoiceBuilder routeFocused(boolean routeFocused) {
+            this.routeFocused = routeFocused;
+            return this;
+        }
+
+        AnchorChoiceBuilder preferRouteAnchorOverRankedGuide(boolean preferRouteAnchorOverRankedGuide) {
+            this.preferRouteAnchorOverRankedGuide = preferRouteAnchorOverRankedGuide;
+            return this;
+        }
+
+        AnchorChoiceBuilder preferCabinSiteSelectionRouteAnchor(boolean preferCabinSiteSelectionRouteAnchor) {
+            this.preferCabinSiteSelectionRouteAnchor = preferCabinSiteSelectionRouteAnchor;
+            return this;
+        }
+
+        AnchorChoiceBuilder routedHasCabinSiteSelectionSignal(boolean routedHasCabinSiteSelectionSignal) {
+            this.routedHasCabinSiteSelectionSignal = routedHasCabinSiteSelectionSignal;
+            return this;
+        }
+
+        AnchorChoiceBuilder rankedHasCabinSiteSelectionSignal(boolean rankedHasCabinSiteSelectionSignal) {
+            this.rankedHasCabinSiteSelectionSignal = rankedHasCabinSiteSelectionSignal;
+            return this;
+        }
+
+        AnchorChoiceBuilder preferRoofWeatherproofRouteAnchor(boolean preferRoofWeatherproofRouteAnchor) {
+            this.preferRoofWeatherproofRouteAnchor = preferRoofWeatherproofRouteAnchor;
+            return this;
+        }
+
+        AnchorChoiceBuilder routedHasRoofWeatherproofSignal(boolean routedHasRoofWeatherproofSignal) {
+            this.routedHasRoofWeatherproofSignal = routedHasRoofWeatherproofSignal;
+            return this;
+        }
+
+        AnchorChoiceBuilder rankedHasRoofWeatherproofDistractorSignal(
+            boolean rankedHasRoofWeatherproofDistractorSignal
+        ) {
+            this.rankedHasRoofWeatherproofDistractorSignal = rankedHasRoofWeatherproofDistractorSignal;
+            return this;
+        }
+
+        AnchorChoiceBuilder rankedHasRoofWeatherproofSignal(boolean rankedHasRoofWeatherproofSignal) {
+            this.rankedHasRoofWeatherproofSignal = rankedHasRoofWeatherproofSignal;
+            return this;
+        }
+
+        AnchorChoiceBuilder rankedGuideFocusWaterDistributionFallback(
+            boolean rankedGuideFocusWaterDistributionFallback
+        ) {
+            this.rankedGuideFocusWaterDistributionFallback = rankedGuideFocusWaterDistributionFallback;
+            return this;
+        }
+
+        AnchorChoiceBuilder sameGuideGroup(boolean sameGuideGroup) {
+            this.sameGuideGroup = sameGuideGroup;
+            return this;
+        }
+
+        AnchorChoiceBuilder rankedSupportWithMetadata(int rankedSupportWithMetadata) {
+            this.rankedSupportWithMetadata = rankedSupportWithMetadata;
+            return this;
+        }
+
+        AnchorChoiceBuilder routedSupportWithMetadata(int routedSupportWithMetadata) {
+            this.routedSupportWithMetadata = routedSupportWithMetadata;
+            return this;
+        }
+
+        AnchorChoice build() {
+            return new AnchorChoice(
+                rankedAnchor,
+                routedAnchor,
+                routeFocused,
+                preferRouteAnchorOverRankedGuide,
+                preferCabinSiteSelectionRouteAnchor,
+                routedHasCabinSiteSelectionSignal,
+                rankedHasCabinSiteSelectionSignal,
+                preferRoofWeatherproofRouteAnchor,
+                routedHasRoofWeatherproofSignal,
+                rankedHasRoofWeatherproofDistractorSignal,
+                rankedHasRoofWeatherproofSignal,
+                rankedGuideFocusWaterDistributionFallback,
+                sameGuideGroup,
+                rankedSupportWithMetadata,
+                routedSupportWithMetadata
+            );
+        }
     }
 
     static final class AnchorChoice {
