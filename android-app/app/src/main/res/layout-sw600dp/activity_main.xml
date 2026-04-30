@@ -114,9 +114,9 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/home_block_gap"
             android:indeterminate="true"
-            android:indeterminateTint="@color/senku_accent_olive"
+            android:indeterminateTint="@color/senku_rev03_accent"
             android:importantForAccessibility="no"
-            android:progressTint="@color/senku_accent_olive" />
+            android:progressTint="@color/senku_rev03_accent" />
 
         <LinearLayout
             android:id="@+id/session_panel"
