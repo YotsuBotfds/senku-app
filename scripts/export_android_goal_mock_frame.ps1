@@ -116,7 +116,14 @@ function Get-ContentCrop {
     param([System.Drawing.Image]$Image, [string]$Name)
 
     $isLandscape = $Name.Contains("-landscape")
-    $top = if ($isLandscape) { [Math]::Max(42, [int]($Image.Height * 0.045)) } else { [Math]::Max(72, [int]($Image.Height * 0.038)) }
+    $isTablet = $Name.Contains("-tablet-")
+    $top = if ($isLandscape) {
+        [Math]::Max(42, [int]($Image.Height * 0.045))
+    } elseif ($isTablet) {
+        [Math]::Max(48, [int]($Image.Height * 0.020))
+    } else {
+        [Math]::Max(72, [int]($Image.Height * 0.038))
+    }
     $bottom = if ($isLandscape) { [Math]::Max(34, [int]($Image.Height * 0.035)) } else { [Math]::Max(78, [int]($Image.Height * 0.040)) }
     $height = [Math]::Max(1, $Image.Height - $top - $bottom)
     return [System.Drawing.Rectangle]::new(0, $top, $Image.Width, $height)
