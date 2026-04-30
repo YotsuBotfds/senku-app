@@ -1483,19 +1483,14 @@ public final class PackRepository implements AutoCloseable {
         int totalSections,
         int targetTotal
     ) {
-        if (addedWithFts <= 0) {
-            return true;
-        }
-        if (queryTerms == null || queryTerms.metadataProfile == null) {
-            return false;
-        }
-        String preferredStructureType = queryTerms.metadataProfile.preferredStructureType();
-        if (!requiresSpecializedRouteAnchorSignal(preferredStructureType)
-            || !shouldRequireDirectAnchorSignal(queryTerms)) {
-            return false;
-        }
-        int minimumHealthyPool = "soapmaking".equals(preferredStructureType) ? 6 : 4;
-        return totalSections < Math.min(targetTotal, minimumHealthyPool);
+        return RetrievalRoutePolicy.shouldBackfillLikeAfterFts(
+            queryTerms == null ? null : queryTerms.routeProfile,
+            queryTerms == null ? null : queryTerms.metadataProfile,
+            queryTerms == null ? 0 : queryTerms.primaryKeywordTokens().size(),
+            addedWithFts,
+            totalSections,
+            targetTotal
+        );
     }
 
     private static final class RouteFtsOrderSpec {

@@ -41,6 +41,54 @@ public final class RetrievalRoutePolicyTest {
     }
 
     @Test
+    public void likeBackfillRunsWhenFtsAddsNothing() {
+        assertEquals(
+            true,
+            RetrievalRoutePolicy.shouldBackfillLikeAfterFts(
+                QueryRouteProfile.fromQuery("build a cabin foundation"),
+                QueryMetadataProfile.fromQuery("build a cabin foundation"),
+                2,
+                0,
+                0,
+                18
+            )
+        );
+    }
+
+    @Test
+    public void soapmakingLikeBackfillRunsUntilHealthyFtsPoolExists() {
+        String query = "how do i make soap from animal fat and ash";
+        QueryRouteProfile routeProfile = QueryRouteProfile.fromQuery(query);
+        QueryMetadataProfile metadataProfile = QueryMetadataProfile.fromQuery(query);
+
+        assertEquals(
+            true,
+            RetrievalRoutePolicy.shouldBackfillLikeAfterFts(routeProfile, metadataProfile, 7, 2, 2, 18)
+        );
+        assertEquals(
+            false,
+            RetrievalRoutePolicy.shouldBackfillLikeAfterFts(routeProfile, metadataProfile, 7, 3, 6, 18)
+        );
+    }
+
+    @Test
+    public void likeBackfillSkipsWhenRouteDoesNotRequireSpecializedAnchorSignal() {
+        String query = "how do i build a storage shelf";
+
+        assertEquals(
+            false,
+            RetrievalRoutePolicy.shouldBackfillLikeAfterFts(
+                QueryRouteProfile.fromQuery(query),
+                QueryMetadataProfile.fromQuery(query),
+                5,
+                2,
+                2,
+                18
+            )
+        );
+    }
+
+    @Test
     public void noBm25OrderDetectsSpecializedRoutePriority() {
         RetrievalRoutePolicy.RouteFtsOrderSpec siteOrder = RetrievalRoutePolicy.noBm25RouteFtsOrder(
             "winter sun shade microclimate building site foundation",

@@ -51,6 +51,29 @@ final class RetrievalRoutePolicy {
         return compactGuideSweep ? Math.max(limit + 4, 16) : Math.max(limit * 3, 24);
     }
 
+    static boolean shouldBackfillLikeAfterFts(
+        QueryRouteProfile routeProfile,
+        QueryMetadataProfile metadataProfile,
+        int primaryKeywordTokenCount,
+        int addedWithFts,
+        int totalSections,
+        int targetTotal
+    ) {
+        if (addedWithFts <= 0) {
+            return true;
+        }
+        if (metadataProfile == null) {
+            return false;
+        }
+        String preferredStructureType = metadataProfile.preferredStructureType();
+        if (!requiresSpecializedRouteAnchorSignal(preferredStructureType)
+            || !shouldRequireDirectAnchorSignal(routeProfile, metadataProfile, primaryKeywordTokenCount)) {
+            return false;
+        }
+        int minimumHealthyPool = "soapmaking".equals(preferredStructureType) ? 6 : 4;
+        return totalSections < Math.min(targetTotal, minimumHealthyPool);
+    }
+
     static RouteFtsOrderSpec noBm25RouteFtsOrder(String queryLower, QueryMetadataProfile metadataProfile) {
         if (metadataProfile != null && "soapmaking".equals(metadataProfile.preferredStructureType())) {
             ArrayList<String> args = new ArrayList<>();
@@ -346,6 +369,27 @@ final class RetrievalRoutePolicy {
             );
         }
         return new RouteFtsOrderSpec(" ORDER BY c.row_id ", Collections.emptyList(), "rowid");
+    }
+
+    private static boolean shouldRequireDirectAnchorSignal(
+        QueryRouteProfile routeProfile,
+        QueryMetadataProfile metadataProfile,
+        int primaryKeywordTokenCount
+    ) {
+        boolean routeFocused = routeProfile != null && routeProfile.isRouteFocused();
+        return metadataProfile.hasExplicitTopic("water_distribution")
+            || (routeFocused && requiresSpecializedRouteAnchorSignal(metadataProfile.preferredStructureType()))
+            || (!routeFocused && (metadataProfile.hasExplicitTopicFocus() || primaryKeywordTokenCount >= 2));
+    }
+
+    private static boolean requiresSpecializedRouteAnchorSignal(String preferredStructureType) {
+        return "water_distribution".equals(preferredStructureType)
+            || "message_auth".equals(preferredStructureType)
+            || "community_security".equals(preferredStructureType)
+            || "community_governance".equals(preferredStructureType)
+            || "soapmaking".equals(preferredStructureType)
+            || "glassmaking".equals(preferredStructureType)
+            || "fair_trial".equals(preferredStructureType);
     }
 
     static int routeGuideSearchThreshold(
