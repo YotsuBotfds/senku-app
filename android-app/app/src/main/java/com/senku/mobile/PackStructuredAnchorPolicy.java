@@ -17,61 +17,6 @@ final class PackStructuredAnchorPolicy {
         "vessel",
         "vessels"
     );
-    private static final Set<String> SOAP_PROCESS_MARKERS = buildMarkerSet(
-        "making soap",
-        "soap making",
-        "soap making - cold process",
-        "cold process soap",
-        "hot process soap",
-        "making lye from wood ash",
-        "wood ash lye",
-        "lye water",
-        "saponification",
-        "render fat",
-        "rendering fats",
-        "tallow",
-        "lard",
-        "trace",
-        "cure"
-    );
-    private static final Set<String> SOAP_GENERIC_CHEMISTRY_MARKERS = buildMarkerSet(
-        "acids and bases",
-        "chemical safety fundamentals",
-        "cleaning product chemistry",
-        "storage compatibility",
-        "industrial applications",
-        "atoms and molecules",
-        "chemical reactions"
-    );
-    private static final Set<String> COMMUNITY_GOVERNANCE_TRUST_REPAIR_SECTION_MARKERS = buildMarkerSet(
-        "trust",
-        "reputation",
-        "vouch",
-        "mediation",
-        "restorative",
-        "restitution"
-    );
-    private static final Set<String> COMMUNITY_GOVERNANCE_MONITORING_DISTRACTOR_MARKERS = buildMarkerSet(
-        "monitoring",
-        "membership",
-        "boundaries",
-        "graduated sanctions",
-        "sanctions",
-        "quota",
-        "allocation",
-        "allocations"
-    );
-    private static final Set<String> COMMUNITY_GOVERNANCE_FINANCE_DISTRACTOR_MARKERS = buildMarkerSet(
-        "insurance",
-        "risk pooling",
-        "reinsurance",
-        "risk transfer",
-        "accounting",
-        "fund governance",
-        "actuarial",
-        "record-keeping",
-        "mutual aid funds"
-    );
 
     private PackStructuredAnchorPolicy() {
     }
@@ -336,11 +281,11 @@ final class PackStructuredAnchorPolicy {
         if (!"soapmaking".equals(normalizedStructure)) {
             score -= 8;
         }
-        if (containsAnyMarker(normalizedTitle, SOAP_GENERIC_CHEMISTRY_MARKERS)
-            || containsAnyMarker(normalizedSection, SOAP_GENERIC_CHEMISTRY_MARKERS)) {
+        if (PackRouteSignalPolicy.hasSoapmakingGenericChemistrySignal(normalizedTitle)
+            || PackRouteSignalPolicy.hasSoapmakingGenericChemistrySignal(normalizedSection)) {
             score -= 22;
         }
-        if (containsAnyMarker(combined, SOAP_PROCESS_MARKERS)) {
+        if (PackRouteSignalPolicy.hasSoapmakingProcessSignal(combined)) {
             score += 6;
         }
         return score;
@@ -415,11 +360,12 @@ final class PackStructuredAnchorPolicy {
             score -= 6;
         }
 
-        boolean financeDistractor = containsAnyMarker(normalizedTitle, COMMUNITY_GOVERNANCE_FINANCE_DISTRACTOR_MARKERS)
-            || containsAnyMarker(normalizedSection, COMMUNITY_GOVERNANCE_FINANCE_DISTRACTOR_MARKERS)
+        boolean financeDistractor = PackRouteSignalPolicy.hasGovernanceFinanceDistractorSignal(normalizedTitle)
+            || PackRouteSignalPolicy.hasGovernanceFinanceDistractorSignal(normalizedSection)
             || normalizedSection.contains("historical mutual aid");
-        boolean monitoringDistractor = containsAnyMarker(normalizedSection, COMMUNITY_GOVERNANCE_MONITORING_DISTRACTOR_MARKERS);
-        boolean trustRepairSignal = containsAnyMarker(normalizedSection, COMMUNITY_GOVERNANCE_TRUST_REPAIR_SECTION_MARKERS);
+        boolean monitoringDistractor =
+            PackRouteSignalPolicy.hasGovernanceMonitoringDistractorSignal(normalizedSection);
+        boolean trustRepairSignal = PackRouteSignalPolicy.hasGovernanceTrustRepairTextSignal(normalizedSection);
 
         if (!financialIntent && financeDistractor) {
             score -= 28;
@@ -440,28 +386,7 @@ final class PackStructuredAnchorPolicy {
     }
 
     private static boolean hasStrongSoapmakingGuideSignal(SearchResult result) {
-        if (result == null) {
-            return false;
-        }
-        String normalizedTitle = normalized(result.title);
-        String normalizedSection = normalized(result.sectionHeading);
-        String combined = normalizeMatchText(
-            PackRepository.emptySafe(result.title) + " "
-                + PackRepository.emptySafe(result.sectionHeading) + " "
-                + PackRepository.emptySafe(result.snippet) + " "
-                + PackRepository.emptySafe(result.body)
-        );
-        boolean processSignal = containsAnyMarker(combined, SOAP_PROCESS_MARKERS);
-        if (!processSignal) {
-            return false;
-        }
-        boolean practicalHeading = containsAnyMarker(normalizedTitle, SOAP_PROCESS_MARKERS)
-            || containsAnyMarker(normalizedSection, SOAP_PROCESS_MARKERS);
-        if (!practicalHeading) {
-            return false;
-        }
-        return !containsAnyMarker(normalizedTitle, SOAP_GENERIC_CHEMISTRY_MARKERS)
-            && !containsAnyMarker(normalizedSection, SOAP_GENERIC_CHEMISTRY_MARKERS);
+        return PackRouteSignalPolicy.hasStrongSoapmakingGuideSignal(result);
     }
 
     private static Set<String> buildMarkerSet(String... values) {

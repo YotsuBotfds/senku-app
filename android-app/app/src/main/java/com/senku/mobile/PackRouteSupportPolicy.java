@@ -29,90 +29,6 @@ final class PackRouteSupportPolicy {
         "snow shelter",
         "winter"
     );
-    private static final Set<String> HOUSE_ROOF_WEATHERPROOF_ANCHOR_MARKERS = buildMarkerSet(
-        "roofing",
-        "roof waterproofing",
-        "roof waterproofing and sealants",
-        "rainproofing and water shedding",
-        "waterproofing and sealants",
-        "roof framing",
-        "roofing materials",
-        "flashing",
-        "ridge cap",
-        "drip edge",
-        "underlayment"
-    );
-    private static final Set<String> HOUSE_ROOF_WEATHERPROOF_DISTRACTOR_MARKERS = buildMarkerSet(
-        "structural engineering basics",
-        "structural overview",
-        "general engineering",
-        "concrete mixing ratio",
-        "calculator",
-        "calculation",
-        "design loads",
-        "load paths",
-        "seismic",
-        "footing sizing"
-    );
-    private static final Set<String> COMMUNITY_GOVERNANCE_TRUST_REPAIR_SECTION_MARKERS = buildMarkerSet(
-        "trust",
-        "reputation",
-        "vouch",
-        "mediation",
-        "restorative",
-        "restitution"
-    );
-    private static final Set<String> COMMUNITY_GOVERNANCE_MONITORING_DISTRACTOR_MARKERS = buildMarkerSet(
-        "monitoring",
-        "membership",
-        "boundaries",
-        "graduated sanctions",
-        "sanctions",
-        "quota",
-        "allocation",
-        "allocations"
-    );
-    private static final Set<String> COMMUNITY_GOVERNANCE_FINANCE_DISTRACTOR_MARKERS = buildMarkerSet(
-        "insurance",
-        "risk pooling",
-        "reinsurance",
-        "risk transfer",
-        "accounting",
-        "fund governance",
-        "actuarial",
-        "record-keeping",
-        "mutual aid funds"
-    );
-    private static final Set<String> WATER_DISTRIBUTION_ANCHOR_MARKERS = buildMarkerSet(
-        "water distribution",
-        "distribution system",
-        "gravity-fed",
-        "gravity fed",
-        "water system",
-        "storage tank",
-        "storage tanks",
-        "cistern",
-        "rainwater harvesting",
-        "rainwater cistern",
-        "plumbing",
-        "piping",
-        "water tower",
-        "spring box",
-        "household taps",
-        "community water"
-    );
-    private static final Set<String> WATER_DISTRIBUTION_GUIDE_MARKERS = buildMarkerSet(
-        "water distribution",
-        "distribution system",
-        "storage tank",
-        "storage tanks",
-        "cistern",
-        "rainwater cistern",
-        "water tower",
-        "spring box",
-        "household taps",
-        "community water"
-    );
     private static final Set<String> WATER_DISTRIBUTION_DISTRACTOR_MARKERS = buildMarkerSet(
         "failure analysis",
         "troubleshooting",
@@ -340,76 +256,39 @@ final class PackRouteSupportPolicy {
         if (metadataProfile == null) {
             return false;
         }
-        return "cabin_house".equals(metadataProfile.preferredStructureType())
-            && (metadataProfile.hasExplicitTopic("roofing") || metadataProfile.hasExplicitTopic("weatherproofing"));
+        return PackRouteSignalPolicy.prefersRoofWeatherproofContext(metadataProfile);
     }
 
     private static boolean hasRoofWeatherproofAnchorSignal(SearchResult candidate) {
-        if (candidate == null) {
-            return false;
-        }
-        String normalized = normalizeMatchText(safe(candidate.title) + " " + safe(candidate.sectionHeading));
-        return containsAnyMarker(normalized, HOUSE_ROOF_WEATHERPROOF_ANCHOR_MARKERS);
+        return PackRouteSignalPolicy.hasRoofWeatherproofAnchorSignal(candidate);
     }
 
     private static boolean hasRoofWeatherproofDistractorSignal(SearchResult candidate) {
-        if (candidate == null) {
-            return false;
-        }
-        String normalized = normalizeMatchText(safe(candidate.title) + " " + safe(candidate.sectionHeading));
-        return containsAnyMarker(normalized, HOUSE_ROOF_WEATHERPROOF_DISTRACTOR_MARKERS);
+        return PackRouteSignalPolicy.hasRoofWeatherproofDistractorSignal(candidate);
     }
 
     private static boolean prefersGovernanceTrustRepairContext(QueryMetadataProfile metadataProfile) {
-        return metadataProfile != null
-            && "community_governance".equals(metadataProfile.preferredStructureType())
-            && metadataProfile.trustRepairMergeIntent();
+        return PackRouteSignalPolicy.prefersGovernanceTrustRepairContext(metadataProfile);
     }
 
     private static boolean hasGovernanceTrustRepairSignal(SearchResult candidate) {
-        if (candidate == null) {
-            return false;
-        }
-        String normalized = normalizeMatchText(safe(candidate.title) + " " + safe(candidate.sectionHeading));
-        return containsAnyMarker(normalized, COMMUNITY_GOVERNANCE_TRUST_REPAIR_SECTION_MARKERS);
+        return PackRouteSignalPolicy.hasGovernanceTrustRepairSignal(candidate);
     }
 
     private static boolean hasGovernanceSupportMixDistractor(SearchResult candidate) {
-        if (candidate == null) {
-            return false;
-        }
-        String normalized = normalizeMatchText(safe(candidate.title) + " " + safe(candidate.sectionHeading));
-        return containsAnyMarker(normalized, COMMUNITY_GOVERNANCE_MONITORING_DISTRACTOR_MARKERS)
-            || containsAnyMarker(normalized, COMMUNITY_GOVERNANCE_FINANCE_DISTRACTOR_MARKERS);
+        return PackRouteSignalPolicy.hasGovernanceSupportMixDistractor(candidate);
     }
 
     private static boolean hasWaterDistributionTitleSignal(SearchResult result) {
-        return containsAnyMarker(
-            safe(result.title) + " " + safe(result.sectionHeading),
-            WATER_DISTRIBUTION_ANCHOR_MARKERS
-        );
+        return PackRouteSignalPolicy.hasWaterDistributionTitleSignal(result);
     }
 
     private static boolean hasStrongWaterDistributionGuideSignal(SearchResult result) {
-        String text = safe(result.title) + " " + safe(result.sectionHeading);
-        if (!containsAnyMarker(text, WATER_DISTRIBUTION_GUIDE_MARKERS)) {
-            return false;
-        }
-        String normalized = normalizeMatchText(text);
-        return normalized.contains("distribution")
-            || normalized.contains("storage tank")
-            || normalized.contains("cistern")
-            || normalized.contains("community water")
-            || normalized.contains("spring box")
-            || normalized.contains("household taps")
-            || normalized.contains("water tower");
+        return PackRouteSignalPolicy.hasStrongWaterDistributionGuideSignal(result);
     }
 
     private static boolean hasWaterDistributionDetailSignal(SearchResult result) {
-        return containsAnyMarker(
-            safe(result.snippet) + " " + safe(result.body),
-            WATER_DISTRIBUTION_ANCHOR_MARKERS
-        );
+        return PackRouteSignalPolicy.hasWaterDistributionDetailSignal(result);
     }
 
     private static boolean containsAnyMarker(String text, Set<String> markers) {

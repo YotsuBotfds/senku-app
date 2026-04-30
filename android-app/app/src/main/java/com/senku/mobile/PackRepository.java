@@ -56,125 +56,6 @@ public final class PackRepository implements AutoCloseable {
         "french drain",
         "drainage and waterproofing"
     );
-    private static final Set<String> HOUSE_ROOF_WEATHERPROOF_ANCHOR_MARKERS = buildMarkerSet(
-        "roofing",
-        "roof waterproofing",
-        "roof waterproofing and sealants",
-        "rainproofing and water shedding",
-        "waterproofing and sealants",
-        "roof framing",
-        "roofing materials",
-        "flashing",
-        "ridge cap",
-        "drip edge",
-        "underlayment"
-    );
-    private static final Set<String> HOUSE_ROOF_WEATHERPROOF_DISTRACTOR_MARKERS = buildMarkerSet(
-        "structural engineering basics",
-        "structural overview",
-        "general engineering",
-        "concrete mixing ratio",
-        "calculator",
-        "calculation",
-        "design loads",
-        "load paths",
-        "seismic",
-        "footing sizing"
-    );
-    private static final Set<String> COMMUNITY_GOVERNANCE_TRUST_REPAIR_SECTION_MARKERS = buildMarkerSet(
-        "trust",
-        "reputation",
-        "vouch",
-        "mediation",
-        "restorative",
-        "restitution"
-    );
-    private static final Set<String> COMMUNITY_GOVERNANCE_MONITORING_DISTRACTOR_MARKERS = buildMarkerSet(
-        "monitoring",
-        "membership",
-        "boundaries",
-        "graduated sanctions",
-        "sanctions",
-        "quota",
-        "allocation",
-        "allocations"
-    );
-    private static final Set<String> COMMUNITY_GOVERNANCE_FINANCE_DISTRACTOR_MARKERS = buildMarkerSet(
-        "insurance",
-        "risk pooling",
-        "reinsurance",
-        "risk transfer",
-        "accounting",
-        "fund governance",
-        "actuarial",
-        "record-keeping",
-        "mutual aid funds"
-    );
-    private static final Set<String> WATER_DISTRIBUTION_ANCHOR_MARKERS = buildMarkerSet(
-        "water distribution",
-        "distribution system",
-        "gravity-fed",
-        "gravity fed",
-        "water system",
-        "storage tank",
-        "storage tanks",
-        "cistern",
-        "rainwater harvesting",
-        "rainwater cistern",
-        "plumbing",
-        "piping",
-        "water tower",
-        "spring box",
-        "household taps",
-        "community water"
-    );
-    private static final Set<String> WATER_DISTRIBUTION_GUIDE_MARKERS = buildMarkerSet(
-        "water distribution",
-        "distribution system",
-        "storage tank",
-        "storage tanks",
-        "cistern",
-        "rainwater cistern",
-        "water tower",
-        "spring box",
-        "household taps",
-        "community water"
-    );
-    private static final Set<String> WATER_STORAGE_CONTAINER_MAKING_MARKERS = buildMarkerSet(
-        "make",
-        "build",
-        "craft",
-        "container",
-        "containers",
-        "vessel",
-        "vessels"
-    );
-    private static final Set<String> SOAP_PROCESS_MARKERS = buildMarkerSet(
-        "making soap",
-        "soap making",
-        "soap making - cold process",
-        "cold process soap",
-        "hot process soap",
-        "making lye from wood ash",
-        "wood ash lye",
-        "lye water",
-        "saponification",
-        "render fat",
-        "rendering fats",
-        "tallow",
-        "lard",
-        "trace",
-        "cure"
-    );
-    private static final Set<String> SOAP_GENERIC_CHEMISTRY_MARKERS = buildMarkerSet(
-        "acids and bases",
-        "chemical safety fundamentals",
-        "cleaning product chemistry",
-        "storage compatibility",
-        "industrial applications",
-        "atoms and molecules",
-        "chemical reactions"
-    );
     private static final Set<String> STOP_TOKENS = buildStopTokens();
     private static final Set<String> LOW_SIGNAL_TOKENS = buildLowSignalTokens();
     private static final Map<String, String[]> QUERY_EXPANSIONS = buildQueryExpansions();
@@ -2114,7 +1995,7 @@ public final class PackRepository implements AutoCloseable {
             boolean titleSignal = hasWaterDistributionTitleSignal(result);
             String retrievalMode = emptySafe(result.retrievalMode).trim().toLowerCase(QUERY_LOCALE);
             if ("guide-focus".equals(retrievalMode) && emptySafe(result.sectionHeading).trim().isEmpty()) {
-                return hasStrongWaterDistributionGuideSignal(result);
+                return PackRouteSignalPolicy.hasStrongWaterDistributionGuideSignal(result);
             }
             if (queryTerms.metadataProfile.sectionHeadingBonus(result.sectionHeading) > 0) {
                 return true;
@@ -2123,7 +2004,7 @@ public final class PackRepository implements AutoCloseable {
             if (!"building".equals(category) && !"utility".equals(category)) {
                 return false;
             }
-            return titleSignal || hasWaterDistributionDetailSignal(result);
+            return titleSignal || PackRouteSignalPolicy.hasWaterDistributionDetailSignal(result);
         }
         if (queryTerms.metadataProfile.hasExplicitTopicFocus()) {
             if (SpecializedAnchorCandidatePolicy.hasDirectSectionHeadingSignal(queryTerms.metadataProfile, result)) {
@@ -2134,7 +2015,7 @@ public final class PackRepository implements AutoCloseable {
             }
             String preferredStructureType = queryTerms.metadataProfile.preferredStructureType();
             if ("soapmaking".equals(preferredStructureType)) {
-                return hasStrongSoapmakingGuideSignal(result);
+                return PackRouteSignalPolicy.hasStrongSoapmakingGuideSignal(result);
             }
             if (requiresSpecializedRouteAnchorSignal(preferredStructureType)) {
                 if (SpecializedAnchorCandidatePolicy.isBlankGuideFocusOutsidePreferredStructure(
@@ -2172,31 +2053,6 @@ public final class PackRepository implements AutoCloseable {
             return true;
         }
         return SpecializedAnchorCandidatePolicy.hasDirectExplicitTopicOverlap(queryTerms.metadataProfile, result);
-    }
-
-    private static boolean hasStrongSoapmakingGuideSignal(SearchResult result) {
-        if (result == null) {
-            return false;
-        }
-        String normalizedTitle = emptySafe(result.title).trim().toLowerCase(QUERY_LOCALE);
-        String normalizedSection = emptySafe(result.sectionHeading).trim().toLowerCase(QUERY_LOCALE);
-        String combined = normalizeMatchText(
-            emptySafe(result.title) + " "
-                + emptySafe(result.sectionHeading) + " "
-                + emptySafe(result.snippet) + " "
-                + emptySafe(result.body)
-        );
-        boolean processSignal = containsAnyMarker(combined, SOAP_PROCESS_MARKERS);
-        if (!processSignal) {
-            return false;
-        }
-        boolean practicalHeading = containsAnyMarker(normalizedTitle, SOAP_PROCESS_MARKERS)
-            || containsAnyMarker(normalizedSection, SOAP_PROCESS_MARKERS);
-        if (!practicalHeading) {
-            return false;
-        }
-        return !containsAnyMarker(normalizedTitle, SOAP_GENERIC_CHEMISTRY_MARKERS)
-            && !containsAnyMarker(normalizedSection, SOAP_GENERIC_CHEMISTRY_MARKERS);
     }
 
     static boolean matchesSpecializedRouteMetadataForTest(String query, SearchResult result) {
@@ -2515,35 +2371,19 @@ public final class PackRepository implements AutoCloseable {
         if (queryTerms == null || queryTerms.metadataProfile == null) {
             return false;
         }
-        return prefersRoofWeatherproofContext(queryTerms.metadataProfile);
+        return PackRouteSignalPolicy.prefersRoofWeatherproofContext(queryTerms.metadataProfile);
     }
 
     private static boolean prefersRoofWeatherproofContext(QueryMetadataProfile metadataProfile) {
-        if (metadataProfile == null) {
-            return false;
-        }
-        return "cabin_house".equals(metadataProfile.preferredStructureType())
-            && (metadataProfile.hasExplicitTopic("roofing") || metadataProfile.hasExplicitTopic("weatherproofing"));
+        return PackRouteSignalPolicy.prefersRoofWeatherproofContext(metadataProfile);
     }
 
     private static boolean hasRoofWeatherproofAnchorSignal(SearchResult candidate) {
-        if (candidate == null) {
-            return false;
-        }
-        String normalized = normalizeMatchText(
-            emptySafe(candidate.title) + " " + emptySafe(candidate.sectionHeading)
-        );
-        return containsAnyMarker(normalized, HOUSE_ROOF_WEATHERPROOF_ANCHOR_MARKERS);
+        return PackRouteSignalPolicy.hasRoofWeatherproofAnchorSignal(candidate);
     }
 
     private static boolean hasRoofWeatherproofDistractorSignal(SearchResult candidate) {
-        if (candidate == null) {
-            return false;
-        }
-        String normalized = normalizeMatchText(
-            emptySafe(candidate.title) + " " + emptySafe(candidate.sectionHeading)
-        );
-        return containsAnyMarker(normalized, HOUSE_ROOF_WEATHERPROOF_DISTRACTOR_MARKERS);
+        return PackRouteSignalPolicy.hasRoofWeatherproofDistractorSignal(candidate);
     }
 
     private static int roofWeatherproofAnchorBias(QueryTerms queryTerms, SearchResult candidate) {
@@ -2561,30 +2401,15 @@ public final class PackRepository implements AutoCloseable {
     }
 
     private static boolean prefersGovernanceTrustRepairContext(QueryMetadataProfile metadataProfile) {
-        return metadataProfile != null
-            && "community_governance".equals(metadataProfile.preferredStructureType())
-            && metadataProfile.trustRepairMergeIntent();
+        return PackRouteSignalPolicy.prefersGovernanceTrustRepairContext(metadataProfile);
     }
 
     private static boolean hasGovernanceTrustRepairSignal(SearchResult candidate) {
-        if (candidate == null) {
-            return false;
-        }
-        String normalized = normalizeMatchText(
-            emptySafe(candidate.title) + " " + emptySafe(candidate.sectionHeading)
-        );
-        return containsAnyMarker(normalized, COMMUNITY_GOVERNANCE_TRUST_REPAIR_SECTION_MARKERS);
+        return PackRouteSignalPolicy.hasGovernanceTrustRepairSignal(candidate);
     }
 
     private static boolean hasGovernanceSupportMixDistractor(SearchResult candidate) {
-        if (candidate == null) {
-            return false;
-        }
-        String normalized = normalizeMatchText(
-            emptySafe(candidate.title) + " " + emptySafe(candidate.sectionHeading)
-        );
-        return containsAnyMarker(normalized, COMMUNITY_GOVERNANCE_MONITORING_DISTRACTOR_MARKERS)
-            || containsAnyMarker(normalized, COMMUNITY_GOVERNANCE_FINANCE_DISTRACTOR_MARKERS);
+        return PackRouteSignalPolicy.hasGovernanceSupportMixDistractor(candidate);
     }
 
     static boolean matchesSpecializedExplicitTopicRowForTest(String query, String structureType, String topicTags) {
@@ -2607,7 +2432,7 @@ public final class PackRepository implements AutoCloseable {
         QueryMetadataProfile metadataProfile = queryTerms == null ? null : queryTerms.metadataProfile;
         boolean strongSoapmakingSignal = metadataProfile != null
             && "soapmaking".equals(metadataProfile.preferredStructureType())
-            && hasStrongSoapmakingGuideSignal(result);
+            && PackRouteSignalPolicy.hasStrongSoapmakingGuideSignal(result);
         return SpecializedAnchorCandidatePolicy.isSpecializedExplicitAnchorCandidate(
             metadataProfile,
             result,
@@ -3718,32 +3543,15 @@ public final class PackRepository implements AutoCloseable {
     }
 
     private static boolean hasWaterDistributionTitleSignal(SearchResult result) {
-        return containsAnyMarker(
-            emptySafe(result.title) + " " + emptySafe(result.sectionHeading),
-            WATER_DISTRIBUTION_ANCHOR_MARKERS
-        );
+        return PackRouteSignalPolicy.hasWaterDistributionTitleSignal(result);
     }
 
     private static boolean hasStrongWaterDistributionGuideSignal(SearchResult result) {
-        String text = emptySafe(result.title) + " " + emptySafe(result.sectionHeading);
-        if (!containsAnyMarker(text, WATER_DISTRIBUTION_GUIDE_MARKERS)) {
-            return false;
-        }
-        String normalized = normalizeMatchText(text);
-        return normalized.contains("distribution")
-            || normalized.contains("storage tank")
-            || normalized.contains("cistern")
-            || normalized.contains("community water")
-            || normalized.contains("spring box")
-            || normalized.contains("household taps")
-            || normalized.contains("water tower");
+        return PackRouteSignalPolicy.hasStrongWaterDistributionGuideSignal(result);
     }
 
     private static boolean hasWaterDistributionDetailSignal(SearchResult result) {
-        return containsAnyMarker(
-            emptySafe(result.snippet) + " " + emptySafe(result.body),
-            WATER_DISTRIBUTION_ANCHOR_MARKERS
-        );
+        return PackRouteSignalPolicy.hasWaterDistributionDetailSignal(result);
     }
 
     private static int waterDistributionAnchorFocusBonus(SearchResult result) {
