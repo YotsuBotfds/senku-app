@@ -640,6 +640,86 @@ public final class PromptHarnessSmokeTest {
     }
 
     @Test
+    public void guideDetailSaveButtonSurfacesGuideInSavedDestinationAndUnsaveRemovesIt() throws Exception {
+        clearPinnedGuidesForTest();
+        Context context = ApplicationProvider.getApplicationContext();
+        SearchResult expectedGuide = loadGuideByIdForTest("GD-345");
+        Assert.assertNotNull("GD-345 should be available for real save semantics proof", expectedGuide);
+
+        try {
+            Intent detailIntent = DetailActivity.newGuideIntent(context, expectedGuide, "saved-real-pin-smoke");
+            detailIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            try (ActivityScenario<DetailActivity> detailScenario = ActivityScenario.launch(detailIntent)) {
+                Assert.assertTrue(
+                    "guide detail should settle before saving; harness signals=" + HarnessTestSignals.snapshot(),
+                    waitForDetailBodyReady(DETAIL_WAIT_MS, 8)
+                );
+                assertResumedGuideDetail(expectedGuide);
+                Assert.assertTrue(
+                    "guide detail Save control should be tappable",
+                    tapDetailPinControl(expectedGuide.guideId, false)
+                );
+                Assert.assertTrue(
+                    "visible Save control should persist the guide in the pinned store",
+                    PinnedGuideStore.contains(context, expectedGuide.guideId)
+                );
+                assertDetailPinControlState(expectedGuide.guideId, true);
+                captureUiState("guide_detail_saved_real_pin");
+            }
+
+            Intent savedIntent = productReviewMainActivityIntent();
+            savedIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            savedIntent.putExtra(MainActivity.EXTRA_OPEN_SAVED, true);
+            try (ActivityScenario<MainActivity> savedScenario = ActivityScenario.launch(savedIntent)) {
+                awaitHarnessIdle();
+                Assert.assertTrue(
+                    "saved launch should settle after real guide save; harness signals=" + HarnessTestSignals.snapshot(),
+                    device.wait(Until.hasObject(By.res(APP_PACKAGE, "search_input")), SEARCH_WAIT_MS)
+                );
+                waitForSavedGuidesDestination(savedScenario, true, DETAIL_WAIT_MS);
+                assertSavedDestinationContainsGuide(expectedGuide);
+                captureUiState("guide_detail_saved_destination_real_pin");
+            }
+
+            Intent unsaveIntent = DetailActivity.newGuideIntent(context, expectedGuide, "saved-real-unpin-smoke");
+            unsaveIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            try (ActivityScenario<DetailActivity> detailScenario = ActivityScenario.launch(unsaveIntent)) {
+                Assert.assertTrue(
+                    "guide detail should settle before unsaving; harness signals=" + HarnessTestSignals.snapshot(),
+                    waitForDetailBodyReady(DETAIL_WAIT_MS, 8)
+                );
+                assertDetailPinControlState(expectedGuide.guideId, true);
+                Assert.assertTrue(
+                    "guide detail Saved control should be tappable for removal",
+                    tapDetailPinControl(expectedGuide.guideId, true)
+                );
+                Assert.assertFalse(
+                    "visible Saved control should remove the guide from the pinned store",
+                    PinnedGuideStore.contains(context, expectedGuide.guideId)
+                );
+                assertDetailPinControlState(expectedGuide.guideId, false);
+                captureUiState("guide_detail_unsaved_real_pin");
+            }
+
+            Intent emptySavedIntent = productReviewMainActivityIntent();
+            emptySavedIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            emptySavedIntent.putExtra(MainActivity.EXTRA_OPEN_SAVED, true);
+            try (ActivityScenario<MainActivity> emptySavedScenario = ActivityScenario.launch(emptySavedIntent)) {
+                awaitHarnessIdle();
+                Assert.assertTrue(
+                    "saved launch should settle after real guide unsave; harness signals=" + HarnessTestSignals.snapshot(),
+                    device.wait(Until.hasObject(By.res(APP_PACKAGE, "search_input")), SEARCH_WAIT_MS)
+                );
+                waitForSavedGuidesDestination(emptySavedScenario, false, DETAIL_WAIT_MS);
+                assertSavedDestinationDoesNotContainGuide(expectedGuide);
+                captureUiState("guide_detail_unsaved_destination_empty");
+            }
+        } finally {
+            clearPinnedGuidesForTest();
+        }
+    }
+
+    @Test
     public void savedTabImeSubmitRoutesToSearchResultsNotAnswerDetail() {
         clearPinnedGuidesForTest();
         Intent intent = productReviewMainActivityIntent();
@@ -3953,6 +4033,141 @@ public final class PromptHarnessSmokeTest {
                 isVisible(resultsList)
             );
         }
+    }
+
+    private boolean tapDetailPinControl(String guideId, boolean currentlyPinned) {
+        Context context = ApplicationProvider.getApplicationContext();
+        String expectedText = context.getString(currentlyPinned ? R.string.detail_unpin : R.string.detail_pin);
+        String expectedDescription = context.getString(
+            currentlyPinned ? R.string.detail_unpin_content_description : R.string.detail_pin_content_description,
+            safe(guideId)
+        );
+        if (clickUiObject(By.desc(expectedDescription), 1_000L)
+            || clickUiObject(By.descContains(expectedDescription), 1_000L)
+            || clickUiObject(By.text(expectedText), 1_000L)) {
+            awaitHarnessIdle();
+            return true;
+        }
+        if (clickUiObject(By.desc(context.getString(R.string.detail_overflow_content_description)), 1_000L)) {
+            UiObject2 menuItem = waitForUiObject(By.text(expectedText), 2_000L);
+            if (menuItem != null && menuItem.isEnabled()) {
+                menuItem.click();
+                InstrumentationRegistry.getInstrumentation().waitForIdleSync();
+                awaitHarnessIdle();
+                return true;
+            }
+        }
+
+        final boolean[] clicked = {false};
+        InstrumentationRegistry.getInstrumentation().runOnMainSync(() -> {
+            Activity activity = getResumedActivityOnMainThread();
+            if (!(activity instanceof DetailActivity)) {
+                return;
+            }
+            Button pinButton = activity.findViewById(R.id.detail_pin_button);
+            if (pinButton == null || !isVisible(pinButton) || !pinButton.isEnabled()) {
+                return;
+            }
+            Assert.assertEquals(
+                "detail pin control should expose the expected visible state before tap",
+                expectedText,
+                safe(pinButton.getText().toString())
+            );
+            pinButton.performClick();
+            clicked[0] = true;
+        });
+        if (clicked[0]) {
+            InstrumentationRegistry.getInstrumentation().waitForIdleSync();
+            awaitHarnessIdle();
+        }
+        return clicked[0];
+    }
+
+    private void assertDetailPinControlState(String expectedGuideId, boolean expectedPinned) {
+        Context context = ApplicationProvider.getApplicationContext();
+        String expectedText = context.getString(expectedPinned ? R.string.detail_unpin : R.string.detail_pin);
+        String expectedDescription = context.getString(
+            expectedPinned ? R.string.detail_unpin_content_description : R.string.detail_pin_content_description,
+            safe(expectedGuideId)
+        );
+        InstrumentationRegistry.getInstrumentation().runOnMainSync(() -> {
+            Activity activity = getResumedActivityOnMainThread();
+            Assert.assertTrue("pin state assertion should run on DetailActivity", activity instanceof DetailActivity);
+            Button pinButton = activity.findViewById(R.id.detail_pin_button);
+            if (pinButton != null && isVisible(pinButton)) {
+                Assert.assertEquals(
+                    "guide detail save control should reflect the persisted pin state",
+                    expectedText,
+                    safe(pinButton.getText().toString())
+                );
+                String description = safe(pinButton.getContentDescription() == null
+                    ? null
+                    : pinButton.getContentDescription().toString());
+                Assert.assertTrue(
+                    "guide detail save control should name the current guide",
+                    description.contains(safe(expectedGuideId))
+                );
+            }
+        });
+        if (device.hasObject(By.desc(expectedDescription))
+            || device.hasObject(By.descContains(expectedDescription))
+            || device.hasObject(By.text(expectedText))) {
+            return;
+        }
+        Assert.assertNotNull(
+            "guide detail should expose a visible save control or overflow entry for " + expectedText,
+            waitForUiObject(By.desc(context.getString(R.string.detail_overflow_content_description)), 1_000L)
+        );
+    }
+
+    private void assertSavedDestinationContainsGuide(SearchResult expectedGuide) {
+        InstrumentationRegistry.getInstrumentation().runOnMainSync(() -> {
+            Activity activity = getResumedActivityOnMainThread();
+            Assert.assertTrue("saved destination guide assertion should run on MainActivity", activity instanceof MainActivity);
+            LinearLayout pinnedContainer = activity.findViewById(R.id.pinned_container);
+            Button matchingGuide = findSavedGuideButton(pinnedContainer, expectedGuide);
+            Assert.assertNotNull(
+                "saved destination should surface the guide saved from detail: " + displayLabel(expectedGuide),
+                matchingGuide
+            );
+        });
+    }
+
+    private void assertSavedDestinationDoesNotContainGuide(SearchResult expectedGuide) {
+        InstrumentationRegistry.getInstrumentation().runOnMainSync(() -> {
+            Activity activity = getResumedActivityOnMainThread();
+            Assert.assertTrue("saved destination empty assertion should run on MainActivity", activity instanceof MainActivity);
+            LinearLayout pinnedContainer = activity.findViewById(R.id.pinned_container);
+            Assert.assertNull(
+                "saved destination should no longer surface the guide removed from detail: "
+                    + displayLabel(expectedGuide),
+                findSavedGuideButton(pinnedContainer, expectedGuide)
+            );
+        });
+    }
+
+    private Button findSavedGuideButton(LinearLayout pinnedContainer, SearchResult expectedGuide) {
+        if (pinnedContainer == null) {
+            return null;
+        }
+        String expectedTitle = safe(expectedGuide == null ? null : expectedGuide.title).trim();
+        String expectedGuideId = safe(expectedGuide == null ? null : expectedGuide.guideId).trim();
+        for (int index = 0; index < pinnedContainer.getChildCount(); index++) {
+            View child = pinnedContainer.getChildAt(index);
+            if (!(child instanceof Button) || !isVisible(child)) {
+                continue;
+            }
+            Button button = (Button) child;
+            String label = safe(button.getText().toString());
+            String description = safe(button.getContentDescription() == null
+                ? null
+                : button.getContentDescription().toString());
+            if ((!expectedTitle.isEmpty() && (label.contains(expectedTitle) || description.contains(expectedTitle)))
+                || (!expectedGuideId.isEmpty() && (label.contains(expectedGuideId) || description.contains(expectedGuideId)))) {
+                return button;
+            }
+        }
+        return null;
     }
 
     private SearchResult loadGuideByIdForTest(String guideId) throws Exception {
