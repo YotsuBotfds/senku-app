@@ -502,6 +502,7 @@
                     android:text="@string/search_hint"
                     android:textAppearance="?android:attr/textAppearanceSmall"
                     android:textColor="@color/senku_rev03_ink_0"
+                    android:textSize="13sp"
                     android:textStyle="bold" />
 
                 <TextView
@@ -513,6 +514,7 @@
                     android:text="0 RESULTS"
                     android:textAppearance="?android:attr/textAppearanceSmall"
                     android:textColor="@color/senku_rev03_accent"
+                    android:textSize="11sp"
                     android:textStyle="bold" />
             </LinearLayout>
 
@@ -544,6 +546,7 @@
                         android:text="FILTER &#8226; CATEGORY"
                         android:textAppearance="?android:attr/textAppearanceSmall"
                         android:textColor="@color/senku_rev03_ink_2"
+                        android:textSize="10sp"
                         android:textStyle="bold" />
 
                     <CheckBox
@@ -554,12 +557,15 @@
                         android:drawablePadding="8dp"
                         android:clickable="false"
                         android:focusable="false"
+                        android:fontFamily="@font/inter_tight"
                         android:includeFontPadding="false"
+                        android:lineHeight="16sp"
                         android:minWidth="0dp"
                         android:minHeight="0dp"
                         android:text="Shelter (12)"
                         android:textAppearance="?android:attr/textAppearanceSmall"
-                        android:textColor="@color/senku_rev03_ink_0" />
+                        android:textColor="@color/senku_rev03_ink_0"
+                        android:textSize="13sp" />
 
                     <CheckBox
                         android:layout_width="match_parent"
@@ -569,12 +575,15 @@
                         android:drawablePadding="8dp"
                         android:clickable="false"
                         android:focusable="false"
+                        android:fontFamily="@font/inter_tight"
                         android:includeFontPadding="false"
+                        android:lineHeight="16sp"
                         android:minWidth="0dp"
                         android:minHeight="0dp"
                         android:text="Water (4)"
                         android:textAppearance="?android:attr/textAppearanceSmall"
-                        android:textColor="@color/senku_rev03_ink_0" />
+                        android:textColor="@color/senku_rev03_ink_0"
+                        android:textSize="13sp" />
 
                     <CheckBox
                         android:layout_width="match_parent"
@@ -584,12 +593,15 @@
                         android:drawablePadding="8dp"
                         android:clickable="false"
                         android:focusable="false"
+                        android:fontFamily="@font/inter_tight"
                         android:includeFontPadding="false"
+                        android:lineHeight="16sp"
                         android:minWidth="0dp"
                         android:minHeight="0dp"
                         android:text="Fire (3)"
                         android:textAppearance="?android:attr/textAppearanceSmall"
-                        android:textColor="@color/senku_rev03_ink_0" />
+                        android:textColor="@color/senku_rev03_ink_0"
+                        android:textSize="13sp" />
 
                     <CheckBox
                         android:layout_width="match_parent"
@@ -599,12 +611,15 @@
                         android:drawablePadding="8dp"
                         android:clickable="false"
                         android:focusable="false"
+                        android:fontFamily="@font/inter_tight"
                         android:includeFontPadding="false"
+                        android:lineHeight="16sp"
                         android:minWidth="0dp"
                         android:minHeight="0dp"
                         android:text="Survival (8)"
                         android:textAppearance="?android:attr/textAppearanceSmall"
-                        android:textColor="@color/senku_rev03_ink_0" />
+                        android:textColor="@color/senku_rev03_ink_0"
+                        android:textSize="13sp" />
 
                     <TextView
                         android:layout_width="match_parent"
@@ -615,6 +630,7 @@
                         android:text="WINDOW"
                         android:textAppearance="?android:attr/textAppearanceSmall"
                         android:textColor="@color/senku_rev03_ink_2"
+                        android:textSize="10sp"
                         android:textStyle="bold" />
 
                     <CheckBox
@@ -625,12 +641,15 @@
                         android:drawablePadding="8dp"
                         android:clickable="false"
                         android:focusable="false"
+                        android:fontFamily="@font/inter_tight"
                         android:includeFontPadding="false"
+                        android:lineHeight="16sp"
                         android:minWidth="0dp"
                         android:minHeight="0dp"
                         android:text="Immediate"
                         android:textAppearance="?android:attr/textAppearanceSmall"
-                        android:textColor="@color/senku_rev03_ink_0" />
+                        android:textColor="@color/senku_rev03_ink_0"
+                        android:textSize="13sp" />
 
                     <CheckBox
                         android:layout_width="match_parent"
@@ -640,12 +659,15 @@
                         android:drawablePadding="8dp"
                         android:clickable="false"
                         android:focusable="false"
+                        android:fontFamily="@font/inter_tight"
                         android:includeFontPadding="false"
+                        android:lineHeight="16sp"
                         android:minWidth="0dp"
                         android:minHeight="0dp"
                         android:text="Short"
                         android:textAppearance="?android:attr/textAppearanceSmall"
-                        android:textColor="@color/senku_rev03_ink_0" />
+                        android:textColor="@color/senku_rev03_ink_0"
+                        android:textSize="13sp" />
 
                     <CheckBox
                         android:layout_width="match_parent"
@@ -655,12 +677,15 @@
                         android:drawablePadding="8dp"
                         android:clickable="false"
                         android:focusable="false"
+                        android:fontFamily="@font/inter_tight"
                         android:includeFontPadding="false"
+                        android:lineHeight="16sp"
                         android:minWidth="0dp"
                         android:minHeight="0dp"
                         android:text="Long"
                         android:textAppearance="?android:attr/textAppearanceSmall"
-                        android:textColor="@color/senku_rev03_ink_0" />
+                        android:textColor="@color/senku_rev03_ink_0"
+                        android:textSize="13sp" />
 
                     <CheckBox
                         android:layout_width="match_parent"
@@ -670,12 +695,15 @@
                         android:drawablePadding="8dp"
                         android:clickable="false"
                         android:focusable="false"
+                        android:fontFamily="@font/inter_tight"
                         android:includeFontPadding="false"
+                        android:lineHeight="16sp"
                         android:minWidth="0dp"
                         android:minHeight="0dp"
                         android:text="Mixed"
                         android:textAppearance="?android:attr/textAppearanceSmall"
-                        android:textColor="@color/senku_rev03_ink_0" />
+                        android:textColor="@color/senku_rev03_ink_0"
+                        android:textSize="13sp" />
                 </LinearLayout>
 
                 <View

@@ -74,6 +74,15 @@ class AndroidUiStatePackParallelPlanContractTests(unittest.TestCase):
             )
             self.assertEqual(plan["max_parallel_devices"], 4)
             self.assertEqual(plan["effective_max_parallel_devices"], 4)
+            self.assertEqual(
+                plan["goal_pack"]["normalized_tablet_review_directory"],
+                "normalized_tablet_review",
+            )
+            self.assertEqual(
+                plan["goal_pack"]["normalized_tablet_review_source"],
+                "canonical framed mocks",
+            )
+            self.assertTrue(plan["goal_pack"]["raw_state_pack_screenshots_unchanged"])
             intent = plan["migration_checklist_intent"]
             self.assertEqual(
                 intent["selected_roles"],
@@ -163,18 +172,38 @@ class AndroidUiStatePackParallelPlanContractTests(unittest.TestCase):
         build_index = script.index("if (-not $SkipBuild) {")
         logs_index = script.index("New-Item -ItemType Directory -Force -Path $logsDir")
         launcher_index = script.index("function Start-RoleProcess")
-        finalize_index = script.index("-FinalizeOnly -SkipBuild")
+        finalize_index = script.index('"-FinalizeOnly"')
+        finalize_skip_build_index = script.index('"-SkipBuild"', finalize_index)
 
         self.assertLess(plan_only_index, build_index)
         self.assertLess(plan_only_index, logs_index)
         self.assertLess(plan_only_index, launcher_index)
         self.assertLess(plan_only_index, finalize_index)
+        self.assertLess(plan_only_index, finalize_skip_build_index)
 
     def test_followup_state_name_matches_seeded_thread_method(self):
         build_script = BUILD_SCRIPT_PATH.read_text(encoding="utf-8-sig")
 
         self.assertIn(
-            '(New-StateDefinition -Method "scriptedSeededFollowUpThreadShowsInlineHistory")',
+            '(New-StateDefinition -Method "scriptedSeededFollowUpThreadShowsInlineHistory" -GoalFamily "thread")',
+            build_script,
+        )
+
+    def test_serial_builder_declares_normalized_tablet_review_without_raw_rewrite(self):
+        build_script = BUILD_SCRIPT_PATH.read_text(encoding="utf-8-sig")
+
+        self.assertIn("function Export-NormalizedTabletReviewSet", build_script)
+        self.assertIn("function New-SkippedNormalizedTabletReviewSet", build_script)
+        self.assertIn('"normalized_tablet_review"', build_script)
+        self.assertIn("status = \"skipped\"", build_script)
+        self.assertIn("canonical mock pack incomplete", build_script)
+        self.assertIn("raw_state_pack_screenshots_unchanged = $true", build_script)
+        self.assertIn(
+            "copy tablet canonical mocks after deterministic frame export; no raw screenshot rewrite",
+            build_script,
+        )
+        self.assertIn(
+            "tablet-only normalized review PNGs under `normalized_tablet_review/`",
             build_script,
         )
         self.assertNotIn(

@@ -37,6 +37,46 @@ class TabletMainXmlShellParityTest {
         }
     }
 
+    @Test
+    fun portraitAndLandscapeSearchFilterTypographyStaysDenseAndExplicit() {
+        listOf("layout-sw600dp-port", "layout-sw600dp-land").forEach { qualifier ->
+            val layout = layout(qualifier)
+            val xml = layoutFile(qualifier).readText()
+
+            listOf("15sp", "28sp", "9sp").forEach { size ->
+                assertFalse("$qualifier should not use $size text", xml.contains("android:textSize=\"$size\""))
+            }
+
+            listOf("FILTER \u2022 CATEGORY", "WINDOW").forEach { text ->
+                val header = layout.elementByText(text)
+                assertEquals("@font/jetbrains_mono", header.android("fontFamily"))
+                assertEquals("10sp", header.android("textSize"))
+            }
+
+            assertEquals("13sp", layout.elementByAndroidId("tablet_search_query_text").android("textSize"))
+            assertFalse(
+                "$qualifier search count text should use an explicit text size",
+                layout.elementByAndroidId("tablet_search_count_text").android("textSize").isBlank(),
+            )
+
+            listOf(
+                "Shelter (12)",
+                "Water (4)",
+                "Fire (3)",
+                "Survival (8)",
+                "Immediate",
+                "Short",
+                "Long",
+                "Mixed",
+            ).forEach { text ->
+                val label = layout.elementByText(text)
+                assertEquals("@font/inter_tight", label.android("fontFamily"))
+                assertEquals("13sp", label.android("textSize"))
+                assertEquals("16sp", label.android("lineHeight"))
+            }
+        }
+    }
+
     private fun assertRailShell(
         layout: Element,
         railWidth: String,
@@ -103,6 +143,17 @@ class TabletMainXmlShellParityTest {
             }
         }
         error("Unable to locate child <$tagName>")
+    }
+
+    private fun Element.elementByText(text: String): Element {
+        val nodes = getElementsByTagName("*")
+        for (index in 0 until nodes.length) {
+            val element = nodes.item(index) as Element
+            if (element.android("text") == text) {
+                return element
+            }
+        }
+        error("Unable to locate element with text $text")
     }
 
     private fun Element.android(name: String): String =

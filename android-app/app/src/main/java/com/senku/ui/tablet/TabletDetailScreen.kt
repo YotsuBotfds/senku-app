@@ -428,8 +428,17 @@ internal fun tabletShouldShowThreadRail(
 internal fun tabletThreadRailShouldShowSourceRows(detailMode: TabletDetailMode): Boolean =
     detailMode != TabletDetailMode.Thread
 
+internal fun tabletShouldShowThreadSourceRail(
+    isLandscape: Boolean,
+    detailMode: TabletDetailMode,
+    sourceCount: Int,
+): Boolean =
+    detailMode == TabletDetailMode.Thread &&
+        isLandscape &&
+        sourceCount > 0
+
 internal fun tabletThreadFlowMaxWidthDp(isLandscape: Boolean): Int =
-    if (isLandscape) 560 else 660
+    if (isLandscape) 560 else 720
 
 internal fun tabletThreadFlowHorizontalPaddingDp(isLandscape: Boolean): Int =
     if (isLandscape) 24 else 18
@@ -3607,7 +3616,11 @@ internal fun tabletShouldShowEvidencePane(
     guideMode: Boolean,
 ): Boolean =
     when {
-        state.isThreadMode() -> state.resolvedVisibleThreadSourceRows().isNotEmpty()
+        state.isThreadMode() -> tabletShouldShowThreadSourceRail(
+            isLandscape = state.isLandscape,
+            detailMode = state.detailMode,
+            sourceCount = state.resolvedVisibleThreadSourceCount(),
+        )
         guideMode -> state.isLandscape
         state.detailMode == TabletDetailMode.Answer -> state.evidenceExpanded
         else -> false

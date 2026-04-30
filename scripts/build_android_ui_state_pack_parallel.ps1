@@ -122,6 +122,10 @@ if ($PlanOnly) {
             battery_style = "outline"
             target_dimensions = "match artifacts/mocks"
             metadata = "goal_mock_export_metadata.json"
+            normalized_tablet_review_directory = "normalized_tablet_review"
+            normalized_tablet_review_metadata = "normalized_tablet_review/metadata.json"
+            normalized_tablet_review_source = "canonical framed mocks"
+            raw_state_pack_screenshots_unchanged = $true
         }
         migration_checklist_intent = [pscustomobject]@{
             selected_roles = @($roles)

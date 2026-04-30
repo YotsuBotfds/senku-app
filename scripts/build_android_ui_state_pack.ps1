@@ -152,6 +152,74 @@ function Invoke-GoalMockFrameExporter {
     }
 }
 
+function Export-NormalizedTabletReviewSet {
+    param(
+        [string]$MocksDir,
+        [string]$OutputDir
+    )
+
+    $reviewDir = Join-Path $OutputDir "normalized_tablet_review"
+    if (Test-Path -LiteralPath $reviewDir) {
+        Remove-Item -LiteralPath $reviewDir -Recurse -Force
+    }
+    New-Item -ItemType Directory -Force -Path $reviewDir | Out-Null
+
+    $copied = New-Object System.Collections.Generic.List[object]
+    $tabletMocks = @(Get-ChildItem -LiteralPath $MocksDir -Filter "*-tablet-*.png" -File | Sort-Object Name)
+    foreach ($mock in $tabletMocks) {
+        $destination = Join-Path $reviewDir $mock.Name
+        Copy-Item -LiteralPath $mock.FullName -Destination $destination -Force
+        $copied.Add([pscustomobject]@{
+            name = $mock.Name
+            source = $mock.FullName
+            destination = $destination
+            sha256 = (Get-FileHash -LiteralPath $destination -Algorithm SHA256).Hash.ToLowerInvariant()
+        })
+    }
+
+    $metadataPath = Join-Path $reviewDir "metadata.json"
+    ([pscustomobject]@{
+        schema_version = 1
+        output_mode = "normalized_tablet_review_mocks"
+        generated_at_utc = (Get-Date).ToUniversalTime().ToString("o")
+        review_dir = $reviewDir
+        source_mocks_dir = $MocksDir
+        source_exporter = "scripts/export_android_goal_mock_frame.ps1"
+        png_count = [int]$copied.Count
+        raw_state_pack_screenshots_unchanged = $true
+        source_policy = "copy tablet canonical mocks after deterministic frame export; no raw screenshot rewrite"
+        live_os_chrome_policy = "review PNGs inherit deterministic crop/frame normalization from canonical mocks"
+        files = @($copied.ToArray())
+    } | ConvertTo-Json -Depth 8) | Set-Content -LiteralPath $metadataPath -Encoding UTF8
+
+    return [pscustomobject]@{
+        status = "pass"
+        review_dir = $reviewDir
+        metadata_path = $metadataPath
+        png_count = [int]$copied.Count
+        png_names = @($copied | ForEach-Object { $_.name })
+        raw_state_pack_screenshots_unchanged = $true
+        source_exporter = "scripts/export_android_goal_mock_frame.ps1"
+    }
+}
+
+function New-SkippedNormalizedTabletReviewSet {
+    param(
+        [string]$Reason
+    )
+
+    return [pscustomobject]@{
+        status = "skipped"
+        reason = $Reason
+        review_dir = $null
+        metadata_path = $null
+        png_count = 0
+        png_names = @()
+        raw_state_pack_screenshots_unchanged = $true
+        source_exporter = "scripts/export_android_goal_mock_frame.ps1"
+    }
+}
+
 function Export-GoalMockPack {
     param(
         [object[]]$ResultEntries,
@@ -216,6 +284,7 @@ function Export-GoalMockPack {
             status = "fail"
             mocks_dir = $mocksDir
             zip_path = $null
+            normalized_tablet_review = (New-SkippedNormalizedTabletReviewSet -Reason "canonical mock pack incomplete; deterministic tablet review generated only for full canonical packs")
             expected_count = [int]$expectedNames.Count
             actual_count = [int]$actualNames.Count
             expected_names = @($expectedNames)
@@ -228,6 +297,7 @@ function Export-GoalMockPack {
     $metadataPath = Join-Path $OutputDir "goal_mock_export_metadata.json"
     Invoke-GoalMockFrameExporter -MocksDir $mocksDir -MetadataPath $metadataPath
     Invoke-GoalMockValidator -Path $mocksDir
+    $normalizedTabletReview = Export-NormalizedTabletReviewSet -MocksDir $mocksDir -OutputDir $OutputDir
     $zipPath = Join-Path (Split-Path -Parent $OutputDir) ($Timestamp + "_mocks.zip")
     $zipPath = Write-GoalMockZip -MocksDir $mocksDir -ZipPath $zipPath
     Invoke-GoalMockValidator -Path $zipPath
@@ -238,6 +308,7 @@ function Export-GoalMockPack {
         zip_path = $zipPath
         metadata_path = $metadataPath
         deterministic_frame_export = $true
+        normalized_tablet_review = $normalizedTabletReview
         expected_count = [int]$expectedNames.Count
         actual_count = [int]$actualNames.Count
         expected_names = @($expectedNames)
@@ -1360,6 +1431,7 @@ $readme = @(
     '- canonical flat mock PNGs under `mocks/`',
     '- canonical flat mock ZIP at `goal_mock_pack.zip_path` in `summary.json`',
     '- deterministic screenshot-only frame metadata at `goal_mock_pack.metadata_path`',
+    '- tablet-only normalized review PNGs under `normalized_tablet_review/` (`goal_mock_pack.normalized_tablet_review`) when a full canonical mock pack is available; filtered packs mark this as skipped and raw screenshots remain unchanged',
     '- source screenshots by posture under `screenshots/`',
     '- matching XML dumps under `dumps/`',
     '- per-state summaries under `summaries/`',
@@ -1376,6 +1448,14 @@ Write-Host "Output: $outputDir"
 Write-Host "Summary: $summaryPath"
 Write-Host "Manifest: $manifestPath"
 Write-Host "Mocks: $($goalMockPack.mocks_dir)"
+$normalizedTabletReview = $goalMockPack.normalized_tablet_review
+if ($null -ne $normalizedTabletReview -and [string]$normalizedTabletReview.status -eq "pass") {
+    Write-Host "Normalized tablet review: $($normalizedTabletReview.review_dir)"
+} elseif ($null -ne $normalizedTabletReview -and -not [string]::IsNullOrWhiteSpace([string]$normalizedTabletReview.reason)) {
+    Write-Host "Normalized tablet review: skipped ($($normalizedTabletReview.reason))"
+} else {
+    Write-Host "Normalized tablet review: skipped"
+}
 Write-Host "Goal bundle: $bundleZip"
 Write-Host ("Pass: {0} / {1}" -f $successCount, $results.Count)
 
