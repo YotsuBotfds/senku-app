@@ -513,43 +513,6 @@ public final class MainActivityPhoneNavigationTest {
     }
 
     @Test
-    public void sharedInputChromeUsesQuestionSemanticsInAskMode() {
-        assertEquals(
-            R.string.ask_hint,
-            MainActivity.resolveSharedInputHintResourceForTest(SubmitTarget.ASK)
-        );
-        assertEquals(
-            R.string.ask_input_description,
-            MainActivity.resolveSharedInputDescriptionResourceForTest(SubmitTarget.ASK)
-        );
-        assertEquals(
-            EditorInfo.IME_ACTION_DONE,
-            MainActivity.resolveSharedInputImeActionForTest(SubmitTarget.ASK)
-        );
-        assertEquals(
-            R.string.ask_button_description,
-            MainActivity.resolveSubmitButtonDescriptionResourceForTest(SubmitTarget.ASK)
-        );
-
-        assertEquals(
-            R.string.search_hint,
-            MainActivity.resolveSharedInputHintResourceForTest(SubmitTarget.SEARCH)
-        );
-        assertEquals(
-            R.string.search_input_description,
-            MainActivity.resolveSharedInputDescriptionResourceForTest(SubmitTarget.SEARCH)
-        );
-        assertEquals(
-            EditorInfo.IME_ACTION_SEARCH,
-            MainActivity.resolveSharedInputImeActionForTest(SubmitTarget.SEARCH)
-        );
-        assertEquals(
-            R.string.search_button_description,
-            MainActivity.resolveSubmitButtonDescriptionResourceForTest(SubmitTarget.SEARCH)
-        );
-    }
-
-    @Test
     public void sharedInputSubmitStaysSearchForLibraryAndSavedFlows() {
         assertEquals(
             SubmitTarget.SEARCH,

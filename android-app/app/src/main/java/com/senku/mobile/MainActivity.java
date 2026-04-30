@@ -3220,50 +3220,9 @@ public final class MainActivity extends AppCompatActivity {
         SubmitTarget target = AskSearchCoordinator.resolveSubmitTarget(activePhoneTab, askLaneActive);
         return new SharedSubmitAction(
             target,
-            resolveSubmitButtonLabelResource(target, answerReady),
-            resolveSubmitButtonDescriptionResource(target)
+            SharedInputChromePolicy.submitButtonLabelResource(target, answerReady),
+            SharedInputChromePolicy.submitButtonDescriptionResource(target)
         );
-    }
-
-    static int resolveSharedInputHintResourceForTest(SubmitTarget target) {
-        return resolveSharedInputHintResource(target);
-    }
-
-    private static int resolveSharedInputHintResource(SubmitTarget target) {
-        return target == SubmitTarget.ASK ? R.string.ask_hint : R.string.search_hint;
-    }
-
-    static int resolveSharedInputDescriptionResourceForTest(SubmitTarget target) {
-        return resolveSharedInputDescriptionResource(target);
-    }
-
-    private static int resolveSharedInputDescriptionResource(SubmitTarget target) {
-        return target == SubmitTarget.ASK ? R.string.ask_input_description : R.string.search_input_description;
-    }
-
-    static int resolveSharedInputImeActionForTest(SubmitTarget target) {
-        return resolveSharedInputImeAction(target);
-    }
-
-    private static int resolveSharedInputImeAction(SubmitTarget target) {
-        return target == SubmitTarget.ASK ? EditorInfo.IME_ACTION_DONE : EditorInfo.IME_ACTION_SEARCH;
-    }
-
-    static int resolveSubmitButtonDescriptionResourceForTest(SubmitTarget target) {
-        return resolveSubmitButtonDescriptionResource(target);
-    }
-
-    private static int resolveSubmitButtonLabelResource(SubmitTarget target, boolean answerReady) {
-        if (target == SubmitTarget.ASK) {
-            return answerReady ? R.string.ask_button_ready : R.string.ask_button;
-        }
-        return R.string.external_review_home_search_button;
-    }
-
-    private static int resolveSubmitButtonDescriptionResource(SubmitTarget target) {
-        return target == SubmitTarget.ASK
-            ? R.string.ask_button_description
-            : R.string.search_button_description;
     }
 
     static boolean isSavedPhoneFlowIntent(BottomTabDestination destination) {
@@ -3831,7 +3790,9 @@ public final class MainActivity extends AppCompatActivity {
         boolean answerReady = isAnswerRuntimeReady();
         SharedSubmitAction searchAction = resolveSearchButtonSubmitAction(activePhoneTab, askLaneActive, answerReady);
         askButton.setText(answerReady ? R.string.ask_button_ready : R.string.ask_button);
-        askButton.setContentDescription(getString(resolveSubmitButtonDescriptionResource(SubmitTarget.ASK)));
+        askButton.setContentDescription(
+            getString(SharedInputChromePolicy.submitButtonDescriptionResource(SubmitTarget.ASK))
+        );
         searchButton.setText(searchAction.buttonTextResource);
         searchButton.setContentDescription(getString(searchAction.buttonDescriptionResource));
         boolean askMode = isAskLaneActive();
@@ -3855,9 +3816,9 @@ public final class MainActivity extends AppCompatActivity {
         if (searchInput == null) {
             return;
         }
-        searchInput.setHint(resolveSharedInputHintResource(target));
-        searchInput.setContentDescription(getString(resolveSharedInputDescriptionResource(target)));
-        searchInput.setImeOptions(resolveSharedInputImeAction(target));
+        searchInput.setHint(SharedInputChromePolicy.inputHintResource(target));
+        searchInput.setContentDescription(getString(SharedInputChromePolicy.inputDescriptionResource(target)));
+        searchInput.setImeOptions(SharedInputChromePolicy.inputImeAction(target));
     }
 
     private void updateHomeEntryHint() {
