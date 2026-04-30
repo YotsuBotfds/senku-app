@@ -1,3 +1,5 @@
+from pathlib import Path
+import re
 import unittest
 from unittest.mock import patch
 
@@ -11,6 +13,72 @@ from rag_claim_support import diagnose_claim_support
 
 
 class QueryRoutingTests(unittest.TestCase):
+    def test_reviewed_card_route_policy_manifest_tracks_android_helper_scope(self):
+        """Document reviewed-card route policy overlap without changing routing."""
+        android_runtime = (
+            Path(__file__).resolve().parents[1]
+            / "android-app"
+            / "app"
+            / "src"
+            / "main"
+            / "java"
+            / "com"
+            / "senku"
+            / "mobile"
+            / "AnswerCardRuntime.java"
+        )
+        text = android_runtime.read_text(encoding="utf-8")
+        card_id_constants = dict(
+            re.findall(
+                r'private static final String ([A-Z0-9_]+_CARD_ID) = "([^"]+)";',
+                text,
+            )
+        )
+        android_card_spec_ids = {
+            card_id_constants[name]
+            for name in re.findall(r"new CardSpec\(\s*([A-Z0-9_]+_CARD_ID),", text)
+        }
+
+        desktop_explicit_route_policy_ids = {
+            "acute_coronary_stroke_overlap",
+            "anaphylaxis_red_zone",
+            "choking_airway_obstruction",
+            "community_kitchen_illness_control",
+            "food_system_outage_illness_boundary",
+            "infected_wound_spreading_infection",
+            "meningitis_sepsis_child",
+            "newborn_danger_sepsis",
+            "pediatric_emergency_medicine",
+            "poisoning_unknown_ingestion",
+        }
+        desktop_retrieval_only_reviewed_card_ids = {
+            "abdominal_internal_bleeding",
+        }
+        android_only_route_helper_ids = {
+            "foundry_casting_area_readiness_boundary",
+        }
+
+        self.assertEqual(
+            android_card_spec_ids
+            - desktop_explicit_route_policy_ids
+            - desktop_retrieval_only_reviewed_card_ids,
+            android_only_route_helper_ids,
+        )
+        self.assertEqual(
+            desktop_retrieval_only_reviewed_card_ids & android_card_spec_ids,
+            {"abdominal_internal_bleeding"},
+        )
+        self.assertEqual(
+            desktop_explicit_route_policy_ids - android_card_spec_ids,
+            {
+                "acute_coronary_stroke_overlap",
+                "anaphylaxis_red_zone",
+                "community_kitchen_illness_control",
+                "food_system_outage_illness_boundary",
+                "pediatric_emergency_medicine",
+            },
+        )
+
     def test_house_build_prompt_gets_construction_domain_and_building_specs(self):
         frame = query.build_scenario_frame("how do i build a house")
         self.assertIn("construction", frame["domains"])
