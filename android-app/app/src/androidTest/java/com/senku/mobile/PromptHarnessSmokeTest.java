@@ -1996,6 +1996,35 @@ public final class PromptHarnessSmokeTest {
     }
 
     @Test
+    public void detailFollowUpImeSendDispatchesLikeSendClick() {
+        FollowUpSubmitDispatchSignals clickSignals =
+            dispatchFollowUpFromFreshDetail("send_click", false);
+        FollowUpSubmitDispatchSignals imeSignals =
+            dispatchFollowUpFromFreshDetail("ime_send", true);
+
+        Assert.assertEquals(
+            "send click should dispatch exactly one follow-up request",
+            1,
+            clickSignals.requestTokenDelta()
+        );
+        Assert.assertEquals(
+            "IME SEND should dispatch exactly one follow-up request",
+            clickSignals.requestTokenDelta(),
+            imeSignals.requestTokenDelta()
+        );
+        Assert.assertEquals(
+            "IME SEND should leave the composer in the same enabled state as send click immediately after dispatch",
+            clickSignals.inputEnabledAfter,
+            imeSignals.inputEnabledAfter
+        );
+        Assert.assertEquals(
+            "IME SEND should leave the send action in the same enabled state as send click immediately after dispatch",
+            clickSignals.sendEnabledAfter,
+            imeSignals.sendEnabledAfter
+        );
+    }
+
+    @Test
     public void guideDetailShowsRelatedGuideNavigation() throws Exception {
         RelatedGuideSeed seed = findFoundryGuideWithRelations();
         Assume.assumeNotNull("GD-132 guide with related links is required for the canonical guide mock", seed);
@@ -4924,6 +4953,119 @@ public final class PromptHarnessSmokeTest {
         InstrumentationRegistry.getInstrumentation().waitForIdleSync();
     }
 
+    private FollowUpSubmitDispatchSignals dispatchFollowUpFromFreshDetail(String routeLabel, boolean useImeSend) {
+        Context context = ApplicationProvider.getApplicationContext();
+        ChatSessionStore.restore(context);
+        String conversationId = ChatSessionStore.createConversation();
+        try (ActivityScenario<DetailActivity> scenario =
+                 ActivityScenario.launch(followUpSubmitParityIntent(context, conversationId))) {
+            awaitHarnessIdle();
+            Assert.assertTrue(
+                "follow-up submit parity detail should render before " + routeLabel,
+                waitForDetailBodyReady(DETAIL_WAIT_MS, 8)
+            );
+            Assert.assertTrue(
+                "follow-up input should be ready before " + routeLabel + "; harness signals="
+                    + HarnessTestSignals.snapshot(),
+                waitForFollowUpComposerReadyOnMainThread(DETAIL_WAIT_MS)
+            );
+            return submitFollowUpForDispatchProbe(
+                "What should I do after the first pass? " + routeLabel,
+                useImeSend
+            );
+        } finally {
+            ChatSessionStore.removeConversation(context, conversationId);
+        }
+    }
+
+    private Intent followUpSubmitParityIntent(Context context, String conversationId) {
+        ArrayList<SearchResult> sources = new ArrayList<>();
+        sources.add(threadFixtureSource(
+            "GD-101",
+            "Fire Starting Basics",
+            "Guide anchor",
+            "Keep tinder dry and build flame gradually before adding larger fuel.",
+            "fire tinder ignition"
+        ));
+        Intent intent = DetailActivity.newAnswerIntent(
+            context,
+            "How do I keep tinder dry before starting a fire?",
+            "GD-101 | confident | submit parity",
+            "Short answer:\nKeep tinder under cover and separate damp outer bark from dry inner fibers.\n\n"
+                + "Steps:\n1. Stage tinder in a pocket or covered container.\n"
+                + "2. Build the flame gradually before adding larger fuel.\n\n"
+                + "Limits or safety:\nWatch wind direction and keep water nearby.",
+            sources,
+            null,
+            conversationId,
+            "followup_submit_parity",
+            OfflineAnswerEngine.AnswerMode.CONFIDENT,
+            OfflineAnswerEngine.ConfidenceLabel.HIGH
+        );
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        return intent;
+    }
+
+    private FollowUpSubmitDispatchSignals submitFollowUpForDispatchProbe(String query, boolean useImeSend) {
+        final FollowUpSubmitDispatchSignals[] result = {null};
+        InstrumentationRegistry.getInstrumentation().runOnMainSync(() -> {
+            Activity activity = getResumedActivityOnMainThread();
+            Assert.assertTrue("follow-up dispatch probe needs DetailActivity", activity instanceof DetailActivity);
+            DetailActivity detailActivity = (DetailActivity) activity;
+            EditText input = detailActivity.findViewById(R.id.detail_followup_input);
+            Button send = detailActivity.findViewById(R.id.detail_followup_send);
+            Assert.assertNotNull("follow-up input should exist for dispatch probe", input);
+            Assert.assertNotNull("follow-up send should exist for dispatch probe", send);
+            Assert.assertTrue("follow-up input should be enabled before dispatch", input.isEnabled());
+
+            input.requestFocus();
+            input.setText(query);
+            input.clearComposingText();
+            input.setSelection(query.length());
+            Assert.assertTrue("follow-up send should be enabled after entering a draft", send.isEnabled());
+
+            int beforeToken = detailActivity.currentAnswerRequestToken();
+            if (useImeSend) {
+                input.onEditorAction(EditorInfo.IME_ACTION_SEND);
+            } else {
+                send.performClick();
+            }
+            result[0] = new FollowUpSubmitDispatchSignals(
+                beforeToken,
+                detailActivity.currentAnswerRequestToken(),
+                input.isEnabled(),
+                send.isEnabled()
+            );
+        });
+        InstrumentationRegistry.getInstrumentation().waitForIdleSync();
+        Assert.assertNotNull("follow-up dispatch probe did not capture signals", result[0]);
+        return result[0];
+    }
+
+    private boolean waitForFollowUpComposerReadyOnMainThread(long timeoutMs) {
+        long deadline = SystemClock.uptimeMillis() + timeoutMs;
+        while (SystemClock.uptimeMillis() < deadline) {
+            final boolean[] ready = {false};
+            InstrumentationRegistry.getInstrumentation().runOnMainSync(() -> {
+                Activity activity = getResumedActivityOnMainThread();
+                if (!(activity instanceof DetailActivity)) {
+                    return;
+                }
+                EditText input = activity.findViewById(R.id.detail_followup_input);
+                Button send = activity.findViewById(R.id.detail_followup_send);
+                ready[0] = input != null
+                    && send != null
+                    && input.isEnabled();
+            });
+            if (ready[0]) {
+                return true;
+            }
+            InstrumentationRegistry.getInstrumentation().waitForIdleSync();
+            SystemClock.sleep(50L);
+        }
+        return false;
+    }
+
     private SearchResult threadFixtureSource(
         String guideId,
         String title,
@@ -7237,6 +7379,29 @@ public final class PromptHarnessSmokeTest {
         RelatedGuideSeed(SearchResult guide, SearchResult relatedGuide) {
             this.guide = guide;
             this.relatedGuide = relatedGuide;
+        }
+    }
+
+    private static final class FollowUpSubmitDispatchSignals {
+        final int beforeRequestToken;
+        final int afterRequestToken;
+        final boolean inputEnabledAfter;
+        final boolean sendEnabledAfter;
+
+        FollowUpSubmitDispatchSignals(
+            int beforeRequestToken,
+            int afterRequestToken,
+            boolean inputEnabledAfter,
+            boolean sendEnabledAfter
+        ) {
+            this.beforeRequestToken = beforeRequestToken;
+            this.afterRequestToken = afterRequestToken;
+            this.inputEnabledAfter = inputEnabledAfter;
+            this.sendEnabledAfter = sendEnabledAfter;
+        }
+
+        int requestTokenDelta() {
+            return afterRequestToken - beforeRequestToken;
         }
     }
 
