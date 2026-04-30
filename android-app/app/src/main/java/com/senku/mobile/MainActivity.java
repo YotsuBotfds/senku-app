@@ -606,8 +606,7 @@ public final class MainActivity extends AppCompatActivity {
                         currentMainRouteState()
                     );
                     if (publishBrowseGuides) {
-                        replaceItems(guides);
-                        showBrowseChrome(true);
+                        publishResultItems(MainResultPublicationPolicy.browseSurface(), guides);
                         resultsHeader.setText("Guide browser (" + guides.size() + " loaded)");
                     }
                     maybeHandleAutomation();
@@ -647,10 +646,11 @@ public final class MainActivity extends AppCompatActivity {
         SessionMemory.RetrievalPlan retrievalPlan = sessionMemory.buildRetrievalPlan(query);
         boolean sessionUsed = retrievalPlan.sessionUsed;
         String displayQuery = query.isEmpty() ? "guides" : query;
-        setResultHighlightQuery(query);
-        updateTabletSearchQuery(displayQuery, 0);
-        updatePhoneSearchQuery(displayQuery, 0);
-        showBrowseChrome(false);
+        MainResultPublicationPolicy loadingPublication =
+            MainResultPublicationPolicy.resultSurfaceWithSearchChrome(query, displayQuery, 0);
+        setResultHighlightQuery(loadingPublication.highlightQuery());
+        publishSearchQueryChrome(loadingPublication);
+        showBrowseChrome(loadingPublication.browseChromeVisible());
         replaceItems(Collections.emptyList());
         resultsHeader.setText(R.string.results_header_searching);
         setBusy(sessionUsed
@@ -672,8 +672,13 @@ public final class MainActivity extends AppCompatActivity {
                 );
                 runTrackedOnUiThread(harnessToken, () -> {
                     setBusy("Search complete", false);
-                    replaceItems(displayResults);
-                    showBrowseChrome(false);
+                    MainResultPublicationPolicy publication =
+                        MainResultPublicationPolicy.resultSurfaceWithSearchChrome(
+                            query,
+                            displayQuery,
+                            displayResults.size()
+                        );
+                    publishResultItems(publication, displayResults);
                     String header = presentationFormatter().buildResultsHeader(
                         displayQuery,
                         displayResults,
@@ -692,18 +697,20 @@ public final class MainActivity extends AppCompatActivity {
                     header = appendReviewSearchLatency(header, displayQuery);
                     resultsHeader.setText(header);
                     updateHomeChromeTitle(false, displayQuery);
-                    updateTabletSearchQuery(displayQuery, displayResults.size());
-                    updatePhoneSearchQuery(displayQuery, displayResults.size());
+                    publishSearchQueryChrome(publication);
                     updateSessionPanel();
                     updatePortraitPhoneResultsPriority();
                 });
             } catch (Exception exc) {
                 runTrackedOnUiThread(harnessToken, () -> {
                     setBusy("Search failed", false);
-                    replaceItems(Collections.emptyList());
-                    if (!hasAutoQuery(getIntent())) {
-                        showBrowseChrome(true);
-                    }
+                    publishResultItems(
+                        MainResultPublicationPolicy.resultSurfaceWithBrowseFallback(
+                            query,
+                            !hasAutoQuery(getIntent())
+                        ),
+                        Collections.emptyList()
+                    );
                     resultsHeader.setText("Search failed");
                     setInfoTextMessage(exc.toString(), true);
                 });
@@ -714,9 +721,9 @@ public final class MainActivity extends AppCompatActivity {
     private void showDeterministicSearch(String query, DeterministicAnswerRouter.DeterministicAnswer deterministic) {
         enterSearchResultsRoute();
         setBusy("Deterministic search ready", false);
-        setResultHighlightQuery(query);
-        replaceItems(deterministic.sources);
-        showBrowseChrome(false);
+        MainResultPublicationPolicy publication =
+            MainResultPublicationPolicy.resultSurfaceWithSearchChrome(query, query, deterministic.sources.size());
+        publishResultItems(publication, deterministic.sources);
         String header;
         if (isTabletSearchLayout()) {
             header = buildTabletSearchHeader(query, deterministic.sources.size());
@@ -727,8 +734,7 @@ public final class MainActivity extends AppCompatActivity {
         }
         resultsHeader.setText(appendReviewSearchLatency(header, query));
         updateHomeChromeTitle(false, query);
-        updateTabletSearchQuery(query, deterministic.sources.size());
-        updatePhoneSearchQuery(query, deterministic.sources.size());
+        publishSearchQueryChrome(publication);
         updateInfoText();
         updatePortraitPhoneResultsPriority();
     }
@@ -818,9 +824,7 @@ public final class MainActivity extends AppCompatActivity {
             sessionMemory.recordTurn(query, answerBody, deterministic.sources, deterministic.ruleId);
             ChatSessionStore.persist(MainActivity.this);
             setBusy("Deterministic offline answer ready", false);
-            setResultHighlightQuery(query);
-            replaceItems(deterministic.sources);
-            showBrowseChrome(false);
+            publishResultItems(MainResultPublicationPolicy.resultSurface(query), deterministic.sources);
             resultsHeader.setText("Deterministic offline answer for \"" + query + "\"");
             updateInfoText();
             updateSessionPanel();
@@ -865,9 +869,10 @@ public final class MainActivity extends AppCompatActivity {
                 ? OfflineAnswerEngine.buildGeneratingStatus(getApplicationContext())
                 : OfflineAnswerEngine.buildSourcesReadyStatus(MainActivity.this, preparedAnswer.sources.size());
             setBusy(status, false);
-            setResultHighlightQuery(preparedAnswer.query);
-            replaceItems(preparedAnswer.sources);
-            showBrowseChrome(false);
+            publishResultItems(
+                MainResultPublicationPolicy.resultSurface(preparedAnswer.query),
+                preparedAnswer.sources
+            );
             resultsHeader.setText(presentationFormatter().buildAnswerContextHeader(
                 preparedAnswer.query,
                 preparedAnswer.sources.size(),
@@ -887,9 +892,10 @@ public final class MainActivity extends AppCompatActivity {
         ) {
             setBusy("Offline answer failed", false);
             if (failedPrepared != null && !failedPrepared.sources.isEmpty()) {
-                setResultHighlightQuery(failedPrepared.query);
-                replaceItems(failedPrepared.sources);
-                showBrowseChrome(false);
+                publishResultItems(
+                    MainResultPublicationPolicy.resultSurface(failedPrepared.query),
+                    failedPrepared.sources
+                );
                 resultsHeader.setText(presentationFormatter().buildAnswerContextHeader(
                     failedPrepared.query,
                     failedPrepared.sources.size(),
@@ -901,11 +907,10 @@ public final class MainActivity extends AppCompatActivity {
                     BottomTabDestination.ASK,
                     false
                 ));
-                setResultHighlightQuery(query);
-                replaceItems(Collections.emptyList());
-                if (!hasAutoQuery) {
-                    showBrowseChrome(true);
-                }
+                publishResultItems(
+                    MainResultPublicationPolicy.resultSurfaceWithBrowseFallback(query, !hasAutoQuery),
+                    Collections.emptyList()
+                );
                 resultsHeader.setText("Offline answer failed");
             }
             updateInfoText();
@@ -1191,9 +1196,7 @@ public final class MainActivity extends AppCompatActivity {
             askLaneActive = false;
             setBusy(presentationFormatter().buildHomeReadyStatus(allGuides.size()), false);
             updateCategoryCards(allGuides);
-            setResultHighlightQuery("");
-            replaceItems(allGuides);
-            showBrowseChrome(true);
+            publishResultItems(MainResultPublicationPolicy.browseSurface(), allGuides);
             resultsHeader.setText("Guide browser (" + allGuides.size() + " loaded)");
             updateSessionPanel();
             return;
@@ -1209,9 +1212,7 @@ public final class MainActivity extends AppCompatActivity {
                     allGuides.clear();
                     allGuides.addAll(guides);
                     updateCategoryCards(guides);
-                    setResultHighlightQuery("");
-                    replaceItems(guides);
-                    showBrowseChrome(true);
+                    publishResultItems(MainResultPublicationPolicy.browseSurface(), guides);
                     resultsHeader.setText("Guide browser (" + guides.size() + " loaded)");
                     updateSessionPanel();
                     refreshPinnedGuidesAsync();
@@ -1226,6 +1227,20 @@ public final class MainActivity extends AppCompatActivity {
                 });
             }
         });
+    }
+
+    private void publishResultItems(MainResultPublicationPolicy publication, List<SearchResult> results) {
+        setResultHighlightQuery(publication.highlightQuery());
+        replaceItems(results);
+        showBrowseChrome(publication.browseChromeVisible());
+    }
+
+    private void publishSearchQueryChrome(MainResultPublicationPolicy publication) {
+        if (!publication.updateSearchQueryChrome()) {
+            return;
+        }
+        updateTabletSearchQuery(publication.searchQueryLabel(), publication.resultCount());
+        updatePhoneSearchQuery(publication.searchQueryLabel(), publication.resultCount());
     }
 
     private void replaceItems(List<SearchResult> results) {
@@ -3528,9 +3543,7 @@ public final class MainActivity extends AppCompatActivity {
         if (searchInput != null) {
             searchInput.setText("");
         }
-        setResultHighlightQuery("");
-        replaceItems(allGuides);
-        showBrowseChrome(true);
+        publishResultItems(MainResultPublicationPolicy.browseSurface(), allGuides);
         updateSessionPanel();
         refreshRecentThreads();
         setBusy("Thread cleared", false);
@@ -3671,15 +3684,14 @@ public final class MainActivity extends AppCompatActivity {
                 filtered.add(result);
             }
         }
-        setResultHighlightQuery("");
-        replaceItems(filtered);
-        showBrowseChrome(false);
         String filterLabel = buildCategoryFilterLabel(label, filtered.size());
+        MainResultPublicationPolicy publication =
+            MainResultPublicationPolicy.resultSurfaceWithSearchChrome("", filterLabel, filtered.size());
+        publishResultItems(publication, filtered);
         resultsHeader.setText(isTabletSearchLayout()
             ? buildTabletSearchHeader(filterLabel, filtered.size())
             : filterLabel);
-        updateTabletSearchQuery(filterLabel, filtered.size());
-        updatePhoneSearchQuery(filterLabel, filtered.size());
+        publishSearchQueryChrome(publication);
         setBusy("Category ready", false);
         updatePortraitPhoneResultsPriority();
     }
