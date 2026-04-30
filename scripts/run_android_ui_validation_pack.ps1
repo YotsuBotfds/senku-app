@@ -784,6 +784,10 @@ function Set-DeviceSizeOverride {
         [int]$Height
     )
 
+    if ($Device -notlike "emulator-*") {
+        throw "Refusing wm size override on physical device '$Device'; retry orientation capture without display-size mutation."
+    }
+
     & $adb -s $Device shell wm size "$Width`x$Height" | Out-Null
     Start-Sleep -Milliseconds 700
 }
@@ -813,6 +817,11 @@ function Set-DeviceFontScale {
 
 function Reset-DeviceSizeOverride {
     param([string]$Device)
+
+    if ($Device -notlike "emulator-*") {
+        Write-Warning "Skipping wm size reset on physical device '$Device'."
+        return
+    }
 
     & $adb -s $Device shell wm size reset | Out-Null
     Start-Sleep -Milliseconds 700

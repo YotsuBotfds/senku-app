@@ -27,6 +27,21 @@ class RunAndroidUiValidationPackContractTests(unittest.TestCase):
             self.script.index('"install", "--no-streaming", "-r", $Apk'),
         )
 
+    def test_wm_size_override_is_guarded_to_emulators(self):
+        self.assertIn("function Set-DeviceSizeOverride", self.script)
+        self.assertIn("function Reset-DeviceSizeOverride", self.script)
+        self.assertIn('if ($Device -notlike "emulator-*") {', self.script)
+        self.assertIn("Refusing wm size override on physical device", self.script)
+        self.assertIn("Skipping wm size reset on physical device", self.script)
+        self.assertLess(
+            self.script.index("Refusing wm size override on physical device"),
+            self.script.index('& $adb -s $Device shell wm size "$Width`x$Height"'),
+        )
+        self.assertLess(
+            self.script.index("Skipping wm size reset on physical device"),
+            self.script.index("& $adb -s $Device shell wm size reset"),
+        )
+
     def test_parser_gate_passes(self):
         result = subprocess.run(
             [
