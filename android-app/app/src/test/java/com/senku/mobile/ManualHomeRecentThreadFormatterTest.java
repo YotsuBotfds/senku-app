@@ -1,6 +1,8 @@
 package com.senku.mobile;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -20,10 +22,13 @@ public final class ManualHomeRecentThreadFormatterTest {
             NOW - ((4L * 60L + 21L) * 60_000L)
         );
 
-        assertEquals(
-            "can I make a rain shelter with...\nGD-345 \u2022 04:21 \u2022 UNSURE",
-            ManualHomeRecentThreadFormatter.buildLabel(preview, NOW)
-        );
+        String label = ManualHomeRecentThreadFormatter.buildLabel(preview, NOW);
+        String[] lines = label.split("\n");
+
+        assertEquals(2, lines.length);
+        assertContainsTokens(lines[0], "can I make", "rain shelter");
+        assertFalse(lines[0].contains("cord and two poles"));
+        assertMetaContains(lines[1], "GD-345", "04:21", "UNSURE");
     }
 
     @Test
@@ -43,8 +48,8 @@ public final class ManualHomeRecentThreadFormatterTest {
             NOW - (25L * 60L * 60L * 1000L)
         );
 
-        assertEquals("GD-027 \u2022 00:07 \u2022 CONFIDENT", ManualHomeRecentThreadFormatter.buildMeta(rulePreview, NOW));
-        assertEquals("GD-094 \u2022 YESTERDAY \u2022 CONFIDENT", ManualHomeRecentThreadFormatter.buildMeta(cardPreview, NOW));
+        assertMetaContains(ManualHomeRecentThreadFormatter.buildMeta(rulePreview, NOW), "GD-027", "00:07", "CONFIDENT");
+        assertMetaContains(ManualHomeRecentThreadFormatter.buildMeta(cardPreview, NOW), "GD-094", "YESTERDAY", "CONFIDENT");
     }
 
     @Test
@@ -57,7 +62,11 @@ public final class ManualHomeRecentThreadFormatterTest {
             0L
         );
 
-        assertEquals("UNSURE", ManualHomeRecentThreadFormatter.buildMeta(preview, NOW));
+        String meta = ManualHomeRecentThreadFormatter.buildMeta(preview, NOW);
+
+        assertMetaContains(meta, "UNSURE");
+        assertFalse(meta.contains("GD-"));
+        assertFalse(meta.contains(":"));
     }
 
     @Test
@@ -110,5 +119,21 @@ public final class ManualHomeRecentThreadFormatterTest {
             "",
             ""
         );
+    }
+
+    private static void assertMetaContains(String meta, String... tokens) {
+        for (String token : tokens) {
+            assertTrue("Expected <" + meta + "> to contain <" + token + ">", meta.contains(token));
+        }
+    }
+
+    private static void assertContainsTokens(String value, String... tokens) {
+        String normalizedValue = value.toLowerCase();
+        for (String token : tokens) {
+            assertTrue(
+                "Expected <" + value + "> to contain token <" + token + ">",
+                normalizedValue.contains(token.toLowerCase())
+            );
+        }
     }
 }

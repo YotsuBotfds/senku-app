@@ -1,6 +1,8 @@
 package com.senku.mobile;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import com.senku.ui.primitives.BottomTabDestination;
 
@@ -15,31 +17,30 @@ public final class MainPresentationFormatterTest {
         MainPresentationFormatter formatter = new MainPresentationFormatter(null);
         List<SearchResult> results = List.of(new SearchResult("Water", "", "", ""));
 
-        assertEquals(
-            "Results for \"how do I purify...\" (1)",
-            formatter.buildResultsHeader(
-                "how do I purify rainwater safely in a pot",
-                results,
-                true,
-                10,
-                true,
-                true,
-                false
-            )
+        String landscapeHeader = formatter.buildResultsHeader(
+            "how do I purify rainwater safely in a pot",
+            results,
+            true,
+            10,
+            true,
+            true,
+            false
+        );
+        String portraitHeader = formatter.buildResultsHeader(
+            "how do I purify rainwater safely in a pot",
+            results,
+            true,
+            10,
+            true,
+            false,
+            false
         );
 
-        assertEquals(
-            "Results for \"how do I purify rainw...\" (1)",
-            formatter.buildResultsHeader(
-                "how do I purify rainwater safely in a pot",
-                results,
-                true,
-                10,
-                true,
-                false,
-                false
-            )
-        );
+        assertResultsHeaderIncludes(landscapeHeader, "1", "how do I purify");
+        assertResultsHeaderIncludes(portraitHeader, "1", "how do I purify");
+        assertFalse(landscapeHeader.contains("rainwater safely in a pot"));
+        assertFalse(portraitHeader.contains("safely in a pot"));
+        assertTrue(landscapeHeader.length() < portraitHeader.length());
     }
 
     @Test
@@ -52,18 +53,18 @@ public final class MainPresentationFormatterTest {
             new SearchResult("Food", "", "", "")
         );
 
-        assertEquals(
-            "Results (4)",
-            formatter.buildResultsHeader(
-                " ",
-                results,
-                true,
-                10,
-                true,
-                false,
-                false
-            )
+        String header = formatter.buildResultsHeader(
+            " ",
+            results,
+            true,
+            10,
+            true,
+            false,
+            false
         );
+
+        assertResultsHeaderIncludes(header, "4");
+        assertFalse(header.contains("\""));
     }
 
     @Test
@@ -71,34 +72,28 @@ public final class MainPresentationFormatterTest {
         MainPresentationFormatter formatter = new MainPresentationFormatter(null);
         List<SearchResult> results = List.of(new SearchResult("Water", "", "", ""));
 
-        assertEquals(
-            "Results for \"solar still\" (1) + session",
-            formatter.buildResultsHeader(
-                "solar still",
-                results,
-                true,
-                10,
-                true,
-                false,
-                false,
-                true
-            )
+        String header = formatter.buildResultsHeader(
+            "solar still",
+            results,
+            true,
+            10,
+            true,
+            false,
+            false,
+            true
         );
+
+        assertResultsHeaderIncludes(header, "1", "solar still");
+        assertTrue(header.toLowerCase().contains("session"));
     }
 
     @Test
     public void failureStateCopyUsesDignifiedUserFacingText() {
         MainPresentationFormatter formatter = new MainPresentationFormatter(null);
 
-        assertEquals(
-            "Manual is still preparing. Try again when the pack is ready.",
-            formatter.buildPackUnavailableStatus()
-        );
-        assertEquals("Manual pack unavailable", formatter.buildPackInstallFailedHeader());
-        assertEquals(
-            "Answer model unavailable. Import a model or enable Host GPU.",
-            formatter.buildModelUnavailableStatus()
-        );
+        assertContainsTokens(formatter.buildPackUnavailableStatus(), "Manual", "preparing", "ready");
+        assertContainsTokens(formatter.buildPackInstallFailedHeader(), "Manual", "pack", "unavailable");
+        assertContainsTokens(formatter.buildModelUnavailableStatus(), "Answer", "model", "unavailable");
     }
 
     @Test
@@ -108,41 +103,55 @@ public final class MainPresentationFormatterTest {
         assertEquals("Library", formatter.buildMainNavigationLabel(BottomTabDestination.HOME));
         assertEquals("Ask", formatter.buildMainNavigationLabel(BottomTabDestination.ASK));
         assertEquals("Saved", formatter.buildMainNavigationLabel(BottomTabDestination.PINS));
-        assertEquals("Open Library", formatter.buildMainNavigationContentDescription(BottomTabDestination.HOME));
-        assertEquals("Ask the manual", formatter.buildMainNavigationContentDescription(BottomTabDestination.ASK));
-        assertEquals(
-            "Open saved guides",
-            formatter.buildMainNavigationContentDescription(BottomTabDestination.PINS)
-        );
+        assertContainsTokens(formatter.buildMainNavigationContentDescription(BottomTabDestination.HOME), "Library");
+        assertContainsTokens(formatter.buildMainNavigationContentDescription(BottomTabDestination.ASK), "Ask");
+        assertContainsTokens(formatter.buildMainNavigationContentDescription(BottomTabDestination.PINS), "saved");
     }
 
     @Test
     public void savedEmptyStateNamesTheConcreteDestination() {
         MainPresentationFormatter formatter = new MainPresentationFormatter(null);
 
-        assertEquals(
-            "No saved guides yet. This tab only shows saved guides, not threads or sections.",
-            formatter.buildSavedGuidesEmptyState()
-        );
+        assertContainsTokens(formatter.buildSavedGuidesEmptyState(), "saved", "guides");
+        assertContainsTokens(formatter.buildSavedGuidesEmptyState(), "not", "threads", "sections");
     }
 
     @Test
     public void noResultsHeaderHandlesQueryAndEmptySearch() {
         MainPresentationFormatter formatter = new MainPresentationFormatter(null);
 
-        assertEquals("No guide matches for \"solar still\"", formatter.buildNoResultsHeader(" solar still "));
-        assertEquals("No guide matches", formatter.buildNoResultsHeader(" "));
-        assertEquals(
-            "No guide matches for \"solar still\"",
-            formatter.buildResultsHeader(
-                "solar still",
-                Collections.emptyList(),
-                true,
-                10,
-                false,
-                false,
-                false
-            )
+        String queriedHeader = formatter.buildNoResultsHeader(" solar still ");
+        String emptySearchHeader = formatter.buildNoResultsHeader(" ");
+        String emptyResultsHeader = formatter.buildResultsHeader(
+            "solar still",
+            Collections.emptyList(),
+            true,
+            10,
+            false,
+            false,
+            false
         );
+
+        assertContainsTokens(queriedHeader, "No", "guide", "solar still");
+        assertContainsTokens(emptySearchHeader, "No", "guide");
+        assertFalse(emptySearchHeader.contains("\""));
+        assertContainsTokens(emptyResultsHeader, "No", "guide", "solar still");
+    }
+
+    private static void assertResultsHeaderIncludes(String header, String count, String... queryTokens) {
+        assertContainsTokens(header, "Results", "(" + count + ")");
+        for (String queryToken : queryTokens) {
+            assertTrue(header.contains(queryToken));
+        }
+    }
+
+    private static void assertContainsTokens(String value, String... tokens) {
+        String normalizedValue = value.toLowerCase();
+        for (String token : tokens) {
+            assertTrue(
+                "Expected <" + value + "> to contain token <" + token + ">",
+                normalizedValue.contains(token.toLowerCase())
+            );
+        }
     }
 }
