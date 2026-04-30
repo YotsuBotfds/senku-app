@@ -4,6 +4,57 @@ Planner lane only. This note slices the remaining Senku Android mock-parity
 work for up to five implementation workers while the parent integrates. Do not
 edit Android source from this lane.
 
+## 2026-04-30 11:40 Pre-Noon Rebaseline
+
+Current pushed head for this tracker:
+
+- `2a22429` - Balance tablet home columns.
+- Commits integrated in the late-morning polish loop:
+  `743be25`, `2f59dc6`, `9db8ddc`, `f954923`, `a912f2e`,
+  `f1347f2`, `e338a2d`, and `2a22429`.
+
+Latest full proof artifact:
+
+- `artifacts/ui_state_pack/final_pre_noon_full_visual_proof/20260430_113129`.
+- Summary reports `status=pass`, `total_states=22`, `pass_count=22`,
+  `fail_count=0`, `platform_anr_count=0`, and `matrix_homogeneous=true`.
+- Matrix APK SHA:
+  `c263797f7184aab9102d6c313a5562d5b7cb392e98c0de2ff0a23896642591e5`.
+- Host model remains `gemma-4-e2b-it-litert`, SHA
+  `ea1102014465edeb14b517bf270f6751d036749e3c5f517a7ff802782cb92161`.
+- Complete goal mock bundle:
+  `artifacts/ui_state_pack/final_pre_noon_full_visual_proof/20260430_113129_mocks.zip`.
+- Review aids:
+  `artifacts/ui_state_pack/final_pre_noon_full_visual_proof/20260430_113129/normalized_review/`
+  and
+  `artifacts/ui_state_pack/final_pre_noon_full_visual_proof/20260430_113129/normalized_tablet_review/`.
+
+Validation after `2a22429`:
+
+- `:app:assembleDebug`
+- `:app:testDebugUnitTest --tests com.senku.mobile.MainActivityPhoneNavigationTest --tests com.senku.mobile.MainActivityHomeChromeTest --tests com.senku.ui.tablet.TabletMainXmlShellParityTest`
+- Full `:app:testDebugUnitTest`
+
+High-signal changes in this loop:
+
+- Normalized tablet/Compose top chrome back affordances to the icon-only shared
+  pattern across home, search, answer, thread, guide, and emergency.
+- Flattened tablet emergency danger/proof surfaces and separated the proof
+  heading from the proof row.
+- Tightened guide paper and search/home density while preserving the field-manual
+  visual direction.
+- Added source/evidence rail breathing room and search filter checkbox spacing.
+- Fixed the shared-input Ask routing edge: the explicit Search button now
+  resolves through the active shared-input target, so Ask-owned input submits as
+  Ask instead of guide search.
+
+Remaining visual work is polish rather than correctness:
+
+- Search filter rail width and empty-space balance.
+- Guide paper/sidebar balance.
+- Answer/thread lower-canvas/composer composition.
+- Home and emergency lower-canvas density.
+
 ## 2026-04-30 03:32 Current-Head Rebaseline
 
 Current pushed head for this tracker:
