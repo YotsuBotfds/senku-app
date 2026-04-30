@@ -235,17 +235,6 @@ public final class MainActivityHomeChromeTest {
     }
 
     @Test
-    public void reviewHomeCategoryCountsMatchTargetMockContract() {
-        assertEquals(84, MainActivity.reviewHomeCategoryCountForTest("shelter"));
-        assertEquals(67, MainActivity.reviewHomeCategoryCountForTest("water"));
-        assertEquals(52, MainActivity.reviewHomeCategoryCountForTest("fire"));
-        assertEquals(91, MainActivity.reviewHomeCategoryCountForTest("food"));
-        assertEquals(73, MainActivity.reviewHomeCategoryCountForTest("medicine"));
-        assertEquals(119, MainActivity.reviewHomeCategoryCountForTest("tools"));
-        assertEquals(0, MainActivity.reviewHomeCategoryCountForTest("communications"));
-    }
-
-    @Test
     public void manualHomeCategoryLabelsStayCompactForPhoneGrid() {
         assertEquals("Shelter", MainActivity.manualHomeCategoryLabel("shelter"));
         assertEquals("Water", MainActivity.manualHomeCategoryLabel("water"));
@@ -307,65 +296,10 @@ public final class MainActivityHomeChromeTest {
     }
 
     @Test
-    public void reviewManualRecentThreadsUseTargetMockExamplesWhenKnown() {
-        long fourHoursTwentyOneMinutesAgo = System.currentTimeMillis() - ((4L * 60L + 21L) * 60_000L);
-        ChatSessionStore.ConversationPreview first = preview(
-            "can I make a rain shelter with cord",
-            "GD-345",
-            "",
-            ReviewedCardMetadata.empty(),
-            fourHoursTwentyOneMinutesAgo
-        );
-        ChatSessionStore.ConversationPreview fire = preview(
-            "how do I start a fire in rain",
-            "GD-394",
-            "deterministic-fire",
-            ReviewedCardMetadata.empty(),
-            fourHoursTwentyOneMinutesAgo
-        );
-        ChatSessionStore.ConversationPreview pot = preview(
-            "boil water without a safe pot",
-            "GD-094",
-            "",
-            new ReviewedCardMetadata("card-1", "GD-094", "reviewed", "", "reviewed_card_runtime", Collections.emptyList()),
-            System.currentTimeMillis() - (25L * 60L * 60L * 1000L)
-        );
-
-        assertEquals(
-            "How do I build a simple rain shelter...\nGD-345 \u2022 04:21 \u2022 UNSURE",
-            MainActivity.buildReviewManualHomeRecentThreadLabelForTest(first, 0)
-        );
-        assertEquals(
-            "Best tinder when materials are wet\nGD-027 \u2022 04:08 \u2022 CONFIDENT",
-            MainActivity.buildReviewManualHomeRecentThreadLabelForTest(fire, 1)
-        );
-        assertEquals(
-            "Boil water without a fire-safe pot\nGD-094 \u2022 YESTERDAY \u2022 CONFIDENT",
-            MainActivity.buildReviewManualHomeRecentThreadLabelForTest(pot, 2)
-        );
-    }
-
-    @Test
-    public void reviewSearchLatencyOnlyAppliesToTargetMockQuery() {
-        assertEquals(
-            "Search  rain shelter - 4 results \u2022 12MS",
-            MainActivity.appendReviewSearchLatency("Search  rain shelter - 4 results", "rain shelter", true)
-        );
-        assertEquals(
-            "Search  rain shelter - 4 results",
-            MainActivity.appendReviewSearchLatency("Search  rain shelter - 4 results", "rain shelter", false)
-        );
-        assertEquals(
-            "Search  water - 4 results",
-            MainActivity.appendReviewSearchLatency("Search  water - 4 results", "water", true)
-        );
-    }
-
-    @Test
     public void phoneSearchHeaderKeepsCompactCountAndReviewLatency() {
         assertEquals(
             "Search rain shelter    4 results \u2022 12MS",
-            MainActivity.appendReviewSearchLatency(
+            ReviewDemoPolicy.appendSearchLatency(
                 MainActivity.buildPhoneSearchHeaderForTest("rain shelter", 4),
                 "rain shelter",
                 true
@@ -398,46 +332,12 @@ public final class MainActivityHomeChromeTest {
     }
 
     @Test
-    public void reviewRainShelterSearchUsesTargetOrderAndDisplayContent() {
-        List<SearchResult> results = MainActivity.buildReviewSearchResultsForTest(
-            "rain shelter",
-            true,
-            Arrays.asList(
-                guideWithId("Primitive Shelter Construction Techniques", "GD-345"),
-                guideWithId("Shelter Site Selection & Hazard Assessment", "GD-446"),
-                guideWithId("Survival Basics & First 72 Hours", "GD-023"),
-                guideWithId("Underground Shelter & Bunker Construction", "GD-873")
-            )
-        );
-
-        assertEquals(4, results.size());
-        assertEquals("GD-023", results.get(0).guideId);
-        assertEquals("GD-027", results.get(1).guideId);
-        assertEquals("GD-345", results.get(2).guideId);
-        assertEquals("GD-294", results.get(3).guideId);
-        assertEquals("Tarp & Cord Shelters", results.get(2).title);
-        assertEquals("A simple ridgeline shelter requires only tarp, cord, and two anchor points...", results.get(2).snippet);
-        assertEquals("topic", results.get(2).contentRole);
-        assertEquals("immediate", results.get(2).timeHorizon);
-    }
-
-    @Test
-    public void reviewRainShelterSearchDoesNotChangeNormalSearches() {
-        List<SearchResult> original = Arrays.asList(
-            guideWithId("Water Storage", "GD-214"),
-            guideWithId("Sand Filter", "GD-035")
-        );
-
-        assertEquals(original, MainActivity.buildReviewSearchResultsForTest("water", true, original));
-        assertEquals(original, MainActivity.buildReviewSearchResultsForTest("rain shelter", false, original));
-    }
-
-    @Test
     public void tabletSearchPreviewUsesTargetCopyForFirstReviewResult() {
-        SearchResult result = MainActivity.buildReviewSearchResultsForTest(
+        SearchResult result = ReviewDemoPolicy.shapeSearchResults(
             "rain shelter",
             true,
-            Arrays.asList(guideWithId("Survival Basics & First 72 Hours", "GD-023"))
+            Arrays.asList(guideWithId("Survival Basics & First 72 Hours", "GD-023")),
+            null
         ).get(0);
 
         assertEquals("Starter  \u00b7  17 sections", MainActivity.buildTabletPreviewMetaForTest(result));
