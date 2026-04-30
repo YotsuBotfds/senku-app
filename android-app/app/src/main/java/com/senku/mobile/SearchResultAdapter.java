@@ -1379,39 +1379,7 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
     }
 
     private static String cleanDisplayTextInternal(String raw, int maxLen) {
-        String cleaned = stripDisplayMarkdown(safe(raw).trim());
-        if (cleaned.isEmpty()) {
-            return "";
-        }
-        cleaned = DetailActivity.sanitizeWarningResidualCopy(cleaned);
-        cleaned = cleaned.replaceAll("\\s+", " ").trim();
-        if (maxLen > 0 && cleaned.length() > maxLen) {
-            return cleaned.substring(0, Math.max(0, maxLen - 1)).trim() + "\u2026";
-        }
-        return cleaned;
-    }
-
-    private static String stripDisplayMarkdown(String raw) {
-        String cleaned = safe(raw);
-        if (cleaned.isEmpty()) {
-            return "";
-        }
-        cleaned = cleaned.replace("\r", "\n");
-        cleaned = cleaned.replaceAll("!\\[([^\\]]*)\\]\\([^)]*\\)", "$1");
-        cleaned = cleaned.replaceAll("\\[([^\\]]+)\\]\\([^)]*\\)", "$1");
-        cleaned = cleaned.replaceAll("(?i)<br\\s*/?>", " ");
-        cleaned = cleaned.replaceAll("(?m)^\\s*#{1,6}\\s*", "");
-        cleaned = cleaned.replaceAll("\\s#{2,6}\\s*", " ");
-        cleaned = cleaned.replaceAll("(?m)^\\s*>+\\s*", "");
-        cleaned = cleaned.replaceAll("(?m)^\\s*[-*+]\\s+\\[[ xX]\\]\\s*", "");
-        cleaned = cleaned.replaceAll("(?m)^\\s*\\d+[.)]\\s+", "");
-        cleaned = cleaned.replaceAll("(?m)^\\s*[-*+]\\s+", "");
-        cleaned = cleaned.replaceAll("(?m)^\\s*\\|?(\\s*:?-{2,}:?\\s*\\|)+\\s*:?-{2,}:?\\s*\\|?\\s*$", " ");
-        cleaned = cleaned.replace("`", "");
-        cleaned = cleaned.replace("**", "");
-        cleaned = cleaned.replace("__", "");
-        cleaned = cleaned.replace("~~", "");
-        return cleaned;
+        return SearchResultCardModelMapper.cleanDisplayText(raw, maxLen);
     }
 
     private CharSequence formatDisplayText(String raw, int maxLen, int maxMatches) {

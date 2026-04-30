@@ -377,7 +377,7 @@ public final class SearchResultCardModelMapper {
         return cleanDisplayText(raw, maxLen);
     }
 
-    private static String cleanDisplayText(String raw, int maxLen) {
+    static String cleanDisplayText(String raw, int maxLen) {
         String cleaned = stripDisplayMarkdown(safe(raw).trim());
         if (cleaned.isEmpty()) {
             return "";
