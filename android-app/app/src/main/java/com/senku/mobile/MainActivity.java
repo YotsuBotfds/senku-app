@@ -413,7 +413,7 @@ public final class MainActivity extends AppCompatActivity {
         });
         askButton.setOnClickListener(v -> {
             setPhoneTabFromFlow(BottomTabDestination.ASK);
-            handleSharedQuerySubmit(searchInput.getText().toString(), SubmitTarget.ASK);
+            handleSharedQuerySubmit(searchInput.getText().toString());
         });
         importModelButton.setOnClickListener(v -> launchModelPicker());
         hostInferenceButton.setOnClickListener(v -> toggleHostInference());
@@ -3136,13 +3136,7 @@ public final class MainActivity extends AppCompatActivity {
         BottomTabDestination destination,
         boolean currentAskLaneActive
     ) {
-        if (destination == BottomTabDestination.ASK) {
-            return true;
-        }
-        if (destination == null) {
-            return currentAskLaneActive;
-        }
-        return false;
+        return AskSearchCoordinator.resolveAskLaneActiveForExplicitPhoneFlow(destination, currentAskLaneActive);
     }
 
     private MainRouteDecisionHelper.RouteState currentMainRouteState() {
@@ -3608,7 +3602,7 @@ public final class MainActivity extends AppCompatActivity {
         searchButton.setText(searchAction.buttonTextResource);
         searchButton.setContentDescription(getString(searchAction.buttonDescriptionResource));
         boolean askMode = isAskLaneActive();
-        updateSharedInputChrome(askMode ? SubmitTarget.ASK : SubmitTarget.SEARCH);
+        updateSharedInputChrome(resolveSharedSubmitTarget(activePhoneTab, askLaneActive));
         if (browseButton != null) {
             browseButton.setText(isBrowseModeActive() ? R.string.browse_guides_button : R.string.home_button);
             boolean browsePrimary = !askMode;

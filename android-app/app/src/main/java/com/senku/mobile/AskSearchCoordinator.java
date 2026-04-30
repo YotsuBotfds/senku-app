@@ -27,6 +27,19 @@ public final class AskSearchCoordinator {
         return resolveSubmitTarget(activePhoneTab, askLaneActive) == SubmitTarget.ASK;
     }
 
+    static boolean resolveAskLaneActiveForExplicitPhoneFlow(
+        BottomTabDestination destination,
+        boolean currentAskLaneActive
+    ) {
+        if (destination == BottomTabDestination.ASK) {
+            return true;
+        }
+        if (destination == null) {
+            return currentAskLaneActive;
+        }
+        return false;
+    }
+
     static BottomTabDestination tabForSubmitTarget(SubmitTarget target) {
         return target == SubmitTarget.ASK
             ? BottomTabDestination.ASK
