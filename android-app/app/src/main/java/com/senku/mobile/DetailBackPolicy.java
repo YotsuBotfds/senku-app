@@ -42,8 +42,8 @@ public final class DetailBackPolicy {
 
     static VisibleBackAffordance visibleBackAffordance(boolean taskRoot) {
         return new VisibleBackAffordance(
-            taskRoot ? R.string.home_button : R.string.detail_back,
-            taskRoot ? R.string.detail_home_content_description : R.string.detail_back_content_description,
+            R.string.detail_back,
+            R.string.detail_back_content_description,
             false
         );
     }
