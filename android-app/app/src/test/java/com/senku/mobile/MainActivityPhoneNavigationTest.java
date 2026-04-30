@@ -482,6 +482,37 @@ public final class MainActivityPhoneNavigationTest {
     }
 
     @Test
+    public void explicitPhoneFlowEntryClaimsOrClearsAskLaneOwnership() {
+        assertTrue(MainActivity.resolveAskLaneActiveForExplicitPhoneFlow(BottomTabDestination.ASK, false));
+
+        assertFalse(MainActivity.resolveAskLaneActiveForExplicitPhoneFlow(BottomTabDestination.SEARCH, true));
+        assertFalse(MainActivity.resolveAskLaneActiveForExplicitPhoneFlow(BottomTabDestination.HOME, true));
+        assertFalse(MainActivity.resolveAskLaneActiveForExplicitPhoneFlow(BottomTabDestination.PINS, true));
+        assertFalse(MainActivity.resolveAskLaneActiveForExplicitPhoneFlow(BottomTabDestination.THREADS, true));
+
+        assertTrue(MainActivity.resolveAskLaneActiveForExplicitPhoneFlow(null, true));
+        assertFalse(MainActivity.resolveAskLaneActiveForExplicitPhoneFlow(null, false));
+    }
+
+    @Test
+    public void explicitSearchEntryPreventsStaleAskLaneSubmitTarget() {
+        boolean askLaneActive = MainActivity.resolveAskLaneActiveForExplicitPhoneFlow(
+            BottomTabDestination.SEARCH,
+            true
+        );
+
+        assertFalse(askLaneActive);
+        assertEquals(
+            SubmitTarget.SEARCH,
+            MainActivity.resolveSharedSubmitTarget(BottomTabDestination.HOME, askLaneActive)
+        );
+        assertEquals(
+            SubmitTarget.SEARCH,
+            MainActivity.resolveSearchButtonSubmitTarget(BottomTabDestination.HOME, askLaneActive)
+        );
+    }
+
+    @Test
     public void mainActivitySubmitHelpersDelegateToAskSearchCoordinator() {
         for (BottomTabDestination destination : BottomTabDestination.values()) {
             for (boolean askLaneActive : Arrays.asList(false, true)) {

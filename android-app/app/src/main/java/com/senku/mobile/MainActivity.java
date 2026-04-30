@@ -3320,7 +3320,21 @@ public final class MainActivity extends AppCompatActivity {
             return;
         }
         activePhoneTab = phoneTabSelectionOwner(destination);
+        askLaneActive = resolveAskLaneActiveForExplicitPhoneFlow(destination, askLaneActive);
         updatePhoneTabBarState();
+    }
+
+    static boolean resolveAskLaneActiveForExplicitPhoneFlow(
+        BottomTabDestination destination,
+        boolean currentAskLaneActive
+    ) {
+        if (destination == BottomTabDestination.ASK) {
+            return true;
+        }
+        if (destination == null) {
+            return currentAskLaneActive;
+        }
+        return false;
     }
 
     private MainRouteDecisionHelper.RouteState currentMainRouteState() {
