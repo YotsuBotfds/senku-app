@@ -105,6 +105,19 @@ public final class MainRouteDecisionHelper {
         return new Transition(browseHome(), Effect.SHOW_BROWSE_HOME);
     }
 
+    static RouteState routeStateForMode(
+        boolean browseMode,
+        BottomTabDestination activePhoneTab,
+        boolean askLaneActive
+    ) {
+        Surface surface = browseMode
+            ? Surface.BROWSE
+            : (askLaneActive || activePhoneTab == BottomTabDestination.ASK
+                ? Surface.ASK_RESULTS
+                : Surface.SEARCH_RESULTS);
+        return new RouteState(surface, activePhoneTab, askLaneActive);
+    }
+
     static BottomTabDestination phoneTabSelectionOwner(BottomTabDestination destination) {
         if (destination == null) {
             return BottomTabDestination.HOME;

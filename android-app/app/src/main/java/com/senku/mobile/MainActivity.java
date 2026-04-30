@@ -3391,12 +3391,7 @@ public final class MainActivity extends AppCompatActivity {
         BottomTabDestination activePhoneTab,
         boolean askLaneActive
     ) {
-        MainRouteDecisionHelper.Surface surface = browseMode
-            ? MainRouteDecisionHelper.Surface.BROWSE
-            : (askLaneActive || activePhoneTab == BottomTabDestination.ASK
-                ? MainRouteDecisionHelper.Surface.ASK_RESULTS
-                : MainRouteDecisionHelper.Surface.SEARCH_RESULTS);
-        return new MainRouteDecisionHelper.RouteState(surface, activePhoneTab, askLaneActive);
+        return MainRouteDecisionHelper.routeStateForMode(browseMode, activePhoneTab, askLaneActive);
     }
 
     private void applyMainRouteState(MainRouteDecisionHelper.RouteState routeState) {

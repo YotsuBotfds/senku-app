@@ -255,6 +255,34 @@ public final class MainRouteDecisionHelperTest {
         assertFalse(threads.askLaneActive);
     }
 
+    @Test
+    public void routeStateForModeResolvesBrowseSearchAndAskSurfaces() {
+        assertRoute(
+            MainRouteDecisionHelper.routeStateForMode(true, BottomTabDestination.ASK, true),
+            MainRouteDecisionHelper.Surface.BROWSE,
+            BottomTabDestination.ASK,
+            true
+        );
+        assertRoute(
+            MainRouteDecisionHelper.routeStateForMode(false, BottomTabDestination.HOME, false),
+            MainRouteDecisionHelper.Surface.SEARCH_RESULTS,
+            BottomTabDestination.HOME,
+            false
+        );
+        assertRoute(
+            MainRouteDecisionHelper.routeStateForMode(false, BottomTabDestination.HOME, true),
+            MainRouteDecisionHelper.Surface.ASK_RESULTS,
+            BottomTabDestination.HOME,
+            true
+        );
+        assertRoute(
+            MainRouteDecisionHelper.routeStateForMode(false, BottomTabDestination.ASK, false),
+            MainRouteDecisionHelper.Surface.ASK_RESULTS,
+            BottomTabDestination.ASK,
+            false
+        );
+    }
+
     private static void assertTransition(
         MainRouteDecisionHelper.Transition transition,
         MainRouteDecisionHelper.Surface surface,
