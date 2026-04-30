@@ -6,6 +6,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.util.Log;
 
+import com.senku.mobile.PackQueryPipelineHelper.SearchLatencyBreakdown;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -32,12 +34,6 @@ public final class PackRepository implements AutoCloseable {
     private static final int MIN_GENERAL_SUPPORT_METADATA_SCORE = 12;
     private static final String FTS5_TABLE = "lexical_chunks_fts";
     private static final String FTS4_TABLE = "lexical_chunks_fts4";
-    private static final long SEARCH_ROUTE_BUDGET_MS = 80L;
-    private static final long SEARCH_FTS_BUDGET_MS = 120L;
-    private static final long SEARCH_KEYWORD_BUDGET_MS = 120L;
-    private static final long SEARCH_VECTOR_BUDGET_MS = 180L;
-    private static final long SEARCH_RERANK_BUDGET_MS = 60L;
-    private static final long SEARCH_TOTAL_BUDGET_MS = 280L;
     private static final long FTS_RUNTIME_PROBE_BUDGET_MS = 25L;
     private static final Object FTS_RUNTIME_LOCK = new Object();
     private static volatile FtsRuntime cachedFtsRuntime;
@@ -269,31 +265,7 @@ public final class PackRepository implements AutoCloseable {
 
         try (Cursor cursor = database.rawQuery(sql, args)) {
             while (cursor.moveToNext()) {
-                String title = cursor.getString(0);
-                String guideId = cursor.getString(1);
-                String category = emptySafe(cursor.getString(2));
-                String difficulty = emptySafe(cursor.getString(3));
-                String description = emptySafe(cursor.getString(4));
-                String body = emptySafe(cursor.getString(5));
-                String contentRole = emptySafe(cursor.getString(6));
-                String timeHorizon = emptySafe(cursor.getString(7));
-                String structureType = emptySafe(cursor.getString(8));
-                String topicTags = emptySafe(cursor.getString(9));
-                String subtitle = guideId + " | " + category + " | " + difficulty;
-                results.add(new SearchResult(
-                    title,
-                    subtitle,
-                    clip(description, 180),
-                    body,
-                    guideId,
-                    "",
-                    category,
-                    "guide",
-                    contentRole,
-                    timeHorizon,
-                    structureType,
-                    topicTags
-                ));
+                results.add(guideResultFromCursor(cursor));
             }
         }
         return results;
@@ -312,31 +284,7 @@ public final class PackRepository implements AutoCloseable {
             if (!cursor.moveToFirst()) {
                 return null;
             }
-            String title = emptySafe(cursor.getString(0));
-            String foundGuideId = emptySafe(cursor.getString(1));
-            String category = emptySafe(cursor.getString(2));
-            String difficulty = emptySafe(cursor.getString(3));
-            String description = emptySafe(cursor.getString(4));
-            String body = emptySafe(cursor.getString(5));
-            String contentRole = emptySafe(cursor.getString(6));
-            String timeHorizon = emptySafe(cursor.getString(7));
-            String structureType = emptySafe(cursor.getString(8));
-            String topicTags = emptySafe(cursor.getString(9));
-            String subtitle = foundGuideId + " | " + category + " | " + difficulty;
-            return new SearchResult(
-                title,
-                subtitle,
-                clip(description, 180),
-                body,
-                foundGuideId,
-                "",
-                category,
-                "guide",
-                contentRole,
-                timeHorizon,
-                structureType,
-                topicTags
-            );
+            return guideResultFromCursor(cursor);
         }
     }
 
@@ -1159,17 +1107,12 @@ public final class PackRepository implements AutoCloseable {
         int selectedCount,
         long elapsedNanos
     ) {
-        double totalMs = Math.max(0L, elapsedNanos) / 1_000_000.0;
-        double avgMsPerChunk = chunkCount <= 0 ? 0.0 : totalMs / chunkCount;
-        return String.format(
-            QUERY_LOCALE,
-            "search.rerank query=\"%s\" topK=%d chunks=%d selected=%d totalRerankMs=%.3f avgRerankMsPerChunk=%.3f",
-            emptySafe(query),
-            Math.max(topK, 0),
-            Math.max(chunkCount, 0),
-            Math.max(selectedCount, 0),
-            totalMs,
-            avgMsPerChunk
+        return PackQueryPipelineHelper.buildRerankTimingDebugLine(
+            query,
+            topK,
+            chunkCount,
+            selectedCount,
+            elapsedNanos
         );
     }
 
@@ -4052,23 +3995,16 @@ public final class PackRepository implements AutoCloseable {
                 continue;
             }
             seenGuideSections.add(guideSectionKey);
-            String retrievalMode;
-            if (combined.lexicalRank != Integer.MAX_VALUE && combined.vectorRank != Integer.MAX_VALUE) {
-                retrievalMode = "hybrid";
-            } else if (combined.vectorRank != Integer.MAX_VALUE) {
-                retrievalMode = "vector";
-            } else {
-                retrievalMode = "lexical";
-            }
-            String subtitle = hit.guideId + " | " + hit.category + " | " + hit.sectionHeading + " | " + retrievalMode;
-            results.add(new SearchResult(
+            String retrievalMode = PackQueryPipelineHelper.retrievalModeForRanks(
+                combined.lexicalRank,
+                combined.vectorRank
+            );
+            results.add(PackQueryPipelineHelper.mapChunkResult(
                 hit.guideTitle,
-                subtitle,
-                clip(hit.document, 220),
-                hit.document,
                 hit.guideId,
                 hit.sectionHeading,
                 hit.category,
+                hit.document,
                 retrievalMode,
                 hit.contentRole,
                 hit.timeHorizon,
@@ -4080,15 +4016,7 @@ public final class PackRepository implements AutoCloseable {
     }
 
     private static String buildGuideSectionKey(String guideId, String guideTitle, String sectionHeading) {
-        String base = emptySafe(guideId).trim();
-        if (base.isEmpty()) {
-            base = emptySafe(guideTitle).trim();
-        }
-        String section = emptySafe(sectionHeading).trim();
-        if (section.isEmpty()) {
-            return base.toLowerCase(QUERY_LOCALE);
-        }
-        return (base + "::" + section).toLowerCase(QUERY_LOCALE);
+        return PackQueryPipelineHelper.guideSectionKey(guideId, guideTitle, sectionHeading);
     }
 
     private static int modePriority(CombinedHit hit) {
@@ -5008,35 +4936,19 @@ public final class PackRepository implements AutoCloseable {
         int routeResults,
         SearchLatencyBreakdown breakdown
     ) {
-        SearchLatencyBreakdown safeBreakdown = breakdown == null
-            ? new SearchLatencyBreakdown(0L, 0L, 0L, 0L, 0L, 0L, "unknown")
-            : breakdown;
-        return "search query=\"" + query + "\" routeFocused=" + routeFocused +
-            " routeSpecs=" + routeSpecCount +
-            " routeMs=" + safeBreakdown.routeMs +
-            " ftsMs=" + safeBreakdown.ftsMs +
-            " keywordMs=" + safeBreakdown.keywordMs +
-            " vectorMs=" + safeBreakdown.vectorMs +
-            " rerankMs=" + safeBreakdown.rerankMs +
-            " lexicalHits=" + lexicalHits +
-            " vectorHits=" + vectorHits +
-            " routeResults=" + routeResults +
-            " fallback=" + safeBreakdown.fallbackMode +
-            " totalMs=" + safeBreakdown.totalMs;
+        return PackQueryPipelineHelper.buildSearchSummaryLine(
+            query,
+            routeFocused,
+            routeSpecCount,
+            lexicalHits,
+            vectorHits,
+            routeResults,
+            breakdown
+        );
     }
 
     private static String buildSlowQueryTripwireDebugLine(String query, SearchLatencyBreakdown breakdown) {
-        if (breakdown == null) {
-            return "search.slow query=\"" + query + "\" stage=unknown";
-        }
-        return "search.slow query=\"" + query + "\" stage=" + breakdown.firstSlowStage() +
-            " fallback=" + breakdown.fallbackMode +
-            " routeMs=" + breakdown.routeMs +
-            " ftsMs=" + breakdown.ftsMs +
-            " keywordMs=" + breakdown.keywordMs +
-            " vectorMs=" + breakdown.vectorMs +
-            " rerankMs=" + breakdown.rerankMs +
-            " totalMs=" + breakdown.totalMs;
+        return PackQueryPipelineHelper.buildSlowQueryTripwireDebugLine(query, breakdown);
     }
 
     private static void logSearchTripwireIfNeeded(String query, SearchLatencyBreakdown breakdown) {
@@ -5087,30 +4999,17 @@ public final class PackRepository implements AutoCloseable {
     }
 
     private static SearchResult guideResultFromCursor(Cursor cursor) {
-        String title = emptySafe(cursor.getString(0));
-        String guideId = emptySafe(cursor.getString(1));
-        String category = emptySafe(cursor.getString(2));
-        String difficulty = emptySafe(cursor.getString(3));
-        String description = emptySafe(cursor.getString(4));
-        String body = emptySafe(cursor.getString(5));
-        String contentRole = emptySafe(cursor.getString(6));
-        String timeHorizon = emptySafe(cursor.getString(7));
-        String structureType = emptySafe(cursor.getString(8));
-        String topicTags = emptySafe(cursor.getString(9));
-        String subtitle = guideId + " | " + category + " | " + difficulty;
-        return new SearchResult(
-            title,
-            subtitle,
-            clip(description, 180),
-            body,
-            guideId,
-            "",
-            category,
-            "guide",
-            contentRole,
-            timeHorizon,
-            structureType,
-            topicTags
+        return PackQueryPipelineHelper.mapGuideRow(
+            cursor.getString(0),
+            cursor.getString(1),
+            cursor.getString(2),
+            cursor.getString(3),
+            cursor.getString(4),
+            cursor.getString(5),
+            cursor.getString(6),
+            cursor.getString(7),
+            cursor.getString(8),
+            cursor.getString(9)
         );
     }
 
@@ -5309,60 +5208,6 @@ public final class PackRepository implements AutoCloseable {
 
         static FtsRuntimeProbeResult notRun() {
             return new FtsRuntimeProbeResult(false, 0L);
-        }
-    }
-
-    private static final class SearchLatencyBreakdown {
-        final long routeMs;
-        final long ftsMs;
-        final long keywordMs;
-        final long vectorMs;
-        final long rerankMs;
-        final long totalMs;
-        final String fallbackMode;
-
-        SearchLatencyBreakdown(
-            long routeMs,
-            long ftsMs,
-            long keywordMs,
-            long vectorMs,
-            long rerankMs,
-            long totalMs,
-            String fallbackMode
-        ) {
-            this.routeMs = Math.max(0L, routeMs);
-            this.ftsMs = Math.max(0L, ftsMs);
-            this.keywordMs = Math.max(0L, keywordMs);
-            this.vectorMs = Math.max(0L, vectorMs);
-            this.rerankMs = Math.max(0L, rerankMs);
-            this.totalMs = Math.max(0L, totalMs);
-            this.fallbackMode = emptySafe(fallbackMode).trim();
-        }
-
-        boolean hasSlowStage() {
-            return !firstSlowStage().isEmpty();
-        }
-
-        String firstSlowStage() {
-            if (routeMs > SEARCH_ROUTE_BUDGET_MS) {
-                return "route";
-            }
-            if (ftsMs > SEARCH_FTS_BUDGET_MS) {
-                return "fts";
-            }
-            if (keywordMs > SEARCH_KEYWORD_BUDGET_MS) {
-                return "keyword";
-            }
-            if (vectorMs > SEARCH_VECTOR_BUDGET_MS) {
-                return "vector";
-            }
-            if (rerankMs > SEARCH_RERANK_BUDGET_MS) {
-                return "rerank";
-            }
-            if (totalMs > SEARCH_TOTAL_BUDGET_MS) {
-                return "total";
-            }
-            return "";
         }
     }
 
