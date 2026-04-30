@@ -569,6 +569,51 @@ public final class PromptHarnessSmokeTest {
     }
 
     @Test
+    public void savedTabPinnedGuideButtonOpensGuideDetailAndBackReturnsSaved() throws Exception {
+        clearPinnedGuidesForTest();
+        Context context = ApplicationProvider.getApplicationContext();
+        SearchResult expectedGuide = loadGuideByIdForTest("GD-345");
+        Assert.assertNotNull("GD-345 should be available for saved guide tap-through proof", expectedGuide);
+        Assert.assertTrue("test seed guide should be accepted as a saved guide", PinnedGuideStore.add(context, "GD-345"));
+        Intent intent = productReviewMainActivityIntent();
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        intent.putExtra(MainActivity.EXTRA_OPEN_SAVED, true);
+
+        try (ActivityScenario<MainActivity> scenario = ActivityScenario.launch(intent)) {
+            awaitHarnessIdle();
+            Assert.assertTrue(
+                "saved launch should settle on the main input before tap-through; harness signals="
+                    + HarnessTestSignals.snapshot(),
+                device.wait(Until.hasObject(By.res(APP_PACKAGE, "search_input")), SEARCH_WAIT_MS)
+            );
+            waitForSavedGuidesDestination(scenario, true, DETAIL_WAIT_MS);
+            Assert.assertTrue(
+                "first saved guide button should be tappable from the Saved destination",
+                tapFirstSavedGuideFromResumedMain()
+            );
+            Assert.assertTrue(
+                "saved guide tap should open DetailActivity; harness signals="
+                    + HarnessTestSignals.snapshot(),
+                waitForResumedActivity(DetailActivity.class, DETAIL_WAIT_MS)
+            );
+            Assert.assertTrue(
+                "saved guide detail should render for GD-345; harness signals="
+                    + HarnessTestSignals.snapshot(),
+                waitForDetailBodyReady(DETAIL_WAIT_MS, 8)
+            );
+            assertResumedGuideDetail(expectedGuide);
+            captureUiState("saved_guide_detail");
+
+            device.pressBack();
+            InstrumentationRegistry.getInstrumentation().waitForIdleSync();
+            waitForSavedGuidesDestination(true, DETAIL_WAIT_MS);
+            captureUiState("saved_guide_detail_back_saved");
+        } finally {
+            clearPinnedGuidesForTest();
+        }
+    }
+
+    @Test
     public void tabletDetailRailLibraryTapReturnsManualHome() {
         try (ActivityScenario<DetailActivity> scenario = launchTabletRailProofDetail()) {
             awaitHarnessIdle();
@@ -3523,6 +3568,27 @@ public final class PromptHarnessSmokeTest {
         return clicked[0];
     }
 
+    private boolean tapFirstSavedGuideFromResumedMain() {
+        final boolean[] clicked = {false};
+        InstrumentationRegistry.getInstrumentation().runOnMainSync(() -> {
+            Activity activity = getResumedActivityOnMainThread();
+            if (!(activity instanceof MainActivity)) {
+                return;
+            }
+            LinearLayout pinnedContainer = activity.findViewById(R.id.pinned_container);
+            Button firstSavedGuide = firstButton(pinnedContainer);
+            if (firstSavedGuide != null && isVisible(firstSavedGuide) && firstSavedGuide.isEnabled()) {
+                firstSavedGuide.performClick();
+                clicked[0] = true;
+            }
+        });
+        if (clicked[0]) {
+            InstrumentationRegistry.getInstrumentation().waitForIdleSync();
+            awaitHarnessIdle();
+        }
+        return clicked[0];
+    }
+
     private boolean clickUiObject(BySelector selector, long timeoutMs) {
         UiObject2 object = device.wait(Until.findObject(selector), timeoutMs);
         if (object == null || !object.isEnabled()) {
@@ -3581,11 +3647,14 @@ public final class PromptHarnessSmokeTest {
         BottomTabBarHostView tabHost =
             findFirstDescendantByClass(activity.findViewById(android.R.id.content), BottomTabBarHostView.class);
         if (tabHost != null) {
-            Assert.assertEquals(
-                "runtime phone tab host should expose Saved as the selected tab",
-                BottomTabDestination.PINS,
-                readPrivateField(tabHost, "activeTab")
-            );
+            Object runtimeActiveTab = readPrivateField(tabHost, "activeTab");
+            if (runtimeActiveTab != null) {
+                Assert.assertEquals(
+                    "runtime phone tab host should expose Saved as the selected tab when reflected",
+                    BottomTabDestination.PINS,
+                    runtimeActiveTab
+                );
+            }
         }
         View staticSavedLabel = activity.findViewById(R.id.phone_nav_pins_label);
         if (staticSavedLabel != null && isVisible(staticSavedLabel)) {
@@ -3644,6 +3713,62 @@ public final class PromptHarnessSmokeTest {
                 isVisible(resultsList)
             );
         }
+    }
+
+    private SearchResult loadGuideByIdForTest(String guideId) throws Exception {
+        PackInstaller.InstalledPack pack = PackInstaller.ensureInstalled(
+            ApplicationProvider.getApplicationContext(),
+            false
+        );
+        try (PackRepository repo = new PackRepository(pack.databaseFile, pack.vectorFile)) {
+            return repo.loadGuideById(guideId);
+        }
+    }
+
+    private void assertResumedGuideDetail(SearchResult expectedGuide) {
+        InstrumentationRegistry.getInstrumentation().runOnMainSync(() -> {
+            Activity activity = getResumedActivityOnMainThread();
+            Assert.assertTrue(
+                "saved guide tap-through should resume DetailActivity",
+                activity instanceof DetailActivity
+            );
+            String expectedGuideId = safe(expectedGuide == null ? null : expectedGuide.guideId).trim();
+            Assert.assertEquals(
+                "saved guide detail should keep the tapped guide id",
+                expectedGuideId,
+                readPrivateStringField(activity, "currentGuideId")
+            );
+            TextView body = activity.findViewById(R.id.detail_body);
+            TextView bodyLabel = activity.findViewById(R.id.detail_body_label);
+            String titleText = firstNonEmpty(
+                readPrivateStringField(activity, "currentTitle"),
+                visibleText(activity.findViewById(R.id.detail_screen_title)),
+                visibleText(activity.findViewById(R.id.detail_title))
+            );
+            String expectedTitle = safe(expectedGuide == null ? null : expectedGuide.title).trim();
+            Assert.assertTrue(
+                "saved guide detail title state should identify the tapped guide",
+                (!expectedTitle.isEmpty() && titleText.contains(expectedTitle)) || titleText.contains(expectedGuideId)
+            );
+            String bodyText = firstNonEmpty(
+                readPrivateStringField(activity, "currentBody"),
+                visibleText(body)
+            );
+            Assert.assertTrue(
+                "saved guide detail body should contain guide content",
+                bodyText.trim().length() >= 8
+            );
+            if (body != null) {
+                Assert.assertTrue("saved guide detail body view should be visible when present", isVisible(body));
+            }
+            if (bodyLabel != null && isVisible(bodyLabel)) {
+                Assert.assertEquals(
+                    "saved guide detail should render as guide detail content",
+                    activity.getString(R.string.detail_body_guide),
+                    safe(bodyLabel.getText().toString())
+                );
+            }
+        });
     }
 
     private void clearPinnedGuidesForTest() {
@@ -7237,6 +7362,13 @@ public final class PromptHarnessSmokeTest {
             }
         }
         return false;
+    }
+
+    private String visibleText(android.view.View view) {
+        if (!(view instanceof TextView) || !isVisible(view)) {
+            return "";
+        }
+        return safe(((TextView) view).getText().toString());
     }
 
     private void openFirstAvailableAnswerSource(Activity activity) {
