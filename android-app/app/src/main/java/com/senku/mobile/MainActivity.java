@@ -4525,7 +4525,7 @@ public final class MainActivity extends AppCompatActivity {
     private void showBrowseChrome(boolean show) {
         browseChromeActive = show;
         updateHomeChromeTitle(show, searchInput == null ? "" : searchInput.getText().toString());
-        boolean showSearchTopbar = isPlainTabletSearchChromeLayout() && !show;
+        boolean showSearchTopbar = isTabletSearchLayout() && tabletSearchTopbarRow != null && !show;
         int visibility = show ? View.VISIBLE : View.GONE;
         if (browseScrollView != null) {
             browseScrollView.setVisibility(visibility);
@@ -5097,10 +5097,6 @@ public final class MainActivity extends AppCompatActivity {
         Configuration configuration = getResources().getConfiguration();
         return configuration.smallestScreenWidthDp >= 600
             && configuration.orientation == Configuration.ORIENTATION_LANDSCAPE;
-    }
-
-    private boolean isPlainTabletSearchChromeLayout() {
-        return isTabletSearchLayout() && tabletSearchSurface == null && tabletSearchTopbarRow != null;
     }
 
     private boolean isTabletPortraitLayout() {

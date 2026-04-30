@@ -534,7 +534,7 @@
             <LinearLayout
                 android:id="@+id/tablet_search_topbar_row"
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
+                android:layout_height="wrap_content"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
                 android:paddingTop="12dp"
@@ -584,7 +584,7 @@
             <View
                 android:id="@+id/tablet_search_bottom_rule"
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
+                android:layout_height="1dp"
                 android:background="@color/senku_rev03_hairline_strong"
                 android:visibility="gone" />
 
