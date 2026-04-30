@@ -376,7 +376,7 @@ public final class DetailThreadHistoryRendererTest {
     }
 
     @Test
-    public void guideChipLabelsKeepRainShelterContextInline() {
+    public void guideChipLabelsKeepDefaultLiveSourceOrder() {
         SessionMemory.TurnSnapshot turn = new SessionMemory.TurnSnapshot(
             "how do i build a rain shelter",
             "Use a sloped tarp ridgeline.",
@@ -391,12 +391,16 @@ public final class DetailThreadHistoryRendererTest {
         );
 
         assertEquals(
-            List.of("GD-345", "GD-111"),
+            List.of("GD-111", "GD-345"),
             DetailThreadHistoryRenderer.guideChipLabelsForTurn(turn)
         );
         assertEquals(
-            List.of("GD-345", "GD-111"),
+            List.of("GD-111", "GD-345"),
             DetailThreadHistoryRenderer.guideChipIdsForTurn(turn)
+        );
+        assertEquals(
+            List.of("GD-345", "GD-111"),
+            DetailThreadHistoryRenderer.guideChipLabelsForTurn(turn, true)
         );
     }
 
@@ -432,7 +436,7 @@ public final class DetailThreadHistoryRendererTest {
     }
 
     @Test
-    public void phoneLandscapeTranscriptShowsOnlyContextualGuideChip() {
+    public void phoneLandscapeTranscriptUsesLiveOrderUnlessReviewDemoPolicyIsEnabled() {
         DetailThreadHistoryRenderer.State phoneLandscapeNoRail = new DetailThreadHistoryRenderer.State(
             false,
             true,
@@ -452,40 +456,62 @@ public final class DetailThreadHistoryRendererTest {
             "",
             0L
         );
+        DetailThreadHistoryRenderer liveRenderer = new DetailThreadHistoryRenderer(
+            null,
+            new DetailSessionPresentationFormatter(null),
+            null
+        );
+        DetailThreadHistoryRenderer reviewDemoRenderer = new DetailThreadHistoryRenderer(
+            null,
+            new DetailSessionPresentationFormatter(null),
+            null,
+            true
+        );
 
         assertEquals(
             List.of("GD-220", "GD-345"),
             DetailThreadHistoryRenderer.guideChipLabelsForTurn(turn)
         );
         assertEquals(
-            List.of("GD-345"),
+            List.of("GD-220"),
             DetailThreadHistoryRenderer.visibleGuideChipLabelsForTurn(turn, phoneLandscapeNoRail, true)
         );
-        assertEquals("GD-345", DetailThreadHistoryRenderer.answerAnchorGuideIdForTurn(turn, "GD-220"));
+        assertEquals("GD-220", DetailThreadHistoryRenderer.answerAnchorGuideIdForTurn(turn, "GD-220"));
+        assertEquals(
+            List.of("GD-345"),
+            DetailThreadHistoryRenderer.visibleGuideChipLabelsForTurn(turn, phoneLandscapeNoRail, true, true)
+        );
+        assertEquals("GD-345", DetailThreadHistoryRenderer.answerAnchorGuideIdForTurn(turn, "GD-220", true));
+        assertEquals("A1 \u00B7 ANCHOR GD-220", liveRenderer.buildTurnLabel(1, false, turn, "GD-220"));
+        assertEquals("A1 \u00B7 ANCHOR GD-345", reviewDemoRenderer.buildTurnLabel(1, false, turn, "GD-220"));
     }
 
     @Test
-    public void guideChipLabelsKeepDeterministicThreadAnchorBeforeRainShelterSource() {
+    public void guideChipLabelsDoNotForceThreadAnchorBeforeRainShelterSourceByDefault() {
         SessionMemory.TurnSnapshot turn = new SessionMemory.TurnSnapshot(
             "how do i build a rain shelter",
             "Use a sloped tarp ridgeline.",
             "Use a sloped tarp ridgeline.",
-            List.of("GD-220 Abrasives Manufacturing", "GD-345 Rain Shelter"),
+            List.of("GD-345 Rain Shelter", "GD-220 Abrasives Manufacturing"),
             List.of(
-                source("GD-220", "Abrasives Manufacturing", "abrasives manufacturing"),
-                source("GD-345", "Rain shelter in wet weather", "field shelter rain tarp")
+                source("GD-345", "Rain shelter in wet weather", "field shelter rain tarp"),
+                source("GD-220", "Abrasives Manufacturing", "abrasives manufacturing")
             ),
             "",
             0L
         );
 
         assertEquals(
-            List.of("GD-220", "GD-345"),
+            List.of("GD-345", "GD-220"),
             DetailThreadHistoryRenderer.guideChipLabelsForTurn(turn)
         );
         assertEquals(
-            List.of("GD-220", "GD-345"),
+            List.of("GD-345", "GD-220"),
             DetailThreadHistoryRenderer.guideChipIdsForTurn(turn)
+        );
+        assertEquals(
+            List.of("GD-220", "GD-345"),
+            DetailThreadHistoryRenderer.guideChipLabelsForTurn(turn, true)
         );
     }
 

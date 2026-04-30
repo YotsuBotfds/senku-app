@@ -62,14 +62,25 @@ final class DetailThreadHistoryRenderer {
 
     private final Context context;
     private final DetailSessionPresentationFormatter sessionFormatter;
+    private final boolean reviewDemoSourcePolicy;
 
     DetailThreadHistoryRenderer(
         Context context,
         DetailSessionPresentationFormatter sessionFormatter,
         DetailSourcePresentationFormatter sourceFormatter
     ) {
+        this(context, sessionFormatter, sourceFormatter, false);
+    }
+
+    DetailThreadHistoryRenderer(
+        Context context,
+        DetailSessionPresentationFormatter sessionFormatter,
+        DetailSourcePresentationFormatter sourceFormatter,
+        boolean reviewDemoSourcePolicy
+    ) {
         this.context = context;
         this.sessionFormatter = sessionFormatter;
+        this.reviewDemoSourcePolicy = reviewDemoSourcePolicy;
     }
 
     void clearHistory(LinearLayout container) {
@@ -258,7 +269,12 @@ final class DetailThreadHistoryRenderer {
             state
         ));
 
-        List<String> guideLabels = visibleGuideChipLabelsForTurn(turn, state, inlineTranscriptBubble);
+        List<String> guideLabels = visibleGuideChipLabelsForTurn(
+            turn,
+            state,
+            inlineTranscriptBubble,
+            reviewDemoSourcePolicy
+        );
         if (!guideLabels.isEmpty() && shouldShowGuideChips(state, inlineTranscriptBubble, container)) {
             turnRow.addView(buildGuideChipRow(guideLabels));
         }
@@ -457,7 +473,7 @@ final class DetailThreadHistoryRenderer {
         StringBuilder builder = new StringBuilder("A")
             .append(safeTurnNumber)
             .append(time);
-        String anchorGuideId = answerAnchorGuideIdForTurn(turn, previousAnchorGuideId);
+        String anchorGuideId = answerAnchorGuideIdForTurn(turn, previousAnchorGuideId, reviewDemoSourcePolicy);
         if (!anchorGuideId.isEmpty()) {
             builder.append(" \u00B7 ANCHOR ").append(anchorGuideId);
         } else {
@@ -467,7 +483,15 @@ final class DetailThreadHistoryRenderer {
     }
 
     static String answerAnchorGuideIdForTurn(SessionMemory.TurnSnapshot turn, String previousAnchorGuideId) {
-        String contextualGuideId = contextualPrimaryGuideIdForTurn(turn);
+        return answerAnchorGuideIdForTurn(turn, previousAnchorGuideId, false);
+    }
+
+    static String answerAnchorGuideIdForTurn(
+        SessionMemory.TurnSnapshot turn,
+        String previousAnchorGuideId,
+        boolean reviewDemoSourcePolicy
+    ) {
+        String contextualGuideId = contextualPrimaryGuideIdForTurn(turn, reviewDemoSourcePolicy);
         if (!contextualGuideId.isEmpty()) {
             return contextualGuideId;
         }
@@ -609,9 +633,13 @@ final class DetailThreadHistoryRenderer {
     }
 
     static List<String> guideIdsForTurn(SessionMemory.TurnSnapshot turn) {
+        return guideIdsForTurn(turn, false);
+    }
+
+    static List<String> guideIdsForTurn(SessionMemory.TurnSnapshot turn, boolean reviewDemoSourcePolicy) {
         LinkedHashSet<String> guideIds = new LinkedHashSet<>();
         if (turn != null) {
-            for (SearchResult source : prioritizedSourceResultsForTurn(turn)) {
+            for (SearchResult source : prioritizedSourceResultsForTurn(turn, reviewDemoSourcePolicy)) {
                 String guideId = safe(source == null ? null : source.guideId).trim();
                 if (!guideId.isEmpty()) {
                     guideIds.add(guideId);
@@ -630,8 +658,14 @@ final class DetailThreadHistoryRenderer {
     }
 
     static List<String> guideChipIdsForTurn(SessionMemory.TurnSnapshot turn) {
-        List<String> guideIds = guideIdsForTurn(turn);
-        guideIds = deterministicThreadGuideOrder(guideIds);
+        return guideChipIdsForTurn(turn, false);
+    }
+
+    static List<String> guideChipIdsForTurn(SessionMemory.TurnSnapshot turn, boolean reviewDemoSourcePolicy) {
+        List<String> guideIds = guideIdsForTurn(turn, reviewDemoSourcePolicy);
+        if (reviewDemoSourcePolicy) {
+            guideIds = deterministicThreadGuideOrder(guideIds);
+        }
         if (guideIds.size() <= GUIDE_CHIP_LIMIT) {
             return guideIds;
         }
@@ -639,7 +673,11 @@ final class DetailThreadHistoryRenderer {
     }
 
     static List<String> guideChipLabelsForTurn(SessionMemory.TurnSnapshot turn) {
-        return guideChipIdsForTurn(turn);
+        return guideChipLabelsForTurn(turn, false);
+    }
+
+    static List<String> guideChipLabelsForTurn(SessionMemory.TurnSnapshot turn, boolean reviewDemoSourcePolicy) {
+        return guideChipIdsForTurn(turn, reviewDemoSourcePolicy);
     }
 
     static List<String> visibleGuideChipLabelsForTurn(
@@ -647,11 +685,20 @@ final class DetailThreadHistoryRenderer {
         State state,
         boolean inlineTranscriptBubble
     ) {
-        List<String> guideIds = guideChipLabelsForTurn(turn);
+        return visibleGuideChipLabelsForTurn(turn, state, inlineTranscriptBubble, false);
+    }
+
+    static List<String> visibleGuideChipLabelsForTurn(
+        SessionMemory.TurnSnapshot turn,
+        State state,
+        boolean inlineTranscriptBubble,
+        boolean reviewDemoSourcePolicy
+    ) {
+        List<String> guideIds = guideChipLabelsForTurn(turn, reviewDemoSourcePolicy);
         if (guideIds.size() <= 1 || !isPhoneLandscapeNoRailTranscript(state, inlineTranscriptBubble)) {
             return guideIds;
         }
-        String contextualGuideId = contextualPrimaryGuideIdForTurn(turn);
+        String contextualGuideId = contextualPrimaryGuideIdForTurn(turn, reviewDemoSourcePolicy);
         if (!contextualGuideId.isEmpty()) {
             return Collections.singletonList(contextualGuideId);
         }
@@ -789,16 +836,23 @@ final class DetailThreadHistoryRenderer {
     }
 
     private static String contextualPrimaryGuideIdForTurn(SessionMemory.TurnSnapshot turn) {
+        return contextualPrimaryGuideIdForTurn(turn, false);
+    }
+
+    private static String contextualPrimaryGuideIdForTurn(
+        SessionMemory.TurnSnapshot turn,
+        boolean reviewDemoSourcePolicy
+    ) {
         if (turn == null) {
             return "";
         }
-        for (SearchResult source : prioritizedSourceResultsForTurn(turn)) {
+        for (SearchResult source : prioritizedSourceResultsForTurn(turn, reviewDemoSourcePolicy)) {
             String guideId = safe(source == null ? null : source.guideId).trim();
             if (!guideId.isEmpty()) {
                 return guideId;
             }
         }
-        List<String> guideIds = guideIdsForTurn(turn);
+        List<String> guideIds = guideIdsForTurn(turn, reviewDemoSourcePolicy);
         return guideIds.isEmpty() ? "" : guideIds.get(0);
     }
 
@@ -884,10 +938,20 @@ final class DetailThreadHistoryRenderer {
     }
 
     private static List<SearchResult> prioritizedSourceResultsForTurn(SessionMemory.TurnSnapshot turn) {
+        return prioritizedSourceResultsForTurn(turn, false);
+    }
+
+    private static List<SearchResult> prioritizedSourceResultsForTurn(
+        SessionMemory.TurnSnapshot turn,
+        boolean reviewDemoSourcePolicy
+    ) {
         if (turn == null || turn.sourceResults == null || turn.sourceResults.isEmpty()) {
             return Collections.emptyList();
         }
         ArrayList<SearchResult> sources = new ArrayList<>(turn.sourceResults);
+        if (!reviewDemoSourcePolicy) {
+            return sources;
+        }
         String question = safe(turn.question).toLowerCase(Locale.US);
         if (question.isEmpty()) {
             return sources;
