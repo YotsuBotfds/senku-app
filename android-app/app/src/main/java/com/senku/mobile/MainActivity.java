@@ -4958,23 +4958,31 @@ public final class MainActivity extends AppCompatActivity {
     }
 
     private String buildTabletPreviewMeta(SearchResult result) {
-        return buildTabletPreviewMetaStatic(result);
+        return buildTabletPreviewMetaStatic(result, productReviewMode);
     }
 
     static String buildTabletPreviewMetaForTest(SearchResult result) {
-        return buildTabletPreviewMetaStatic(result);
+        return buildTabletPreviewMetaStatic(result, false);
+    }
+
+    static String buildTabletPreviewMetaForTest(SearchResult result, boolean productReviewMode) {
+        return buildTabletPreviewMetaStatic(result, productReviewMode);
     }
 
     private String buildTabletPreviewBody(SearchResult result) {
-        return buildTabletPreviewBodyStatic(result);
+        return buildTabletPreviewBodyStatic(result, productReviewMode);
     }
 
     static String buildTabletPreviewBodyForTest(SearchResult result) {
-        return buildTabletPreviewBodyStatic(result);
+        return buildTabletPreviewBodyStatic(result, false);
     }
 
-    private static String buildTabletPreviewMetaStatic(SearchResult result) {
-        if (isReviewPreviewResult(result)) {
+    static String buildTabletPreviewBodyForTest(SearchResult result, boolean productReviewMode) {
+        return buildTabletPreviewBodyStatic(result, productReviewMode);
+    }
+
+    private static String buildTabletPreviewMetaStatic(SearchResult result, boolean productReviewMode) {
+        if (isReviewPreviewResult(result, productReviewMode)) {
             return "Starter  \u00B7  17 sections";
         }
         ArrayList<String> parts = new ArrayList<>();
@@ -4984,11 +4992,11 @@ public final class MainActivity extends AppCompatActivity {
         if (parts.isEmpty()) {
             addNonEmptyPartStatic(parts, result == null ? null : result.subtitle);
         }
-        return parts.isEmpty() ? "Source guide" : TextUtils.join("  \u00B7  ", parts);
+        return parts.isEmpty() ? "Source guide" : String.join("  \u00B7  ", parts);
     }
 
-    private static String buildTabletPreviewBodyStatic(SearchResult result) {
-        if (isReviewPreviewResult(result)) {
+    private static String buildTabletPreviewBodyStatic(SearchResult result, boolean productReviewMode) {
+        if (isReviewPreviewResult(result, productReviewMode)) {
             return "Day signaling vs. night signaling.\n\n"
                 + "Daytime visibility relies on contrast: smoke, ground-marked panels, mirror flash. "
                 + "Nighttime relies on light: reflective surfaces, fire, signal flares.";
@@ -5000,8 +5008,9 @@ public final class MainActivity extends AppCompatActivity {
         );
     }
 
-    private static boolean isReviewPreviewResult(SearchResult result) {
-        return "GD-023".equalsIgnoreCase(safe(result == null ? null : result.guideId).trim())
+    private static boolean isReviewPreviewResult(SearchResult result, boolean productReviewMode) {
+        return productReviewMode
+            && "GD-023".equalsIgnoreCase(safe(result == null ? null : result.guideId).trim())
             && "Survival Basics & First 72 Hours".equals(safe(result == null ? null : result.title).trim())
             && isReviewSearchResult(result);
     }

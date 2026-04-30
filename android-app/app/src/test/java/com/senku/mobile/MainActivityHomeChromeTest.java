@@ -355,7 +355,7 @@ public final class MainActivityHomeChromeTest {
     }
 
     @Test
-    public void tabletSearchPreviewUsesTargetCopyForFirstReviewResult() {
+    public void tabletSearchPreviewUsesDataDrivenCopyForReviewResultByDefault() {
         SearchResult result = ReviewDemoPolicy.shapeSearchResults(
             "rain shelter",
             true,
@@ -363,9 +363,28 @@ public final class MainActivityHomeChromeTest {
             null
         ).get(0);
 
-        assertEquals("Starter  \u00b7  17 sections", MainActivity.buildTabletPreviewMetaForTest(result));
-        assertTrue(MainActivity.buildTabletPreviewBodyForTest(result).startsWith("Day signaling vs. night signaling."));
-        assertTrue(MainActivity.buildTabletPreviewBodyForTest(result).contains("signal flares."));
+        assertEquals(
+            "starter  \u00b7  immediate  \u00b7  survival",
+            MainActivity.buildTabletPreviewMetaForTest(result)
+        );
+        assertEquals(
+            "Shelter Building: Protection from the Elements. Day signaling vs. night signaling...",
+            MainActivity.buildTabletPreviewBodyForTest(result)
+        );
+    }
+
+    @Test
+    public void tabletSearchPreviewUsesTargetCopyForFirstReviewResultOnlyWhenRequested() {
+        SearchResult result = ReviewDemoPolicy.shapeSearchResults(
+            "rain shelter",
+            true,
+            Arrays.asList(guideWithId("Survival Basics & First 72 Hours", "GD-023")),
+            null
+        ).get(0);
+
+        assertEquals("Starter  \u00b7  17 sections", MainActivity.buildTabletPreviewMetaForTest(result, true));
+        assertTrue(MainActivity.buildTabletPreviewBodyForTest(result, true).startsWith("Day signaling vs. night signaling."));
+        assertTrue(MainActivity.buildTabletPreviewBodyForTest(result, true).contains("signal flares."));
     }
 
     @Test
