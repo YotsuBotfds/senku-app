@@ -14,7 +14,8 @@ final class AnswerAnchorPolicy {
         SearchResult rankedAnchor
     ) {
         String normalizedStructurePreference = safe(preferredStructureType).trim().toLowerCase(QUERY_LOCALE);
-        if (!requiresSpecializedRouteAnchorSignal(normalizedStructurePreference) || rankedAnchor == null) {
+        if (!RetrievalRoutePolicy.requiresSpecializedRouteAnchorSignal(normalizedStructurePreference)
+            || rankedAnchor == null) {
             return false;
         }
         if (!"guide-focus".equals(safe(rankedAnchor.retrievalMode).trim().toLowerCase(QUERY_LOCALE))) {
@@ -74,16 +75,6 @@ final class AnswerAnchorPolicy {
         return rankedScore >= routedScore + RANKED_ANCHOR_KEEP_DELTA
             ? choice.rankedAnchor
             : choice.routedAnchor;
-    }
-
-    private static boolean requiresSpecializedRouteAnchorSignal(String preferredStructureType) {
-        return "water_distribution".equals(preferredStructureType)
-            || "message_auth".equals(preferredStructureType)
-            || "community_security".equals(preferredStructureType)
-            || "community_governance".equals(preferredStructureType)
-            || "soapmaking".equals(preferredStructureType)
-            || "glassmaking".equals(preferredStructureType)
-            || "fair_trial".equals(preferredStructureType);
     }
 
     private static String safe(String value) {
