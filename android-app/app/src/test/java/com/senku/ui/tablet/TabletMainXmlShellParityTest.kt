@@ -192,6 +192,24 @@ class TabletMainXmlShellParityTest {
         assertEquals("14sp", input.android("textSize"))
     }
 
+    @Test
+    fun portraitTabletHomeColumnsKeepBalancedCategoryAndRecentRhythm() {
+        val layout = layout("layout-sw600dp-port")
+        val categoryHeader = layout.elementByAndroidId("category_section_header")
+        val categoryColumn = categoryHeader.parentNode as Element
+        val categoryContainer = layout.elementByAndroidId("category_section_container")
+        val recentSection = layout.elementByAndroidId("recent_threads_section")
+        val recentContainer = layout.elementByAndroidId("recent_threads_container")
+
+        assertEquals("0dp", categoryColumn.android("layout_width"))
+        assertEquals("12dp", categoryColumn.android("layout_marginEnd"))
+        assertEquals("1.02", categoryColumn.android("layout_weight"))
+        assertEquals("4dp", categoryContainer.android("layout_marginTop"))
+        assertEquals("0dp", recentSection.android("layout_width"))
+        assertEquals("0.9", recentSection.android("layout_weight"))
+        assertEquals("4dp", recentContainer.android("layout_marginTop"))
+    }
+
     private fun assertMainChromeRow(
         qualifier: String,
         height: String,
