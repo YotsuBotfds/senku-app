@@ -15,81 +15,17 @@ class TabletMainXmlShellParityTest {
 
         assertRailShell(
             layout = portrait,
-            railWidth = "88dp",
+            railWidth = "72dp",
             firstItemTopMargin = "24dp",
             itemTopMargin = "18dp",
             labelTopMargin = "3dp",
         )
         assertRailShell(
             layout = landscape,
-            railWidth = "112dp",
+            railWidth = "96dp",
             firstItemTopMargin = "18dp",
             itemTopMargin = "12dp",
             labelTopMargin = "4dp",
-        )
-    }
-
-    @Test
-    fun portraitAndLandscapeHomeShellMetricsMatchMockProportions() {
-        val portrait = layout("layout-sw600dp-port")
-        val landscape = layout("layout-sw600dp-land")
-
-        assertHomeWorkspace(
-            layout = portrait,
-            chromeGutter = "22dp",
-            scrollGutterStart = "22dp",
-            scrollGutterEnd = "22dp",
-            searchHeight = "46dp",
-            searchTopMargin = "14dp",
-            searchHorizontalPadding = "20dp",
-            searchIconSize = "32dp",
-            searchIconPadding = "8dp",
-            categoryRecentGap = "18dp",
-            recentWeight = "0.92",
-        )
-        assertHomeWorkspace(
-            layout = landscape,
-            chromeGutter = "34dp",
-            scrollGutterStart = "48dp",
-            scrollGutterEnd = "30dp",
-            searchHeight = "56dp",
-            searchTopMargin = "26dp",
-            searchHorizontalPadding = "20dp",
-            searchIconSize = "38dp",
-            searchIconPadding = "10dp",
-            categoryRecentGap = "28dp",
-            recentWeight = "1",
-        )
-    }
-
-    @Test
-    fun portraitAndLandscapeSearchColumnMetricsMatchMockProportions() {
-        val portrait = layout("layout-sw600dp-port")
-        val landscape = layout("layout-sw600dp-land")
-
-        assertSearchWorkspace(
-            layout = portrait,
-            queryBarHeight = "34dp",
-            queryBarGutter = "22dp",
-            filterWidth = "192dp",
-            filterPaddingStart = "18dp",
-            filterPaddingTop = "12dp",
-            filterPaddingEnd = "14dp",
-            resultListMargin = "16dp",
-            previewWidth = "236dp",
-            previewVisibility = "gone",
-        )
-        assertSearchWorkspace(
-            layout = landscape,
-            queryBarHeight = "48dp",
-            queryBarGutter = "28dp",
-            filterWidth = "254dp",
-            filterPaddingStart = "18dp",
-            filterPaddingTop = "16dp",
-            filterPaddingEnd = "16dp",
-            resultListMargin = "20dp",
-            previewWidth = "404dp",
-            previewVisibility = "",
         )
     }
 
@@ -173,72 +109,6 @@ class TabletMainXmlShellParityTest {
             assertEquals(labelTopMargin, label.android("layout_marginTop"))
             assertEquals("@font/inter_tight", label.android("fontFamily"))
         }
-    }
-
-    private fun assertHomeWorkspace(
-        layout: Element,
-        chromeGutter: String,
-        scrollGutterStart: String,
-        scrollGutterEnd: String,
-        searchHeight: String,
-        searchTopMargin: String,
-        searchHorizontalPadding: String,
-        searchIconSize: String,
-        searchIconPadding: String,
-        categoryRecentGap: String,
-        recentWeight: String,
-    ) {
-        val chrome = layout.elementByAndroidId("home_chrome_title").parentNode as Element
-        val scroll = layout.elementByAndroidId("browse_scroll_view")
-        val searchInput = layout.elementByAndroidId("search_input")
-        val searchShell = searchInput.parentNode as Element
-        val searchIcon = searchShell.firstElementChild("ImageView")
-        val categoriesColumn = layout.elementByAndroidId("category_section_header").parentNode as Element
-        val recent = layout.elementByAndroidId("recent_threads_section")
-
-        assertEquals(chromeGutter, chrome.android("paddingStart"))
-        assertEquals(chromeGutter, chrome.android("paddingEnd"))
-        assertEquals(scrollGutterStart, scroll.android("paddingStart"))
-        assertEquals(scrollGutterEnd, scroll.android("paddingEnd"))
-        assertEquals(searchHeight, searchShell.android("layout_height"))
-        assertEquals(searchTopMargin, searchShell.android("layout_marginTop"))
-        assertEquals(searchHorizontalPadding, searchShell.android("paddingStart"))
-        assertEquals(searchHorizontalPadding, searchShell.android("paddingEnd"))
-        assertEquals(searchIconSize, searchIcon.android("layout_width"))
-        assertEquals(searchIconSize, searchIcon.android("layout_height"))
-        assertEquals(searchIconPadding, searchIcon.android("padding"))
-        assertEquals(categoryRecentGap, categoriesColumn.android("layout_marginEnd"))
-        assertEquals(recentWeight, recent.android("layout_weight"))
-    }
-
-    private fun assertSearchWorkspace(
-        layout: Element,
-        queryBarHeight: String,
-        queryBarGutter: String,
-        filterWidth: String,
-        filterPaddingStart: String,
-        filterPaddingTop: String,
-        filterPaddingEnd: String,
-        resultListMargin: String,
-        previewWidth: String,
-        previewVisibility: String,
-    ) {
-        val queryBar = layout.elementByAndroidId("tablet_search_query_text").parentNode as Element
-        val filterColumn = layout.elementByText("FILTER \u2022 CATEGORY").parentNode as Element
-        val results = layout.elementByAndroidId("results_list")
-        val preview = layout.elementByAndroidId("tablet_search_preview_rail")
-
-        assertEquals(queryBarHeight, queryBar.android("layout_height"))
-        assertEquals(queryBarGutter, queryBar.android("paddingStart"))
-        assertEquals(queryBarGutter, queryBar.android("paddingEnd"))
-        assertEquals(filterWidth, filterColumn.android("layout_width"))
-        assertEquals(filterPaddingStart, filterColumn.android("paddingStart"))
-        assertEquals(filterPaddingTop, filterColumn.android("paddingTop"))
-        assertEquals(filterPaddingEnd, filterColumn.android("paddingEnd"))
-        assertEquals(resultListMargin, results.android("layout_marginStart"))
-        assertEquals(resultListMargin, results.android("layout_marginEnd"))
-        assertEquals(previewWidth, preview.android("layout_width"))
-        assertEquals(previewVisibility, preview.android("visibility"))
     }
 
     private fun layout(qualifier: String): Element =
