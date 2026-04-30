@@ -1010,9 +1010,13 @@ public final class MainActivity extends AppCompatActivity {
     }
 
     private void maybeHandleOpenSavedIntent(Intent intent) {
-        if (intent != null && intent.getBooleanExtra(EXTRA_OPEN_SAVED, false)) {
+        if (shouldOpenSavedDestination(intent != null && intent.getBooleanExtra(EXTRA_OPEN_SAVED, false))) {
             openPhoneTab(BottomTabDestination.PINS, false);
         }
+    }
+
+    static boolean shouldOpenSavedDestination(boolean openSavedExtra) {
+        return openSavedExtra;
     }
 
     private void maybeHandleAutomation() {

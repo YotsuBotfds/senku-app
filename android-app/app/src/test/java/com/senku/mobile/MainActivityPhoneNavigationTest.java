@@ -123,6 +123,16 @@ public final class MainActivityPhoneNavigationTest {
     }
 
     @Test
+    public void openSavedExtraRequestsSavedDestination() {
+        assertTrue(MainActivity.shouldOpenSavedDestination(true));
+    }
+
+    @Test
+    public void missingOpenSavedExtraDoesNotRequestSavedDestination() {
+        assertFalse(MainActivity.shouldOpenSavedDestination(false));
+    }
+
+    @Test
     public void savedGuideSectionShowsEmptyStateOnlyForSavedFlow() {
         assertTrue(MainActivity.shouldShowSavedGuideSection(true, BottomTabDestination.PINS, 0));
 
