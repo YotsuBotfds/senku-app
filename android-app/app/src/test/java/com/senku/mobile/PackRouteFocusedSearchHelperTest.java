@@ -49,29 +49,36 @@ public final class PackRouteFocusedSearchHelperTest {
     }
 
     @Test
-    public void fullRouteCursorScanRequiresSpecializedExplicitTopicFocus() {
-        assertTrue(PackRouteFocusedSearchHelper.shouldScanFullRouteCursor(
-            PackRepository.QueryTerms.fromQuery("how do i make soap from animal fat and ash")
-        ));
-        assertFalse(PackRouteFocusedSearchHelper.shouldScanFullRouteCursor(
-            PackRepository.QueryTerms.fromQuery("how do i build a house")
-        ));
+    public void fullRouteCursorScanEnablesSpecializedDirectTopicRoutes() {
+        assertFullRouteCursorScan("how do i make soap from animal fat and ash", true);
+        assertFullRouteCursorScan("how do i make glass from silica sand and soda ash", true);
+        assertFullRouteCursorScan("how do i design a gravity-fed water distribution system", true);
     }
 
     @Test
     public void fullRouteCursorScanSkipsGovernanceAndSecurityRoutes() {
-        assertFalse(PackRouteFocusedSearchHelper.shouldScanFullRouteCursor(
-            PackRepository.QueryTerms.fromQuery(
-                "how do i protect a vulnerable work site, field, or water point without spreading people too thin?"
-            )
-        ));
-        assertFalse(PackRouteFocusedSearchHelper.shouldScanFullRouteCursor(
-            PackRepository.QueryTerms.fromQuery("someone is stealing food from the group what do we do")
-        ));
+        assertFullRouteCursorScan(
+            "how do i protect a vulnerable work site, field, or water point without spreading people too thin?",
+            false
+        );
+        assertFullRouteCursorScan("someone is stealing food from the group what do we do", false);
+    }
+
+    @Test
+    public void fullRouteCursorScanSkipsBroadHouseRoute() {
+        assertFullRouteCursorScan("how do i build a house", false);
     }
 
     @Test
     public void fullRouteCursorScanHandlesMissingTerms() {
         assertFalse(PackRouteFocusedSearchHelper.shouldScanFullRouteCursor(null));
+    }
+
+    private static void assertFullRouteCursorScan(String query, boolean expected) {
+        assertEquals(
+            query,
+            expected,
+            PackRouteFocusedSearchHelper.shouldScanFullRouteCursor(PackRepository.QueryTerms.fromQuery(query))
+        );
     }
 }
