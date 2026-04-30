@@ -439,9 +439,9 @@ function Invoke-InteractionStep {
         [string[]]$ExpectedAnyText = @()
     )
 
+    $postCheck = $null
     try {
         & $Action
-        $postCheck = $null
         if ($ExpectedAnyText.Count -gt 0) {
             $postCheck = Wait-UiPostStepEvidence -ResolvedAdbPath $ResolvedAdbPath -DeviceSerial $DeviceSerial -ExpectedAnyText $ExpectedAnyText
             if (-not $postCheck.passed) {
@@ -451,7 +451,7 @@ function Invoke-InteractionStep {
         [void]$Steps.Add((New-InteractionStep -Name $Name -Status "success" -PostCheck $postCheck))
         return $true
     } catch {
-        [void]$Steps.Add((New-InteractionStep -Name $Name -Status "failed" -Message $_.Exception.Message))
+        [void]$Steps.Add((New-InteractionStep -Name $Name -Status "failed" -Message $_.Exception.Message -PostCheck $postCheck))
         return $false
     }
 }

@@ -161,6 +161,28 @@ class ValidateAndroidPhysicalPhoneSmokeSummaryTests(unittest.TestCase):
             errors,
         )
 
+    def test_completed_interaction_failed_post_check_payload_keeps_diagnostics(self):
+        summary = add_interaction(
+            make_summary(completed=True),
+            statuses=["success", "success", "success", "failed", "success"],
+        )
+        summary["interaction"]["steps"][3]["post_check"] = {
+            "passed": False,
+            "expected_any_text": ["boil water", "Answer", "Results", "Search", "Ask"],
+            "matched_text": [],
+            "ui_text_sample": ["No matching result"],
+            "dump_length": 96,
+            "dump_sha256": "b" * 64,
+            "captured_at_utc": "2026-04-30T00:00:02.0000000Z",
+        }
+
+        _, errors = validate_summary(self.write_summary(summary))
+
+        self.assertEqual(
+            errors,
+            ["expected root.interaction.steps[3].status to be success for completed summaries"],
+        )
+
     def test_completed_interaction_requires_post_step_ui_evidence(self):
         summary = add_interaction(make_summary(completed=True))
         del summary["interaction"]["steps"][0]["post_check"]

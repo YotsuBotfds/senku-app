@@ -472,6 +472,88 @@ class AndroidPhysicalPhoneSmokeContractTests(unittest.TestCase):
         finally:
             shutil.rmtree(root, ignore_errors=True)
 
+    def test_fake_adb_post_check_failure_records_evidence_payload(self):
+        root = Path(tempfile.mkdtemp(prefix="physical_phone_smoke_post_check_fail_"))
+        try:
+            output_dir = root / "out"
+            apk = root / "app-debug.apk"
+            adb = root / "adb.cmd"
+            entered = root / "entered.txt"
+            apk.write_text("apk", encoding="utf-8")
+            adb.write_text(
+                "\r\n".join(
+                    [
+                        "@echo off",
+                        "if \"%1\"==\"devices\" (",
+                        "  echo List of devices attached",
+                        "  echo R5CT123456A\tdevice",
+                        "  exit /b 0",
+                        ")",
+                        "if \"%5\"==\"ro.kernel.qemu\" (echo 0& exit /b 0)",
+                        "if \"%5\"==\"ro.boot.qemu\" (echo 0& exit /b 0)",
+                        "if \"%3\"==\"install\" (echo Success& exit /b 0)",
+                        "if \"%4\"==\"am\" (echo Starting: Intent& exit /b 0)",
+                        "if \"%4\"==\"dumpsys\" if \"%5\"==\"window\" (echo mCurrentFocus=Window{u0 com.senku.mobile/.MainActivity}& exit /b 0)",
+                        "if \"%4\"==\"dumpsys\" if \"%5\"==\"activity\" (echo topResumedActivity=com.senku.mobile/.MainActivity& exit /b 0)",
+                        f"if \"%4\"==\"uiautomator\" if exist \"{entered}\" (echo ^<hierarchy^>^<node text=\"No matching result\" /^>^</hierarchy^>& exit /b 0)",
+                        "if \"%4\"==\"uiautomator\" (echo ^<hierarchy^>^<node text=\"Saved\" content-desc=\"Saved\" bounds=\"[10,20][110,120]\" /^>^<node class=\"android.widget.EditText\" resource-id=\"com.senku.mobile:id/search\" bounds=\"[30,200][330,260]\" /^>^</hierarchy^>& exit /b 0)",
+                        "if \"%4\"==\"input\" if \"%5\"==\"tap\" (echo tapped& exit /b 0)",
+                        "if \"%4\"==\"input\" if \"%5\"==\"text\" (echo typed& exit /b 0)",
+                        f"if \"%4\"==\"input\" if \"%5\"==\"keyevent\" if \"%6\"==\"ENTER\" (echo entered> \"{entered}\"& exit /b 0)",
+                        "if \"%4\"==\"input\" if \"%5\"==\"keyevent\" (echo key& exit /b 0)",
+                        "exit /b 1",
+                    ]
+                ),
+                encoding="utf-8",
+            )
+
+            result = subprocess.run(
+                [
+                    "powershell",
+                    "-NoProfile",
+                    "-ExecutionPolicy",
+                    "Bypass",
+                    "-File",
+                    str(SCRIPT),
+                    "-OutputDir",
+                    str(output_dir),
+                    "-Serial",
+                    "R5CT123456A",
+                    "-ApkPath",
+                    str(apk),
+                    "-AdbPath",
+                    str(adb),
+                    "-Interact",
+                    "-InteractionQuery",
+                    "boil water",
+                ],
+                cwd=REPO_ROOT,
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+
+            self.assertNotEqual(result.returncode, 0, result.stderr + result.stdout)
+            self.assertIn("interaction failed step", result.stderr + result.stdout)
+            summary = json.loads((output_dir / "summary.json").read_text(encoding="utf-8-sig"))
+            step_by_name = {step["name"]: step for step in summary["interaction"]["steps"]}
+            failed_step = step_by_name["submit_query"]
+            self.assertEqual(failed_step["status"], "failed")
+            self.assertIn("Post-step UI check", failed_step["message"])
+            self.assertIn("post_check", failed_step)
+            post_check = failed_step["post_check"]
+            self.assertFalse(post_check["passed"])
+            self.assertEqual(
+                post_check["expected_any_text"],
+                ["boil water", "Answer", "Results", "Search", "Ask"],
+            )
+            self.assertEqual(post_check["matched_text"], [])
+            self.assertIn("No matching result", post_check["ui_text_sample"])
+            self.assertGreater(post_check["dump_length"], 0)
+            self.assertRegex(post_check["dump_sha256"], r"^[0-9a-f]{64}$")
+        finally:
+            shutil.rmtree(root, ignore_errors=True)
+
     def test_fake_adb_real_run_falls_back_to_device_dump_file(self):
         root = Path(tempfile.mkdtemp(prefix="physical_phone_smoke_dump_fallback_"))
         try:
