@@ -8,13 +8,13 @@ public final class HostInferencePolicy {
     }
 
     public static Decision evaluate(String baseUrl) {
-        return evaluate(baseUrl, false);
+        return evaluate(baseUrl, true);
     }
 
     public static Decision evaluate(String baseUrl, boolean allowHttps) {
         URI uri;
         try {
-            uri = URI.create(safe(baseUrl).trim());
+            uri = URI.create(withDefaultHttpScheme(safe(baseUrl).trim()));
         } catch (IllegalArgumentException exception) {
             return Decision.rejected(Reason.INVALID_URL, "", "");
         }
@@ -49,8 +49,14 @@ public final class HostInferencePolicy {
         String normalized = safe(host).trim().toLowerCase(Locale.US);
         return "localhost".equals(normalized)
             || "127.0.0.1".equals(normalized)
-            || "10.0.2.2".equals(normalized)
-            || "10.0.3.2".equals(normalized);
+            || "10.0.2.2".equals(normalized);
+    }
+
+    private static String withDefaultHttpScheme(String baseUrl) {
+        if (baseUrl.isEmpty() || baseUrl.contains("://")) {
+            return baseUrl;
+        }
+        return "http://" + baseUrl;
     }
 
     private static String safe(String text) {

@@ -42,7 +42,7 @@ public final class HostInferenceConfigTest {
     @Test
     public void normalizeBaseUrlAppendsV1ForHostOnlyValue() {
         assertEquals(
-            "localhost:1235/v1",
+            "http://localhost:1235/v1",
             HostInferenceConfig.normalizeBaseUrl("localhost:1235")
         );
     }
@@ -67,11 +67,11 @@ public final class HostInferenceConfigTest {
     public void serverLabelFallsBackToRawBaseUrlWhenHostIsUnavailable() {
         HostInferenceConfig.Settings settings = new HostInferenceConfig.Settings(
             true,
-            "localhost:1235/v1",
+            "not a uri/v1",
             "gemma-4-e2b-it-litert"
         );
 
-        assertEquals("localhost:1235/v1", settings.serverLabel());
+        assertEquals("not a uri/v1", settings.serverLabel());
     }
 
     @Test

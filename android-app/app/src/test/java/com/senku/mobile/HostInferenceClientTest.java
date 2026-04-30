@@ -85,4 +85,22 @@ public final class HostInferenceClientTest {
             assertTrue(exception.getMessage().contains("NON_LOCAL_CLEARTEXT_REJECTED"));
         }
     }
+
+    @Test
+    public void clientBuildsHttpsCompletionUriWhenPolicyAllowsHttps() {
+        HostInferenceConfig.Settings settings = new HostInferenceConfig.Settings(
+            true,
+            "https://host.local/openai/v1",
+            "gemma-4-e2b-it-litert"
+        );
+
+        HostInferencePolicy.Decision decision = HostInferencePolicy.evaluate(settings.baseUrl);
+
+        assertTrue(decision.allowed);
+        assertEquals(HostInferencePolicy.Reason.HTTPS_ALLOWED, decision.reason);
+        assertEquals(
+            "https://host.local/openai/v1/chat/completions",
+            HostInferenceClient.completionUri(settings).toString()
+        );
+    }
 }

@@ -8,13 +8,9 @@ import org.json.JSONObject;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.InetSocketAddress;
-import java.net.Socket;
+import java.net.HttpURLConnection;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
-import java.util.LinkedHashMap;
-import java.util.Locale;
-import java.util.Map;
 
 public final class HostInferenceClient {
     private static final String TAG = "SenkuMobile";
@@ -34,20 +30,7 @@ public final class HostInferenceClient {
             );
         }
 
-        URI uri = URI.create(settings.baseUrl + "/chat/completions");
-        String scheme = uri.getScheme() == null ? "http" : uri.getScheme().trim().toLowerCase(Locale.US);
-        if (!"http".equals(scheme)) {
-            throw new IllegalStateException("Host inference currently supports only http endpoints: " + settings.baseUrl);
-        }
-        String host = uri.getHost();
-        if (host == null || host.trim().isEmpty()) {
-            throw new IllegalStateException("Host inference URL has no host: " + settings.baseUrl);
-        }
-        int port = uri.getPort() > 0 ? uri.getPort() : 80;
-        String path = uri.getRawPath();
-        if (path == null || path.isEmpty()) {
-            path = "/";
-        }
+        URI uri = completionUri(settings);
 
         JSONObject payload = new JSONObject();
         payload.put("model", settings.modelId);
@@ -69,16 +52,6 @@ public final class HostInferenceClient {
         payload.put("messages", messages);
 
         byte[] bodyBytes = payload.toString().getBytes(StandardCharsets.UTF_8);
-        byte[] requestBytes = (
-            "POST " + path + " HTTP/1.1\r\n" +
-                "Host: " + host + ":" + port + "\r\n" +
-                "Content-Type: application/json\r\n" +
-                "Accept: application/json\r\n" +
-                "Connection: close\r\n" +
-                "Content-Length: " + bodyBytes.length + "\r\n" +
-                "\r\n"
-        ).getBytes(StandardCharsets.UTF_8);
-
         Log.d(
             TAG,
             "host.request start url=" + uri +
@@ -88,40 +61,52 @@ public final class HostInferenceClient {
                 " requestBytes=" + bodyBytes.length
         );
 
-        try (Socket socket = new Socket()) {
-            socket.connect(new InetSocketAddress(host, port), CONNECT_TIMEOUT_MS);
-            socket.setSoTimeout(READ_TIMEOUT_MS);
+        HttpURLConnection connection = (HttpURLConnection) uri.toURL().openConnection();
+        connection.setConnectTimeout(CONNECT_TIMEOUT_MS);
+        connection.setReadTimeout(READ_TIMEOUT_MS);
+        connection.setRequestMethod("POST");
+        connection.setDoOutput(true);
+        connection.setRequestProperty("Content-Type", "application/json");
+        connection.setRequestProperty("Accept", "application/json");
+        connection.setRequestProperty("Connection", "close");
+        connection.setFixedLengthStreamingMode(bodyBytes.length);
 
-            try (OutputStream output = socket.getOutputStream();
-                 InputStream input = socket.getInputStream()) {
-                output.write(requestBytes);
+        try {
+            try (OutputStream output = connection.getOutputStream()) {
                 output.write(bodyBytes);
                 output.flush();
                 Log.d(TAG, "host.request bodyWritten bytes=" + bodyBytes.length);
-
-                RawHttpResponse response = readResponse(input);
-                Log.d(
-                    TAG,
-                    "host.response status=" + response.statusCode +
-                        " bodyChars=" + response.body.length()
-                );
-
-                if (response.statusCode < 200 || response.statusCode >= 300) {
-                    throw new IllegalStateException(
-                        "Host inference failed (" + response.statusCode + "): " + response.body
-                    );
-                }
-
-                Result result = parseResponseBody(response.body);
-                Log.d(
-                    TAG,
-                    "host.response parsed chars=" + result.answer.length() +
-                        " backend=" + result.backend +
-                        " elapsedSeconds=" + result.elapsedSeconds
-                );
-                return result;
             }
+
+            int statusCode = connection.getResponseCode();
+            String responseBody = readResponseBody(connection, statusCode);
+            Log.d(
+                TAG,
+                "host.response status=" + statusCode +
+                    " bodyChars=" + responseBody.length()
+            );
+
+            if (statusCode < 200 || statusCode >= 300) {
+                throw new IllegalStateException(
+                    "Host inference failed (" + statusCode + "): " + responseBody
+                );
+            }
+
+            Result result = parseResponseBody(responseBody);
+            Log.d(
+                TAG,
+                "host.response parsed chars=" + result.answer.length() +
+                    " backend=" + result.backend +
+                    " elapsedSeconds=" + result.elapsedSeconds
+            );
+            return result;
+        } finally {
+            connection.disconnect();
         }
+    }
+
+    static URI completionUri(HostInferenceConfig.Settings settings) {
+        return URI.create(settings.baseUrl + "/chat/completions");
     }
 
     static Result parseResponseBody(String responseBody) throws Exception {
@@ -174,64 +159,11 @@ public final class HostInferenceClient {
         return "";
     }
 
-    private static RawHttpResponse readResponse(InputStream input) throws Exception {
-        String statusLine = readAsciiLine(input);
-        if (statusLine == null || statusLine.isEmpty()) {
-            throw new java.io.EOFException("Host inference returned no status line");
-        }
-        String[] statusParts = statusLine.split(" ", 3);
-        if (statusParts.length < 2) {
-            throw new IllegalStateException("Malformed HTTP status line: " + statusLine);
-        }
-        int statusCode = Integer.parseInt(statusParts[1]);
-        Map<String, String> headers = new LinkedHashMap<>();
-        while (true) {
-            String headerLine = readAsciiLine(input);
-            if (headerLine == null || headerLine.isEmpty()) {
-                break;
-            }
-            int colon = headerLine.indexOf(':');
-            if (colon <= 0) {
-                continue;
-            }
-            String name = headerLine.substring(0, colon).trim().toLowerCase(Locale.US);
-            String value = headerLine.substring(colon + 1).trim();
-            headers.put(name, value);
-        }
-
-        int contentLength = -1;
-        String contentLengthValue = headers.get("content-length");
-        if (contentLengthValue != null && !contentLengthValue.isEmpty()) {
-            contentLength = Integer.parseInt(contentLengthValue);
-        }
-
-        byte[] bodyBytes = contentLength >= 0
-            ? readBestEffortBytes(input, contentLength)
-            : readFullyBytes(input);
-        if (contentLength >= 0 && contentLength != bodyBytes.length) {
-            Log.w(
-                TAG,
-                "host.response lengthMismatch header=" + contentLength + " actual=" + bodyBytes.length
-            );
-        }
-        return new RawHttpResponse(statusCode, new String(bodyBytes, StandardCharsets.UTF_8));
-    }
-
-    private static String readAsciiLine(InputStream input) throws Exception {
-        ByteArrayOutputStream output = new ByteArrayOutputStream();
-        int next;
-        while ((next = input.read()) != -1) {
-            if (next == '\n') {
-                break;
-            }
-            if (next != '\r') {
-                output.write(next);
-            }
-        }
-        if (next == -1 && output.size() == 0) {
-            return null;
-        }
-        return output.toString(StandardCharsets.UTF_8);
+    private static String readResponseBody(HttpURLConnection connection, int statusCode) throws Exception {
+        InputStream stream = statusCode >= 200 && statusCode < 300
+            ? connection.getInputStream()
+            : connection.getErrorStream();
+        return new String(readFullyBytes(stream), StandardCharsets.UTF_8);
     }
 
     private static byte[] readFullyBytes(InputStream stream) throws Exception {
@@ -245,34 +177,6 @@ public final class HostInferenceClient {
                 output.write(buffer, 0, read);
             }
             return output.toByteArray();
-        }
-    }
-
-    private static byte[] readBestEffortBytes(InputStream stream, int expectedBytes) throws Exception {
-        if (stream == null || expectedBytes <= 0) {
-            return new byte[0];
-        }
-        ByteArrayOutputStream output = new ByteArrayOutputStream(expectedBytes);
-        byte[] buffer = new byte[8192];
-        int remaining = expectedBytes;
-        while (remaining > 0) {
-            int read = stream.read(buffer, 0, Math.min(buffer.length, remaining));
-            if (read == -1) {
-                break;
-            }
-            output.write(buffer, 0, read);
-            remaining -= read;
-        }
-        return output.toByteArray();
-    }
-
-    private static final class RawHttpResponse {
-        final int statusCode;
-        final String body;
-
-        RawHttpResponse(int statusCode, String body) {
-            this.statusCode = statusCode;
-            this.body = body == null ? "" : body;
         }
     }
 

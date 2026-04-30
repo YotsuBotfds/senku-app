@@ -74,7 +74,7 @@ public final class HostInferenceConfig {
         if (trimmed.isEmpty()) {
             return DEFAULT_BASE_URL;
         }
-        String normalized = trimmed.replaceAll("/+$", "");
+        String normalized = withDefaultHttpScheme(trimmed.replaceAll("/+$", ""));
         URI uri;
         try {
             uri = URI.create(normalized);
@@ -101,6 +101,13 @@ public final class HostInferenceConfig {
             }
         }
         return scheme + "://" + authority + path + "/v1";
+    }
+
+    private static String withDefaultHttpScheme(String baseUrl) {
+        if (baseUrl.isEmpty() || baseUrl.contains("://")) {
+            return baseUrl;
+        }
+        return "http://" + baseUrl;
     }
 
     static String normalizeModelId(String modelId) {

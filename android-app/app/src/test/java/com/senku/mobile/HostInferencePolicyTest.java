@@ -27,12 +27,6 @@ public final class HostInferencePolicyTest {
             "http",
             "10.0.2.2"
         );
-        assertAllowed(
-            HostInferencePolicy.evaluate("http://10.0.3.2:1235/v1"),
-            HostInferencePolicy.Reason.LOCAL_CLEARTEXT_ALLOWED,
-            "http",
-            "10.0.3.2"
-        );
     }
 
     @Test
@@ -60,20 +54,8 @@ public final class HostInferencePolicyTest {
     }
 
     @Test
-    public void httpsRequiresConfiguration() {
+    public void httpsIsAllowedByDefault() {
         HostInferencePolicy.Decision decision = HostInferencePolicy.evaluate("https://host.local/v1");
-
-        assertRejected(
-            decision,
-            HostInferencePolicy.Reason.HTTPS_REQUIRES_CONFIGURATION,
-            "https",
-            "host.local"
-        );
-    }
-
-    @Test
-    public void httpsIsAllowedWhenConfigured() {
-        HostInferencePolicy.Decision decision = HostInferencePolicy.evaluate("https://host.local/v1", true);
 
         assertAllowed(
             decision,
@@ -98,16 +80,28 @@ public final class HostInferencePolicyTest {
     }
 
     @Test
-    public void hostOnlyNormalizedUrlKeepsExistingUriLimitation() {
+    public void hostOnlyNormalizedUrlUsesLocalCleartextPolicy() {
         HostInferencePolicy.Decision decision = HostInferencePolicy.evaluate(
             HostInferenceConfig.normalizeBaseUrl("localhost:1235")
         );
 
+        assertAllowed(
+            decision,
+            HostInferencePolicy.Reason.LOCAL_CLEARTEXT_ALLOWED,
+            "http",
+            "localhost"
+        );
+    }
+
+    @Test
+    public void nonListedEmulatorCleartextHostIsRejected() {
+        HostInferencePolicy.Decision decision = HostInferencePolicy.evaluate("http://10.0.3.2:1235/v1");
+
         assertRejected(
             decision,
-            HostInferencePolicy.Reason.MISSING_HOST,
-            "localhost",
-            ""
+            HostInferencePolicy.Reason.NON_LOCAL_CLEARTEXT_REJECTED,
+            "http",
+            "10.0.3.2"
         );
     }
 
