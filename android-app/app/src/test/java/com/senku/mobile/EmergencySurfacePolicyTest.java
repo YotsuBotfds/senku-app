@@ -304,6 +304,31 @@ public final class EmergencySurfacePolicyTest {
     }
 
     @Test
+    public void tabletEmergencyProofCardUsesProminentOliveSurfaceTokens() {
+        assertEquals(R.color.senku_rev03_olive_10, DetailActivity.resolveTabletEmergencyProofCardSurfaceColorRes());
+        assertEquals(R.color.senku_rev03_accent_moss, DetailActivity.resolveTabletEmergencyProofCardAccentColorRes());
+        assertEquals(R.color.senku_rev03_olive_40, DetailActivity.resolveTabletEmergencyProofCardStrokeColorRes());
+        assertEquals(7, DetailActivity.resolveTabletEmergencyProofCardAccentRailWidthDp());
+        assertEquals(12, DetailActivity.resolveTabletEmergencyProofCardCornerRadiusDp());
+        assertEquals(1, DetailActivity.resolveTabletEmergencyProofCardStrokeWidthDp());
+        assertEquals(112, DetailActivity.resolveTabletEmergencyProofCardMinHeightDp());
+        assertEquals(18, DetailActivity.resolveTabletEmergencyProofCardTopMarginDp());
+        assertEquals(13.0f, DetailActivity.resolveTabletEmergencyProofCardScoreTextSizeSp(), 0.0f);
+    }
+
+    @Test
+    public void tabletEmergencyProofCardCanSplitTrailingScoreFromMetaLine() {
+        CharSequence summary = "GD-132 \u2022 ANCHOR    93%\nFoundry & Metal Casting";
+
+        assertEquals("93%", DetailActivity.extractEmergencyProofScoreLabel(summary));
+        assertEquals(
+            "GD-132 \u2022 ANCHOR\nFoundry & Metal Casting",
+            DetailActivity.buildEmergencyProofSummaryWithoutScore(summary, "93%").toString()
+        );
+        assertEquals("", DetailActivity.extractEmergencyProofScoreLabel("GD-132 \u2022 ANCHOR\nFoundry"));
+    }
+
+    @Test
     public void emergencyActionBlocksUseRev03TextColors() {
         assertEquals(R.color.senku_rev03_ink_2, DetailActionBlockPresentationFormatter.emergencyActionHeadingTextColorRes());
         assertEquals(R.color.senku_rev03_ink_0, DetailActionBlockPresentationFormatter.emergencyActionTitleTextColorRes());

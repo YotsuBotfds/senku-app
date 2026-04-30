@@ -260,6 +260,35 @@ class TabletEvidenceVisibilityPolicyTest {
     }
 
     @Test
+    fun answerModeSourceRailHeaderExposesExpandAffordance() {
+        assertEquals("TAP TO EXPAND", answerModeSourceHeaderAffordance())
+    }
+
+    @Test
+    fun answerModeSourceCardsAllowTwoLineSnippetsAndRoomierCompactPadding() {
+        assertEquals(2, answerModeSourceSnippetMaxLines())
+        assertTrue(compactEvidenceCardVerticalPaddingDp() > 8)
+    }
+
+    @Test
+    fun answerModeSourceRowsKeepMatchScoresSeparateFromReferenceRelation() {
+        val rows = tabletAnswerModeSourceRows(
+            anchor = AnchorState(
+                key = "gd-345",
+                id = "GD-345",
+                title = "Rain shelter",
+                section = "",
+                snippet = "Build a ridgeline first, then drape and tension the tarp.",
+                hasSource = true,
+            ),
+            xrefs = emptyList(),
+        )
+
+        assertEquals(listOf("74%", "68%", "61%"), rows.map { it.match })
+        assertEquals(listOf("ANCHOR", "RELATED", "TOPIC"), rows.map { it.relation })
+    }
+
+    @Test
     fun tabletGuideModeUsesGuideSectionCountForRailHeader() {
         val state = stateWithSources(
             sourceCount = 1,

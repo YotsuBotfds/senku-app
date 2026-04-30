@@ -539,6 +539,10 @@ internal fun tabletChromeHeaderHorizontalPaddingDp(isLandscape: Boolean): Int =
 internal fun tabletChromeHeaderVerticalPaddingDp(isLandscape: Boolean): Int =
     if (isLandscape) 9 else 12
 
+internal fun tabletDetailBackActionWidthDp(): Int = 28
+
+internal fun tabletDetailBackActionIconSizeDp(): Int = 18
+
 internal fun tabletGuideChromePolicy(isLandscape: Boolean): TabletGuideChromePolicy =
     if (isLandscape) {
         TabletGuideChromePolicy(
@@ -1940,11 +1944,10 @@ private fun GuideTopBarBackAction(
     onClick: () -> Unit,
 ) {
     val colors = SenkuTheme.colors
-    val typography = SenkuTheme.typography
     Surface(
         modifier = Modifier
             .height(28.dp)
-            .width(60.dp)
+            .width(tabletDetailBackActionWidthDp().dp)
             .semantics(mergeDescendants = true) {
                 contentDescription = "Back to previous screen"
             }
@@ -1956,28 +1959,15 @@ private fun GuideTopBarBackAction(
         contentColor = colors.ink0,
         shape = RoundedCornerShape(6.dp),
     ) {
-        Row(
-            modifier = Modifier.padding(horizontal = 6.dp),
-            horizontalArrangement = Arrangement.spacedBy(2.dp),
-            verticalAlignment = Alignment.CenterVertically,
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center,
         ) {
             Icon(
                 painter = painterResource(R.drawable.ic_home_back_chevron),
                 contentDescription = null,
-                modifier = Modifier.size(14.dp),
+                modifier = Modifier.size(tabletDetailBackActionIconSizeDp().dp),
                 tint = colors.ink0,
-            )
-            Text(
-                text = "Back",
-                style = typography.monoCaps.copy(
-                    fontSize = 10.sp,
-                    lineHeight = 12.sp,
-                    fontWeight = FontWeight.Medium,
-                    letterSpacing = 0.09.em,
-                ),
-                color = colors.ink0,
-                maxLines = 1,
-                overflow = TextOverflow.Clip,
             )
         }
     }

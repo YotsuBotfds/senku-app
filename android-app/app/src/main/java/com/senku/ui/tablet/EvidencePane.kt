@@ -60,6 +60,12 @@ private enum class EvidenceCardDensity {
     Compact,
 }
 
+internal fun answerModeSourceHeaderAffordance(): String = "TAP TO EXPAND"
+
+internal fun answerModeSourceSnippetMaxLines(): Int = 2
+
+internal fun compactEvidenceCardVerticalPaddingDp(): Int = 10
+
 internal data class TabletEvidenceCardRow(
     val guideId: String,
     val relation: String,
@@ -365,6 +371,7 @@ private fun CrossReferenceSection(
     ) {
         SectionHeader(
             title = if (answerMode) answerModeSourceSectionTitle(sourceCount) else "CROSS-REFERENCE \u00b7 $referenceCount",
+            trailingLabel = if (answerMode) answerModeSourceHeaderAffordance() else "",
             accessibilitySummary = buildSourceGraphAccessibilitySummary(
                 landmark = landmark,
                 emptyDescription = emptyDescription,
@@ -381,10 +388,9 @@ private fun CrossReferenceSection(
                         guideId = row.guideId,
                         relation = row.relation,
                         title = row.title,
-                        section = listOf(row.match, row.section)
-                            .filter { it.isNotBlank() }
-                            .joinToString(" \u00b7 "),
+                        section = row.section,
                         snippet = row.quote,
+                        scoreLabel = row.match,
                         onClick = {
                             if (row.guideId.equals(anchor.id, ignoreCase = true)) {
                                 onAnchorClick()
@@ -393,7 +399,7 @@ private fun CrossReferenceSection(
                             }
                         },
                         titleMaxLines = 2,
-                        snippetMaxLines = 1,
+                        snippetMaxLines = answerModeSourceSnippetMaxLines(),
                         density = EvidenceCardDensity.Compact,
                     )
                 }
@@ -405,6 +411,7 @@ private fun CrossReferenceSection(
                         title = row.title,
                         section = row.section,
                         snippet = row.quote,
+                        scoreLabel = "",
                         onClick = {
                             if (row.guideId.equals(anchor.id, ignoreCase = true)) {
                                 onAnchorClick()
@@ -591,6 +598,7 @@ private fun ManualEvidenceCard(
     title: String,
     section: String,
     snippet: String,
+    scoreLabel: String = "",
     onClick: () -> Unit,
     titleMaxLines: Int,
     snippetMaxLines: Int,
@@ -604,8 +612,8 @@ private fun ManualEvidenceCard(
     val rowEndPadding = if (isCompact) 9.dp else 11.dp
     val rowGap = if (isCompact) 8.dp else 11.dp
     val railWidth = if (isCompact) 3.dp else 4.dp
-    val contentVerticalPadding = if (isCompact) 8.dp else 12.dp
-    val contentGap = if (isCompact) 5.dp else 6.dp
+    val contentVerticalPadding = if (isCompact) compactEvidenceCardVerticalPaddingDp().dp else 12.dp
+    val contentGap = if (isCompact) 6.dp else 6.dp
     val metaColor = if (relation == "ANCHOR") colors.accent else colors.ink2
     val titleFontSize = if (isCompact) 13.sp else 16.sp
     val titleLineHeight = if (isCompact) 17.sp else 20.sp
@@ -646,6 +654,7 @@ private fun ManualEvidenceCard(
                     section = section,
                     title = title,
                     snippet = snippet,
+                    scoreLabel = scoreLabel,
                     titleMaxLines = titleMaxLines,
                     snippetMaxLines = snippetMaxLines,
                     metaColor = metaColor,
@@ -680,6 +689,7 @@ private fun ManualEvidenceCard(
                         section = section,
                         title = title,
                         snippet = snippet,
+                        scoreLabel = scoreLabel,
                         titleMaxLines = titleMaxLines,
                         snippetMaxLines = snippetMaxLines,
                         metaColor = metaColor,
@@ -699,6 +709,7 @@ private fun EvidenceCardText(
     section: String,
     title: String,
     snippet: String,
+    scoreLabel: String,
     titleMaxLines: Int,
     snippetMaxLines: Int,
     metaColor: androidx.compose.ui.graphics.Color,
@@ -707,20 +718,41 @@ private fun EvidenceCardText(
 ) {
     val colors = SenkuTheme.colors
     val typography = SenkuTheme.typography
+    val metaText = listOf(guideId.trim().ifEmpty { "GD-?" }, relation, section.trim())
+        .filter { it.isNotEmpty() }
+        .joinToString(" \u00b7 ")
 
-    Text(
-        text = listOf(guideId.trim().ifEmpty { "GD-?" }, relation, section.trim())
-            .filter { it.isNotEmpty() }
-            .joinToString(" \u00b7 "),
-        style = typography.monoCaps.copy(
-            fontSize = 10.sp,
-            lineHeight = 12.sp,
-            fontWeight = FontWeight.Medium,
-        ),
-        color = metaColor,
-        maxLines = 1,
-        overflow = TextOverflow.Ellipsis,
-    )
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Text(
+            text = metaText,
+            modifier = Modifier.weight(1f),
+            style = typography.monoCaps.copy(
+                fontSize = 10.sp,
+                lineHeight = 12.sp,
+                fontWeight = FontWeight.Medium,
+            ),
+            color = metaColor,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+        )
+        if (scoreLabel.trim().isNotEmpty()) {
+            Text(
+                text = scoreLabel.trim(),
+                style = typography.monoCaps.copy(
+                    fontSize = 10.sp,
+                    lineHeight = 12.sp,
+                    fontWeight = FontWeight.Medium,
+                ),
+                color = colors.ink2,
+                maxLines = 1,
+                overflow = TextOverflow.Clip,
+            )
+        }
+    }
     Text(
         text = title.trim().ifEmpty { "Source guide" },
         style = typography.uiBody.copy(
@@ -750,15 +782,18 @@ private fun EvidenceCardText(
 @Composable
 private fun SectionHeader(
     title: String,
+    trailingLabel: String = "",
     accessibilitySummary: String,
 ) {
     val colors = SenkuTheme.colors
 
     Row(
-        modifier = Modifier.semantics {
-            heading()
-            contentDescription = accessibilitySummary
-        },
+        modifier = Modifier
+            .fillMaxWidth()
+            .semantics {
+                heading()
+                contentDescription = accessibilitySummary
+            },
         horizontalArrangement = Arrangement.spacedBy(10.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
@@ -770,6 +805,7 @@ private fun SectionHeader(
         )
         Text(
             text = title,
+            modifier = Modifier.weight(1f),
             style = SenkuTheme.typography.monoCaps.copy(
                 fontSize = 10.sp,
                 lineHeight = 12.sp,
@@ -779,6 +815,19 @@ private fun SectionHeader(
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
         )
+        if (trailingLabel.isNotEmpty()) {
+            Text(
+                text = trailingLabel,
+                style = SenkuTheme.typography.monoCaps.copy(
+                    fontSize = 9.sp,
+                    lineHeight = 12.sp,
+                    fontWeight = FontWeight.Medium,
+                ),
+                color = colors.accent,
+                maxLines = 1,
+                overflow = TextOverflow.Clip,
+            )
+        }
     }
 }
 

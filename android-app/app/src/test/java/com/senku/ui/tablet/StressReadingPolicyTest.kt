@@ -158,6 +158,8 @@ class StressReadingPolicyTest {
         assertEquals(18, portraitPolicy.topBarHorizontalPaddingDp)
         assertEquals(12, portraitPolicy.topBarVerticalPaddingDp)
         assertEquals(14, portraitPolicy.topBarTitleFontSizeSp)
+        assertEquals(28, tabletDetailBackActionWidthDp())
+        assertEquals(18, tabletDetailBackActionIconSizeDp())
         assertTrue(portraitPolicy.topBarMinHeightDp > landscapePolicy.topBarMinHeightDp)
         assertTrue(landscapePolicy.topBarHorizontalPaddingDp > portraitPolicy.topBarHorizontalPaddingDp)
     }
