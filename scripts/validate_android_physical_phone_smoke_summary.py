@@ -46,6 +46,26 @@ REQUIRED_TEXT_CHECK_TYPES: dict[str, type | tuple[type, ...]] = {
     "missing": list,
 }
 
+REQUIRED_INTERACTION_TYPES: dict[str, type | tuple[type, ...]] = {
+    "enabled": bool,
+    "query": str,
+    "steps": list,
+}
+
+REQUIRED_INTERACTION_STEP_TYPES: dict[str, type | tuple[type, ...]] = {
+    "name": str,
+    "status": str,
+}
+
+EXPECTED_INTERACTION_STEPS = [
+    "tap_saved",
+    "tap_query_field",
+    "enter_query",
+    "submit_query",
+    "back",
+]
+VALID_INTERACTION_STATUSES = {"success", "failed", "skipped"}
+
 
 def _expect_type(
     data: dict[str, Any],
@@ -106,6 +126,15 @@ def _validate_common_contract(data: dict[str, Any], errors: list[str]) -> None:
                 _expect_type(text_checks, key, expected_type, errors, scope="root.text_checks")
             _validate_text_checks(text_checks, errors)
 
+    interaction = data.get("interaction")
+    if interaction is not None:
+        if not isinstance(interaction, dict):
+            errors.append(f"expected root.interaction to be dict, got {type(interaction).__name__}")
+        else:
+            for key, expected_type in REQUIRED_INTERACTION_TYPES.items():
+                _expect_type(interaction, key, expected_type, errors, scope="root.interaction")
+            _validate_interaction(interaction, errors)
+
 
 def _expect_string_list(value: Any, key: str, errors: list[str]) -> list[str]:
     if not isinstance(value, list):
@@ -138,6 +167,43 @@ def _validate_text_checks(text_checks: dict[str, Any], errors: list[str]) -> Non
             errors.append(f"expected root.text_checks.missing item to be requested: {fragment!r}")
 
 
+def _validate_interaction(interaction: dict[str, Any], errors: list[str]) -> None:
+    if interaction.get("enabled") is not True:
+        errors.append(f"expected root.interaction.enabled to be True, got {interaction.get('enabled')!r}")
+
+    steps = interaction.get("steps")
+    if not isinstance(steps, list):
+        return
+
+    if not steps:
+        errors.append("expected root.interaction.steps to be non-empty")
+        return
+
+    seen_names: list[str] = []
+    for index, step in enumerate(steps):
+        scope = f"root.interaction.steps[{index}]"
+        if not isinstance(step, dict):
+            errors.append(f"expected {scope} to be dict, got {type(step).__name__}")
+            continue
+        for key, expected_type in REQUIRED_INTERACTION_STEP_TYPES.items():
+            _expect_type(step, key, expected_type, errors, scope=scope)
+        name = step.get("name")
+        status = step.get("status")
+        if isinstance(name, str):
+            seen_names.append(name)
+            if name not in EXPECTED_INTERACTION_STEPS:
+                errors.append(f"expected {scope}.name to be a known interaction step, got {name!r}")
+        if isinstance(status, str) and status not in VALID_INTERACTION_STATUSES:
+            errors.append(f"expected {scope}.status to be success|failed|skipped, got {status!r}")
+        message = step.get("message")
+        if message is not None and (not isinstance(message, str) or not message.strip()):
+            errors.append(f"expected {scope}.message to be non-empty str when present")
+
+    missing_names = [name for name in EXPECTED_INTERACTION_STEPS if name not in seen_names]
+    if missing_names:
+        errors.append(f"expected root.interaction.steps to include: {', '.join(missing_names)}")
+
+
 def _validate_dry_run(data: dict[str, Any], errors: list[str]) -> None:
     _expect_equal(data, "status", "dry_run_only", errors)
     _expect_equal(data, "dry_run", True, errors)
@@ -158,6 +224,14 @@ def _validate_dry_run(data: dict[str, Any], errors: list[str]) -> None:
             errors.append("expected root.text_checks.passed to be empty for dry-run summaries")
         if text_checks.get("missing"):
             errors.append("expected root.text_checks.missing to be empty for dry-run summaries")
+
+    interaction = data.get("interaction")
+    if isinstance(interaction, dict) and isinstance(interaction.get("steps"), list):
+        for index, step in enumerate(interaction["steps"]):
+            if isinstance(step, dict) and step.get("status") != "skipped":
+                errors.append(
+                    f"expected root.interaction.steps[{index}].status to be skipped for dry-run summaries"
+                )
 
 
 def _validate_completed(data: dict[str, Any], errors: list[str]) -> None:
@@ -194,6 +268,14 @@ def _validate_completed(data: dict[str, Any], errors: list[str]) -> None:
                     )
         if missing:
             errors.append("expected root.text_checks.missing to be empty for completed summaries")
+
+    interaction = data.get("interaction")
+    if isinstance(interaction, dict) and isinstance(interaction.get("steps"), list):
+        for index, step in enumerate(interaction["steps"]):
+            if isinstance(step, dict) and step.get("status") != "success":
+                errors.append(
+                    f"expected root.interaction.steps[{index}].status to be success for completed summaries"
+                )
 
 
 def validate_summary(path: Path) -> tuple[dict[str, Any] | None, list[str]]:

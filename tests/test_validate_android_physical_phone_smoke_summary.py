@@ -55,6 +55,20 @@ def add_text_checks(summary: dict, *, missing: list[str] | None = None) -> dict:
     return summary
 
 
+def add_interaction(summary: dict, *, statuses: list[str] | None = None) -> dict:
+    statuses = statuses or ["success", "success", "success", "success", "success"]
+    names = ["tap_saved", "tap_query_field", "enter_query", "submit_query", "back"]
+    summary["interaction"] = {
+        "enabled": True,
+        "query": "boil water",
+        "steps": [
+            {"name": name, "status": status, **({"message": "not found"} if status == "failed" else {})}
+            for name, status in zip(names, statuses)
+        ],
+    }
+    return summary
+
+
 class ValidateAndroidPhysicalPhoneSmokeSummaryTests(unittest.TestCase):
     def write_summary(self, payload: object) -> Path:
         temp_dir = tempfile.TemporaryDirectory()
@@ -101,6 +115,59 @@ class ValidateAndroidPhysicalPhoneSmokeSummaryTests(unittest.TestCase):
         self.assertEqual(errors, [])
         self.assertIsNotNone(data)
         self.assertEqual(data["text_checks"]["passed"], ["Senku", "Library"])
+
+    def test_valid_completed_interaction_steps_pass(self):
+        data, errors = validate_summary(
+            self.write_summary(add_interaction(make_summary(completed=True)))
+        )
+
+        self.assertEqual(errors, [])
+        self.assertIsNotNone(data)
+        self.assertEqual(data["interaction"]["steps"][0]["status"], "success")
+
+    def test_valid_dry_run_interaction_steps_are_skipped(self):
+        summary = add_interaction(make_summary(), statuses=["skipped"] * 5)
+
+        data, errors = validate_summary(self.write_summary(summary))
+
+        self.assertEqual(errors, [])
+        self.assertIsNotNone(data)
+        self.assertEqual(data["interaction"]["steps"][0]["status"], "skipped")
+
+    def test_completed_interaction_steps_reject_failure_status(self):
+        summary = add_interaction(
+            make_summary(completed=True),
+            statuses=["success", "failed", "success", "success", "success"],
+        )
+
+        _, errors = validate_summary(self.write_summary(summary))
+
+        self.assertIn(
+            "expected root.interaction.steps[1].status to be success for completed summaries",
+            errors,
+        )
+
+    def test_interaction_steps_validate_shape(self):
+        summary = add_interaction(make_summary(completed=True))
+        summary["interaction"]["steps"] = [
+            {"name": "tap_saved", "status": "success"},
+            {"name": "unknown", "status": "wat"},
+        ]
+
+        _, errors = validate_summary(self.write_summary(summary))
+
+        self.assertIn(
+            "expected root.interaction.steps[1].name to be a known interaction step, got 'unknown'",
+            errors,
+        )
+        self.assertIn(
+            "expected root.interaction.steps[1].status to be success|failed|skipped, got 'wat'",
+            errors,
+        )
+        self.assertIn(
+            "expected root.interaction.steps to include: tap_query_field, enter_query, submit_query, back",
+            errors,
+        )
 
     def test_completed_text_checks_reject_missing_fragments(self):
         summary = add_text_checks(make_summary(completed=True), missing=["Library"])

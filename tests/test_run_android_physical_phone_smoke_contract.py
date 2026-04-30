@@ -26,6 +26,8 @@ class AndroidPhysicalPhoneSmokeContractTests(unittest.TestCase):
         self.assertIn("[string]$DumpPath", self.script)
         self.assertIn("[string]$LogcatPath", self.script)
         self.assertIn("[string[]]$RequiredText", self.script)
+        self.assertIn("[switch]$Interact", self.script)
+        self.assertIn("[string]$InteractionQuery", self.script)
         self.assertIn('Join-Path $env:LOCALAPPDATA "Android\\Sdk\\platform-tools\\adb.exe"', self.script)
         self.assertIn("Serial is required unless -DryRun is set", self.script)
         self.assertIn("Refusing emulator serial", self.script)
@@ -47,6 +49,13 @@ class AndroidPhysicalPhoneSmokeContractTests(unittest.TestCase):
         self.assertIn("/sdcard/senku_physical_smoke_ui.xml", self.script)
         self.assertIn("function Get-TextCheckSummary", self.script)
         self.assertIn("text_checks", self.script)
+        self.assertIn("function Invoke-SenkuSimpleInteraction", self.script)
+        self.assertIn("tap_saved", self.script)
+        self.assertIn("tap_query_field", self.script)
+        self.assertIn("enter_query", self.script)
+        self.assertIn("submit_query", self.script)
+        self.assertIn('"input", "text"', self.script)
+        self.assertIn('"input", "keyevent", "BACK"', self.script)
         self.assertIn('"logcat", "-d", "-v", "time"', self.script)
         self.assertIn("physical_device = $true", self.script)
         self.assertIn("launches_emulators = $false", self.script)
@@ -116,6 +125,8 @@ class AndroidPhysicalPhoneSmokeContractTests(unittest.TestCase):
             self.assertIsNone(summary["evidence"]["screenshot_path"])
             self.assertIsNone(summary["evidence"]["dump_path"])
             self.assertIsNone(summary["evidence"]["logcat_path"])
+            self.assertNotIn("interaction", summary)
+            self.assertNotIn("interaction", summary["commands"])
             self.assertTrue((output_dir / "summary.md").exists())
             markdown = (output_dir / "summary.md").read_text(encoding="utf-8-sig")
             self.assertIn("# Android Physical Phone Smoke", markdown)
@@ -298,6 +309,152 @@ class AndroidPhysicalPhoneSmokeContractTests(unittest.TestCase):
             self.assertIn("-s R5CT123456A install --no-streaming -r", call_text)
             self.assertIn("-s R5CT123456A shell am start -n com.senku.mobile/.MainActivity", call_text)
             self.assertIn("-s R5CT123456A exec-out screencap -p", call_text)
+        finally:
+            shutil.rmtree(root, ignore_errors=True)
+
+    def test_fake_adb_interaction_success_records_step_statuses(self):
+        root = Path(tempfile.mkdtemp(prefix="physical_phone_smoke_interact_"))
+        try:
+            output_dir = root / "out"
+            apk = root / "app-debug.apk"
+            adb = root / "adb.cmd"
+            calls = root / "adb_calls.txt"
+            apk.write_text("apk", encoding="utf-8")
+            adb.write_text(
+                "\r\n".join(
+                    [
+                        "@echo off",
+                        f"echo %*>> \"{calls}\"",
+                        "if \"%1\"==\"devices\" (",
+                        "  echo List of devices attached",
+                        "  echo R5CT123456A\tdevice",
+                        "  exit /b 0",
+                        ")",
+                        "if \"%5\"==\"ro.kernel.qemu\" (echo 0& exit /b 0)",
+                        "if \"%5\"==\"ro.boot.qemu\" (echo 0& exit /b 0)",
+                        "if \"%3\"==\"install\" (echo Success& exit /b 0)",
+                        "if \"%4\"==\"am\" (echo Starting: Intent& exit /b 0)",
+                        "if \"%4\"==\"dumpsys\" if \"%5\"==\"window\" (echo mCurrentFocus=Window{u0 com.senku.mobile/.MainActivity}& exit /b 0)",
+                        "if \"%4\"==\"dumpsys\" if \"%5\"==\"activity\" (echo topResumedActivity=com.senku.mobile/.MainActivity& exit /b 0)",
+                        "if \"%4\"==\"uiautomator\" (echo ^<hierarchy^>^<node text=\"Saved\" content-desc=\"Saved\" bounds=\"[10,20][110,120]\" /^>^<node class=\"android.widget.EditText\" resource-id=\"com.senku.mobile:id/search\" bounds=\"[30,200][330,260]\" /^>^</hierarchy^>& exit /b 0)",
+                        "if \"%4\"==\"input\" if \"%5\"==\"tap\" (echo tapped& exit /b 0)",
+                        "if \"%4\"==\"input\" if \"%5\"==\"text\" (echo typed& exit /b 0)",
+                        "if \"%4\"==\"input\" if \"%5\"==\"keyevent\" (echo key& exit /b 0)",
+                        "exit /b 1",
+                    ]
+                ),
+                encoding="utf-8",
+            )
+
+            result = subprocess.run(
+                [
+                    "powershell",
+                    "-NoProfile",
+                    "-ExecutionPolicy",
+                    "Bypass",
+                    "-File",
+                    str(SCRIPT),
+                    "-OutputDir",
+                    str(output_dir),
+                    "-Serial",
+                    "R5CT123456A",
+                    "-ApkPath",
+                    str(apk),
+                    "-AdbPath",
+                    str(adb),
+                    "-Interact",
+                    "-InteractionQuery",
+                    "boil water",
+                ],
+                cwd=REPO_ROOT,
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+
+            self.assertEqual(result.returncode, 0, result.stderr + result.stdout)
+            summary = json.loads((output_dir / "summary.json").read_text(encoding="utf-8-sig"))
+            self.assertTrue(summary["interaction"]["enabled"])
+            self.assertEqual(summary["interaction"]["query"], "boil water")
+            self.assertEqual(
+                [(step["name"], step["status"]) for step in summary["interaction"]["steps"]],
+                [
+                    ("tap_saved", "success"),
+                    ("tap_query_field", "success"),
+                    ("enter_query", "success"),
+                    ("submit_query", "success"),
+                    ("back", "success"),
+                ],
+            )
+            call_text = calls.read_text(encoding="utf-8")
+            self.assertIn("-s R5CT123456A shell input tap 60 70", call_text)
+            self.assertIn("-s R5CT123456A shell input tap 180 230", call_text)
+            self.assertIn("-s R5CT123456A shell input text boil%swater", call_text)
+            self.assertIn("-s R5CT123456A shell input keyevent ENTER", call_text)
+            self.assertIn("-s R5CT123456A shell input keyevent BACK", call_text)
+        finally:
+            shutil.rmtree(root, ignore_errors=True)
+
+    def test_fake_adb_interaction_failure_records_step_status_before_failing(self):
+        root = Path(tempfile.mkdtemp(prefix="physical_phone_smoke_interact_fail_"))
+        try:
+            output_dir = root / "out"
+            apk = root / "app-debug.apk"
+            adb = root / "adb.cmd"
+            apk.write_text("apk", encoding="utf-8")
+            adb.write_text(
+                "\r\n".join(
+                    [
+                        "@echo off",
+                        "if \"%1\"==\"devices\" (",
+                        "  echo List of devices attached",
+                        "  echo R5CT123456A\tdevice",
+                        "  exit /b 0",
+                        ")",
+                        "if \"%5\"==\"ro.kernel.qemu\" (echo 0& exit /b 0)",
+                        "if \"%5\"==\"ro.boot.qemu\" (echo 0& exit /b 0)",
+                        "if \"%3\"==\"install\" (echo Success& exit /b 0)",
+                        "if \"%4\"==\"am\" (echo Starting: Intent& exit /b 0)",
+                        "if \"%4\"==\"dumpsys\" if \"%5\"==\"window\" (echo mCurrentFocus=Window{u0 com.senku.mobile/.MainActivity}& exit /b 0)",
+                        "if \"%4\"==\"dumpsys\" if \"%5\"==\"activity\" (echo topResumedActivity=com.senku.mobile/.MainActivity& exit /b 0)",
+                        "if \"%4\"==\"uiautomator\" (echo ^<hierarchy^>^<node class=\"android.widget.EditText\" bounds=\"[30,200][330,260]\" /^>^</hierarchy^>& exit /b 0)",
+                        "if \"%4\"==\"input\" (exit /b 0)",
+                        "exit /b 1",
+                    ]
+                ),
+                encoding="utf-8",
+            )
+
+            result = subprocess.run(
+                [
+                    "powershell",
+                    "-NoProfile",
+                    "-ExecutionPolicy",
+                    "Bypass",
+                    "-File",
+                    str(SCRIPT),
+                    "-OutputDir",
+                    str(output_dir),
+                    "-Serial",
+                    "R5CT123456A",
+                    "-ApkPath",
+                    str(apk),
+                    "-AdbPath",
+                    str(adb),
+                    "-Interact",
+                ],
+                cwd=REPO_ROOT,
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+
+            self.assertNotEqual(result.returncode, 0, result.stderr + result.stdout)
+            self.assertIn("interaction failed step", result.stderr + result.stdout)
+            summary = json.loads((output_dir / "summary.json").read_text(encoding="utf-8-sig"))
+            self.assertEqual(summary["interaction"]["steps"][0]["name"], "tap_saved")
+            self.assertEqual(summary["interaction"]["steps"][0]["status"], "failed")
+            self.assertIn("Saved control was not found", summary["interaction"]["steps"][0]["message"])
         finally:
             shutil.rmtree(root, ignore_errors=True)
 

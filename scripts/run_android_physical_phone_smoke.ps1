@@ -8,7 +8,9 @@ param(
     [string]$ScreenshotPath,
     [string]$DumpPath,
     [string]$LogcatPath,
-    [string[]]$RequiredText = @()
+    [string[]]$RequiredText = @(),
+    [switch]$Interact,
+    [string]$InteractionQuery = "water filter charcoal sand"
 )
 
 $ErrorActionPreference = "Stop"
@@ -175,6 +177,16 @@ function Write-SummaryMarkdown {
         "- logcat_path: ``$($Summary.evidence.logcat_path)``",
         "- summary_json: ``$($Summary.summary_json)``"
     )
+    if ($null -ne $Summary.interaction) {
+        $lines += @(
+            "- interaction_enabled: $($Summary.interaction.enabled)",
+            "- interaction_query: $($Summary.interaction.query)"
+        )
+        foreach ($step in $Summary.interaction.steps) {
+            $message = if ([string]::IsNullOrWhiteSpace($step.message)) { "" } else { " - $($step.message)" }
+            $lines += "- interaction_step: $($step.name)=$($step.status)$message"
+        }
+    }
     $lines | Set-Content -Path $Path -Encoding UTF8
 }
 
@@ -255,6 +267,171 @@ function Expand-RequiredTextFragments {
     return $expanded
 }
 
+function ConvertTo-AdbInputText {
+    param([string]$Text)
+
+    $encoded = $Text -replace "\\", "\\\\" `
+        -replace "\s", "%s" `
+        -replace "'", "\\'" `
+        -replace '"', '\"' `
+        -replace "\(", "\\(" `
+        -replace "\)", "\\)" `
+        -replace "\&", "\\&" `
+        -replace "\|", "\\|" `
+        -replace ";", "\;" `
+        -replace "<", "\<" `
+        -replace ">", "\>"
+    return $encoded
+}
+
+function Get-UiNodeAttributeMap {
+    param([string]$NodeText)
+
+    $attributes = @{}
+    foreach ($match in [regex]::Matches($NodeText, '\s(?<name>[\w:-]+)="(?<value>[^"]*)"')) {
+        $attributes[$match.Groups["name"].Value] = [System.Net.WebUtility]::HtmlDecode($match.Groups["value"].Value)
+    }
+    return $attributes
+}
+
+function Get-BoundsCenter {
+    param([string]$Bounds)
+
+    if ([string]::IsNullOrWhiteSpace($Bounds)) {
+        return $null
+    }
+    if ($Bounds -notmatch '^\[(?<left>\d+),(?<top>\d+)\]\[(?<right>\d+),(?<bottom>\d+)\]$') {
+        return $null
+    }
+
+    return [pscustomobject]@{
+        x = [int](([int]$Matches["left"] + [int]$Matches["right"]) / 2)
+        y = [int](([int]$Matches["top"] + [int]$Matches["bottom"]) / 2)
+    }
+}
+
+function Find-UiNodeCenter {
+    param(
+        [string]$DumpText,
+        [scriptblock]$Predicate
+    )
+
+    foreach ($match in [regex]::Matches($DumpText, '<node\b[^>]*>')) {
+        $attributes = Get-UiNodeAttributeMap -NodeText $match.Value
+        if (-not (& $Predicate $attributes)) {
+            continue
+        }
+
+        $center = Get-BoundsCenter -Bounds $attributes["bounds"]
+        if ($null -ne $center) {
+            return $center
+        }
+    }
+    return $null
+}
+
+function New-InteractionStep {
+    param(
+        [string]$Name,
+        [string]$Status,
+        [string]$Message = $null
+    )
+
+    $step = [ordered]@{
+        name = $Name
+        status = $Status
+    }
+    if (-not [string]::IsNullOrWhiteSpace($Message)) {
+        $step.message = $Message
+    }
+    return $step
+}
+
+function Invoke-InteractionStep {
+    param(
+        [System.Collections.ArrayList]$Steps,
+        [string]$Name,
+        [scriptblock]$Action
+    )
+
+    try {
+        & $Action
+        [void]$Steps.Add((New-InteractionStep -Name $Name -Status "success"))
+        return $true
+    } catch {
+        [void]$Steps.Add((New-InteractionStep -Name $Name -Status "failed" -Message $_.Exception.Message))
+        return $false
+    }
+}
+
+function Invoke-SenkuSimpleInteraction {
+    param(
+        [string]$ResolvedAdbPath,
+        [string]$DeviceSerial,
+        [string]$QueryText
+    )
+
+    $steps = [System.Collections.ArrayList]::new()
+
+    [void](Invoke-InteractionStep -Steps $steps -Name "tap_saved" -Action {
+        $dumpText = Read-UiAutomatorDump -ResolvedAdbPath $ResolvedAdbPath -DeviceSerial $DeviceSerial
+        $center = Find-UiNodeCenter -DumpText $dumpText -Predicate {
+            param($attributes)
+            return ($attributes["text"] -eq "Saved") -or ($attributes["content-desc"] -eq "Saved")
+        }
+        if ($null -eq $center) {
+            throw "Saved control was not found in UIAutomator dump."
+        }
+        Invoke-AdbChecked -ResolvedAdbPath $ResolvedAdbPath -Arguments @("-s", $DeviceSerial, "shell", "input", "tap", "$($center.x)", "$($center.y)")
+        Start-Sleep -Milliseconds 500
+    })
+
+    [void](Invoke-InteractionStep -Steps $steps -Name "tap_query_field" -Action {
+        $dumpText = Read-UiAutomatorDump -ResolvedAdbPath $ResolvedAdbPath -DeviceSerial $DeviceSerial
+        $center = Find-UiNodeCenter -DumpText $dumpText -Predicate {
+            param($attributes)
+            $className = [string]$attributes["class"]
+            $resourceId = [string]$attributes["resource-id"]
+            $text = [string]$attributes["text"]
+            $description = [string]$attributes["content-desc"]
+            return $className.Contains("EditText") `
+                -or $resourceId.Contains("query") `
+                -or $resourceId.Contains("search") `
+                -or $resourceId.Contains("input") `
+                -or $text.Contains("Search") `
+                -or $text.Contains("Ask") `
+                -or $description.Contains("Search") `
+                -or $description.Contains("Ask")
+        }
+        if ($null -eq $center) {
+            throw "Query input control was not found in UIAutomator dump."
+        }
+        Invoke-AdbChecked -ResolvedAdbPath $ResolvedAdbPath -Arguments @("-s", $DeviceSerial, "shell", "input", "tap", "$($center.x)", "$($center.y)")
+        Start-Sleep -Milliseconds 300
+    })
+
+    [void](Invoke-InteractionStep -Steps $steps -Name "enter_query" -Action {
+        if ([string]::IsNullOrWhiteSpace($QueryText)) {
+            throw "InteractionQuery is empty."
+        }
+        $adbText = ConvertTo-AdbInputText -Text $QueryText
+        Invoke-AdbChecked -ResolvedAdbPath $ResolvedAdbPath -Arguments @("-s", $DeviceSerial, "shell", "input", "text", $adbText)
+        Start-Sleep -Milliseconds 300
+    })
+
+    [void](Invoke-InteractionStep -Steps $steps -Name "submit_query" -Action {
+        Invoke-AdbChecked -ResolvedAdbPath $ResolvedAdbPath -Arguments @("-s", $DeviceSerial, "shell", "input", "keyevent", "ENTER")
+        Start-Sleep -Milliseconds 1000
+    })
+
+    [void](Invoke-InteractionStep -Steps $steps -Name "back" -Action {
+        Invoke-AdbChecked -ResolvedAdbPath $ResolvedAdbPath -Arguments @("-s", $DeviceSerial, "shell", "input", "keyevent", "BACK")
+        Start-Sleep -Milliseconds 500
+    })
+
+    return @($steps)
+}
+
 $resolvedOutputDir = Resolve-TargetPath -Path $OutputDir
 New-Item -ItemType Directory -Force -Path $resolvedOutputDir | Out-Null
 
@@ -271,6 +448,8 @@ $startedAt = (Get-Date).ToUniversalTime()
 $status = "dry_run_only"
 $focusText = $null
 $textCheckFailureMessage = $null
+$interactionFailureMessage = $null
+$interactionSteps = if ($Interact) { [System.Collections.ArrayList]::new() } else { $null }
 $requestedTextFragments = @(Expand-RequiredTextFragments -Fragments $RequiredText)
 $textChecks = if ($requestedTextFragments.Count -gt 0) {
     [ordered]@{
@@ -311,6 +490,14 @@ if (-not $DryRun) {
         throw "Physical phone smoke launched '$launchActivity' but focus evidence did not show '$packageName' resumed. See $resolvedFocusPath"
     }
 
+    if ($Interact) {
+        $interactionSteps = Invoke-SenkuSimpleInteraction -ResolvedAdbPath $resolvedAdbPath -DeviceSerial $Serial -QueryText $InteractionQuery
+        $failedInteractionSteps = @($interactionSteps | Where-Object { $_.status -ne "success" })
+        if ($failedInteractionSteps.Count -gt 0) {
+            $interactionFailureMessage = "Physical phone smoke interaction failed step(s): $((@($failedInteractionSteps | ForEach-Object { $_.name })) -join ', ')"
+        }
+    }
+
     if ($null -ne $resolvedScreenshotPath) {
         $screenshotParent = Split-Path -Parent $resolvedScreenshotPath
         if (-not [string]::IsNullOrWhiteSpace($screenshotParent)) {
@@ -341,6 +528,12 @@ if (-not $DryRun) {
     }
 
     $status = "completed"
+} elseif ($Interact) {
+    [void]$interactionSteps.Add((New-InteractionStep -Name "tap_saved" -Status "skipped" -Message "Dry run only."))
+    [void]$interactionSteps.Add((New-InteractionStep -Name "tap_query_field" -Status "skipped" -Message "Dry run only."))
+    [void]$interactionSteps.Add((New-InteractionStep -Name "enter_query" -Status "skipped" -Message "Dry run only."))
+    [void]$interactionSteps.Add((New-InteractionStep -Name "submit_query" -Status "skipped" -Message "Dry run only."))
+    [void]$interactionSteps.Add((New-InteractionStep -Name "back" -Status "skipped" -Message "Dry run only."))
 }
 
 $finishedAt = (Get-Date).ToUniversalTime()
@@ -383,6 +576,14 @@ $summaryData = [ordered]@{
 if ($null -ne $textChecks) {
     $summaryData.text_checks = $textChecks
 }
+if ($Interact) {
+    $summaryData.commands.interaction = "adb -s $Serial shell input tap/text/keyevent using UIAutomator-selected controls"
+    $summaryData.interaction = [ordered]@{
+        enabled = $true
+        query = $InteractionQuery
+        steps = @($interactionSteps)
+    }
+}
 $summary = [pscustomobject]$summaryData
 
 Write-JsonFile -Path $summaryJsonPath -Value $summary
@@ -394,4 +595,7 @@ if ($DryRun) {
 }
 if ($null -ne $textCheckFailureMessage) {
     throw $textCheckFailureMessage
+}
+if ($null -ne $interactionFailureMessage) {
+    throw $interactionFailureMessage
 }
