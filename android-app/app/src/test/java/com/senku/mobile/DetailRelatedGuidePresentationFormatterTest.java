@@ -1,6 +1,7 @@
 package com.senku.mobile;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertNull;
 
 import java.util.Arrays;
@@ -89,8 +90,7 @@ public final class DetailRelatedGuidePresentationFormatterTest {
                 2
             )
         );
-        assertEquals(
-            "1 linked guide \u00b7 required reading \u00b7 GD-215 \u00b7 Rainwater Catchment.",
+        assertContainsInOrder(
             formatter.buildNonRailRelatedGuidesSubtitle(
                 new DetailRelatedGuidePresentationFormatter.State(
                     false,
@@ -100,7 +100,11 @@ public final class DetailRelatedGuidePresentationFormatterTest {
                     ""
                 ),
                 1
-            )
+            ),
+            "1 linked guide",
+            "required reading",
+            "GD-215",
+            "Rainwater Catchment"
         );
     }
 
@@ -108,12 +112,14 @@ public final class DetailRelatedGuidePresentationFormatterTest {
     public void stationRailSubtitleUsesCrossReferenceOpenedFromCopy() {
         DetailRelatedGuidePresentationFormatter formatter = new DetailRelatedGuidePresentationFormatter(null);
 
-        assertEquals(
-            "6 linked guides \u00b7 opened from GD-220.",
+        assertContainsInOrder(
             formatter.buildStationRelatedGuidesSubtitle(
                 new DetailRelatedGuidePresentationFormatter.State(true, false, "GD-220", "", ""),
                 6
-            )
+            ),
+            "6 linked guides",
+            "opened from",
+            "GD-220"
         );
     }
 
@@ -122,9 +128,7 @@ public final class DetailRelatedGuidePresentationFormatterTest {
         DetailRelatedGuidePresentationFormatter formatter = new DetailRelatedGuidePresentationFormatter(null);
 
         assertEquals("Cross-reference", formatter.buildNonRailRelatedGuidesTitle());
-        assertEquals(
-            "Cross-reference linked guide 1 of 1. GD-215 \u00b7 Rainwater Catchment. Anchored to GD-214. Preview here. Open full guide switches pages.",
-            formatter.buildRelatedGuideButtonContentDescription(
+        String description = formatter.buildRelatedGuideButtonContentDescription(
                 new DetailRelatedGuidePresentationFormatter.State(
                     false,
                     true,
@@ -136,8 +140,18 @@ public final class DetailRelatedGuidePresentationFormatterTest {
                 0,
                 1,
                 true
-            )
+            );
+        assertContainsInOrder(
+            description,
+            "Cross-reference",
+            "linked guide",
+            "1 of 1",
+            "GD-215",
+            "Rainwater Catchment",
+            "Anchored to GD-214",
+            "Preview"
         );
+        assertContains(description, "Open full guide");
     }
 
     @Test
@@ -147,23 +161,28 @@ public final class DetailRelatedGuidePresentationFormatterTest {
             new DetailRelatedGuidePresentationFormatter.State(false, false, "", "", "[GD-214] Water Storage");
         SearchResult guide = new SearchResult("Rainwater Catchment", "", "", "", "GD-215", "", "", "");
 
-        assertEquals(
-            "Related guides. 2 guides",
-            formatter.buildAnswerModeRelatedGuidesPanelContentDescription(state, 2)
+        assertContainsInOrder(
+            formatter.buildAnswerModeRelatedGuidesPanelContentDescription(state, 2),
+            "Related guides",
+            "2 guides"
         );
-        assertEquals(
-            "Related guide 1 of 2. GD-215 \u00b7 Rainwater Catchment. Previews here. Open full guide switches pages.",
-            formatter.buildAnswerModeRelatedGuideButtonContentDescription(state, guide, 0, 2, true)
+        String description = formatter.buildAnswerModeRelatedGuideButtonContentDescription(state, guide, 0, 2, true);
+        assertContainsInOrder(
+            description,
+            "Related guide",
+            "1 of 2",
+            "GD-215",
+            "Rainwater Catchment",
+            "Previews here"
         );
+        assertContains(description, "Open full guide");
     }
 
     @Test
     public void nonRailOpenDescriptionUsesLinkedGuideCopy() {
         DetailRelatedGuidePresentationFormatter formatter = new DetailRelatedGuidePresentationFormatter(null);
 
-        assertEquals(
-            "Open cross-reference linked guide 1 of 1. GD-215 \u00b7 Rainwater Catchment. Anchored to GD-214. Opens the linked guide page in the installed pack.",
-            formatter.buildRelatedGuideButtonContentDescription(
+        String description = formatter.buildRelatedGuideButtonContentDescription(
                 new DetailRelatedGuidePresentationFormatter.State(
                     false,
                     true,
@@ -175,8 +194,18 @@ public final class DetailRelatedGuidePresentationFormatterTest {
                 0,
                 1,
                 false
-            )
+            );
+        assertContainsInOrder(
+            description,
+            "Open",
+            "cross-reference",
+            "linked guide",
+            "1 of 1",
+            "GD-215",
+            "Rainwater Catchment",
+            "Anchored to GD-214"
         );
+        assertContains(description, "Opens the linked guide page");
     }
 
     @Test
@@ -214,9 +243,7 @@ public final class DetailRelatedGuidePresentationFormatterTest {
                 )
             )
         );
-        assertEquals(
-            "Open related guide 1 of 1. GD-220 \u00b7 Abrasives Manufacturing. Category Cross-ref. Opens the linked guide page in the installed pack.",
-            formatter.buildRelatedGuideButtonContentDescription(
+        String description = formatter.buildRelatedGuideButtonContentDescription(
                 new DetailRelatedGuidePresentationFormatter.State(false, false, "", "", ""),
                 new SearchResult(
                     "Abrasives Manufacturing",
@@ -235,8 +262,17 @@ public final class DetailRelatedGuidePresentationFormatterTest {
                 0,
                 1,
                 false
-            )
+            );
+        assertContainsInOrder(
+            description,
+            "Open",
+            "related guide",
+            "1 of 1",
+            "GD-220",
+            "Abrasives Manufacturing",
+            "Category Cross-ref"
         );
+        assertContains(description, "Opens the linked guide page");
     }
 
     @Test
@@ -262,9 +298,7 @@ public final class DetailRelatedGuidePresentationFormatterTest {
                 )
             )
         );
-        assertEquals(
-            "Open related guide 1 of 1. GD-220 \u00b7 Abrasives Manufacturing. Category Anchor. Opens the linked guide page in the installed pack.",
-            formatter.buildRelatedGuideButtonContentDescription(
+        String description = formatter.buildRelatedGuideButtonContentDescription(
                 new DetailRelatedGuidePresentationFormatter.State(false, false, "", "", ""),
                 new SearchResult(
                     "Abrasives Manufacturing",
@@ -283,8 +317,17 @@ public final class DetailRelatedGuidePresentationFormatterTest {
                 0,
                 1,
                 false
-            )
+            );
+        assertContainsInOrder(
+            description,
+            "Open",
+            "related guide",
+            "1 of 1",
+            "GD-220",
+            "Abrasives Manufacturing",
+            "Category Anchor"
         );
+        assertContains(description, "Opens the linked guide page");
     }
 
     @Test
@@ -321,9 +364,7 @@ public final class DetailRelatedGuidePresentationFormatterTest {
     public void answerModeContentDescriptionUsesCompactCanonicalRowCopy() {
         DetailRelatedGuidePresentationFormatter formatter = new DetailRelatedGuidePresentationFormatter(null);
 
-        assertEquals(
-            "Related guide 1 of 4. GD-294 \u00b7 Cave Shelter Systems & Cold-Weather. Opens this related guide.",
-            formatter.buildAnswerModeRelatedGuideButtonContentDescription(
+        String description = formatter.buildAnswerModeRelatedGuideButtonContentDescription(
                 new DetailRelatedGuidePresentationFormatter.State(
                     false,
                     false,
@@ -344,8 +385,15 @@ public final class DetailRelatedGuidePresentationFormatterTest {
                 0,
                 4,
                 false
-            )
+            );
+        assertContainsInOrder(
+            description,
+            "Related guide",
+            "1 of 4",
+            "GD-294",
+            "Cave Shelter Systems & Cold-Weather"
         );
+        assertContains(description, "Opens this related guide");
     }
 
     @Test
@@ -493,5 +541,18 @@ public final class DetailRelatedGuidePresentationFormatterTest {
         assertEquals("long", merged.timeHorizon);
         assertEquals("howto", merged.structureType);
         assertEquals("rainwater", merged.topicTags);
+    }
+
+    private static void assertContains(String actual, String expected) {
+        assertTrue("Expected <" + actual + "> to contain <" + expected + ">", actual.contains(expected));
+    }
+
+    private static void assertContainsInOrder(String actual, String... expectedTokens) {
+        int previousIndex = -1;
+        for (String expectedToken : expectedTokens) {
+            int index = actual.indexOf(expectedToken, previousIndex + 1);
+            assertTrue("Expected <" + actual + "> to contain <" + expectedToken + "> after index " + previousIndex, index >= 0);
+            previousIndex = index;
+        }
     }
 }

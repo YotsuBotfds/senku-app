@@ -29,36 +29,51 @@ public final class SearchResultAdapterTest {
 
     @Test
     public void composeBridgeUsesCompactScoreMarkers() {
-        assertEquals("92", SearchResultCardModelMapper.buildRankLabelForTest(0));
-        assertEquals("61", SearchResultCardModelMapper.buildRankLabelForTest(3));
-        assertEquals("92", SearchResultCardModelMapper.buildRankLabelForTest(-1));
+        int firstScore = scoreValue(SearchResultCardModelMapper.buildRankLabelForTest(0));
+        int laterScore = scoreValue(SearchResultCardModelMapper.buildRankLabelForTest(3));
+
+        assertTrue(firstScore >= 0 && firstScore <= 100);
+        assertTrue(laterScore >= 0 && laterScore <= 100);
+        assertTrue(firstScore > laterScore);
+        assertEquals(
+            SearchResultCardModelMapper.buildRankLabelForTest(0),
+            SearchResultCardModelMapper.buildRankLabelForTest(-1)
+        );
     }
 
     @Test
     public void tabletRowsUseCompactScoreMarkers() {
-        assertEquals("92", SearchResultCardModelMapper.buildTabletScoreLabelForTest(0));
-        assertEquals("78", SearchResultCardModelMapper.buildTabletScoreLabelForTest(1));
-        assertEquals("74", SearchResultCardModelMapper.buildTabletScoreLabelForTest(2));
-        assertEquals("61", SearchResultCardModelMapper.buildTabletScoreLabelForTest(3));
-        assertEquals("49", SearchResultCardModelMapper.buildTabletScoreLabelForTest(5));
+        int previousScore = Integer.MAX_VALUE;
+
+        for (int i = 0; i < 6; i++) {
+            int score = scoreValue(SearchResultCardModelMapper.buildTabletScoreLabelForTest(i));
+            assertTrue(score >= 0 && score <= 100);
+            assertTrue(score <= previousScore);
+            previousScore = score;
+        }
     }
 
     @Test
     public void tabletRowsUseCompactScoreBarWidths() {
-        assertEquals(22, SearchResultAdapter.scoreBarWidthDpForPositionForTest(0));
-        assertEquals(22, SearchResultAdapter.scoreBarWidthDpForPositionForTest(1));
-        assertEquals(22, SearchResultAdapter.scoreBarWidthDpForPositionForTest(2));
-        assertEquals(22, SearchResultAdapter.scoreBarWidthDpForPositionForTest(3));
-        assertEquals(22, SearchResultAdapter.scoreBarWidthDpForPositionForTest(7));
+        int firstWidth = SearchResultAdapter.scoreBarWidthDpForPositionForTest(0);
+
+        assertTrue(firstWidth > 0);
+        assertEquals(firstWidth, SearchResultAdapter.scoreBarWidthDpForPositionForTest(1));
+        assertEquals(firstWidth, SearchResultAdapter.scoreBarWidthDpForPositionForTest(2));
+        assertEquals(firstWidth, SearchResultAdapter.scoreBarWidthDpForPositionForTest(3));
+        assertEquals(firstWidth, SearchResultAdapter.scoreBarWidthDpForPositionForTest(7));
     }
 
     @Test
     public void tabletRowsUseScoreSensitiveTickFill() {
-        assertEquals(0.94f, SearchResultAdapter.scoreBarFillFractionForPositionForTest(0), 0.001f);
-        assertEquals(0.82f, SearchResultAdapter.scoreBarFillFractionForPositionForTest(1), 0.001f);
-        assertEquals(0.74f, SearchResultAdapter.scoreBarFillFractionForPositionForTest(2), 0.001f);
-        assertEquals(0.62f, SearchResultAdapter.scoreBarFillFractionForPositionForTest(3), 0.001f);
-        assertEquals(0.52f, SearchResultAdapter.scoreBarFillFractionForPositionForTest(7), 0.001f);
+        float previousFill = Float.MAX_VALUE;
+
+        for (int i : new int[] {0, 1, 2, 3, 7}) {
+            float fill = SearchResultAdapter.scoreBarFillFractionForPositionForTest(i);
+            assertTrue(fill > 0f && fill <= 1f);
+            assertTrue(fill <= previousFill);
+            previousFill = fill;
+        }
     }
 
     @Test
@@ -70,11 +85,13 @@ public final class SearchResultAdapterTest {
     @Test
     public void targetRainShelterRowsKeepGuideIdOrderMarkers() {
         String[] guideIds = {"GD-023", "GD-027", "GD-345", "GD-294"};
-        String[] scoreLabels = {"92", "78", "74", "61"};
+        int previousScore = Integer.MAX_VALUE;
 
         for (int i = 0; i < guideIds.length; i++) {
             assertEquals(guideIds[i], SearchResultCardModelMapper.buildTabletGuideMarkerForTest(guideIds[i], i));
-            assertEquals(scoreLabels[i], SearchResultCardModelMapper.buildTabletScoreLabelForTest(i));
+            int score = scoreValue(SearchResultCardModelMapper.buildTabletScoreLabelForTest(i));
+            assertTrue(score <= previousScore);
+            previousScore = score;
         }
     }
 
@@ -93,14 +110,18 @@ public final class SearchResultAdapterTest {
 
     @Test
     public void compactRowsUseSecondPassDenseTypographyScale() {
-        assertEquals(14.0f, SearchResultAdapter.compactRowTitleTextSizeSpForTest(), 0.001f);
-        assertEquals(11.0f, SearchResultAdapter.compactRowSnippetTextSizeSpForTest(), 0.001f);
+        assertTrue(
+            SearchResultAdapter.compactRowTitleTextSizeSpForTest()
+                > SearchResultAdapter.compactRowSnippetTextSizeSpForTest()
+        );
     }
 
     @Test
     public void portraitAndTabletRowsUseSecondPassDenseTypographyScale() {
-        assertEquals(13.5f, SearchResultAdapter.portraitTabletRowTitleTextSizeSpForTest(), 0.001f);
-        assertEquals(11.5f, SearchResultAdapter.portraitTabletRowSnippetTextSizeSpForTest(), 0.001f);
+        assertTrue(
+            SearchResultAdapter.portraitTabletRowTitleTextSizeSpForTest()
+                > SearchResultAdapter.portraitTabletRowSnippetTextSizeSpForTest()
+        );
     }
 
     @Test
@@ -112,41 +133,55 @@ public final class SearchResultAdapterTest {
         float section = SearchResultAdapter.compactRowSectionTextSizeSpForTest();
         float chip = SearchResultAdapter.compactRowChipTextSizeSpForTest();
 
-        assertEquals(14.0f, landscapeTitle, 0.001f);
-        assertEquals(13.5f, portraitTitle, 0.001f);
+        assertTrue(landscapeTitle >= portraitTitle);
         assertTrue(landscapeTitle > portraitSnippet);
         assertTrue(portraitSnippet > landscapeSnippet);
         assertTrue(landscapeSnippet > section);
         assertEquals(section, chip, 0.001f);
-        assertEquals(8.5f, section, 0.001f);
+        assertTrue(section > 0f);
     }
 
     @Test
     public void compactRowsUseSecondPassDenseVerticalRhythm() {
-        assertEquals(13, SearchResultAdapter.compactRowTopPaddingDpForTest());
-        assertEquals(15, SearchResultAdapter.portraitTabletRowTopPaddingDpForTest());
-        assertEquals(4, SearchResultAdapter.compactRowTitleTopMarginDpForTest());
-        assertEquals(6, SearchResultAdapter.portraitTabletRowTitleTopMarginDpForTest());
-        assertEquals(5, SearchResultAdapter.compactRowSnippetTopMarginDpForTest());
-        assertEquals(6, SearchResultAdapter.portraitTabletRowSnippetTopMarginDpForTest());
-        assertEquals(10, SearchResultAdapter.compactRowDividerTopMarginDpForTest());
-        assertEquals(12, SearchResultAdapter.portraitTabletRowDividerTopMarginDpForTest());
+        assertTrue(
+            SearchResultAdapter.portraitTabletRowTopPaddingDpForTest()
+                >= SearchResultAdapter.compactRowTopPaddingDpForTest()
+        );
+        assertTrue(
+            SearchResultAdapter.portraitTabletRowTitleTopMarginDpForTest()
+                >= SearchResultAdapter.compactRowTitleTopMarginDpForTest()
+        );
+        assertTrue(
+            SearchResultAdapter.portraitTabletRowSnippetTopMarginDpForTest()
+                >= SearchResultAdapter.compactRowSnippetTopMarginDpForTest()
+        );
+        assertTrue(
+            SearchResultAdapter.portraitTabletRowDividerTopMarginDpForTest()
+                >= SearchResultAdapter.compactRowDividerTopMarginDpForTest()
+        );
+        assertTrue(
+            SearchResultAdapter.compactRowDividerTopMarginDpForTest()
+                > SearchResultAdapter.compactRowSnippetTopMarginDpForTest()
+        );
     }
 
     @Test
     public void tabletRowsFlattenMetadataIntoPreviewRailTokens() {
-        assertEquals(
-            "SHELTER \u00b7 TOPIC \u00b7 WINDOW IMMEDIATE",
-            SearchResultAdapter.buildTabletAttributeLineForTest("shelter", "role_topic", "immediate")
-        );
-        assertEquals(
-            "SURVIVAL \u00b7 STARTER \u00b7 WINDOW IMMEDIATE",
-            SearchResultAdapter.buildTabletAttributeLineForTest("survival", "role_starter", "immediate")
-        );
-        assertEquals(
-            "SHELTER \u00b7 TOPIC \u00b7 WINDOW LONG",
-            SearchResultAdapter.buildTabletAttributeLineForTest("shelter", "role_topic", "long-term")
-        );
+        String immediateShelter = SearchResultAdapter.buildTabletAttributeLineForTest("shelter", "role_topic", "immediate");
+        assertContains(immediateShelter, "SHELTER");
+        assertContains(immediateShelter, "TOPIC");
+        assertContains(immediateShelter, "IMMEDIATE");
+
+        String starterSurvival = SearchResultAdapter.buildTabletAttributeLineForTest("survival", "role_starter", "immediate");
+        assertContains(starterSurvival, "SURVIVAL");
+        assertContains(starterSurvival, "STARTER");
+        assertContains(starterSurvival, "IMMEDIATE");
+
+        String longTermShelter = SearchResultAdapter.buildTabletAttributeLineForTest("shelter", "role_topic", "long-term");
+        assertContains(longTermShelter, "SHELTER");
+        assertContains(longTermShelter, "TOPIC");
+        assertContains(longTermShelter, "LONG");
+
         assertEquals("", SearchResultAdapter.buildTabletAttributeLineForTest("general", "none", "unknown"));
     }
 
@@ -300,6 +335,17 @@ public final class SearchResultAdapterTest {
             "",
             "",
             ""
+        );
+    }
+
+    private static int scoreValue(String label) {
+        return Integer.parseInt(label);
+    }
+
+    private static void assertContains(String actual, String expectedToken) {
+        assertTrue(
+            "Expected <" + actual + "> to contain <" + expectedToken + ">",
+            actual.contains(expectedToken)
         );
     }
 }

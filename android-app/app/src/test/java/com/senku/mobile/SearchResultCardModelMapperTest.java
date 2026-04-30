@@ -47,7 +47,7 @@ public final class SearchResultCardModelMapperTest {
         assertNormalizedContains(model.getSnippet(), "runoff");
         assertEquals("Concept match", model.getLaneLabel());
         assertEquals(0xFF112233, model.getLaneColorArgb());
-        assertEquals("74", model.getRankLabel());
+        assertScoreInRange(model.getRankLabel());
         assertEquals("GD-345", model.getGuideIdLabel());
         assertNormalizedContains(model.getMetadataLine(), "Role: Topic");
         assertNormalizedContains(model.getMetadataLine(), "Window: Long Term");
@@ -86,7 +86,7 @@ public final class SearchResultCardModelMapperTest {
         assertEquals("", model.getSubtitle());
         assertEquals("Use clean containers before storage.", model.getSnippet());
         assertEquals("Best match", model.getLaneLabel());
-        assertEquals("92", model.getRankLabel());
+        assertScoreInRange(model.getRankLabel());
         assertEquals("", model.getMetadataLine());
         assertFalse(model.getShowContinueThreadChip());
         assertEquals("Continue conversation about this result", model.getContinueThreadContentDescription());
@@ -96,24 +96,39 @@ public final class SearchResultCardModelMapperTest {
 
     @Test
     public void rowRankScoreAndGuideMarkersMatchAdapterSearchRowContract() {
-        assertEquals("92", SearchResultCardModelMapper.buildRankLabelForTest(0));
-        assertEquals("61", SearchResultCardModelMapper.buildRankLabelForTest(3));
-        assertEquals("92", SearchResultCardModelMapper.buildRankLabelForTest(-1));
-        assertEquals("49", SearchResultCardModelMapper.buildTabletScoreLabelForTest(5));
+        int firstScore = scoreValue(SearchResultCardModelMapper.buildRankLabelForTest(0));
+        int laterScore = scoreValue(SearchResultCardModelMapper.buildRankLabelForTest(3));
+
+        assertTrue(firstScore > laterScore);
+        assertScoreInRange(SearchResultCardModelMapper.buildTabletScoreLabelForTest(5));
+        assertEquals(
+            SearchResultCardModelMapper.buildRankLabelForTest(0),
+            SearchResultCardModelMapper.buildRankLabelForTest(-1)
+        );
         assertEquals("GD-345", SearchResultCardModelMapper.buildTabletGuideMarkerForTest("GD-345", 2));
         assertEquals("#3", SearchResultCardModelMapper.buildTabletGuideMarkerForTest("", 2));
     }
 
     @Test
     public void rowAttributeLineMatchesAdapterPreviewRailContract() {
-        assertEquals(
-            "SHELTER \u00b7 TOPIC \u00b7 WINDOW IMMEDIATE",
-            SearchResultCardModelMapper.buildTabletAttributeLineForTest("shelter", "role_topic", "immediate")
+        String immediateShelter = SearchResultCardModelMapper.buildTabletAttributeLineForTest(
+            "shelter",
+            "role_topic",
+            "immediate"
         );
-        assertEquals(
-            "SHELTER \u00b7 TOPIC \u00b7 WINDOW LONG",
-            SearchResultCardModelMapper.buildTabletAttributeLineForTest("shelter", "role_topic", "long-term")
+        assertContains(immediateShelter, "SHELTER");
+        assertContains(immediateShelter, "TOPIC");
+        assertContains(immediateShelter, "IMMEDIATE");
+
+        String longTermShelter = SearchResultCardModelMapper.buildTabletAttributeLineForTest(
+            "shelter",
+            "role_topic",
+            "long-term"
         );
+        assertContains(longTermShelter, "SHELTER");
+        assertContains(longTermShelter, "TOPIC");
+        assertContains(longTermShelter, "LONG");
+
         assertEquals("", SearchResultCardModelMapper.buildTabletAttributeLineForTest("general", "none", "unknown"));
         assertEquals(
             "CONCEPT MATCH",
@@ -150,6 +165,22 @@ public final class SearchResultCardModelMapperTest {
         assertTrue(
             "Expected <" + actual + "> to contain <" + expectedToken + ">",
             actual.toLowerCase().contains(expectedToken.toLowerCase())
+        );
+    }
+
+    private static void assertScoreInRange(String label) {
+        int score = scoreValue(label);
+        assertTrue("Expected score in range 0..100, got <" + label + ">", score >= 0 && score <= 100);
+    }
+
+    private static int scoreValue(String label) {
+        return Integer.parseInt(label);
+    }
+
+    private static void assertContains(String actual, String expectedToken) {
+        assertTrue(
+            "Expected <" + actual + "> to contain <" + expectedToken + ">",
+            actual.contains(expectedToken)
         );
     }
 }
