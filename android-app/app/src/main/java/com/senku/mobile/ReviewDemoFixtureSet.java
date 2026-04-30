@@ -131,7 +131,7 @@ final class ReviewDemoFixtureSet {
         String anchorGuideId,
         ArrayList<SearchResult> shaped
     ) {
-        if (!RAIN_SHELTER_TOPIC_GUIDE_ID.equalsIgnoreCase(safe(anchorGuideId).trim())) {
+        if (!isRainShelterTopicGuide(anchorGuideId)) {
             return shaped;
         }
         int canonicalIndex = indexOfGuideId(shaped, RAIN_SHELTER_PHONE_RELATED_CANONICAL_GUIDE_ID);
@@ -147,6 +147,10 @@ final class ReviewDemoFixtureSet {
             shaped.add(Math.min(targetIndex + 1, shaped.size()), displaced);
         }
         return shaped;
+    }
+
+    static boolean isRainShelterTopicGuide(String guideId) {
+        return RAIN_SHELTER_TOPIC_GUIDE_ID.equalsIgnoreCase(safe(guideId).trim());
     }
 
     static String rainShelterUncertainFitAnswerBody() {

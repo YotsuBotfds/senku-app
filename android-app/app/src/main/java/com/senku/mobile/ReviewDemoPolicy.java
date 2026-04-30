@@ -23,7 +23,7 @@ final class ReviewDemoPolicy {
     }
 
     static boolean isSourceStackDemoEnabled(boolean productReviewMode) {
-        return isResolvedProductReviewModeEnabled(productReviewMode);
+        return shouldApplyReviewDemoFixtures(productReviewMode);
     }
 
     static boolean resolveProductReviewMode(Intent intent, Context context) {
@@ -91,7 +91,7 @@ final class ReviewDemoPolicy {
         List<SearchResult> adjacent,
         boolean safetyCritical
     ) {
-        if (!isResolvedProductReviewModeEnabled(productReviewMode)
+        if (!shouldApplyReviewDemoFixtures(productReviewMode)
             || safetyCritical
             || !ReviewDemoFixtureSet.isRainShelterUncertainFit(query, adjacent)) {
             return "";
@@ -105,7 +105,7 @@ final class ReviewDemoPolicy {
         List<SearchResult> adjacent,
         boolean safetyCritical
     ) {
-        if (!isResolvedProductReviewModeEnabled(productReviewMode)
+        if (!shouldApplyReviewDemoFixtures(productReviewMode)
             || safetyCritical
             || !ReviewDemoFixtureSet.isRainShelterUncertainFit(query, adjacent)) {
             return adjacent == null ? Collections.emptyList() : new ArrayList<>(adjacent);
@@ -121,7 +121,7 @@ final class ReviewDemoPolicy {
         List<SearchResult> results,
         GuideLookup guideLookup
     ) {
-        if (!isResolvedProductReviewModeEnabled(productReviewMode)
+        if (!shouldApplyReviewDemoFixtures(productReviewMode)
             || !ReviewDemoFixtureSet.isReviewSearchQuery(query)) {
             return results == null ? Collections.emptyList() : results;
         }
@@ -137,21 +137,21 @@ final class ReviewDemoPolicy {
         if (relatedGuides != null) {
             shaped.addAll(relatedGuides);
         }
-        if (!isResolvedProductReviewModeEnabled(productReviewMode)) {
+        if (!shouldShapeAnswerModeRelatedGuides(productReviewMode, anchorGuideId)) {
             return shaped;
         }
         return ReviewDemoFixtureSet.shapeAnswerModeRelatedGuides(anchorGuideId, shaped);
     }
 
     static int displayHomeCategoryCount(boolean productReviewMode, String bucketKey, int actualCount) {
-        if (!isResolvedProductReviewModeEnabled(productReviewMode)) {
+        if (!shouldApplyReviewDemoFixtures(productReviewMode)) {
             return actualCount;
         }
         return ReviewDemoFixtureSet.homeCategoryCount(bucketKey);
     }
 
     static String shapeHomeSubtitle(boolean productReviewMode, int guideCount, String defaultSubtitle) {
-        if (!isResolvedProductReviewModeEnabled(productReviewMode) || guideCount <= 0) {
+        if (!shouldApplyReviewDemoFixtures(productReviewMode) || guideCount <= 0) {
             return safe(defaultSubtitle);
         }
         return ReviewDemoFixtureSet.homeSubtitle();
@@ -159,7 +159,7 @@ final class ReviewDemoPolicy {
 
     static String shapeManualHomeStatus(boolean productReviewMode, boolean manualHomeShell, String defaultStatus) {
         String cleanStatus = safe(defaultStatus).trim();
-        if (!isResolvedProductReviewModeEnabled(productReviewMode) || !manualHomeShell || cleanStatus.isEmpty()) {
+        if (!shouldApplyReviewDemoFixtures(productReviewMode) || !manualHomeShell || cleanStatus.isEmpty()) {
             return cleanStatus;
         }
         if (cleanStatus.toLowerCase(Locale.US).startsWith("ready offline")) {
@@ -170,7 +170,7 @@ final class ReviewDemoPolicy {
 
     static String appendSearchLatency(String header, String query, boolean productReviewMode) {
         String cleanHeader = safe(header).trim();
-        if (!isResolvedProductReviewModeEnabled(productReviewMode)
+        if (!shouldApplyReviewDemoFixtures(productReviewMode)
             || cleanHeader.isEmpty()
             || !ReviewDemoFixtureSet.isReviewSearchQuery(query)
             || ReviewDemoFixtureSet.headerAlreadyIncludesReviewLatency(cleanHeader)) {
@@ -189,7 +189,7 @@ final class ReviewDemoPolicy {
     }
 
     static boolean shouldApplySearchRowReviewVisualState(boolean productReviewMode, String query) {
-        return isResolvedProductReviewModeEnabled(productReviewMode)
+        return shouldApplyReviewDemoFixtures(productReviewMode)
             && ReviewDemoFixtureSet.isReviewSearchQuery(query);
     }
 
@@ -199,7 +199,7 @@ final class ReviewDemoPolicy {
         int index,
         String defaultLabel
     ) {
-        if (!isResolvedProductReviewModeEnabled(productReviewMode)) {
+        if (!shouldApplyReviewDemoFixtures(productReviewMode)) {
             return safe(defaultLabel);
         }
         String reviewLabel = ReviewDemoFixtureSet.manualHomeRecentThreadLabel(index);
@@ -232,8 +232,13 @@ final class ReviewDemoPolicy {
         return reviewManualHomeRecentThreadTitle(null, index);
     }
 
-    private static boolean isResolvedProductReviewModeEnabled(boolean productReviewMode) {
+    static boolean shouldApplyReviewDemoFixtures(boolean productReviewMode) {
         return productReviewMode;
+    }
+
+    static boolean shouldShapeAnswerModeRelatedGuides(boolean productReviewMode, String anchorGuideId) {
+        return shouldApplyReviewDemoFixtures(productReviewMode)
+            && ReviewDemoFixtureSet.isRainShelterTopicGuide(anchorGuideId);
     }
 
     private static String reviewManualHomeRecentThreadTitle(
@@ -247,7 +252,7 @@ final class ReviewDemoPolicy {
     }
 
     private static boolean isTabletPreviewReviewResult(boolean productReviewMode, SearchResult result) {
-        return isResolvedProductReviewModeEnabled(productReviewMode)
+        return shouldApplyReviewDemoFixtures(productReviewMode)
             && ReviewDemoFixtureSet.isTabletPreviewReviewResult(result);
     }
 

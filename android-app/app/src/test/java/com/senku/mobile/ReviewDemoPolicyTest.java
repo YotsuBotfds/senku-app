@@ -140,6 +140,20 @@ public final class ReviewDemoPolicyTest {
     }
 
     @Test
+    public void reviewFixtureGateRequiresResolvedProductReviewMode() {
+        assertFalse(ReviewDemoPolicy.shouldApplyReviewDemoFixtures(false));
+        assertTrue(ReviewDemoPolicy.shouldApplyReviewDemoFixtures(true));
+    }
+
+    @Test
+    public void answerModeRelatedGuideShapingRequiresReviewModeAndTargetGuide() {
+        assertFalse(ReviewDemoPolicy.shouldShapeAnswerModeRelatedGuides(false, "GD-345"));
+        assertFalse(ReviewDemoPolicy.shouldShapeAnswerModeRelatedGuides(true, "GD-027"));
+        assertFalse(ReviewDemoPolicy.shouldShapeAnswerModeRelatedGuides(true, null));
+        assertTrue(ReviewDemoPolicy.shouldShapeAnswerModeRelatedGuides(true, " gd-345 "));
+    }
+
+    @Test
     public void rainShelterUncertainFitBackendDemoDefaultsOffUntilWiredByCaller() {
         assertFalse(ReviewDemoPolicy.isRainShelterUncertainFitBackendDemoEnabled());
     }
