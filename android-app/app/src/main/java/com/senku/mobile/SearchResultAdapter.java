@@ -108,6 +108,7 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
     private String activeQuery = "";
     private Set<String> warmThreadGuideIds = Collections.emptySet();
     private int maxDisplayedItems = DEFAULT_MAX_DISPLAYED_ITEMS;
+    private boolean reviewDemoSearchRowVisualStateEnabled = false;
 
     public SearchResultAdapter(
         Context context,
@@ -164,6 +165,14 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
         notifyDataSetChanged();
     }
 
+    public void setReviewDemoSearchRowVisualStateEnabled(boolean enabled) {
+        if (reviewDemoSearchRowVisualStateEnabled == enabled) {
+            return;
+        }
+        reviewDemoSearchRowVisualStateEnabled = enabled;
+        notifyDataSetChanged();
+    }
+
     @NonNull
     @Override
     public ResultViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -188,7 +197,11 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
         holder.meta.setMaxLines(1);
         holder.meta.setEllipsize(TextUtils.TruncateAt.END);
         holder.categoryBadge.setVisibility(View.GONE);
-        boolean suppressReviewLinkedCue = shouldSuppressLinkedGuideCueForResult(activeQuery, result);
+        boolean suppressReviewLinkedCue = shouldSuppressLinkedGuideCueForResult(
+            reviewDemoSearchRowVisualStateEnabled,
+            activeQuery,
+            result
+        );
         if (suppressReviewLinkedCue) {
             hideLinkedGuideChrome(holder.linkedGuideCue, holder.linkedGuidePreview);
         } else {
@@ -1381,24 +1394,24 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
         return false;
     }
 
-    static boolean shouldSuppressLinkedGuideCueForQueryForTest(String query) {
-        return isReviewSearchVisualQuery(query);
+    static boolean shouldSuppressLinkedGuideCueForQueryForTest(boolean reviewDemoEnabled, String query) {
+        return ReviewDemoPolicy.shouldApplySearchRowReviewVisualState(reviewDemoEnabled, query);
     }
 
-    private static boolean isReviewSearchVisualQuery(String query) {
-        return "rain shelter".equalsIgnoreCase(safe(query).trim());
+    static boolean shouldSuppressLinkedGuideCueForResultForTest(
+        boolean reviewDemoEnabled,
+        String query,
+        SearchResult result
+    ) {
+        return shouldSuppressLinkedGuideCueForResult(reviewDemoEnabled, query, result);
     }
 
-    static boolean shouldSuppressLinkedGuideCueForResultForTest(String query, SearchResult result) {
-        return shouldSuppressLinkedGuideCueForResult(query, result);
-    }
-
-    private static boolean shouldSuppressLinkedGuideCueForResult(String query, SearchResult result) {
-        return isReviewSearchVisualQuery(query) && isReviewSearchResult(result);
-    }
-
-    private static boolean isReviewSearchResult(SearchResult result) {
-        return safe(result == null ? null : result.subtitle).toLowerCase(Locale.US).contains("| review");
+    private static boolean shouldSuppressLinkedGuideCueForResult(
+        boolean reviewDemoEnabled,
+        String query,
+        SearchResult result
+    ) {
+        return ReviewDemoPolicy.shouldSuppressSearchRowLinkedGuideCue(reviewDemoEnabled, query, result);
     }
 
     private String buildLinkedGuidePreviewLine(LinkedGuidePreview preview, boolean richTabletCard) {

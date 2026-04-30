@@ -246,6 +246,18 @@ final class ReviewDemoPolicy {
         return cleanHeader + " \u2022 " + REVIEW_SEARCH_LATENCY_LABEL.toUpperCase(Locale.US);
     }
 
+    static boolean shouldSuppressSearchRowLinkedGuideCue(
+        boolean productReviewMode,
+        String query,
+        SearchResult result
+    ) {
+        return shouldApplySearchRowReviewVisualState(productReviewMode, query) && isReviewSearchResult(result);
+    }
+
+    static boolean shouldApplySearchRowReviewVisualState(boolean productReviewMode, String query) {
+        return productReviewMode && isReviewSearchQuery(query);
+    }
+
     static String shapeRecentThreadLabel(
         boolean productReviewMode,
         ChatSessionStore.ConversationPreview preview,
@@ -407,6 +419,10 @@ final class ReviewDemoPolicy {
 
     private static boolean isReviewSearchQuery(String query) {
         return REVIEW_SEARCH_QUERY.equalsIgnoreCase(safe(query).trim());
+    }
+
+    private static boolean isReviewSearchResult(SearchResult result) {
+        return safe(result == null ? null : result.subtitle).toLowerCase(Locale.US).contains("| review");
     }
 
     private static boolean isRainShelterUncertainFit(String query, List<SearchResult> adjacent) {

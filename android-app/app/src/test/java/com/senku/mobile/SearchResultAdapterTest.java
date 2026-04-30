@@ -269,14 +269,21 @@ public final class SearchResultAdapterTest {
     }
 
     @Test
-    public void reviewRainShelterVisualStateSuppressesLinkedGuideCueOnlyForMockQuery() {
+    public void defaultProductionVisualStateDoesNotSuppressMockLinkedGuideCue() {
+        SearchResult reviewResult = resultWithSubtitle("GD-023 | Survival | review");
+
+        assertFalse(SearchResultAdapter.shouldSuppressLinkedGuideCueForResultForTest(false, " rain shelter ", reviewResult));
+    }
+
+    @Test
+    public void reviewRainShelterVisualStateSuppressesLinkedGuideCueOnlyWhenEnabledForMockQuery() {
         SearchResult reviewResult = resultWithSubtitle("GD-023 | Survival | review");
         SearchResult normalResult = resultWithSubtitle("");
 
-        assertTrue(SearchResultAdapter.shouldSuppressLinkedGuideCueForResultForTest(" rain shelter ", reviewResult));
-        assertFalse(SearchResultAdapter.shouldSuppressLinkedGuideCueForResultForTest(" rain shelter ", normalResult));
-        assertFalse(SearchResultAdapter.shouldSuppressLinkedGuideCueForResultForTest("water", reviewResult));
-        assertFalse(SearchResultAdapter.shouldSuppressLinkedGuideCueForResultForTest("", reviewResult));
+        assertTrue(SearchResultAdapter.shouldSuppressLinkedGuideCueForResultForTest(true, " rain shelter ", reviewResult));
+        assertFalse(SearchResultAdapter.shouldSuppressLinkedGuideCueForResultForTest(true, " rain shelter ", normalResult));
+        assertFalse(SearchResultAdapter.shouldSuppressLinkedGuideCueForResultForTest(true, "water", reviewResult));
+        assertFalse(SearchResultAdapter.shouldSuppressLinkedGuideCueForResultForTest(true, "", reviewResult));
     }
 
     private static SearchResult resultWithSubtitle(String subtitle) {

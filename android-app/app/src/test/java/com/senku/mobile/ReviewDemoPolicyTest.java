@@ -61,6 +61,44 @@ public final class ReviewDemoPolicyTest {
     }
 
     @Test
+    public void disabledModeDoesNotSuppressSearchRowLinkedGuideCueForMockRows() {
+        assertFalse(ReviewDemoPolicy.shouldApplySearchRowReviewVisualState(false, "rain shelter"));
+        assertFalse(
+            ReviewDemoPolicy.shouldSuppressSearchRowLinkedGuideCue(
+                false,
+                "rain shelter",
+                guideWithSubtitle("GD-023 | survival | review")
+            )
+        );
+    }
+
+    @Test
+    public void enabledModeSuppressesSearchRowLinkedGuideCueOnlyForReviewSearchRows() {
+        assertTrue(ReviewDemoPolicy.shouldApplySearchRowReviewVisualState(true, " rain shelter "));
+        assertTrue(
+            ReviewDemoPolicy.shouldSuppressSearchRowLinkedGuideCue(
+                true,
+                " rain shelter ",
+                guideWithSubtitle("GD-023 | survival | review")
+            )
+        );
+        assertFalse(
+            ReviewDemoPolicy.shouldSuppressSearchRowLinkedGuideCue(
+                true,
+                "rain shelter",
+                guideWithSubtitle("GD-023 | survival")
+            )
+        );
+        assertFalse(
+            ReviewDemoPolicy.shouldSuppressSearchRowLinkedGuideCue(
+                true,
+                "water",
+                guideWithSubtitle("GD-023 | survival | review")
+            )
+        );
+    }
+
+    @Test
     public void reviewRainShelterSearchUsesTargetOrderAndDisplayContentWhenEnabled() {
         List<SearchResult> results = ReviewDemoPolicy.shapeSearchResults(
             "rain shelter",
@@ -238,6 +276,23 @@ public final class ReviewDemoPolicyTest {
             "",
             "",
             "lexical",
+            "",
+            "",
+            "",
+            ""
+        );
+    }
+
+    private static SearchResult guideWithSubtitle(String subtitle) {
+        return new SearchResult(
+            "Survival Basics & First 72 Hours",
+            subtitle,
+            "",
+            "",
+            "GD-023",
+            "",
+            "",
+            "",
             "",
             "",
             "",

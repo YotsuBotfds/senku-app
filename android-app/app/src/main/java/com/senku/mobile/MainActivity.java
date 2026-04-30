@@ -430,6 +430,7 @@ public final class MainActivity extends AppCompatActivity {
         adapter = new SearchResultAdapter(this, items, this::openDetail, this::openLinkedGuidePreview);
         adapter.setActiveQuery(activeResultHighlightQuery);
         adapter.setLinkedGuidePreviewMap(resultPreviewBridgeMap);
+        updateAdapterReviewDemoSearchRowState();
         resultsList.setAdapter(adapter);
 
         modelPickerLauncher = registerForActivityResult(
@@ -552,6 +553,7 @@ public final class MainActivity extends AppCompatActivity {
         super.onNewIntent(intent);
         setIntent(intent);
         productReviewMode = resolveProductReviewMode(intent);
+        updateAdapterReviewDemoSearchRowState();
         HostInferenceConfig.applyIntentOverrides(this, intent);
         autoIntentHandled = false;
         debugDetailIntentHandled = false;
@@ -1263,6 +1265,12 @@ public final class MainActivity extends AppCompatActivity {
         updateLandscapePhoneResultsPriority();
         updatePortraitPhoneResultsPriority();
         refreshResultPreviewBridgesAsync(results);
+    }
+
+    private void updateAdapterReviewDemoSearchRowState() {
+        if (adapter != null) {
+            adapter.setReviewDemoSearchRowVisualStateEnabled(productReviewMode);
+        }
     }
 
     private static String firstNonEmptyStatic(String... values) {
