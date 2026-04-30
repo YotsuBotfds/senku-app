@@ -343,6 +343,20 @@ class TabletEvidenceVisibilityPolicyTest {
     }
 
     @Test
+    fun tabletGuideModeDoesNotInferFoundrySectionCountOutsideReviewDemo() {
+        val state = stateWithSources(
+            sourceCount = 1,
+            isLandscape = true,
+            detailMode = TabletDetailMode.Guide,
+            guideId = "GD-132",
+            guideTitle = "Foundry & Metal Casting",
+            guideSectionCount = 0,
+        )
+
+        assertEquals(1, state.resolvedGuideSectionCount())
+    }
+
+    @Test
     fun tabletXRefsCarryRequiredRailRelation() {
         val xref = XRefState(id = "GD-499", title = "Bellows", relation = "REQUIRED")
 
@@ -379,7 +393,7 @@ class TabletEvidenceVisibilityPolicyTest {
 
         val railSources = state.resolvedThreadRailSources()
 
-        assertEquals(17, state.resolvedGuideSectionCount())
+        assertEquals(1, state.resolvedGuideSectionCount())
         assertEquals(6, buildCrossReferenceCardCount(tabletSourceGraphAnchor(state.anchor), state.xrefs))
         assertEquals(6, railSources.size)
         assertEquals("CROSS-REFERENCE \u2022 6", threadRailSectionTitle("CROSS-REFERENCE", railSources.size))

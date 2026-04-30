@@ -681,8 +681,14 @@ internal fun tabletGuideReferencePaneSixRowHeightDp(isLandscape: Boolean): Int {
         ((childCount - 1) * policy.referencePaneVerticalSpacingDp)
 }
 
-internal fun tabletGuideReferencePaneRows(xrefs: List<XRefState>): List<XRefState> {
+internal fun tabletGuideReferencePaneRows(
+    xrefs: List<XRefState>,
+    reviewDemoMode: Boolean = false,
+): List<XRefState> {
     val visible = xrefs.filter { it.id.trim().isNotEmpty() }
+    if (!reviewDemoMode) {
+        return visible.take(6)
+    }
     val hasFoundryAnchor = visible.any {
         it.id.trim().equals("GD-132", ignoreCase = true) &&
             it.relation.trim().equals("ANCHOR", ignoreCase = true)
@@ -853,11 +859,12 @@ internal fun tabletAnswerRelatedGuideRows(
     guideTitle: String,
     anchor: AnchorState,
     xrefs: List<XRefState>,
+    reviewDemoMode: Boolean = false,
 ): List<XRefState> {
     val identity = listOf(guideId, guideTitle, anchor.id, anchor.title, anchor.snippet)
         .joinToString(" ")
         .lowercase(Locale.US)
-    if ("gd-345" in identity && ("rain" in identity || "shelter" in identity || "tarp" in identity)) {
+    if (reviewDemoMode && "gd-345" in identity && ("rain" in identity || "shelter" in identity || "tarp" in identity)) {
         return listOf(
             XRefState("GD-294", "Cave Shelter Systems & Cold-Weather", "RELATED"),
             XRefState("GD-695", "Hurricane & Severe Storm Sheltering", "RELATED"),
@@ -889,23 +896,39 @@ internal fun tabletThreadSourceCardMeta(sourceId: String, relation: String): Str
     }
 }
 
-internal fun tabletThreadSourceScoreLabel(source: SourceState): String =
-    when (source.id.trim().uppercase()) {
-        "GD-220" -> "74%"
-        "GD-345" -> "68%"
-        else -> ""
+internal fun tabletThreadSourceScoreLabel(
+    source: SourceState,
+    reviewDemoMode: Boolean = false,
+): String =
+    if (reviewDemoMode) {
+        when (source.id.trim().uppercase()) {
+            "GD-220" -> "74%"
+            "GD-345" -> "68%"
+            else -> ""
+        }
+    } else {
+        ""
     }
 
-internal fun tabletThreadAnchorSourceTitle(sourceId: String, fallbackTitle: String): String =
-    when (sourceId.trim().uppercase(Locale.US)) {
-        "GD-220" -> "Abrasives Manufacturing"
-        else -> fallbackTitle.trim().ifEmpty { "Thread anchor" }
+internal fun tabletThreadAnchorSourceTitle(
+    sourceId: String,
+    fallbackTitle: String,
+    reviewDemoMode: Boolean = false,
+): String =
+    if (reviewDemoMode && sourceId.trim().equals("GD-220", ignoreCase = true)) {
+        "Abrasives Manufacturing"
+    } else {
+        fallbackTitle.trim().ifEmpty { "Thread anchor" }
     }
 
-internal fun tabletThreadSourceSnippetLabel(source: SourceState): String =
-    when (source.id.trim().uppercase(Locale.US)) {
-        "GD-220" -> "\"Pitch ridgeline along prevailing wind...\""
-        else -> ""
+internal fun tabletThreadSourceSnippetLabel(
+    source: SourceState,
+    reviewDemoMode: Boolean = false,
+): String =
+    if (reviewDemoMode && source.id.trim().equals("GD-220", ignoreCase = true)) {
+        "\"Pitch ridgeline along prevailing wind...\""
+    } else {
+        ""
     }
 
 internal fun tabletTitleBarShouldShowSupportRows(detailMode: TabletDetailMode): Boolean =
@@ -914,8 +937,12 @@ internal fun tabletTitleBarShouldShowSupportRows(detailMode: TabletDetailMode): 
 internal fun tabletThreadQuestionMetaLabel(turnIndex: Int): String =
     "Q${turnIndex.coerceAtLeast(1)} \u2022 ${tabletThreadTimestampLabel(turnIndex)} \u2022 FIELD QUESTION"
 
-internal fun tabletThreadAnswerMetaLabel(turnIndex: Int, content: AnswerContent? = null): String {
-    val sourceId = tabletThreadAnswerSourceId(content, turnIndex)
+internal fun tabletThreadAnswerMetaLabel(
+    turnIndex: Int,
+    content: AnswerContent? = null,
+    reviewDemoMode: Boolean = false,
+): String {
+    val sourceId = tabletThreadAnswerSourceId(content, turnIndex, reviewDemoMode)
     val anchorLabel = sourceId.takeIf { it.isNotBlank() }?.let { "ANCHOR $it" } ?: "ANSWER"
     return "A${turnIndex.coerceAtLeast(1)} \u2022 ${tabletThreadTimestampLabel(turnIndex)} \u2022 $anchorLabel"
 }
@@ -942,11 +969,19 @@ internal fun tabletThreadTimestampLabel(turnIndex: Int): String {
     return String.format(Locale.US, "04:%02d", minute.coerceAtMost(59))
 }
 
-internal fun tabletThreadAnswerSourceId(content: AnswerContent?, turnIndex: Int): String {
-    return tabletThreadAnswerSourceIds(content, turnIndex).firstOrNull().orEmpty()
+internal fun tabletThreadAnswerSourceId(
+    content: AnswerContent?,
+    turnIndex: Int,
+    reviewDemoMode: Boolean = false,
+): String {
+    return tabletThreadAnswerSourceIds(content, turnIndex, reviewDemoMode).firstOrNull().orEmpty()
 }
 
-internal fun tabletThreadAnswerSourceIds(content: AnswerContent?, turnIndex: Int): List<String> {
+internal fun tabletThreadAnswerSourceIds(
+    content: AnswerContent?,
+    turnIndex: Int,
+    reviewDemoMode: Boolean = false,
+): List<String> {
     val metadata = content?.reviewedCardMetadata
     val ids = linkedSetOf<String>()
     fun addGuideId(value: String?) {
@@ -962,6 +997,9 @@ internal fun tabletThreadAnswerSourceIds(content: AnswerContent?, turnIndex: Int
     if (ids.isNotEmpty()) {
         return ids.toList()
     }
+    if (!reviewDemoMode) {
+        return emptyList()
+    }
     return when (turnIndex.coerceAtLeast(1)) {
         1 -> listOf("GD-220", "GD-132")
         2 -> listOf("GD-345")
@@ -969,8 +1007,12 @@ internal fun tabletThreadAnswerSourceIds(content: AnswerContent?, turnIndex: Int
     }
 }
 
-internal fun tabletThreadAnswerSourceChipLabels(content: AnswerContent?, turnIndex: Int): List<String> =
-    tabletThreadAnswerSourceIds(content, turnIndex)
+internal fun tabletThreadAnswerSourceChipLabels(
+    content: AnswerContent?,
+    turnIndex: Int,
+    reviewDemoMode: Boolean = false,
+): List<String> =
+    tabletThreadAnswerSourceIds(content, turnIndex, reviewDemoMode)
 
 internal fun tabletThreadAnswerStatusLabel(content: AnswerContent, status: Status): String =
     when {
@@ -1475,6 +1517,7 @@ private fun DetailWorkspace(
                     ThreadSourcePane(
                         sources = state.resolvedVisibleThreadSourceRows(),
                         isLandscape = state.isLandscape,
+                        reviewDemoMode = state.reviewDemoMode,
                         onSourceClick = onSourceClick,
                         modifier = Modifier
                             .width(tabletThreadEvidenceRailWidthDp(state.isLandscape).dp)
@@ -1489,6 +1532,7 @@ private fun DetailWorkspace(
                     val evidenceGraph = state.resolvedEvidencePaneGraph()
                     GuideReferencePane(
                         xrefs = evidenceGraph.xrefs,
+                        reviewDemoMode = state.reviewDemoMode,
                         onXRefClick = onXRefClick,
                         modifier = Modifier
                             .width(tabletGuideReferenceRailWidthDp(state.isLandscape).dp)
@@ -2171,6 +2215,7 @@ private fun GuideSectionRailRow(
 private fun ThreadSourcePane(
     sources: List<SourceState>,
     isLandscape: Boolean,
+    reviewDemoMode: Boolean,
     onSourceClick: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -2218,6 +2263,7 @@ private fun ThreadSourcePane(
             sources.forEach { source ->
                 ThreadSourceCard(
                     source = source,
+                    reviewDemoMode = reviewDemoMode,
                     onClick = { onSourceClick(source.key) },
                 )
             }
@@ -2228,6 +2274,7 @@ private fun ThreadSourcePane(
 @Composable
 private fun ThreadSourceCard(
     source: SourceState,
+    reviewDemoMode: Boolean,
     onClick: () -> Unit,
 ) {
     val colors = SenkuTheme.colors
@@ -2262,8 +2309,8 @@ private fun ThreadSourceCard(
                     .padding(vertical = 8.dp),
                 verticalArrangement = Arrangement.spacedBy(4.dp),
             ) {
-                val scoreLabel = tabletThreadSourceScoreLabel(source)
-                val snippetLabel = tabletThreadSourceSnippetLabel(source)
+                val scoreLabel = tabletThreadSourceScoreLabel(source, reviewDemoMode)
+                val snippetLabel = tabletThreadSourceSnippetLabel(source, reviewDemoMode)
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -2324,6 +2371,7 @@ private fun ThreadSourceCard(
 @Composable
 private fun GuideReferencePane(
     xrefs: List<XRefState>,
+    reviewDemoMode: Boolean,
     onXRefClick: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -2332,7 +2380,7 @@ private fun GuideReferencePane(
     val densityPolicy = tabletGuideSideRailDensityPolicy(isLandscape = true)
     val typePolicy = tabletGuideRailTypePolicy()
     val scrollState = rememberScrollState()
-    val referenceRows = tabletGuideReferencePaneRows(xrefs)
+    val referenceRows = tabletGuideReferencePaneRows(xrefs, reviewDemoMode)
 
     Column(
         modifier = modifier
@@ -2476,6 +2524,7 @@ private fun AnswerReadingSurface(
             guideTitle = state.guideTitle,
             anchor = state.anchor,
             xrefs = state.xrefs,
+            reviewDemoMode = state.reviewDemoMode,
         )
         if (relatedGuides.isNotEmpty()) {
             RelatedGuidesSection(
@@ -2508,6 +2557,7 @@ private fun AnswerReadingSurface(
                     typeScalePolicy = typeScalePolicy,
                     onFocusTurn = { onTurnClick(turn.id) },
                     isLandscape = state.isLandscape,
+                    reviewDemoMode = state.reviewDemoMode,
                 )
             }
         }
@@ -2710,6 +2760,7 @@ private fun SecondaryTurnBlock(
     typeScalePolicy: TabletDetailTypeScalePolicy,
     onFocusTurn: () -> Unit,
     isLandscape: Boolean,
+    reviewDemoMode: Boolean,
 ) {
     Surface(
         modifier = Modifier
@@ -2730,6 +2781,7 @@ private fun SecondaryTurnBlock(
             guideMode = false,
             threadMode = true,
             isLandscape = isLandscape,
+            reviewDemoMode = reviewDemoMode,
             modifier = Modifier.padding(horizontal = 12.dp),
         )
     }
@@ -2778,7 +2830,7 @@ private fun GuidePaperHeader(
     val typePolicy = tabletGuidePaperTypePolicy()
     val anchor = state.guideModeAnchorLabel.trim()
         .takeIf { it.isNotEmpty() }
-        ?: if (state.isFoundryGuideReader()) "OPENED FROM GD-220" else ""
+        ?: if (state.reviewDemoMode && state.isFoundryGuideReader()) "OPENED FROM GD-220" else ""
     val metaLine = listOfNotNull(
         state.guideId.trim().ifEmpty { "GD-?" },
         "${state.resolvedGuideSectionCount()} SECTIONS",
@@ -2871,6 +2923,7 @@ private fun ThreadTurnList(
             guideMode = guideMode,
             threadMode = state.isThreadMode(),
             isLandscape = state.isLandscape,
+            reviewDemoMode = state.reviewDemoMode,
         )
     }
 }
@@ -3079,6 +3132,7 @@ private fun ThreadTurnBlock(
     guideMode: Boolean,
     threadMode: Boolean,
     isLandscape: Boolean,
+    reviewDemoMode: Boolean = false,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -3107,6 +3161,7 @@ private fun ThreadTurnBlock(
             guideMode = guideMode,
             threadMode = threadMode,
             isLandscape = isLandscape,
+            reviewDemoMode = reviewDemoMode,
         )
     }
 }
@@ -3193,6 +3248,7 @@ private fun AnswerInlineBlock(
     guideMode: Boolean,
     threadMode: Boolean,
     isLandscape: Boolean,
+    reviewDemoMode: Boolean,
     modifier: Modifier = Modifier,
 ) {
     val colors = SenkuTheme.colors
@@ -3217,7 +3273,11 @@ private fun AnswerInlineBlock(
                 verticalAlignment = Alignment.Top,
             ) {
                 Text(
-                    text = if (threadMode) tabletThreadAnswerMetaLabel(turnIndex, content) else "A$turnIndex - ${answerAnchorLabel(content)}",
+                    text = if (threadMode) {
+                        tabletThreadAnswerMetaLabel(turnIndex, content, reviewDemoMode)
+                    } else {
+                        "A$turnIndex - ${answerAnchorLabel(content)}"
+                    },
                     modifier = Modifier.weight(1f),
                     style = typography.monoCaps.copy(
                         fontSize = 10.sp,
@@ -3260,7 +3320,7 @@ private fun AnswerInlineBlock(
         }
         if (threadMode) {
             ThreadAnswerSourceChipRow(
-                labels = tabletThreadAnswerSourceChipLabels(content, turnIndex),
+                labels = tabletThreadAnswerSourceChipLabels(content, turnIndex, reviewDemoMode),
             )
         }
         if (!content.steps.isNullOrEmpty() && !content.abstain) {
@@ -3730,7 +3790,7 @@ internal fun TabletDetailState.resolvedThreadRailTurns(): List<ThreadTurnState> 
     if (!isGuideMode()) {
         return turns
     }
-    if (isFoundryGuideReader()) {
+    if (reviewDemoMode && isFoundryGuideReader()) {
         return FoundryGuideRailSections.mapIndexed { index, label ->
             ThreadTurnState(
                 id = "foundry-guide-section-${index + 1}",
@@ -3781,7 +3841,7 @@ internal fun TabletDetailState.resolvedThreadSourceRows(): List<SourceState> {
         rows += SourceState(
             key = threadAnchorId,
             id = threadAnchorId,
-            title = tabletThreadAnchorSourceTitle(threadAnchorId, guideTitle),
+            title = tabletThreadAnchorSourceTitle(threadAnchorId, guideTitle, reviewDemoMode),
             isAnchor = true,
             isSelected = false,
         )
@@ -3892,7 +3952,7 @@ private fun TabletDetailState.inferredGuideSectionCountFallback(): Int? {
     val identityText = listOf(guideId, guideTitle, anchor.id, anchor.title)
         .joinToString(" ")
         .lowercase()
-    if ("gd-132" in identityText || "foundry" in identityText) {
+    if (reviewDemoMode && ("gd-132" in identityText || "foundry" in identityText)) {
         return 17
     }
     return null

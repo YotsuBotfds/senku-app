@@ -245,17 +245,19 @@ class StressReadingPolicyTest {
     }
 
     @Test
-    fun tabletGuideReferencePanePromotesOpenedFromGuideAsAnchor() {
-        val rows = tabletGuideReferencePaneRows(
-            listOf(
-                XRefState("GD-132", "Foundry & Metal Casting", "ANCHOR"),
-                XRefState("GD-220", "Abrasives Manufacturing", "RELATED"),
-                XRefState("GD-499", "Bellows & Forge Blower", "REQUIRED"),
-            ),
+    fun tabletGuideReferencePaneKeepsLiveOrderByDefaultAndPromotesDemoAnchorOnOptIn() {
+        val xrefs = listOf(
+            XRefState("GD-132", "Foundry & Metal Casting", "ANCHOR"),
+            XRefState("GD-220", "Abrasives Manufacturing", "RELATED"),
+            XRefState("GD-499", "Bellows & Forge Blower", "REQUIRED"),
         )
+        val liveRows = tabletGuideReferencePaneRows(xrefs)
+        val demoRows = tabletGuideReferencePaneRows(xrefs, reviewDemoMode = true)
 
-        assertEquals(listOf("GD-220", "GD-499"), rows.map { it.id })
-        assertEquals(listOf("ANCHOR", "REQUIRED"), rows.map { it.relation })
+        assertEquals(listOf("GD-132", "GD-220", "GD-499"), liveRows.map { it.id })
+        assertEquals(listOf("ANCHOR", "RELATED", "REQUIRED"), liveRows.map { it.relation })
+        assertEquals(listOf("GD-220", "GD-499"), demoRows.map { it.id })
+        assertEquals(listOf("ANCHOR", "REQUIRED"), demoRows.map { it.relation })
     }
 
     @Test
@@ -351,7 +353,7 @@ class StressReadingPolicyTest {
     }
 
     @Test
-    fun tabletFoundryGuideRailUsesCanonicalMockSections() {
+    fun tabletFoundryGuideRailUsesLiveSectionsByDefault() {
         val state = tabletDetailState(
             guideId = "GD-132",
             guideTitle = "Foundry & Metal Casting",
@@ -363,6 +365,25 @@ class StressReadingPolicyTest {
                 )
             ),
             detailMode = TabletDetailMode.Guide,
+        )
+
+        assertEquals(listOf("Question"), state.resolvedThreadRailTurns().map { it.question })
+    }
+
+    @Test
+    fun tabletFoundryGuideRailUsesCanonicalMockSectionsInReviewDemoMode() {
+        val state = tabletDetailState(
+            guideId = "GD-132",
+            guideTitle = "Foundry & Metal Casting",
+            turns = listOf(
+                threadTurn(
+                    id = "guide",
+                    answer = "\u2014 \u00A7 1 \u00B7 AREA READINESS\n" +
+                        "Reviewed Answer-Card Boundary",
+                )
+            ),
+            detailMode = TabletDetailMode.Guide,
+            reviewDemoMode = true,
         )
 
         assertEquals(
@@ -573,6 +594,7 @@ class StressReadingPolicyTest {
                 hasSource = true,
             ),
             xrefs = emptyList(),
+            reviewDemoMode = true,
         )
 
         assertEquals(
@@ -603,7 +625,7 @@ class StressReadingPolicyTest {
             state.resolvedThreadSourceRows().map { it.id },
         )
         assertEquals(
-            listOf("Abrasives Manufacturing", "Tarp & Cord Shelters"),
+            listOf("Rain shelter", "Tarp & Cord Shelters"),
             state.resolvedThreadSourceRows().map { it.title },
         )
     }
@@ -624,8 +646,10 @@ class StressReadingPolicyTest {
         )
 
         assertEquals("Q1 \u2022 04:21 \u2022 FIELD QUESTION", tabletThreadQuestionMetaLabel(1))
-        assertEquals("A2 \u2022 04:23 \u2022 ANCHOR GD-345", tabletThreadAnswerMetaLabel(2))
-        assertEquals("A2 \u2022 04:23 \u2022 ANCHOR GD-345", tabletThreadAnswerMetaLabel(2, confidentAnswer))
+        assertEquals("A2 \u2022 04:23 \u2022 ANSWER", tabletThreadAnswerMetaLabel(2))
+        assertEquals("A2 \u2022 04:23 \u2022 ANSWER", tabletThreadAnswerMetaLabel(2, confidentAnswer))
+        assertEquals("A2 \u2022 04:23 \u2022 ANCHOR GD-345", tabletThreadAnswerMetaLabel(2, reviewDemoMode = true))
+        assertEquals("A2 \u2022 04:23 \u2022 ANCHOR GD-345", tabletThreadAnswerMetaLabel(2, confidentAnswer, reviewDemoMode = true))
         assertEquals("\u2022 CONFIDENT", tabletThreadAnswerStatusLabel(confidentAnswer, Status.Done))
         assertEquals("\u2022 UNSURE", tabletThreadAnswerStatusLabel(unsureAnswer, Status.Done))
         assertEquals(
@@ -640,23 +664,27 @@ class StressReadingPolicyTest {
         )
         assertFalse(tabletThreadAnswerStatusLabel(confidentAnswer, Status.Done).contains("Rule match"))
         assertFalse(tabletThreadAnswerStatusLabel(confidentAnswer, Status.Done).contains("STRONG EVIDENCE"))
-        assertTrue(tabletThreadAnswerMetaLabel(2).contains("GD-345"))
-        assertTrue(tabletThreadAnswerMetaLabel(2, confidentAnswer).contains("GD-345"))
+        assertFalse(tabletThreadAnswerMetaLabel(2).contains("GD-345"))
+        assertTrue(tabletThreadAnswerMetaLabel(2, confidentAnswer, reviewDemoMode = true).contains("GD-345"))
     }
 
     @Test
     fun tabletThreadAnswerSourceChipsUsePerTurnFallbackGuideIds() {
         assertEquals(
-            listOf("GD-220", "GD-132"),
+            emptyList<String>(),
             tabletThreadAnswerSourceIds(content = null, turnIndex = 1),
         )
         assertEquals(
             listOf("GD-220", "GD-132"),
-            tabletThreadAnswerSourceChipLabels(content = null, turnIndex = 1),
+            tabletThreadAnswerSourceIds(content = null, turnIndex = 1, reviewDemoMode = true),
+        )
+        assertEquals(
+            listOf("GD-220", "GD-132"),
+            tabletThreadAnswerSourceChipLabels(content = null, turnIndex = 1, reviewDemoMode = true),
         )
         assertEquals(
             listOf("GD-345"),
-            tabletThreadAnswerSourceIds(content = null, turnIndex = 2),
+            tabletThreadAnswerSourceIds(content = null, turnIndex = 2, reviewDemoMode = true),
         )
         assertEquals(
             emptyList<String>(),
@@ -698,11 +726,19 @@ class StressReadingPolicyTest {
         assertEquals("GD-345 \u2022 TOPIC", tabletThreadSourceCardMeta("GD-345", "TOPIC"))
         assertEquals("SOURCE", tabletThreadSourceCardMeta("", "SOURCE"))
         assertFalse(tabletThreadSourceCardMeta("", "SOURCE").contains("THREAD - 1 SOURCE"))
-        assertEquals("Abrasives Manufacturing", tabletThreadAnchorSourceTitle("GD-220", "Rain shelter - 2 turns"))
+        assertEquals("Rain shelter - 2 turns", tabletThreadAnchorSourceTitle("GD-220", "Rain shelter - 2 turns"))
+        assertEquals("Abrasives Manufacturing", tabletThreadAnchorSourceTitle("GD-220", "Rain shelter - 2 turns", reviewDemoMode = true))
+        assertEquals(
+            "",
+            tabletThreadSourceSnippetLabel(
+                SourceState("anchor", "GD-220", "Abrasives Manufacturing", isAnchor = true, isSelected = false),
+            ),
+        )
         assertEquals(
             "\"Pitch ridgeline along prevailing wind...\"",
             tabletThreadSourceSnippetLabel(
                 SourceState("anchor", "GD-220", "Abrasives Manufacturing", isAnchor = true, isSelected = false),
+                reviewDemoMode = true,
             ),
         )
     }
@@ -770,12 +806,14 @@ class StressReadingPolicyTest {
             "74%",
             tabletThreadSourceScoreLabel(
                 SourceState("anchor", "GD-220", "Abrasives Manufacturing", isAnchor = true, isSelected = true),
+                reviewDemoMode = true,
             ),
         )
         assertEquals(
             "68%",
             tabletThreadSourceScoreLabel(
                 SourceState("topic", "GD-345", "Tarp & Cord Shelters", isAnchor = false, isSelected = false),
+                reviewDemoMode = true,
             ),
         )
         assertEquals(
@@ -1028,6 +1066,7 @@ class StressReadingPolicyTest {
         evidenceExpanded: Boolean = false,
         isLandscape: Boolean = true,
         detailMode: TabletDetailMode = TabletDetailMode.Answer,
+        reviewDemoMode: Boolean = false,
     ): TabletDetailState =
         TabletDetailState(
             guideId = guideId,
@@ -1050,6 +1089,7 @@ class StressReadingPolicyTest {
             guideModeLabel = guideModeLabel,
             guideModeAnchorLabel = guideModeAnchorLabel,
             detailMode = detailMode,
+            reviewDemoMode = reviewDemoMode,
         )
 
     private fun threadTurn(
