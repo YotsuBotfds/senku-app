@@ -61,11 +61,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public final class MainActivity extends AppCompatActivity {
-    enum HomeChromeBackAction {
-        RETURN_TO_BROWSE,
-        NO_OP
-    }
-
     private static final String EXTRA_AUTO_QUERY = "auto_query";
     private static final String EXTRA_AUTO_ASK = "auto_ask";
     private static final String EXTRA_AUTO_FOLLOWUP_QUERY = "auto_followup_query";
@@ -592,17 +587,23 @@ public final class MainActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        if (shouldHandleMainSurfaceNavigationTabs(isPhoneFormFactor(), isTabletSearchLayout())
-            && isBrowseModeActive()
-            && activePhoneTab != BottomTabDestination.HOME) {
-            BottomTabDestination previousTab = popPreviousPhoneTab();
-            openPhoneTab(previousTab == null ? BottomTabDestination.HOME : previousTab, false);
-            return;
-        }
-        if (!isBrowseModeActive() && !items.isEmpty()) {
-            setPhoneTabFromFlow(BottomTabDestination.HOME);
-            browseGuides();
-            return;
+        if (shouldHandleMainSurfaceNavigationTabs(isPhoneFormFactor(), isTabletSearchLayout())) {
+            BottomTabDestination previousTab = isBrowseModeActive() && activePhoneTab != BottomTabDestination.HOME
+                ? popPreviousPhoneTab()
+                : null;
+            MainRouteDecisionHelper.Transition transition = MainRouteDecisionHelper.systemBack(
+                currentMainRouteState(),
+                previousTab
+            );
+            if (transition.effect == MainRouteDecisionHelper.Effect.SHOW_PREVIOUS_TAB) {
+                openPhoneTab(transition.routeState.activePhoneTab, false);
+                return;
+            }
+            if (transition.effect == MainRouteDecisionHelper.Effect.RETURN_TO_BROWSE && !items.isEmpty()) {
+                applyMainRouteState(transition.routeState);
+                browseGuides();
+                return;
+            }
         }
         super.onBackPressed();
     }
@@ -2699,12 +2700,8 @@ public final class MainActivity extends AppCompatActivity {
             : TABLET_HOME_PORTRAIT_TOP_PADDING_DP;
     }
 
-    static HomeChromeBackAction resolveHomeChromeBackActionForTest(boolean browseMode) {
-        return resolveHomeChromeBackAction(browseMode);
-    }
-
-    private static HomeChromeBackAction resolveHomeChromeBackAction(boolean browseMode) {
-        return browseMode ? HomeChromeBackAction.NO_OP : HomeChromeBackAction.RETURN_TO_BROWSE;
+    static MainRouteDecisionHelper.Effect resolveHomeChromeBackEffectForTest(boolean browseMode) {
+        return MainRouteDecisionHelper.homeChromeBack(routeStateForMode(browseMode, BottomTabDestination.HOME, false)).effect;
     }
 
     static int resolveTabletSearchFilterRailWidthDp(boolean landscapeTabletLayout) {
@@ -3029,19 +3026,7 @@ public final class MainActivity extends AppCompatActivity {
     }
 
     static BottomTabDestination phoneTabSelectionOwner(BottomTabDestination destination) {
-        if (destination == null) {
-            return BottomTabDestination.HOME;
-        }
-        if (isLibraryPhoneFlowIntent(destination)) {
-            return BottomTabDestination.HOME;
-        }
-        if (isAskPhoneFlowIntent(destination)) {
-            return BottomTabDestination.ASK;
-        }
-        if (isSavedPhoneFlowIntent(destination)) {
-            return BottomTabDestination.PINS;
-        }
-        return destination;
+        return MainRouteDecisionHelper.phoneTabSelectionOwner(destination);
     }
 
     static boolean isLibraryPhoneFlowIntent(BottomTabDestination destination) {
@@ -3149,46 +3134,41 @@ public final class MainActivity extends AppCompatActivity {
         if (!shouldHandleMainSurfaceNavigationTabs(isPhoneFormFactor(), isTabletSearchLayout())) {
             return;
         }
-        BottomTabDestination selectionOwner = phoneTabSelectionOwner(destination);
+        MainRouteDecisionHelper.Transition transition = MainRouteDecisionHelper.openPhoneTab(
+            currentMainRouteState(),
+            destination
+        );
+        BottomTabDestination selectionOwner = transition.routeState.activePhoneTab;
         if (pushHistory && selectionOwner != activePhoneTab) {
             pushPhoneTab(activePhoneTab);
         }
-        activePhoneTab = selectionOwner;
-        updatePhoneTabBarState();
-        switch (destination) {
-            case HOME:
-                askLaneActive = false;
+        applyMainRouteState(transition.routeState);
+        updateActionLabels();
+        switch (transition.effect) {
+            case SHOW_BROWSE_HOME:
                 updateActionLabels();
                 dismissSearchKeyboard();
                 ensureBrowseHomeVisible();
                 scrollBrowseToTop();
                 break;
-            case SEARCH:
-                askLaneActive = false;
-                updateActionLabels();
+            case FOCUS_SEARCH_INPUT:
                 if (isBrowseModeActive()) {
                     scrollBrowseToTop();
                 }
                 focusSearchInput();
                 break;
-            case ASK:
-                askLaneActive = true;
-                updateActionLabels();
+            case FOCUS_ASK_INPUT:
                 if (isBrowseModeActive()) {
                     scrollBrowseToTop();
                 }
                 focusSearchInput();
                 break;
-            case THREADS:
-                askLaneActive = false;
-                updateActionLabels();
+            case SHOW_RECENT_THREADS:
                 dismissSearchKeyboard();
                 ensureBrowseHomeVisible();
                 scrollBrowseSectionIntoView(recentThreadsSection);
                 break;
-            case PINS:
-                askLaneActive = false;
-                updateActionLabels();
+            case SHOW_SAVED_GUIDES:
                 dismissSearchKeyboard();
                 pendingSavedGuideSectionFocus = true;
                 ensureSavedGuidesDestinationVisible();
@@ -3204,6 +3184,40 @@ public final class MainActivity extends AppCompatActivity {
             return;
         }
         activePhoneTab = phoneTabSelectionOwner(destination);
+        updatePhoneTabBarState();
+    }
+
+    private MainRouteDecisionHelper.RouteState currentMainRouteState() {
+        return routeStateForMode(isBrowseModeActive(), activePhoneTab, askLaneActive);
+    }
+
+    static MainRouteDecisionHelper.RouteState routeStateForModeForTest(
+        boolean browseMode,
+        BottomTabDestination activePhoneTab,
+        boolean askLaneActive
+    ) {
+        return routeStateForMode(browseMode, activePhoneTab, askLaneActive);
+    }
+
+    private static MainRouteDecisionHelper.RouteState routeStateForMode(
+        boolean browseMode,
+        BottomTabDestination activePhoneTab,
+        boolean askLaneActive
+    ) {
+        MainRouteDecisionHelper.Surface surface = browseMode
+            ? MainRouteDecisionHelper.Surface.BROWSE
+            : (askLaneActive || activePhoneTab == BottomTabDestination.ASK
+                ? MainRouteDecisionHelper.Surface.ASK_RESULTS
+                : MainRouteDecisionHelper.Surface.SEARCH_RESULTS);
+        return new MainRouteDecisionHelper.RouteState(surface, activePhoneTab, askLaneActive);
+    }
+
+    private void applyMainRouteState(MainRouteDecisionHelper.RouteState routeState) {
+        MainRouteDecisionHelper.RouteState safeRouteState = routeState == null
+            ? MainRouteDecisionHelper.browseHome()
+            : routeState;
+        activePhoneTab = safeRouteState.activePhoneTab;
+        askLaneActive = safeRouteState.askLaneActive;
         updatePhoneTabBarState();
     }
 
@@ -4771,8 +4785,9 @@ public final class MainActivity extends AppCompatActivity {
     }
 
     private void handleHomeChromeBack() {
-        if (resolveHomeChromeBackAction(isBrowseModeActive()) == HomeChromeBackAction.RETURN_TO_BROWSE) {
-            setPhoneTabFromFlow(BottomTabDestination.HOME);
+        MainRouteDecisionHelper.Transition transition = MainRouteDecisionHelper.homeChromeBack(currentMainRouteState());
+        if (transition.effect == MainRouteDecisionHelper.Effect.RETURN_TO_BROWSE) {
+            applyMainRouteState(transition.routeState);
             showBrowseChrome(true);
         }
     }

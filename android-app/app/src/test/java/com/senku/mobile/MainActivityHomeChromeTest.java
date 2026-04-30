@@ -278,12 +278,12 @@ public final class MainActivityHomeChromeTest {
     @Test
     public void homeChromeBackReturnsSearchToBrowseButKeepsBrowseInPlace() {
         assertEquals(
-            MainActivity.HomeChromeBackAction.RETURN_TO_BROWSE,
-            MainActivity.resolveHomeChromeBackActionForTest(false)
+            MainRouteDecisionHelper.Effect.RETURN_TO_BROWSE,
+            MainActivity.resolveHomeChromeBackEffectForTest(false)
         );
         assertEquals(
-            MainActivity.HomeChromeBackAction.NO_OP,
-            MainActivity.resolveHomeChromeBackActionForTest(true)
+            MainRouteDecisionHelper.Effect.NONE,
+            MainActivity.resolveHomeChromeBackEffectForTest(true)
         );
     }
 
