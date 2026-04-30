@@ -11,16 +11,24 @@ import java.util.Locale;
 final class HomeCategoryPolicy {
     private static final int MAX_COMPACT_HOME_CATEGORY_TILES = 6;
     private static final int MANUAL_HOME_CATEGORY_COLUMNS = 3;
-    private static final int DEFAULT_SHELF_ACCENT = 0xFFC9B682;
+    private static final int SHELF_ACCENT_DEFAULT = 0xFFC9B682;
+    private static final int SHELF_ACCENT_WATER = 0xFF7A9AB4;
+    private static final int SHELF_ACCENT_SHELTER = 0xFF7A9A5A;
+    private static final int SHELF_ACCENT_FIRE = 0xFFC48A5A;
+    private static final int SHELF_ACCENT_MEDICINE = 0xFFB67A7A;
+    private static final int SHELF_ACCENT_FOOD = 0xFF9AA064;
+    private static final int SHELF_ACCENT_TOOLS = 0xFFC9B682;
+    private static final int SHELF_ACCENT_COMMUNICATIONS = 0xFF7A9A9A;
+    private static final int SHELF_ACCENT_COMMUNITY = 0xFF9AA084;
     private static final CategoryDefinition[] HOME_CHROME_CATEGORIES = {
-        new CategoryDefinition("water", "Water & sanitation", 0xFF7A9AB4),
-        new CategoryDefinition("shelter", "Shelter & build", 0xFF7A9A5A),
-        new CategoryDefinition("fire", "Fire & energy", 0xFFC48A5A),
-        new CategoryDefinition("medicine", "Medicine", 0xFFB67A7A),
-        new CategoryDefinition("food", "Food & agriculture", 0xFF9AA064),
-        new CategoryDefinition("tools", "Tools & craft", 0xFFC9B682),
-        new CategoryDefinition("communications", "Communications", 0xFF7A9A9A),
-        new CategoryDefinition("community", "Community", 0xFF9AA084)
+        new CategoryDefinition("water", new CategoryStyle("Water & sanitation", SHELF_ACCENT_WATER)),
+        new CategoryDefinition("shelter", new CategoryStyle("Shelter & build", SHELF_ACCENT_SHELTER)),
+        new CategoryDefinition("fire", new CategoryStyle("Fire & energy", SHELF_ACCENT_FIRE)),
+        new CategoryDefinition("medicine", new CategoryStyle("Medicine", SHELF_ACCENT_MEDICINE)),
+        new CategoryDefinition("food", new CategoryStyle("Food & agriculture", SHELF_ACCENT_FOOD)),
+        new CategoryDefinition("tools", new CategoryStyle("Tools & craft", SHELF_ACCENT_TOOLS)),
+        new CategoryDefinition("communications", new CategoryStyle("Communications", SHELF_ACCENT_COMMUNICATIONS)),
+        new CategoryDefinition("community", new CategoryStyle("Community", SHELF_ACCENT_COMMUNITY))
     };
 
     private HomeCategoryPolicy() {
@@ -170,7 +178,7 @@ final class HomeCategoryPolicy {
 
     static int accentForBucket(String bucketKey) {
         CategoryDefinition definition = categoryDefinitionForBucket(bucketKey);
-        return definition == null ? DEFAULT_SHELF_ACCENT : definition.accentColor;
+        return definition == null ? SHELF_ACCENT_DEFAULT : definition.style.accentColor;
     }
 
     static int defaultOrderForBucket(String bucketKey) {
@@ -281,7 +289,7 @@ final class HomeCategoryPolicy {
 
     static String labelForBucket(String bucketKey) {
         CategoryDefinition definition = categoryDefinitionForBucket(bucketKey);
-        return definition == null ? "" : definition.label;
+        return definition == null ? "" : definition.style.label;
     }
 
     static String formatCount(int count) {
@@ -415,11 +423,19 @@ final class HomeCategoryPolicy {
 
     private static final class CategoryDefinition {
         final String bucketKey;
+        final CategoryStyle style;
+
+        CategoryDefinition(String bucketKey, CategoryStyle style) {
+            this.bucketKey = bucketKey;
+            this.style = style;
+        }
+    }
+
+    private static final class CategoryStyle {
         final String label;
         final int accentColor;
 
-        CategoryDefinition(String bucketKey, String label, int accentColor) {
-            this.bucketKey = bucketKey;
+        CategoryStyle(String label, int accentColor) {
             this.label = label;
             this.accentColor = accentColor;
         }
