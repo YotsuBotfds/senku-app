@@ -192,18 +192,52 @@ class AndroidUiStatePackParallelPlanContractTests(unittest.TestCase):
     def test_serial_builder_declares_normalized_tablet_review_without_raw_rewrite(self):
         build_script = BUILD_SCRIPT_PATH.read_text(encoding="utf-8-sig")
 
+        self.assertIn("function Export-NormalizedReviewSet", build_script)
         self.assertIn("function Export-NormalizedTabletReviewSet", build_script)
+        self.assertIn("function New-SkippedNormalizedReviewSet", build_script)
         self.assertIn("function New-SkippedNormalizedTabletReviewSet", build_script)
+        self.assertIn('"normalized_review"', build_script)
         self.assertIn('"normalized_tablet_review"', build_script)
+        self.assertIn("normalized_review = $normalizedReview", build_script)
         self.assertIn("status = \"skipped\"", build_script)
         self.assertIn("canonical mock pack incomplete", build_script)
         self.assertIn("raw_state_pack_screenshots_unchanged = $true", build_script)
+        self.assertIn(
+            "copy all canonical mocks after deterministic frame export; no raw screenshot rewrite",
+            build_script,
+        )
         self.assertIn(
             "copy tablet canonical mocks after deterministic frame export; no raw screenshot rewrite",
             build_script,
         )
         self.assertIn(
+            "full normalized review PNGs under `normalized_review/`",
+            build_script,
+        )
+        self.assertIn(
             "tablet-only normalized review PNGs under `normalized_tablet_review/`",
+            build_script,
+        )
+        self.assertIn(
+            "source screenshots by posture under `screenshots/` are raw diagnostic captures",
+            build_script,
+        )
+        self.assertIn(
+            "mock parity review uses `mocks/`, `goal_mock_pack.zip_path`, `normalized_review/`, or `normalized_tablet_review/` only",
+            build_script,
+        )
+        self.assertIn(
+            "`screenshots/` and `raw/` are diagnostics for state capture/debugging, not deterministic parity artifacts",
+            build_script,
+        )
+        self.assertIn("review_contract = [pscustomobject]@", build_script)
+        self.assertIn('"goal_mock_pack.zip_path"', build_script)
+        self.assertIn(
+            'raw_screenshot_policy = "diagnostics_only; may include live emulator OS chrome"',
+            build_script,
+        )
+        self.assertIn(
+            'parity_policy = "use deterministic framed mocks, mock ZIP, or normalized review artifacts for mock parity"',
             build_script,
         )
         self.assertNotIn(
