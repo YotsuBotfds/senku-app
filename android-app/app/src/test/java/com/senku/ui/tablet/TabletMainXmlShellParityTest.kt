@@ -76,6 +76,20 @@ class TabletMainXmlShellParityTest {
     }
 
     @Test
+    fun portraitAndLandscapeMainChromeRowsKeepTopbarAlignmentTokens() {
+        assertMainChromeRow(
+            qualifier = "layout-sw600dp-port",
+            height = "54dp",
+            horizontalPadding = "18dp",
+        )
+        assertMainChromeRow(
+            qualifier = "layout-sw600dp-land",
+            height = "48dp",
+            horizontalPadding = "32dp",
+        )
+    }
+
+    @Test
     fun portraitAndLandscapeTabletShellsDoNotUsePlatformMonospaceAlias() {
         listOf("layout-sw600dp-port", "layout-sw600dp-land").forEach { qualifier ->
             val xml = layoutFile(qualifier).readText()
@@ -121,6 +135,49 @@ class TabletMainXmlShellParityTest {
                 assertEquals("16sp", label.android("lineHeight"))
             }
         }
+    }
+
+    private fun assertMainChromeRow(
+        qualifier: String,
+        height: String,
+        horizontalPadding: String,
+    ) {
+        val layout = layout(qualifier)
+        val title = layout.elementByAndroidId("home_chrome_title")
+        val row = title.parentNode as Element
+        val children = row.directElementChildren()
+        val backIcon = children[0]
+        val divider = children[1]
+        val searchIcon = children[3]
+        val overflow = children[4]
+
+        assertEquals("$qualifier topbar height", height, row.android("layout_height"))
+        assertEquals("$qualifier topbar start padding", horizontalPadding, row.android("paddingStart"))
+        assertEquals("$qualifier topbar end padding", horizontalPadding, row.android("paddingEnd"))
+        assertEquals("$qualifier topbar child token order", listOf("ImageView", "View", "TextView", "ImageView", "TextView"), children.map { it.tagName })
+
+        assertEquals("16dp", backIcon.android("layout_width"))
+        assertEquals("16dp", backIcon.android("layout_height"))
+        assertEquals("@null", backIcon.android("contentDescription"))
+        assertEquals("@drawable/ic_home_back_chevron", backIcon.android("src"))
+        assertEquals("@color/senku_rev03_ink_2", backIcon.android("tint"))
+
+        assertEquals("1dp", divider.android("layout_width"))
+        assertEquals("16dp", divider.android("layout_height"))
+        assertEquals("10dp", divider.android("layout_marginStart"))
+        assertEquals("14dp", divider.android("layout_marginEnd"))
+
+        assertEquals("0dp", title.android("layout_width"))
+        assertEquals("1", title.android("layout_weight"))
+        assertEquals("1", title.android("maxLines"))
+        assertEquals("end", title.android("ellipsize"))
+        assertEquals("@style/TextAppearance.Senku.Rev03.ChromeMono", title.android("textAppearance"))
+        assertEquals("HOME SENKU \u2022 Field manual \u2022 ed.2", title.android("text"))
+
+        assertEquals("16dp", searchIcon.android("layout_width"))
+        assertEquals("16dp", searchIcon.android("layout_height"))
+        assertEquals("@drawable/ic_search_magnifier", searchIcon.android("src"))
+        assertEquals("...", overflow.android("text"))
     }
 
     private fun assertRailShell(
@@ -217,6 +274,11 @@ class TabletMainXmlShellParityTest {
             .map { childNodes.item(it) }
             .filterIsInstance<Element>()
             .filter { it.tagName == tagName }
+
+    private fun Element.directElementChildren(): List<Element> =
+        (0 until childNodes.length)
+            .map { childNodes.item(it) }
+            .filterIsInstance<Element>()
 
     private fun Element.elementByText(text: String): Element {
         val nodes = getElementsByTagName("*")

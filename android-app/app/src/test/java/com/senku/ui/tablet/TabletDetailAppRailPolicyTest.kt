@@ -6,6 +6,7 @@ import com.senku.ui.primitives.Rev03ComposeNavRailLabelLineHeightSp
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Test
+import java.io.File
 
 class TabletDetailAppRailPolicyTest {
     @Test
@@ -27,6 +28,37 @@ class TabletDetailAppRailPolicyTest {
         assertEquals(13, tabletGuideAppRailLabelLineHeightSp(isLandscape = false))
         assertEquals(13, tabletGuideAppRailLabelLineHeightSp(isLandscape = true))
         assertEquals(0, tabletGuideAppRailLabelLetterSpacingSp())
+    }
+
+    @Test
+    fun tabletGuideTopbarLocksAlignmentAndTitleTypeTokens() {
+        val portraitPolicy = tabletGuideChromePolicy(isLandscape = false)
+        val landscapePolicy = tabletGuideChromePolicy(isLandscape = true)
+
+        assertEquals(20, portraitPolicy.topBarHorizontalPaddingDp)
+        assertEquals(24, landscapePolicy.topBarHorizontalPaddingDp)
+        assertEquals(14, portraitPolicy.topBarTitleFontSizeSp)
+        assertEquals(18, portraitPolicy.topBarTitleLineHeightSp)
+        assertEquals(14, landscapePolicy.topBarTitleFontSizeSp)
+        assertEquals(18, landscapePolicy.topBarTitleLineHeightSp)
+    }
+
+    @Test
+    fun tabletGuideTopbarBackAffordanceKeepsCompactWidthAndVisibleLabel() {
+        val source = locateFile(
+            "android-app/app/src/main/java/com/senku/ui/tablet/TabletDetailScreen.kt",
+            "app/src/main/java/com/senku/ui/tablet/TabletDetailScreen.kt",
+        ).readText()
+
+        assertSourceContains(source, ".height(28.dp)")
+        assertSourceContains(source, ".widthIn(min = 54.dp, max = 60.dp)")
+        assertSourceContains(source, "contentDescription = \"Back to previous screen\"")
+        assertSourceContains(source, "Modifier.padding(horizontal = 6.dp)")
+        assertSourceContains(source, "horizontalArrangement = Arrangement.spacedBy(2.dp)")
+        assertSourceContains(source, "text = \"Back\"")
+        assertSourceContains(source, "fontSize = 10.sp")
+        assertSourceContains(source, "lineHeight = 12.sp")
+        assertSourceContains(source, "overflow = TextOverflow.Clip")
     }
 
     @Test
@@ -108,5 +140,24 @@ class TabletDetailAppRailPolicyTest {
         )
 
         assertEquals(listOf("ask"), calls)
+    }
+
+    private fun assertSourceContains(source: String, token: String) {
+        assertEquals("Expected TabletDetailScreen.kt to contain `$token`", true, source.contains(token))
+    }
+
+    private fun locateFile(vararg candidates: String): File {
+        val userDir = requireNotNull(System.getProperty("user.dir")) { "user.dir is not set" }
+        val start = File(userDir).absoluteFile
+        val roots = generateSequence(start) { root -> root.parentFile }
+        for (root in roots) {
+            for (candidate in candidates) {
+                val file = File(root, candidate)
+                if (file.exists()) {
+                    return file
+                }
+            }
+        }
+        error("Unable to locate tablet detail source from ${start.path}")
     }
 }
