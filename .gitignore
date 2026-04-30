@@ -7,6 +7,7 @@ android-app/.gradle-home/
 # android-app build output
 android-app/app/build/
 android-app/build/
+android-app/app/src.zip
 
 # android-app machine-specific config (SDK paths, etc.)
 android-app/local.properties
