@@ -80,13 +80,15 @@ class StressReadingPolicyTest {
     }
 
     @Test
-    fun tabletThreadTypeScalePromotesTranscriptHierarchyOverAnswerChrome() {
+    fun tabletThreadTypeScaleStaysOnSharedTabletLadder() {
         val basePolicy = tabletLandscapeDetailTypeScalePolicy()
         val threadPolicy = tabletThreadDetailTypeScalePolicy(basePolicy, isLandscape = true)
 
-        assertEquals(basePolicy.questionFontSizeSp + 4, threadPolicy.questionFontSizeSp)
-        assertEquals(basePolicy.answerFontSizeSp + 5, threadPolicy.answerFontSizeSp)
-        assertEquals(basePolicy.answerLineHeightSp + 7, threadPolicy.answerLineHeightSp)
+        assertEquals(basePolicy.questionFontSizeSp + 2, threadPolicy.questionFontSizeSp)
+        assertEquals(basePolicy.answerFontSizeSp + 3, threadPolicy.answerFontSizeSp)
+        assertEquals(basePolicy.answerLineHeightSp + 5, threadPolicy.answerLineHeightSp)
+        assertEquals(basePolicy.questionFontSizeSp + 3, tabletPrimaryAnswerQuestionFontSizeSp(basePolicy))
+        assertEquals(basePolicy.questionLineHeightSp + 4, tabletPrimaryAnswerQuestionLineHeightSp(basePolicy))
     }
 
     @Test
@@ -114,7 +116,7 @@ class StressReadingPolicyTest {
         assertEquals(40, tabletGuidePaperBottomPaddingDp(isLandscape = false))
         assertEquals(376, tabletGuideReferenceRailWidthDp(isLandscape = true))
         assertEquals(0, tabletGuideReferenceRailWidthDp(isLandscape = false))
-        assertEquals(88, tabletGuideAppRailWidthDp(isLandscape = true))
+        assertEquals(96, tabletGuideAppRailWidthDp(isLandscape = true))
         assertEquals(72, tabletGuideAppRailWidthDp(isLandscape = false))
         assertFalse(tabletGuideSectionRailShowsToolbar())
     }

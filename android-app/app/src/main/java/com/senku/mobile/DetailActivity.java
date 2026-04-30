@@ -45,6 +45,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.compose.ui.platform.ComposeView;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.core.view.ViewCompat;
 
 import com.senku.ui.answer.AnswerContent;
@@ -104,7 +105,7 @@ public final class DetailActivity extends AppCompatActivity {
     private static final int TABLET_APP_RAIL_DIVIDER_WIDTH_DP = 1;
     private static final int TABLET_APP_RAIL_TOP_PADDING_DP = 20;
     private static final int TABLET_APP_RAIL_BADGE_WIDTH_DP = 36;
-    private static final int TABLET_APP_RAIL_BADGE_HEIGHT_DP = 34;
+    private static final int TABLET_APP_RAIL_BADGE_HEIGHT_DP = 36;
     private static final int TABLET_APP_RAIL_FIRST_ITEM_TOP_MARGIN_DP = 24;
     private static final int TABLET_APP_RAIL_ITEM_TOP_MARGIN_DP = 18;
     private static final int TABLET_APP_RAIL_ICON_SIZE_DP = 22;
@@ -1006,7 +1007,7 @@ public final class DetailActivity extends AppCompatActivity {
         item.setGravity(Gravity.CENTER);
         item.setText(R.string.app_badge_letter);
         item.setTextColor(getColor(R.color.senku_rev03_accent));
-        item.setTypeface(Typeface.DEFAULT_BOLD);
+        item.setTypeface(rev03UiTypeface(Typeface.BOLD));
         item.setTextSize(15f);
         item.setBackgroundResource(R.drawable.bg_manual_home_nav_shell);
         item.setIncludeFontPadding(false);
@@ -1053,8 +1054,8 @@ public final class DetailActivity extends AppCompatActivity {
         text.setIncludeFontPadding(false);
         text.setText(label);
         text.setTextColor(color);
-        text.setTextSize(10f);
-        text.setTypeface(Typeface.DEFAULT, active ? Typeface.BOLD : Typeface.NORMAL);
+        text.setTextSize(12f);
+        text.setTypeface(rev03UiTypeface(active ? Typeface.BOLD : Typeface.NORMAL));
         LinearLayout.LayoutParams textParams = new LinearLayout.LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT,
             ViewGroup.LayoutParams.WRAP_CONTENT
@@ -1767,9 +1768,9 @@ public final class DetailActivity extends AppCompatActivity {
         chromeTextParams.leftMargin = dp(12);
 
         tabletEmergencyChromeOverlayTitle = new TextView(this);
-        tabletEmergencyChromeOverlayTitle.setTextColor(getColor(R.color.senku_text_light));
-        tabletEmergencyChromeOverlayTitle.setTypeface(Typeface.DEFAULT_BOLD);
-        tabletEmergencyChromeOverlayTitle.setTextSize(18f);
+        tabletEmergencyChromeOverlayTitle.setTextColor(getColor(R.color.senku_rev03_ink_0));
+        tabletEmergencyChromeOverlayTitle.setTypeface(rev03UiTypeface(Typeface.BOLD));
+        tabletEmergencyChromeOverlayTitle.setTextSize(17f);
         tabletEmergencyChromeOverlayTitle.setMaxLines(1);
         tabletEmergencyChromeOverlayTitle.setEllipsize(TextUtils.TruncateAt.END);
         chromeText.addView(tabletEmergencyChromeOverlayTitle, new LinearLayout.LayoutParams(
@@ -1778,9 +1779,9 @@ public final class DetailActivity extends AppCompatActivity {
         ));
 
         tabletEmergencyChromeOverlayMeta = new TextView(this);
-        tabletEmergencyChromeOverlayMeta.setTextColor(getColor(R.color.senku_text_muted_light));
-        tabletEmergencyChromeOverlayMeta.setTypeface(Typeface.MONOSPACE);
-        tabletEmergencyChromeOverlayMeta.setTextSize(12f);
+        tabletEmergencyChromeOverlayMeta.setTextColor(getColor(R.color.senku_rev03_ink_2));
+        tabletEmergencyChromeOverlayMeta.setTypeface(rev03MonoTypeface(Typeface.NORMAL));
+        tabletEmergencyChromeOverlayMeta.setTextSize(11f);
         tabletEmergencyChromeOverlayMeta.setMaxLines(1);
         tabletEmergencyChromeOverlayMeta.setEllipsize(TextUtils.TruncateAt.END);
         chromeText.addView(tabletEmergencyChromeOverlayMeta, new LinearLayout.LayoutParams(
@@ -1807,7 +1808,7 @@ public final class DetailActivity extends AppCompatActivity {
         TextView title = new TextView(this);
         title.setId(R.id.detail_emergency_header_title);
         title.setTextColor(getColor(R.color.senku_emergency_banner_text));
-        title.setTypeface(Typeface.DEFAULT_BOLD);
+        title.setTypeface(rev03UiTypeface(Typeface.BOLD));
         title.setTextSize(16f);
         title.setIncludeFontPadding(false);
         overlay.addView(title, new LinearLayout.LayoutParams(
@@ -1844,8 +1845,8 @@ public final class DetailActivity extends AppCompatActivity {
 
         tabletEmergencyProofOverlayTitle = new TextView(this);
         tabletEmergencyProofOverlayTitle.setText(buildEmergencyWhyTitle());
-        tabletEmergencyProofOverlayTitle.setTextColor(getColor(R.color.senku_text_light));
-        tabletEmergencyProofOverlayTitle.setTypeface(Typeface.MONOSPACE, Typeface.BOLD);
+        tabletEmergencyProofOverlayTitle.setTextColor(getColor(R.color.senku_rev03_ink_2));
+        tabletEmergencyProofOverlayTitle.setTypeface(rev03MonoTypeface(Typeface.BOLD));
         tabletEmergencyProofOverlayTitle.setTextSize(11f);
         tabletEmergencyProofOverlayTitle.setLetterSpacing(0.08f);
         tabletEmergencyProofOverlayPanel.addView(tabletEmergencyProofOverlayTitle, new LinearLayout.LayoutParams(
@@ -1854,7 +1855,7 @@ public final class DetailActivity extends AppCompatActivity {
         ));
 
         tabletEmergencyProofOverlayText = new TextView(this);
-        tabletEmergencyProofOverlayText.setTextColor(getColor(R.color.senku_text_muted_light));
+        tabletEmergencyProofOverlayText.setTextColor(getColor(R.color.senku_rev03_ink_1));
         tabletEmergencyProofOverlayText.setTextSize(13f);
         tabletEmergencyProofOverlayText.setLineSpacing(0f, 1.08f);
         tabletEmergencyProofOverlayText.setMaxLines(3);
@@ -1911,8 +1912,8 @@ public final class DetailActivity extends AppCompatActivity {
         TextView station = new TextView(this);
         station.setGravity(Gravity.CENTER);
         station.setText(R.string.app_badge_letter);
-        station.setTextColor(getColor(R.color.senku_rev03_ink_0));
-        station.setTypeface(Typeface.DEFAULT_BOLD);
+        station.setTextColor(getColor(R.color.senku_rev03_accent));
+        station.setTypeface(rev03UiTypeface(Typeface.BOLD));
         station.setTextSize(15f);
         station.setBackgroundResource(R.drawable.bg_manual_home_nav_shell);
         station.setIncludeFontPadding(false);
@@ -1974,7 +1975,7 @@ public final class DetailActivity extends AppCompatActivity {
         text.setText(label);
         text.setTextColor(color);
         text.setTextSize(12f);
-        text.setTypeface(Typeface.DEFAULT, active ? Typeface.BOLD : Typeface.NORMAL);
+        text.setTypeface(rev03UiTypeface(active ? Typeface.BOLD : Typeface.NORMAL));
         LinearLayout.LayoutParams textParams = new LinearLayout.LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT,
             ViewGroup.LayoutParams.WRAP_CONTENT
@@ -2034,7 +2035,7 @@ public final class DetailActivity extends AppCompatActivity {
         }
         button.setAllCaps(false);
         button.setText("");
-        button.setTextColor(getColor(R.color.senku_text_light));
+        button.setTextColor(getColor(R.color.senku_rev03_ink_0));
         button.setBackgroundResource(R.drawable.bg_detail_topbar_chip);
         button.setMinWidth(0);
         button.setMinimumWidth(0);
@@ -2044,9 +2045,22 @@ public final class DetailActivity extends AppCompatActivity {
         Drawable icon = getDrawable(drawableResId);
         if (icon != null) {
             icon = icon.mutate();
-            icon.setTint(getColor(R.color.senku_text_muted_light));
+            icon.setTint(getColor(R.color.senku_rev03_ink_2));
         }
         button.setCompoundDrawablesRelativeWithIntrinsicBounds(icon, null, null, null);
+    }
+
+    private Typeface rev03UiTypeface(int style) {
+        return rev03Typeface(R.font.inter_tight, style, Typeface.DEFAULT);
+    }
+
+    private Typeface rev03MonoTypeface(int style) {
+        return rev03Typeface(R.font.jetbrains_mono, style, Typeface.MONOSPACE);
+    }
+
+    private Typeface rev03Typeface(int fontResId, int style, Typeface fallback) {
+        Typeface typeface = ResourcesCompat.getFont(this, fontResId);
+        return Typeface.create(typeface != null ? typeface : fallback, style);
     }
 
     private String buildTabletEmergencyOverlayChromeTitle() {

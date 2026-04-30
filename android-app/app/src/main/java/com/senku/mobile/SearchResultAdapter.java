@@ -20,6 +20,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.compose.ui.platform.ComposeView;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -44,10 +45,10 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
     private static final int MAX_HIGHLIGHT_TERMS = 4;
     private static final int DEFAULT_MAX_DISPLAYED_ITEMS = 4;
     private static final int SCORE_TICK_TRACK_WIDTH_DP = 22;
-    private static final float LANDSCAPE_ROW_TITLE_TEXT_SIZE_SP = 16.5f;
-    private static final float LANDSCAPE_ROW_SNIPPET_TEXT_SIZE_SP = 12.75f;
-    private static final float PORTRAIT_TABLET_ROW_TITLE_TEXT_SIZE_SP = 18.0f;
-    private static final float PORTRAIT_TABLET_ROW_SNIPPET_TEXT_SIZE_SP = 14.0f;
+    private static final float LANDSCAPE_ROW_TITLE_TEXT_SIZE_SP = 16.0f;
+    private static final float LANDSCAPE_ROW_SNIPPET_TEXT_SIZE_SP = 12.5f;
+    private static final float PORTRAIT_TABLET_ROW_TITLE_TEXT_SIZE_SP = 16.0f;
+    private static final float PORTRAIT_TABLET_ROW_SNIPPET_TEXT_SIZE_SP = 13.0f;
 
     public static final class LinkedGuidePreview {
         public final String guideId;
@@ -280,8 +281,8 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
 
         TextView title = new TextView(context);
         title.setId(R.id.result_title);
-        title.setTextColor(ContextCompat.getColor(context, R.color.senku_text_light));
-        title.setTypeface(Typeface.DEFAULT, Typeface.BOLD);
+        title.setTextColor(ContextCompat.getColor(context, R.color.senku_rev03_ink_0));
+        title.setTypeface(rev03UiTypeface(context, Typeface.BOLD));
         title.setTextSize(
             TypedValue.COMPLEX_UNIT_SP,
             compactRowTitleTextSizeSp(landscapePhoneCard)
@@ -309,6 +310,7 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
         TextView snippet = new TextView(context);
         snippet.setId(R.id.result_snippet);
         snippet.setTextColor(ContextCompat.getColor(context, R.color.senku_rev03_ink_1));
+        snippet.setTypeface(rev03UiTypeface(context, Typeface.NORMAL));
         snippet.setTextSize(
             TypedValue.COMPLEX_UNIT_SP,
             compactRowSnippetTextSizeSp(landscapePhoneCard)
@@ -436,6 +438,11 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
 
     private static float compactRowSnippetTextSizeSp(boolean landscapePhoneCard) {
         return landscapePhoneCard ? LANDSCAPE_ROW_SNIPPET_TEXT_SIZE_SP : PORTRAIT_TABLET_ROW_SNIPPET_TEXT_SIZE_SP;
+    }
+
+    private static Typeface rev03UiTypeface(Context context, int style) {
+        Typeface typeface = ResourcesCompat.getFont(context, R.font.inter_tight);
+        return Typeface.create(typeface != null ? typeface : Typeface.DEFAULT, style);
     }
 
     private static int boundedItemCount(int resultCount, int maxDisplayedItems) {

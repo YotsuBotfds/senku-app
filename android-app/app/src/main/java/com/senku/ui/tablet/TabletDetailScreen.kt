@@ -411,7 +411,19 @@ internal fun tabletGuideReferenceRailWidthDp(isLandscape: Boolean): Int =
     if (isLandscape) 376 else 0
 
 internal fun tabletGuideAppRailWidthDp(isLandscape: Boolean): Int =
-    if (isLandscape) 88 else 72
+    if (isLandscape) 96 else 72
+
+internal fun tabletGuideAppRailBadgeHeightDp(isLandscape: Boolean): Int =
+    36
+
+internal fun tabletGuideAppRailFirstItemTopMarginDp(isLandscape: Boolean): Int =
+    if (isLandscape) 18 else 24
+
+internal fun tabletGuideAppRailItemTopMarginDp(isLandscape: Boolean): Int =
+    if (isLandscape) 12 else 18
+
+internal fun tabletGuideAppRailLabelTopMarginDp(isLandscape: Boolean): Int =
+    if (isLandscape) 4 else 3
 
 internal fun tabletDetailAppRailActiveDestination(detailMode: TabletDetailMode): TabletDetailAppRailDestination =
     when (detailMode) {
@@ -759,11 +771,17 @@ internal fun tabletThreadDetailTypeScalePolicy(
     isLandscape: Boolean,
 ): TabletDetailTypeScalePolicy =
     basePolicy.copy(
-        questionFontSizeSp = basePolicy.questionFontSizeSp + if (isLandscape) 4 else 2,
-        questionLineHeightSp = basePolicy.questionLineHeightSp + if (isLandscape) 5 else 3,
-        answerFontSizeSp = basePolicy.answerFontSizeSp + if (isLandscape) 5 else 3,
-        answerLineHeightSp = basePolicy.answerLineHeightSp + if (isLandscape) 7 else 5,
+        questionFontSizeSp = basePolicy.questionFontSizeSp + if (isLandscape) 2 else 1,
+        questionLineHeightSp = basePolicy.questionLineHeightSp + if (isLandscape) 3 else 2,
+        answerFontSizeSp = basePolicy.answerFontSizeSp + if (isLandscape) 3 else 2,
+        answerLineHeightSp = basePolicy.answerLineHeightSp + if (isLandscape) 5 else 3,
     )
+
+internal fun tabletPrimaryAnswerQuestionFontSizeSp(policy: TabletDetailTypeScalePolicy): Int =
+    policy.questionFontSizeSp + 3
+
+internal fun tabletPrimaryAnswerQuestionLineHeightSp(policy: TabletDetailTypeScalePolicy): Int =
+    policy.questionLineHeightSp + 4
 
 internal fun tabletThreadTimestampLabel(turnIndex: Int): String {
     val minute = 19 + (turnIndex.coerceAtLeast(1) * 2)
@@ -934,6 +952,7 @@ fun TabletDetailScreen(
             ) {
                 GuideAppRail(
                     activeDestination = tabletDetailAppRailActiveDestination(state.detailMode),
+                    isLandscape = state.isLandscape,
                     onLibraryClick = onHomeClick,
                     onAskClick = onAskClick,
                     onSavedClick = onSavedClick,
@@ -1000,6 +1019,7 @@ fun TabletDetailScreen(
             ) {
                 GuideAppRail(
                     activeDestination = tabletDetailAppRailActiveDestination(state.detailMode),
+                    isLandscape = state.isLandscape,
                     onLibraryClick = onHomeClick,
                     onAskClick = onAskClick,
                     onSavedClick = onSavedClick,
@@ -1046,6 +1066,7 @@ fun TabletDetailScreen(
             ) {
                 GuideAppRail(
                     activeDestination = tabletDetailAppRailActiveDestination(state.detailMode),
+                    isLandscape = state.isLandscape,
                     onLibraryClick = onHomeClick,
                     onAskClick = onAskClick,
                     onSavedClick = onSavedClick,
@@ -1464,6 +1485,7 @@ private fun ThreadReadingSurface(
 @Composable
 private fun GuideAppRail(
     activeDestination: TabletDetailAppRailDestination,
+    isLandscape: Boolean,
     onLibraryClick: () -> Unit,
     onAskClick: () -> Unit,
     onSavedClick: () -> Unit,
@@ -1474,17 +1496,19 @@ private fun GuideAppRail(
 
     Column(
         modifier = modifier
-            .background(colors.bg1)
+            .background(colors.bg0)
             .padding(top = 20.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(18.dp),
+        verticalArrangement = Arrangement.Top,
     ) {
         Surface(
-            modifier = Modifier.size(36.dp),
-            color = colors.bg2,
+            modifier = Modifier
+                .width(36.dp)
+                .height(tabletGuideAppRailBadgeHeightDp(isLandscape).dp),
+            color = colors.bg1,
             contentColor = colors.accent,
-            shape = RoundedCornerShape(8.dp),
-            border = BorderStroke(1.dp, colors.accent.copy(alpha = 0.55f)),
+            shape = RoundedCornerShape(7.dp),
+            border = BorderStroke(1.dp, colors.olive40),
         ) {
             Box(
                 modifier = Modifier.fillMaxSize(),
@@ -1495,7 +1519,7 @@ private fun GuideAppRail(
                     style = typography.monoCaps.copy(
                         fontSize = 15.sp,
                         lineHeight = 18.sp,
-                        fontWeight = FontWeight.Medium,
+                        fontWeight = FontWeight.Bold,
                     ),
                     color = colors.accent,
                     maxLines = 1,
@@ -1507,6 +1531,7 @@ private fun GuideAppRail(
             label = stringResource(R.string.bottom_tab_home),
             iconRes = R.drawable.ic_home_library,
             active = activeDestination == TabletDetailAppRailDestination.Library,
+            labelTopMargin = tabletGuideAppRailLabelTopMarginDp(isLandscape).dp,
             onClick = {
                 tabletDetailAppRailDispatchAction(
                     TabletDetailAppRailAction.Library,
@@ -1515,11 +1540,13 @@ private fun GuideAppRail(
                     onSavedClick,
                 )
             },
+            modifier = Modifier.padding(top = tabletGuideAppRailFirstItemTopMarginDp(isLandscape).dp),
         )
         GuideAppRailItem(
             label = stringResource(R.string.bottom_tab_ask),
             iconRes = R.drawable.ic_home_ask,
             active = activeDestination == TabletDetailAppRailDestination.Ask,
+            labelTopMargin = tabletGuideAppRailLabelTopMarginDp(isLandscape).dp,
             onClick = {
                 tabletDetailAppRailDispatchAction(
                     TabletDetailAppRailAction.Ask,
@@ -1528,11 +1555,13 @@ private fun GuideAppRail(
                     onSavedClick,
                 )
             },
+            modifier = Modifier.padding(top = tabletGuideAppRailItemTopMarginDp(isLandscape).dp),
         )
         GuideAppRailItem(
             label = stringResource(R.string.bottom_tab_pins),
             iconRes = R.drawable.ic_home_saved,
             active = activeDestination == TabletDetailAppRailDestination.Saved,
+            labelTopMargin = tabletGuideAppRailLabelTopMarginDp(isLandscape).dp,
             onClick = {
                 tabletDetailAppRailDispatchAction(
                     TabletDetailAppRailAction.Saved,
@@ -1541,6 +1570,7 @@ private fun GuideAppRail(
                     onSavedClick,
                 )
             },
+            modifier = Modifier.padding(top = tabletGuideAppRailItemTopMarginDp(isLandscape).dp),
         )
     }
 }
@@ -1550,18 +1580,20 @@ private fun GuideAppRailItem(
     label: String,
     iconRes: Int,
     active: Boolean,
+    labelTopMargin: Dp,
     onClick: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     val colors = SenkuTheme.colors
     val typography = SenkuTheme.typography
     val itemColor = if (active) colors.accent else colors.ink2
 
     Column(
-        modifier = Modifier
-            .width(76.dp)
+        modifier = modifier
+            .fillMaxWidth()
             .clickable(onClick = onClick),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(4.dp),
+        verticalArrangement = Arrangement.Top,
     ) {
         Icon(
             painter = painterResource(iconRes),
@@ -1571,6 +1603,7 @@ private fun GuideAppRailItem(
         )
         Text(
             text = label,
+            modifier = Modifier.padding(top = labelTopMargin),
             style = typography.smallBody.copy(
                 fontSize = 12.sp,
                 lineHeight = 14.sp,
@@ -2254,8 +2287,8 @@ private fun PrimaryAnswerBlock(
             Text(
                 text = turn.question.trim().ifEmpty { "No question text recorded." },
                 style = typography.sectionTitle.copy(
-                    fontSize = (typeScalePolicy.questionFontSizeSp + 10).sp,
-                    lineHeight = (typeScalePolicy.questionLineHeightSp + 12).sp,
+                    fontSize = tabletPrimaryAnswerQuestionFontSizeSp(typeScalePolicy).sp,
+                    lineHeight = tabletPrimaryAnswerQuestionLineHeightSp(typeScalePolicy).sp,
                     fontWeight = FontWeight.SemiBold,
                     letterSpacing = 0.sp,
                 ),
