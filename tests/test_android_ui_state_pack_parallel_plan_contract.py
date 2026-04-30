@@ -193,13 +193,17 @@ class AndroidUiStatePackParallelPlanContractTests(unittest.TestCase):
         build_script = BUILD_SCRIPT_PATH.read_text(encoding="utf-8-sig")
 
         self.assertIn("function Export-NormalizedReviewSet", build_script)
+        self.assertIn("function Export-FilteredNormalizedReviewSet", build_script)
         self.assertIn("function Export-NormalizedTabletReviewSet", build_script)
         self.assertIn("function New-SkippedNormalizedReviewSet", build_script)
         self.assertIn("function New-SkippedNormalizedTabletReviewSet", build_script)
         self.assertIn('"normalized_review"', build_script)
         self.assertIn('"normalized_tablet_review"', build_script)
+        self.assertIn('"filtered_normalized_review"', build_script)
         self.assertIn("normalized_review = $normalizedReview", build_script)
+        self.assertIn("filtered_normalized_review = $filteredReview", build_script)
         self.assertIn("status = \"skipped\"", build_script)
+        self.assertIn('status = "skipped_canonical_incomplete"', build_script)
         self.assertIn("canonical mock pack incomplete", build_script)
         self.assertIn("raw_state_pack_screenshots_unchanged = $true", build_script)
         self.assertIn(
@@ -219,6 +223,14 @@ class AndroidUiStatePackParallelPlanContractTests(unittest.TestCase):
             build_script,
         )
         self.assertIn(
+            "filtered role packs may report `Status: fail` even when `pass_count == total_states`",
+            build_script,
+        )
+        self.assertIn(
+            "filtered role packs with available canonical-named mocks also write `filtered_normalized_review/`",
+            build_script,
+        )
+        self.assertIn(
             "source screenshots by posture under `screenshots/` are raw diagnostic captures",
             build_script,
         )
@@ -230,14 +242,23 @@ class AndroidUiStatePackParallelPlanContractTests(unittest.TestCase):
             "`screenshots/` and `raw/` are diagnostics for state capture/debugging, not deterministic parity artifacts",
             build_script,
         )
+        self.assertIn(
+            "`filtered_normalized_review/` is for filtered-pack convenience review only",
+            build_script,
+        )
         self.assertIn("review_contract = [pscustomobject]@", build_script)
         self.assertIn('"goal_mock_pack.zip_path"', build_script)
+        self.assertIn('"filtered_normalized_review"', build_script)
         self.assertIn(
             'raw_screenshot_policy = "diagnostics_only; may include live emulator OS chrome"',
             build_script,
         )
         self.assertIn(
             'parity_policy = "use deterministic framed mocks, mock ZIP, or normalized review artifacts for mock parity"',
+            build_script,
+        )
+        self.assertIn(
+            "filtered role packs can have pass_count equal total_states while summary status is fail",
             build_script,
         )
         self.assertNotIn(

@@ -254,6 +254,73 @@ function Export-NormalizedReviewSet {
     }
 }
 
+function Export-FilteredNormalizedReviewSet {
+    param(
+        [string]$MocksDir,
+        [string]$OutputDir,
+        [string[]]$ExpectedNames,
+        [string[]]$ActualNames,
+        [string[]]$MissingNames,
+        [string[]]$Failures
+    )
+
+    $reviewDir = Join-Path $OutputDir "filtered_normalized_review"
+    if (Test-Path -LiteralPath $reviewDir) {
+        Remove-Item -LiteralPath $reviewDir -Recurse -Force
+    }
+    New-Item -ItemType Directory -Force -Path $reviewDir | Out-Null
+
+    $copied = New-Object System.Collections.Generic.List[object]
+    $mocks = @(Get-ChildItem -LiteralPath $MocksDir -Filter "*.png" -File | Sort-Object Name)
+    foreach ($mock in $mocks) {
+        $destination = Join-Path $reviewDir $mock.Name
+        Copy-Item -LiteralPath $mock.FullName -Destination $destination -Force
+        $copied.Add([pscustomobject]@{
+            name = $mock.Name
+            source = $mock.FullName
+            destination = $destination
+            sha256 = (Get-FileHash -LiteralPath $destination -Algorithm SHA256).Hash.ToLowerInvariant()
+        })
+    }
+
+    $metadataPath = Join-Path $reviewDir "metadata.json"
+    ([pscustomobject]@{
+        schema_version = 1
+        output_mode = "filtered_normalized_review_mocks"
+        status = "skipped_canonical_incomplete"
+        generated_at_utc = (Get-Date).ToUniversalTime().ToString("o")
+        review_dir = $reviewDir
+        source_mocks_dir = $MocksDir
+        png_count = [int]$copied.Count
+        expected_count = [int]$ExpectedNames.Count
+        actual_count = [int]$ActualNames.Count
+        missing_count = [int]$MissingNames.Count
+        expected_names = @($ExpectedNames)
+        actual_names = @($ActualNames)
+        missing_names = @($MissingNames)
+        canonical_pack_status = "fail"
+        canonical_review_status = "skipped"
+        raw_state_pack_screenshots_unchanged = $true
+        source_policy = "copy available canonical-named mocks from an incomplete filtered pack; no raw screenshot rewrite"
+        review_policy = "human convenience artifact only; full normalized_review and mock ZIP remain available only for complete 22-PNG canonical packs"
+        failures = @($Failures)
+        files = @($copied.ToArray())
+    } | ConvertTo-Json -Depth 8) | Set-Content -LiteralPath $metadataPath -Encoding UTF8
+
+    return [pscustomobject]@{
+        status = "skipped_canonical_incomplete"
+        review_dir = $reviewDir
+        metadata_path = $metadataPath
+        png_count = [int]$copied.Count
+        expected_count = [int]$ExpectedNames.Count
+        actual_count = [int]$ActualNames.Count
+        missing_count = [int]$MissingNames.Count
+        png_names = @($copied | ForEach-Object { $_.name })
+        raw_state_pack_screenshots_unchanged = $true
+        review_policy = "human convenience artifact only; full-pack parity contract unchanged"
+    }
+}
+
 function New-SkippedNormalizedTabletReviewSet {
     param(
         [string]$Reason
@@ -348,12 +415,24 @@ function Export-GoalMockPack {
     }
 
     if ($failures.Count -gt 0) {
+        $filteredReview = if ($actualNames.Count -gt 0) {
+            Export-FilteredNormalizedReviewSet `
+                -MocksDir $mocksDir `
+                -OutputDir $OutputDir `
+                -ExpectedNames $expectedNames `
+                -ActualNames $actualNames `
+                -MissingNames $missing `
+                -Failures $failures
+        } else {
+            (New-SkippedNormalizedReviewSet -Reason "canonical mock pack incomplete and no canonical-named PNGs were available for filtered review")
+        }
         return [pscustomobject]@{
             status = "fail"
             mocks_dir = $mocksDir
             zip_path = $null
             normalized_review = (New-SkippedNormalizedReviewSet -Reason "canonical mock pack incomplete; deterministic review generated only for full canonical packs")
             normalized_tablet_review = (New-SkippedNormalizedTabletReviewSet -Reason "canonical mock pack incomplete; deterministic tablet review generated only for full canonical packs")
+            filtered_normalized_review = $filteredReview
             expected_count = [int]$expectedNames.Count
             actual_count = [int]$actualNames.Count
             expected_names = @($expectedNames)
@@ -380,6 +459,7 @@ function Export-GoalMockPack {
         deterministic_frame_export = $true
         normalized_review = $normalizedReview
         normalized_tablet_review = $normalizedTabletReview
+        filtered_normalized_review = (New-SkippedNormalizedReviewSet -Reason "not needed for full canonical packs; use normalized_review")
         expected_count = [int]$expectedNames.Count
         actual_count = [int]$actualNames.Count
         expected_names = @($expectedNames)
@@ -1480,12 +1560,16 @@ $summary = [pscustomobject]@{
             "normalized_review",
             "normalized_tablet_review"
         )
+        filtered_review_artifacts = @(
+            "filtered_normalized_review"
+        )
         raw_screenshot_artifacts = @(
             "screenshots",
             "raw"
         )
         raw_screenshot_policy = "diagnostics_only; may include live emulator OS chrome"
         parity_policy = "use deterministic framed mocks, mock ZIP, or normalized review artifacts for mock parity"
+        filtered_pack_policy = "filtered role packs can have pass_count equal total_states while summary status is fail because the 22-PNG canonical mock pack is incomplete; filtered_normalized_review is a human convenience artifact only"
         raw_state_pack_screenshots_unchanged = $true
     }
     manifest_path = $manifestPath
@@ -1519,6 +1603,8 @@ $readme = @(
     '- deterministic screenshot-only frame metadata at `goal_mock_pack.metadata_path`',
     '- full normalized review PNGs under `normalized_review/` (`goal_mock_pack.normalized_review`) when a full canonical mock pack is available',
     '- tablet-only normalized review PNGs under `normalized_tablet_review/` (`goal_mock_pack.normalized_tablet_review`) when a full canonical mock pack is available; filtered packs mark this as skipped and raw screenshots remain unchanged',
+    '- filtered role packs may report `Status: fail` even when `pass_count == total_states`, because the full 22-PNG canonical mock pack is incomplete',
+    '- filtered role packs with available canonical-named mocks also write `filtered_normalized_review/` (`goal_mock_pack.filtered_normalized_review`) as a human review aid; it is marked skipped/incomplete and does not replace the full-pack parity contract',
     '- source screenshots by posture under `screenshots/` are raw diagnostic captures and may include live emulator OS chrome; do not use them for mock parity review',
     '- matching XML dumps under `dumps/`',
     '- per-state summaries under `summaries/`',
@@ -1527,6 +1613,7 @@ $readme = @(
     '',
     'Review contract:',
     '- mock parity review uses `mocks/`, `goal_mock_pack.zip_path`, `normalized_review/`, or `normalized_tablet_review/` only',
+    '- `filtered_normalized_review/` is for filtered-pack convenience review only and remains `skipped_canonical_incomplete` until all 22 canonical PNGs are present',
     '- `screenshots/` and `raw/` are diagnostics for state capture/debugging, not deterministic parity artifacts'
 )
 $readme | Set-Content -LiteralPath $readmePath -Encoding UTF8
@@ -1554,6 +1641,14 @@ if ($null -ne $normalizedTabletReview -and [string]$normalizedTabletReview.statu
     Write-Host "Normalized tablet review: skipped ($($normalizedTabletReview.reason))"
 } else {
     Write-Host "Normalized tablet review: skipped"
+}
+$filteredNormalizedReview = $goalMockPack.filtered_normalized_review
+if ($null -ne $filteredNormalizedReview -and [string]$filteredNormalizedReview.status -eq "skipped_canonical_incomplete") {
+    Write-Host "Filtered normalized review: $($filteredNormalizedReview.review_dir) (canonical incomplete; human convenience only)"
+} elseif ($null -ne $filteredNormalizedReview -and -not [string]::IsNullOrWhiteSpace([string]$filteredNormalizedReview.reason)) {
+    Write-Host "Filtered normalized review: skipped ($($filteredNormalizedReview.reason))"
+} else {
+    Write-Host "Filtered normalized review: skipped"
 }
 Write-Host "Goal bundle: $bundleZip"
 Write-Host ("Pass: {0} / {1}" -f $successCount, $results.Count)

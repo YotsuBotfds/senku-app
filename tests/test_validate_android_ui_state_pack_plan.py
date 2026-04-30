@@ -110,6 +110,25 @@ def make_plan() -> dict:
                 "command": '& "scripts\\build_android_ui_state_pack.ps1" -RoleFilter "tablet_landscape" -SkipFinalize -SkipBuild -SkipInstall',
             },
         ],
+        "goal_pack": {
+            "canonical_directory": "mocks",
+            "expected_png_count": 22,
+            "expected_png_names": sorted(
+                [
+                    f"{family}-{posture}.png"
+                    for family in ("home", "search", "thread", "guide", "answer")
+                    for posture in (
+                        "phone-portrait",
+                        "phone-landscape",
+                        "tablet-portrait",
+                        "tablet-landscape",
+                    )
+                ]
+                + ["emergency-phone-portrait.png", "emergency-tablet-portrait.png"]
+            ),
+            "validator": "scripts/validate_android_mock_goal_pack.py",
+            "excludes_debug_intermediate_screenshots": True,
+        },
     }
 
 
