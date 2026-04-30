@@ -334,6 +334,7 @@ public final class DetailActivity extends AppCompatActivity {
     private boolean relatedGuidePreviewExpanded;
     private DetailProofPresentationFormatter detailProofPresentationFormatter;
     private DetailAnswerBodyFormatter detailAnswerBodyFormatter;
+    private DetailAnswerGenerationBodyPolicy detailAnswerGenerationBodyPolicy;
     private DetailAnswerPresentationFormatter detailAnswerPresentationFormatter;
     private DetailGuidePresentationFormatter detailGuidePresentationFormatter;
     private DetailCitationPresentationFormatter detailCitationPresentationFormatter;
@@ -6655,40 +6656,25 @@ public final class DetailActivity extends AppCompatActivity {
     }
 
     private String normalizeStreamingBody(String partialBody) {
-        String body = safe(partialBody);
-        if (body.isEmpty()) {
-            return "";
-        }
-        if (body.regionMatches(true, 0, "Answer\n", 0, "Answer\n".length())) {
-            return body;
-        }
-        return PromptBuilder.buildStreamingAnswerBody(body);
+        return detailAnswerGenerationBodyPolicy().normalizeStreamingBody(partialBody);
     }
 
     private String resolveFinalAnswerBody(String finalAnswerBody, int requestToken) {
-        String finalBody = safe(finalAnswerBody);
-        if (requestToken != streamingAnswerToken) {
-            return finalBody;
-        }
-        String streamBody = safe(bestStreamingAnswerBody);
-        String finalVisible = formatAnswerBody(finalBody);
-        String streamVisible = formatAnswerBody(streamBody);
-        if (streamVisible.isEmpty()) {
-            return finalBody;
-        }
-        boolean finalLooksBroken = finalVisible.length() <= 12
-            || (!finalVisible.contains(" ") && streamVisible.length() >= 24)
-            || PromptBuilder.isLikelyCorruptedAnswer(finalVisible);
-        boolean streamedIsSubstantiallyRicher = streamVisible.length() >= Math.max(40, finalVisible.length() + 24);
-        if (finalLooksBroken && streamedIsSubstantiallyRicher) {
+        DetailAnswerGenerationBodyPolicy.FinalBodyResolution resolution =
+            detailAnswerGenerationBodyPolicy().resolveFinalAnswerBody(
+                finalAnswerBody,
+                requestToken,
+                streamingAnswerToken,
+                bestStreamingAnswerBody
+            );
+        if (resolution.usedStreamingFallback) {
             Log.w(
                 TAG,
                 "detail.finalBodyFallback token=" + requestToken +
-                    " finalVisibleLen=" + finalVisible.length() +
-                    " streamVisibleLen=" + streamVisible.length());
-            return streamBody;
+                    " finalVisibleLen=" + resolution.finalVisibleLength +
+                    " streamVisibleLen=" + resolution.streamVisibleLength);
         }
-        return finalBody;
+        return resolution.body;
     }
 
     private PackRepository ensureRepository() throws Exception {
@@ -7142,6 +7128,13 @@ public final class DetailActivity extends AppCompatActivity {
             detailAnswerBodyFormatter = new DetailAnswerBodyFormatter(this);
         }
         return detailAnswerBodyFormatter;
+    }
+
+    private DetailAnswerGenerationBodyPolicy detailAnswerGenerationBodyPolicy() {
+        if (detailAnswerGenerationBodyPolicy == null) {
+            detailAnswerGenerationBodyPolicy = new DetailAnswerGenerationBodyPolicy(detailAnswerBodyFormatter());
+        }
+        return detailAnswerGenerationBodyPolicy;
     }
 
     private DetailAnswerPresentationFormatter detailAnswerPresentationFormatter() {
