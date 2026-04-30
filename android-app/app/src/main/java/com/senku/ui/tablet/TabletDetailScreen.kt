@@ -461,10 +461,10 @@ internal fun tabletComposerBottomPaddingDp(detailMode: TabletDetailMode, isLands
     }
 
 internal fun tabletGuidePaperMaxWidthDp(isLandscape: Boolean): Int =
-    if (isLandscape) 576 else 820
+    if (isLandscape) 576 else 760
 
 internal fun tabletGuidePaperHorizontalPaddingDp(isLandscape: Boolean): Int =
-    if (isLandscape) 24 else 12
+    if (isLandscape) 24 else 16
 
 internal fun tabletGuidePaperVerticalPaddingDp(isLandscape: Boolean): Int =
     if (isLandscape) 2 else 12
@@ -575,10 +575,10 @@ internal fun tabletGuidePaperDensityPolicy(isLandscape: Boolean): TabletGuidePap
         )
     } else {
         TabletGuidePaperDensityPolicy(
-            headerTitleFontSizeSp = 30,
-            headerTitleLineHeightSp = 36,
-            bodyFontSizeSp = 14,
-            bodyLineHeightSp = 21,
+            headerTitleFontSizeSp = 32,
+            headerTitleLineHeightSp = 38,
+            bodyFontSizeSp = 13,
+            bodyLineHeightSp = 20,
             bodySpacingDp = 10,
             dangerBodyFontSizeSp = 14,
             dangerBodyLineHeightSp = 21,
@@ -610,9 +610,9 @@ internal fun tabletGuideSideRailDensityPolicy(isLandscape: Boolean): TabletGuide
         )
     } else {
         TabletGuideSideRailDensityPolicy(
-            sectionRailVerticalSpacingDp = 17,
-            sectionRowActiveMinHeightDp = 52,
-            sectionRowInactiveMinHeightDp = 42,
+            sectionRailVerticalSpacingDp = 14,
+            sectionRowActiveMinHeightDp = 46,
+            sectionRowInactiveMinHeightDp = 36,
             sectionRowHorizontalPaddingDp = 10,
             sectionRowVerticalPaddingDp = 6,
             referencePaneHorizontalPaddingDp = 26,
@@ -3302,39 +3302,50 @@ private fun GuideDangerCalloutRow(
     val body = normalizedLines.drop(1).joinToString(" ").trim()
     Surface(
         modifier = Modifier.fillMaxWidth(),
-        color = paperPalette.pageInset,
+        color = paperPalette.page.copy(alpha = 0.96f),
         contentColor = paperPalette.ink,
-        shape = RoundedCornerShape(0.dp),
+        shape = RoundedCornerShape(6.dp),
+        border = BorderStroke(1.dp, paperPalette.danger.copy(alpha = 0.35f)),
     ) {
         Column(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 12.dp, vertical = 10.dp),
             verticalArrangement = Arrangement.spacedBy(densityPolicy.dangerSpacingDp.dp),
         ) {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(3.dp)
-                    .background(paperPalette.danger),
+                    .background(paperPalette.danger.copy(alpha = 0.92f)),
             )
-            Text(
-                text = title,
-                modifier = Modifier.padding(horizontal = 20.dp),
-                style = typography.monoCaps.copy(
-                    fontSize = typePolicy.calloutLabelFontSizeSp.sp,
-                    lineHeight = typePolicy.calloutLabelLineHeightSp.sp,
-                    fontWeight = FontWeight.Medium,
-                    letterSpacing = 0.sp,
-                ),
-                color = paperPalette.danger,
-            )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(10.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Box(
+                    modifier = Modifier
+                        .width(4.dp)
+                        .height(18.dp)
+                        .background(paperPalette.danger),
+                )
+                Text(
+                    text = title,
+                    style = typography.monoCaps.copy(
+                        fontSize = typePolicy.calloutLabelFontSizeSp.sp,
+                        lineHeight = typePolicy.calloutLabelLineHeightSp.sp,
+                        fontWeight = FontWeight.Medium,
+                        letterSpacing = 0.sp,
+                    ),
+                    color = paperPalette.danger,
+                )
+                Spacer(modifier = Modifier.weight(1f))
+            }
             if (body.isNotEmpty()) {
                 Text(
                     text = body,
-                    modifier = Modifier.padding(
-                        start = 16.dp,
-                        end = 16.dp,
-                        bottom = if (isLandscape) 12.dp else 14.dp,
-                    ),
+                    modifier = Modifier.padding(start = 14.dp, end = 10.dp, bottom = if (isLandscape) 6.dp else 8.dp),
                     style = typography.answerBody.copy(
                         fontSize = densityPolicy.dangerBodyFontSizeSp.sp,
                         lineHeight = densityPolicy.dangerBodyLineHeightSp.sp,
