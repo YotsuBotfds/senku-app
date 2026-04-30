@@ -22,9 +22,19 @@ public final class MainActivityHomeChromeTest {
     }
 
     @Test
-    public void productReviewModeRequiresExplicitTrueIntentExtra() {
+    public void productReviewModeRejectsRawIntentExtraWithoutAuthorization() {
         assertFalse(MainActivity.resolveProductReviewModeForTest(true, false));
-        assertTrue(MainActivity.resolveProductReviewModeForTest(true, true));
+        assertFalse(MainActivity.resolveProductReviewModeForTest(true, true));
+    }
+
+    @Test
+    public void productReviewModeAllowsAuthorizedDebugAutomationPath() {
+        assertTrue(MainActivity.resolveProductReviewModeForTest(true, true, true, true));
+    }
+
+    @Test
+    public void productReviewModeRejectsAuthorizedMarkerOutsideDebugBuilds() {
+        assertFalse(MainActivity.resolveProductReviewModeForTest(true, true, true, false));
     }
 
     @Test

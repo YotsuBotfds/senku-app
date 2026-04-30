@@ -76,11 +76,13 @@ public final class DetailActivityPhoneGuideChromeTest {
     }
 
     @Test
-    public void productReviewModeRequiresExplicitDetailIntentExtra() {
+    public void productReviewModeRequiresAuthorizedDetailIntentExtra() {
         assertFalse(DetailActivity.resolveProductReviewModeForTest(false, false));
         assertFalse(DetailActivity.resolveProductReviewModeForTest(false, true));
         assertFalse(DetailActivity.resolveProductReviewModeForTest(true, false));
-        assertTrue(DetailActivity.resolveProductReviewModeForTest(true, true));
+        assertFalse(DetailActivity.resolveProductReviewModeForTest(true, true));
+        assertTrue(DetailActivity.resolveProductReviewModeForTest(true, true, true, true));
+        assertFalse(DetailActivity.resolveProductReviewModeForTest(true, true, true, false));
     }
 
     @Test

@@ -13,6 +13,27 @@ import org.junit.Test;
 
 public final class ReviewDemoPolicyTest {
     @Test
+    public void productReviewModeIgnoresRawExtraWithoutAutomationAuthorization() {
+        assertFalse(ReviewDemoPolicy.resolveProductReviewModeForTest(true, true, false, true));
+    }
+
+    @Test
+    public void productReviewModeAllowsAuthorizedDebugAutomationPath() {
+        assertTrue(ReviewDemoPolicy.resolveProductReviewModeForTest(true, true, true, true));
+    }
+
+    @Test
+    public void productReviewModeDefaultsOffWithoutRequestExtra() {
+        assertFalse(ReviewDemoPolicy.resolveProductReviewModeForTest(false, false, true, true));
+        assertFalse(ReviewDemoPolicy.resolveProductReviewModeForTest(false, true, true, true));
+    }
+
+    @Test
+    public void productReviewModeRejectsAuthorizedMarkerOutsideDebugBuilds() {
+        assertFalse(ReviewDemoPolicy.resolveProductReviewModeForTest(true, true, true, false));
+    }
+
+    @Test
     public void reviewHomeCategoryCountsMatchTargetMockContractWhenEnabled() {
         assertEquals(84, ReviewDemoPolicy.displayHomeCategoryCount(true, "shelter", 7));
         assertEquals(67, ReviewDemoPolicy.displayHomeCategoryCount(true, "water", 7));

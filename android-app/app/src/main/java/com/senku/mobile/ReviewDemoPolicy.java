@@ -1,5 +1,9 @@
 package com.senku.mobile;
 
+import android.content.Context;
+import android.content.Intent;
+import android.content.pm.ApplicationInfo;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -7,6 +11,10 @@ import java.util.List;
 import java.util.Locale;
 
 final class ReviewDemoPolicy {
+    static final String EXTRA_PRODUCT_REVIEW_MODE = "product_review_mode";
+    static final String EXTRA_PRODUCT_REVIEW_AUTOMATION_AUTH =
+        "com.senku.mobile.extra.PRODUCT_REVIEW_AUTOMATION_AUTH";
+    private static final String PRODUCT_REVIEW_AUTOMATION_AUTH_VALUE = "senku-review-demo-v1";
     private static final String REVIEW_SEARCH_QUERY = "rain shelter";
     private static final String REVIEW_SEARCH_LATENCY_LABEL = "12ms";
     private static final String RAIN_SHELTER_TOPIC_GUIDE_ID = "GD-345";
@@ -69,6 +77,57 @@ final class ReviewDemoPolicy {
 
     static boolean isSourceStackDemoEnabled(boolean productReviewMode) {
         return productReviewMode;
+    }
+
+    static boolean resolveProductReviewMode(Intent intent, Context context) {
+        return resolveProductReviewMode(intent, isDebuggableBuild(context));
+    }
+
+    static boolean resolveProductReviewMode(Intent intent, boolean debugBuild) {
+        if (intent == null) {
+            return false;
+        }
+        return resolveProductReviewModeForTest(
+            intent.hasExtra(EXTRA_PRODUCT_REVIEW_MODE),
+            intent.getBooleanExtra(EXTRA_PRODUCT_REVIEW_MODE, false),
+            isProductReviewAutomationAuthorized(intent),
+            debugBuild
+        );
+    }
+
+    static boolean resolveProductReviewModeForTest(
+        boolean hasReviewModeExtra,
+        boolean reviewModeEnabled,
+        boolean automationAuthorized,
+        boolean debugBuild
+    ) {
+        return hasReviewModeExtra && reviewModeEnabled && automationAuthorized && debugBuild;
+    }
+
+    static void putProductReviewModeExtras(Intent intent, boolean productReviewMode) {
+        if (intent == null) {
+            return;
+        }
+        intent.putExtra(EXTRA_PRODUCT_REVIEW_MODE, productReviewMode);
+        if (productReviewMode) {
+            intent.putExtra(
+                EXTRA_PRODUCT_REVIEW_AUTOMATION_AUTH,
+                PRODUCT_REVIEW_AUTOMATION_AUTH_VALUE
+            );
+        } else {
+            intent.removeExtra(EXTRA_PRODUCT_REVIEW_AUTOMATION_AUTH);
+        }
+    }
+
+    private static boolean isDebuggableBuild(Context context) {
+        ApplicationInfo info = context == null ? null : context.getApplicationInfo();
+        return info != null && (info.flags & ApplicationInfo.FLAG_DEBUGGABLE) != 0;
+    }
+
+    private static boolean isProductReviewAutomationAuthorized(Intent intent) {
+        return PRODUCT_REVIEW_AUTOMATION_AUTH_VALUE.equals(
+            intent == null ? null : intent.getStringExtra(EXTRA_PRODUCT_REVIEW_AUTOMATION_AUTH)
+        );
     }
 
     static boolean isAnswerProductReviewModeEnabled() {

@@ -69,7 +69,7 @@ public final class MainActivity extends AppCompatActivity {
     private static final String EXTRA_DEBUG_DETAIL_TITLE = "debug_detail_title";
     private static final String EXTRA_DEBUG_DETAIL_SUBTITLE = "debug_detail_subtitle";
     private static final String EXTRA_DEBUG_DETAIL_BODY = "debug_detail_body";
-    static final String EXTRA_PRODUCT_REVIEW_MODE = "product_review_mode";
+    static final String EXTRA_PRODUCT_REVIEW_MODE = ReviewDemoPolicy.EXTRA_PRODUCT_REVIEW_MODE;
     private static final String STATE_CONVERSATION_ID = "conversation_id";
     private static final String STATE_PHONE_TAB = "phone_tab";
     static final int SEARCH_RESULT_LIMIT = 4;
@@ -1160,18 +1160,26 @@ public final class MainActivity extends AppCompatActivity {
         return shouldOpenEmptyAutoAskLane(decodedAutoQuery, autoAsk);
     }
 
-    static boolean resolveProductReviewMode(Intent intent) {
-        boolean hasReviewModeExtra = intent != null && intent.hasExtra(EXTRA_PRODUCT_REVIEW_MODE);
-        boolean reviewModeEnabled = intent != null && intent.getBooleanExtra(EXTRA_PRODUCT_REVIEW_MODE, false);
-        return resolveProductReviewMode(hasReviewModeExtra, reviewModeEnabled);
-    }
-
-    private static boolean resolveProductReviewMode(boolean hasReviewModeExtra, boolean reviewModeEnabled) {
-        return hasReviewModeExtra && reviewModeEnabled;
+    private boolean resolveProductReviewMode(Intent intent) {
+        return ReviewDemoPolicy.resolveProductReviewMode(intent, this);
     }
 
     static boolean resolveProductReviewModeForTest(boolean hasReviewModeExtra, boolean reviewModeEnabled) {
-        return resolveProductReviewMode(hasReviewModeExtra, reviewModeEnabled);
+        return resolveProductReviewModeForTest(hasReviewModeExtra, reviewModeEnabled, false, true);
+    }
+
+    static boolean resolveProductReviewModeForTest(
+        boolean hasReviewModeExtra,
+        boolean reviewModeEnabled,
+        boolean automationAuthorized,
+        boolean debugBuild
+    ) {
+        return ReviewDemoPolicy.resolveProductReviewModeForTest(
+            hasReviewModeExtra,
+            reviewModeEnabled,
+            automationAuthorized,
+            debugBuild
+        );
     }
 
     static boolean shouldShowDeveloperToolsPanel(
@@ -3522,7 +3530,7 @@ public final class MainActivity extends AppCompatActivity {
         if (intent == null) {
             return;
         }
-        intent.putExtra(EXTRA_PRODUCT_REVIEW_MODE, productReviewMode);
+        ReviewDemoPolicy.putProductReviewModeExtras(intent, productReviewMode);
         if (installedPack == null || installedPack.manifest == null) {
             return;
         }

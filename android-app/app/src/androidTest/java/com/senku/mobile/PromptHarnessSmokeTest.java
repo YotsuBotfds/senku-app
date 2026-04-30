@@ -80,7 +80,6 @@ public final class PromptHarnessSmokeTest {
     private static final String EXTRA_AUTO_QUERY = "auto_query";
     private static final String EXTRA_AUTO_ASK = "auto_ask";
     private static final String EXTRA_AUTO_FOLLOWUP_QUERY = "auto_followup_query";
-    private static final String EXTRA_PRODUCT_REVIEW_MODE = MainActivity.EXTRA_PRODUCT_REVIEW_MODE;
     // Empirical: search logs ~5.8-6.2s; 10s missed three times across 48h on 5554/5556. See notes/R-SEARCH_DIAGNOSTIC_20260421.md.
     private static final long SEARCH_WAIT_MS = 15_000L;
     // Tablet portrait full-pack runs can spend 15-20s in offline hybrid search before the UI posts results.
@@ -150,7 +149,7 @@ public final class PromptHarnessSmokeTest {
 
     private static Intent productReviewMainActivityIntent() {
         Intent intent = new Intent(ApplicationProvider.getApplicationContext(), MainActivity.class);
-        intent.putExtra(EXTRA_PRODUCT_REVIEW_MODE, true);
+        ReviewDemoPolicy.putProductReviewModeExtras(intent, true);
         return intent;
     }
 

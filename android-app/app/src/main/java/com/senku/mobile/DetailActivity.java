@@ -1221,15 +1221,25 @@ public final class DetailActivity extends AppCompatActivity {
     }
 
     static boolean resolveProductReviewModeForTest(boolean hasReviewModeExtra, boolean reviewModeEnabled) {
-        return hasReviewModeExtra && reviewModeEnabled;
+        return resolveProductReviewModeForTest(hasReviewModeExtra, reviewModeEnabled, false, true);
     }
 
-    private static boolean resolveProductReviewMode(Intent intent) {
-        return intent != null
-            && resolveProductReviewModeForTest(
-                intent.hasExtra(EXTRA_PRODUCT_REVIEW_MODE),
-                intent.getBooleanExtra(EXTRA_PRODUCT_REVIEW_MODE, false)
-            );
+    static boolean resolveProductReviewModeForTest(
+        boolean hasReviewModeExtra,
+        boolean reviewModeEnabled,
+        boolean automationAuthorized,
+        boolean debugBuild
+    ) {
+        return ReviewDemoPolicy.resolveProductReviewModeForTest(
+            hasReviewModeExtra,
+            reviewModeEnabled,
+            automationAuthorized,
+            debugBuild
+        );
+    }
+
+    private boolean resolveProductReviewMode(Intent intent) {
+        return ReviewDemoPolicy.resolveProductReviewMode(intent, this);
     }
 
     @SuppressWarnings("unchecked")
