@@ -144,6 +144,31 @@ public final class MainRouteDecisionHelperTest {
     }
 
     @Test
+    public void homeChromeBackMatchesSystemBackForVisibleResultRoutes() {
+        MainRouteDecisionHelper.RouteState search =
+            new MainRouteDecisionHelper.RouteState(
+                MainRouteDecisionHelper.Surface.SEARCH_RESULTS,
+                BottomTabDestination.HOME,
+                false
+            );
+        MainRouteDecisionHelper.RouteState ask =
+            new MainRouteDecisionHelper.RouteState(
+                MainRouteDecisionHelper.Surface.ASK_RESULTS,
+                BottomTabDestination.ASK,
+                true
+            );
+
+        assertSameRouteTransition(
+            MainRouteDecisionHelper.systemBack(search, BottomTabDestination.PINS),
+            MainRouteDecisionHelper.homeChromeBack(search)
+        );
+        assertSameRouteTransition(
+            MainRouteDecisionHelper.systemBack(ask, BottomTabDestination.PINS),
+            MainRouteDecisionHelper.homeChromeBack(ask)
+        );
+    }
+
+    @Test
     public void homeChromeBackIsOnlyVisibleForNonBrowseRoutes() {
         assertFalse(MainRouteDecisionHelper.shouldShowHomeChromeBack(MainRouteDecisionHelper.browseHome()));
         assertFalse(MainRouteDecisionHelper.shouldShowHomeChromeBack(
@@ -364,6 +389,43 @@ public final class MainRouteDecisionHelperTest {
     }
 
     @Test
+    public void installedPackPublishesBrowseGuidesOnlyForBrowseRoutesWithoutAutoQuery() {
+        assertTrue(MainRouteDecisionHelper.shouldPublishInstalledBrowseGuides(
+            false,
+            MainRouteDecisionHelper.browseHome()
+        ));
+        assertTrue(MainRouteDecisionHelper.shouldPublishInstalledBrowseGuides(
+            false,
+            new MainRouteDecisionHelper.RouteState(
+                MainRouteDecisionHelper.Surface.SAVED_GUIDES,
+                BottomTabDestination.PINS,
+                false
+            )
+        ));
+
+        assertFalse(MainRouteDecisionHelper.shouldPublishInstalledBrowseGuides(
+            true,
+            MainRouteDecisionHelper.browseHome()
+        ));
+        assertFalse(MainRouteDecisionHelper.shouldPublishInstalledBrowseGuides(
+            false,
+            new MainRouteDecisionHelper.RouteState(
+                MainRouteDecisionHelper.Surface.SEARCH_RESULTS,
+                BottomTabDestination.HOME,
+                false
+            )
+        ));
+        assertFalse(MainRouteDecisionHelper.shouldPublishInstalledBrowseGuides(
+            false,
+            new MainRouteDecisionHelper.RouteState(
+                MainRouteDecisionHelper.Surface.ASK_RESULTS,
+                BottomTabDestination.ASK,
+                true
+            )
+        ));
+    }
+
+    @Test
     public void routeStateNormalizesVirtualDestinationsToVisibleOwners() {
         MainRouteDecisionHelper.RouteState search =
             new MainRouteDecisionHelper.RouteState(
@@ -438,6 +500,19 @@ public final class MainRouteDecisionHelperTest {
     ) {
         assertEquals(effect, transition.effect);
         assertRoute(transition.routeState, surface, activePhoneTab, askLaneActive);
+    }
+
+    private static void assertSameRouteTransition(
+        MainRouteDecisionHelper.Transition expected,
+        MainRouteDecisionHelper.Transition actual
+    ) {
+        assertEquals(expected.effect, actual.effect);
+        assertRoute(
+            actual.routeState,
+            expected.routeState.surface,
+            expected.routeState.activePhoneTab,
+            expected.routeState.askLaneActive
+        );
     }
 
     private static void assertRoute(

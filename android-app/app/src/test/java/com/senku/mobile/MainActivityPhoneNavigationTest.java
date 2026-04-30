@@ -573,6 +573,35 @@ public final class MainActivityPhoneNavigationTest {
     }
 
     @Test
+    public void installPackCompletionDoesNotPublishHomeGuidesOverRestoredSearchOrAskRoutes() {
+        assertFalse(MainActivity.shouldPublishInstalledBrowseGuidesAfterInstall(
+            false,
+            MainActivity.routeStateForModeForTest(false, BottomTabDestination.HOME, false)
+        ));
+        assertFalse(MainActivity.shouldPublishInstalledBrowseGuidesAfterInstall(
+            false,
+            MainActivity.routeStateForModeForTest(false, BottomTabDestination.ASK, true)
+        ));
+    }
+
+    @Test
+    public void installPackCompletionStillPublishesBrowseAndSavedRoutesWithoutAutoQuery() {
+        assertTrue(MainActivity.shouldPublishInstalledBrowseGuidesAfterInstall(
+            false,
+            MainActivity.routeStateForModeForTest(true, BottomTabDestination.HOME, false)
+        ));
+        assertTrue(MainActivity.shouldPublishInstalledBrowseGuidesAfterInstall(
+            false,
+            MainActivity.routeStateForModeForTest(true, BottomTabDestination.PINS, false)
+        ));
+
+        assertFalse(MainActivity.shouldPublishInstalledBrowseGuidesAfterInstall(
+            true,
+            MainActivity.routeStateForModeForTest(true, BottomTabDestination.HOME, false)
+        ));
+    }
+
+    @Test
     public void sharedInputSubmitRoutesToAskWhenAskOwnsTheVisibleFlow() {
         assertEquals(
             SubmitTarget.ASK,

@@ -559,17 +559,27 @@ public final class MainActivity extends AppCompatActivity {
                 currentMainRouteState(),
                 previousTab
             );
-            if (transition.effect == MainRouteDecisionHelper.Effect.SHOW_PREVIOUS_TAB) {
-                openPhoneTab(transition.routeState.activePhoneTab, false);
-                return;
-            }
-            if (transition.effect == MainRouteDecisionHelper.Effect.RETURN_TO_BROWSE) {
-                applyMainRouteState(transition.routeState);
-                browseGuides();
+            if (applyMainRouteBackTransition(transition)) {
                 return;
             }
         }
         super.onBackPressed();
+    }
+
+    private boolean applyMainRouteBackTransition(MainRouteDecisionHelper.Transition transition) {
+        if (transition == null) {
+            return false;
+        }
+        if (transition.effect == MainRouteDecisionHelper.Effect.SHOW_PREVIOUS_TAB) {
+            openPhoneTab(transition.routeState.activePhoneTab, false);
+            return true;
+        }
+        if (transition.effect == MainRouteDecisionHelper.Effect.RETURN_TO_BROWSE) {
+            applyMainRouteState(transition.routeState);
+            browseGuides();
+            return true;
+        }
+        return false;
     }
 
     private void installPack(boolean force) {
@@ -594,10 +604,14 @@ public final class MainActivity extends AppCompatActivity {
                     refreshHomeRelatedGuidesAsync();
                     refreshPinnedGuidesAsync();
                     setResultHighlightQuery("");
-                    replaceItems(guides);
                     boolean autoQueryPending = hasAutoQuery(getIntent());
-                    showBrowseChrome(!autoQueryPending);
-                    if (!autoQueryPending) {
+                    boolean publishBrowseGuides = shouldPublishInstalledBrowseGuidesAfterInstall(
+                        autoQueryPending,
+                        currentMainRouteState()
+                    );
+                    if (publishBrowseGuides) {
+                        replaceItems(guides);
+                        showBrowseChrome(true);
                         resultsHeader.setText("Guide browser (" + guides.size() + " loaded)");
                     }
                     maybeHandleAutomation();
@@ -1442,6 +1456,7 @@ public final class MainActivity extends AppCompatActivity {
         updatePinnedEmptyState();
         refreshHomeRelatedGuidesAsync();
         updatePinnedSectionVisibility();
+        focusSavedGuideSectionIfReady();
     }
 
     private void refreshRecentThreads() {
@@ -3255,6 +3270,13 @@ public final class MainActivity extends AppCompatActivity {
         return repositoryReady && loadedGuideCount <= 0;
     }
 
+    static boolean shouldPublishInstalledBrowseGuidesAfterInstall(
+        boolean autoQueryPending,
+        MainRouteDecisionHelper.RouteState routeState
+    ) {
+        return MainRouteDecisionHelper.shouldPublishInstalledBrowseGuides(autoQueryPending, routeState);
+    }
+
     private void scrollBrowseToTop() {
         ScrollView scrollView = resolveBrowseScrollView();
         if (scrollView == null) {
@@ -4609,10 +4631,7 @@ public final class MainActivity extends AppCompatActivity {
 
     private void handleHomeChromeBack() {
         MainRouteDecisionHelper.Transition transition = MainRouteDecisionHelper.homeChromeBack(currentMainRouteState());
-        if (transition.effect == MainRouteDecisionHelper.Effect.RETURN_TO_BROWSE) {
-            applyMainRouteState(transition.routeState);
-            showBrowseChrome(true);
-        }
+        applyMainRouteBackTransition(transition);
     }
 
     private void updateHomeChromeBackAvailability(boolean available) {

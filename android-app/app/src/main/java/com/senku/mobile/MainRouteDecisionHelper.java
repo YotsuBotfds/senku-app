@@ -50,7 +50,7 @@ public final class MainRouteDecisionHelper {
         if (isBrowseSurface(route.surface)) {
             return new Transition(route, Effect.NONE);
         }
-        return new Transition(browseHome(), Effect.RETURN_TO_BROWSE);
+        return systemBack(route, null);
     }
 
     static boolean shouldShowHomeChromeBack(RouteState state) {
@@ -121,6 +121,10 @@ public final class MainRouteDecisionHelper {
             return new Transition(route, Effect.NONE);
         }
         return openPhoneTab(route, BottomTabDestination.PINS);
+    }
+
+    static boolean shouldPublishInstalledBrowseGuides(boolean autoQueryPending, RouteState state) {
+        return !autoQueryPending && isBrowseSurface(normalize(state).surface);
     }
 
     static RouteState routeStateForMode(
