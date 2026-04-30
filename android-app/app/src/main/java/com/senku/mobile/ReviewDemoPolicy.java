@@ -76,7 +76,7 @@ final class ReviewDemoPolicy {
     }
 
     static boolean isSourceStackDemoEnabled(boolean productReviewMode) {
-        return productReviewMode;
+        return isResolvedProductReviewModeEnabled(productReviewMode);
     }
 
     static boolean resolveProductReviewMode(Intent intent, Context context) {
@@ -144,7 +144,9 @@ final class ReviewDemoPolicy {
         List<SearchResult> adjacent,
         boolean safetyCritical
     ) {
-        if (!productReviewMode || safetyCritical || !isRainShelterUncertainFit(query, adjacent)) {
+        if (!isResolvedProductReviewModeEnabled(productReviewMode)
+            || safetyCritical
+            || !isRainShelterUncertainFit(query, adjacent)) {
             return "";
         }
         return "ANSWER\n"
@@ -162,7 +164,9 @@ final class ReviewDemoPolicy {
         List<SearchResult> adjacent,
         boolean safetyCritical
     ) {
-        if (!productReviewMode || safetyCritical || !isRainShelterUncertainFit(query, adjacent)) {
+        if (!isResolvedProductReviewModeEnabled(productReviewMode)
+            || safetyCritical
+            || !isRainShelterUncertainFit(query, adjacent)) {
             return adjacent == null ? Collections.emptyList() : new ArrayList<>(adjacent);
         }
         SearchResult rainShelter = bestRainShelterSource(adjacent);
@@ -226,7 +230,7 @@ final class ReviewDemoPolicy {
         List<SearchResult> results,
         GuideLookup guideLookup
     ) {
-        if (!productReviewMode || !isReviewSearchQuery(query)) {
+        if (!isResolvedProductReviewModeEnabled(productReviewMode) || !isReviewSearchQuery(query)) {
             return results == null ? Collections.emptyList() : results;
         }
         LinkedHashMap<String, SearchResult> resultsByGuideId = new LinkedHashMap<>();
@@ -258,7 +262,8 @@ final class ReviewDemoPolicy {
         if (relatedGuides != null) {
             shaped.addAll(relatedGuides);
         }
-        if (!productReviewMode || !RAIN_SHELTER_TOPIC_GUIDE_ID.equalsIgnoreCase(safe(anchorGuideId).trim())) {
+        if (!isResolvedProductReviewModeEnabled(productReviewMode)
+            || !RAIN_SHELTER_TOPIC_GUIDE_ID.equalsIgnoreCase(safe(anchorGuideId).trim())) {
             return shaped;
         }
         int canonicalIndex = indexOfGuideId(shaped, RAIN_SHELTER_PHONE_RELATED_CANONICAL_GUIDE_ID);
@@ -277,7 +282,7 @@ final class ReviewDemoPolicy {
     }
 
     static int displayHomeCategoryCount(boolean productReviewMode, String bucketKey, int actualCount) {
-        if (!productReviewMode) {
+        if (!isResolvedProductReviewModeEnabled(productReviewMode)) {
             return actualCount;
         }
         switch (safe(bucketKey).trim()) {
@@ -300,7 +305,7 @@ final class ReviewDemoPolicy {
 
     static String appendSearchLatency(String header, String query, boolean productReviewMode) {
         String cleanHeader = safe(header).trim();
-        if (!productReviewMode
+        if (!isResolvedProductReviewModeEnabled(productReviewMode)
             || cleanHeader.isEmpty()
             || !isReviewSearchQuery(query)
             || cleanHeader.toLowerCase(Locale.US).contains(REVIEW_SEARCH_LATENCY_LABEL)) {
@@ -318,7 +323,7 @@ final class ReviewDemoPolicy {
     }
 
     static boolean shouldApplySearchRowReviewVisualState(boolean productReviewMode, String query) {
-        return productReviewMode && isReviewSearchQuery(query);
+        return isResolvedProductReviewModeEnabled(productReviewMode) && isReviewSearchQuery(query);
     }
 
     static String shapeRecentThreadLabel(
@@ -327,7 +332,7 @@ final class ReviewDemoPolicy {
         int index,
         String defaultLabel
     ) {
-        if (!productReviewMode) {
+        if (!isResolvedProductReviewModeEnabled(productReviewMode)) {
             return safe(defaultLabel);
         }
         String reviewLabel = reviewManualHomeRecentThreadLabel(index);
@@ -362,6 +367,10 @@ final class ReviewDemoPolicy {
             spec.structureType,
             spec.topicTags
         );
+    }
+
+    private static boolean isResolvedProductReviewModeEnabled(boolean productReviewMode) {
+        return productReviewMode;
     }
 
     private static SearchResult primitiveTechnologyRelatedGuide() {

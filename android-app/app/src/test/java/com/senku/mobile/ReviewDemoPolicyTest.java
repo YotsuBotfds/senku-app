@@ -34,6 +34,19 @@ public final class ReviewDemoPolicyTest {
     }
 
     @Test
+    public void deniedProductReviewModeCannotEnableReviewFixtureSurfaces() {
+        assertReviewFixturesDisabled(
+            ReviewDemoPolicy.resolveProductReviewModeForTest(true, true, false, true)
+        );
+        assertReviewFixturesDisabled(
+            ReviewDemoPolicy.resolveProductReviewModeForTest(true, true, true, false)
+        );
+        assertReviewFixturesDisabled(
+            ReviewDemoPolicy.resolveProductReviewModeForTest(false, true, true, true)
+        );
+    }
+
+    @Test
     public void reviewHomeCategoryCountsMatchTargetMockContractWhenEnabled() {
         assertEquals(84, ReviewDemoPolicy.displayHomeCategoryCount(true, "shelter", 7));
         assertEquals(67, ReviewDemoPolicy.displayHomeCategoryCount(true, "water", 7));
@@ -324,6 +337,38 @@ public final class ReviewDemoPolicyTest {
             "",
             ""
         );
+    }
+
+    private static void assertReviewFixturesDisabled(boolean productReviewMode) {
+        List<SearchResult> original = Arrays.asList(
+            guideWithId("Live Shelter Result", "GD-501"),
+            guideWithId("Live Water Result", "GD-502")
+        );
+
+        assertFalse(ReviewDemoPolicy.isSourceStackDemoEnabled(productReviewMode));
+        assertEquals(7, ReviewDemoPolicy.displayHomeCategoryCount(productReviewMode, "shelter", 7));
+        assertEquals(
+            "Search  rain shelter - 2 results",
+            ReviewDemoPolicy.appendSearchLatency(
+                "Search  rain shelter - 2 results",
+                "rain shelter",
+                productReviewMode
+            )
+        );
+        assertFalse(ReviewDemoPolicy.shouldApplySearchRowReviewVisualState(productReviewMode, "rain shelter"));
+        assertFalse(
+            ReviewDemoPolicy.shouldSuppressSearchRowLinkedGuideCue(
+                productReviewMode,
+                "rain shelter",
+                guideWithSubtitle("GD-023 | survival | review")
+            )
+        );
+        assertSame(original, ReviewDemoPolicy.shapeSearchResults(
+            "rain shelter",
+            productReviewMode,
+            original,
+            null
+        ));
     }
 
     private static ChatSessionStore.ConversationPreview preview(
