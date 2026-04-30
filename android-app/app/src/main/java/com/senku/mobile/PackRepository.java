@@ -958,7 +958,8 @@ public final class PackRepository implements AutoCloseable {
             if (!supportCandidateMatchesRoute(routeProfile, queryTerms.metadataProfile, diversifyContext, candidate)) {
                 continue;
             }
-            SupportBreakdown support = supportBreakdown(queryTerms, candidate);
+            PackSupportScoringPolicy.SupportBreakdown support =
+                PackSupportScoringPolicy.supportBreakdown(queryTerms, candidate);
             int score = support.supportWithMetadata();
             if (score <= 0) {
                 continue;
@@ -971,8 +972,8 @@ public final class PackRepository implements AutoCloseable {
                 return scoreOrder;
             }
             int modeOrder = Integer.compare(
-                supportRetrievalRank(right.result.retrievalMode),
-                supportRetrievalRank(left.result.retrievalMode)
+                PackSupportScoringPolicy.supportRetrievalRank(right.result.retrievalMode),
+                PackSupportScoringPolicy.supportRetrievalRank(left.result.retrievalMode)
             );
             if (modeOrder != 0) {
                 return modeOrder;
@@ -1019,12 +1020,13 @@ public final class PackRepository implements AutoCloseable {
         ArrayList<RerankedResult> scored = new ArrayList<>();
         for (int index = 0; index < results.size(); index++) {
             SearchResult result = results.get(index);
-            SupportBreakdown support = supportBreakdown(queryTerms, result);
+            PackSupportScoringPolicy.SupportBreakdown support =
+                PackSupportScoringPolicy.supportBreakdown(queryTerms, result);
             int metadataBonus = support.metadataBonus;
             int score = support.supportWithMetadata();
             score += rerankModeBonus(result.retrievalMode);
 
-            String guideKey = guideGroupKey(result);
+            String guideKey = PackSupportScoringPolicy.guideGroupKey(result);
             GuideScore guide = guides.get(guideKey);
             if (guide == null) {
                 guide = new GuideScore(result);
@@ -1037,7 +1039,7 @@ public final class PackRepository implements AutoCloseable {
         }
 
         for (RerankedResult scoredResult : scored) {
-            GuideScore guide = guides.get(guideGroupKey(scoredResult.result));
+            GuideScore guide = guides.get(PackSupportScoringPolicy.guideGroupKey(scoredResult.result));
             if (guide == null) {
                 continue;
             }
@@ -1307,7 +1309,7 @@ public final class PackRepository implements AutoCloseable {
         LinkedHashMap<String, Integer> guideTotals = new LinkedHashMap<>();
         LinkedHashMap<String, Integer> guideSectionCounts = new LinkedHashMap<>();
         for (ScoredSearchResult sectionScore : bestBySection.values()) {
-            String guideKey = guideGroupKey(sectionScore.result);
+            String guideKey = PackSupportScoringPolicy.guideGroupKey(sectionScore.result);
             guideTotals.put(guideKey, guideTotals.getOrDefault(guideKey, 0) + Math.max(1, sectionScore.score));
             guideSectionCounts.put(guideKey, guideSectionCounts.getOrDefault(guideKey, 0) + 1);
         }
@@ -1316,7 +1318,7 @@ public final class PackRepository implements AutoCloseable {
         boolean conservativeWaterGuideBundling = "water_storage".equals(queryTerms.metadataProfile.preferredStructureType())
             && !queryTerms.metadataProfile.hasExplicitTopic("water_distribution");
         for (ScoredSearchResult sectionScore : bestBySection.values()) {
-            String guideKey = guideGroupKey(sectionScore.result);
+            String guideKey = PackSupportScoringPolicy.guideGroupKey(sectionScore.result);
             int guideBonus = Math.min(28, guideTotals.getOrDefault(guideKey, 0) / 4);
             int diversityBonus = Math.min(10, guideSectionCounts.getOrDefault(guideKey, 0) * 2);
             if (conservativeWaterGuideBundling) {
@@ -2191,9 +2193,10 @@ public final class PackRepository implements AutoCloseable {
             hasRoofWeatherproofDistractorSignal(rankedAnchor),
             hasRoofWeatherproofAnchorSignal(rankedAnchor),
             rankedGuideFocusWaterDistributionFallback,
-            guideGroupKey(routedAnchor).equals(guideGroupKey(rankedAnchor)),
-            supportBreakdown(queryTerms, rankedAnchor).supportWithMetadata(),
-            supportBreakdown(queryTerms, routedAnchor).supportWithMetadata()
+            PackSupportScoringPolicy.guideGroupKey(routedAnchor)
+                .equals(PackSupportScoringPolicy.guideGroupKey(rankedAnchor)),
+            PackSupportScoringPolicy.supportBreakdown(queryTerms, rankedAnchor).supportWithMetadata(),
+            PackSupportScoringPolicy.supportBreakdown(queryTerms, routedAnchor).supportWithMetadata()
         ));
     }
 
@@ -2247,7 +2250,8 @@ public final class PackRepository implements AutoCloseable {
                 continue;
             }
 
-            int score = Math.max(1, supportBreakdown(queryTerms, candidate).supportWithMetadata()) + Math.max(0, 12 - index);
+            int score = Math.max(1, PackSupportScoringPolicy.supportBreakdown(queryTerms, candidate).supportWithMetadata())
+                + Math.max(0, 12 - index);
             String category = emptySafe(candidate.category).trim().toLowerCase(QUERY_LOCALE);
             if ("building".equals(category)) {
                 score += 10;
@@ -2321,7 +2325,8 @@ public final class PackRepository implements AutoCloseable {
                 continue;
             }
 
-            int score = Math.max(1, supportBreakdown(queryTerms, candidate).supportWithMetadata()) + Math.max(0, 12 - index);
+            int score = Math.max(1, PackSupportScoringPolicy.supportBreakdown(queryTerms, candidate).supportWithMetadata())
+                + Math.max(0, 12 - index);
             int overlap = metadataProfile.preferredTopicOverlapCount(candidate.topicTags);
             String normalizedRole = emptySafe(candidate.contentRole).trim().toLowerCase(QUERY_LOCALE);
             String normalizedMode = emptySafe(candidate.retrievalMode).trim().toLowerCase(QUERY_LOCALE);
@@ -2419,9 +2424,9 @@ public final class PackRepository implements AutoCloseable {
                 continue;
             }
 
-            int score = Math.max(1, supportBreakdown(queryTerms, candidate).supportWithMetadata());
+            int score = Math.max(1, PackSupportScoringPolicy.supportBreakdown(queryTerms, candidate).supportWithMetadata());
             score += Math.max(0, 12 - index);
-            score += anchorAlignmentBonus(queryTerms, candidate);
+            score += PackSupportScoringPolicy.anchorAlignmentBonus(queryTerms, candidate);
             String retrievalMode = emptySafe(candidate.retrievalMode).trim().toLowerCase(QUERY_LOCALE);
             if ("route-focus".equals(retrievalMode)) {
                 score += 10;
@@ -2474,7 +2479,8 @@ public final class PackRepository implements AutoCloseable {
                 continue;
             }
 
-            int score = Math.max(1, supportBreakdown(queryTerms, candidate).supportWithMetadata()) + Math.max(0, 12 - index);
+            int score = Math.max(1, PackSupportScoringPolicy.supportBreakdown(queryTerms, candidate).supportWithMetadata())
+                + Math.max(0, 12 - index);
             score += broadHouseAnchorFocusBonus(candidate, sectionBonus, structureMatch);
             String retrievalMode = emptySafe(candidate.retrievalMode).trim().toLowerCase(QUERY_LOCALE);
             if ("route-focus".equals(retrievalMode)) {
@@ -2650,14 +2656,14 @@ public final class PackRepository implements AutoCloseable {
             if (!isSpecializedExplicitAnchorCandidate(queryTerms, result)) {
                 continue;
             }
-            int support = supportBreakdown(queryTerms, result).supportWithMetadata();
+            int support = PackSupportScoringPolicy.supportBreakdown(queryTerms, result).supportWithMetadata();
             if (support <= 0) {
                 continue;
             }
             if (requireDirectSignal && !hasDirectAnchorSignal(queryTerms, result)) {
                 continue;
             }
-            String key = guideGroupKey(result);
+            String key = PackSupportScoringPolicy.guideGroupKey(result);
             GuideScore guide = guides.get(key);
             if (guide == null) {
                 guide = new GuideScore(result);
@@ -2665,7 +2671,7 @@ public final class PackRepository implements AutoCloseable {
             }
             int score = support;
             score += Math.max(0, 12 - index);
-            score += anchorAlignmentBonus(queryTerms, result);
+            score += PackSupportScoringPolicy.anchorAlignmentBonus(queryTerms, result);
             String mode = emptySafe(result.retrievalMode).trim().toLowerCase(QUERY_LOCALE);
             if ("route-focus".equals(mode)) {
                 score += 8;
@@ -2699,7 +2705,7 @@ public final class PackRepository implements AutoCloseable {
                 && (queryTerms.metadataProfile.hasExplicitTopicFocus() || queryTerms.primaryKeywordTokens().size() >= 2));
     }
 
-    private static boolean requiresSpecializedRouteAnchorSignal(String preferredStructureType) {
+    static boolean requiresSpecializedRouteAnchorSignal(String preferredStructureType) {
         return "water_distribution".equals(preferredStructureType)
             || "message_auth".equals(preferredStructureType)
             || "community_security".equals(preferredStructureType)
@@ -3104,9 +3110,9 @@ public final class PackRepository implements AutoCloseable {
             }
 
             int score = AnswerAnchorPolicy.routeFocusedAnchorScore(
-                supportBreakdown(queryTerms, candidate).supportWithMetadata(),
+                PackSupportScoringPolicy.supportBreakdown(queryTerms, candidate).supportWithMetadata(),
                 index,
-                anchorAlignmentBonus(queryTerms, candidate),
+                PackSupportScoringPolicy.anchorAlignmentBonus(queryTerms, candidate),
                 broadRouteSectionPreferenceBonus(queryTerms, candidate),
                 cabinSiteSelectionAnchorBias(queryTerms, candidate),
                 roofWeatherproofAnchorBias(queryTerms, candidate)
@@ -3455,16 +3461,12 @@ public final class PackRepository implements AutoCloseable {
     }
 
     static SupportBreakdown supportBreakdownForTest(String query, SearchResult result) {
-        return supportBreakdown(QueryTerms.fromQuery(query), result);
+        return new SupportBreakdown(
+            PackSupportScoringPolicy.supportBreakdown(QueryTerms.fromQuery(query), result)
+        );
     }
 
-    static final class SupportBreakdown {
-        final int lexicalSupport;
-        final int metadataBonus;
-        final int specializedTopicBonus;
-        final int sectionBonus;
-        final int structurePenalty;
-
+    static final class SupportBreakdown extends PackSupportScoringPolicy.SupportBreakdown {
         SupportBreakdown(
             int lexicalSupport,
             int metadataBonus,
@@ -3472,114 +3474,25 @@ public final class PackRepository implements AutoCloseable {
             int sectionBonus,
             int structurePenalty
         ) {
-            this.lexicalSupport = lexicalSupport;
-            this.metadataBonus = metadataBonus;
-            this.specializedTopicBonus = specializedTopicBonus;
-            this.sectionBonus = sectionBonus;
-            this.structurePenalty = structurePenalty;
+            super(lexicalSupport, metadataBonus, specializedTopicBonus, sectionBonus, structurePenalty);
         }
 
-        int baseSupport() {
-            return lexicalSupport + specializedTopicBonus + sectionBonus + structurePenalty;
-        }
-
-        int supportWithMetadata() {
-            return baseSupport() + metadataBonus;
-        }
-    }
-
-    private static SupportBreakdown supportBreakdown(QueryTerms queryTerms, SearchResult result) {
-        String retrievalMode = emptySafe(result.retrievalMode).toLowerCase(QUERY_LOCALE);
-        int lexicalSupport = "vector".equals(retrievalMode)
-            ? 0
-            : lexicalKeywordScore(
-                queryTerms,
-                result.title,
-                result.sectionHeading,
-                result.category,
-                result.topicTags,
-                result.snippet,
-                result.body
+        SupportBreakdown(PackSupportScoringPolicy.SupportBreakdown breakdown) {
+            this(
+                breakdown.lexicalSupport,
+                breakdown.metadataBonus,
+                breakdown.specializedTopicBonus,
+                breakdown.sectionBonus,
+                breakdown.structurePenalty
             );
-        int metadataBonus = metadataBonus(
-            queryTerms,
-            result.category,
-            result.contentRole,
-            result.timeHorizon,
-            result.structureType,
-            result.topicTags
-        );
-        int specializedTopicBonus = specializedExplicitTopicBonus(queryTerms, result);
-        int sectionBonus = queryTerms.metadataProfile.sectionHeadingBonus(result.sectionHeading);
-        int structurePenalty = supportStructurePenalty(
-            queryTerms.metadataProfile.prefersDiversifiedContext(),
-            retrievalMode,
-            result.sectionHeading
-        );
-        return new SupportBreakdown(
-            lexicalSupport,
-            metadataBonus,
-            specializedTopicBonus,
-            sectionBonus,
-            structurePenalty
-        );
-    }
-
-    private static int specializedExplicitTopicBonus(QueryTerms queryTerms, SearchResult result) {
-        if (queryTerms == null || result == null || queryTerms.metadataProfile == null) {
-            return 0;
         }
-        QueryMetadataProfile metadataProfile = queryTerms.metadataProfile;
-        String preferredStructureType = metadataProfile.preferredStructureType();
-        if (!metadataProfile.hasExplicitTopicFocus() || !requiresSpecializedRouteAnchorSignal(preferredStructureType)) {
-            return 0;
-        }
-        boolean structureMatch = preferredStructureType.equals(
-            emptySafe(result.structureType).trim().toLowerCase(QUERY_LOCALE)
-        );
-        boolean topicMatch = metadataProfile.hasExplicitTopicOverlap(result.topicTags);
-        if (structureMatch && topicMatch) {
-            return 18 + specializedAnchorFocusBonus(queryTerms, result);
-        }
-        if (structureMatch) {
-            return 12 + specializedAnchorFocusBonus(queryTerms, result);
-        }
-        if (topicMatch) {
-            return 8 + specializedAnchorFocusBonus(queryTerms, result);
-        }
-        return -10;
     }
 
     static int anchorAlignmentBonusForTest(String query, SearchResult result) {
-        return anchorAlignmentBonus(QueryTerms.fromQuery(query), result);
+        return PackSupportScoringPolicy.anchorAlignmentBonus(QueryTerms.fromQuery(query), result);
     }
 
-    private static int anchorAlignmentBonus(QueryTerms queryTerms, SearchResult result) {
-        if (queryTerms == null || result == null || queryTerms.metadataProfile == null) {
-            return 0;
-        }
-        QueryMetadataProfile metadataProfile = queryTerms.metadataProfile;
-        String preferredStructureType = metadataProfile.preferredStructureType();
-        if (!metadataProfile.hasExplicitTopicFocus() || !requiresSpecializedRouteAnchorSignal(preferredStructureType)) {
-            return 0;
-        }
-        boolean structureMatch = preferredStructureType.equals(
-            emptySafe(result.structureType).trim().toLowerCase(QUERY_LOCALE)
-        );
-        boolean topicMatch = metadataProfile.hasExplicitTopicOverlap(result.topicTags);
-        if (structureMatch && topicMatch) {
-            return 24 + specializedAnchorFocusBonus(queryTerms, result);
-        }
-        if (structureMatch) {
-            return 16 + specializedAnchorFocusBonus(queryTerms, result);
-        }
-        if (topicMatch) {
-            return 12 + specializedAnchorFocusBonus(queryTerms, result);
-        }
-        return -24;
-    }
-
-    private static int specializedAnchorFocusBonus(QueryTerms queryTerms, SearchResult result) {
+    static int specializedAnchorFocusBonus(QueryTerms queryTerms, SearchResult result) {
         if (queryTerms == null || result == null || queryTerms.metadataProfile == null) {
             return 0;
         }
@@ -4099,7 +4012,7 @@ public final class PackRepository implements AutoCloseable {
         return "(" + String.join(" AND ", parts) + ")";
     }
 
-    private static int lexicalKeywordScore(
+    static int lexicalKeywordScore(
         QueryTerms queryTerms,
         String title,
         String section,
@@ -4202,7 +4115,7 @@ public final class PackRepository implements AutoCloseable {
         return score;
     }
 
-    private static int metadataBonus(
+    static int metadataBonus(
         QueryTerms queryTerms,
         String category,
         String contentRole,
@@ -4353,17 +4266,6 @@ public final class PackRepository implements AutoCloseable {
             return safeTags;
         }
         return safeTags + "," + safeTopicTags;
-    }
-
-    private static int supportRetrievalRank(String retrievalMode) {
-        String mode = emptySafe(retrievalMode).trim().toLowerCase(QUERY_LOCALE);
-        return switch (mode) {
-            case "route-focus" -> 4;
-            case "guide-focus" -> 3;
-            case "hybrid" -> 2;
-            case "lexical" -> 1;
-            default -> 0;
-        };
     }
 
     static boolean supportCandidateMatchesRoute(
@@ -4567,18 +4469,10 @@ public final class PackRepository implements AutoCloseable {
     }
 
     static int supportStructurePenalty(boolean diversifyContext, String retrievalMode, String sectionHeading) {
-        return RetrievalRoutePolicy.supportStructurePenalty(diversifyContext, retrievalMode, sectionHeading);
+        return PackSupportScoringPolicy.supportStructurePenalty(diversifyContext, retrievalMode, sectionHeading);
     }
 
-    private static String guideGroupKey(SearchResult result) {
-        String guideId = emptySafe(result.guideId).trim();
-        if (!guideId.isEmpty()) {
-            return guideId.toLowerCase(QUERY_LOCALE);
-        }
-        return emptySafe(result.title).replaceAll("\\s+", " ").trim().toLowerCase(QUERY_LOCALE);
-    }
-
-    private static String emptySafe(String text) {
+    static String emptySafe(String text) {
         return text == null ? "" : text;
     }
 
@@ -5281,7 +5175,7 @@ public final class PackRepository implements AutoCloseable {
         }
     }
 
-    private static final class QueryTerms {
+    static final class QueryTerms {
         final String queryLower;
         final List<String> rawTokens;
         final List<String> primaryTokens;
