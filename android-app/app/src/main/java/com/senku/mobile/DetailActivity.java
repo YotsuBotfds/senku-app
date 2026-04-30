@@ -2139,7 +2139,7 @@ public final class DetailActivity extends AppCompatActivity {
             R.drawable.ic_home_library,
             getString(resolveTabletEmergencyAppRailHomeLabelResource()),
             getString(resolveTabletEmergencyAppRailHomeContentDescriptionResource()),
-            false,
+            isTabletEmergencyAppRailDestinationActive(TabletEmergencyAppRailDestination.HOME),
             v -> navigateHomeFromDetail()
         ), tabletAppRailItemParams(TABLET_APP_RAIL_FIRST_ITEM_TOP_MARGIN_DP));
 
@@ -2147,7 +2147,7 @@ public final class DetailActivity extends AppCompatActivity {
             R.drawable.ic_home_ask,
             getString(R.string.bottom_tab_ask),
             getString(R.string.bottom_tab_ask),
-            true,
+            isTabletEmergencyAppRailDestinationActive(TabletEmergencyAppRailDestination.ASK),
             v -> navigateMainFromGuidePhoneTab("auto_ask", true)
         ), tabletAppRailItemParams(TABLET_APP_RAIL_ITEM_TOP_MARGIN_DP));
 
@@ -2155,7 +2155,7 @@ public final class DetailActivity extends AppCompatActivity {
             R.drawable.ic_home_saved,
             getString(R.string.bottom_tab_pins),
             getString(R.string.bottom_tab_pins),
-            false,
+            isTabletEmergencyAppRailDestinationActive(TabletEmergencyAppRailDestination.SAVED),
             v -> navigateMainFromGuidePhoneTab(MainActivity.EXTRA_OPEN_SAVED, true)
         ), tabletAppRailItemParams(TABLET_APP_RAIL_ITEM_TOP_MARGIN_DP));
         return rail;
@@ -2581,6 +2581,22 @@ public final class DetailActivity extends AppCompatActivity {
 
     static int resolveTabletEmergencyAppRailHomeContentDescriptionResource() {
         return R.string.detail_emergency_app_rail_manual_content_description;
+    }
+
+    enum TabletEmergencyAppRailDestination {
+        HOME,
+        ASK,
+        SAVED
+    }
+
+    static TabletEmergencyAppRailDestination resolveTabletEmergencyAppRailActiveDestination() {
+        return TabletEmergencyAppRailDestination.ASK;
+    }
+
+    static boolean isTabletEmergencyAppRailDestinationActive(
+        TabletEmergencyAppRailDestination destination
+    ) {
+        return destination == resolveTabletEmergencyAppRailActiveDestination();
     }
 
     static float resolveTabletEmergencyAppRailLabelTextSizeSp() {

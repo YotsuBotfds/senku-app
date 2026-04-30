@@ -194,6 +194,24 @@ public final class EmergencySurfacePolicyTest {
     }
 
     @Test
+    public void tabletPortraitEmergencyAppRailMarksAskAsActiveContext() {
+        assertEquals(
+            DetailActivity.TabletEmergencyAppRailDestination.ASK,
+            DetailActivity.resolveTabletEmergencyAppRailActiveDestination()
+        );
+        assertFalse(DetailActivity.isTabletEmergencyAppRailDestinationActive(
+            DetailActivity.TabletEmergencyAppRailDestination.HOME
+        ));
+        assertTrue(DetailActivity.isTabletEmergencyAppRailDestinationActive(
+            DetailActivity.TabletEmergencyAppRailDestination.ASK
+        ));
+        assertFalse(DetailActivity.isTabletEmergencyAppRailDestinationActive(
+            DetailActivity.TabletEmergencyAppRailDestination.SAVED
+        ));
+        assertFalse(DetailActivity.isTabletEmergencyAppRailDestinationActive(null));
+    }
+
+    @Test
     public void savedGuideRowsUseSavedGuideContentDescriptionResource() {
         assertEquals(
             R.string.saved_guide_button_content_description,
