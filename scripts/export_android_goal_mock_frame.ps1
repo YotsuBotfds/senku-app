@@ -247,15 +247,17 @@ $allPngNames = @($files | ForEach-Object { $_.Name })
 $actualNames = @($allPngNames)
 $targetLookup = New-Object System.Collections.Generic.HashSet[string]
 foreach ($name in @($TargetNames)) {
-    $trimmed = [string]$name
-    if ([string]::IsNullOrWhiteSpace($trimmed)) {
-        continue
+    foreach ($targetName in ([string]$name -split ",")) {
+        $trimmed = [string]$targetName
+        if ([string]::IsNullOrWhiteSpace($trimmed)) {
+            continue
+        }
+        $baseName = [System.IO.Path]::GetFileName($trimmed.Trim())
+        if ([string]::IsNullOrWhiteSpace($baseName)) {
+            continue
+        }
+        $null = $targetLookup.Add($baseName)
     }
-    $baseName = [System.IO.Path]::GetFileName($trimmed)
-    if ([string]::IsNullOrWhiteSpace($baseName)) {
-        continue
-    }
-    $null = $targetLookup.Add($baseName)
 }
 
 if ($AllowPartial) {

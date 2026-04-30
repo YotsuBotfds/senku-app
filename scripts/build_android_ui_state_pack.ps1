@@ -165,12 +165,28 @@ function Invoke-GoalMockFrameExporter {
     )
 
     $referenceDir = Join-Path $repoRoot "artifacts\mocks"
-    $exportOutput = & powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File $goalMockFrameExporter `
-        -MocksDir $MocksDir `
-        -MetadataPath $MetadataPath `
-        -TargetNames $TargetNames `
-        -AllowPartial:$AllowPartial `
-        -ReferenceDir $referenceDir 2>&1
+    $frameArgs = @(
+        "-NoProfile",
+        "-NonInteractive",
+        "-ExecutionPolicy",
+        "Bypass",
+        "-File",
+        $goalMockFrameExporter,
+        "-MocksDir",
+        $MocksDir,
+        "-MetadataPath",
+        $MetadataPath,
+        "-ReferenceDir",
+        $referenceDir
+    )
+    if ($TargetNames.Count -gt 0) {
+        $frameArgs += "-TargetNames"
+        $frameArgs += ($TargetNames -join ",")
+    }
+    if ($AllowPartial) {
+        $frameArgs += "-AllowPartial"
+    }
+    $exportOutput = & powershell @frameArgs 2>&1
     if ($LASTEXITCODE -ne 0) {
         throw ("Goal mock deterministic frame export failed for {0}: {1}" -f $MocksDir, (($exportOutput | Out-String).Trim()))
     }
