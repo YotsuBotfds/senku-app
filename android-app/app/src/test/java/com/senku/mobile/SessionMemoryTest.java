@@ -810,6 +810,88 @@ public final class SessionMemoryTest {
     }
 
     @Test
+    public void maxTurnCapDropsOldestTurnsAndKeepsNewestRetrievalContext() {
+        SessionMemory memory = new SessionMemory();
+        memory.recordTranscriptFixtureTurnForTest(
+            "turn 1: how do i make candles",
+            "Short answer: Render tallow.",
+            "Short answer: Render tallow.",
+            List.of(testSource("Tallow Candles", "GD-101", "Tallow", "fire", "guide-focus", "tallow,candles")),
+            "",
+            1714244001000L
+        );
+        memory.recordTranscriptFixtureTurnForTest(
+            "turn 2: how do i choose a cabin site",
+            "Short answer: Start with drainage.",
+            "Short answer: Start with drainage.",
+            List.of(testSource("Cabin Site Selection", "GD-102", "Drainage", "building", "guide-focus", "site_selection,drainage")),
+            "",
+            1714244002000L
+        );
+        memory.recordTranscriptFixtureTurnForTest(
+            "turn 3: how do i frame a wall",
+            "Short answer: Keep it plumb.",
+            "Short answer: Keep it plumb.",
+            List.of(testSource("Wall Framing", "GD-103", "Framing", "building", "guide-focus", "wall_construction")),
+            "",
+            1714244003000L
+        );
+        memory.recordTranscriptFixtureTurnForTest(
+            "turn 4: how do i seal a roof",
+            "Short answer: Overlap roofing layers.",
+            "Short answer: Overlap roofing layers.",
+            List.of(testSource("Roof Sealing", "GD-104", "Roofing", "building", "guide-focus", "roofing,weatherproofing")),
+            "",
+            1714244004000L
+        );
+        memory.recordTranscriptFixtureTurnForTest(
+            "turn 5: how do i store grain",
+            "Short answer: Keep it dry.",
+            "Short answer: Keep it dry.",
+            List.of(testSource("Grain Storage", "GD-105", "Dry Storage", "food", "guide-focus", "grain_storage")),
+            "",
+            1714244005000L
+        );
+        memory.recordTranscriptFixtureTurnForTest(
+            "turn 6: how do i purify water",
+            "Short answer: Boil or filter it.",
+            "Short answer: Boil or filter it.",
+            List.of(testSource("Water Purification", "GD-106", "Boiling", "survival", "guide-focus", "water_purification")),
+            "",
+            1714244006000L
+        );
+        memory.recordTranscriptFixtureTurnForTest(
+            "turn 7: what's the safest way to store treated water long term",
+            "Short answer: Use food-safe containers and rotate them.",
+            "Short answer: Use food-safe containers and rotate them.",
+            List.of(testSource(
+                "Storage & Material Management",
+                "GD-252",
+                "Water Storage: Hydration Assurance",
+                "resource-management",
+                "guide-focus",
+                "water_storage,container_sanitation,water_rotation"
+            )),
+            "",
+            1714244007000L
+        );
+
+        List<SessionMemory.TurnSnapshot> snapshots = memory.recentTurnSnapshots(10);
+        SessionMemory.RetrievalPlan plan = memory.buildRetrievalPlan("what next");
+
+        assertEquals(6, memory.turnCount());
+        assertEquals(6, snapshots.size());
+        assertEquals("turn 2: how do i choose a cabin site", snapshots.get(0).question);
+        assertEquals("turn 7: what's the safest way to store treated water long term", snapshots.get(5).question);
+        assertEquals("GD-252", memory.recentSourceResults().get(0).guideId);
+        assertTrue(plan.sessionUsed);
+        assertTrue(plan.contextSelectionQuery.contains("water"));
+        assertTrue(plan.contextSelectionQuery.contains("storage"));
+        assertTrue(plan.contextSelectionQuery.contains("container"));
+        assertFalse(plan.promptContext.contains("turn 1: how do i make candles"));
+    }
+
+    @Test
     public void clayOvenFollowUpCarriesClayOvenContext() {
         SessionMemory memory = new SessionMemory();
         memory.recordTurn(
@@ -974,6 +1056,34 @@ public final class SessionMemoryTest {
     }
 
     @Test
+    public void idleAnchorResetClearsStickyAnchorWithoutDroppingTranscript() {
+        SessionMemory.setAnchorPriorEnabledForTest(true);
+        try {
+            SessionMemory memory = new SessionMemory();
+            memory.recordTranscriptFixtureTurnForTest(
+                "how do i build a rain shelter",
+                "Short answer: Use a ridge line.",
+                "Short answer: Use a ridge line.",
+                List.of(testSource("Tarp Shelters", "GD-444", "Ridge Line Setup", "survival", "guide-focus", "rain_shelter")),
+                "",
+                1714244000000L
+            );
+
+            boolean reset = memory.markAnchorIdleResetIfStale(
+                1714244000000L + SessionMemory.anchorIdleResetMsForTest() + 1L
+            );
+            SessionMemory.RetrievalPlan plan = memory.buildRetrievalPlan("what should i do next?");
+
+            assertTrue(reset);
+            assertEquals(1, memory.turnCount());
+            assertTrue(memory.renderTranscript().contains("how do i build a rain shelter"));
+            assertEquals(null, plan.anchorPrior);
+        } finally {
+            SessionMemory.setAnchorPriorEnabledForTest(false);
+        }
+    }
+
+    @Test
     public void singularizeKeepsDoubleSEndingsIntact() {
         assertEquals("glass", SessionMemory.singularizeForTest("glass"));
         assertEquals("stress", SessionMemory.singularizeForTest("stress"));
@@ -986,5 +1096,29 @@ public final class SessionMemoryTest {
         assertFalse(SessionMemory.tokensMatchForTest("glass", "glas"));
         assertTrue(SessionMemory.tokensMatchForTest("seal", "sealing"));
         assertTrue(SessionMemory.tokensMatchForTest("drain", "drainage"));
+    }
+
+    private static SearchResult testSource(
+        String title,
+        String guideId,
+        String sectionHeading,
+        String category,
+        String retrievalMode,
+        String topicTags
+    ) {
+        return new SearchResult(
+            title,
+            "",
+            "",
+            "",
+            guideId,
+            sectionHeading,
+            category,
+            retrievalMode,
+            "",
+            "",
+            "",
+            topicTags
+        );
     }
 }

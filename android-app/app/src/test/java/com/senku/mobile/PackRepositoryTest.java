@@ -3330,6 +3330,135 @@ public final class PackRepositoryTest {
     }
 
     @Test
+    public void routePolicyExtractionSeedMatrixLocksSpecializedRouteContracts() {
+        SearchResult waterDistributionSignal = new SearchResult(
+            "Community Water Distribution Systems",
+            "",
+            "Gravity-fed distribution and storage tank planning.",
+            "Gravity-fed distribution and storage tank planning.",
+            "GD-270",
+            "Storage Tank Planning",
+            "building",
+            "route-focus",
+            "planning",
+            "long_term",
+            "water_storage",
+            "water_storage,water_distribution"
+        );
+        SearchResult genericWaterStorage = new SearchResult(
+            "Storage & Material Management",
+            "",
+            "Water storage basics and food-safe containers.",
+            "Water storage basics and food-safe containers.",
+            "GD-252",
+            "Water Storage: Hydration Assurance",
+            "resource-management",
+            "route-focus",
+            "safety",
+            "long_term",
+            "water_storage",
+            "water_storage,container_sanitation,water_rotation"
+        );
+        SearchResult soapmakingSignal = new SearchResult(
+            "Homestead Chemistry",
+            "",
+            "Render fat, prepare lye water, mix to trace, and cure soap bars safely.",
+            "Render fat, prepare lye water, mix to trace, and cure soap bars safely.",
+            "GD-122",
+            "Soap Making - Cold Process",
+            "crafts",
+            "route-focus",
+            "subsystem",
+            "mixed",
+            "soapmaking",
+            "soapmaking,lye_safety"
+        );
+        SearchResult genericSoapSafety = new SearchResult(
+            "Storage Records",
+            "",
+            "Inventory labels and shelf records.",
+            "Inventory labels and shelf records.",
+            "GD-262",
+            "Inventory Labels",
+            "resource-management",
+            "route-focus",
+            "safety",
+            "immediate",
+            "general",
+            ""
+        );
+        SearchResult governanceSignal = new SearchResult(
+            "Commons Management & Sustainable Resource Governance",
+            "",
+            "Trust repair, mediation, reputation, and vouching for cautious group integration.",
+            "Trust repair, mediation, reputation, and vouching for cautious group integration.",
+            "GD-626",
+            "Trust Repair, Reputation, and Vouching",
+            "resource-management",
+            "route-focus",
+            "subsystem",
+            "long_term",
+            "community_governance",
+            "community_governance,conflict_resolution,trust_systems"
+        );
+        SearchResult genericGovernanceAccounting = new SearchResult(
+            "Inventory Ledgers",
+            "",
+            "Accounting reserves and pooled fund records.",
+            "Accounting reserves and pooled fund records.",
+            "GD-657",
+            "Accounting Reserves",
+            "resource-management",
+            "route-focus",
+            "reference",
+            "long_term",
+            "general",
+            ""
+        );
+
+        Object[][] routeCases = new Object[][]{
+            {
+                "how do i design a gravity-fed water distribution system",
+                "water_distribution",
+                "water_distribution_priority",
+                waterDistributionSignal,
+                genericWaterStorage
+            },
+            {
+                "How do I make soap from animal fat safely enough that it's actually useful?",
+                "soapmaking",
+                "soapmaking_priority",
+                soapmakingSignal,
+                genericSoapSafety
+            },
+            {
+                "How do we merge with another group if we don't trust each other yet?",
+                "community_governance",
+                "community_governance_priority",
+                governanceSignal,
+                genericGovernanceAccounting
+            }
+        };
+
+        for (Object[] routeCase : routeCases) {
+            String query = (String) routeCase[0];
+            String expectedStructure = (String) routeCase[1];
+            String expectedPriority = (String) routeCase[2];
+            SearchResult directSignal = (SearchResult) routeCase[3];
+            SearchResult nonSignal = (SearchResult) routeCase[4];
+
+            assertEquals(query, expectedStructure, QueryMetadataProfile.fromQuery(query).preferredStructureType());
+            assertEquals(query, true, PackRepository.shouldRequireDirectAnchorSignalForTest(query));
+            assertEquals(query, expectedPriority, PackRepository.noBm25RouteFtsOrderLabelForTest(query));
+            assertEquals(query, true, PackRepository.hasDirectAnchorSignalForTest(query, directSignal));
+            assertEquals(query, false, PackRepository.hasDirectAnchorSignalForTest(query, nonSignal));
+        }
+
+        assertEquals(600, PackRepository.routeChunkCandidateLimitForTest("how do i build a house", 12));
+        assertEquals(42, PackRepository.routeChunkCandidateTargetForTest("how do i build a house", 12));
+    }
+
+    @Test
     public void communitySecurityGuideSweepUsesLowerThreshold() {
         QueryRouteProfile routeProfile = QueryRouteProfile.fromQuery(
             "How do we protect a vulnerable work site without spreading people too thin?"

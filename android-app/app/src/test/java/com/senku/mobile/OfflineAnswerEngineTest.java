@@ -5,6 +5,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import com.senku.mobile.telemetry.LatencyPanel;
 
@@ -2496,6 +2497,10 @@ public final class OfflineAnswerEngineTest {
 
         assertTrue(answerRun.abstain);
         assertFalse(answerRun.deterministic);
+        assertEquals(OfflineAnswerEngine.AnswerMode.ABSTAIN, answerRun.mode);
+        assertEquals(OfflineAnswerEngine.ConfidenceLabel.LOW, answerRun.confidenceLabel);
+        assertEquals(1, answerRun.sources.size());
+        assertEquals("GD-102", answerRun.sources.get(0).guideId);
         assertTrue(answerRun.answerBody.contains("Senku doesn't have a guide"));
         assertEquals("", hostCall.get());
         assertEquals("", deviceCall.get());
@@ -2550,12 +2555,104 @@ public final class OfflineAnswerEngineTest {
         OfflineAnswerEngine.AnswerRun answerRun = OfflineAnswerEngine.generate(null, null, prepared);
 
         assertEquals(OfflineAnswerEngine.AnswerMode.UNCERTAIN_FIT, answerRun.mode);
+        assertEquals(OfflineAnswerEngine.ConfidenceLabel.MEDIUM, answerRun.confidenceLabel);
+        assertEquals(1, answerRun.sources.size());
+        assertEquals("GD-305", answerRun.sources.get(0).guideId);
         assertFalse(answerRun.abstain);
         assertFalse(answerRun.deterministic);
         assertTrue(answerRun.answerBody.contains("not a confident fit"));
         assertEquals("", hostCall.get());
         assertEquals("", deviceCall.get());
         assertEquals("Related guides ready. Verify the fit.", OfflineAnswerEngine.buildCompletionStatus(answerRun));
+    }
+
+    @Test
+    public void runRejectsBlankQueryBeforePackModelOrGenerators() throws Exception {
+        AtomicReference<String> hostCall = new AtomicReference<>("");
+        AtomicReference<String> deviceCall = new AtomicReference<>("");
+        OfflineAnswerEngine.setGeneratorsForTest(
+            (settings, systemPrompt, prompt, maxTokens) -> {
+                hostCall.set("called");
+                throw new AssertionError("host generation should not run");
+            },
+            (context, modelFile, prompt, maxTokens, listener) -> {
+                deviceCall.set("called");
+                throw new AssertionError("device generation should not run");
+            }
+        );
+
+        try {
+            OfflineAnswerEngine.run(null, null, null, null, "   ");
+        } catch (IllegalArgumentException exception) {
+            assertEquals("Enter a question first", exception.getMessage());
+            assertEquals("", hostCall.get());
+            assertEquals("", deviceCall.get());
+            return;
+        }
+
+        fail("blank query should reject before any backend setup");
+    }
+
+    @Test
+    public void runRejectsMissingPackBeforeModelGateOrGenerators() throws Exception {
+        AtomicReference<String> hostCall = new AtomicReference<>("");
+        AtomicReference<String> deviceCall = new AtomicReference<>("");
+        OfflineAnswerEngine.setGeneratorsForTest(
+            (settings, systemPrompt, prompt, maxTokens) -> {
+                hostCall.set("called");
+                throw new AssertionError("host generation should not run");
+            },
+            (context, modelFile, prompt, maxTokens, listener) -> {
+                deviceCall.set("called");
+                throw new AssertionError("device generation should not run");
+            }
+        );
+
+        try {
+            OfflineAnswerEngine.run(
+                null,
+                null,
+                new SessionMemory(),
+                null,
+                "how do i build a rain shelter?"
+            );
+        } catch (IllegalStateException exception) {
+            assertEquals("Pack is not ready yet", exception.getMessage());
+            assertEquals("", hostCall.get());
+            assertEquals("", deviceCall.get());
+            return;
+        }
+
+        fail("missing pack should reject before model availability");
+    }
+
+    @Test
+    public void generateRejectsNullPreparedAnswerBeforeGenerators() throws Exception {
+        AtomicReference<String> hostCall = new AtomicReference<>("");
+        AtomicReference<String> deviceCall = new AtomicReference<>("");
+        File tempModel = File.createTempFile("senku-null-prepared", ".litertlm");
+        tempModel.deleteOnExit();
+        OfflineAnswerEngine.setGeneratorsForTest(
+            (settings, systemPrompt, prompt, maxTokens) -> {
+                hostCall.set("called");
+                throw new AssertionError("host generation should not run");
+            },
+            (context, modelFile, prompt, maxTokens, listener) -> {
+                deviceCall.set("called");
+                throw new AssertionError("device generation should not run");
+            }
+        );
+
+        try {
+            OfflineAnswerEngine.generate(null, tempModel, null);
+        } catch (IllegalArgumentException exception) {
+            assertEquals("Prepared answer is required", exception.getMessage());
+            assertEquals("", hostCall.get());
+            assertEquals("", deviceCall.get());
+            return;
+        }
+
+        fail("null prepared answer should reject before generation");
     }
 
     @Test
