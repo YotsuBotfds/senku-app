@@ -2,6 +2,7 @@ package com.senku.mobile;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import com.senku.ui.primitives.BottomTabDestination;
@@ -499,6 +500,122 @@ public final class MainRouteDecisionHelperTest {
             BottomTabDestination.ASK,
             false
         );
+    }
+
+    @Test
+    public void routeStateCodecEncodesNormalizedValues() {
+        MainRouteDecisionHelper.EncodedRouteState encoded =
+            MainRouteDecisionHelper.encodeRouteState(new MainRouteDecisionHelper.RouteState(
+                MainRouteDecisionHelper.Surface.BROWSE,
+                BottomTabDestination.SEARCH,
+                true
+            ));
+
+        assertEquals(MainRouteDecisionHelper.Surface.BROWSE.name(), encoded.surface);
+        assertEquals(BottomTabDestination.HOME.name(), encoded.activePhoneTab);
+        assertTrue(encoded.askLaneActive);
+    }
+
+    @Test
+    public void routeStateCodecParsesKnownSurfaceAndPhoneTabNamesOnly() {
+        assertEquals(
+            MainRouteDecisionHelper.Surface.SAVED_GUIDES,
+            MainRouteDecisionHelper.parseRouteSurface(MainRouteDecisionHelper.Surface.SAVED_GUIDES.name())
+        );
+        assertEquals(
+            BottomTabDestination.PINS,
+            MainRouteDecisionHelper.parsePhoneTab(BottomTabDestination.PINS.name())
+        );
+        assertNull(MainRouteDecisionHelper.parseRouteSurface(null));
+        assertNull(MainRouteDecisionHelper.parseRouteSurface("   "));
+        assertNull(MainRouteDecisionHelper.parseRouteSurface("DETAIL"));
+        assertNull(MainRouteDecisionHelper.parsePhoneTab(null));
+        assertNull(MainRouteDecisionHelper.parsePhoneTab("   "));
+        assertNull(MainRouteDecisionHelper.parsePhoneTab("DETAIL"));
+    }
+
+    @Test
+    public void routeStateCodecRestoresFirstClassRouteState() {
+        assertRoute(
+            MainRouteDecisionHelper.resolveRestoredMainRouteState(
+                MainRouteDecisionHelper.Surface.SEARCH_RESULTS.name(),
+                BottomTabDestination.HOME.name(),
+                false,
+                true,
+                BottomTabDestination.PINS.name()
+            ),
+            MainRouteDecisionHelper.Surface.SEARCH_RESULTS,
+            BottomTabDestination.HOME,
+            false
+        );
+        assertRoute(
+            MainRouteDecisionHelper.resolveRestoredMainRouteState(
+                MainRouteDecisionHelper.Surface.RECENT_THREADS.name(),
+                BottomTabDestination.THREADS.name(),
+                false,
+                true,
+                BottomTabDestination.HOME.name()
+            ),
+            MainRouteDecisionHelper.Surface.RECENT_THREADS,
+            BottomTabDestination.ASK,
+            false
+        );
+    }
+
+    @Test
+    public void routeStateCodecFallsBackToLegacyPhoneTabForMissingOrInvalidFirstClassState() {
+        assertRoute(
+            MainRouteDecisionHelper.resolveRestoredMainRouteState(
+                null,
+                null,
+                false,
+                false,
+                BottomTabDestination.ASK.name()
+            ),
+            MainRouteDecisionHelper.Surface.RECENT_THREADS,
+            BottomTabDestination.ASK,
+            true
+        );
+        assertRoute(
+            MainRouteDecisionHelper.resolveRestoredMainRouteState(
+                "DETAIL",
+                BottomTabDestination.HOME.name(),
+                false,
+                true,
+                BottomTabDestination.PINS.name()
+            ),
+            MainRouteDecisionHelper.Surface.SAVED_GUIDES,
+            BottomTabDestination.PINS,
+            false
+        );
+    }
+
+    @Test
+    public void routeStateCodecResolvesInitialBrowseChromeVisibility() {
+        assertFalse(MainRouteDecisionHelper.resolveInitialBrowseChromeVisible(
+            true,
+            MainRouteDecisionHelper.Surface.SAVED_GUIDES.name(),
+            BottomTabDestination.PINS.name(),
+            false,
+            true,
+            BottomTabDestination.PINS.name()
+        ));
+        assertFalse(MainRouteDecisionHelper.resolveInitialBrowseChromeVisible(
+            false,
+            MainRouteDecisionHelper.Surface.ASK_RESULTS.name(),
+            BottomTabDestination.ASK.name(),
+            true,
+            true,
+            BottomTabDestination.HOME.name()
+        ));
+        assertTrue(MainRouteDecisionHelper.resolveInitialBrowseChromeVisible(
+            false,
+            MainRouteDecisionHelper.Surface.SAVED_GUIDES.name(),
+            BottomTabDestination.PINS.name(),
+            false,
+            true,
+            BottomTabDestination.HOME.name()
+        ));
     }
 
     private static void assertTransition(

@@ -3,6 +3,11 @@ package com.senku.mobile;
 import com.senku.ui.primitives.BottomTabDestination;
 
 public final class MainRouteDecisionHelper {
+    static final String STATE_PHONE_TAB = "phone_tab";
+    static final String STATE_MAIN_ROUTE_SURFACE = "main_route_surface";
+    static final String STATE_MAIN_ROUTE_ACTIVE_TAB = "main_route_active_tab";
+    static final String STATE_MAIN_ROUTE_ASK_LANE_ACTIVE = "main_route_ask_lane_active";
+
     enum Surface {
         BROWSE,
         RECENT_THREADS,
@@ -140,6 +145,55 @@ public final class MainRouteDecisionHelper {
         return new RouteState(surface, activePhoneTab, askLaneActive);
     }
 
+    static EncodedRouteState encodeRouteState(RouteState routeState) {
+        RouteState safeRouteState = normalize(routeState);
+        return new EncodedRouteState(
+            safeRouteState.surface.name(),
+            safeRouteState.activePhoneTab.name(),
+            safeRouteState.askLaneActive
+        );
+    }
+
+    static RouteState resolveRestoredMainRouteState(
+        String rawSurface,
+        String rawActivePhoneTab,
+        boolean askLaneActive,
+        boolean hasFirstClassRouteState,
+        String legacyPhoneTab
+    ) {
+        if (hasFirstClassRouteState) {
+            Surface surface = parseRouteSurface(rawSurface);
+            BottomTabDestination activeTab = parsePhoneTab(rawActivePhoneTab);
+            if (surface != null && activeTab != null) {
+                return new RouteState(surface, activeTab, askLaneActive);
+            }
+        }
+        BottomTabDestination legacyTab = resolveRestoredPhoneTab(legacyPhoneTab);
+        return routeStateForMode(true, legacyTab, legacyTab == BottomTabDestination.ASK);
+    }
+
+    static boolean resolveInitialBrowseChromeVisible(
+        boolean autoQueryPending,
+        String rawSurface,
+        String rawActivePhoneTab,
+        boolean askLaneActive,
+        boolean hasFirstClassRouteState,
+        String legacyPhoneTab
+    ) {
+        return !autoQueryPending && isBrowseSurface(resolveRestoredMainRouteState(
+            rawSurface,
+            rawActivePhoneTab,
+            askLaneActive,
+            hasFirstClassRouteState,
+            legacyPhoneTab
+        ).surface);
+    }
+
+    static BottomTabDestination resolveRestoredPhoneTab(String rawValue) {
+        BottomTabDestination destination = parsePhoneTab(rawValue);
+        return destination == null ? BottomTabDestination.HOME : phoneTabSelectionOwner(destination);
+    }
+
     static BottomTabDestination phoneTabSelectionOwner(BottomTabDestination destination) {
         if (destination == null) {
             return BottomTabDestination.HOME;
@@ -182,8 +236,42 @@ public final class MainRouteDecisionHelper {
             || surface == Surface.SAVED_GUIDES;
     }
 
+    static Surface parseRouteSurface(String rawValue) {
+        if (rawValue == null || rawValue.trim().isEmpty()) {
+            return null;
+        }
+        try {
+            return Surface.valueOf(rawValue);
+        } catch (IllegalArgumentException ignored) {
+            return null;
+        }
+    }
+
+    static BottomTabDestination parsePhoneTab(String rawValue) {
+        if (rawValue == null || rawValue.trim().isEmpty()) {
+            return null;
+        }
+        try {
+            return BottomTabDestination.valueOf(rawValue);
+        } catch (IllegalArgumentException ignored) {
+            return null;
+        }
+    }
+
     private static RouteState normalize(RouteState state) {
         return state == null ? browseHome() : state.normalized();
+    }
+
+    static final class EncodedRouteState {
+        final String surface;
+        final String activePhoneTab;
+        final boolean askLaneActive;
+
+        EncodedRouteState(String surface, String activePhoneTab, boolean askLaneActive) {
+            this.surface = surface;
+            this.activePhoneTab = activePhoneTab;
+            this.askLaneActive = askLaneActive;
+        }
     }
 
     static final class RouteState {
