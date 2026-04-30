@@ -193,9 +193,19 @@ public final class EmergencySurfacePolicyTest {
             R.string.detail_back_content_description,
             DetailActivity.resolveDetailVisibleBackContentDescriptionResource()
         );
+        assertEquals(R.string.detail_back, DetailActivity.resolveDetailVisibleBackLabelResource(false));
+        assertEquals(R.string.home_button, DetailActivity.resolveDetailVisibleBackLabelResource(true));
+        assertEquals(
+            R.string.detail_home_content_description,
+            DetailActivity.resolveDetailVisibleBackContentDescriptionResource(true)
+        );
         assertEquals(
             R.string.detail_back_content_description,
             DetailActivity.resolveTabletEmergencyBackContentDescriptionResource()
+        );
+        assertEquals(
+            R.string.detail_emergency_app_rail_manual_content_description,
+            DetailActivity.resolveTabletEmergencyBackContentDescriptionResource(true)
         );
         assertFalse(DetailActivity.shouldEnableDetailBackLongPressHomeShortcut());
     }
@@ -254,6 +264,8 @@ public final class EmergencySurfacePolicyTest {
     @Test
     public void tabletEmergencyBackAffordanceUsesVisibleBackLabel() {
         assertEquals("Back", DetailActivity.tabletEmergencyBackButtonLabel());
+        assertEquals("Back", DetailActivity.tabletEmergencyBackButtonLabel(false));
+        assertEquals("Manual", DetailActivity.tabletEmergencyBackButtonLabel(true));
         assertEquals(64, DetailActivity.resolveTabletEmergencyBackButtonMinWidthDp());
         assertTrue(
             DetailActivity.resolveTabletEmergencyBackButtonMinWidthDp()

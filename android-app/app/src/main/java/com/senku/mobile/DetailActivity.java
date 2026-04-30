@@ -122,6 +122,7 @@ public final class DetailActivity extends AppCompatActivity {
     private static final int DETAIL_TOP_CHROME_ICON_ACTION_SIZE_DP = 28;
     private static final int DETAIL_TOP_CHROME_BACK_ACTION_MIN_WIDTH_DP = 64;
     private static final String DETAIL_TOP_CHROME_BACK_ACTION_LABEL = "Back";
+    private static final String DETAIL_TOP_CHROME_MANUAL_ACTION_LABEL = "Manual";
     private static final int TABLET_EMERGENCY_CHROME_NAV_ICON_SIZE_DP = DETAIL_TOP_CHROME_ICON_ACTION_SIZE_DP;
     private static final int TABLET_EMERGENCY_LANDSCAPE_LEFT_MARGIN_DP = 336;
     private static final int TABLET_EMERGENCY_LANDSCAPE_RIGHT_MARGIN_DP = 24;
@@ -862,8 +863,8 @@ public final class DetailActivity extends AppCompatActivity {
                 }
             });
         }
-        backButton.setText(resolveDetailVisibleBackLabelResource());
-        backButton.setContentDescription(getString(resolveDetailVisibleBackContentDescriptionResource()));
+        backButton.setText(resolveDetailVisibleBackLabelResource(isTaskRoot()));
+        backButton.setContentDescription(getString(resolveDetailVisibleBackContentDescriptionResource(isTaskRoot())));
         backButton.setOnClickListener(v -> navigateBackFromDetail());
         backButton.setOnLongClickListener(null);
         backButton.setLongClickable(shouldEnableDetailBackLongPressHomeShortcut());
@@ -976,7 +977,7 @@ public final class DetailActivity extends AppCompatActivity {
     }
 
     static boolean shouldInstallPhoneLandscapeAnswerNavRail(boolean answerMode, boolean landscapePhone) {
-        return answerMode && landscapePhone;
+        return false;
     }
 
     static int resolvePhoneLandscapeAnswerNavRailWidthDp() {
@@ -1767,7 +1768,7 @@ public final class DetailActivity extends AppCompatActivity {
         chromeParams.bottomMargin = dp(TABLET_EMERGENCY_CHROME_BOTTOM_MARGIN_DP);
 
         Button back = new Button(this);
-        back.setContentDescription(getString(resolveTabletEmergencyBackContentDescriptionResource()));
+        back.setContentDescription(getString(resolveTabletEmergencyBackContentDescriptionResource(isTaskRoot())));
         applyTabletEmergencyChromeBackButton(back);
         back.setOnClickListener(v -> navigateBackFromDetail());
         tabletEmergencyChromeOverlayPanel.addView(back, new LinearLayout.LayoutParams(
@@ -2077,7 +2078,7 @@ public final class DetailActivity extends AppCompatActivity {
             return;
         }
         button.setAllCaps(false);
-        button.setText(tabletEmergencyBackButtonLabel());
+        button.setText(tabletEmergencyBackButtonLabel(isTaskRoot()));
         button.setTextColor(getColor(R.color.senku_rev03_ink_0));
         button.setTypeface(rev03MonoTypeface(Typeface.BOLD));
         button.setTextSize(resolveDetailTopChromeLabelTextSizeSp());
@@ -2097,7 +2098,11 @@ public final class DetailActivity extends AppCompatActivity {
     }
 
     static String tabletEmergencyBackButtonLabel() {
-        return DETAIL_TOP_CHROME_BACK_ACTION_LABEL;
+        return tabletEmergencyBackButtonLabel(false);
+    }
+
+    static String tabletEmergencyBackButtonLabel(boolean taskRoot) {
+        return taskRoot ? DETAIL_TOP_CHROME_MANUAL_ACTION_LABEL : DETAIL_TOP_CHROME_BACK_ACTION_LABEL;
     }
 
     static int resolveTabletEmergencyBackButtonMinWidthDp() {
@@ -2105,7 +2110,13 @@ public final class DetailActivity extends AppCompatActivity {
     }
 
     static int resolveTabletEmergencyBackContentDescriptionResource() {
-        return R.string.detail_back_content_description;
+        return resolveTabletEmergencyBackContentDescriptionResource(false);
+    }
+
+    static int resolveTabletEmergencyBackContentDescriptionResource(boolean taskRoot) {
+        return taskRoot
+            ? R.string.detail_emergency_app_rail_manual_content_description
+            : R.string.detail_back_content_description;
     }
 
     private Typeface rev03UiTypeface(int style) {
@@ -8282,7 +8293,7 @@ public final class DetailActivity extends AppCompatActivity {
                 answerMode && !buildTranscriptExportText().isEmpty(),
                 shouldShowDetailOverflowAction(),
                 shouldAllowRev03TopBarTitleWrap() ? 2 : 1,
-                getString(R.string.detail_back_content_description),
+                getString(resolveDetailVisibleBackContentDescriptionResource(isTaskRoot())),
                 getString(R.string.detail_home_content_description),
                 getString(
                     pinActive
@@ -8593,11 +8604,19 @@ public final class DetailActivity extends AppCompatActivity {
     }
 
     static int resolveDetailVisibleBackLabelResource() {
-        return R.string.detail_back;
+        return resolveDetailVisibleBackLabelResource(false);
+    }
+
+    static int resolveDetailVisibleBackLabelResource(boolean taskRoot) {
+        return taskRoot ? R.string.home_button : R.string.detail_back;
     }
 
     static int resolveDetailVisibleBackContentDescriptionResource() {
-        return R.string.detail_back_content_description;
+        return resolveDetailVisibleBackContentDescriptionResource(false);
+    }
+
+    static int resolveDetailVisibleBackContentDescriptionResource(boolean taskRoot) {
+        return taskRoot ? R.string.detail_home_content_description : R.string.detail_back_content_description;
     }
 
     static boolean shouldEnableDetailBackLongPressHomeShortcut() {

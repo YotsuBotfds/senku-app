@@ -196,8 +196,8 @@ public final class DetailFollowupLandscapeComposerTest {
     }
 
     @Test
-    public void phoneLandscapeAnswerInstallsMockParityLeftRail() {
-        assertTrue(DetailActivity.shouldInstallPhoneLandscapeAnswerNavRail(true, true));
+    public void phoneLandscapeAnswerDoesNotInstallSideNavRail() {
+        assertFalse(DetailActivity.shouldInstallPhoneLandscapeAnswerNavRail(true, true));
         assertFalse(DetailActivity.shouldInstallPhoneLandscapeAnswerNavRail(true, false));
         assertFalse(DetailActivity.shouldInstallPhoneLandscapeAnswerNavRail(false, true));
         assertEquals(64, DetailActivity.resolvePhoneLandscapeAnswerNavRailWidthDp());
