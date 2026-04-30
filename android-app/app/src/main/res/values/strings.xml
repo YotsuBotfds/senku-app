@@ -81,7 +81,7 @@
     <string name="recent_thread_resume_title">Recent thread</string>
     <string name="recent_thread_removed">Removed thread: %1$s</string>
     <string name="pinned_section_title">Saved guides</string>
-    <string name="saved_guides_empty">No saved guides yet.</string>
+    <string name="saved_guides_empty">No saved guides yet. This tab only shows saved guides, not threads or sections.</string>
     <string name="saved_guide_button_content_description">Saved guide %1$d of %2$d: %3$s. Tap to open.</string>
     <string name="home_related_section_title">Guide connections</string>
     <string name="home_related_section_subtitle_recent_empty">Your latest thread is still steering this shelf. Open the pivot guide or save another guide to branch out.</string>

@@ -130,6 +130,20 @@ public final class MainActivityPhoneNavigationTest {
     }
 
     @Test
+    public void savedDestinationDoesNotWaitForRepositoryToShowEmptyState() {
+        assertTrue(MainActivity.shouldShowSavedGuideSection(true, BottomTabDestination.PINS, 0));
+        assertFalse(MainActivity.shouldLoadBrowseGuidesForSavedDestination(false, 0));
+    }
+
+    @Test
+    public void savedDestinationRefreshesBrowseGuidesOnlyWhenRepositoryIsReadyButNotLoaded() {
+        assertTrue(MainActivity.shouldLoadBrowseGuidesForSavedDestination(true, 0));
+
+        assertFalse(MainActivity.shouldLoadBrowseGuidesForSavedDestination(true, 1));
+        assertFalse(MainActivity.shouldLoadBrowseGuidesForSavedDestination(false, 0));
+    }
+
+    @Test
     public void phoneFlowIntentPredicatesNameLibraryAskAndSavedOwnership() {
         assertTrue(MainActivity.isLibraryPhoneFlowIntent(BottomTabDestination.HOME));
         assertTrue(MainActivity.isLibraryPhoneFlowIntent(BottomTabDestination.SEARCH));

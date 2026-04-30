@@ -3307,7 +3307,7 @@ public final class MainActivity extends AppCompatActivity {
                 updateActionLabels();
                 dismissSearchKeyboard();
                 pendingSavedGuideSectionFocus = true;
-                ensureBrowseHomeVisible();
+                ensureSavedGuidesDestinationVisible();
                 focusSavedGuideSectionIfReady();
                 break;
             default:
@@ -3356,6 +3356,19 @@ public final class MainActivity extends AppCompatActivity {
         }
         showBrowseChrome(true);
         updateSessionPanel();
+    }
+
+    private void ensureSavedGuidesDestinationVisible() {
+        if (shouldLoadBrowseGuidesForSavedDestination(repository != null, allGuides.size())) {
+            browseGuides();
+            return;
+        }
+        showBrowseChrome(true);
+        updateSessionPanel();
+    }
+
+    static boolean shouldLoadBrowseGuidesForSavedDestination(boolean repositoryReady, int loadedGuideCount) {
+        return repositoryReady && loadedGuideCount <= 0;
     }
 
     private void scrollBrowseToTop() {
