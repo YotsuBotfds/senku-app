@@ -15,7 +15,7 @@ param(
     [string]$HostInferenceModel = "gemma-4-e2b-it-litert",
     [string]$OutputDir = "artifacts\\bench\\android_detail_followups",
     [string]$RunLabel,
-    [ValidateSet("auto", "in_detail_ui", "auto_intent")]
+    [ValidateSet("auto", "in_detail_ui", "auto_intent", "send_button", "ime_send", "ime_done", "hardware_enter")]
     [string]$FollowUpSubmissionMode = "auto",
     [switch]$SkipSourceProbe,
     [int]$InitialMaxWaitSeconds = 260,
@@ -1091,7 +1091,9 @@ function Submit-InDetailFollowUp {
         $InitialSummary,
         [string]$InitialQuery,
         [string]$FollowUpQuery,
-        [string]$PreviousBody
+        [string]$PreviousBody,
+        [ValidateSet("auto", "in_detail_ui", "send_button", "ime_send", "ime_done", "hardware_enter")]
+        [string]$SubmitMode = "auto"
     )
 
     if (-not (Tap-Bounds -Bounds $InitialSummary.followup_bounds)) {
@@ -1159,6 +1161,9 @@ function Submit-InDetailFollowUp {
         $inputMatched = Test-FollowUpInputMatch -Summary $submitSummary -ExpectedText $FollowUpQuery
     }
     if (-not $composerVisible) {
+        if ($SubmitMode -ne "auto") {
+            throw "Explicit follow-up submit mode '$SubmitMode' failed before submit: composer_missing."
+        }
         Start-AskActivity -Query $InitialQuery -AutoFollowUpQuery $FollowUpQuery
         return [pscustomobject]@{
             mode = "auto_followup_fallback"
@@ -1171,6 +1176,9 @@ function Submit-InDetailFollowUp {
         }
     }
     if (-not $inputMatched) {
+        if ($SubmitMode -ne "auto") {
+            throw "Explicit follow-up submit mode '$SubmitMode' failed before submit: input_mismatch."
+        }
         Start-AskActivity -Query $InitialQuery -AutoFollowUpQuery $FollowUpQuery
         return [pscustomobject]@{
             mode = "auto_followup_fallback"
@@ -1193,10 +1201,29 @@ function Submit-InDetailFollowUp {
         $InitialSummary.followup_send_bounds
     }
 
+    $effectiveSubmitMode = if ($SubmitMode -eq "auto" -or $SubmitMode -eq "in_detail_ui") { "send_button" } else { $SubmitMode }
+
     # The inline composer already keeps the send button visible. Avoid KEYCODE_BACK here,
     # because some emulator keyboard setups treat it as navigation and drop us out of detail.
-    if (-not (Tap-Bounds -Bounds $sendBounds)) {
-        & $adb -s $Emulator shell input keyevent 66 | Out-Null
+    switch ($effectiveSubmitMode) {
+        "send_button" {
+            if (-not (Tap-Bounds -Bounds $sendBounds)) {
+                if ($SubmitMode -ne "auto") {
+                    throw "Explicit follow-up submit mode '$SubmitMode' failed: send_button_missing."
+                }
+                & $adb -s $Emulator shell input keyevent 66 | Out-Null
+                $effectiveSubmitMode = "hardware_enter"
+            }
+        }
+        "ime_send" {
+            & $adb -s $Emulator shell input keyevent 66 | Out-Null
+        }
+        "ime_done" {
+            & $adb -s $Emulator shell input keyevent 66 | Out-Null
+        }
+        "hardware_enter" {
+            & $adb -s $Emulator shell input keyevent 66 | Out-Null
+        }
     }
 
     Start-Sleep -Milliseconds 900
@@ -1213,7 +1240,7 @@ function Submit-InDetailFollowUp {
         -PreviousTitle $InitialSummary.detail_title `
         -PreviousBody $PreviousBody
 
-    if (-not $advanced) {
+    if (-not $advanced -and $SubmitMode -eq "auto") {
         & $adb -s $Emulator shell input keyevent 66 | Out-Null
         Start-Sleep -Milliseconds 900
         $advancedSummary = Wait-ForFollowUpAdvanceSignal `
@@ -1229,7 +1256,7 @@ function Submit-InDetailFollowUp {
             -PreviousBody $PreviousBody
     }
 
-    if (-not $advanced) {
+    if (-not $advanced -and $SubmitMode -eq "auto") {
         if (Save-UiDump -DeviceDump $submitDeviceDump -LocalDump $submitDump) {
             $submitSummary = Get-UiSummary -DumpFile $submitDump
         }
@@ -1256,16 +1283,16 @@ function Submit-InDetailFollowUp {
     }
 
     return [pscustomobject]@{
-        mode = "in_detail_ui"
+        mode = if ($SubmitMode -eq "auto") { "in_detail_ui" } else { $SubmitMode }
         input_echo = if ($submitSummary) { $submitSummary.followup_input_text } else { $null }
         used_fallback = $false
         input_match = $inputMatched
         composer_visible = $composerVisible
         send_visible = $sendVisible
         primary_signal = if ($advanced) {
-            if ($sendVisible) { "visible_send_button_advanced" } else { "visible_composer_enter_fallback_advanced" }
+            "{0}_advanced" -f $effectiveSubmitMode
         } else {
-            "submit_without_visible_advance_after_retry"
+            "{0}_without_visible_advance" -f $effectiveSubmitMode
         }
         advanced_after_submit = $advanced
     }
@@ -1454,6 +1481,7 @@ if (Test-MainScreenBusy -Summary $initialAnswerSummary) {
 $initialSummary = Wait-ForFollowUpControls -LocalDump $followupReadyDump -MaxWaitSeconds $initialControlWaitSeconds
 $expectedFollowUpTitle = $FollowUpQuery.Trim()
 $submissionResult = $null
+$allowAutoFollowUpFallback = ($FollowUpSubmissionMode -eq "auto")
 if ($FollowUpSubmissionMode -eq "auto_intent") {
     Write-Host ("Submitting follow-up via auto intent: {0}" -f $expectedFollowUpTitle)
     Start-AskActivity -Query $InitialQuery -AutoFollowUpQuery $expectedFollowUpTitle
@@ -1474,6 +1502,9 @@ if ($FollowUpSubmissionMode -eq "auto_intent") {
     $initialSummary = Wait-ForFollowUpControls -LocalDump $followupReadyDump
 }
 if ($FollowUpSubmissionMode -ne "auto_intent" -and (-not $initialSummary -or [string]::IsNullOrWhiteSpace($initialSummary.followup_bounds))) {
+    if (-not $allowAutoFollowUpFallback) {
+        throw "Explicit follow-up submit mode '$FollowUpSubmissionMode' failed before submit: initial_controls_missing."
+    }
     Write-Warning "Initial answer screen did not expose the in-detail follow-up controls; retrying with auto-followup fallback."
     Start-AskActivity -Query $InitialQuery -AutoFollowUpQuery $expectedFollowUpTitle
         $submissionResult = [pscustomobject]@{
@@ -1491,9 +1522,10 @@ if ($FollowUpSubmissionMode -ne "auto_intent" -and (-not $initialSummary -or [st
         -InitialSummary $initialSummary `
         -InitialQuery $InitialQuery `
         -FollowUpQuery $expectedFollowUpTitle `
-        -PreviousBody $(if ($initialAnswerSummary) { $initialAnswerSummary.detail_body } else { $initialSummary.detail_body })
+        -PreviousBody $(if ($initialAnswerSummary) { $initialAnswerSummary.detail_body } else { $initialSummary.detail_body }) `
+        -SubmitMode $(if ($FollowUpSubmissionMode -eq "auto") { "auto" } else { $FollowUpSubmissionMode })
 }
-if ($submissionResult -and -not $submissionResult.used_fallback -and -not $submissionResult.advanced_after_submit) {
+if ($submissionResult -and -not $submissionResult.used_fallback -and -not $submissionResult.advanced_after_submit -and $allowAutoFollowUpFallback) {
     Write-Warning "In-detail follow-up did not show an advance signal after repeated send attempts; retrying with auto-followup fallback."
     Start-AskActivity -Query $InitialQuery -AutoFollowUpQuery $expectedFollowUpTitle
     $submissionResult = [pscustomobject]@{
@@ -1514,7 +1546,7 @@ if ($submissionResult -and -not $submissionResult.used_fallback -and -not $submi
         -LocalDump $followupDump `
         -FrozenDump $followupAnswerDump
 if (-not (Test-DetailCompletion -Summary $followupSummary -ExpectedTitle $expectedFollowUpTitle -PreviousBody $(if ($initialAnswerSummary) { $initialAnswerSummary.detail_body } else { $initialSummary.detail_body }))) {
-    if ($submissionResult -and -not $submissionResult.used_fallback) {
+    if ($submissionResult -and -not $submissionResult.used_fallback -and $allowAutoFollowUpFallback) {
         Write-Warning "In-detail follow-up did not advance cleanly; retrying with auto-followup fallback."
         Start-AskActivity -Query $InitialQuery -AutoFollowUpQuery $expectedFollowUpTitle
         $submissionResult = [pscustomobject]@{
@@ -1535,6 +1567,9 @@ if (-not (Test-DetailCompletion -Summary $followupSummary -ExpectedTitle $expect
             -FrozenDump $followupAnswerDump
     }
     if (-not (Test-DetailCompletion -Summary $followupSummary -ExpectedTitle $expectedFollowUpTitle -PreviousBody $(if ($initialAnswerSummary) { $initialAnswerSummary.detail_body } else { $initialSummary.detail_body }))) {
+        if (-not $allowAutoFollowUpFallback -and $submissionResult) {
+            throw ("Explicit follow-up submit mode '{0}' did not complete; primary signal: {1}." -f $FollowUpSubmissionMode, $submissionResult.primary_signal)
+        }
         throw "Timed out waiting for in-detail follow-up completion."
     }
 }
@@ -1613,6 +1648,7 @@ $record = [ordered]@{
     final_detail_body = if ($followupAnswerSummary -and -not [string]::IsNullOrWhiteSpace($followupAnswerSummary.detail_body)) { $followupAnswerSummary.detail_body } elseif ($followupSummary) { $followupSummary.detail_body } else { $null }
     final_detail_status = if ($followupAnswerSummary -and -not [string]::IsNullOrWhiteSpace($followupAnswerSummary.detail_status)) { $followupAnswerSummary.detail_status } elseif ($followupSummary) { $followupSummary.detail_status } else { $null }
     final_followup_available = if ($followupAnswerSummary) { $followupAnswerSummary.followup_available } elseif ($followupSummary) { $followupSummary.followup_available } else { $null }
+    followup_submission_requested_mode = $FollowUpSubmissionMode
     followup_submission_mode = if ($submissionResult) { $submissionResult.mode } else { $null }
     followup_submission_input_echo = if ($submissionResult) { $submissionResult.input_echo } else { $null }
     followup_submission_input_match = if ($submissionResult) { $submissionResult.input_match } else { $null }

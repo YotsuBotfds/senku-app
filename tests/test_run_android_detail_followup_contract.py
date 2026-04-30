@@ -39,6 +39,48 @@ class RunAndroidDetailFollowupContractTests(unittest.TestCase):
         )
         self.assertNotIn("$slug = $Text.ToLowerInvariant()", self.script)
 
+    def test_followup_submit_modes_are_explicit_and_fail_closed(self):
+        self.assertIn(
+            '[ValidateSet("auto", "in_detail_ui", "auto_intent", "send_button", "ime_send", "ime_done", "hardware_enter")]',
+            self.script,
+        )
+        self.assertIn('$allowAutoFollowUpFallback = ($FollowUpSubmissionMode -eq "auto")', self.script)
+        self.assertIn("if (-not $allowAutoFollowUpFallback) {", self.script)
+        self.assertIn(
+            'throw "Explicit follow-up submit mode \'$FollowUpSubmissionMode\' failed before submit: initial_controls_missing."',
+            self.script,
+        )
+        self.assertIn(
+            'throw "Explicit follow-up submit mode \'$SubmitMode\' failed before submit: composer_missing."',
+            self.script,
+        )
+        self.assertIn(
+            'throw "Explicit follow-up submit mode \'$SubmitMode\' failed before submit: input_mismatch."',
+            self.script,
+        )
+        self.assertIn(
+            'if ($submissionResult -and -not $submissionResult.used_fallback -and -not $submissionResult.advanced_after_submit -and $allowAutoFollowUpFallback)',
+            self.script,
+        )
+        self.assertIn(
+            'if ($submissionResult -and -not $submissionResult.used_fallback -and $allowAutoFollowUpFallback)',
+            self.script,
+        )
+
+    def test_followup_submit_mode_is_attempted_and_recorded(self):
+        self.assertIn(
+            '[ValidateSet("auto", "in_detail_ui", "send_button", "ime_send", "ime_done", "hardware_enter")]',
+            self.script,
+        )
+        self.assertIn('-SubmitMode $(if ($FollowUpSubmissionMode -eq "auto") { "auto" } else { $FollowUpSubmissionMode })', self.script)
+        self.assertIn('$effectiveSubmitMode = if ($SubmitMode -eq "auto" -or $SubmitMode -eq "in_detail_ui") { "send_button" } else { $SubmitMode }', self.script)
+        self.assertIn('"ime_send" {', self.script)
+        self.assertIn('"ime_done" {', self.script)
+        self.assertIn('"hardware_enter" {', self.script)
+        self.assertIn('"{0}_advanced" -f $effectiveSubmitMode', self.script)
+        self.assertIn('followup_submission_requested_mode = $FollowUpSubmissionMode', self.script)
+        self.assertIn("followup_submission_primary_signal =", self.script)
+
     def test_quality_gate_parser_passes(self):
         result = subprocess.run(
             [
