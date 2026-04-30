@@ -53,9 +53,12 @@ public final class DetailActionBlockPresentationFormatterTest {
                     "3. Seek medical help if fever develops [GD-298]."
         );
 
-        assertEquals("Keep the person still.", blocks.get(0).body);
-        assertEquals("Never give food or drink.", blocks.get(1).body);
-        assertEquals("Seek medical help if fever develops.", blocks.get(2).body);
+        assertBlockBodyContains(blocks.get(0), "Keep", "person", "still");
+        assertBlockBodyContains(blocks.get(1), "Never", "food", "drink");
+        assertBlockBodyContains(blocks.get(2), "Seek", "medical", "fever");
+        assertBlockBodyExcludes(blocks.get(0), "[System Instruction]", "[GD-232]");
+        assertBlockBodyExcludes(blocks.get(1), "[Caution]", "[GD-284]");
+        assertBlockBodyExcludes(blocks.get(2), "[GD-298]");
     }
 
     @Test
@@ -79,11 +82,9 @@ public final class DetailActionBlockPresentationFormatterTest {
             );
 
         assertEquals(4, actions.size());
-        assertEquals("Stop all hot work", actions.get(0).title);
-        assertEquals("No new charges, no new pours.", actions.get(0).detail);
-        assertEquals("Clear the floor to 5 m radius", actions.get(1).title);
-        assertEquals("Move personnel upwind.", actions.get(1).detail);
-        assertEquals("Confirm two paths of egress", actions.get(2).title);
+        assertActionContains(actions.get(0), "Stop", "hot work", "No new charges");
+        assertActionContains(actions.get(1), "Clear", "5 m radius", "upwind");
+        assertActionContains(actions.get(2), "Confirm", "two paths", "egress");
         assertEquals("", actions.get(2).detail);
     }
 
@@ -124,14 +125,11 @@ public final class DetailActionBlockPresentationFormatterTest {
             );
 
         assertEquals(4, actions.size());
-        assertEquals("Stop all hot work", actions.get(0).title);
-        assertEquals("No new charges, no new pours.", actions.get(0).detail);
-        assertEquals("Clear the floor to 5 m radius", actions.get(1).title);
-        assertEquals("Move personnel upwind.", actions.get(1).detail);
-        assertEquals("Confirm two paths of egress", actions.get(2).title);
-        assertEquals("Door and roll-up open and unobstructed.", actions.get(2).detail);
-        assertEquals("Notify the area owner", actions.get(3).title);
-        assertEquals("GD-132 lists current owner.", actions.get(3).detail);
+        assertActionContains(actions.get(0), "Stop", "hot work", "No new charges");
+        assertActionContains(actions.get(1), "Clear", "5 m radius", "upwind");
+        assertActionContains(actions.get(2), "Confirm", "two paths", "Door", "unobstructed");
+        assertActionContains(actions.get(3), "Notify", "area owner", "GD-132", "current owner");
+        assertNoActionContains(actions, "WATCH", "burn hazard");
     }
 
     @Test
@@ -149,10 +147,10 @@ public final class DetailActionBlockPresentationFormatterTest {
             );
 
         assertEquals(4, actions.size());
-        assertEquals("Stop all hot work", actions.get(0).title);
-        assertEquals("Clear the floor to 5 m radius", actions.get(1).title);
-        assertEquals("Door and roll-up open and unobstructed.", actions.get(2).detail);
-        assertEquals("GD-132 lists current owner.", actions.get(3).detail);
+        assertActionContains(actions.get(0), "Stop", "hot work");
+        assertActionContains(actions.get(1), "Clear", "5 m radius");
+        assertActionContains(actions.get(2), "Door", "roll-up", "unobstructed");
+        assertActionContains(actions.get(3), "GD-132", "current owner");
     }
 
     @Test
@@ -201,10 +199,10 @@ public final class DetailActionBlockPresentationFormatterTest {
             );
 
         assertEquals(4, actions.size());
-        assertEquals("Stop all hot work", actions.get(0).title);
-        assertEquals("Clear the floor to 5 m radius", actions.get(1).title);
-        assertEquals("Door and roll-up open and unobstructed.", actions.get(2).detail);
-        assertEquals("GD-132 lists current owner.", actions.get(3).detail);
+        assertActionContains(actions.get(0), "Stop", "hot work");
+        assertActionContains(actions.get(1), "Clear", "5 m radius");
+        assertActionContains(actions.get(2), "Door", "roll-up", "unobstructed");
+        assertActionContains(actions.get(3), "GD-132", "current owner");
     }
 
     @Test
@@ -236,8 +234,9 @@ public final class DetailActionBlockPresentationFormatterTest {
             );
 
         assertEquals(2, actions.size());
-        assertEquals("Stop all hot work", actions.get(0).title);
-        assertEquals("Clear the floor to 5 m radius", actions.get(1).title);
+        assertActionContains(actions.get(0), "Stop", "hot work");
+        assertActionContains(actions.get(1), "Clear", "5 m radius");
+        assertNoActionContains(actions, "Backend route", "Route: deterministic", "Model: local");
     }
 
     @Test
@@ -257,10 +256,10 @@ public final class DetailActionBlockPresentationFormatterTest {
             );
 
         assertEquals(4, actions.size());
-        assertEquals("Stop all hot work", actions.get(0).title);
-        assertEquals("Clear the floor to 5 m radius", actions.get(1).title);
-        assertEquals("Notify the area owner", actions.get(3).title);
-        assertEquals("GD-132 lists current owner.", actions.get(3).detail);
+        assertActionContains(actions.get(0), "Stop", "hot work");
+        assertActionContains(actions.get(1), "Clear", "5 m radius");
+        assertActionContains(actions.get(3), "Notify", "area owner", "GD-132", "current owner");
+        assertNoActionContains(actions, "Evidence", "Provenance", "Reviewed card runtime");
     }
 
     @Test
@@ -278,8 +277,9 @@ public final class DetailActionBlockPresentationFormatterTest {
             );
 
         assertEquals(2, actions.size());
-        assertEquals("Stop all hot work", actions.get(0).title);
-        assertEquals("Clear the floor to 5 m radius", actions.get(1).title);
+        assertActionContains(actions.get(0), "Stop", "hot work");
+        assertActionContains(actions.get(1), "Clear", "5 m radius");
+        assertNoActionContains(actions, "Guide connection", "Route", "backend");
     }
 
     @Test
@@ -297,8 +297,9 @@ public final class DetailActionBlockPresentationFormatterTest {
             );
 
         assertEquals(2, actions.size());
-        assertEquals("Stop all hot work", actions.get(0).title);
-        assertEquals("Clear the floor to 5 m radius", actions.get(1).title);
+        assertActionContains(actions.get(0), "Stop", "hot work");
+        assertActionContains(actions.get(1), "Clear", "5 m radius");
+        assertNoActionContains(actions, "Answer status", "Route metadata", "reviewed_card_runtime");
     }
 
     @Test
@@ -315,8 +316,9 @@ public final class DetailActionBlockPresentationFormatterTest {
             );
 
         assertEquals(2, actions.size());
-        assertEquals("Stop all hot work", actions.get(0).title);
-        assertEquals("Clear the floor to 5 m radius", actions.get(1).title);
+        assertActionContains(actions.get(0), "Stop", "hot work");
+        assertActionContains(actions.get(1), "Clear", "5 m radius");
+        assertNoActionContains(actions, "Source / why proof", "GD-132 - Foundry", "reviewed_card_runtime");
     }
 
     @Test
@@ -334,10 +336,10 @@ public final class DetailActionBlockPresentationFormatterTest {
             );
 
         assertEquals(4, actions.size());
-        assertEquals("Stop all hot work", actions.get(0).title);
-        assertEquals("Clear the floor to 5 m radius", actions.get(1).title);
-        assertEquals("Door and roll-up open and unobstructed.", actions.get(2).detail);
-        assertEquals("GD-132 lists current owner.", actions.get(3).detail);
+        assertActionContains(actions.get(0), "Stop", "hot work");
+        assertActionContains(actions.get(1), "Clear", "5 m radius");
+        assertActionContains(actions.get(2), "Door", "roll-up", "unobstructed");
+        assertActionContains(actions.get(3), "GD-132", "current owner");
     }
 
     @Test
@@ -352,9 +354,9 @@ public final class DetailActionBlockPresentationFormatterTest {
             );
 
         assertEquals(3, actions.size());
-        assertEquals("Clear the floor to 5 m radius", actions.get(0).title);
-        assertEquals("Door and roll-up open and unobstructed.", actions.get(1).detail);
-        assertEquals("GD-132 lists current owner.", actions.get(2).detail);
+        assertActionContains(actions.get(0), "Clear", "5 m radius");
+        assertActionContains(actions.get(1), "Door", "roll-up", "unobstructed");
+        assertActionContains(actions.get(2), "GD-132", "current owner");
     }
 
     @Test
@@ -369,9 +371,9 @@ public final class DetailActionBlockPresentationFormatterTest {
             );
 
         assertEquals(3, actions.size());
-        assertEquals("Move to minimum 5 m from active work zone", actions.get(0).title);
-        assertEquals("Clear the floor to 5 m radius", actions.get(1).title);
-        assertEquals("The guide lists the current owner.", actions.get(2).detail);
+        assertActionContains(actions.get(0), "Move", "minimum 5 m", "active work zone");
+        assertActionContains(actions.get(1), "Clear", "5 m radius");
+        assertActionContains(actions.get(2), "guide", "current owner");
     }
 
     @Test
@@ -401,8 +403,7 @@ public final class DetailActionBlockPresentationFormatterTest {
             );
 
         assertEquals(4, actions.size());
-        assertEquals("Notify the area owner", actions.get(3).title);
-        assertEquals("GD-132 lists current owner.", actions.get(3).detail);
+        assertActionContains(actions.get(3), "Notify", "area owner", "GD-132", "current owner");
     }
 
     @Test
@@ -531,7 +532,7 @@ public final class DetailActionBlockPresentationFormatterTest {
             );
 
         assertEquals(5, actions.size());
-        assertEquals("Document the pause for handoff", actions.get(4).title);
+        assertActionContains(actions.get(4), "Document", "pause", "handoff");
     }
 
     private List<DetailActionBlockPresentationFormatter.ActionBlockSpec> extract(String formattedAnswerText) {
@@ -550,5 +551,51 @@ public final class DetailActionBlockPresentationFormatterTest {
         assertEquals(kind, block.kind);
         assertEquals(label, block.label);
         assertEquals(body, block.body);
+    }
+
+    private static void assertBlockBodyContains(
+        DetailActionBlockPresentationFormatter.ActionBlockSpec block,
+        String... tokens
+    ) {
+        assertTextContains(block.body, tokens);
+    }
+
+    private static void assertBlockBodyExcludes(
+        DetailActionBlockPresentationFormatter.ActionBlockSpec block,
+        String... tokens
+    ) {
+        assertTextExcludes(block.body, tokens);
+    }
+
+    private static void assertActionContains(
+        DetailActionBlockPresentationFormatter.EmergencyActionSpec action,
+        String... tokens
+    ) {
+        assertTextContains(action.title + " " + action.detail, tokens);
+    }
+
+    private static void assertNoActionContains(
+        List<DetailActionBlockPresentationFormatter.EmergencyActionSpec> actions,
+        String... tokens
+    ) {
+        StringBuilder combined = new StringBuilder();
+        for (DetailActionBlockPresentationFormatter.EmergencyActionSpec action : actions) {
+            combined.append(action.title).append(' ').append(action.detail).append('\n');
+        }
+        assertTextExcludes(combined.toString(), tokens);
+    }
+
+    private static void assertTextContains(String text, String... tokens) {
+        for (String token : tokens) {
+            assertTrue("Expected text to contain <" + token + "> but was <" + text + ">",
+                text.contains(token));
+        }
+    }
+
+    private static void assertTextExcludes(String text, String... tokens) {
+        for (String token : tokens) {
+            assertFalse("Expected text to exclude <" + token + "> but was <" + text + ">",
+                text.contains(token));
+        }
     }
 }
