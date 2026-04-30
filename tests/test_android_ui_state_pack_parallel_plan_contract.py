@@ -267,6 +267,17 @@ class AndroidUiStatePackParallelPlanContractTests(unittest.TestCase):
             build_script,
         )
 
+    def test_filtered_review_frame_export_uses_file_safe_arguments(self):
+        build_script = BUILD_SCRIPT_PATH.read_text(encoding="utf-8-sig")
+        exporter_script = (
+            REPO_ROOT / "scripts" / "export_android_goal_mock_frame.ps1"
+        ).read_text(encoding="utf-8-sig")
+
+        self.assertIn('$frameArgs += ($TargetNames -join ",")', build_script)
+        self.assertIn('$frameArgs += "-AllowPartial"', build_script)
+        self.assertNotIn("-AllowPartial:$AllowPartial", build_script)
+        self.assertIn('-split ","', exporter_script)
+
 
 if __name__ == "__main__":
     unittest.main()
