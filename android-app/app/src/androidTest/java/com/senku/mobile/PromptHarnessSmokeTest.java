@@ -46,6 +46,7 @@ import androidx.test.runner.lifecycle.ActivityLifecycleMonitorRegistry;
 import androidx.test.runner.lifecycle.Stage;
 
 import com.senku.ui.primitives.BottomTabBarHostView;
+import com.senku.ui.primitives.BottomTabDestination;
 import com.senku.ui.composer.DockedComposerHostView;
 import com.senku.ui.suggest.SuggestChipRailHostView;
 
@@ -325,6 +326,113 @@ public final class PromptHarnessSmokeTest {
                 }
             });
             captureUiState("home_entry");
+        }
+    }
+
+    @Test
+    public void autoAskWithoutAutoQueryOpensAskLaneAfterInitialLoad() {
+        Intent intent = new Intent(ApplicationProvider.getApplicationContext(), MainActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        intent.putExtra(EXTRA_AUTO_ASK, true);
+
+        try (ActivityScenario<MainActivity> scenario = ActivityScenario.launch(intent)) {
+            awaitHarnessIdle();
+            Assert.assertTrue(
+                "auto_ask=true without auto_query should still land on the main input; harness signals="
+                    + HarnessTestSignals.snapshot(),
+                device.wait(Until.hasObject(By.res(APP_PACKAGE, "search_input")), SEARCH_WAIT_MS)
+            );
+
+            scenario.onActivity(activity -> {
+                EditText input = activity.findViewById(R.id.search_input);
+                Button browse = activity.findViewById(R.id.browse_button);
+                Button ask = activity.findViewById(R.id.ask_button);
+                TextView laneHint = activity.findViewById(R.id.home_entry_hint);
+                RecyclerView resultsList = activity.findViewById(R.id.results_list);
+                Assert.assertNotNull("shared input should exist after empty auto ask launch", input);
+                Assert.assertNotNull("browse action should exist after empty auto ask launch", browse);
+                Assert.assertNotNull("ask action should exist after empty auto ask launch", ask);
+                Assert.assertNotNull("lane hint should exist after empty auto ask launch", laneHint);
+
+                Assert.assertEquals(
+                    "empty auto ask should select the Ask phone lane",
+                    BottomTabDestination.ASK,
+                    readPrivateField(activity, "activePhoneTab")
+                );
+                Assert.assertTrue(
+                    "empty auto ask should activate ask-lane submit semantics",
+                    readPrivateBooleanField(activity, "askLaneActive")
+                );
+                Assert.assertFalse(
+                    "empty auto ask must not select hidden Search mode",
+                    BottomTabDestination.SEARCH.equals(readPrivateField(activity, "activePhoneTab"))
+                );
+
+                BottomTabBarHostView tabHost =
+                    findFirstDescendantByClass(activity.findViewById(android.R.id.content), BottomTabBarHostView.class);
+                if (tabHost != null) {
+                    Assert.assertEquals(
+                        "runtime phone tab host should expose Ask as the selected tab",
+                        BottomTabDestination.ASK,
+                        readPrivateField(tabHost, "activeTab")
+                    );
+                }
+                View staticAskLabel = activity.findViewById(R.id.phone_nav_ask_label);
+                if (staticAskLabel != null && isVisible(staticAskLabel)) {
+                    Assert.assertTrue(
+                        "static phone navigation should mark Ask selected when present",
+                        staticAskLabel.isSelected()
+                    );
+                }
+
+                Assert.assertEquals(
+                    "empty auto ask should leave the shared input empty",
+                    "",
+                    safe(input.getText().toString())
+                );
+                Assert.assertEquals(
+                    "empty auto ask should use the Ask hint on the shared input",
+                    activity.getString(R.string.ask_hint),
+                    safe(input.getHint() == null ? null : input.getHint().toString())
+                );
+                Assert.assertEquals(
+                    "empty auto ask should use the Ask accessibility description",
+                    activity.getString(R.string.ask_input_description),
+                    safe(input.getContentDescription() == null ? null : input.getContentDescription().toString())
+                );
+                Assert.assertEquals(
+                    "empty auto ask should submit the shared input with the Ask IME action",
+                    EditorInfo.IME_ACTION_DONE,
+                    input.getImeOptions() & EditorInfo.IME_MASK_ACTION
+                );
+                Assert.assertNotEquals(
+                    "empty auto ask should not keep Search IME semantics",
+                    EditorInfo.IME_ACTION_SEARCH,
+                    input.getImeOptions() & EditorInfo.IME_MASK_ACTION
+                );
+                Assert.assertEquals(
+                    "empty auto ask should show ask-specific helper copy",
+                    activity.getString(R.string.home_entry_ask_lane),
+                    safe(laneHint.getText().toString())
+                );
+                Assert.assertEquals(
+                    "ask should carry the primary lane emphasis after empty auto ask launch",
+                    activity.getColor(R.color.senku_text_dark),
+                    ask.getCurrentTextColor()
+                );
+                Assert.assertEquals(
+                    "browse should remain secondary while empty auto ask is active",
+                    activity.getColor(R.color.senku_text_light),
+                    browse.getCurrentTextColor()
+                );
+                if (resultsList != null) {
+                    Assert.assertFalse(
+                        "empty auto ask should not open the search-results lane",
+                        isVisible(resultsList)
+                    );
+                }
+            });
+            captureUiState("auto_ask_empty_lane");
         }
     }
 

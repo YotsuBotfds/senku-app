@@ -82,6 +82,7 @@
     <string name="recent_thread_removed">Removed thread: %1$s</string>
     <string name="pinned_section_title">Saved guides</string>
     <string name="saved_guides_empty">No saved guides yet.</string>
+    <string name="saved_guide_button_content_description">Saved guide %1$d of %2$d: %3$s. Tap to open.</string>
     <string name="home_related_section_title">Guide connections</string>
     <string name="home_related_section_subtitle_recent_empty">Your latest thread is still steering this shelf. Open the pivot guide or save another guide to branch out.</string>
     <string name="home_related_section_subtitle_pinned_empty">Your saved guide is steering this shelf right now. Open it directly or save another guide to shift the path.</string>
@@ -117,6 +118,8 @@
     <string name="detail_thread_anchor_line">Anchor %1$s</string>
     <string name="detail_thread_anchor_shift">Anchor shift %1$s -&gt; %2$s</string>
     <string name="detail_emergency_header_title">Field caution</string>
+    <string name="detail_emergency_app_rail_manual_label">Manual</string>
+    <string name="detail_emergency_app_rail_manual_content_description">Open Manual library home</string>
     <string name="detail_emergency_default">This deterministic answer contains urgent field actions. Read the steps in order and escalate if the risk worsens.</string>
     <string name="detail_emergency_generic_puncture">Medical caution: flush deeply, do not close the wound in the field, and escalate for spreading infection or a retained object.</string>
     <string name="detail_action_do_first">Do first</string>

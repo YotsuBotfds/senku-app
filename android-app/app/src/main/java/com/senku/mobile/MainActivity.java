@@ -1726,7 +1726,7 @@ public final class MainActivity extends AppCompatActivity {
         button.setTextColor(getResources().getColor(R.color.senku_text_light));
         button.setText(presentationFormatter().buildGuideButtonLabel(result));
         button.setContentDescription(
-            "Pinned guide " + (index + 1) + " of " + total + ": " + safe(result.title) + ". Tap to open."
+            getString(savedGuideButtonContentDescriptionResource(), index + 1, total, safe(result.title))
         );
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
             LinearLayout.LayoutParams.WRAP_CONTENT,
@@ -1738,6 +1738,10 @@ public final class MainActivity extends AppCompatActivity {
         button.setLayoutParams(params);
         button.setOnClickListener(v -> openDetail(result));
         return button;
+    }
+
+    static int savedGuideButtonContentDescriptionResource() {
+        return R.string.saved_guide_button_content_description;
     }
 
     private Button createHomeRelatedGuideButton(

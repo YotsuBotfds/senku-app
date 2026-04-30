@@ -162,10 +162,21 @@ public final class EmergencySurfacePolicyTest {
 
     @Test
     public void tabletPortraitEmergencyAppRailHomeActionNamesManualExit() {
-        assertEquals("Manual", DetailActivity.resolveTabletEmergencyAppRailHomeLabel());
         assertEquals(
-            "Open Manual library home",
-            DetailActivity.resolveTabletEmergencyAppRailHomeContentDescription()
+            R.string.detail_emergency_app_rail_manual_label,
+            DetailActivity.resolveTabletEmergencyAppRailHomeLabelResource()
+        );
+        assertEquals(
+            R.string.detail_emergency_app_rail_manual_content_description,
+            DetailActivity.resolveTabletEmergencyAppRailHomeContentDescriptionResource()
+        );
+    }
+
+    @Test
+    public void savedGuideRowsUseSavedGuideContentDescriptionResource() {
+        assertEquals(
+            R.string.saved_guide_button_content_description,
+            MainActivity.savedGuideButtonContentDescriptionResource()
         );
     }
 

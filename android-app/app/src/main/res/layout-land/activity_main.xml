@@ -219,7 +219,7 @@
                     android:id="@+id/home_chrome_search_icon"
                     android:layout_width="16dp"
                     android:layout_height="16dp"
-                    android:contentDescription="@string/search_button"
+                    android:importantForAccessibility="no"
                     android:src="@drawable/ic_search_magnifier"
                     android:tint="@color/senku_rev03_ink_2" />
             </LinearLayout>
@@ -297,7 +297,7 @@
                     android:layout_width="34dp"
                     android:layout_height="34dp"
                     android:background="@drawable/bg_manual_home_search_icon"
-                    android:contentDescription="@string/search_input_description"
+                    android:importantForAccessibility="no"
                     android:labelFor="@id/search_input"
                     android:padding="9dp"
                     android:src="@drawable/ic_search_magnifier"
@@ -521,7 +521,7 @@
             <ImageView
                 android:layout_width="15dp"
                 android:layout_height="15dp"
-                android:contentDescription="@string/search_input_description"
+                android:importantForAccessibility="no"
                 android:padding="2dp"
                 android:src="@drawable/ic_search_magnifier"
                 android:tint="@color/senku_rev03_accent" />

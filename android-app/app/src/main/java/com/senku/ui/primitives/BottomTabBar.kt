@@ -106,7 +106,7 @@ class BottomTabBarHostView @JvmOverloads constructor(
             BottomTabModel(BottomTabDestination.SEARCH, "Search"),
             BottomTabModel(BottomTabDestination.ASK, "Ask"),
             BottomTabModel(BottomTabDestination.THREADS, "Threads"),
-            BottomTabModel(BottomTabDestination.PINS, "Pins"),
+            BottomTabModel(BottomTabDestination.PINS, "Saved", "Saved guides"),
         )
     }
 }

@@ -1938,8 +1938,8 @@ public final class DetailActivity extends AppCompatActivity {
 
         rail.addView(buildTabletEmergencyAppRailItem(
             R.drawable.ic_home_library,
-            resolveTabletEmergencyAppRailHomeLabel(),
-            resolveTabletEmergencyAppRailHomeContentDescription(),
+            getString(resolveTabletEmergencyAppRailHomeLabelResource()),
+            getString(resolveTabletEmergencyAppRailHomeContentDescriptionResource()),
             false,
             v -> navigateHomeFromDetail()
         ), tabletAppRailItemParams(TABLET_APP_RAIL_FIRST_ITEM_TOP_MARGIN_DP));
@@ -2210,12 +2210,12 @@ public final class DetailActivity extends AppCompatActivity {
         return false;
     }
 
-    static String resolveTabletEmergencyAppRailHomeLabel() {
-        return "Manual";
+    static int resolveTabletEmergencyAppRailHomeLabelResource() {
+        return R.string.detail_emergency_app_rail_manual_label;
     }
 
-    static String resolveTabletEmergencyAppRailHomeContentDescription() {
-        return "Open Manual library home";
+    static int resolveTabletEmergencyAppRailHomeContentDescriptionResource() {
+        return R.string.detail_emergency_app_rail_manual_content_description;
     }
 
     static boolean shouldShowTabletEmergencyAppRailOverlay(

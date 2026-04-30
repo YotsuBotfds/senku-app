@@ -383,7 +383,7 @@
                 android:minHeight="48dp"
                 android:paddingStart="12dp"
                 android:paddingEnd="12dp"
-                android:text="Saved"
+                android:text="@string/bottom_tab_pins"
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:textColor="@color/senku_rev03_ink_0" />
         </LinearLayout>
