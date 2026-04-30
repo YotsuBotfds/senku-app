@@ -58,9 +58,11 @@ class TopBarTest {
     @Test
     fun backActionUsesVisibleCompactLabelPolicy() {
         assertEquals("Back", topBarBackActionLabelForTest())
-        assertEquals(64, topBarActionWidthDpForTest(TopBarActionKind.Back))
+        assertEquals(60, topBarActionWidthDpForTest(TopBarActionKind.Back))
         assertEquals(28, topBarActionWidthDpForTest(TopBarActionKind.Home))
         assertEquals(28, topBarActionWidthDpForTest(TopBarActionKind.Share))
+        assertEquals(14, topBarBackIconSizeDpForTest())
+        assertEquals(24, topBarLeadingDividerHeightDpForTest())
     }
 
     @Test

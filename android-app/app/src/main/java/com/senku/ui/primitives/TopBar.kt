@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
@@ -54,8 +53,9 @@ private val TopBarTitleLineHeight = 16.sp
 private val TopBarChromeLabelFontSize = 9.5.sp
 private val TopBarChromeLabelLineHeight = 11.sp
 private val TopBarIconActionSize = 28.dp
-private val TopBarBackActionMinWidth = 64.dp
-private val TopBarBackActionMaxWidth = 68.dp
+private val TopBarBackActionWidth = 60.dp
+private val TopBarBackIconSize = 14.dp
+private val TopBarLeadingDividerHeight = 24.dp
 private const val TopBarBackActionLabel = "Back"
 
 @Immutable
@@ -155,7 +155,7 @@ fun SenkuTopBar(
             Box(
                 modifier = Modifier
                     .width(1.dp)
-                    .height(16.dp)
+                    .height(TopBarLeadingDividerHeight)
                     .background(colors.hairlineStrong),
             )
             Spacer(modifier = Modifier.width(10.dp))
@@ -296,10 +296,7 @@ private fun TopBarActionButton(
                 if (action.kind == TopBarActionKind.Back) {
                     Modifier
                         .height(TopBarIconActionSize)
-                        .widthIn(
-                            min = TopBarBackActionMinWidth,
-                            max = TopBarBackActionMaxWidth,
-                        )
+                        .width(TopBarBackActionWidth)
                 } else {
                     Modifier.size(TopBarIconActionSize)
                 }
@@ -322,14 +319,14 @@ private fun TopBarActionButton(
         if (action.kind == TopBarActionKind.Back) {
             Row(
                 modifier = Modifier.padding(horizontal = 6.dp),
-                horizontalArrangement = Arrangement.spacedBy(1.dp),
+                horizontalArrangement = Arrangement.spacedBy(2.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Icon(
                     imageVector = action.kind.icon(),
                     contentDescription = null,
                     tint = iconTint,
-                    modifier = Modifier.size(16.dp),
+                    modifier = Modifier.size(TopBarBackIconSize),
                 )
                 Text(
                     text = TopBarBackActionLabel,
@@ -359,9 +356,13 @@ internal fun topBarTitleFontSizeSpForTest(): Float = TopBarTitleFontSize.value
 
 internal fun topBarChromeLabelFontSizeSpForTest(): Float = TopBarChromeLabelFontSize.value
 
+internal fun topBarBackIconSizeDpForTest(): Int = TopBarBackIconSize.value.toInt()
+
+internal fun topBarLeadingDividerHeightDpForTest(): Int = TopBarLeadingDividerHeight.value.toInt()
+
 internal fun topBarActionWidthDpForTest(kind: TopBarActionKind): Int =
     if (kind == TopBarActionKind.Back) {
-        TopBarBackActionMinWidth.value.toInt()
+        TopBarBackActionWidth.value.toInt()
     } else {
         TopBarIconActionSize.value.toInt()
     }
