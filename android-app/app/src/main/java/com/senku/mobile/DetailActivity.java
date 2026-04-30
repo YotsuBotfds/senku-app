@@ -765,7 +765,7 @@ public final class DetailActivity extends AppCompatActivity {
         getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {
-                navigateBackFromDetail();
+                navigateBackFromDetail(DetailBackPolicy.BackTrigger.SYSTEM_BACK);
             }
         });
     }
@@ -901,11 +901,13 @@ public final class DetailActivity extends AppCompatActivity {
                 }
             });
         }
-        backButton.setText(resolveDetailVisibleBackLabelResource(isTaskRoot()));
-        backButton.setContentDescription(getString(resolveDetailVisibleBackContentDescriptionResource(isTaskRoot())));
-        backButton.setOnClickListener(v -> navigateBackFromDetail());
+        DetailBackPolicy.VisibleBackAffordance backAffordance =
+            DetailBackPolicy.visibleBackAffordance(isTaskRoot());
+        backButton.setText(backAffordance.labelResource);
+        backButton.setContentDescription(getString(backAffordance.contentDescriptionResource));
+        backButton.setOnClickListener(v -> navigateBackFromDetail(DetailBackPolicy.BackTrigger.VISIBLE_BACK_BUTTON));
         backButton.setOnLongClickListener(null);
-        backButton.setLongClickable(shouldEnableDetailBackLongPressHomeShortcut());
+        backButton.setLongClickable(backAffordance.longPressHomeShortcutEnabled);
         if (homeButton != null) {
             homeButton.setOnClickListener(v -> navigateHomeFromDetail());
         }
@@ -1803,7 +1805,7 @@ public final class DetailActivity extends AppCompatActivity {
         );
 
         View back = buildTabletEmergencyChromeBackAction();
-        back.setOnClickListener(v -> navigateBackFromDetail());
+        back.setOnClickListener(v -> navigateBackFromDetail(DetailBackPolicy.BackTrigger.VISIBLE_BACK_BUTTON));
         tabletEmergencyChromeOverlayPanel.addView(back, new LinearLayout.LayoutParams(
             dp(resolveTabletEmergencyBackButtonMinWidthDp()),
             dp(resolveTabletEmergencyChromeNavIconSizeDp())
@@ -8648,7 +8650,7 @@ public final class DetailActivity extends AppCompatActivity {
                 getString(R.string.detail_overflow_content_description),
                 action -> {
                     if (action == TopBarActionKind.Back) {
-                        navigateBackFromDetail();
+                        navigateBackFromDetail(DetailBackPolicy.BackTrigger.VISIBLE_BACK_BUTTON);
                     } else if (action == TopBarActionKind.Home) {
                         navigateHomeFromDetail();
                     } else if (action == TopBarActionKind.Pin) {
@@ -8937,15 +8939,39 @@ public final class DetailActivity extends AppCompatActivity {
     }
 
     private void navigateBackFromDetail() {
-        if (shouldFallbackDetailBackToHome(isTaskRoot())) {
+        navigateBackFromDetail(DetailBackPolicy.BackTrigger.SYSTEM_BACK);
+    }
+
+    private void navigateBackFromDetail(DetailBackPolicy.BackTrigger trigger) {
+        DetailBackPolicy.Decision decision = DetailBackPolicy.decide(detailBackPolicyInputs(trigger));
+        applyDetailBackDecision(decision);
+    }
+
+    private DetailBackPolicy.Inputs detailBackPolicyInputs(DetailBackPolicy.BackTrigger trigger) {
+        return new DetailBackPolicy.Inputs(
+            isTaskRoot(),
+            answerMode ? DetailBackPolicy.SourceRoute.ANSWER : DetailBackPolicy.SourceRoute.GUIDE,
+            trigger
+        );
+    }
+
+    private void applyDetailBackDecision(DetailBackPolicy.Decision decision) {
+        DetailBackPolicy.Decision resolved = decision == null
+            ? DetailBackPolicy.decide(detailBackPolicyInputs(DetailBackPolicy.BackTrigger.SYSTEM_BACK))
+            : decision;
+        if (resolved.effect == DetailBackPolicy.Effect.NAVIGATE_HOME) {
             navigateHomeFromDetail();
+            return;
+        }
+        if (resolved.finishBehavior == DetailBackPolicy.FinishBehavior.FINISH_AFTER_TRANSITION) {
+            finishAfterTransition();
             return;
         }
         finish();
     }
 
     static boolean shouldFallbackDetailBackToHome(boolean taskRoot) {
-        return taskRoot;
+        return DetailBackPolicy.shouldFallbackToHome(taskRoot);
     }
 
     static int resolveDetailVisibleBackLabelResource() {
@@ -8953,7 +8979,7 @@ public final class DetailActivity extends AppCompatActivity {
     }
 
     static int resolveDetailVisibleBackLabelResource(boolean taskRoot) {
-        return taskRoot ? R.string.home_button : R.string.detail_back;
+        return DetailBackPolicy.visibleBackAffordance(taskRoot).labelResource;
     }
 
     static int resolveDetailVisibleBackContentDescriptionResource() {
@@ -8961,11 +8987,11 @@ public final class DetailActivity extends AppCompatActivity {
     }
 
     static int resolveDetailVisibleBackContentDescriptionResource(boolean taskRoot) {
-        return taskRoot ? R.string.detail_home_content_description : R.string.detail_back_content_description;
+        return DetailBackPolicy.visibleBackAffordance(taskRoot).contentDescriptionResource;
     }
 
     static boolean shouldEnableDetailBackLongPressHomeShortcut() {
-        return false;
+        return DetailBackPolicy.visibleBackAffordance(false).longPressHomeShortcutEnabled;
     }
 
     static boolean shouldShowDetailOverflowAction() {
@@ -9712,11 +9738,7 @@ public final class DetailActivity extends AppCompatActivity {
     }
 
     private void returnFromGuideNavigationContext() {
-        if (isTaskRoot()) {
-            navigateHomeFromDetail();
-            return;
-        }
-        finish();
+        navigateBackFromDetail(DetailBackPolicy.BackTrigger.GUIDE_RETURN);
     }
 
     private String buildGuideHandoffSummaryText(String handoffLabel, String anchorLabel) {
@@ -11397,7 +11419,7 @@ public final class DetailActivity extends AppCompatActivity {
 
     @Override
     public boolean onSupportNavigateUp() {
-        navigateBackFromDetail();
+        navigateBackFromDetail(DetailBackPolicy.BackTrigger.SUPPORT_NAVIGATE_UP);
         return true;
     }
 }
