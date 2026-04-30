@@ -114,6 +114,18 @@ public final class DetailFollowupLandscapeComposerTest {
     }
 
     @Test
+    public void savedFollowUpDraftUsesSameNormalizationAsComposerState() {
+        assertEquals(
+            "what should I do next?\nwhich source?",
+            DetailActivity.normalizeSavedFollowUpDraft(
+                "  what should I do next?\r\nwhich source?  "
+            )
+        );
+        assertEquals("", DetailActivity.normalizeSavedFollowUpDraft(" \n\t "));
+        assertEquals("", DetailActivity.normalizeSavedFollowUpDraft(null));
+    }
+
+    @Test
     public void dockedComposerHidesRetryChromeOnLandscapePhone() {
         assertFalse(DetailActivity.shouldShowDockedComposerRetry(true, true));
     }

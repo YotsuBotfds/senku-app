@@ -196,6 +196,8 @@ public final class DetailActivity extends AppCompatActivity {
     private static final String EXTRA_GUIDE_MODE_ANCHOR_LABEL = "guide_mode_anchor_label";
     private static final String EXTRA_DETAIL_SOURCE_ROUTE = "detail_source_route";
     private static final String EXTRA_PRODUCT_REVIEW_MODE = MainActivity.EXTRA_PRODUCT_REVIEW_MODE;
+    private static final String STATE_PHONE_FOLLOWUP_DRAFT = "state_phone_followup_draft";
+    private static final String STATE_TABLET_FOLLOWUP_DRAFT = "state_tablet_followup_draft";
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
     private final Handler uiHandler = new Handler(Looper.getMainLooper());
     private final AnswerPresenter answerPresenter =
@@ -393,6 +395,7 @@ public final class DetailActivity extends AppCompatActivity {
     private boolean lastStreamingBodyCursorState;
     private boolean collapseHeroAfterStableAnswer;
     private String tabletComposerText = "";
+    private String restoredPhoneFollowUpDraft = "";
     private String selectedTabletTurnId = "";
     private String selectedSourceKey = "";
     private String selectedRelatedGuideKey = "";
@@ -744,6 +747,7 @@ public final class DetailActivity extends AppCompatActivity {
 
         tabletDetailRoot = findViewById(R.id.tablet_detail_root);
         readIntent();
+        restoreFollowUpDrafts(savedInstanceState);
         if (tabletDetailRoot != null) {
             tabletComposeMode = true;
             tabletDetailRoot.setImportantForAccessibility(
@@ -762,11 +766,52 @@ public final class DetailActivity extends AppCompatActivity {
         bindViews();
         installGuidePhoneBottomTabBarIfNeeded();
         configureFollowUpInput();
+        applyRestoredPhoneFollowUpDraft();
         renderDetailState();
         refreshRelatedGuides();
         if (!maybeStartPendingGeneration()) {
             maybeStartAutoFollowUp();
         }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString(STATE_PHONE_FOLLOWUP_DRAFT, currentPhoneFollowUpDraftForSave());
+        outState.putString(STATE_TABLET_FOLLOWUP_DRAFT, currentTabletFollowUpDraftForSave());
+    }
+
+    private void restoreFollowUpDrafts(Bundle savedInstanceState) {
+        restoredPhoneFollowUpDraft = "";
+        if (savedInstanceState == null) {
+            return;
+        }
+        restoredPhoneFollowUpDraft = normalizeSavedFollowUpDraft(
+            savedInstanceState.getString(STATE_PHONE_FOLLOWUP_DRAFT, "")
+        );
+        tabletComposerText = normalizeSavedFollowUpDraft(
+            savedInstanceState.getString(STATE_TABLET_FOLLOWUP_DRAFT, tabletComposerText)
+        );
+    }
+
+    private String currentPhoneFollowUpDraftForSave() {
+        if (followUpInput == null || followUpInput.getText() == null) {
+            return restoredPhoneFollowUpDraft;
+        }
+        return normalizeSavedFollowUpDraft(followUpInput.getText().toString());
+    }
+
+    private String currentTabletFollowUpDraftForSave() {
+        return normalizeSavedFollowUpDraft(tabletComposerText);
+    }
+
+    private void applyRestoredPhoneFollowUpDraft() {
+        if (followUpInput == null || restoredPhoneFollowUpDraft.isEmpty()) {
+            return;
+        }
+        followUpInput.setText(restoredPhoneFollowUpDraft);
+        followUpInput.setSelection(restoredPhoneFollowUpDraft.length());
+        restoredPhoneFollowUpDraft = "";
     }
 
     private void installDetailBackDispatcher() {
@@ -1621,9 +1666,6 @@ public final class DetailActivity extends AppCompatActivity {
         }
         followUpPanel.setVisibility(isCurrentAnswerFollowUpEligible() ? View.VISIBLE : View.GONE);
         updateFollowUpMirrorMode();
-        if (answerMode && pendingAutoFollowUpQuery.isEmpty()) {
-            followUpInput.setText("");
-        }
         renderDockedComposer();
         preservePhoneLandscapeThreadTopAfterComposerSetup();
         renderFollowUpSuggestions();
@@ -6388,7 +6430,18 @@ public final class DetailActivity extends AppCompatActivity {
         currentAnswerHostFallbackUsed = false;
         reviewedCardMetadataBridge.reset();
         setBusy(OfflineAnswerEngine.buildRetrievalStatus(query, sessionMemory), true);
+        clearSubmittedFollowUpDraft(kind);
         answerPresenter.prepareThenGenerate(requestToken, kind, repository, query);
+    }
+
+    private void clearSubmittedFollowUpDraft(AnswerPresenter.Kind kind) {
+        if (kind == AnswerPresenter.Kind.TABLET_FOLLOWUP) {
+            tabletComposerText = "";
+            return;
+        }
+        if (followUpInput != null) {
+            followUpInput.setText("");
+        }
     }
 
     static boolean isFollowUpSubmitAction(int actionId, KeyEvent event) {
@@ -6413,6 +6466,10 @@ public final class DetailActivity extends AppCompatActivity {
 
     static String normalizeFollowUpQuery(String rawQuery) {
         return FollowUpComposerState.normalizeDraft(rawQuery);
+    }
+
+    static String normalizeSavedFollowUpDraft(String rawDraft) {
+        return normalizeFollowUpQuery(rawDraft);
     }
 
     void applyPreparedPreviewState(OfflineAnswerEngine.PreparedAnswer preparedAnswer) {
