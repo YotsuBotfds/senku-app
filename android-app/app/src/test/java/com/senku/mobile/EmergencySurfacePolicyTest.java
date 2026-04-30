@@ -292,6 +292,13 @@ public final class EmergencySurfacePolicyTest {
     }
 
     @Test
+    public void emergencyActionBlocksUseRev03TextColors() {
+        assertEquals(R.color.senku_rev03_ink_2, DetailActionBlockPresentationFormatter.emergencyActionHeadingTextColorRes());
+        assertEquals(R.color.senku_rev03_ink_0, DetailActionBlockPresentationFormatter.emergencyActionTitleTextColorRes());
+        assertEquals(R.color.senku_rev03_ink_2, DetailActionBlockPresentationFormatter.emergencyActionDetailTextColorRes());
+    }
+
+    @Test
     public void tabletEmergencyBackAffordanceUsesVisibleBackLabel() {
         assertEquals("Back", DetailActivity.tabletEmergencyBackButtonLabel());
         assertEquals("Back", DetailActivity.tabletEmergencyBackButtonLabel(false));

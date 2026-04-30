@@ -10,6 +10,8 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.core.content.res.ResourcesCompat;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -316,8 +318,8 @@ final class DetailThreadHistoryRenderer {
         TextView body = new TextView(context);
         body.setText(text);
         body.setTextAppearance(context, android.R.style.TextAppearance_Medium);
-        body.setTextColor(context.getColor(userTurn ? R.color.senku_rev03_ink_0 : R.color.senku_text_light));
-        body.setTypeface(userTurn ? Typeface.DEFAULT_BOLD : Typeface.SERIF, userTurn ? Typeface.BOLD : Typeface.NORMAL);
+        body.setTextColor(context.getColor(bodyTextColorRes(userTurn)));
+        body.setTypeface(bodyTypeface(userTurn));
         body.setTextSize(bodyTextSizeSp(userTurn, inlineTranscriptBubble, railBubble, state));
         body.setLineSpacing(0f, bodyLineSpacing(userTurn, inlineTranscriptBubble, railBubble, state));
         body.setPadding(
@@ -711,6 +713,10 @@ final class DetailThreadHistoryRenderer {
         return userTurn || inlineTranscriptBubble ? 15 : 13;
     }
 
+    static int bodyTextColorRes(boolean userTurn) {
+        return userTurn ? R.color.senku_rev03_ink_0 : R.color.senku_rev03_ink_0;
+    }
+
     static float bodyLineSpacing(
         boolean userTurn,
         boolean inlineTranscriptBubble,
@@ -759,6 +765,18 @@ final class DetailThreadHistoryRenderer {
         gd345Index = indexOfGuideId(ordered, "GD-345");
         ordered.add(Math.max(0, gd345Index), gd220);
         return ordered;
+    }
+
+    private Typeface bodyTypeface(boolean userTurn) {
+        if (userTurn) {
+            return rev03Typeface(R.font.inter_tight, Typeface.BOLD, Typeface.DEFAULT_BOLD);
+        }
+        return rev03Typeface(R.font.source_serif_4, Typeface.NORMAL, Typeface.SERIF);
+    }
+
+    private Typeface rev03Typeface(int fontResId, int style, Typeface fallback) {
+        Typeface typeface = ResourcesCompat.getFont(context, fontResId);
+        return Typeface.create(typeface != null ? typeface : fallback, style);
     }
 
     private static int indexOfGuideId(List<String> guideIds, String targetGuideId) {

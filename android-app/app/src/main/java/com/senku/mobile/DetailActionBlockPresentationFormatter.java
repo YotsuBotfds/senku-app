@@ -144,7 +144,7 @@ final class DetailActionBlockPresentationFormatter {
         TextView heading = new TextView(context);
         heading.setText(EMERGENCY_ACTION_HEADING_PREFIX + displayedActionCount);
         heading.setTextAppearance(context, android.R.style.TextAppearance_Small);
-        heading.setTextColor(context.getColor(R.color.senku_text_muted_light));
+        heading.setTextColor(context.getColor(emergencyActionHeadingTextColorRes()));
         heading.setTypeface(Typeface.MONOSPACE, Typeface.BOLD);
         heading.setLetterSpacing(0.10f);
         heading.setTextSize(EMERGENCY_ACTION_HEADING_TEXT_SIZE_SP);
@@ -199,7 +199,7 @@ final class DetailActionBlockPresentationFormatter {
         TextView body = new TextView(context);
         body.setText(block.body);
         body.setTextAppearance(context, android.R.style.TextAppearance_Small);
-        body.setTextColor(context.getColor(R.color.senku_text_light));
+        body.setTextColor(context.getColor(emergencyActionTitleTextColorRes()));
         body.setTypeface(Typeface.DEFAULT_BOLD);
         body.setLineSpacing(0f, 1.12f);
         body.setPadding(0, dp(6), 0, 0);
@@ -268,7 +268,7 @@ final class DetailActionBlockPresentationFormatter {
         TextView title = new TextView(context);
         title.setText(styleEmergencyMinimumDistance(action.title));
         title.setTextAppearance(context, android.R.style.TextAppearance_Medium);
-        title.setTextColor(context.getColor(R.color.senku_text_light));
+        title.setTextColor(context.getColor(emergencyActionTitleTextColorRes()));
         title.setTypeface(Typeface.DEFAULT_BOLD);
         title.setTextSize(EMERGENCY_ACTION_TITLE_TEXT_SIZE_SP);
         title.setLineSpacing(0f, 1.0f);
@@ -279,7 +279,7 @@ final class DetailActionBlockPresentationFormatter {
         TextView detail = new TextView(context);
         detail.setText(styleEmergencyMinimumDistance(action.detail));
         detail.setTextAppearance(context, android.R.style.TextAppearance_Small);
-        detail.setTextColor(context.getColor(R.color.senku_text_muted_light));
+        detail.setTextColor(context.getColor(emergencyActionDetailTextColorRes()));
         detail.setTextSize(EMERGENCY_ACTION_DETAIL_TEXT_SIZE_SP);
         detail.setLineSpacing(0f, 1.0f);
         detail.setIncludeFontPadding(false);
@@ -574,6 +574,18 @@ final class DetailActionBlockPresentationFormatter {
 
     static int[] emergencyMinimumDistanceSpanRangeForTest(String text) {
         return emergencyMinimumDistanceSpanRange(text);
+    }
+
+    static int emergencyActionHeadingTextColorRes() {
+        return R.color.senku_rev03_ink_2;
+    }
+
+    static int emergencyActionTitleTextColorRes() {
+        return R.color.senku_rev03_ink_0;
+    }
+
+    static int emergencyActionDetailTextColorRes() {
+        return R.color.senku_rev03_ink_2;
     }
 
     private static int[] emergencyMinimumDistanceSpanRange(String text) {

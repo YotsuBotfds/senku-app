@@ -320,6 +320,12 @@ public final class DetailThreadHistoryRendererTest {
     }
 
     @Test
+    public void threadBodyCopyUsesRev03InkAcrossQuestionsAndAnswers() {
+        assertEquals(R.color.senku_rev03_ink_0, DetailThreadHistoryRenderer.bodyTextColorRes(true));
+        assertEquals(R.color.senku_rev03_ink_0, DetailThreadHistoryRenderer.bodyTextColorRes(false));
+    }
+
+    @Test
     public void guideChipsStayInlineAndDeduplicated() {
         SessionMemory.TurnSnapshot turn = new SessionMemory.TurnSnapshot(
             "question",
