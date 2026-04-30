@@ -234,14 +234,38 @@ public final class MainActivityHomeChromeTest {
     }
 
     @Test
-    public void manualHomeStatusDropsDuplicateGuideCountForNarrowChrome() {
+    public void manualHomeStatusKeepsGuideCountOutsideReviewMode() {
         assertEquals(
-            "PACK READY",
+            "Ready offline | 754 guides",
             MainActivity.compactManualHomeStatusForTest("Ready offline | 754 guides", true)
         );
         assertEquals(
             "Ready offline | 754 guides",
             MainActivity.compactManualHomeStatusForTest("Ready offline | 754 guides", false)
+        );
+    }
+
+    @Test
+    public void reviewManualHomeStatusDropsDuplicateGuideCountForNarrowChrome() {
+        assertEquals(
+            "PACK READY",
+            MainActivity.compactManualHomeStatusForTest("Ready offline | 754 guides", true, true)
+        );
+    }
+
+    @Test
+    public void homeSubtitleUsesActualCountOutsideReviewMode() {
+        assertEquals(
+            "271 guides in your offline field manual",
+            MainActivity.buildHomeSubtitleTextForTest(271, false)
+        );
+        assertEquals(
+            "1 guide in your offline field manual",
+            MainActivity.buildHomeSubtitleTextForTest(1, false)
+        );
+        assertEquals(
+            "754 guides \u2022 12 categories \u2022 ready offline \u2022 ed. 2",
+            MainActivity.buildHomeSubtitleTextForTest(271, true)
         );
     }
 

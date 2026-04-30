@@ -3588,7 +3588,7 @@ public final class MainActivity extends AppCompatActivity {
     }
 
     private void setBusy(String status, boolean busy) {
-        statusText.setText(compactManualHomeStatus(status, isManualHomeShellLayout()));
+        statusText.setText(compactManualHomeStatus(status, isManualHomeShellLayout(), productReviewMode));
         progressBar.setVisibility(busy ? View.VISIBLE : View.GONE);
         if (!busy) {
             suppressSearchFocusForAutomation = false;
@@ -3673,7 +3673,7 @@ public final class MainActivity extends AppCompatActivity {
             homeSubtitleText.setText(R.string.home_subtitle);
             return;
         }
-        homeSubtitleText.setText("754 guides \u2022 12 categories \u2022 ready offline \u2022 ed. 2");
+        homeSubtitleText.setText(buildHomeSubtitleText(guideCount, productReviewMode));
     }
 
     private void updateHomeManualStamp() {
@@ -4624,19 +4624,40 @@ public final class MainActivity extends AppCompatActivity {
     }
 
     static String compactManualHomeStatusForTest(String status, boolean manualHomeShell) {
-        return compactManualHomeStatus(status, manualHomeShell);
+        return compactManualHomeStatus(status, manualHomeShell, false);
     }
 
-    private static String compactManualHomeStatus(String status, boolean manualHomeShell) {
+    static String compactManualHomeStatusForTest(
+        String status,
+        boolean manualHomeShell,
+        boolean productReviewMode
+    ) {
+        return compactManualHomeStatus(status, manualHomeShell, productReviewMode);
+    }
+
+    private static String compactManualHomeStatus(
+        String status,
+        boolean manualHomeShell,
+        boolean productReviewMode
+    ) {
         String cleanStatus = safe(status).trim();
-        if (!manualHomeShell || cleanStatus.isEmpty()) {
-            return cleanStatus;
+        return ReviewDemoPolicy.shapeManualHomeStatus(productReviewMode, manualHomeShell, cleanStatus);
+    }
+
+    static String buildHomeSubtitleTextForTest(int guideCount, boolean productReviewMode) {
+        return buildHomeSubtitleText(guideCount, productReviewMode);
+    }
+
+    private static String buildHomeSubtitleText(int guideCount, boolean productReviewMode) {
+        if (guideCount <= 0) {
+            return "";
         }
-        String lowerStatus = cleanStatus.toLowerCase(Locale.US);
-        if (lowerStatus.startsWith("ready offline")) {
-            return "PACK READY";
-        }
-        return cleanStatus;
+        NumberFormat format = NumberFormat.getNumberInstance(Locale.US);
+        String guideLabel = guideCount == 1
+            ? format.format(guideCount) + " guide"
+            : format.format(guideCount) + " guides";
+        String defaultSubtitle = guideLabel + " in your offline field manual";
+        return ReviewDemoPolicy.shapeHomeSubtitle(productReviewMode, guideCount, defaultSubtitle);
     }
 
     private static String buildPhoneSearchHeader(String query, int resultCount) {
@@ -4868,9 +4889,6 @@ public final class MainActivity extends AppCompatActivity {
     }
 
     private static String buildTabletPreviewMetaStatic(SearchResult result, boolean productReviewMode) {
-        if (isReviewPreviewResult(result, productReviewMode)) {
-            return "Starter  \u00B7  17 sections";
-        }
         ArrayList<String> parts = new ArrayList<>();
         addNonEmptyPartStatic(parts, result == null ? null : result.contentRole);
         addNonEmptyPartStatic(parts, result == null ? null : result.timeHorizon);
@@ -4878,31 +4896,17 @@ public final class MainActivity extends AppCompatActivity {
         if (parts.isEmpty()) {
             addNonEmptyPartStatic(parts, result == null ? null : result.subtitle);
         }
-        return parts.isEmpty() ? "Source guide" : String.join("  \u00B7  ", parts);
+        String defaultMeta = parts.isEmpty() ? "Source guide" : String.join("  \u00B7  ", parts);
+        return ReviewDemoPolicy.shapeTabletPreviewMeta(productReviewMode, result, defaultMeta);
     }
 
     private static String buildTabletPreviewBodyStatic(SearchResult result, boolean productReviewMode) {
-        if (isReviewPreviewResult(result, productReviewMode)) {
-            return "Day signaling vs. night signaling.\n\n"
-                + "Daytime visibility relies on contrast: smoke, ground-marked panels, mirror flash. "
-                + "Nighttime relies on light: reflective surfaces, fire, signal flares.";
-        }
-        return firstNonEmptyStatic(
+        String defaultBody = firstNonEmptyStatic(
             result == null ? null : result.snippet,
             result == null ? null : result.body,
             "Tap a result to open the full guide."
         );
-    }
-
-    private static boolean isReviewPreviewResult(SearchResult result, boolean productReviewMode) {
-        return productReviewMode
-            && "GD-023".equalsIgnoreCase(safe(result == null ? null : result.guideId).trim())
-            && "Survival Basics & First 72 Hours".equals(safe(result == null ? null : result.title).trim())
-            && isReviewSearchResult(result);
-    }
-
-    private static boolean isReviewSearchResult(SearchResult result) {
-        return safe(result == null ? null : result.subtitle).toLowerCase(Locale.US).contains("| review");
+        return ReviewDemoPolicy.shapeTabletPreviewBody(productReviewMode, result, defaultBody);
     }
 
     private static void addNonEmptyPartStatic(List<String> parts, String value) {

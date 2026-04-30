@@ -17,6 +17,8 @@ final class ReviewDemoPolicy {
     private static final String PRODUCT_REVIEW_AUTOMATION_AUTH_VALUE = "senku-review-demo-v1";
     private static final String REVIEW_SEARCH_QUERY = "rain shelter";
     private static final String REVIEW_SEARCH_LATENCY_LABEL = "12ms";
+    private static final String REVIEW_HOME_SUBTITLE = "754 guides \u2022 12 categories \u2022 ready offline \u2022 ed. 2";
+    private static final String REVIEW_MANUAL_HOME_READY_STATUS = "PACK READY";
     private static final String RAIN_SHELTER_TOPIC_GUIDE_ID = "GD-345";
     private static final String RAIN_SHELTER_PHONE_RELATED_CANONICAL_GUIDE_ID = "GD-027";
     private static final String RAIN_SHELTER_PHONE_RELATED_DISPLACED_GUIDE_ID = "GD-109";
@@ -303,6 +305,24 @@ final class ReviewDemoPolicy {
         }
     }
 
+    static String shapeHomeSubtitle(boolean productReviewMode, int guideCount, String defaultSubtitle) {
+        if (!isResolvedProductReviewModeEnabled(productReviewMode) || guideCount <= 0) {
+            return safe(defaultSubtitle);
+        }
+        return REVIEW_HOME_SUBTITLE;
+    }
+
+    static String shapeManualHomeStatus(boolean productReviewMode, boolean manualHomeShell, String defaultStatus) {
+        String cleanStatus = safe(defaultStatus).trim();
+        if (!isResolvedProductReviewModeEnabled(productReviewMode) || !manualHomeShell || cleanStatus.isEmpty()) {
+            return cleanStatus;
+        }
+        if (cleanStatus.toLowerCase(Locale.US).startsWith("ready offline")) {
+            return REVIEW_MANUAL_HOME_READY_STATUS;
+        }
+        return cleanStatus;
+    }
+
     static String appendSearchLatency(String header, String query, boolean productReviewMode) {
         String cleanHeader = safe(header).trim();
         if (!isResolvedProductReviewModeEnabled(productReviewMode)
@@ -345,6 +365,22 @@ final class ReviewDemoPolicy {
             return safe(defaultLabel);
         }
         return meta.isEmpty() ? title : title + "\n" + meta;
+    }
+
+    static String shapeTabletPreviewMeta(boolean productReviewMode, SearchResult result, String defaultMeta) {
+        if (!isTabletPreviewReviewResult(productReviewMode, result)) {
+            return safe(defaultMeta);
+        }
+        return "Starter  \u00B7  17 sections";
+    }
+
+    static String shapeTabletPreviewBody(boolean productReviewMode, SearchResult result, String defaultBody) {
+        if (!isTabletPreviewReviewResult(productReviewMode, result)) {
+            return safe(defaultBody);
+        }
+        return "Day signaling vs. night signaling.\n\n"
+            + "Daytime visibility relies on contrast: smoke, ground-marked panels, mirror flash. "
+            + "Nighttime relies on light: reflective surfaces, fire, signal flares.";
     }
 
     static String placeholderRecentThreadQuestion(int index) {
@@ -495,6 +531,13 @@ final class ReviewDemoPolicy {
 
     private static boolean isReviewSearchResult(SearchResult result) {
         return safe(result == null ? null : result.subtitle).toLowerCase(Locale.US).contains("| review");
+    }
+
+    private static boolean isTabletPreviewReviewResult(boolean productReviewMode, SearchResult result) {
+        return isResolvedProductReviewModeEnabled(productReviewMode)
+            && "GD-023".equalsIgnoreCase(safe(result == null ? null : result.guideId).trim())
+            && "Survival Basics & First 72 Hours".equals(safe(result == null ? null : result.title).trim())
+            && isReviewSearchResult(result);
     }
 
     private static boolean isRainShelterUncertainFit(String query, List<SearchResult> adjacent) {

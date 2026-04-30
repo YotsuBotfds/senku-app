@@ -64,6 +64,34 @@ public final class ReviewDemoPolicyTest {
     }
 
     @Test
+    public void disabledModeKeepsActualHomeSubtitleAndReadyStatus() {
+        assertEquals(
+            "271 guides in your offline field manual",
+            ReviewDemoPolicy.shapeHomeSubtitle(false, 271, "271 guides in your offline field manual")
+        );
+        assertEquals(
+            "Ready offline | 271 guides",
+            ReviewDemoPolicy.shapeManualHomeStatus(false, true, "Ready offline | 271 guides")
+        );
+    }
+
+    @Test
+    public void reviewModeUsesTargetHomeSubtitleAndCompactReadyStatus() {
+        assertEquals(
+            "754 guides \u2022 12 categories \u2022 ready offline \u2022 ed. 2",
+            ReviewDemoPolicy.shapeHomeSubtitle(true, 271, "271 guides in your offline field manual")
+        );
+        assertEquals(
+            "PACK READY",
+            ReviewDemoPolicy.shapeManualHomeStatus(true, true, "Ready offline | 271 guides")
+        );
+        assertEquals(
+            "Ready offline | 271 guides",
+            ReviewDemoPolicy.shapeManualHomeStatus(true, false, "Ready offline | 271 guides")
+        );
+    }
+
+    @Test
     public void sourceStackDemoRequiresExplicitReviewMode() {
         assertFalse(ReviewDemoPolicy.isSourceStackDemoEnabled(false));
         assertTrue(ReviewDemoPolicy.isSourceStackDemoEnabled(true));
@@ -274,6 +302,28 @@ public final class ReviewDemoPolicyTest {
             "Original recent thread",
             ReviewDemoPolicy.shapeRecentThreadLabel(false, null, 0, "Original recent thread")
         );
+    }
+
+    @Test
+    public void tabletPreviewTargetCopyRequiresReviewModeAndReviewRow() {
+        SearchResult reviewRow = guideWithSubtitle("GD-023 | survival | review");
+        SearchResult normalRow = guideWithSubtitle("GD-023 | survival");
+
+        assertEquals(
+            "starter \u2022 immediate \u2022 survival",
+            ReviewDemoPolicy.shapeTabletPreviewMeta(false, reviewRow, "starter \u2022 immediate \u2022 survival")
+        );
+        assertEquals(
+            "Starter  \u00B7  17 sections",
+            ReviewDemoPolicy.shapeTabletPreviewMeta(true, reviewRow, "starter \u2022 immediate \u2022 survival")
+        );
+        assertEquals(
+            "starter \u2022 immediate \u2022 survival",
+            ReviewDemoPolicy.shapeTabletPreviewMeta(true, normalRow, "starter \u2022 immediate \u2022 survival")
+        );
+        assertTrue(ReviewDemoPolicy.shapeTabletPreviewBody(true, reviewRow, "live snippet")
+            .startsWith("Day signaling vs. night signaling."));
+        assertEquals("live snippet", ReviewDemoPolicy.shapeTabletPreviewBody(false, reviewRow, "live snippet"));
     }
 
     private static List<SearchResult> rainShelterAdjacentGuides() {
