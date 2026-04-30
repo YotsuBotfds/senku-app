@@ -16,6 +16,12 @@ class TabletDetailAppRailPolicyTest {
         assertEquals(12, tabletGuideAppRailItemTopMarginDp(isLandscape = true))
         assertEquals(3, tabletGuideAppRailLabelTopMarginDp(isLandscape = false))
         assertEquals(4, tabletGuideAppRailLabelTopMarginDp(isLandscape = true))
+        assertEquals(22, tabletGuideAppRailIconSizeDp(isLandscape = false))
+        assertEquals(22, tabletGuideAppRailIconSizeDp(isLandscape = true))
+        assertEquals(10, tabletGuideAppRailLabelFontSizeSp(isLandscape = false))
+        assertEquals(10, tabletGuideAppRailLabelFontSizeSp(isLandscape = true))
+        assertEquals(13, tabletGuideAppRailLabelLineHeightSp(isLandscape = false))
+        assertEquals(13, tabletGuideAppRailLabelLineHeightSp(isLandscape = true))
     }
 
     @Test

@@ -53,6 +53,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.unit.TextUnit
 import com.senku.mobile.R
 import com.senku.ui.answer.AnswerContent
 import com.senku.ui.answer.AnswerSurfaceLabel
@@ -493,6 +494,15 @@ internal fun tabletGuideAppRailItemTopMarginDp(isLandscape: Boolean): Int =
 
 internal fun tabletGuideAppRailLabelTopMarginDp(isLandscape: Boolean): Int =
     if (isLandscape) 4 else 3
+
+internal fun tabletGuideAppRailIconSizeDp(isLandscape: Boolean): Int =
+    22
+
+internal fun tabletGuideAppRailLabelFontSizeSp(isLandscape: Boolean): Int =
+    10
+
+internal fun tabletGuideAppRailLabelLineHeightSp(isLandscape: Boolean): Int =
+    13
 
 internal fun tabletDetailAppRailActiveDestination(detailMode: TabletDetailMode): TabletDetailAppRailDestination =
     when (detailMode) {
@@ -1603,6 +1613,9 @@ private fun GuideAppRail(
             iconRes = R.drawable.ic_home_library,
             active = activeDestination == TabletDetailAppRailDestination.Library,
             labelTopMargin = tabletGuideAppRailLabelTopMarginDp(isLandscape).dp,
+            iconSize = tabletGuideAppRailIconSizeDp(isLandscape).dp,
+            labelFontSize = tabletGuideAppRailLabelFontSizeSp(isLandscape).sp,
+            labelLineHeight = tabletGuideAppRailLabelLineHeightSp(isLandscape).sp,
             onClick = {
                 tabletDetailAppRailDispatchAction(
                     TabletDetailAppRailAction.Library,
@@ -1618,6 +1631,9 @@ private fun GuideAppRail(
             iconRes = R.drawable.ic_home_ask,
             active = activeDestination == TabletDetailAppRailDestination.Ask,
             labelTopMargin = tabletGuideAppRailLabelTopMarginDp(isLandscape).dp,
+            iconSize = tabletGuideAppRailIconSizeDp(isLandscape).dp,
+            labelFontSize = tabletGuideAppRailLabelFontSizeSp(isLandscape).sp,
+            labelLineHeight = tabletGuideAppRailLabelLineHeightSp(isLandscape).sp,
             onClick = {
                 tabletDetailAppRailDispatchAction(
                     TabletDetailAppRailAction.Ask,
@@ -1633,6 +1649,9 @@ private fun GuideAppRail(
             iconRes = R.drawable.ic_home_saved,
             active = activeDestination == TabletDetailAppRailDestination.Saved,
             labelTopMargin = tabletGuideAppRailLabelTopMarginDp(isLandscape).dp,
+            iconSize = tabletGuideAppRailIconSizeDp(isLandscape).dp,
+            labelFontSize = tabletGuideAppRailLabelFontSizeSp(isLandscape).sp,
+            labelLineHeight = tabletGuideAppRailLabelLineHeightSp(isLandscape).sp,
             onClick = {
                 tabletDetailAppRailDispatchAction(
                     TabletDetailAppRailAction.Saved,
@@ -1652,6 +1671,9 @@ private fun GuideAppRailItem(
     iconRes: Int,
     active: Boolean,
     labelTopMargin: Dp,
+    iconSize: Dp,
+    labelFontSize: TextUnit,
+    labelLineHeight: TextUnit,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -1669,15 +1691,15 @@ private fun GuideAppRailItem(
         Icon(
             painter = painterResource(iconRes),
             contentDescription = label,
-            modifier = Modifier.size(22.dp),
+            modifier = Modifier.size(iconSize),
             tint = itemColor,
         )
         Text(
             text = label,
             modifier = Modifier.padding(top = labelTopMargin),
             style = typography.smallBody.copy(
-                fontSize = 12.sp,
-                lineHeight = 14.sp,
+                fontSize = labelFontSize,
+                lineHeight = labelLineHeight,
                 fontWeight = if (active) FontWeight.Bold else FontWeight.Normal,
             ),
             color = itemColor,
