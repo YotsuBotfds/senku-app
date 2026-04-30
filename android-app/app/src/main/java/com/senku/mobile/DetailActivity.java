@@ -181,6 +181,7 @@ public final class DetailActivity extends AppCompatActivity {
     private TextView heroTitle;
     private TextView heroSubtitle;
     private TextView headerLabel;
+    private TextView headerStatusLabel;
     private TextView bodyLabel;
     private TextView titleView;
     private TextView subtitleView;
@@ -723,6 +724,7 @@ public final class DetailActivity extends AppCompatActivity {
         heroTitle = findViewById(R.id.detail_hero_title);
         heroSubtitle = findViewById(R.id.detail_hero_subtitle);
         headerLabel = findViewById(R.id.detail_header_label);
+        headerStatusLabel = findViewById(R.id.detail_header_status_label);
         bodyLabel = findViewById(R.id.detail_body_label);
         titleView = findViewById(R.id.detail_title);
         subtitleView = findViewById(R.id.detail_subtitle);
@@ -7560,6 +7562,10 @@ public final class DetailActivity extends AppCompatActivity {
         }
         applyBubblePadding(questionBubble, answerMode ? dp(10) : dp(14));
         applyBubblePadding(answerBubble, answerMode ? dp(10) : dp(14));
+        if (shouldUseFullWidthCompactPortraitAnswerFlow(answerMode, true)) {
+            setHorizontalMargins(questionBubble, 0, 0);
+            setHorizontalMargins(answerBubble, 0, 0);
+        }
         if (answerBubble == null) {
             return;
         }
@@ -7574,6 +7580,10 @@ public final class DetailActivity extends AppCompatActivity {
         ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) rawParams;
         params.topMargin = answerMode ? dp(6) : dp(8);
         parent.setLayoutParams(params);
+    }
+
+    static boolean shouldUseFullWidthCompactPortraitAnswerFlow(boolean answerMode, boolean compactPortraitPhone) {
+        return answerMode && compactPortraitPhone;
     }
 
     private void applyCompactPortraitAnswerSpacing() {
@@ -9612,12 +9622,14 @@ public final class DetailActivity extends AppCompatActivity {
                 headerLabel.setIncludeFontPadding(true);
                 headerLabel.setMinHeight(dp(18));
                 headerLabel.setPadding(0, dp(2), 0, dp(2));
+                applyAnswerHeaderConfidenceStatus(true);
             } else {
                 headerLabel.setTextColor(getColor(R.color.senku_rev03_accent));
                 headerLabel.setTypeface(Typeface.DEFAULT_BOLD);
                 headerLabel.setLetterSpacing(0f);
                 headerLabel.setMinHeight(0);
                 headerLabel.setPadding(0, 0, 0, 0);
+                applyAnswerHeaderConfidenceStatus(false);
             }
         }
         if (titleView != null) {
@@ -9643,6 +9655,53 @@ public final class DetailActivity extends AppCompatActivity {
                 subtitleView.setTextAlignment(View.TEXT_ALIGNMENT_VIEW_START);
             }
         }
+    }
+
+    private void applyAnswerHeaderConfidenceStatus(boolean visible) {
+        if (headerStatusLabel == null) {
+            return;
+        }
+        String label = visible
+            ? buildAnswerHeaderConfidenceDotLabel(
+                currentAnswerConfidenceLabel,
+                isAnswerShellUncertainFitRoute(),
+                isAbstainRoute()
+            )
+            : "";
+        if (label.isEmpty()) {
+            headerStatusLabel.setVisibility(View.GONE);
+            headerStatusLabel.setText("");
+            return;
+        }
+        headerStatusLabel.setText(label);
+        headerStatusLabel.setVisibility(View.VISIBLE);
+        headerStatusLabel.setTextColor(getColor(
+            label.contains("CONFIDENT") ? R.color.senku_rev03_ok : R.color.senku_rev03_warn
+        ));
+        headerStatusLabel.setTypeface(Typeface.MONOSPACE, Typeface.BOLD);
+        headerStatusLabel.setLetterSpacing(0.12f);
+        headerStatusLabel.setTextSize(isLandscapePhoneLayout()
+            ? resolvePhonePortraitQuestionMetaTextSizeSp()
+            : resolvePhonePortraitQuestionMetaLabelTextSizeSp());
+        headerStatusLabel.setIncludeFontPadding(true);
+        headerStatusLabel.setMinHeight(dp(18));
+        headerStatusLabel.setPadding(0, dp(2), 0, dp(2));
+    }
+
+    static String buildAnswerHeaderConfidenceDotLabel(
+        OfflineAnswerEngine.ConfidenceLabel confidenceLabel,
+        boolean uncertainFitRoute,
+        boolean abstainRoute
+    ) {
+        if (abstainRoute) {
+            return "";
+        }
+        if (uncertainFitRoute
+            || confidenceLabel == OfflineAnswerEngine.ConfidenceLabel.LOW
+            || confidenceLabel == OfflineAnswerEngine.ConfidenceLabel.MEDIUM) {
+            return "\u2022 UNSURE";
+        }
+        return "\u2022 CONFIDENT";
     }
 
     private String buildPhonePortraitAnswerQuestionMeta() {

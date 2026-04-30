@@ -543,6 +543,37 @@ public final class DetailFollowupLandscapeComposerTest {
     }
 
     @Test
+    public void compactPortraitAnswerFlowUsesFullColumnWidth() {
+        assertTrue(DetailActivity.shouldUseFullWidthCompactPortraitAnswerFlow(true, true));
+        assertFalse(DetailActivity.shouldUseFullWidthCompactPortraitAnswerFlow(true, false));
+        assertFalse(DetailActivity.shouldUseFullWidthCompactPortraitAnswerFlow(false, true));
+    }
+
+    @Test
+    public void answerHeaderConfidenceDotUsesMockLabels() {
+        assertEquals(
+            "\u2022 CONFIDENT",
+            DetailActivity.buildAnswerHeaderConfidenceDotLabel(OfflineAnswerEngine.ConfidenceLabel.HIGH, false, false)
+        );
+        assertEquals(
+            "\u2022 UNSURE",
+            DetailActivity.buildAnswerHeaderConfidenceDotLabel(OfflineAnswerEngine.ConfidenceLabel.MEDIUM, false, false)
+        );
+        assertEquals(
+            "\u2022 UNSURE",
+            DetailActivity.buildAnswerHeaderConfidenceDotLabel(OfflineAnswerEngine.ConfidenceLabel.LOW, false, false)
+        );
+        assertEquals(
+            "\u2022 UNSURE",
+            DetailActivity.buildAnswerHeaderConfidenceDotLabel(OfflineAnswerEngine.ConfidenceLabel.HIGH, true, false)
+        );
+        assertEquals(
+            "",
+            DetailActivity.buildAnswerHeaderConfidenceDotLabel(OfflineAnswerEngine.ConfidenceLabel.HIGH, false, true)
+        );
+    }
+
+    @Test
     public void answerModeSuppressesLegacyBodyMirror() {
         assertTrue(DetailActivity.shouldHideBodyMirrorForAnswerMode(true));
         assertFalse(DetailActivity.shouldHideBodyMirrorForAnswerMode(false));

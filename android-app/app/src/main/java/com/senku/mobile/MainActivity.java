@@ -98,7 +98,7 @@ public final class MainActivity extends AppCompatActivity {
     private static final float TABLET_HOME_PRIMARY_PORTRAIT_WEIGHT = 1.02f;
     private static final float TABLET_HOME_RECENT_PORTRAIT_WEIGHT = 0.90f;
     private static final int TABLET_HOME_LANDSCAPE_TOP_PADDING_DP = 18;
-    private static final int TABLET_HOME_PORTRAIT_TOP_PADDING_DP = 100;
+    private static final int TABLET_HOME_PORTRAIT_TOP_PADDING_DP = 42;
     private static final int TABLET_SEARCH_FILTER_RAIL_LANDSCAPE_WIDTH_DP = 331;
     private static final int TABLET_SEARCH_PREVIEW_RAIL_LANDSCAPE_WIDTH_DP = 441;
     private static final String REVIEW_SEARCH_QUERY = "rain shelter";

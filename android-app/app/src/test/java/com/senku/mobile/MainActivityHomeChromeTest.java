@@ -271,7 +271,7 @@ public final class MainActivityHomeChromeTest {
         assertEquals(1.02f, MainActivity.resolveTabletHomePrimaryWeight(false), 0.001f);
         assertEquals(0.90f, MainActivity.resolveTabletHomeRecentWeight(false), 0.001f);
         assertEquals(18, MainActivity.resolveTabletHomeTopPaddingDp(true));
-        assertEquals(100, MainActivity.resolveTabletHomeTopPaddingDp(false));
+        assertEquals(42, MainActivity.resolveTabletHomeTopPaddingDp(false));
     }
 
     @Test

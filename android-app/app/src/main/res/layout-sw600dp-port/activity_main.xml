@@ -129,11 +129,27 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="36dp"
+            android:layout_height="54dp"
             android:gravity="center_vertical"
             android:orientation="horizontal"
             android:paddingStart="18dp"
             android:paddingEnd="18dp">
+
+            <ImageView
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:contentDescription="@null"
+                android:importantForAccessibility="no"
+                android:padding="3dp"
+                android:src="@drawable/ic_home_back_chevron"
+                android:tint="@color/senku_rev03_ink_2" />
+
+            <View
+                android:layout_width="1dp"
+                android:layout_height="16dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="14dp"
+                android:background="@color/senku_rev03_hairline_strong" />
 
             <TextView
                 android:id="@+id/home_chrome_title"
@@ -147,18 +163,28 @@
                 android:text="HOME SENKU &#8226; Field manual &#8226; ed.2"
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:textColor="@color/senku_rev03_ink_1"
+                android:textSize="11sp"
                 android:textStyle="bold" />
+
+            <ImageView
+                android:id="@+id/home_chrome_search_icon"
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:contentDescription="@string/search_button"
+                android:padding="2dp"
+                android:src="@drawable/ic_search_magnifier"
+                android:tint="@color/senku_rev03_ink_2" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="14dp"
                 android:fontFamily="monospace"
                 android:includeFontPadding="false"
-                android:text="754 guides"
+                android:text="..."
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:textColor="@color/senku_rev03_ink_2"
-                android:textStyle="bold"
-                android:visibility="gone" />
+                android:textStyle="bold" />
         </LinearLayout>
 
         <ScrollView
