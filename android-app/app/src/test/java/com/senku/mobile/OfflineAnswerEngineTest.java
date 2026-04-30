@@ -2307,7 +2307,7 @@ public final class OfflineAnswerEngineTest {
     }
 
     @Test
-    public void buildUncertainFitAnswerBodyUsesStructuredRainShelterFallback() {
+    public void buildUncertainFitAnswerBodyDoesNotUseReviewRainShelterFallbackByDefault() {
         String answerBody = OfflineAnswerEngine.buildUncertainFitAnswerBody(
             "How do I build a simple rain shelter from tarp and cord?",
             List.of(
@@ -2330,14 +2330,14 @@ public final class OfflineAnswerEngineTest {
             false
         );
 
-        assertTrue(answerBody.startsWith("ANSWER\nBuild a ridgeline first"));
-        assertTrue(answerBody.contains("\n\nFIELD STEPS\n1. Tie a taut ridgeline"));
-        assertFalse(answerBody.contains("Possibly relevant guides in the library:"));
-        assertFalse(answerBody.contains("Try:"));
+        assertTrue(answerBody.startsWith("Senku found guides that may be relevant"));
+        assertFalse(answerBody.contains("Build a ridgeline first"));
+        assertTrue(answerBody.contains("Possibly relevant guides in the library:"));
+        assertTrue(answerBody.contains("Try:"));
     }
 
     @Test
-    public void rainShelterUncertainFitSourcesUseReviewedMockIdentityStack() {
+    public void rainShelterUncertainFitSourcesKeepRetrievedIdentityByDefault() {
         List<SearchResult> sources = OfflineAnswerEngine.shapeUncertainFitSourcesForPresentation(
             "How do I build a simple rain shelter from tarp and cord?",
             List.of(
@@ -2369,14 +2369,12 @@ public final class OfflineAnswerEngineTest {
             false
         );
 
-        assertEquals(3, sources.size());
-        assertEquals("GD-220", sources.get(0).guideId);
-        assertEquals("Abrasives Manufacturing", sources.get(0).title);
-        assertEquals("GD-132", sources.get(1).guideId);
-        assertEquals("Foundry & Metal Casting", sources.get(1).title);
-        assertEquals("GD-345", sources.get(2).guideId);
-        assertEquals("Tarp & Cord Shelters", sources.get(2).title);
-        assertEquals("Tarp & Cord Shelters", sources.get(2).sectionHeading);
+        assertEquals(2, sources.size());
+        assertEquals("GD-345", sources.get(0).guideId);
+        assertEquals("Primitive Shelter Construction Techniques", sources.get(0).title);
+        assertEquals("Wood Quality Evaluation for Shelter Construction", sources.get(0).sectionHeading);
+        assertEquals("GD-345", sources.get(1).guideId);
+        assertEquals("Debris Hut (Emergency Shelter)", sources.get(1).sectionHeading);
     }
 
     @Test

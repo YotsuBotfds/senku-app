@@ -1,7 +1,9 @@
 package com.senku.mobile;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -84,6 +86,62 @@ public final class ReviewDemoPolicyTest {
     }
 
     @Test
+    public void reviewRainShelterUncertainFitAnswerRequiresEnabledPolicy() {
+        List<SearchResult> adjacent = rainShelterAdjacentGuides();
+
+        assertEquals(
+            "",
+            ReviewDemoPolicy.buildRainShelterUncertainFitAnswerBody(
+                false,
+                "How do I build a simple rain shelter from tarp and cord?",
+                adjacent,
+                false
+            )
+        );
+
+        String answerBody = ReviewDemoPolicy.buildRainShelterUncertainFitAnswerBody(
+            true,
+            "How do I build a simple rain shelter from tarp and cord?",
+            adjacent,
+            false
+        );
+
+        assertTrue(answerBody.startsWith("ANSWER\nBuild a ridgeline first"));
+        assertTrue(answerBody.contains("\n\nFIELD STEPS\n1. Tie a taut ridgeline"));
+    }
+
+    @Test
+    public void reviewRainShelterUncertainFitSourcesRequireEnabledPolicy() {
+        List<SearchResult> adjacent = rainShelterAdjacentGuides();
+
+        List<SearchResult> disabled = ReviewDemoPolicy.shapeRainShelterUncertainFitSources(
+            false,
+            "How do I build a simple rain shelter from tarp and cord?",
+            adjacent,
+            false
+        );
+        assertEquals(2, disabled.size());
+        assertEquals("Primitive Shelter Construction Techniques", disabled.get(0).title);
+        assertFalse("GD-220".equals(disabled.get(0).guideId));
+
+        List<SearchResult> enabled = ReviewDemoPolicy.shapeRainShelterUncertainFitSources(
+            true,
+            "How do I build a simple rain shelter from tarp and cord?",
+            adjacent,
+            false
+        );
+
+        assertEquals(3, enabled.size());
+        assertEquals("GD-220", enabled.get(0).guideId);
+        assertEquals("Abrasives Manufacturing", enabled.get(0).title);
+        assertEquals("GD-132", enabled.get(1).guideId);
+        assertEquals("Foundry & Metal Casting", enabled.get(1).title);
+        assertEquals("GD-345", enabled.get(2).guideId);
+        assertEquals("Tarp & Cord Shelters", enabled.get(2).title);
+        assertEquals("Tarp & Cord Shelters", enabled.get(2).sectionHeading);
+    }
+
+    @Test
     public void reviewManualRecentThreadsUseTargetMockExamplesWhenEnabled() {
         long fourHoursTwentyOneMinutesAgo = System.currentTimeMillis() - ((4L * 60L + 21L) * 60_000L);
         ChatSessionStore.ConversationPreview first = preview(
@@ -127,6 +185,35 @@ public final class ReviewDemoPolicyTest {
         assertEquals(
             "Original recent thread",
             ReviewDemoPolicy.shapeRecentThreadLabel(false, null, 0, "Original recent thread")
+        );
+    }
+
+    private static List<SearchResult> rainShelterAdjacentGuides() {
+        return Arrays.asList(
+            new SearchResult(
+                "Primitive Shelter Construction Techniques",
+                "",
+                "A simple ridgeline shelter requires only tarp, cord, and two anchor points.",
+                "",
+                "GD-345",
+                "Wood Quality Evaluation for Shelter Construction",
+                "survival",
+                "lexical",
+                "",
+                "",
+                "emergency_shelter",
+                "foundation,weatherproofing,site_selection"
+            ),
+            new SearchResult(
+                "Primitive Shelter Construction Techniques",
+                "",
+                "Pile leaves and boughs over a small frame.",
+                "",
+                "GD-345",
+                "Debris Hut (Emergency Shelter)",
+                "survival",
+                "lexical"
+            )
         );
     }
 
