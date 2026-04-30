@@ -45,6 +45,7 @@ import android.widget.Toast;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.PopupMenu;
 import androidx.compose.ui.platform.ComposeView;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.core.view.ViewCompat;
@@ -140,6 +141,8 @@ public final class DetailActivity extends AppCompatActivity {
     private static final String RAIN_SHELTER_PHONE_RELATED_CANONICAL_GUIDE_ID = "GD-027";
     private static final String RAIN_SHELTER_PHONE_RELATED_DISPLACED_GUIDE_ID = "GD-109";
     private static final int ANSWER_MODE_PHONE_VISIBLE_RELATED_GUIDE_COUNT = 4;
+    private static final int DETAIL_OVERFLOW_MENU_SAVE_GUIDE_ID = 1;
+    private static final int DETAIL_OVERFLOW_MENU_HOME_ID = 2;
     private static final String EXTRA_TITLE = "title";
     private static final String EXTRA_SUBTITLE = "subtitle";
     private static final String EXTRA_BODY = "body";
@@ -8281,7 +8284,13 @@ public final class DetailActivity extends AppCompatActivity {
             String pinnableGuideId = resolvePinnableGuideId();
             boolean compactPhoneAnswerChrome = shouldUseCompactPhoneAnswerChrome();
             boolean guidePhoneChrome = !answerMode && isCompactPortraitPhoneLayout();
-            boolean pinVisible = !pinnableGuideId.isEmpty() && !compactPhoneAnswerChrome;
+            boolean overflowVisible = shouldShowDetailOverflowAction(
+                answerMode,
+                phoneXmlDetailLayoutActive(),
+                isCompactPortraitPhoneLayout(),
+                pinnableGuideId
+            );
+            boolean pinVisible = !pinnableGuideId.isEmpty() && !compactPhoneAnswerChrome && !overflowVisible;
             boolean pinActive = pinVisible && PinnedGuideStore.contains(this, pinnableGuideId);
             rev03TopBarHost.setTopBarState(
                 buildRev03TopBarTitle(),
@@ -8291,7 +8300,7 @@ public final class DetailActivity extends AppCompatActivity {
                 pinVisible,
                 pinActive,
                 answerMode && !buildTranscriptExportText().isEmpty(),
-                shouldShowDetailOverflowAction(),
+                overflowVisible,
                 shouldAllowRev03TopBarTitleWrap() ? 2 : 1,
                 getString(resolveDetailVisibleBackContentDescriptionResource(isTaskRoot())),
                 getString(R.string.detail_home_content_description),
@@ -8312,6 +8321,8 @@ public final class DetailActivity extends AppCompatActivity {
                         togglePinnedGuide();
                     } else if (action == TopBarActionKind.Share) {
                         shareTranscriptFromDetail();
+                    } else if (action == TopBarActionKind.Overflow) {
+                        showDetailOverflowMenu();
                     }
                 }
             );
@@ -8625,6 +8636,60 @@ public final class DetailActivity extends AppCompatActivity {
 
     static boolean shouldShowDetailOverflowAction() {
         return false;
+    }
+
+    static boolean shouldShowDetailOverflowAction(
+        boolean answerMode,
+        boolean phoneXmlDetailLayoutActive,
+        boolean compactPortraitPhone,
+        String pinnableGuideId
+    ) {
+        return !answerMode
+            && phoneXmlDetailLayoutActive
+            && compactPortraitPhone
+            && !safe(pinnableGuideId).trim().isEmpty();
+    }
+
+    private void showDetailOverflowMenu() {
+        if (rev03TopBarHost == null) {
+            return;
+        }
+        String guideId = resolvePinnableGuideId();
+        if (!shouldShowDetailOverflowAction(
+            answerMode,
+            phoneXmlDetailLayoutActive(),
+            isCompactPortraitPhoneLayout(),
+            guideId
+        )) {
+            return;
+        }
+        PopupMenu menu = new PopupMenu(this, rev03TopBarHost);
+        boolean pinned = PinnedGuideStore.contains(this, guideId);
+        menu.getMenu().add(
+            0,
+            DETAIL_OVERFLOW_MENU_SAVE_GUIDE_ID,
+            0,
+            getString(pinned ? R.string.detail_unpin : R.string.detail_pin)
+        );
+        menu.getMenu().add(
+            0,
+            DETAIL_OVERFLOW_MENU_HOME_ID,
+            1,
+            getString(R.string.home_button)
+        );
+        menu.setOnMenuItemClickListener(item -> {
+            int itemId = item.getItemId();
+            if (itemId == DETAIL_OVERFLOW_MENU_SAVE_GUIDE_ID) {
+                togglePinnedGuide();
+                return true;
+            }
+            if (itemId == DETAIL_OVERFLOW_MENU_HOME_ID) {
+                navigateHomeFromDetail();
+                return true;
+            }
+            return false;
+        });
+        menu.show();
     }
 
     private void shareTranscriptFromDetail() {
@@ -9908,39 +9973,39 @@ public final class DetailActivity extends AppCompatActivity {
 
     static int resolvePhoneGuideBodyShellBottomPaddingDp(boolean singlePaperPhoneGuide, boolean landscapePhone) {
         if (singlePaperPhoneGuide) {
-            return landscapePhone ? 18 : 30;
+            return landscapePhone ? 14 : 24;
         }
         return landscapePhone ? 16 : 18;
     }
 
     static int resolvePhoneGuideBodyShellHorizontalPaddingDp(boolean singlePaperPhoneGuide, boolean landscapePhone) {
         if (singlePaperPhoneGuide) {
-            return landscapePhone ? 18 : 22;
+            return landscapePhone ? 16 : 18;
         }
         return landscapePhone ? 16 : 18;
     }
 
     static int resolvePhoneGuideBodyShellTopPaddingDp(boolean singlePaperPhoneGuide, boolean landscapePhone) {
         if (singlePaperPhoneGuide) {
-            return landscapePhone ? 8 : 14;
+            return landscapePhone ? 6 : 10;
         }
         return landscapePhone ? 12 : 14;
     }
 
     static int resolvePhoneGuideBodyLineSpacingExtraDp(boolean landscapePhone) {
-        return landscapePhone ? 3 : 4;
+        return landscapePhone ? 2 : 3;
     }
 
     static int resolvePhoneGuideViewportHorizontalPaddingDp(boolean landscapePhone) {
-        return landscapePhone ? 6 : 10;
+        return landscapePhone ? 5 : 8;
     }
 
     static int resolvePhoneGuideViewportTopPaddingDp(boolean landscapePhone) {
-        return landscapePhone ? 4 : 10;
+        return landscapePhone ? 3 : 8;
     }
 
     static int resolvePhoneGuidePaperBottomViewportInsetDp(boolean landscapePhone) {
-        return landscapePhone ? 8 : 10;
+        return landscapePhone ? 6 : 8;
     }
 
     static int resolvePhoneGuideAnswerBubbleTopMarginDp(boolean landscapePhone) {
@@ -9948,7 +10013,7 @@ public final class DetailActivity extends AppCompatActivity {
     }
 
     static float resolvePhoneGuideBodyTextSizeSp(boolean landscapePhone) {
-        return landscapePhone ? 16.0f : 16.5f;
+        return landscapePhone ? 15.0f : 15.5f;
     }
 
     private void restoreAnswerSemanticPresentation() {

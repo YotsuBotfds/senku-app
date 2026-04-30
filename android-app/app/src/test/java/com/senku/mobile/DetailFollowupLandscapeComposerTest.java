@@ -336,22 +336,22 @@ public final class DetailFollowupLandscapeComposerTest {
 
     @Test
     public void phoneGuidePaperKeepsExtraBottomBreathingRoomForRequiredReadingRows() {
-        assertEquals(30, DetailActivity.resolvePhoneGuideBodyShellBottomPaddingDp(true, false));
-        assertEquals(18, DetailActivity.resolvePhoneGuideBodyShellBottomPaddingDp(true, true));
+        assertEquals(24, DetailActivity.resolvePhoneGuideBodyShellBottomPaddingDp(true, false));
+        assertEquals(14, DetailActivity.resolvePhoneGuideBodyShellBottomPaddingDp(true, true));
         assertEquals(18, DetailActivity.resolvePhoneGuideBodyShellBottomPaddingDp(false, false));
         assertEquals(16, DetailActivity.resolvePhoneGuideBodyShellBottomPaddingDp(false, true));
-        assertEquals(22, DetailActivity.resolvePhoneGuideBodyShellHorizontalPaddingDp(true, false));
-        assertEquals(18, DetailActivity.resolvePhoneGuideBodyShellHorizontalPaddingDp(true, true));
-        assertEquals(14, DetailActivity.resolvePhoneGuideBodyShellTopPaddingDp(true, false));
-        assertEquals(8, DetailActivity.resolvePhoneGuideBodyShellTopPaddingDp(true, true));
-        assertEquals(4, DetailActivity.resolvePhoneGuideBodyLineSpacingExtraDp(false));
-        assertEquals(3, DetailActivity.resolvePhoneGuideBodyLineSpacingExtraDp(true));
-        assertEquals(10, DetailActivity.resolvePhoneGuideViewportHorizontalPaddingDp(false));
-        assertEquals(6, DetailActivity.resolvePhoneGuideViewportHorizontalPaddingDp(true));
-        assertEquals(10, DetailActivity.resolvePhoneGuideViewportTopPaddingDp(false));
-        assertEquals(4, DetailActivity.resolvePhoneGuideViewportTopPaddingDp(true));
-        assertEquals(10, DetailActivity.resolvePhoneGuidePaperBottomViewportInsetDp(false));
-        assertEquals(8, DetailActivity.resolvePhoneGuidePaperBottomViewportInsetDp(true));
+        assertEquals(18, DetailActivity.resolvePhoneGuideBodyShellHorizontalPaddingDp(true, false));
+        assertEquals(16, DetailActivity.resolvePhoneGuideBodyShellHorizontalPaddingDp(true, true));
+        assertEquals(10, DetailActivity.resolvePhoneGuideBodyShellTopPaddingDp(true, false));
+        assertEquals(6, DetailActivity.resolvePhoneGuideBodyShellTopPaddingDp(true, true));
+        assertEquals(3, DetailActivity.resolvePhoneGuideBodyLineSpacingExtraDp(false));
+        assertEquals(2, DetailActivity.resolvePhoneGuideBodyLineSpacingExtraDp(true));
+        assertEquals(8, DetailActivity.resolvePhoneGuideViewportHorizontalPaddingDp(false));
+        assertEquals(5, DetailActivity.resolvePhoneGuideViewportHorizontalPaddingDp(true));
+        assertEquals(8, DetailActivity.resolvePhoneGuideViewportTopPaddingDp(false));
+        assertEquals(3, DetailActivity.resolvePhoneGuideViewportTopPaddingDp(true));
+        assertEquals(8, DetailActivity.resolvePhoneGuidePaperBottomViewportInsetDp(false));
+        assertEquals(6, DetailActivity.resolvePhoneGuidePaperBottomViewportInsetDp(true));
     }
 
     @Test

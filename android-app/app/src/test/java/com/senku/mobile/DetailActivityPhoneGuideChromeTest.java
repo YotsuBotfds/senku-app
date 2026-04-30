@@ -42,28 +42,37 @@ public final class DetailActivityPhoneGuideChromeTest {
 
     @Test
     public void guidePhoneViewportUsesTargetPaperInsets() {
-        assertEquals(4, DetailActivity.resolvePhoneGuideViewportTopPaddingDp(true));
-        assertEquals(6, DetailActivity.resolvePhoneGuideViewportHorizontalPaddingDp(true));
-        assertEquals(10, DetailActivity.resolvePhoneGuideViewportTopPaddingDp(false));
-        assertEquals(10, DetailActivity.resolvePhoneGuideViewportHorizontalPaddingDp(false));
-        assertEquals(8, DetailActivity.resolvePhoneGuidePaperBottomViewportInsetDp(true));
-        assertEquals(10, DetailActivity.resolvePhoneGuidePaperBottomViewportInsetDp(false));
+        assertEquals(3, DetailActivity.resolvePhoneGuideViewportTopPaddingDp(true));
+        assertEquals(5, DetailActivity.resolvePhoneGuideViewportHorizontalPaddingDp(true));
+        assertEquals(8, DetailActivity.resolvePhoneGuideViewportTopPaddingDp(false));
+        assertEquals(8, DetailActivity.resolvePhoneGuideViewportHorizontalPaddingDp(false));
+        assertEquals(6, DetailActivity.resolvePhoneGuidePaperBottomViewportInsetDp(true));
+        assertEquals(8, DetailActivity.resolvePhoneGuidePaperBottomViewportInsetDp(false));
     }
 
     @Test
     public void singlePaperPhoneGuideShellGetsFullWidthPaperDensity() {
-        assertEquals(18, DetailActivity.resolvePhoneGuideBodyShellHorizontalPaddingDp(true, true));
-        assertEquals(22, DetailActivity.resolvePhoneGuideBodyShellHorizontalPaddingDp(true, false));
-        assertEquals(8, DetailActivity.resolvePhoneGuideBodyShellTopPaddingDp(true, true));
-        assertEquals(14, DetailActivity.resolvePhoneGuideBodyShellTopPaddingDp(true, false));
-        assertEquals(18, DetailActivity.resolvePhoneGuideBodyShellBottomPaddingDp(true, true));
-        assertEquals(30, DetailActivity.resolvePhoneGuideBodyShellBottomPaddingDp(true, false));
-        assertEquals(3, DetailActivity.resolvePhoneGuideBodyLineSpacingExtraDp(true));
-        assertEquals(4, DetailActivity.resolvePhoneGuideBodyLineSpacingExtraDp(false));
+        assertEquals(16, DetailActivity.resolvePhoneGuideBodyShellHorizontalPaddingDp(true, true));
+        assertEquals(18, DetailActivity.resolvePhoneGuideBodyShellHorizontalPaddingDp(true, false));
+        assertEquals(6, DetailActivity.resolvePhoneGuideBodyShellTopPaddingDp(true, true));
+        assertEquals(10, DetailActivity.resolvePhoneGuideBodyShellTopPaddingDp(true, false));
+        assertEquals(14, DetailActivity.resolvePhoneGuideBodyShellBottomPaddingDp(true, true));
+        assertEquals(24, DetailActivity.resolvePhoneGuideBodyShellBottomPaddingDp(true, false));
+        assertEquals(2, DetailActivity.resolvePhoneGuideBodyLineSpacingExtraDp(true));
+        assertEquals(3, DetailActivity.resolvePhoneGuideBodyLineSpacingExtraDp(false));
         assertEquals(0, DetailActivity.resolvePhoneGuideAnswerBubbleTopMarginDp(true));
         assertEquals(4, DetailActivity.resolvePhoneGuideAnswerBubbleTopMarginDp(false));
-        assertEquals(16.0f, DetailActivity.resolvePhoneGuideBodyTextSizeSp(true), 0.001f);
-        assertEquals(16.5f, DetailActivity.resolvePhoneGuideBodyTextSizeSp(false), 0.001f);
+        assertEquals(15.0f, DetailActivity.resolvePhoneGuideBodyTextSizeSp(true), 0.001f);
+        assertEquals(15.5f, DetailActivity.resolvePhoneGuideBodyTextSizeSp(false), 0.001f);
+    }
+
+    @Test
+    public void phonePortraitGuideOverflowOnlyShowsWhenBackedByGuideActions() {
+        assertTrue(DetailActivity.shouldShowDetailOverflowAction(false, true, true, "GD-132"));
+        assertFalse(DetailActivity.shouldShowDetailOverflowAction(true, true, true, "GD-132"));
+        assertFalse(DetailActivity.shouldShowDetailOverflowAction(false, false, true, "GD-132"));
+        assertFalse(DetailActivity.shouldShowDetailOverflowAction(false, true, false, "GD-132"));
+        assertFalse(DetailActivity.shouldShowDetailOverflowAction(false, true, true, ""));
     }
 
     @Test
