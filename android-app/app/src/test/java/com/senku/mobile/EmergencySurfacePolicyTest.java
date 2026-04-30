@@ -291,6 +291,44 @@ public final class EmergencySurfacePolicyTest {
     }
 
     @Test
+    public void emergencyComposerContextUsesReviewedCardGuideIdWhenNotGd132() {
+        ReviewedCardMetadata metadata = reviewedMetadata(
+            "poisoning_unknown_ingestion",
+            "GD-898",
+            "pilot_reviewed",
+            "GD-898"
+        );
+
+        assertEquals(
+            "EMERGENCY CONTEXT \u2022 GD-898 ANCHOR",
+            DetailActivity.buildEmergencyDockedComposerContextHint(metadata, List.of(), "")
+        );
+    }
+
+    @Test
+    public void emergencyComposerContextFallsBackToSourceMetadataThenGeneric() {
+        List<SearchResult> sources = List.of(new SearchResult(
+            "Poisoning first response",
+            "Offline answer | deterministic | instant",
+            "Call poison control and monitor airway.",
+            "Emergency poisoning response.",
+            "GD-284",
+            "Poisoning First Response",
+            "Pediatric Emergency Medicine",
+            "reviewed"
+        ));
+
+        assertEquals(
+            "EMERGENCY CONTEXT \u2022 GD-284 ANCHOR",
+            DetailActivity.buildEmergencyDockedComposerContextHint(ReviewedCardMetadata.empty(), sources, "")
+        );
+        assertEquals(
+            "EMERGENCY CONTEXT",
+            DetailActivity.buildEmergencyDockedComposerContextHint(ReviewedCardMetadata.empty(), List.of(), "")
+        );
+    }
+
+    @Test
     public void emergencyPortraitSpacingKeepsActionRowsAndProofCardReadable() {
         assertEquals(10, DetailActivity.resolveEmergencyActionRowGapDp(false));
         assertEquals(14, DetailActivity.resolveEmergencyProofCardHorizontalPaddingDp(false));

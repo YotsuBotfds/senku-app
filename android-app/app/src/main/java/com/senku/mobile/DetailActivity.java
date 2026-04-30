@@ -3923,7 +3923,11 @@ public final class DetailActivity extends AppCompatActivity {
         }
         String guideId = resolveDisplayGuideId();
         if (isCurrentEmergencySurfaceEligible()) {
-            return buildEmergencyDockedComposerContextHint(guideId);
+            return buildEmergencyDockedComposerContextHint(
+                reviewedCardMetadataBridge.current(),
+                currentSources,
+                guideId
+            );
         }
         if (isCurrentThreadDetailRoute()) {
             return buildThreadDockedComposerContextHint(
@@ -3951,6 +3955,36 @@ public final class DetailActivity extends AppCompatActivity {
             return "EMERGENCY CONTEXT";
         }
         return "EMERGENCY CONTEXT" + HEADER_BULLET + cleanGuideId + " ANCHOR";
+    }
+
+    static String buildEmergencyDockedComposerContextHint(
+        ReviewedCardMetadata reviewedCardMetadata,
+        List<SearchResult> sources,
+        String fallbackGuideId
+    ) {
+        return buildEmergencyDockedComposerContextHint(
+            resolveEmergencyComposerGuideId(reviewedCardMetadata, sources, fallbackGuideId)
+        );
+    }
+
+    static String resolveEmergencyComposerGuideId(
+        ReviewedCardMetadata reviewedCardMetadata,
+        List<SearchResult> sources,
+        String fallbackGuideId
+    ) {
+        ReviewedCardMetadata metadata = ReviewedCardMetadata.normalize(reviewedCardMetadata);
+        String cardGuideId = safe(metadata.cardGuideId).trim();
+        if (!cardGuideId.isEmpty()) {
+            return cardGuideId;
+        }
+        if (!metadata.citedReviewedSourceGuideIds.isEmpty()) {
+            return metadata.citedReviewedSourceGuideIds.get(0);
+        }
+        String sourceGuideId = primaryGuideIdForSources(sources);
+        if (!sourceGuideId.isEmpty()) {
+            return sourceGuideId;
+        }
+        return safe(fallbackGuideId).trim();
     }
 
     static String buildThreadDockedComposerContextHint(String guideId, int totalTurnCount) {
@@ -11169,7 +11203,11 @@ public final class DetailActivity extends AppCompatActivity {
     private void refreshFollowUpCopy() {
         if (followUpTitleText != null) {
             followUpTitleText.setText(isCurrentEmergencySurfaceEligible()
-                ? "EMERGENCY CONTEXT \u00b7 GD-132 ANCHOR"
+                ? buildEmergencyDockedComposerContextHint(
+                    reviewedCardMetadataBridge.current(),
+                    currentSources,
+                    resolveDisplayGuideId()
+                )
                 : getString(R.string.detail_loop4_followup_title));
         }
         if (followUpSubtitleText != null) {
