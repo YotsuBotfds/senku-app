@@ -167,6 +167,30 @@ public final class MainActivityPhoneNavigationTest {
     }
 
     @Test
+    public void phoneFlowIntentPredicatesAreMutuallyExclusiveForEveryDestination() {
+        for (BottomTabDestination destination : BottomTabDestination.values()) {
+            int matchingPredicateCount = 0;
+            if (MainActivity.isLibraryPhoneFlowIntent(destination)) {
+                matchingPredicateCount++;
+                assertEquals(BottomTabDestination.HOME, MainActivity.phoneTabSelectionOwner(destination));
+            }
+            if (MainActivity.isAskPhoneFlowIntent(destination)) {
+                matchingPredicateCount++;
+                assertEquals(BottomTabDestination.ASK, MainActivity.phoneTabSelectionOwner(destination));
+            }
+            if (MainActivity.isSavedPhoneFlowIntent(destination)) {
+                matchingPredicateCount++;
+                assertEquals(BottomTabDestination.PINS, MainActivity.phoneTabSelectionOwner(destination));
+            }
+
+            assertEquals(1, matchingPredicateCount);
+            assertTrue(MainActivity.buildVisiblePhoneTabDestinations().contains(
+                MainActivity.phoneTabSelectionOwner(destination)
+            ));
+        }
+    }
+
+    @Test
     public void restoredPhoneTabUsesVisibleSelectionOwner() {
         assertEquals(
             BottomTabDestination.ASK,

@@ -147,13 +147,16 @@ public final class DetailActivity extends AppCompatActivity {
     private static final int EMERGENCY_PORTRAIT_PROOF_CARD_HORIZONTAL_PADDING_DP = 14;
     private static final int EMERGENCY_PORTRAIT_PROOF_CARD_VERTICAL_PADDING_DP = 10;
     private static final int TABLET_EMERGENCY_ACTION_ROW_GAP_DP = 8;
-    private static final int TABLET_EMERGENCY_PROOF_CARD_HORIZONTAL_PADDING_DP = 24;
-    private static final int TABLET_EMERGENCY_PROOF_CARD_VERTICAL_PADDING_DP = 18;
-    private static final int TABLET_EMERGENCY_PROOF_CARD_ACCENT_RAIL_WIDTH_DP = 7;
-    private static final int TABLET_EMERGENCY_PROOF_CARD_CORNER_RADIUS_DP = 12;
-    private static final int TABLET_EMERGENCY_PROOF_CARD_STROKE_WIDTH_DP = 1;
-    private static final int TABLET_EMERGENCY_PROOF_CARD_MIN_HEIGHT_DP = 112;
-    private static final int TABLET_EMERGENCY_PROOF_CARD_TOP_MARGIN_DP = 18;
+    private static final int TABLET_EMERGENCY_DANGER_BAND_HORIZONTAL_BLEED_DP =
+        TABLET_EMERGENCY_PORTRAIT_HORIZONTAL_PADDING_DP;
+    private static final int TABLET_EMERGENCY_PROOF_CARD_HORIZONTAL_PADDING_DP = 18;
+    private static final int TABLET_EMERGENCY_PROOF_CARD_VERTICAL_PADDING_DP = 12;
+    private static final int TABLET_EMERGENCY_PROOF_CARD_ACCENT_RAIL_WIDTH_DP = 4;
+    private static final int TABLET_EMERGENCY_PROOF_CARD_CORNER_RADIUS_DP = 0;
+    private static final int TABLET_EMERGENCY_PROOF_CARD_STROKE_WIDTH_DP = 0;
+    private static final int TABLET_EMERGENCY_PROOF_CARD_MIN_HEIGHT_DP = 74;
+    private static final int TABLET_EMERGENCY_PROOF_CARD_TOP_MARGIN_DP = 8;
+    private static final int TABLET_EMERGENCY_PROOF_HEADER_TOP_MARGIN_DP = 16;
     private static final float TABLET_EMERGENCY_PROOF_CARD_SCORE_TEXT_SIZE_SP = 13.0f;
     private static final Pattern GUIDE_HTML_BREAK_PATTERN = Pattern.compile("(?i)<br\\s*/?>");
     private static final Pattern SOURCE_COUNT_TOKEN_PATTERN = Pattern.compile("(?i)\\b(\\d+)\\s+sources?\\b");
@@ -216,6 +219,7 @@ public final class DetailActivity extends AppCompatActivity {
     private View tabletEmergencyChromeOverlayRule;
     private LinearLayout tabletEmergencyDangerOverlayPanel;
     private LinearLayout tabletEmergencyActionsOverlayPanel;
+    private LinearLayout tabletEmergencyProofOverlayHeaderRow;
     private LinearLayout tabletEmergencyProofOverlayPanel;
     private LinearLayout tabletEmergencyProofOverlayContentColumn;
     private TextView tabletEmergencyProofOverlayTitle;
@@ -1876,10 +1880,12 @@ public final class DetailActivity extends AppCompatActivity {
         tabletEmergencyDangerOverlayPanel.setOrientation(LinearLayout.VERTICAL);
         tabletEmergencyDangerOverlayPanel.setBackgroundResource(R.drawable.bg_emergency_banner);
         tabletEmergencyDangerOverlayPanel.setPadding(dp(24), dp(18), dp(24), dp(20));
-        overlay.addView(tabletEmergencyDangerOverlayPanel, new LinearLayout.LayoutParams(
+        LinearLayout.LayoutParams dangerParams = new LinearLayout.LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT,
             ViewGroup.LayoutParams.WRAP_CONTENT
-        ));
+        );
+        applyTabletEmergencyDangerBandMargins(dangerParams);
+        overlay.addView(tabletEmergencyDangerOverlayPanel, dangerParams);
 
         TextView title = new TextView(this);
         title.setId(R.id.detail_emergency_header_title);
@@ -1915,11 +1921,48 @@ public final class DetailActivity extends AppCompatActivity {
         actionsParams.topMargin = dp(16);
         overlay.addView(tabletEmergencyActionsOverlayPanel, actionsParams);
 
+        tabletEmergencyProofOverlayHeaderRow = new LinearLayout(this);
+        tabletEmergencyProofOverlayHeaderRow.setOrientation(LinearLayout.HORIZONTAL);
+        tabletEmergencyProofOverlayHeaderRow.setGravity(Gravity.CENTER_VERTICAL);
+        tabletEmergencyProofOverlayHeaderRow.setVisibility(View.GONE);
+
+        tabletEmergencyProofOverlayTitle = new TextView(this);
+        tabletEmergencyProofOverlayTitle.setText(buildEmergencyWhyTitle());
+        tabletEmergencyProofOverlayTitle.setTextColor(getColor(R.color.senku_rev03_ink_0));
+        tabletEmergencyProofOverlayTitle.setTypeface(rev03MonoTypeface(Typeface.BOLD));
+        tabletEmergencyProofOverlayTitle.setTextSize(12f);
+        tabletEmergencyProofOverlayTitle.setLetterSpacing(0.10f);
+        tabletEmergencyProofOverlayHeaderRow.addView(tabletEmergencyProofOverlayTitle, new LinearLayout.LayoutParams(
+            0,
+            ViewGroup.LayoutParams.WRAP_CONTENT,
+            1f
+        ));
+
+        tabletEmergencyProofOverlayScore = new TextView(this);
+        tabletEmergencyProofOverlayScore.setTextColor(getColor(resolveTabletEmergencyProofCardAccentColorRes()));
+        tabletEmergencyProofOverlayScore.setTypeface(rev03MonoTypeface(Typeface.BOLD));
+        tabletEmergencyProofOverlayScore.setTextSize(resolveTabletEmergencyProofCardScoreTextSizeSp());
+        tabletEmergencyProofOverlayScore.setGravity(Gravity.END);
+        tabletEmergencyProofOverlayScore.setMaxLines(1);
+        tabletEmergencyProofOverlayScore.setVisibility(View.GONE);
+        tabletEmergencyProofOverlayHeaderRow.addView(tabletEmergencyProofOverlayScore, new LinearLayout.LayoutParams(
+            ViewGroup.LayoutParams.WRAP_CONTENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        ));
+
+        LinearLayout.LayoutParams proofHeaderParams = new LinearLayout.LayoutParams(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        );
+        proofHeaderParams.topMargin = dp(resolveTabletEmergencyProofHeaderTopMarginDp());
+        overlay.addView(tabletEmergencyProofOverlayHeaderRow, proofHeaderParams);
+
         tabletEmergencyProofOverlayPanel = new LinearLayout(this);
         tabletEmergencyProofOverlayPanel.setOrientation(LinearLayout.HORIZONTAL);
         tabletEmergencyProofOverlayPanel.setGravity(Gravity.CENTER_VERTICAL);
         tabletEmergencyProofOverlayPanel.setBackground(buildTabletEmergencyProofCardBackground());
         tabletEmergencyProofOverlayPanel.setMinimumHeight(dp(resolveTabletEmergencyProofCardMinHeightDp()));
+        tabletEmergencyProofOverlayPanel.setVisibility(View.GONE);
         tabletEmergencyProofOverlayPanel.setPadding(0, 0, 0, 0);
         View proofAccentRail = new View(this);
         proofAccentRail.setBackgroundColor(getColor(resolveTabletEmergencyProofCardAccentColorRes()));
@@ -1942,38 +1985,6 @@ public final class DetailActivity extends AppCompatActivity {
             1f
         ));
 
-        LinearLayout proofHeaderRow = new LinearLayout(this);
-        proofHeaderRow.setOrientation(LinearLayout.HORIZONTAL);
-        proofHeaderRow.setGravity(Gravity.CENTER_VERTICAL);
-
-        tabletEmergencyProofOverlayTitle = new TextView(this);
-        tabletEmergencyProofOverlayTitle.setText(buildEmergencyWhyTitle());
-        tabletEmergencyProofOverlayTitle.setTextColor(getColor(R.color.senku_rev03_ink_2));
-        tabletEmergencyProofOverlayTitle.setTypeface(rev03MonoTypeface(Typeface.BOLD));
-        tabletEmergencyProofOverlayTitle.setTextSize(11f);
-        tabletEmergencyProofOverlayTitle.setLetterSpacing(0.08f);
-        proofHeaderRow.addView(tabletEmergencyProofOverlayTitle, new LinearLayout.LayoutParams(
-            0,
-            ViewGroup.LayoutParams.WRAP_CONTENT,
-            1f
-        ));
-
-        tabletEmergencyProofOverlayScore = new TextView(this);
-        tabletEmergencyProofOverlayScore.setTextColor(getColor(resolveTabletEmergencyProofCardAccentColorRes()));
-        tabletEmergencyProofOverlayScore.setTypeface(rev03MonoTypeface(Typeface.BOLD));
-        tabletEmergencyProofOverlayScore.setTextSize(resolveTabletEmergencyProofCardScoreTextSizeSp());
-        tabletEmergencyProofOverlayScore.setGravity(Gravity.END);
-        tabletEmergencyProofOverlayScore.setMaxLines(1);
-        tabletEmergencyProofOverlayScore.setVisibility(View.GONE);
-        proofHeaderRow.addView(tabletEmergencyProofOverlayScore, new LinearLayout.LayoutParams(
-            ViewGroup.LayoutParams.WRAP_CONTENT,
-            ViewGroup.LayoutParams.WRAP_CONTENT
-        ));
-        tabletEmergencyProofOverlayContentColumn.addView(proofHeaderRow, new LinearLayout.LayoutParams(
-            ViewGroup.LayoutParams.MATCH_PARENT,
-            ViewGroup.LayoutParams.WRAP_CONTENT
-        ));
-
         tabletEmergencyProofOverlayText = new TextView(this);
         tabletEmergencyProofOverlayText.setTextColor(getColor(R.color.senku_rev03_ink_0));
         tabletEmergencyProofOverlayText.setTextSize(13f);
@@ -1984,7 +1995,6 @@ public final class DetailActivity extends AppCompatActivity {
             ViewGroup.LayoutParams.MATCH_PARENT,
             ViewGroup.LayoutParams.WRAP_CONTENT
         );
-        proofTextParams.topMargin = dp(6);
         tabletEmergencyProofOverlayContentColumn.addView(tabletEmergencyProofOverlayText, proofTextParams);
 
         LinearLayout.LayoutParams proofParams = new LinearLayout.LayoutParams(
@@ -2363,6 +2373,12 @@ public final class DetailActivity extends AppCompatActivity {
                 isTabletPortraitLayout() ? dp(24) : dp(18),
                 isTabletPortraitLayout() ? dp(20) : dp(12)
             );
+            ViewGroup.LayoutParams rawDangerParams = tabletEmergencyDangerOverlayPanel.getLayoutParams();
+            if (rawDangerParams instanceof LinearLayout.LayoutParams) {
+                LinearLayout.LayoutParams dangerParams = (LinearLayout.LayoutParams) rawDangerParams;
+                applyTabletEmergencyDangerBandMargins(dangerParams);
+                tabletEmergencyDangerOverlayPanel.setLayoutParams(dangerParams);
+            }
         }
         ViewGroup.LayoutParams currentParams = overlay.getLayoutParams();
         if (currentParams instanceof FrameLayout.LayoutParams) {
@@ -2377,6 +2393,15 @@ public final class DetailActivity extends AppCompatActivity {
             overlay.setLayoutParams(params);
         }
         updateTabletEmergencyAppRailOverlayLayout(overlay);
+    }
+
+    private void applyTabletEmergencyDangerBandMargins(LinearLayout.LayoutParams params) {
+        if (params == null) {
+            return;
+        }
+        int horizontalBleed = resolveTabletEmergencyDangerBandHorizontalBleedDp(isTabletPortraitLayout());
+        params.leftMargin = -dp(horizontalBleed);
+        params.rightMargin = -dp(horizontalBleed);
     }
 
     private void updateTabletEmergencyAppRailOverlayLayout(LinearLayout overlay) {
@@ -2452,6 +2477,10 @@ public final class DetailActivity extends AppCompatActivity {
 
     static int resolveTabletEmergencyChromeRuleHorizontalInsetDp(boolean tabletPortrait) {
         return tabletPortrait ? -TABLET_EMERGENCY_PORTRAIT_HORIZONTAL_PADDING_DP : -18;
+    }
+
+    static int resolveTabletEmergencyDangerBandHorizontalBleedDp(boolean tabletPortrait) {
+        return tabletPortrait ? TABLET_EMERGENCY_DANGER_BAND_HORIZONTAL_BLEED_DP : 0;
     }
 
     static int resolveTabletEmergencyAppRailWidthDp() {
@@ -2569,8 +2598,14 @@ public final class DetailActivity extends AppCompatActivity {
             return;
         }
         if (!isTabletEmergencyFullHeightPage() || currentSources == null || currentSources.isEmpty()) {
+            if (tabletEmergencyProofOverlayHeaderRow != null) {
+                tabletEmergencyProofOverlayHeaderRow.setVisibility(View.GONE);
+            }
             tabletEmergencyProofOverlayPanel.setVisibility(View.GONE);
             return;
+        }
+        if (tabletEmergencyProofOverlayHeaderRow != null) {
+            tabletEmergencyProofOverlayHeaderRow.setVisibility(View.VISIBLE);
         }
         tabletEmergencyProofOverlayPanel.setVisibility(View.VISIBLE);
         tabletEmergencyProofOverlayPanel.setBackground(buildTabletEmergencyProofCardBackground());
@@ -2602,10 +2637,13 @@ public final class DetailActivity extends AppCompatActivity {
         GradientDrawable background = new GradientDrawable();
         background.setColor(getColor(resolveTabletEmergencyProofCardSurfaceColorRes()));
         background.setCornerRadius(dp(resolveTabletEmergencyProofCardCornerRadiusDp()));
-        background.setStroke(
-            dp(resolveTabletEmergencyProofCardStrokeWidthDp()),
-            getColor(resolveTabletEmergencyProofCardStrokeColorRes())
-        );
+        int strokeWidth = resolveTabletEmergencyProofCardStrokeWidthDp();
+        if (strokeWidth > 0) {
+            background.setStroke(
+                dp(strokeWidth),
+                getColor(resolveTabletEmergencyProofCardStrokeColorRes())
+            );
+        }
         return background;
     }
 
@@ -2625,6 +2663,7 @@ public final class DetailActivity extends AppCompatActivity {
         tabletEmergencyChromeOverlayMeta = null;
         tabletEmergencyDangerOverlayPanel = null;
         tabletEmergencyActionsOverlayPanel = null;
+        tabletEmergencyProofOverlayHeaderRow = null;
         tabletEmergencyProofOverlayPanel = null;
         tabletEmergencyProofOverlayContentColumn = null;
         tabletEmergencyProofOverlayTitle = null;
@@ -10075,7 +10114,7 @@ public final class DetailActivity extends AppCompatActivity {
     }
 
     static int resolveTabletEmergencyProofCardSurfaceColorRes() {
-        return R.color.senku_rev03_olive_10;
+        return R.color.senku_rev03_bg_1;
     }
 
     static int resolveTabletEmergencyProofCardAccentColorRes() {
@@ -10083,7 +10122,7 @@ public final class DetailActivity extends AppCompatActivity {
     }
 
     static int resolveTabletEmergencyProofCardStrokeColorRes() {
-        return R.color.senku_rev03_olive_40;
+        return R.color.senku_rev03_hairline_strong;
     }
 
     static int resolveTabletEmergencyProofCardAccentRailWidthDp() {
@@ -10104,6 +10143,10 @@ public final class DetailActivity extends AppCompatActivity {
 
     static int resolveTabletEmergencyProofCardTopMarginDp() {
         return TABLET_EMERGENCY_PROOF_CARD_TOP_MARGIN_DP;
+    }
+
+    static int resolveTabletEmergencyProofHeaderTopMarginDp() {
+        return TABLET_EMERGENCY_PROOF_HEADER_TOP_MARGIN_DP;
     }
 
     static float resolveTabletEmergencyProofCardScoreTextSizeSp() {

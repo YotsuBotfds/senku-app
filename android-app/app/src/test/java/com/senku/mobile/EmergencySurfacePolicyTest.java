@@ -146,6 +146,8 @@ public final class EmergencySurfacePolicyTest {
         assertEquals(1, DetailActivity.resolveTabletEmergencyChromeRuleHeightDp());
         assertEquals(-16, DetailActivity.resolveTabletEmergencyChromeRuleHorizontalInsetDp(true));
         assertEquals(-18, DetailActivity.resolveTabletEmergencyChromeRuleHorizontalInsetDp(false));
+        assertEquals(16, DetailActivity.resolveTabletEmergencyDangerBandHorizontalBleedDp(true));
+        assertEquals(0, DetailActivity.resolveTabletEmergencyDangerBandHorizontalBleedDp(false));
     }
 
     @Test
@@ -297,22 +299,23 @@ public final class EmergencySurfacePolicyTest {
     }
 
     @Test
-    public void tabletEmergencySpacingUsesDenserRowsButRoomierProofCard() {
+    public void tabletEmergencySpacingUsesDenserRowsAndFlatterProofRow() {
         assertEquals(8, DetailActivity.resolveEmergencyActionRowGapDp(true));
-        assertEquals(24, DetailActivity.resolveEmergencyProofCardHorizontalPaddingDp(true));
-        assertEquals(18, DetailActivity.resolveEmergencyProofCardVerticalPaddingDp(true));
+        assertEquals(18, DetailActivity.resolveEmergencyProofCardHorizontalPaddingDp(true));
+        assertEquals(12, DetailActivity.resolveEmergencyProofCardVerticalPaddingDp(true));
+        assertEquals(16, DetailActivity.resolveTabletEmergencyProofHeaderTopMarginDp());
     }
 
     @Test
-    public void tabletEmergencyProofCardUsesProminentOliveSurfaceTokens() {
-        assertEquals(R.color.senku_rev03_olive_10, DetailActivity.resolveTabletEmergencyProofCardSurfaceColorRes());
+    public void tabletEmergencyProofCardUsesFlatSeparatedSurfaceTokens() {
+        assertEquals(R.color.senku_rev03_bg_1, DetailActivity.resolveTabletEmergencyProofCardSurfaceColorRes());
         assertEquals(R.color.senku_rev03_accent_moss, DetailActivity.resolveTabletEmergencyProofCardAccentColorRes());
-        assertEquals(R.color.senku_rev03_olive_40, DetailActivity.resolveTabletEmergencyProofCardStrokeColorRes());
-        assertEquals(7, DetailActivity.resolveTabletEmergencyProofCardAccentRailWidthDp());
-        assertEquals(12, DetailActivity.resolveTabletEmergencyProofCardCornerRadiusDp());
-        assertEquals(1, DetailActivity.resolveTabletEmergencyProofCardStrokeWidthDp());
-        assertEquals(112, DetailActivity.resolveTabletEmergencyProofCardMinHeightDp());
-        assertEquals(18, DetailActivity.resolveTabletEmergencyProofCardTopMarginDp());
+        assertEquals(R.color.senku_rev03_hairline_strong, DetailActivity.resolveTabletEmergencyProofCardStrokeColorRes());
+        assertEquals(4, DetailActivity.resolveTabletEmergencyProofCardAccentRailWidthDp());
+        assertEquals(0, DetailActivity.resolveTabletEmergencyProofCardCornerRadiusDp());
+        assertEquals(0, DetailActivity.resolveTabletEmergencyProofCardStrokeWidthDp());
+        assertEquals(74, DetailActivity.resolveTabletEmergencyProofCardMinHeightDp());
+        assertEquals(8, DetailActivity.resolveTabletEmergencyProofCardTopMarginDp());
         assertEquals(13.0f, DetailActivity.resolveTabletEmergencyProofCardScoreTextSizeSp(), 0.0f);
     }
 
