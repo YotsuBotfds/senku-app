@@ -449,6 +449,50 @@ public final class PromptHarnessSmokeTest {
     }
 
     @Test
+    public void savedTabEmptyStateOpensSavedGuideDestination() {
+        clearPinnedGuidesForTest();
+        Intent intent = new Intent(ApplicationProvider.getApplicationContext(), MainActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        intent.putExtra(MainActivity.EXTRA_OPEN_SAVED, true);
+
+        try (ActivityScenario<MainActivity> scenario = ActivityScenario.launch(intent)) {
+            awaitHarnessIdle();
+            Assert.assertTrue(
+                "saved launch should settle on the main input; harness signals=" + HarnessTestSignals.snapshot(),
+                device.wait(Until.hasObject(By.res(APP_PACKAGE, "search_input")), SEARCH_WAIT_MS)
+            );
+            waitForSavedGuidesDestination(scenario, false, DETAIL_WAIT_MS);
+            scenario.onActivity(activity -> assertSavedGuidesDestination(activity, false));
+            captureUiState("saved_guides_empty");
+        } finally {
+            clearPinnedGuidesForTest();
+        }
+    }
+
+    @Test
+    public void savedTabPinnedGuideStateOpensSavedGuideDestination() {
+        clearPinnedGuidesForTest();
+        Context context = ApplicationProvider.getApplicationContext();
+        Assert.assertTrue("test seed guide should be accepted as a saved guide", PinnedGuideStore.add(context, "GD-345"));
+        Intent intent = new Intent(context, MainActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        intent.putExtra(MainActivity.EXTRA_OPEN_SAVED, true);
+
+        try (ActivityScenario<MainActivity> scenario = ActivityScenario.launch(intent)) {
+            awaitHarnessIdle();
+            Assert.assertTrue(
+                "saved launch should settle on the main input; harness signals=" + HarnessTestSignals.snapshot(),
+                device.wait(Until.hasObject(By.res(APP_PACKAGE, "search_input")), SEARCH_WAIT_MS)
+            );
+            waitForSavedGuidesDestination(scenario, true, DETAIL_WAIT_MS);
+            scenario.onActivity(activity -> assertSavedGuidesDestination(activity, true));
+            captureUiState("saved_guides_non_empty");
+        } finally {
+            clearPinnedGuidesForTest();
+        }
+    }
+
+    @Test
     public void searchQueryShowsResultsWithoutShellPolling() {
         try (ActivityScenario<MainActivity> scenario = ActivityScenario.launch(MainActivity.class)) {
             awaitHarnessIdle();
@@ -3128,6 +3172,153 @@ public final class PromptHarnessSmokeTest {
             waitForHarnessIdleFallback(30_000L);
         }
         InstrumentationRegistry.getInstrumentation().waitForIdleSync();
+    }
+
+    private void waitForSavedGuidesDestination(
+        ActivityScenario<MainActivity> scenario,
+        boolean expectSavedGuide,
+        long timeoutMs
+    ) {
+        long deadline = SystemClock.uptimeMillis() + timeoutMs;
+        String[] lastFailure = {"saved guide destination never became ready"};
+        while (SystemClock.uptimeMillis() < deadline) {
+            boolean[] matched = {false};
+            scenario.onActivity(activity -> {
+                try {
+                    assertSavedGuidesDestination(activity, expectSavedGuide);
+                    matched[0] = true;
+                } catch (AssertionError assertionError) {
+                    lastFailure[0] = assertionError.getMessage();
+                }
+            });
+            if (matched[0]) {
+                return;
+            }
+            awaitHarnessIdle();
+            SystemClock.sleep(75L);
+        }
+        Assert.fail(lastFailure[0] + "; harness signals=" + HarnessTestSignals.snapshot());
+    }
+
+    private void assertSavedGuidesDestination(Activity activity, boolean expectSavedGuide) {
+        Assert.assertNotNull("saved destination activity should exist", activity);
+        EditText input = activity.findViewById(R.id.search_input);
+        Button ask = activity.findViewById(R.id.ask_button);
+        View pinnedSection = activity.findViewById(R.id.pinned_section);
+        TextView pinnedEmptyText = activity.findViewById(R.id.pinned_empty_text);
+        View pinnedScroll = activity.findViewById(R.id.pinned_scroll);
+        LinearLayout pinnedContainer = activity.findViewById(R.id.pinned_container);
+        RecyclerView resultsList = activity.findViewById(R.id.results_list);
+
+        Assert.assertNotNull("saved destination should keep the shared input mounted", input);
+        Assert.assertNotNull("saved destination should expose the saved guide section", pinnedSection);
+        Assert.assertNotNull("saved destination should expose saved empty text", pinnedEmptyText);
+        Assert.assertNotNull("saved destination should expose saved guide container", pinnedContainer);
+        Assert.assertEquals(
+            "saved destination should select the Saved phone lane",
+            BottomTabDestination.PINS,
+            readPrivateField(activity, "activePhoneTab")
+        );
+        Assert.assertFalse(
+            "saved destination must not masquerade as Search",
+            BottomTabDestination.SEARCH.equals(readPrivateField(activity, "activePhoneTab"))
+        );
+        Assert.assertFalse(
+            "saved destination must not keep Ask submit semantics active",
+            readPrivateBooleanField(activity, "askLaneActive")
+        );
+        Assert.assertEquals(
+            "saved destination should keep search-style input semantics for finding guides",
+            activity.getString(R.string.search_hint),
+            safe(input.getHint() == null ? null : input.getHint().toString())
+        );
+        Assert.assertEquals(
+            "saved destination should not expose Ask accessibility ownership on the shared input",
+            activity.getString(R.string.search_input_description),
+            safe(input.getContentDescription() == null ? null : input.getContentDescription().toString())
+        );
+        if (ask != null) {
+            Assert.assertEquals(
+                "ask action should remain available but not own Saved state",
+                activity.getString(R.string.ask_button_description),
+                safe(ask.getContentDescription() == null ? null : ask.getContentDescription().toString())
+            );
+        }
+
+        BottomTabBarHostView tabHost =
+            findFirstDescendantByClass(activity.findViewById(android.R.id.content), BottomTabBarHostView.class);
+        if (tabHost != null) {
+            Assert.assertEquals(
+                "runtime phone tab host should expose Saved as the selected tab",
+                BottomTabDestination.PINS,
+                readPrivateField(tabHost, "activeTab")
+            );
+        }
+        View staticSavedLabel = activity.findViewById(R.id.phone_nav_pins_label);
+        if (staticSavedLabel != null && isVisible(staticSavedLabel)) {
+            Assert.assertTrue(
+                "static phone navigation should mark Saved selected when present",
+                staticSavedLabel.isSelected()
+            );
+        }
+
+        Assert.assertTrue(
+            "saved destination should make the Saved Guides section visible for dumps/screenshots",
+            isEffectivelyVisible(pinnedSection)
+        );
+        if (expectSavedGuide) {
+            Assert.assertFalse(
+                "non-empty saved destination should hide the empty Saved copy",
+                isEffectivelyVisible(pinnedEmptyText)
+            );
+            Assert.assertTrue(
+                "non-empty saved destination should show the saved-guide rail",
+                isEffectivelyVisible(pinnedScroll)
+            );
+            Assert.assertTrue(
+                "non-empty saved destination should render at least one saved guide button",
+                childCount(pinnedContainer) > 0
+            );
+            Button firstSavedGuide = firstButton(pinnedContainer);
+            Assert.assertNotNull("saved guide rail should expose a tappable guide", firstSavedGuide);
+            String label = safe(firstSavedGuide.getText().toString());
+            String description = safe(firstSavedGuide.getContentDescription() == null
+                ? null
+                : firstSavedGuide.getContentDescription().toString());
+            Assert.assertFalse("saved guide button label should not be empty", label.trim().isEmpty());
+            Assert.assertTrue(
+                "saved guide button should carry Saved-specific content description",
+                containsAny(description, "saved guide")
+            );
+        } else {
+            Assert.assertTrue(
+                "empty saved destination should show Saved Guides empty copy",
+                isEffectivelyVisible(pinnedEmptyText)
+            );
+            Assert.assertEquals(
+                "empty saved destination should identify itself as Saved Guides, not Search or Ask",
+                activity.getString(R.string.saved_guides_empty),
+                safe(pinnedEmptyText.getText().toString())
+            );
+            Assert.assertFalse(
+                "empty saved destination should not show the saved-guide rail",
+                isEffectivelyVisible(pinnedScroll)
+            );
+        }
+        if (resultsList != null) {
+            Assert.assertFalse(
+                "saved destination should not present the search-results lane as the active surface",
+                isEffectivelyVisible(resultsList)
+            );
+        }
+    }
+
+    private void clearPinnedGuidesForTest() {
+        Context context = ApplicationProvider.getApplicationContext();
+        context.getSharedPreferences("senku_pinned_guides", Context.MODE_PRIVATE)
+            .edit()
+            .clear()
+            .commit();
     }
 
     private boolean isKnownEspressoIdleReflectionFailure(Throwable throwable) {
