@@ -215,9 +215,9 @@ public final class EmergencySurfacePolicyTest {
             DetailActivity.resolveDetailVisibleBackContentDescriptionResource()
         );
         assertEquals(R.string.detail_back, DetailActivity.resolveDetailVisibleBackLabelResource(false));
-        assertEquals(R.string.detail_back, DetailActivity.resolveDetailVisibleBackLabelResource(true));
+        assertEquals(R.string.home_button, DetailActivity.resolveDetailVisibleBackLabelResource(true));
         assertEquals(
-            R.string.detail_back_content_description,
+            R.string.detail_home_content_description,
             DetailActivity.resolveDetailVisibleBackContentDescriptionResource(true)
         );
         assertEquals(
@@ -225,7 +225,7 @@ public final class EmergencySurfacePolicyTest {
             DetailActivity.resolveTabletEmergencyBackContentDescriptionResource()
         );
         assertEquals(
-            R.string.detail_back_content_description,
+            R.string.detail_home_content_description,
             DetailActivity.resolveTabletEmergencyBackContentDescriptionResource(true)
         );
         assertEquals(
@@ -237,7 +237,7 @@ public final class EmergencySurfacePolicyTest {
             DetailActivity.tabletEmergencyBackButtonLabel(false)
         );
         assertEquals(
-            R.string.detail_back,
+            R.string.home_button,
             DetailActivity.tabletEmergencyBackButtonLabel(true)
         );
         assertFalse(DetailActivity.shouldEnableDetailBackLongPressHomeShortcut());
@@ -428,7 +428,7 @@ public final class EmergencySurfacePolicyTest {
     public void tabletEmergencyBackAffordanceUsesSharedIconOnlyChrome() {
         assertEquals(R.string.detail_back, DetailActivity.tabletEmergencyBackButtonLabel());
         assertEquals(R.string.detail_back, DetailActivity.tabletEmergencyBackButtonLabel(false));
-        assertEquals(R.string.detail_back, DetailActivity.tabletEmergencyBackButtonLabel(true));
+        assertEquals(R.string.home_button, DetailActivity.tabletEmergencyBackButtonLabel(true));
         assertEquals(28, DetailActivity.resolveTabletEmergencyBackButtonMinWidthDp());
         assertEquals(28, DetailActivity.resolveTabletEmergencyChromeNavIconSizeDp());
         assertEquals(10.0f, DetailActivity.resolveTabletEmergencyBackLabelTextSizeSp(), 0.0f);

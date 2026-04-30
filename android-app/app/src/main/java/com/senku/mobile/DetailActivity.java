@@ -163,8 +163,6 @@ public final class DetailActivity extends AppCompatActivity {
     private static final Pattern PHONE_LANDSCAPE_GUIDE_SECTION_LABEL_PATTERN =
         Pattern.compile("^[\\-\\u2013\\u2014]+\\s*\\u00a7\\s*(\\d+)\\s*[\\u00b7:\\-]?\\s*(.*)$");
     private static final String HEADER_BULLET = " \u2022 ";
-    private static final int DETAIL_OVERFLOW_MENU_SAVE_GUIDE_ID = 1;
-    private static final int DETAIL_OVERFLOW_MENU_HOME_ID = 2;
 
     enum FollowUpSubmitRoute {
         EMPTY_INPUT,
@@ -9322,9 +9320,26 @@ public final class DetailActivity extends AppCompatActivity {
         boolean compactPortraitPhone,
         String pinnableGuideId
     ) {
-        return answerMode
-            && phoneXmlDetailLayoutActive
-            && !safe(pinnableGuideId).trim().isEmpty();
+        return DetailOverflowPolicy.shouldShow(
+            answerMode,
+            phoneXmlDetailLayoutActive,
+            compactPortraitPhone,
+            pinnableGuideId
+        );
+    }
+
+    static List<DetailOverflowPolicy.Action> detailOverflowActions(
+        boolean answerMode,
+        boolean phoneXmlDetailLayoutActive,
+        boolean compactPortraitPhone,
+        String pinnableGuideId
+    ) {
+        return DetailOverflowPolicy.actions(
+            answerMode,
+            phoneXmlDetailLayoutActive,
+            compactPortraitPhone,
+            pinnableGuideId
+        );
     }
 
     private void showDetailOverflowMenu() {
@@ -9344,23 +9359,23 @@ public final class DetailActivity extends AppCompatActivity {
         boolean pinned = PinnedGuideStore.contains(this, guideId);
         menu.getMenu().add(
             0,
-            DETAIL_OVERFLOW_MENU_SAVE_GUIDE_ID,
+            DetailOverflowPolicy.SAVE_GUIDE_MENU_ID,
             0,
             getString(pinned ? R.string.detail_unpin : R.string.detail_pin)
         );
         menu.getMenu().add(
             0,
-            DETAIL_OVERFLOW_MENU_HOME_ID,
+            DetailOverflowPolicy.HOME_MENU_ID,
             1,
             getString(R.string.home_button)
         );
         menu.setOnMenuItemClickListener(item -> {
             int itemId = item.getItemId();
-            if (itemId == DETAIL_OVERFLOW_MENU_SAVE_GUIDE_ID) {
+            if (itemId == DetailOverflowPolicy.SAVE_GUIDE_MENU_ID) {
                 togglePinnedGuide();
                 return true;
             }
-            if (itemId == DETAIL_OVERFLOW_MENU_HOME_ID) {
+            if (itemId == DetailOverflowPolicy.HOME_MENU_ID) {
                 navigateHomeFromDetail();
                 return true;
             }

@@ -103,8 +103,8 @@ public final class DetailBackPolicyTest {
         assertEquals(R.string.detail_back_content_description, stacked.contentDescriptionResource);
         assertFalse(stacked.longPressHomeShortcutEnabled);
 
-        assertEquals(R.string.detail_back, taskRoot.labelResource);
-        assertEquals(R.string.detail_back_content_description, taskRoot.contentDescriptionResource);
+        assertEquals(R.string.home_button, taskRoot.labelResource);
+        assertEquals(R.string.detail_home_content_description, taskRoot.contentDescriptionResource);
         assertFalse(taskRoot.longPressHomeShortcutEnabled);
 
         assertCurrentClassifiedBackDecision(
@@ -130,8 +130,8 @@ public final class DetailBackPolicyTest {
         assertEquals(R.string.detail_back_content_description, stacked.contentDescriptionResource);
         assertFalse(stacked.longPressHomeShortcutEnabled);
 
-        assertEquals(R.string.detail_back, taskRoot.labelResource);
-        assertEquals(R.string.detail_back_content_description, taskRoot.contentDescriptionResource);
+        assertEquals(R.string.home_button, taskRoot.labelResource);
+        assertEquals(R.string.detail_home_content_description, taskRoot.contentDescriptionResource);
         assertFalse(taskRoot.longPressHomeShortcutEnabled);
     }
 

@@ -7,6 +7,7 @@ import static org.junit.Assert.assertTrue;
 import com.senku.ui.primitives.BottomTabDestination;
 
 import java.util.Arrays;
+import java.util.Collections;
 
 import org.junit.Test;
 
@@ -84,6 +85,23 @@ public final class DetailActivityPhoneGuideChromeTest {
     }
 
     @Test
+    public void phoneAnswerOverflowActionsAreSaveGuideThenHome() {
+        assertEquals(
+            Arrays.asList(
+                DetailOverflowPolicy.Action.SAVE_GUIDE,
+                DetailOverflowPolicy.Action.HOME
+            ),
+            DetailActivity.detailOverflowActions(true, true, true, "GD-132")
+        );
+        assertEquals(
+            Collections.emptyList(),
+            DetailActivity.detailOverflowActions(false, true, true, "GD-132")
+        );
+        assertEquals(DetailOverflowPolicy.SAVE_GUIDE_MENU_ID, DetailOverflowPolicy.menuId(DetailOverflowPolicy.Action.SAVE_GUIDE));
+        assertEquals(DetailOverflowPolicy.HOME_MENU_ID, DetailOverflowPolicy.menuId(DetailOverflowPolicy.Action.HOME));
+    }
+
+    @Test
     public void routeAwareDetailBackChromeNamesTaskRootHomeDestination() {
         assertEquals(
             R.string.detail_back,
@@ -114,6 +132,26 @@ public final class DetailActivityPhoneGuideChromeTest {
             )
         );
     }
+
+    @Test
+    public void legacyDetailBackChromeHelpersNameTaskRootHomeDestination() {
+        assertEquals(R.string.detail_back, DetailActivity.resolveDetailVisibleBackLabelResource(false));
+        assertEquals(R.string.home_button, DetailActivity.resolveDetailVisibleBackLabelResource(true));
+        assertEquals(
+            R.string.detail_back_content_description,
+            DetailActivity.resolveDetailVisibleBackContentDescriptionResource(false)
+        );
+        assertEquals(
+            R.string.detail_home_content_description,
+            DetailActivity.resolveDetailVisibleBackContentDescriptionResource(true)
+        );
+        assertEquals(
+            R.string.detail_home_content_description,
+            DetailActivity.resolveTabletEmergencyBackContentDescriptionResource(true)
+        );
+        assertEquals(R.string.home_button, DetailActivity.tabletEmergencyBackButtonLabel(true));
+    }
+
 
     @Test
     public void productReviewModeRequiresAuthorizedDetailIntentExtra() {

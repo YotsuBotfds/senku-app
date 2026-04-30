@@ -43,11 +43,7 @@ public final class DetailBackPolicy {
     }
 
     static VisibleBackAffordance visibleBackAffordance(boolean taskRoot) {
-        return new VisibleBackAffordance(
-            R.string.detail_back,
-            R.string.detail_back_content_description,
-            false
-        );
+        return visibleBackAffordance(new Inputs(taskRoot, SourceRoute.UNKNOWN, BackTrigger.VISIBLE_BACK_BUTTON));
     }
 
     static VisibleBackAffordance visibleBackAffordance(Inputs inputs) {
