@@ -127,7 +127,11 @@ public final class EmergencySurfacePolicyTest {
         DetailActivity.TabletEmergencyOverlayMargins margins =
             DetailActivity.resolveTabletEmergencyOverlayMarginsDp(true);
 
-        assertEquals(44, margins.left);
+        assertEquals(
+            DetailActivity.resolveTabletEmergencyAppRailWidthDp()
+                + DetailActivity.resolveTabletEmergencyAppRailDividerWidthDp(),
+            margins.left
+        );
         assertEquals(24, margins.right);
         assertEquals(12, margins.top);
         assertEquals(
@@ -139,6 +143,16 @@ public final class EmergencySurfacePolicyTest {
     @Test
     public void tabletPortraitEmergencyChromeUsesCompactIconTargets() {
         assertEquals(40, DetailActivity.resolveTabletEmergencyChromeNavIconSizeDp());
+    }
+
+    @Test
+    public void tabletPortraitEmergencyUsesSharedAppRailColumn() {
+        assertEquals(72, DetailActivity.resolveTabletEmergencyAppRailWidthDp());
+        assertEquals(1, DetailActivity.resolveTabletEmergencyAppRailDividerWidthDp());
+        assertTrue(DetailActivity.shouldShowTabletEmergencyAppRailOverlay(true, true, true));
+        assertFalse(DetailActivity.shouldShowTabletEmergencyAppRailOverlay(true, false, true));
+        assertFalse(DetailActivity.shouldShowTabletEmergencyAppRailOverlay(false, true, true));
+        assertFalse(DetailActivity.shouldShowTabletEmergencyAppRailOverlay(true, true, false));
     }
 
     @Test

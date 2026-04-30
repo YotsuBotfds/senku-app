@@ -100,7 +100,16 @@ public final class DetailActivity extends AppCompatActivity {
     private static final float STREAMING_FIRST_CHUNK_ALPHA = 0.88f;
     private static final long GENERATION_STALL_NOTICE_MS = 12000L;
     private static final long GENERATION_STALL_POLL_MS = 1000L;
-    private static final int TABLET_EMERGENCY_PORTRAIT_LEFT_MARGIN_DP = 44;
+    private static final int TABLET_APP_RAIL_WIDTH_DP = 72;
+    private static final int TABLET_APP_RAIL_DIVIDER_WIDTH_DP = 1;
+    private static final int TABLET_APP_RAIL_TOP_PADDING_DP = 20;
+    private static final int TABLET_APP_RAIL_BADGE_WIDTH_DP = 36;
+    private static final int TABLET_APP_RAIL_BADGE_HEIGHT_DP = 34;
+    private static final int TABLET_APP_RAIL_FIRST_ITEM_TOP_MARGIN_DP = 24;
+    private static final int TABLET_APP_RAIL_ITEM_TOP_MARGIN_DP = 18;
+    private static final int TABLET_APP_RAIL_ICON_SIZE_DP = 22;
+    private static final int TABLET_EMERGENCY_PORTRAIT_LEFT_MARGIN_DP =
+        TABLET_APP_RAIL_WIDTH_DP + TABLET_APP_RAIL_DIVIDER_WIDTH_DP;
     private static final int TABLET_EMERGENCY_PORTRAIT_RIGHT_MARGIN_DP = 24;
     private static final int TABLET_EMERGENCY_PORTRAIT_TOP_MARGIN_DP = 12;
     private static final int TABLET_EMERGENCY_PORTRAIT_HORIZONTAL_PADDING_DP = 16;
@@ -167,6 +176,8 @@ public final class DetailActivity extends AppCompatActivity {
     private TextView emergencyHeaderTitle;
     private TextView emergencyHeaderText;
     private LinearLayout tabletEmergencyHeaderOverlay;
+    private View tabletEmergencyAppRailOverlay;
+    private View tabletEmergencyAppRailDivider;
     private LinearLayout tabletEmergencyChromeOverlayPanel;
     private TextView tabletEmergencyChromeOverlayTitle;
     private TextView tabletEmergencyChromeOverlayMeta;
@@ -1682,6 +1693,7 @@ public final class DetailActivity extends AppCompatActivity {
         updateTabletEmergencyHeaderOverlayLayout(overlay);
         overlay.setVisibility(View.VISIBLE);
         overlay.bringToFront();
+        bringTabletEmergencyAppRailOverlayToFront();
     }
 
     private String buildTabletEmergencyOverlayContentDescription() {
@@ -1717,6 +1729,7 @@ public final class DetailActivity extends AppCompatActivity {
             return null;
         }
         FrameLayout root = (FrameLayout) content;
+        ensureTabletEmergencyAppRailOverlay(root);
         LinearLayout overlay = new LinearLayout(this);
         overlay.setId(R.id.detail_emergency_header);
         overlay.setOrientation(LinearLayout.VERTICAL);
@@ -1866,6 +1879,138 @@ public final class DetailActivity extends AppCompatActivity {
         return overlay;
     }
 
+    private void ensureTabletEmergencyAppRailOverlay(FrameLayout root) {
+        if (!shouldShowTabletEmergencyAppRailOverlay(
+            answerMode,
+            isTabletPortraitLayout(),
+            shouldShowEmergencyHeader()
+        )) {
+            return;
+        }
+        if (tabletEmergencyAppRailOverlay == null) {
+            tabletEmergencyAppRailOverlay = buildTabletEmergencyAppRail();
+            root.addView(tabletEmergencyAppRailOverlay, tabletEmergencyAppRailParams());
+        }
+        if (tabletEmergencyAppRailDivider == null) {
+            View divider = new View(this);
+            divider.setBackgroundColor(getColor(R.color.senku_rev03_hairline_strong));
+            tabletEmergencyAppRailDivider = divider;
+            root.addView(tabletEmergencyAppRailDivider, tabletEmergencyAppRailDividerParams());
+        }
+    }
+
+    private View buildTabletEmergencyAppRail() {
+        LinearLayout rail = new LinearLayout(this);
+        rail.setOrientation(LinearLayout.VERTICAL);
+        rail.setGravity(Gravity.CENTER_HORIZONTAL);
+        rail.setBackgroundColor(getColor(R.color.senku_rev03_bg_0));
+        rail.setPadding(0, dp(TABLET_APP_RAIL_TOP_PADDING_DP), 0, 0);
+        rail.setContentDescription("Detail navigation");
+        rail.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_YES);
+
+        TextView station = new TextView(this);
+        station.setGravity(Gravity.CENTER);
+        station.setText(R.string.app_badge_letter);
+        station.setTextColor(getColor(R.color.senku_rev03_ink_0));
+        station.setTypeface(Typeface.DEFAULT_BOLD);
+        station.setTextSize(15f);
+        station.setBackgroundResource(R.drawable.bg_manual_home_nav_shell);
+        station.setIncludeFontPadding(false);
+        station.setContentDescription("Senku detail");
+        rail.addView(station, new LinearLayout.LayoutParams(
+            dp(TABLET_APP_RAIL_BADGE_WIDTH_DP),
+            dp(TABLET_APP_RAIL_BADGE_HEIGHT_DP)
+        ));
+
+        rail.addView(buildTabletEmergencyAppRailItem(
+            R.drawable.ic_home_library,
+            getString(R.string.bottom_tab_home),
+            false,
+            v -> navigateHomeFromDetail()
+        ), tabletAppRailItemParams(TABLET_APP_RAIL_FIRST_ITEM_TOP_MARGIN_DP));
+
+        rail.addView(buildTabletEmergencyAppRailItem(
+            R.drawable.ic_home_ask,
+            getString(R.string.bottom_tab_ask),
+            true,
+            v -> navigateMainFromGuidePhoneTab("auto_ask", true)
+        ), tabletAppRailItemParams(TABLET_APP_RAIL_ITEM_TOP_MARGIN_DP));
+
+        rail.addView(buildTabletEmergencyAppRailItem(
+            R.drawable.ic_home_saved,
+            getString(R.string.bottom_tab_pins),
+            false,
+            v -> navigateMainFromGuidePhoneTab(MainActivity.EXTRA_OPEN_SAVED, true)
+        ), tabletAppRailItemParams(TABLET_APP_RAIL_ITEM_TOP_MARGIN_DP));
+        return rail;
+    }
+
+    private View buildTabletEmergencyAppRailItem(
+        int iconResId,
+        String label,
+        boolean active,
+        View.OnClickListener clickListener
+    ) {
+        LinearLayout item = new LinearLayout(this);
+        item.setOrientation(LinearLayout.VERTICAL);
+        item.setGravity(Gravity.CENTER);
+        item.setContentDescription(label);
+        item.setClickable(true);
+        item.setFocusable(true);
+        item.setOnClickListener(clickListener);
+
+        int color = getColor(active ? R.color.senku_rev03_accent : R.color.senku_rev03_ink_2);
+        ImageView icon = new ImageView(this);
+        icon.setImageResource(iconResId);
+        icon.setImageTintList(ColorStateList.valueOf(color));
+        item.addView(icon, new LinearLayout.LayoutParams(
+            dp(TABLET_APP_RAIL_ICON_SIZE_DP),
+            dp(TABLET_APP_RAIL_ICON_SIZE_DP)
+        ));
+
+        TextView text = new TextView(this);
+        text.setGravity(Gravity.CENTER);
+        text.setIncludeFontPadding(false);
+        text.setText(label);
+        text.setTextColor(color);
+        text.setTextSize(12f);
+        text.setTypeface(Typeface.DEFAULT, active ? Typeface.BOLD : Typeface.NORMAL);
+        LinearLayout.LayoutParams textParams = new LinearLayout.LayoutParams(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        );
+        textParams.topMargin = dp(3);
+        item.addView(text, textParams);
+        return item;
+    }
+
+    private LinearLayout.LayoutParams tabletAppRailItemParams(int topMarginDp) {
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        );
+        params.topMargin = dp(topMarginDp);
+        return params;
+    }
+
+    private FrameLayout.LayoutParams tabletEmergencyAppRailParams() {
+        return new FrameLayout.LayoutParams(
+            dp(resolveTabletEmergencyAppRailWidthDp()),
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            Gravity.START
+        );
+    }
+
+    private FrameLayout.LayoutParams tabletEmergencyAppRailDividerParams() {
+        FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
+            dp(resolveTabletEmergencyAppRailDividerWidthDp()),
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            Gravity.START
+        );
+        params.leftMargin = dp(resolveTabletEmergencyAppRailWidthDp());
+        return params;
+    }
+
     private void updateTabletEmergencyOverlayChrome(boolean emergencyFullHeightPage) {
         if (tabletEmergencyChromeOverlayPanel == null) {
             return;
@@ -1948,6 +2093,38 @@ public final class DetailActivity extends AppCompatActivity {
             params.bottomMargin = desiredParams.bottomMargin;
             overlay.setLayoutParams(params);
         }
+        updateTabletEmergencyAppRailOverlayLayout(overlay);
+    }
+
+    private void updateTabletEmergencyAppRailOverlayLayout(LinearLayout overlay) {
+        boolean showRail = shouldShowTabletEmergencyAppRailOverlay(
+            answerMode,
+            isTabletPortraitLayout(),
+            shouldShowEmergencyHeader()
+        );
+        ViewParent parent = overlay.getParent();
+        if (showRail && parent instanceof FrameLayout) {
+            ensureTabletEmergencyAppRailOverlay((FrameLayout) parent);
+        }
+        if (tabletEmergencyAppRailOverlay != null) {
+            tabletEmergencyAppRailOverlay.setVisibility(showRail ? View.VISIBLE : View.GONE);
+            tabletEmergencyAppRailOverlay.setLayoutParams(tabletEmergencyAppRailParams());
+        }
+        if (tabletEmergencyAppRailDivider != null) {
+            tabletEmergencyAppRailDivider.setVisibility(showRail ? View.VISIBLE : View.GONE);
+            tabletEmergencyAppRailDivider.setLayoutParams(tabletEmergencyAppRailDividerParams());
+        }
+    }
+
+    private void bringTabletEmergencyAppRailOverlayToFront() {
+        if (tabletEmergencyAppRailOverlay != null
+            && tabletEmergencyAppRailOverlay.getVisibility() == View.VISIBLE) {
+            tabletEmergencyAppRailOverlay.bringToFront();
+        }
+        if (tabletEmergencyAppRailDivider != null
+            && tabletEmergencyAppRailDivider.getVisibility() == View.VISIBLE) {
+            tabletEmergencyAppRailDivider.bringToFront();
+        }
     }
 
     private FrameLayout.LayoutParams tabletEmergencyHeaderOverlayParams() {
@@ -1986,8 +2163,24 @@ public final class DetailActivity extends AppCompatActivity {
         return TABLET_EMERGENCY_CHROME_NAV_ICON_SIZE_DP;
     }
 
+    static int resolveTabletEmergencyAppRailWidthDp() {
+        return TABLET_APP_RAIL_WIDTH_DP;
+    }
+
+    static int resolveTabletEmergencyAppRailDividerWidthDp() {
+        return TABLET_APP_RAIL_DIVIDER_WIDTH_DP;
+    }
+
     static boolean shouldShowTabletEmergencyHomeChromeAction() {
         return false;
+    }
+
+    static boolean shouldShowTabletEmergencyAppRailOverlay(
+        boolean answerMode,
+        boolean tabletPortrait,
+        boolean emergencySurfaceEligible
+    ) {
+        return shouldUseTabletEmergencyFullHeightPage(answerMode, tabletPortrait, emergencySurfaceEligible);
     }
 
     static boolean shouldUseTabletEmergencyFullHeightPage(
@@ -2081,12 +2274,14 @@ public final class DetailActivity extends AppCompatActivity {
 
     private void removeTabletEmergencyHeaderOverlay() {
         if (tabletEmergencyHeaderOverlay == null) {
+            removeTabletEmergencyAppRailOverlay();
             return;
         }
         ViewParent parent = tabletEmergencyHeaderOverlay.getParent();
         if (parent instanceof ViewGroup) {
             ((ViewGroup) parent).removeView(tabletEmergencyHeaderOverlay);
         }
+        removeTabletEmergencyAppRailOverlay();
         tabletEmergencyHeaderOverlay = null;
         tabletEmergencyChromeOverlayPanel = null;
         tabletEmergencyChromeOverlayTitle = null;
@@ -2096,6 +2291,23 @@ public final class DetailActivity extends AppCompatActivity {
         tabletEmergencyProofOverlayTitle = null;
         tabletEmergencyProofOverlayText = null;
         applyTabletEmergencyRootVisibility(false);
+    }
+
+    private void removeTabletEmergencyAppRailOverlay() {
+        if (tabletEmergencyAppRailOverlay != null) {
+            ViewParent parent = tabletEmergencyAppRailOverlay.getParent();
+            if (parent instanceof ViewGroup) {
+                ((ViewGroup) parent).removeView(tabletEmergencyAppRailOverlay);
+            }
+            tabletEmergencyAppRailOverlay = null;
+        }
+        if (tabletEmergencyAppRailDivider != null) {
+            ViewParent parent = tabletEmergencyAppRailDivider.getParent();
+            if (parent instanceof ViewGroup) {
+                ((ViewGroup) parent).removeView(tabletEmergencyAppRailDivider);
+            }
+            tabletEmergencyAppRailDivider = null;
+        }
     }
 
     private TabletDetailState buildTabletState() {
