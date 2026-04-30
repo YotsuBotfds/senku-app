@@ -160,6 +160,8 @@ public final class DetailActivity extends AppCompatActivity {
     private static final float TABLET_EMERGENCY_PROOF_CARD_SCORE_TEXT_SIZE_SP = 13.0f;
     private static final Pattern GUIDE_HTML_BREAK_PATTERN = Pattern.compile("(?i)<br\\s*/?>");
     private static final Pattern SOURCE_COUNT_TOKEN_PATTERN = Pattern.compile("(?i)\\b(\\d+)\\s+sources?\\b");
+    private static final Pattern PHONE_LANDSCAPE_GUIDE_SECTION_LABEL_PATTERN =
+        Pattern.compile("^[\\-\\u2013\\u2014]+\\s*\\u00a7\\s*(\\d+)\\s*[\\u00b7:\\-]?\\s*(.*)$");
     private static final String HEADER_BULLET = " \u2022 ";
     private static final int DETAIL_OVERFLOW_MENU_SAVE_GUIDE_ID = 1;
     private static final int DETAIL_OVERFLOW_MENU_HOME_ID = 2;
@@ -5578,20 +5580,25 @@ public final class DetailActivity extends AppCompatActivity {
         clearActiveGuideContextPanel();
         clearRelatedGuidePreviewPanel();
         applyNextStepsPanelStyling(false);
+        SearchResult guide = currentGuideSectionRailSource();
+        int sectionCount = phoneLandscapeGuideSectionRailCount(guide, productReviewMode);
+        List<String> labels = phoneLandscapeGuideSectionRailLabels(guide, productReviewMode);
+        String selectedLabel = labels.isEmpty() ? "" : labels.get(0);
         if (nextStepsTitleText != null) {
-            nextStepsTitleText.setText("— SECTIONS • 17");
-            nextStepsTitleText.setContentDescription("Guide sections, 17 sections");
+            nextStepsTitleText.setText("\u2014 SECTIONS \u2022 " + sectionCount);
+            nextStepsTitleText.setContentDescription("Guide sections, " + formatCountLabel(sectionCount, "section", "sections"));
         }
         setNextStepsSubtitleVisible(false);
         if (nextStepsSubtitleText != null) {
             nextStepsSubtitleText.setText("");
             nextStepsSubtitleText.setContentDescription("");
         }
-        String panelContentDescription = "Guide sections. 17 sections. Area readiness selected.";
+        String panelContentDescription = "Guide sections. "
+            + formatCountLabel(sectionCount, "section", "sections")
+            + (selectedLabel.isEmpty() ? "." : ". " + phoneLandscapeGuideSectionReadableLabel(selectedLabel) + " selected.");
         nextStepsPanel.setContentDescription(panelContentDescription);
         nextStepsContainer.setContentDescription(panelContentDescription);
 
-        List<String> labels = phoneLandscapeGuideSectionRailLabels();
         for (int i = 0; i < labels.size(); i++) {
             TextView row = new TextView(this);
             row.setText(labels.get(i));
@@ -5745,16 +5752,128 @@ public final class DetailActivity extends AppCompatActivity {
         return 12.5f;
     }
 
-    static List<String> phoneLandscapeGuideSectionRailLabels() {
-        return Arrays.asList(
-            "§1  Area readiness",
-            "§2  Required reading",
-            "§3  Hazard screen",
-            "§4  Material labeling",
-            "§5  No-go triggers",
-            "§6  Access control",
-            "§7  Owner handoff"
+    private SearchResult currentGuideSectionRailSource() {
+        return new SearchResult(
+            safe(currentTitle).trim(),
+            safe(currentSubtitle).trim(),
+            "",
+            safe(currentBody),
+            safe(currentGuideId).trim(),
+            "",
+            "",
+            ""
         );
+    }
+
+    static List<String> phoneLandscapeGuideSectionRailLabels(SearchResult guide, boolean reviewDemoMode) {
+        if (shouldUsePhoneLandscapeGuideSectionRailDemoLabels(guide, reviewDemoMode)) {
+            return phoneLandscapeGuideSectionRailDemoLabels();
+        }
+        ArrayList<String> labels = new ArrayList<>();
+        GuideBodySanitizer.ParsedGuideBody parsedBody =
+            GuideBodySanitizer.parseGuideBodyForDisplay(safe(guide == null ? null : guide.body));
+        for (GuideBodySanitizer.GuideBodyLine line : parsedBody.lines) {
+            if (line.kind != GuideBodySanitizer.GuideBodyLine.Kind.SECTION) {
+                continue;
+            }
+            String label = formatPhoneLandscapeGuideSectionRailLabel(labels.size() + 1, line.text);
+            if (!label.isEmpty() && !labels.contains(label)) {
+                labels.add(label);
+            }
+            if (labels.size() >= 7) {
+                break;
+            }
+        }
+        if (labels.isEmpty()) {
+            String fallback = firstNonEmpty(
+                safe(guide == null ? null : guide.sectionHeading).trim(),
+                safe(guide == null ? null : guide.title).trim(),
+                safe(guide == null ? null : guide.guideId).trim(),
+                "Guide overview"
+            );
+            labels.add(formatPhoneLandscapeGuideSectionRailLabel(1, fallback));
+        }
+        return Collections.unmodifiableList(labels);
+    }
+
+    static int phoneLandscapeGuideSectionRailCount(SearchResult guide, boolean reviewDemoMode) {
+        if (shouldUsePhoneLandscapeGuideSectionRailDemoLabels(guide, reviewDemoMode)) {
+            return 17;
+        }
+        String sourceBody = safe(guide == null ? null : guide.body);
+        int inferredCount = DetailGuidePresentationFormatter.inferGuideSectionCountForRail(
+            guide,
+            sourceBody,
+            sourceBody
+        );
+        return Math.max(1, inferredCount);
+    }
+
+    private static boolean shouldUsePhoneLandscapeGuideSectionRailDemoLabels(SearchResult guide, boolean reviewDemoMode) {
+        if (!reviewDemoMode) {
+            return false;
+        }
+        String guideId = safe(guide == null ? null : guide.guideId).trim();
+        String title = safe(guide == null ? null : guide.title).trim().toLowerCase(Locale.US);
+        return "GD-132".equalsIgnoreCase(guideId) || title.contains("foundry");
+    }
+
+    private static List<String> phoneLandscapeGuideSectionRailDemoLabels() {
+        return Arrays.asList(
+            "\u00a71  Area readiness",
+            "\u00a72  Required reading",
+            "\u00a73  Hazard screen",
+            "\u00a74  Material labeling",
+            "\u00a75  No-go triggers",
+            "\u00a76  Access control",
+            "\u00a77  Owner handoff"
+        );
+    }
+
+    private static String formatPhoneLandscapeGuideSectionRailLabel(int ordinal, String rawLabel) {
+        String cleaned = safe(rawLabel).trim();
+        if (cleaned.isEmpty()) {
+            return "";
+        }
+        java.util.regex.Matcher matcher = PHONE_LANDSCAPE_GUIDE_SECTION_LABEL_PATTERN.matcher(cleaned);
+        if (matcher.matches()) {
+            int sectionNumber = parsePositiveInt(matcher.group(1), ordinal);
+            return "\u00a7" + sectionNumber + "  " + sentenceCaseRailLabel(matcher.group(2));
+        }
+        cleaned = cleaned
+            .replaceFirst("^#{1,6}\\s+", "")
+            .replaceFirst("(?i)^(?:Section\\s+|\\u00a7\\s*)\\d+\\s*[:\\-\\u00b7]?\\s*", "")
+            .trim();
+        if (cleaned.isEmpty()) {
+            return "";
+        }
+        return "\u00a7" + Math.max(1, ordinal) + "  " + sentenceCaseRailLabel(cleaned);
+    }
+
+    private static String phoneLandscapeGuideSectionReadableLabel(String label) {
+        return safe(label)
+            .replaceFirst("^\\u00a7\\s*\\d+\\s*", "")
+            .trim();
+    }
+
+    private static String sentenceCaseRailLabel(String label) {
+        String cleaned = safe(label).replaceAll("\\s+", " ").trim();
+        if (cleaned.isEmpty()) {
+            return "";
+        }
+        if (cleaned.length() == 1) {
+            return cleaned.toUpperCase(Locale.US);
+        }
+        return cleaned.substring(0, 1).toUpperCase(Locale.US)
+            + cleaned.substring(1).toLowerCase(Locale.US);
+    }
+
+    private static int parsePositiveInt(String value, int fallback) {
+        try {
+            return Math.max(1, Integer.parseInt(safe(value).trim()));
+        } catch (NumberFormatException exc) {
+            return Math.max(1, fallback);
+        }
     }
 
     private void setNextStepsSubtitleVisible(boolean visible) {

@@ -554,7 +554,48 @@ public final class DetailFollowupLandscapeComposerTest {
     }
 
     @Test
-    public void phoneLandscapeGuideSectionRailMatchesTargetFirstViewport() {
+    public void phoneLandscapeGuideSectionRailUsesGuideSectionsOutsideReviewDemo() {
+        SearchResult guide = new SearchResult(
+            "Water Collection",
+            "",
+            "",
+            "## Site selection\nKeep the catchment uphill from waste.\n"
+                + "## First flush\nDiscard the first runoff.\n"
+                + "## Storage\nCover clean containers.",
+            "GD-501",
+            "",
+            "",
+            ""
+        );
+
+        assertEquals(
+            Arrays.asList(
+                "\u00A71  Site selection",
+                "\u00A72  First flush",
+                "\u00A73  Storage"
+            ),
+            DetailActivity.phoneLandscapeGuideSectionRailLabels(guide, false)
+        );
+        assertEquals(3, DetailActivity.phoneLandscapeGuideSectionRailCount(guide, false));
+    }
+
+    @Test
+    public void phoneLandscapeGuideSectionRailKeepsTargetLabelsInReviewDemoOnly() {
+        SearchResult foundryGuide = new SearchResult(
+            "Foundry & Metal Casting",
+            "",
+            "",
+            "## Live section\nUse real guide text outside demo mode.",
+            "GD-132",
+            "",
+            "",
+            ""
+        );
+
+        assertEquals(
+            Arrays.asList("\u00A71  Live section"),
+            DetailActivity.phoneLandscapeGuideSectionRailLabels(foundryGuide, false)
+        );
         assertEquals(
             Arrays.asList(
                 "\u00A71  Area readiness",
@@ -565,8 +606,9 @@ public final class DetailFollowupLandscapeComposerTest {
                 "\u00A76  Access control",
                 "\u00A77  Owner handoff"
             ),
-            DetailActivity.phoneLandscapeGuideSectionRailLabels()
+            DetailActivity.phoneLandscapeGuideSectionRailLabels(foundryGuide, true)
         );
+        assertEquals(17, DetailActivity.phoneLandscapeGuideSectionRailCount(foundryGuide, true));
     }
 
     @Test
