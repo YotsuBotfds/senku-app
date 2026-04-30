@@ -32,9 +32,9 @@ param(
     [string]$HostInferenceUrl = "http://10.0.2.2:1235/v1",
     [string]$HostInferenceModel = "gemma-4-e2b-it-litert",
     [string]$ArtifactRoot = "artifacts/instrumented_ui_smoke",
-    [ValidateSet("", "phone-basic", "phone-host", "phone-full", "tablet-landscape", "large-font", "tablet-large-font")]
+    [ValidateSet("", "phone-basic", "phone-host", "phone-full", "phone-functional", "tablet-landscape", "large-font", "tablet-large-font")]
     [string]$SmokePreset = "",
-    [ValidateSet("basic", "host", "full", "custom")]
+    [ValidateSet("basic", "host", "full", "functional", "custom")]
     [string]$SmokeProfile = "basic",
     [ValidateSet("portrait", "landscape")]
     [string]$Orientation = "portrait",
@@ -1172,6 +1172,13 @@ function Resolve-InstrumentationClassArgument {
                 "${BaseClass}#autoFollowUpWithHostInferenceBuildsInlineThreadHistory"
             ) -join ","
         }
+        "functional" {
+            return @(
+                "${BaseClass}#homeAndAskImeSubmitRouteToSearchResultsAndAnswerDetail",
+                "${BaseClass}#savedNavigationBackReturnsManualHomeDestination",
+                "${BaseClass}#answerModeProvenanceOpenBackReturnsAnswerContext"
+            ) -join ","
+        }
         default {
             return $BaseClass
         }
@@ -1195,6 +1202,11 @@ switch ($SmokePreset) {
     }
     "phone-full" {
         $SmokeProfile = "full"
+        $Orientation = "portrait"
+        $FontScale = 1.0
+    }
+    "phone-functional" {
+        $SmokeProfile = "functional"
         $Orientation = "portrait"
         $FontScale = 1.0
     }

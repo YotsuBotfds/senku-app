@@ -52,6 +52,15 @@ class RunAndroidInstrumentedUiSmokeSummaryContractTests(unittest.TestCase):
         self.assertIn('Invoke-ApkInstallWithPhysicalNoStreamingFallback -ApkPath $appApk -FailureMessage "App APK install failed"', self.script)
         self.assertIn('Invoke-ApkInstallWithPhysicalNoStreamingFallback -ApkPath $testApk -FailureMessage "Test APK install failed"', self.script)
 
+    def test_functional_smoke_profile_targets_existing_prompt_harness_methods(self):
+        self.assertIn('"phone-functional"', self.script)
+        self.assertIn('"functional"', self.script)
+        self.assertIn('"phone-functional" {', self.script)
+        self.assertIn('$SmokeProfile = "functional"', self.script)
+        self.assertIn('${BaseClass}#homeAndAskImeSubmitRouteToSearchResultsAndAnswerDetail', self.script)
+        self.assertIn('${BaseClass}#savedNavigationBackReturnsManualHomeDestination', self.script)
+        self.assertIn('${BaseClass}#answerModeProvenanceOpenBackReturnsAnswerContext', self.script)
+
     def test_parser_gate_passes(self):
         result = subprocess.run(
             [
