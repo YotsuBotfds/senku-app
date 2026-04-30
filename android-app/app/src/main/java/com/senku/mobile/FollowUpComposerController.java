@@ -7,6 +7,11 @@ final class FollowUpComposerController {
         SUBMIT
     }
 
+    enum SubmitRoute {
+        EMPTY_INPUT,
+        PHONE_FOLLOWUP
+    }
+
     enum RetryAction {
         EMPTY,
         RETRY
@@ -53,6 +58,13 @@ final class FollowUpComposerController {
         boolean busy
     ) {
         return resolveSubmit(new FollowUpComposerState(rawQuery, busy, busy, "", surface, null, null));
+    }
+
+    static SubmitRoute resolvePhoneSubmitRoute(String rawQuery) {
+        SubmitDecision decision = resolveSubmit(rawQuery, FollowUpComposerState.Surface.PHONE, false);
+        return decision.action == SubmitAction.EMPTY
+            ? SubmitRoute.EMPTY_INPUT
+            : SubmitRoute.PHONE_FOLLOWUP;
     }
 
     static RetryDecision resolveRetry(FollowUpComposerState state, String visibleDraftFallback) {

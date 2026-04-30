@@ -151,6 +151,34 @@ public final class FollowUpComposerStateTest {
     }
 
     @Test
+    public void savedDraftNormalizationUsesComposerDraftRules() {
+        assertEquals(
+            "what should I do next?\nwhich source?",
+            FollowUpComposerState.normalizeSavedDraft(
+                "  what should I do next?\r\nwhich source?  "
+            )
+        );
+        assertEquals("", FollowUpComposerState.normalizeSavedDraft(" \n\t "));
+        assertEquals("", FollowUpComposerState.normalizeSavedDraft(null));
+    }
+
+    @Test
+    public void draftForSaveUsesRestoredDraftOnlyWhenVisibleDraftIsUnavailable() {
+        assertEquals(
+            "restored draft",
+            FollowUpComposerState.resolveDraftForSave(null, " restored draft ")
+        );
+        assertEquals(
+            "",
+            FollowUpComposerState.resolveDraftForSave(" \n\t ", " restored draft ")
+        );
+        assertEquals(
+            "visible draft",
+            FollowUpComposerState.resolveDraftForSave(" visible draft ", " restored draft ")
+        );
+    }
+
+    @Test
     public void copyHelpersPreserveExistingStateDecisions() {
         FollowUpComposerState state = FollowUpComposerState.idle(
             "draft",

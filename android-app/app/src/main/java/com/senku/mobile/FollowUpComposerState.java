@@ -138,6 +138,17 @@ public final class FollowUpComposerState {
         return normalizeDraft(activeRetryQuery);
     }
 
+    public static String normalizeSavedDraft(String rawDraft) {
+        return normalizeDraft(rawDraft);
+    }
+
+    public static String resolveDraftForSave(String visibleDraft, String restoredDraft) {
+        if (visibleDraft == null) {
+            return normalizeSavedDraft(restoredDraft);
+        }
+        return normalizeSavedDraft(visibleDraft);
+    }
+
     private boolean hasActiveRetryQuery() {
         return !activeRetryQuery.isEmpty();
     }

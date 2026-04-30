@@ -164,11 +164,6 @@ public final class DetailActivity extends AppCompatActivity {
         Pattern.compile("^[\\-\\u2013\\u2014]+\\s*\\u00a7\\s*(\\d+)\\s*[\\u00b7:\\-]?\\s*(.*)$");
     private static final String HEADER_BULLET = " \u2022 ";
 
-    enum FollowUpSubmitRoute {
-        EMPTY_INPUT,
-        PHONE_FOLLOWUP
-    }
-
     private static final String EXTRA_TITLE = "title";
     private static final String EXTRA_SUBTITLE = "subtitle";
     private static final String EXTRA_BODY = "body";
@@ -786,23 +781,23 @@ public final class DetailActivity extends AppCompatActivity {
         if (savedInstanceState == null) {
             return;
         }
-        restoredPhoneFollowUpDraft = normalizeSavedFollowUpDraft(
+        restoredPhoneFollowUpDraft = FollowUpComposerState.normalizeSavedDraft(
             savedInstanceState.getString(STATE_PHONE_FOLLOWUP_DRAFT, "")
         );
-        tabletComposerText = normalizeSavedFollowUpDraft(
+        tabletComposerText = FollowUpComposerState.normalizeSavedDraft(
             savedInstanceState.getString(STATE_TABLET_FOLLOWUP_DRAFT, tabletComposerText)
         );
     }
 
     private String currentPhoneFollowUpDraftForSave() {
         if (followUpInput == null || followUpInput.getText() == null) {
-            return restoredPhoneFollowUpDraft;
+            return FollowUpComposerState.resolveDraftForSave(null, restoredPhoneFollowUpDraft);
         }
-        return normalizeSavedFollowUpDraft(followUpInput.getText().toString());
+        return FollowUpComposerState.resolveDraftForSave(followUpInput.getText().toString(), restoredPhoneFollowUpDraft);
     }
 
     private String currentTabletFollowUpDraftForSave() {
-        return normalizeSavedFollowUpDraft(tabletComposerText);
+        return FollowUpComposerState.normalizeSavedDraft(tabletComposerText);
     }
 
     private void applyRestoredPhoneFollowUpDraft() {
@@ -6456,22 +6451,6 @@ public final class DetailActivity extends AppCompatActivity {
 
     static boolean isFollowUpHardwareEnterSubmitAction(int keyCode, int action) {
         return keyCode == KeyEvent.KEYCODE_ENTER && action == KeyEvent.ACTION_UP;
-    }
-
-    static FollowUpSubmitRoute resolveFollowUpSubmitRoute(String rawQuery) {
-        FollowUpComposerController.SubmitDecision decision =
-            FollowUpComposerController.resolveSubmit(rawQuery, FollowUpComposerState.Surface.PHONE, false);
-        return decision.action == FollowUpComposerController.SubmitAction.EMPTY
-            ? FollowUpSubmitRoute.EMPTY_INPUT
-            : FollowUpSubmitRoute.PHONE_FOLLOWUP;
-    }
-
-    static String normalizeFollowUpQuery(String rawQuery) {
-        return FollowUpComposerState.normalizeDraft(rawQuery);
-    }
-
-    static String normalizeSavedFollowUpDraft(String rawDraft) {
-        return normalizeFollowUpQuery(rawDraft);
     }
 
     void applyPreparedPreviewState(OfflineAnswerEngine.PreparedAnswer preparedAnswer) {

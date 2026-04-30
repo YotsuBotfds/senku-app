@@ -26,7 +26,7 @@ public final class DetailFollowupLandscapeComposerTest {
         harness.clickSend("  what should I check next?  ");
 
         assertEquals(1, harness.submitCount);
-        assertEquals(DetailActivity.FollowUpSubmitRoute.PHONE_FOLLOWUP, harness.lastRoute);
+        assertEquals(FollowUpComposerController.SubmitRoute.PHONE_FOLLOWUP, harness.lastRoute);
         assertEquals("what should I check next?", harness.lastQuery);
     }
 
@@ -37,7 +37,7 @@ public final class DetailFollowupLandscapeComposerTest {
         assertTrue(harness.editorAction(EditorInfo.IME_ACTION_SEND, null, "  what should I do next?  "));
 
         assertEquals(1, harness.submitCount);
-        assertEquals(DetailActivity.FollowUpSubmitRoute.PHONE_FOLLOWUP, harness.lastRoute);
+        assertEquals(FollowUpComposerController.SubmitRoute.PHONE_FOLLOWUP, harness.lastRoute);
         assertEquals("what should I do next?", harness.lastQuery);
     }
 
@@ -50,10 +50,10 @@ public final class DetailFollowupLandscapeComposerTest {
         assertTrue(imeHarness.editorAction(EditorInfo.IME_ACTION_SEND, null, ""));
 
         assertEquals(1, sendHarness.submitCount);
-        assertEquals(DetailActivity.FollowUpSubmitRoute.EMPTY_INPUT, sendHarness.lastRoute);
+        assertEquals(FollowUpComposerController.SubmitRoute.EMPTY_INPUT, sendHarness.lastRoute);
         assertEquals("", sendHarness.lastQuery);
         assertEquals(1, imeHarness.submitCount);
-        assertEquals(DetailActivity.FollowUpSubmitRoute.EMPTY_INPUT, imeHarness.lastRoute);
+        assertEquals(FollowUpComposerController.SubmitRoute.EMPTY_INPUT, imeHarness.lastRoute);
         assertEquals("", imeHarness.lastQuery);
     }
 
@@ -87,42 +87,6 @@ public final class DetailFollowupLandscapeComposerTest {
             KeyEvent.KEYCODE_TAB,
             KeyEvent.ACTION_UP
         ));
-    }
-
-    @Test
-    public void followUpComposerEmptyInputStaysOnEmptyPolicyPath() {
-        assertEquals(
-            DetailActivity.FollowUpSubmitRoute.EMPTY_INPUT,
-            DetailActivity.resolveFollowUpSubmitRoute("")
-        );
-        assertEquals(
-            DetailActivity.FollowUpSubmitRoute.EMPTY_INPUT,
-            DetailActivity.resolveFollowUpSubmitRoute("   \n\t  ")
-        );
-    }
-
-    @Test
-    public void followUpComposerSendableInputRoutesToPhoneFollowUpPath() {
-        assertEquals(
-            DetailActivity.FollowUpSubmitRoute.PHONE_FOLLOWUP,
-            DetailActivity.resolveFollowUpSubmitRoute("  what should I do next?  ")
-        );
-        assertEquals(
-            "what should I do next?",
-            DetailActivity.normalizeFollowUpQuery("  what should I do next?  ")
-        );
-    }
-
-    @Test
-    public void savedFollowUpDraftUsesSameNormalizationAsComposerState() {
-        assertEquals(
-            "what should I do next?\nwhich source?",
-            DetailActivity.normalizeSavedFollowUpDraft(
-                "  what should I do next?\r\nwhich source?  "
-            )
-        );
-        assertEquals("", DetailActivity.normalizeSavedFollowUpDraft(" \n\t "));
-        assertEquals("", DetailActivity.normalizeSavedFollowUpDraft(null));
     }
 
     @Test
@@ -978,7 +942,7 @@ public final class DetailFollowupLandscapeComposerTest {
 
     private static final class FollowUpInteractionHarness {
         int submitCount;
-        DetailActivity.FollowUpSubmitRoute lastRoute;
+        FollowUpComposerController.SubmitRoute lastRoute;
         String lastQuery;
 
         void clickSend(String draft) {
@@ -995,8 +959,8 @@ public final class DetailFollowupLandscapeComposerTest {
 
         private void dispatchSubmit(String draft) {
             submitCount += 1;
-            lastQuery = DetailActivity.normalizeFollowUpQuery(draft);
-            lastRoute = DetailActivity.resolveFollowUpSubmitRoute(draft);
+            lastQuery = FollowUpComposerState.normalizeDraft(draft);
+            lastRoute = FollowUpComposerController.resolvePhoneSubmitRoute(draft);
         }
     }
 }

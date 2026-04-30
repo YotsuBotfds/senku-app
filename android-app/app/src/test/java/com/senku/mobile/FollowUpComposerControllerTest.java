@@ -92,6 +92,26 @@ public final class FollowUpComposerControllerTest {
     }
 
     @Test
+    public void phoneSubmitRouteKeepsEmptyInputOnEmptyPath() {
+        assertEquals(
+            FollowUpComposerController.SubmitRoute.EMPTY_INPUT,
+            FollowUpComposerController.resolvePhoneSubmitRoute("")
+        );
+        assertEquals(
+            FollowUpComposerController.SubmitRoute.EMPTY_INPUT,
+            FollowUpComposerController.resolvePhoneSubmitRoute("   \n\t  ")
+        );
+    }
+
+    @Test
+    public void phoneSubmitRouteSendsNonBlankDraftThroughFollowupPath() {
+        assertEquals(
+            FollowUpComposerController.SubmitRoute.PHONE_FOLLOWUP,
+            FollowUpComposerController.resolvePhoneSubmitRoute("  what should I do next?  ")
+        );
+    }
+
+    @Test
     public void retryDecisionUsesComposerRetryBeforeVisibleDraftFallback() {
         FollowUpComposerState state = new FollowUpComposerState(
             "visible draft",
