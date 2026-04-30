@@ -92,6 +92,11 @@ class TabletMainXmlShellParityTest {
     }
 
     @Test
+    fun genericTabletSearchChromeMockRowHasSharedTypography() {
+        assertSearchChromeRowInGenericTablet("layout-sw600dp")
+    }
+
+    @Test
     fun portraitAndLandscapeTabletShellsDoNotUsePlatformMonospaceAlias() {
         listOf("layout-sw600dp-port", "layout-sw600dp-land").forEach { qualifier ->
             val xml = layoutFile(qualifier).readText()
@@ -231,6 +236,43 @@ class TabletMainXmlShellParityTest {
 
         assertEquals("$qualifier search topbar height", "0dp", row.android("layout_height"))
         assertEquals("$qualifier search topbar hidden", "gone", row.android("visibility"))
+        assertEquals(
+            "$qualifier search topbar child token order",
+            listOf("ImageView", "TextView", "TextView"),
+            children.map { it.tagName },
+        )
+        assertEquals("20dp", searchIcon.android("layout_width"))
+        assertEquals("20dp", searchIcon.android("layout_height"))
+        assertEquals("@drawable/ic_search_magnifier", searchIcon.android("src"))
+        assertEquals("0dp", query.android("layout_width"))
+        assertEquals("14dp", query.android("layout_marginStart"))
+        assertEquals("1", query.android("layout_weight"))
+        assertEquals("1", query.android("maxLines"))
+        assertEquals("end", query.android("ellipsize"))
+        assertEquals("@font/inter_tight", query.android("fontFamily"))
+        assertEquals("14sp", query.android("textSize"))
+        assertEquals("600", query.android("textFontWeight"))
+        assertEquals("", query.android("textStyle"))
+        assertEquals("18sp", query.android("lineHeight"))
+        assertEquals("@font/jetbrains_mono", count.android("fontFamily"))
+        assertEquals("12sp", count.android("textSize"))
+        assertEquals("16sp", count.android("lineHeight"))
+        assertEquals("0dp", bottomRule.android("layout_height"))
+        assertEquals("gone", bottomRule.android("visibility"))
+        assertEquals("@color/senku_rev03_hairline_strong", bottomRule.android("background"))
+    }
+
+    private fun assertSearchChromeRowInGenericTablet(qualifier: String) {
+        val layout = layout(qualifier)
+        val row = layout.elementByAndroidId("tablet_search_topbar_row")
+        val query = layout.elementByAndroidId("tablet_search_query_text")
+        val count = layout.elementByAndroidId("tablet_search_count_text")
+        val bottomRule = layout.elementByAndroidId("tablet_search_bottom_rule")
+        val children = row.directElementChildren()
+        val searchIcon = children[0]
+
+        assertEquals("$qualifier search topbar should be present", "wrap_content", row.android("layout_height"))
+        assertEquals("gone", row.android("visibility"))
         assertEquals(
             "$qualifier search topbar child token order",
             listOf("ImageView", "TextView", "TextView"),

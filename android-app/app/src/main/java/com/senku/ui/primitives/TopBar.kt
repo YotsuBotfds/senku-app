@@ -52,9 +52,11 @@ private val TopBarTitleFontSize = 13.sp
 private val TopBarTitleLineHeight = 16.sp
 private val TopBarChromeLabelFontSize = 9.5.sp
 private val TopBarChromeLabelLineHeight = 11.sp
-private val TopBarIconActionSize = 28.dp
-private val TopBarBackActionWidth = 60.dp
-private val TopBarBackIconSize = 14.dp
+private val TopBarActionSize = 28.dp
+private val TopBarBackActionLabeledWidth = 60.dp
+private val TopBarBackIconSize = 18.dp
+private val TopBarBackActionHorizontalPadding = 6.dp
+private val TopBarBackActionTextSpacing = 2.dp
 private val TopBarLeadingDividerHeight = 24.dp
 private const val TopBarBackActionLabel = "Back"
 
@@ -65,15 +67,18 @@ data class TopBarActionSpec(
     val isVisible: Boolean = true,
     val isEnabled: Boolean = true,
     val isActive: Boolean = false,
+    val showsBackLabel: Boolean = false,
 ) {
     companion object {
         fun back(
             contentDescription: String,
             isEnabled: Boolean = true,
+            showsBackLabel: Boolean = false,
         ) = TopBarActionSpec(
             kind = TopBarActionKind.Back,
             contentDescription = contentDescription,
             isEnabled = isEnabled,
+            showsBackLabel = showsBackLabel,
         )
 
         fun home(
@@ -278,6 +283,7 @@ private fun TopBarActionButton(
 ) {
     val colors = SenkuTheme.colors
     val shape = RoundedCornerShape(6.dp)
+    val shouldShowBackLabel = action.kind == TopBarActionKind.Back && action.showsBackLabel
     val containerColor = when {
         action.isActive -> colors.ok.copy(alpha = 0.10f)
         else -> Color.Transparent
@@ -292,15 +298,8 @@ private fun TopBarActionButton(
 
     Box(
         modifier = modifier
-            .then(
-                if (action.kind == TopBarActionKind.Back) {
-                    Modifier
-                        .height(TopBarIconActionSize)
-                        .width(TopBarBackActionWidth)
-                } else {
-                    Modifier.size(TopBarIconActionSize)
-                }
-            )
+            .size(TopBarActionSize)
+            .then(if (shouldShowBackLabel) Modifier.width(TopBarBackActionLabeledWidth) else Modifier)
             .clip(shape)
             .semantics(mergeDescendants = true) {
                 contentDescription = action.contentDescription
@@ -316,10 +315,10 @@ private fun TopBarActionButton(
             ),
         contentAlignment = Alignment.Center,
     ) {
-        if (action.kind == TopBarActionKind.Back) {
+        if (shouldShowBackLabel) {
             Row(
-                modifier = Modifier.padding(horizontal = 6.dp),
-                horizontalArrangement = Arrangement.spacedBy(2.dp),
+                modifier = Modifier.padding(horizontal = TopBarBackActionHorizontalPadding),
+                horizontalArrangement = Arrangement.spacedBy(TopBarBackActionTextSpacing),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Icon(
@@ -344,7 +343,7 @@ private fun TopBarActionButton(
                 imageVector = action.kind.icon(),
                 contentDescription = null,
                 tint = iconTint,
-                modifier = Modifier.size(18.dp),
+                modifier = Modifier.size(TopBarBackIconSize),
             )
         }
     }
@@ -361,10 +360,12 @@ internal fun topBarBackIconSizeDpForTest(): Int = TopBarBackIconSize.value.toInt
 internal fun topBarLeadingDividerHeightDpForTest(): Int = TopBarLeadingDividerHeight.value.toInt()
 
 internal fun topBarActionWidthDpForTest(kind: TopBarActionKind): Int =
-    if (kind == TopBarActionKind.Back) {
-        TopBarBackActionWidth.value.toInt()
-    } else {
-        TopBarIconActionSize.value.toInt()
+    when (kind) {
+        TopBarActionKind.Back -> TopBarActionSize.value.toInt()
+        TopBarActionKind.Home -> TopBarActionSize.value.toInt()
+        TopBarActionKind.Pin -> TopBarActionSize.value.toInt()
+        TopBarActionKind.Share -> TopBarActionSize.value.toInt()
+        TopBarActionKind.Overflow -> TopBarActionSize.value.toInt()
     }
 
 private fun TopBarActionKind.icon(): ImageVector = when (this) {

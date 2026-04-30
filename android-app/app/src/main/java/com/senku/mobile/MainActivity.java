@@ -230,6 +230,8 @@ public final class MainActivity extends AppCompatActivity {
     private View browseRail;
     private View tabletSearchSurface;
     private View phoneLandscapeSearchSurface;
+    private View tabletSearchTopbarRow;
+    private View tabletSearchBottomRule;
     private View phoneSearchQueryWell;
     private TextView phoneSearchQueryText;
     private TextView phoneSearchCountText;
@@ -467,6 +469,8 @@ public final class MainActivity extends AppCompatActivity {
         browseRail = findViewById(R.id.browse_rail);
         tabletSearchSurface = findViewById(R.id.tablet_search_surface);
         phoneLandscapeSearchSurface = findViewById(R.id.phone_landscape_search_surface);
+        tabletSearchTopbarRow = findViewById(R.id.tablet_search_topbar_row);
+        tabletSearchBottomRule = findViewById(R.id.tablet_search_bottom_rule);
         phoneSearchQueryWell = findViewById(R.id.phone_search_query_well);
         phoneSearchQueryText = findViewById(R.id.phone_search_query_text);
         phoneSearchCountText = findViewById(R.id.phone_search_count_text);
@@ -4521,9 +4525,16 @@ public final class MainActivity extends AppCompatActivity {
     private void showBrowseChrome(boolean show) {
         browseChromeActive = show;
         updateHomeChromeTitle(show, searchInput == null ? "" : searchInput.getText().toString());
+        boolean showSearchTopbar = isPlainTabletSearchChromeLayout() && !show;
         int visibility = show ? View.VISIBLE : View.GONE;
         if (browseScrollView != null) {
             browseScrollView.setVisibility(visibility);
+        }
+        if (tabletSearchTopbarRow != null) {
+            tabletSearchTopbarRow.setVisibility(showSearchTopbar ? View.VISIBLE : View.GONE);
+        }
+        if (tabletSearchBottomRule != null) {
+            tabletSearchBottomRule.setVisibility(showSearchTopbar ? View.VISIBLE : View.GONE);
         }
         updateRecentThreadsVisibility();
         updatePinnedSectionVisibility();
@@ -5086,6 +5097,10 @@ public final class MainActivity extends AppCompatActivity {
         Configuration configuration = getResources().getConfiguration();
         return configuration.smallestScreenWidthDp >= 600
             && configuration.orientation == Configuration.ORIENTATION_LANDSCAPE;
+    }
+
+    private boolean isPlainTabletSearchChromeLayout() {
+        return isTabletSearchLayout() && tabletSearchSurface == null && tabletSearchTopbarRow != null;
     }
 
     private boolean isTabletPortraitLayout() {

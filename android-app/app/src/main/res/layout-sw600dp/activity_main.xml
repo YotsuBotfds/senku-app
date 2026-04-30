@@ -321,6 +321,63 @@
             android:textColor="@color/senku_rev03_ink_0" />
     </LinearLayout>
 
+        <LinearLayout
+            android:id="@+id/tablet_search_topbar_row"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingTop="12dp"
+            android:paddingStart="18dp"
+            android:paddingEnd="18dp"
+            android:paddingBottom="12dp"
+            android:visibility="gone">
+
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:contentDescription="@string/search_input_description"
+                android:src="@drawable/ic_search_magnifier"
+                android:tint="@color/senku_rev03_accent" />
+
+            <TextView
+                android:id="@+id/tablet_search_query_text"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="14dp"
+                android:layout_weight="1"
+                android:ellipsize="end"
+                android:fontFamily="@font/inter_tight"
+                android:includeFontPadding="false"
+                android:lineHeight="18sp"
+                android:maxLines="1"
+                android:text="@string/search_hint"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textColor="@color/senku_rev03_ink_0"
+                android:textFontWeight="600"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/tablet_search_count_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/jetbrains_mono"
+                android:includeFontPadding="false"
+                android:lineHeight="16sp"
+                android:text="0 RESULTS"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textColor="@color/senku_rev03_accent"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <View
+            android:id="@+id/tablet_search_bottom_rule"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:background="@color/senku_rev03_hairline_strong"
+            android:visibility="gone" />
+
     <HorizontalScrollView
         android:id="@+id/search_suggestions_section"
         android:layout_width="match_parent"
