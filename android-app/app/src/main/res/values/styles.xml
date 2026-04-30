@@ -3,14 +3,14 @@
     <style name="TextAppearance.Senku.Rev03.CanvasTitle" parent="@style/TextAppearance.AppCompat.Large">
         <item name="android:fontFamily">@font/inter_tight</item>
         <item name="android:textSize">36sp</item>
-        <item name="android:lineHeight">40sp</item>
+        <item name="android:lineHeight">39.6sp</item>
         <item name="android:letterSpacing">-0.02</item>
     </style>
 
     <style name="TextAppearance.Senku.Rev03.SectionTitle" parent="@style/TextAppearance.AppCompat.Title">
         <item name="android:fontFamily">@font/inter_tight</item>
         <item name="android:textSize">22sp</item>
-        <item name="android:lineHeight">27sp</item>
+        <item name="android:lineHeight">26.4sp</item>
         <item name="android:letterSpacing">-0.01</item>
     </style>
 
