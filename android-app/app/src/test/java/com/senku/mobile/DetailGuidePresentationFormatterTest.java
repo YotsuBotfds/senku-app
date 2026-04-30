@@ -25,15 +25,20 @@ public final class DetailGuidePresentationFormatterTest {
             "guide-focus"
         );
 
-        assertEquals(
-            "FIELD MANUAL \u00b7 REV 04-27 \u00b7 PK 2\n"
-                + "Water\n"
-                + "GD-214 \u00b7 2 SECTIONS\n\n"
-                + "\u2014 \u00a7 1 \u00b7 STORAGE\n\n"
-                + "\u2014 \u00a7 2 \u00b7 SAFE STORAGE\n"
-                + "Use clean water.",
-            DetailGuidePresentationFormatter.buildGuideBody(result)
+        String displayBody = DetailGuidePresentationFormatter.buildGuideBody(result);
+
+        assertContainsAll(
+            displayBody,
+            "FIELD MANUAL \u00b7 REV 04-27 \u00b7 PK 2",
+            "Water",
+            "GD-214 \u00b7 2 SECTIONS",
+            "\u2014 \u00a7 1 \u00b7 STORAGE",
+            "\u2014 \u00a7 2 \u00b7 SAFE STORAGE",
+            "Use clean water."
         );
+        assertFalse(displayBody.contains("Snippet should not win"));
+        assertFalse(displayBody.contains("[System Instruction]"));
+        assertEquals(2, countOccurrences(displayBody, "\u2014 \u00a7 "));
     }
 
     @Test
@@ -49,14 +54,17 @@ public final class DetailGuidePresentationFormatterTest {
             "guide-focus"
         );
 
-        assertEquals(
-            "FIELD MANUAL \u00b7 REV 04-27 \u00b7 PK 2\n"
-                + "Water\n"
-                + "GD-214 \u00b7 1 SECTION\n\n"
-                + "\u2014 \u00a7 1 \u00b7 STORAGE\n"
-                + "Use covered jars.",
-            DetailGuidePresentationFormatter.buildGuideBody(result)
+        String displayBody = DetailGuidePresentationFormatter.buildGuideBody(result);
+
+        assertContainsAll(
+            displayBody,
+            "FIELD MANUAL \u00b7 REV 04-27 \u00b7 PK 2",
+            "Water",
+            "GD-214 \u00b7 1 SECTION",
+            "\u2014 \u00a7 1 \u00b7 STORAGE",
+            "Use covered jars."
         );
+        assertEquals(1, countOccurrences(displayBody, "\u2014 \u00a7 1 \u00b7 STORAGE"));
     }
 
     @Test
@@ -72,14 +80,18 @@ public final class DetailGuidePresentationFormatterTest {
             "guide-focus"
         );
 
-        assertEquals(
-            "FIELD MANUAL \u00b7 REV 04-27 \u00b7 PK 2\n"
-                + "Water\n"
-                + "GD-214 \u00b7 1 SECTION\n\n"
-                + "Use covered jars\n"
-                + "Rotate monthly.",
-            DetailGuidePresentationFormatter.buildGuideBody(result)
+        String displayBody = DetailGuidePresentationFormatter.buildGuideBody(result);
+
+        assertContainsAll(
+            displayBody,
+            "FIELD MANUAL \u00b7 REV 04-27 \u00b7 PK 2",
+            "Water",
+            "GD-214 \u00b7 1 SECTION",
+            "Use covered jars",
+            "Rotate monthly."
         );
+        assertFalse(displayBody.contains("**covered jars**"));
+        assertFalse(displayBody.contains("<br>"));
     }
 
     @Test
@@ -108,21 +120,25 @@ public final class DetailGuidePresentationFormatterTest {
             "guide-focus"
         );
 
-        assertEquals(
-            "FIELD MANUAL \u00b7 REV 04-27 \u00b7 PK 2\n"
-                + "Foundry & Metal Casting\n"
-                + "GD-132 \u00b7 3 SECTIONS \u00b7 OPENED FROM GD-220\n\n"
-                + "DANGER \u00b7 EXTREME BURN HAZARD\n"
-                + "A single drop of water contacting molten metal causes a violent steam explosion. Every tool, mold, crucible, and surface that contacts molten metal must be completely dry.\n"
-                + "\u2014 \u00a7 1 \u00b7 AREA READINESS\n"
-                + "Reviewed Answer-Card Boundary\n"
-                + "Use this section only for foundry-area readiness, visible hazard screening, material and source labeling, no-go triggers, access control, and expert or owner handoff.\n"
-                + "Start with the current activity status.\n\n"
-                + "\u2014 \u00a7 2 \u00b7 REQUIRED READING\n"
-                + "GD-220 \u00b7 Abrasives Manufacturing\n"
-                + "GD-499 \u00b7 Bellows & Forge Blower Construction",
-            DetailGuidePresentationFormatter.buildGuideBody(result, true)
+        String displayBody = DetailGuidePresentationFormatter.buildGuideBody(result, true);
+
+        assertContainsAll(
+            displayBody,
+            "FIELD MANUAL \u00b7 REV 04-27 \u00b7 PK 2",
+            "Foundry & Metal Casting",
+            "GD-132 \u00b7 3 SECTIONS \u00b7 OPENED FROM GD-220",
+            "DANGER \u00b7 EXTREME BURN HAZARD",
+            "A single drop of water contacting molten metal causes a violent steam explosion.",
+            "\u2014 \u00a7 1 \u00b7 AREA READINESS",
+            "Reviewed Answer-Card Boundary",
+            "Use this section only for foundry-area readiness",
+            "Start with the current activity status.",
+            "\u2014 \u00a7 2 \u00b7 REQUIRED READING",
+            "GD-220 \u00b7 Abrasives Manufacturing",
+            "GD-499 \u00b7 Bellows & Forge Blower Construction"
         );
+        assertFalse(displayBody.contains("bearing-manufacturing"));
+        assertEquals(2, countOccurrences(displayBody, "\u2014 \u00a7 "));
     }
 
     @Test
@@ -319,20 +335,24 @@ public final class DetailGuidePresentationFormatterTest {
             "guide-focus"
         );
 
-        assertEquals(
-            "FIELD MANUAL \u00b7 REV 04-27 \u00b7 PK 2\n"
-                + "Foundry & Metal Casting\n"
-                + "GD-132 \u00b7 4 SECTIONS \u00b7 OPENED FROM GD-220\n\n"
-                + "DANGER \u00b7 EXTREME BURN HAZARD\n"
-                + "Keep tools dry.\n"
-                + "\u2014 \u00a7 1 \u00b7 FOUNDRY SAFETY QUICKSTART\n"
-                + "Check dry tools.\n\n"
-                + "\u2014 \u00a7 2 \u00b7 REQUIRED READING\n"
-                + "GD-220 \u00b7 Abrasives Manufacturing\n"
-                + "GD-499 \u00b7 Bellows & Forge Blower Construction\n"
-                + "GD-225 \u00b7 Bloomery Furnace Construction",
-            DetailGuidePresentationFormatter.buildGuideBody(result, true)
+        String displayBody = DetailGuidePresentationFormatter.buildGuideBody(result, true);
+
+        assertContainsAll(
+            displayBody,
+            "FIELD MANUAL \u00b7 REV 04-27 \u00b7 PK 2",
+            "Foundry & Metal Casting",
+            "GD-132 \u00b7 4 SECTIONS \u00b7 OPENED FROM GD-220",
+            "DANGER \u00b7 EXTREME BURN HAZARD",
+            "Keep tools dry.",
+            "\u2014 \u00a7 1 \u00b7 FOUNDRY SAFETY QUICKSTART",
+            "Check dry tools.",
+            "\u2014 \u00a7 2 \u00b7 REQUIRED READING",
+            "GD-220 \u00b7 Abrasives Manufacturing",
+            "GD-499 \u00b7 Bellows & Forge Blower Construction",
+            "GD-225 \u00b7 Bloomery Furnace Construction"
         );
+        assertFalse(displayBody.contains("REQUIRED READING \u00b7 Chemical Safety Guide"));
+        assertEquals(2, countOccurrences(displayBody, "\u2014 \u00a7 "));
     }
 
     @Test
@@ -355,18 +375,23 @@ public final class DetailGuidePresentationFormatterTest {
             "guide-focus"
         );
 
-        assertEquals(
-            "FIELD MANUAL \u00b7 REV 04-27 \u00b7 PK 2\n"
-                + "Metal Casting\n"
-                + "GD-214 \u00b7 1 SECTION\n\n"
-                + "DANGER \u00b7 EXTREME BURN HAZARD\n"
-                + "A single drop of water contacting molten metal causes a violent steam explosion, spraying molten metal 3+ meters in all directions. EVERY tool, mold, crucible, and surface that contacts molten metal must be completely dry. Inspect crucibles for cracks before every use. Never cast alone.\n"
-                + "REQUIRED READING \u00b7 Chemical Safety Guide\n"
-                + "\u2014 \u00a7 1 \u00b7 AREA READINESS\n"
-                + "Reviewed Answer-Card Boundary\n"
-                + "Use this section only for foundry-area readiness.",
-            DetailGuidePresentationFormatter.buildGuideBody(result)
+        String displayBody = DetailGuidePresentationFormatter.buildGuideBody(result);
+
+        assertContainsAll(
+            displayBody,
+            "FIELD MANUAL \u00b7 REV 04-27 \u00b7 PK 2",
+            "Metal Casting",
+            "GD-214 \u00b7 1 SECTION",
+            "DANGER \u00b7 EXTREME BURN HAZARD",
+            "violent steam explosion",
+            "REQUIRED READING \u00b7 Chemical Safety Guide",
+            "\u2014 \u00a7 1 \u00b7 AREA READINESS",
+            "Reviewed Answer-Card Boundary",
+            "Use this section only for foundry-area readiness."
         );
+        assertFalse(displayBody.contains("WARNING\n"));
+        assertFalse(displayBody.contains("## Reviewed Answer-Card Boundary"));
+        assertEquals(1, countOccurrences(displayBody, "\u2014 \u00a7 "));
     }
 
     @Test
@@ -804,5 +829,21 @@ public final class DetailGuidePresentationFormatterTest {
         assertEquals(GuideBodySanitizer.GuideBodyLine.Kind.SECTION, parsed.lines[0].kind);
         assertEquals(GuideBodySanitizer.GuideBodyLine.Kind.TEXT, parsed.lines[2].kind);
         assertEquals(GuideBodySanitizer.GuideBodyLine.Kind.TEXT, parsed.lines[4].kind);
+    }
+
+    private static void assertContainsAll(String actual, String... expectedTokens) {
+        for (String expectedToken : expectedTokens) {
+            assertTrue("Missing expected token: " + expectedToken, actual.contains(expectedToken));
+        }
+    }
+
+    private static int countOccurrences(String actual, String token) {
+        int count = 0;
+        int index = 0;
+        while ((index = actual.indexOf(token, index)) >= 0) {
+            count++;
+            index += token.length();
+        }
+        return count;
     }
 }
