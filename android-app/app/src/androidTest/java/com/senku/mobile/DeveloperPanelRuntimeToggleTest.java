@@ -115,6 +115,62 @@ public final class DeveloperPanelRuntimeToggleTest {
         }
     }
 
+    @Test
+    public void developerPanelToggleButtonExpandsAndCollapsesRouteContent() {
+        try (ActivityScenario<MainActivity> scenario = ActivityScenario.launch(MainActivity.class)) {
+            waitUntilEnabled(scenario, R.id.developer_toggle_button);
+
+            scenario.onActivity(activity -> {
+                View developerPanel = activity.findViewById(R.id.developer_panel);
+                View developerContent = activity.findViewById(R.id.developer_content);
+                Button developerToggle = activity.findViewById(R.id.developer_toggle_button);
+
+                Assert.assertNotNull("developer panel should exist", developerPanel);
+                Assert.assertNotNull("developer content should exist", developerContent);
+                Assert.assertNotNull("developer route toggle should exist", developerToggle);
+                Assert.assertEquals(
+                    "developer panel should be visible on the developer route surface",
+                    View.VISIBLE,
+                    developerPanel.getVisibility()
+                );
+                Assert.assertEquals(
+                    "developer route content should start collapsed",
+                    View.GONE,
+                    developerContent.getVisibility()
+                );
+                Assert.assertEquals(
+                    "developer route toggle should advertise the collapsed action",
+                    activity.getString(R.string.developer_tools_show),
+                    developerToggle.getText().toString()
+                );
+
+                developerToggle.performClick();
+                Assert.assertEquals(
+                    "developer route toggle should expand the route content",
+                    View.VISIBLE,
+                    developerContent.getVisibility()
+                );
+                Assert.assertEquals(
+                    "developer route toggle should advertise the expanded action",
+                    activity.getString(R.string.developer_tools_hide),
+                    developerToggle.getText().toString()
+                );
+
+                developerToggle.performClick();
+                Assert.assertEquals(
+                    "developer route toggle should collapse the route content",
+                    View.GONE,
+                    developerContent.getVisibility()
+                );
+                Assert.assertEquals(
+                    "developer route toggle should restore the collapsed action label",
+                    activity.getString(R.string.developer_tools_show),
+                    developerToggle.getText().toString()
+                );
+            });
+        }
+    }
+
     private void captureUiState(String label) {
         String safeLabel = label.replaceAll("[^a-zA-Z0-9._-]+", "_");
         File screenshotOutput = new File(
