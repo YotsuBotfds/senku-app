@@ -182,7 +182,7 @@ fun DockedComposer(
                         end = if (model.compact) 16.dp else 24.dp,
                     ),
                 style = typography.monoCaps.copy(
-                    fontSize = 9.sp,
+                    fontSize = 10.sp,
                     lineHeight = 12.sp,
                     fontWeight = FontWeight.Medium,
                 ),
@@ -231,8 +231,8 @@ fun DockedComposer(
                     Text(
                         text = "+",
                         style = typography.tag.copy(
-                            fontSize = 18.sp,
-                            lineHeight = 18.sp,
+                            fontSize = 16.sp,
+                            lineHeight = 16.sp,
                             fontWeight = FontWeight.Medium,
                         ),
                         color = colors.ink2,
@@ -256,7 +256,7 @@ fun DockedComposer(
                 enabled = model.enabled,
                 singleLine = model.compact,
                 textStyle = typography.uiBody.copy(
-                    fontSize = 14.sp,
+                    fontSize = 13.sp,
                     lineHeight = 20.sp,
                     fontWeight = FontWeight.Medium,
                     color = colors.ink0,
@@ -282,7 +282,7 @@ fun DockedComposer(
                             Text(
                                 text = fieldHint,
                                 style = typography.uiBody.copy(
-                                    fontSize = 14.sp,
+                                    fontSize = 13.sp,
                                     lineHeight = 20.sp,
                                     fontWeight = FontWeight.Medium,
                                 ),

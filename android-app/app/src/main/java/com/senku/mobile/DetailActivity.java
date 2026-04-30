@@ -1008,7 +1008,7 @@ public final class DetailActivity extends AppCompatActivity {
         item.setText(R.string.app_badge_letter);
         item.setTextColor(getColor(R.color.senku_rev03_accent));
         item.setTypeface(rev03UiTypeface(Typeface.BOLD));
-        item.setTextSize(15f);
+        item.setTextSize(14f);
         item.setBackgroundResource(R.drawable.bg_manual_home_nav_shell);
         item.setIncludeFontPadding(false);
         return item;
@@ -1370,7 +1370,7 @@ public final class DetailActivity extends AppCompatActivity {
         // Let each answer screen start with a clean follow-up box instead of restoring
         // a stale draft from a prior activity instance.
         followUpInput.setSaveEnabled(false);
-        followUpInput.setTypeface(Typeface.SANS_SERIF);
+        followUpInput.setTypeface(rev03UiTypeface(Typeface.NORMAL));
         followUpInput.setInputType(
             InputType.TYPE_CLASS_TEXT
                 | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES
@@ -1444,7 +1444,7 @@ public final class DetailActivity extends AppCompatActivity {
         if (screenMeta != null) {
             screenMeta.setText(answerMode ? buildCompactHeaderMeta() : buildGuideHeaderMeta());
             screenMeta.setVisibility(shouldShowHeaderMeta() ? View.VISIBLE : View.GONE);
-            screenMeta.setTypeface(Typeface.MONOSPACE, Typeface.BOLD);
+            screenMeta.setTypeface(rev03MonoTypeface(Typeface.BOLD));
             screenMeta.setLetterSpacing(0.03f);
         }
         applyPhonePortraitHeaderTreatment();
@@ -1677,15 +1677,16 @@ public final class DetailActivity extends AppCompatActivity {
             title.setText(buildEmergencyHeaderTitle());
             title.setTextColor(getColor(isTabletPortraitLayout()
                 ? R.color.senku_rev03_danger
-                : R.color.senku_emergency_banner_text));
-            title.setTypeface(Typeface.MONOSPACE, Typeface.BOLD);
+                : R.color.senku_rev03_ink_0));
+            title.setTypeface(rev03MonoTypeface(Typeface.BOLD));
             title.setTextSize(isTabletPortraitLayout() ? 11f : 16f);
             title.setLetterSpacing(isTabletPortraitLayout() ? 0.08f : 0f);
         }
         if (text != null) {
             text.setText(DetailActionBlockPresentationFormatter.styleEmergencyMinimumDistance(buildEmergencyHeaderSummary()));
-            text.setTypeface(isTabletPortraitLayout() ? Typeface.create(Typeface.SERIF, Typeface.BOLD) : Typeface.DEFAULT);
-            text.setTextSize(isTabletPortraitLayout() ? 15f : 14f);
+            text.setTextColor(getColor(R.color.senku_rev03_ink_0));
+            text.setTypeface(isTabletPortraitLayout() ? rev03SerifTypeface(Typeface.BOLD) : rev03UiTypeface(Typeface.NORMAL));
+            text.setTextSize(14f);
             text.setMaxLines(isTabletPortraitLayout() ? 3 : 2);
         }
         updateTabletEmergencyOverlayChrome(emergencyFullHeightPage);
@@ -1807,7 +1808,7 @@ public final class DetailActivity extends AppCompatActivity {
 
         TextView title = new TextView(this);
         title.setId(R.id.detail_emergency_header_title);
-        title.setTextColor(getColor(R.color.senku_emergency_banner_text));
+        title.setTextColor(getColor(R.color.senku_rev03_ink_0));
         title.setTypeface(rev03UiTypeface(Typeface.BOLD));
         title.setTextSize(16f);
         title.setIncludeFontPadding(false);
@@ -1818,7 +1819,8 @@ public final class DetailActivity extends AppCompatActivity {
 
         TextView text = new TextView(this);
         text.setId(R.id.detail_emergency_header_text);
-        text.setTextColor(getColor(R.color.senku_emergency_banner_text));
+        text.setTextColor(getColor(R.color.senku_rev03_ink_0));
+        text.setTypeface(rev03UiTypeface(Typeface.NORMAL));
         text.setTextSize(14f);
         text.setMaxLines(2);
         text.setEllipsize(TextUtils.TruncateAt.END);
@@ -1914,7 +1916,7 @@ public final class DetailActivity extends AppCompatActivity {
         station.setText(R.string.app_badge_letter);
         station.setTextColor(getColor(R.color.senku_rev03_accent));
         station.setTypeface(rev03UiTypeface(Typeface.BOLD));
-        station.setTextSize(15f);
+        station.setTextSize(14f);
         station.setBackgroundResource(R.drawable.bg_manual_home_nav_shell);
         station.setIncludeFontPadding(false);
         station.setContentDescription("Senku detail");
@@ -2056,6 +2058,10 @@ public final class DetailActivity extends AppCompatActivity {
 
     private Typeface rev03MonoTypeface(int style) {
         return rev03Typeface(R.font.jetbrains_mono, style, Typeface.MONOSPACE);
+    }
+
+    private Typeface rev03SerifTypeface(int style) {
+        return rev03Typeface(R.font.source_serif_4, style, Typeface.SERIF);
     }
 
     private Typeface rev03Typeface(int fontResId, int style, Typeface fallback) {
@@ -3213,7 +3219,7 @@ public final class DetailActivity extends AppCompatActivity {
             params.topMargin = 0;
             bodyMirrorShell.setLayoutParams(params);
             bodyMirrorShell.setAlpha(1f);
-            bodyView.setTextColor(getColor(R.color.senku_text_light));
+            bodyView.setTextColor(getColor(R.color.senku_rev03_ink_0));
             bodyView.setAlpha(1f);
             bodyMirrorShell.setVisibility(View.GONE);
         } else {
@@ -3229,7 +3235,7 @@ public final class DetailActivity extends AppCompatActivity {
                 : R.drawable.bg_detail_guide_paper_shell);
             bodyMirrorShell.setAlpha(1f);
             bodyView.setTextColor(getColor(answerMode && phoneXmlDetailLayoutActive()
-                ? R.color.senku_text_light
+                ? R.color.senku_rev03_ink_0
                 : R.color.senku_rev03_paper_ink));
             bodyView.setAlpha(1f);
             bodyMirrorShell.setVisibility(View.VISIBLE);
@@ -3956,7 +3962,7 @@ public final class DetailActivity extends AppCompatActivity {
                 Button button = new Button(this);
                 button.setAllCaps(false);
                 button.setBackgroundResource(detailSourceButtonBackground(previewMode));
-                button.setTextColor(getColor(R.color.senku_text_light));
+                button.setTextColor(getColor(R.color.senku_rev03_ink_0));
                 button.setMinHeight(0);
                 button.setMinimumHeight(0);
                 int btnPadH = (phonePortraitSourceCards || flatAnswerSourceCards)
@@ -3996,7 +4002,7 @@ public final class DetailActivity extends AppCompatActivity {
                     : 14f);
                 button.setLineSpacing(0f, (phonePortraitSourceCards || flatAnswerSourceCards) ? 1.0f : 1f);
                 if (styledSourceCard) {
-                    button.setTypeface(Typeface.DEFAULT, Typeface.NORMAL);
+                    button.setTypeface(rev03UiTypeface(Typeface.NORMAL));
                     button.setIncludeFontPadding(false);
                 }
                 button.setTag(buildSourceSelectionKey(source));
@@ -4131,7 +4137,7 @@ public final class DetailActivity extends AppCompatActivity {
             Button compactTrigger = new Button(this);
             compactTrigger.setAllCaps(false);
             compactTrigger.setBackgroundResource(R.drawable.bg_sources_section_pill);
-            compactTrigger.setTextColor(getColor(R.color.senku_text_light));
+            compactTrigger.setTextColor(getColor(R.color.senku_rev03_ink_0));
             compactTrigger.setMinHeight(0);
             compactTrigger.setMinimumHeight(0);
             compactTrigger.setMaxWidth(dp(240));
@@ -4174,7 +4180,7 @@ public final class DetailActivity extends AppCompatActivity {
             chip.setBackgroundResource(renderPrimaryAnchor
                 ? R.drawable.bg_detail_meta_pill
                 : R.drawable.bg_sources_section_pill);
-            chip.setTextColor(getColor(R.color.senku_text_light));
+            chip.setTextColor(getColor(R.color.senku_rev03_ink_0));
             chip.setMinHeight(0);
             chip.setMinimumHeight(0);
             chip.setMaxWidth(dp(compactPhonePortrait ? 200 : 260));
@@ -4279,13 +4285,13 @@ public final class DetailActivity extends AppCompatActivity {
             Button chip = new Button(this);
             chip.setAllCaps(false);
             chip.setBackgroundResource(R.drawable.bg_helper_chip);
-            chip.setTextColor(getColor(R.color.senku_text_light));
+            chip.setTextColor(getColor(R.color.senku_rev03_ink_0));
             chip.setMinHeight(0);
             chip.setMinimumHeight(0);
             chip.setPadding(dp(12), compactPhonePortrait ? dp(8) : dp(10), dp(12), compactPhonePortrait ? dp(8) : dp(10));
             chip.setText(nextStep);
             chip.setContentDescription(detailSourcePresentationFormatter().buildNextStepChipContentDescription(nextStep, i, limit));
-            applyDirectionalActionAffordance(chip, getColor(R.color.senku_text_muted_light));
+            applyDirectionalActionAffordance(chip, getColor(R.color.senku_rev03_ink_2));
             chip.setOnClickListener(v -> {
                 if (followUpInput == null) {
                     return;
@@ -4321,7 +4327,7 @@ public final class DetailActivity extends AppCompatActivity {
             Button chip = new Button(this);
             chip.setAllCaps(false);
             chip.setBackgroundResource(R.drawable.bg_source_link);
-            chip.setTextColor(getColor(R.color.senku_text_light));
+            chip.setTextColor(getColor(R.color.senku_rev03_ink_0));
             chip.setMinHeight(0);
             chip.setMinimumHeight(0);
             chip.setPadding(dp(12), dp(8), dp(12), dp(8));
@@ -4370,7 +4376,7 @@ public final class DetailActivity extends AppCompatActivity {
             String material = materials.get(i);
             TextView chip = new TextView(this);
             chip.setBackgroundResource(R.drawable.bg_helper_pill);
-            chip.setTextColor(getColor(R.color.senku_text_light));
+            chip.setTextColor(getColor(R.color.senku_rev03_ink_0));
             chip.setPadding(
                 compactPhoneAnswer ? dp(9) : dp(12),
                 compactPhonePortrait ? dp(6) : dp(8),
@@ -4414,10 +4420,10 @@ public final class DetailActivity extends AppCompatActivity {
         sourcesPanel.setPadding(panelPad, panelPad, panelPad, panelPad);
         setTopMargin(sourcesPanel, dp(flatAnswerChrome ? 0 : (collapsedPhonePortrait ? 8 : 10)));
         if (flatAnswerChrome && sourcesTitleText != null) {
-            sourcesTitleText.setTypeface(Typeface.MONOSPACE, Typeface.BOLD);
+            sourcesTitleText.setTypeface(rev03MonoTypeface(Typeface.BOLD));
             sourcesTitleText.setTextSize(13f);
             sourcesTitleText.setLetterSpacing(0.08f);
-            sourcesTitleText.setTextColor(getColor(R.color.senku_text_muted_light));
+            sourcesTitleText.setTextColor(getColor(R.color.senku_rev03_ink_2));
             sourcesTitleText.setPadding(0, dp(2), 0, dp(6));
         }
         if (sourcesSubtitle != null) {
@@ -4593,7 +4599,7 @@ public final class DetailActivity extends AppCompatActivity {
                 styled.setSpan(new StyleSpan(Typeface.ITALIC), quoteStart, value.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                 styled.setSpan(new RelativeSizeSpan(0.84f), quoteStart, value.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                 styled.setSpan(
-                    new ForegroundColorSpan(getColor(R.color.senku_text_muted_light)),
+                    new ForegroundColorSpan(getColor(R.color.senku_rev03_ink_2)),
                     quoteStart,
                     value.length(),
                     Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
@@ -4636,7 +4642,7 @@ public final class DetailActivity extends AppCompatActivity {
             String material = materials.get(i);
             TextView chip = new TextView(this);
             chip.setBackgroundResource(R.drawable.bg_helper_pill);
-            chip.setTextColor(getColor(R.color.senku_text_light));
+            chip.setTextColor(getColor(R.color.senku_rev03_ink_0));
             chip.setPadding(dp(12), compactPhonePortrait ? dp(8) : dp(10), dp(12), compactPhonePortrait ? dp(8) : dp(10));
             chip.setText(detailSourcePresentationFormatter().buildMaterialChipLabel(i, material));
             chip.setContentDescription(detailSourcePresentationFormatter().buildMaterialChipContentDescription(material, i));
@@ -4870,14 +4876,14 @@ public final class DetailActivity extends AppCompatActivity {
                 Button button = new Button(this);
                 button.setAllCaps(false);
                 button.setBackgroundResource(R.drawable.bg_helper_chip);
-                button.setTextColor(getColor(R.color.senku_text_light));
+                button.setTextColor(getColor(R.color.senku_rev03_ink_0));
                 button.setMinHeight(0);
                 button.setMinimumHeight(0);
                 button.setPadding(dp(14), dp(12), dp(14), dp(12));
                 button.setText(nextStep);
                 button.setContentDescription(detailSourcePresentationFormatter().buildNextStepChipContentDescription(nextStep, i, limit));
                 button.setTextAlignment(View.TEXT_ALIGNMENT_VIEW_START);
-                applyDirectionalActionAffordance(button, getColor(R.color.senku_text_muted_light));
+                applyDirectionalActionAffordance(button, getColor(R.color.senku_rev03_ink_2));
                 button.setOnClickListener(v -> {
                     if (followUpInput == null) {
                         return;
@@ -4944,7 +4950,7 @@ public final class DetailActivity extends AppCompatActivity {
             button.setBackgroundResource(flatAnswerChrome
                 ? android.R.color.transparent
                 : (previewMode ? R.drawable.bg_source_link_selector : R.drawable.bg_source_link));
-            button.setTextColor(getColor(R.color.senku_text_light));
+            button.setTextColor(getColor(R.color.senku_rev03_ink_0));
             button.setMinHeight(0);
             button.setMinimumHeight(0);
             button.setMinWidth(0);
@@ -4977,9 +4983,9 @@ public final class DetailActivity extends AppCompatActivity {
                 button.setTextSize(isLandscapePhoneLayout()
                     ? resolvePhoneLandscapeRelatedRailButtonTextSizeSp()
                     : 13f);
-                button.setTypeface(Typeface.DEFAULT, Typeface.NORMAL);
+                button.setTypeface(rev03UiTypeface(Typeface.NORMAL));
                 button.setIncludeFontPadding(false);
-                applySubtleDirectionalActionAffordance(button, getColor(R.color.senku_text_muted_light));
+                applySubtleDirectionalActionAffordance(button, getColor(R.color.senku_rev03_ink_2));
             }
             if (previewMode) {
                 button.setTag(buildRelatedGuideSelectionKey(relatedGuide));
@@ -5074,7 +5080,7 @@ public final class DetailActivity extends AppCompatActivity {
             Button button = new Button(this);
             button.setAllCaps(false);
             button.setBackgroundResource(previewMode ? R.drawable.bg_source_link_selector : R.drawable.bg_helper_chip);
-            button.setTextColor(getColor(R.color.senku_text_light));
+            button.setTextColor(getColor(R.color.senku_rev03_ink_0));
             button.setMinHeight(0);
             button.setMinimumHeight(0);
             button.setSingleLine(false);
@@ -5191,9 +5197,9 @@ public final class DetailActivity extends AppCompatActivity {
         for (int i = 0; i < labels.size(); i++) {
             TextView row = new TextView(this);
             row.setText(labels.get(i));
-            row.setTextColor(getColor(i == 0 ? R.color.senku_text_light : R.color.senku_text_muted_light));
-            row.setTypeface(i == 0 ? Typeface.DEFAULT_BOLD : Typeface.DEFAULT);
-            row.setTextSize(14f);
+            row.setTextColor(getColor(i == 0 ? R.color.senku_rev03_ink_0 : R.color.senku_rev03_ink_2));
+            row.setTypeface(rev03UiTypeface(i == 0 ? Typeface.BOLD : Typeface.NORMAL));
+            row.setTextSize(13f);
             row.setSingleLine(false);
             row.setMaxLines(2);
             row.setGravity(Gravity.CENTER_VERTICAL);
@@ -5423,8 +5429,8 @@ public final class DetailActivity extends AppCompatActivity {
             setTopMargin(nextStepsPanel, dp(0));
             if (nextStepsTitleText != null) {
                 nextStepsTitleText.setBackgroundResource(android.R.color.transparent);
-                nextStepsTitleText.setTextColor(getColor(R.color.senku_text_muted_light));
-                nextStepsTitleText.setTypeface(Typeface.MONOSPACE, Typeface.BOLD);
+                nextStepsTitleText.setTextColor(getColor(R.color.senku_rev03_ink_2));
+                nextStepsTitleText.setTypeface(rev03MonoTypeface(Typeface.BOLD));
                 nextStepsTitleText.setTextSize(13f);
                 nextStepsTitleText.setLetterSpacing(0.08f);
                 nextStepsTitleText.setPadding(0, dp(2), 0, dp(6));
@@ -5439,8 +5445,8 @@ public final class DetailActivity extends AppCompatActivity {
                 : 10));
             if (nextStepsTitleText != null) {
                 nextStepsTitleText.setBackgroundResource(android.R.color.transparent);
-                nextStepsTitleText.setTextColor(getColor(R.color.senku_text_muted_light));
-                nextStepsTitleText.setTypeface(Typeface.MONOSPACE, Typeface.BOLD);
+                nextStepsTitleText.setTextColor(getColor(R.color.senku_rev03_ink_2));
+                nextStepsTitleText.setTypeface(rev03MonoTypeface(Typeface.BOLD));
                 nextStepsTitleText.setTextSize(isLandscapePhoneLayout()
                     ? resolvePhoneLandscapeRelatedRailTitleTextSizeSp()
                     : 13f);
@@ -5460,7 +5466,7 @@ public final class DetailActivity extends AppCompatActivity {
                 nextStepsTitleText.setBackgroundResource(promotedCrossReferenceRail
                     ? R.drawable.bg_sources_section_pill
                     : R.drawable.bg_helper_pill);
-                nextStepsTitleText.setTextColor(getColor(R.color.senku_text_light));
+                nextStepsTitleText.setTextColor(getColor(R.color.senku_rev03_ink_0));
             }
             return;
         }
@@ -5468,7 +5474,7 @@ public final class DetailActivity extends AppCompatActivity {
             ? android.R.color.transparent
             : R.drawable.bg_helper_panel);
         if (nextStepsTitleText != null) {
-            nextStepsTitleText.setTextColor(getColor(R.color.senku_text_light));
+            nextStepsTitleText.setTextColor(getColor(R.color.senku_rev03_ink_0));
         }
     }
 
@@ -6739,7 +6745,7 @@ public final class DetailActivity extends AppCompatActivity {
             builder.append(" \u00b7 ").append(section);
         }
         builder.setSpan(
-            new ForegroundColorSpan(getColor(R.color.senku_text_light)),
+            new ForegroundColorSpan(getColor(R.color.senku_rev03_ink_0)),
             titleStart,
             builder.length(),
             Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
@@ -6750,7 +6756,7 @@ public final class DetailActivity extends AppCompatActivity {
             int excerptStart = builder.length();
             builder.append("\"").append(excerpt).append("\"");
             builder.setSpan(
-                new ForegroundColorSpan(getColor(R.color.senku_text_muted_light)),
+                new ForegroundColorSpan(getColor(R.color.senku_rev03_ink_2)),
                 excerptStart,
                 builder.length(),
                 Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
@@ -7946,9 +7952,9 @@ public final class DetailActivity extends AppCompatActivity {
                 : View.VISIBLE);
             if (showCompactContextTitle) {
                 followUpTitleText.setTextSize(10.5f);
-                followUpTitleText.setTypeface(Typeface.MONOSPACE, Typeface.BOLD);
+                followUpTitleText.setTypeface(rev03MonoTypeface(Typeface.BOLD));
                 followUpTitleText.setLetterSpacing(0.08f);
-                followUpTitleText.setTextColor(getColor(R.color.senku_text_muted_light));
+                followUpTitleText.setTextColor(getColor(R.color.senku_rev03_ink_2));
             }
         }
         if (followUpSubtitleText != null) {
@@ -9218,12 +9224,12 @@ public final class DetailActivity extends AppCompatActivity {
     private void updateSelectedRelatedGuideButton(Button relatedGuideButton) {
         if (selectedRelatedGuideButton != null) {
             selectedRelatedGuideButton.setSelected(false);
-            selectedRelatedGuideButton.setTypeface(Typeface.DEFAULT);
+            selectedRelatedGuideButton.setTypeface(rev03UiTypeface(Typeface.NORMAL));
         }
         selectedRelatedGuideButton = relatedGuideButton;
         if (selectedRelatedGuideButton != null) {
             selectedRelatedGuideButton.setSelected(true);
-            selectedRelatedGuideButton.setTypeface(Typeface.DEFAULT_BOLD);
+            selectedRelatedGuideButton.setTypeface(rev03UiTypeface(Typeface.BOLD));
             Object tag = selectedRelatedGuideButton.getTag();
             if (tag instanceof String) {
                 selectedRelatedGuideKey = safe((String) tag);
@@ -9342,7 +9348,7 @@ public final class DetailActivity extends AppCompatActivity {
         provenanceToggleButton = new Button(this);
         provenanceToggleButton.setAllCaps(false);
         provenanceToggleButton.setBackgroundResource(R.drawable.bg_source_link);
-        provenanceToggleButton.setTextColor(getColor(R.color.senku_text_light));
+        provenanceToggleButton.setTextColor(getColor(R.color.senku_rev03_ink_0));
         provenanceToggleButton.setMinHeight(0);
         provenanceToggleButton.setMinimumHeight(0);
         provenanceToggleButton.setPadding(dp(12), dp(8), dp(12), dp(8));
@@ -9406,13 +9412,13 @@ public final class DetailActivity extends AppCompatActivity {
     private void updateSelectedSourceButton(Button sourceButton) {
         if (selectedSourceButton != null) {
             selectedSourceButton.setSelected(false);
-            selectedSourceButton.setTypeface(Typeface.DEFAULT);
+            selectedSourceButton.setTypeface(rev03UiTypeface(Typeface.NORMAL));
             selectedSourceButton.setBackgroundResource(detailSourceButtonBackground(shouldUseSourceProvenancePanel()));
         }
         selectedSourceButton = sourceButton;
         if (selectedSourceButton != null) {
             selectedSourceButton.setSelected(true);
-            selectedSourceButton.setTypeface(Typeface.DEFAULT_BOLD);
+            selectedSourceButton.setTypeface(rev03UiTypeface(Typeface.BOLD));
             selectedSourceButton.setBackgroundResource(detailSourceButtonSelectedBackground());
             Object tag = selectedSourceButton.getTag();
             if (tag instanceof String) {
@@ -9696,19 +9702,19 @@ public final class DetailActivity extends AppCompatActivity {
         if (headerLabel != null) {
             headerLabel.setText("FIELD MANUAL");
             headerLabel.setTextColor(getColor(R.color.senku_rev03_paper_ink_muted));
-            headerLabel.setTypeface(Typeface.MONOSPACE, Typeface.BOLD);
+            headerLabel.setTypeface(rev03MonoTypeface(Typeface.BOLD));
             headerLabel.setLetterSpacing(0.1f);
             headerLabel.setVisibility(View.VISIBLE);
         }
         if (titleView != null) {
             titleView.setTextColor(getColor(R.color.senku_rev03_paper_ink));
-            titleView.setTypeface(Typeface.DEFAULT_BOLD);
+            titleView.setTypeface(rev03SerifTypeface(Typeface.BOLD));
             titleView.setTextSize(isLandscapePhoneLayout() ? 22f : 24f);
             titleView.setIncludeFontPadding(false);
         }
         if (subtitleView != null) {
             subtitleView.setTextColor(getColor(R.color.senku_rev03_paper_ink_muted));
-            subtitleView.setTypeface(Typeface.MONOSPACE, Typeface.BOLD);
+            subtitleView.setTypeface(rev03MonoTypeface(Typeface.BOLD));
             subtitleView.setLetterSpacing(0.06f);
             subtitleView.setIncludeFontPadding(false);
         }
@@ -9859,7 +9865,7 @@ public final class DetailActivity extends AppCompatActivity {
                 headerLabel.setText("ANSWER" + HEADER_BULLET + "THIS DEVICE" + HEADER_BULLET + "1 TURN");
                 headerLabel.setVisibility(View.VISIBLE);
                 headerLabel.setTextColor(getColor(R.color.senku_rev03_accent));
-                headerLabel.setTypeface(Typeface.MONOSPACE, Typeface.BOLD);
+                headerLabel.setTypeface(rev03MonoTypeface(Typeface.BOLD));
                 headerLabel.setLetterSpacing(0.12f);
                 headerLabel.setTextSize(isLandscapePhoneLayout()
                     ? resolvePhonePortraitQuestionMetaTextSizeSp()
@@ -9871,7 +9877,7 @@ public final class DetailActivity extends AppCompatActivity {
                 applyAnswerHeaderConfidenceStatus(true);
             } else {
                 headerLabel.setTextColor(getColor(R.color.senku_rev03_accent));
-                headerLabel.setTypeface(Typeface.DEFAULT_BOLD);
+                headerLabel.setTypeface(rev03UiTypeface(Typeface.BOLD));
                 headerLabel.setLetterSpacing(0f);
                 headerLabel.setMinHeight(0);
                 headerLabel.setPadding(0, 0, 0, 0);
@@ -9879,8 +9885,8 @@ public final class DetailActivity extends AppCompatActivity {
             }
         }
         if (titleView != null) {
-            titleView.setTextColor(getColor(R.color.senku_text_light));
-            titleView.setTypeface(Typeface.DEFAULT_BOLD);
+            titleView.setTextColor(getColor(R.color.senku_rev03_ink_0));
+            titleView.setTypeface(rev03UiTypeface(Typeface.BOLD));
             titleView.setTextSize(resolveAnswerQuestionTitleTextSizeSp(
                 answerMode,
                 isLandscapePhoneLayout(),
@@ -9890,8 +9896,8 @@ public final class DetailActivity extends AppCompatActivity {
             titleView.setTextAlignment(View.TEXT_ALIGNMENT_VIEW_START);
         }
         if (subtitleView != null) {
-            subtitleView.setTextColor(getColor(R.color.senku_text_muted_light));
-            subtitleView.setTypeface(Typeface.MONOSPACE);
+            subtitleView.setTextColor(getColor(R.color.senku_rev03_ink_2));
+            subtitleView.setTypeface(rev03MonoTypeface(Typeface.NORMAL));
             subtitleView.setLetterSpacing(answerMode && (isCompactPortraitPhoneLayout() || isLandscapePhoneLayout()) ? 0.08f : 0f);
             if (answerMode && (isCompactPortraitPhoneLayout() || isLandscapePhoneLayout())) {
                 subtitleView.setText(buildPhonePortraitAnswerQuestionMeta());
@@ -9924,7 +9930,7 @@ public final class DetailActivity extends AppCompatActivity {
         headerStatusLabel.setTextColor(getColor(
             label.contains("CONFIDENT") ? R.color.senku_rev03_ok : R.color.senku_rev03_warn
         ));
-        headerStatusLabel.setTypeface(Typeface.MONOSPACE, Typeface.BOLD);
+        headerStatusLabel.setTypeface(rev03MonoTypeface(Typeface.BOLD));
         headerStatusLabel.setLetterSpacing(0.12f);
         headerStatusLabel.setTextSize(isLandscapePhoneLayout()
             ? resolvePhonePortraitQuestionMetaTextSizeSp()
@@ -10397,14 +10403,14 @@ public final class DetailActivity extends AppCompatActivity {
             return;
         }
         boolean emphasizedChip = answerMode && (isDeterministicRoute() || isAbstainRoute() || isAnswerShellUncertainFitRoute());
-        routeChip.setTypeface(emphasizedChip ? Typeface.MONOSPACE : Typeface.DEFAULT_BOLD, Typeface.BOLD);
+        routeChip.setTypeface(emphasizedChip ? rev03MonoTypeface(Typeface.BOLD) : rev03UiTypeface(Typeface.BOLD));
         routeChip.setLetterSpacing(emphasizedChip ? 0.05f : 0f);
         Drawable icon = null;
         if (emphasizedChip) {
             icon = getDrawable(android.R.drawable.presence_online);
             if (icon != null) {
                 icon = icon.mutate();
-                icon.setTint(getColor(R.color.senku_text_light));
+                icon.setTint(getColor(R.color.senku_rev03_ink_0));
             }
         }
         routeChip.setCompoundDrawablePadding(icon == null ? 0 : dp(6));

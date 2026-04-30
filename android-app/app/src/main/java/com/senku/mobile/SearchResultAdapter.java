@@ -49,6 +49,8 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
     private static final float LANDSCAPE_ROW_SNIPPET_TEXT_SIZE_SP = 12.5f;
     private static final float PORTRAIT_TABLET_ROW_TITLE_TEXT_SIZE_SP = 16.0f;
     private static final float PORTRAIT_TABLET_ROW_SNIPPET_TEXT_SIZE_SP = 13.0f;
+    private static final float COMPACT_ROW_SECTION_TEXT_SIZE_SP = 10.0f;
+    private static final float COMPACT_ROW_CHIP_TEXT_SIZE_SP = 10.0f;
 
     public static final class LinkedGuidePreview {
         public final String guideId;
@@ -295,7 +297,7 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
         titleParams.topMargin = dp(landscapePhoneCard ? 5 : 7);
         row.addView(title, titleParams);
 
-        TextView section = buildMonoTextView(context, 9, 13, Typeface.NORMAL);
+        TextView section = buildMonoTextView(context, COMPACT_ROW_SECTION_TEXT_SIZE_SP, 13, Typeface.NORMAL);
         section.setId(R.id.result_section);
         section.setTextColor(ContextCompat.getColor(context, R.color.senku_rev03_ink_2));
         section.setAllCaps(true);
@@ -347,7 +349,8 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
         TextView linkedPreview = new TextView(context);
         linkedPreview.setId(R.id.result_related_preview);
         linkedPreview.setTextColor(ContextCompat.getColor(context, R.color.senku_rev03_accent_moss));
-        linkedPreview.setTextSize(TypedValue.COMPLEX_UNIT_SP, 10);
+        linkedPreview.setTypeface(rev03UiTypeface(context, Typeface.NORMAL));
+        linkedPreview.setTextSize(TypedValue.COMPLEX_UNIT_SP, COMPACT_ROW_CHIP_TEXT_SIZE_SP);
         linkedPreview.setSingleLine(true);
         linkedPreview.setEllipsize(TextUtils.TruncateAt.END);
         linkedPreview.setVisibility(View.GONE);
@@ -375,9 +378,9 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
         return root;
     }
 
-    private TextView buildMonoTextView(Context context, int textSizeSp, int lineHeightSp, int style) {
+    private TextView buildMonoTextView(Context context, float textSizeSp, int lineHeightSp, int style) {
         TextView textView = new TextView(context);
-        textView.setTypeface(Typeface.MONOSPACE, style);
+        textView.setTypeface(rev03MonoTypeface(context, style));
         textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, textSizeSp);
         textView.setLineSpacing(0, (float) lineHeightSp / Math.max(1, textSizeSp));
         textView.setIncludeFontPadding(false);
@@ -389,9 +392,9 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
         TextView chip = new TextView(context);
         chip.setBackground(buildFlatBadgeDrawable(context, defaultBadgeColor));
         chip.setPadding(dp(7), dp(2), dp(7), dp(2));
-        chip.setTextColor(ContextCompat.getColor(context, R.color.senku_text_light));
-        chip.setTextSize(TypedValue.COMPLEX_UNIT_SP, 9);
-        chip.setTypeface(Typeface.MONOSPACE, Typeface.BOLD);
+        chip.setTextColor(ContextCompat.getColor(context, R.color.senku_rev03_ink_0));
+        chip.setTextSize(TypedValue.COMPLEX_UNIT_SP, COMPACT_ROW_CHIP_TEXT_SIZE_SP);
+        chip.setTypeface(rev03MonoTypeface(context, Typeface.BOLD));
         chip.setSingleLine(true);
         chip.setEllipsize(TextUtils.TruncateAt.END);
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
@@ -432,6 +435,14 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
         return compactRowSnippetTextSizeSp(false);
     }
 
+    static float compactRowSectionTextSizeSpForTest() {
+        return COMPACT_ROW_SECTION_TEXT_SIZE_SP;
+    }
+
+    static float compactRowChipTextSizeSpForTest() {
+        return COMPACT_ROW_CHIP_TEXT_SIZE_SP;
+    }
+
     private static float compactRowTitleTextSizeSp(boolean landscapePhoneCard) {
         return landscapePhoneCard ? LANDSCAPE_ROW_TITLE_TEXT_SIZE_SP : PORTRAIT_TABLET_ROW_TITLE_TEXT_SIZE_SP;
     }
@@ -441,8 +452,16 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
     }
 
     private static Typeface rev03UiTypeface(Context context, int style) {
-        Typeface typeface = ResourcesCompat.getFont(context, R.font.inter_tight);
-        return Typeface.create(typeface != null ? typeface : Typeface.DEFAULT, style);
+        return rev03Typeface(context, R.font.inter_tight, style, Typeface.SANS_SERIF);
+    }
+
+    private static Typeface rev03MonoTypeface(Context context, int style) {
+        return rev03Typeface(context, R.font.jetbrains_mono, style, Typeface.create("monospace", Typeface.NORMAL));
+    }
+
+    private static Typeface rev03Typeface(Context context, int fontResId, int style, Typeface fallback) {
+        Typeface typeface = ResourcesCompat.getFont(context, fontResId);
+        return Typeface.create(typeface != null ? typeface : fallback, style);
     }
 
     private static int boundedItemCount(int resultCount, int maxDisplayedItems) {
@@ -486,8 +505,8 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
         badge.setText(buildTabletScoreLabel(position));
         badge.setTextColor(score >= 70
             ? ContextCompat.getColor(badge.getContext(), R.color.senku_rev03_accent)
-            : ContextCompat.getColor(badge.getContext(), R.color.senku_text_muted_light));
-        badge.setTypeface(Typeface.MONOSPACE, Typeface.BOLD);
+            : ContextCompat.getColor(badge.getContext(), R.color.senku_rev03_ink_2));
+        badge.setTypeface(rev03MonoTypeface(badge.getContext(), Typeface.BOLD));
         badge.setBackground(null);
         badge.setCompoundDrawablesRelativeWithIntrinsicBounds(0, 0, 0, 0);
         badge.setContentDescription("Rank " + buildOrdinalRankLabel(position) + ", score marker " + score);
@@ -541,7 +560,7 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
         fill.setCornerRadius(dp(1));
         fill.setColor(score >= 70
             ? ContextCompat.getColor(inflater.getContext(), R.color.senku_rev03_accent)
-            : ContextCompat.getColor(inflater.getContext(), R.color.senku_text_muted_light));
+            : ContextCompat.getColor(inflater.getContext(), R.color.senku_rev03_ink_2));
         ClipDrawable clippedFill = new ClipDrawable(fill, android.view.Gravity.START, ClipDrawable.HORIZONTAL);
         clippedFill.setLevel(Math.round(scoreBarFillFractionForScore(score) * 10000f));
 

@@ -425,8 +425,8 @@ private fun RailSection(
                     Text(
                         text = threadRailSectionTitle(label, count),
                         style = SenkuTheme.typography.monoCaps.copy(
-                            fontSize = 9.5.sp,
-                            lineHeight = 11.sp,
+                            fontSize = 10.sp,
+                            lineHeight = 12.sp,
                             fontWeight = FontWeight.Medium,
                         ),
                         color = colors.ink2,
@@ -492,8 +492,8 @@ private fun ThreadTurnRow(
                         sourceCount = turn.answer.sourceCount,
                     ),
                     style = SenkuTheme.typography.monoCaps.copy(
-                        fontSize = 8.5.sp,
-                        lineHeight = 10.sp,
+                        fontSize = 10.sp,
+                        lineHeight = 12.sp,
                         fontWeight = FontWeight.Medium,
                     ),
                     color = idColor,
@@ -503,8 +503,8 @@ private fun ThreadTurnRow(
                 Text(
                     text = turn.question.trim().ifEmpty { "No question recorded." },
                     style = SenkuTheme.typography.smallBody.copy(
-                        fontSize = 10.5.sp,
-                        lineHeight = 13.sp,
+                        fontSize = 12.sp,
+                        lineHeight = 15.sp,
                         fontWeight = FontWeight.Normal,
                     ),
                     color = if (turn.isActive) colors.ink0 else colors.ink1,
@@ -521,8 +521,8 @@ private fun ThreadTurnRow(
                         active = turn.isActive,
                     ),
                     style = SenkuTheme.typography.smallBody.copy(
-                        fontSize = 9.5.sp,
-                        lineHeight = 11.sp,
+                        fontSize = 11.sp,
+                        lineHeight = 14.sp,
                     ),
                     color = colors.ink2,
                     maxLines = 1,
@@ -582,8 +582,8 @@ private fun SourcePill(
                 Text(
                     text = displayLabel,
                     style = SenkuTheme.typography.monoCaps.copy(
-                        fontSize = 8.5.sp,
-                        lineHeight = 10.sp,
+                        fontSize = 10.sp,
+                        lineHeight = 12.sp,
                         fontWeight = FontWeight.Medium,
                     ),
                     color = idColor,
@@ -594,8 +594,8 @@ private fun SourcePill(
                     Text(
                         text = scoreLabel,
                         style = SenkuTheme.typography.monoCaps.copy(
-                            fontSize = 9.sp,
-                            lineHeight = 10.sp,
+                            fontSize = 10.sp,
+                            lineHeight = 12.sp,
                             fontWeight = FontWeight.SemiBold,
                         ),
                         color = colors.ink2,
@@ -625,8 +625,8 @@ private fun PlaceholderText(text: String) {
     Text(
         text = text,
         style = SenkuTheme.typography.smallBody.copy(
-            fontSize = 10.5.sp,
-            lineHeight = 13.sp,
+            fontSize = 12.sp,
+            lineHeight = 15.sp,
         ),
         color = SenkuTheme.colors.ink3,
     )

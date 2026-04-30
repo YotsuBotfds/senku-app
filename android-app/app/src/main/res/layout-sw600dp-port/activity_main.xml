@@ -261,7 +261,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:fontFamily="monospace"
+                        android:fontFamily="@font/jetbrains_mono"
                         android:includeFontPadding="false"
                         android:text="754 GUIDES &#8226; ED.2 &#8226; 184 MB"
                         android:textAppearance="?android:attr/textAppearanceSmall"
@@ -344,7 +344,7 @@
                             android:id="@+id/category_section_header"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:fontFamily="monospace"
+                            android:fontFamily="@font/jetbrains_mono"
                             android:includeFontPadding="false"
                             android:text="&#8212; CATEGORIES &#8226; 12"
                             android:textAppearance="?android:attr/textAppearanceSmall"
@@ -370,7 +370,7 @@
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:fontFamily="monospace"
+                            android:fontFamily="@font/jetbrains_mono"
                             android:includeFontPadding="false"
                             android:text="@string/recent_threads_title"
                             android:textAppearance="?android:attr/textAppearanceSmall"
@@ -455,7 +455,7 @@
                     android:layout_weight="1"
                     android:accessibilityLiveRegion="polite"
                     android:ellipsize="end"
-                    android:fontFamily="monospace"
+                    android:fontFamily="@font/jetbrains_mono"
                     android:includeFontPadding="false"
                     android:maxLines="1"
                     android:text="@string/results_header_loading"
@@ -466,7 +466,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:fontFamily="monospace"
+                    android:fontFamily="@font/jetbrains_mono"
                     android:includeFontPadding="false"
                     android:text=""
                     android:textAppearance="?android:attr/textAppearanceSmall"
@@ -496,7 +496,7 @@
                     android:layout_marginStart="14dp"
                     android:layout_weight="1"
                     android:ellipsize="end"
-                    android:fontFamily="monospace"
+                    android:fontFamily="@font/jetbrains_mono"
                     android:includeFontPadding="false"
                     android:maxLines="1"
                     android:text="@string/search_hint"
@@ -508,7 +508,7 @@
                     android:id="@+id/tablet_search_count_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:fontFamily="monospace"
+                    android:fontFamily="@font/jetbrains_mono"
                     android:includeFontPadding="false"
                     android:text="0 RESULTS"
                     android:textAppearance="?android:attr/textAppearanceSmall"
@@ -539,7 +539,7 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:fontFamily="monospace"
+                        android:fontFamily="@font/jetbrains_mono"
                         android:includeFontPadding="false"
                         android:text="FILTER &#8226; CATEGORY"
                         android:textAppearance="?android:attr/textAppearanceSmall"
@@ -610,7 +610,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="20dp"
-                        android:fontFamily="monospace"
+                        android:fontFamily="@font/jetbrains_mono"
                         android:includeFontPadding="false"
                         android:text="WINDOW"
                         android:textAppearance="?android:attr/textAppearanceSmall"
@@ -712,12 +712,12 @@
                         android:id="@+id/tablet_search_preview_kicker"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:fontFamily="monospace"
+                        android:fontFamily="@font/jetbrains_mono"
                         android:includeFontPadding="false"
                         android:text="PREVIEW"
                         android:textAppearance="?android:attr/textAppearanceSmall"
                         android:textColor="@color/senku_rev03_ink_2"
-                        android:textSize="9sp"
+                        android:textSize="10sp"
                         android:textStyle="bold" />
 
                     <TextView
@@ -727,7 +727,7 @@
                         android:layout_marginTop="12dp"
                         android:textAppearance="?android:attr/textAppearanceLarge"
                         android:textColor="@color/senku_rev03_ink_0"
-                        android:textSize="15sp"
+                        android:textSize="16sp"
                         android:textStyle="bold" />
 
                     <TextView
@@ -735,11 +735,11 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="9dp"
-                        android:fontFamily="monospace"
+                        android:fontFamily="@font/jetbrains_mono"
                         android:letterSpacing="0.08"
                         android:textAppearance="?android:attr/textAppearanceSmall"
                         android:textColor="@color/senku_rev03_ink_2"
-                        android:textSize="9sp"
+                        android:textSize="10sp"
                         android:textStyle="bold" />
 
                     <TextView

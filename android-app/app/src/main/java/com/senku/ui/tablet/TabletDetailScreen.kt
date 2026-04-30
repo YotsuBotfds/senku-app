@@ -241,6 +241,7 @@ internal data class TabletGuideChromePolicy(
     val topBarMinHeightDp: Int,
     val topBarHorizontalPaddingDp: Int,
     val topBarVerticalPaddingDp: Int,
+    val topBarTitleFontSizeSp: Int,
     val topBarTitleLineHeightSp: Int,
 )
 
@@ -277,17 +278,71 @@ internal data class TabletGuideSideRailDensityPolicy(
 )
 
 private data class GuidePaperPalette(
-    val page: Color = Color(0xFFE8DFC9),
-    val pageInset: Color = Color(0xFFE1D3BA),
-    val ink: Color = Color(0xFF20241D),
-    val inkSoft: Color = Color(0xFF5E6256),
-    val rule: Color = Color(0x3320241D),
-    val ruleStrong: Color = Color(0x5520241D),
-    val accent: Color = Color(0xFF8A6630),
-    val danger: Color = Color(0xFF9A4E34),
+    val page: Color,
+    val pageInset: Color,
+    val ink: Color,
+    val inkSoft: Color,
+    val rule: Color,
+    val ruleStrong: Color,
+    val accent: Color,
+    val danger: Color,
 )
 
-private fun tabletGuidePaperPalette() = GuidePaperPalette()
+@Composable
+private fun tabletGuidePaperPalette(): GuidePaperPalette {
+    val colors = SenkuTheme.colors
+    return GuidePaperPalette(
+        page = colors.paper,
+        pageInset = colors.paper.copy(alpha = 0.88f),
+        ink = colors.paperInk,
+        inkSoft = colors.paperInkMuted,
+        rule = colors.paperInk.copy(alpha = 0.20f),
+        ruleStrong = colors.paperInk.copy(alpha = 0.34f),
+        accent = colors.paperWarn,
+        danger = colors.paperDanger,
+    )
+}
+
+private data class TabletGuideRailTypePolicy(
+    val headerFontSizeSp: Int = 10,
+    val headerLineHeightSp: Int = 13,
+    val sectionLabelFontSizeSp: Int = 10,
+    val sectionLabelLineHeightSp: Int = 13,
+    val activeTitleFontSizeSp: Int = 14,
+    val activeTitleLineHeightSp: Int = 18,
+    val inactiveTitleFontSizeSp: Int = 13,
+    val inactiveTitleLineHeightSp: Int = 17,
+    val referenceMetaFontSizeSp: Int = 10,
+    val referenceMetaLineHeightSp: Int = 13,
+)
+
+private fun tabletGuideRailTypePolicy(): TabletGuideRailTypePolicy = TabletGuideRailTypePolicy()
+
+private data class TabletGuidePaperTypePolicy(
+    val metaFontSizeSp: Int = 11,
+    val metaLineHeightSp: Int = 14,
+    val sectionFontSizeSp: Int = 11,
+    val sectionLineHeightSp: Int = 14,
+    val calloutLabelFontSizeSp: Int = 11,
+    val calloutLabelLineHeightSp: Int = 14,
+    val requiredIdFontSizeSp: Int = 11,
+    val requiredIdLineHeightSp: Int = 14,
+    val requiredArrowFontSizeSp: Int = 16,
+    val requiredArrowLineHeightSp: Int = 16,
+)
+
+private fun tabletGuidePaperTypePolicy(): TabletGuidePaperTypePolicy = TabletGuidePaperTypePolicy()
+
+private data class TabletThreadSourceTypePolicy(
+    val metaFontSizeSp: Int = 10,
+    val metaLineHeightSp: Int = 13,
+    val titleFontSizeSp: Int = 12,
+    val titleLineHeightSp: Int = 16,
+    val snippetFontSizeSp: Int = 11,
+    val snippetLineHeightSp: Int = 14,
+)
+
+private fun tabletThreadSourceTypePolicy(): TabletThreadSourceTypePolicy = TabletThreadSourceTypePolicy()
 
 internal data class TabletGuideEvidencePaneGraph(
     val anchor: AnchorState,
@@ -416,6 +471,9 @@ internal fun tabletGuideAppRailWidthDp(isLandscape: Boolean): Int =
 internal fun tabletGuideAppRailBadgeHeightDp(isLandscape: Boolean): Int =
     36
 
+internal fun tabletGuideAppRailBadgeFontSizeSp(isLandscape: Boolean): Int =
+    14
+
 internal fun tabletGuideAppRailFirstItemTopMarginDp(isLandscape: Boolean): Int =
     if (isLandscape) 18 else 24
 
@@ -453,6 +511,7 @@ internal fun tabletGuideChromePolicy(isLandscape: Boolean): TabletGuideChromePol
             topBarMinHeightDp = 38,
             topBarHorizontalPaddingDp = 24,
             topBarVerticalPaddingDp = 6,
+            topBarTitleFontSizeSp = 14,
             topBarTitleLineHeightSp = 18,
         )
     } else {
@@ -460,6 +519,7 @@ internal fun tabletGuideChromePolicy(isLandscape: Boolean): TabletGuideChromePol
             topBarMinHeightDp = 58,
             topBarHorizontalPaddingDp = 20,
             topBarVerticalPaddingDp = 9,
+            topBarTitleFontSizeSp = 14,
             topBarTitleLineHeightSp = 18,
         )
     }
@@ -467,31 +527,31 @@ internal fun tabletGuideChromePolicy(isLandscape: Boolean): TabletGuideChromePol
 internal fun tabletGuidePaperDensityPolicy(isLandscape: Boolean): TabletGuidePaperDensityPolicy =
     if (isLandscape) {
         TabletGuidePaperDensityPolicy(
-            headerTitleFontSizeSp = 27,
-            headerTitleLineHeightSp = 32,
-            bodyFontSizeSp = 13,
-            bodyLineHeightSp = 19,
+            headerTitleFontSizeSp = 25,
+            headerTitleLineHeightSp = 30,
+            bodyFontSizeSp = 12,
+            bodyLineHeightSp = 18,
             bodySpacingDp = 7,
-            dangerBodyFontSizeSp = 13,
-            dangerBodyLineHeightSp = 19,
+            dangerBodyFontSizeSp = 12,
+            dangerBodyLineHeightSp = 18,
             dangerSpacingDp = 7,
             requiredRowMinHeightDp = 44,
-            requiredRowTitleFontSizeSp = 13,
-            requiredRowTitleLineHeightSp = 17,
+            requiredRowTitleFontSizeSp = 12,
+            requiredRowTitleLineHeightSp = 16,
         )
     } else {
         TabletGuidePaperDensityPolicy(
-            headerTitleFontSizeSp = 34,
-            headerTitleLineHeightSp = 39,
-            bodyFontSizeSp = 15,
-            bodyLineHeightSp = 22,
+            headerTitleFontSizeSp = 30,
+            headerTitleLineHeightSp = 36,
+            bodyFontSizeSp = 14,
+            bodyLineHeightSp = 21,
             bodySpacingDp = 10,
-            dangerBodyFontSizeSp = 15,
-            dangerBodyLineHeightSp = 22,
+            dangerBodyFontSizeSp = 14,
+            dangerBodyLineHeightSp = 21,
             dangerSpacingDp = 12,
             requiredRowMinHeightDp = 56,
-            requiredRowTitleFontSizeSp = 15,
-            requiredRowTitleLineHeightSp = 19,
+            requiredRowTitleFontSizeSp = 14,
+            requiredRowTitleLineHeightSp = 18,
         )
     }
 
@@ -510,7 +570,7 @@ internal fun tabletGuideSideRailDensityPolicy(isLandscape: Boolean): TabletGuide
             referenceCardHorizontalPaddingDp = 14,
             referenceCardVerticalPaddingDp = 6,
             referenceCardVerticalSpacingDp = 4,
-            referenceCardTitleFontSizeSp = 14,
+            referenceCardTitleFontSizeSp = 13,
             referenceCardTitleLineHeightSp = 17,
             referenceCardTitleMaxLines = 1,
         )
@@ -528,8 +588,8 @@ internal fun tabletGuideSideRailDensityPolicy(isLandscape: Boolean): TabletGuide
             referenceCardHorizontalPaddingDp = 18,
             referenceCardVerticalPaddingDp = 14,
             referenceCardVerticalSpacingDp = 9,
-            referenceCardTitleFontSizeSp = 16,
-            referenceCardTitleLineHeightSp = 20,
+            referenceCardTitleFontSizeSp = 14,
+            referenceCardTitleLineHeightSp = 18,
             referenceCardTitleMaxLines = 2,
         )
     }
@@ -771,17 +831,17 @@ internal fun tabletThreadDetailTypeScalePolicy(
     isLandscape: Boolean,
 ): TabletDetailTypeScalePolicy =
     basePolicy.copy(
-        questionFontSizeSp = basePolicy.questionFontSizeSp + if (isLandscape) 2 else 1,
-        questionLineHeightSp = basePolicy.questionLineHeightSp + if (isLandscape) 3 else 2,
-        answerFontSizeSp = basePolicy.answerFontSizeSp + if (isLandscape) 3 else 2,
-        answerLineHeightSp = basePolicy.answerLineHeightSp + if (isLandscape) 5 else 3,
+        questionFontSizeSp = basePolicy.questionFontSizeSp + if (isLandscape) 1 else 0,
+        questionLineHeightSp = basePolicy.questionLineHeightSp + if (isLandscape) 2 else 1,
+        answerFontSizeSp = basePolicy.answerFontSizeSp + if (isLandscape) 1 else 1,
+        answerLineHeightSp = basePolicy.answerLineHeightSp + if (isLandscape) 2 else 2,
     )
 
 internal fun tabletPrimaryAnswerQuestionFontSizeSp(policy: TabletDetailTypeScalePolicy): Int =
-    policy.questionFontSizeSp + 3
+    policy.questionFontSizeSp + 2
 
 internal fun tabletPrimaryAnswerQuestionLineHeightSp(policy: TabletDetailTypeScalePolicy): Int =
-    policy.questionLineHeightSp + 4
+    policy.questionLineHeightSp + 3
 
 internal fun tabletThreadTimestampLabel(turnIndex: Int): String {
     val minute = 19 + (turnIndex.coerceAtLeast(1) * 2)
@@ -1517,7 +1577,7 @@ private fun GuideAppRail(
                 Text(
                     text = stringResource(R.string.app_badge_letter),
                     style = typography.monoCaps.copy(
-                        fontSize = 15.sp,
+                        fontSize = tabletGuideAppRailBadgeFontSizeSp(isLandscape).sp,
                         lineHeight = 18.sp,
                         fontWeight = FontWeight.Bold,
                     ),
@@ -1633,6 +1693,7 @@ private fun GuideSectionRail(
     val typography = SenkuTheme.typography
     val labels = tabletGuideNavigationLabels()
     val densityPolicy = tabletGuideSideRailDensityPolicy(isLandscape)
+    val typePolicy = tabletGuideRailTypePolicy()
     val scrollState = rememberScrollState()
 
     Column(
@@ -1665,8 +1726,8 @@ private fun GuideSectionRail(
             Text(
                 text = "${labels.sectionLabel} \u00B7 ${sectionCount.coerceAtLeast(turns.size)}",
                 style = typography.monoCaps.copy(
-                    fontSize = 11.sp,
-                    lineHeight = 14.sp,
+                    fontSize = typePolicy.headerFontSizeSp.sp,
+                    lineHeight = typePolicy.headerLineHeightSp.sp,
                     fontWeight = FontWeight.Medium,
                 ),
                 color = colors.ink2,
@@ -1847,6 +1908,7 @@ private fun GuideSectionRailRow(
     val colors = SenkuTheme.colors
     val typography = SenkuTheme.typography
     val densityPolicy = tabletGuideSideRailDensityPolicy(isLandscape)
+    val typePolicy = tabletGuideRailTypePolicy()
 
     Surface(
         modifier = Modifier
@@ -1882,8 +1944,8 @@ private fun GuideSectionRailRow(
             Text(
                 text = parts.section,
                 style = typography.monoCaps.copy(
-                    fontSize = 11.sp,
-                    lineHeight = 14.sp,
+                    fontSize = typePolicy.sectionLabelFontSizeSp.sp,
+                    lineHeight = typePolicy.sectionLabelLineHeightSp.sp,
                     fontWeight = FontWeight.Medium,
                 ),
                 color = if (active) colors.accent else colors.ink3,
@@ -1894,8 +1956,8 @@ private fun GuideSectionRailRow(
                 text = parts.title,
                 modifier = Modifier.weight(1f),
                 style = typography.uiBody.copy(
-                    fontSize = if (active) 14.5.sp else 13.5.sp,
-                    lineHeight = if (active) 18.sp else 17.sp,
+                    fontSize = if (active) typePolicy.activeTitleFontSizeSp.sp else typePolicy.inactiveTitleFontSizeSp.sp,
+                    lineHeight = if (active) typePolicy.activeTitleLineHeightSp.sp else typePolicy.inactiveTitleLineHeightSp.sp,
                     fontWeight = if (active) FontWeight.SemiBold else FontWeight.Normal,
                     letterSpacing = 0.sp,
                 ),
@@ -1973,6 +2035,7 @@ private fun ThreadSourceCard(
     val colors = SenkuTheme.colors
     val relation = threadRailSourceRelationLabel(source)
     val accent = if (source.isAnchor) colors.ok else colors.accent
+    val typePolicy = tabletThreadSourceTypePolicy()
     Surface(
         modifier = Modifier.fillMaxWidth(),
         color = if (source.isAnchor || source.isSelected) colors.bg2 else colors.bg1,
@@ -2012,8 +2075,8 @@ private fun ThreadSourceCard(
                         text = tabletThreadSourceCardMeta(source.id, relation),
                         modifier = Modifier.weight(1f),
                         style = SenkuTheme.typography.monoCaps.copy(
-                            fontSize = 9.5.sp,
-                            lineHeight = 12.sp,
+                            fontSize = typePolicy.metaFontSizeSp.sp,
+                            lineHeight = typePolicy.metaLineHeightSp.sp,
                             fontWeight = FontWeight.Medium,
                         ),
                         color = accent,
@@ -2034,8 +2097,8 @@ private fun ThreadSourceCard(
                 Text(
                     text = source.title.trim().ifEmpty { "Thread source" },
                     style = SenkuTheme.typography.uiBody.copy(
-                        fontSize = 12.5.sp,
-                        lineHeight = 16.sp,
+                        fontSize = typePolicy.titleFontSizeSp.sp,
+                        lineHeight = typePolicy.titleLineHeightSp.sp,
                         fontWeight = FontWeight.SemiBold,
                     ),
                     color = colors.ink0,
@@ -2046,8 +2109,8 @@ private fun ThreadSourceCard(
                     Text(
                         text = snippetLabel,
                         style = SenkuTheme.typography.smallBody.copy(
-                            fontSize = 11.sp,
-                            lineHeight = 14.sp,
+                            fontSize = typePolicy.snippetFontSizeSp.sp,
+                            lineHeight = typePolicy.snippetLineHeightSp.sp,
                             fontStyle = FontStyle.Italic,
                         ),
                         color = colors.ink2,
@@ -2069,6 +2132,7 @@ private fun GuideReferencePane(
     val colors = SenkuTheme.colors
     val typography = SenkuTheme.typography
     val densityPolicy = tabletGuideSideRailDensityPolicy(isLandscape = true)
+    val typePolicy = tabletGuideRailTypePolicy()
     val scrollState = rememberScrollState()
     val referenceRows = tabletGuideReferencePaneRows(xrefs)
 
@@ -2095,8 +2159,8 @@ private fun GuideReferencePane(
             Text(
                 text = tabletGuideReferenceHeaderTitle(referenceRows.size),
                 style = typography.monoCaps.copy(
-                    fontSize = 11.sp,
-                    lineHeight = 14.sp,
+                    fontSize = typePolicy.headerFontSizeSp.sp,
+                    lineHeight = typePolicy.headerLineHeightSp.sp,
                     fontWeight = FontWeight.Medium,
                 ),
                 color = colors.ink2,
@@ -2124,6 +2188,7 @@ private fun GuideReferenceCard(
     val relation = xref.relation.trim().ifEmpty { "RELATED" }.uppercase()
     val accent = if (relation == "REQUIRED") colors.warn else colors.accent
     val densityPolicy = tabletGuideSideRailDensityPolicy(isLandscape = true)
+    val typePolicy = tabletGuideRailTypePolicy()
 
     Surface(
         modifier = Modifier.fillMaxWidth(),
@@ -2147,8 +2212,8 @@ private fun GuideReferenceCard(
                 text = listOf(xref.id.trim().ifEmpty { "GD-?" }, relation)
                     .joinToString(" \u00B7 "),
                 style = typography.monoCaps.copy(
-                    fontSize = 11.sp,
-                    lineHeight = 14.sp,
+                    fontSize = typePolicy.referenceMetaFontSizeSp.sp,
+                    lineHeight = typePolicy.referenceMetaLineHeightSp.sp,
                     fontWeight = FontWeight.Medium,
                 ),
                 color = accent,
@@ -2389,6 +2454,7 @@ private fun GuidePaperHeader(
     val typography = SenkuTheme.typography
     val paperPalette = tabletGuidePaperPalette()
     val densityPolicy = tabletGuidePaperDensityPolicy(state.isLandscape)
+    val typePolicy = tabletGuidePaperTypePolicy()
     val anchor = state.guideModeAnchorLabel.trim()
         .takeIf { it.isNotEmpty() }
         ?: if (state.isFoundryGuideReader()) "OPENED FROM GD-220" else ""
@@ -2405,8 +2471,8 @@ private fun GuidePaperHeader(
         Text(
             text = "FIELD MANUAL \u00B7 REV 04-27 \u00B7 PK 2",
             style = typography.monoCaps.copy(
-                fontSize = 12.sp,
-                lineHeight = 15.sp,
+                fontSize = typePolicy.metaFontSizeSp.sp,
+                lineHeight = typePolicy.metaLineHeightSp.sp,
                 fontWeight = FontWeight.Medium,
             ),
             color = paperPalette.accent,
@@ -2426,8 +2492,8 @@ private fun GuidePaperHeader(
         Text(
             text = metaLine.uppercase(),
             style = typography.monoCaps.copy(
-                fontSize = 12.sp,
-                lineHeight = 15.sp,
+                fontSize = typePolicy.metaFontSizeSp.sp,
+                lineHeight = typePolicy.metaLineHeightSp.sp,
                 fontWeight = FontWeight.Medium,
             ),
             color = paperPalette.inkSoft,
@@ -2580,7 +2646,7 @@ private fun TitleBar(
                 ),
                 modifier = Modifier.weight(1f),
                 style = typography.sectionTitle.copy(
-                    fontSize = if (guideMode) 15.sp else 17.sp,
+                    fontSize = if (guideMode) guideChromePolicy.topBarTitleFontSizeSp.sp else 17.sp,
                     lineHeight = if (guideMode) guideChromePolicy.topBarTitleLineHeightSp.sp else 20.sp,
                     fontWeight = FontWeight.SemiBold,
                 ),
@@ -2911,8 +2977,8 @@ private fun AnswerInlineBlock(
                     Text(
                         text = if (content.abstain) "BOUNDARY" else "UNCERTAIN FIT",
                         style = typography.monoCaps.copy(
-                            fontSize = 9.sp,
-                            lineHeight = 12.sp,
+                            fontSize = 10.sp,
+                            lineHeight = 13.sp,
                             fontWeight = FontWeight.Medium,
                         ),
                         color = if (guideMode) paperPalette.danger else if (content.abstain) colors.danger else colors.warn,
@@ -3018,6 +3084,7 @@ private fun GuidePaperBodyText(
     val typography = SenkuTheme.typography
     val paperPalette = tabletGuidePaperPalette()
     val densityPolicy = tabletGuidePaperDensityPolicy(isLandscape)
+    val typePolicy = tabletGuidePaperTypePolicy()
     val bodyFontSize = densityPolicy.bodyFontSizeSp.sp
     val bodyLineHeight = densityPolicy.bodyLineHeightSp.sp
     val normalizedGuideTitle = normalizeGuidePaperTokenLine(guideTitle)
@@ -3059,8 +3126,8 @@ private fun GuidePaperBodyText(
                 TabletGuideBodyLineKind.Section -> Text(
                     text = normalizeGuidePaperSectionLine(line),
                     style = typography.monoCaps.copy(
-                        fontSize = 12.sp,
-                        lineHeight = 15.sp,
+                        fontSize = typePolicy.sectionFontSizeSp.sp,
+                        lineHeight = typePolicy.sectionLineHeightSp.sp,
                         fontWeight = FontWeight.Medium,
                     ),
                     color = paperPalette.accent,
@@ -3090,6 +3157,7 @@ private fun GuideDangerCalloutRow(
     val typography = SenkuTheme.typography
     val paperPalette = tabletGuidePaperPalette()
     val densityPolicy = tabletGuidePaperDensityPolicy(isLandscape)
+    val typePolicy = tabletGuidePaperTypePolicy()
     val normalizedLines = lines.map { normalizeGuidePaperDangerLine(it) }
     val title = normalizedLines.firstOrNull().orEmpty()
     val body = normalizedLines.drop(1).joinToString(" ").trim()
@@ -3113,8 +3181,8 @@ private fun GuideDangerCalloutRow(
                 text = title,
                 modifier = Modifier.padding(horizontal = 20.dp),
                 style = typography.monoCaps.copy(
-                    fontSize = 12.sp,
-                    lineHeight = 15.sp,
+                    fontSize = typePolicy.calloutLabelFontSizeSp.sp,
+                    lineHeight = typePolicy.calloutLabelLineHeightSp.sp,
                     fontWeight = FontWeight.Medium,
                     letterSpacing = 0.sp,
                 ),
@@ -3149,6 +3217,7 @@ private fun GuideRequiredReadingRow(
     val typography = SenkuTheme.typography
     val paperPalette = tabletGuidePaperPalette()
     val densityPolicy = tabletGuidePaperDensityPolicy(isLandscape)
+    val typePolicy = tabletGuidePaperTypePolicy()
     val parts = parseGuideRequiredReadingParts(line)
     Surface(
         modifier = Modifier.fillMaxWidth(),
@@ -3177,8 +3246,8 @@ private fun GuideRequiredReadingRow(
                     .widthIn(min = 64.dp, max = 80.dp)
                     .padding(vertical = if (isLandscape) 11.dp else 14.dp),
                 style = typography.monoCaps.copy(
-                    fontSize = 11.5.sp,
-                    lineHeight = 15.sp,
+                    fontSize = typePolicy.requiredIdFontSizeSp.sp,
+                    lineHeight = typePolicy.requiredIdLineHeightSp.sp,
                     fontWeight = FontWeight.Medium,
                 ),
                 color = paperPalette.accent,
@@ -3203,8 +3272,8 @@ private fun GuideRequiredReadingRow(
             Text(
                 text = ">",
                 style = typography.sectionTitle.copy(
-                    fontSize = 17.sp,
-                    lineHeight = 17.sp,
+                    fontSize = typePolicy.requiredArrowFontSizeSp.sp,
+                    lineHeight = typePolicy.requiredArrowLineHeightSp.sp,
                     fontWeight = FontWeight.SemiBold,
                 ),
                 color = paperPalette.inkSoft,

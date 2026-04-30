@@ -162,8 +162,8 @@ fun CollapsibleEvidencePane(
                     text = "Source evidence & guide connections (${xrefs.size})",
                     modifier = Modifier.weight(1f),
                     style = SenkuTheme.typography.uiBody.copy(
-                        fontSize = 11.5.sp,
-                        lineHeight = 15.sp,
+                        fontSize = 12.sp,
+                        lineHeight = 16.sp,
                         fontWeight = FontWeight.SemiBold,
                     ),
                     color = colors.ink0,
@@ -607,8 +607,8 @@ private fun ManualEvidenceCard(
     val contentVerticalPadding = if (isCompact) 8.dp else 12.dp
     val contentGap = if (isCompact) 5.dp else 6.dp
     val metaColor = if (relation == "ANCHOR") colors.accent else colors.ink2
-    val titleFontSize = if (isCompact) 12.5.sp else 14.sp
-    val titleLineHeight = if (isCompact) 16.sp else 18.sp
+    val titleFontSize = if (isCompact) 13.sp else 16.sp
+    val titleLineHeight = if (isCompact) 17.sp else 20.sp
     val cardColor = when {
         !isCompact -> colors.bg2
         isAnchor -> colors.bg2
@@ -713,7 +713,7 @@ private fun EvidenceCardText(
             .filter { it.isNotEmpty() }
             .joinToString(" \u00b7 "),
         style = typography.monoCaps.copy(
-            fontSize = 9.5.sp,
+            fontSize = 10.sp,
             lineHeight = 12.sp,
             fontWeight = FontWeight.Medium,
         ),

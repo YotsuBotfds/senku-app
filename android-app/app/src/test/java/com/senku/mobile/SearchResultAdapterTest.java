@@ -104,6 +104,23 @@ public final class SearchResultAdapterTest {
     }
 
     @Test
+    public void searchRowTypographyKeepsDenseRev03ScaleRelationship() {
+        float landscapeTitle = SearchResultAdapter.compactRowTitleTextSizeSpForTest();
+        float landscapeSnippet = SearchResultAdapter.compactRowSnippetTextSizeSpForTest();
+        float portraitTitle = SearchResultAdapter.portraitTabletRowTitleTextSizeSpForTest();
+        float portraitSnippet = SearchResultAdapter.portraitTabletRowSnippetTextSizeSpForTest();
+        float section = SearchResultAdapter.compactRowSectionTextSizeSpForTest();
+        float chip = SearchResultAdapter.compactRowChipTextSizeSpForTest();
+
+        assertEquals(portraitTitle, landscapeTitle, 0.001f);
+        assertTrue(landscapeTitle > portraitSnippet);
+        assertTrue(portraitSnippet > landscapeSnippet);
+        assertTrue(landscapeSnippet > section);
+        assertEquals(section, chip, 0.001f);
+        assertEquals(10.0f, section, 0.001f);
+    }
+
+    @Test
     public void tabletRowsFlattenMetadataIntoPreviewRailTokens() {
         assertEquals(
             "SHELTER \u00b7 TOPIC \u00b7 WINDOW IMMEDIATE",

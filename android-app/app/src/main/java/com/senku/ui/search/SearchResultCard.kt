@@ -123,8 +123,8 @@ fun SearchResultCard(
                         text = model.guideIdLabel.trim().uppercase(Locale.US),
                         modifier = Modifier.weight(1f),
                         style = SenkuTheme.typography.monoCaps.copy(
-                            fontSize = 8.sp,
-                            lineHeight = 11.sp,
+                            fontSize = 10.sp,
+                            lineHeight = 12.sp,
                             fontWeight = FontWeight.Bold,
                         ),
                         color = colors.accent,
@@ -140,8 +140,8 @@ fun SearchResultCard(
                 Text(
                     text = model.title.trim(),
                     style = SenkuTheme.typography.uiBody.copy(
-                        fontSize = 11.sp,
-                        lineHeight = 14.sp,
+                        fontSize = 13.sp,
+                        lineHeight = 17.sp,
                         fontWeight = FontWeight.Bold,
                     ),
                     color = colors.ink0,
@@ -154,8 +154,8 @@ fun SearchResultCard(
                     Text(
                         text = metadataLabel,
                         style = SenkuTheme.typography.monoCaps.copy(
-                            fontSize = 8.sp,
-                            lineHeight = 10.sp,
+                            fontSize = 10.sp,
+                            lineHeight = 12.sp,
                             fontWeight = FontWeight.Medium,
                         ),
                         color = colors.ink2,
@@ -167,8 +167,8 @@ fun SearchResultCard(
                 Text(
                     text = compactResultPreviewText(model.subtitle, model.snippet),
                     style = SenkuTheme.typography.smallBody.copy(
-                        fontSize = 9.sp,
-                        lineHeight = 11.sp,
+                        fontSize = 12.sp,
+                        lineHeight = 15.sp,
                         fontWeight = FontWeight.Normal,
                     ),
                     color = colors.ink1.copy(alpha = 0.78f),
@@ -241,8 +241,8 @@ private fun ScoreTick(
         Text(
             text = honestRankLabel(label),
             style = SenkuTheme.typography.monoCaps.copy(
-                fontSize = 7.sp,
-                lineHeight = 9.sp,
+                fontSize = 10.sp,
+                lineHeight = 12.sp,
                 fontWeight = FontWeight.Medium,
             ),
             color = SenkuTheme.colors.ink1,
@@ -274,8 +274,8 @@ private fun ActionChip(
             text = label.trim(),
             modifier = Modifier.padding(horizontal = 4.dp, vertical = 1.dp),
             style = SenkuTheme.typography.tag.copy(
-                fontSize = 8.sp,
-                lineHeight = 10.sp,
+                fontSize = 10.sp,
+                lineHeight = 12.sp,
                 fontWeight = FontWeight.Medium,
             ),
             color = textColor,
