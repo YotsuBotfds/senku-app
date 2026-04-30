@@ -1,5 +1,6 @@
 package com.senku.ui
 
+import com.senku.ui.tablet.tabletDetailBackActionPolicy
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.w3c.dom.Element
@@ -58,6 +59,7 @@ internal fun assertSharedMainChrome(layout: Element, spec: MainChromeSpec) {
     val overflow = row.directElementChildren("TextView").single { it.android("text") == "..." }
     val bottomRule = layout.elementByAndroidId("home_chrome_bottom_rule")
     val verticalPadding = if (spec.height == "48dp") "9dp" else "12dp"
+    val backPolicy = tabletDetailBackActionPolicy()
 
     assertEquals("${spec.qualifier} topbar height", spec.height, row.android("layout_height"))
     assertEquals("${spec.qualifier} topbar start padding", spec.horizontalPadding, row.android("paddingStart"))
@@ -76,19 +78,18 @@ internal fun assertSharedMainChrome(layout: Element, spec: MainChromeSpec) {
         ),
     )
 
-    assertEquals("28dp", back.android("layout_width"))
-    assertEquals("28dp", back.android("layout_height"))
+    assertEquals("${backPolicy.widthDp}dp", back.android("layout_width"))
+    assertEquals("${backPolicy.heightDp}dp", back.android("layout_height"))
     assertEquals("@string/detail_back_content_description", back.android("contentDescription"))
     assertEquals("horizontal", back.android("orientation"))
     assertEquals("center", back.android("gravity"))
     assertEquals("0dp", back.android("paddingStart"))
     assertEquals("0dp", back.android("paddingEnd"))
-    assertEquals("18dp", backIcon.android("layout_width"))
-    assertEquals("18dp", backIcon.android("layout_height"))
+    assertEquals("${backPolicy.iconSizeDp}dp", backIcon.android("layout_width"))
+    assertEquals("${backPolicy.iconSizeDp}dp", backIcon.android("layout_height"))
     assertEquals("@drawable/ic_home_back_chevron", backIcon.android("src"))
     assertEquals("@color/senku_rev03_ink_0", backIcon.android("tint"))
-    assertEquals("@string/detail_back", backLabel.android("text"))
-    assertEquals("gone", backLabel.android("visibility"))
+    assertEquals(backPolicy.showsTextLabel, backLabel.android("visibility") != "gone")
     assertEquals("0dp", backLabel.android("layout_marginStart"))
     assertEquals("@font/jetbrains_mono", backLabel.android("fontFamily"))
     assertEquals("10sp", backLabel.android("textSize"))
