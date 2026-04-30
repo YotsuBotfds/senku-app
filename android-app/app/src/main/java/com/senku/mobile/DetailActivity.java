@@ -117,7 +117,12 @@ public final class DetailActivity extends AppCompatActivity {
     private static final int TABLET_EMERGENCY_PORTRAIT_HORIZONTAL_PADDING_DP = 16;
     private static final int TABLET_EMERGENCY_PORTRAIT_VERTICAL_PADDING_DP = 12;
     private static final int TABLET_EMERGENCY_CHROME_BOTTOM_MARGIN_DP = 12;
-    private static final int TABLET_EMERGENCY_CHROME_NAV_ICON_SIZE_DP = 40;
+    private static final float DETAIL_TOP_CHROME_TITLE_TEXT_SIZE_SP = 13.0f;
+    private static final float DETAIL_TOP_CHROME_LABEL_TEXT_SIZE_SP = 9.5f;
+    private static final int DETAIL_TOP_CHROME_ICON_ACTION_SIZE_DP = 28;
+    private static final int DETAIL_TOP_CHROME_BACK_ACTION_MIN_WIDTH_DP = 64;
+    private static final String DETAIL_TOP_CHROME_BACK_ACTION_LABEL = "Back";
+    private static final int TABLET_EMERGENCY_CHROME_NAV_ICON_SIZE_DP = DETAIL_TOP_CHROME_ICON_ACTION_SIZE_DP;
     private static final int TABLET_EMERGENCY_LANDSCAPE_LEFT_MARGIN_DP = 336;
     private static final int TABLET_EMERGENCY_LANDSCAPE_RIGHT_MARGIN_DP = 24;
     private static final int TABLET_EMERGENCY_LANDSCAPE_TOP_MARGIN_DP = 16;
@@ -1762,7 +1767,7 @@ public final class DetailActivity extends AppCompatActivity {
         chromeParams.bottomMargin = dp(TABLET_EMERGENCY_CHROME_BOTTOM_MARGIN_DP);
 
         Button back = new Button(this);
-        back.setContentDescription(getString(R.string.detail_back_content_description));
+        back.setContentDescription(getString(resolveTabletEmergencyBackContentDescriptionResource()));
         applyTabletEmergencyChromeBackButton(back);
         back.setOnClickListener(v -> navigateBackFromDetail());
         tabletEmergencyChromeOverlayPanel.addView(back, new LinearLayout.LayoutParams(
@@ -1782,7 +1787,7 @@ public final class DetailActivity extends AppCompatActivity {
         tabletEmergencyChromeOverlayTitle = new TextView(this);
         tabletEmergencyChromeOverlayTitle.setTextColor(getColor(R.color.senku_rev03_ink_0));
         tabletEmergencyChromeOverlayTitle.setTypeface(rev03UiTypeface(Typeface.BOLD));
-        tabletEmergencyChromeOverlayTitle.setTextSize(17f);
+        tabletEmergencyChromeOverlayTitle.setTextSize(resolveDetailTopChromeTitleTextSizeSp());
         tabletEmergencyChromeOverlayTitle.setMaxLines(1);
         tabletEmergencyChromeOverlayTitle.setEllipsize(TextUtils.TruncateAt.END);
         chromeText.addView(tabletEmergencyChromeOverlayTitle, new LinearLayout.LayoutParams(
@@ -1793,7 +1798,7 @@ public final class DetailActivity extends AppCompatActivity {
         tabletEmergencyChromeOverlayMeta = new TextView(this);
         tabletEmergencyChromeOverlayMeta.setTextColor(getColor(R.color.senku_rev03_ink_2));
         tabletEmergencyChromeOverlayMeta.setTypeface(rev03MonoTypeface(Typeface.NORMAL));
-        tabletEmergencyChromeOverlayMeta.setTextSize(11f);
+        tabletEmergencyChromeOverlayMeta.setTextSize(resolveDetailTopChromeLabelTextSizeSp());
         tabletEmergencyChromeOverlayMeta.setMaxLines(1);
         tabletEmergencyChromeOverlayMeta.setEllipsize(TextUtils.TruncateAt.END);
         chromeText.addView(tabletEmergencyChromeOverlayMeta, new LinearLayout.LayoutParams(
@@ -2075,7 +2080,7 @@ public final class DetailActivity extends AppCompatActivity {
         button.setText(tabletEmergencyBackButtonLabel());
         button.setTextColor(getColor(R.color.senku_rev03_ink_0));
         button.setTypeface(rev03MonoTypeface(Typeface.BOLD));
-        button.setTextSize(10f);
+        button.setTextSize(resolveDetailTopChromeLabelTextSizeSp());
         button.setBackgroundResource(R.drawable.bg_detail_topbar_chip);
         button.setMinWidth(0);
         button.setMinimumWidth(0);
@@ -2092,11 +2097,15 @@ public final class DetailActivity extends AppCompatActivity {
     }
 
     static String tabletEmergencyBackButtonLabel() {
-        return "Back";
+        return DETAIL_TOP_CHROME_BACK_ACTION_LABEL;
     }
 
     static int resolveTabletEmergencyBackButtonMinWidthDp() {
-        return 64;
+        return DETAIL_TOP_CHROME_BACK_ACTION_MIN_WIDTH_DP;
+    }
+
+    static int resolveTabletEmergencyBackContentDescriptionResource() {
+        return R.string.detail_back_content_description;
     }
 
     private Typeface rev03UiTypeface(int style) {
@@ -8083,11 +8092,19 @@ public final class DetailActivity extends AppCompatActivity {
     }
 
     static float resolvePhonePortraitAppHeaderTitleTextSizeSp() {
-        return 12.5f;
+        return resolveDetailTopChromeTitleTextSizeSp();
     }
 
     static float resolvePhonePortraitAppHeaderMetaTextSizeSp() {
-        return 9.5f;
+        return resolveDetailTopChromeLabelTextSizeSp();
+    }
+
+    static float resolveDetailTopChromeTitleTextSizeSp() {
+        return DETAIL_TOP_CHROME_TITLE_TEXT_SIZE_SP;
+    }
+
+    static float resolveDetailTopChromeLabelTextSizeSp() {
+        return DETAIL_TOP_CHROME_LABEL_TEXT_SIZE_SP;
     }
 
     static float resolvePhonePortraitQuestionMetaLabelTextSizeSp() {
@@ -9872,21 +9889,21 @@ public final class DetailActivity extends AppCompatActivity {
 
     static int resolvePhoneGuideBodyShellBottomPaddingDp(boolean singlePaperPhoneGuide, boolean landscapePhone) {
         if (singlePaperPhoneGuide) {
-            return landscapePhone ? 18 : 26;
+            return landscapePhone ? 18 : 30;
         }
         return landscapePhone ? 16 : 18;
     }
 
     static int resolvePhoneGuideBodyShellHorizontalPaddingDp(boolean singlePaperPhoneGuide, boolean landscapePhone) {
         if (singlePaperPhoneGuide) {
-            return 18;
+            return landscapePhone ? 18 : 22;
         }
         return landscapePhone ? 16 : 18;
     }
 
     static int resolvePhoneGuideBodyShellTopPaddingDp(boolean singlePaperPhoneGuide, boolean landscapePhone) {
         if (singlePaperPhoneGuide) {
-            return landscapePhone ? 8 : 10;
+            return landscapePhone ? 8 : 14;
         }
         return landscapePhone ? 12 : 14;
     }
@@ -9896,15 +9913,15 @@ public final class DetailActivity extends AppCompatActivity {
     }
 
     static int resolvePhoneGuideViewportHorizontalPaddingDp(boolean landscapePhone) {
-        return landscapePhone ? 6 : 0;
+        return landscapePhone ? 6 : 10;
     }
 
     static int resolvePhoneGuideViewportTopPaddingDp(boolean landscapePhone) {
-        return landscapePhone ? 4 : 8;
+        return landscapePhone ? 4 : 10;
     }
 
     static int resolvePhoneGuidePaperBottomViewportInsetDp(boolean landscapePhone) {
-        return landscapePhone ? 8 : 2;
+        return landscapePhone ? 8 : 10;
     }
 
     static int resolvePhoneGuideAnswerBubbleTopMarginDp(boolean landscapePhone) {
@@ -9912,7 +9929,7 @@ public final class DetailActivity extends AppCompatActivity {
     }
 
     static float resolvePhoneGuideBodyTextSizeSp(boolean landscapePhone) {
-        return landscapePhone ? 16.0f : 17.0f;
+        return landscapePhone ? 16.0f : 16.5f;
     }
 
     private void restoreAnswerSemanticPresentation() {

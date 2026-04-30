@@ -44,25 +44,37 @@ public final class DetailActivityPhoneGuideChromeTest {
     public void guidePhoneViewportUsesTargetPaperInsets() {
         assertEquals(4, DetailActivity.resolvePhoneGuideViewportTopPaddingDp(true));
         assertEquals(6, DetailActivity.resolvePhoneGuideViewportHorizontalPaddingDp(true));
-        assertEquals(8, DetailActivity.resolvePhoneGuideViewportTopPaddingDp(false));
-        assertEquals(0, DetailActivity.resolvePhoneGuideViewportHorizontalPaddingDp(false));
+        assertEquals(10, DetailActivity.resolvePhoneGuideViewportTopPaddingDp(false));
+        assertEquals(10, DetailActivity.resolvePhoneGuideViewportHorizontalPaddingDp(false));
         assertEquals(8, DetailActivity.resolvePhoneGuidePaperBottomViewportInsetDp(true));
-        assertEquals(2, DetailActivity.resolvePhoneGuidePaperBottomViewportInsetDp(false));
+        assertEquals(10, DetailActivity.resolvePhoneGuidePaperBottomViewportInsetDp(false));
     }
 
     @Test
     public void singlePaperPhoneGuideShellGetsFullWidthPaperDensity() {
         assertEquals(18, DetailActivity.resolvePhoneGuideBodyShellHorizontalPaddingDp(true, true));
-        assertEquals(18, DetailActivity.resolvePhoneGuideBodyShellHorizontalPaddingDp(true, false));
+        assertEquals(22, DetailActivity.resolvePhoneGuideBodyShellHorizontalPaddingDp(true, false));
         assertEquals(8, DetailActivity.resolvePhoneGuideBodyShellTopPaddingDp(true, true));
-        assertEquals(10, DetailActivity.resolvePhoneGuideBodyShellTopPaddingDp(true, false));
+        assertEquals(14, DetailActivity.resolvePhoneGuideBodyShellTopPaddingDp(true, false));
         assertEquals(18, DetailActivity.resolvePhoneGuideBodyShellBottomPaddingDp(true, true));
-        assertEquals(26, DetailActivity.resolvePhoneGuideBodyShellBottomPaddingDp(true, false));
+        assertEquals(30, DetailActivity.resolvePhoneGuideBodyShellBottomPaddingDp(true, false));
         assertEquals(3, DetailActivity.resolvePhoneGuideBodyLineSpacingExtraDp(true));
         assertEquals(4, DetailActivity.resolvePhoneGuideBodyLineSpacingExtraDp(false));
         assertEquals(0, DetailActivity.resolvePhoneGuideAnswerBubbleTopMarginDp(true));
         assertEquals(4, DetailActivity.resolvePhoneGuideAnswerBubbleTopMarginDp(false));
         assertEquals(16.0f, DetailActivity.resolvePhoneGuideBodyTextSizeSp(true), 0.001f);
-        assertEquals(17.0f, DetailActivity.resolvePhoneGuideBodyTextSizeSp(false), 0.001f);
+        assertEquals(16.5f, DetailActivity.resolvePhoneGuideBodyTextSizeSp(false), 0.001f);
+    }
+
+    @Test
+    public void portraitGuidePaperKeepsOuterInsetWiderThanLandscape() {
+        assertTrue(
+            DetailActivity.resolvePhoneGuideViewportHorizontalPaddingDp(false) >
+                DetailActivity.resolvePhoneGuideViewportHorizontalPaddingDp(true)
+        );
+        assertTrue(
+            DetailActivity.resolvePhoneGuideBodyShellHorizontalPaddingDp(true, false) >
+                DetailActivity.resolvePhoneGuideBodyShellHorizontalPaddingDp(true, true)
+        );
     }
 }

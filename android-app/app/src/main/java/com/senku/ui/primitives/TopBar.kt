@@ -51,11 +51,11 @@ enum class TopBarActionKind {
 
 private val TopBarTitleFontSize = 13.sp
 private val TopBarTitleLineHeight = 16.sp
-private val TopBarChromeLabelFontSize = 9.sp
+private val TopBarChromeLabelFontSize = 9.5.sp
 private val TopBarChromeLabelLineHeight = 11.sp
 private val TopBarIconActionSize = 28.dp
-private val TopBarBackActionMinWidth = 52.dp
-private val TopBarBackActionMaxWidth = 58.dp
+private val TopBarBackActionMinWidth = 64.dp
+private val TopBarBackActionMaxWidth = 68.dp
 private const val TopBarBackActionLabel = "Back"
 
 @Immutable
@@ -354,6 +354,10 @@ private fun TopBarActionButton(
 }
 
 internal fun topBarBackActionLabelForTest(): String = TopBarBackActionLabel
+
+internal fun topBarTitleFontSizeSpForTest(): Float = TopBarTitleFontSize.value
+
+internal fun topBarChromeLabelFontSizeSpForTest(): Float = TopBarChromeLabelFontSize.value
 
 internal fun topBarActionWidthDpForTest(kind: TopBarActionKind): Int =
     if (kind == TopBarActionKind.Back) {

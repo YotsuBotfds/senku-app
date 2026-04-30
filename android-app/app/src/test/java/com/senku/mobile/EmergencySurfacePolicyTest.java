@@ -142,7 +142,7 @@ public final class EmergencySurfacePolicyTest {
 
     @Test
     public void tabletPortraitEmergencyChromeUsesCompactIconTargets() {
-        assertEquals(40, DetailActivity.resolveTabletEmergencyChromeNavIconSizeDp());
+        assertEquals(28, DetailActivity.resolveTabletEmergencyChromeNavIconSizeDp());
     }
 
     @Test
@@ -192,6 +192,10 @@ public final class EmergencySurfacePolicyTest {
         assertEquals(
             R.string.detail_back_content_description,
             DetailActivity.resolveDetailVisibleBackContentDescriptionResource()
+        );
+        assertEquals(
+            R.string.detail_back_content_description,
+            DetailActivity.resolveTabletEmergencyBackContentDescriptionResource()
         );
         assertFalse(DetailActivity.shouldEnableDetailBackLongPressHomeShortcut());
     }
@@ -254,6 +258,22 @@ public final class EmergencySurfacePolicyTest {
         assertTrue(
             DetailActivity.resolveTabletEmergencyBackButtonMinWidthDp()
                 > DetailActivity.resolveTabletEmergencyChromeNavIconSizeDp()
+        );
+    }
+
+    @Test
+    public void detailAndEmergencyChromeUseSharedTypeTokens() {
+        assertEquals(13.0f, DetailActivity.resolveDetailTopChromeTitleTextSizeSp(), 0.0f);
+        assertEquals(9.5f, DetailActivity.resolveDetailTopChromeLabelTextSizeSp(), 0.0f);
+        assertEquals(
+            DetailActivity.resolveDetailTopChromeTitleTextSizeSp(),
+            DetailActivity.resolvePhonePortraitAppHeaderTitleTextSizeSp(),
+            0.0f
+        );
+        assertEquals(
+            DetailActivity.resolveDetailTopChromeLabelTextSizeSp(),
+            DetailActivity.resolvePhonePortraitAppHeaderMetaTextSizeSp(),
+            0.0f
         );
     }
 
