@@ -92,7 +92,9 @@ final class AskQueryController {
 
         File modelFile = host.modelFile();
         HostInferenceConfig.Settings inferenceSettings = host.hostInferenceSettings();
-        if (!host.reviewedCardRuntimeEnabled()
+        boolean hasReviewedCardRuntimeRoute = host.reviewedCardRuntimeEnabled()
+            && AnswerCardRuntime.supportsQuery(query);
+        if (!hasReviewedCardRuntimeRoute
             && (inferenceSettings == null || !inferenceSettings.enabled)
             && modelFile == null) {
             host.onModelUnavailable(host.hasAutoQuery());

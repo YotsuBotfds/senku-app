@@ -27,6 +27,15 @@ public final class AnswerCardRuntimeTest {
     }
 
     @Test
+    public void supportsQueryOnlyMatchesReviewedCardPilotLanes() {
+        assertTrue(AnswerCardRuntime.supportsQueryForTest("my child swallowed an unknown cleaner"));
+        assertTrue(AnswerCardRuntime.supportsQueryForTest("3 day old baby has fever and fast breathing"));
+        assertTrue(AnswerCardRuntime.supportsQueryForTest("child is choking on a grape and cannot speak"));
+        assertFalse(AnswerCardRuntime.supportsQueryForTest("how do i build a tarp shelter"));
+        assertFalse(AnswerCardRuntime.supportsQueryForTest("what is the best way to store bleach safely"));
+    }
+
+    @Test
     public void poisoningAnswerCardPilotQueryRequiresActionAndUnknownObject() {
         assertTrue(
             AnswerCardRuntime.isPoisoningAnswerCardPilotQueryForTest(

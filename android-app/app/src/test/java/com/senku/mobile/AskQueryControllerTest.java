@@ -86,6 +86,22 @@ public final class AskQueryControllerTest {
     }
 
     @Test
+    public void modelUnavailableStopsBeforePrepareForUnsupportedReviewedCardQuery() {
+        FakeHost host = readyHost();
+        host.modelFile = null;
+        host.hostInferenceSettings = settings(false);
+        host.reviewedCardRuntimeEnabled = true;
+        FakeEngine engine = new FakeEngine();
+        AskQueryController controller = new AskQueryController(host, engine, query -> null);
+
+        controller.runAsk("need generated answer");
+
+        assertEquals(List.of("model-unavailable:false"), host.events);
+        assertEquals(0, engine.prepareCalls);
+        assertEquals(List.of(), host.begunHarnessTags);
+    }
+
+    @Test
     public void prepareSuccessRunsAsyncPrepareAndPostsSuccess() {
         FakeHost host = readyHost();
         host.hostInferenceSettings = settings(true);

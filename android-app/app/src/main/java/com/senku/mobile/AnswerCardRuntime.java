@@ -681,6 +681,15 @@ final class AnswerCardRuntime {
         }
     }
 
+    static boolean supportsQuery(String query) {
+        for (CardSpec spec : CARD_SPECS) {
+            if (spec.matches(query)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     static AnswerPlan planPoisoningAnswerCardFromCardsForTest(String query, List<AnswerCard> cards) {
         return planAnswerCardFromCards(query, cards, POISONING_UNKNOWN_INGESTION_SPEC);
     }
@@ -735,6 +744,10 @@ final class AnswerCardRuntime {
 
     static boolean isFoundryCastingAreaReadinessAnswerCardQueryForTest(String query) {
         return isFoundryCastingAreaReadinessAnswerCardQuery(query);
+    }
+
+    static boolean supportsQueryForTest(String query) {
+        return supportsQuery(query);
     }
 
     static boolean isEnabledForTest(Context context) {

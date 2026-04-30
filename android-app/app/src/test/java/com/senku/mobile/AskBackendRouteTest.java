@@ -65,6 +65,23 @@ public final class AskBackendRouteTest {
     }
 
     @Test
+    public void genericQueryWithReviewedCardRuntimeEnabledStillRequiresModelRoute() {
+        RouteHost host = availableHost();
+        host.modelFile = null;
+        host.hostInferenceSettings = settings(false);
+        host.reviewedCardRuntimeEnabled = true;
+        host.hasAutoQuery = true;
+        RouteEngine engine = new RouteEngine(generativePrepared("unreachable", false));
+        AskQueryController controller = new AskQueryController(host, engine, query -> null);
+
+        controller.runAsk("how do i build a tarp shelter");
+
+        assertEquals(List.of("model-unavailable:true"), host.events);
+        assertEquals(0, engine.prepareCalls);
+        assertEquals(List.of(), host.begunHarnessTags);
+    }
+
+    @Test
     public void generativeHostRouteCanPrepareWithoutLocalModelWhenHostInferenceIsEnabled() {
         RouteHost host = availableHost();
         host.modelFile = null;
