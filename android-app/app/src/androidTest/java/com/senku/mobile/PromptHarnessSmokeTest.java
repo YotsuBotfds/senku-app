@@ -4268,10 +4268,7 @@ public final class PromptHarnessSmokeTest {
 
     private void clearPinnedGuidesForTest() {
         Context context = ApplicationProvider.getApplicationContext();
-        context.getSharedPreferences("senku_pinned_guides", Context.MODE_PRIVATE)
-            .edit()
-            .clear()
-            .commit();
+        PinnedGuideStore.clearForTest(context);
     }
 
     private boolean isKnownEspressoIdleReflectionFailure(Throwable throwable) {

@@ -61,6 +61,10 @@ public final class PinnedGuideStore {
         preferences(context).edit().putString(KEY_GUIDE_IDS, storedValueForGuideIds(guideIds)).apply();
     }
 
+    static void clearForTest(Context context) {
+        clear(preferences(context));
+    }
+
     static List<String> guideIdsFromStoredValueForTest(String storedValue) {
         return guideIdsFromStoredValue(storedValue);
     }
@@ -71,6 +75,14 @@ public final class PinnedGuideStore {
 
     static String storedValueForGuideIdsForTest(List<String> guideIds) {
         return storedValueForGuideIds(guideIds);
+    }
+
+    static void clearPreferencesForTest(SharedPreferences preferences) {
+        clear(preferences);
+    }
+
+    private static void clear(SharedPreferences preferences) {
+        preferences.edit().clear().commit();
     }
 
     private static List<String> guideIdsFromStoredValue(String storedValue) {
