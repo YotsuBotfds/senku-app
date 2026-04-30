@@ -600,7 +600,7 @@ public final class MainActivity extends AppCompatActivity {
                 openPhoneTab(transition.routeState.activePhoneTab, false);
                 return;
             }
-            if (transition.effect == MainRouteDecisionHelper.Effect.RETURN_TO_BROWSE && !items.isEmpty()) {
+            if (transition.effect == MainRouteDecisionHelper.Effect.RETURN_TO_BROWSE) {
                 applyMainRouteState(transition.routeState);
                 browseGuides();
                 return;
@@ -1024,6 +1024,18 @@ public final class MainActivity extends AppCompatActivity {
             );
         }
         return MainRouteDecisionHelper.openPhoneTab(routeState, BottomTabDestination.PINS);
+    }
+
+    static MainRouteDecisionHelper.Transition resolveSystemBackForTest(
+        boolean browseMode,
+        BottomTabDestination activePhoneTab,
+        boolean askLaneActive,
+        BottomTabDestination previousPhoneTab
+    ) {
+        return MainRouteDecisionHelper.systemBack(
+            routeStateForMode(browseMode, activePhoneTab, askLaneActive),
+            previousPhoneTab
+        );
     }
 
     private void maybeHandleAutomation() {

@@ -193,6 +193,70 @@ public final class MainActivityPhoneNavigationTest {
     }
 
     @Test
+    public void openSavedExtraUsesSavedPinsRouteSemanticsFromAskResults() {
+        MainRouteDecisionHelper.Transition transition =
+            MainActivity.resolveOpenSavedDestinationForTest(
+                true,
+                false,
+                BottomTabDestination.ASK,
+                true
+            );
+
+        assertEquals(MainRouteDecisionHelper.Effect.SHOW_SAVED_GUIDES, transition.effect);
+        assertEquals(MainRouteDecisionHelper.Surface.BROWSE, transition.routeState.surface);
+        assertEquals(BottomTabDestination.PINS, transition.routeState.activePhoneTab);
+        assertFalse(transition.routeState.askLaneActive);
+    }
+
+    @Test
+    public void systemBackFromZeroResultSearchRouteReturnsBrowse() {
+        MainRouteDecisionHelper.Transition transition =
+            MainActivity.resolveSystemBackForTest(
+                false,
+                BottomTabDestination.HOME,
+                false,
+                null
+            );
+
+        assertEquals(MainRouteDecisionHelper.Effect.RETURN_TO_BROWSE, transition.effect);
+        assertEquals(MainRouteDecisionHelper.Surface.BROWSE, transition.routeState.surface);
+        assertEquals(BottomTabDestination.HOME, transition.routeState.activePhoneTab);
+        assertFalse(transition.routeState.askLaneActive);
+    }
+
+    @Test
+    public void systemBackFromAskUnavailableBrowseStateReturnsHome() {
+        MainRouteDecisionHelper.Transition transition =
+            MainActivity.resolveSystemBackForTest(
+                true,
+                BottomTabDestination.ASK,
+                false,
+                null
+            );
+
+        assertEquals(MainRouteDecisionHelper.Effect.SHOW_PREVIOUS_TAB, transition.effect);
+        assertEquals(MainRouteDecisionHelper.Surface.BROWSE, transition.routeState.surface);
+        assertEquals(BottomTabDestination.HOME, transition.routeState.activePhoneTab);
+        assertFalse(transition.routeState.askLaneActive);
+    }
+
+    @Test
+    public void systemBackFromSavedReturnsPreviousTabOwner() {
+        MainRouteDecisionHelper.Transition transition =
+            MainActivity.resolveSystemBackForTest(
+                true,
+                BottomTabDestination.PINS,
+                false,
+                BottomTabDestination.ASK
+            );
+
+        assertEquals(MainRouteDecisionHelper.Effect.SHOW_PREVIOUS_TAB, transition.effect);
+        assertEquals(MainRouteDecisionHelper.Surface.BROWSE, transition.routeState.surface);
+        assertEquals(BottomTabDestination.ASK, transition.routeState.activePhoneTab);
+        assertFalse(transition.routeState.askLaneActive);
+    }
+
+    @Test
     public void savedGuideSectionShowsEmptyStateOnlyForSavedFlow() {
         assertTrue(MainActivity.shouldShowSavedGuideSection(true, BottomTabDestination.PINS, 0));
 

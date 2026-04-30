@@ -99,6 +99,26 @@ public final class MainRouteDecisionHelperTest {
     }
 
     @Test
+    public void systemBackFromSavedBrowseReturnsPreviousOwnerBeforeHomeFallback() {
+        MainRouteDecisionHelper.RouteState saved =
+            new MainRouteDecisionHelper.RouteState(
+                MainRouteDecisionHelper.Surface.BROWSE,
+                BottomTabDestination.PINS,
+                false
+            );
+
+        MainRouteDecisionHelper.Transition previousAsk =
+            MainRouteDecisionHelper.systemBack(saved, BottomTabDestination.ASK);
+        MainRouteDecisionHelper.Transition missingPrevious =
+            MainRouteDecisionHelper.systemBack(saved, null);
+
+        assertEquals(MainRouteDecisionHelper.Effect.SHOW_PREVIOUS_TAB, previousAsk.effect);
+        assertRoute(previousAsk.routeState, MainRouteDecisionHelper.Surface.BROWSE, BottomTabDestination.ASK, false);
+        assertEquals(MainRouteDecisionHelper.Effect.SHOW_PREVIOUS_TAB, missingPrevious.effect);
+        assertRoute(missingPrevious.routeState, MainRouteDecisionHelper.Surface.BROWSE, BottomTabDestination.HOME, false);
+    }
+
+    @Test
     public void homeChromeBackOnlyHandlesNonBrowseRoutes() {
         MainRouteDecisionHelper.Transition browse =
             MainRouteDecisionHelper.homeChromeBack(MainRouteDecisionHelper.browseHome());

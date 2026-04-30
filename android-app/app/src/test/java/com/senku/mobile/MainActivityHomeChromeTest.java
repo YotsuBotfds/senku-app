@@ -6,6 +6,7 @@ import static org.junit.Assert.assertTrue;
 
 import com.senku.ui.home.CategoryShelfItemModel;
 import com.senku.ui.home.CategoryShelfLayoutMode;
+import com.senku.ui.primitives.BottomTabDestination;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -285,6 +286,18 @@ public final class MainActivityHomeChromeTest {
             MainRouteDecisionHelper.Effect.NONE,
             MainActivity.resolveHomeChromeBackEffectForTest(true)
         );
+    }
+
+    @Test
+    public void homeChromeBackReturnsAskResultsToBrowse() {
+        MainRouteDecisionHelper.Transition transition = MainRouteDecisionHelper.homeChromeBack(
+            MainActivity.routeStateForModeForTest(false, BottomTabDestination.ASK, true)
+        );
+
+        assertEquals(MainRouteDecisionHelper.Effect.RETURN_TO_BROWSE, transition.effect);
+        assertEquals(MainRouteDecisionHelper.Surface.BROWSE, transition.routeState.surface);
+        assertEquals(BottomTabDestination.HOME, transition.routeState.activePhoneTab);
+        assertFalse(transition.routeState.askLaneActive);
     }
 
     @Test
