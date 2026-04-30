@@ -134,6 +134,65 @@ public final class MainActivityPhoneNavigationTest {
     }
 
     @Test
+    public void openSavedExtraRoutesThroughSavedDestinationFromBrowse() {
+        MainRouteDecisionHelper.Transition transition =
+            MainActivity.resolveOpenSavedDestinationForTest(
+                true,
+                true,
+                BottomTabDestination.HOME,
+                false
+            );
+
+        assertEquals(MainRouteDecisionHelper.Effect.SHOW_SAVED_GUIDES, transition.effect);
+        assertEquals(MainRouteDecisionHelper.Surface.BROWSE, transition.routeState.surface);
+        assertEquals(BottomTabDestination.PINS, transition.routeState.activePhoneTab);
+        assertFalse(transition.routeState.askLaneActive);
+    }
+
+    @Test
+    public void openSavedExtraClearsResultSurfaceAndAskState() {
+        MainRouteDecisionHelper.Transition fromSearch =
+            MainActivity.resolveOpenSavedDestinationForTest(
+                true,
+                false,
+                BottomTabDestination.HOME,
+                false
+            );
+        MainRouteDecisionHelper.Transition fromAsk =
+            MainActivity.resolveOpenSavedDestinationForTest(
+                true,
+                false,
+                BottomTabDestination.ASK,
+                true
+            );
+
+        assertEquals(MainRouteDecisionHelper.Effect.SHOW_SAVED_GUIDES, fromSearch.effect);
+        assertEquals(MainRouteDecisionHelper.Surface.BROWSE, fromSearch.routeState.surface);
+        assertEquals(BottomTabDestination.PINS, fromSearch.routeState.activePhoneTab);
+        assertFalse(fromSearch.routeState.askLaneActive);
+        assertEquals(MainRouteDecisionHelper.Effect.SHOW_SAVED_GUIDES, fromAsk.effect);
+        assertEquals(MainRouteDecisionHelper.Surface.BROWSE, fromAsk.routeState.surface);
+        assertEquals(BottomTabDestination.PINS, fromAsk.routeState.activePhoneTab);
+        assertFalse(fromAsk.routeState.askLaneActive);
+    }
+
+    @Test
+    public void missingOpenSavedExtraKeepsCurrentRouteState() {
+        MainRouteDecisionHelper.Transition transition =
+            MainActivity.resolveOpenSavedDestinationForTest(
+                false,
+                false,
+                BottomTabDestination.ASK,
+                true
+            );
+
+        assertEquals(MainRouteDecisionHelper.Effect.NONE, transition.effect);
+        assertEquals(MainRouteDecisionHelper.Surface.ASK_RESULTS, transition.routeState.surface);
+        assertEquals(BottomTabDestination.ASK, transition.routeState.activePhoneTab);
+        assertTrue(transition.routeState.askLaneActive);
+    }
+
+    @Test
     public void savedGuideSectionShowsEmptyStateOnlyForSavedFlow() {
         assertTrue(MainActivity.shouldShowSavedGuideSection(true, BottomTabDestination.PINS, 0));
 

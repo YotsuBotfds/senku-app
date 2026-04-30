@@ -986,13 +986,41 @@ public final class MainActivity extends AppCompatActivity {
     }
 
     private void maybeHandleOpenSavedIntent(Intent intent) {
-        if (shouldOpenSavedDestination(intent != null && intent.getBooleanExtra(EXTRA_OPEN_SAVED, false))) {
-            openPhoneTab(BottomTabDestination.PINS, false);
-        }
+        MainRouteDecisionHelper.Transition transition = resolveOpenSavedDestination(
+            intent != null && intent.getBooleanExtra(EXTRA_OPEN_SAVED, false),
+            currentMainRouteState()
+        );
+        applyPhoneTabTransition(transition, false);
     }
 
     static boolean shouldOpenSavedDestination(boolean openSavedExtra) {
-        return openSavedExtra;
+        return resolveOpenSavedDestination(openSavedExtra, MainRouteDecisionHelper.browseHome()).effect
+            == MainRouteDecisionHelper.Effect.SHOW_SAVED_GUIDES;
+    }
+
+    static MainRouteDecisionHelper.Transition resolveOpenSavedDestinationForTest(
+        boolean openSavedExtra,
+        boolean browseMode,
+        BottomTabDestination activePhoneTab,
+        boolean askLaneActive
+    ) {
+        return resolveOpenSavedDestination(
+            openSavedExtra,
+            routeStateForMode(browseMode, activePhoneTab, askLaneActive)
+        );
+    }
+
+    private static MainRouteDecisionHelper.Transition resolveOpenSavedDestination(
+        boolean openSavedExtra,
+        MainRouteDecisionHelper.RouteState routeState
+    ) {
+        if (!openSavedExtra) {
+            return new MainRouteDecisionHelper.Transition(
+                routeState == null ? MainRouteDecisionHelper.browseHome() : routeState,
+                MainRouteDecisionHelper.Effect.NONE
+            );
+        }
+        return MainRouteDecisionHelper.openPhoneTab(routeState, BottomTabDestination.PINS);
     }
 
     private void maybeHandleAutomation() {
@@ -3199,6 +3227,13 @@ public final class MainActivity extends AppCompatActivity {
             currentMainRouteState(),
             destination
         );
+        applyPhoneTabTransition(transition, pushHistory);
+    }
+
+    private void applyPhoneTabTransition(MainRouteDecisionHelper.Transition transition, boolean pushHistory) {
+        if (transition == null || transition.effect == MainRouteDecisionHelper.Effect.NONE) {
+            return;
+        }
         BottomTabDestination selectionOwner = transition.routeState.activePhoneTab;
         if (pushHistory && selectionOwner != activePhoneTab) {
             pushPhoneTab(activePhoneTab);
