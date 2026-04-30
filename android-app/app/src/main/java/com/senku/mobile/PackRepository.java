@@ -23,9 +23,6 @@ public final class PackRepository implements AutoCloseable {
     private static final String TAG = "SenkuPackRepo";
     private static final Locale QUERY_LOCALE = Locale.US;
     private static final int HYBRID_RRF_K = 60;
-    private static final double ANCHOR_BASE_BONUS = 0.08;
-    private static final double ANCHOR_PRIOR_MAX_BONUS = 0.10;
-    private static final String ANCHOR_PRIOR_PREFIX = "__anchor_prior__:";
     private static final int LEXICAL_CANDIDATE_LIMIT = 72;
     private static final int VECTOR_NEIGHBOR_LIMIT = 28;
     private static final int VECTOR_SEED_COUNT = 6;
@@ -335,14 +332,14 @@ public final class PackRepository implements AutoCloseable {
 
     private ParsedSearchQuery parseSearchQuery(String rawQuery) {
         String query = emptySafe(rawQuery).trim();
-        if (!query.startsWith(ANCHOR_PRIOR_PREFIX)) {
+        if (!query.startsWith(PackAnchorPriorPolicy.DIRECTIVE_PREFIX)) {
             return new ParsedSearchQuery(query, null);
         }
         int markerEnd = query.indexOf(' ');
         if (markerEnd <= 0) {
             return new ParsedSearchQuery(query, null);
         }
-        String payload = query.substring(ANCHOR_PRIOR_PREFIX.length(), markerEnd);
+        String payload = query.substring(PackAnchorPriorPolicy.DIRECTIVE_PREFIX.length(), markerEnd);
         String[] parts = payload.split(":");
         if (parts.length != 3) {
             return new ParsedSearchQuery(query, null);
@@ -473,15 +470,6 @@ public final class PackRepository implements AutoCloseable {
         } catch (SQLiteException ignored) {
             return "";
         }
-    }
-
-    private static double anchorDecay(int turnsSinceAnchor) {
-        return switch (turnsSinceAnchor) {
-            case 0 -> 1.0;
-            case 1 -> 0.6;
-            case 2 -> 0.3;
-            default -> 0.0;
-        };
     }
 
     public List<SearchResult> search(String rawQuery, int limit) {
@@ -3803,41 +3791,30 @@ public final class PackRepository implements AutoCloseable {
         if (merged == null || merged.isEmpty() || anchorPrior == null) {
             return;
         }
-        double decay = anchorDecay(anchorPrior.turnsSinceAnchor);
-        if (decay <= 0.0) {
-            return;
-        }
         Map<String, Double> relatedWeights = relatedWeightsByGuide.get(anchorPrior.anchorGuideId);
         if (relatedWeights == null) {
             relatedWeights = Collections.emptyMap();
         }
         for (CombinedHit combined : merged.values()) {
             String guideId = emptySafe(combined.chunk.guideId).trim();
-            double weight = 0.0;
-            if (anchorPrior.anchorGuideId.equals(guideId)) {
-                weight = 1.0;
-            } else if (!guideId.isEmpty()) {
-                weight = relatedWeights.getOrDefault(guideId, 0.0);
-            }
-            if (weight <= 0.0) {
-                continue;
-            }
-            double bonus = Math.min(
-                ANCHOR_PRIOR_MAX_BONUS,
-                Math.max(0.0, ANCHOR_BASE_BONUS * decay * weight)
+            PackAnchorPriorPolicy.AnchorPriorAdjustment adjustment = PackAnchorPriorPolicy.adjustment(
+                anchorPrior.anchorGuideId,
+                anchorPrior.turnsSinceAnchor,
+                guideId,
+                relatedWeights
             );
-            if (bonus <= 0.0) {
+            if (!adjustment.hasBonus()) {
                 continue;
             }
-            combined.rrfScore += bonus;
+            combined.rrfScore += adjustment.bonus;
             safeLogDebug(
                 "anchor_prior turn=" + anchorPrior.turnCount +
                     " anchor_gid=" + anchorPrior.anchorGuideId +
                     " chunk_gid=" + guideId +
-                    " base=" + ANCHOR_BASE_BONUS +
-                    " decay=" + decay +
-                    " weight=" + weight +
-                    " bonus=" + bonus
+                    " base=" + PackAnchorPriorPolicy.BASE_BONUS +
+                    " decay=" + adjustment.decay +
+                    " weight=" + adjustment.weight +
+                    " bonus=" + adjustment.bonus
             );
         }
     }
