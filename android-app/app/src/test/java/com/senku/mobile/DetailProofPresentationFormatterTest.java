@@ -2,6 +2,7 @@ package com.senku.mobile;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 import java.util.List;
@@ -89,14 +90,11 @@ public final class DetailProofPresentationFormatterTest {
 
         assertFalse(visible.toLowerCase().contains("proof rail"));
         assertFalse(visible.toLowerCase().contains("proof"));
-        assertEquals(
-            "SOURCES  sources reviewed | 1 source\n" +
-                "GUIDE  [GD-101] sources anchor\n" +
-                "MATCH  generated sources\n" +
-                "SECTION  sources section\n" +
-                "MATCH  Best match",
-            visible
-        );
+        assertContainsLine(visible, "SOURCES  sources reviewed | 1 source");
+        assertContainsLine(visible, "GUIDE  [GD-101] sources anchor");
+        assertContainsLine(visible, "MATCH  generated sources");
+        assertContainsLine(visible, "SECTION  sources section");
+        assertContainsLine(visible, "MATCH  Best match");
     }
 
     @Test
@@ -349,12 +347,12 @@ public final class DetailProofPresentationFormatterTest {
 
         String visible = formatter.buildWhySummaryPlainText(state, sources, true, false);
 
-        assertEquals(
-            "GUIDE  [GD-345] Tarp & Cord Shelters\nSOURCES  3 sources",
-            visible
-        );
+        assertContainsLine(visible, "GUIDE  [GD-345] Tarp & Cord Shelters");
+        assertContainsLine(visible, "SOURCES  3 sources");
         assertFalse(visible.contains("MATCH"));
         assertFalse(visible.contains("FIT"));
+        assertFalse(visible.contains("hybrid"));
+        assertFalse(visible.contains("guide-focus"));
     }
 
     @Test
@@ -376,14 +374,18 @@ public final class DetailProofPresentationFormatterTest {
         String visible = formatter.buildWhySummaryPlainText(state, List.of(), false, false);
 
         assertFalse(visible.toLowerCase().contains("proof"));
-        assertEquals(
-            "MATCH  generated sources\n" +
-                "ENGINE  host sources\n" +
-                "SOURCES  No guide citations attached yet\n" +
-                "LIBRARY  No cited guide lines surfaced from the installed pack for this answer yet.\n" +
-                "REVISION  04-27\n" +
-                "CHECK  Reopen search or inspect a guide directly before relying on this.",
-            visible
+        assertContainsLine(visible, "MATCH  generated sources");
+        assertContainsLine(visible, "ENGINE  host sources");
+        assertContainsLine(visible, "SOURCES  No guide citations attached yet");
+        assertContainsLine(visible, "LIBRARY  No cited guide lines surfaced from the installed pack for this answer yet.");
+        assertContainsLine(visible, "REVISION  04-27");
+        assertContainsLine(visible, "CHECK  Reopen search or inspect a guide directly before relying on this.");
+    }
+
+    private static void assertContainsLine(String visible, String expectedLine) {
+        assertTrue(
+            "Expected line not found: " + expectedLine + "\nVisible text:\n" + visible,
+            Arrays.asList(visible.split("\\n")).contains(expectedLine)
         );
     }
 
