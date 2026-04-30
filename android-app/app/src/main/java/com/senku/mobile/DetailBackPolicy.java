@@ -35,6 +35,8 @@ public final class DetailBackPolicy {
 
     static Decision decide(Inputs inputs) {
         Inputs normalized = inputs == null ? Inputs.defaultState() : inputs.normalized();
+        // SourceRoute and BackTrigger are kept as explicit inputs so call sites can
+        // classify how detail was reached without implying different navigation yet.
         return normalized.taskRoot
             ? new Decision(Effect.NAVIGATE_HOME, FinishBehavior.FINISH)
             : new Decision(Effect.FINISH_ACTIVITY, FinishBehavior.FINISH);

@@ -196,6 +196,7 @@ public final class DetailActivity extends AppCompatActivity {
     private static final String EXTRA_GUIDE_MODE_LABEL = "guide_mode_label";
     private static final String EXTRA_GUIDE_MODE_SUMMARY = "guide_mode_summary";
     private static final String EXTRA_GUIDE_MODE_ANCHOR_LABEL = "guide_mode_anchor_label";
+    private static final String EXTRA_DETAIL_SOURCE_ROUTE = "detail_source_route";
     private static final String EXTRA_PRODUCT_REVIEW_MODE = MainActivity.EXTRA_PRODUCT_REVIEW_MODE;
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
     private final Handler uiHandler = new Handler(Looper.getMainLooper());
@@ -452,6 +453,7 @@ public final class DetailActivity extends AppCompatActivity {
     private String currentGuideModeLabel = "";
     private String currentGuideModeSummary = "";
     private String currentGuideModeAnchorLabel = "";
+    private DetailBackPolicy.SourceRoute currentDetailSourceRoute = DetailBackPolicy.SourceRoute.UNKNOWN;
 
     public static Intent newGuideIntent(Context context, SearchResult result) {
         return newGuideIntent(context, result, null);
@@ -490,6 +492,7 @@ public final class DetailActivity extends AppCompatActivity {
         intent.putExtra(EXTRA_GUIDE_MODE_LABEL, safe(guideModeLabel));
         intent.putExtra(EXTRA_GUIDE_MODE_SUMMARY, safe(guideModeSummary));
         intent.putExtra(EXTRA_GUIDE_MODE_ANCHOR_LABEL, safe(guideModeAnchorLabel));
+        intent.putExtra(EXTRA_DETAIL_SOURCE_ROUTE, DetailBackPolicy.SourceRoute.GUIDE.name());
         populatePackMetadataExtras(context, intent);
         return intent;
     }
@@ -501,7 +504,7 @@ public final class DetailActivity extends AppCompatActivity {
         String anchorLabel
     ) {
         String label = context.getString(R.string.detail_home_guide_connection_label);
-        return newGuideIntent(
+        Intent intent = newGuideIntent(
             context,
             result,
             conversationId,
@@ -509,6 +512,8 @@ public final class DetailActivity extends AppCompatActivity {
             DetailGuideContextPresentationFormatter.buildGuideHandoffSummaryText(context, label, anchorLabel),
             anchorLabel
         );
+        intent.putExtra(EXTRA_DETAIL_SOURCE_ROUTE, DetailBackPolicy.SourceRoute.HOME_GUIDE.name());
+        return intent;
     }
 
     public static Intent newCrossReferenceGuideIntent(
@@ -521,7 +526,7 @@ public final class DetailActivity extends AppCompatActivity {
         String label = railContext
             ? DetailGuideContextPresentationFormatter.guideRailLabel(context)
             : "Cross-reference";
-        return newGuideIntent(
+        Intent intent = newGuideIntent(
             context,
             result,
             conversationId,
@@ -529,6 +534,8 @@ public final class DetailActivity extends AppCompatActivity {
             DetailGuideContextPresentationFormatter.buildGuideHandoffSummaryText(context, label, anchorLabel),
             anchorLabel
         );
+        intent.putExtra(EXTRA_DETAIL_SOURCE_ROUTE, DetailBackPolicy.SourceRoute.CROSS_REFERENCE_GUIDE.name());
+        return intent;
     }
 
     public static Intent newAnswerIntent(Context context, String title, String subtitle, String body, List<SearchResult> sources) {
@@ -635,6 +642,7 @@ public final class DetailActivity extends AppCompatActivity {
         intent.putExtra(EXTRA_SOURCES, new ArrayList<>(sources == null ? Collections.emptyList() : sources));
         intent.putExtra(EXTRA_AUTO_FOLLOWUP_QUERY, safe(autoFollowUpQuery));
         intent.putExtra(EXTRA_CONVERSATION_ID, safe(conversationId));
+        intent.putExtra(EXTRA_DETAIL_SOURCE_ROUTE, DetailBackPolicy.SourceRoute.ANSWER.name());
         populatePackMetadataExtras(context, intent);
         return intent;
     }
@@ -677,6 +685,7 @@ public final class DetailActivity extends AppCompatActivity {
         );
         intent.putExtra(EXTRA_AUTO_FOLLOWUP_QUERY, safe(autoFollowUpQuery));
         intent.putExtra(EXTRA_CONVERSATION_ID, safe(conversationId));
+        intent.putExtra(EXTRA_DETAIL_SOURCE_ROUTE, DetailBackPolicy.SourceRoute.ANSWER.name());
         intent.putExtra(
             EXTRA_PENDING_GENERATION,
             prepared != null
@@ -1278,6 +1287,7 @@ public final class DetailActivity extends AppCompatActivity {
         currentGuideModeLabel = safe(intent.getStringExtra(EXTRA_GUIDE_MODE_LABEL)).trim();
         currentGuideModeSummary = safe(intent.getStringExtra(EXTRA_GUIDE_MODE_SUMMARY)).trim();
         currentGuideModeAnchorLabel = safe(intent.getStringExtra(EXTRA_GUIDE_MODE_ANCHOR_LABEL)).trim();
+        currentDetailSourceRoute = sourceRouteFromIntent(intent, answerMode);
         collapseHeroAfterStableAnswer = answerMode && !pendingGeneration && !safe(currentBody).trim().isEmpty();
         portraitSourcesExpanded = false;
         portraitSessionExpanded = false;
@@ -9210,9 +9220,24 @@ public final class DetailActivity extends AppCompatActivity {
     private DetailBackPolicy.Inputs detailBackPolicyInputs(DetailBackPolicy.BackTrigger trigger) {
         return new DetailBackPolicy.Inputs(
             isTaskRoot(),
-            answerMode ? DetailBackPolicy.SourceRoute.ANSWER : DetailBackPolicy.SourceRoute.GUIDE,
+            currentDetailSourceRoute,
             trigger
         );
+    }
+
+    private static DetailBackPolicy.SourceRoute sourceRouteFromIntent(Intent intent, boolean answerMode) {
+        if (intent == null) {
+            return DetailBackPolicy.SourceRoute.UNKNOWN;
+        }
+        String rawRoute = safe(intent.getStringExtra(EXTRA_DETAIL_SOURCE_ROUTE)).trim();
+        if (!rawRoute.isEmpty()) {
+            try {
+                return DetailBackPolicy.SourceRoute.valueOf(rawRoute.toUpperCase(Locale.US));
+            } catch (IllegalArgumentException ignored) {
+                return answerMode ? DetailBackPolicy.SourceRoute.ANSWER : DetailBackPolicy.SourceRoute.GUIDE;
+            }
+        }
+        return answerMode ? DetailBackPolicy.SourceRoute.ANSWER : DetailBackPolicy.SourceRoute.GUIDE;
     }
 
     private void applyDetailBackDecision(DetailBackPolicy.Decision decision) {
