@@ -77,13 +77,11 @@ public final class MainActivity extends AppCompatActivity {
     private static final int MIN_SEARCH_SUGGESTION_QUERY = 2;
     private static final int MAX_SEARCH_SUGGESTIONS = 6;
     private static final int MAX_CATEGORY_SUGGESTIONS = 2;
-    private static final int MAX_COMPACT_HOME_CATEGORY_TILES = 6;
     private static final int MAX_SAVED_GUIDES = 12;
     private static final int MAX_RECENT_THREAD_PREVIEWS = 3;
     private static final int MAX_HOME_RELATED_GUIDES = 4;
     private static final int MAX_RESULT_PREVIEW_BRIDGE_GUIDES = 4;
     private static final int RESULT_PREVIEW_BRIDGE_SIGNAL_LIMIT = 1;
-    private static final int MANUAL_HOME_CATEGORY_COLUMNS = 3;
     private static final int MANUAL_HOME_CATEGORY_CARD_HEIGHT_DP = 74;
     private static final int TABLET_MANUAL_HOME_CATEGORY_CARD_HEIGHT_DP = 68;
     private static final int MANUAL_HOME_CATEGORY_ROW_GAP_DP = 9;
@@ -102,17 +100,6 @@ public final class MainActivity extends AppCompatActivity {
     private static final long MILLIS_PER_MINUTE = 60_000L;
     private static final long MINUTES_PER_HOUR = 60L;
     private static final long HOURS_PER_DAY = 24L;
-    private static final CategoryDefinition[] HOME_CHROME_CATEGORIES = {
-        new CategoryDefinition("water", "Water & sanitation", 0xFF7A9AB4),
-        new CategoryDefinition("shelter", "Shelter & build", 0xFF7A9A5A),
-        new CategoryDefinition("fire", "Fire & energy", 0xFFC48A5A),
-        new CategoryDefinition("medicine", "Medicine", 0xFFB67A7A),
-        new CategoryDefinition("food", "Food & agriculture", 0xFF9AA064),
-        new CategoryDefinition("tools", "Tools & craft", 0xFFC9B682),
-        new CategoryDefinition("communications", "Communications", 0xFF7A9A9A),
-        new CategoryDefinition("community", "Community", 0xFF9AA084)
-    };
-
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
     private final ArrayList<SearchResult> items = new ArrayList<>();
     private final ArrayList<SearchResult> allGuides = new ArrayList<>();
@@ -305,18 +292,6 @@ public final class MainActivity extends AppCompatActivity {
             this.countView = countView;
             this.defaultOrder = defaultOrder;
             this.count = count;
-        }
-    }
-
-    private static final class CategoryDefinition {
-        final String bucketKey;
-        final String label;
-        final int accentColor;
-
-        CategoryDefinition(String bucketKey, String label, int accentColor) {
-            this.bucketKey = bucketKey;
-            this.label = label;
-            this.accentColor = accentColor;
         }
     }
 
@@ -2874,13 +2849,7 @@ public final class MainActivity extends AppCompatActivity {
         int cardHeightDp,
         int rowGapDp
     ) {
-        int safeItemCount = Math.max(0, itemCount);
-        if (safeItemCount == 0) {
-            return 0;
-        }
-        int rows = (safeItemCount + MANUAL_HOME_CATEGORY_COLUMNS - 1) / MANUAL_HOME_CATEGORY_COLUMNS;
-        return rows * cardHeightDp
-            + Math.max(0, rows - 1) * rowGapDp;
+        return HomeCategoryPolicy.shelfMinimumHeightDp(itemCount, cardHeightDp, rowGapDp);
     }
 
     private void allowChildOverflow(View view) {
@@ -3986,34 +3955,13 @@ public final class MainActivity extends AppCompatActivity {
         List<SearchResult> guides,
         boolean condense
     ) {
-        return buildHomeChromeCategoryShelfItems(buildVisibleCategoryTiles(
-            buildHomeChromeCategoryTileStates(guides),
-            condense
-        ));
+        return HomeCategoryPolicy.buildShelfItemsFromGuides(guides, condense);
     }
 
     private static List<CategoryShelfItemModel> buildHomeChromeCategoryShelfItems(
         List<CategoryTileState> visibleCategoryTiles
     ) {
-        ArrayList<CategoryShelfItemModel> items = new ArrayList<>();
-        for (CategoryTileState tile : visibleCategoryTiles) {
-            String label = categoryLabelForBucket(tile == null ? null : tile.bucketKey);
-            if (label.isEmpty()) {
-                label = humanizeMetadataLabel(tile == null ? null : tile.bucketKey);
-            }
-            items.add(new CategoryShelfItemModel(
-                tile == null ? "" : tile.bucketKey,
-                label,
-                formatHomeChromeCategoryCount(tile == null ? 0 : tile.count),
-                resolveCategoryShelfAccent(tile == null ? null : tile.bucketKey),
-                tile != null && tile.count > 0,
-                buildHomeChromeCategoryContentDescription(
-                    tile == null ? null : tile.bucketKey,
-                    tile == null ? 0 : tile.count
-                )
-            ));
-        }
-        return items;
+        return HomeCategoryPolicy.buildShelfItems(toHomeCategoryModels(visibleCategoryTiles));
     }
 
     private static List<CategoryShelfItemModel> buildManualHomeCategoryShelfItems(
@@ -4026,46 +3974,15 @@ public final class MainActivity extends AppCompatActivity {
         List<CategoryTileState> visibleCategoryTiles,
         boolean includeCountInLabel
     ) {
-        ArrayList<CategoryShelfItemModel> items = new ArrayList<>();
-        for (CategoryTileState tile : visibleCategoryTiles) {
-            String label = manualHomeCategoryLabel(tile == null ? null : tile.bucketKey);
-            int count = tile == null ? 0 : tile.count;
-            items.add(new CategoryShelfItemModel(
-                tile == null ? "" : tile.bucketKey,
-                label,
-                formatHomeChromeCategoryCount(count),
-                resolveCategoryShelfAccent(tile == null ? null : tile.bucketKey),
-                tile != null && count > 0,
-                buildHomeChromeCategoryContentDescription(
-                    tile == null ? null : tile.bucketKey,
-                    count
-                )
-            ));
-        }
-        return items;
+        return HomeCategoryPolicy.buildManualShelfItems(toHomeCategoryModels(visibleCategoryTiles));
     }
 
     static String manualHomeCategoryFilterLabelForTest(String bucketKey, int count) {
-        return buildCategoryFilterLabel(manualHomeCategoryLabel(bucketKey), count);
+        return HomeCategoryPolicy.manualFilterLabel(bucketKey, count);
     }
 
     static String manualHomeCategoryLabel(String bucketKey) {
-        switch (safe(bucketKey).trim()) {
-            case "shelter":
-                return "Shelter";
-            case "water":
-                return "Water";
-            case "fire":
-                return "Fire";
-            case "food":
-                return "Food";
-            case "medicine":
-                return "Medicine";
-            case "tools":
-                return "Tools";
-            default:
-                return categoryLabelForBucket(bucketKey);
-        }
+        return HomeCategoryPolicy.manualLabel(bucketKey);
     }
 
     static String buildCategoryFilterLabelForTest(String label, int count) {
@@ -4073,11 +3990,7 @@ public final class MainActivity extends AppCompatActivity {
     }
 
     private static String buildCategoryFilterLabel(String label, int count) {
-        String cleanLabel = safe(label).trim();
-        if (cleanLabel.isEmpty()) {
-            cleanLabel = "Guides";
-        }
-        return cleanLabel + " (" + Math.max(0, count) + ")";
+        return HomeCategoryPolicy.filterLabel(label, count);
     }
 
     private CategoryShelfLayoutMode resolveCategoryShelfLayoutMode() {
@@ -4093,10 +4006,7 @@ public final class MainActivity extends AppCompatActivity {
         boolean tabletPortraitLayout,
         boolean landscapeTabletLayout
     ) {
-        if (landscapeTabletLayout || tabletPortraitLayout) {
-            return CategoryShelfLayoutMode.TABLET_GRID;
-        }
-        return CategoryShelfLayoutMode.PHONE_GRID;
+        return HomeCategoryPolicy.layoutMode(phoneFormFactor, tabletPortraitLayout, landscapeTabletLayout);
     }
 
     private boolean areCategoryInteractionsEnabled() {
@@ -4107,12 +4017,11 @@ public final class MainActivity extends AppCompatActivity {
     }
 
     static boolean areCategoryInteractionsEnabled(boolean hasRepository, boolean busy) {
-        return hasRepository && !busy;
+        return HomeCategoryPolicy.interactionsEnabled(hasRepository, busy);
     }
 
     static int resolveCategoryShelfAccent(String bucketKey) {
-        CategoryDefinition definition = categoryDefinitionForBucket(bucketKey);
-        return definition == null ? 0xFFC9B682 : definition.accentColor;
+        return HomeCategoryPolicy.accentForBucket(bucketKey);
     }
 
     private void updateCategoryCount(TextView view, int count) {
@@ -4132,7 +4041,7 @@ public final class MainActivity extends AppCompatActivity {
             bucketKey,
             card,
             countView,
-            defaultOrderForCategoryBucket(bucketKey),
+            HomeCategoryPolicy.defaultOrderForBucket(bucketKey),
             displayCountForHomeCategory(bucketKey, countForBucket(guides, bucketKey), guides)
         );
     }
@@ -4196,14 +4105,13 @@ public final class MainActivity extends AppCompatActivity {
 
     private static ArrayList<CategoryTileState> buildHomeChromeCategoryTileStates(List<SearchResult> guides) {
         ArrayList<CategoryTileState> categoryTiles = new ArrayList<>();
-        for (int index = 0; index < HOME_CHROME_CATEGORIES.length; index++) {
-            CategoryDefinition definition = HOME_CHROME_CATEGORIES[index];
+        for (HomeCategoryPolicy.HomeCategoryModel model : HomeCategoryPolicy.buildCategoryModels(guides)) {
             categoryTiles.add(new CategoryTileState(
-                definition.bucketKey,
+                model.bucketKey,
                 null,
                 null,
-                index,
-                countForBucket(guides, definition.bucketKey)
+                model.defaultOrder,
+                model.count
             ));
         }
         return categoryTiles;
@@ -4217,50 +4125,58 @@ public final class MainActivity extends AppCompatActivity {
         List<CategoryTileState> categoryTiles,
         boolean condense
     ) {
-        ArrayList<CategoryTileState> visible = new ArrayList<>();
-        for (CategoryTileState tile : categoryTiles) {
-            if (tile != null && tile.count > 0) {
-                visible.add(tile);
-            }
-        }
-        visible.sort(Comparator
-            .comparingInt((CategoryTileState tile) -> tile.count)
-            .reversed()
-            .thenComparingInt(tile -> tile.defaultOrder));
-        if (condense && visible.size() > MAX_COMPACT_HOME_CATEGORY_TILES) {
-            int cutoffCount = visible.get(MAX_COMPACT_HOME_CATEGORY_TILES - 1).count;
-            int nextCount = visible.get(MAX_COMPACT_HOME_CATEGORY_TILES).count;
-            if (cutoffCount >= Math.max(2, nextCount * 2)) {
-                return new ArrayList<>(visible.subList(0, MAX_COMPACT_HOME_CATEGORY_TILES));
-            }
-        }
-        return visible;
+        return categoryTilesForModels(
+            categoryTiles,
+            HomeCategoryPolicy.visibleCategoryModels(toHomeCategoryModels(categoryTiles), condense)
+        );
     }
 
     private static ArrayList<CategoryTileState> buildManualHomeCategoryTiles(
         List<CategoryTileState> categoryTiles
     ) {
-        ArrayList<CategoryTileState> ordered = new ArrayList<>();
-        addCategoryTileByBucket(ordered, categoryTiles, "shelter");
-        addCategoryTileByBucket(ordered, categoryTiles, "water");
-        addCategoryTileByBucket(ordered, categoryTiles, "fire");
-        addCategoryTileByBucket(ordered, categoryTiles, "food");
-        addCategoryTileByBucket(ordered, categoryTiles, "medicine");
-        addCategoryTileByBucket(ordered, categoryTiles, "tools");
-        return ordered;
+        return categoryTilesForModels(
+            categoryTiles,
+            HomeCategoryPolicy.manualHomeCategoryModels(toHomeCategoryModels(categoryTiles))
+        );
     }
 
-    private static void addCategoryTileByBucket(
-        ArrayList<CategoryTileState> destination,
-        List<CategoryTileState> categoryTiles,
-        String bucketKey
+    private static ArrayList<HomeCategoryPolicy.HomeCategoryModel> toHomeCategoryModels(
+        List<CategoryTileState> categoryTiles
     ) {
+        ArrayList<HomeCategoryPolicy.HomeCategoryModel> models = new ArrayList<>();
+        if (categoryTiles == null) {
+            return models;
+        }
         for (CategoryTileState tile : categoryTiles) {
-            if (tile != null && tile.count > 0 && bucketKey.equals(tile.bucketKey)) {
-                destination.add(tile);
-                return;
+            models.add(new HomeCategoryPolicy.HomeCategoryModel(
+                tile == null ? "" : tile.bucketKey,
+                tile == null ? 0 : tile.defaultOrder,
+                tile == null ? 0 : tile.count
+            ));
+        }
+        return models;
+    }
+
+    private static ArrayList<CategoryTileState> categoryTilesForModels(
+        List<CategoryTileState> categoryTiles,
+        List<HomeCategoryPolicy.HomeCategoryModel> models
+    ) {
+        ArrayList<CategoryTileState> orderedTiles = new ArrayList<>();
+        if (categoryTiles == null || models == null) {
+            return orderedTiles;
+        }
+        for (HomeCategoryPolicy.HomeCategoryModel model : models) {
+            if (model == null) {
+                continue;
+            }
+            for (CategoryTileState tile : categoryTiles) {
+                if (tile != null && model.bucketKey.equals(tile.bucketKey)) {
+                    orderedTiles.add(tile);
+                    break;
+                }
             }
         }
+        return orderedTiles;
     }
 
     private boolean shouldCondenseHomeCategoryDeck() {
@@ -4326,94 +4242,11 @@ public final class MainActivity extends AppCompatActivity {
     }
 
     private static int countForBucket(List<SearchResult> guides, String bucket) {
-        int count = 0;
-        if (guides == null) {
-            return count;
-        }
-        for (SearchResult result : guides) {
-            if (matchesCategoryBucket(result, bucket)) {
-                count += 1;
-            }
-        }
-        return count;
+        return HomeCategoryPolicy.countForBucket(guides, bucket);
     }
 
     private static boolean matchesCategoryBucket(SearchResult result, String bucket) {
-        if (result == null) {
-            return false;
-        }
-        String category = normalizeBucketText(result.category);
-        String searchable = normalizeBucketText(
-            result.category + " " +
-                result.topicTags + " " +
-                result.title
-        );
-        switch (bucket) {
-            case "water":
-                return "water".equals(category)
-                    || "sanitation".equals(category)
-                    || containsAnyBucketToken(searchable,
-                        "water", "rainwater", "rain barrel", "sanitation", "hygiene",
-                        "latrine", "filtration", "filter", "purify", "purification",
-                        "wastewater", "aquaculture"
-                    );
-            case "shelter":
-                return "shelter".equals(category)
-                    || "building".equals(category)
-                    || "utility".equals(category)
-                    || containsAnyBucketToken(searchable,
-                        "shelter", "housing", "cabin", "roof", "foundation",
-                        "insulation", "weatherproof", "bathhouse"
-                    );
-            case "fire":
-                return "fire".equals(category)
-                    || "energy".equals(category)
-                    || "power-generation".equals(category)
-                    || containsAnyBucketToken(searchable,
-                        "fire", "stove", "fuel", "charcoal", "candle", "lamp",
-                        "heat", "thermal", "combustion", "boiler", "steam"
-                    );
-            case "medicine":
-                return "medical".equals(category) || "medicine".equals(category) || "health".equals(category);
-            case "food":
-                return "food".equals(category)
-                    || "agriculture".equals(category)
-                    || "biology".equals(category)
-                    || containsAnyBucketToken(searchable,
-                        "food", "garden", "crop", "seed", "soil", "farming",
-                        "preserve", "ferment", "fish", "animal husbandry"
-                    );
-            case "tools":
-                return "tools".equals(category)
-                    || "craft".equals(category)
-                    || "crafts".equals(category)
-                    || "metalworking".equals(category)
-                    || "textiles-fiber-arts".equals(category)
-                    || "salvage".equals(category)
-                    || containsAnyBucketToken(searchable,
-                        "tool", "tools", "craft", "joinery", "forge", "metal",
-                        "textile", "fabric", "rope", "repair", "salvage"
-                    );
-            case "communications":
-                return "communications".equals(category)
-                    || "communication".equals(category)
-                    || containsAnyBucketToken(searchable,
-                        "communications", "communication", "radio", "signal",
-                        "telegraph", "antenna", "message"
-                    );
-            case "community":
-                return "community".equals(category)
-                    || "society".equals(category)
-                    || "resource-management".equals(category)
-                    || "defense".equals(category)
-                    || "culture-knowledge".equals(category)
-                    || containsAnyBucketToken(searchable,
-                        "community", "governance", "security", "defense",
-                        "education", "apprenticeship", "records", "currency"
-                    );
-            default:
-                return false;
-        }
+        return HomeCategoryPolicy.matchesBucket(result, bucket);
     }
 
     private static boolean containsAnyBucketToken(String searchable, String... tokens) {
@@ -4425,70 +4258,16 @@ public final class MainActivity extends AppCompatActivity {
         return false;
     }
 
-    private static CategoryDefinition categoryDefinitionForBucket(String bucketKey) {
-        String normalizedBucket = safe(bucketKey).trim();
-        for (CategoryDefinition definition : HOME_CHROME_CATEGORIES) {
-            if (definition.bucketKey.equals(normalizedBucket)) {
-                return definition;
-            }
-        }
-        return null;
-    }
-
-    private static int defaultOrderForCategoryBucket(String bucketKey) {
-        String normalizedBucket = safe(bucketKey).trim();
-        for (int index = 0; index < HOME_CHROME_CATEGORIES.length; index++) {
-            if (HOME_CHROME_CATEGORIES[index].bucketKey.equals(normalizedBucket)) {
-                return index;
-            }
-        }
-        return HOME_CHROME_CATEGORIES.length;
-    }
-
     static String categoryLabelForBucket(String bucketKey) {
-        CategoryDefinition definition = categoryDefinitionForBucket(bucketKey);
-        return definition == null ? "" : definition.label;
+        return HomeCategoryPolicy.labelForBucket(bucketKey);
     }
 
     static String formatHomeChromeCategoryCount(int count) {
-        return count + (count == 1 ? " guide" : " guides");
+        return HomeCategoryPolicy.formatCount(count);
     }
 
     static String buildHomeChromeCategoryContentDescription(String bucketKey, int count) {
-        String label = categoryLabelForBucket(bucketKey);
-        if (label.isEmpty()) {
-            label = humanizeMetadataLabel(bucketKey);
-        }
-        if (label.isEmpty()) {
-            label = "Category";
-        }
-        return label + ", " + formatHomeChromeCategoryCount(count) + ". Tap to filter.";
-    }
-
-    private static String humanizeMetadataLabel(String value) {
-        String text = safe(value).trim();
-        if (text.isEmpty()) {
-            return "";
-        }
-        StringBuilder builder = new StringBuilder(text.length());
-        boolean capitalizeNext = true;
-        for (int index = 0; index < text.length(); index++) {
-            char character = text.charAt(index);
-            if (character == '-' || character == '_' || Character.isWhitespace(character)) {
-                if (builder.length() > 0 && builder.charAt(builder.length() - 1) != ' ') {
-                    builder.append(' ');
-                }
-                capitalizeNext = true;
-                continue;
-            }
-            builder.append(capitalizeNext ? Character.toUpperCase(character) : character);
-            capitalizeNext = false;
-        }
-        return builder.toString().trim();
-    }
-
-    private static String normalizeBucketText(String value) {
-        return safe(value).trim().toLowerCase(Locale.US);
+        return HomeCategoryPolicy.contentDescription(bucketKey, count);
     }
 
     private void setCategoryTilesEnabled(boolean enabled) {
