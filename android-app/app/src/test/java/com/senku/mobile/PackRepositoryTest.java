@@ -2145,6 +2145,80 @@ public final class PackRepositoryTest {
     }
 
     @Test
+    public void specializedAnchorPolicyKeepsSoapmakingStrongSignalBranchNarrow() {
+        QueryMetadataProfile metadataProfile = QueryMetadataProfile.fromQuery(
+            "How do I make soap from animal fat safely enough that it's actually useful?"
+        );
+        SearchResult candidate = new SearchResult(
+            "Chemistry Fundamentals",
+            "",
+            "General chemistry with a practical soapmaking section somewhere deeper in the guide.",
+            "General chemistry with a practical soapmaking section somewhere deeper in the guide.",
+            "GD-571",
+            "Practical Synthesis Procedures",
+            "chemistry",
+            "route-focus",
+            "safety",
+            "mixed",
+            "glassmaking",
+            ""
+        );
+
+        assertEquals(
+            true,
+            SpecializedAnchorCandidatePolicy.isSpecializedExplicitAnchorCandidate(metadataProfile, candidate, true)
+        );
+        assertEquals(
+            false,
+            SpecializedAnchorCandidatePolicy.isSpecializedExplicitAnchorCandidate(metadataProfile, candidate, false)
+        );
+    }
+
+    @Test
+    public void specializedAnchorPolicyCentralizesDirectTopicOverlapFacts() {
+        QueryMetadataProfile metadataProfile = QueryMetadataProfile.fromQuery(
+            "storage tanks water distribution water storage"
+        );
+        SearchResult genericStorage = new SearchResult(
+            "Storage & Material Management",
+            "",
+            "Water storage basics and food-safe containers.",
+            "Water storage basics and food-safe containers.",
+            "GD-252",
+            "Water Storage: Hydration Assurance",
+            "resource-management",
+            "guide-focus",
+            "safety",
+            "long_term",
+            "water_storage",
+            ""
+        );
+        SearchResult distributionGuide = new SearchResult(
+            "Community Water Distribution Systems",
+            "",
+            "Gravity-fed distribution and storage tank planning.",
+            "Gravity-fed distribution and storage tank planning.",
+            "GD-270",
+            "Storage Tank Planning",
+            "building",
+            "route-focus",
+            "planning",
+            "long_term",
+            "water_storage",
+            "water_storage,water_distribution"
+        );
+
+        assertEquals(false, SpecializedAnchorCandidatePolicy.hasDirectExplicitTopicOverlap(metadataProfile, genericStorage));
+        assertEquals(true, SpecializedAnchorCandidatePolicy.hasDirectExplicitTopicOverlap(metadataProfile, distributionGuide));
+        assertEquals(true, SpecializedAnchorCandidatePolicy.matchesRouteMetadata(
+            metadataProfile,
+            distributionGuide.sectionHeading,
+            distributionGuide.structureType,
+            distributionGuide.topicTags
+        ));
+    }
+
+    @Test
     public void soapmakingAnchorCandidateRejectsWrongFamilyGuideWithoutTopicTags() {
         SearchResult candidate = new SearchResult(
             "Chemistry Fundamentals",
