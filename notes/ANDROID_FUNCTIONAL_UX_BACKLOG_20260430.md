@@ -19,6 +19,19 @@ Status after evening functional/code-health head `3b2bae3`.
   thread placeholders require review mode, follow-up empty submit has
   interaction proof, and another small search-result display helper moved into
   `SearchResultCardModelMapper`.
+- `7ac07a3d` added the result-publication presentation boundary: result
+  list/highlight/route publication and search-query chrome publication are now
+  separate policy-owned presentations.
+- `ea9284bc` extracted follow-up and harness helper seams: follow-up stall
+  visibility is covered in `FollowUpGenerationCoordinator`, prompt-harness
+  reflection moved to `PromptHarnessReflection`, and review-demo
+  cross-reference shaping stayed behind policy.
+- `cd0812b4` relaxed brittle presentation assertions so copy/layout tests guard
+  semantic requirements without pinning incidental exact strings.
+- `164d6ca2` moved Pack answer-context section loading into
+  `PackAnswerContextSectionLoader`, with focused Pack tests and
+  `PackRepositoryAnswerContextIntegrationTest` proving the repository
+  `buildGuideAnswerContext()` path against a tiny SQLite fixture.
 
 ## Current Proof
 
@@ -77,10 +90,13 @@ the exported mocks.
    - Code-health risk: back behavior is coupled to adapter contents and tab
      side effects. Empty search, Ask-unavailable, and Saved paths should be
      explicit routes rather than inferred from `items`.
-   - Status: partially addressed. Route state and effect helpers are live, and
-     previous-tab transitions now apply helper-resolved route state directly.
-   - Next safe slice: move another small `MainActivity` route side effect into
-     `MainRouteEffectController` with tests.
+   - Status: partially addressed. Route state/effect helpers are live,
+     previous-tab transitions apply helper-resolved route state directly, and
+     result publication now flows through `MainResultPublicationPolicy`
+     presentations.
+   - Next safe slice: move a remaining `MainActivity` route side effect into
+     `MainRouteEffectController`; do not reopen result publication unless a
+     regression points there.
    - Validation: zero-result search back, Ask unavailable back, Saved back,
      and detail return tests.
 
@@ -118,8 +134,10 @@ the exported mocks.
      `DetailActivity` and `DetailAnswerPresenterHost`.
    - Status: partially addressed. Pure `FollowUpComposerState` and
      `FollowUpComposerController` exist; retry presentation now centralizes
-     visibility, enabled state, and normalized retry query. Next slice is
-     wiring more of `DetailActivity` to these helpers.
+     visibility, enabled state, and normalized retry query. Generation-start
+     cleanup is coordinated and stall-notice visibility now has focused
+     coordinator proof. Next slice is wiring more of `DetailActivity` composer
+     state through these helpers.
 
 8. Tablet rail end-to-end navigation
    - Status: covered. Existing androidTest methods
@@ -132,8 +150,9 @@ the exported mocks.
    - Code-health risk: `SearchResultAdapter` still owns card heuristics and
      mapping as well as RecyclerView binding.
    - Status: in progress. `SearchResultCardModelMapper` is live and now owns
-     multiple pure display labels/descriptions; continue trimming only small
-     pure helpers from the adapter.
+     multiple pure display labels/descriptions; recent tests assert semantic
+     display contracts instead of exact incidental copy. Continue trimming only
+     small pure helpers from the adapter.
 
 10. Physical device install/smoke
    - ADB only reported the emulator matrix during the pre-noon check:

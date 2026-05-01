@@ -36,6 +36,12 @@ Worker M tracking note only. No Android source or test edits in this lane.
 - Earlier visual evidence remains useful for regression history:
   `artifacts/ui_state_pack/wave69_integrated_final/20260429_081538` and
   `artifacts/mocks`.
+- Later backend cleanup commits on 2026-05-01 (`7ac07a3d`, `ea9284bc`,
+  `cd0812b4`, `164d6ca2`) reduced cleanup debt without changing the product UX
+  target: result publication has a policy presentation boundary,
+  follow-up/harness helper seams are extracted, copy-sensitive tests prefer
+  semantic assertions, and answer-context guide-section loading moved out of
+  `PackRepository` with focused repository plus androidTest proof.
 
 ## Functional UX Queue
 
@@ -122,6 +128,10 @@ Worker M tracking note only. No Android source or test edits in this lane.
      verification metadata for UTP artifacts is intentionally handled.
    - Add Saved and Back-stack variants to the proof matrix rather than relying
      only on visual home/search/detail captures.
+   - Preserve the new helper boundaries when adding proof variants: do not
+     inline result publication back into `MainActivity`, do not add new direct
+     reflection helpers to `PromptHarnessSmokeTest`, and avoid exact-copy
+     assertions unless the copy itself is the product contract.
 
 4. **Final proof**
    - Capture a full four-posture state pack with all 22 canonical targets.

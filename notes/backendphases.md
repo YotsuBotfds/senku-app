@@ -87,11 +87,31 @@ Purpose: prevent future agents from rerunning Ask/query backend cleanup that is 
 - Reviewed-card metadata behavior is centralized behind policy.
 - Tablet Ask rail submit routing has focused proof.
 - Physical smoke proof is current for the completed backend cleanup stack.
+- Result publication now has a presentation boundary:
+  `MainResultPublicationPolicy` separates result-list/highlight/route
+  publication from search-query chrome publication through
+  `ResultItemsPresentation` and `SearchQueryChromePresentation`, with focused
+  proof in `MainResultPublicationPolicyTest`.
+- Follow-up generation and prompt-harness seams are extracted:
+  `FollowUpGenerationCoordinator` owns generation-start and stall-notice
+  decisions, `PromptHarnessReflection` owns androidTest reflection helpers, and
+  review-demo abrasives cross-reference shaping is policy-gated.
+- Brittle presentation assertions now prefer semantic contracts for suggestion
+  descriptions, prompt clipping, linked-guide cue descriptions, session
+  context, and answer-card notice copy instead of incidental exact strings.
+- Pack answer-context section loading now lives in
+  `PackAnswerContextSectionLoader`; `PackRepository` keeps orchestration and
+  delegates guide-section loading. Proof includes focused Pack repository
+  tests plus `PackRepositoryAnswerContextIntegrationTest`, which exercises
+  `buildGuideAnswerContext()` against a tiny on-device SQLite pack.
 
 ## Remaining Next Slices
 
 - Continue shrinking `MainActivity` only where backend lifecycle or route
   orchestration still owns too much.
+- Do not rerun the result-publication extraction unless a regression points
+  there; future `MainActivity` cleanup should target still-mixed route side
+  effects outside `MainResultPublicationPolicy`.
 - Keep repository cleanup incremental around remaining pure policy/helper
   extraction with parity tests.
 - Keep review/demo fixture gates explicit when adding mocks or preview labels so
