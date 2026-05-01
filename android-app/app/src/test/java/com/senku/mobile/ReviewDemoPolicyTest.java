@@ -5,9 +5,16 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Stream;
 
 import org.junit.Test;
 
@@ -382,6 +389,24 @@ public final class ReviewDemoPolicyTest {
         assertEquals("live snippet", ReviewDemoPolicy.shapeTabletPreviewBody(false, reviewRow, "live snippet"));
     }
 
+    @Test
+    public void productionCodeUsesReviewDemoFixtureSetOnlyThroughPolicy() throws Exception {
+        Path productionSourceRoot = productionSourceRoot();
+        List<String> violations = new ArrayList<>();
+
+        try (Stream<Path> files = Files.walk(productionSourceRoot)) {
+            files
+                .filter(Files::isRegularFile)
+                .filter(ReviewDemoPolicyTest::isProductionSourceFile)
+                .forEach(file -> collectFixtureSetReferenceViolation(productionSourceRoot, file, violations));
+        }
+
+        assertTrue(
+            "ReviewDemoFixtureSet must stay isolated behind ReviewDemoPolicy: " + violations,
+            violations.isEmpty()
+        );
+    }
+
     private static List<SearchResult> rainShelterAdjacentGuides() {
         return Arrays.asList(
             new SearchResult(
@@ -475,6 +500,43 @@ public final class ReviewDemoPolicyTest {
             original,
             null
         ));
+    }
+
+    private static Path productionSourceRoot() {
+        Path gradleModuleRoot = Paths.get("src", "main", "java");
+        if (Files.isDirectory(gradleModuleRoot)) {
+            return gradleModuleRoot;
+        }
+        Path repoRoot = Paths.get("android-app", "app", "src", "main", "java");
+        if (Files.isDirectory(repoRoot)) {
+            return repoRoot;
+        }
+        throw new AssertionError("Unable to locate Android production source root");
+    }
+
+    private static boolean isProductionSourceFile(Path file) {
+        String name = file.getFileName().toString();
+        return name.endsWith(".java") || name.endsWith(".kt");
+    }
+
+    private static void collectFixtureSetReferenceViolation(
+        Path sourceRoot,
+        Path file,
+        List<String> violations
+    ) {
+        String relativePath = sourceRoot.relativize(file).toString().replace('\\', '/');
+        if (relativePath.equals("com/senku/mobile/ReviewDemoFixtureSet.java")
+            || relativePath.equals("com/senku/mobile/ReviewDemoPolicy.java")) {
+            return;
+        }
+        try {
+            String content = new String(Files.readAllBytes(file), StandardCharsets.UTF_8);
+            if (content.contains("ReviewDemoFixtureSet")) {
+                violations.add(relativePath);
+            }
+        } catch (IOException exception) {
+            throw new AssertionError("Unable to scan " + relativePath, exception);
+        }
     }
 
     private static ChatSessionStore.ConversationPreview preview(
