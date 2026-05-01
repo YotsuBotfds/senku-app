@@ -688,14 +688,23 @@ public final class PackRepository implements AutoCloseable {
         int limit,
         CandidateTelemetrySink telemetrySink
     ) {
-        emitCandidateTelemetry(telemetrySink, buildPrerankCandidateTelemetryLine(query, combinedHits, limit));
+        emitCandidateTelemetry(
+            telemetrySink,
+            PackSearchFinalizationPolicy.buildPrerankCandidateTelemetryLine(query, combinedHits, limit)
+        );
         List<SearchResult> projectedResults = PackRetrievalFusionPolicy.toSearchResults(combinedHits, limit);
         long rerankStartedAtNs = elapsedRealtimeNanosSafe();
         List<RerankedResult> rerankedDetails = maybeRerankResultsDetailed(queryTerms, projectedResults, limit);
         List<SearchResult> reranked = extractSearchResults(rerankedDetails);
-        long rerankElapsedMs = elapsedRealtimeMsSince(rerankStartedAtNs);
-        emitCandidateTelemetry(telemetrySink, buildRerankedCandidateTelemetryLine(query, rerankedDetails));
-        return new SearchFinalization(reranked, rerankElapsedMs);
+        long rerankElapsedMs = PackSearchFinalizationPolicy.elapsedMsBetween(
+            rerankStartedAtNs,
+            elapsedRealtimeNanosSafe()
+        );
+        emitCandidateTelemetry(
+            telemetrySink,
+            PackSearchFinalizationPolicy.buildRerankedCandidateTelemetryLine(query, rerankedDetails)
+        );
+        return PackSearchFinalizationPolicy.toSearchFinalization(reranked, rerankElapsedMs);
     }
 
     private static void emitCandidateTelemetry(CandidateTelemetrySink telemetrySink, String line) {
@@ -2217,52 +2226,6 @@ public final class PackRepository implements AutoCloseable {
             }
         }
         return CandidateTelemetryFormatter.buildLine("vector", query, rows);
-    }
-
-    private static String buildPrerankCandidateTelemetryLine(
-        String query,
-        List<CombinedHit> hits,
-        int limit
-    ) {
-        ArrayList<String> rows = new ArrayList<>();
-        if (hits != null) {
-            int capped = CandidateTelemetryFormatter.limitedRowCount(hits.size(), limit);
-            for (int index = 0; index < capped; index++) {
-                CombinedHit hit = hits.get(index);
-                rows.add(
-                    CandidateTelemetryFormatter.formatRow(
-                        index + 1,
-                        hit.chunk.guideId,
-                        hit.chunk.sectionHeading,
-                        hit.rrfScore,
-                        hit.chunk.structureType,
-                        hit.chunk.category,
-                        hit.chunk.topicTags
-                    )
-                );
-            }
-        }
-        return CandidateTelemetryFormatter.buildLine("prerank", query, rows);
-    }
-
-    private static String buildRerankedCandidateTelemetryLine(String query, List<RerankedResult> results) {
-        ArrayList<String> rows = new ArrayList<>();
-        if (results != null) {
-            int capped = CandidateTelemetryFormatter.limitedRowCount(results.size());
-            for (int index = 0; index < capped; index++) {
-                RerankedResult result = results.get(index);
-                rows.add(
-                    CandidateTelemetryFormatter.formatRerankedRow(
-                        index + 1,
-                        result.result,
-                        result.finalScore,
-                        result.baseScore,
-                        result.metadataBonus
-                    )
-                );
-            }
-        }
-        return CandidateTelemetryFormatter.buildLine("reranked", query, rows);
     }
 
     private static void safeLogDebug(String message) {
