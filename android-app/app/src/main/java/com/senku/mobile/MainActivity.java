@@ -4330,7 +4330,15 @@ public final class MainActivity extends AppCompatActivity {
     }
 
     static String buildPhoneSearchHeaderForTest(String query, int resultCount) {
-        return buildPhoneSearchHeader(query, resultCount);
+        return buildPhoneSearchHeader(query, resultCount, false);
+    }
+
+    static String buildPhoneSearchHeaderForTest(
+        String query,
+        int resultCount,
+        boolean productReviewMode
+    ) {
+        return buildPhoneSearchHeader(query, resultCount, productReviewMode);
     }
 
     static String compactManualHomeStatusForTest(String status, boolean manualHomeShell) {
@@ -4370,13 +4378,17 @@ public final class MainActivity extends AppCompatActivity {
         return ReviewDemoPolicy.shapeHomeSubtitle(productReviewMode, guideCount, defaultSubtitle);
     }
 
-    private static String buildPhoneSearchHeader(String query, int resultCount) {
+    private String buildPhoneSearchHeader(String query, int resultCount) {
+        return buildPhoneSearchHeader(query, resultCount, productReviewMode);
+    }
+
+    private static String buildPhoneSearchHeader(String query, int resultCount, boolean productReviewMode) {
         String cleanQuery = safe(query).trim();
         String countLabel = resultCount + (resultCount == 1 ? " result" : " results");
         if (cleanQuery.isEmpty()) {
             return "Search - " + countLabel;
         }
-        return "Search " + cleanQuery + "    " + countLabel;
+        return appendReviewSearchLatency("Search " + cleanQuery + "    " + countLabel, cleanQuery, productReviewMode);
     }
 
     static String buildSearchChromeQueryLabelForTest(String query) {

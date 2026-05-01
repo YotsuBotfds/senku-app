@@ -364,11 +364,11 @@ public final class MainActivityHomeChromeTest {
     public void phoneSearchHeaderKeepsCompactCountAndReviewLatency() {
         assertEquals(
             "Search rain shelter    4 results \u2022 12MS",
-            ReviewDemoPolicy.appendSearchLatency(
-                MainActivity.buildPhoneSearchHeaderForTest("rain shelter", 4),
-                "rain shelter",
-                true
-            )
+            MainActivity.buildPhoneSearchHeaderForTest("rain shelter", 4, true)
+        );
+        assertEquals(
+            "Search rain shelter    4 results",
+            MainActivity.buildPhoneSearchHeaderForTest("rain shelter", 4, false)
         );
         assertEquals("Search - 1 result", MainActivity.buildPhoneSearchHeaderForTest("", 1));
     }
