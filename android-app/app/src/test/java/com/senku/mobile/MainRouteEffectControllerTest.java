@@ -88,6 +88,37 @@ public final class MainRouteEffectControllerTest {
     }
 
     @Test
+    public void resumeKeyboardPolicyDismissesForVisibleResultsOrResultRoutesOnly() {
+        RecordingRouteEffects browseEffects = new RecordingRouteEffects(true);
+        MainRouteEffectController.applyResumeKeyboardPolicy(
+            false,
+            MainRouteDecisionHelper.browseHome(),
+            browseEffects
+        );
+        assertTrue(browseEffects.calls.isEmpty());
+
+        RecordingRouteEffects visibleResultEffects = new RecordingRouteEffects(true);
+        MainRouteEffectController.applyResumeKeyboardPolicy(
+            true,
+            MainRouteDecisionHelper.browseHome(),
+            visibleResultEffects
+        );
+        assertEquals(Arrays.asList("dismissSearchKeyboard"), visibleResultEffects.calls);
+
+        RecordingRouteEffects resultRouteEffects = new RecordingRouteEffects(false);
+        MainRouteEffectController.applyResumeKeyboardPolicy(
+            false,
+            new MainRouteDecisionHelper.RouteState(
+                MainRouteDecisionHelper.Surface.ASK_RESULTS,
+                BottomTabDestination.ASK,
+                true
+            ),
+            resultRouteEffects
+        );
+        assertEquals(Arrays.asList("dismissSearchKeyboard"), resultRouteEffects.calls);
+    }
+
+    @Test
     public void backTransitionToPreviousTabAppliesRouteBeforeSectionEffects() {
         MainRouteDecisionHelper.Transition transition =
             new MainRouteDecisionHelper.Transition(

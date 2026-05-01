@@ -353,6 +353,25 @@ public final class MainRouteCoordinatorTest {
     }
 
     @Test
+    public void resumeKeyboardPolicyRunsThroughCoordinatorRouteState() {
+        RecordingHost host = new RecordingHost();
+        MainRouteCoordinator coordinator = new MainRouteCoordinator(host);
+
+        coordinator.applyResumeKeyboardPolicy(false);
+        assertTrue(host.calls.isEmpty());
+
+        coordinator.applyResumeKeyboardPolicy(true);
+        assertEquals(Arrays.asList("dismissSearchKeyboard"), host.calls);
+
+        host.calls.clear();
+        coordinator.enterAskResultsRoute();
+        host.calls.clear();
+        coordinator.applyResumeKeyboardPolicy(false);
+
+        assertEquals(Arrays.asList("dismissSearchKeyboard"), host.calls);
+    }
+
+    @Test
     public void installCompletionKeepsRestoredResultRoutesAndPayloadsThroughCoordinatorState() {
         assertInstallCompletionPreservesRestoredRouteAndPayload(
             MainRouteDecisionHelper.Surface.SEARCH_RESULTS,

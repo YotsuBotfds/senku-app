@@ -62,6 +62,10 @@ final class MainRouteDecisionHelper {
         return !isBrowseSurface(normalize(state).surface);
     }
 
+    static boolean shouldDismissSearchKeyboardOnResume(boolean hasVisibleResults, RouteState state) {
+        return hasVisibleResults || !isBrowseSurface(normalize(state).surface);
+    }
+
     static Transition openPhoneTab(RouteState state, BottomTabDestination destination) {
         RouteState route = normalize(state);
         switch (destination == null ? BottomTabDestination.HOME : destination) {

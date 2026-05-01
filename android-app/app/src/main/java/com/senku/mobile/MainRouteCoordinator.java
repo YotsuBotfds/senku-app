@@ -120,6 +120,17 @@ final class MainRouteCoordinator {
         );
     }
 
+    void applyResumeKeyboardPolicy(boolean hasVisibleResults) {
+        if (host == null) {
+            return;
+        }
+        MainRouteEffectController.applyResumeKeyboardPolicy(
+            hasVisibleResults,
+            currentRouteState(),
+            routeEffects()
+        );
+    }
+
     void enterSearchResultsRoute() {
         applyRouteState(MainRouteDecisionHelper.enterSearch(currentRouteState()).routeState);
     }

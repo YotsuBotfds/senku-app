@@ -623,9 +623,7 @@ public final class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        if (!items.isEmpty() || !isBrowseModeActive()) {
-            dismissSearchKeyboard();
-        }
+        routeCoordinator.applyResumeKeyboardPolicy(!items.isEmpty());
         updateIdentityStrip();
         updatePhoneTabBarState();
         updateActionLabels();

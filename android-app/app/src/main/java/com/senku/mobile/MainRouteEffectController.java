@@ -155,6 +155,22 @@ final class MainRouteEffectController {
         ));
     }
 
+    static void applyResumeKeyboardPolicy(
+        boolean hasVisibleResults,
+        MainRouteDecisionHelper.RouteState currentRouteState,
+        Effects effects
+    ) {
+        if (effects == null) {
+            return;
+        }
+        if (MainRouteDecisionHelper.shouldDismissSearchKeyboardOnResume(
+            hasVisibleResults,
+            currentRouteState
+        )) {
+            effects.dismissSearchKeyboard();
+        }
+    }
+
     static void applyPhoneTabTransitionEffect(
         MainRouteDecisionHelper.Transition transition,
         Effects effects

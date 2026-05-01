@@ -232,6 +232,26 @@ public final class MainRouteDecisionHelperTest {
     }
 
     @Test
+    public void resumeKeyboardPolicyDismissesForVisibleResultsOrResultRoutesOnly() {
+        assertFalse(MainRouteDecisionHelper.shouldDismissSearchKeyboardOnResume(
+            false,
+            MainRouteDecisionHelper.browseHome()
+        ));
+        assertTrue(MainRouteDecisionHelper.shouldDismissSearchKeyboardOnResume(
+            true,
+            MainRouteDecisionHelper.browseHome()
+        ));
+        assertTrue(MainRouteDecisionHelper.shouldDismissSearchKeyboardOnResume(
+            false,
+            new MainRouteDecisionHelper.RouteState(
+                MainRouteDecisionHelper.Surface.SEARCH_RESULTS,
+                BottomTabDestination.HOME,
+                false
+            )
+        ));
+    }
+
+    @Test
     public void browseSurfaceClassifierCoversBrowseRecentAndSavedOnly() {
         assertTrue(MainRouteDecisionHelper.isBrowseSurface(MainRouteDecisionHelper.Surface.BROWSE));
         assertTrue(MainRouteDecisionHelper.isBrowseSurface(MainRouteDecisionHelper.Surface.RECENT_THREADS));
