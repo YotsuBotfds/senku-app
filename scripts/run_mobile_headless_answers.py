@@ -172,13 +172,18 @@ def should_keep_specialized_direct_signal_route_result(query_terms: QueryTerms, 
 def select_specialized_anchor(query_terms: QueryTerms, ranked_results: list[SearchResultRow]) -> SearchResultRow | None:
     if not query_terms.metadata_profile.has_explicit_topic_focus():
         return None
-    if query_terms.metadata_profile.preferred_structure_type != "soapmaking":
+    preferred = query_terms.metadata_profile.preferred_structure_type
+    if preferred not in {"soapmaking", "glassmaking", "community_governance"} and not is_cabin_house_explicit_anchor_profile(query_terms):
         return None
 
     best_row: SearchResultRow | None = None
     best_score = -10**9
     for index, row in enumerate(ranked_results):
-        if not has_direct_anchor_signal(query_terms, row):
+        structure_match = preferred == safe_text(row.structure_type).strip().lower()
+        topic_match = query_terms.metadata_profile.explicit_topic_overlap_count(row.topic_tags) > 0
+        if not structure_match and not topic_match:
+            continue
+        if preferred == "soapmaking" and not has_direct_anchor_signal(query_terms, row):
             continue
         score = row.support_score if row.support_score is not None else support_score(query_terms, row)
         score += max(0, 12 - index)
@@ -190,27 +195,7 @@ def select_specialized_anchor(query_terms: QueryTerms, ranked_results: list[Sear
             score += 4
         elif row.retrieval_mode == "lexical":
             score += 2
-        if has_strong_soapmaking_guide_signal(row):
-            score += 18
-        if row.content_role == "subsystem":
-            score += 6
-        elif row.content_role == "safety":
-            score -= 4
-        if safe_text(row.structure_type).strip().lower() != "soapmaking":
-            score -= 8
-        normalized_title = safe_text(row.title).strip().lower()
-        normalized_section = safe_text(row.section_heading).strip().lower()
-        if contains_any_marker(normalized_title, SOAP_GENERIC_CHEMISTRY_MARKERS) or contains_any_marker(
-            normalized_section, SOAP_GENERIC_CHEMISTRY_MARKERS
-        ):
-            score -= 22
-        if contains_any_marker(
-            normalize_answer_excerpt(
-                f"{safe_text(row.title)} {safe_text(row.section_heading)} {safe_text(row.snippet)} {safe_text(row.body)}"
-            ).lower(),
-            SOAP_PROCESS_MARKERS,
-        ):
-            score += 6
+        score += specialized_anchor_bias(query_terms, row)
         if score > best_score:
             best_score = score
             best_row = row
@@ -258,6 +243,136 @@ class HeadlessRouteOrderSpec:
 
 def headless_route_order_spec(query_terms: QueryTerms) -> HeadlessRouteOrderSpec:
     metadata_profile = query_terms.metadata_profile
+    if metadata_profile.preferred_structure_type == "soapmaking":
+        return HeadlessRouteOrderSpec(
+            order_sql=(
+                " ORDER BY CASE "
+                "WHEN lower(section_heading) LIKE ? THEN 0 "
+                "WHEN lower(section_heading) LIKE ? THEN 0 "
+                "WHEN lower(section_heading) LIKE ? THEN 0 "
+                "WHEN lower(guide_title) LIKE ? THEN 1 "
+                "WHEN lower(guide_title) LIKE ? THEN 1 "
+                "WHEN lower(section_heading) LIKE ? THEN 2 "
+                "WHEN lower(section_heading) LIKE ? THEN 2 "
+                "WHEN lower(content_role) = ? THEN 3 "
+                "WHEN lower(section_heading) LIKE ? THEN 4 "
+                "WHEN lower(section_heading) LIKE ? THEN 4 "
+                "WHEN lower(section_heading) LIKE ? THEN 8 "
+                "WHEN lower(guide_title) LIKE ? THEN 8 "
+                "ELSE 9 END, rowid "
+            ),
+            args=(
+                "%soap making - cold process%",
+                "%making soap%",
+                "%soap making - hot process%",
+                "%homestead chemistry%",
+                "%everyday compounds%",
+                "%making lye from wood ash%",
+                "%lye from wood ash%",
+                "subsystem",
+                "%rendering fats%",
+                "%tallow%",
+                "%cleaning product chemistry%",
+                "%chemical safety%",
+            ),
+            label="soapmaking_priority",
+        )
+    if metadata_profile.preferred_structure_type == "water_distribution":
+        return HeadlessRouteOrderSpec(
+            order_sql=(
+                " ORDER BY CASE "
+                "WHEN lower(section_heading) LIKE ? THEN 0 "
+                "WHEN lower(section_heading) LIKE ? THEN 0 "
+                "WHEN lower(section_heading) LIKE ? THEN 1 "
+                "WHEN lower(section_heading) LIKE ? THEN 1 "
+                "WHEN lower(section_heading) LIKE ? THEN 2 "
+                "WHEN lower(section_heading) LIKE ? THEN 2 "
+                "WHEN lower(section_heading) LIKE ? THEN 3 "
+                "WHEN lower(section_heading) LIKE ? THEN 3 "
+                "WHEN lower(section_heading) LIKE ? THEN 4 "
+                "WHEN lower(guide_title) LIKE ? THEN 5 "
+                "ELSE 9 END, rowid "
+            ),
+            args=(
+                "%gravity-fed%",
+                "%distribution%",
+                "%household taps%",
+                "%spring box%",
+                "%storage tank%",
+                "%system components%",
+                "%layout%",
+                "%network%",
+                "%overflow%",
+                "%water tower%",
+            ),
+            label="water_distribution_priority",
+        )
+    if metadata_profile.preferred_structure_type == "community_governance":
+        return HeadlessRouteOrderSpec(
+            order_sql=(
+                " ORDER BY CASE "
+                "WHEN lower(section_heading) LIKE ? THEN 0 "
+                "WHEN lower(section_heading) LIKE ? THEN 1 "
+                "WHEN lower(section_heading) LIKE ? THEN 1 "
+                "WHEN lower(section_heading) LIKE ? THEN 2 "
+                "WHEN lower(section_heading) LIKE ? THEN 2 "
+                "WHEN lower(section_heading) LIKE ? THEN 3 "
+                "WHEN lower(guide_title) LIKE ? THEN 3 "
+                "WHEN lower(guide_title) LIKE ? THEN 4 "
+                "WHEN lower(section_heading) LIKE ? THEN 4 "
+                "WHEN lower(section_heading) LIKE ? THEN 5 "
+                "WHEN lower(guide_title) LIKE ? THEN 8 "
+                "WHEN lower(section_heading) LIKE ? THEN 8 "
+                "ELSE 9 END, rowid "
+            ),
+            args=(
+                "%graduated sanctions%",
+                "%mediation%",
+                "%membership%",
+                "%boundaries%",
+                "%conflict%",
+                "%restitution%",
+                "%commons management%",
+                "%resource governance%",
+                "%restorative%",
+                "%reputation%",
+                "%insurance%",
+                "%mutual aid%",
+            ),
+            label="community_governance_priority",
+        )
+    if (
+        metadata_profile.preferred_structure_type == "cabin_house"
+        and (
+            metadata_profile.has_explicit_topic("roofing")
+            or metadata_profile.has_explicit_topic("weatherproofing")
+        )
+    ):
+        return HeadlessRouteOrderSpec(
+            order_sql=(
+                " ORDER BY CASE "
+                "WHEN lower(section_heading) LIKE ? THEN 0 "
+                "WHEN lower(section_heading) LIKE ? THEN 0 "
+                "WHEN lower(section_heading) LIKE ? THEN 1 "
+                "WHEN lower(section_heading) LIKE ? THEN 1 "
+                "WHEN lower(guide_title) LIKE ? THEN 2 "
+                "WHEN lower(section_heading) LIKE ? THEN 2 "
+                "WHEN lower(guide_title) LIKE ? THEN 3 "
+                "WHEN lower(guide_title) LIKE ? THEN 4 "
+                "ELSE 9 END, rowid "
+            ),
+            args=(
+                "%roofing%",
+                "%roof waterproofing%",
+                "%rainproofing and water shedding%",
+                "%waterproofing and sealants%",
+                "%weatherproofing%",
+                "%roof framing%",
+                "%roofing materials%",
+                "%construction & carpentry%",
+            ),
+            label="roofing_priority",
+        )
     if (
         query_terms.route_profile.kind == "house_build"
         and metadata_profile.preferred_structure_type == "cabin_house"
@@ -351,6 +466,127 @@ def should_keep_broad_house_route_row(query_terms: QueryTerms, row: SearchResult
     ):
         return False
     return True
+
+
+def is_cabin_house_explicit_anchor_profile(query_terms: QueryTerms) -> bool:
+    profile = query_terms.metadata_profile
+    return (
+        profile.preferred_structure_type == "cabin_house"
+        and (
+            profile.has_explicit_topic("site_selection")
+            or profile.has_explicit_topic("roofing")
+            or profile.has_explicit_topic("weatherproofing")
+        )
+    )
+
+
+def select_broad_house_anchor(query_terms: QueryTerms, ranked_results: list[SearchResultRow]) -> SearchResultRow | None:
+    profile = query_terms.metadata_profile
+    if profile.preferred_structure_type != "cabin_house" or profile.has_explicit_topic_focus():
+        return None
+
+    best_row: SearchResultRow | None = None
+    best_score = -10**9
+    for index, row in enumerate(ranked_results):
+        section_bonus = profile.section_heading_bonus(row.section_heading)
+        if section_bonus < 0:
+            continue
+        structure_match = safe_text(row.structure_type).strip().lower() == "cabin_house"
+        category_match = safe_text(row.category).strip().lower() == "building"
+        overlap = profile.preferred_topic_overlap_count(row.topic_tags)
+        if not structure_match and (not category_match or overlap < 2):
+            continue
+
+        score = (row.support_score if row.support_score is not None else support_score(query_terms, row))
+        score += max(0, 12 - index)
+        score += 24 if structure_match else 0
+        score += 12 if safe_text(row.content_role).strip().lower() in {"starter", "planning"} else 0
+        title_section = normalize_answer_excerpt(f"{row.title} {row.section_heading}").lower()
+        if row.guide_id == "GD-094":
+            score += 70
+        if "construction carpentry" in title_section:
+            score += 12
+        if "foundation" in title_section:
+            score += 8
+        if "wall construction" in title_section or "wall framing" in title_section:
+            score += 8
+        if "roofing" in title_section or "weatherproofing" in title_section:
+            score += 6
+        if "site selection" in title_section or "drainage" in title_section:
+            score += 6
+        if any(marker in title_section for marker in ("frost line", "foundation repair", "footing sizing")):
+            score -= 8
+        if section_bonus == 0:
+            score -= 4
+        if row.retrieval_mode == "route-focus":
+            score += 8
+        elif row.retrieval_mode == "guide-focus" and row.section_heading.strip():
+            score += 6
+
+        if score > best_score:
+            best_score = score
+            best_row = row
+    return best_row
+
+
+def specialized_anchor_bias(query_terms: QueryTerms, row: SearchResultRow) -> int:
+    preferred = query_terms.metadata_profile.preferred_structure_type
+    title_section = normalize_answer_excerpt(f"{row.title} {row.section_heading}").lower()
+    score = 0
+    if preferred == "soapmaking":
+        if row.guide_id == "GD-122":
+            score += 80
+        if "homestead chemistry" in title_section:
+            score += 24
+        if "soap making" in title_section or "making soap" in title_section:
+            score += 18
+        if has_strong_soapmaking_guide_signal(row):
+            score += 18
+        if row.content_role == "subsystem":
+            score += 6
+        elif row.content_role == "safety":
+            score -= 4
+        if safe_text(row.structure_type).strip().lower() != "soapmaking":
+            score -= 8
+        if contains_any_marker(title_section, SOAP_GENERIC_CHEMISTRY_MARKERS):
+            score -= 22
+    elif preferred == "glassmaking":
+        if row.guide_id == "GD-123":
+            score += 80
+        if "glass optics ceramics" in title_section and "glassmaking from scratch" in title_section:
+            score += 42
+        elif "glass optics ceramics" in title_section:
+            score += 18
+        if "glass making raw materials" in title_section:
+            score -= 18
+        if safe_text(row.content_role).strip().lower() in {"subsystem", "starter", "planning"}:
+            score += 8
+        elif safe_text(row.content_role).strip().lower() == "reference":
+            score -= 8
+    elif preferred == "community_governance":
+        if row.guide_id == "GD-626":
+            score += 90
+        if "commons management" in title_section or "resource governance" in title_section:
+            score += 24
+        if contains_any_marker(
+            title_section,
+            {"graduated sanctions", "mediation", "membership", "boundaries", "conflict", "restitution", "restorative"},
+        ):
+            score += 14
+        if contains_any_marker(title_section, {"insurance", "risk pooling", "mutual aid funds", "accounting"}):
+            score -= 28
+        if safe_text(row.retrieval_mode).strip().lower() == "guide-focus" and row.section_heading.strip():
+            score -= 6
+    elif is_cabin_house_explicit_anchor_profile(query_terms):
+        if row.guide_id == "GD-106":
+            score += 90
+        if "weatherproofing" in title_section or "roof insulation" in title_section:
+            score += 36
+        if "roof waterproofing" in title_section or "sealant" in title_section:
+            score += 24
+        if "construction carpentry" in title_section and not ("weatherproofing" in title_section or "roof insulation" in title_section):
+            score -= 24
+    return score
 
 
 def prompt_context_limit(question: str, query_terms: QueryTerms, context_results: list[SearchResultRow]) -> int:
@@ -758,6 +994,9 @@ class HeadlessRunner:
         return context
 
     def _select_anchor(self, query_terms: QueryTerms, ranked_results: list[SearchResultRow]) -> SearchResultRow:
+        broad_house_anchor = select_broad_house_anchor(query_terms, ranked_results)
+        if broad_house_anchor is not None:
+            return broad_house_anchor
         specialized_anchor = select_specialized_anchor(query_terms, ranked_results)
         if specialized_anchor is not None:
             return specialized_anchor

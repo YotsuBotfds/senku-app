@@ -2,6 +2,7 @@ import unittest
 from unittest import mock
 
 from scripts.mobile_headless_parity import (
+    PackAssets,
     QueryMetadataProfileLite,
     QueryTerms,
     SearchResultRow,
@@ -9,6 +10,7 @@ from scripts.mobile_headless_parity import (
     support_score,
 )
 from scripts.run_mobile_headless_answers import (
+    HeadlessRunner,
     build_prompt,
     build_system_prompt,
     headless_route_order_spec,
@@ -394,6 +396,69 @@ class MobileHeadlessParityRouteTests(unittest.TestCase):
         )
 
         self.assertFalse(keep)
+
+    def test_current_head_real_pack_external_review_prompts_keep_expected_context_owners(self):
+        cases = [
+            {
+                "case_id": "house",
+                "prompt": "how do i build a house",
+                "expected_guide": "GD-094",
+                "route_kind": "house_build",
+                "order_label": "rowid",
+            },
+            {
+                "case_id": "house_windows_roof",
+                "prompt": "how do i build a house with windows and a roof",
+                "expected_guide": "GD-106",
+                "route_kind": "house_build",
+                "order_label": "roofing_priority",
+            },
+            {
+                "case_id": "food_theft",
+                "prompt": "someone is stealing food from the group what do we do",
+                "expected_guide": "GD-626",
+                "route_kind": "community_governance",
+                "order_label": "community_governance_priority",
+            },
+            {
+                "case_id": "gravity_fed_water",
+                "prompt": "how do i design a gravity-fed water distribution system",
+                "expected_guide": "GD-270",
+                "route_kind": "water_distribution",
+                "order_label": "water_distribution_priority",
+            },
+            {
+                "case_id": "soap",
+                "prompt": "how do i make soap from animal fat and ash",
+                "expected_guide": "GD-122",
+                "route_kind": "soapmaking",
+                "order_label": "soapmaking_priority",
+            },
+            {
+                "case_id": "glass",
+                "prompt": "how do i make glass from silica sand and soda ash",
+                "expected_guide": "GD-123",
+                "route_kind": "glassmaking",
+                "order_label": "rowid",
+            },
+        ]
+
+        runner = HeadlessRunner(PackAssets.load())
+        try:
+            for case in cases:
+                with self.subTest(case=case["case_id"]):
+                    terms = QueryTerms.from_query(case["prompt"])
+                    ranked = runner.search(case["prompt"], 16)
+                    context = runner.build_context(case["prompt"], ranked, 4)
+                    top_search_guides = list(dict.fromkeys(row.guide_id for row in ranked[:10]))
+
+                    self.assertEqual(case["route_kind"], terms.route_profile.kind)
+                    self.assertEqual(case["order_label"], headless_route_order_spec(terms).label)
+                    self.assertIn(case["expected_guide"], top_search_guides)
+                    self.assertTrue(context)
+                    self.assertEqual(case["expected_guide"], context[0].guide_id)
+        finally:
+            runner.close()
 
 
 if __name__ == "__main__":
