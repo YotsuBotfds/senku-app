@@ -155,13 +155,37 @@ class TabletMainXmlShellParityTest {
     }
 
     @Test
-    fun genericTabletSavedShortcutKeepsSavedLabelIconAndActionSemantics() {
+    fun genericTabletFallbackShortcutsKeepSharedLibraryAskSavedTokens() {
         val layout = mainLayout("layout-sw600dp")
+        val browse = layout.elementByAndroidId("browse_button")
+        val ask = layout.elementByAndroidId("ask_button")
         val saved = layout.elementByAndroidId("saved_button")
+        val nav = saved.parentNode as Element
+        val navItems = nav.directElementChildren()
+
+        assertEquals(
+            "generic tablet fallback shortcuts should keep Library, Ask, Saved order",
+            listOf("browse_button", "ask_button", "saved_button"),
+            navItems.map { it.requiredAndroidId() },
+        )
+
+        assertEquals("@string/bottom_tab_home", browse.android("text"))
+        assertEquals("@drawable/ic_home_library", browse.android("drawableStart"))
+        assertEquals("@string/bottom_tab_home", browse.android("contentDescription"))
+        assertEquals("@color/senku_rev03_accent", browse.android("drawableTint"))
+        assertEquals("@color/senku_rev03_accent", browse.android("textColor"))
+
+        assertEquals("@string/bottom_tab_ask", ask.android("text"))
+        assertEquals("@drawable/ic_home_ask", ask.android("drawableStart"))
+        assertEquals("@string/bottom_tab_ask", ask.android("contentDescription"))
+        assertEquals("@color/senku_rev03_ink_2", ask.android("drawableTint"))
+        assertEquals("@color/senku_rev03_ink_2", ask.android("textColor"))
 
         assertEquals("@string/bottom_tab_pins", saved.android("text"))
         assertEquals("@drawable/ic_home_saved", saved.android("drawableStart"))
         assertEquals("@string/bottom_tab_pins", saved.android("contentDescription"))
+        assertEquals("@color/senku_rev03_ink_2", saved.android("drawableTint"))
+        assertEquals("@color/senku_rev03_ink_2", saved.android("textColor"))
         assertEquals("true", saved.android("clickable"))
         assertEquals("true", saved.android("focusable"))
     }

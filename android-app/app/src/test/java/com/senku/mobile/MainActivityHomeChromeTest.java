@@ -6,6 +6,7 @@ import static org.junit.Assert.assertTrue;
 
 import com.senku.ui.home.CategoryShelfItemModel;
 import com.senku.ui.home.CategoryShelfLayoutMode;
+import com.senku.ui.primitives.BottomTabDestination;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -339,6 +340,73 @@ public final class MainActivityHomeChromeTest {
         );
         assertEquals("guides", MainActivity.buildSearchChromeQueryLabelForTest(""));
         assertEquals("1 RESULT", MainActivity.buildSearchChromeCountLabelForTest("water", 1, true));
+    }
+
+    @Test
+    public void homeChromePolicyShowsHomeActionAndStyledManualTitleForBrowseRoute() {
+        MainHomeChromePolicy.ChromeState chromeState = MainHomeChromePolicy.resolve(
+            true,
+            "rain shelter",
+            MainRouteDecisionHelper.browseHome()
+        );
+
+        assertFalse(chromeState.backAvailable);
+        assertTrue(chromeState.searchActionVisible);
+        assertTrue(chromeState.usesStyledHomeTitle);
+        assertEquals("HOME SENKU", chromeState.mode);
+        assertEquals("Field manual \u2022 ed.2", chromeState.title);
+    }
+
+    @Test
+    public void homeChromePolicyHidesSearchActionAndDefaultsBlankSearchTitle() {
+        MainHomeChromePolicy.ChromeState chromeState = MainHomeChromePolicy.resolve(
+            false,
+            " guides ",
+            new MainRouteDecisionHelper.RouteState(
+                MainRouteDecisionHelper.Surface.SEARCH_RESULTS,
+                BottomTabDestination.HOME,
+                false
+            )
+        );
+
+        assertTrue(chromeState.backAvailable);
+        assertFalse(chromeState.searchActionVisible);
+        assertFalse(chromeState.usesStyledHomeTitle);
+        assertEquals("SEARCH", chromeState.mode);
+        assertEquals("Senku", chromeState.title);
+    }
+
+    @Test
+    public void homeChromePolicyUsesQueryAsSearchTitle() {
+        MainHomeChromePolicy.ChromeState chromeState = MainHomeChromePolicy.resolve(
+            false,
+            " rain shelter ",
+            new MainRouteDecisionHelper.RouteState(
+                MainRouteDecisionHelper.Surface.SEARCH_RESULTS,
+                BottomTabDestination.HOME,
+                false
+            )
+        );
+
+        assertEquals("SEARCH", chromeState.mode);
+        assertEquals("rain shelter", chromeState.title);
+        assertFalse(chromeState.searchActionVisible);
+    }
+
+    @Test
+    public void homeChromePolicyMergesModeIntoTitleOnlyForSingleLineLandscapeChrome() {
+        assertEquals(
+            "SEARCH \u2022 rain shelter",
+            MainHomeChromePolicy.visibleTitle("SEARCH", "rain shelter", false, true)
+        );
+        assertEquals(
+            "rain shelter",
+            MainHomeChromePolicy.visibleTitle("SEARCH", "rain shelter", true, true)
+        );
+        assertEquals(
+            "rain shelter",
+            MainHomeChromePolicy.visibleTitle("SEARCH", "rain shelter", false, false)
+        );
     }
 
     @Test

@@ -4457,28 +4457,19 @@ public final class MainActivity extends AppCompatActivity {
     }
 
     private void updateHomeChromeTitle(boolean browseMode, String query) {
-        updateHomeChromeBackAvailability(
-            MainRouteDecisionHelper.shouldShowHomeChromeBack(currentMainRouteState())
-        );
+        MainHomeChromePolicy.ChromeState chromeState =
+            MainHomeChromePolicy.resolve(browseMode, query, currentMainRouteState());
+        updateHomeChromeBackAvailability(chromeState.backAvailable);
         if (homeChromeTitleText == null && homeChromeModeText == null) {
             return;
         }
-        if (browseMode) {
-            setHomeChromeModeAndTitle("HOME SENKU", buildHomeChromeTitleText());
-            if (homeChromeSearchIcon != null) {
-                homeChromeSearchIcon.setVisibility(View.VISIBLE);
-            }
-            return;
-        }
         if (homeChromeSearchIcon != null) {
-            homeChromeSearchIcon.setVisibility(View.GONE);
+            homeChromeSearchIcon.setVisibility(chromeState.searchActionVisible ? View.VISIBLE : View.GONE);
         }
-        String cleanQuery = safe(query).trim();
-        if (cleanQuery.isEmpty() || "guides".equalsIgnoreCase(cleanQuery)) {
-            setHomeChromeModeAndTitle("SEARCH", "Senku");
-            return;
-        }
-        setHomeChromeModeAndTitle("SEARCH", cleanQuery);
+        setHomeChromeModeAndTitle(
+            chromeState.mode,
+            chromeState.usesStyledHomeTitle ? buildHomeChromeTitleText() : chromeState.title
+        );
     }
 
     private void setHomeChromeModeAndTitle(CharSequence mode, CharSequence title) {
@@ -4494,19 +4485,16 @@ public final class MainActivity extends AppCompatActivity {
         if (homeChromeModeText != null || !isLandscapePhoneLayout()) {
             return title;
         }
-        String cleanMode = safe(mode == null ? null : mode.toString()).trim();
-        String cleanTitle = safe(title == null ? null : title.toString()).trim();
-        if (cleanMode.isEmpty()) {
-            return title;
-        }
-        if (cleanTitle.isEmpty()) {
-            return cleanMode;
-        }
-        return cleanMode + " \u2022 " + cleanTitle;
+        return MainHomeChromePolicy.visibleTitle(
+            mode == null ? null : mode.toString(),
+            title == null ? null : title.toString(),
+            false,
+            true
+        );
     }
 
     private static CharSequence buildHomeChromeTitleText() {
-        String title = "Field manual \u2022 ed.2";
+        String title = MainHomeChromePolicy.HOME_TITLE;
         SpannableString styled = new SpannableString(title);
         int fieldStart = title.indexOf("Field manual");
         int editionStart = title.indexOf("ed.2");
