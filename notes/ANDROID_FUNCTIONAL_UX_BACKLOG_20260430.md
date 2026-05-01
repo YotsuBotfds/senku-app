@@ -113,14 +113,11 @@ the exported mocks.
    - Code-health risk: review/mock mode can shape default product behavior
      (home metadata, recent threads, category counts, search labels/results).
    - Status: partially addressed. Review mode already requires debug automation
-     authorization, fixture access is policy-gated, and recent-thread
-     placeholders now require the resolved review mode.
+     authorization, fixture access is policy-gated, recent-thread placeholders
+     now route through `ReviewDemoPolicy`, and product shared-input search CTAs
+     now use neutral `home_search_button` resources guarded by a leakage test.
    - Next safe slice: continue moving direct fixture-shaped display decisions
      behind explicit `ReviewDemoPolicy` guards without changing production UI.
-   - Current scout finding: product shared-input search controls still reference
-     `external_review_home_search_button` by resource name from normal
-     `activity_main` layouts and `SharedInputChromePolicy`; rename to a neutral
-     production resource or gate it explicitly through review policy.
    - Key code: `MainActivity.resolveProductReviewMode()`,
      `buildReviewSearchResults()`, `reviewHomeCategoryCount()`,
      `appendReviewSearchLatency()`, and `SharedInputChromePolicy`.

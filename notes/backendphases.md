@@ -1,6 +1,6 @@
 # Backend Cleanup Phase Tracker
 
-Last updated after local validation and cleanup through `f7887fc6` on 2026-05-01.
+Last updated after local validation and cleanup through `8d333c6c` on 2026-05-01.
 
 Purpose: prevent future agents from rerunning Ask/query backend cleanup that is already complete. Keep this note short; implementation detail belongs in commits and tests.
 
@@ -252,12 +252,23 @@ Purpose: prevent future agents from rerunning Ask/query backend cleanup that is 
 - PromptHarness route assertions are current through `a8b7445c`: androidTest
   route checks read `currentMainRouteState()` instead of stale MainActivity
   route fields removed by the coordinator extraction.
-- Latest local proof after `a8b7445c`: `git diff --check` passed; full Android
+- Review/demo search CTA cleanup is current through `fbbcc38b`: product
+  shared-input search controls use neutral `home_search_button` resources
+  instead of `external_review_*` names, and `ProductSearchCtaResourceLeakageTest`
+  guards normal `activity_main` variants.
+- Tablet detail source-state extraction is current through `8df1e45b`:
+  `DetailTabletStateBuilder` owns pure source-row assembly for tablet state.
+- Recent-thread placeholder gating is current through `b9f3f4ba`: synthetic
+  review placeholders route through `ReviewDemoPolicy`.
+- Query routing test isolation is current through `5373e6b4`: vector-focused
+  tests mock lexical fallback and no longer open sqlite during those paths.
+- Latest local proof after `8d333c6c`: `git diff --check` passed; full Android
   `:app:testDebugUnitTest :app:assembleDebug :app:assembleDebugAndroidTest`
   passed; fresh physical phone `phone-functional` PromptHarness smoke passed on
   `RFCX607ZM8L` with APK SHA
-  `e1986d26c09c382066204164f22cfe022977855c5d473699f1856bdd78d0ccff` at
-  `artifacts/physical_phone_functional_after_a8b7445c/run_summary.json`.
+  `1705e0e595d679b5806e31d6bc41656e05b9232cf0b6dccffb66d823bbc5d3e1` at
+  `artifacts/physical_phone_functional_after_8d333c6c/run_summary.json`;
+  `tests.test_query_routing` ran 94 tests OK without ResourceWarning noise.
 
 ## Remaining Next Slices
 
@@ -265,13 +276,12 @@ Purpose: prevent future agents from rerunning Ask/query backend cleanup that is 
   orchestration still owns too much; new route work should extend
   `MainRouteCoordinator` tests rather than restoring route fields to
   `MainActivity`.
-- Architecture scout next priority: tablet detail state-builder extraction; do
-  not start a broad `PackRepository` search pipeline rewrite without
-  route-output parity proof.
-- Review/demo leakage scout found a P1 cleanup: product `activity_main` layouts
-  and `SharedInputChromePolicy` still reference an `external_review_*` search
-  CTA resource name. Rename or route those resources through explicit
-  review-policy gates in the next review-isolation slice.
+- Architecture scout follow-up priority: continue tablet/detail state-builder
+  extraction in narrow seams; do not start a broad `PackRepository` search
+  pipeline rewrite without route-output parity proof.
+- Review/demo leakage follow-up: continue moving remaining fixture-shaped
+  display decisions through explicit review-policy gates; the product search CTA
+  resource-name leak is closed and guarded.
 - Do not rerun the result-publication extraction unless a regression points
   there; future `MainActivity` cleanup should target still-mixed route side
   effects outside `MainResultPublicationPolicy`.
