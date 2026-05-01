@@ -5,6 +5,7 @@ import static org.junit.Assert.assertEquals;
 import android.view.inputmethod.EditorInfo;
 
 import com.senku.mobile.AskSearchCoordinator.SubmitTarget;
+import com.senku.ui.primitives.BottomTabDestination;
 
 import org.junit.Test;
 
@@ -69,5 +70,33 @@ public final class SharedInputChromePolicyTest {
             R.string.search_button_description,
             SharedInputChromePolicy.submitButtonDescriptionResource(null)
         );
+    }
+
+    @Test
+    public void sharedSubmitActionMapsAskTargetToReadyAskButtonChrome() {
+        MainSharedInputSubmitPolicy.SharedSubmitAction action =
+            MainSharedInputSubmitPolicy.resolveSearchButtonSubmitAction(
+                BottomTabDestination.ASK,
+                false,
+                true
+            );
+
+        assertEquals(SubmitTarget.ASK, action.target);
+        assertEquals(R.string.ask_button_ready, action.buttonTextResource);
+        assertEquals(R.string.ask_button_description, action.buttonDescriptionResource);
+    }
+
+    @Test
+    public void sharedSubmitActionMapsLibraryTargetToSearchButtonChrome() {
+        MainSharedInputSubmitPolicy.SharedSubmitAction action =
+            MainSharedInputSubmitPolicy.resolveSearchButtonSubmitAction(
+                BottomTabDestination.HOME,
+                false,
+                true
+            );
+
+        assertEquals(SubmitTarget.SEARCH, action.target);
+        assertEquals(R.string.home_search_button, action.buttonTextResource);
+        assertEquals(R.string.search_button_description, action.buttonDescriptionResource);
     }
 }

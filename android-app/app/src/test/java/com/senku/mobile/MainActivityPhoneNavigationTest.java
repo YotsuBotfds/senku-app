@@ -459,9 +459,9 @@ public final class MainActivityPhoneNavigationTest {
 
     @Test
     public void searchButtonSubmitActionUsesSameTargetAndVisibleCopy() {
-        MainActivity.SharedSubmitAction askAction =
+        MainSharedInputSubmitPolicy.SharedSubmitAction askAction =
             MainActivity.resolveSearchButtonSubmitActionForTest(BottomTabDestination.ASK, false, true);
-        MainActivity.SharedSubmitAction searchAction =
+        MainSharedInputSubmitPolicy.SharedSubmitAction searchAction =
             MainActivity.resolveSearchButtonSubmitActionForTest(BottomTabDestination.HOME, false, true);
 
         assertEquals(SubmitTarget.ASK, askAction.target);

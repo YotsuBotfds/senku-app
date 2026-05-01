@@ -499,7 +499,7 @@ public final class MainActivity extends AppCompatActivity {
         );
 
         searchButton.setOnClickListener(v -> {
-            SharedSubmitAction action = resolveSearchButtonSubmitAction(
+            MainSharedInputSubmitPolicy.SharedSubmitAction action = resolveSearchButtonSubmitAction(
                 routeCoordinator.activePhoneTab(),
                 routeCoordinator.askLaneActive(),
                 isAnswerRuntimeReady()
@@ -2991,7 +2991,7 @@ public final class MainActivity extends AppCompatActivity {
         return resolveSearchButtonSubmitAction(activePhoneTab, askLaneActive, false).target;
     }
 
-    static SharedSubmitAction resolveSearchButtonSubmitActionForTest(
+    static MainSharedInputSubmitPolicy.SharedSubmitAction resolveSearchButtonSubmitActionForTest(
         BottomTabDestination activePhoneTab,
         boolean askLaneActive,
         boolean answerReady
@@ -2999,16 +2999,15 @@ public final class MainActivity extends AppCompatActivity {
         return resolveSearchButtonSubmitAction(activePhoneTab, askLaneActive, answerReady);
     }
 
-    private static SharedSubmitAction resolveSearchButtonSubmitAction(
+    private static MainSharedInputSubmitPolicy.SharedSubmitAction resolveSearchButtonSubmitAction(
         BottomTabDestination activePhoneTab,
         boolean askLaneActive,
         boolean answerReady
     ) {
-        SubmitTarget target = AskSearchCoordinator.resolveSubmitTarget(activePhoneTab, askLaneActive);
-        return new SharedSubmitAction(
-            target,
-            SharedInputChromePolicy.submitButtonLabelResource(target, answerReady),
-            SharedInputChromePolicy.submitButtonDescriptionResource(target)
+        return MainSharedInputSubmitPolicy.resolveSearchButtonSubmitAction(
+            activePhoneTab,
+            askLaneActive,
+            answerReady
         );
     }
 
@@ -3471,7 +3470,7 @@ public final class MainActivity extends AppCompatActivity {
 
     private void updateActionLabels() {
         boolean answerReady = isAnswerRuntimeReady();
-        SharedSubmitAction searchAction = resolveSearchButtonSubmitAction(
+        MainSharedInputSubmitPolicy.SharedSubmitAction searchAction = resolveSearchButtonSubmitAction(
             routeCoordinator.activePhoneTab(),
             routeCoordinator.askLaneActive(),
             answerReady
@@ -4478,22 +4477,6 @@ public final class MainActivity extends AppCompatActivity {
         }
         if (homeChromeBackDivider != null) {
             homeChromeBackDivider.setVisibility(available ? View.VISIBLE : View.GONE);
-        }
-    }
-
-    static final class SharedSubmitAction {
-        final SubmitTarget target;
-        final int buttonTextResource;
-        final int buttonDescriptionResource;
-
-        SharedSubmitAction(
-            SubmitTarget target,
-            int buttonTextResource,
-            int buttonDescriptionResource
-        ) {
-            this.target = target == null ? SubmitTarget.SEARCH : target;
-            this.buttonTextResource = buttonTextResource;
-            this.buttonDescriptionResource = buttonDescriptionResource;
         }
     }
 
