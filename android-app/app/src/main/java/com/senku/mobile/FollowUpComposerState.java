@@ -50,6 +50,10 @@ public final class FollowUpComposerState {
         );
     }
 
+    public FollowUpComposerState withClearedDraft() {
+        return withDraft("");
+    }
+
     public FollowUpComposerState withBusy(boolean busy) {
         return new FollowUpComposerState(
             draftText,

@@ -196,6 +196,12 @@ public final class FollowUpComposerStateTest {
 
         assertFalse(busy.submitEnabled());
         assertFalse(busy.retryEnabled());
+
+        FollowUpComposerState cleared = busy.withClearedDraft();
+        assertEquals("", cleared.draftText);
+        assertEquals("failed", cleared.failureMessage);
+        assertEquals("retry", cleared.retryQuery());
+        assertEquals(FollowUpComposerState.Surface.TABLET, cleared.surface);
     }
 
     @Test

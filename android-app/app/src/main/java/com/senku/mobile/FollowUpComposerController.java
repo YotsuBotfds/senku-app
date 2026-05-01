@@ -101,6 +101,10 @@ final class FollowUpComposerController {
         );
     }
 
+    static FollowUpComposerState resolveGenerationStart(FollowUpComposerState state) {
+        return safeState(state).withClearedDraft();
+    }
+
     static FollowUpComposerState resolveGenerationSuccess(FollowUpComposerState state) {
         FollowUpComposerState safeState = safeState(state);
         return FollowUpComposerState.idle("", safeState.surface);

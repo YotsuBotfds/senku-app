@@ -101,6 +101,22 @@ public final class FollowUpComposerControllerTest {
     }
 
     @Test
+    public void generationStartClearsSubmittedDraftBeforeAnswerCompletes() {
+        FollowUpComposerState submitted = FollowUpComposerState.idle(
+            "  inspect the lower seam  ",
+            FollowUpComposerState.Surface.TABLET
+        ).asSubmitting();
+
+        FollowUpComposerState started =
+            FollowUpComposerController.resolveGenerationStart(submitted);
+
+        assertEquals("", started.draftText);
+        assertEquals(true, started.busy);
+        assertEquals(true, started.submitting);
+        assertEquals(FollowUpComposerState.Surface.TABLET, started.surface);
+    }
+
+    @Test
     public void failedGenerationRestoresSubmittedDraftForRetry() {
         FollowUpComposerState submitted = FollowUpComposerState.idle(
             "  inspect the lower seam  ",

@@ -6545,12 +6545,14 @@ public final class DetailActivity extends AppCompatActivity {
     }
 
     private void clearSubmittedFollowUpDraft(AnswerPresenter.Kind kind) {
+        FollowUpComposerState cleared =
+            FollowUpComposerController.resolveGenerationStart(buildFollowUpComposerStateForKind(kind));
         if (kind == AnswerPresenter.Kind.TABLET_FOLLOWUP) {
-            tabletComposerText = "";
+            tabletComposerText = cleared.draftText;
             return;
         }
         if (followUpInput != null) {
-            followUpInput.setText("");
+            followUpInput.setText(cleared.draftText);
         }
     }
 
