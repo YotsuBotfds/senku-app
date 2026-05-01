@@ -42,6 +42,14 @@ class RunAndroidDetailFollowupMatrixContractTests(unittest.TestCase):
         self.assertIn("$args.RunLabel = [string]$Run.run_label", self.script)
         self.assertIn("$args.SkipSourceProbe = $true", self.script)
 
+    def test_strict_followup_proof_can_be_enabled_globally_or_per_run(self):
+        self.assertIn("[switch]$DefaultRequireStrictFollowUpProof", self.script)
+        self.assertIn(
+            '$DefaultRequireStrictFollowUpProof -or ($Run.PSObject.Properties.Name -contains "require_strict_followup_proof" -and [bool]$Run.require_strict_followup_proof)',
+            self.script,
+        )
+        self.assertIn("$args.RequireStrictFollowUpProof = $true", self.script)
+
     def test_wait_parameters_are_validated_before_child_prompt_runs(self):
         self.assertIn("function Assert-PositiveWaitParameter", self.script)
         self.assertIn("function Assert-WaitParameters", self.script)

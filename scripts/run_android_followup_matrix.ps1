@@ -15,6 +15,7 @@ param(
     [int]$MaxCases = 0,
     [bool]$CaptureLogcat = $true,
     [switch]$WarmStart,
+    [switch]$RequireStrictFollowUpProof,
     [switch]$SkipPackPushIfCurrent,
     [switch]$ForcePackPush
 )
@@ -430,6 +431,13 @@ for ($index = 0; $index -lt $cases.Count; $index++) {
     if ($WarmStart) {
         $detailArgs.WarmStart = $true
     }
+    $runRequiresStrictFollowUpProof = $RequireStrictFollowUpProof -or (
+        $case.PSObject.Properties.Name -contains "require_strict_followup_proof" -and
+        [bool]$case.require_strict_followup_proof
+    )
+    if ($runRequiresStrictFollowUpProof) {
+        $detailArgs.RequireStrictFollowUpProof = $true
+    }
     $detailOutputText = ""
     try {
         $detailOutput = & $detailRunner @detailArgs 2>&1
@@ -476,6 +484,7 @@ for ($index = 0; $index -lt $cases.Count; $index++) {
         lower_source_button_count = if ($runJson) { $runJson.lower_source_button_count } else { $null }
         followup_submission_mode = if ($runJson) { $runJson.followup_submission_mode } else { $null }
         warm_start = [bool]$WarmStart
+        strict_followup_proof_required = [bool]$runRequiresStrictFollowUpProof
         push_pack_summary_path = if ($runJson) { $runJson.push_pack_summary_path } else { $null }
         push_pack_cache_hit = if ($runJson) { $runJson.push_pack_cache_hit } else { $null }
         push_pack_pushed = if ($runJson) { $runJson.push_pack_pushed } else { $null }

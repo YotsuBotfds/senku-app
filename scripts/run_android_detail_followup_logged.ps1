@@ -13,6 +13,7 @@ param(
     [string]$OutputDir = "artifacts\\bench\\android_detail_followups",
     [string]$RunLabel,
     [switch]$SkipSourceProbe,
+    [switch]$RequireStrictFollowUpProof,
     [switch]$SkipPackPushIfCurrent,
     [switch]$ForcePackPush,
     [int]$InitialMaxWaitSeconds = 260,
@@ -157,6 +158,9 @@ if ($WarmStart) {
 if ($SkipSourceProbe) {
     $scriptArgs.SkipSourceProbe = $true
 }
+if ($RequireStrictFollowUpProof) {
+    $scriptArgs.RequireStrictFollowUpProof = $true
+}
 
 Stop-ConflictingHarnessRuns -TargetEmulator $Emulator
 
@@ -190,6 +194,7 @@ if ($null -ne $capturedError -and -not (Test-Path $manifestPath)) {
         initial_query = $InitialQuery
         requested_follow_up = $FollowUpQuery
         warm_start = [bool]$WarmStart
+        strict_followup_proof_required = [bool]$RequireStrictFollowUpProof
         push_pack_summary_path = $(if (Test-Path -LiteralPath $pushPackSummaryPath) { $pushPackSummaryPath } else { $null })
         push_pack_cache_hit = $(if ($pushPackSummary) { [bool]$pushPackSummary.cache_hit } else { $null })
         push_pack_pushed = $(if ($pushPackSummary) { [bool]$pushPackSummary.pushed } else { $null })

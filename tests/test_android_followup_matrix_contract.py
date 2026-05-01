@@ -49,6 +49,7 @@ class AndroidFollowupMatrixContractTests(unittest.TestCase):
 
     def test_followup_matrix_contract_fields_and_pass_throughs(self):
         self.assertIn("[switch]$WarmStart", self.script)
+        self.assertIn("[switch]$RequireStrictFollowUpProof", self.script)
         self.assertIn("[switch]$SkipPackPushIfCurrent", self.script)
         self.assertIn("[switch]$ForcePackPush", self.script)
         self.assertIn("if (-not [string]::IsNullOrWhiteSpace($PushPackDir)) {", self.script)
@@ -57,7 +58,10 @@ class AndroidFollowupMatrixContractTests(unittest.TestCase):
         self.assertIn("$detailArgs.SkipPackPushIfCurrent = $true", self.script)
         self.assertIn("$detailArgs.ForcePackPush = $true", self.script)
         self.assertIn("$detailArgs.WarmStart = $true", self.script)
+        self.assertIn("$detailArgs.RequireStrictFollowUpProof = $true", self.script)
+        self.assertIn('"require_strict_followup_proof"', self.script)
         self.assertIn("warm_start = [bool]$WarmStart", self.script)
+        self.assertIn("strict_followup_proof_required = [bool]$runRequiresStrictFollowUpProof", self.script)
         self.assertIn("function New-FollowupMatrixSummary", self.script)
         self.assertIn("function ConvertTo-FollowupMatrixSummaryMarkdown", self.script)
         self.assertIn("function Resolve-MatrixDevicePosture", self.script)

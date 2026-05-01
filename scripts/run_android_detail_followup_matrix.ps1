@@ -8,6 +8,7 @@ param(
     [string]$OutputDir = "artifacts\\bench\\android_detail_followups",
     [int]$MaxParallel = 3,
     [switch]$DefaultSkipSourceProbe,
+    [switch]$DefaultRequireStrictFollowUpProof,
     [switch]$StopOnError,
     [int]$InitialMaxWaitSeconds = 260,
     [int]$FollowUpMaxWaitSeconds = 180,
@@ -115,6 +116,9 @@ function New-RunArgs {
     }
     if ($DefaultSkipSourceProbe -or ($Run.PSObject.Properties.Name -contains "skip_source_probe" -and [bool]$Run.skip_source_probe)) {
         $args.SkipSourceProbe = $true
+    }
+    if ($DefaultRequireStrictFollowUpProof -or ($Run.PSObject.Properties.Name -contains "require_strict_followup_proof" -and [bool]$Run.require_strict_followup_proof)) {
+        $args.RequireStrictFollowUpProof = $true
     }
     return $args
 }
