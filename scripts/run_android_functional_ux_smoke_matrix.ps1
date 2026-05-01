@@ -70,8 +70,39 @@ if ($PhysicalDevice -and $Device -like "emulator-*") {
 
 $repoRoot = (Resolve-Path (Join-Path $PSScriptRoot "..")).Path
 $smokeScript = Join-Path $PSScriptRoot "run_android_instrumented_ui_smoke.ps1"
+$adb = Join-Path $env:LOCALAPPDATA "Android\Sdk\platform-tools\adb.exe"
+$commonHarnessModule = Join-Path $PSScriptRoot "android_harness_common.psm1"
 if (-not (Test-Path -LiteralPath $smokeScript -PathType Leaf)) {
     throw "Missing smoke script: $smokeScript"
+}
+if (-not (Test-Path -LiteralPath $adb -PathType Leaf)) {
+    throw "adb not found at $adb"
+}
+if (-not (Test-Path -LiteralPath $commonHarnessModule -PathType Leaf)) {
+    throw "android_harness_common.psm1 not found at $commonHarnessModule"
+}
+Import-Module $commonHarnessModule -Force -DisableNameChecking
+
+function Assert-FunctionalUxPhoneDevice {
+    Write-Host ("[functional-ux-matrix:{0}] preflighting phone-preset device role" -f $Device)
+    & $adb -s $Device wait-for-device
+    if ($LASTEXITCODE -ne 0) {
+        throw "adb wait-for-device failed for $Device"
+    }
+    $facts = Resolve-AndroidDeviceFacts -AdbPath $adb -DeviceName $Device -RequestedOrientation "portrait"
+    $role = if ($null -ne $facts -and -not [string]::IsNullOrWhiteSpace([string]$facts.resolved_role)) {
+        [string]$facts.resolved_role
+    } else {
+        "unknown"
+    }
+    if ($role -ne "phone") {
+        $smallest = if ($null -ne $facts -and $null -ne $facts.smallest_width_dp) {
+            [string]$facts.smallest_width_dp
+        } else {
+            "unknown"
+        }
+        throw ("Functional UX smoke matrix runs phone-* presets, but {0} resolved as {1} (smallest_width_dp={2}). Use a phone-class device such as emulator-5556 or the attached physical phone, or run a tablet-specific state-pack lane." -f $Device, $role, $smallest)
+    }
 }
 
 if ([string]::IsNullOrWhiteSpace($OutputLabel)) {
@@ -91,6 +122,8 @@ $presets = @(
     "phone-functional-saved",
     "phone-functional-back-provenance"
 )
+
+Assert-FunctionalUxPhoneDevice
 
 function Convert-ToRepoRelativePath {
     param([string]$Path)

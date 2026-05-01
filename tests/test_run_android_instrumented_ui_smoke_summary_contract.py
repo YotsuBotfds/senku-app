@@ -100,6 +100,16 @@ class RunAndroidInstrumentedUiSmokeSummaryContractTests(unittest.TestCase):
         self.assertIn('"emergencyAnswerVisibleBackButtonReturnsManualHomeDestination"', self.script)
         self.assertIn('${BaseClass}#$methodName', self.script)
 
+    def test_phone_and_tablet_smoke_presets_guard_device_role(self):
+        self.assertIn("function Resolve-ExpectedDeviceRoleForSmokePreset", self.script)
+        self.assertIn('StartsWith("phone-"', self.script)
+        self.assertIn('StartsWith("tablet-"', self.script)
+        self.assertIn("function Assert-SmokePresetDeviceRole", self.script)
+        self.assertIn("SmokePreset '{0}' expects a {1} device", self.script)
+        self.assertIn("$preflightDeviceFacts = Get-ResolvedDeviceFacts -RequestedOrientation $Orientation", self.script)
+        self.assertIn("Assert-SmokePresetDeviceRole -DeviceFacts $preflightDeviceFacts -Preset $SmokePreset", self.script)
+        self.assertIn("Assert-SmokePresetDeviceRole -DeviceFacts $deviceFacts -Preset $SmokePreset", self.script)
+
     def test_functional_saved_profile_includes_real_save_unsave_semantics(self):
         expected_block = '''"functional-saved" {
             return @(

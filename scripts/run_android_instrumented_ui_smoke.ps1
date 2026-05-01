@@ -1189,6 +1189,47 @@ function Get-ResolvedDeviceFacts {
     return Resolve-AndroidDeviceFacts -AdbPath $adb -DeviceName $Device -RequestedOrientation $RequestedOrientation
 }
 
+function Resolve-ExpectedDeviceRoleForSmokePreset {
+    param([string]$Preset)
+
+    if ([string]::IsNullOrWhiteSpace($Preset)) {
+        return ""
+    }
+    if ($Preset.StartsWith("phone-", [System.StringComparison]::OrdinalIgnoreCase)) {
+        return "phone"
+    }
+    if ($Preset.StartsWith("tablet-", [System.StringComparison]::OrdinalIgnoreCase)) {
+        return "tablet"
+    }
+    return ""
+}
+
+function Assert-SmokePresetDeviceRole {
+    param(
+        [object]$DeviceFacts,
+        [string]$Preset
+    )
+
+    $expectedRole = Resolve-ExpectedDeviceRoleForSmokePreset -Preset $Preset
+    if ([string]::IsNullOrWhiteSpace($expectedRole)) {
+        return
+    }
+    $actualRole = if ($null -ne $DeviceFacts -and -not [string]::IsNullOrWhiteSpace([string]$DeviceFacts.resolved_role)) {
+        [string]$DeviceFacts.resolved_role
+    } else {
+        "unknown"
+    }
+    if ($actualRole -eq $expectedRole) {
+        return
+    }
+    $smallestWidth = if ($null -ne $DeviceFacts -and $null -ne $DeviceFacts.smallest_width_dp) {
+        [string]$DeviceFacts.smallest_width_dp
+    } else {
+        "unknown"
+    }
+    throw ("SmokePreset '{0}' expects a {1} device, but {2} resolved as {3} (smallest_width_dp={4}). Pick a matching emulator/device before running the preset." -f $Preset, $expectedRole, $Device, $actualRole, $smallestWidth)
+}
+
 function Resolve-InstrumentationMethodNames {
     param(
         [string]$Profile
@@ -1496,6 +1537,8 @@ if ($LASTEXITCODE -ne 0) {
 Write-RunPhase -Phase "device connected; waiting for readiness"
 Wait-ForDeviceReadiness
 Write-RunPhase -Phase "device ready"
+$preflightDeviceFacts = Get-ResolvedDeviceFacts -RequestedOrientation $Orientation
+Assert-SmokePresetDeviceRole -DeviceFacts $preflightDeviceFacts -Preset $SmokePreset
 if (-not $EffectiveSkipInstall) {
     Write-RunPhase -Phase "installing app APK"
     Invoke-ApkInstallWithPhysicalNoStreamingFallback -ApkPath $appApk -FailureMessage "App APK install failed" -ApkLabel "app APK" -TimeoutMilliseconds $apkInstallTimeoutMilliseconds
@@ -1555,6 +1598,7 @@ try {
     Write-RunPhase -Phase ("setting orientation {0}" -f $Orientation)
     Set-DeviceOrientation -TargetOrientation $Orientation
     $deviceFacts = Get-ResolvedDeviceFacts -RequestedOrientation $Orientation
+    Assert-SmokePresetDeviceRole -DeviceFacts $deviceFacts -Preset $SmokePreset
     $orientationSettled = ($deviceFacts.rotation_matches_requested -eq $true)
     if (-not $orientationSettled) {
         $orientationSettled = Wait-ForDeviceOrientation -TargetOrientation $Orientation

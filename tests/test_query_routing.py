@@ -149,6 +149,13 @@ class QueryRoutingTests(unittest.TestCase):
     def test_current_head_water_soap_and_glass_routes_get_desktop_specs_and_prompt_notes(self):
         water_question = "how do i design a gravity-fed water distribution system"
         self.assertTrue(query._is_water_distribution_query(water_question))
+        water_filter_question = "how do i build a gravity-fed water filter"
+        self.assertFalse(query._is_water_distribution_query(water_filter_question))
+        filter_specs = query._supplemental_retrieval_specs(water_filter_question, 8)
+        self.assertFalse(
+            any("gravity-fed water distribution" in spec["text"] for spec in filter_specs),
+            [spec["text"] for spec in filter_specs],
+        )
         water_specs = query._supplemental_retrieval_specs(water_question, 8)
         self.assertTrue(
             any(

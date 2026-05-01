@@ -4058,8 +4058,6 @@ _WATER_DISTRIBUTION_QUERY_MARKERS = {
     "water distribution",
     "distribution system",
     "distribution systems",
-    "gravity-fed water",
-    "gravity fed water",
     "gravity-fed distribution",
     "gravity fed distribution",
     "water tower",

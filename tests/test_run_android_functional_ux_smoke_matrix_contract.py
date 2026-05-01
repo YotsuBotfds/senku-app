@@ -39,6 +39,12 @@ class RunAndroidFunctionalUxSmokeMatrixContractTests(unittest.TestCase):
         self.assertIn('"-CaptureLogcat"', self.script)
         self.assertIn('$canReuseInstalledApks = $true', self.script)
 
+    def test_matrix_preflights_phone_device_role(self):
+        self.assertIn("function Assert-FunctionalUxPhoneDevice", self.script)
+        self.assertIn("Resolve-AndroidDeviceFacts -AdbPath $adb -DeviceName $Device", self.script)
+        self.assertIn("Functional UX smoke matrix runs phone-* presets", self.script)
+        self.assertIn("Assert-FunctionalUxPhoneDevice", self.script)
+
     def test_parser_gate_passes(self):
         result = subprocess.run(
             [

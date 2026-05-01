@@ -1,6 +1,6 @@
 # Backend Cleanup Phase Tracker
 
-Last updated after pushed cleanup through `8b0fd85d` on 2026-05-01.
+Last updated after pushed cleanup through `9add4e86` on 2026-05-01.
 
 Purpose: prevent future agents from rerunning Ask/query backend cleanup that is already complete. Keep this note short; implementation detail belongs in commits and tests.
 
@@ -290,6 +290,18 @@ Purpose: prevent future agents from rerunning Ask/query backend cleanup that is 
   route-effect tests live with the controller, route-search SQL handles
   hardening/no-op/SQLiteException paths, and Ask result publication helper
   names are cleaned up.
+- Backend cleanup is current through `9add4e86`: Ask result presentation
+  decisions now sit behind a controller boundary, desktop water-distribution
+  route hints are explicit, and pack retrieval fusion plus detail tablet source
+  ownership now live behind focused policies.
+- Latest local proof after `9add4e86`: full Android
+  `:app:testDebugUnitTest :app:assembleDebug :app:assembleDebugAndroidTest`
+  passed.
+- Post-`9add4e86` harness cleanup: phone functional UX smoke presets now guard
+  against tablet-class devices before install/instrumentation, and the desktop
+  water-distribution route hint no longer catches generic gravity-fed water
+  filter prompts. Physical phone proof for `phone-functional-follow-up` passed
+  on `RFCX607ZM8L`.
 
 ## Remaining Next Slices
 
