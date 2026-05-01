@@ -125,7 +125,8 @@ final class DetailGuidePresentationFormatter {
             int lineEnd = cursor + line.text.length();
             String trimmed = line.text.trim();
             if (line.kind == GuideBodySanitizer.GuideBodyLine.Kind.SECTION) {
-                styleGuideAnchorLine(styled, displayText, lineStart, lineEnd, line.label);
+                String sectionPrefix = line.section == null ? line.label : line.section.prefix;
+                styleGuideAnchorLine(styled, displayText, lineStart, lineEnd, sectionPrefix);
                 insideAdmonitionBlock = false;
                 nextTextLineMayBeRecoveredHeading = true;
             } else if (isGuideManualKickerLine(trimmed)) {
@@ -153,8 +154,17 @@ final class DetailGuidePresentationFormatter {
                 insideAdmonitionBlock = false;
                 nextTextLineMayBeRecoveredHeading = false;
             } else if (line.kind == GuideBodySanitizer.GuideBodyLine.Kind.ADMONITION_LABEL) {
-                admonitionAccentColorRes = admonitionAccentColorRes(trimmed);
+                String calloutLabel = line.callout == null ? line.label : line.callout.label;
+                admonitionAccentColorRes = admonitionAccentColorRes(calloutLabel);
                 styleGuideAdmonitionLabelLine(styled, lineStart, lineEnd, line.label, admonitionAccentColorRes);
+                insideAdmonitionBlock = true;
+                nextTextLineMayBeRecoveredHeading = false;
+            } else if (line.kind == GuideBodySanitizer.GuideBodyLine.Kind.ADMONITION_TEXT) {
+                String calloutLabel = line.callout == null ? "" : line.callout.label;
+                if (!calloutLabel.isEmpty()) {
+                    admonitionAccentColorRes = admonitionAccentColorRes(calloutLabel);
+                }
+                applyGuideIndentedWarningLine(styled, lineStart, lineEnd, admonitionAccentColorRes);
                 insideAdmonitionBlock = true;
                 nextTextLineMayBeRecoveredHeading = false;
             } else {
@@ -765,7 +775,7 @@ final class DetailGuidePresentationFormatter {
         GuideBodySanitizer.ParsedGuideBody parsedBody = GuideBodySanitizer.parseGuideBodyForDisplay(body);
         int sections = 0;
         for (GuideBodySanitizer.GuideBodyLine line : parsedBody.lines) {
-            if (line.kind == GuideBodySanitizer.GuideBodyLine.Kind.SECTION) {
+            if (line.kind == GuideBodySanitizer.GuideBodyLine.Kind.SECTION && line.section != null) {
                 sections++;
             }
         }

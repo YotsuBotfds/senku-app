@@ -66,11 +66,45 @@ final class GuideBodySanitizer {
         final Kind kind;
         final String text;
         final String label;
+        final GuideSection section;
+        final GuideCallout callout;
 
         GuideBodyLine(Kind kind, String text, String label) {
+            this(kind, text, label, null, null);
+        }
+
+        GuideBodyLine(Kind kind, String text, String label, GuideSection section, GuideCallout callout) {
             this.kind = kind == null ? Kind.TEXT : kind;
             this.text = safe(text);
             this.label = safe(label);
+            this.section = section;
+            this.callout = callout;
+        }
+    }
+
+    static final class GuideSection {
+        final int ordinal;
+        final String prefix;
+        final String value;
+        final String heading;
+        final String normalizedValue;
+
+        GuideSection(int ordinal, String prefix, String value, String heading) {
+            this.ordinal = Math.max(1, ordinal);
+            this.prefix = safe(prefix);
+            this.value = safe(value);
+            this.heading = safe(heading);
+            this.normalizedValue = normalizeSectionComparisonValue(this.value);
+        }
+    }
+
+    static final class GuideCallout {
+        final String label;
+        final String title;
+
+        GuideCallout(String label, String title) {
+            this.label = canonicalGuideAdmonitionLabel(label);
+            this.title = safe(title);
         }
     }
 
@@ -120,7 +154,9 @@ final class GuideBodySanitizer {
                             new GuideBodyLine(
                                 GuideBodyLine.Kind.ADMONITION_LABEL,
                                 activeAdmonitionLabel,
-                                activeAdmonitionLabel
+                                activeAdmonitionLabel,
+                                null,
+                                new GuideCallout(activeAdmonitionLabel, "")
                             )
                         );
                     }
@@ -150,7 +186,13 @@ final class GuideBodySanitizer {
                 appendParsedLine(
                     builder,
                     parsedLines,
-                    new GuideBodyLine(GuideBodyLine.Kind.ADMONITION_LABEL, labelText, activeAdmonitionLabel)
+                    new GuideBodyLine(
+                        GuideBodyLine.Kind.ADMONITION_LABEL,
+                        labelText,
+                        activeAdmonitionLabel,
+                        null,
+                        new GuideCallout(activeAdmonitionLabel, labelTextTitle(labelText, activeAdmonitionLabel))
+                    )
                 );
                 pendingAdmonitionLabel = false;
                 firstAdmonitionContentLine = false;
@@ -174,13 +216,21 @@ final class GuideBodySanitizer {
                     insideReviewedBoundaryOpening = false;
                     sectionOrdinal++;
                     SectionDisplayParts sectionParts = buildSectionDisplayParts(sectionOrdinal, sectionValue);
+                    GuideSection section = new GuideSection(
+                        sectionOrdinal,
+                        buildGuideSectionPrefix(sectionOrdinal),
+                        sectionParts.value,
+                        sectionParts.heading
+                    );
                     appendParsedLine(
                         builder,
                         parsedLines,
                         new GuideBodyLine(
                             GuideBodyLine.Kind.SECTION,
                             sectionParts.label,
-                            buildGuideSectionPrefix(sectionOrdinal)
+                            section.prefix,
+                            section,
+                            null
                         )
                     );
                     if (!sectionParts.heading.isEmpty()) {
@@ -209,6 +259,7 @@ final class GuideBodySanitizer {
                     );
                     pendingAdmonitionLabel = false;
                 } else {
+                    String calloutLabel = canonicalGuideAdmonitionLineLabel(displayLine);
                     if (insideReviewedBoundaryOpening) {
                         if (displayLine.isEmpty()) {
                             if (reviewedBoundaryOpeningTextLines > 0) {
@@ -251,11 +302,13 @@ final class GuideBodySanitizer {
                         builder,
                         parsedLines,
                         new GuideBodyLine(
-                            canonicalGuideAdmonitionLabel(displayLine).isEmpty()
+                            calloutLabel.isEmpty()
                                 ? (insideAdmonitionBlock ? GuideBodyLine.Kind.ADMONITION_TEXT : GuideBodyLine.Kind.TEXT)
                                 : GuideBodyLine.Kind.ADMONITION_LABEL,
                             displayLine,
-                            canonicalGuideAdmonitionLabel(displayLine)
+                            calloutLabel,
+                            null,
+                            buildGuideCallout(activeAdmonitionLabel, displayLine, insideAdmonitionBlock)
                         )
                     );
                 }
@@ -269,7 +322,13 @@ final class GuideBodySanitizer {
             appendParsedLine(
                 builder,
                 parsedLines,
-                new GuideBodyLine(GuideBodyLine.Kind.ADMONITION_LABEL, activeAdmonitionLabel, activeAdmonitionLabel)
+                new GuideBodyLine(
+                    GuideBodyLine.Kind.ADMONITION_LABEL,
+                    activeAdmonitionLabel,
+                    activeAdmonitionLabel,
+                    null,
+                    new GuideCallout(activeAdmonitionLabel, "")
+                )
             );
         }
         while (!parsedLines.isEmpty() && parsedLines.get(parsedLines.size() - 1).text.isEmpty()) {
@@ -298,13 +357,13 @@ final class GuideBodySanitizer {
         String previousSectionValue = "";
         for (int i = 0; i < parsedLines.size(); i++) {
             GuideBodyLine line = parsedLines.get(i);
-            if (line.kind != GuideBodyLine.Kind.SECTION) {
+            if (line.kind != GuideBodyLine.Kind.SECTION || line.section == null) {
                 if (!line.text.isEmpty()) {
                     previousSectionValue = "";
                 }
                 continue;
             }
-            String sectionValue = normalizeSectionComparisonValue(line.text);
+            String sectionValue = line.section.normalizedValue;
             if (!sectionValue.isEmpty() && sectionValue.equals(previousSectionValue)) {
                 parsedLines.remove(i);
                 i--;
@@ -652,8 +711,46 @@ final class GuideBodySanitizer {
         }
         return new SectionDisplayParts(
             buildGuideSectionPrefix(sectionOrdinal) + " " + label.toUpperCase(QUERY_LOCALE),
+            label,
             heading
         );
+    }
+
+    private static GuideCallout buildGuideCallout(String activeAdmonitionLabel, String displayLine, boolean insideAdmonitionBlock) {
+        String label = canonicalGuideAdmonitionLabel(activeAdmonitionLabel);
+        String lineLabel = canonicalGuideAdmonitionLineLabel(displayLine);
+        if (label.isEmpty()) {
+            label = lineLabel;
+        }
+        if (label.isEmpty() || (!insideAdmonitionBlock && lineLabel.isEmpty())) {
+            return null;
+        }
+        String title = "";
+        String prefix = label + " \u00b7 ";
+        String cleanedLine = safe(displayLine).trim();
+        if (cleanedLine.startsWith(prefix)) {
+            title = cleanedLine.substring(prefix.length()).trim();
+        }
+        return new GuideCallout(label, title);
+    }
+
+    private static String canonicalGuideAdmonitionLineLabel(String line) {
+        String cleaned = safe(line).trim();
+        String label = canonicalGuideAdmonitionLabel(cleaned);
+        if (!label.isEmpty()) {
+            return label;
+        }
+        int separatorIndex = cleaned.indexOf('\u00b7');
+        if (separatorIndex <= 0) {
+            return "";
+        }
+        return canonicalGuideAdmonitionLabel(cleaned.substring(0, separatorIndex).trim());
+    }
+
+    private static String labelTextTitle(String labelText, String label) {
+        String prefix = canonicalGuideAdmonitionLabel(label) + " \u00b7 ";
+        String cleaned = safe(labelText).trim();
+        return cleaned.startsWith(prefix) ? cleaned.substring(prefix.length()).trim() : "";
     }
 
     private static String firstGuideSectionCue(String text) {
@@ -830,10 +927,12 @@ final class GuideBodySanitizer {
 
     private static final class SectionDisplayParts {
         final String label;
+        final String value;
         final String heading;
 
-        SectionDisplayParts(String label, String heading) {
+        SectionDisplayParts(String label, String value, String heading) {
             this.label = safe(label);
+            this.value = safe(value);
             this.heading = safe(heading);
         }
     }

@@ -762,6 +762,9 @@ public final class DetailGuidePresentationFormatterTest {
         assertEquals(2, parsed.lines.length);
         assertEquals(GuideBodySanitizer.GuideBodyLine.Kind.SECTION, parsed.lines[0].kind);
         assertEquals("\u2014 \u00a7 1 \u00b7", parsed.lines[0].label);
+        assertEquals(1, parsed.lines[0].section.ordinal);
+        assertEquals("Area readiness", parsed.lines[0].section.value);
+        assertEquals("area readiness", parsed.lines[0].section.normalizedValue);
         assertEquals(GuideBodySanitizer.GuideBodyLine.Kind.REQUIRED_READING, parsed.lines[1].kind);
         assertEquals("REQUIRED READING", parsed.lines[1].label);
     }
@@ -797,9 +800,31 @@ public final class DetailGuidePresentationFormatterTest {
         );
         assertEquals(4, parsed.lines.length);
         assertEquals(GuideBodySanitizer.GuideBodyLine.Kind.ADMONITION_LABEL, parsed.lines[0].kind);
+        assertEquals("DANGER", parsed.lines[0].callout.label);
+        assertEquals("EXTREME BURN HAZARD", parsed.lines[0].callout.title);
         assertEquals(GuideBodySanitizer.GuideBodyLine.Kind.ADMONITION_TEXT, parsed.lines[1].kind);
+        assertEquals("DANGER", parsed.lines[1].callout.label);
         assertEquals(GuideBodySanitizer.GuideBodyLine.Kind.ADMONITION_TEXT, parsed.lines[2].kind);
         assertEquals(GuideBodySanitizer.GuideBodyLine.Kind.REQUIRED_READING, parsed.lines[3].kind);
+    }
+
+    @Test
+    public void guideBodyParserNormalizesMojibakeBeforeAssigningSectionAndCalloutMetadata() {
+        GuideBodySanitizer.ParsedGuideBody parsed = GuideBodySanitizer.parseGuideBodyForDisplay(
+            "\u00c2\u00a7 1 \u00c2\u00b7 Area readiness\nDANGER \u00c2\u00b7 EXTREME BURN HAZARD"
+        );
+
+        assertEquals(
+            "\u2014 \u00a7 1 \u00b7 AREA READINESS\nDANGER \u00b7 EXTREME BURN HAZARD",
+            parsed.displayText
+        );
+        assertEquals(2, parsed.lines.length);
+        assertEquals(GuideBodySanitizer.GuideBodyLine.Kind.SECTION, parsed.lines[0].kind);
+        assertEquals("\u2014 \u00a7 1 \u00b7", parsed.lines[0].section.prefix);
+        assertEquals("Area readiness", parsed.lines[0].section.value);
+        assertEquals(GuideBodySanitizer.GuideBodyLine.Kind.ADMONITION_LABEL, parsed.lines[1].kind);
+        assertEquals("DANGER", parsed.lines[1].callout.label);
+        assertEquals("EXTREME BURN HAZARD", parsed.lines[1].callout.title);
     }
 
     @Test
