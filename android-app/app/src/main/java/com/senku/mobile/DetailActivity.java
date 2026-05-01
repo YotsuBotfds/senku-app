@@ -6483,29 +6483,35 @@ public final class DetailActivity extends AppCompatActivity {
     }
 
     private void runFollowUp() {
-        FollowUpComposerController.SubmitDecision decision =
-            FollowUpComposerController.resolveSubmit(buildPhoneFollowUpComposerState());
-        if (decision.action == FollowUpComposerController.SubmitAction.EMPTY) {
-            setBusy(getString(R.string.detail_followup_empty), false);
-            return;
-        }
-        if (decision.action == FollowUpComposerController.SubmitAction.BLOCKED) {
-            return;
-        }
-        startFollowUpGeneration(AnswerPresenter.Kind.PHONE_FOLLOWUP, decision.query);
+        applyFollowUpActionDecision(
+            DetailFollowUpActionController.resolvePhoneSubmit(buildPhoneFollowUpComposerState())
+        );
     }
 
     private void runTabletFollowUp(String rawQuery) {
-        FollowUpComposerController.SubmitDecision decision =
-            FollowUpComposerController.resolveSubmit(buildTabletFollowUpComposerState().withDraft(rawQuery));
-        if (decision.action == FollowUpComposerController.SubmitAction.EMPTY) {
+        applyFollowUpActionDecision(
+            DetailFollowUpActionController.resolveTabletSubmit(buildTabletFollowUpComposerState(), rawQuery)
+        );
+    }
+
+    private void applyFollowUpActionDecision(DetailFollowUpActionController.Decision decision) {
+        if (decision == null) {
+            return;
+        }
+        if (decision.action == DetailFollowUpActionController.Action.EMPTY) {
             setBusy(getString(R.string.detail_followup_empty), false);
             return;
         }
-        if (decision.action == FollowUpComposerController.SubmitAction.BLOCKED) {
+        if (decision.action == DetailFollowUpActionController.Action.BLOCKED) {
             return;
         }
-        startFollowUpGeneration(AnswerPresenter.Kind.TABLET_FOLLOWUP, decision.query);
+        startFollowUpGeneration(followUpKindForTarget(decision.target), decision.query);
+    }
+
+    private AnswerPresenter.Kind followUpKindForTarget(DetailFollowUpActionController.Target target) {
+        return target == DetailFollowUpActionController.Target.TABLET_FOLLOWUP
+            ? AnswerPresenter.Kind.TABLET_FOLLOWUP
+            : AnswerPresenter.Kind.PHONE_FOLLOWUP;
     }
 
     private void startFollowUpGeneration(AnswerPresenter.Kind kind, String query) {
@@ -6614,31 +6620,30 @@ public final class DetailActivity extends AppCompatActivity {
     String buildGenerationFailureStatus(Throwable exc) { return "Offline answer failed: " + (exc == null ? null : exc.getMessage()); }
 
     private void retryLastFailedQuery() {
-        if (tabletComposeMode) {
-            FollowUpComposerController.RetryDecision decision =
-                FollowUpComposerController.resolveRetry(buildTabletFollowUpComposerState(), tabletComposerText);
-            if (decision.action == FollowUpComposerController.RetryAction.EMPTY) {
-                setBusy(getString(R.string.detail_followup_empty), false);
-                return;
-            }
-            tabletComposerText = decision.query;
-            runTabletFollowUp(decision.query);
+        DetailFollowUpActionController.Decision decision =
+            DetailFollowUpActionController.resolveRetry(
+                tabletComposeMode,
+                buildPhoneFollowUpComposerState(),
+                followUpInput == null ? null : followUpInput.getText().toString(),
+                buildTabletFollowUpComposerState(),
+                tabletComposerText
+            );
+        applyRetryDraft(decision);
+        applyFollowUpActionDecision(decision);
+    }
+
+    private void applyRetryDraft(DetailFollowUpActionController.Decision decision) {
+        if (decision == null || decision.action == DetailFollowUpActionController.Action.EMPTY) {
             return;
         }
-        FollowUpComposerController.RetryDecision decision =
-            FollowUpComposerController.resolveRetry(
-                buildPhoneFollowUpComposerState(),
-                followUpInput == null ? null : followUpInput.getText().toString()
-            );
-        if (decision.action == FollowUpComposerController.RetryAction.EMPTY) {
-            setBusy(getString(R.string.detail_followup_empty), false);
+        if (decision.target == DetailFollowUpActionController.Target.TABLET_FOLLOWUP) {
+            tabletComposerText = decision.query;
             return;
         }
         if (followUpInput != null) {
             followUpInput.setText(decision.query);
             followUpInput.setSelection(decision.query.length());
         }
-        runFollowUp();
     }
 
     private String buildGeneratingPreviewBody(int sourceCount) {
