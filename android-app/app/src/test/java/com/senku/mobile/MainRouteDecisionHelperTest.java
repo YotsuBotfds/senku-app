@@ -547,6 +547,78 @@ public final class MainRouteDecisionHelperTest {
     }
 
     @Test
+    public void installCompletionPolicyPublishesBrowseGuidesForBrowseRecentAndSavedRoutes() {
+        assertInstallCompletionAction(
+            false,
+            MainRouteDecisionHelper.browseHome(),
+            MainInstallCompletionPolicy.Action.PUBLISH_BROWSE_GUIDES
+        );
+        assertInstallCompletionAction(
+            false,
+            new MainRouteDecisionHelper.RouteState(
+                MainRouteDecisionHelper.Surface.RECENT_THREADS,
+                BottomTabDestination.ASK,
+                false
+            ),
+            MainInstallCompletionPolicy.Action.PUBLISH_BROWSE_GUIDES
+        );
+        assertInstallCompletionAction(
+            false,
+            new MainRouteDecisionHelper.RouteState(
+                MainRouteDecisionHelper.Surface.SAVED_GUIDES,
+                BottomTabDestination.PINS,
+                false
+            ),
+            MainInstallCompletionPolicy.Action.PUBLISH_BROWSE_GUIDES
+        );
+    }
+
+    @Test
+    public void installCompletionPolicyPreservesCurrentResultsForSearchAskAndAutoQueryRoutes() {
+        assertInstallCompletionAction(
+            false,
+            new MainRouteDecisionHelper.RouteState(
+                MainRouteDecisionHelper.Surface.SEARCH_RESULTS,
+                BottomTabDestination.HOME,
+                false
+            ),
+            MainInstallCompletionPolicy.Action.PRESERVE_CURRENT_RESULTS
+        );
+        assertInstallCompletionAction(
+            false,
+            new MainRouteDecisionHelper.RouteState(
+                MainRouteDecisionHelper.Surface.ASK_RESULTS,
+                BottomTabDestination.ASK,
+                true
+            ),
+            MainInstallCompletionPolicy.Action.PRESERVE_CURRENT_RESULTS
+        );
+        assertInstallCompletionAction(
+            true,
+            MainRouteDecisionHelper.browseHome(),
+            MainInstallCompletionPolicy.Action.PRESERVE_CURRENT_RESULTS
+        );
+        assertInstallCompletionAction(
+            true,
+            new MainRouteDecisionHelper.RouteState(
+                MainRouteDecisionHelper.Surface.RECENT_THREADS,
+                BottomTabDestination.ASK,
+                false
+            ),
+            MainInstallCompletionPolicy.Action.PRESERVE_CURRENT_RESULTS
+        );
+        assertInstallCompletionAction(
+            true,
+            new MainRouteDecisionHelper.RouteState(
+                MainRouteDecisionHelper.Surface.SAVED_GUIDES,
+                BottomTabDestination.PINS,
+                false
+            ),
+            MainInstallCompletionPolicy.Action.PRESERVE_CURRENT_RESULTS
+        );
+    }
+
+    @Test
     public void routeStateNormalizesVirtualDestinationsToVisibleOwners() {
         MainRouteDecisionHelper.RouteState search =
             new MainRouteDecisionHelper.RouteState(
@@ -874,6 +946,14 @@ public final class MainRouteDecisionHelperTest {
             expected.activePhoneTab,
             expected.askLaneActive
         );
+    }
+
+    private static void assertInstallCompletionAction(
+        boolean autoQueryPending,
+        MainRouteDecisionHelper.RouteState routeState,
+        MainInstallCompletionPolicy.Action expected
+    ) {
+        assertEquals(expected, MainInstallCompletionPolicy.resolve(autoQueryPending, routeState));
     }
 
     private static void assertRoute(

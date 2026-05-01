@@ -265,6 +265,51 @@ public final class ReviewDemoPolicyTest {
     }
 
     @Test
+    public void disabledReviewModeDoesNotUseReviewFixturesForSearchOrQueryAnswerPaths() {
+        List<SearchResult> searchResults = Arrays.asList(
+            guideWithId("Live Rain Shelter Result", "GD-501"),
+            guideWithId("Live Water Result", "GD-502")
+        );
+        ReviewDemoPolicy.GuideLookup forbiddenFixtureLookup = new ReviewDemoPolicy.GuideLookup() {
+            @Override
+            public SearchResult loadGuideById(String guideId) {
+                throw new AssertionError("Review fixture lookup should stay disabled for " + guideId);
+            }
+        };
+
+        assertSame(
+            searchResults,
+            ReviewDemoPolicy.shapeSearchResults(
+                "rain shelter",
+                false,
+                searchResults,
+                forbiddenFixtureLookup
+            )
+        );
+
+        List<SearchResult> adjacent = rainShelterAdjacentGuides();
+        assertEquals(
+            "",
+            ReviewDemoPolicy.buildRainShelterUncertainFitAnswerBody(
+                false,
+                "How do I build a simple rain shelter from tarp and cord?",
+                adjacent,
+                false
+            )
+        );
+
+        List<SearchResult> shapedSources = ReviewDemoPolicy.shapeRainShelterUncertainFitSources(
+            false,
+            "How do I build a simple rain shelter from tarp and cord?",
+            adjacent,
+            false
+        );
+        assertEquals(adjacent, shapedSources);
+        assertFalse(containsGuideId(shapedSources, "GD-220"));
+        assertFalse(containsGuideId(shapedSources, "GD-132"));
+    }
+
+    @Test
     public void reviewRainShelterUncertainFitAnswerRequiresEnabledPolicy() {
         List<SearchResult> adjacent = rainShelterAdjacentGuides();
 
@@ -468,6 +513,18 @@ public final class ReviewDemoPolicyTest {
             "",
             ""
         );
+    }
+
+    private static boolean containsGuideId(List<SearchResult> results, String guideId) {
+        if (results == null) {
+            return false;
+        }
+        for (SearchResult result : results) {
+            if (result != null && guideId.equals(result.guideId)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private static void assertReviewFixturesDisabled(boolean productReviewMode) {

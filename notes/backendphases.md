@@ -1,6 +1,6 @@
 # Backend Cleanup Phase Tracker
 
-Last updated after the 2026-05-01 backend cleanup/proof refresh.
+Last updated after commit `20fe6ad` on 2026-04-30.
 
 Purpose: prevent future agents from rerunning Ask/query backend cleanup that is already complete. Keep this note short; implementation detail belongs in commits and tests.
 
@@ -15,10 +15,13 @@ Purpose: prevent future agents from rerunning Ask/query backend cleanup that is 
 - Review fixture policy is guarded so demo/review-only data does not bleed into
   production query paths.
 - No-source Ask handling now fails closed instead of fabricating unsupported
-  output.
-- Physical and instrumented smoke evidence was refreshed, including stronger
-  presets for shared input, Saved/back, answer provenance, and phone/tablet
-  route checks.
+  output, including the explicit no-source route and generated-answer
+  safeguard tests.
+- Install completion preservation is guarded by policy/tests so completion is
+  not cleared by later route refreshes.
+- Topic-tag parsing is delimiter-robust for saved/current-head route output.
+- Physical smoke evidence passed with refreshed saved-route checks, and the
+  instrumented UI smoke contract now includes install_contract evidence.
 
 ## Remaining Next Slices
 
