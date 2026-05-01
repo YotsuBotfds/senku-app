@@ -145,6 +145,51 @@ public final class MainRouteCoordinatorTest {
     }
 
     @Test
+    public void askUnavailableOrNoSourceFailureClearsAskResultsBeforeBack() {
+        RecordingHost host = new RecordingHost();
+        MainRouteCoordinator coordinator = new MainRouteCoordinator(host);
+        coordinator.enterAskResultsRoute();
+        host.calls.clear();
+
+        coordinator.applyRouteState(MainRouteDecisionHelper.askUnavailableOrNoSourceFailure());
+
+        assertRoute(
+            coordinator.currentRouteState(),
+            MainRouteDecisionHelper.Surface.RECENT_THREADS,
+            BottomTabDestination.ASK,
+            false
+        );
+        assertTrue(coordinator.isBrowseModeActive());
+        assertFalse(coordinator.askLaneActive());
+        assertEquals(
+            Arrays.asList("route:RECENT_THREADS:ASK:false:browse=true"),
+            host.calls
+        );
+
+        host.calls.clear();
+        assertFalse(coordinator.applyHomeChromeBackTransition());
+        assertTrue(host.calls.isEmpty());
+
+        assertTrue(coordinator.applySystemBackTransition());
+        assertRoute(
+            coordinator.currentRouteState(),
+            MainRouteDecisionHelper.Surface.BROWSE,
+            BottomTabDestination.HOME,
+            false
+        );
+        assertEquals(
+            Arrays.asList(
+                "route:BROWSE:HOME:false:browse=true",
+                "updateActionLabels",
+                "dismissSearchKeyboard",
+                "ensureBrowseHomeVisible",
+                "scrollBrowseToTop"
+            ),
+            host.calls
+        );
+    }
+
+    @Test
     public void disabledNavigationHostLeavesTabTapUnhandled() {
         RecordingHost host = new RecordingHost();
         host.handleNavigation = false;
