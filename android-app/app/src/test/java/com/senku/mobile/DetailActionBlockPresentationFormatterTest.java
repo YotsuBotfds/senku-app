@@ -263,6 +263,60 @@ public final class DetailActionBlockPresentationFormatterTest {
     }
 
     @Test
+    public void emergencyPresentationPolicySeparatesImmediateActionsFromProofBoundaries() {
+        assertTrue(DetailEmergencyPresentationPolicy.isImmediateActionHeading("Immediate actions"));
+        assertTrue(DetailEmergencyPresentationPolicy.isImmediateActionHeading("FIELD STEPS:"));
+        assertTrue(DetailEmergencyPresentationPolicy.isImmediateActionHeading("ANSWER GD-132 - Burn hazard response"));
+        assertFalse(DetailEmergencyPresentationPolicy.isImmediateActionHeading("Why this answer"));
+
+        assertTrue(DetailEmergencyPresentationPolicy.isProofBoundaryHeading("Why this answer"));
+        assertTrue(DetailEmergencyPresentationPolicy.isProofBoundaryHeading("Route, backend & proof"));
+        assertTrue(DetailEmergencyPresentationPolicy.isProofBoundaryHeading("Guide connection | Show"));
+        assertFalse(DetailEmergencyPresentationPolicy.isProofBoundaryHeading("Stop all hot work"));
+    }
+
+    @Test
+    public void emergencyPresentationPolicyReturnsOnlySemanticImmediateActionRows() {
+        List<String> actions = DetailEmergencyPresentationPolicy.extractImmediateActionLines(
+            "Short answer:\n" +
+                "Stop work immediately.\n\n" +
+                "Immediate actions:\n" +
+                "1. Stop all hot work. No new charges, no new pours.\n" +
+                "2) Clear the floor to 5 m radius. Move personnel upwind.\n\n" +
+                "Why this answer\n" +
+                "1. GD-132 - Foundry & Metal Casting.\n" +
+                "2. Backend route reviewed_card_runtime."
+        );
+
+        assertEquals(List.of(
+            "Stop all hot work. No new charges, no new pours.",
+            "Clear the floor to 5 m radius. Move personnel upwind."
+        ), actions);
+    }
+
+    @Test
+    public void emergencyPresentationPolicyHighRiskFallbackStopsBeforeProofRows() {
+        List<String> fallbackActions = DetailEmergencyPresentationPolicy.extractHighRiskActionCandidateLines(
+            "1. Apply direct pressure.\n" +
+                "2. Do not remove a deeply embedded object.\n\n" +
+                "Sources:\n" +
+                "1. GD-232 - First aid."
+        );
+        List<String> boundedActions = DetailEmergencyPresentationPolicy.extractHighRiskActionCandidateLines(
+            "Steps:\n" +
+                "1. Apply direct pressure.\n\n" +
+                "Sources:\n" +
+                "1. GD-232 - First aid."
+        );
+
+        assertEquals(List.of(
+            "Apply direct pressure.",
+            "Do not remove a deeply embedded object."
+        ), fallbackActions);
+        assertEquals(List.of("Apply direct pressure."), boundedActions);
+    }
+
+    @Test
     public void extractEmergencyActionSpecsStopsBeforeGuideConnectionChrome() {
         List<DetailActionBlockPresentationFormatter.EmergencyActionSpec> actions =
             DetailActionBlockPresentationFormatter.extractEmergencyActionSpecs(

@@ -300,7 +300,7 @@ final class DetailActionBlockPresentationFormatter {
         ActionBlockTextSanitizer sanitizer
     ) {
         ArrayList<EmergencyActionSpec> actions = new ArrayList<>();
-        for (String step : extractEmergencyStepLines(formattedAnswerText)) {
+        for (String step : DetailEmergencyPresentationPolicy.extractImmediateActionLines(formattedAnswerText)) {
             String cleaned = sanitizeActionBlockText(step, sanitizer);
             if (cleaned.isEmpty()) {
                 continue;
@@ -350,27 +350,6 @@ final class DetailActionBlockPresentationFormatter {
         return title;
     }
 
-    private static List<String> extractEmergencyStepLines(String answerText) {
-        ArrayList<String> steps = new ArrayList<>();
-        String[] lines = safe(answerText).split("\\R");
-        boolean collectingActionSection = false;
-        for (String rawLine : lines) {
-            String line = safe(rawLine).trim();
-            String normalized = line.toLowerCase(Locale.US);
-            if (isActionSectionHeading(normalized)) {
-                collectingActionSection = true;
-                continue;
-            }
-            if (collectingActionSection && isNonActionSectionHeading(normalized)) {
-                break;
-            }
-            if (collectingActionSection && line.matches("^\\d+[.)]\\s+.*")) {
-                steps.add(line.replaceFirst("^\\d+[.)]\\s*", "").trim());
-            }
-        }
-        return steps;
-    }
-
     private static String trimEmergencyActionTitle(String text) {
         return safe(text).trim().replaceFirst("[.!?]+$", "").trim();
     }
@@ -407,7 +386,7 @@ final class DetailActionBlockPresentationFormatter {
         ActionBlockTextSanitizer sanitizer
     ) {
         ArrayList<ActionBlockSpec> blocks = new ArrayList<>();
-        List<String> steps = extractStepLines(formattedAnswerText);
+        List<String> steps = DetailEmergencyPresentationPolicy.extractHighRiskActionCandidateLines(formattedAnswerText);
         if (steps.isEmpty()) {
             return blocks;
         }
@@ -443,84 +422,6 @@ final class DetailActionBlockPresentationFormatter {
             blocks.add(new ActionBlockSpec(ActionBlockKind.ESCALATE, ACTION_LABEL_ESCALATE, escalate));
         }
         return blocks;
-    }
-
-    private static List<String> extractStepLines(String answerText) {
-        ArrayList<String> steps = new ArrayList<>();
-        String[] lines = safe(answerText).split("\\R");
-        boolean sawActionSection = false;
-        boolean collectingActionSection = false;
-        for (String rawLine : lines) {
-            String line = safe(rawLine).trim();
-            String normalized = line.toLowerCase(Locale.US);
-            if (isActionSectionHeading(normalized)) {
-                sawActionSection = true;
-                collectingActionSection = true;
-                continue;
-            }
-            if (collectingActionSection && isNonActionSectionHeading(normalized)) {
-                collectingActionSection = false;
-                continue;
-            }
-            if (line.matches("^\\d+[.)]\\s+.*")) {
-                if (!sawActionSection || collectingActionSection) {
-                    steps.add(line.replaceFirst("^\\d+[.)]\\s*", "").trim());
-                }
-                continue;
-            }
-        }
-        return steps;
-    }
-
-    private static boolean isActionSectionHeading(String normalizedLine) {
-        return "steps:".equals(normalizedLine)
-            || "steps".equals(normalizedLine)
-            || "field steps".equals(normalizedLine)
-            || "field steps:".equals(normalizedLine)
-            || "field actions".equals(normalizedLine)
-            || "field actions:".equals(normalizedLine)
-            || "immediate actions".equals(normalizedLine)
-            || "immediate actions:".equals(normalizedLine)
-            || "emergency actions".equals(normalizedLine)
-            || "emergency actions:".equals(normalizedLine)
-            || "emergency response:".equals(normalizedLine)
-            || "response actions:".equals(normalizedLine)
-            || "answer gd-132 - burn hazard response".equals(normalizedLine)
-            || "actions:".equals(normalizedLine);
-    }
-
-    private static boolean isNonActionSectionHeading(String normalizedLine) {
-        return normalizedLine.endsWith(":")
-            || normalizedLine.startsWith("watch")
-            || normalizedLine.startsWith("why this answer")
-            || normalizedLine.startsWith("why / source")
-            || normalizedLine.startsWith("why/source")
-            || normalizedLine.startsWith("why proof")
-            || normalizedLine.startsWith("why/proof")
-            || normalizedLine.startsWith("evidence")
-            || normalizedLine.startsWith("provenance")
-            || normalizedLine.startsWith("proof")
-            || normalizedLine.startsWith("source / why")
-            || normalizedLine.startsWith("source/why")
-            || normalizedLine.startsWith("source and why")
-            || normalizedLine.startsWith("source proof")
-            || normalizedLine.startsWith("route")
-            || normalizedLine.startsWith("backend")
-            || normalizedLine.startsWith("model")
-            || normalizedLine.startsWith("confidence")
-            || normalizedLine.startsWith("match type")
-            || normalizedLine.startsWith("reviewed card")
-            || normalizedLine.startsWith("answer status")
-            || normalizedLine.startsWith("normal answer")
-            || normalizedLine.startsWith("status")
-            || normalizedLine.startsWith("metadata")
-            || normalizedLine.startsWith("meta")
-            || normalizedLine.startsWith("source")
-            || normalizedLine.startsWith("sources")
-            || normalizedLine.startsWith("sources and proof")
-            || normalizedLine.startsWith("sources proof")
-            || normalizedLine.startsWith("guide connection")
-            || normalizedLine.startsWith("emergency context");
     }
 
     private String sanitizeActionBlockText(String text) {
