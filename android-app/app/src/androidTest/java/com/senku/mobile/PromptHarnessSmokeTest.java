@@ -4678,9 +4678,11 @@ public final class PromptHarnessSmokeTest {
 
     private boolean tapDetailPinControl(String guideId, boolean currentlyPinned) {
         Context context = ApplicationProvider.getApplicationContext();
-        String expectedText = context.getString(currentlyPinned ? R.string.detail_unpin : R.string.detail_pin);
+        String expectedText = context.getString(currentlyPinned ? R.string.detail_saved : R.string.detail_save);
         String expectedDescription = context.getString(
-            currentlyPinned ? R.string.detail_unpin_content_description : R.string.detail_pin_content_description,
+            currentlyPinned
+                ? R.string.detail_remove_saved_content_description
+                : R.string.detail_save_content_description,
             safe(guideId)
         );
         if (clickUiObject(By.desc(expectedDescription), 1_000L)
@@ -4726,9 +4728,11 @@ public final class PromptHarnessSmokeTest {
 
     private void assertDetailPinControlState(String expectedGuideId, boolean expectedPinned) {
         Context context = ApplicationProvider.getApplicationContext();
-        String expectedText = context.getString(expectedPinned ? R.string.detail_unpin : R.string.detail_pin);
+        String expectedText = context.getString(expectedPinned ? R.string.detail_saved : R.string.detail_save);
         String expectedDescription = context.getString(
-            expectedPinned ? R.string.detail_unpin_content_description : R.string.detail_pin_content_description,
+            expectedPinned
+                ? R.string.detail_remove_saved_content_description
+                : R.string.detail_save_content_description,
             safe(expectedGuideId)
         );
         InstrumentationRegistry.getInstrumentation().runOnMainSync(() -> {
