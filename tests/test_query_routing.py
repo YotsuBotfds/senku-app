@@ -13,6 +13,15 @@ from rag_claim_support import diagnose_claim_support
 
 
 class QueryRoutingTests(unittest.TestCase):
+    def _empty_lexical_results(self, *args, **kwargs):
+        return {
+            "ids": [[]],
+            "documents": [[]],
+            "metadatas": [[]],
+            "distances": [[]],
+            "_retrieval_kind": "lexical",
+        }
+
     def test_reviewed_card_route_policy_manifest_tracks_android_helper_scope(self):
         """Document reviewed-card route policy overlap without changing routing."""
         android_runtime = (
@@ -4698,7 +4707,9 @@ class QueryRoutingTests(unittest.TestCase):
             def query(self, **kwargs):
                 raise AssertionError("collection.query should not run on embedding mismatch")
 
-        with patch("query.embed_batch", return_value=[]):
+        with patch("query.embed_batch", return_value=[]), patch(
+            "query.query_lexical_index", side_effect=self._empty_lexical_results
+        ):
             with self.assertRaisesRegex(RuntimeError, "Embedding response count mismatch"):
                 query.retrieve_results("how do i build a house", DummyCollection(), 5)
 
@@ -4723,6 +4734,8 @@ class QueryRoutingTests(unittest.TestCase):
         with patch(
             "query.embed_batch",
             side_effect=lambda texts, *args, **kwargs: [[0.0] for _ in texts],
+        ), patch(
+            "query.query_lexical_index", side_effect=self._empty_lexical_results
         ):
             query.retrieve_results(question, DummyCollection(), 8)
 
@@ -4744,6 +4757,8 @@ class QueryRoutingTests(unittest.TestCase):
         with patch(
             "query.embed_batch",
             side_effect=lambda texts, *args, **kwargs: [[0.0] for _ in texts],
+        ), patch(
+            "query.query_lexical_index", side_effect=self._empty_lexical_results
         ):
             query.retrieve_results(
                 "Several kids at a shelter have mild diarrhea but are playful and drinking.",
