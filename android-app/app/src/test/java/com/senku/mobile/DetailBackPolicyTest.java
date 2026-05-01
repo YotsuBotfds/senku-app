@@ -202,6 +202,114 @@ public final class DetailBackPolicyTest {
     }
 
     @Test
+    public void sourceProvenanceReturnFromAnswerStackFinishesOnlyOpenedDetail() {
+        DetailBackPolicy.Decision openedSourceReturn = DetailBackPolicy.decide(
+            new DetailBackPolicy.Inputs(
+                false,
+                DetailBackPolicy.SourceRoute.GUIDE,
+                DetailBackPolicy.BackTrigger.GUIDE_RETURN
+            )
+        );
+        DetailBackPolicy.VisibleBackAffordance openedSourceBack = DetailBackPolicy.visibleBackAffordance(
+            new DetailBackPolicy.Inputs(
+                false,
+                DetailBackPolicy.SourceRoute.GUIDE,
+                DetailBackPolicy.BackTrigger.VISIBLE_BACK_BUTTON
+            )
+        );
+        DetailBackPolicy.Decision preservedAnswerContext = DetailBackPolicy.decide(
+            new DetailBackPolicy.Inputs(
+                false,
+                DetailBackPolicy.SourceRoute.ANSWER,
+                DetailBackPolicy.BackTrigger.VISIBLE_BACK_BUTTON
+            )
+        );
+
+        assertEquals(DetailBackPolicy.Effect.FINISH_ACTIVITY, openedSourceReturn.effect);
+        assertEquals(DetailBackPolicy.FinishBehavior.FINISH, openedSourceReturn.finishBehavior);
+        assertEquals(R.string.detail_back, openedSourceBack.labelResource);
+        assertEquals(R.string.detail_back_content_description, openedSourceBack.contentDescriptionResource);
+        assertFalse(openedSourceBack.longPressHomeShortcutEnabled);
+        assertEquals(DetailBackPolicy.Effect.FINISH_ACTIVITY, preservedAnswerContext.effect);
+        assertEquals(DetailBackPolicy.FinishBehavior.FINISH, preservedAnswerContext.finishBehavior);
+    }
+
+    @Test
+    public void crossReferenceProvenanceReturnFromAnswerStackFinishesOnlyOpenedDetail() {
+        DetailBackPolicy.Decision openedCrossReferenceReturn = DetailBackPolicy.decide(
+            new DetailBackPolicy.Inputs(
+                false,
+                DetailBackPolicy.SourceRoute.CROSS_REFERENCE_GUIDE,
+                DetailBackPolicy.BackTrigger.GUIDE_RETURN
+            )
+        );
+        DetailBackPolicy.VisibleBackAffordance openedCrossReferenceBack = DetailBackPolicy.visibleBackAffordance(
+            new DetailBackPolicy.Inputs(
+                false,
+                DetailBackPolicy.SourceRoute.CROSS_REFERENCE_GUIDE,
+                DetailBackPolicy.BackTrigger.VISIBLE_BACK_BUTTON
+            )
+        );
+        DetailBackPolicy.Decision preservedAnswerContext = DetailBackPolicy.decide(
+            new DetailBackPolicy.Inputs(
+                false,
+                DetailBackPolicy.SourceRoute.ANSWER,
+                DetailBackPolicy.BackTrigger.SYSTEM_BACK
+            )
+        );
+
+        assertEquals(DetailBackPolicy.Effect.FINISH_ACTIVITY, openedCrossReferenceReturn.effect);
+        assertEquals(DetailBackPolicy.FinishBehavior.FINISH, openedCrossReferenceReturn.finishBehavior);
+        assertEquals(R.string.detail_back, openedCrossReferenceBack.labelResource);
+        assertEquals(R.string.detail_back_content_description, openedCrossReferenceBack.contentDescriptionResource);
+        assertFalse(openedCrossReferenceBack.longPressHomeShortcutEnabled);
+        assertEquals(DetailBackPolicy.Effect.FINISH_ACTIVITY, preservedAnswerContext.effect);
+        assertEquals(DetailBackPolicy.FinishBehavior.FINISH, preservedAnswerContext.finishBehavior);
+    }
+
+    @Test
+    public void taskRootVisibleBackReturnsHomeWhenNoAnswerContextIsUnderOpenedDetail() {
+        for (DetailBackPolicy.SourceRoute sourceRoute : DetailBackPolicy.SourceRoute.values()) {
+            DetailBackPolicy.Inputs taskRootVisibleBack = new DetailBackPolicy.Inputs(
+                true,
+                sourceRoute,
+                DetailBackPolicy.BackTrigger.VISIBLE_BACK_BUTTON
+            );
+
+            DetailBackPolicy.Decision decision = DetailBackPolicy.decide(taskRootVisibleBack);
+            DetailBackPolicy.VisibleBackAffordance affordance =
+                DetailBackPolicy.visibleBackAffordance(taskRootVisibleBack);
+
+            assertEquals(DetailBackPolicy.Effect.NAVIGATE_HOME, decision.effect);
+            assertEquals(DetailBackPolicy.FinishBehavior.FINISH, decision.finishBehavior);
+            assertEquals(R.string.home_button, affordance.labelResource);
+            assertEquals(R.string.detail_home_content_description, affordance.contentDescriptionResource);
+            assertFalse(affordance.longPressHomeShortcutEnabled);
+        }
+    }
+
+    @Test
+    public void stackedVisibleBackFinishesForEveryNonSavedDetailRoute() {
+        for (DetailBackPolicy.SourceRoute sourceRoute : DetailBackPolicy.SourceRoute.values()) {
+            DetailBackPolicy.Inputs stackedVisibleBack = new DetailBackPolicy.Inputs(
+                false,
+                sourceRoute,
+                DetailBackPolicy.BackTrigger.VISIBLE_BACK_BUTTON
+            );
+
+            DetailBackPolicy.Decision decision = DetailBackPolicy.decide(stackedVisibleBack);
+            DetailBackPolicy.VisibleBackAffordance affordance =
+                DetailBackPolicy.visibleBackAffordance(stackedVisibleBack);
+
+            assertEquals(DetailBackPolicy.Effect.FINISH_ACTIVITY, decision.effect);
+            assertEquals(DetailBackPolicy.FinishBehavior.FINISH, decision.finishBehavior);
+            assertEquals(R.string.detail_back, affordance.labelResource);
+            assertEquals(R.string.detail_back_content_description, affordance.contentDescriptionResource);
+            assertFalse(affordance.longPressHomeShortcutEnabled);
+        }
+    }
+
+    @Test
     public void answerSourceVisibleBackUsesHomeChromeAndNavigatesHomeAtTaskRoot() {
         DetailBackPolicy.Inputs answerTaskRoot = new DetailBackPolicy.Inputs(
             true,
