@@ -1,6 +1,7 @@
 package com.senku.mobile;
 
 import com.senku.ui.tablet.SourceState;
+import com.senku.ui.tablet.ThreadTurnState;
 import com.senku.ui.tablet.XRefState;
 
 import java.util.ArrayList;
@@ -32,6 +33,26 @@ final class DetailTabletStateBuilder {
                 safe(guide == null ? null : guide.guideId).trim(),
                 safe(guide == null ? null : guide.title).trim(),
                 DetailTabletSourceOwnershipPolicy.tabletXRefRelationLabel(guide)
+            ));
+        }
+        return states;
+    }
+
+    static ArrayList<ThreadTurnState> buildTurnStates(
+        List<DetailActivity.TabletTurnBinding> turnBindings,
+        DetailActivity.TabletTurnBinding activeTurn
+    ) {
+        ArrayList<ThreadTurnState> states = new ArrayList<>();
+        for (DetailActivity.TabletTurnBinding turn : turnBindings == null
+            ? Collections.<DetailActivity.TabletTurnBinding>emptyList()
+            : turnBindings) {
+            states.add(new ThreadTurnState(
+                turn.id,
+                turn.question,
+                turn.answer,
+                turn.status,
+                activeTurn != null && turn.id.equals(activeTurn.id),
+                turn.showQuestion
             ));
         }
         return states;

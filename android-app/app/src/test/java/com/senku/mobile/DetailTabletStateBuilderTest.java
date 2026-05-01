@@ -3,12 +3,19 @@ package com.senku.mobile;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
+import com.senku.ui.answer.AnswerContent;
+import com.senku.ui.answer.AnswerContentFactory;
+import com.senku.ui.answer.Evidence;
 import com.senku.ui.tablet.SourceState;
+import com.senku.ui.tablet.Status;
+import com.senku.ui.tablet.ThreadTurnState;
 import com.senku.ui.tablet.XRefState;
 
 import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Test;
@@ -139,6 +146,84 @@ public final class DetailTabletStateBuilderTest {
     }
 
     @Test
+    public void turnStatesPreserveBindingFieldsAndMarkActiveById() {
+        AnswerContent doneAnswer = answer("Earlier answer");
+        AnswerContent activeAnswer = answer("Current answer");
+        DetailActivity.TabletTurnBinding earlier = turn(
+            "T1",
+            "How do I prep?",
+            doneAnswer,
+            Status.Done,
+            true
+        );
+        DetailActivity.TabletTurnBinding current = turn(
+            "T2",
+            "What next?",
+            activeAnswer,
+            Status.Pending,
+            false
+        );
+
+        List<ThreadTurnState> states = DetailTabletStateBuilder.buildTurnStates(
+            List.of(earlier, current),
+            current
+        );
+
+        assertEquals(2, states.size());
+        assertEquals("T1", states.get(0).getId());
+        assertEquals("How do I prep?", states.get(0).getQuestion());
+        assertSame(doneAnswer, states.get(0).getAnswer());
+        assertEquals(Status.Done, states.get(0).getStatus());
+        assertFalse(states.get(0).isActive());
+        assertTrue(states.get(0).getShowQuestion());
+        assertEquals("T2", states.get(1).getId());
+        assertSame(activeAnswer, states.get(1).getAnswer());
+        assertEquals(Status.Pending, states.get(1).getStatus());
+        assertTrue(states.get(1).isActive());
+        assertFalse(states.get(1).getShowQuestion());
+    }
+
+    @Test
+    public void turnStatesUseActiveTurnIdRatherThanObjectIdentity() {
+        DetailActivity.TabletTurnBinding current = turn(
+            "T2",
+            "What next?",
+            answer("Current answer"),
+            Status.Active,
+            true
+        );
+        DetailActivity.TabletTurnBinding sameIdSelection = turn(
+            "T2",
+            "Different object",
+            answer("Selection answer"),
+            Status.Done,
+            false
+        );
+
+        List<ThreadTurnState> states = DetailTabletStateBuilder.buildTurnStates(
+            List.of(current),
+            sameIdSelection
+        );
+
+        assertEquals(1, states.size());
+        assertTrue(states.get(0).isActive());
+    }
+
+    @Test
+    public void turnStatesAllowMissingInputAndNoActiveTurn() {
+        List<ThreadTurnState> emptyStates = DetailTabletStateBuilder.buildTurnStates(null, null);
+        List<ThreadTurnState> inactiveStates = DetailTabletStateBuilder.buildTurnStates(
+            List.of(turn("T1", "Guide", answer("Guide body"), Status.Active, false)),
+            null
+        );
+
+        assertTrue(emptyStates.isEmpty());
+        assertEquals(1, inactiveStates.size());
+        assertFalse(inactiveStates.get(0).isActive());
+        assertFalse(inactiveStates.get(0).getShowQuestion());
+    }
+
+    @Test
     public void visualOwnerUsesGenericQuestionSourceOverlap() {
         SearchResult abrasives = topicSource(
             "GD-220",
@@ -214,5 +299,33 @@ public final class DetailTabletStateBuilderTest {
 
     private static SearchResult topicSource(String guideId, String title, String topicTags) {
         return new SearchResult(title, "", "", "", guideId, "", "", "", "", "", "", topicTags);
+    }
+
+    private static DetailActivity.TabletTurnBinding turn(
+        String id,
+        String question,
+        AnswerContent answer,
+        Status status,
+        boolean showQuestion
+    ) {
+        return new DetailActivity.TabletTurnBinding(
+            id,
+            question,
+            answer,
+            status,
+            showQuestion,
+            new ArrayList<>()
+        );
+    }
+
+    private static AnswerContent answer(String body) {
+        return AnswerContentFactory.fromRenderedAnswer(
+            body,
+            1,
+            "",
+            0.0,
+            Evidence.Moderate,
+            false
+        );
     }
 }

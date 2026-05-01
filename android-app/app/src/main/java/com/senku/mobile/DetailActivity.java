@@ -2804,17 +2804,10 @@ public final class DetailActivity extends AppCompatActivity {
         SearchResult visualOwnerSource = resolveTabletVisualOwnerSource(turnBindings, activeSource);
         ensureTabletEvidenceSelection(visualOwnerSource);
 
-        ArrayList<ThreadTurnState> turns = new ArrayList<>();
-        for (TabletTurnBinding turn : turnBindings) {
-            turns.add(new ThreadTurnState(
-                turn.id,
-                turn.question,
-                turn.answer,
-                turn.status,
-                activeTurn != null && turn.id.equals(activeTurn.id),
-                turn.showQuestion
-            ));
-        }
+        ArrayList<ThreadTurnState> turns = DetailTabletStateBuilder.buildTurnStates(
+            turnBindings,
+            activeTurn
+        );
 
         ArrayList<SourceState> sources = activeTurn == null
             ? new ArrayList<>()
@@ -11657,7 +11650,7 @@ public final class DetailActivity extends AppCompatActivity {
         }
     }
 
-    private static final class TabletTurnBinding {
+    static final class TabletTurnBinding {
         final String id;
         final String question;
         final AnswerContent answer;
