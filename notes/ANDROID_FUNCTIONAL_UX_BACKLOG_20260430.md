@@ -1,6 +1,6 @@
 # Android Functional UX Backlog - 2026-04-30
 
-Status after evening functional/code-health head `3b2bae3`.
+Status after pushed validation/code-health head `51ae1f69`.
 
 ## Fixed This Loop
 
@@ -32,6 +32,23 @@ Status after evening functional/code-health head `3b2bae3`.
   `PackAnswerContextSectionLoader`, with focused Pack tests and
   `PackRepositoryAnswerContextIntegrationTest` proving the repository
   `buildGuideAnswerContext()` path against a tiny SQLite fixture.
+- `74ab01c9` extracted presentation helper boundaries for prompt-harness
+  artifacts, detail emergency actions, detail source stacks, linked-guide cues,
+  and tablet evidence visibility.
+- `71a99de0` extracted route/retrieval helpers:
+  `MainCategoryFilterController`, `PackWaterDistributionAnchorPolicy`,
+  `PackRouteFocusedResultRanker`, and the split
+  `PackRouteRefinementPolicy` helper responsibilities.
+- `51ae1f69` fixed prompt expectation validation so empty structured primary
+  expected-guide fields are valid when the prompt metadata intentionally leaves
+  the primary guide blank.
+- The current automation cleanup wave extracted `MainAutomationRouteController`
+  so intent-driven Ask/Search handoffs apply through a tested host boundary
+  instead of direct `MainActivity` branching, and added JVM route-family
+  coverage for broad-house, cabin weatherproofing/window, and food-theft
+  governance variants.
+- Prompt expectation validation now also accepts blank-string retrieval primary
+  fields, keeping JSON and Markdown blank-primary metadata consistent.
 
 ## Current Proof
 
@@ -45,6 +62,14 @@ Status after evening functional/code-health head `3b2bae3`.
   `:app:testDebugUnitTest` focused route/review/search suites,
   `:app:assembleDebugAndroidTest`, and physical phone functional preset on
   `RFCX607ZM8L` all passed after `3b2bae3`.
+- Latest reported pushed validation after `51ae1f69`: direct pack guard
+  passed; the FTS fallback matrix passed on `emulator-5554`; the non-Android
+  regression gate passes with `-AllowRetrievalWarnings` and still reports the
+  3 known retrieval warnings.
+- Latest local smoke after the automation route extraction: fresh build/install
+  `phone-functional` PromptHarness smoke on `emulator-5554` passed 3/3 tests
+  with screenshots, dumps, and logcat captured under
+  `artifacts/instrumented_ui_smoke/20260501_063203_907`.
 
 ## Top Queue - Phone Chrome Normalization
 
@@ -151,8 +176,9 @@ the exported mocks.
      mapping as well as RecyclerView binding.
    - Status: in progress. `SearchResultCardModelMapper` is live and now owns
      multiple pure display labels/descriptions; recent tests assert semantic
-     display contracts instead of exact incidental copy. Continue trimming only
-     small pure helpers from the adapter.
+     display contracts instead of exact incidental copy. Presentation helper
+     boundaries were extended in `74ab01c9`; continue trimming only small pure
+     helpers from the adapter/presenter surfaces.
 
 10. Physical device install/smoke
    - ADB only reported the emulator matrix during the pre-noon check:

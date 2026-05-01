@@ -1,6 +1,6 @@
 # Backend Cleanup Phase Tracker
 
-Last updated after local validation of the backend cleanup slices through physical smoke proof on 2026-05-01.
+Last updated after pushed validation and cleanup through `51ae1f69` on 2026-05-01.
 
 Purpose: prevent future agents from rerunning Ask/query backend cleanup that is already complete. Keep this note short; implementation detail belongs in commits and tests.
 
@@ -104,6 +104,35 @@ Purpose: prevent future agents from rerunning Ask/query backend cleanup that is 
   delegates guide-section loading. Proof includes focused Pack repository
   tests plus `PackRepositoryAnswerContextIntegrationTest`, which exercises
   `buildGuideAnswerContext()` against a tiny on-device SQLite pack.
+- Presentation helper boundaries are current through `74ab01c9`:
+  prompt-harness artifact writing, detail emergency action text, detail source
+  stack policy, linked-guide cue policy, and tablet evidence visibility now sit
+  behind focused helpers instead of presenter/test bodies.
+- Route and retrieval helper boundaries are current through `71a99de0`:
+  `MainCategoryFilterController` owns main category filter behavior,
+  `PackWaterDistributionAnchorPolicy` owns water-distribution anchor routing,
+  `PackRouteFocusedResultRanker` owns focused route ranking, and
+  `PackRouteRefinementPolicy` was split so refinement helpers stay isolated
+  from executor/repository orchestration.
+- Prompt expectation validation is current through `51ae1f69`: empty
+  structured primary expected-guide fields are accepted by the validator
+  instead of being treated as malformed prompt metadata.
+- Automation intent route application now has a controller boundary:
+  `MainAutomationRouteController` applies `MainAutomationIntentPolicy`
+  decisions through host callbacks, while `MainActivity` keeps lifecycle and
+  rendering ownership. Focused proof covers apply, empty Ask, wait-for-repo,
+  Ask run, and Search run paths.
+- External-review route-family JVM proof now covers additional broad-house,
+  cabin weatherproofing/window, and food-theft/governance variants without
+  relying on a slow current-head device search.
+- Prompt expectation validation also accepts blank-string retrieval primary
+  expected-guide fields so JSON and Markdown blank-primary metadata behave
+  consistently.
+- Latest reported proof: direct pack guard passed; the FTS fallback matrix
+  passed on `emulator-5554`; the non-Android regression gate passes with
+  `-AllowRetrievalWarnings` and still reports the 3 known retrieval warnings;
+  a fresh installed `phone-functional` PromptHarness smoke passed on
+  `emulator-5554` with 3/3 tests.
 
 ## Remaining Next Slices
 
@@ -114,6 +143,12 @@ Purpose: prevent future agents from rerunning Ask/query backend cleanup that is 
   effects outside `MainResultPublicationPolicy`.
 - Keep repository cleanup incremental around remaining pure policy/helper
   extraction with parity tests.
+- Do not collapse the new presentation, category-filter, route-ranking,
+  water-distribution anchor, or route-refinement helper boundaries back into
+  activity/repository/executor bodies.
+- Keep automation intent route handling in `MainAutomationRouteController`;
+  future automation behavior should extend the controller/policy tests instead
+  of adding new intent branches directly to `MainActivity`.
 - Keep review/demo fixture gates explicit when adding mocks or preview labels so
   production query paths stay fixture-free.
 - Prefer backend/code-health slices that remove mixed responsibilities from

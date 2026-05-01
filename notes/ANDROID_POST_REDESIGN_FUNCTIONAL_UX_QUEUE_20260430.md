@@ -37,17 +37,34 @@ Worker M tracking note only. No Android source or test edits in this lane.
   `artifacts/ui_state_pack/wave69_integrated_final/20260429_081538` and
   `artifacts/mocks`.
 - Later backend cleanup commits on 2026-05-01 (`7ac07a3d`, `ea9284bc`,
-  `cd0812b4`, `164d6ca2`) reduced cleanup debt without changing the product UX
-  target: result publication has a policy presentation boundary,
-  follow-up/harness helper seams are extracted, copy-sensitive tests prefer
-  semantic assertions, and answer-context guide-section loading moved out of
-  `PackRepository` with focused repository plus androidTest proof.
+  `cd0812b4`, `164d6ca2`, `74ab01c9`, `71a99de0`, `51ae1f69`) reduced
+  cleanup debt without changing the product UX target: result publication has
+  a policy presentation boundary, follow-up/harness helper seams are extracted,
+  copy-sensitive tests prefer semantic assertions, answer-context guide-section
+  loading moved out of `PackRepository`, presentation helper boundaries now
+  cover prompt-harness artifacts/detail source stacks/linked-guide cues/tablet
+  evidence visibility, route/retrieval helpers now cover
+  `MainCategoryFilterController`, `PackWaterDistributionAnchorPolicy`,
+  `PackRouteFocusedResultRanker`, and the split
+  `PackRouteRefinementPolicy`; automation intent route application now lives
+  behind `MainAutomationRouteController`; and prompt expectation validation now
+  accepts intentionally empty structured or blank-string primary expected-guide
+  fields.
+- Latest reported pushed validation after `51ae1f69`: direct pack guard
+  passed; the FTS fallback matrix passed on `emulator-5554`; the non-Android
+  regression gate passes with `-AllowRetrievalWarnings` and still reports the
+  3 known retrieval warnings.
+- Latest local smoke after automation route extraction: fresh build/install
+  `phone-functional` PromptHarness smoke on `emulator-5554` passed 3/3 tests.
 
 ## Functional UX Queue
 
 1. Ask handoff
    - Landed: empty auto-Ask handoff is now a unit-covered Ask lane entry
      instead of a search detour.
+   - Current automation intent handling is centralized in
+     `MainAutomationRouteController`; keep future Ask/Search automation changes
+     in that controller/policy test boundary.
    - Verify that every visible Ask affordance submits to the Ask/answer flow,
      including tablet rail buttons, restored detail state, IME Enter, and
      hardware Enter.
@@ -130,7 +147,9 @@ Worker M tracking note only. No Android source or test edits in this lane.
      only on visual home/search/detail captures.
    - Preserve the new helper boundaries when adding proof variants: do not
      inline result publication back into `MainActivity`, do not add new direct
-     reflection helpers to `PromptHarnessSmokeTest`, and avoid exact-copy
+     reflection helpers to `PromptHarnessSmokeTest`, do not fold the category
+     filter, water-distribution anchor, focused route ranker, or route
+     refinement helpers back into orchestration classes, and avoid exact-copy
      assertions unless the copy itself is the product contract.
 
 4. **Final proof**
