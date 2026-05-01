@@ -11823,62 +11823,43 @@ public final class DetailActivity extends AppCompatActivity {
             : detailGuideContextPresentationFormatter().buildActiveGuideContextPrimaryLabel(
                 buildGuideContextPresentationState()
             );
-        if (!navigation.shouldLoadGuideBeforeOpen) {
-            startActivity(newGuideIntent(
-                this,
-                navigation.source,
-                conversationId,
-                guideModeLabel,
-                guideModeSummary,
-                guideModeAnchorLabel
-            ));
-            return;
-        }
-
-        executor.execute(() -> {
-            SearchResult target = navigation.source;
-            int harnessToken = beginHarnessTask(navigation.harnessTaskLabel);
-            try {
-                PackRepository repo = ensureRepository();
-                SearchResult loadedGuide = repo.loadGuideById(navigation.guideId);
-                if (loadedGuide != null) {
-                    target = detailSourcePresentationFormatter().mergeGuideForSourceNavigation(
-                        navigation.source,
-                        loadedGuide
-                    );
-                }
-            } catch (Exception exc) {
-                Log.w(TAG, navigation.loadFailureLogLabel + " guideId=" + navigation.guideId, exc);
-            }
-            SearchResult finalTarget = target;
-            runTrackedOnUiThread(harnessToken, () -> {
-                if (isFinishing() || isDestroyed()) {
-                    return;
-                }
+        openResolvedGuide(
+            navigation,
+            resolvedGuide ->
                 startActivity(newGuideIntent(
                     this,
-                    finalTarget,
+                    resolvedGuide,
                     conversationId,
                     guideModeLabel,
                     guideModeSummary,
                     guideModeAnchorLabel
-                ));
-            });
-        });
+                ))
+        );
     }
 
     private void openCrossReferenceGuide(SearchResult guide, SearchResult sourceAnchor) {
         DetailSourceOpenNavigationCoordinator.Decision navigation =
             DetailSourceOpenNavigationCoordinator.decideCrossReferenceGuide(guide);
         String anchorLabel = detailRelatedGuidePresentationFormatter().buildAnswerModeRelatedGuidesAnchorLabel(sourceAnchor);
+        openResolvedGuide(
+            navigation,
+            resolvedGuide ->
+                startActivity(newCrossReferenceGuideIntent(
+                    this,
+                    resolvedGuide,
+                    conversationId,
+                    anchorLabel,
+                    showUtilityRail()
+                ))
+        );
+    }
+
+    private void openResolvedGuide(
+        DetailSourceOpenNavigationCoordinator.Decision navigation,
+        ResolvedGuideOpenAction openAction
+    ) {
         if (!navigation.shouldLoadGuideBeforeOpen) {
-            startActivity(newCrossReferenceGuideIntent(
-                this,
-                navigation.source,
-                conversationId,
-                anchorLabel,
-                showUtilityRail()
-            ));
+            openAction.open(navigation.source);
             return;
         }
 
@@ -11902,15 +11883,13 @@ public final class DetailActivity extends AppCompatActivity {
                 if (isFinishing() || isDestroyed()) {
                     return;
                 }
-                startActivity(newCrossReferenceGuideIntent(
-                    this,
-                    finalTarget,
-                    conversationId,
-                    anchorLabel,
-                    showUtilityRail()
-                ));
+                openAction.open(finalTarget);
             });
         });
+    }
+
+    private interface ResolvedGuideOpenAction {
+        void open(SearchResult resolvedGuide);
     }
 
     static final class TabletEmergencyOverlayMargins {
