@@ -1,6 +1,6 @@
 # Backend Cleanup Phase Tracker
 
-Last updated after pushed cleanup through `dcd549f1` on 2026-05-01.
+Last updated after pushed cleanup through `27a8ffdf` on 2026-05-01.
 
 Purpose: prevent future agents from rerunning Ask/query backend cleanup that is already complete. Keep this note short; implementation detail belongs in commits and tests.
 
@@ -387,6 +387,12 @@ Purpose: prevent future agents from rerunning Ask/query backend cleanup that is 
 - Main shared-input submit ownership is current through `a6032456`: the visible
   Search/Ask submit action now routes through `MainSharedInputSubmitPolicy`,
   with focused chrome/phone-navigation coverage.
+- Main home category presentation is current through `4bc840a4`: manual-home
+  category shelf height decisions now live in
+  `MainHomeCategoryPresentationPolicy`, with phone/tablet focused coverage.
+- Detail docked-composer presentation cleanup is current through `efc6e97c`:
+  composer hint selection now lives in `DetailDockedComposerPresentationPolicy`
+  while `DetailActivity` keeps focus, IME, submit, and generation wiring.
 - Pack search finalization and telemetry cleanup is current through `dcd549f1`:
   `PackRepository` funnels repeated combined-hit projection, prerank telemetry,
   rerank timing, and rerank telemetry through `finalizeCombinedHitsForSearch()`
@@ -395,18 +401,25 @@ Purpose: prevent future agents from rerunning Ask/query backend cleanup that is 
   formatting, elapsed-time conversion, outcome labels, latency breakdown
   construction, and lexical/vector candidate telemetry now live in
   `PackSearchFinalizationPolicy` and `PackSearchTelemetryPolicy`.
+- Pack keyword scoring cleanup is current through `5e14994a`: keyword scoring
+  and metadata bonus composition now live in `PackKeywordScoringPolicy` without
+  touching SQL, route collection, vector/rerank/fusion, query parsing, or answer
+  anchors.
 - Detail tablet state-builder cleanup is current through `3085fc1e`:
   tablet xref row projection, turn-state projection, and anchor-state
   projection, plus guide-mode label/summary/anchor projection, now live in
   `DetailTabletStateBuilder`, with focused tests for label trimming, relation
   buckets, active-turn selection, evidence anchor projection, guide-mode answer
   and thread summaries, and null/empty input.
-- Tracker is refreshed through pushed head `dcd549f1`. Final focused gate after
-  that head passed: Python functional UX matrix contracts plus targeted
-  PowerShell parser/progress tests, `MainActivityPhoneNavigationTest`,
-  `SharedInputChromePolicyTest`, `DetailTabletStateBuilderTest`,
-  `PackRepositoryTelemetryTest`, `PackRepositoryRerankTimingTest`, and
-  `PackRepositoryRouteOutputParityTest`.
+- Functional harness proof is current through `27a8ffdf`: AndroidTest coverage
+  now includes no-result search system Back returning to Browse/Home with Ask
+  ownership cleared. This commit was compile-validated with
+  `assembleDebugAndroidTest`; it was not live-run on-device in the cleanup loop.
+- Tracker is refreshed through pushed head `27a8ffdf`. Final focused gate after
+  that head passed: `HomeCategoryPolicyTest`, `MainActivityHomeChromeTest`,
+  `DetailFollowupLandscapeComposerTest`, `EmergencySurfacePolicyTest`,
+  `PackRepositoryTest`, `PackTextMatchPolicyTest`,
+  `PackRepositoryRouteOutputParityTest`, and `assembleDebugAndroidTest`.
 
 ## Remaining Next Slices
 
@@ -426,15 +439,14 @@ Purpose: prevent future agents from rerunning Ask/query backend cleanup that is 
 - Keep repository cleanup incremental around remaining pure policy/helper
   extraction with parity tests.
 - Architecture scout next priorities: continue pure Java detail tablet-state
-  extraction; then consider docked-composer presentation policy, shared-input
-  submit ownership, Pack lexical scoring extraction, Pack FTS runtime boundary,
-  and smoke harness helper splits. Avoid broad route-focused retrieval rewrites
-  and avoid `TabletDetailScreen.kt` refactors unless a visual regression demands
-  it.
+  extraction; then consider broader docked-composer model assembly,
+  `PackFtsRuntimeDetector` SQLite-bound detection extraction, and smoke harness
+  helper splits. Avoid broad route-focused retrieval rewrites and avoid
+  `TabletDetailScreen.kt` refactors unless a visual regression demands it.
 - Functional proof backlog from scout: physical Ask-owned submit proof on the
-  phone, zero-result search visible/system Back, Ask-unavailable/no-source Back,
-  task-root detail visible Back, and Saved tab semantics assertions in the
-  Android harness.
+  phone, zero-result search visible Back live proof, Ask-unavailable/no-source
+  Back, task-root detail visible Back, and Saved tab semantics assertions in
+  the Android harness.
 - UI normalization is a future explicit Android-only slice (`UI-NORM1 Shared
   Chrome Contract`): align `TopBar`, `BottomTabBar`/`NavRailMetrics`,
   `IdentityStrip`, `SenkuTypography`, XML text appearances/dimens, and Java
