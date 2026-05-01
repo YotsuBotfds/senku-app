@@ -3811,10 +3811,11 @@ public final class MainActivity extends AppCompatActivity {
     }
 
     private boolean shouldUseReviewHomeCategoryCounts(List<SearchResult> guides) {
-        return productReviewMode
-            && isManualHomeShellLayout()
-            && guides != null
-            && !guides.isEmpty();
+        return ReviewDemoPolicy.shouldUseHomeCategoryFixtureCounts(
+            productReviewMode,
+            isManualHomeShellLayout(),
+            guides != null && !guides.isEmpty()
+        );
     }
 
     private void applyCategoryDensityLayout(List<CategoryTileState> categoryTiles) {

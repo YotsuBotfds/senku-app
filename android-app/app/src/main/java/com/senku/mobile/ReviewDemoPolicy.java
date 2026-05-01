@@ -150,6 +150,16 @@ final class ReviewDemoPolicy {
         return ReviewDemoFixtureSet.homeCategoryCount(bucketKey);
     }
 
+    static boolean shouldUseHomeCategoryFixtureCounts(
+        boolean productReviewMode,
+        boolean manualHomeShell,
+        boolean hasGuides
+    ) {
+        return shouldApplyReviewDemoFixtures(productReviewMode)
+            && manualHomeShell
+            && hasGuides;
+    }
+
     static String shapeHomeSubtitle(boolean productReviewMode, int guideCount, String defaultSubtitle) {
         if (!shouldApplyReviewDemoFixtures(productReviewMode) || guideCount <= 0) {
             return safe(defaultSubtitle);

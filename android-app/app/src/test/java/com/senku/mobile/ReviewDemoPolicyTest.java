@@ -113,6 +113,14 @@ public final class ReviewDemoPolicyTest {
     }
 
     @Test
+    public void homeCategoryFixtureCountsRequireReviewModeManualShellAndGuides() {
+        assertTrue(ReviewDemoPolicy.shouldUseHomeCategoryFixtureCounts(true, true, true));
+        assertFalse(ReviewDemoPolicy.shouldUseHomeCategoryFixtureCounts(false, true, true));
+        assertFalse(ReviewDemoPolicy.shouldUseHomeCategoryFixtureCounts(true, false, true));
+        assertFalse(ReviewDemoPolicy.shouldUseHomeCategoryFixtureCounts(true, true, false));
+    }
+
+    @Test
     public void disabledModeKeepsActualHomeSubtitleAndReadyStatus() {
         assertEquals(
             "271 guides in your offline field manual",
