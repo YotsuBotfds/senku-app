@@ -1,6 +1,6 @@
 # Backend Cleanup Phase Tracker
 
-Last updated after cleanup through `acc43d0b` on 2026-05-01.
+Last updated after cleanup through `a9908b44` on 2026-05-01.
 
 Purpose: prevent future agents from rerunning Ask/query backend cleanup that is already complete. Keep this note short; implementation detail belongs in commits and tests.
 
@@ -490,6 +490,14 @@ Purpose: prevent future agents from rerunning Ask/query backend cleanup that is 
   policies, tablet search preview text uses Rev03 text appearances, and phone
   main XML visible text no longer depends on raw monospace/framework
   text-appearance islands.
+- Brittle functional guardrails are reduced through `a9908b44`: review-demo
+  fixture boundary proof now checks fixture API call boundaries instead of
+  broad raw-copy text sentinels, and the functional UX matrix has explicit
+  contract-test seams for child-runner override and device-preflight skipping
+  so watchdog, argument quoting, and build/install reuse behavior are tested
+  without long emulator loops.
+- Saved-flow canary proof after UI-NORM1 passed on `emulator-5556`:
+  `artifacts/android_functional_ux_smoke_canary/ui_norm_saved_20260501/20260501_131715_614/emulator-5556/summary.json`.
 - Latest reported validation after `acc43d0b`: focused JVM proof for
   `DetailTabletStateBuilderTest`, `SearchResultCardModelMapperTest`,
   `FollowUpComposerControllerTest`, `MainRouteCoordinatorTest`,
@@ -510,7 +518,12 @@ Purpose: prevent future agents from rerunning Ask/query backend cleanup that is 
   `.\\.venvs\\senku-validate\\Scripts\\python.exe -B -m unittest tests.test_run_android_functional_ux_smoke_matrix_contract tests.test_powershell_quality_gate -v`;
   `cd android-app; ./gradlew.bat :app:testDebugUnitTest --tests com.senku.ui.theme.TypographyTokenAuditTest --tests com.senku.ui.primitives.TopBarTest --tests com.senku.ui.primitives.BottomTabBarTest --tests com.senku.ui.tablet.TabletMainXmlShellParityTest --tests com.senku.ui.phone.PhoneMainXmlShellParityTest`;
   `cd android-app; ./gradlew.bat :app:assembleDebugAndroidTest`.
-- Tracker is refreshed through `acc43d0b`.
+- Additional validation after `a9908b44`: `ReviewDemoPolicyTest`,
+  `ReviewDemoFixtureBoundaryTest`, `ProductSearchCtaResourceLeakageTest`,
+  `tests.test_run_android_functional_ux_smoke_matrix_contract`, the PowerShell
+  parser gate for `scripts/run_android_functional_ux_smoke_matrix.ps1`, and
+  `git diff --check`.
+- Tracker is refreshed through `a9908b44`.
 
 ## Remaining Next Slices
 
