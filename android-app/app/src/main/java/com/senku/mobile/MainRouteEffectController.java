@@ -18,7 +18,7 @@ final class MainRouteEffectController {
 
         void scrollBrowseToTop();
 
-        void focusSearchInput();
+        void focusSharedInput();
 
         void scrollRecentThreadsIntoView();
 
@@ -53,7 +53,7 @@ final class MainRouteEffectController {
         Runnable dismissSearchKeyboard,
         Runnable ensureBrowseHomeVisible,
         Runnable scrollBrowseToTop,
-        Runnable focusSearchInput,
+        Runnable focusSharedInput,
         Runnable scrollRecentThreadsIntoView,
         Runnable prepareSavedGuidesDestination
     ) {
@@ -68,7 +68,7 @@ final class MainRouteEffectController {
             dismissSearchKeyboard,
             ensureBrowseHomeVisible,
             scrollBrowseToTop,
-            focusSearchInput,
+            focusSharedInput,
             scrollRecentThreadsIntoView,
             prepareSavedGuidesDestination
         );
@@ -178,7 +178,7 @@ final class MainRouteEffectController {
                 if (effects.isBrowseModeActive()) {
                     effects.scrollBrowseToTop();
                 }
-                effects.focusSearchInput();
+                effects.focusSharedInput();
                 break;
             case SHOW_RECENT_THREADS:
                 effects.dismissSearchKeyboard();
@@ -237,7 +237,7 @@ final class MainRouteEffectController {
         private final Runnable dismissSearchKeyboard;
         private final Runnable ensureBrowseHomeVisible;
         private final Runnable scrollBrowseToTop;
-        private final Runnable focusSearchInput;
+        private final Runnable focusSharedInput;
         private final Runnable scrollRecentThreadsIntoView;
         private final Runnable prepareSavedGuidesDestination;
 
@@ -252,7 +252,7 @@ final class MainRouteEffectController {
             Runnable dismissSearchKeyboard,
             Runnable ensureBrowseHomeVisible,
             Runnable scrollBrowseToTop,
-            Runnable focusSearchInput,
+            Runnable focusSharedInput,
             Runnable scrollRecentThreadsIntoView,
             Runnable prepareSavedGuidesDestination
         ) {
@@ -266,7 +266,7 @@ final class MainRouteEffectController {
             this.dismissSearchKeyboard = dismissSearchKeyboard;
             this.ensureBrowseHomeVisible = ensureBrowseHomeVisible;
             this.scrollBrowseToTop = scrollBrowseToTop;
-            this.focusSearchInput = focusSearchInput;
+            this.focusSharedInput = focusSharedInput;
             this.scrollRecentThreadsIntoView = scrollRecentThreadsIntoView;
             this.prepareSavedGuidesDestination = prepareSavedGuidesDestination;
         }
@@ -322,8 +322,8 @@ final class MainRouteEffectController {
         }
 
         @Override
-        public void focusSearchInput() {
-            focusSearchInput.run();
+        public void focusSharedInput() {
+            focusSharedInput.run();
         }
 
         @Override

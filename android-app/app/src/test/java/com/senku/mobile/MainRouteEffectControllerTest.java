@@ -59,7 +59,7 @@ public final class MainRouteEffectControllerTest {
             Arrays.asList(
                 "applyRouteState:RECENT_THREADS:ASK:true",
                 "updateActionLabels",
-                "focusSearchInput"
+                "focusSharedInput"
             ),
             effects.calls
         );
@@ -313,7 +313,7 @@ public final class MainRouteEffectControllerTest {
             () -> calls.add("dismissSearchKeyboard"),
             () -> calls.add("ensureBrowseHomeVisible"),
             () -> calls.add("scrollBrowseToTop"),
-            () -> calls.add("focusSearchInput"),
+            () -> calls.add("focusSharedInput"),
             () -> calls.add("scrollRecentThreadsIntoView"),
             () -> calls.add("prepareSavedGuidesDestination")
         );
@@ -328,7 +328,7 @@ public final class MainRouteEffectControllerTest {
         effects.dismissSearchKeyboard();
         effects.ensureBrowseHomeVisible();
         effects.scrollBrowseToTop();
-        effects.focusSearchInput();
+        effects.focusSharedInput();
         effects.scrollRecentThreadsIntoView();
         effects.prepareSavedGuidesDestination();
 
@@ -343,7 +343,7 @@ public final class MainRouteEffectControllerTest {
                 "dismissSearchKeyboard",
                 "ensureBrowseHomeVisible",
                 "scrollBrowseToTop",
-                "focusSearchInput",
+                "focusSharedInput",
                 "scrollRecentThreadsIntoView",
                 "prepareSavedGuidesDestination"
             ),
@@ -423,8 +423,8 @@ public final class MainRouteEffectControllerTest {
         }
 
         @Override
-        public void focusSearchInput() {
-            calls.add("focusSearchInput");
+        public void focusSharedInput() {
+            calls.add("focusSharedInput");
         }
 
         @Override

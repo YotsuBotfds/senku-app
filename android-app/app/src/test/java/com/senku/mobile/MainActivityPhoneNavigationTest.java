@@ -568,7 +568,7 @@ public final class MainActivityPhoneNavigationTest {
         );
 
         assertEquals(
-            Arrays.asList("updateActionLabels", "focusSearchInput"),
+            Arrays.asList("updateActionLabels", "focusSharedInput"),
             effects.calls
         );
     }
@@ -769,8 +769,8 @@ public final class MainActivityPhoneNavigationTest {
         }
 
         @Override
-        public void focusSearchInput() {
-            calls.add("focusSearchInput");
+        public void focusSharedInput() {
+            calls.add("focusSharedInput");
         }
 
         @Override

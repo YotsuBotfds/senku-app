@@ -1305,6 +1305,10 @@ public final class MainActivity extends AppCompatActivity {
         showSearchKeyboard();
     }
 
+    private void focusSharedInput() {
+        focusSearchInput();
+    }
+
     private void handleSharedQuerySubmit(String rawQuery) {
         handleSharedQuerySubmit(rawQuery, resolveSharedSubmitTarget(activePhoneTab, askLaneActive));
     }
@@ -2974,7 +2978,7 @@ public final class MainActivity extends AppCompatActivity {
             this::dismissSearchKeyboard,
             this::ensureBrowseHomeVisible,
             this::scrollBrowseToTop,
-            this::focusSearchInput,
+            this::focusSharedInput,
             () -> scrollBrowseSectionIntoView(recentThreadsSection),
             this::prepareSavedGuidesDestination
         );
