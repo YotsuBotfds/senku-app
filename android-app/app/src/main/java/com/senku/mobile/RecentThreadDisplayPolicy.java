@@ -28,7 +28,7 @@ final class RecentThreadDisplayPolicy {
                 displayPreviews.add(preview);
             }
         }
-        if (productReviewMode && manualHomeShell) {
+        if (ReviewDemoPolicy.shouldUseReviewRecentThreadPlaceholders(productReviewMode, manualHomeShell)) {
             while (displayPreviews.size() < maxCount) {
                 displayPreviews.add(buildReviewRecentThreadPlaceholder(productReviewMode, displayPreviews.size()));
             }

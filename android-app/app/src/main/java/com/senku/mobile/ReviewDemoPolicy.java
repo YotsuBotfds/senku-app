@@ -159,6 +159,14 @@ final class ReviewDemoPolicy {
             && hasGuides;
     }
 
+    static boolean shouldUseReviewRecentThreadPlaceholders(
+        boolean productReviewMode,
+        boolean manualHomeShell
+    ) {
+        return shouldApplyReviewDemoFixtures(productReviewMode)
+            && manualHomeShell;
+    }
+
     static String shapeHomeSubtitle(boolean productReviewMode, int guideCount, String defaultSubtitle) {
         if (!shouldApplyReviewDemoFixtures(productReviewMode) || guideCount <= 0) {
             return safe(defaultSubtitle);

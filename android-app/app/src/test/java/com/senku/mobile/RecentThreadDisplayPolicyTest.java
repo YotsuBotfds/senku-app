@@ -1,7 +1,9 @@
 package com.senku.mobile;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -50,6 +52,38 @@ public final class RecentThreadDisplayPolicyTest {
         assertEquals(
             1,
             RecentThreadDisplayPolicy.buildDisplayList(Collections.singletonList(live), true, false, MAX_COUNT).size()
+        );
+    }
+
+    @Test
+    public void normalProductRecentThreadsAreNotSynthetic() {
+        ChatSessionStore.ConversationPreview live = livePreview(
+            "product-conversation-live",
+            "which water filter should I pack",
+            NOW
+        );
+
+        List<ChatSessionStore.ConversationPreview> displayPreviews =
+            RecentThreadDisplayPolicy.buildDisplayList(Collections.singletonList(live), false, true, MAX_COUNT);
+
+        assertEquals(1, displayPreviews.size());
+        assertSame(live, displayPreviews.get(0));
+        assertFalse(displayPreviews.get(0).conversationId.startsWith("review-home-placeholder-"));
+    }
+
+    @Test
+    public void reviewPlaceholderPaddingIsGatedByReviewDemoPolicy() {
+        assertTrue(ReviewDemoPolicy.shouldUseReviewRecentThreadPlaceholders(true, true));
+        assertFalse(ReviewDemoPolicy.shouldUseReviewRecentThreadPlaceholders(false, true));
+        assertFalse(ReviewDemoPolicy.shouldUseReviewRecentThreadPlaceholders(true, false));
+
+        assertEquals(
+            0,
+            RecentThreadDisplayPolicy.buildDisplayList(Collections.emptyList(), false, true, MAX_COUNT).size()
+        );
+        assertEquals(
+            MAX_COUNT,
+            RecentThreadDisplayPolicy.buildDisplayList(Collections.emptyList(), true, true, MAX_COUNT).size()
         );
     }
 
