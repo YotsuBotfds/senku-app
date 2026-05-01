@@ -1,6 +1,6 @@
 # Backend Cleanup Phase Tracker
 
-Last updated after pushed cleanup through `9add4e86` on 2026-05-01.
+Last updated after pushed cleanup through `5e761339` on 2026-05-01.
 
 Purpose: prevent future agents from rerunning Ask/query backend cleanup that is already complete. Keep this note short; implementation detail belongs in commits and tests.
 
@@ -297,11 +297,35 @@ Purpose: prevent future agents from rerunning Ask/query backend cleanup that is 
 - Latest local proof after `9add4e86`: full Android
   `:app:testDebugUnitTest :app:assembleDebug :app:assembleDebugAndroidTest`
   passed.
-- Post-`9add4e86` harness cleanup: phone functional UX smoke presets now guard
-  against tablet-class devices before install/instrumentation, and the desktop
-  water-distribution route hint no longer catches generic gravity-fed water
-  filter prompts. Physical phone proof for `phone-functional-follow-up` passed
-  on `RFCX607ZM8L`.
+- Post-`9add4e86` harness cleanup is current through `627d3991`: phone
+  functional UX smoke presets now guard against tablet-class devices before
+  install/instrumentation, and the desktop water-distribution route hint no
+  longer catches generic gravity-fed water filter prompts. Physical phone proof
+  for `phone-functional-follow-up` passed on `RFCX607ZM8L`.
+- Recent-thread preview ordering is current through `cbdd3014`:
+  `ChatSessionStore` now makes same-timestamp preview ordering deterministic,
+  with focused store proof.
+- Review source stack copy is current through `e5edf94d`: foundry guidance now
+  uses the corrected quoted text across source-stack and tablet evidence
+  presentation tests.
+- No-BM25 route FTS ordering is current through `2e8b9292`:
+  `PackRouteFtsOrderPolicy` owns route FTS order-label construction while
+  `RetrievalRoutePolicy` and route SQL planning delegate to the focused policy.
+  Focused proof lives in `PackRouteFtsOrderPolicyTest` and
+  `PackRouteSearchSqlPolicyTest`.
+- Reviewed-card predicate ownership is current through `8164a7bf`:
+  `ReviewedCardPredicatePolicy` owns answer-card selector markers and drift
+  guards while `AnswerCardRuntime` keeps answer-plan assembly. Focused proof
+  lives in `AnswerCardRuntimeTest` and `ReviewedCardPredicatePolicyTest`.
+- Route-search SQL hardening is current through `855fe260`:
+  `PackRouteSearchSqlPolicy` locally filters null/blank tokens and categories
+  before generating FTS or LIKE plans, preserving valid SQL/args behavior while
+  no-oping invalid inputs. Focused proof lives in
+  `PackRouteSearchSqlPolicyTest`.
+- Functional UX smoke lock ergonomics are current through `5e761339`: the
+  matrix wrapper holds one outer device lock across all presets, child smoke
+  runs skip nested lock acquisition, and shared lock waits now log elapsed time,
+  remaining timeout, and lock path breadcrumbs.
 
 ## Remaining Next Slices
 
