@@ -8744,18 +8744,36 @@ public final class DetailActivity extends AppCompatActivity {
                 isCompactPortraitPhoneLayout(),
                 pinnableGuideId
             );
-            boolean pinVisible = !pinnableGuideId.isEmpty() && !compactPhoneAnswerChrome && !overflowVisible;
+            boolean pinVisible = DetailChromePresentationPolicy.shouldShowPinAction(
+                pinnableGuideId,
+                compactPhoneAnswerChrome,
+                overflowVisible
+            );
             boolean pinActive = pinVisible && PinnedGuideStore.contains(this, pinnableGuideId);
+            DetailChromePresentationPolicy.TopBarState topBarState =
+                DetailChromePresentationPolicy.buildTopBarState(
+                    buildRev03TopBarTitle(),
+                    buildRev03TopBarSubtitle(),
+                    buildRev03TopBarDangerPillLabel(),
+                    guidePhoneChrome,
+                    compactPhoneAnswerChrome,
+                    isCompactPortraitPhoneLayout(),
+                    pinnableGuideId,
+                    pinActive,
+                    answerMode && !buildTranscriptExportText().isEmpty(),
+                    overflowVisible,
+                    shouldAllowRev03TopBarTitleWrap()
+                );
             rev03TopBarHost.setTopBarState(
-                buildRev03TopBarTitle(),
-                buildRev03TopBarSubtitle(),
-                buildRev03TopBarDangerPillLabel(),
-                guidePhoneChrome || compactPhoneAnswerChrome || !isCompactPortraitPhoneLayout(),
-                pinVisible,
-                pinActive,
-                answerMode && !buildTranscriptExportText().isEmpty(),
-                overflowVisible,
-                shouldAllowRev03TopBarTitleWrap() ? 2 : 1,
+                topBarState.title,
+                topBarState.subtitle,
+                topBarState.dangerPillLabel,
+                topBarState.showHome,
+                topBarState.showPin,
+                topBarState.pinActive,
+                topBarState.showShare,
+                topBarState.showOverflow,
+                topBarState.titleMaxLines,
                 getString(
                     detailVisibleBackAffordance(DetailBackPolicy.BackTrigger.VISIBLE_BACK_BUTTON)
                         .contentDescriptionResource
@@ -8788,7 +8806,10 @@ public final class DetailActivity extends AppCompatActivity {
         if (rev03MetaStripHost != null) {
             List<MetaItem> items = buildRev03MetaStripItems();
             rev03MetaStripHost.updateItems(items);
-            boolean showMetaStrip = !items.isEmpty() && !shouldUseCompactPhoneAnswerChrome();
+            boolean showMetaStrip = DetailChromePresentationPolicy.shouldShowMetaStrip(
+                items,
+                shouldUseCompactPhoneAnswerChrome()
+            );
             rev03MetaStripHost.setVisibility(showMetaStrip ? View.VISIBLE : View.GONE);
             if (subtitleView != null) {
                 subtitleView.setVisibility(showMetaStrip ? View.GONE : View.VISIBLE);
@@ -8904,22 +8925,19 @@ public final class DetailActivity extends AppCompatActivity {
     }
 
     private String buildRev03TopBarTitle() {
-        if (answerMode) {
-            return buildPhoneAwareHeaderTitle(resolveDisplayGuideId(), buildPrimarySourceLabel());
-        }
-        if (!answerMode && phoneXmlDetailLayoutActive()) {
-            return buildPhoneGuideTopBarTitle();
-        }
-        String candidate = safe(currentTitle).trim();
-        if (!candidate.isEmpty()) {
-            return candidate;
-        }
-        return answerMode
-            ? detailSessionPresentationFormatter().buildCompactHeaderTitle(
-                detailSessionPresentationFormatter().resolvePrimaryGuideId(currentSources, currentSubtitle),
-                buildPrimarySourceLabel()
-            )
-            : buildGuideHeaderTitle();
+        String answerTitle = answerMode
+            ? buildPhoneAwareHeaderTitle(resolveDisplayGuideId(), buildPrimarySourceLabel())
+            : "";
+        String phoneGuideTitle = !answerMode && phoneXmlDetailLayoutActive() ? buildPhoneGuideTopBarTitle() : "";
+        String guideHeaderTitle = answerMode ? "" : buildGuideHeaderTitle();
+        return DetailChromePresentationPolicy.resolveTopBarTitle(
+            answerMode,
+            phoneXmlDetailLayoutActive(),
+            currentTitle,
+            answerTitle,
+            phoneGuideTitle,
+            guideHeaderTitle
+        );
     }
 
     private String buildRev03TopBarSubtitle() {
@@ -8931,76 +8949,61 @@ public final class DetailActivity extends AppCompatActivity {
     }
 
     private String buildPhoneGuideTopBarTitle() {
-        String guideId = resolveDisplayGuideId();
-        String title = safe(currentTitle).trim();
-        if (!guideId.isEmpty() && !title.isEmpty()) {
-            return "GUIDE " + guideId + HEADER_BULLET + title;
-        }
-        if (!guideId.isEmpty()) {
-            return "GUIDE " + guideId;
-        }
-        return title.isEmpty() ? getString(R.string.detail_header_guide) : "GUIDE" + HEADER_BULLET + title;
+        return DetailChromePresentationPolicy.resolvePhoneGuideTopBarTitle(
+            resolveDisplayGuideId(),
+            currentTitle,
+            getString(R.string.detail_header_guide),
+            HEADER_BULLET
+        );
     }
 
     private List<MetaItem> buildRev03MetaStripItems() {
-        ArrayList<MetaItem> items = new ArrayList<>();
-        if (answerMode) {
-            items.add(new MetaItem(
-                isCurrentThreadDetailRoute() ? "thread" : getString(R.string.meta_answered),
-                routeTone(),
-                true
-            ));
-            if (isCurrentEmergencySurfaceEligible()) {
-                items.add(new MetaItem("danger", Tone.Danger, false));
-            }
-            String backendValue = buildSerialBackendValue();
-            if (!backendValue.isEmpty()) {
-                items.add(new MetaItem(backendValue, Tone.Accent, false));
-            }
-            if (!isAbstainRoute() && currentAnswerConfidenceLabel != null) {
-                if (currentAnswerConfidenceLabel == OfflineAnswerEngine.ConfidenceLabel.MEDIUM) {
-                    items.add(new MetaItem("likely match", Tone.Default, false));
-                } else if (currentAnswerConfidenceLabel == OfflineAnswerEngine.ConfidenceLabel.LOW) {
-                    items.add(new MetaItem("low confidence", Tone.Warn, false));
-                }
-            }
-            items.add(new MetaItem(
-                getSourcesMetaLabel(currentAnswerShellSourceCount()),
+        if (!answerMode) {
+            return DetailChromePresentationPolicy.buildMetaStripItems(
+                false,
+                false,
+                "",
+                false,
+                "",
+                false,
+                false,
+                false,
+                false,
+                null,
+                "",
+                "",
+                "",
                 Tone.Default,
-                false
-            ));
-            int turns = sessionMemory == null ? 0 : sessionMemory.recentTurnSnapshots(6).size();
-            items.add(new MetaItem(
-                getTurnsMetaLabel(Math.max(1, turns)),
-                Tone.Default,
-                false
-            ));
-            items.add(new MetaItem(
-                getEvidenceTrustSurfaceLabel(),
-                evidenceTone(),
-                false
-            ));
-            if (phoneXmlDetailLayoutActive()) {
-                return items;
-            }
-            appendMetaStripTokens(items, splitSerialTokens(buildPackFreshnessMeta(true)));
-        } else {
-            items.add(new MetaItem(buildGuideModeChipText(), Tone.Accent, false));
-            appendMetaStripTokens(items, splitSerialTokens(buildPackFreshnessMeta(true)));
+                false,
+                buildGuideModeChipText(),
+                splitSerialTokens(buildPackFreshnessMeta(true))
+            );
         }
-        return items;
+        int turns = sessionMemory == null ? 0 : sessionMemory.recentTurnSnapshots(6).size();
+        boolean phoneXmlDetailLayout = phoneXmlDetailLayoutActive();
+        return DetailChromePresentationPolicy.buildMetaStripItems(
+            true,
+            isCurrentThreadDetailRoute(),
+            getString(R.string.meta_answered),
+            isCurrentEmergencySurfaceEligible(),
+            buildSerialBackendValue(),
+            isAbstainRoute(),
+            isAnswerShellUncertainFitRoute(),
+            isLowCoverageRoute(),
+            isDeterministicRoute(),
+            currentAnswerConfidenceLabel,
+            getSourcesMetaLabel(currentAnswerShellSourceCount()),
+            getTurnsMetaLabel(Math.max(1, turns)),
+            getEvidenceTrustSurfaceLabel(),
+            evidenceTone(),
+            phoneXmlDetailLayout,
+            "",
+            phoneXmlDetailLayout ? Collections.emptyList() : splitSerialTokens(buildPackFreshnessMeta(true))
+        );
     }
 
     static void appendMetaStripTokens(List<MetaItem> items, List<String> tokens) {
-        if (items == null || tokens == null) {
-            return;
-        }
-        for (String token : tokens) {
-            String cleaned = safe(token).trim();
-            if (!cleaned.isEmpty()) {
-                items.add(new MetaItem(cleaned, Tone.Default, false));
-            }
-        }
+        DetailChromePresentationPolicy.appendMetaStripTokens(items, tokens);
     }
 
     private ArrayList<String> splitSerialTokens(String value) {
@@ -9019,22 +9022,6 @@ public final class DetailActivity extends AppCompatActivity {
             count == 1 ? R.string.meta_turns_one : R.string.meta_turns_many,
             count
         );
-    }
-
-    private Tone routeTone() {
-        if (isAbstainRoute()) {
-            return Tone.Danger;
-        }
-        if (isAnswerShellUncertainFitRoute()) {
-            return Tone.Warn;
-        }
-        if (isLowCoverageRoute()) {
-            return Tone.Warn;
-        }
-        if (isDeterministicRoute()) {
-            return Tone.Ok;
-        }
-        return Tone.Default;
     }
 
     private Tone evidenceTone() {
