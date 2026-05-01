@@ -114,6 +114,71 @@ public final class MainSearchSuggestionPolicyTest {
         assertFalse(noBucketHint.get(0).isCategory());
     }
 
+    @Test
+    public void suggestionControllerRoutesCategorySuggestionToFilterRoute() {
+        MainSearchSuggestionPolicy.SearchSuggestion suggestion =
+            new MainSearchSuggestionPolicy.SearchSuggestion(
+                "Water & sanitation (1)",
+                "Suggested category",
+                "",
+                "water",
+                "Water & sanitation"
+            );
+
+        MainSearchSuggestionController.SuggestionRoute route = MainSearchSuggestionController.route(
+            suggestion,
+            Arrays.asList(
+                guide("GD-001", "Rain barrel basics", "water", "Water systems", "rainwater"),
+                guide("GD-002", "Cabin roof", "shelter", "Shelter", "roof")
+            ),
+            MainRouteDecisionHelper.browseHome()
+        );
+
+        assertTrue(route.isCategoryFilter());
+        assertFalse(route.shouldIgnore());
+        assertEquals(1, route.categoryFilterRoute().resultCount());
+        assertEquals("Water & sanitation (1)", route.categoryFilterRoute().searchQueryLabel());
+    }
+
+    @Test
+    public void suggestionControllerRoutesGuideSuggestionToTrimmedSearchQuery() {
+        MainSearchSuggestionPolicy.SearchSuggestion suggestion =
+            new MainSearchSuggestionPolicy.SearchSuggestion(
+                "GD-001 | Rain barrel basics",
+                "Suggested guide",
+                "  GD-001  ",
+                "",
+                ""
+            );
+
+        MainSearchSuggestionController.SuggestionRoute route = MainSearchSuggestionController.route(
+            suggestion,
+            sampleGuides(),
+            MainRouteDecisionHelper.browseHome()
+        );
+
+        assertTrue(route.isSearch());
+        assertFalse(route.shouldIgnore());
+        assertEquals("GD-001", route.searchQuery());
+    }
+
+    @Test
+    public void suggestionControllerIgnoresNullAndEmptyGuideSuggestion() {
+        MainSearchSuggestionPolicy.SearchSuggestion emptyGuideSuggestion =
+            new MainSearchSuggestionPolicy.SearchSuggestion("Empty", "", "   ", "", "");
+
+        assertTrue(MainSearchSuggestionController.route(
+            null,
+            sampleGuides(),
+            MainRouteDecisionHelper.browseHome()
+        ).shouldIgnore());
+        assertTrue(MainSearchSuggestionController.route(
+            emptyGuideSuggestion,
+            sampleGuides(),
+            MainRouteDecisionHelper.browseHome()
+        ).shouldIgnore());
+    }
+
     private static List<SearchResult> sampleGuides() {
         return Collections.singletonList(guide("GD-001", "Water collection basics", "water", "Water", "rain"));
     }

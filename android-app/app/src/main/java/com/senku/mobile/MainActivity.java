@@ -1551,15 +1551,20 @@ public final class MainActivity extends AppCompatActivity {
     }
 
     private void applySearchSuggestion(MainSearchSuggestionPolicy.SearchSuggestion suggestion) {
-        if (suggestion == null) {
+        MainSearchSuggestionController.SuggestionRoute route = MainSearchSuggestionController.route(
+            suggestion,
+            allGuides,
+            currentMainRouteState()
+        );
+        if (route.shouldIgnore()) {
             return;
         }
-        if (suggestion.isCategory()) {
-            filterGuidesByCategory(suggestion.categoryKey, suggestion.categoryLabel);
+        if (route.isCategoryFilter()) {
+            applyCategoryFilterRoute(route.categoryFilterRoute());
             return;
         }
-        String query = safe(suggestion.searchQuery).trim();
-        if (query.isEmpty()) {
+        String query = route.searchQuery();
+        if (!route.isSearch() || query.isEmpty()) {
             return;
         }
         searchInput.setText(query);
@@ -3588,6 +3593,13 @@ public final class MainActivity extends AppCompatActivity {
             label,
             currentMainRouteState()
         );
+        applyCategoryFilterRoute(route);
+    }
+
+    private void applyCategoryFilterRoute(MainCategoryFilterController.FilterRoute route) {
+        if (route == null) {
+            return;
+        }
         if (route.shouldBrowseGuides()) {
             browseGuides();
             return;
