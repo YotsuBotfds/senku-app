@@ -307,6 +307,20 @@ public final class MainActivityPhoneNavigationTest {
     }
 
     @Test
+    public void installCompletionDoesNotPublishBrowseGuidesOverRestoredResultSurfaces() {
+        assertRestoredResultRouteSuppressesInstallCompletionBrowsePublish(
+            MainRouteDecisionHelper.Surface.SEARCH_RESULTS,
+            BottomTabDestination.HOME,
+            false
+        );
+        assertRestoredResultRouteSuppressesInstallCompletionBrowsePublish(
+            MainRouteDecisionHelper.Surface.ASK_RESULTS,
+            BottomTabDestination.ASK,
+            true
+        );
+    }
+
+    @Test
     public void sharedInputSubmitRoutesToAskWhenAskOwnsTheVisibleFlow() {
         assertEquals(
             SubmitTarget.ASK,
@@ -458,5 +472,24 @@ public final class MainActivityPhoneNavigationTest {
         assertEquals(surface, routeState.surface);
         assertEquals(activePhoneTab, routeState.activePhoneTab);
         assertEquals(askLaneActive, routeState.askLaneActive);
+    }
+
+    private static void assertRestoredResultRouteSuppressesInstallCompletionBrowsePublish(
+        MainRouteDecisionHelper.Surface surface,
+        BottomTabDestination activePhoneTab,
+        boolean askLaneActive
+    ) {
+        MainRouteDecisionHelper.RouteState restoredRouteState =
+            MainActivity.resolveRestoredMainRouteState(
+                surface.name(),
+                activePhoneTab.name(),
+                askLaneActive,
+                true,
+                BottomTabDestination.HOME.name()
+            );
+
+        assertRouteState(restoredRouteState, surface, activePhoneTab, askLaneActive);
+        assertFalse(MainRouteDecisionHelper.isBrowseSurface(restoredRouteState.surface));
+        assertFalse(MainRouteDecisionHelper.shouldPublishInstalledBrowseGuides(false, restoredRouteState));
     }
 }

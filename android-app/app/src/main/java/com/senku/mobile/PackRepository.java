@@ -3084,57 +3084,15 @@ public final class PackRepository implements AutoCloseable {
     }
 
     private static String buildFtsQuery(QueryTerms queryTerms) {
-        return buildFtsQuery(queryTerms, 8, true);
+        return PackFtsQueryBuilder.build(queryTerms);
     }
 
     private static String buildFtsQuery(QueryTerms queryTerms, int maxExpressions, boolean includeExpansionTokens) {
-        Set<String> tokens = new LinkedHashSet<>();
-        List<String> primaryTokens = queryTerms.primaryFtsTokens();
-        for (String token : primaryTokens) {
-            addFtsExpression(tokens, token);
-            if (tokens.size() >= maxExpressions) {
-                break;
-            }
-        }
-        if (includeExpansionTokens && tokens.size() < maxExpressions) {
-            for (String token : queryTerms.expansionTokens) {
-                addFtsExpression(tokens, token);
-                if (tokens.size() >= maxExpressions) {
-                    break;
-                }
-            }
-        }
-        return String.join(" OR ", tokens);
+        return PackFtsQueryBuilder.build(queryTerms, maxExpressions, includeExpansionTokens);
     }
 
     static String buildFtsQueryForTest(String query) {
         return buildFtsQuery(QueryTerms.fromQuery(query));
-    }
-
-    private static void addFtsExpression(Set<String> expressions, String token) {
-        String expression = buildFtsExpression(token);
-        if (!expression.isEmpty()) {
-            expressions.add(expression);
-        }
-    }
-
-    private static String buildFtsExpression(String token) {
-        ArrayList<String> parts = new ArrayList<>();
-        String[] split = emptySafe(token).toLowerCase(QUERY_LOCALE).split("[^a-z0-9]+");
-        for (String part : split) {
-            String normalized = emptySafe(part).trim().toLowerCase(QUERY_LOCALE);
-            if (normalized.isEmpty()) {
-                continue;
-            }
-            parts.add(normalized + "*");
-        }
-        if (parts.isEmpty()) {
-            return "";
-        }
-        if (parts.size() == 1) {
-            return parts.get(0);
-        }
-        return "(" + String.join(" AND ", parts) + ")";
     }
 
     static int lexicalKeywordScore(
