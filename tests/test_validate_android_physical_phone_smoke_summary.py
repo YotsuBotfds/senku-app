@@ -424,6 +424,20 @@ class ValidateAndroidPhysicalPhoneSmokeSummaryTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stderr + result.stdout)
         self.assertIn("android_physical_phone_smoke_summary: ok", result.stdout)
         self.assertIn("status: completed", result.stdout)
+        self.assertIn(
+            "summary_markdown: artifacts/bench/android_physical_phone_smoke/summary.md",
+            result.stdout,
+        )
+        self.assertIn("serial: R5CT123456A", result.stdout)
+        self.assertIn("focused_package: com.senku.mobile", result.stdout)
+        self.assertIn(
+            "screenshot_path: artifacts/bench/android_physical_phone_smoke/screenshot.png",
+            result.stdout,
+        )
+        self.assertIn(
+            "dump_path: artifacts/bench/android_physical_phone_smoke/uiautomator.xml",
+            result.stdout,
+        )
 
     def test_find_latest_summary_uses_newest_timestamped_summary(self):
         temp_dir = tempfile.TemporaryDirectory()

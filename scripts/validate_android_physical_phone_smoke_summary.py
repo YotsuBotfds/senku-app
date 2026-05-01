@@ -596,6 +596,21 @@ def main(argv: list[str] | None = None) -> int:
     print(f"status: {data.get('status')}")
     print(f"physical_device: {data.get('physical_device')}")
     print(f"launches_emulators: {data.get('launches_emulators')}")
+    print(f"summary_markdown: {data.get('summary_markdown')}")
+    print(f"serial: {data.get('serial')}")
+    evidence = data.get("evidence")
+    if isinstance(evidence, dict):
+        print(f"focused_package: {evidence.get('focused_package')}")
+        print(f"screenshot_path: {evidence.get('screenshot_path')}")
+        print(f"dump_path: {evidence.get('dump_path')}")
+    interaction = data.get("interaction")
+    if isinstance(interaction, dict) and isinstance(interaction.get("steps"), list):
+        step_statuses = [
+            f"{step.get('name')}={step.get('status')}"
+            for step in interaction["steps"]
+            if isinstance(step, dict)
+        ]
+        print(f"interaction_steps: {', '.join(step_statuses)}")
     return 0
 
 
