@@ -6859,9 +6859,32 @@ public final class DetailActivity extends AppCompatActivity {
 
     void clearPhoneFollowUpInput() { followUpInput.setText(""); }
 
-    void applyAnswerFailureState(int requestToken, Throwable exc, String fallbackQuery) {
+    void applyFollowUpGenerationSuccess(AnswerPresenter.Kind kind) {
+        if (kind != AnswerPresenter.Kind.PHONE_FOLLOWUP && kind != AnswerPresenter.Kind.TABLET_FOLLOWUP) {
+            return;
+        }
+        FollowUpComposerState completed =
+            FollowUpComposerController.resolveGenerationSuccess(buildFollowUpComposerStateForKind(kind));
+        lastFailedQuery = completed.retryQuery();
+        if (kind == AnswerPresenter.Kind.TABLET_FOLLOWUP) {
+            tabletComposerText = completed.draftText;
+        } else if (followUpInput != null) {
+            followUpInput.setText(completed.draftText);
+        }
+    }
+
+    void applyAnswerFailureState(int requestToken, AnswerPresenter.Kind kind, Throwable exc, String fallbackQuery) {
         completedStreamingToken = requestToken;
-        lastFailedQuery = safe(fallbackQuery).trim();
+        FollowUpComposerState failed =
+            FollowUpComposerController.resolveGenerationFailure(
+                buildFollowUpComposerStateForKind(kind),
+                buildGenerationFailureStatus(exc),
+                fallbackQuery
+            );
+        lastFailedQuery = failed.retryQuery();
+        if (kind == AnswerPresenter.Kind.TABLET_FOLLOWUP) {
+            tabletComposerText = failed.draftText;
+        }
         currentBody = buildGenerationFailureBody(exc);
         currentAnswerConfidenceLabel = null;
         currentAnswerResponseMode = OfflineAnswerEngine.AnswerMode.CONFIDENT;
@@ -6895,6 +6918,12 @@ public final class DetailActivity extends AppCompatActivity {
             lastFailedQuery,
             isGenerationStallRetryAvailable(tabletBusy) ? currentTitle : ""
         );
+    }
+
+    private FollowUpComposerState buildFollowUpComposerStateForKind(AnswerPresenter.Kind kind) {
+        return kind == AnswerPresenter.Kind.TABLET_FOLLOWUP
+            ? buildTabletFollowUpComposerState()
+            : buildPhoneFollowUpComposerState();
     }
 
     private boolean isGenerationStallRetryAvailable(boolean busy) {

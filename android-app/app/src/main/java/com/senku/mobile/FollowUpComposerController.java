@@ -101,6 +101,25 @@ final class FollowUpComposerController {
         );
     }
 
+    static FollowUpComposerState resolveGenerationSuccess(FollowUpComposerState state) {
+        FollowUpComposerState safeState = safeState(state);
+        return FollowUpComposerState.idle("", safeState.surface);
+    }
+
+    static FollowUpComposerState resolveGenerationFailure(
+        FollowUpComposerState state,
+        String failureMessage,
+        String submittedQuery
+    ) {
+        FollowUpComposerState safeState = safeState(state);
+        String retryQuery = FollowUpComposerState.normalizeDraft(submittedQuery);
+        if (retryQuery.isEmpty()) {
+            retryQuery = safeState.submitQuery();
+        }
+        return FollowUpComposerState.idle(retryQuery, safeState.surface)
+            .withFailure(failureMessage, retryQuery);
+    }
+
     private static FollowUpComposerState safeState(FollowUpComposerState state) {
         return state == null ? FollowUpComposerState.idle("", FollowUpComposerState.Surface.PHONE) : state;
     }

@@ -85,6 +85,64 @@ public final class FollowUpComposerControllerTest {
     }
 
     @Test
+    public void successfulGenerationClearsSubmittedDraft() {
+        FollowUpComposerState submitted = FollowUpComposerState.idle(
+            "  inspect the lower seam  ",
+            FollowUpComposerState.Surface.PHONE
+        ).asSubmitting();
+
+        FollowUpComposerState completed =
+            FollowUpComposerController.resolveGenerationSuccess(submitted);
+
+        assertEquals("", completed.draftText);
+        assertEquals("", completed.failureMessage);
+        assertEquals("", completed.retryQuery());
+        assertEquals(FollowUpComposerState.Surface.PHONE, completed.surface);
+    }
+
+    @Test
+    public void failedGenerationRestoresSubmittedDraftForRetry() {
+        FollowUpComposerState submitted = FollowUpComposerState.idle(
+            "  inspect the lower seam  ",
+            FollowUpComposerState.Surface.TABLET
+        ).asSubmitting();
+
+        FollowUpComposerState failed =
+            FollowUpComposerController.resolveGenerationFailure(
+                submitted,
+                "  offline answer failed  ",
+                "  inspect the lower seam  "
+            );
+        FollowUpComposerController.RetryDecision retry =
+            FollowUpComposerController.resolveRetry(failed, "");
+
+        assertEquals("inspect the lower seam", failed.draftText);
+        assertEquals("offline answer failed", failed.failureMessage);
+        assertEquals("inspect the lower seam", failed.retryQuery());
+        assertEquals(FollowUpComposerController.RetryAction.RETRY, retry.action);
+        assertEquals("inspect the lower seam", retry.query);
+        assertEquals(FollowUpComposerState.Surface.TABLET, failed.surface);
+    }
+
+    @Test
+    public void failedGenerationFallsBackToVisibleDraftWhenSubmittedQueryMissing() {
+        FollowUpComposerState visibleDraft = FollowUpComposerState.idle(
+            "  retry visible wording  ",
+            FollowUpComposerState.Surface.PHONE
+        );
+
+        FollowUpComposerState failed =
+            FollowUpComposerController.resolveGenerationFailure(
+                visibleDraft,
+                "failed",
+                " \n\t "
+            );
+
+        assertEquals("retry visible wording", failed.draftText);
+        assertEquals("retry visible wording", failed.retryQuery());
+    }
+
+    @Test
     public void rawSubmitDecisionNormalizesEmptyPhoneDraft() {
         FollowUpComposerController.SubmitDecision decision =
             FollowUpComposerController.resolveSubmit(

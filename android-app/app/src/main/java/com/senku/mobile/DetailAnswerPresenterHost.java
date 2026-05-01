@@ -90,9 +90,8 @@ final class DetailAnswerPresenterHost implements AnswerPresenter.Host {
         activity.applyAnswerSuccessState(requestToken, result);
         if (kind == AnswerPresenter.Kind.TABLET_FOLLOWUP) {
             activity.clearTabletFollowUpSelectionState();
-        } else if (kind == AnswerPresenter.Kind.PHONE_FOLLOWUP) {
-            activity.clearPhoneFollowUpInput();
         }
+        activity.applyFollowUpGenerationSuccess(kind);
         activity.renderDetailState();
         if (kind != AnswerPresenter.Kind.TABLET_FOLLOWUP) {
             activity.refreshRelatedGuides();
@@ -106,10 +105,7 @@ final class DetailAnswerPresenterHost implements AnswerPresenter.Host {
 
     @Override
     public void onFailure(int requestToken, AnswerPresenter.Kind kind, Throwable exc, String fallbackQuery) {
-        activity.applyAnswerFailureState(requestToken, exc, fallbackQuery);
-        if (kind == AnswerPresenter.Kind.TABLET_FOLLOWUP) {
-            activity.setTabletComposerDraft(activity.lastFailedQuery());
-        }
+        activity.applyAnswerFailureState(requestToken, kind, exc, fallbackQuery);
         activity.renderDetailState();
         activity.setBusy(activity.buildGenerationFailureStatus(exc), false);
         if (kind != AnswerPresenter.Kind.TABLET_FOLLOWUP) {
