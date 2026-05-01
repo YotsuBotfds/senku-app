@@ -121,6 +121,30 @@ public final class MainRouteCoordinatorTest {
     }
 
     @Test
+    public void homeChromeBackFromResultsReturnsThroughSameBrowseEffect() {
+        RecordingHost host = new RecordingHost();
+        MainRouteCoordinator coordinator = new MainRouteCoordinator(host);
+        coordinator.enterAskResultsRoute();
+        host.calls.clear();
+
+        assertTrue(coordinator.applyHomeChromeBackTransition());
+
+        assertRoute(
+            coordinator.currentRouteState(),
+            MainRouteDecisionHelper.Surface.BROWSE,
+            BottomTabDestination.HOME,
+            false
+        );
+        assertEquals(
+            Arrays.asList(
+                "route:BROWSE:HOME:false:browse=true",
+                "returnToBrowse"
+            ),
+            host.calls
+        );
+    }
+
+    @Test
     public void disabledNavigationHostLeavesTabTapUnhandled() {
         RecordingHost host = new RecordingHost();
         host.handleNavigation = false;

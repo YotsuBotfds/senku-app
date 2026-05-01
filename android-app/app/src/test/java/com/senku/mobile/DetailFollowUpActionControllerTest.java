@@ -180,6 +180,32 @@ public final class DetailFollowUpActionControllerTest {
     }
 
     @Test
+    public void busyFailedQueryRetryBlocksDuplicateGeneration() {
+        FollowUpComposerState busyFailedPhoneState = new FollowUpComposerState(
+            "visible draft",
+            true,
+            true,
+            "offline failure",
+            FollowUpComposerState.Surface.PHONE,
+            "  failed query  ",
+            null
+        );
+
+        DetailFollowUpActionController.Decision decision =
+            DetailFollowUpActionController.resolveRetry(
+                false,
+                busyFailedPhoneState,
+                "visible fallback",
+                null,
+                null
+            );
+
+        assertEquals(DetailFollowUpActionController.Action.BLOCKED, decision.action);
+        assertEquals(DetailFollowUpActionController.Target.PHONE_FOLLOWUP, decision.target);
+        assertEquals("failed query", decision.query);
+    }
+
+    @Test
     public void visibleStallRetryClickStillBlocksDuplicateGeneration() {
         FollowUpComposerState stalledPhoneState = new FollowUpComposerState(
             "",
