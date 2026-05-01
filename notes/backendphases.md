@@ -1,6 +1,6 @@
 # Backend Cleanup Phase Tracker
 
-Last updated after pushed cleanup through `0c2f23e0` on 2026-05-01.
+Last updated after pushed cleanup through `48f50d67` on 2026-05-01.
 
 Purpose: prevent future agents from rerunning Ask/query backend cleanup that is already complete. Keep this note short; implementation detail belongs in commits and tests.
 
@@ -329,8 +329,12 @@ Purpose: prevent future agents from rerunning Ask/query backend cleanup that is 
 - Physical phone saved proof is current after `31e40916`: the
   `phone-functional-saved` smoke profile passed on `RFCX607ZM8L` with real
   guide save/unsave semantics in addition to Saved back, Saved search, and
-  pinned-guide open/back coverage. Artifact root:
-  `artifacts/physical_phone_saved_after_31e40916/`.
+  pinned-guide open/back coverage. Release proof is self-contained in
+  `artifacts/physical_phone_saved_after_31e40916/run_summary.json`: status
+  `pass`, `OK (4 tests)`, APK SHA
+  `2fb9ecf7f3691c52c10845cd72cf5da6ef816edb9838b5c0f8d3e53de38e1120`,
+  physical phone serial `RFCX607ZM8L`, installed pack identity, screenshots,
+  dumps, logcat, and bundle paths.
 - PowerShell quality-gate contracts are current through `a3bea24c`: parser and
   dry-run tests now match the refreshed array-style finalize/skip-build
   forwarding and absolute artifact-root resolution for instrumented smoke
@@ -360,7 +364,23 @@ Purpose: prevent future agents from rerunning Ask/query backend cleanup that is 
 - Physical phone follow-up proof is current after `8965c17d`:
   `phone-functional-follow-up` passed on `RFCX607ZM8L` for Ask routing, IME
   follow-up submit, empty follow-up submit, and inline thread history. Artifact
-  root: `artifacts/physical_phone_followup_after_8965c17d/`.
+  root: `artifacts/physical_phone_followup_after_8965c17d/`; release proof is
+  self-contained in `run_summary.json` with status `pass`, `OK (4 tests)`, the
+  same APK SHA
+  `2fb9ecf7f3691c52c10845cd72cf5da6ef816edb9838b5c0f8d3e53de38e1120`,
+  physical phone serial, installed pack identity, screenshots, dumps, logcat,
+  and bundle paths.
+- Main review-display gating is current through `9c631441`: tablet search
+  header formatting now routes through `MainReviewDisplayPolicy`, keeping
+  review latency/display decisions behind the same policy boundary as phone
+  search chrome and preview copy.
+- Pack search finalization cleanup is current through `206994b5`:
+  `PackRepository` funnels repeated combined-hit projection, prerank telemetry,
+  rerank timing, and rerank telemetry through `finalizeCombinedHitsForSearch()`
+  without changing route merge behavior.
+- Detail tablet state-builder cleanup is current through `48f50d67`:
+  tablet xref row projection now lives in `DetailTabletStateBuilder`, with
+  focused tests for label trimming, relation buckets, and null/empty input.
 
 ## Remaining Next Slices
 
