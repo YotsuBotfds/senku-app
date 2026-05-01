@@ -145,6 +145,133 @@ public final class MainRouteCoordinatorTest {
     }
 
     @Test
+    public void resultRoutesSystemAndHomeChromeBackApplySameBrowseContract() {
+        CoordinatorBackCase[] cases = new CoordinatorBackCase[] {
+            new CoordinatorBackCase("search system", false, false),
+            new CoordinatorBackCase("search chrome", false, true),
+            new CoordinatorBackCase("ask system", true, false),
+            new CoordinatorBackCase("ask chrome", true, true)
+        };
+
+        for (CoordinatorBackCase testCase : cases) {
+            RecordingHost host = new RecordingHost();
+            MainRouteCoordinator coordinator = new MainRouteCoordinator(host);
+            if (testCase.askResults) {
+                coordinator.enterAskResultsRoute();
+            } else {
+                coordinator.enterSearchResultsRoute();
+            }
+            host.calls.clear();
+
+            boolean handled = testCase.homeChromeBack
+                ? coordinator.applyHomeChromeBackTransition()
+                : coordinator.applySystemBackTransition();
+
+            assertTrue(testCase.label, handled);
+            assertRoute(
+                coordinator.currentRouteState(),
+                MainRouteDecisionHelper.Surface.BROWSE,
+                BottomTabDestination.HOME,
+                false
+            );
+            assertEquals(
+                testCase.label,
+                Arrays.asList(
+                    "route:BROWSE:HOME:false:browse=true",
+                    "returnToBrowse"
+                ),
+                host.calls
+            );
+        }
+    }
+
+    @Test
+    public void savedSystemBackUsesHistoryBeforeHomeFallback() {
+        SavedCoordinatorBackCase[] cases = new SavedCoordinatorBackCase[] {
+            new SavedCoordinatorBackCase(
+                "saved after ask",
+                new BottomTabDestination[] {BottomTabDestination.ASK, BottomTabDestination.PINS},
+                MainRouteDecisionHelper.Surface.RECENT_THREADS,
+                BottomTabDestination.ASK,
+                Arrays.asList(
+                    "route:RECENT_THREADS:ASK:false:browse=true",
+                    "updateActionLabels",
+                    "dismissSearchKeyboard",
+                    "ensureBrowseHomeVisible",
+                    "scrollRecentThreadsIntoView"
+                )
+            ),
+            new SavedCoordinatorBackCase(
+                "saved without history",
+                new BottomTabDestination[] {BottomTabDestination.PINS},
+                MainRouteDecisionHelper.Surface.BROWSE,
+                BottomTabDestination.HOME,
+                Arrays.asList(
+                    "route:BROWSE:HOME:false:browse=true",
+                    "updateActionLabels",
+                    "dismissSearchKeyboard",
+                    "ensureBrowseHomeVisible",
+                    "scrollBrowseToTop"
+                )
+            )
+        };
+
+        for (SavedCoordinatorBackCase testCase : cases) {
+            RecordingHost host = new RecordingHost();
+            MainRouteCoordinator coordinator = new MainRouteCoordinator(host);
+            for (BottomTabDestination destination : testCase.openTabs) {
+                coordinator.openPhoneTab(destination, true);
+            }
+            host.calls.clear();
+
+            assertTrue(testCase.label, coordinator.applySystemBackTransition());
+            assertRoute(
+                coordinator.currentRouteState(),
+                testCase.expectedSurface,
+                testCase.expectedPhoneTab,
+                false
+            );
+            assertEquals(testCase.label, testCase.expectedCalls, host.calls);
+        }
+    }
+
+    @Test
+    public void previousTabHistoryReturnsToMostRecentDifferentOwner() {
+        PreviousTabCase[] cases = new PreviousTabCase[] {
+            new PreviousTabCase(
+                "saved returns to ask",
+                new BottomTabDestination[] {BottomTabDestination.ASK, BottomTabDestination.PINS},
+                MainRouteDecisionHelper.Surface.RECENT_THREADS,
+                BottomTabDestination.ASK
+            ),
+            new PreviousTabCase(
+                "ask returns to saved",
+                new BottomTabDestination[] {BottomTabDestination.PINS, BottomTabDestination.ASK},
+                MainRouteDecisionHelper.Surface.SAVED_GUIDES,
+                BottomTabDestination.PINS
+            )
+        };
+
+        for (PreviousTabCase testCase : cases) {
+            RecordingHost host = new RecordingHost();
+            MainRouteCoordinator coordinator = new MainRouteCoordinator(host);
+            for (BottomTabDestination destination : testCase.openTabs) {
+                coordinator.openPhoneTab(destination, true);
+            }
+            host.calls.clear();
+
+            assertTrue(testCase.label, coordinator.applySystemBackTransition());
+            assertRoute(
+                coordinator.currentRouteState(),
+                testCase.expectedSurface,
+                testCase.expectedPhoneTab,
+                false
+            );
+            assertTrue(testCase.label, host.calls.contains("updateActionLabels"));
+        }
+    }
+
+    @Test
     public void askUnavailableOrNoSourceFailureClearsAskResultsBeforeBack() {
         RecordingHost host = new RecordingHost();
         MainRouteCoordinator coordinator = new MainRouteCoordinator(host);
@@ -223,6 +350,59 @@ public final class MainRouteCoordinatorTest {
     ) {
         assertEquals(expectedCalls.size(), actualCalls.size());
         assertTrue(actualCalls.containsAll(expectedCalls));
+    }
+
+    private static final class CoordinatorBackCase {
+        final String label;
+        final boolean askResults;
+        final boolean homeChromeBack;
+
+        CoordinatorBackCase(String label, boolean askResults, boolean homeChromeBack) {
+            this.label = label;
+            this.askResults = askResults;
+            this.homeChromeBack = homeChromeBack;
+        }
+    }
+
+    private static final class SavedCoordinatorBackCase {
+        final String label;
+        final BottomTabDestination[] openTabs;
+        final MainRouteDecisionHelper.Surface expectedSurface;
+        final BottomTabDestination expectedPhoneTab;
+        final List<String> expectedCalls;
+
+        SavedCoordinatorBackCase(
+            String label,
+            BottomTabDestination[] openTabs,
+            MainRouteDecisionHelper.Surface expectedSurface,
+            BottomTabDestination expectedPhoneTab,
+            List<String> expectedCalls
+        ) {
+            this.label = label;
+            this.openTabs = openTabs;
+            this.expectedSurface = expectedSurface;
+            this.expectedPhoneTab = expectedPhoneTab;
+            this.expectedCalls = expectedCalls;
+        }
+    }
+
+    private static final class PreviousTabCase {
+        final String label;
+        final BottomTabDestination[] openTabs;
+        final MainRouteDecisionHelper.Surface expectedSurface;
+        final BottomTabDestination expectedPhoneTab;
+
+        PreviousTabCase(
+            String label,
+            BottomTabDestination[] openTabs,
+            MainRouteDecisionHelper.Surface expectedSurface,
+            BottomTabDestination expectedPhoneTab
+        ) {
+            this.label = label;
+            this.openTabs = openTabs;
+            this.expectedSurface = expectedSurface;
+            this.expectedPhoneTab = expectedPhoneTab;
+        }
     }
 
     private static final class RecordingHost implements MainRouteCoordinator.Host {

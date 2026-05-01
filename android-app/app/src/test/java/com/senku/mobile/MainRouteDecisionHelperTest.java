@@ -170,6 +170,47 @@ public final class MainRouteDecisionHelperTest {
     }
 
     @Test
+    public void resultRoutesSystemAndHomeChromeBackShareBrowseHomeContract() {
+        BackParityCase[] cases = new BackParityCase[] {
+            new BackParityCase(
+                "search results",
+                new MainRouteDecisionHelper.RouteState(
+                    MainRouteDecisionHelper.Surface.SEARCH_RESULTS,
+                    BottomTabDestination.HOME,
+                    false
+                ),
+                BottomTabDestination.PINS
+            ),
+            new BackParityCase(
+                "ask results",
+                new MainRouteDecisionHelper.RouteState(
+                    MainRouteDecisionHelper.Surface.ASK_RESULTS,
+                    BottomTabDestination.ASK,
+                    true
+                ),
+                BottomTabDestination.HOME
+            )
+        };
+
+        for (BackParityCase testCase : cases) {
+            MainRouteDecisionHelper.Transition systemBack =
+                MainRouteDecisionHelper.systemBack(testCase.routeState, testCase.previousPhoneTab);
+            MainRouteDecisionHelper.Transition chromeBack =
+                MainRouteDecisionHelper.homeChromeBack(testCase.routeState);
+
+            assertEquals(testCase.label, MainRouteDecisionHelper.Effect.RETURN_TO_BROWSE, systemBack.effect);
+            assertRoute(
+                systemBack.routeState,
+                MainRouteDecisionHelper.Surface.BROWSE,
+                BottomTabDestination.HOME,
+                false
+            );
+            assertSameRouteTransition(systemBack, chromeBack);
+            assertTrue(testCase.label, MainRouteDecisionHelper.shouldShowHomeChromeBack(testCase.routeState));
+        }
+    }
+
+    @Test
     public void homeChromeBackIsOnlyVisibleForNonBrowseRoutes() {
         assertFalse(MainRouteDecisionHelper.shouldShowHomeChromeBack(MainRouteDecisionHelper.browseHome()));
         assertFalse(MainRouteDecisionHelper.shouldShowHomeChromeBack(
@@ -662,6 +703,56 @@ public final class MainRouteDecisionHelperTest {
             false,
             MainRouteDecisionHelper.Effect.SHOW_PREVIOUS_TAB
         );
+    }
+
+    @Test
+    public void savedBackContractUsesPreviousOwnerOrHomeFallbackTable() {
+        SavedBackCase[] cases = new SavedBackCase[] {
+            new SavedBackCase(
+                "previous home",
+                BottomTabDestination.HOME,
+                MainRouteDecisionHelper.Surface.BROWSE,
+                BottomTabDestination.HOME
+            ),
+            new SavedBackCase(
+                "previous ask",
+                BottomTabDestination.ASK,
+                MainRouteDecisionHelper.Surface.RECENT_THREADS,
+                BottomTabDestination.ASK
+            ),
+            new SavedBackCase(
+                "missing previous",
+                null,
+                MainRouteDecisionHelper.Surface.BROWSE,
+                BottomTabDestination.HOME
+            ),
+            new SavedBackCase(
+                "same previous",
+                BottomTabDestination.PINS,
+                MainRouteDecisionHelper.Surface.BROWSE,
+                BottomTabDestination.HOME
+            )
+        };
+        MainRouteDecisionHelper.RouteState saved =
+            new MainRouteDecisionHelper.RouteState(
+                MainRouteDecisionHelper.Surface.SAVED_GUIDES,
+                BottomTabDestination.PINS,
+                false
+            );
+
+        for (SavedBackCase testCase : cases) {
+            MainRouteDecisionHelper.Transition transition =
+                MainRouteDecisionHelper.systemBack(saved, testCase.previousPhoneTab);
+
+            assertEquals(testCase.label, MainRouteDecisionHelper.Effect.SHOW_PREVIOUS_TAB, transition.effect);
+            assertRoute(
+                transition.routeState,
+                testCase.expectedSurface,
+                testCase.expectedPhoneTab,
+                false
+            );
+            assertFalse(testCase.label, MainRouteDecisionHelper.shouldShowHomeChromeBack(saved));
+        }
     }
 
     @Test
@@ -1474,5 +1565,40 @@ public final class MainRouteDecisionHelperTest {
         assertEquals(surface, state.surface);
         assertEquals(activePhoneTab, state.activePhoneTab);
         assertEquals(askLaneActive, state.askLaneActive);
+    }
+
+    private static final class BackParityCase {
+        final String label;
+        final MainRouteDecisionHelper.RouteState routeState;
+        final BottomTabDestination previousPhoneTab;
+
+        BackParityCase(
+            String label,
+            MainRouteDecisionHelper.RouteState routeState,
+            BottomTabDestination previousPhoneTab
+        ) {
+            this.label = label;
+            this.routeState = routeState;
+            this.previousPhoneTab = previousPhoneTab;
+        }
+    }
+
+    private static final class SavedBackCase {
+        final String label;
+        final BottomTabDestination previousPhoneTab;
+        final MainRouteDecisionHelper.Surface expectedSurface;
+        final BottomTabDestination expectedPhoneTab;
+
+        SavedBackCase(
+            String label,
+            BottomTabDestination previousPhoneTab,
+            MainRouteDecisionHelper.Surface expectedSurface,
+            BottomTabDestination expectedPhoneTab
+        ) {
+            this.label = label;
+            this.previousPhoneTab = previousPhoneTab;
+            this.expectedSurface = expectedSurface;
+            this.expectedPhoneTab = expectedPhoneTab;
+        }
     }
 }
