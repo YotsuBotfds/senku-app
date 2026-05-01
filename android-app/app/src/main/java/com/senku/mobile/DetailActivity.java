@@ -7131,7 +7131,7 @@ public final class DetailActivity extends AppCompatActivity {
     private String buildGuideHeaderTitle() {
         String guideId = resolveDisplayGuideId();
         if (!guideId.isEmpty()) {
-            return "Manual entry " + guideId;
+            return "GUIDE " + guideId;
         }
         return getString(R.string.detail_header_guide);
     }
@@ -7844,9 +7844,9 @@ public final class DetailActivity extends AppCompatActivity {
     static String buildPhoneEmergencyHeaderTitle(String primaryGuideId) {
         String guideId = safe(primaryGuideId).trim();
         if (!guideId.isEmpty()) {
-            return "ANSWER " + guideId + HEADER_BULLET + "Burn hazard";
+            return "EMERGENCY " + guideId + HEADER_BULLET + "Burn hazard";
         }
-        return "ANSWER" + HEADER_BULLET + "Burn hazard";
+        return "EMERGENCY" + HEADER_BULLET + "Burn hazard";
     }
 
     static String buildEmergencyWhyTitle() {

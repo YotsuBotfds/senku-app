@@ -319,7 +319,7 @@ public final class EmergencySurfacePolicyTest {
             )
         );
         assertEquals("\u2014 WHY THIS ANSWER", DetailActivity.buildEmergencyWhyTitle());
-        assertEquals("ANSWER GD-132 \u2022 Burn hazard", DetailActivity.buildPhoneEmergencyHeaderTitle("GD-132"));
+        assertEquals("EMERGENCY GD-132 \u2022 Burn hazard", DetailActivity.buildPhoneEmergencyHeaderTitle("GD-132"));
         assertEquals(
             "\u2022 DANGER \u00b7 EXTREME BURN HAZARD",
             DetailActivity.buildEmergencyDangerHeaderTitle("answer_card:burn_hazard", "foundry", "Burn hazard response")

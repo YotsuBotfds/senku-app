@@ -34,7 +34,7 @@ final class DetailPhoneSourceCardPolicy {
         if (!card.roleLabel.isEmpty()) {
             metaParts.add(card.roleLabel);
         }
-        if (!card.matchLabel.isEmpty()) {
+        if (!compactAnswerPreview && !card.matchLabel.isEmpty()) {
             metaParts.add(emergencyAnchor ? "93%" : card.matchLabel);
         }
         StringBuilder builder = new StringBuilder();

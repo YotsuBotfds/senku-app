@@ -40,7 +40,7 @@ public final class DetailPhoneSourceCardPolicyTest {
         );
 
         assertEquals(
-            "GD-444 \u2022 ANCHOR \u2022 78%\nEmergency Shelter",
+            "GD-444 \u2022 ANCHOR\nEmergency Shelter",
             DetailPhoneSourceCardPolicy.buildLabel(card, false, true)
         );
         assertTrue(DetailPhoneSourceCardPolicy.shouldUseCompactAnswerPreviewCard(true, true, false));

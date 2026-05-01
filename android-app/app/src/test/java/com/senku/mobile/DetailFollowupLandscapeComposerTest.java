@@ -558,8 +558,8 @@ public final class DetailFollowupLandscapeComposerTest {
         );
         assertEquals("ANSWER GD-345", DetailActivity.buildPhonePortraitAnswerHeaderTitle("GD-345", ""));
         assertEquals("ANSWER", DetailActivity.buildPhonePortraitAnswerHeaderTitle("", ""));
-        assertEquals("ANSWER GD-132 \u2022 Burn hazard", DetailActivity.buildPhoneEmergencyHeaderTitle("GD-132"));
-        assertEquals("ANSWER \u2022 Burn hazard", DetailActivity.buildPhoneEmergencyHeaderTitle(""));
+        assertEquals("EMERGENCY GD-132 \u2022 Burn hazard", DetailActivity.buildPhoneEmergencyHeaderTitle("GD-132"));
+        assertEquals("EMERGENCY \u2022 Burn hazard", DetailActivity.buildPhoneEmergencyHeaderTitle(""));
         assertFalse(DetailActivity.buildPhoneEmergencyHeaderTitle("GD-132").contains("\u00C3"));
         assertFalse(DetailActivity.buildPhoneEmergencyHeaderTitle("GD-132").contains("\u00E2"));
         assertTrue(DetailActivity.shouldUsePhoneAnswerHeaderTitle(true, true));
@@ -1068,7 +1068,7 @@ public final class DetailFollowupLandscapeComposerTest {
         assertEquals(3, DetailActivity.resolvePhonePortraitSourceCardMaxLines(true, true));
         assertEquals(4, DetailActivity.resolvePhonePortraitSourceCardVerticalPaddingDp(true));
         assertEquals(
-            "GD-345 \u2022 ANCHOR \u2022 93%\nTarp & Cord Shelters",
+            "GD-345 \u2022 ANCHOR\nTarp & Cord Shelters",
             DetailActivity.buildPhonePortraitSourceCardLabel(card, false, true)
         );
     }
