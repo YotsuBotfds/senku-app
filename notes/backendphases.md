@@ -1,6 +1,6 @@
 # Backend Cleanup Phase Tracker
 
-Last updated after cleanup through `237613d4` on 2026-05-01.
+Last updated after cleanup through `8767a1eb` on 2026-05-01.
 
 Purpose: prevent future agents from rerunning Ask/query backend cleanup that is already complete. Keep this note short; implementation detail belongs in commits and tests.
 
@@ -673,7 +673,24 @@ Purpose: prevent future agents from rerunning Ask/query backend cleanup that is 
   retrieval context; `git diff --check` passed; full Android
   `:app:testDebugUnitTest :app:assembleDebug :app:assembleDebugAndroidTest`
   passed.
-- Tracker is refreshed through `237613d4`.
+- Route coordinator opt-out coverage is current through `2e6ba830`: system
+  back leaves the route unchanged and unhandled when the navigation host opts
+  out of main-surface navigation.
+- Standalone physical phone smoke bounding is current through `8558ace1`:
+  `run_android_physical_phone_smoke.ps1` has bounded adb command/install
+  timeouts, explicit timeout errors, bounded screenshot capture, and timeout
+  metadata in summary/Markdown output. The summary validator now enforces the
+  timeout contract.
+- No-device migration validation coverage is current through `8767a1eb`: the
+  Android migration validator suite now includes functional UX smoke matrix,
+  physical phone smoke, instrumented smoke summary, and instrumented capture
+  summary contract tests.
+- Latest local proof after `8767a1eb`: focused Python contract tests passed
+  for physical phone smoke, physical smoke summary validation, and migration
+  validator suite contracts; focused JVM proof passed for
+  `MainRouteCoordinatorTest`; `git diff --check` passed before tracker
+  refresh.
+- Tracker is refreshed through `8767a1eb`.
 
 ## Remaining Next Slices
 
