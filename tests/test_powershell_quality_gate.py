@@ -9,6 +9,7 @@ SCRIPT_PATH = REPO_ROOT / "scripts" / "run_powershell_quality_gate.ps1"
 WINDOWS_VALIDATION_PATH = REPO_ROOT / "scripts" / "run_windows_validation.ps1"
 ANDROID_PROMPT_PATH = REPO_ROOT / "scripts" / "run_android_prompt.ps1"
 ANDROID_SMOKE_PATH = REPO_ROOT / "scripts" / "run_android_instrumented_ui_smoke.ps1"
+ANDROID_FUNCTIONAL_UX_SMOKE_MATRIX_PATH = REPO_ROOT / "scripts" / "run_android_functional_ux_smoke_matrix.ps1"
 ANDROID_UI_STATE_PACK_PATH = REPO_ROOT / "scripts" / "build_android_ui_state_pack.ps1"
 ANDROID_UI_STATE_PACK_PARALLEL_PATH = REPO_ROOT / "scripts" / "build_android_ui_state_pack_parallel.ps1"
 LITERT_MODEL_PUSH_PATH = REPO_ROOT / "scripts" / "push_litert_model_to_android.ps1"
@@ -23,6 +24,7 @@ ANDROID_HARNESS_SCRIPT_PATHS = (
     "scripts\\run_android_harness_matrix.ps1",
     "scripts\\android_harness_common.psm1",
     "scripts\\run_android_instrumented_ui_smoke.ps1",
+    "scripts\\run_android_functional_ux_smoke_matrix.ps1",
     "scripts\\start_senku_emulator_matrix.ps1",
     "scripts\\build_android_ui_state_pack.ps1",
     "scripts\\build_android_ui_state_pack_parallel.ps1",
@@ -208,6 +210,15 @@ class PowerShellQualityGateTests(unittest.TestCase):
         self.assertIn("$artifactDir = Join-Path $resolvedArtifactRoot (Join-Path $timestamp $Device)", script)
         self.assertNotIn("RunAllDevices", script)
         self.assertNotIn("adb devices", script)
+
+    def test_android_functional_ux_smoke_matrix_reports_preset_progress(self):
+        script = ANDROID_FUNCTIONAL_UX_SMOKE_MATRIX_PATH.read_text(encoding="utf-8")
+
+        self.assertIn("matrix_elapsed_seconds", script)
+        self.assertIn("artifact_root={5}", script)
+        self.assertIn("completed_preset_count", script)
+        self.assertIn("total_preset_count", script)
+        self.assertIn("FailFast stopping after {1}/{2} preset(s); matrix_summary.json will include completed results", script)
 
     def test_android_prompt_accepts_orientation_contract(self):
         script = ANDROID_PROMPT_PATH.read_text(encoding="utf-8")

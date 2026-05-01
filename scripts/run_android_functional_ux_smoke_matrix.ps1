@@ -163,6 +163,7 @@ $anyFailed = $false
 $canReuseInstalledApks = $false
 $matrixDeviceLock = $null
 $matrixDeviceLockUsed = $false
+$matrixStopwatch = [System.Diagnostics.Stopwatch]::StartNew()
 
 function Read-JsonFileOrNull {
     param([string]$Path)
@@ -189,7 +190,9 @@ if (-not $SkipDeviceLock) {
 
 Assert-FunctionalUxPhoneDevice
 
-foreach ($preset in $presets) {
+for ($presetIndex = 0; $presetIndex -lt $presets.Count; $presetIndex++) {
+    $preset = $presets[$presetIndex]
+    $presetOrdinal = $presetIndex + 1
     $presetRoot = Join-Path $matrixRoot $preset
     $presetRootForRunner = Convert-ToRepoRelativePath -Path $presetRoot
     $runSummaryPath = Join-Path $presetRoot "run_summary.json"
@@ -227,7 +230,7 @@ foreach ($preset in $presets) {
         $arguments += "-SkipDeviceLock"
     }
 
-    Write-Host ("[functional-ux-matrix:{0}] starting {1}" -f $Device, $preset)
+    Write-Host ("[functional-ux-matrix:{0}] starting {1} ({2}/{3}); matrix_elapsed_seconds={4}; artifact_root={5}" -f $Device, $preset, $presetOrdinal, $presets.Count, [Math]::Round($matrixStopwatch.Elapsed.TotalSeconds, 1), $presetRootForRunner)
     $startedAt = Get-Date
     & $powerShellExe @arguments
     $exitCode = $LASTEXITCODE
@@ -258,15 +261,17 @@ foreach ($preset in $presets) {
         artifact_expectations_met = $(if ($null -ne $runSummary) { $runSummary.artifact_expectations_met } else { $null })
     }) | Out-Null
 
-    Write-Host ("[functional-ux-matrix:{0}] finished {1} exit_code={2} duration_seconds={3}" -f $Device, $preset, $exitCode, $durationSeconds)
+    Write-Host ("[functional-ux-matrix:{0}] finished {1} ({2}/{3}) exit_code={4} duration_seconds={5} matrix_elapsed_seconds={6}" -f $Device, $preset, $presetOrdinal, $presets.Count, $exitCode, $durationSeconds, [Math]::Round($matrixStopwatch.Elapsed.TotalSeconds, 1))
     if ($passed) {
         $canReuseInstalledApks = $true
     }
     if ($FailFast -and -not $passed) {
+        Write-Host ("[functional-ux-matrix:{0}] FailFast stopping after {1}/{2} preset(s); matrix_summary.json will include completed results" -f $Device, $presetOrdinal, $presets.Count)
         break
     }
 }
 
+$matrixStopwatch.Stop()
 $matrixSummaryPath = Join-Path $matrixRoot "matrix_summary.json"
 $summary = [ordered]@{
     source = "run_android_functional_ux_smoke_matrix.ps1"
@@ -280,6 +285,11 @@ $summary = [ordered]@{
     clear_logcat_before_run = [bool]$ClearLogcatBeforeRun
     device_lock_used = [bool]$matrixDeviceLockUsed
     device_lock_posture = $(if ($matrixDeviceLockUsed) { "matrix_lock_children_skip_nested" } else { "skipped" })
+    fail_fast = [bool]$FailFast
+    stopped_early = [bool]($FailFast -and $anyFailed -and $results.Count -lt $presets.Count)
+    completed_preset_count = [int]$results.Count
+    total_preset_count = [int]$presets.Count
+    duration_seconds = [Math]::Round($matrixStopwatch.Elapsed.TotalSeconds, 3)
     presets = $results
     passed = -not $anyFailed
 }
