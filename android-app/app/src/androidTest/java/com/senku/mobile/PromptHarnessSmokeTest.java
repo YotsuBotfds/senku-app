@@ -1,6 +1,11 @@
 package com.senku.mobile;
 
 import static androidx.test.espresso.Espresso.onIdle;
+import static com.senku.mobile.PromptHarnessParsing.clipExpectedSummary;
+import static com.senku.mobile.PromptHarnessParsing.extractGuideId;
+import static com.senku.mobile.PromptHarnessParsing.extractGuideTitleFragment;
+import static com.senku.mobile.PromptHarnessParsing.extractLeadingInteger;
+import static com.senku.mobile.PromptHarnessParsing.extractTurnCount;
 import static com.senku.mobile.PromptHarnessText.clipForDiagnostics;
 import static com.senku.mobile.PromptHarnessText.containsAny;
 import static com.senku.mobile.PromptHarnessText.countOccurrences;
@@ -75,7 +80,6 @@ import java.util.Collections;
 import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @RunWith(AndroidJUnit4.class)
@@ -7436,27 +7440,6 @@ public final class PromptHarnessSmokeTest {
             || summaryTextLower.contains(clipExpectedSummary(expectedLower));
     }
 
-    private String extractGuideId(String rawText) {
-        Matcher matcher = Pattern.compile("\\bGD-\\d+\\b", Pattern.CASE_INSENSITIVE).matcher(safe(rawText));
-        if (matcher.find()) {
-            return safe(matcher.group()).toUpperCase(Locale.US);
-        }
-        return "";
-    }
-
-    private String extractGuideTitleFragment(String rawText) {
-        String label = safe(rawText).trim();
-        int colonIndex = label.indexOf(':');
-        if (colonIndex >= 0 && colonIndex + 1 < label.length()) {
-            label = label.substring(colonIndex + 1).trim();
-        }
-        label = label.replaceFirst("(?i)^GD-\\d+\\s*-\\s*", "").trim();
-        if (label.isEmpty()) {
-            return "";
-        }
-        return label.length() > 24 ? label.substring(0, 24).trim() : label;
-    }
-
     private boolean waitForRelatedGuidePanel(
         ActivityScenario<DetailActivity> scenario,
         String expectedRelatedTitle,
@@ -9011,18 +8994,6 @@ public final class PromptHarnessSmokeTest {
             + childCount(activity.findViewById(R.id.detail_thread_container));
     }
 
-    private int extractTurnCount(String rawText) {
-        Matcher matcher = Pattern.compile("(\\d+)\\s+turn", Pattern.CASE_INSENSITIVE).matcher(safe(rawText));
-        if (matcher.find()) {
-            try {
-                return Integer.parseInt(matcher.group(1));
-            } catch (NumberFormatException ignored) {
-                return 0;
-            }
-        }
-        return 0;
-    }
-
     private int visibleButtonCount(LinearLayout container) {
         if (container == null || !isVisible(container)) {
             return 0;
@@ -9115,14 +9086,6 @@ public final class PromptHarnessSmokeTest {
             matched[0] = activity instanceof DetailActivity && isLandscapePhoneActivity(activity);
         });
         return matched[0];
-    }
-
-    private String clipExpectedSummary(String expectedSummaryLower) {
-        String cleaned = safe(expectedSummaryLower).trim();
-        if (cleaned.length() <= 24) {
-            return cleaned;
-        }
-        return cleaned.substring(0, 24).trim();
     }
 
     private boolean isGuideReturnPanelVisible() {
@@ -9384,18 +9347,6 @@ public final class PromptHarnessSmokeTest {
             }
         }
         return null;
-    }
-
-    private int extractLeadingInteger(String rawText) {
-        Matcher matcher = Pattern.compile("(\\d+)").matcher(safe(rawText));
-        if (!matcher.find()) {
-            return 0;
-        }
-        try {
-            return Integer.parseInt(matcher.group(1));
-        } catch (NumberFormatException ignored) {
-            return 0;
-        }
     }
 
     private boolean hasLeadingMarginSpanOn(TextView view, String fragment) {

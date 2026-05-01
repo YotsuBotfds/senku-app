@@ -292,6 +292,31 @@ public final class SearchResultCardModelMapperTest {
     }
 
     @Test
+    public void legacyRowPresentationOwnsViewportBudgetsAndLineCounts() {
+        SearchResultCardModelMapper.SearchResultRowPresentation tablet =
+            SearchResultCardModelMapper.buildLegacyRowPresentationForTest(true, false, false, false);
+        SearchResultCardModelMapper.SearchResultRowPresentation landscape =
+            SearchResultCardModelMapper.buildLegacyRowPresentationForTest(false, true, false, true);
+        SearchResultCardModelMapper.SearchResultRowPresentation smallPortrait =
+            SearchResultCardModelMapper.buildLegacyRowPresentationForTest(false, false, true, false);
+
+        assertEquals(112, tablet.titleBudget);
+        assertEquals(2, tablet.titleMaxLines);
+        assertEquals(124, tablet.snippetBudget);
+        assertEquals(2, tablet.snippetMaxLines);
+
+        assertEquals(90, landscape.titleBudget);
+        assertEquals(1, landscape.titleMaxLines);
+        assertEquals(142, landscape.snippetBudget);
+        assertEquals(1, landscape.snippetMaxLines);
+
+        assertEquals(88, smallPortrait.titleBudget);
+        assertEquals(2, smallPortrait.titleMaxLines);
+        assertEquals(126, smallPortrait.snippetBudget);
+        assertEquals(2, smallPortrait.snippetMaxLines);
+    }
+
+    @Test
     public void legacyRowModelKeepsTabletSnippetTwoLineContract() {
         SearchResultCardModelMapper.SearchResultRowModel rowModel = SearchResultCardModelMapper.mapLegacyRow(
             null,

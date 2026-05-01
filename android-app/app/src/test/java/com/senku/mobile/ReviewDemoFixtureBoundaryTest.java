@@ -225,6 +225,29 @@ public final class ReviewDemoFixtureBoundaryTest {
     }
 
     @Test
+    public void searchRowReviewVisualStateIsQueryScopedAtDisplayBoundary() throws Exception {
+        assertTrue(MainReviewDisplayPolicy.searchRowVisualStateEnabled(true, " rain shelter "));
+        assertFalse(MainReviewDisplayPolicy.searchRowVisualStateEnabled(true, "water"));
+        assertFalse(MainReviewDisplayPolicy.searchRowVisualStateEnabled(false, "rain shelter"));
+
+        Path mainActivity = productionSourceRoot()
+            .resolve("com")
+            .resolve("senku")
+            .resolve("mobile")
+            .resolve("MainActivity.java");
+        String content = new String(Files.readAllBytes(mainActivity), StandardCharsets.UTF_8);
+
+        assertTrue(
+            "MainActivity should pass the active query through MainReviewDisplayPolicy before enabling row review visuals",
+            content.contains("searchRowVisualStateEnabled(activeResultHighlightQuery)")
+        );
+        assertFalse(
+            "MainActivity should not enable row review visuals from review mode alone",
+            content.contains("reviewDisplayPolicy().searchRowVisualStateEnabled())")
+        );
+    }
+
+    @Test
     public void productionDisplayFixturesStayBehindMainReviewDisplayPolicy() throws Exception {
         Path productionSourceRoot = productionSourceRoot();
         List<String> violations = new ArrayList<>();

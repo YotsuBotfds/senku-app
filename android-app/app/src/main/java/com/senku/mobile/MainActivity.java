@@ -643,10 +643,8 @@ public final class MainActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        if (shouldHandleMainSurfaceNavigationTabs(isPhoneFormFactor(), isTabletSearchLayout())) {
-            if (routeCoordinator.applySystemBackTransition()) {
-                return;
-            }
+        if (routeCoordinator.applySystemBackTransition()) {
+            return;
         }
         super.onBackPressed();
     }
@@ -1355,7 +1353,9 @@ public final class MainActivity extends AppCompatActivity {
 
     private void updateAdapterReviewDemoSearchRowState() {
         if (adapter != null) {
-            adapter.setReviewDemoSearchRowVisualStateEnabled(reviewDisplayPolicy().searchRowVisualStateEnabled());
+            adapter.setReviewDemoSearchRowVisualStateEnabled(
+                reviewDisplayPolicy().searchRowVisualStateEnabled(activeResultHighlightQuery)
+            );
         }
     }
 

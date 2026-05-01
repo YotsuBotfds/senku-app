@@ -46,10 +46,15 @@ final class SearchResultCardModelMapper {
 
     static SearchResultRowModel mapLegacyRow(SearchResult result, int position, Options options) {
         Options safeOptions = options == null ? Options.defaults() : options;
-        boolean stressCompactCard = safeOptions.landscapePhoneCard && safeOptions.largeFontCard;
+        SearchResultRowPresentation rowPresentation = buildLegacyRowPresentation(
+            safeOptions.richTabletCard,
+            safeOptions.landscapePhoneCard,
+            safeOptions.smallPhonePortraitCard,
+            safeOptions.largeFontCard
+        );
         return new SearchResultRowModel(
-            searchRowTitleBudget(safeOptions.richTabletCard, safeOptions.landscapePhoneCard),
-            (safeOptions.landscapePhoneCard || stressCompactCard) ? 1 : 2,
+            rowPresentation.titleBudget,
+            rowPresentation.titleMaxLines,
             buildTabletGuideMarker(result == null ? null : result.guideId, position),
             buildTabletAttributeLineForResult(
                 result == null ? null : result.category,
@@ -57,13 +62,12 @@ final class SearchResultCardModelMapper {
                 result == null ? null : result.timeHorizon,
                 result == null ? null : result.retrievalMode
             ),
-            buildCompactRowSnippetForResult(
-                result,
-                safeOptions.richTabletCard,
-                safeOptions.landscapePhoneCard,
-                safeOptions.smallPhonePortraitCard
+            buildCompactRowSnippet(
+                result == null ? null : result.snippet,
+                result == null ? null : result.sectionHeading,
+                rowPresentation.snippetBudget
             ),
-            safeOptions.richTabletCard ? 2 : ((safeOptions.landscapePhoneCard || stressCompactCard) ? 1 : 2)
+            rowPresentation.snippetMaxLines
         );
     }
 
@@ -88,6 +92,25 @@ final class SearchResultCardModelMapper {
             this.guideMarker = guideMarker;
             this.attributeLine = attributeLine;
             this.snippet = snippet;
+            this.snippetMaxLines = snippetMaxLines;
+        }
+    }
+
+    static final class SearchResultRowPresentation {
+        final int titleBudget;
+        final int titleMaxLines;
+        final int snippetBudget;
+        final int snippetMaxLines;
+
+        SearchResultRowPresentation(
+            int titleBudget,
+            int titleMaxLines,
+            int snippetBudget,
+            int snippetMaxLines
+        ) {
+            this.titleBudget = titleBudget;
+            this.titleMaxLines = titleMaxLines;
+            this.snippetBudget = snippetBudget;
             this.snippetMaxLines = snippetMaxLines;
         }
     }
@@ -228,6 +251,37 @@ final class SearchResultCardModelMapper {
 
     static int searchRowTitleBudgetForTest(boolean richTabletCard, boolean landscapePhoneCard) {
         return searchRowTitleBudget(richTabletCard, landscapePhoneCard);
+    }
+
+    static SearchResultRowPresentation buildLegacyRowPresentationForTest(
+        boolean richTabletCard,
+        boolean landscapePhoneCard,
+        boolean smallPhonePortraitCard,
+        boolean largeFontCard
+    ) {
+        return buildLegacyRowPresentation(
+            richTabletCard,
+            landscapePhoneCard,
+            smallPhonePortraitCard,
+            largeFontCard
+        );
+    }
+
+    private static SearchResultRowPresentation buildLegacyRowPresentation(
+        boolean richTabletCard,
+        boolean landscapePhoneCard,
+        boolean smallPhonePortraitCard,
+        boolean largeFontCard
+    ) {
+        boolean stressCompactCard = landscapePhoneCard && largeFontCard;
+        int titleMaxLines = (landscapePhoneCard || stressCompactCard) ? 1 : 2;
+        int snippetMaxLines = richTabletCard ? 2 : ((landscapePhoneCard || stressCompactCard) ? 1 : 2);
+        return new SearchResultRowPresentation(
+            searchRowTitleBudget(richTabletCard, landscapePhoneCard),
+            titleMaxLines,
+            compactRowSnippetBudget(richTabletCard, landscapePhoneCard, smallPhonePortraitCard),
+            snippetMaxLines
+        );
     }
 
     private static int searchRowTitleBudget(boolean richTabletCard, boolean landscapePhoneCard) {

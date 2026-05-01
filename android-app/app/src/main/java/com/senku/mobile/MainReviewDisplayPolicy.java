@@ -55,6 +55,10 @@ final class MainReviewDisplayPolicy {
         return searchRowVisualStateEnabled(productReviewMode);
     }
 
+    boolean searchRowVisualStateEnabled(String query) {
+        return searchRowVisualStateEnabled(productReviewMode, query);
+    }
+
     String manualHomeRecentThreadLabel(ChatSessionStore.ConversationPreview preview, int index) {
         return manualHomeRecentThreadLabel(preview, index, productReviewMode);
     }
@@ -136,6 +140,10 @@ final class MainReviewDisplayPolicy {
 
     static boolean searchRowVisualStateEnabled(boolean productReviewMode) {
         return productReviewMode;
+    }
+
+    static boolean searchRowVisualStateEnabled(boolean productReviewMode, String query) {
+        return ReviewDemoPolicy.shouldApplySearchRowReviewVisualState(productReviewMode, query);
     }
 
     static String manualHomeRecentThreadLabel(

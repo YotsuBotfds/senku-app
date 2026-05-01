@@ -37,6 +37,16 @@ final class DetailTabletStateBuilder {
         }
     }
 
+    static final class ActiveSourceSelection {
+        final String selectedSourceKey;
+        final SearchResult source;
+
+        ActiveSourceSelection(String selectedSourceKey, SearchResult source) {
+            this.selectedSourceKey = safe(selectedSourceKey).trim();
+            this.source = source;
+        }
+    }
+
     static ActiveTurnSelection resolveActiveTurn(
         List<DetailActivity.TabletTurnBinding> turnBindings,
         String selectedTurnId
@@ -52,6 +62,15 @@ final class DetailTabletStateBuilder {
         }
         DetailActivity.TabletTurnBinding fallback = turnBindings.get(turnBindings.size() - 1);
         return new ActiveTurnSelection(safe(fallback.id), fallback);
+    }
+
+    static ActiveSourceSelection resolveActiveSource(
+        List<SearchResult> sources,
+        String selectedSourceKey
+    ) {
+        DetailTabletSourceOwnershipPolicy.ActiveSourceSelection selection =
+            DetailTabletSourceOwnershipPolicy.resolveActiveSource(sources, selectedSourceKey);
+        return new ActiveSourceSelection(selection.selectedKey, selection.source);
     }
 
     static GuideModeState buildGuideModeState(
@@ -103,6 +122,20 @@ final class DetailTabletStateBuilder {
             states.add(buildSourceState(source, anchorKey, selectedKey));
         }
         return states;
+    }
+
+    static ArrayList<SourceState> buildSourceRailStates(
+        DetailActivity.TabletTurnBinding activeTurn,
+        SearchResult visualOwnerSource
+    ) {
+        if (activeTurn == null) {
+            return new ArrayList<>();
+        }
+        return buildSourceStates(
+            activeTurn.sources,
+            visualOwnerSource,
+            visualOwnerSource
+        );
     }
 
     static ArrayList<XRefState> buildXRefStates(List<SearchResult> guides) {

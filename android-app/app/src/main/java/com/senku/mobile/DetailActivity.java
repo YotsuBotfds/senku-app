@@ -2820,13 +2820,10 @@ public final class DetailActivity extends AppCompatActivity {
             activeTurn
         );
 
-        ArrayList<SourceState> sources = activeTurn == null
-            ? new ArrayList<>()
-            : DetailTabletStateBuilder.buildSourceStates(
-                activeTurn.sources,
-                visualOwnerSource,
-                visualOwnerSource
-            );
+        ArrayList<SourceState> sources = DetailTabletStateBuilder.buildSourceRailStates(
+            activeTurn,
+            visualOwnerSource
+        );
 
         boolean pinVisible = !resolvePinnableGuideId().isEmpty();
         boolean pinActive = pinVisible && PinnedGuideStore.contains(this, resolvePinnableGuideId());
@@ -3148,9 +3145,9 @@ public final class DetailActivity extends AppCompatActivity {
             selectedSourceKey = "";
             return null;
         }
-        DetailTabletSourceOwnershipPolicy.ActiveSourceSelection selection =
-            DetailTabletSourceOwnershipPolicy.resolveActiveSource(activeTurn.sources, selectedSourceKey);
-        selectedSourceKey = selection.selectedKey;
+        DetailTabletStateBuilder.ActiveSourceSelection selection =
+            DetailTabletStateBuilder.resolveActiveSource(activeTurn.sources, selectedSourceKey);
+        selectedSourceKey = selection.selectedSourceKey;
         return selection.source;
     }
 

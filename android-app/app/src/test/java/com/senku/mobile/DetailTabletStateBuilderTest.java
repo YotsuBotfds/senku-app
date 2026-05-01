@@ -278,6 +278,45 @@ public final class DetailTabletStateBuilderTest {
     }
 
     @Test
+    public void activeSourceSelectionFallsBackToFirstRealSourceAndKey() {
+        SearchResult blank = new SearchResult(" ", "", "", "", "", " ", "", "");
+        SearchResult firstReal = source("GD-345", "Rain Shelter", "Rigging");
+
+        DetailTabletStateBuilder.ActiveSourceSelection selection =
+            DetailTabletStateBuilder.resolveActiveSource(
+                Arrays.asList(blank, firstReal),
+                "missing"
+            );
+
+        assertSame(firstReal, selection.source);
+        assertEquals("gd-345|rigging|rain shelter", selection.selectedSourceKey);
+    }
+
+    @Test
+    public void sourceRailStatesUseVisualOwnerAsAnchorAndSelection() {
+        SearchResult abrasives = source("GD-220", "Abrasives Manufacturing", "Materials");
+        SearchResult shelter = source("GD-345", "Rain Shelter", "Rigging");
+        DetailActivity.TabletTurnBinding activeTurn = turnWithSources(
+            "T1",
+            "How do I build a rain shelter?",
+            List.of(abrasives, shelter)
+        );
+
+        List<SourceState> states = DetailTabletStateBuilder.buildSourceRailStates(
+            activeTurn,
+            shelter
+        );
+        List<SourceState> emptyStates = DetailTabletStateBuilder.buildSourceRailStates(null, shelter);
+
+        assertEquals(2, states.size());
+        assertFalse(states.get(0).isAnchor());
+        assertFalse(states.get(0).isSelected());
+        assertTrue(states.get(1).isAnchor());
+        assertTrue(states.get(1).isSelected());
+        assertTrue(emptyStates.isEmpty());
+    }
+
+    @Test
     public void visualOwnerUsesGenericQuestionSourceOverlap() {
         SearchResult abrasives = topicSource(
             "GD-220",
