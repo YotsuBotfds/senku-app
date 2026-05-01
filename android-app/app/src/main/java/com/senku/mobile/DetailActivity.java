@@ -3397,19 +3397,7 @@ public final class DetailActivity extends AppCompatActivity {
     }
 
     private ArrayList<XRefState> buildTabletXRefStates() {
-        ArrayList<XRefState> xrefs = new ArrayList<>();
-        for (SearchResult guide : tabletEvidenceXRefs) {
-            xrefs.add(new XRefState(
-                safe(guide == null ? null : guide.guideId).trim(),
-                safe(guide == null ? null : guide.title).trim(),
-                tabletXRefRelationLabel(guide)
-            ));
-        }
-        return xrefs;
-    }
-
-    private String tabletXRefRelationLabel(SearchResult guide) {
-        return DetailTabletSourceOwnershipPolicy.tabletXRefRelationLabel(guide);
+        return DetailTabletStateBuilder.buildXRefStates(tabletEvidenceXRefs);
     }
 
     private static String extractGuideIdFromLabel(String label) {

@@ -1,6 +1,7 @@
 package com.senku.mobile;
 
 import com.senku.ui.tablet.SourceState;
+import com.senku.ui.tablet.XRefState;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -20,6 +21,18 @@ final class DetailTabletStateBuilder {
         String selectedKey = buildSourceSelectionKey(selectedSource);
         for (SearchResult source : sources == null ? Collections.<SearchResult>emptyList() : sources) {
             states.add(buildSourceState(source, anchorKey, selectedKey));
+        }
+        return states;
+    }
+
+    static ArrayList<XRefState> buildXRefStates(List<SearchResult> guides) {
+        ArrayList<XRefState> states = new ArrayList<>();
+        for (SearchResult guide : guides == null ? Collections.<SearchResult>emptyList() : guides) {
+            states.add(new XRefState(
+                safe(guide == null ? null : guide.guideId).trim(),
+                safe(guide == null ? null : guide.title).trim(),
+                DetailTabletSourceOwnershipPolicy.tabletXRefRelationLabel(guide)
+            ));
         }
         return states;
     }

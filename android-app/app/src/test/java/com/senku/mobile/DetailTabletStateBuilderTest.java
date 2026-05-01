@@ -6,6 +6,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import com.senku.ui.tablet.SourceState;
+import com.senku.ui.tablet.XRefState;
 
 import java.util.Arrays;
 import java.util.List;
@@ -79,6 +80,62 @@ public final class DetailTabletStateBuilderTest {
         assertEquals("", states.get(0).getTitle());
         assertFalse(states.get(0).isAnchor());
         assertFalse(states.get(0).isSelected());
+    }
+
+    @Test
+    public void xrefStatesTrimLabelsAndPreserveRelationBuckets() {
+        List<XRefState> states = DetailTabletStateBuilder.buildXRefStates(List.of(
+            new SearchResult(
+                " Required prep ",
+                "",
+                "",
+                "",
+                " GD-499 ",
+                "",
+                "",
+                "",
+                "topic",
+                "",
+                "",
+                ""
+            ),
+            new SearchResult(
+                " Reviewed source ",
+                "",
+                "",
+                "",
+                " GD-222 ",
+                "",
+                "",
+                "",
+                "reviewed_source_anchor",
+                "",
+                "",
+                ""
+            ),
+            source(" GD-333 ", " Related guide ", "")
+        ));
+
+        assertEquals(3, states.size());
+        assertEquals("GD-499", states.get(0).getId());
+        assertEquals("Required prep", states.get(0).getTitle());
+        assertEquals("REQUIRED", states.get(0).getRelation());
+        assertEquals("ANCHOR", states.get(1).getRelation());
+        assertEquals("RELATED", states.get(2).getRelation());
+    }
+
+    @Test
+    public void xrefStatesAllowNullAndEmptyInput() {
+        List<XRefState> emptyStates = DetailTabletStateBuilder.buildXRefStates(null);
+        List<XRefState> nullRowStates = DetailTabletStateBuilder.buildXRefStates(
+            Arrays.asList((SearchResult) null)
+        );
+
+        assertTrue(emptyStates.isEmpty());
+        assertEquals(1, nullRowStates.size());
+        assertEquals("", nullRowStates.get(0).getId());
+        assertEquals("", nullRowStates.get(0).getTitle());
+        assertEquals("RELATED", nullRowStates.get(0).getRelation());
     }
 
     @Test
