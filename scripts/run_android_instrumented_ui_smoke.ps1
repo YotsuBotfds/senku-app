@@ -1220,17 +1220,23 @@ function Resolve-InstrumentationMethodNames {
         }
         "functional-follow-up" {
             return @(
-                "homeAndAskImeSubmitRouteToSearchResultsAndAnswerDetail"
+                "homeAndAskImeSubmitRouteToSearchResultsAndAnswerDetail",
+                "detailFollowUpImeSendDispatchesLikeSendClick",
+                "detailFollowUpEmptySubmitDoesNotDispatchDraft",
+                "phoneAnswerDetailFollowUpSubmitReturnsThreadDetailWithInlineHistory"
             )
         }
         "functional-saved" {
             return @(
-                "savedNavigationBackReturnsManualHomeDestination"
+                "savedNavigationBackReturnsManualHomeDestination",
+                "savedTabImeSubmitRoutesToSearchResultsNotAnswerDetail",
+                "savedTabPinnedGuideButtonOpensGuideDetailAndBackReturnsSaved"
             )
         }
         "functional-back-provenance" {
             return @(
-                "answerModeProvenanceOpenBackReturnsAnswerContext"
+                "answerModeProvenanceOpenBackReturnsAnswerContext",
+                "answerSourceChipTapFollowsAdvertisedActionForSeededGuideSources"
             )
         }
         default {

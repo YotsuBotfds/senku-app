@@ -2450,6 +2450,120 @@ public final class PromptHarnessSmokeTest {
     }
 
     @Test
+    public void phoneAnswerDetailFollowUpSubmitReturnsThreadDetailWithInlineHistory() throws Exception {
+        Context context = ApplicationProvider.getApplicationContext();
+        ChatSessionStore.restore(context);
+        String conversationId = ChatSessionStore.createConversation();
+        SessionMemory sessionMemory = ChatSessionStore.memoryFor(conversationId);
+        ArrayList<SearchResult> initialSources = new ArrayList<>();
+        initialSources.add(threadFixtureSource(
+            "GD-345",
+            "Tarp & Cord Shelters",
+            "Rain shelter",
+            "A simple ridgeline shelter requires only tarp, cord, and two anchor points.",
+            "rain shelter tarp cord ridgeline"
+        ));
+
+        String initialQuery = "How do I build a simple rain shelter from tarp and cord?";
+        String initialAnswer =
+            "Build a ridgeline first, then drape and tension the tarp around it. "
+                + "Pitch the ridge along prevailing wind.";
+        String followUpQuery = "What should I do next after the ridge line is up?";
+        String generatedFollowUpAnswer =
+            "After the ridgeline is secure, spread the tarp evenly, tension both windward corners, "
+                + "and keep the low edge close to the ground so runoff and gusts move away from the shelter.";
+        sessionMemory.recordTranscriptFixtureTurnForTest(
+            initialQuery,
+            initialAnswer,
+            initialAnswer,
+            initialSources,
+            "thread_fixture_gd345_initial",
+            fixedLocalTimeEpochMsForThreadFixture(4, 21)
+        );
+
+        Intent intent = DetailActivity.newAnswerIntent(
+            context,
+            initialQuery,
+            "GD-345 | confident | 04:21",
+            initialAnswer,
+            initialSources,
+            null,
+            conversationId,
+            "thread_fixture_gd345_initial",
+            OfflineAnswerEngine.AnswerMode.CONFIDENT,
+            OfflineAnswerEngine.ConfidenceLabel.HIGH
+        );
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        File temporaryModelFile = ensureTemporaryModelFileForFollowUpSmoke(context);
+        OfflineAnswerEngine.setGeneratorsForTest(
+            null,
+            (generatorContext, modelFile, prompt, maxTokens, listener) -> {
+                if (listener != null) {
+                    listener.onPartialText(generatedFollowUpAnswer);
+                }
+                return generatedFollowUpAnswer;
+            }
+        );
+
+        try (ActivityScenario<DetailActivity> scenario = ActivityScenario.launch(intent)) {
+            awaitHarnessIdle();
+            Assert.assertTrue(
+                "phone follow-up detail should render before composer submit",
+                waitForDetailBodyReady(DETAIL_WAIT_MS, 8)
+            );
+            scenario.onActivity(activity -> {
+                Assume.assumeTrue(
+                    "phone follow-up composer smoke requires a phone detail layout",
+                    isPhoneActivity(activity) && !collectDetailSettleSignals(activity).tabletCompose
+                );
+            });
+            Assert.assertTrue(
+                "phone follow-up composer should be ready before submit; harness signals="
+                    + HarnessTestSignals.snapshot(),
+                waitForFollowUpComposerReadyOnMainThread(DETAIL_WAIT_MS)
+            );
+
+            FollowUpSubmitDispatchSignals dispatchSignals =
+                submitFollowUpForDispatchProbe(followUpQuery, false);
+            Assert.assertEquals(
+                "phone follow-up submit should dispatch exactly one request",
+                1,
+                dispatchSignals.requestTokenDelta()
+            );
+            awaitHarnessIdle();
+
+            assertResumedDetailActivitySettled(
+                GENERATIVE_DETAIL_WAIT_MS,
+                40,
+                "",
+                false,
+                "phone follow-up submit did not return to a settled DetailActivity"
+            );
+            boolean latestQuestionRecorded =
+                waitForSessionLatestQuestion(sessionMemory, followUpQuery, GENERATIVE_DETAIL_WAIT_MS);
+            if (!latestQuestionRecorded) {
+                captureUiState("phone_followup_submit_missing_session_turn");
+            }
+            Assert.assertTrue(
+                "phone follow-up submit should record the submitted question as the latest session turn; "
+                    + describeSessionLatestTurn(sessionMemory) + "; "
+                    + describeResumedActivityAndHarnessSignals(),
+                latestQuestionRecorded
+            );
+            Assert.assertTrue(
+                "phone follow-up submit should surface visible inline thread history",
+                waitForVisibleFollowUpHistorySurface(DETAIL_WAIT_MS)
+            );
+            scrollHistoryIntoView(scenario);
+            captureUiState("phone_followup_submit_thread_history");
+        } finally {
+            OfflineAnswerEngine.resetGeneratorsForTest();
+            deleteTemporaryModelFileForFollowUpSmoke(temporaryModelFile);
+            ChatSessionStore.removeConversation(context, conversationId);
+        }
+    }
+
+    @Test
     public void detailFollowUpImeSendDispatchesLikeSendClick() {
         FollowUpSubmitDispatchSignals clickSignals =
             dispatchFollowUpFromFreshDetail("send_click", false);
@@ -2481,9 +2595,9 @@ public final class PromptHarnessSmokeTest {
     @Test
     public void detailFollowUpEmptySubmitDoesNotDispatchDraft() {
         FollowUpSubmitDispatchSignals clickSignals =
-            dispatchFollowUpFromFreshDetail("empty_send_click", " \n\t ", false, false);
+            dispatchFollowUpFromFreshDetail("empty_send_click", " \n\t ", false, true);
         FollowUpSubmitDispatchSignals imeSignals =
-            dispatchFollowUpFromFreshDetail("empty_ime_send", " \n\t ", true, false);
+            dispatchFollowUpFromFreshDetail("empty_ime_send", " \n\t ", true, true);
 
         Assert.assertEquals(
             "empty send click must not dispatch a follow-up request",
@@ -8057,6 +8171,70 @@ public final class PromptHarnessSmokeTest {
             }
         });
         InstrumentationRegistry.getInstrumentation().waitForIdleSync();
+    }
+
+    private boolean waitForVisibleFollowUpHistorySurface(long timeoutMs) {
+        long deadline = SystemClock.uptimeMillis() + timeoutMs;
+        while (SystemClock.uptimeMillis() < deadline) {
+            final boolean[] visible = {false};
+            InstrumentationRegistry.getInstrumentation().runOnMainSync(() -> {
+                Activity activity = getResumedActivityOnMainThread();
+                visible[0] = activity != null && countVisibleHistoryViews(activity) > 0;
+            });
+            if (visible[0]) {
+                return true;
+            }
+            InstrumentationRegistry.getInstrumentation().waitForIdleSync();
+            SystemClock.sleep(75L);
+        }
+        return false;
+    }
+
+    private boolean waitForSessionLatestQuestion(SessionMemory sessionMemory, String expectedQuestion, long timeoutMs) {
+        long deadline = SystemClock.uptimeMillis() + timeoutMs;
+        String expected = safe(expectedQuestion).trim();
+        while (SystemClock.uptimeMillis() < deadline) {
+            SessionMemory.TurnSnapshot latest = sessionMemory == null ? null : sessionMemory.latestTurnSnapshot();
+            if (latest != null && expected.equals(safe(latest.question).trim())) {
+                return true;
+            }
+            InstrumentationRegistry.getInstrumentation().waitForIdleSync();
+            SystemClock.sleep(75L);
+        }
+        return false;
+    }
+
+    private String describeSessionLatestTurn(SessionMemory sessionMemory) {
+        SessionMemory.TurnSnapshot latest = sessionMemory == null ? null : sessionMemory.latestTurnSnapshot();
+        if (latest == null) {
+            return "latestTurn=<none>";
+        }
+        return "latestTurn={question=\"" + safe(latest.question)
+            + "\", answerLen=" + safe(latest.answerBody).trim().length()
+            + ", ruleId=\"" + safe(latest.ruleId) + "\"}";
+    }
+
+    private File ensureTemporaryModelFileForFollowUpSmoke(Context context) throws Exception {
+        if (ModelFileStore.getImportedModelFile(context) != null) {
+            return null;
+        }
+        File modelsDir = new File(context.getFilesDir(), "models");
+        Assert.assertTrue(
+            "follow-up smoke should be able to create a temporary model directory",
+            modelsDir.isDirectory() || modelsDir.mkdirs()
+        );
+        File stub = new File(modelsDir, "senku-followup-smoke.task");
+        try (FileOutputStream output = new FileOutputStream(stub)) {
+            output.write(new byte[] {1, 2, 3, 4});
+        }
+        Assert.assertTrue("temporary follow-up smoke model should exist", stub.isFile());
+        return stub;
+    }
+
+    private void deleteTemporaryModelFileForFollowUpSmoke(File temporaryModelFile) {
+        if (temporaryModelFile != null && temporaryModelFile.isFile()) {
+            temporaryModelFile.delete();
+        }
     }
 
     private android.view.View firstVisibleHistorySurface(Activity activity) {
