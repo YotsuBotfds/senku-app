@@ -450,6 +450,7 @@ function Get-AskOwnedEvidenceFragments {
     return @(
         "Ask Senku",
         "Ask a question",
+        "Ask the manual a question",
         "Ask anything",
         "Ask a survival question",
         "Share your situation",
@@ -460,6 +461,9 @@ function Get-AskOwnedEvidenceFragments {
 function Get-AskAnswerEvidenceFragments {
     return @(
         "Answer",
+        "Answer model unavailable",
+        "Import a model",
+        "Host GPU",
         "Sources",
         "Details",
         "Related guides",
@@ -629,14 +633,51 @@ function Find-AskSubmitCenter {
         $resourceId = [string]$attributes["resource-id"]
         $text = [string]$attributes["text"]
         $description = [string]$attributes["content-desc"]
+        $clickable = [string]$attributes["clickable"]
         $visibleLabel = "$text $description"
+        $isRealSubmitControl = $clickable -eq "true" `
+            -or $className.Contains("Button") `
+            -or ($resourceId -match "(ask_button|search_button|submit|send|share)")
         return (-not $className.Contains("EditText")) -and (
-            ($text -in @("Ask", "Submit", "Send", "Share")) `
+            $isRealSubmitControl -and (
+                ($text -in @("Ask", "Submit", "Send", "Share")) `
                 -or ($description -in @("Ask", "Submit", "Send", "Share")) `
                 -or ($visibleLabel -match "\b(Ask|Submit|Send|Share)\b") `
                 -or ($resourceId -match "(ask|submit|send|share)")
+            )
         )
     }
+}
+
+function Wait-PhysicalSmokePackReadyIfInstalling {
+    param(
+        [string]$ResolvedAdbPath,
+        [string]$DeviceSerial,
+        [int]$TimeoutMs = 60000,
+        [int]$PollMs = 1000
+    )
+
+    $dumpText = Read-UiAutomatorDump -ResolvedAdbPath $ResolvedAdbPath -DeviceSerial $DeviceSerial
+    $isInstalling = $dumpText.IndexOf("Installing offline pack", [System.StringComparison]::OrdinalIgnoreCase) -ge 0 `
+        -or $dumpText.IndexOf("Preparing manual", [System.StringComparison]::OrdinalIgnoreCase) -ge 0
+    $isReady = $dumpText.IndexOf("Ready offline", [System.StringComparison]::OrdinalIgnoreCase) -ge 0 `
+        -or $dumpText.IndexOf("Pack ready", [System.StringComparison]::OrdinalIgnoreCase) -ge 0
+    if ((-not $isInstalling) -or $isReady) {
+        return
+    }
+
+    $deadline = [DateTime]::UtcNow.AddMilliseconds($TimeoutMs)
+    do {
+        Start-Sleep -Milliseconds $PollMs
+        $dumpText = Read-UiAutomatorDump -ResolvedAdbPath $ResolvedAdbPath -DeviceSerial $DeviceSerial
+        $isReady = $dumpText.IndexOf("Ready offline", [System.StringComparison]::OrdinalIgnoreCase) -ge 0 `
+            -or $dumpText.IndexOf("Pack ready", [System.StringComparison]::OrdinalIgnoreCase) -ge 0
+        if ($isReady) {
+            return
+        }
+    } while ([DateTime]::UtcNow -lt $deadline)
+
+    throw "Physical phone smoke did not reach a pack-ready UI state before interaction."
 }
 
 function New-InteractionStep {
@@ -910,6 +951,7 @@ if (-not $DryRun) {
     }
 
     if ($Interact) {
+        Wait-PhysicalSmokePackReadyIfInstalling -ResolvedAdbPath $resolvedAdbPath -DeviceSerial $Serial
         if ($InteractionMode -eq "Ask") {
             $interactionSteps = Invoke-SenkuAskInteraction -ResolvedAdbPath $resolvedAdbPath -DeviceSerial $Serial -QueryText $InteractionQuery
         } else {

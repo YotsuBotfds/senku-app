@@ -627,7 +627,7 @@ class AndroidPhysicalPhoneSmokeContractTests(unittest.TestCase):
                         "if \"%4\"==\"dumpsys\" if \"%5\"==\"input\" (echo SurfaceOrientation: 0& exit /b 0)",
                         "if \"%3\"==\"exec-out\" (echo PNGDATA& exit /b 0)",
                         f"if \"%4\"==\"uiautomator\" if exist \"{answer}\" if not exist \"{backed}\" (echo ^<hierarchy^>^<node text=\"Answer\" /^>^<node text=\"Sources\" /^>^<node text=\"Details\" /^>^</hierarchy^>& exit /b 0)",
-                        f"if \"%4\"==\"uiautomator\" if exist \"{ask}\" (echo ^<hierarchy^>^<node text=\"Ask Senku\" /^>^<node class=\"android.widget.EditText\" resource-id=\"com.senku.mobile:id/ask_input\" content-desc=\"Ask a question\" bounds=\"[30,200][330,260]\" /^>^<node text=\"Share\" content-desc=\"Share\" bounds=\"[350,200][430,260]\" /^>^</hierarchy^>& exit /b 0)",
+                        f"if \"%4\"==\"uiautomator\" if exist \"{ask}\" (echo ^<hierarchy^>^<node text=\"Ask Senku\" /^>^<node class=\"android.widget.EditText\" resource-id=\"com.senku.mobile:id/ask_input\" content-desc=\"Ask a question\" bounds=\"[30,200][330,260]\" /^>^<node class=\"android.widget.Button\" text=\"Share\" content-desc=\"Share\" clickable=\"true\" bounds=\"[350,200][430,260]\" /^>^</hierarchy^>& exit /b 0)",
                         "if \"%4\"==\"uiautomator\" (echo ^<hierarchy^>^<node text=\"Ask\" content-desc=\"Ask\" bounds=\"[10,20][110,120]\" /^>^</hierarchy^>& exit /b 0)",
                         f"if \"%4\"==\"input\" if \"%5\"==\"tap\" if \"%6\"==\"60\" (echo ask> \"{ask}\"& echo tapped& exit /b 0)",
                         "if \"%4\"==\"input\" if \"%5\"==\"tap\" if \"%6\"==\"180\" (echo tapped& exit /b 0)",
@@ -721,7 +721,7 @@ class AndroidPhysicalPhoneSmokeContractTests(unittest.TestCase):
                 "^<hierarchy^>"
                 "^<node text=\"Ask Senku\" /^>"
                 "^<node class=\"android.widget.EditText\" text=\"boil water\" resource-id=\"com.senku.mobile:id/ask_input\" content-desc=\"Ask a question\" bounds=\"[30,200][330,260]\" /^>"
-                "^<node text=\"Share\" content-desc=\"Share\" bounds=\"[350,200][430,260]\" /^>"
+                "^<node class=\"android.widget.Button\" text=\"Share\" content-desc=\"Share\" clickable=\"true\" bounds=\"[350,200][430,260]\" /^>"
                 "^</hierarchy^>"
             )
             adb.write_text(
