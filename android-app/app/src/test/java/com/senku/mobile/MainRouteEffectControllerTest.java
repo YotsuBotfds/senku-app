@@ -147,6 +147,27 @@ public final class MainRouteEffectControllerTest {
     }
 
     @Test
+    public void zeroResultSearchSystemBackReturnsBrowseWithoutPoppingPreviousTab() {
+        MainRouteDecisionHelper.RouteState zeroResultSearch =
+            MainRouteDecisionHelper.enterSearch(MainRouteDecisionHelper.browseHome()).routeState;
+        RecordingBackEffects effects = new RecordingBackEffects(false, BottomTabDestination.HOME);
+        effects.previousPhoneTab = BottomTabDestination.PINS;
+
+        assertTrue(MainRouteEffectController.applySystemBackTransition(
+            zeroResultSearch,
+            effects
+        ));
+
+        assertEquals(
+            Arrays.asList(
+                "applyRouteState:BROWSE:HOME:false",
+                "returnToBrowse"
+            ),
+            effects.calls
+        );
+    }
+
+    @Test
     public void savedTransitionAfterRestoredSearchPushesHomeOwnerForBack() {
         MainRouteDecisionHelper.RouteState restoredSearch =
             MainRouteDecisionHelper.resolveRestoredMainRouteState(
