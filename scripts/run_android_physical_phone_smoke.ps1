@@ -648,7 +648,7 @@ $orientationText = $null
 $deviceIdentity = $null
 $textCheckFailureMessage = $null
 $interactionFailureMessage = $null
-$interactionSteps = if ($Interact) { [System.Collections.ArrayList]::new() } else { $null }
+$interactionSteps = [System.Collections.ArrayList]::new()
 $requestedTextFragments = @(Expand-RequiredTextFragments -Fragments $RequiredText)
 $textChecks = if ($requestedTextFragments.Count -gt 0) {
     [ordered]@{

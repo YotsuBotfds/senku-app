@@ -10,6 +10,7 @@ from pathlib import Path
 REPO_ROOT = Path(__file__).resolve().parents[1]
 SCRIPT = REPO_ROOT / "scripts" / "run_android_physical_phone_smoke.ps1"
 QUALITY_GATE_SCRIPT = REPO_ROOT / "scripts" / "run_powershell_quality_gate.ps1"
+VALIDATOR_SCRIPT = REPO_ROOT / "scripts" / "validate_android_physical_phone_smoke_summary.py"
 
 
 class AndroidPhysicalPhoneSmokeContractTests(unittest.TestCase):
@@ -178,6 +179,62 @@ class AndroidPhysicalPhoneSmokeContractTests(unittest.TestCase):
             self.assertEqual(summary["text_checks"]["requested"], ["Field manual", "Senku"])
             self.assertEqual(summary["text_checks"]["passed"], [])
             self.assertEqual(summary["text_checks"]["missing"], [])
+        finally:
+            shutil.rmtree(output_dir, ignore_errors=True)
+
+    def test_dry_run_interact_records_skipped_steps_and_validates(self):
+        output_dir = Path(tempfile.mkdtemp(prefix="physical_phone_smoke_dry_interact_"))
+        try:
+            result = subprocess.run(
+                [
+                    "powershell",
+                    "-NoProfile",
+                    "-ExecutionPolicy",
+                    "Bypass",
+                    "-File",
+                    str(SCRIPT),
+                    "-OutputDir",
+                    str(output_dir),
+                    "-DryRun",
+                    "-Interact",
+                    "-InteractionQuery",
+                    "boil water",
+                ],
+                cwd=REPO_ROOT,
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+
+            self.assertEqual(result.returncode, 0, result.stderr + result.stdout)
+            summary_path = output_dir / "summary.json"
+            summary = json.loads(summary_path.read_text(encoding="utf-8-sig"))
+            self.assertEqual(summary["status"], "dry_run_only")
+            self.assertTrue(summary["interaction"]["enabled"])
+            self.assertEqual(summary["interaction"]["query"], "boil water")
+            self.assertEqual(
+                [(step["name"], step["status"]) for step in summary["interaction"]["steps"]],
+                [
+                    ("tap_saved", "skipped"),
+                    ("tap_query_field", "skipped"),
+                    ("enter_query", "skipped"),
+                    ("submit_query", "skipped"),
+                    ("back", "skipped"),
+                ],
+            )
+            for step in summary["interaction"]["steps"]:
+                self.assertEqual(step["message"], "Dry run only.")
+                self.assertNotIn("post_check", step)
+
+            validation = subprocess.run(
+                ["python", str(VALIDATOR_SCRIPT), str(summary_path)],
+                cwd=REPO_ROOT,
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+
+            self.assertEqual(validation.returncode, 0, validation.stderr + validation.stdout)
         finally:
             shutil.rmtree(output_dir, ignore_errors=True)
 

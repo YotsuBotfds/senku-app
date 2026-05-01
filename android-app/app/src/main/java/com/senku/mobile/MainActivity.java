@@ -76,7 +76,6 @@ public final class MainActivity extends AppCompatActivity {
     private static final int MAX_SAVED_GUIDES = 12;
     private static final int MAX_RECENT_THREAD_PREVIEWS = 3;
     private static final int MAX_HOME_RELATED_GUIDES = 4;
-    private static final int MAX_RESULT_PREVIEW_BRIDGE_GUIDES = 4;
     private static final int RESULT_PREVIEW_BRIDGE_SIGNAL_LIMIT = 1;
     private static final int MANUAL_HOME_CATEGORY_CARD_HEIGHT_DP = 74;
     private static final int TABLET_MANUAL_HOME_CATEGORY_CARD_HEIGHT_DP = 68;
@@ -1479,14 +1478,12 @@ public final class MainActivity extends AppCompatActivity {
 
     private void renderRecentThreads(List<ChatSessionStore.ConversationPreview> previews) {
         recentThreadPreviews.clear();
-        if (previews != null) {
-            recentThreadPreviews.addAll(previews);
-        }
-        if (productReviewMode && isManualHomeShellLayout()) {
-            while (recentThreadPreviews.size() < MAX_RECENT_THREAD_PREVIEWS) {
-                recentThreadPreviews.add(buildReviewRecentThreadPlaceholder(productReviewMode, recentThreadPreviews.size()));
-            }
-        }
+        recentThreadPreviews.addAll(RecentThreadDisplayPolicy.buildDisplayList(
+            previews,
+            productReviewMode,
+            isManualHomeShellLayout(),
+            getRecentThreadPreviewLimit()
+        ));
         if (recentThreadsContainer != null) {
             recentThreadsContainer.removeAllViews();
             for (int index = 0; index < recentThreadPreviews.size(); index++) {
@@ -1495,25 +1492,6 @@ public final class MainActivity extends AppCompatActivity {
         }
         refreshHomeRelatedGuidesAsync();
         updateRecentThreadsVisibility();
-    }
-
-    private static ChatSessionStore.ConversationPreview buildReviewRecentThreadPlaceholder(
-        boolean productReviewMode,
-        int index
-    ) {
-        long now = System.currentTimeMillis();
-        SessionMemory.TurnSnapshot turn = new SessionMemory.TurnSnapshot(
-            ReviewDemoPolicy.placeholderRecentThreadQuestion(productReviewMode, index, ""),
-            "",
-            "",
-            Collections.emptyList(),
-            Collections.emptyList(),
-            "",
-            ReviewedCardMetadata.empty(),
-            null,
-            now
-        );
-        return new ChatSessionStore.ConversationPreview("review-home-placeholder-" + index, turn, 1, now);
     }
 
     private void refreshSearchSuggestions(String rawQuery) {
@@ -1999,7 +1977,7 @@ public final class MainActivity extends AppCompatActivity {
 
     private void refreshResultPreviewBridgesAsync(List<SearchResult> results) {
         PackRepository repo = repository;
-        LinkedHashMap<String, String> previewGuideIds = collectResultPreviewBridgeGuideIds(results);
+        LinkedHashMap<String, String> previewGuideIds = ResultPreviewBridgePolicy.collectGuideIds(results);
         int requestVersion = ++resultPreviewBridgeRequestVersion;
         if (repo == null || previewGuideIds.isEmpty()) {
             return;
@@ -2040,25 +2018,6 @@ public final class MainActivity extends AppCompatActivity {
                 runTrackedOnUiThread(harnessToken, () -> applyResultPreviewBridgeSignals(requestVersion, Collections.emptyMap()));
             }
         });
-    }
-
-    private LinkedHashMap<String, String> collectResultPreviewBridgeGuideIds(List<SearchResult> results) {
-        LinkedHashMap<String, String> previewGuideIds = new LinkedHashMap<>();
-        if (results == null) {
-            return previewGuideIds;
-        }
-        for (SearchResult result : results) {
-            String guideId = safe(result == null ? null : result.guideId).trim();
-            if (guideId.isEmpty()) {
-                continue;
-            }
-            String normalizedGuideId = guideId.toLowerCase(Locale.US);
-            previewGuideIds.putIfAbsent(normalizedGuideId, guideId);
-            if (previewGuideIds.size() >= MAX_RESULT_PREVIEW_BRIDGE_GUIDES) {
-                break;
-            }
-        }
-        return previewGuideIds;
     }
 
     private void applyResultPreviewBridgeSignals(
@@ -3044,8 +3003,7 @@ public final class MainActivity extends AppCompatActivity {
     }
 
     static boolean isSavedPhoneFlowIntent(BottomTabDestination destination) {
-        return destination != null
-            && phoneTabSelectionOwner(destination) == BottomTabDestination.PINS;
+        return SavedGuidesPolicy.isSavedPhoneFlowIntent(destination);
     }
 
     static boolean shouldShowSavedGuideSection(
@@ -3053,10 +3011,7 @@ public final class MainActivity extends AppCompatActivity {
         BottomTabDestination activePhoneTab,
         int savedGuideCount
     ) {
-        if (!browseMode) {
-            return false;
-        }
-        return savedGuideCount > 0 || activePhoneTab == BottomTabDestination.PINS;
+        return SavedGuidesPolicy.shouldShowSection(browseMode, activePhoneTab, savedGuideCount);
     }
 
     private static int phoneTabLabelResource(BottomTabDestination destination) {
@@ -3234,7 +3189,7 @@ public final class MainActivity extends AppCompatActivity {
     }
 
     static boolean shouldLoadBrowseGuidesForSavedDestination(boolean repositoryReady, int loadedGuideCount) {
-        return repositoryReady && loadedGuideCount <= 0;
+        return SavedGuidesPolicy.shouldLoadBrowseGuidesForDestination(repositoryReady, loadedGuideCount);
     }
 
     private void scrollBrowseToTop() {
@@ -3271,7 +3226,11 @@ public final class MainActivity extends AppCompatActivity {
             return;
         }
         updatePinnedSectionVisibility();
-        if (pinnedSection == null || pinnedSection.getVisibility() != View.VISIBLE) {
+        if (!SavedGuidesPolicy.shouldFocusSection(
+            pendingSavedGuideSectionFocus,
+            true,
+            pinnedSection != null && pinnedSection.getVisibility() == View.VISIBLE
+        )) {
             return;
         }
         pendingSavedGuideSectionFocus = false;
