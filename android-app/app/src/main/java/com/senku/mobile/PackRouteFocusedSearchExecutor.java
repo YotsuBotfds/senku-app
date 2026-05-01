@@ -86,13 +86,13 @@ final class PackRouteFocusedSearchExecutor {
             );
         }
 
-        int guideSearchThreshold = PackRepository.routeGuideSearchThreshold(
+        int guideSearchThreshold = RetrievalRoutePolicy.routeGuideSearchThreshold(
             queryTerms.routeProfile,
             queryTerms.metadataProfile,
             compactGuideSweep,
             limit
         );
-        guideSearchThreshold = PackRepository.runtimeRouteGuideSearchThreshold(
+        guideSearchThreshold = RetrievalRoutePolicy.runtimeRouteGuideSearchThreshold(
             queryTerms.metadataProfile,
             ftsSupportsBm25,
             guideSearchThreshold

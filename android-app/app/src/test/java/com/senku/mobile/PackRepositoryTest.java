@@ -3608,8 +3608,8 @@ public final class PackRepositoryTest {
             "what's the safest way to store treated water long term"
         );
 
-        int broadThreshold = PackRepository.routeGuideSearchThreshold(routeProfile, metadataProfile, false, 12);
-        int compactThreshold = PackRepository.routeGuideSearchThreshold(routeProfile, metadataProfile, true, 12);
+        int broadThreshold = RetrievalRoutePolicy.routeGuideSearchThreshold(routeProfile, metadataProfile, false, 12);
+        int compactThreshold = RetrievalRoutePolicy.routeGuideSearchThreshold(routeProfile, metadataProfile, true, 12);
 
         assertEquals(9, broadThreshold);
         assertEquals(6, compactThreshold);
@@ -3624,8 +3624,8 @@ public final class PackRepositoryTest {
             "how do i build a rainwater cistern and gravity fed water distribution system"
         );
 
-        int broadThreshold = PackRepository.routeGuideSearchThreshold(routeProfile, metadataProfile, false, 12);
-        int compactThreshold = PackRepository.routeGuideSearchThreshold(routeProfile, metadataProfile, true, 12);
+        int broadThreshold = RetrievalRoutePolicy.routeGuideSearchThreshold(routeProfile, metadataProfile, false, 12);
+        int compactThreshold = RetrievalRoutePolicy.routeGuideSearchThreshold(routeProfile, metadataProfile, true, 12);
 
         assertEquals(24, broadThreshold);
         assertEquals(16, compactThreshold);
@@ -3637,8 +3637,8 @@ public final class PackRepositoryTest {
             "how do i build a rainwater cistern and gravity fed water distribution system"
         );
 
-        assertEquals(5, PackRepository.runtimeRouteGuideSearchThreshold(metadataProfile, false, 24));
-        assertEquals(24, PackRepository.runtimeRouteGuideSearchThreshold(metadataProfile, true, 24));
+        assertEquals(5, RetrievalRoutePolicy.runtimeRouteGuideSearchThreshold(metadataProfile, false, 24));
+        assertEquals(24, RetrievalRoutePolicy.runtimeRouteGuideSearchThreshold(metadataProfile, true, 24));
     }
 
     @Test
@@ -3650,8 +3650,8 @@ public final class PackRepositoryTest {
             "how do i make soap from animal fat safely enough that it's actually useful"
         );
 
-        int broadThreshold = PackRepository.routeGuideSearchThreshold(routeProfile, metadataProfile, false, 12);
-        int compactThreshold = PackRepository.routeGuideSearchThreshold(routeProfile, metadataProfile, true, 12);
+        int broadThreshold = RetrievalRoutePolicy.routeGuideSearchThreshold(routeProfile, metadataProfile, false, 12);
+        int compactThreshold = RetrievalRoutePolicy.routeGuideSearchThreshold(routeProfile, metadataProfile, true, 12);
 
         assertEquals(24, broadThreshold);
         assertEquals(18, compactThreshold);
@@ -3675,8 +3675,8 @@ public final class PackRepositoryTest {
             "How do we merge with another group if we don't trust each other yet?"
         );
 
-        int broadThreshold = PackRepository.routeGuideSearchThreshold(routeProfile, metadataProfile, false, 12);
-        int compactThreshold = PackRepository.routeGuideSearchThreshold(routeProfile, metadataProfile, true, 12);
+        int broadThreshold = RetrievalRoutePolicy.routeGuideSearchThreshold(routeProfile, metadataProfile, false, 12);
+        int compactThreshold = RetrievalRoutePolicy.routeGuideSearchThreshold(routeProfile, metadataProfile, true, 12);
 
         assertEquals(10, broadThreshold);
         assertEquals(8, compactThreshold);
@@ -3855,8 +3855,8 @@ public final class PackRepositoryTest {
             "How do we protect a vulnerable work site without spreading people too thin?"
         );
 
-        int broadThreshold = PackRepository.routeGuideSearchThreshold(routeProfile, metadataProfile, false, 12);
-        int compactThreshold = PackRepository.routeGuideSearchThreshold(routeProfile, metadataProfile, true, 12);
+        int broadThreshold = RetrievalRoutePolicy.routeGuideSearchThreshold(routeProfile, metadataProfile, false, 12);
+        int compactThreshold = RetrievalRoutePolicy.routeGuideSearchThreshold(routeProfile, metadataProfile, true, 12);
 
         assertEquals(10, broadThreshold);
         assertEquals(8, compactThreshold);
@@ -3941,7 +3941,7 @@ public final class PackRepositoryTest {
         );
 
         assertTrue(routeProfile.usesCompactGuideSweep("how do i choose a safe site and foundation for a small cabin"));
-        assertEquals(12, PackRepository.routeGuideSearchThreshold(routeProfile, metadataProfile, true, 12));
+        assertEquals(12, RetrievalRoutePolicy.routeGuideSearchThreshold(routeProfile, metadataProfile, true, 12));
     }
 
     @Test

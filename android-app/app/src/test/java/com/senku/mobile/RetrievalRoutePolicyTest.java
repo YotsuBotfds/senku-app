@@ -41,6 +41,29 @@ public final class RetrievalRoutePolicyTest {
     }
 
     @Test
+    public void runtimeRouteGuideSearchThresholdClampsNoBm25WaterDistributionOnly() {
+        QueryMetadataProfile waterDistribution = QueryMetadataProfile.fromQuery(
+            "how do i design a gravity-fed water distribution system"
+        );
+        QueryMetadataProfile waterStorage = QueryMetadataProfile.fromQuery(
+            "what is the safest way to store treated water long term"
+        );
+
+        assertEquals(
+            5,
+            RetrievalRoutePolicy.runtimeRouteGuideSearchThreshold(waterDistribution, false, 18)
+        );
+        assertEquals(
+            18,
+            RetrievalRoutePolicy.runtimeRouteGuideSearchThreshold(waterDistribution, true, 18)
+        );
+        assertEquals(
+            18,
+            RetrievalRoutePolicy.runtimeRouteGuideSearchThreshold(waterStorage, false, 18)
+        );
+    }
+
+    @Test
     public void likeBackfillRunsWhenFtsAddsNothing() {
         assertEquals(
             true,

@@ -3,6 +3,8 @@ package com.senku.mobile;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import android.database.sqlite.SQLiteException;
+
 import java.util.Collections;
 import java.util.List;
 
@@ -171,6 +173,19 @@ public final class PackPlainSearchSqlPolicyTest {
     }
 
     @Test
+    public void plainLikeFallbackReturnsEmptyWhenSqliteExecutionFails() {
+        List<SearchResult> results = PackRepository.searchPlainLikeResultsForTest(
+            "clay oven",
+            9,
+            (sql, args) -> {
+                throw new SQLiteException("missing fallback column");
+            }
+        );
+
+        assertTrue(results.isEmpty());
+    }
+
+    @Test
     public void vectorNeighborHitsPlanPreservesSqlArgsAndEffectiveLimit() {
         PackPlainSearchSqlPolicy.PlainSqlPlan plan = PackPlainSearchSqlPolicy.vectorNeighborHitsPlan(
             List.of(new VectorStore.VectorNeighbor(7, 0.9f), new VectorStore.VectorNeighbor(12, 0.7f))
@@ -216,6 +231,18 @@ public final class PackPlainSearchSqlPolicyTest {
         assertTrue(onlyNull.isEmpty());
         assertEquals("empty_neighbors", onlyNull.noOpReason);
         assertTrue(onlyNull.args.isEmpty());
+    }
+
+    @Test
+    public void vectorNeighborHitsReturnEmptyWhenSqliteExecutionFails() {
+        List<PackRepository.RankedChunk> results = PackRepository.loadVectorNeighborHitsForTest(
+            List.of(new VectorStore.VectorNeighbor(7, 0.9f)),
+            (sql, args) -> {
+                throw new SQLiteException("vector cursor unavailable");
+            }
+        );
+
+        assertTrue(results.isEmpty());
     }
 
     private static String keywordClause() {

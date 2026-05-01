@@ -953,28 +953,6 @@ public final class PackRepository implements AutoCloseable {
         return PackRouteFocusedSearchHelper.noBm25RouteFtsOrder(QueryTerms.fromQuery(query)).label;
     }
 
-    static int routeGuideSearchThreshold(
-        QueryRouteProfile routeProfile,
-        QueryMetadataProfile metadataProfile,
-        boolean compactGuideSweep,
-        int limit
-    ) {
-        return RetrievalRoutePolicy.routeGuideSearchThreshold(
-            routeProfile,
-            metadataProfile,
-            compactGuideSweep,
-            limit
-        );
-    }
-
-    static int runtimeRouteGuideSearchThreshold(
-        QueryMetadataProfile metadataProfile,
-        boolean ftsSupportsBm25,
-        int threshold
-    ) {
-        return RetrievalRoutePolicy.runtimeRouteGuideSearchThreshold(metadataProfile, ftsSupportsBm25, threshold);
-    }
-
     static int lexicalCandidateLimit(
         QueryRouteProfile routeProfile,
         QueryMetadataProfile metadataProfile,
@@ -1763,13 +1741,25 @@ public final class PackRepository implements AutoCloseable {
     }
 
     private List<SearchResult> searchPlainLikeResults(String query, int limit) {
+        return searchPlainLikeResults(query, limit, database::rawQuery);
+    }
+
+    static List<SearchResult> searchPlainLikeResultsForTest(String query, int limit, RawQueryRunner queryRunner) {
+        return searchPlainLikeResults(query, limit, queryRunner);
+    }
+
+    private static List<SearchResult> searchPlainLikeResults(
+        String query,
+        int limit,
+        RawQueryRunner queryRunner
+    ) {
         PackPlainSearchSqlPolicy.PlainSqlPlan plan = PackPlainSearchSqlPolicy.plainLikeResultsPlan(query, limit);
         if (plan.isEmpty()) {
             return Collections.emptyList();
         }
 
         ArrayList<SearchResult> results = new ArrayList<>();
-        try (Cursor cursor = database.rawQuery(plan.sql, plan.argsArray())) {
+        try (Cursor cursor = queryRunner.rawQuery(plan.sql, plan.argsArray())) {
             while (cursor.moveToNext()) {
                 String title = cursor.getString(0);
                 String guideId = emptySafe(cursor.getString(1));
@@ -1796,11 +1786,27 @@ public final class PackRepository implements AutoCloseable {
                     topicTags
                 ));
             }
+        } catch (SQLiteException ignored) {
+            return Collections.emptyList();
         }
         return results;
     }
 
     private List<RankedChunk> loadVectorNeighborHits(List<VectorStore.VectorNeighbor> neighbors) {
+        return loadVectorNeighborHits(neighbors, database::rawQuery);
+    }
+
+    static List<RankedChunk> loadVectorNeighborHitsForTest(
+        List<VectorStore.VectorNeighbor> neighbors,
+        RawQueryRunner queryRunner
+    ) {
+        return loadVectorNeighborHits(neighbors, queryRunner);
+    }
+
+    private static List<RankedChunk> loadVectorNeighborHits(
+        List<VectorStore.VectorNeighbor> neighbors,
+        RawQueryRunner queryRunner
+    ) {
         PackPlainSearchSqlPolicy.PlainSqlPlan plan = PackPlainSearchSqlPolicy.vectorNeighborHitsPlan(neighbors);
         if (plan.isEmpty()) {
             return Collections.emptyList();
@@ -1815,7 +1821,7 @@ public final class PackRepository implements AutoCloseable {
         }
 
         HashMap<Integer, RankedChunk> loaded = new HashMap<>();
-        try (Cursor cursor = database.rawQuery(plan.sql, plan.argsArray())) {
+        try (Cursor cursor = queryRunner.rawQuery(plan.sql, plan.argsArray())) {
             while (cursor.moveToNext()) {
                 int vectorRowId = cursor.getInt(1);
                 VectorStore.VectorNeighbor neighbor = byRowId.get(vectorRowId);
@@ -1843,6 +1849,8 @@ public final class PackRepository implements AutoCloseable {
                     )
                 );
             }
+        } catch (SQLiteException ignored) {
+            return Collections.emptyList();
         }
 
         ArrayList<RankedChunk> ordered = new ArrayList<>();
@@ -1859,6 +1867,10 @@ public final class PackRepository implements AutoCloseable {
             rank += 1;
         }
         return ordered;
+    }
+
+    interface RawQueryRunner {
+        Cursor rawQuery(String sql, String[] args) throws SQLiteException;
     }
 
     private List<CombinedHit> mergeHybrid(
