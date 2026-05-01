@@ -1,6 +1,6 @@
 # Backend Cleanup Phase Tracker
 
-Last updated after pushed cleanup through `ebd4333f` on 2026-05-01.
+Last updated after pushed cleanup through `063acb5c` on 2026-05-01.
 
 Purpose: prevent future agents from rerunning Ask/query backend cleanup that is already complete. Keep this note short; implementation detail belongs in commits and tests.
 
@@ -438,7 +438,39 @@ Purpose: prevent future agents from rerunning Ask/query backend cleanup that is 
   submit evidence, and waits only when the pack is visibly still installing
   without a ready state. Physical proof passed on `RFCX607ZM8L`; artifact root:
   `artifacts/bench/physical_ask_owned_submit_proof_after_harness_patch_20260501_1235/`.
-- Tracker is refreshed through pushed head `ebd4333f`.
+- Search result chrome publication naming is current through `fe4e601f`:
+  the result-publication helper now names search-query chrome publication
+  explicitly, with `MainResultPublicationPolicyTest` and phone-navigation
+  expectations updated to the clearer contract.
+- Ask-unavailable Back proof is current through `78c8fb25`:
+  `MainRouteCoordinatorTest` covers returning from an Ask-results route with
+  an unavailable answer state through the same browse/home route restoration
+  path instead of relying on a live smoke.
+- Busy follow-up retry proof is current through `b75cfd0e`:
+  `DetailFollowupLandscapeComposerTest` covers a visible stalled retry click
+  routing through the submit/busy dedupe gate while preserving the retry query.
+- Android cleanup proofs are current through pushed head `063acb5c`:
+  `DetailTabletStateBuilder` now owns detail mode, tablet portrait compact
+  shell, display-source, guide-title, answer-topic, and section-count decisions;
+  `SearchResultCardModelMapper` owns compact-row metadata fallback cleanup; and
+  `FollowUpComposerController` owns input/submit enabled-state presentation.
+  Focused proof lives in `DetailTabletStateBuilderTest`,
+  `SearchResultCardModelMapperTest`, and `FollowUpComposerControllerTest`.
+- Task-root detail visible Back proof is current through `063acb5c`:
+  `PromptHarnessSmokeTest.taskRootAnswerDetailVisibleAffordanceNavigatesToManualHome`
+  covers a task-root answer detail exposing Home semantics on the visible
+  Back/Home affordance and returning to manual Home.
+- Latest reported validation after `063acb5c`: focused JVM proof for
+  `DetailTabletStateBuilderTest`, `SearchResultCardModelMapperTest`,
+  `FollowUpComposerControllerTest`, `MainRouteCoordinatorTest`,
+  `DetailFollowupLandscapeComposerTest`, and
+  `MainResultPublicationPolicyTest`; compile validation with
+  `:app:assembleDebugAndroidTest`; and `git diff --check`.
+- Current validation commands:
+  `git diff --check`;
+  `cd android-app; ./gradlew.bat :app:testDebugUnitTest --tests com.senku.mobile.DetailTabletStateBuilderTest --tests com.senku.mobile.SearchResultCardModelMapperTest --tests com.senku.mobile.FollowUpComposerControllerTest --tests com.senku.mobile.MainRouteCoordinatorTest --tests com.senku.mobile.DetailFollowupLandscapeComposerTest --tests com.senku.mobile.MainResultPublicationPolicyTest`;
+  `cd android-app; ./gradlew.bat :app:assembleDebugAndroidTest`.
+- Tracker is refreshed through pushed head `063acb5c`.
 
 ## Remaining Next Slices
 
@@ -458,17 +490,21 @@ Purpose: prevent future agents from rerunning Ask/query backend cleanup that is 
 - Keep repository cleanup incremental around remaining pure policy/helper
   extraction with parity tests.
 - Architecture scout next priorities: continue pure Java detail tablet-state
-  extraction and smoke harness helper splits. Avoid broad route-focused
+  extraction only in narrow remaining seams, continue smoke harness helper
+  splits, and keep search-card/composer helper cleanup similarly focused.
+  Avoid broad route-focused
   retrieval rewrites and avoid `TabletDetailScreen.kt` refactors unless a
   visual regression demands it.
 - Physical Ask-owned phone submit proof is closed for the no-model physical
   phone path; future Ask proof should use a deterministic/review-runtime query
   only when the goal is to prove full answer-detail rendering rather than
   Ask-owned submit routing.
-- Functional proof backlog from scout: Ask-unavailable/no-source Back and
-  task-root detail visible Back live proof. Zero-result search system Back has
-  compile-validated AndroidTest coverage; Saved tab semantics assertions are
-  covered in the Android harness.
+- Functional proof backlog from scout: no-source Back live proof remains if a
+  future slice needs device-level confirmation. Ask-unavailable Back is covered
+  in route coordinator proof, task-root detail visible Back has AndroidTest
+  harness coverage, zero-result search system Back has compile-validated
+  AndroidTest coverage, and Saved tab semantics assertions are covered in the
+  Android harness.
 - UI normalization is a future explicit Android-only slice (`UI-NORM1 Shared
   Chrome Contract`): align `TopBar`, `BottomTabBar`/`NavRailMetrics`,
   `IdentityStrip`, `SenkuTypography`, XML text appearances/dimens, and Java
