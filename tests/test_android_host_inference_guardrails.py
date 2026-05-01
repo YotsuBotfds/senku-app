@@ -37,7 +37,10 @@ class AndroidHostInferenceGuardrailTest(unittest.TestCase):
         self.assertIn("function Resolve-AndroidHostInferenceUrlForDevice", script)
         self.assertRegex(script, r'if \(\$DeviceName -like "emulator-\*"\) \{\s*return \$Url\s*\}')
         self.assertIn('if ($uri.Host -ne "10.0.2.2")', script)
-        self.assertIn('& $AdbPath -s $DeviceName reverse ("tcp:{0}" -f $port) ("tcp:{0}" -f $port)', script)
+        self.assertIn('$reverseTimeoutMilliseconds = 10000', script)
+        self.assertIn('Invoke-AndroidAdbCommandCapture -AdbPath $AdbPath -Arguments @("-s", $DeviceName, "reverse", ("tcp:{0}" -f $port), ("tcp:{0}" -f $port)) -TimeoutMilliseconds $reverseTimeoutMilliseconds', script)
+        self.assertIn("adb reverse timed out after {0} ms", script)
+        self.assertNotIn('& $AdbPath -s $DeviceName reverse ("tcp:{0}" -f $port) ("tcp:{0}" -f $port)', script)
         self.assertIn('$builder.Host = "127.0.0.1"', script)
 
     def test_readme_documents_emulator_default_and_physical_device_rewrite(self):

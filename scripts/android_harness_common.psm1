@@ -695,7 +695,15 @@ function Resolve-AndroidHostInferenceUrlForDevice {
             return $Url
         }
         $port = if ($uri.Port -gt 0) { $uri.Port } else { 80 }
-        & $AdbPath -s $DeviceName reverse ("tcp:{0}" -f $port) ("tcp:{0}" -f $port) | Out-Null
+        $reverseTimeoutMilliseconds = 10000
+        $reverseResult = Invoke-AndroidAdbCommandCapture -AdbPath $AdbPath -Arguments @("-s", $DeviceName, "reverse", ("tcp:{0}" -f $port), ("tcp:{0}" -f $port)) -TimeoutMilliseconds $reverseTimeoutMilliseconds
+        if ($reverseResult.timed_out) {
+            Write-Warning ("adb reverse timed out after {0} ms for {1} tcp:{2}" -f $reverseTimeoutMilliseconds, $DeviceName, $port)
+            return $Url
+        }
+        if ($reverseResult.exit_code -ne 0 -and -not [string]::IsNullOrWhiteSpace([string]$reverseResult.output)) {
+            Write-Warning ("adb reverse reported exit_code={0} for {1} tcp:{2}: {3}" -f $reverseResult.exit_code, $DeviceName, $port, ([string]$reverseResult.output).Trim())
+        }
         $builder = [System.UriBuilder]::new($uri)
         $builder.Host = "127.0.0.1"
         return $builder.Uri.AbsoluteUri

@@ -58,16 +58,26 @@ final class AskQueryController {
     private final Host host;
     private final Engine engine;
     private final DeterministicMatcher deterministicMatcher;
-    private final LatestJobGate latestJobGate = new LatestJobGate();
+    private final LatestJobGate latestJobGate;
 
     AskQueryController(Host host) {
         this(host, DEFAULT_ENGINE, DEFAULT_MATCHER);
     }
 
     AskQueryController(Host host, Engine engine, DeterministicMatcher deterministicMatcher) {
+        this(host, engine, deterministicMatcher, new LatestJobGate());
+    }
+
+    AskQueryController(
+        Host host,
+        Engine engine,
+        DeterministicMatcher deterministicMatcher,
+        LatestJobGate latestJobGate
+    ) {
         this.host = host;
         this.engine = engine == null ? DEFAULT_ENGINE : engine;
         this.deterministicMatcher = deterministicMatcher == null ? DEFAULT_MATCHER : deterministicMatcher;
+        this.latestJobGate = latestJobGate == null ? new LatestJobGate() : latestJobGate;
     }
 
     void runAsk(String rawQuery) {

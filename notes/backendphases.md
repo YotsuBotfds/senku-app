@@ -1,6 +1,6 @@
 # Backend Cleanup Phase Tracker
 
-Last updated after cleanup through `54bc5893` on 2026-05-01.
+Last updated after the current Android hardening batch on 2026-05-01.
 
 Purpose: prevent future agents from rerunning Ask/query backend cleanup that is already complete. Keep this note short; implementation detail belongs in commits and tests.
 
@@ -857,6 +857,24 @@ Purpose: prevent future agents from rerunning Ask/query backend cleanup that is 
   DetailTabletEmergencyChrome JVM tests passed; full warm
   `:app:testDebugUnitTest :app:assembleDebug :app:assembleDebugAndroidTest`
   passed; `git diff --check` passed.
+- Android query/install/host hardening is current through the latest working
+  batch: `MainActivity` shares one `LatestJobGate` across Search and Ask
+  controllers so stale Search results cannot overwrite newer Ask output (and
+  vice versa), reusable pack installs validate checksums/vector headers/schema
+  instead of trusting byte size alone, host-inference endpoint trust tests cover
+  cleartext loopback and optional HTTPS policy, and physical-device
+  `adb reverse` setup is bounded through `Invoke-AndroidAdbCommandCapture`.
+- Helper inventory after the latest extraction wave found production call sites
+  for the newly added production policy/controller/helper classes; remaining
+  cleanup is focused on direct tests for high-risk helpers and wrapper
+  simplification, not broad new extraction.
+- Latest local proof for this batch: focused JVM tests passed for
+  `MainSearchControllerTest`, `AskQueryControllerTest`,
+  `MainSharedInputSubmitPolicyTest`, `HostInferenceClientTest`,
+  `HostInferencePolicyTest`, and `PackInstallerTest`; Python host/smoke
+  contract tests passed; the PowerShell parser gate passed for
+  `scripts/android_harness_common.psm1`; `:app:assembleDebug
+  :app:assembleDebugAndroidTest` passed.
 
 ## Remaining Next Slices
 
@@ -864,14 +882,16 @@ Purpose: prevent future agents from rerunning Ask/query backend cleanup that is 
   when they remove real production logic from a god class, have production call
   sites, and add focused tests; do not continue extracting helpers merely
   because logic can be moved.
-- Highest priority functional fixes from the latest scout: shared Ask/Search
-  operation gating so stale Search cannot overwrite newer Ask (or vice versa),
-  reusable pack validation beyond byte-size checks, Saved/Home async exception
-  containment so harness busy tokens always end, and bounded physical-device
-  `adb reverse` for host inference.
-- Current integration priority: inventory recently added policy/controller/helper
-  classes for production call sites and duplicate remaining logic, then run a
-  single current-head focused backend gate before the next broad behavior change.
+- Highest priority functional fix from the latest scout: Saved/Home async
+  exception containment in `MainActivity.refreshPinnedGuidesAsync()` and
+  `refreshHomeRelatedGuidesAsync()` so harness busy tokens always end and failed
+  guide loads render recoverable states instead of leaking work.
+- Current integration priority: add direct tests for high-risk helpers that are
+  production-used but thinly covered (`PromptAnswerTextPolicy`,
+  `HostInferenceResponsePolicy`, `DetailSourceStackPolicy`,
+  `SearchLinkedGuideCuePolicy`, and `PackSearchFinalizationPolicy`), then run a
+  single current-head focused backend gate before the next broad behavior
+  change.
 - Retrieval policy work should pause until route behavior is protected with
   golden route tests over the high-value prompts; avoid broad `PackRepository`
   or route-focused search rewrites without route-output parity proof.

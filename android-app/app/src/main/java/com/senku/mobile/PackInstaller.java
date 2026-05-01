@@ -55,7 +55,14 @@ public final class PackInstaller {
         File sqliteFile = new File(rootDir, SQLITE_NAME);
         File vectorFile = new File(rootDir, vectorName);
 
-        boolean installedFromAssets = shouldInstallFromAssetsForTest(force, assetManifest, manifestFile, sqliteFile, vectorFile);
+        boolean installedFromAssets = shouldInstallFromAssets(
+            force,
+            assetManifest,
+            manifestFile,
+            sqliteFile,
+            vectorFile,
+            PackInstaller::validateInstalledSqliteSchema
+        );
         if (installedFromAssets) {
             copyAsset(assets, assetPath(MANIFEST_NAME), manifestFile);
             copyAsset(assets, assetPath(SQLITE_NAME), sqliteFile);
@@ -73,7 +80,8 @@ public final class PackInstaller {
     private static PackManifest readUsableInstalledPackManifest(
         File manifestFile,
         File sqliteFile,
-        File vectorFile
+        File vectorFile,
+        SqliteSchemaValidator sqliteSchemaValidator
     ) throws IOException, JSONException {
         if (!manifestFile.isFile() || !sqliteFile.isFile() || !vectorFile.isFile()) {
             return null;
@@ -81,10 +89,9 @@ public final class PackInstaller {
         PackManifest installed;
         try {
             installed = PackManifest.fromJson(readFileText(manifestFile));
-        } catch (JSONException exc) {
-            return null;
-        }
-        if (sqliteFile.length() != installed.sqliteBytes || vectorFile.length() != installed.vectorBytes) {
+            validateInstalledFiles(installed, sqliteFile, vectorFile, sqliteSchemaValidator);
+            validateVectorInfo(installed, readVectorInfo(vectorFile));
+        } catch (IOException | JSONException exc) {
             return null;
         }
         return installed;
@@ -142,9 +149,18 @@ public final class PackInstaller {
     }
 
     private static void validateInstalledFiles(PackManifest manifest, File sqliteFile, File vectorFile) throws IOException {
+        validateInstalledFiles(manifest, sqliteFile, vectorFile, PackInstaller::validateInstalledSqliteSchema);
+    }
+
+    private static void validateInstalledFiles(
+        PackManifest manifest,
+        File sqliteFile,
+        File vectorFile,
+        SqliteSchemaValidator sqliteSchemaValidator
+    ) throws IOException {
         validateInstalledFile(sqliteFile, manifest.sqliteBytes, manifest.sqliteSha256, SQLITE_NAME);
         validateInstalledFile(vectorFile, manifest.vectorBytes, manifest.vectorSha256, vectorFile.getName());
-        validateInstalledSqliteSchema(sqliteFile);
+        sqliteSchemaValidator.validate(sqliteFile);
     }
 
     private static void validateInstalledFile(File file, long expectedBytes, String expectedSha256, String label) throws IOException {
@@ -186,7 +202,25 @@ public final class PackInstaller {
         File sqliteFile,
         File vectorFile
     ) throws IOException, JSONException {
-        PackManifest installedManifest = readUsableInstalledPackManifest(manifestFile, sqliteFile, vectorFile);
+        PackManifest installedManifest = readUsableInstalledPackManifest(manifestFile, sqliteFile, vectorFile, file -> {
+        });
+        return PackInstallValidationPolicy.shouldInstallFromAssets(force, assetManifest, installedManifest);
+    }
+
+    private static boolean shouldInstallFromAssets(
+        boolean force,
+        PackManifest assetManifest,
+        File manifestFile,
+        File sqliteFile,
+        File vectorFile,
+        SqliteSchemaValidator sqliteSchemaValidator
+    ) throws IOException, JSONException {
+        PackManifest installedManifest = readUsableInstalledPackManifest(
+            manifestFile,
+            sqliteFile,
+            vectorFile,
+            sqliteSchemaValidator
+        );
         return PackInstallValidationPolicy.shouldInstallFromAssets(force, assetManifest, installedManifest);
     }
 
@@ -346,6 +380,10 @@ public final class PackInstaller {
 
     private static String assetPath(String fileName) {
         return ASSET_DIR + "/" + fileName;
+    }
+
+    private interface SqliteSchemaValidator {
+        void validate(File sqliteFile) throws IOException;
     }
 
     public static final class InstalledPack {

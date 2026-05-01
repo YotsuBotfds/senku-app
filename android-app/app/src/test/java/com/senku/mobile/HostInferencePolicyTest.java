@@ -43,25 +43,37 @@ public final class HostInferencePolicyTest {
 
     @Test
     public void nonLocalCleartextIsRejectedByDefault() {
-        HostInferencePolicy.Decision decision = HostInferencePolicy.evaluate("http://host.local:1235/v1");
+        HostInferencePolicy.Decision decision = HostInferencePolicy.evaluate("http://example.com:1235/v1");
 
         assertRejected(
             decision,
             HostInferencePolicy.Reason.NON_LOCAL_CLEARTEXT_REJECTED,
             "http",
-            "host.local"
+            "example.com"
         );
     }
 
     @Test
-    public void httpsIsAllowedByDefault() {
-        HostInferencePolicy.Decision decision = HostInferencePolicy.evaluate("https://host.local/v1");
+    public void httpsNonLocalIsAllowedByCurrentDefaultPolicy() {
+        HostInferencePolicy.Decision decision = HostInferencePolicy.evaluate("https://example.com/v1");
 
         assertAllowed(
             decision,
             HostInferencePolicy.Reason.HTTPS_ALLOWED,
             "https",
-            "host.local"
+            "example.com"
+        );
+    }
+
+    @Test
+    public void httpsNonLocalCanRequireExplicitConfiguration() {
+        HostInferencePolicy.Decision decision = HostInferencePolicy.evaluate("https://example.com/v1", false);
+
+        assertRejected(
+            decision,
+            HostInferencePolicy.Reason.HTTPS_REQUIRES_CONFIGURATION,
+            "https",
+            "example.com"
         );
     }
 

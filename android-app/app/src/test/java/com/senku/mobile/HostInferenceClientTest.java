@@ -121,7 +121,7 @@ public final class HostInferenceClientTest {
     public void generateRejectsNonLocalCleartextBeforeConnecting() throws Exception {
         HostInferenceConfig.Settings settings = new HostInferenceConfig.Settings(
             true,
-            "http://host.local:1235/v1",
+            "http://example.com:1235/v1",
             "gemma-4-e2b-it-litert"
         );
 

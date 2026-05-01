@@ -93,8 +93,11 @@ public final class MainActivity extends AppCompatActivity {
     private final ArrayList<SearchResult> homeRelatedGuides = new ArrayList<>();
     private final LinkedHashMap<String, SearchResultAdapter.LinkedGuidePreview> resultPreviewBridgeMap =
         new LinkedHashMap<>();
-    private final MainSearchController searchController = new MainSearchController(new MainSearchHost());
-    private final AskQueryController askQueryController = new AskQueryController(new MainAskQueryHost());
+    private final LatestJobGate mainQueryOperationGate = new LatestJobGate();
+    private final MainSearchController searchController =
+        new MainSearchController(new MainSearchHost(), null, null, mainQueryOperationGate);
+    private final AskQueryController askQueryController =
+        new AskQueryController(new MainAskQueryHost(), null, null, mainQueryOperationGate);
     private final MainGuideOpenController guideOpenController = new MainGuideOpenController();
     private final MainHomeRelatedGuideController homeRelatedGuideController = new MainHomeRelatedGuideController();
     private final MainResultPreviewBridgeController resultPreviewBridgeController =

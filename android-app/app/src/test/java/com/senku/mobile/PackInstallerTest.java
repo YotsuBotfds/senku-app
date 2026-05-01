@@ -5,6 +5,8 @@ import org.junit.Test;
 import java.io.File;
 import java.io.IOException;
 import java.security.MessageDigest;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -202,6 +204,76 @@ public final class PackInstallerTest {
     }
 
     @Test
+    public void shouldInstallFromAssetsRefreshesWhenInstalledSqliteChecksumDoesNotMatchManifest() throws Exception {
+        Path tempDir = Files.createTempDirectory("pack-installer");
+        File manifestFile = tempDir.resolve("senku_manifest.json").toFile();
+        File sqliteFile = tempDir.resolve("senku_mobile.sqlite3").toFile();
+        File vectorFile = tempDir.resolve("senku_vectors.f16").toFile();
+        byte[] expectedSqlite = repeatedBytes(123);
+        byte[] corruptSqlite = repeatedBytes(123);
+        corruptSqlite[17] = (byte) (corruptSqlite[17] + 1);
+        byte[] vector = vectorBytes(456, 768, 1);
+        Files.write(
+            manifestFile.toPath(),
+            manifestJson(
+                "2026-04-27T04:21:12.533181+00:00",
+                271,
+                expectedSqlite.length,
+                vector.length,
+                sha256Hex(expectedSqlite),
+                sha256Hex(vector)
+            ).getBytes(StandardCharsets.UTF_8)
+        );
+        Files.write(sqliteFile.toPath(), corruptSqlite);
+        Files.write(vectorFile.toPath(), vector);
+
+        assertEquals(
+            true,
+            PackInstaller.shouldInstallFromAssetsForTest(
+                false,
+                manifestWithGeneratedAtAndAnswerCards("2026-04-27T04:21:12.533181+00:00", 271),
+                manifestFile,
+                sqliteFile,
+                vectorFile
+            )
+        );
+    }
+
+    @Test
+    public void shouldInstallFromAssetsRefreshesWhenInstalledVectorHeaderDoesNotMatchManifest() throws Exception {
+        Path tempDir = Files.createTempDirectory("pack-installer");
+        File manifestFile = tempDir.resolve("senku_manifest.json").toFile();
+        File sqliteFile = tempDir.resolve("senku_mobile.sqlite3").toFile();
+        File vectorFile = tempDir.resolve("senku_vectors.f16").toFile();
+        byte[] sqlite = repeatedBytes(123);
+        byte[] staleVector = repeatedBytes(456);
+        Files.write(
+            manifestFile.toPath(),
+            manifestJson(
+                "2026-04-27T04:21:12.533181+00:00",
+                271,
+                sqlite.length,
+                staleVector.length,
+                sha256Hex(sqlite),
+                ""
+            ).getBytes(StandardCharsets.UTF_8)
+        );
+        Files.write(sqliteFile.toPath(), sqlite);
+        Files.write(vectorFile.toPath(), staleVector);
+
+        assertEquals(
+            true,
+            PackInstaller.shouldInstallFromAssetsForTest(
+                false,
+                manifestWithGeneratedAtAndAnswerCards("2026-04-27T04:21:12.533181+00:00", 271),
+                manifestFile,
+                sqliteFile,
+                vectorFile
+            )
+        );
+    }
+
+    @Test
     public void shouldInstallFromAssetsRefreshesWhenInstalledManifestIsMalformed() throws Exception {
         Path tempDir = Files.createTempDirectory("pack-installer");
         File manifestFile = tempDir.resolve("senku_manifest.json").toFile();
@@ -314,16 +386,36 @@ public final class PackInstallerTest {
         File manifestFile = tempDir.resolve("senku_manifest.json").toFile();
         File sqliteFile = tempDir.resolve("senku_mobile.sqlite3").toFile();
         File vectorFile = tempDir.resolve("senku_vectors.f16").toFile();
+        byte[] sqlite = repeatedBytes(actualSqliteBytes);
+        byte[] vector = vectorBytes(actualVectorBytes, 768, 1);
         Files.write(
             manifestFile.toPath(),
-            manifestJson(generatedAt, answerCardCount, manifestSqliteBytes, manifestVectorBytes).getBytes(StandardCharsets.UTF_8)
+            manifestJson(
+                generatedAt,
+                answerCardCount,
+                manifestSqliteBytes,
+                manifestVectorBytes,
+                sha256Hex(sqlite),
+                sha256Hex(vector)
+            ).getBytes(StandardCharsets.UTF_8)
         );
-        Files.write(sqliteFile.toPath(), repeatedBytes(actualSqliteBytes));
-        Files.write(vectorFile.toPath(), repeatedBytes(actualVectorBytes));
+        Files.write(sqliteFile.toPath(), sqlite);
+        Files.write(vectorFile.toPath(), vector);
         return new InstalledPackFiles(manifestFile, sqliteFile, vectorFile);
     }
 
     private static String manifestJson(String generatedAt, int answerCardCount, long sqliteBytes, long vectorBytes) {
+        return manifestJson(generatedAt, answerCardCount, sqliteBytes, vectorBytes, "abc", "def");
+    }
+
+    private static String manifestJson(
+        String generatedAt,
+        int answerCardCount,
+        long sqliteBytes,
+        long vectorBytes,
+        String sqliteSha256,
+        String vectorSha256
+    ) {
         return "{\n" +
             "  \"pack_format\": \"senku-mobile-pack-v2\",\n" +
             "  \"pack_version\": 2,\n" +
@@ -346,11 +438,11 @@ public final class PackInstallerTest {
             "  \"files\": {\n" +
             "    \"sqlite\": {\n" +
             "      \"bytes\": " + sqliteBytes + ",\n" +
-            "      \"sha256\": \"abc\"\n" +
+            "      \"sha256\": \"" + sqliteSha256 + "\"\n" +
             "    },\n" +
             "    \"vectors\": {\n" +
             "      \"bytes\": " + vectorBytes + ",\n" +
-            "      \"sha256\": \"def\"\n" +
+            "      \"sha256\": \"" + vectorSha256 + "\"\n" +
             "    }\n" +
             "  }\n" +
             "}";
@@ -362,6 +454,29 @@ public final class PackInstallerTest {
             bytes[index] = (byte) (index % 251);
         }
         return bytes;
+    }
+
+    private static byte[] vectorBytes(int length, int dimension, int dtypeCode) {
+        byte[] bytes = repeatedBytes(length);
+        ByteBuffer.wrap(bytes).order(ByteOrder.LITTLE_ENDIAN)
+            .put("SNKUVEC1".getBytes(StandardCharsets.US_ASCII))
+            .putInt(1)
+            .putInt(32)
+            .putInt(49841)
+            .putInt(dimension)
+            .putInt(dtypeCode)
+            .putInt(0);
+        return bytes;
+    }
+
+    private static String sha256Hex(byte[] content) throws Exception {
+        MessageDigest digest = MessageDigest.getInstance("SHA-256");
+        byte[] expectedBytes = digest.digest(content);
+        StringBuilder expected = new StringBuilder(expectedBytes.length * 2);
+        for (byte b : expectedBytes) {
+            expected.append(String.format("%02x", b));
+        }
+        return expected.toString();
     }
 
     private static void expectVectorInfoRejected(

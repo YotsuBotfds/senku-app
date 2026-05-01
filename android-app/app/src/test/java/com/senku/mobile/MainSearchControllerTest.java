@@ -5,6 +5,9 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
+import android.content.Context;
+
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -259,10 +262,100 @@ public final class MainSearchControllerTest {
         assertNull(host.lastResults);
     }
 
+    @Test
+    public void staleSearchSuccessIsSuppressedAfterNewerAskStarts() {
+        LatestJobGate sharedGate = new LatestJobGate();
+        FakeHost searchHost = readyHost();
+        searchHost.queueUiActions = true;
+        FakeEngine searchEngine = new FakeEngine();
+        SearchResult oldSearchResult = sampleResult("Old Search", "GD-001");
+        searchEngine.resultsByQuery.put("old search", List.of(oldSearchResult));
+        MainSearchController searchController =
+            new MainSearchController(searchHost, searchEngine, query -> null, sharedGate);
+        FakeAskHost askHost = readyAskHost();
+        askHost.queueUiActions = true;
+        FakeAskEngine askEngine = new FakeAskEngine();
+        OfflineAnswerEngine.PreparedAnswer newAskAnswer = preparedAnswer("new ask");
+        askEngine.preparedAnswers.put("new ask", newAskAnswer);
+        AskQueryController askController =
+            new AskQueryController(askHost, askEngine, query -> null, sharedGate);
+
+        searchController.runSearch("old search");
+        askController.runAsk("new ask");
+        searchHost.runQueuedUiAction(0);
+        askHost.runQueuedUiAction(0);
+
+        assertEquals(List.of("started:old search:old search:false"), searchHost.events);
+        assertNull(searchHost.lastResults);
+        assertEquals(List.of("prepare-started:new ask", "prepare-success"), askHost.events);
+        assertSame(newAskAnswer, askHost.lastPreparedSuccess);
+    }
+
+    @Test
+    public void staleAskSuccessIsSuppressedAfterNewerSearchStarts() {
+        LatestJobGate sharedGate = new LatestJobGate();
+        FakeAskHost askHost = readyAskHost();
+        askHost.queueUiActions = true;
+        FakeAskEngine askEngine = new FakeAskEngine();
+        OfflineAnswerEngine.PreparedAnswer oldAskAnswer = preparedAnswer("old ask");
+        askEngine.preparedAnswers.put("old ask", oldAskAnswer);
+        AskQueryController askController =
+            new AskQueryController(askHost, askEngine, query -> null, sharedGate);
+        FakeHost searchHost = readyHost();
+        searchHost.queueUiActions = true;
+        FakeEngine searchEngine = new FakeEngine();
+        SearchResult newSearchResult = sampleResult("New Search", "GD-002");
+        searchEngine.resultsByQuery.put("new search", List.of(newSearchResult));
+        MainSearchController searchController =
+            new MainSearchController(searchHost, searchEngine, query -> null, sharedGate);
+
+        askController.runAsk("old ask");
+        searchController.runSearch("new search");
+        askHost.runQueuedUiAction(0);
+        searchHost.runQueuedUiAction(0);
+
+        assertEquals(List.of("prepare-started:old ask"), askHost.events);
+        assertNull(askHost.lastPreparedSuccess);
+        assertEquals(
+            List.of(
+                "started:new search:new search:false",
+                "success:new search:new search:false:1"
+            ),
+            searchHost.events
+        );
+        assertSame(newSearchResult, searchHost.lastResults.get(0));
+    }
+
     private static FakeHost readyHost() {
         FakeHost host = new FakeHost();
         host.repositoryAvailable = true;
         return host;
+    }
+
+    private static FakeAskHost readyAskHost() {
+        FakeAskHost host = new FakeAskHost();
+        host.repositoryAvailable = true;
+        host.modelFile = new File("model.task");
+        host.hostInferenceSettings = settings(false);
+        return host;
+    }
+
+    private static HostInferenceConfig.Settings settings(boolean enabled) {
+        return new HostInferenceConfig.Settings(enabled, "http://127.0.0.1:1235/v1", "test-model");
+    }
+
+    private static OfflineAnswerEngine.PreparedAnswer preparedAnswer(String query) {
+        return OfflineAnswerEngine.PreparedAnswer.restoredGenerative(
+            query,
+            List.of(sampleResult("Ask Source", "GD-ASK")),
+            false,
+            System.currentTimeMillis() - 500L,
+            false,
+            "",
+            "",
+            "system",
+            "prompt"
+        );
     }
 
     private static SearchResult sampleResult(String title, String guideId) {
@@ -425,6 +518,142 @@ public final class MainSearchControllerTest {
         }
     }
 
+    private static final class FakeAskHost implements AskQueryController.Host {
+        final ArrayList<String> events = new ArrayList<>();
+        final ArrayList<String> begunHarnessTags = new ArrayList<>();
+        final ArrayList<Integer> uiHarnessTokens = new ArrayList<>();
+        final ArrayList<Runnable> queuedUiActions = new ArrayList<>();
+        final SessionMemory sessionMemory = new SessionMemory();
+        final Executor executor = Runnable::run;
+
+        boolean repositoryAvailable;
+        File modelFile;
+        HostInferenceConfig.Settings hostInferenceSettings = settings(false);
+        boolean reviewedCardRuntimeEnabled;
+        boolean hasAutoQuery;
+        boolean queueUiActions;
+        int nextHarnessToken = 1;
+
+        OfflineAnswerEngine.PreparedAnswer lastPreparedSuccess;
+        Exception lastFailure;
+
+        @Override
+        public Context applicationContext() {
+            return null;
+        }
+
+        @Override
+        public Executor executor() {
+            return executor;
+        }
+
+        @Override
+        public SessionMemory sessionMemory() {
+            return sessionMemory;
+        }
+
+        @Override
+        public boolean isRepositoryAvailable() {
+            return repositoryAvailable;
+        }
+
+        @Override
+        public PackRepository repository() {
+            return null;
+        }
+
+        @Override
+        public File modelFile() {
+            return modelFile;
+        }
+
+        @Override
+        public HostInferenceConfig.Settings hostInferenceSettings() {
+            return hostInferenceSettings;
+        }
+
+        @Override
+        public boolean reviewedCardRuntimeEnabled() {
+            return reviewedCardRuntimeEnabled;
+        }
+
+        @Override
+        public boolean hasAutoQuery() {
+            return hasAutoQuery;
+        }
+
+        @Override
+        public int beginHarnessTask(String label) {
+            begunHarnessTags.add(label);
+            return nextHarnessToken++;
+        }
+
+        @Override
+        public void runTrackedOnUiThread(int harnessToken, Runnable action) {
+            uiHarnessTokens.add(harnessToken);
+            if (queueUiActions) {
+                queuedUiActions.add(action);
+                return;
+            }
+            if (action != null) {
+                action.run();
+            }
+        }
+
+        void runQueuedUiAction(int index) {
+            Runnable action = queuedUiActions.get(index);
+            if (action != null) {
+                action.run();
+            }
+        }
+
+        @Override
+        public void onPackUnavailable() {
+            events.add("pack-unavailable");
+        }
+
+        @Override
+        public void onBlankQuery() {
+            events.add("blank-query");
+        }
+
+        @Override
+        public void onDeterministicAnswer(
+            String query,
+            DeterministicAnswerRouter.DeterministicAnswer deterministic,
+            String answerBody
+        ) {
+            events.add("deterministic");
+        }
+
+        @Override
+        public void onModelUnavailable(boolean hasAutoQuery) {
+            events.add("model-unavailable:" + hasAutoQuery);
+        }
+
+        @Override
+        public void onPrepareStarted(String query) {
+            events.add("prepare-started:" + query);
+        }
+
+        @Override
+        public void onPrepareSuccess(OfflineAnswerEngine.PreparedAnswer preparedAnswer) {
+            events.add("prepare-success");
+            lastPreparedSuccess = preparedAnswer;
+        }
+
+        @Override
+        public void onPrepareFailure(
+            String query,
+            OfflineAnswerEngine.PreparedAnswer failedPrepared,
+            Exception exception,
+            boolean hasAutoQuery
+        ) {
+            events.add("prepare-failure:" + hasAutoQuery);
+            lastFailure = exception;
+        }
+    }
+
     private static final class FakeEngine implements MainSearchController.Engine {
         final Map<String, List<SearchResult>> resultsByQuery = new HashMap<>();
         final Map<String, Exception> exceptionsByQuery = new HashMap<>();
@@ -454,6 +683,23 @@ public final class MainSearchControllerTest {
                 return resultsByQuery.get(query);
             }
             return resultsToReturn == null ? Collections.emptyList() : resultsToReturn;
+        }
+    }
+
+    private static final class FakeAskEngine implements AskQueryController.Engine {
+        final Map<String, OfflineAnswerEngine.PreparedAnswer> preparedAnswers = new HashMap<>();
+        int prepareCalls;
+
+        @Override
+        public OfflineAnswerEngine.PreparedAnswer prepare(
+            Context context,
+            PackRepository repo,
+            SessionMemory sessionMemory,
+            File modelFile,
+            String query
+        ) {
+            prepareCalls += 1;
+            return preparedAnswers.get(query);
         }
     }
 
