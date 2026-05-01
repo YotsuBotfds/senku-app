@@ -185,15 +185,19 @@
                 </LinearLayout>
 
                 <ImageView
+                    android:id="@+id/home_chrome_back_button"
                     android:layout_width="18dp"
                     android:layout_height="18dp"
+                    android:clickable="true"
                     android:contentDescription="@null"
+                    android:focusable="true"
                     android:importantForAccessibility="no"
                     android:padding="3dp"
                     android:src="@drawable/ic_home_back_chevron"
                     android:tint="@color/senku_rev03_ink_2" />
 
                 <View
+                    android:id="@+id/home_chrome_divider"
                     android:layout_width="1dp"
                     android:layout_height="18dp"
                     android:layout_marginStart="9dp"

@@ -4046,13 +4046,9 @@ public final class DetailActivity extends AppCompatActivity {
             return "";
         }
         String guideId = resolveDisplayGuideId();
-        boolean compactPhoneAnswerChrome = isCompactPortraitPhoneLayout() || isLandscapePhoneLayout();
+        boolean topChromeCarriesContext = topDetailChromeCarriesDockedComposerContext(guideId);
         if (isCurrentEmergencySurfaceEligible()) {
-            if (shouldSuppressDockedComposerContextHintForTopChrome(
-                answerMode,
-                compactPhoneAnswerChrome,
-                true
-            )) {
+            if (topChromeCarriesContext) {
                 return "";
             }
             return buildEmergencyDockedComposerContextHint(
@@ -4065,21 +4061,46 @@ public final class DetailActivity extends AppCompatActivity {
             return buildThreadDockedComposerContextHint(
                 resolveThreadAnchorGuideId(guideId),
                 currentAnswerThreadTurnCount(),
-                shouldSuppressDockedComposerContextHintForTopChrome(
-                    answerMode,
-                    compactPhoneAnswerChrome,
-                    false
-                )
+                topChromeCarriesContext
             );
         }
         return buildAnswerDockedComposerContextHint(
             guideId,
-            shouldSuppressDockedComposerContextHintForTopChrome(
-                answerMode,
-                compactPhoneAnswerChrome,
-                false
+            topChromeCarriesContext
+        );
+    }
+
+    private boolean topDetailChromeCarriesDockedComposerContext(String guideId) {
+        return shouldSuppressDockedComposerContextHintForTopChrome(
+            answerMode,
+            shouldUseCompactPhoneAnswerChrome(),
+            topDetailChromeCarriesContextMetadata(
+                isCurrentThreadDetailRoute(),
+                guideId,
+                currentAnswerThreadTurnCount(),
+                buildPrimarySourceLabel(),
+                buildThreadTopicLabel(),
+                isCurrentEmergencySurfaceEligible()
             )
         );
+    }
+
+    static boolean topDetailChromeCarriesContextMetadata(
+        boolean threadDetailRoute,
+        String guideId,
+        int totalTurnCount,
+        String primarySourceLabel,
+        String topicLabel,
+        boolean emergencySurface
+    ) {
+        if (threadDetailRoute) {
+            return totalTurnCount > 1
+                || !safe(guideId).trim().isEmpty()
+                || !safe(topicLabel).trim().isEmpty();
+        }
+        return emergencySurface
+            || !safe(guideId).trim().isEmpty()
+            || !safe(primarySourceLabel).trim().isEmpty();
     }
 
     static String buildAnswerDockedComposerContextHint(String guideId) {
@@ -4163,10 +4184,10 @@ public final class DetailActivity extends AppCompatActivity {
 
     static boolean shouldSuppressDockedComposerContextHintForTopChrome(
         boolean answerMode,
-        boolean phoneTopChromeCarriesContext,
-        boolean emergencySurface
+        boolean topChromeActive,
+        boolean topChromeCarriesContext
     ) {
-        return answerMode && phoneTopChromeCarriesContext;
+        return answerMode && topChromeActive && topChromeCarriesContext;
     }
 
     static boolean shouldRequestLandscapeDockedComposerFocus(
@@ -8709,8 +8730,13 @@ public final class DetailActivity extends AppCompatActivity {
             showUtilityRail(),
             emergencySurface
         );
+        boolean suppressFollowUpContextTitle = shouldSuppressFollowUpContextTitleForTopChrome(
+            emergencySurface,
+            topDetailChromeCarriesDockedComposerContext(resolveDisplayGuideId())
+        );
         if (followUpTitleText != null) {
-            followUpTitleText.setVisibility((compactFollowUp && !emergencySurface && !showCompactContextTitle)
+            followUpTitleText.setVisibility((suppressFollowUpContextTitle
+                || (compactFollowUp && !emergencySurface && !showCompactContextTitle))
                 ? View.GONE
                 : View.VISIBLE);
             if (showCompactContextTitle) {
@@ -8788,6 +8814,13 @@ public final class DetailActivity extends AppCompatActivity {
         boolean emergencySurface
     ) {
         return emergencySurface || (portraitPhone && !landscapePhone && !tabletPortrait && !utilityRail);
+    }
+
+    static boolean shouldSuppressFollowUpContextTitleForTopChrome(
+        boolean emergencySurface,
+        boolean topChromeCarriesContext
+    ) {
+        return emergencySurface && topChromeCarriesContext;
     }
 
     static float resolvePhonePortraitAppHeaderTitleTextSizeSp() {

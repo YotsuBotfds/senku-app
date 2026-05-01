@@ -55,7 +55,7 @@ object DockedComposerTouchTargetTokens {
     const val ADD_ACTION_PADDING_DP = (ADD_ACTION_TOUCH_TARGET_DP - ADD_ACTION_VISUAL_SIZE_DP) / 2
     const val ADD_ACTION_DISABLED_CONTENT_DESCRIPTION = "Add action unavailable"
     const val ADD_ACTION_ENABLED_CONTENT_DESCRIPTION = "Add action"
-    const val ADD_ACTION_DISABLED_ALPHA = 0.44f
+    const val ADD_ACTION_DISABLED_ALPHA = 0.64f
     const val ADD_ACTION_ENABLED_ALPHA = 1.0f
 }
 

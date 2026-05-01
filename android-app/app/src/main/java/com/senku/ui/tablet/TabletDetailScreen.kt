@@ -790,7 +790,13 @@ internal fun tabletAnswerReadingChromePolicy(isLandscape: Boolean): TabletAnswer
         )
     }
 
-internal fun tabletComposerContextHint(state: TabletDetailState): String {
+internal fun tabletComposerContextHint(
+    state: TabletDetailState,
+    topChromeCarriesContext: Boolean = false,
+): String {
+    if (topChromeCarriesContext && (state.detailMode == TabletDetailMode.Answer || state.isThreadMode())) {
+        return ""
+    }
     val guideMode = state.isGuideMode()
     val turnLabel = when (val count = state.turns.size) {
         0 -> if (guideMode) "No sections" else "No turns"
@@ -827,6 +833,12 @@ internal fun tabletComposerContextHint(state: TabletDetailState): String {
         .joinToString(" \u2022 ")
         .uppercase()
 }
+
+internal fun tabletTopChromeCarriesComposerContext(
+    state: TabletDetailState,
+    workspaceTitleBarVisible: Boolean,
+): Boolean =
+    workspaceTitleBarVisible || state.detailMode == TabletDetailMode.Answer || state.isThreadMode()
 
 internal fun tabletComposerPlaceholder(state: TabletDetailState): String =
     if (state.isThreadMode()) {
@@ -1582,7 +1594,13 @@ private fun DetailWorkspace(
                     showRetry = state.composerShowRetry,
                     retryLabel = state.composerRetryLabel,
                     compact = true,
-                    contextHint = tabletComposerContextHint(state),
+                    contextHint = tabletComposerContextHint(
+                        state,
+                        topChromeCarriesContext = tabletTopChromeCarriesComposerContext(
+                            state,
+                            showTitleBar,
+                        ),
+                    ),
                 ),
                 onTextChange = onComposerTextChange,
                 onSendClick = { onComposerSendClick(state.composerText) },

@@ -44,6 +44,7 @@ class DockedComposerTouchTargetTokenTest {
             state.contentDescription,
         )
         assertEquals(DockedComposerTouchTargetTokens.ADD_ACTION_DISABLED_ALPHA, state.contentAlpha, 0.0f)
+        assertTrue(state.contentAlpha >= 0.6f)
     }
 
     @Test

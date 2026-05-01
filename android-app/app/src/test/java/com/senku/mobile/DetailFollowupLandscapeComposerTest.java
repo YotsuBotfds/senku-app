@@ -215,10 +215,67 @@ public final class DetailFollowupLandscapeComposerTest {
             "",
             DetailActivity.buildAnswerDockedComposerContextHint("GD-345", true)
         );
-        assertTrue(DetailActivity.shouldSuppressDockedComposerContextHintForTopChrome(true, true, false));
         assertTrue(DetailActivity.shouldSuppressDockedComposerContextHintForTopChrome(true, true, true));
+        assertFalse(DetailActivity.shouldSuppressDockedComposerContextHintForTopChrome(true, true, false));
         assertFalse(DetailActivity.shouldSuppressDockedComposerContextHintForTopChrome(true, false, false));
+        assertFalse(DetailActivity.shouldSuppressDockedComposerContextHintForTopChrome(true, false, true));
         assertFalse(DetailActivity.shouldSuppressDockedComposerContextHintForTopChrome(false, true, false));
+    }
+
+    @Test
+    public void topDetailChromeCarriesAnswerContextOnlyWithMetadata() {
+        assertTrue(DetailActivity.topDetailChromeCarriesContextMetadata(
+            false,
+            "GD-345",
+            1,
+            "",
+            "",
+            false
+        ));
+        assertTrue(DetailActivity.topDetailChromeCarriesContextMetadata(
+            false,
+            "",
+            1,
+            "Tarp & Cord Shelters",
+            "",
+            false
+        ));
+        assertFalse(DetailActivity.topDetailChromeCarriesContextMetadata(
+            false,
+            "",
+            1,
+            "",
+            "",
+            false
+        ));
+    }
+
+    @Test
+    public void topDetailChromeCarriesThreadAndEmergencyContextMetadata() {
+        assertTrue(DetailActivity.topDetailChromeCarriesContextMetadata(
+            true,
+            "",
+            2,
+            "",
+            "",
+            false
+        ));
+        assertTrue(DetailActivity.topDetailChromeCarriesContextMetadata(
+            true,
+            "",
+            1,
+            "",
+            "Rain shelter",
+            false
+        ));
+        assertTrue(DetailActivity.topDetailChromeCarriesContextMetadata(
+            false,
+            "",
+            1,
+            "",
+            "",
+            true
+        ));
     }
 
     @Test
@@ -239,6 +296,13 @@ public final class DetailFollowupLandscapeComposerTest {
             "",
             DetailActivity.buildThreadDockedComposerContextHint("GD-220", 2, true)
         );
+    }
+
+    @Test
+    public void emergencyFollowUpContextTitleSuppressesOnlyWhenTopChromeOwnsContext() {
+        assertTrue(DetailActivity.shouldSuppressFollowUpContextTitleForTopChrome(true, true));
+        assertFalse(DetailActivity.shouldSuppressFollowUpContextTitleForTopChrome(true, false));
+        assertFalse(DetailActivity.shouldSuppressFollowUpContextTitleForTopChrome(false, true));
     }
 
     @Test

@@ -118,6 +118,7 @@ public final class MainActivity extends AppCompatActivity {
     private TextView homeChromeModeText;
     private TextView homeChromeTitleText;
     private View homeChromeBackButton;
+    private View homeChromeBackDivider;
     private View homeChromeSearchIcon;
     private TextView resultsHeader;
     private ProgressBar progressBar;
@@ -284,6 +285,7 @@ public final class MainActivity extends AppCompatActivity {
         homeChromeModeText = findViewById(R.id.home_chrome_mode);
         homeChromeTitleText = findViewById(R.id.home_chrome_title);
         homeChromeBackButton = findViewById(R.id.home_chrome_back_button);
+        homeChromeBackDivider = findViewById(R.id.home_chrome_divider);
         homeChromeSearchIcon = findViewById(R.id.home_chrome_search_icon);
         resultsHeader = findViewById(R.id.results_header);
         progressBar = findViewById(R.id.progress_bar);
@@ -4568,12 +4570,14 @@ public final class MainActivity extends AppCompatActivity {
     }
 
     private void updateHomeChromeBackAvailability(boolean available) {
-        if (homeChromeBackButton == null) {
-            return;
+        if (homeChromeBackButton != null) {
+            homeChromeBackButton.setVisibility(available ? View.VISIBLE : View.GONE);
+            homeChromeBackButton.setEnabled(available);
+            homeChromeBackButton.setClickable(available);
         }
-        homeChromeBackButton.setVisibility(available ? View.VISIBLE : View.GONE);
-        homeChromeBackButton.setEnabled(available);
-        homeChromeBackButton.setClickable(available);
+        if (homeChromeBackDivider != null) {
+            homeChromeBackDivider.setVisibility(available ? View.VISIBLE : View.GONE);
+        }
     }
 
     static final class SharedSubmitAction {

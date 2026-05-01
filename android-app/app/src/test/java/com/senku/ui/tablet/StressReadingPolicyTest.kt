@@ -581,6 +581,18 @@ class StressReadingPolicyTest {
     }
 
     @Test
+    fun tabletComposerContextHintSuppressesAnswerContextWhenTopChromeOwnsIt() {
+        val state = tabletDetailState(
+            guideId = "GD-345",
+            guideTitle = "Rain shelter",
+            detailMode = TabletDetailMode.Answer,
+        )
+
+        assertEquals("", tabletComposerContextHint(state, topChromeCarriesContext = true))
+        assertTrue(tabletTopChromeCarriesComposerContext(state, workspaceTitleBarVisible = false))
+    }
+
+    @Test
     fun tabletAnswerRelatedGuidesPromoteRainShelterMockRows() {
         val rows = tabletAnswerRelatedGuideRows(
             guideId = "GD-345",
@@ -618,6 +630,7 @@ class StressReadingPolicyTest {
             "THREAD CONTEXT KEPT \u2022 2 TURNS \u2022 GD-220 ANCHOR",
             tabletComposerContextHint(state),
         )
+        assertEquals("", tabletComposerContextHint(state, topChromeCarriesContext = true))
         assertEquals("Ask a follow-up about this thread...", tabletComposerPlaceholder(state))
         assertEquals("GD-220 anchor", tabletThreadContextAnchorLabel(state))
         assertEquals(
@@ -867,6 +880,10 @@ class StressReadingPolicyTest {
         assertEquals(
             "GUIDE CONTEXT KEPT \u2022 NO SECTIONS \u2022 NO REFERENCES",
             tabletComposerContextHint(state),
+        )
+        assertEquals(
+            "GUIDE CONTEXT KEPT \u2022 NO SECTIONS \u2022 NO REFERENCES",
+            tabletComposerContextHint(state, topChromeCarriesContext = true),
         )
     }
 
