@@ -352,6 +352,20 @@ public final class MainRouteCoordinatorTest {
         assertTrue(host.calls.isEmpty());
     }
 
+    @Test
+    public void installCompletionKeepsRestoredResultRoutesAndPayloadsThroughCoordinatorState() {
+        assertInstallCompletionPreservesRestoredRouteAndPayload(
+            MainRouteDecisionHelper.Surface.SEARCH_RESULTS,
+            BottomTabDestination.HOME,
+            false
+        );
+        assertInstallCompletionPreservesRestoredRouteAndPayload(
+            MainRouteDecisionHelper.Surface.ASK_RESULTS,
+            BottomTabDestination.ASK,
+            true
+        );
+    }
+
     private static void assertRoute(
         MainRouteDecisionHelper.RouteState state,
         MainRouteDecisionHelper.Surface surface,
@@ -369,6 +383,40 @@ public final class MainRouteCoordinatorTest {
     ) {
         assertEquals(expectedCalls.size(), actualCalls.size());
         assertTrue(actualCalls.containsAll(expectedCalls));
+    }
+
+    private static void assertInstallCompletionPreservesRestoredRouteAndPayload(
+        MainRouteDecisionHelper.Surface restoredSurface,
+        BottomTabDestination restoredPhoneTab,
+        boolean restoredAskLaneActive
+    ) {
+        RecordingHost host = new RecordingHost();
+        MainRouteCoordinator coordinator = new MainRouteCoordinator(host);
+        MainRouteDecisionHelper.RouteState restoredRoute = new MainRouteDecisionHelper.RouteState(
+            restoredSurface,
+            restoredPhoneTab,
+            restoredAskLaneActive
+        );
+        List<String> visibleResults = new ArrayList<>(Arrays.asList(
+            "restored:" + restoredSurface.name()
+        ));
+        List<String> installedBrowseGuides = Arrays.asList("browse:GD-001", "browse:GD-002");
+
+        coordinator.applyRouteState(restoredRoute);
+        host.calls.clear();
+        MainInstallCompletionPolicy.CompletionPlan plan =
+            MainInstallCompletionPolicy.plan(false, coordinator.currentRouteState());
+        if (plan.shouldPublishBrowseGuides()) {
+            visibleResults.clear();
+            visibleResults.addAll(installedBrowseGuides);
+            coordinator.applyRouteState(MainResultPublicationPolicy.resolveRouteState(plan.browsePublication()));
+        }
+
+        assertFalse(plan.shouldPublishBrowseGuides());
+        assertEquals(Arrays.asList("restored:" + restoredSurface.name()), visibleResults);
+        assertFalse("restored result payload should remain visible", visibleResults.isEmpty());
+        assertRoute(coordinator.currentRouteState(), restoredSurface, restoredPhoneTab, restoredAskLaneActive);
+        assertTrue(host.calls.isEmpty());
     }
 
     private static final class CoordinatorBackCase {

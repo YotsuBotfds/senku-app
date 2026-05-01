@@ -211,6 +211,8 @@ function Resolve-FunctionalUxSmokePresets {
 }
 
 $presets = @(Resolve-FunctionalUxSmokePresets -Package $PresetPackage)
+$expectedDeviceRole = Resolve-ExpectedDeviceRoleForPresetPackage -Package $PresetPackage
+$localExecutionScope = "local_only"
 
 function Convert-ToRepoRelativePath {
     param([string]$Path)
@@ -364,7 +366,7 @@ if (-not $SkipDeviceLock) {
 if ($SkipDevicePreflight) {
     Write-Host ("[functional-ux-matrix:{0}] device role preflight skipped" -f $Device)
 } else {
-    Assert-FunctionalUxDeviceRole -ExpectedRole (Resolve-ExpectedDeviceRoleForPresetPackage -Package $PresetPackage)
+    Assert-FunctionalUxDeviceRole -ExpectedRole $expectedDeviceRole
 }
 
 for ($presetIndex = 0; $presetIndex -lt $presets.Count; $presetIndex++) {
@@ -443,6 +445,10 @@ for ($presetIndex = 0; $presetIndex -lt $presets.Count; $presetIndex++) {
 
     $results.Add([ordered]@{
         preset = $preset
+        preset_package = $PresetPackage
+        expected_device_role = $expectedDeviceRole
+        execution_scope = $localExecutionScope
+        bounded_by_matrix_watchdog = [bool]($PresetTimeoutSeconds -gt 0)
         exit_code = $exitCode
         passed = $passed
         duration_seconds = $durationSeconds
@@ -487,6 +493,8 @@ $summary = [ordered]@{
     physical_device_mode = [bool]$PhysicalDevice
     output_label = $OutputLabel
     preset_package = $PresetPackage
+    expected_device_role = $expectedDeviceRole
+    execution_scope = $localExecutionScope
     matrix_root = Convert-ToRepoRelativePath -Path $matrixRoot
     capture_logcat = $true
     capture_logcat_requested = [bool]$CaptureLogcat

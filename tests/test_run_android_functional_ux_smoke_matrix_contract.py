@@ -105,6 +105,42 @@ class RunAndroidFunctionalUxSmokeMatrixContractTests(unittest.TestCase):
             (REPO_ROOT / "android-app" / "app" / "src" / "androidTest" / "java" / "com" / "senku" / "mobile" / "PromptHarnessSmokeTest.java").read_text(encoding="utf-8"),
         )
 
+    def test_tablet_functional_package_targets_existing_rail_and_header_methods(self):
+        expected_methods_by_profile = {
+            "tablet-functional-rail": [
+                "tabletDetailRailLibraryTapReturnsManualHome",
+                "tabletDetailRailSavedTapOpensSavedDestination",
+                "tabletDetailRailAskTapOpensEmptyAskLaneAndSubmitRoutesToAnswerDetail",
+            ],
+            "tablet-functional-header": [
+                "guideDetailTabletPortraitSuppressesRedundantStateChips",
+            ],
+        }
+        prompt_harness = (
+            REPO_ROOT
+            / "android-app"
+            / "app"
+            / "src"
+            / "androidTest"
+            / "java"
+            / "com"
+            / "senku"
+            / "mobile"
+            / "PromptHarnessSmokeTest.java"
+        ).read_text(encoding="utf-8")
+
+        for profile, expected_methods in expected_methods_by_profile.items():
+            match = re.search(
+                rf'"{re.escape(profile)}"\s*\{{\s*return\s*@\((.*?)\)\s*\}}',
+                self.smoke_script,
+                re.S,
+            )
+            self.assertIsNotNone(match, f"Could not find {profile} method registry.")
+            registered_methods = re.findall(r'"([^"]+)"', match.group(1))
+            self.assertEqual(registered_methods, expected_methods)
+            for method in expected_methods:
+                self.assertIn(f"public void {method}()", prompt_harness)
+
     def test_matrix_device_role_preflight_uses_bounded_adb_wait(self):
         self.assertIn("[int]$DeviceWaitTimeoutSeconds = 120", self.script)
         self.assertIn('throw "-DeviceWaitTimeoutSeconds must be 1 or greater."', self.script)
@@ -246,7 +282,14 @@ exit 0
         self.assertEqual(result.returncode, 0, result.stderr + result.stdout)
         self.assertEqual([entry["smoke_preset"] for entry in invocations], EXPECTED_TABLET_FUNCTIONAL_PRESETS)
         self.assertEqual(summary["preset_package"], "tablet-functional")
+        self.assertEqual(summary["expected_device_role"], "tablet")
+        self.assertEqual(summary["execution_scope"], "local_only")
         self.assertEqual([preset["preset"] for preset in summary["presets"]], EXPECTED_TABLET_FUNCTIONAL_PRESETS)
+        for preset in summary["presets"]:
+            self.assertEqual(preset["preset_package"], "tablet-functional")
+            self.assertEqual(preset["expected_device_role"], "tablet")
+            self.assertEqual(preset["execution_scope"], "local_only")
+            self.assertFalse(preset["bounded_by_matrix_watchdog"])
 
     def test_matrix_summary_records_reuse_build_state_behaviorally(self):
         with tempfile.TemporaryDirectory() as temp_dir:

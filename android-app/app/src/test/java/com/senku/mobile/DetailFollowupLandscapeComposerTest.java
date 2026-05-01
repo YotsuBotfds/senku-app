@@ -107,6 +107,32 @@ public final class DetailFollowupLandscapeComposerTest {
     }
 
     @Test
+    public void visibleSubmittingRetryButtonClickDoesNotStartDuplicateFollowUp() {
+        FollowUpRetryButtonHarness harness = new FollowUpRetryButtonHarness(
+            new FollowUpComposerState(
+                "",
+                false,
+                true,
+                null,
+                FollowUpComposerState.Surface.PHONE,
+                null,
+                "  active submitting query  "
+            )
+        );
+
+        FollowUpComposerController.RetryPresentation presentation =
+            FollowUpComposerController.resolveRetryPresentation(harness.phoneState, true);
+        harness.clickRetryButton();
+
+        assertTrue(presentation.visible);
+        assertTrue(presentation.actionEnabled);
+        assertEquals("active submitting query", presentation.query);
+        assertEquals(0, harness.startedGenerationCount);
+        assertEquals(1, harness.blockedCount);
+        assertEquals("active submitting query", harness.visibleDraft);
+    }
+
+    @Test
     public void followUpNonSubmitImeActionDoesNotDispatchFollowUp() {
         FollowUpInteractionHarness harness = new FollowUpInteractionHarness();
 
