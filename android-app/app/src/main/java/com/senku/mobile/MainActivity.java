@@ -567,7 +567,8 @@ public final class MainActivity extends AppCompatActivity {
             return false;
         }
         if (transition.effect == MainRouteDecisionHelper.Effect.SHOW_PREVIOUS_TAB) {
-            openPhoneTab(transition.routeState.activePhoneTab, false);
+            applyMainRouteState(transition.routeState);
+            MainRouteEffectController.applyPhoneTabTransitionEffect(transition, mainRouteEffects());
             return true;
         }
         if (transition.effect == MainRouteDecisionHelper.Effect.RETURN_TO_BROWSE) {
@@ -1436,7 +1437,7 @@ public final class MainActivity extends AppCompatActivity {
         }
         if (productReviewMode && isManualHomeShellLayout()) {
             while (recentThreadPreviews.size() < MAX_RECENT_THREAD_PREVIEWS) {
-                recentThreadPreviews.add(buildReviewRecentThreadPlaceholder(recentThreadPreviews.size()));
+                recentThreadPreviews.add(buildReviewRecentThreadPlaceholder(productReviewMode, recentThreadPreviews.size()));
             }
         }
         if (recentThreadsContainer != null) {
@@ -1449,10 +1450,13 @@ public final class MainActivity extends AppCompatActivity {
         updateRecentThreadsVisibility();
     }
 
-    private static ChatSessionStore.ConversationPreview buildReviewRecentThreadPlaceholder(int index) {
+    private static ChatSessionStore.ConversationPreview buildReviewRecentThreadPlaceholder(
+        boolean productReviewMode,
+        int index
+    ) {
         long now = System.currentTimeMillis();
         SessionMemory.TurnSnapshot turn = new SessionMemory.TurnSnapshot(
-            ReviewDemoPolicy.placeholderRecentThreadQuestion(index),
+            ReviewDemoPolicy.placeholderRecentThreadQuestion(productReviewMode, index, ""),
             "",
             "",
             Collections.emptyList(),
@@ -3052,7 +3056,7 @@ public final class MainActivity extends AppCompatActivity {
             pushPhoneTab(activePhoneTab);
         }
         applyMainRouteState(transition.routeState);
-        MainRouteEffectController.applyPhoneTabTransitionEffect(transition.effect, mainRouteEffects());
+        MainRouteEffectController.applyPhoneTabTransitionEffect(transition, mainRouteEffects());
     }
 
     private MainRouteEffectController.Effects mainRouteEffects() {

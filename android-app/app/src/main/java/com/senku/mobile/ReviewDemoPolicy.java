@@ -228,7 +228,10 @@ final class ReviewDemoPolicy {
         return ReviewDemoFixtureSet.tabletPreviewBody();
     }
 
-    static String placeholderRecentThreadQuestion(int index) {
+    static String placeholderRecentThreadQuestion(boolean productReviewMode, int index, String defaultQuestion) {
+        if (!shouldApplyReviewDemoFixtures(productReviewMode)) {
+            return safe(defaultQuestion);
+        }
         return reviewManualHomeRecentThreadTitle(null, index);
     }
 

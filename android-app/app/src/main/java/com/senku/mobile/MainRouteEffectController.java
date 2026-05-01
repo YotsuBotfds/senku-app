@@ -23,7 +23,25 @@ final class MainRouteEffectController {
     }
 
     static void applyPhoneTabTransitionEffect(
+        MainRouteDecisionHelper.Transition transition,
+        Effects effects
+    ) {
+        if (transition == null) {
+            return;
+        }
+        applyPhoneTabTransitionEffect(transition.effect, transition.routeState, effects);
+    }
+
+    static void applyPhoneTabTransitionEffect(
         MainRouteDecisionHelper.Effect effect,
+        Effects effects
+    ) {
+        applyPhoneTabTransitionEffect(effect, null, effects);
+    }
+
+    private static void applyPhoneTabTransitionEffect(
+        MainRouteDecisionHelper.Effect effect,
+        MainRouteDecisionHelper.RouteState routeState,
         Effects effects
     ) {
         if (effect == null || effect == MainRouteDecisionHelper.Effect.NONE || effects == null) {
@@ -53,7 +71,39 @@ final class MainRouteEffectController {
                 effects.dismissSearchKeyboard();
                 effects.prepareSavedGuidesDestination();
                 break;
+            case SHOW_PREVIOUS_TAB:
+                applyPreviousTabEffect(routeState, effects);
+                break;
             default:
+                break;
+        }
+    }
+
+    private static void applyPreviousTabEffect(
+        MainRouteDecisionHelper.RouteState routeState,
+        Effects effects
+    ) {
+        if (routeState == null) {
+            effects.dismissSearchKeyboard();
+            effects.ensureBrowseHomeVisible();
+            effects.scrollBrowseToTop();
+            return;
+        }
+        switch (routeState.surface) {
+            case RECENT_THREADS:
+                effects.dismissSearchKeyboard();
+                effects.ensureBrowseHomeVisible();
+                effects.scrollRecentThreadsIntoView();
+                break;
+            case SAVED_GUIDES:
+                effects.dismissSearchKeyboard();
+                effects.prepareSavedGuidesDestination();
+                break;
+            case BROWSE:
+            default:
+                effects.dismissSearchKeyboard();
+                effects.ensureBrowseHomeVisible();
+                effects.scrollBrowseToTop();
                 break;
         }
     }

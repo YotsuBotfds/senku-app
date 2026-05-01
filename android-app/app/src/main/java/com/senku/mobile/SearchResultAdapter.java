@@ -1068,11 +1068,11 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
     }
 
     static String buildLinkedGuideChipLabelForTest() {
-        return buildLinkedGuideChipLabel();
+        return SearchResultCardModelMapper.buildLinkedGuideChipLabelForTest();
     }
 
     private static String buildLinkedGuideChipLabel() {
-        return "Guide";
+        return SearchResultCardModelMapper.buildLinkedGuideChipLabel();
     }
 
     private int colorForCategory(String category) {

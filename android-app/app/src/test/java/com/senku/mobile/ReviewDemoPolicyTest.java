@@ -153,6 +153,18 @@ public final class ReviewDemoPolicyTest {
     }
 
     @Test
+    public void placeholderRecentThreadFixtureRequiresReviewMode() {
+        assertEquals(
+            "Live placeholder",
+            ReviewDemoPolicy.placeholderRecentThreadQuestion(false, 0, "Live placeholder")
+        );
+        assertEquals(
+            "How do I build a simple rain shelter...",
+            ReviewDemoPolicy.placeholderRecentThreadQuestion(true, 0, "Live placeholder")
+        );
+    }
+
+    @Test
     public void answerModeRelatedGuideShapingRequiresReviewModeAndTargetGuide() {
         assertFalse(ReviewDemoPolicy.shouldShapeAnswerModeRelatedGuides(false, "GD-345"));
         assertFalse(ReviewDemoPolicy.shouldShapeAnswerModeRelatedGuides(true, "GD-027"));

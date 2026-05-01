@@ -162,6 +162,11 @@ public final class SearchResultCardModelMapperTest {
     }
 
     @Test
+    public void linkedGuideChipLabelKeepsCompactVisibleCue() {
+        assertEquals("Guide", SearchResultCardModelMapper.buildLinkedGuideChipLabelForTest());
+    }
+
+    @Test
     public void linkedGuideHandoffDescriptionsUseConnectionLanguage() {
         assertEquals(
             "Guide connection available: GD-214 - Water Storage",

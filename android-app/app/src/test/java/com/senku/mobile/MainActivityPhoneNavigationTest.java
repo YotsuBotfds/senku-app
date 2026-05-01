@@ -585,6 +585,77 @@ public final class MainActivityPhoneNavigationTest {
         );
     }
 
+    @Test
+    public void routeEffectControllerAppliesPreviousTabTransitionRouteWithoutReopeningAskLane() {
+        MainRouteDecisionHelper.Transition transition = MainRouteDecisionHelper.systemBack(
+            new MainRouteDecisionHelper.RouteState(
+                MainRouteDecisionHelper.Surface.SAVED_GUIDES,
+                BottomTabDestination.PINS,
+                false
+            ),
+            BottomTabDestination.ASK
+        );
+        RecordingRouteEffects effects = new RecordingRouteEffects(true);
+
+        MainRouteEffectController.applyPhoneTabTransitionEffect(transition, effects);
+
+        assertEquals(MainRouteDecisionHelper.Effect.SHOW_PREVIOUS_TAB, transition.effect);
+        assertRouteState(
+            transition.routeState,
+            MainRouteDecisionHelper.Surface.RECENT_THREADS,
+            BottomTabDestination.ASK,
+            false
+        );
+        assertEquals(
+            Arrays.asList(
+                "updateActionLabels",
+                "dismissSearchKeyboard",
+                "ensureBrowseHomeVisible",
+                "scrollRecentThreadsIntoView"
+            ),
+            effects.calls
+        );
+    }
+
+    @Test
+    public void routeEffectControllerReturnsPreviousSavedAndHomeRoutesByTransitionSurface() {
+        RecordingRouteEffects savedEffects = new RecordingRouteEffects(true);
+        RecordingRouteEffects homeEffects = new RecordingRouteEffects(true);
+
+        MainRouteEffectController.applyPhoneTabTransitionEffect(
+            new MainRouteDecisionHelper.Transition(
+                new MainRouteDecisionHelper.RouteState(
+                    MainRouteDecisionHelper.Surface.SAVED_GUIDES,
+                    BottomTabDestination.PINS,
+                    false
+                ),
+                MainRouteDecisionHelper.Effect.SHOW_PREVIOUS_TAB
+            ),
+            savedEffects
+        );
+        MainRouteEffectController.applyPhoneTabTransitionEffect(
+            new MainRouteDecisionHelper.Transition(
+                MainRouteDecisionHelper.browseHome(),
+                MainRouteDecisionHelper.Effect.SHOW_PREVIOUS_TAB
+            ),
+            homeEffects
+        );
+
+        assertEquals(
+            Arrays.asList("updateActionLabels", "dismissSearchKeyboard", "prepareSavedGuidesDestination"),
+            savedEffects.calls
+        );
+        assertEquals(
+            Arrays.asList(
+                "updateActionLabels",
+                "dismissSearchKeyboard",
+                "ensureBrowseHomeVisible",
+                "scrollBrowseToTop"
+            ),
+            homeEffects.calls
+        );
+    }
+
     private static void assertRouteState(
         MainRouteDecisionHelper.RouteState routeState,
         MainRouteDecisionHelper.Surface surface,

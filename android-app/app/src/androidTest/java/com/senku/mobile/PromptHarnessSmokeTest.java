@@ -2413,6 +2413,35 @@ public final class PromptHarnessSmokeTest {
     }
 
     @Test
+    public void detailFollowUpEmptySubmitDoesNotDispatchDraft() {
+        FollowUpSubmitDispatchSignals clickSignals =
+            dispatchFollowUpFromFreshDetail("empty_send_click", " \n\t ", false, false);
+        FollowUpSubmitDispatchSignals imeSignals =
+            dispatchFollowUpFromFreshDetail("empty_ime_send", " \n\t ", true, false);
+
+        Assert.assertEquals(
+            "empty send click must not dispatch a follow-up request",
+            0,
+            clickSignals.requestTokenDelta()
+        );
+        Assert.assertEquals(
+            "empty IME SEND must not dispatch a follow-up request",
+            0,
+            imeSignals.requestTokenDelta()
+        );
+        Assert.assertEquals(
+            "empty send click should leave the visible draft empty after normalization",
+            "",
+            clickSignals.visibleDraftAfter
+        );
+        Assert.assertEquals(
+            "empty IME SEND should leave the visible draft empty after normalization",
+            clickSignals.visibleDraftAfter,
+            imeSignals.visibleDraftAfter
+        );
+    }
+
+    @Test
     public void detailFollowUpDraftSurvivesActivityRecreate() {
         Context context = ApplicationProvider.getApplicationContext();
         ChatSessionStore.restore(context);
@@ -5740,6 +5769,20 @@ public final class PromptHarnessSmokeTest {
     }
 
     private FollowUpSubmitDispatchSignals dispatchFollowUpFromFreshDetail(String routeLabel, boolean useImeSend) {
+        return dispatchFollowUpFromFreshDetail(
+            routeLabel,
+            "What should I do after the first pass? " + routeLabel,
+            useImeSend,
+            true
+        );
+    }
+
+    private FollowUpSubmitDispatchSignals dispatchFollowUpFromFreshDetail(
+        String routeLabel,
+        String query,
+        boolean useImeSend,
+        boolean expectSendEnabledBeforeSubmit
+    ) {
         Context context = ApplicationProvider.getApplicationContext();
         ChatSessionStore.restore(context);
         String conversationId = ChatSessionStore.createConversation();
@@ -5756,8 +5799,9 @@ public final class PromptHarnessSmokeTest {
                 waitForFollowUpComposerReadyOnMainThread(DETAIL_WAIT_MS)
             );
             return submitFollowUpForDispatchProbe(
-                "What should I do after the first pass? " + routeLabel,
-                useImeSend
+                query,
+                useImeSend,
+                expectSendEnabledBeforeSubmit
             );
         } finally {
             ChatSessionStore.removeConversation(context, conversationId);
@@ -5793,6 +5837,14 @@ public final class PromptHarnessSmokeTest {
     }
 
     private FollowUpSubmitDispatchSignals submitFollowUpForDispatchProbe(String query, boolean useImeSend) {
+        return submitFollowUpForDispatchProbe(query, useImeSend, true);
+    }
+
+    private FollowUpSubmitDispatchSignals submitFollowUpForDispatchProbe(
+        String query,
+        boolean useImeSend,
+        boolean expectSendEnabledBeforeSubmit
+    ) {
         final FollowUpSubmitDispatchSignals[] result = {null};
         InstrumentationRegistry.getInstrumentation().runOnMainSync(() -> {
             Activity activity = getResumedActivityOnMainThread();
@@ -5808,7 +5860,11 @@ public final class PromptHarnessSmokeTest {
             input.setText(query);
             input.clearComposingText();
             input.setSelection(query.length());
-            Assert.assertTrue("follow-up send should be enabled after entering a draft", send.isEnabled());
+            Assert.assertEquals(
+                "follow-up send enabled state before dispatch should match draft policy",
+                expectSendEnabledBeforeSubmit,
+                send.isEnabled()
+            );
 
             int beforeToken = detailActivity.currentAnswerRequestToken();
             if (useImeSend) {
@@ -5820,7 +5876,8 @@ public final class PromptHarnessSmokeTest {
                 beforeToken,
                 detailActivity.currentAnswerRequestToken(),
                 input.isEnabled(),
-                send.isEnabled()
+                send.isEnabled(),
+                safe(input.getText() == null ? null : input.getText().toString()).trim()
             );
         });
         InstrumentationRegistry.getInstrumentation().waitForIdleSync();
@@ -8412,17 +8469,20 @@ public final class PromptHarnessSmokeTest {
         final int afterRequestToken;
         final boolean inputEnabledAfter;
         final boolean sendEnabledAfter;
+        final String visibleDraftAfter;
 
         FollowUpSubmitDispatchSignals(
             int beforeRequestToken,
             int afterRequestToken,
             boolean inputEnabledAfter,
-            boolean sendEnabledAfter
+            boolean sendEnabledAfter,
+            String visibleDraftAfter
         ) {
             this.beforeRequestToken = beforeRequestToken;
             this.afterRequestToken = afterRequestToken;
             this.inputEnabledAfter = inputEnabledAfter;
             this.sendEnabledAfter = sendEnabledAfter;
+            this.visibleDraftAfter = safe(visibleDraftAfter);
         }
 
         int requestTokenDelta() {

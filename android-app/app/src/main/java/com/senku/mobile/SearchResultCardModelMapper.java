@@ -319,6 +319,14 @@ public final class SearchResultCardModelMapper {
         return false;
     }
 
+    static String buildLinkedGuideChipLabelForTest() {
+        return buildLinkedGuideChipLabel();
+    }
+
+    static String buildLinkedGuideChipLabel() {
+        return "Guide";
+    }
+
     static String buildLinkedGuideAvailableDescriptionForTest(String actionLabel) {
         return buildLinkedGuideAvailableDescription(actionLabel);
     }
