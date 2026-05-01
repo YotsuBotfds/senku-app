@@ -32,9 +32,9 @@ param(
     [string]$HostInferenceUrl = "http://10.0.2.2:1235/v1",
     [string]$HostInferenceModel = "gemma-4-e2b-it-litert",
     [string]$ArtifactRoot = "artifacts/instrumented_ui_smoke",
-    [ValidateSet("", "phone-basic", "phone-host", "phone-full", "phone-functional", "phone-functional-follow-up", "phone-functional-saved", "phone-functional-back-provenance", "tablet-landscape", "large-font", "tablet-large-font")]
+    [ValidateSet("", "phone-basic", "phone-host", "phone-full", "phone-functional", "phone-functional-follow-up", "phone-functional-saved", "phone-functional-back-provenance", "tablet-functional-rail", "tablet-functional-header", "tablet-landscape", "large-font", "tablet-large-font")]
     [string]$SmokePreset = "",
-    [ValidateSet("basic", "host", "full", "functional", "functional-follow-up", "functional-saved", "functional-back-provenance", "custom")]
+    [ValidateSet("basic", "host", "full", "functional", "functional-follow-up", "functional-saved", "functional-back-provenance", "tablet-functional-rail", "tablet-functional-header", "custom")]
     [string]$SmokeProfile = "basic",
     [ValidateSet("portrait", "landscape")]
     [string]$Orientation = "portrait",
@@ -1134,6 +1134,8 @@ function Get-InstrumentationTimeoutMs {
         "functional-follow-up" { return 300000 }
         "functional-saved" { return 300000 }
         "functional-back-provenance" { return 300000 }
+        "tablet-functional-rail" { return 300000 }
+        "tablet-functional-header" { return 300000 }
         "full" { return 420000 }
         default { return 300000 }
     }
@@ -1288,6 +1290,18 @@ function Resolve-InstrumentationMethodNames {
                 "answerSourceChipTapFollowsAdvertisedActionForSeededGuideSources"
             )
         }
+        "tablet-functional-rail" {
+            return @(
+                "tabletDetailRailLibraryTapReturnsManualHome",
+                "tabletDetailRailSavedTapOpensSavedDestination",
+                "tabletDetailRailAskTapOpensEmptyAskLaneAndSubmitRoutesToAnswerDetail"
+            )
+        }
+        "tablet-functional-header" {
+            return @(
+                "guideDetailTabletPortraitSuppressesRedundantStateChips"
+            )
+        }
         default {
             return @()
         }
@@ -1360,6 +1374,16 @@ switch ($SmokePreset) {
     }
     "phone-functional-back-provenance" {
         $SmokeProfile = "functional-back-provenance"
+        $Orientation = "portrait"
+        $FontScale = 1.0
+    }
+    "tablet-functional-rail" {
+        $SmokeProfile = "tablet-functional-rail"
+        $Orientation = "landscape"
+        $FontScale = 1.0
+    }
+    "tablet-functional-header" {
+        $SmokeProfile = "tablet-functional-header"
         $Orientation = "portrait"
         $FontScale = 1.0
     }

@@ -18,6 +18,10 @@ EXPECTED_FUNCTIONAL_PRESETS = [
     "phone-functional-saved",
     "phone-functional-back-provenance",
 ]
+EXPECTED_TABLET_FUNCTIONAL_PRESETS = [
+    "tablet-functional-rail",
+    "tablet-functional-header",
+]
 
 
 def _run_powershell(args, *, env=None, timeout=30):
@@ -32,10 +36,14 @@ def _run_powershell(args, *, env=None, timeout=30):
     )
 
 
-def _matrix_presets(script_text):
-    match = re.search(r"\$presets\s*=\s*@\((.*?)\)", script_text, re.S)
+def _matrix_presets_for_package(script_text, package):
+    match = re.search(
+        rf'"{re.escape(package)}"\s*\{{\s*return\s*@\((.*?)\)\s*\}}',
+        script_text,
+        re.S,
+    )
     if match is None:
-        raise AssertionError("Could not find matrix preset declaration.")
+        raise AssertionError(f"Could not find matrix preset declaration for {package}.")
     return re.findall(r'"([^"]+)"', match.group(1))
 
 
@@ -46,8 +54,10 @@ class RunAndroidFunctionalUxSmokeMatrixContractTests(unittest.TestCase):
         cls.smoke_script = SMOKE_SCRIPT.read_text(encoding="utf-8-sig")
 
     def test_functional_matrix_presets_are_declared_and_registered_by_child_runner(self):
-        matrix_presets = _matrix_presets(self.script)
-        self.assertEqual(matrix_presets, EXPECTED_FUNCTIONAL_PRESETS)
+        phone_presets = _matrix_presets_for_package(self.script, "phone-functional")
+        tablet_presets = _matrix_presets_for_package(self.script, "tablet-functional")
+        self.assertEqual(phone_presets, EXPECTED_FUNCTIONAL_PRESETS)
+        self.assertEqual(tablet_presets, EXPECTED_TABLET_FUNCTIONAL_PRESETS)
 
         smoke_lines = self.smoke_script.splitlines()
         smoke_preset_line_index = next(
@@ -56,8 +66,14 @@ class RunAndroidFunctionalUxSmokeMatrixContractTests(unittest.TestCase):
         validate_set_line = smoke_lines[smoke_preset_line_index - 1]
         registered_presets = {preset for preset in re.findall(r'"([^"]*)"', validate_set_line) if preset}
 
-        missing_presets = sorted(set(matrix_presets) - registered_presets)
+        missing_presets = sorted(set(phone_presets + tablet_presets) - registered_presets)
         self.assertEqual(missing_presets, [])
+
+    def test_default_preset_package_preserves_phone_matrix_behavior(self):
+        self.assertIn('[string]$PresetPackage = "phone-functional"', self.script)
+        self.assertIn('"phone-functional" {', self.script)
+        self.assertIn('"tablet-functional" {', self.script)
+        self.assertIn("preset_package = $PresetPackage", self.script)
 
     def test_child_runner_receives_quoted_paths_and_matrix_arguments(self):
         with tempfile.TemporaryDirectory() as temp_dir:
@@ -129,6 +145,70 @@ exit 0
             self.assertIn("artifact root with spaces", entry["artifact_root"])
             self.assertIn(output_label, entry["summary_path"])
             self.assertIn(output_label, entry["capture_summary_path"])
+
+    def test_tablet_package_child_runner_receives_tablet_presets_only(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            temp_root = Path(temp_dir)
+            capture_path = temp_root / "received_tablet_args.jsonl"
+            child_runner = temp_root / "fake_child.ps1"
+            artifact_root = temp_root / "artifacts"
+            output_label = "tablet_contract"
+            child_runner.write_text(
+                r'''
+$record = [ordered]@{
+    args = @($args)
+    smoke_preset = $args[([Array]::IndexOf($args, "-SmokePreset") + 1)]
+}
+($record | ConvertTo-Json -Compress) | Add-Content -LiteralPath $env:MATRIX_ARG_CAPTURE
+$summaryPath = $args[([Array]::IndexOf($args, "-SummaryPath") + 1)]
+New-Item -ItemType Directory -Force -Path (Split-Path -Parent $summaryPath) | Out-Null
+[ordered]@{
+    status = "passed"
+    failure_reason = $null
+    selected_test_methods = @("fake")
+    screenshot_count = 0
+    dump_count = 0
+    artifact_expectations_met = $true
+} | ConvertTo-Json | Set-Content -LiteralPath $summaryPath -Encoding UTF8
+exit 0
+''',
+                encoding="utf-8",
+            )
+
+            env = {**os.environ, "MATRIX_ARG_CAPTURE": str(capture_path)}
+            result = _run_powershell(
+                [
+                    "-File",
+                    str(SCRIPT),
+                    "-Device",
+                    "emulator-5554",
+                    "-PresetPackage",
+                    "tablet-functional",
+                    "-ArtifactRoot",
+                    str(artifact_root),
+                    "-OutputLabel",
+                    output_label,
+                    "-ChildRunnerOverride",
+                    str(child_runner),
+                    "-SkipDeviceLock",
+                    "-SkipDevicePreflight",
+                    "-PresetTimeoutSeconds",
+                    "0",
+                ],
+                env=env,
+            )
+
+            invocations = [
+                json.loads(line)
+                for line in capture_path.read_text(encoding="utf-8").splitlines()
+                if line.strip()
+            ]
+            summary = json.loads((artifact_root / output_label / "matrix_summary.json").read_text(encoding="utf-8-sig"))
+
+        self.assertEqual(result.returncode, 0, result.stderr + result.stdout)
+        self.assertEqual([entry["smoke_preset"] for entry in invocations], EXPECTED_TABLET_FUNCTIONAL_PRESETS)
+        self.assertEqual(summary["preset_package"], "tablet-functional")
+        self.assertEqual([preset["preset"] for preset in summary["presets"]], EXPECTED_TABLET_FUNCTIONAL_PRESETS)
 
     def test_matrix_summary_records_reuse_build_state_behaviorally(self):
         with tempfile.TemporaryDirectory() as temp_dir:

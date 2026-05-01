@@ -558,7 +558,7 @@ public final class PromptHarnessSmokeTest {
                 tapSavedNavigationFromMain()
             );
             waitForSavedGuidesDestination(scenario, false, DETAIL_WAIT_MS);
-            UiObject2 savedLabel = waitForUiObject(By.text("Saved"), DETAIL_WAIT_MS);
+            UiObject2 savedLabel = waitForUiObject(By.text(appString(R.string.bottom_tab_pins)), DETAIL_WAIT_MS);
             Assert.assertTrue(
                 "Saved navigation should expose a visible Saved label after selection; harness signals="
                     + HarnessTestSignals.snapshot(),
@@ -4780,11 +4780,11 @@ public final class PromptHarnessSmokeTest {
     }
 
     private boolean tapSavedNavigationFromMain() {
-        BySelector savedGuidesDescription = By.desc("Saved guides");
+        BySelector savedGuidesDescription = By.desc(appString(R.string.pinned_section_title));
         if (clickUiObject(savedGuidesDescription, 1_500L)) {
             return true;
         }
-        if (clickUiObject(By.text("Saved"), 1_500L)) {
+        if (clickUiObject(By.text(appString(R.string.bottom_tab_pins)), 1_500L)) {
             return true;
         }
 
@@ -6257,9 +6257,10 @@ public final class PromptHarnessSmokeTest {
     }
 
     private void openAskTabFromHomeChrome() {
-        UiObject2 askTab = waitForUiObject(By.text("Ask"), SEARCH_WAIT_MS);
+        String askTabLabel = appString(R.string.bottom_tab_ask);
+        UiObject2 askTab = waitForUiObject(By.text(askTabLabel), SEARCH_WAIT_MS);
         if (askTab == null || !hasVisibleBounds(askTab)) {
-            askTab = waitForUiObject(By.desc("Ask"), SEARCH_WAIT_MS);
+            askTab = waitForUiObject(By.desc(askTabLabel), SEARCH_WAIT_MS);
         }
         Assert.assertNotNull(
             "Ask tab should be visible before exercising IME submission; harness signals="
@@ -8953,14 +8954,16 @@ public final class PromptHarnessSmokeTest {
     }
 
     private boolean hasUiAutomatorEmergencySourceContext() {
+        String sourceGraphDescription = appString(R.string.detail_a11y_landmark_source_graph);
+        String guideConnectionLabel = appString(R.string.detail_next_steps_title_guides_nonrail);
         return device != null
             && (
                 device.hasObject(By.textContains("SOURCES -"))
                     || device.hasObject(By.textContains("1 SOURCE"))
                     || device.hasObject(By.textContains("GD-132"))
                     || device.hasObject(By.textContains("Foundry & Metal Casting"))
-                    || device.hasObject(By.textContains("Guide connection"))
-                    || device.hasObject(By.descContains("Source graph"))
+                    || device.hasObject(By.textContains(guideConnectionLabel))
+                    || device.hasObject(By.descContains(sourceGraphDescription))
                     || device.hasObject(By.descContains("Sources -"))
                     || device.hasObject(By.descContains("GD-132"))
             );
@@ -9577,6 +9580,10 @@ public final class PromptHarnessSmokeTest {
             start += needle.length();
         }
         return count;
+    }
+
+    private static String appString(int resId) {
+        return ApplicationProvider.getApplicationContext().getString(resId);
     }
 
     private static long parseLongArg(Bundle args, String key, long fallback) {

@@ -12,6 +12,8 @@ param(
     [switch]$SkipInstall,
     [switch]$SkipDeviceLock,
     [switch]$SkipDevicePreflight,
+    [ValidateSet("phone-functional", "tablet-functional")]
+    [string]$PresetPackage = "phone-functional",
     [string]$ChildRunnerOverride = "",
     [int]$PresetTimeoutSeconds = 1800,
     [int]$PresetProgressIntervalSeconds = 60,
@@ -35,8 +37,15 @@ release-scout functional UX check:
   - phone-functional-saved
   - phone-functional-back-provenance
 
+The tablet package runs the tablet detail rail/header functional UX checks:
+  - tablet-functional-rail
+  - tablet-functional-header
+
 Usage:
   powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\run_android_functional_ux_smoke_matrix.ps1 -Device emulator-5554 -CaptureLogcat -ClearLogcatBeforeRun
+
+Tablet package example:
+  powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\run_android_functional_ux_smoke_matrix.ps1 -Device emulator-5554 -PresetPackage tablet-functional -OutputLabel tablet_functional_current_head -CaptureLogcat
 
 Physical phone example:
   powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\run_android_functional_ux_smoke_matrix.ps1 -Device RFCX607ZM8L -PhysicalDevice -OutputLabel physical_current_head -CaptureLogcat
@@ -52,6 +61,7 @@ Parameters:
   -SkipInstall            Passes -SkipInstall to each preset run.
   -SkipDeviceLock         Passes -SkipDeviceLock to each preset run.
   -SkipDevicePreflight    Skips adb role preflight. Intended for wrapper contract tests.
+  -PresetPackage          Preset package to run: phone-functional (default) or tablet-functional.
   -ChildRunnerOverride    Alternate child runner path. Intended for wrapper contract tests.
   -PresetTimeoutSeconds   Matrix watchdog timeout per preset. Default: 1800. Use 0 to disable.
   -PresetProgressIntervalSeconds
@@ -114,8 +124,23 @@ function Acquire-MatrixDeviceLock {
     return Acquire-AndroidHarnessDeviceLock -DeviceName $DeviceName -LockRoot $lockRoot -TimeoutSeconds $TimeoutSeconds -ProgressLabel ("[functional-ux-matrix:{0}]" -f $DeviceName)
 }
 
-function Assert-FunctionalUxPhoneDevice {
-    Write-Host ("[functional-ux-matrix:{0}] preflighting phone-preset device role" -f $Device)
+function Resolve-ExpectedDeviceRoleForPresetPackage {
+    param([string]$Package)
+
+    switch ($Package) {
+        "phone-functional" { return "phone" }
+        "tablet-functional" { return "tablet" }
+        default { return "" }
+    }
+}
+
+function Assert-FunctionalUxDeviceRole {
+    param([string]$ExpectedRole)
+
+    if ([string]::IsNullOrWhiteSpace($ExpectedRole)) {
+        return
+    }
+    Write-Host ("[functional-ux-matrix:{0}] preflighting {1}-preset device role" -f $Device, $ExpectedRole)
     & $adb -s $Device wait-for-device
     if ($LASTEXITCODE -ne 0) {
         throw "adb wait-for-device failed for $Device"
@@ -126,13 +151,13 @@ function Assert-FunctionalUxPhoneDevice {
     } else {
         "unknown"
     }
-    if ($role -ne "phone") {
+    if ($role -ne $ExpectedRole) {
         $smallest = if ($null -ne $facts -and $null -ne $facts.smallest_width_dp) {
             [string]$facts.smallest_width_dp
         } else {
             "unknown"
         }
-        throw ("Functional UX smoke matrix runs phone-* presets, but {0} resolved as {1} (smallest_width_dp={2}). Use a phone-class device such as emulator-5556 or the attached physical phone, or run a tablet-specific state-pack lane." -f $Device, $role, $smallest)
+        throw ("Functional UX smoke matrix package '{0}' expects a {1} device, but {2} resolved as {3} (smallest_width_dp={4}). Pick a matching emulator/device before running the package." -f $PresetPackage, $ExpectedRole, $Device, $role, $smallest)
     }
 }
 
@@ -147,12 +172,31 @@ $matrixRoot = if ([System.IO.Path]::IsPathRooted($ArtifactRoot)) {
 }
 New-Item -ItemType Directory -Force -Path $matrixRoot | Out-Null
 
-$presets = @(
-    "phone-functional",
-    "phone-functional-follow-up",
-    "phone-functional-saved",
-    "phone-functional-back-provenance"
-)
+function Resolve-FunctionalUxSmokePresets {
+    param([string]$Package)
+
+    switch ($Package) {
+        "phone-functional" {
+            return @(
+                "phone-functional",
+                "phone-functional-follow-up",
+                "phone-functional-saved",
+                "phone-functional-back-provenance"
+            )
+        }
+        "tablet-functional" {
+            return @(
+                "tablet-functional-rail",
+                "tablet-functional-header"
+            )
+        }
+        default {
+            throw "Unsupported preset package: $Package"
+        }
+    }
+}
+
+$presets = @(Resolve-FunctionalUxSmokePresets -Package $PresetPackage)
 
 function Convert-ToRepoRelativePath {
     param([string]$Path)
@@ -306,7 +350,7 @@ if (-not $SkipDeviceLock) {
 if ($SkipDevicePreflight) {
     Write-Host ("[functional-ux-matrix:{0}] device role preflight skipped" -f $Device)
 } else {
-    Assert-FunctionalUxPhoneDevice
+    Assert-FunctionalUxDeviceRole -ExpectedRole (Resolve-ExpectedDeviceRoleForPresetPackage -Package $PresetPackage)
 }
 
 for ($presetIndex = 0; $presetIndex -lt $presets.Count; $presetIndex++) {
@@ -428,6 +472,7 @@ $summary = [ordered]@{
     device = $Device
     physical_device_mode = [bool]$PhysicalDevice
     output_label = $OutputLabel
+    preset_package = $PresetPackage
     matrix_root = Convert-ToRepoRelativePath -Path $matrixRoot
     capture_logcat = $true
     capture_logcat_requested = [bool]$CaptureLogcat
