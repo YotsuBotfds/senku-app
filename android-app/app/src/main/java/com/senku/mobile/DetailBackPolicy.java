@@ -1,6 +1,6 @@
 package com.senku.mobile;
 
-public final class DetailBackPolicy {
+final class DetailBackPolicy {
     enum SourceRoute {
         UNKNOWN,
         ANSWER,

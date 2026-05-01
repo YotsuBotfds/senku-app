@@ -2,7 +2,7 @@ package com.senku.mobile;
 
 import com.senku.ui.primitives.BottomTabDestination;
 
-public final class SavedGuidesPolicy {
+final class SavedGuidesPolicy {
     private SavedGuidesPolicy() {
     }
 

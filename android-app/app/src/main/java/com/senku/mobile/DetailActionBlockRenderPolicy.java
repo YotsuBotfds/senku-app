@@ -1,7 +1,7 @@
 package com.senku.mobile;
 
-public final class DetailActionBlockRenderPolicy {
-    public enum Decision {
+final class DetailActionBlockRenderPolicy {
+    enum Decision {
         NONE,
         EMERGENCY_PORTRAIT,
         HIGH_RISK
@@ -10,7 +10,7 @@ public final class DetailActionBlockRenderPolicy {
     private DetailActionBlockRenderPolicy() {
     }
 
-    public static Decision evaluate(
+    static Decision evaluate(
         boolean emergencyPortraitSurface,
         boolean answerMode,
         boolean highRiskRoute,

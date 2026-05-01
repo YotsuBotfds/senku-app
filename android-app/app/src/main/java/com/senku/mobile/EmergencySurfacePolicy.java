@@ -2,20 +2,20 @@ package com.senku.mobile;
 
 import java.util.Locale;
 
-public final class EmergencySurfacePolicy {
-    public static final String REASON_ELIGIBLE = "eligible";
-    public static final String REASON_NOT_DETERMINISTIC = "not_deterministic";
-    public static final String REASON_UNREVIEWED = "unreviewed";
-    public static final String REASON_GENERATED_ONLY = "generated_only";
-    public static final String REASON_LOW_COVERAGE = "low_coverage";
-    public static final String REASON_UNCERTAIN_FIT = "uncertain_fit";
-    public static final String REASON_GUIDE_READING = "guide_reading";
-    public static final String REASON_NOT_HIGH_RISK_EMERGENCY = "not_high_risk_emergency";
+final class EmergencySurfacePolicy {
+    static final String REASON_ELIGIBLE = "eligible";
+    static final String REASON_NOT_DETERMINISTIC = "not_deterministic";
+    static final String REASON_UNREVIEWED = "unreviewed";
+    static final String REASON_GENERATED_ONLY = "generated_only";
+    static final String REASON_LOW_COVERAGE = "low_coverage";
+    static final String REASON_UNCERTAIN_FIT = "uncertain_fit";
+    static final String REASON_GUIDE_READING = "guide_reading";
+    static final String REASON_NOT_HIGH_RISK_EMERGENCY = "not_high_risk_emergency";
 
     private EmergencySurfacePolicy() {
     }
 
-    public static Decision evaluate(Input input) {
+    static Decision evaluate(Input input) {
         Input normalized = Input.normalize(input);
         if (!normalized.deterministic) {
             return Decision.ineligible(REASON_NOT_DETERMINISTIC);
@@ -127,18 +127,18 @@ public final class EmergencySurfacePolicy {
         return value == null ? "" : value.trim().toLowerCase(Locale.ROOT);
     }
 
-    public static final class Input {
-        public final boolean deterministic;
-        public final String ruleId;
-        public final String category;
-        public final String reviewStatus;
-        public final String provenance;
-        public final String coverageLabel;
-        public final String confidenceLabel;
-        public final String answerMode;
-        public final int citedReviewedSourceCount;
+    static final class Input {
+        final boolean deterministic;
+        final String ruleId;
+        final String category;
+        final String reviewStatus;
+        final String provenance;
+        final String coverageLabel;
+        final String confidenceLabel;
+        final String answerMode;
+        final int citedReviewedSourceCount;
 
-        public Input(
+        Input(
             boolean deterministic,
             String ruleId,
             String category,
@@ -172,9 +172,9 @@ public final class EmergencySurfacePolicy {
         }
     }
 
-    public static final class Decision {
-        public final boolean eligible;
-        public final String reason;
+    static final class Decision {
+        final boolean eligible;
+        final String reason;
 
         private Decision(boolean eligible, String reason) {
             this.eligible = eligible;

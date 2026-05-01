@@ -3,15 +3,15 @@ package com.senku.mobile;
 import java.net.URI;
 import java.util.Locale;
 
-public final class HostInferencePolicy {
+final class HostInferencePolicy {
     private HostInferencePolicy() {
     }
 
-    public static Decision evaluate(String baseUrl) {
+    static Decision evaluate(String baseUrl) {
         return evaluate(baseUrl, true);
     }
 
-    public static Decision evaluate(String baseUrl, boolean allowHttps) {
+    static Decision evaluate(String baseUrl, boolean allowHttps) {
         URI uri;
         try {
             uri = URI.create(withDefaultHttpScheme(safe(baseUrl).trim()));
@@ -63,7 +63,7 @@ public final class HostInferencePolicy {
         return text == null ? "" : text;
     }
 
-    public enum Reason {
+    enum Reason {
         LOCAL_CLEARTEXT_ALLOWED,
         NON_LOCAL_CLEARTEXT_REJECTED,
         HTTPS_ALLOWED,
@@ -73,11 +73,11 @@ public final class HostInferencePolicy {
         INVALID_URL
     }
 
-    public static final class Decision {
-        public final boolean allowed;
-        public final Reason reason;
-        public final String scheme;
-        public final String host;
+    static final class Decision {
+        final boolean allowed;
+        final Reason reason;
+        final String scheme;
+        final String host;
 
         private Decision(boolean allowed, Reason reason, String scheme, String host) {
             this.allowed = allowed;
