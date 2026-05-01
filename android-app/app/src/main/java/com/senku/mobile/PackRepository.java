@@ -353,9 +353,7 @@ public final class PackRepository implements AutoCloseable {
                 " limit=" + limit
         );
 
-        int routeResultLimit = queryTerms.routeProfile.isRouteFocused()
-            ? Math.min(Math.max(Math.max(limit, 18) / (queryTerms.routeProfile.isStarterBuildProject() ? 3 : 2), 12), 24)
-            : 0;
+        int routeResultLimit = PackRetrievalOrchestrationPolicy.routeResultLimit(queryTerms.routeProfile, limit);
         long routeStartedAt = System.currentTimeMillis();
         List<SearchResult> routeResults = queryTerms.routeProfile.isRouteFocused()
             ? searchRouteFocusedResults(queryTerms, routeResultLimit)
@@ -1072,30 +1070,15 @@ public final class PackRepository implements AutoCloseable {
         List<SearchResult> lexicalFallback,
         int limit
     ) {
-        return mergePreferredResults(routeResults, lexicalFallback, limit);
+        return PackRetrievalOrchestrationPolicy.mergeResultsWhenCentroidMissing(
+            routeResults,
+            lexicalFallback,
+            limit
+        );
     }
 
     private static List<SearchResult> mergePreferredResults(List<SearchResult> primary, List<SearchResult> secondary, int limit) {
-        if (primary.isEmpty()) {
-            return secondary;
-        }
-        LinkedHashMap<String, SearchResult> merged = new LinkedHashMap<>();
-        for (SearchResult result : primary) {
-            if (merged.size() >= limit) {
-                break;
-            }
-            merged.put(buildGuideSectionKey(result.guideId, result.title, result.sectionHeading), result);
-        }
-        for (SearchResult result : secondary) {
-            if (merged.size() >= limit) {
-                break;
-            }
-            String key = buildGuideSectionKey(result.guideId, result.title, result.sectionHeading);
-            if (!merged.containsKey(key)) {
-                merged.put(key, result);
-            }
-        }
-        return new ArrayList<>(merged.values());
+        return PackRetrievalOrchestrationPolicy.mergePreferredResults(primary, secondary, limit);
     }
 
     private static int relatedGuideCandidateLimit(int requestedLimit) {
