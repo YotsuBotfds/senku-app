@@ -1,6 +1,6 @@
 # Backend Cleanup Phase Tracker
 
-Last updated after cleanup through `3fc7e03b` on 2026-05-01.
+Last updated after cleanup through `acc43d0b` on 2026-05-01.
 
 Purpose: prevent future agents from rerunning Ask/query backend cleanup that is already complete. Keep this note short; implementation detail belongs in commits and tests.
 
@@ -484,7 +484,13 @@ Purpose: prevent future agents from rerunning Ask/query backend cleanup that is 
   action attachment is delegated to `FollowUpComposerController`, and the
   functional UX matrix watchdog argument/process path has stronger contract
   coverage.
-- Latest reported validation after `3fc7e03b`: focused JVM proof for
+- UI-NORM1 chrome typography normalization is current through `acc43d0b`:
+  Compose `navLabel` / `chromeMono` tokens now mirror audited Rev03 XML
+  metrics, topbar and phone bottom-tab dimensions are named behind metrics
+  policies, tablet search preview text uses Rev03 text appearances, and phone
+  main XML visible text no longer depends on raw monospace/framework
+  text-appearance islands.
+- Latest reported validation after `acc43d0b`: focused JVM proof for
   `DetailTabletStateBuilderTest`, `SearchResultCardModelMapperTest`,
   `FollowUpComposerControllerTest`, `MainRouteCoordinatorTest`,
   `DetailFollowupLandscapeComposerTest`, `MainResultPublicationPolicyTest`,
@@ -494,14 +500,17 @@ Purpose: prevent future agents from rerunning Ask/query backend cleanup that is 
   `MainActivityHomeChromeTest` and `MainRouteDecisionHelperTest`; script
   contract proof for
   `tests.test_run_android_functional_ux_smoke_matrix_contract` and
-  `tests.test_powershell_quality_gate`; compile validation with
+  `tests.test_powershell_quality_gate`; UI token/parity proof for
+  `TypographyTokenAuditTest`, `TopBarTest`, `BottomTabBarTest`,
+  `TabletMainXmlShellParityTest`, and `PhoneMainXmlShellParityTest`; compile validation with
   `:app:assembleDebugAndroidTest`; and `git diff --check`.
 - Current validation commands:
   `git diff --check`;
   `cd android-app; ./gradlew.bat :app:testDebugUnitTest --tests com.senku.mobile.DetailTabletStateBuilderTest --tests com.senku.mobile.SearchResultCardModelMapperTest --tests com.senku.mobile.FollowUpComposerControllerTest --tests com.senku.mobile.MainRouteCoordinatorTest --tests com.senku.mobile.DetailFollowupLandscapeComposerTest --tests com.senku.mobile.MainResultPublicationPolicyTest --tests com.senku.ui.tablet.TabletEvidenceVisibilityPolicyTest --tests com.senku.ui.tablet.StressReadingPolicyTest --tests com.senku.mobile.FollowUpComposerStateTest --tests com.senku.mobile.ReviewDemoFixtureBoundaryTest --tests com.senku.mobile.DetailGuidePresentationFormatterTest --tests com.senku.mobile.MainActivityHomeChromeTest --tests com.senku.mobile.MainRouteDecisionHelperTest`;
   `.\\.venvs\\senku-validate\\Scripts\\python.exe -B -m unittest tests.test_run_android_functional_ux_smoke_matrix_contract tests.test_powershell_quality_gate -v`;
+  `cd android-app; ./gradlew.bat :app:testDebugUnitTest --tests com.senku.ui.theme.TypographyTokenAuditTest --tests com.senku.ui.primitives.TopBarTest --tests com.senku.ui.primitives.BottomTabBarTest --tests com.senku.ui.tablet.TabletMainXmlShellParityTest --tests com.senku.ui.phone.PhoneMainXmlShellParityTest`;
   `cd android-app; ./gradlew.bat :app:assembleDebugAndroidTest`.
-- Tracker is refreshed through `3fc7e03b`.
+- Tracker is refreshed through `acc43d0b`.
 
 ## Remaining Next Slices
 
@@ -534,10 +543,10 @@ Purpose: prevent future agents from rerunning Ask/query backend cleanup that is 
   PromptHarness coverage for a deterministic no-source/abstain detail returning
   to Ask then Browse/Home. Any remaining no-source concern is broader live
   retrieval/model generation behavior, not route Back ownership.
-- UI normalization is a future explicit Android-only slice (`UI-NORM1 Shared
-  Chrome Contract`): align `TopBar`, `BottomTabBar`/`NavRailMetrics`,
-  `IdentityStrip`, `SenkuTypography`, XML text appearances/dimens, and Java
-  chrome mount/bind points together. Do not mix this with backend cleanup.
+- UI normalization follow-up remains Android-only: the first UI-NORM1 token
+  bridge is landed, but future visual work should continue with small
+  chrome/token slices and targeted screenshots rather than broad redesign
+  commits. Do not mix this with backend cleanup.
 - Do not collapse the new presentation, category-filter, route-ranking,
   water-distribution anchor, or route-refinement helper boundaries back into
   activity/repository/executor bodies.
