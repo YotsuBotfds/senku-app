@@ -103,6 +103,7 @@ public final class MainActivity extends AppCompatActivity {
     private final MainSearchController searchController = new MainSearchController(new MainSearchHost());
     private final AskQueryController askQueryController = new AskQueryController(new MainAskQueryHost());
     private final MainGuideOpenController guideOpenController = new MainGuideOpenController();
+    private final MainHomeRelatedGuideController homeRelatedGuideController = new MainHomeRelatedGuideController();
 
     private MainPresentationFormatter presentationFormatter;
     private HomeGuidePresentationFormatter homeGuidePresentationFormatter;
@@ -1978,37 +1979,17 @@ public final class MainActivity extends AppCompatActivity {
     }
 
     private HomeGuideAnchor selectHomeGuideAnchor() {
-        HomeGuideAnchor recentAnchor = selectLatestRecentThreadHomeGuideAnchor();
-        if (recentAnchor != null) {
-            return recentAnchor;
-        }
-        if (pinnedGuides.isEmpty()) {
-            return null;
-        }
-        SearchResult pinnedGuide = pinnedGuides.get(0);
-        String guideId = safe(pinnedGuide == null ? null : pinnedGuide.guideId).trim();
-        if (guideId.isEmpty()) {
-            return null;
-        }
-        return new HomeGuideAnchor(guideId, presentationFormatter().buildGuideReference(pinnedGuide, guideId), false);
+        return homeRelatedGuideController.selectHomeGuideAnchor(
+            pinnedGuides,
+            recentThreadPreviews,
+            presentationFormatter()
+        );
     }
 
     private HomeGuideAnchor selectLatestRecentThreadHomeGuideAnchor() {
-        if (recentThreadPreviews.isEmpty()) {
-            return null;
-        }
-        ChatSessionStore.ConversationPreview preview = recentThreadPreviews.get(0);
-        String guideId = presentationFormatter().resolvePreviewPrimaryGuideId(preview);
-        if (guideId.isEmpty()) {
-            return null;
-        }
-        return new HomeGuideAnchor(
-            guideId,
-            presentationFormatter().buildGuideReference(
-                guideId,
-                presentationFormatter().resolvePreviewPrimaryGuideTitle(preview, guideId)
-            ),
-            true
+        return homeRelatedGuideController.selectLatestRecentThreadHomeGuideAnchor(
+            recentThreadPreviews,
+            presentationFormatter()
         );
     }
 
