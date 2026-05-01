@@ -5678,7 +5678,7 @@ public final class DetailActivity extends AppCompatActivity {
         } else {
             clearRelatedGuidePreviewPanel();
         }
-        if (shouldRevealAnswerSourceGraphAfterSelection(
+        if (DetailSourceProvenanceCoordinator.shouldRevealAnswerSourceGraphAfterSelection(
             answerMode,
             isCompactPortraitPhoneLayout(),
             selectedSourceKey,
@@ -9736,10 +9736,12 @@ public final class DetailActivity extends AppCompatActivity {
         String selectedSourceKey,
         int relatedGuideCount
     ) {
-        return answerMode
-            && compactPortraitPhone
-            && !safe(selectedSourceKey).trim().isEmpty()
-            && relatedGuideCount > 0;
+        return DetailSourceProvenanceCoordinator.shouldRevealAnswerSourceGraphAfterSelection(
+            answerMode,
+            compactPortraitPhone,
+            selectedSourceKey,
+            relatedGuideCount
+        );
     }
 
     static boolean shouldExpandAnswerSourceGraphAfterSourceSelection(
@@ -9747,9 +9749,11 @@ public final class DetailActivity extends AppCompatActivity {
         boolean compactPortraitPhone,
         String selectedSourceKey
     ) {
-        return answerMode
-            && compactPortraitPhone
-            && !safe(selectedSourceKey).trim().isEmpty();
+        return DetailSourceProvenanceCoordinator.shouldExpandAnswerSourceGraphAfterSourceSelection(
+            answerMode,
+            compactPortraitPhone,
+            selectedSourceKey
+        );
     }
 
     static boolean shouldApplyRelatedGuidePreviewCtaClearance(
@@ -9759,11 +9763,13 @@ public final class DetailActivity extends AppCompatActivity {
         boolean followUpVisible,
         boolean previewOpenVisible
     ) {
-        return phoneXmlDetailLayoutActive
-            && compactPortraitPhone
-            && answerMode
-            && followUpVisible
-            && previewOpenVisible;
+        return DetailSourceProvenanceCoordinator.shouldApplyRelatedGuidePreviewCtaClearance(
+            phoneXmlDetailLayoutActive,
+            compactPortraitPhone,
+            answerMode,
+            followUpVisible,
+            previewOpenVisible
+        );
     }
 
     static int resolveRelatedGuidePreviewCtaBottomClearancePx(
@@ -9771,9 +9777,10 @@ public final class DetailActivity extends AppCompatActivity {
         int followUpPanelHeightPx,
         int extraClearancePx
     ) {
-        return Math.max(
-            0,
-            Math.max(currentContentBottomPaddingPx, followUpPanelHeightPx + Math.max(0, extraClearancePx))
+        return DetailSourceProvenanceCoordinator.resolveRelatedGuidePreviewCtaBottomClearancePx(
+            currentContentBottomPaddingPx,
+            followUpPanelHeightPx,
+            extraClearancePx
         );
     }
 
@@ -9784,9 +9791,13 @@ public final class DetailActivity extends AppCompatActivity {
         int bottomClearancePx,
         int currentScrollY
     ) {
-        int targetBottom = Math.max(0, targetTopPx) + Math.max(0, targetHeightPx);
-        int desiredScrollY = targetBottom + Math.max(0, bottomClearancePx) - Math.max(0, viewportHeightPx);
-        return Math.max(Math.max(0, currentScrollY), Math.max(0, desiredScrollY));
+        return DetailSourceProvenanceCoordinator.computeScrollYToKeepViewBottomVisible(
+            targetTopPx,
+            targetHeightPx,
+            viewportHeightPx,
+            bottomClearancePx,
+            currentScrollY
+        );
     }
 
     static int resolveWhyTextMaxLines(
@@ -10107,7 +10118,7 @@ public final class DetailActivity extends AppCompatActivity {
     }
 
     private void revealRelatedGuidePreviewCtaAboveComposer() {
-        if (!shouldApplyRelatedGuidePreviewCtaClearance(
+        if (!DetailSourceProvenanceCoordinator.shouldApplyRelatedGuidePreviewCtaClearance(
             phoneXmlDetailLayoutActive(),
             isCompactPortraitPhoneLayout(),
             answerMode,
@@ -10117,7 +10128,7 @@ public final class DetailActivity extends AppCompatActivity {
             return;
         }
         View content = detailScroll.getChildAt(0);
-        int bottomClearance = resolveRelatedGuidePreviewCtaBottomClearancePx(
+        int bottomClearance = DetailSourceProvenanceCoordinator.resolveRelatedGuidePreviewCtaBottomClearancePx(
             content.getPaddingBottom(),
             followUpPanel == null ? 0 : followUpPanel.getHeight(),
             dp(16)
@@ -10138,7 +10149,7 @@ public final class DetailActivity extends AppCompatActivity {
                 return;
             }
             int targetTop = computeViewTopInScroll(relatedGuidePreviewOpenButton);
-            int targetScrollY = computeScrollYToKeepViewBottomVisible(
+            int targetScrollY = DetailSourceProvenanceCoordinator.computeScrollYToKeepViewBottomVisible(
                 targetTop,
                 relatedGuidePreviewOpenButton.getHeight(),
                 detailScroll.getHeight(),
@@ -10408,7 +10419,7 @@ public final class DetailActivity extends AppCompatActivity {
         provenancePanel.animate().alpha(1f).setDuration(150).start();
         String sourceSelectionKey = buildSourceSelectionKey(source);
         boolean anchorChanged = !safe(sourceSelectionKey).equals(relatedGuideAnchorKey);
-        boolean shouldRevealSourceGraph = shouldExpandAnswerSourceGraphAfterSourceSelection(
+        boolean shouldRevealSourceGraph = DetailSourceProvenanceCoordinator.shouldExpandAnswerSourceGraphAfterSourceSelection(
             answerMode,
             isCompactPortraitPhoneLayout(),
             sourceSelectionKey
