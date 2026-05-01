@@ -1,6 +1,6 @@
 # Backend Cleanup Phase Tracker
 
-Last updated after cleanup through `ed2bada0` on 2026-05-01.
+Last updated after cleanup through `54bc5893` on 2026-05-01.
 
 Purpose: prevent future agents from rerunning Ask/query backend cleanup that is already complete. Keep this note short; implementation detail belongs in commits and tests.
 
@@ -789,6 +789,34 @@ Purpose: prevent future agents from rerunning Ask/query backend cleanup that is 
   passed; focused route SQL, smoke summary/capture, functional matrix, and
   cleanup/stop script contract tests passed; PowerShell parser gates passed for
   touched scripts; `git diff --check` passed before tracker refresh.
+- UI validation child timeout reporting is current through `4cca0d9a`:
+  `run_android_ui_validation_pack.ps1` records timeout evidence, timeout
+  seconds, and fail-closed exit code from child PowerShell jobs.
+- Prompt harness text helpers are current through `188c4754`: pure text,
+  diagnostics, occurrence-count, and simple Bundle parsing helpers now live in
+  `PromptHarnessText` instead of the main androidTest smoke body.
+- Detail tablet active-turn selection is current through `82383af1`:
+  `DetailTabletStateBuilder.resolveActiveTurn()` owns the selected-turn/fallback
+  decision while `DetailActivity` applies the returned selection.
+- Main resume keyboard handling is current through `61f79135`: on-resume
+  keyboard dismissal now routes through `MainRouteCoordinator`,
+  `MainRouteDecisionHelper`, and `MainRouteEffectController` rather than a
+  local `MainActivity` branch.
+- Search row layout metrics are current through `6cf0bb64`:
+  `SearchRowLayoutPolicy` owns compact row typography and vertical rhythm
+  metrics consumed by `SearchResultAdapter`.
+- Pack search reranking is current through `43d3371a`:
+  `PackSearchRerankPolicy` owns metadata-rerank eligibility, passthrough rows,
+  rerank scoring, retrieval-mode bonus, and guide aggregation bonus while
+  `PackRepository` keeps orchestration/timing wrappers.
+- Offline answer telemetry is current through `54bc5893`:
+  `OfflineAnswerTelemetryPolicy` owns first-token, latency, final-mode log
+  formatting, and prepared final-mode route resolution.
+- Latest local proof after `54bc5893`: full Android
+  `:app:testDebugUnitTest :app:assembleDebug :app:assembleDebugAndroidTest`
+  passed; focused Pack rerank/repository parity and OfflineAnswer telemetry
+  tests passed; UI validation child-timeout contract and parser gate passed;
+  `git diff --check` passed before tracker refresh.
 
 ## Remaining Next Slices
 
