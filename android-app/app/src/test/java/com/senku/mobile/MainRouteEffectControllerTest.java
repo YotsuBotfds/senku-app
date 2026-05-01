@@ -120,6 +120,88 @@ public final class MainRouteEffectControllerTest {
     }
 
     @Test
+    public void savedTransitionAfterRestoredSearchPushesHomeOwnerForBack() {
+        MainRouteDecisionHelper.RouteState restoredSearch =
+            MainRouteDecisionHelper.resolveRestoredMainRouteState(
+                MainRouteDecisionHelper.Surface.SEARCH_RESULTS.name(),
+                BottomTabDestination.HOME.name(),
+                false,
+                true,
+                BottomTabDestination.PINS.name()
+            );
+        MainRouteDecisionHelper.Transition transition =
+            MainRouteDecisionHelper.openPhoneTab(restoredSearch, BottomTabDestination.PINS);
+        RecordingBackEffects effects = new RecordingBackEffects(false, BottomTabDestination.HOME);
+
+        MainRouteEffectController.applyPhoneTabTransition(transition, true, effects);
+
+        assertEquals(
+            Arrays.asList(
+                "pushPhoneTab:HOME",
+                "applyRouteState:SAVED_GUIDES:PINS:false",
+                "updateActionLabels",
+                "dismissSearchKeyboard",
+                "prepareSavedGuidesDestination"
+            ),
+            effects.calls
+        );
+    }
+
+    @Test
+    public void savedTransitionAfterRestoredAskPushesAskOwnerForBack() {
+        MainRouteDecisionHelper.RouteState restoredAsk =
+            MainRouteDecisionHelper.resolveRestoredMainRouteState(
+                MainRouteDecisionHelper.Surface.ASK_RESULTS.name(),
+                BottomTabDestination.ASK.name(),
+                true,
+                true,
+                BottomTabDestination.HOME.name()
+            );
+        MainRouteDecisionHelper.Transition transition =
+            MainRouteDecisionHelper.openPhoneTab(restoredAsk, BottomTabDestination.PINS);
+        RecordingBackEffects effects = new RecordingBackEffects(false, BottomTabDestination.ASK);
+
+        MainRouteEffectController.applyPhoneTabTransition(transition, true, effects);
+
+        assertEquals(
+            Arrays.asList(
+                "pushPhoneTab:ASK",
+                "applyRouteState:SAVED_GUIDES:PINS:false",
+                "updateActionLabels",
+                "dismissSearchKeyboard",
+                "prepareSavedGuidesDestination"
+            ),
+            effects.calls
+        );
+    }
+
+    @Test
+    public void threadsBackAfterRestoreCanReturnToSavedGuides() {
+        RecordingBackEffects effects = new RecordingBackEffects(true, BottomTabDestination.ASK);
+        effects.previousPhoneTab = BottomTabDestination.PINS;
+
+        assertTrue(MainRouteEffectController.applySystemBackTransition(
+            new MainRouteDecisionHelper.RouteState(
+                MainRouteDecisionHelper.Surface.RECENT_THREADS,
+                BottomTabDestination.ASK,
+                false
+            ),
+            effects
+        ));
+
+        assertEquals(
+            Arrays.asList(
+                "popPreviousPhoneTab",
+                "applyRouteState:SAVED_GUIDES:PINS:false",
+                "updateActionLabels",
+                "dismissSearchKeyboard",
+                "prepareSavedGuidesDestination"
+            ),
+            effects.calls
+        );
+    }
+
+    @Test
     public void systemBackDoesNotPopHistoryWhenBrowseHomeOwnsBack() {
         RecordingBackEffects effects = new RecordingBackEffects(true, BottomTabDestination.HOME);
         effects.previousPhoneTab = BottomTabDestination.ASK;

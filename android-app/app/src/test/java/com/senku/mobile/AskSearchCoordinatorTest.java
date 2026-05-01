@@ -103,6 +103,59 @@ public final class AskSearchCoordinatorTest {
     }
 
     @Test
+    public void restoredResultRouteSubmitTargetsStayAlignedWithSearchAskTabs() {
+        MainRouteDecisionHelper.RouteState restoredSearch =
+            MainRouteDecisionHelper.resolveRestoredMainRouteState(
+                MainRouteDecisionHelper.Surface.SEARCH_RESULTS.name(),
+                BottomTabDestination.HOME.name(),
+                false,
+                true,
+                BottomTabDestination.PINS.name()
+            );
+        MainRouteDecisionHelper.RouteState restoredAsk =
+            MainRouteDecisionHelper.resolveRestoredMainRouteState(
+                MainRouteDecisionHelper.Surface.ASK_RESULTS.name(),
+                BottomTabDestination.ASK.name(),
+                true,
+                true,
+                BottomTabDestination.HOME.name()
+            );
+
+        assertEquals(
+            AskSearchCoordinator.SubmitTarget.SEARCH,
+            AskSearchCoordinator.resolveSubmitTarget(
+                restoredSearch.activePhoneTab,
+                restoredSearch.askLaneActive
+            )
+        );
+        assertEquals(
+            BottomTabDestination.SEARCH,
+            AskSearchCoordinator.tabForSubmitTarget(
+                AskSearchCoordinator.resolveSubmitTarget(
+                    restoredSearch.activePhoneTab,
+                    restoredSearch.askLaneActive
+                )
+            )
+        );
+        assertEquals(
+            AskSearchCoordinator.SubmitTarget.ASK,
+            AskSearchCoordinator.resolveSubmitTarget(
+                restoredAsk.activePhoneTab,
+                restoredAsk.askLaneActive
+            )
+        );
+        assertEquals(
+            BottomTabDestination.ASK,
+            AskSearchCoordinator.tabForSubmitTarget(
+                AskSearchCoordinator.resolveSubmitTarget(
+                    restoredAsk.activePhoneTab,
+                    restoredAsk.askLaneActive
+                )
+            )
+        );
+    }
+
+    @Test
     public void explicitPhoneFlowAskLaneOwnershipFollowsAskSearchDestination() {
         assertTrue(AskSearchCoordinator.resolveAskLaneActiveForExplicitPhoneFlow(
             BottomTabDestination.ASK,
