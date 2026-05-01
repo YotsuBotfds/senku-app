@@ -1,7 +1,9 @@
 package com.senku.mobile;
 
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Set;
 
 final class PackAnchorPriorPolicy {
     static final String DIRECTIVE_PREFIX = "__anchor_prior__:";
@@ -42,6 +44,26 @@ final class PackAnchorPriorPolicy {
             Math.max(0.0, BASE_BONUS * decay * weight)
         );
         return new AnchorPriorAdjustment(decay, weight, bonus);
+    }
+
+    static Map<String, Map<String, Double>> relatedLinkWeights(
+        Map<String, ? extends Set<String>> directedLinks
+    ) {
+        if (directedLinks == null || directedLinks.isEmpty()) {
+            return Collections.emptyMap();
+        }
+
+        LinkedHashMap<String, Map<String, Double>> weightedLinks = new LinkedHashMap<>();
+        for (Map.Entry<String, ? extends Set<String>> entry : directedLinks.entrySet()) {
+            LinkedHashMap<String, Double> weights = new LinkedHashMap<>();
+            for (String relatedGuideId : entry.getValue()) {
+                Set<String> reciprocalLinks = directedLinks.get(relatedGuideId);
+                boolean reciprocal = reciprocalLinks != null && reciprocalLinks.contains(entry.getKey());
+                weights.put(relatedGuideId, reciprocal ? 0.5 : 0.3);
+            }
+            weightedLinks.put(entry.getKey(), Collections.unmodifiableMap(weights));
+        }
+        return Collections.unmodifiableMap(weightedLinks);
     }
 
     private static double decay(int turnsSinceAnchor) {

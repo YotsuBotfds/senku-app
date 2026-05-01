@@ -229,17 +229,7 @@ public final class PackRepository implements AutoCloseable {
             return Collections.emptyMap();
         }
 
-        LinkedHashMap<String, Map<String, Double>> weightedLinks = new LinkedHashMap<>();
-        for (Map.Entry<String, Set<String>> entry : directedLinks.entrySet()) {
-            LinkedHashMap<String, Double> weights = new LinkedHashMap<>();
-            for (String relatedGuideId : entry.getValue()) {
-                boolean reciprocal = directedLinks.getOrDefault(relatedGuideId, Collections.emptySet())
-                    .contains(entry.getKey());
-                weights.put(relatedGuideId, reciprocal ? 0.5 : 0.3);
-            }
-            weightedLinks.put(entry.getKey(), Collections.unmodifiableMap(weights));
-        }
-        return Collections.unmodifiableMap(weightedLinks);
+        return PackAnchorPriorPolicy.relatedLinkWeights(directedLinks);
     }
 
     public String getAnchorSnippet(String rawGuideId, String sessionChunkId) {

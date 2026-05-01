@@ -83,6 +83,32 @@ public final class MainActivityPhoneNavigationTest {
     }
 
     @Test
+    public void openSavedExtraSelectsSavedPinsRouteAndSavedGuideSection() {
+        MainRouteDecisionHelper.Transition transition = MainRouteDecisionHelper.openSavedIntent(
+            true,
+            new MainRouteDecisionHelper.RouteState(
+                MainRouteDecisionHelper.Surface.ASK_RESULTS,
+                BottomTabDestination.ASK,
+                true
+            )
+        );
+
+        assertEquals(MainRouteDecisionHelper.Effect.SHOW_SAVED_GUIDES, transition.effect);
+        assertRouteState(
+            transition.routeState,
+            MainRouteDecisionHelper.Surface.SAVED_GUIDES,
+            BottomTabDestination.PINS,
+            false
+        );
+        assertTrue(MainRouteDecisionHelper.isBrowseSurface(transition.routeState.surface));
+        assertTrue(MainActivity.shouldShowSavedGuideSection(
+            MainRouteDecisionHelper.isBrowseSurface(transition.routeState.surface),
+            transition.routeState.activePhoneTab,
+            0
+        ));
+    }
+
+    @Test
     public void missingOpenSavedExtraDoesNotRequestSavedDestination() {
         assertFalse(MainActivity.shouldOpenSavedDestination(false));
     }
