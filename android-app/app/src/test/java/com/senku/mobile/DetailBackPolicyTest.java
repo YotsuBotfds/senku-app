@@ -38,8 +38,10 @@ public final class DetailBackPolicyTest {
 
         assertEquals(explicitStacked.effect, stacked.effect);
         assertEquals(explicitStacked.finishBehavior, stacked.finishBehavior);
+        assertEquals(explicitStacked.routeIntent, stacked.routeIntent);
         assertEquals(explicitTaskRoot.effect, taskRoot.effect);
         assertEquals(explicitTaskRoot.finishBehavior, taskRoot.finishBehavior);
+        assertEquals(explicitTaskRoot.routeIntent, taskRoot.routeIntent);
     }
 
     @Test
@@ -66,6 +68,58 @@ public final class DetailBackPolicyTest {
         assertTriggerEffect(true, DetailBackPolicy.BackTrigger.SYSTEM_BACK, DetailBackPolicy.Effect.NAVIGATE_HOME);
         assertTriggerEffect(true, DetailBackPolicy.BackTrigger.SUPPORT_NAVIGATE_UP, DetailBackPolicy.Effect.NAVIGATE_HOME);
         assertTriggerEffect(true, DetailBackPolicy.BackTrigger.GUIDE_RETURN, DetailBackPolicy.Effect.NAVIGATE_HOME);
+    }
+
+    @Test
+    public void routeSpecificBackIntentDocumentsCurrentAnswerGuideCrossReferenceAndEmergencyUx() {
+        assertBackIntent(
+            false,
+            DetailBackPolicy.SourceRoute.ANSWER,
+            DetailBackPolicy.BackTrigger.SYSTEM_BACK,
+            DetailBackPolicy.RouteBackIntent.FINISH_OPENED_DETAIL
+        );
+        assertBackIntent(
+            true,
+            DetailBackPolicy.SourceRoute.ANSWER,
+            DetailBackPolicy.BackTrigger.SYSTEM_BACK,
+            DetailBackPolicy.RouteBackIntent.NAVIGATE_HOME
+        );
+        assertBackIntent(
+            false,
+            DetailBackPolicy.SourceRoute.GUIDE,
+            DetailBackPolicy.BackTrigger.GUIDE_RETURN,
+            DetailBackPolicy.RouteBackIntent.FINISH_OPENED_DETAIL
+        );
+        assertBackIntent(
+            true,
+            DetailBackPolicy.SourceRoute.GUIDE,
+            DetailBackPolicy.BackTrigger.GUIDE_RETURN,
+            DetailBackPolicy.RouteBackIntent.NAVIGATE_HOME
+        );
+        assertBackIntent(
+            false,
+            DetailBackPolicy.SourceRoute.CROSS_REFERENCE_GUIDE,
+            DetailBackPolicy.BackTrigger.GUIDE_RETURN,
+            DetailBackPolicy.RouteBackIntent.FINISH_OPENED_DETAIL
+        );
+        assertBackIntent(
+            true,
+            DetailBackPolicy.SourceRoute.CROSS_REFERENCE_GUIDE,
+            DetailBackPolicy.BackTrigger.GUIDE_RETURN,
+            DetailBackPolicy.RouteBackIntent.NAVIGATE_HOME
+        );
+        assertBackIntent(
+            false,
+            DetailBackPolicy.SourceRoute.EMERGENCY_ANSWER,
+            DetailBackPolicy.BackTrigger.VISIBLE_BACK_BUTTON,
+            DetailBackPolicy.RouteBackIntent.FINISH_OPENED_DETAIL
+        );
+        assertBackIntent(
+            true,
+            DetailBackPolicy.SourceRoute.EMERGENCY_ANSWER,
+            DetailBackPolicy.BackTrigger.VISIBLE_BACK_BUTTON,
+            DetailBackPolicy.RouteBackIntent.NAVIGATE_EMERGENCY_MANUAL_HOME
+        );
     }
 
     @Test
@@ -293,6 +347,7 @@ public final class DetailBackPolicyTest {
 
             assertEquals(DetailBackPolicy.Effect.NAVIGATE_HOME, decision.effect);
             assertEquals(DetailBackPolicy.FinishBehavior.FINISH, decision.finishBehavior);
+            assertEquals(expectedCurrentRouteBackIntent(true, sourceRoute), decision.routeIntent);
             assertTaskRootAffordanceResources(sourceRoute, affordance);
             assertFalse(affordance.longPressHomeShortcutEnabled);
         }
@@ -313,6 +368,7 @@ public final class DetailBackPolicyTest {
 
             assertEquals(DetailBackPolicy.Effect.FINISH_ACTIVITY, decision.effect);
             assertEquals(DetailBackPolicy.FinishBehavior.FINISH, decision.finishBehavior);
+            assertEquals(DetailBackPolicy.RouteBackIntent.FINISH_OPENED_DETAIL, decision.routeIntent);
             assertEquals(R.string.detail_back, affordance.labelResource);
             assertEquals(R.string.detail_back_content_description, affordance.contentDescriptionResource);
             assertFalse(affordance.longPressHomeShortcutEnabled);
@@ -332,6 +388,7 @@ public final class DetailBackPolicyTest {
 
         assertEquals(DetailBackPolicy.Effect.NAVIGATE_HOME, decision.effect);
         assertEquals(DetailBackPolicy.FinishBehavior.FINISH, decision.finishBehavior);
+        assertEquals(DetailBackPolicy.RouteBackIntent.NAVIGATE_HOME, decision.routeIntent);
         assertEquals(R.string.home_button, affordance.labelResource);
         assertEquals(R.string.detail_home_content_description, affordance.contentDescriptionResource);
         assertFalse(affordance.longPressHomeShortcutEnabled);
@@ -351,6 +408,7 @@ public final class DetailBackPolicyTest {
 
         assertEquals(DetailBackPolicy.Effect.NAVIGATE_HOME, decision.effect);
         assertEquals(DetailBackPolicy.FinishBehavior.FINISH, decision.finishBehavior);
+        assertEquals(DetailBackPolicy.RouteBackIntent.NAVIGATE_EMERGENCY_MANUAL_HOME, decision.routeIntent);
         assertEquals(R.string.detail_emergency_app_rail_manual_label, affordance.labelResource);
         assertEquals(R.string.detail_emergency_app_rail_manual_content_description, affordance.contentDescriptionResource);
         assertFalse(affordance.longPressHomeShortcutEnabled);
@@ -369,6 +427,7 @@ public final class DetailBackPolicyTest {
 
         assertEquals(DetailBackPolicy.Effect.FINISH_ACTIVITY, decision.effect);
         assertEquals(DetailBackPolicy.FinishBehavior.FINISH, decision.finishBehavior);
+        assertEquals(DetailBackPolicy.RouteBackIntent.FINISH_OPENED_DETAIL, decision.routeIntent);
         assertEquals(R.string.detail_back, affordance.labelResource);
         assertEquals(R.string.detail_back_content_description, affordance.contentDescriptionResource);
         assertFalse(affordance.longPressHomeShortcutEnabled);
@@ -387,6 +446,7 @@ public final class DetailBackPolicyTest {
 
         assertEquals(DetailBackPolicy.Effect.NAVIGATE_HOME, decision.effect);
         assertEquals(DetailBackPolicy.FinishBehavior.FINISH, decision.finishBehavior);
+        assertEquals(DetailBackPolicy.RouteBackIntent.NAVIGATE_HOME, decision.routeIntent);
         assertEquals(R.string.home_button, affordance.labelResource);
         assertEquals(R.string.detail_home_content_description, affordance.contentDescriptionResource);
         assertFalse(affordance.longPressHomeShortcutEnabled);
@@ -405,6 +465,7 @@ public final class DetailBackPolicyTest {
 
         assertEquals(DetailBackPolicy.Effect.FINISH_ACTIVITY, decision.effect);
         assertEquals(DetailBackPolicy.FinishBehavior.FINISH, decision.finishBehavior);
+        assertEquals(DetailBackPolicy.RouteBackIntent.FINISH_OPENED_DETAIL, decision.routeIntent);
         assertEquals(R.string.detail_back, affordance.labelResource);
         assertEquals(R.string.detail_back_content_description, affordance.contentDescriptionResource);
         assertFalse(affordance.longPressHomeShortcutEnabled);
@@ -423,6 +484,7 @@ public final class DetailBackPolicyTest {
 
         assertEquals(DetailBackPolicy.Effect.NAVIGATE_HOME, decision.effect);
         assertEquals(DetailBackPolicy.FinishBehavior.FINISH, decision.finishBehavior);
+        assertEquals(DetailBackPolicy.RouteBackIntent.NAVIGATE_HOME, decision.routeIntent);
         assertEquals(R.string.home_button, affordance.labelResource);
         assertEquals(R.string.detail_home_content_description, affordance.contentDescriptionResource);
         assertFalse(affordance.longPressHomeShortcutEnabled);
@@ -458,6 +520,7 @@ public final class DetailBackPolicyTest {
 
         assertEquals(explicit.effect, decision.effect);
         assertEquals(explicit.finishBehavior, decision.finishBehavior);
+        assertEquals(explicit.routeIntent, decision.routeIntent);
     }
 
     @Test
@@ -468,6 +531,7 @@ public final class DetailBackPolicyTest {
 
         assertEquals(DetailBackPolicy.Effect.FINISH_ACTIVITY, decision.effect);
         assertEquals(DetailBackPolicy.FinishBehavior.FINISH, decision.finishBehavior);
+        assertEquals(DetailBackPolicy.RouteBackIntent.FINISH_OPENED_DETAIL, decision.routeIntent);
     }
 
     private static void assertCurrentMatrixDecision(
@@ -513,6 +577,33 @@ public final class DetailBackPolicyTest {
 
         assertEquals(expectedEffect, decision.effect);
         assertEquals(DetailBackPolicy.FinishBehavior.FINISH, decision.finishBehavior);
+        assertEquals(expectedCurrentRouteBackIntent(taskRoot, sourceRoute), decision.routeIntent);
+    }
+
+    private static void assertBackIntent(
+        boolean taskRoot,
+        DetailBackPolicy.SourceRoute sourceRoute,
+        DetailBackPolicy.BackTrigger trigger,
+        DetailBackPolicy.RouteBackIntent expectedIntent
+    ) {
+        DetailBackPolicy.Decision decision = DetailBackPolicy.decide(
+            new DetailBackPolicy.Inputs(taskRoot, sourceRoute, trigger)
+        );
+
+        assertEquals(expectedIntent, decision.routeIntent);
+    }
+
+    private static DetailBackPolicy.RouteBackIntent expectedCurrentRouteBackIntent(
+        boolean taskRoot,
+        DetailBackPolicy.SourceRoute sourceRoute
+    ) {
+        if (!taskRoot) {
+            return DetailBackPolicy.RouteBackIntent.FINISH_OPENED_DETAIL;
+        }
+        if (sourceRoute == DetailBackPolicy.SourceRoute.EMERGENCY_ANSWER) {
+            return DetailBackPolicy.RouteBackIntent.NAVIGATE_EMERGENCY_MANUAL_HOME;
+        }
+        return DetailBackPolicy.RouteBackIntent.NAVIGATE_HOME;
     }
 
     private static void assertTaskRootAffordanceResources(

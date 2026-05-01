@@ -22,10 +22,41 @@ public final class DetailBackPolicy {
         NAVIGATE_HOME
     }
 
+    enum RouteBackIntent {
+        FINISH_OPENED_DETAIL,
+        NAVIGATE_HOME,
+        NAVIGATE_EMERGENCY_MANUAL_HOME
+    }
+
     enum FinishBehavior {
         FINISH,
         FINISH_AFTER_TRANSITION
     }
+
+    private static final RouteBackContract UNKNOWN_ROUTE_BACK_CONTRACT = new RouteBackContract(
+        RouteBackIntent.FINISH_OPENED_DETAIL,
+        RouteBackIntent.NAVIGATE_HOME
+    );
+    private static final RouteBackContract ANSWER_ROUTE_BACK_CONTRACT = new RouteBackContract(
+        RouteBackIntent.FINISH_OPENED_DETAIL,
+        RouteBackIntent.NAVIGATE_HOME
+    );
+    private static final RouteBackContract EMERGENCY_ANSWER_ROUTE_BACK_CONTRACT = new RouteBackContract(
+        RouteBackIntent.FINISH_OPENED_DETAIL,
+        RouteBackIntent.NAVIGATE_EMERGENCY_MANUAL_HOME
+    );
+    private static final RouteBackContract GUIDE_ROUTE_BACK_CONTRACT = new RouteBackContract(
+        RouteBackIntent.FINISH_OPENED_DETAIL,
+        RouteBackIntent.NAVIGATE_HOME
+    );
+    private static final RouteBackContract HOME_GUIDE_ROUTE_BACK_CONTRACT = new RouteBackContract(
+        RouteBackIntent.FINISH_OPENED_DETAIL,
+        RouteBackIntent.NAVIGATE_HOME
+    );
+    private static final RouteBackContract CROSS_REFERENCE_GUIDE_ROUTE_BACK_CONTRACT = new RouteBackContract(
+        RouteBackIntent.FINISH_OPENED_DETAIL,
+        RouteBackIntent.NAVIGATE_HOME
+    );
 
     private DetailBackPolicy() {
     }
@@ -36,11 +67,8 @@ public final class DetailBackPolicy {
 
     static Decision decide(Inputs inputs) {
         Inputs normalized = inputs == null ? Inputs.defaultState() : inputs.normalized();
-        // SourceRoute and BackTrigger are kept as explicit inputs so call sites can
-        // classify how detail was reached without implying different navigation yet.
-        return normalized.taskRoot
-            ? new Decision(Effect.NAVIGATE_HOME, FinishBehavior.FINISH)
-            : new Decision(Effect.FINISH_ACTIVITY, FinishBehavior.FINISH);
+        RouteBackIntent routeIntent = routeBackIntent(normalized);
+        return decisionFor(routeIntent);
     }
 
     static VisibleBackAffordance visibleBackAffordance(boolean taskRoot) {
@@ -51,7 +79,7 @@ public final class DetailBackPolicy {
         Inputs normalized = inputs == null ? Inputs.defaultState() : inputs.normalized();
         Decision decision = decide(normalized);
         if (decision.effect == Effect.NAVIGATE_HOME) {
-            if (normalized.sourceRoute == SourceRoute.EMERGENCY_ANSWER) {
+            if (decision.routeIntent == RouteBackIntent.NAVIGATE_EMERGENCY_MANUAL_HOME) {
                 return new VisibleBackAffordance(
                     R.string.detail_emergency_app_rail_manual_label,
                     R.string.detail_emergency_app_rail_manual_content_description,
@@ -73,6 +101,44 @@ public final class DetailBackPolicy {
 
     static boolean shouldFallbackToHome(boolean taskRoot) {
         return decide(taskRoot).effect == Effect.NAVIGATE_HOME;
+    }
+
+    private static RouteBackIntent routeBackIntent(Inputs inputs) {
+        RouteBackContract contract = routeBackContract(inputs.sourceRoute);
+        return inputs.taskRoot ? contract.taskRootIntent : contract.stackedIntent;
+    }
+
+    private static RouteBackContract routeBackContract(SourceRoute sourceRoute) {
+        SourceRoute normalized = sourceRoute == null ? SourceRoute.UNKNOWN : sourceRoute;
+        return switch (normalized) {
+            case UNKNOWN -> UNKNOWN_ROUTE_BACK_CONTRACT;
+            case ANSWER -> ANSWER_ROUTE_BACK_CONTRACT;
+            case EMERGENCY_ANSWER -> EMERGENCY_ANSWER_ROUTE_BACK_CONTRACT;
+            case GUIDE -> GUIDE_ROUTE_BACK_CONTRACT;
+            case HOME_GUIDE -> HOME_GUIDE_ROUTE_BACK_CONTRACT;
+            case CROSS_REFERENCE_GUIDE -> CROSS_REFERENCE_GUIDE_ROUTE_BACK_CONTRACT;
+        };
+    }
+
+    private static Decision decisionFor(RouteBackIntent routeIntent) {
+        RouteBackIntent normalized = routeIntent == null ? RouteBackIntent.FINISH_OPENED_DETAIL : routeIntent;
+        return switch (normalized) {
+            case FINISH_OPENED_DETAIL -> new Decision(
+                Effect.FINISH_ACTIVITY,
+                FinishBehavior.FINISH,
+                RouteBackIntent.FINISH_OPENED_DETAIL
+            );
+            case NAVIGATE_HOME -> new Decision(
+                Effect.NAVIGATE_HOME,
+                FinishBehavior.FINISH,
+                RouteBackIntent.NAVIGATE_HOME
+            );
+            case NAVIGATE_EMERGENCY_MANUAL_HOME -> new Decision(
+                Effect.NAVIGATE_HOME,
+                FinishBehavior.FINISH,
+                RouteBackIntent.NAVIGATE_EMERGENCY_MANUAL_HOME
+            );
+        };
     }
 
     static final class Inputs {
@@ -98,10 +164,22 @@ public final class DetailBackPolicy {
     static final class Decision {
         final Effect effect;
         final FinishBehavior finishBehavior;
+        final RouteBackIntent routeIntent;
 
         Decision(Effect effect, FinishBehavior finishBehavior) {
+            this(effect, finishBehavior, routeIntentForEffect(effect));
+        }
+
+        Decision(Effect effect, FinishBehavior finishBehavior, RouteBackIntent routeIntent) {
             this.effect = effect == null ? Effect.FINISH_ACTIVITY : effect;
             this.finishBehavior = finishBehavior == null ? FinishBehavior.FINISH : finishBehavior;
+            this.routeIntent = routeIntent == null ? routeIntentForEffect(this.effect) : routeIntent;
+        }
+
+        private static RouteBackIntent routeIntentForEffect(Effect effect) {
+            return effect == Effect.NAVIGATE_HOME
+                ? RouteBackIntent.NAVIGATE_HOME
+                : RouteBackIntent.FINISH_OPENED_DETAIL;
         }
     }
 
@@ -118,6 +196,20 @@ public final class DetailBackPolicy {
             this.labelResource = labelResource;
             this.contentDescriptionResource = contentDescriptionResource;
             this.longPressHomeShortcutEnabled = longPressHomeShortcutEnabled;
+        }
+    }
+
+    private static final class RouteBackContract {
+        final RouteBackIntent stackedIntent;
+        final RouteBackIntent taskRootIntent;
+
+        RouteBackContract(RouteBackIntent stackedIntent, RouteBackIntent taskRootIntent) {
+            this.stackedIntent = stackedIntent == null
+                ? RouteBackIntent.FINISH_OPENED_DETAIL
+                : stackedIntent;
+            this.taskRootIntent = taskRootIntent == null
+                ? RouteBackIntent.NAVIGATE_HOME
+                : taskRootIntent;
         }
     }
 }
