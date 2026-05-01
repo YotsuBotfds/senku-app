@@ -41,7 +41,7 @@ Parameters:
   -PhysicalDevice         Refuses emulator-* serials; use for attached phones.
   -OutputLabel            Subdirectory label under -ArtifactRoot. Defaults to a timestamp.
   -ArtifactRoot           Matrix output root. Default: artifacts/android_functional_ux_smoke_matrix.
-  -CaptureLogcat          Passes -CaptureLogcat to each preset run.
+  -CaptureLogcat          Accepted for compatibility; logcat is always captured because capture summaries require it.
   -ClearLogcatBeforeRun   Passes -ClearLogcatBeforeRun to each preset run.
   -SkipBuild              Passes -SkipBuild to each preset run.
   -SkipInstall            Passes -SkipInstall to each preset run.
@@ -116,10 +116,26 @@ function Get-PowerShellExecutable {
 $powerShellExe = Get-PowerShellExecutable
 $results = New-Object System.Collections.Generic.List[object]
 $anyFailed = $false
+$canReuseInstalledApks = $false
+
+function Read-JsonFileOrNull {
+    param([string]$Path)
+
+    if ([string]::IsNullOrWhiteSpace($Path) -or -not (Test-Path -LiteralPath $Path -PathType Leaf)) {
+        return $null
+    }
+    try {
+        return Get-Content -LiteralPath $Path -Raw | ConvertFrom-Json
+    } catch {
+        return $null
+    }
+}
 
 foreach ($preset in $presets) {
     $presetRoot = Join-Path $matrixRoot $preset
-    $summaryPath = Join-Path $presetRoot "summary.json"
+    $presetRootForRunner = Convert-ToRepoRelativePath -Path $presetRoot
+    $runSummaryPath = Join-Path $presetRoot "run_summary.json"
+    $captureSummaryPath = Join-Path $presetRoot "capture_summary.json"
     New-Item -ItemType Directory -Force -Path $presetRoot | Out-Null
 
     $arguments = @(
@@ -133,20 +149,20 @@ foreach ($preset in $presets) {
         "-SmokePreset",
         $preset,
         "-ArtifactRoot",
-        $presetRoot,
+        $presetRootForRunner,
+        "-SummaryPath",
+        $runSummaryPath,
         "-CaptureSummaryPath",
-        $summaryPath
+        $captureSummaryPath,
+        "-CaptureLogcat"
     )
-    if ($CaptureLogcat) {
-        $arguments += "-CaptureLogcat"
-    }
     if ($ClearLogcatBeforeRun) {
         $arguments += "-ClearLogcatBeforeRun"
     }
-    if ($SkipBuild) {
+    if ($SkipBuild -or $canReuseInstalledApks) {
         $arguments += "-SkipBuild"
     }
-    if ($SkipInstall) {
+    if ($SkipInstall -or $canReuseInstalledApks) {
         $arguments += "-SkipInstall"
     }
     if ($SkipDeviceLock) {
@@ -163,6 +179,7 @@ foreach ($preset in $presets) {
     if (-not $passed) {
         $anyFailed = $true
     }
+    $runSummary = Read-JsonFileOrNull -Path $runSummaryPath
 
     $results.Add([ordered]@{
         preset = $preset
@@ -170,10 +187,23 @@ foreach ($preset in $presets) {
         passed = $passed
         duration_seconds = $durationSeconds
         artifact_root = Convert-ToRepoRelativePath -Path $presetRoot
-        capture_summary_path = Convert-ToRepoRelativePath -Path $summaryPath
+        run_summary_path = Convert-ToRepoRelativePath -Path $runSummaryPath
+        capture_summary_path = Convert-ToRepoRelativePath -Path $captureSummaryPath
+        status = $(if ($null -ne $runSummary) { $runSummary.status } else { $null })
+        failure_reason = $(if ($null -ne $runSummary) { $runSummary.failure_reason } else { $null })
+        selected_test_methods = $(if ($null -ne $runSummary) { @($runSummary.selected_test_methods) } else { @() })
+        screenshot_count = $(if ($null -ne $runSummary) { $runSummary.screenshot_count } else { $null })
+        dump_count = $(if ($null -ne $runSummary) { $runSummary.dump_count } else { $null })
+        artifact_dir = $(if ($null -ne $runSummary) { Convert-ToRepoRelativePath -Path ([string]$runSummary.artifact_dir) } else { $null })
+        artifact_bundle_zip = $(if ($null -ne $runSummary) { Convert-ToRepoRelativePath -Path ([string]$runSummary.artifact_bundle_zip) } else { $null })
+        instrumentation_log = $(if ($null -ne $runSummary) { Convert-ToRepoRelativePath -Path ([string]$runSummary.instrumentation_log) } else { $null })
+        artifact_expectations_met = $(if ($null -ne $runSummary) { $runSummary.artifact_expectations_met } else { $null })
     }) | Out-Null
 
     Write-Host ("[functional-ux-matrix:{0}] finished {1} exit_code={2} duration_seconds={3}" -f $Device, $preset, $exitCode, $durationSeconds)
+    if ($passed) {
+        $canReuseInstalledApks = $true
+    }
     if ($FailFast -and -not $passed) {
         break
     }
@@ -187,7 +217,8 @@ $summary = [ordered]@{
     physical_device_mode = [bool]$PhysicalDevice
     output_label = $OutputLabel
     matrix_root = Convert-ToRepoRelativePath -Path $matrixRoot
-    capture_logcat = [bool]$CaptureLogcat
+    capture_logcat = $true
+    capture_logcat_requested = [bool]$CaptureLogcat
     clear_logcat_before_run = [bool]$ClearLogcatBeforeRun
     presets = $results
     passed = -not $anyFailed

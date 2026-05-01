@@ -7004,6 +7004,10 @@ public final class PromptHarnessSmokeTest {
         scenario.onActivity(activity -> {
             Activity resumed = getResumedActivityOnMainThread();
             Assert.assertNotNull("answer detail should be resumed before tapping a source chip", resumed);
+            if (selectTabletAnswerSource(activity, expectedSource)) {
+                action[0] = "preview";
+                return;
+            }
             Button sourceButton = findMatchingSourceButton(activity, expectedSource);
             Assert.assertNotNull("expected a visible source chip for " + displayLabel(expectedSource), sourceButton);
             String description = safe(String.valueOf(sourceButton.getContentDescription())).toLowerCase(Locale.US);
@@ -7113,6 +7117,16 @@ public final class PromptHarnessSmokeTest {
                 }
                 DetailSettleSignals signals = collectDetailSettleSignals(activity);
                 openedGuide[0] = sourceOpenedAsGuide(activity, expectedSource, signals);
+                if (!openedGuide[0] && signals.tabletCompose) {
+                    Object tabletState = invokePrivateNoArgMethod(activity, "buildTabletState");
+                    Collection<?> sourceStates =
+                        asCollection(tabletState == null ? null : invokeNoArgMethod(tabletState, "getSources"));
+                    Object anchor = tabletState == null ? null : invokeNoArgMethod(tabletState, "getAnchor");
+                    previewMatched[0] = signals.answerMode
+                        && hasTabletSourceStateMatch(sourceStates, expectedSource, true)
+                        && sourceAnchorMatches(anchor, expectedSource);
+                    return;
+                }
                 previewMatched[0] = !openedGuide[0] && sourcePreviewPanelMatches(activity, expectedSource);
             });
             Assert.assertFalse(

@@ -130,7 +130,12 @@ if ($BuildOnly) {
 $appApk = Join-Path $androidRoot "app\\build\\outputs\\apk\\debug\\app-debug.apk"
 $testApk = Join-Path $androidRoot "app\\build\\outputs\\apk\\androidTest\\debug\\app-debug-androidTest.apk"
 $timestamp = Get-Date -Format "yyyyMMdd_HHmmss_fff"
-$artifactDir = Join-Path $repoRoot (Join-Path $ArtifactRoot (Join-Path $timestamp $Device))
+$resolvedArtifactRoot = if ([System.IO.Path]::IsPathRooted($ArtifactRoot)) {
+    $ArtifactRoot
+} else {
+    Join-Path $repoRoot $ArtifactRoot
+}
+$artifactDir = Join-Path $resolvedArtifactRoot (Join-Path $timestamp $Device)
 $screenshotDir = Join-Path $artifactDir "screenshots"
 $dumpDir = Join-Path $artifactDir "dumps"
 $harnessStateDir = Join-Path $repoRoot "artifacts\\harness_state"
