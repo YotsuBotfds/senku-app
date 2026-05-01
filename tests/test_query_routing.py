@@ -146,6 +146,81 @@ class QueryRoutingTests(unittest.TestCase):
         self.assertTrue(any("water storage systems rationing protocol" in spec["text"] for spec in storage_specs))
         self.assertTrue(any("container selection preparation food grade" in spec["text"] for spec in storage_specs))
 
+    def test_current_head_water_soap_and_glass_routes_get_desktop_specs_and_prompt_notes(self):
+        water_question = "how do i design a gravity-fed water distribution system"
+        self.assertTrue(query._is_water_distribution_query(water_question))
+        water_specs = query._supplemental_retrieval_specs(water_question, 8)
+        self.assertTrue(
+            any(
+                spec["category"] == "building"
+                and "gravity-fed water distribution storage tank" in spec["text"]
+                for spec in water_specs
+            ),
+            [spec["text"] for spec in water_specs],
+        )
+        self.assertTrue(
+            any(
+                spec["category"] == "resource-management"
+                and "pipe network tap points" in spec["text"]
+                for spec in water_specs
+            ),
+            [spec["text"] for spec in water_specs],
+        )
+        distribution_meta = {
+            "guide_title": "Community Water Distribution Systems",
+            "guide_id": "GD-270",
+            "section_heading": "Gravity-Fed Distribution Systems",
+            "category": "building",
+            "description": "Design gravity-fed distribution networks with storage tank planning and household taps.",
+            "structure_type": "water_distribution",
+            "topic_tags": "water_distribution,water_storage",
+        }
+        container_meta = {
+            "guide_title": "Storage & Material Management",
+            "guide_id": "GD-252",
+            "section_heading": "Water Storage: Hydration Assurance",
+            "category": "resource-management",
+            "description": "Water storage basics, food-grade plastic buckets, bottles, and container sanitation.",
+            "structure_type": "water_storage",
+            "topic_tags": "water_storage,container_sanitation",
+        }
+        self.assertLess(
+            query._metadata_rerank_delta(water_question, distribution_meta),
+            query._metadata_rerank_delta(water_question, container_meta),
+        )
+
+        soap_question = "how do i make soap from animal fat and ash"
+        soap_specs = query._supplemental_retrieval_specs(soap_question, 8)
+        self.assertTrue(any("soap making from animal fat ash lye" in spec["text"] for spec in soap_specs))
+        self.assertTrue(any("wood ash lye animal fat soapmaking" in spec["text"] for spec in soap_specs))
+
+        glass_question = "how do i make glass from silica sand and soda ash"
+        glass_specs = query._supplemental_retrieval_specs(glass_question, 8)
+        self.assertTrue(any("glassmaking from scratch silica sand soda ash" in spec["text"] for spec in glass_specs))
+        self.assertTrue(any("glassmaking from scratch glass furnace" in spec["text"] for spec in glass_specs))
+
+        basic_results = {
+            "documents": [["Focused planning note."]],
+            "metadatas": [[{
+                "guide_title": "Planning Guide",
+                "guide_id": "GD-999",
+                "section_heading": "Planning Section",
+                "category": "building",
+                "difficulty": "beginner",
+                "description": "",
+            }]],
+            "distances": [[0.2]],
+        }
+        water_prompt = query.build_prompt(water_question, basic_results)
+        self.assertIn("For gravity-fed water distribution", water_prompt)
+        self.assertIn("Separate treatment/storage from distribution", water_prompt)
+        soap_prompt = query.build_prompt(soap_question, basic_results)
+        self.assertIn("For soapmaking, keep it practical", soap_prompt)
+        self.assertIn("ash-lye-and-fat starter path", soap_prompt)
+        glass_prompt = query.build_prompt(glass_question, basic_results)
+        self.assertIn("For making glass from scratch", glass_prompt)
+        self.assertIn("raw materials, furnace heat, forming, and annealing", glass_prompt)
+
     def test_runoff_infant_formula_boundary_gets_uncertainty_guard(self):
         question = (
             "The well may be flood-contaminated and we collected roof runoff in a clean barrel. "

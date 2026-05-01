@@ -4054,6 +4054,51 @@ _WATER_STORAGE_QUERY_MARKERS = {
     "ration water",
 }
 
+_WATER_DISTRIBUTION_QUERY_MARKERS = {
+    "water distribution",
+    "distribution system",
+    "distribution systems",
+    "gravity-fed water",
+    "gravity fed water",
+    "gravity-fed distribution",
+    "gravity fed distribution",
+    "water tower",
+    "water towers",
+    "household taps",
+    "tap points",
+    "pipe network",
+    "piped water",
+}
+
+_WATER_DISTRIBUTION_POSITIVE_METADATA_MARKERS = {
+    "water distribution",
+    "water system design and distribution",
+    "distribution system components",
+    "gravity-fed distribution",
+    "gravity fed distribution",
+    "storage tank",
+    "storage tanks",
+    "water tower",
+    "household taps",
+    "tap points",
+    "pipe network",
+    "piped water",
+}
+
+_WATER_DISTRIBUTION_DISTRACTOR_METADATA_MARKERS = {
+    "container selection",
+    "container sanitation",
+    "food-grade plastic",
+    "water bottle",
+    "water jug",
+    "buckets",
+    "bottles",
+    "desalination",
+    "irrigation",
+    "waterway",
+    "harbor",
+}
+
 _WATER_STORAGE_POSITIVE_METADATA_MARKERS = {
     "water storage",
     "water storage systems",
@@ -6364,6 +6409,14 @@ def _is_water_storage_query(question):
     """Detect practical prompts about storing water in containers."""
     lower = question.lower()
     return "water" in lower and _text_has_marker(lower, _WATER_STORAGE_QUERY_MARKERS)
+
+
+def _is_water_distribution_query(question):
+    """Detect water-network prompts that need distribution, not container-only storage."""
+    lower = question.lower()
+    return "water" in lower and _text_has_marker(
+        lower, _WATER_DISTRIBUTION_QUERY_MARKERS
+    )
 
 
 def _is_runoff_infant_formula_boundary_query(question):
@@ -10710,6 +10763,17 @@ def _metadata_rerank_delta(question, meta):
         if _text_has_marker(meta_text, _WATER_STORAGE_DISTRACTOR_METADATA_MARKERS):
             apply_delta("water_storage_distractor_metadata", 0.12)
 
+    if _is_water_distribution_query(question_lower):
+        if category in {"building", "utility", "resource-management"}:
+            apply_delta("water_distribution_core_categories", -0.025)
+        elif category in {"biology", "agriculture", "transportation"}:
+            apply_delta("water_distribution_category_distractor", 0.05)
+
+        if _text_has_marker(meta_text, _WATER_DISTRIBUTION_POSITIVE_METADATA_MARKERS):
+            apply_delta("water_distribution_positive_metadata", -0.06)
+        if _text_has_marker(meta_text, _WATER_DISTRIBUTION_DISTRACTOR_METADATA_MARKERS):
+            apply_delta("water_distribution_distractor_metadata", 0.08)
+
     if _is_fire_in_rain_special_case(question_lower):
         if category == "survival":
             apply_delta("fire_in_rain_survival", -0.03)
@@ -13913,6 +13977,27 @@ def _supplemental_retrieval_specs(
             ]
         )
 
+    if _is_water_distribution_query(question_lower):
+        specs.extend(
+            [
+                {
+                    "text": "gravity-fed water distribution storage tank head pressure household taps",
+                    "category": "building",
+                    "limit": supplemental_limit,
+                },
+                {
+                    "text": "water system design and distribution main line branch taps shutoff maintenance",
+                    "category": "building",
+                    "limit": supplemental_limit,
+                },
+                {
+                    "text": "community water distribution systems storage tanks pipe network tap points",
+                    "category": "resource-management",
+                    "limit": supplemental_limit,
+                },
+            ]
+        )
+
     if _text_has_marker(question_lower, _EVACUATE_MARKERS) and _text_has_marker(
         question_lower, _SHELTER_DECISION_MARKERS
     ):
@@ -16261,6 +16346,10 @@ def build_prompt(
         )
         prompt_notes.append(
             "- Use exactly 4 short numbered sections: pick container, clean/sanitize, fill/seal, rotate/check. Do not drift into alkali chemistry, aquatic biology, or irrigation systems."
+        )
+    if _is_water_distribution_query(question):
+        prompt_notes.append(
+            "- For gravity-fed water distribution, focus on source/head, storage tank, main line, branch taps, shutoffs, and maintenance. Separate treatment/storage from distribution; do not answer as generic container-only storage."
         )
     if _is_fire_in_rain_special_case(question):
         prompt_notes.append(
