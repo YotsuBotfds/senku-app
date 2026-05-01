@@ -22,6 +22,7 @@ android-app/senku_model_store.xml
 .idea/
 android-app/.idea/
 .android/
+.android-user-home/
 android-app/.android/
 android-app/.kotlin/
 
@@ -34,11 +35,13 @@ CLAUDE.md
 
 # --- Temporary directories ---
 .tmp/
+tmp*/
 _tmp_gallery/
 archive/
 artifacts/*
 !artifacts/mocks/
 !artifacts/mocks/*.png
+notes/codex-temp-test/
 test_startprocess_*.txt
 
 # --- Local runtime data ---
