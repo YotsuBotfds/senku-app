@@ -1138,6 +1138,114 @@ public final class PromptHarnessSmokeTest {
     }
 
     @Test
+    public void explicitSearchAfterAnswerBackClearsAskOwnership() {
+        ActivityScenario<MainActivity> scenario = launchProductReviewMainActivity();
+        try {
+            awaitHarnessIdle();
+            Assert.assertTrue(
+                "home search input never appeared before answer-back search ownership regression; harness signals="
+                    + HarnessTestSignals.snapshot(),
+                device.wait(Until.hasObject(By.res(APP_PACKAGE, "search_input")), SEARCH_WAIT_MS)
+            );
+
+            String askQuery = "How do I start a fire in rain?";
+            submitSearchFromResumedActivity(askQuery, true);
+            assertResumedDetailActivitySettled(
+                DETAIL_WAIT_MS,
+                8,
+                "",
+                false,
+                "Ask submit should open answer detail before ownership regression"
+            );
+
+            Assert.assertTrue(
+                "answer detail should expose a visible back button before returning to Main; "
+                    + describeResumedActivityAndHarnessSignals(),
+                clickVisibleViewOrContentDescription(
+                    "detail_back_button",
+                    R.string.detail_back_content_description,
+                    DETAIL_WAIT_MS
+                )
+            );
+            waitForMainSearchInputReady(SEARCH_WAIT_MS);
+            Assert.assertFalse(
+                "answer detail should not remain resumed after visible back",
+                isResumedActivity(DetailActivity.class)
+            );
+            scenario.onActivity(activity -> {
+                Button ask = activity.findViewById(R.id.ask_button);
+                Button browse = activity.findViewById(R.id.browse_button);
+                Assert.assertNotNull("Ask button should exist after returning from answer detail", ask);
+                Assert.assertNotNull("Browse button should exist after returning from answer detail", browse);
+                Assert.assertTrue(
+                    "returning from answer detail should keep Ask submit semantics active",
+                    readPrivateBooleanField(activity, "askLaneActive")
+                );
+                Assert.assertEquals(
+                    "returning from answer detail should keep Ask selected",
+                    BottomTabDestination.ASK,
+                    readPrivateField(activity, "activePhoneTab")
+                );
+                Assert.assertEquals(
+                    "Ask should remain visually emphasized after answer back",
+                    activity.getColor(R.color.senku_text_dark),
+                    ask.getCurrentTextColor()
+                );
+                Assert.assertEquals(
+                    "Browse should remain secondary while Ask is emphasized after answer back",
+                    activity.getColor(R.color.senku_text_light),
+                    browse.getCurrentTextColor()
+                );
+            });
+
+            Assert.assertTrue(
+                "Browse control should be available to leave Ask lane before explicit Search submit; "
+                    + describeResumedActivityAndHarnessSignals(),
+                clickVisibleButton("browse_button", SEARCH_WAIT_MS)
+            );
+            scenario.onActivity(activity -> {
+                assertCurrentMainRouteState(
+                    activity,
+                    "Browse tap after answer back should clear Ask ownership before Search submit",
+                    MainRouteDecisionHelper.Surface.BROWSE,
+                    BottomTabDestination.HOME,
+                    false,
+                    BottomTabDestination.HOME
+                );
+            });
+
+            submitSearchFromResumedActivity("rain shelter", false);
+            assertResultsSettled(scenario, SEARCH_RESULTS_WAIT_MS);
+            dismissMainSearchKeyboardIfVisible();
+            scenario.onActivity(activity -> {
+                assertCurrentMainRouteState(
+                    activity,
+                    "Explicit Search after answer back should settle on Search results",
+                    MainRouteDecisionHelper.Surface.SEARCH_RESULTS,
+                    BottomTabDestination.HOME,
+                    false,
+                    BottomTabDestination.SEARCH
+                );
+                RecyclerView resultsList = activity.findViewById(R.id.results_list);
+                Assert.assertNotNull("Search after answer back should keep results mounted", resultsList);
+                Assert.assertTrue(
+                    "Search after answer back should show guide results",
+                    isVisible(resultsList)
+                        && resultsList.getAdapter() != null
+                        && resultsList.getAdapter().getItemCount() > 0
+                );
+            });
+            Assert.assertFalse(
+                "Search after answer back must not resume DetailActivity",
+                isResumedActivity(DetailActivity.class)
+            );
+            captureUiState("answer_back_explicit_search_results");
+        } finally {
+            closeScenarioLeniently(scenario);
+        }
+    }
+
+    @Test
     public void searchResultsLinkedGuideHandoffOpensLinkedGuideDetail() throws Exception {
         RelatedGuideSeed seed = findGuideWithRelations();
         Assume.assumeNotNull("no guide with related links available for browse handoff smoke", seed);
