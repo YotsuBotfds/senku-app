@@ -1088,6 +1088,31 @@ public final class PromptHarnessSmokeTest {
     }
 
     @Test
+    public void noResultSearchSystemBackReturnsBrowseWithoutAskOwnership() {
+        ActivityScenario<MainActivity> scenario = launchProductReviewMainActivity();
+        try {
+            awaitHarnessIdle();
+            Assert.assertTrue(
+                "home search input never appeared before no-result search back smoke; harness signals="
+                    + HarnessTestSignals.snapshot(),
+                device.wait(Until.hasObject(By.res(APP_PACKAGE, "search_input")), SEARCH_WAIT_MS)
+            );
+
+            String query = "zzzxqv qqqxxyy";
+            submitSearchFromResumedActivity(query, false);
+            assertNoResultsSearchSettled(scenario, SEARCH_RESULTS_WAIT_MS, query);
+            dismissMainSearchKeyboardIfVisible();
+
+            device.pressBack();
+            InstrumentationRegistry.getInstrumentation().waitForIdleSync();
+            assertResumedManualHomeDestination("system back from no-result search should return to Browse/Home");
+            captureUiState("no_result_search_back_home");
+        } finally {
+            closeScenarioLeniently(scenario);
+        }
+    }
+
+    @Test
     public void searchResultsVisibleHomeChromeBackReturnsBrowseWithoutAskOwnership() {
         ActivityScenario<MainActivity> scenario = launchProductReviewMainActivity();
         try {
@@ -5347,6 +5372,48 @@ public final class PromptHarnessSmokeTest {
         );
     }
 
+    private void assertNoResultsSearchSettled(
+        ActivityScenario<MainActivity> scenario,
+        long timeoutMs,
+        String query
+    ) {
+        Assert.assertTrue(
+            "no-result search never settled; harness signals=" + HarnessTestSignals.snapshot(),
+            waitForNoResultsSearchSettled(scenario, timeoutMs, query)
+        );
+        scenario.onActivity(activity -> {
+            assertCurrentMainRouteState(
+                activity,
+                "No-result search should remain on the Search route before Back",
+                MainRouteDecisionHelper.Surface.SEARCH_RESULTS,
+                BottomTabDestination.HOME,
+                false,
+                BottomTabDestination.SEARCH
+            );
+            RecyclerView resultsList = activity.findViewById(R.id.results_list);
+            TextView resultsHeader = activity.findViewById(R.id.results_header);
+            TextView phoneSearchCountText = activity.findViewById(R.id.phone_search_count_text);
+            View homeChromeBack = activity.findViewById(R.id.home_chrome_back_button);
+            Assert.assertNotNull("no-result search should keep the results adapter mounted", resultsList);
+            Assert.assertNotNull("no-result search should keep the results header mounted", resultsHeader);
+            Assert.assertEquals(
+                "no-result search should publish an empty adapter",
+                0,
+                resultsList.getAdapter() == null ? -1 : resultsList.getAdapter().getItemCount()
+            );
+            Assert.assertTrue(
+                "no-result search should publish no-result or zero-count chrome",
+                containsAny(safe(resultsHeader.getText().toString()), "no guide matches", "0 results")
+                    || (phoneSearchCountText != null
+                        && containsAny(safe(phoneSearchCountText.getText().toString()), "0 results"))
+            );
+            Assert.assertTrue(
+                "no-result search should expose Back before system Back is pressed",
+                isEffectivelyVisible(homeChromeBack) && homeChromeBack.isEnabled()
+            );
+        });
+    }
+
     private void assertDetailSettled(long timeoutMs, String expectedTitle, boolean expectHistory) {
         assertResumedDetailActivitySettled(
             timeoutMs,
@@ -7540,6 +7607,52 @@ public final class PromptHarnessSmokeTest {
                 }
                 String headerText = safe(resultsHeader.getText().toString()).toLowerCase(Locale.US);
                 settled[0] = !headerText.contains("searching") && !headerText.contains("failed");
+            });
+            if (settled[0]) {
+                return true;
+            }
+            InstrumentationRegistry.getInstrumentation().waitForIdleSync();
+            SystemClock.sleep(75L);
+        }
+        return false;
+    }
+
+    private boolean waitForNoResultsSearchSettled(
+        ActivityScenario<MainActivity> scenario,
+        long timeoutMs,
+        String query
+    ) {
+        long deadline = SystemClock.uptimeMillis() + timeoutMs;
+        while (SystemClock.uptimeMillis() < deadline) {
+            final boolean[] settled = {false};
+            scenario.onActivity(activity -> {
+                EditText input = activity.findViewById(R.id.search_input);
+                RecyclerView recyclerView = activity.findViewById(R.id.results_list);
+                TextView resultsHeader = activity.findViewById(R.id.results_header);
+                TextView statusText = activity.findViewById(R.id.status_text);
+                View progressBar = activity.findViewById(R.id.progress_bar);
+                if (input == null || recyclerView == null || resultsHeader == null || statusText == null) {
+                    return;
+                }
+                RecyclerView.Adapter<?> adapter = recyclerView.getAdapter();
+                if (adapter == null || adapter.getItemCount() != 0) {
+                    return;
+                }
+                if (!query.equals(safe(input.getText() == null ? null : input.getText().toString()))) {
+                    return;
+                }
+                if (progressBar != null && progressBar.getVisibility() == android.view.View.VISIBLE) {
+                    return;
+                }
+                String status = safe(statusText.getText().toString()).toLowerCase(Locale.US);
+                String header = safe(resultsHeader.getText().toString()).toLowerCase(Locale.US);
+                Object routeState = invokePrivateNoArgMethod(activity, "currentMainRouteState");
+                Object surface = routeState == null ? null : readPrivateField(routeState, "surface");
+                settled[0] = !status.contains("searching")
+                    && !status.contains("failed")
+                    && !header.contains("searching")
+                    && !header.contains("failed")
+                    && MainRouteDecisionHelper.Surface.SEARCH_RESULTS.equals(surface);
             });
             if (settled[0]) {
                 return true;
