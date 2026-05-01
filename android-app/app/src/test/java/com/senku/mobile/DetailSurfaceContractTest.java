@@ -86,7 +86,7 @@ public final class DetailSurfaceContractTest {
     }
 
     @Test
-    public void uncertainFitAnswerSuppressesFollowupAndShowsSupportingGuideChoices() {
+    public void uncertainFitAnswerShowsFollowupAndSupportingGuideChoices() {
         DetailSurfaceContract.Posture posture =
             DetailSurfaceContract.answer(DetailSurfaceContract.AnswerKind.UNCERTAIN_FIT);
 
@@ -96,11 +96,13 @@ public final class DetailSurfaceContractTest {
             DetailSurfaceContract.TrustProvenanceVisibility.UNCERTAIN_FIT_PROVENANCE,
             posture.trustProvenanceVisibility
         );
-        assertEquals(DetailSurfaceContract.FollowUpVisibility.HIDDEN, posture.followUpVisibility);
+        assertEquals(DetailSurfaceContract.FollowUpVisibility.VISIBLE, posture.followUpVisibility);
         assertEquals(
             DetailSurfaceContract.RelatedGuidePosture.SUPPORTING_GUIDE_CHOICES,
             posture.relatedGuidePosture
         );
+        assertEquals(DetailSurfaceContract.FollowUpEligibility.ELIGIBLE, posture.followUpEligibility);
+        assertEquals(DetailSurfaceContract.ComposerEligibility.ELIGIBLE, posture.composerEligibility);
     }
 
     @Test
@@ -230,20 +232,25 @@ public final class DetailSurfaceContractTest {
     }
 
     @Test
-    public void abstainAndUncertainAnswerDetailsKeepEvidenceButHideFollowUp() {
+    public void abstainDetailsKeepEvidenceButHideFollowUp() {
         DetailSurfaceContract.Posture abstain =
             DetailSurfaceContract.answer(DetailSurfaceContract.AnswerKind.ABSTAIN);
-        DetailSurfaceContract.Posture uncertain =
-            DetailSurfaceContract.answer(DetailSurfaceContract.AnswerKind.UNCERTAIN_FIT);
 
         assertEquals(true, DetailSurfaceContract.shouldShowAnswerEvidence(abstain));
         assertEquals(false, DetailSurfaceContract.shouldShowAnswerFollowUp(abstain));
         assertEquals(true, DetailSurfaceContract.usesAnswerCanvasSurface(abstain));
         assertEquals(false, DetailSurfaceContract.isComposerEligible(abstain));
+    }
+
+    @Test
+    public void uncertainFitDetailsKeepEvidenceAndAllowRefinementFollowUp() {
+        DetailSurfaceContract.Posture uncertain =
+            DetailSurfaceContract.answer(DetailSurfaceContract.AnswerKind.UNCERTAIN_FIT);
+
         assertEquals(true, DetailSurfaceContract.shouldShowAnswerEvidence(uncertain));
-        assertEquals(false, DetailSurfaceContract.shouldShowAnswerFollowUp(uncertain));
+        assertEquals(true, DetailSurfaceContract.shouldShowAnswerFollowUp(uncertain));
         assertEquals(true, DetailSurfaceContract.usesAnswerCanvasSurface(uncertain));
-        assertEquals(false, DetailSurfaceContract.isComposerEligible(uncertain));
+        assertEquals(true, DetailSurfaceContract.isComposerEligible(uncertain));
     }
 
     @Test
@@ -325,7 +332,7 @@ public final class DetailSurfaceContractTest {
         assertEquals(true, DetailSurfaceContract.isAnswerEvidenceRegion(abstain));
         assertEquals(true, DetailSurfaceContract.usesAnswerRelatedGuideRole(abstain));
 
-        assertEquals(DetailSurfaceContract.PrimaryAction.REVIEW_SUPPORTING_GUIDES, uncertain.primaryAction);
+        assertEquals(DetailSurfaceContract.PrimaryAction.ASK_FOLLOW_UP, uncertain.primaryAction);
         assertEquals(
             DetailSurfaceContract.EvidenceRegionRole.UNCERTAIN_FIT_RATIONALE,
             uncertain.evidenceRegionRole
@@ -334,7 +341,9 @@ public final class DetailSurfaceContractTest {
             DetailSurfaceContract.RelatedGuideRole.ANSWER_SUPPORTING_CHOICES,
             uncertain.relatedGuideRole
         );
-        assertEquals(DetailSurfaceContract.FollowUpEligibility.INELIGIBLE, uncertain.followUpEligibility);
+        assertEquals(DetailSurfaceContract.FollowUpEligibility.ELIGIBLE, uncertain.followUpEligibility);
+        assertEquals(DetailSurfaceContract.ComposerEligibility.ELIGIBLE, uncertain.composerEligibility);
+        assertEquals(DetailSurfaceContract.ChromePlan.ANSWER_CANVAS_WITH_COMPOSER, uncertain.chromePlan);
     }
 
     @Test

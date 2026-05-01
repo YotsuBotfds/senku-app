@@ -2321,9 +2321,9 @@ public final class PromptHarnessSmokeTest {
 
             assertHostAskDetailSettledAfterHandoff(GENERATIVE_DETAIL_WAIT_MS, false);
             Assert.assertTrue(
-                "inline thread never appeared after the settled detail handoff; "
+                "follow-up composer never became visible after the settled detail handoff; "
                     + describeResumedActivityAndHarnessSignals(),
-                device.wait(Until.hasObject(By.res(APP_PACKAGE, "detail_followup_input")), DETAIL_WAIT_MS)
+                waitForFollowUpComposerReadyOnMainThread(DETAIL_WAIT_MS)
             );
             submitFollowUpFromResumedDetail("What should I do next after the ridge line is up?");
 
@@ -5266,8 +5266,11 @@ public final class PromptHarnessSmokeTest {
                     }
                     if (!statusText.trim().isEmpty()
                         && !containsAny(statusText, hostLabel, onDeviceLabel, fallbackLabel)
-                        && !containsAny(statusTextLower, "answer ready", "offline answer ready", "no guide match")) {
-                        failure[0] = signals.postureLabel + " settled status should keep final backend or completion wording";
+                        && !containsAny(statusTextLower, "answer ready", "offline answer ready",
+                            "no guide match", "related guides ready", "verify the fit")) {
+                        failure[0] = signals.postureLabel
+                            + " settled status should keep final backend or completion wording: "
+                            + statusText;
                         return;
                     }
                     matched[0] = true;
@@ -5428,8 +5431,10 @@ public final class PromptHarnessSmokeTest {
                     // R-gal1: uncertain-fit and abstain wording can be terminal.
                     if (!containsAny(statusText, hostLabel, onDeviceLabel, fallbackLabel)
                         && !containsAny(statusTextLower, "answer ready", "offline answer ready",
-                            "no guide match", "not a confident fit", "uncertain fit", "abstain")) {
-                        failure[0] = "settled status should keep final backend or completion wording when still visible";
+                            "no guide match", "not a confident fit", "uncertain fit", "abstain",
+                            "related guides ready", "verify the fit")) {
+                        failure[0] = "settled status should keep final backend or completion wording when still visible: "
+                            + statusText;
                         return;
                     }
                 }
@@ -6072,7 +6077,11 @@ public final class PromptHarnessSmokeTest {
                 }
                 EditText input = activity.findViewById(R.id.detail_followup_input);
                 Button send = activity.findViewById(R.id.detail_followup_send);
-                ready[0] = input != null
+                View panel = activity.findViewById(R.id.detail_followup_panel);
+                View compose = activity.findViewById(R.id.detail_followup_compose);
+                ready[0] = isEffectivelyVisible(panel)
+                    && isEffectivelyVisible(compose)
+                    && input != null
                     && send != null
                     && input.isEnabled();
             });
