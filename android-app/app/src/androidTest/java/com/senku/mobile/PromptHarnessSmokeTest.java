@@ -919,6 +919,14 @@ public final class PromptHarnessSmokeTest {
             assertResultsSettled(homeScenario, SEARCH_RESULTS_WAIT_MS);
             dismissMainSearchKeyboardIfVisible();
             homeScenario.onActivity(activity -> {
+                assertCurrentMainRouteState(
+                    activity,
+                    "Home shared-input submit should settle on the Search route, not just visible results",
+                    MainRouteDecisionHelper.Surface.SEARCH_RESULTS,
+                    BottomTabDestination.HOME,
+                    false,
+                    BottomTabDestination.SEARCH
+                );
                 Assert.assertFalse(
                     "Home shared-input submit should keep Ask ownership inactive",
                     readPrivateBooleanField(activity, "askLaneActive")
@@ -951,9 +959,22 @@ public final class PromptHarnessSmokeTest {
             );
 
             openAskTabFromHomeChrome();
-            submitSearchInputImeActionFromResumedActivity(
+            askScenario.onActivity(activity -> assertCurrentMainRouteState(
+                activity,
+                "Ask tab switch should select the Ask route before shared-input submit",
+                MainRouteDecisionHelper.Surface.RECENT_THREADS,
+                BottomTabDestination.ASK,
+                true,
+                BottomTabDestination.ASK
+            ));
+            submitSearchInputImeActionFromResumedMainAndAssertRoute(
                 "How do I start a fire in rain?",
-                EditorInfo.IME_ACTION_SEARCH
+                EditorInfo.IME_ACTION_SEARCH,
+                MainRouteDecisionHelper.Surface.ASK_RESULTS,
+                BottomTabDestination.ASK,
+                true,
+                BottomTabDestination.ASK,
+                "Ask shared-input submit should enter the Ask route before answer-detail handoff"
             );
 
             assertResumedDetailActivitySettled(
@@ -4274,6 +4295,52 @@ public final class PromptHarnessSmokeTest {
         });
     }
 
+    private void assertCurrentMainRouteState(
+        Activity activity,
+        String failureLabel,
+        MainRouteDecisionHelper.Surface expectedSurface,
+        BottomTabDestination expectedActivePhoneTab,
+        boolean expectedAskLaneActive,
+        BottomTabDestination expectedDisplayedTab
+    ) {
+        Assert.assertTrue(failureLabel + "; activity should be MainActivity", activity instanceof MainActivity);
+        Object routeState = invokePrivateNoArgMethod(activity, "currentMainRouteState");
+        Assert.assertNotNull(failureLabel + "; currentMainRouteState should be available", routeState);
+        Assert.assertEquals(
+            failureLabel + "; route surface mismatch",
+            expectedSurface,
+            readPrivateField(routeState, "surface")
+        );
+        Assert.assertEquals(
+            failureLabel + "; route active phone tab mismatch",
+            expectedActivePhoneTab,
+            readPrivateField(routeState, "activePhoneTab")
+        );
+        Assert.assertEquals(
+            failureLabel + "; route ask-lane ownership mismatch",
+            expectedAskLaneActive,
+            readPrivateBooleanField(routeState, "askLaneActive")
+        );
+        Assert.assertEquals(
+            failureLabel + "; displayed active tab mismatch",
+            expectedDisplayedTab,
+            MainNavigationTabPolicy.displayedActiveDestination((MainRouteDecisionHelper.RouteState) routeState)
+        );
+
+        BottomTabBarHostView tabHost =
+            findFirstDescendantByClass(activity.findViewById(android.R.id.content), BottomTabBarHostView.class);
+        if (tabHost != null) {
+            Object runtimeActiveTab = readPrivateField(tabHost, "activeTab");
+            if (runtimeActiveTab != null) {
+                Assert.assertEquals(
+                    failureLabel + "; runtime tab host active tab mismatch",
+                    expectedDisplayedTab,
+                    runtimeActiveTab
+                );
+            }
+        }
+    }
+
     private boolean tapSavedNavigationFromMain() {
         BySelector savedGuidesDescription = By.desc("Saved guides");
         if (clickUiObject(savedGuidesDescription, 1_500L)) {
@@ -5819,6 +5886,36 @@ public final class PromptHarnessSmokeTest {
             input.setText(query);
             input.setSelection(query.length());
             input.onEditorAction(actionId);
+        });
+        InstrumentationRegistry.getInstrumentation().waitForIdleSync();
+    }
+
+    private void submitSearchInputImeActionFromResumedMainAndAssertRoute(
+        String query,
+        int actionId,
+        MainRouteDecisionHelper.Surface expectedSurface,
+        BottomTabDestination expectedActivePhoneTab,
+        boolean expectedAskLaneActive,
+        BottomTabDestination expectedDisplayedTab,
+        String failureLabel
+    ) {
+        InstrumentationRegistry.getInstrumentation().runOnMainSync(() -> {
+            Activity activity = getResumedActivityOnMainThread();
+            Assert.assertTrue("no resumed MainActivity for IME route assertion", activity instanceof MainActivity);
+            EditText input = activity.findViewById(R.id.search_input);
+            Assert.assertNotNull("search input should exist for IME route assertion", input);
+            input.requestFocus();
+            input.setText(query);
+            input.setSelection(query.length());
+            input.onEditorAction(actionId);
+            assertCurrentMainRouteState(
+                activity,
+                failureLabel,
+                expectedSurface,
+                expectedActivePhoneTab,
+                expectedAskLaneActive,
+                expectedDisplayedTab
+            );
         });
         InstrumentationRegistry.getInstrumentation().waitForIdleSync();
     }
