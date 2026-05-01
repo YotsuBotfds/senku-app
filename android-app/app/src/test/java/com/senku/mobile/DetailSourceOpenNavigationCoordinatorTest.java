@@ -43,6 +43,19 @@ public final class DetailSourceOpenNavigationCoordinatorTest {
         assertTrue(decision.shouldLoadGuideBeforeOpen);
     }
 
+    @Test
+    public void trimmedGuideIdDoesNotMutateOriginalSourcePayload() {
+        SearchResult source = source("  GD-111  ");
+
+        DetailSourceOpenNavigationCoordinator.Decision decision =
+            DetailSourceOpenNavigationCoordinator.decide(source);
+
+        assertSame(source, decision.source);
+        assertEquals("  GD-111  ", decision.source.guideId);
+        assertEquals("GD-111", decision.guideId);
+        assertTrue(decision.shouldLoadGuideBeforeOpen);
+    }
+
     private static SearchResult source(String guideId) {
         return new SearchResult(
             "Poisoning",

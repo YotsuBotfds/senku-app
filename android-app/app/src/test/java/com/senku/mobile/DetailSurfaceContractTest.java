@@ -182,6 +182,51 @@ public final class DetailSurfaceContractTest {
     }
 
     @Test
+    public void stateFactoryGuideClassificationWinsOverAnswerSignals() {
+        DetailSurfaceContract.Posture posture =
+            DetailSurfaceContract.fromState(
+                false,
+                DetailSurfaceContract.EntryPoint.RELATED_GUIDE_HANDOFF,
+                "UNCERTAIN_FIT",
+                true,
+                true,
+                "reviewed-card"
+            );
+
+        assertEquals(DetailSurfaceContract.Surface.GUIDE_READER, posture.surface);
+        assertEquals(DetailSurfaceContract.BodyRole.GUIDE_BODY, posture.bodyRole);
+        assertEquals(
+            DetailSurfaceContract.RelatedGuidePosture.GUIDE_HANDOFF_CONTEXT,
+            posture.relatedGuidePosture
+        );
+        assertEquals(false, DetailSurfaceContract.shouldShowAnswerEvidence(posture));
+        assertEquals(false, DetailSurfaceContract.shouldShowAnswerFollowUp(posture));
+    }
+
+    @Test
+    public void stateFactoryAnswerClassificationKeepsSupportOnlyPostureForAbstain() {
+        DetailSurfaceContract.Posture posture =
+            DetailSurfaceContract.fromState(
+                true,
+                DetailSurfaceContract.EntryPoint.RELATED_GUIDE_HANDOFF,
+                " confident ",
+                false,
+                true,
+                ""
+            );
+
+        assertEquals(DetailSurfaceContract.Surface.ANSWER_DETAIL, posture.surface);
+        assertEquals(DetailSurfaceContract.BodyRole.ABSTAIN_BODY, posture.bodyRole);
+        assertEquals(
+            DetailSurfaceContract.RelatedGuidePosture.SUPPORTING_GUIDE_CHOICES,
+            posture.relatedGuidePosture
+        );
+        assertEquals(DetailSurfaceContract.ChromePlan.ANSWER_CANVAS_SUPPORT_ONLY, posture.chromePlan);
+        assertEquals(true, DetailSurfaceContract.shouldShowAnswerEvidence(posture));
+        assertEquals(false, DetailSurfaceContract.shouldShowAnswerFollowUp(posture));
+    }
+
+    @Test
     public void answerKindClassificationMapsExistingStateSignals() {
         assertEquals(
             DetailSurfaceContract.AnswerKind.ABSTAIN,

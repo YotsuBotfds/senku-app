@@ -50,11 +50,40 @@ public final class DetailGuideHandoffIntentBridgeTest {
     }
 
     @Test
+    public void crossReferenceContextFallsBackToTrimmedSourceGuideWhenLabelIsBlank() {
+        DetailGuideHandoffIntentBridge.HandoffContext context =
+            DetailGuideHandoffIntentBridge.crossReference(" GD-111 ", "   ");
+
+        assertEquals("browse_cross_ref", context.sourceKind);
+        assertEquals("GD-111", context.sourceGuideId);
+        assertEquals("", context.sourceGuideLabel);
+        assertEquals("GD-111", context.anchorLabel());
+        assertEquals(
+            DetailGuideHandoffIntentBridge.Route.CROSS_REFERENCE_GUIDE,
+            DetailGuideHandoffIntentBridge.routeFor(context)
+        );
+    }
+
+    @Test
     public void unknownSourceKindStaysPlainGuideEvenWhenAnchored() {
         DetailGuideHandoffIntentBridge.HandoffContext context =
             new DetailGuideHandoffIntentBridge.HandoffContext("other", "GD-898", "Poisoning");
 
         assertFalse(context.isEmpty());
+        assertEquals(
+            DetailGuideHandoffIntentBridge.Route.GUIDE,
+            DetailGuideHandoffIntentBridge.routeFor(context)
+        );
+    }
+
+    @Test
+    public void unknownSourceKindIsTrimmedButNeverPromotedToHandoffRoute() {
+        DetailGuideHandoffIntentBridge.HandoffContext context =
+            new DetailGuideHandoffIntentBridge.HandoffContext(" other ", " GD-898 ", " Poisoning ");
+
+        assertEquals("other", context.sourceKind);
+        assertEquals("GD-898", context.sourceGuideId);
+        assertEquals("Poisoning", context.anchorLabel());
         assertEquals(
             DetailGuideHandoffIntentBridge.Route.GUIDE,
             DetailGuideHandoffIntentBridge.routeFor(context)
