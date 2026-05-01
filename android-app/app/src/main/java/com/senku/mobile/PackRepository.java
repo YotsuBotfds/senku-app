@@ -706,7 +706,7 @@ public final class PackRepository implements AutoCloseable {
         }
 
         long rerankStartedAtNanos = elapsedRealtimeNanosSafe();
-        LinkedHashMap<String, GuideScore> guides = new LinkedHashMap<>();
+        LinkedHashMap<String, PackAnswerAnchorScoringPolicy.GuideScore> guides = new LinkedHashMap<>();
         ArrayList<RerankedResult> scored = new ArrayList<>();
         for (int index = 0; index < results.size(); index++) {
             SearchResult result = results.get(index);
@@ -717,9 +717,9 @@ public final class PackRepository implements AutoCloseable {
             score += rerankModeBonus(result.retrievalMode);
 
             String guideKey = PackSupportScoringPolicy.guideGroupKey(result);
-            GuideScore guide = guides.get(guideKey);
+            PackAnswerAnchorScoringPolicy.GuideScore guide = guides.get(guideKey);
             if (guide == null) {
-                guide = new GuideScore(result);
+                guide = new PackAnswerAnchorScoringPolicy.GuideScore(result);
                 guides.put(guideKey, guide);
             }
             guide.totalScore += Math.max(1, score);
@@ -729,7 +729,8 @@ public final class PackRepository implements AutoCloseable {
         }
 
         for (RerankedResult scoredResult : scored) {
-            GuideScore guide = guides.get(PackSupportScoringPolicy.guideGroupKey(scoredResult.result));
+            PackAnswerAnchorScoringPolicy.GuideScore guide =
+                guides.get(PackSupportScoringPolicy.guideGroupKey(scoredResult.result));
             if (guide == null) {
                 continue;
             }
@@ -779,7 +780,7 @@ public final class PackRepository implements AutoCloseable {
         return 0;
     }
 
-    private static int guideAggregationBonus(GuideScore guide) {
+    private static int guideAggregationBonus(PackAnswerAnchorScoringPolicy.GuideScore guide) {
         if (guide == null) {
             return 0;
         }
@@ -1335,9 +1336,11 @@ public final class PackRepository implements AutoCloseable {
         }
 
         boolean enforceDirectSignal = false;
-        LinkedHashMap<String, GuideScore> guides = buildAnchorGuideScores(queryTerms, rankedResults, false);
+        LinkedHashMap<String, PackAnswerAnchorScoringPolicy.GuideScore> guides =
+            buildAnchorGuideScores(queryTerms, rankedResults, false);
         if (shouldRequireDirectAnchorSignal(queryTerms)) {
-            LinkedHashMap<String, GuideScore> directSignalGuides = buildAnchorGuideScores(queryTerms, rankedResults, true);
+            LinkedHashMap<String, PackAnswerAnchorScoringPolicy.GuideScore> directSignalGuides =
+                buildAnchorGuideScores(queryTerms, rankedResults, true);
             if (!directSignalGuides.isEmpty()) {
                 guides = directSignalGuides;
                 enforceDirectSignal = true;
@@ -1364,7 +1367,7 @@ public final class PackRepository implements AutoCloseable {
             return rankedResults.get(0);
         }
 
-        ArrayList<GuideScore> ordered = new ArrayList<>(guides.values());
+        ArrayList<PackAnswerAnchorScoringPolicy.GuideScore> ordered = new ArrayList<>(guides.values());
         ordered.sort((left, right) -> {
             int totalOrder = Integer.compare(right.totalScore, left.totalScore);
             if (totalOrder != 0) {
@@ -1474,55 +1477,21 @@ public final class PackRepository implements AutoCloseable {
         List<SearchResult> rankedResults,
         boolean requireDirectSignal
     ) {
-        return buildAnchorGuideScores(QueryTerms.fromQuery(query), rankedResults, requireDirectSignal);
+        LinkedHashMap<String, PackAnswerAnchorScoringPolicy.GuideScore> policyScores =
+            buildAnchorGuideScores(QueryTerms.fromQuery(query), rankedResults, requireDirectSignal);
+        LinkedHashMap<String, GuideScore> compatibilityScores = new LinkedHashMap<>();
+        for (Map.Entry<String, PackAnswerAnchorScoringPolicy.GuideScore> entry : policyScores.entrySet()) {
+            compatibilityScores.put(entry.getKey(), new GuideScore(entry.getValue()));
+        }
+        return compatibilityScores;
     }
 
-    private static LinkedHashMap<String, GuideScore> buildAnchorGuideScores(
+    private static LinkedHashMap<String, PackAnswerAnchorScoringPolicy.GuideScore> buildAnchorGuideScores(
         QueryTerms queryTerms,
         List<SearchResult> rankedResults,
         boolean requireDirectSignal
     ) {
-        LinkedHashMap<String, GuideScore> guides = new LinkedHashMap<>();
-        for (int index = 0; index < rankedResults.size(); index++) {
-            SearchResult result = rankedResults.get(index);
-            if (!isSpecializedExplicitAnchorCandidate(queryTerms, result)) {
-                continue;
-            }
-            int support = PackSupportScoringPolicy.supportBreakdown(queryTerms, result).supportWithMetadata();
-            if (support <= 0) {
-                continue;
-            }
-            if (requireDirectSignal && !hasDirectAnchorSignal(queryTerms, result)) {
-                continue;
-            }
-            String key = PackSupportScoringPolicy.guideGroupKey(result);
-            GuideScore guide = guides.get(key);
-            if (guide == null) {
-                guide = new GuideScore(result);
-                guides.put(key, guide);
-            }
-            int score = support;
-            score += Math.max(0, 12 - index);
-            score += PackSupportScoringPolicy.anchorAlignmentBonus(queryTerms, result);
-            String mode = emptySafe(result.retrievalMode).trim().toLowerCase(QUERY_LOCALE);
-            if ("route-focus".equals(mode)) {
-                score += 8;
-            } else if ("hybrid".equals(mode)) {
-                score += 4;
-            } else if ("guide-focus".equals(mode)) {
-                score += 3;
-            } else if ("lexical".equals(mode)) {
-                score += 2;
-            }
-            guide.totalScore += score;
-            guide.bestScore = Math.max(guide.bestScore, score);
-            guide.sectionKeys.add(buildGuideSectionKey(result.guideId, result.title, result.sectionHeading));
-            if (score > guide.anchorScore) {
-                guide.anchorScore = score;
-                guide.anchor = result;
-            }
-        }
-        return guides;
+        return PackAnswerAnchorScoringPolicy.buildAnchorGuideScores(queryTerms, rankedResults, requireDirectSignal);
     }
 
     static boolean shouldRequireDirectAnchorSignalForTest(String query) {
@@ -3256,15 +3225,21 @@ public final class PackRepository implements AutoCloseable {
         }
     }
 
-    static final class GuideScore {
-        SearchResult anchor;
-        int anchorScore;
-        int totalScore;
-        int bestScore;
-        final Set<String> sectionKeys = new LinkedHashSet<>();
+    static final class GuideScore extends PackAnswerAnchorScoringPolicy.GuideScore {
 
         GuideScore(SearchResult anchor) {
-            this.anchor = anchor;
+            super(anchor);
+        }
+
+        GuideScore(PackAnswerAnchorScoringPolicy.GuideScore source) {
+            super(source == null ? null : source.anchor);
+            if (source == null) {
+                return;
+            }
+            this.anchorScore = source.anchorScore;
+            this.totalScore = source.totalScore;
+            this.bestScore = source.bestScore;
+            this.sectionKeys.addAll(source.sectionKeys);
         }
     }
 
