@@ -12,7 +12,7 @@ import java.util.List;
 final class PackRouteFocusedSearchExecutor {
     private static final String TAG = "SenkuPackRepo";
 
-    private final SQLiteDatabase database;
+    private final PackRepository.RawQueryRunner queryRunner;
     private final boolean ftsAvailable;
     private final String ftsTableName;
     private final boolean ftsSupportsBm25;
@@ -23,7 +23,19 @@ final class PackRouteFocusedSearchExecutor {
         String ftsTableName,
         boolean ftsSupportsBm25
     ) {
-        this.database = database;
+        this.queryRunner = database::rawQuery;
+        this.ftsAvailable = ftsAvailable;
+        this.ftsTableName = ftsTableName;
+        this.ftsSupportsBm25 = ftsSupportsBm25;
+    }
+
+    PackRouteFocusedSearchExecutor(
+        PackRepository.RawQueryRunner queryRunner,
+        boolean ftsAvailable,
+        String ftsTableName,
+        boolean ftsSupportsBm25
+    ) {
+        this.queryRunner = queryRunner;
         this.ftsAvailable = ftsAvailable;
         this.ftsTableName = ftsTableName;
         this.ftsSupportsBm25 = ftsSupportsBm25;
@@ -228,7 +240,7 @@ final class PackRouteFocusedSearchExecutor {
             return 0;
         }
 
-        try (Cursor cursor = database.rawQuery(plan.sql, plan.argsArray())) {
+        try (Cursor cursor = queryRunner.rawQuery(plan.sql, plan.argsArray())) {
             int added = collectCursor(
                 resultKind,
                 cursor,
@@ -277,12 +289,14 @@ final class PackRouteFocusedSearchExecutor {
             return 0;
         }
 
-        try (Cursor cursor = database.rawQuery(plan.sql, plan.argsArray())) {
-            return collectCursor(resultKind, cursor, queryTerms, specTerms, routeSpec, bestBySection, targetTotal);
-        } catch (SQLiteException error) {
-            Log.w(TAG, resultKind.likeLogName + ".fail query=\"" + queryTerms.queryLower + "\"", error);
-            return 0;
-        }
+        return collectLikeCursorSafely(
+            plan,
+            queryRunner,
+            cursor -> collectCursor(resultKind, cursor, queryTerms, specTerms, routeSpec, bestBySection, targetTotal),
+            resultKind.likeLogName,
+            queryTerms.queryLower,
+            true
+        );
     }
 
     private PackRouteSearchSqlPolicy.RouteFtsSqlPlan ftsPlan(
@@ -353,6 +367,38 @@ final class PackRouteFocusedSearchExecutor {
             bestBySection,
             targetTotal
         );
+    }
+
+    static int collectLikeCursorSafelyForTest(
+        PackRouteSearchSqlPolicy.RouteLikeSqlPlan plan,
+        PackRepository.RawQueryRunner queryRunner
+    ) {
+        return collectLikeCursorSafely(plan, queryRunner, cursor -> 1, "", "", false);
+    }
+
+    private static int collectLikeCursorSafely(
+        PackRouteSearchSqlPolicy.RouteLikeSqlPlan plan,
+        PackRepository.RawQueryRunner queryRunner,
+        CursorCollector collector,
+        String logName,
+        String queryLower,
+        boolean logFailure
+    ) {
+        if (plan == null || plan.isEmpty() || queryRunner == null) {
+            return 0;
+        }
+        try (Cursor cursor = queryRunner.rawQuery(plan.sql, plan.argsArray())) {
+            return collector.collect(cursor);
+        } catch (SQLiteException error) {
+            if (logFailure) {
+                Log.w(TAG, logName + ".fail query=\"" + queryLower + "\"", error);
+            }
+            return 0;
+        }
+    }
+
+    private interface CursorCollector {
+        int collect(Cursor cursor);
     }
 
     private enum RouteResultKind {

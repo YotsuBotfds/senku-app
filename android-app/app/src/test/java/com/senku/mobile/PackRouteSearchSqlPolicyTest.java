@@ -430,6 +430,43 @@ public final class PackRouteSearchSqlPolicyTest {
     }
 
     @Test
+    public void guideLikePlanNoOpsWhenTokensOrCategoriesAreNullOrBlank() {
+        PackRouteSearchSqlPolicy.RouteLikeSqlPlan nullTokens = PackRouteSearchSqlPolicy.guideLikePlan(
+            null,
+            List.of("building"),
+            24
+        );
+        PackRouteSearchSqlPolicy.RouteLikeSqlPlan blankTokens = PackRouteSearchSqlPolicy.guideLikePlan(
+            Arrays.asList("", "   ", null),
+            List.of("building"),
+            24
+        );
+        PackRouteSearchSqlPolicy.RouteLikeSqlPlan nullCategories = PackRouteSearchSqlPolicy.guideLikePlan(
+            List.of("alpha"),
+            null,
+            24
+        );
+        PackRouteSearchSqlPolicy.RouteLikeSqlPlan blankCategories = PackRouteSearchSqlPolicy.guideLikePlan(
+            List.of("alpha"),
+            Arrays.asList("", "   ", null),
+            24
+        );
+
+        assertTrue(nullTokens.isEmpty());
+        assertTrue(nullTokens.args.isEmpty());
+        assertEquals("empty_tokens", nullTokens.noOpReason);
+        assertTrue(blankTokens.isEmpty());
+        assertTrue(blankTokens.args.isEmpty());
+        assertEquals("empty_tokens", blankTokens.noOpReason);
+        assertTrue(nullCategories.isEmpty());
+        assertTrue(nullCategories.args.isEmpty());
+        assertEquals("empty_categories", nullCategories.noOpReason);
+        assertTrue(blankCategories.isEmpty());
+        assertTrue(blankCategories.args.isEmpty());
+        assertEquals("empty_categories", blankCategories.noOpReason);
+    }
+
+    @Test
     public void guideLikePlanUsesOnlyNonBlankTokensAndCategories() {
         PackRouteSearchSqlPolicy.RouteLikeSqlPlan plan = PackRouteSearchSqlPolicy.guideLikePlan(
             Arrays.asList(" alpha ", "", null, "beta"),
