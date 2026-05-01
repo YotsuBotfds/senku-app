@@ -21,16 +21,28 @@ final class DetailTabletStateBuilder {
         String anchorKey = buildSourceSelectionKey(anchorSource);
         String selectedKey = buildSourceSelectionKey(selectedSource);
         for (SearchResult source : sources == null ? Collections.<SearchResult>emptyList() : sources) {
-            String sourceKey = buildSourceSelectionKey(source);
-            states.add(new SourceState(
-                sourceKey,
-                safe(source == null ? null : source.guideId).trim(),
-                safe(source == null ? null : source.title).trim(),
-                !anchorKey.isEmpty() && anchorKey.equals(sourceKey),
-                !selectedKey.isEmpty() && selectedKey.equals(sourceKey)
-            ));
+            states.add(buildSourceState(source, anchorKey, selectedKey));
         }
         return states;
+    }
+
+    private static SourceState buildSourceState(
+        SearchResult source,
+        String anchorKey,
+        String selectedKey
+    ) {
+        String sourceKey = buildSourceSelectionKey(source);
+        return new SourceState(
+            sourceKey,
+            safe(source == null ? null : source.guideId).trim(),
+            safe(source == null ? null : source.title).trim(),
+            sourceKeyMatches(anchorKey, sourceKey),
+            sourceKeyMatches(selectedKey, sourceKey)
+        );
+    }
+
+    private static boolean sourceKeyMatches(String targetKey, String sourceKey) {
+        return !targetKey.isEmpty() && targetKey.equals(sourceKey);
     }
 
     static SearchResult resolveVisualOwnerSource(

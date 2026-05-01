@@ -7,6 +7,7 @@ import static org.junit.Assert.assertTrue;
 
 import com.senku.ui.tablet.SourceState;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Test;
@@ -60,6 +61,22 @@ public final class DetailTabletStateBuilderTest {
 
         assertEquals(1, states.size());
         assertEquals("||", states.get(0).getKey());
+        assertFalse(states.get(0).isAnchor());
+        assertFalse(states.get(0).isSelected());
+    }
+
+    @Test
+    public void nullSourceRowsUseBlankLabelsAndUnselectedState() {
+        List<SourceState> states = DetailTabletStateBuilder.buildSourceStates(
+            Arrays.asList((SearchResult) null),
+            null,
+            null
+        );
+
+        assertEquals(1, states.size());
+        assertEquals("", states.get(0).getKey());
+        assertEquals("", states.get(0).getId());
+        assertEquals("", states.get(0).getTitle());
         assertFalse(states.get(0).isAnchor());
         assertFalse(states.get(0).isSelected());
     }
