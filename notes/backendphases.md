@@ -1,6 +1,6 @@
 # Backend Cleanup Phase Tracker
 
-Last updated after cleanup through `8442a9ac` on 2026-05-01.
+Last updated after cleanup through `c5988e6f` on 2026-05-01.
 
 Purpose: prevent future agents from rerunning Ask/query backend cleanup that is already complete. Keep this note short; implementation detail belongs in commits and tests.
 
@@ -621,7 +621,36 @@ Purpose: prevent future agents from rerunning Ask/query backend cleanup that is 
   `tests.test_run_android_functional_ux_smoke_matrix_contract`,
   `tests.test_run_android_instrumented_ui_smoke_capture_summary`);
   `git diff --check` passed before tracker refresh.
-- Tracker is refreshed through `8442a9ac`.
+- Route/back and shared input contracts are current through `3f9b863d`:
+  helper/coordinator tests cover system-back and chrome-back parity for
+  Search/Ask result surfaces, Saved back fallback/history behavior, previous
+  tab behavior, and shared Search/Ask submit target ownership across button and
+  IME-style submits.
+- Follow-up composer guard coverage is current through `b2e8cd4b`: tests cover
+  send-button/IME parity, empty and busy submit blocking, retry after
+  stall/failure, and legacy hidden-input focus staying out of the docked
+  composer path.
+- Answer/evidence label helpers are current through `75a587bb`: repeated
+  bullet/dash joins, source-count labels, and status tokens now route through a
+  shared Compose answer helper while preserving existing paper/evidence/tablet
+  display strings.
+- Search result metadata formatting is current through `ce540046`: Java mapper
+  and adapter metadata-token filtering/joining are centralized, and the Kotlin
+  search-card policy uses the same explicit token predicate without layout
+  changes.
+- Route anchor-bias ownership is current through `c5988e6f`: cabin site,
+  roof/weatherproof, and current-head route refinement bias decisions live in
+  `PackRouteAnchorBiasPolicy`, with repository/refinement wrappers preserved
+  for existing callers.
+- Latest local proof after `c5988e6f`: focused JVM tests passed for
+  route/back, shared input submit, follow-up composer, answer/evidence labels,
+  search result cards, route anchor bias, route refinement, route output
+  parity, route-focused ranking/search helpers, answer anchor selection,
+  retrieval orchestration/fusion, and support scoring; `git diff --check`
+  passed; full Android
+  `:app:testDebugUnitTest :app:assembleDebug :app:assembleDebugAndroidTest`
+  passed.
+- Tracker is refreshed through `c5988e6f`.
 
 ## Remaining Next Slices
 
