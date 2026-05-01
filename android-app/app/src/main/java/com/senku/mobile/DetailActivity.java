@@ -2816,21 +2816,13 @@ public final class DetailActivity extends AppCompatActivity {
             ));
         }
 
-        String activeSourceKey = buildSourceSelectionKey(visualOwnerSource);
-        ArrayList<SourceState> sources = new ArrayList<>();
-        if (activeTurn != null) {
-            String anchorKey = buildSourceSelectionKey(visualOwnerSource);
-            for (SearchResult source : activeTurn.sources) {
-                String sourceKey = buildSourceSelectionKey(source);
-                sources.add(new SourceState(
-                    sourceKey,
-                    safe(source == null ? null : source.guideId).trim(),
-                    safe(source == null ? null : source.title).trim(),
-                    !anchorKey.isEmpty() && anchorKey.equals(sourceKey),
-                    !activeSourceKey.isEmpty() && activeSourceKey.equals(sourceKey)
-                ));
-            }
-        }
+        ArrayList<SourceState> sources = activeTurn == null
+            ? new ArrayList<>()
+            : DetailTabletStateBuilder.buildSourceStates(
+                activeTurn.sources,
+                visualOwnerSource,
+                visualOwnerSource
+            );
 
         boolean pinVisible = !resolvePinnableGuideId().isEmpty();
         boolean pinActive = pinVisible && PinnedGuideStore.contains(this, resolvePinnableGuideId());
