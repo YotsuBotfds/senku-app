@@ -542,6 +542,38 @@ public final class PromptHarnessSmokeTest {
     }
 
     @Test
+    public void savedNavigationTapSelectsVisibleSavedSemantics() {
+        clearPinnedGuidesForTest();
+        try (ActivityScenario<MainActivity> scenario = launchProductReviewMainActivity()) {
+            awaitHarnessIdle();
+            Assert.assertTrue(
+                "home launch should settle before Saved visible-semantics proof; harness signals="
+                    + HarnessTestSignals.snapshot(),
+                device.wait(Until.hasObject(By.res(APP_PACKAGE, "search_input")), SEARCH_WAIT_MS)
+            );
+
+            Assert.assertTrue(
+                "Saved navigation tab should be tappable before visible-semantics proof",
+                tapSavedNavigationFromMain()
+            );
+            waitForSavedGuidesDestination(scenario, false, DETAIL_WAIT_MS);
+            UiObject2 savedLabel = waitForUiObject(By.text("Saved"), DETAIL_WAIT_MS);
+            Assert.assertTrue(
+                "Saved navigation should expose a visible Saved label after selection; harness signals="
+                    + HarnessTestSignals.snapshot(),
+                hasVisibleBounds(savedLabel)
+            );
+            scenario.onActivity(activity -> {
+                assertSavedGuidesDestination(activity, false);
+                assertSavedNavigationVisibleSemantics(activity);
+            });
+            captureUiState("saved_tab_visible_semantics");
+        } finally {
+            clearPinnedGuidesForTest();
+        }
+    }
+
+    @Test
     public void savedNavigationBackReturnsManualHomeDestination() {
         clearPinnedGuidesForTest();
         try (ActivityScenario<MainActivity> scenario = launchProductReviewMainActivity()) {
@@ -4619,6 +4651,66 @@ public final class PromptHarnessSmokeTest {
             awaitHarnessIdle();
         }
         return clicked[0];
+    }
+
+    private void assertSavedNavigationVisibleSemantics(Activity activity) {
+        Assert.assertNotNull("saved visible-semantics activity should exist", activity);
+        Assert.assertEquals(
+            "Saved visible semantics should use the Saved route owner",
+            BottomTabDestination.PINS,
+            readMainRouteActivePhoneTab(activity)
+        );
+
+        boolean provedVisibleNavigation = false;
+        BottomTabBarHostView tabHost =
+            findFirstDescendantByClass(activity.findViewById(android.R.id.content), BottomTabBarHostView.class);
+        if (tabHost != null && isEffectivelyVisible(tabHost)) {
+            provedVisibleNavigation = true;
+        }
+
+        View staticSavedTab = activity.findViewById(R.id.phone_nav_pins);
+        TextView staticSavedLabel = activity.findViewById(R.id.phone_nav_pins_label);
+        if (staticSavedTab != null && isEffectivelyVisible(staticSavedTab)) {
+            Assert.assertTrue("static navigation should mark Saved selected", staticSavedTab.isSelected());
+            Assert.assertEquals(
+                "static navigation should expose saved-guides accessibility semantics",
+                "Open saved guides",
+                safe(staticSavedTab.getContentDescription() == null
+                    ? null
+                    : staticSavedTab.getContentDescription().toString())
+            );
+            Assert.assertNotNull("static navigation should expose the Saved label", staticSavedLabel);
+            Assert.assertEquals(
+                "static navigation should keep the visible Saved label",
+                "Saved",
+                safe(staticSavedLabel.getText().toString())
+            );
+            Assert.assertTrue("static navigation Saved label should be selected", staticSavedLabel.isSelected());
+            assertStaticNavLabelNotSelected(activity, R.id.phone_nav_home_label, "Library");
+            assertStaticNavLabelNotSelected(activity, R.id.phone_nav_ask_label, "Ask");
+            provedVisibleNavigation = true;
+        }
+
+        Assert.assertTrue(
+            "Saved visible-semantics proof should observe a runtime or static navigation surface",
+            provedVisibleNavigation
+        );
+    }
+
+    private void assertStaticNavLabelNotSelected(Activity activity, int labelId, String expectedLabel) {
+        TextView label = activity.findViewById(labelId);
+        if (label == null || !isVisible(label)) {
+            return;
+        }
+        Assert.assertEquals(
+            "static navigation should keep the visible " + expectedLabel + " label",
+            expectedLabel,
+            safe(label.getText().toString())
+        );
+        Assert.assertFalse(
+            "static navigation should not mark " + expectedLabel + " selected while Saved is active",
+            label.isSelected()
+        );
     }
 
     private boolean clickUiObject(BySelector selector, long timeoutMs) {
