@@ -24,11 +24,15 @@ public final class ProductSearchCtaResourceLeakageTest {
         assertFalse("Expected at least one activity_main.xml layout variant", activityMainLayouts.isEmpty());
 
         List<String> leakingLayouts = new ArrayList<>();
+        List<String> reviewDemoFixtureLayouts = new ArrayList<>();
         int productSearchButtonReferences = 0;
         for (Path layout : activityMainLayouts) {
             String xml = new String(Files.readAllBytes(layout), StandardCharsets.UTF_8);
             if (xml.contains(EXTERNAL_REVIEW_SEARCH_LABEL)) {
                 leakingLayouts.add(relativePath(layout));
+            }
+            if (containsReviewDemoFixtureCopy(xml)) {
+                reviewDemoFixtureLayouts.add(relativePath(layout));
             }
             if (xml.contains("android:id=\"@+id/search_button\"")) {
                 productSearchButtonReferences++;
@@ -43,6 +47,11 @@ public final class ProductSearchCtaResourceLeakageTest {
             "External-review search copy must stay out of product activity_main.xml variants",
             "",
             String.join(", ", leakingLayouts)
+        );
+        assertEquals(
+            "Review/demo fixture copy must stay out of product activity_main.xml variants",
+            "",
+            String.join(", ", reviewDemoFixtureLayouts)
         );
         assertEquals(
             "Every normal product activity_main.xml variant should expose the product search CTA",
@@ -64,6 +73,14 @@ public final class ProductSearchCtaResourceLeakageTest {
                 .forEach(variants::add);
         }
         return variants;
+    }
+
+    private static boolean containsReviewDemoFixtureCopy(String xml) {
+        return xml.contains("754 guides")
+            || xml.contains("754 GUIDES")
+            || xml.contains("12 categories")
+            || xml.contains("ED.2")
+            || xml.contains("ed. 2");
     }
 
     private static File locateRepoFile(String relativePath) {

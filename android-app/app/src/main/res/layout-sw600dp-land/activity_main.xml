@@ -304,7 +304,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="6dp"
                         android:includeFontPadding="false"
-                        android:text="754 guides &#8226; 12 categories &#8226; ready offline &#8226; ed. 2"
+                        android:text="@string/home_identity_subtitle_loading"
                         android:textAppearance="?android:attr/textAppearanceSmall"
                         android:textColor="@color/senku_rev03_ink_1"
                         android:textSize="13sp" />
@@ -340,7 +340,7 @@
                             android:layout_height="wrap_content"
                             android:fontFamily="@font/jetbrains_mono"
                             android:includeFontPadding="false"
-                            android:text="754 GUIDES &#8226; ED.2 &#8226; 184 MB"
+                            android:text="@string/status_starting"
                             android:textAppearance="?android:attr/textAppearanceSmall"
                             android:textColor="@color/senku_rev03_ink_2"
                             android:textSize="12sp"

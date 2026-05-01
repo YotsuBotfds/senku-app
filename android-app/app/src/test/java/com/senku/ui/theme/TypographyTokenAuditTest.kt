@@ -235,7 +235,7 @@ class TypographyTokenAuditTest {
         if (id.startsWith("category_") && id.endsWith("_count")) {
             return true
         }
-        return text == "754 guides \u2022 12 categories \u2022 ready offline \u2022 ed. 2"
+        return false
     }
 
     private fun Element.isHiddenInLayout(): Boolean {

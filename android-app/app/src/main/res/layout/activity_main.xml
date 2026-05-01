@@ -171,7 +171,7 @@
                     android:layout_height="wrap_content"
                     android:fontFamily="monospace"
                     android:includeFontPadding="false"
-                    android:text="754 GUIDES &#8226; ED.2 &#8226; 184 MB"
+                    android:text="@string/status_starting"
                     android:textAppearance="?android:attr/textAppearanceSmall"
                     android:textColor="@color/senku_rev03_ink_2"
                     android:textSize="10sp"
