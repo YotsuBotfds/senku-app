@@ -581,7 +581,7 @@ public final class MainActivity extends AppCompatActivity {
                     );
                     if (installCompletionAction == MainInstallCompletionPolicy.Action.PUBLISH_BROWSE_GUIDES) {
                         setResultHighlightQuery("");
-                        publishResultItems(MainResultPublicationPolicy.browseSurface(), guides);
+                        publishResultItems(MainResultPublicationPolicy.browseSurface(currentMainRouteState()), guides);
                         resultsHeader.setText("Guide browser (" + guides.size() + " loaded)");
                     }
                     maybeHandleAutomation();
@@ -694,7 +694,7 @@ public final class MainActivity extends AppCompatActivity {
                 MainResultPublicationPolicy.resultSurfaceWithSearchChrome(query, displayQuery, 0);
             setResultHighlightQuery(loadingPublication.highlightQuery());
             publishSearchQueryChrome(loadingPublication);
-            showBrowseChrome(loadingPublication.browseChromeVisible());
+            applyMainRouteState(resolveResultPublicationRouteState(loadingPublication));
             replaceItems(Collections.emptyList());
             resultsHeader.setText(R.string.results_header_searching);
             setBusy(sessionUsed
@@ -753,7 +753,7 @@ public final class MainActivity extends AppCompatActivity {
         public void onSearchFailure(String query, Exception exception) {
             setBusy("Search failed", false);
             publishResultItems(
-                MainResultPublicationPolicy.resultSurfaceWithBrowseFallback(
+                MainResultPublicationPolicy.searchResultSurfaceWithBrowseFallback(
                     query,
                     !hasAutoQuery(getIntent())
                 ),
@@ -921,7 +921,7 @@ public final class MainActivity extends AppCompatActivity {
             } else {
                 applyMainRouteState(MainRouteDecisionHelper.askUnavailableOrNoSourceFailure());
                 publishResultItems(
-                    MainResultPublicationPolicy.resultSurfaceWithBrowseFallback(query, !hasAutoQuery),
+                    MainResultPublicationPolicy.askResultSurfaceWithBrowseFallback(query, !hasAutoQuery),
                     Collections.emptyList()
                 );
                 resultsHeader.setText("Offline answer failed");
@@ -1208,7 +1208,7 @@ public final class MainActivity extends AppCompatActivity {
             applyMainRouteState(MainRouteDecisionHelper.browseGuides(currentMainRouteState()));
             setBusy(presentationFormatter().buildHomeReadyStatus(allGuides.size()), false);
             updateCategoryCards(allGuides);
-            publishResultItems(MainResultPublicationPolicy.browseSurface(), allGuides);
+            publishResultItems(MainResultPublicationPolicy.browseSurface(currentMainRouteState()), allGuides);
             resultsHeader.setText("Guide browser (" + allGuides.size() + " loaded)");
             updateSessionPanel();
             return;
@@ -1224,7 +1224,7 @@ public final class MainActivity extends AppCompatActivity {
                     allGuides.clear();
                     allGuides.addAll(guides);
                     updateCategoryCards(guides);
-                    publishResultItems(MainResultPublicationPolicy.browseSurface(), guides);
+                    publishResultItems(MainResultPublicationPolicy.browseSurface(currentMainRouteState()), guides);
                     resultsHeader.setText("Guide browser (" + guides.size() + " loaded)");
                     updateSessionPanel();
                     refreshPinnedGuidesAsync();
@@ -1244,7 +1244,13 @@ public final class MainActivity extends AppCompatActivity {
     private void publishResultItems(MainResultPublicationPolicy publication, List<SearchResult> results) {
         setResultHighlightQuery(publication.highlightQuery());
         replaceItems(results);
-        showBrowseChrome(publication.browseChromeVisible());
+        applyMainRouteState(resolveResultPublicationRouteState(publication));
+    }
+
+    static MainRouteDecisionHelper.RouteState resolveResultPublicationRouteState(
+        MainResultPublicationPolicy publication
+    ) {
+        return publication == null ? MainRouteDecisionHelper.browseHome() : publication.routeState();
     }
 
     private void publishSearchQueryChrome(MainResultPublicationPolicy publication) {
@@ -3428,7 +3434,7 @@ public final class MainActivity extends AppCompatActivity {
         if (searchInput != null) {
             searchInput.setText("");
         }
-        publishResultItems(MainResultPublicationPolicy.browseSurface(), allGuides);
+        publishResultItems(MainResultPublicationPolicy.browseSurface(currentMainRouteState()), allGuides);
         updateSessionPanel();
         refreshRecentThreads();
         setBusy("Thread cleared", false);
