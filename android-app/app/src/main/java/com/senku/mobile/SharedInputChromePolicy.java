@@ -26,7 +26,7 @@ final class SharedInputChromePolicy {
         if (target == SubmitTarget.ASK) {
             return answerReady ? R.string.ask_button_ready : R.string.ask_button;
         }
-        return R.string.external_review_home_search_button;
+        return R.string.home_search_button;
     }
 
     static int submitButtonDescriptionResource(SubmitTarget target) {

@@ -468,7 +468,7 @@ public final class MainActivityPhoneNavigationTest {
         assertEquals(R.string.ask_button_ready, askAction.buttonTextResource);
         assertEquals(R.string.ask_button_description, askAction.buttonDescriptionResource);
         assertEquals(SubmitTarget.SEARCH, searchAction.target);
-        assertEquals(R.string.external_review_home_search_button, searchAction.buttonTextResource);
+        assertEquals(R.string.home_search_button, searchAction.buttonTextResource);
         assertEquals(R.string.search_button_description, searchAction.buttonDescriptionResource);
     }
 

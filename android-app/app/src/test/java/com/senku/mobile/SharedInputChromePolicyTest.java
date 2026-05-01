@@ -40,11 +40,11 @@ public final class SharedInputChromePolicyTest {
         );
         assertEquals(EditorInfo.IME_ACTION_SEARCH, SharedInputChromePolicy.inputImeAction(SubmitTarget.SEARCH));
         assertEquals(
-            R.string.external_review_home_search_button,
+            R.string.home_search_button,
             SharedInputChromePolicy.submitButtonLabelResource(SubmitTarget.SEARCH, false)
         );
         assertEquals(
-            R.string.external_review_home_search_button,
+            R.string.home_search_button,
             SharedInputChromePolicy.submitButtonLabelResource(SubmitTarget.SEARCH, true)
         );
         assertEquals(
@@ -62,7 +62,7 @@ public final class SharedInputChromePolicyTest {
         );
         assertEquals(EditorInfo.IME_ACTION_SEARCH, SharedInputChromePolicy.inputImeAction(null));
         assertEquals(
-            R.string.external_review_home_search_button,
+            R.string.home_search_button,
             SharedInputChromePolicy.submitButtonLabelResource(null, true)
         );
         assertEquals(

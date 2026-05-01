@@ -316,7 +316,7 @@
                 android:minWidth="0dp"
                 android:paddingStart="18dp"
                 android:paddingEnd="18dp"
-            android:text="@string/external_review_home_search_button"
+            android:text="@string/home_search_button"
             android:textAllCaps="false"
             android:textColor="@color/senku_rev03_ink_0" />
     </LinearLayout>

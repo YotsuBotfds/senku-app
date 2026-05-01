@@ -7,6 +7,7 @@
     <string name="home_subtitle">Pack loading</string>
     <string name="search_hint">Search guide titles, IDs, or field notes...</string>
     <string name="search_button">Search</string>
+    <string name="home_search_button">Find</string>
     <string name="ask_button">Ask Manual</string>
     <string name="ask_button_ready">Ask Manual</string>
     <string name="search_button_description">Search guide results</string>

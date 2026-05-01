@@ -1,5 +1,4 @@
 <resources>
-    <string name="external_review_home_search_button">Find</string>
     <string name="external_review_home_ready_status">Ready offline | %1$s guides</string>
     <string name="external_review_home_subtitle_ready">MODE OFFLINE</string>
     <string name="external_review_home_related_section_title">Linked paths</string>
