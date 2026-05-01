@@ -94,13 +94,17 @@ def add_interaction(summary: dict, *, statuses: list[str] | None = None) -> dict
         if status == "failed":
             step["message"] = "not found"
         if summary["status"] == "completed" and status == "success" and name in post_check_steps:
+            matched_text = ["Saved"] if name != "submit_query" else ["Answer"]
             step["post_check"] = {
                 "passed": True,
-                "expected_any_text": ["Saved" if name != "submit_query" else "Search"],
-                "matched_text": ["Saved" if name != "submit_query" else "Search"],
-                "ui_text_sample": ["Saved", "Search"],
+                "expected_any_text": ["Saved" if name != "submit_query" else "Answer"],
+                "matched_text": matched_text,
+                "ui_text_sample": ["Saved", "Answer"],
                 "dump_length": 128,
                 "dump_sha256": "a" * 64,
+                "baseline_dump_sha256": "b" * 64,
+                "dump_changed": True,
+                "require_changed_dump": name in {"submit_query", "back"},
                 "captured_at_utc": "2026-04-30T00:00:01.0000000Z",
             }
         steps.append(step)
@@ -202,6 +206,9 @@ class ValidateAndroidPhysicalPhoneSmokeSummaryTests(unittest.TestCase):
             "ui_text_sample": ["No matching result"],
             "dump_length": 96,
             "dump_sha256": "b" * 64,
+            "baseline_dump_sha256": "c" * 64,
+            "dump_changed": False,
+            "require_changed_dump": True,
             "captured_at_utc": "2026-04-30T00:00:02.0000000Z",
             "step_name": "submit_query",
         }
@@ -219,6 +226,7 @@ class ValidateAndroidPhysicalPhoneSmokeSummaryTests(unittest.TestCase):
         del summary["interaction"]["steps"][0]["post_check"]
         summary["interaction"]["steps"][3]["post_check"]["passed"] = False
         summary["interaction"]["steps"][4]["post_check"]["matched_text"] = []
+        summary["interaction"]["steps"][4]["post_check"]["dump_changed"] = False
 
         _, errors = validate_summary(self.write_summary(summary))
 
@@ -231,7 +239,29 @@ class ValidateAndroidPhysicalPhoneSmokeSummaryTests(unittest.TestCase):
             errors,
         )
         self.assertIn(
-            "expected root.interaction.steps[4].post_check.matched_text to be non-empty",
+            "expected root.interaction.steps[4].post_check.matched_text or dump_changed evidence",
+            errors,
+        )
+
+    def test_completed_submit_back_reject_generic_unchanged_post_check(self):
+        summary = add_interaction(make_summary(completed=True))
+        submit_post_check = summary["interaction"]["steps"][3]["post_check"]
+        submit_post_check["expected_any_text"] = ["boil water", "Search", "Ask"]
+        submit_post_check["matched_text"] = ["boil water", "Search"]
+        submit_post_check["dump_changed"] = False
+        back_post_check = summary["interaction"]["steps"][4]["post_check"]
+        back_post_check["expected_any_text"] = ["Search", "Ask"]
+        back_post_check["matched_text"] = ["Search"]
+        back_post_check["dump_changed"] = False
+
+        _, errors = validate_summary(self.write_summary(summary))
+
+        self.assertIn(
+            "expected root.interaction.steps[3].post_check to include route/state text or changed UI evidence",
+            errors,
+        )
+        self.assertIn(
+            "expected root.interaction.steps[4].post_check to include route/state text or changed UI evidence",
             errors,
         )
 
@@ -242,6 +272,9 @@ class ValidateAndroidPhysicalPhoneSmokeSummaryTests(unittest.TestCase):
         post_check["matched_text"] = ["Other"]
         post_check["dump_length"] = 0
         post_check["dump_sha256"] = "not-a-sha"
+        post_check["baseline_dump_sha256"] = "not-a-sha"
+        post_check["dump_changed"] = "yes"
+        post_check["require_changed_dump"] = "yes"
         post_check["step_name"] = "unknown"
 
         _, errors = validate_summary(self.write_summary(summary))
@@ -257,6 +290,18 @@ class ValidateAndroidPhysicalPhoneSmokeSummaryTests(unittest.TestCase):
         self.assertIn("expected root.interaction.steps[0].post_check.dump_length to be positive", errors)
         self.assertIn(
             "expected root.interaction.steps[0].post_check.dump_sha256 to be a lowercase sha256 hex digest",
+            errors,
+        )
+        self.assertIn(
+            "expected root.interaction.steps[0].post_check.baseline_dump_sha256 to be a lowercase sha256 hex digest",
+            errors,
+        )
+        self.assertIn(
+            "expected root.interaction.steps[0].post_check.dump_changed to be bool when present",
+            errors,
+        )
+        self.assertIn(
+            "expected root.interaction.steps[0].post_check.require_changed_dump to be bool when present",
             errors,
         )
         self.assertIn(

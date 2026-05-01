@@ -392,7 +392,9 @@ function Get-UiPostStepEvidence {
     param(
         [string]$DumpText,
         [string[]]$ExpectedAnyText,
-        [string]$StepName = ""
+        [string]$StepName = "",
+        [string]$BaselineDumpSha256 = $null,
+        [bool]$RequireChangedDump = $false
     )
 
     $expected = @($ExpectedAnyText | Where-Object { -not [string]::IsNullOrWhiteSpace($_) })
@@ -403,14 +405,23 @@ function Get-UiPostStepEvidence {
         }
     }
 
+    $dumpSha256 = Get-UiDumpHash -DumpText $DumpText
+    $hasBaseline = -not [string]::IsNullOrWhiteSpace($BaselineDumpSha256)
+    $dumpChanged = if ($hasBaseline) { $dumpSha256 -ne $BaselineDumpSha256 } else { $null }
+    $textPassed = (($expected.Count -eq 0) -and (-not $RequireChangedDump)) -or ($matched.Count -gt 0)
+    $changePassed = $RequireChangedDump -and ($dumpChanged -eq $true)
+
     $textFragments = @(Get-UiDumpTextFragments -DumpText $DumpText | Select-Object -First 25)
     $evidence = [ordered]@{
-        passed = ($expected.Count -eq 0) -or ($matched.Count -gt 0)
+        passed = $textPassed -or $changePassed
         expected_any_text = $expected
         matched_text = $matched
         ui_text_sample = $textFragments
         dump_length = $DumpText.Length
-        dump_sha256 = Get-UiDumpHash -DumpText $DumpText
+        dump_sha256 = $dumpSha256
+        baseline_dump_sha256 = if ($hasBaseline) { $BaselineDumpSha256 } else { $null }
+        dump_changed = $dumpChanged
+        require_changed_dump = $RequireChangedDump
         captured_at_utc = (Get-Date).ToUniversalTime().ToString("o")
     }
     if (-not [string]::IsNullOrWhiteSpace($StepName)) {
@@ -436,6 +447,8 @@ function Wait-UiPostStepEvidence {
         [string]$DeviceSerial,
         [string[]]$ExpectedAnyText,
         [string]$StepName = "",
+        [string]$BaselineDumpSha256 = $null,
+        [bool]$RequireChangedDump = $false,
         [int]$TimeoutMs = 3000,
         [int]$PollMs = 500
     )
@@ -444,7 +457,7 @@ function Wait-UiPostStepEvidence {
     $lastEvidence = $null
     do {
         $dumpText = Read-UiAutomatorDump -ResolvedAdbPath $ResolvedAdbPath -DeviceSerial $DeviceSerial
-        $lastEvidence = Get-UiPostStepEvidence -DumpText $dumpText -ExpectedAnyText $ExpectedAnyText -StepName $StepName
+        $lastEvidence = Get-UiPostStepEvidence -DumpText $dumpText -ExpectedAnyText $ExpectedAnyText -StepName $StepName -BaselineDumpSha256 $BaselineDumpSha256 -RequireChangedDump $RequireChangedDump
         $script:LastUiPostStepEvidence = $lastEvidence
         if ($lastEvidence.passed) {
             return $lastEvidence
@@ -561,16 +574,22 @@ function Invoke-InteractionStep {
         [System.Collections.ArrayList]$Steps,
         [string]$Name,
         [scriptblock]$Action,
-        [string[]]$ExpectedAnyText = @()
+        [string[]]$ExpectedAnyText = @(),
+        [switch]$RequireChangedDump
     )
 
     $postCheck = $null
+    $baselineDumpSha256 = $null
     try {
+        if ($RequireChangedDump) {
+            $baselineDumpText = Read-UiAutomatorDump -ResolvedAdbPath $ResolvedAdbPath -DeviceSerial $DeviceSerial
+            $baselineDumpSha256 = Get-UiDumpHash -DumpText $baselineDumpText
+        }
         & $Action
-        if ($ExpectedAnyText.Count -gt 0) {
-            $postCheck = Wait-UiPostStepEvidence -ResolvedAdbPath $ResolvedAdbPath -DeviceSerial $DeviceSerial -ExpectedAnyText $ExpectedAnyText -StepName $Name
+        if (($ExpectedAnyText.Count -gt 0) -or $RequireChangedDump) {
+            $postCheck = Wait-UiPostStepEvidence -ResolvedAdbPath $ResolvedAdbPath -DeviceSerial $DeviceSerial -ExpectedAnyText $ExpectedAnyText -StepName $Name -BaselineDumpSha256 $baselineDumpSha256 -RequireChangedDump ([bool]$RequireChangedDump)
             if (-not $postCheck.passed) {
-                $message = "Post-step UI check for '$Name' did not find expected text fragment(s): $($ExpectedAnyText -join ', ')"
+                $message = "Post-step UI check for '$Name' did not find expected text fragment(s) or changed UI dump: $($ExpectedAnyText -join ', ')"
                 [void]$Steps.Add((New-InteractionStep -Name $Name -Status "failed" -Message $message -PostCheck $postCheck))
                 return $false
             }
@@ -578,7 +597,7 @@ function Invoke-InteractionStep {
         [void]$Steps.Add((New-InteractionStep -Name $Name -Status "success" -PostCheck $postCheck))
         return $true
     } catch {
-        if ($null -eq $postCheck -and $ExpectedAnyText.Count -gt 0 -and $null -ne $script:LastUiPostStepEvidence) {
+        if ($null -eq $postCheck -and (($ExpectedAnyText.Count -gt 0) -or $RequireChangedDump) -and $null -ne $script:LastUiPostStepEvidence) {
             $lastEvidenceStepName = [string]$script:LastUiPostStepEvidence.step_name
             if ([string]::IsNullOrWhiteSpace($lastEvidenceStepName) -or $lastEvidenceStepName -eq $Name) {
                 $postCheck = $script:LastUiPostStepEvidence
@@ -647,12 +666,12 @@ function Invoke-SenkuSimpleInteraction {
     [void](Invoke-InteractionStep -Steps $steps -Name "submit_query" -Action {
         Invoke-AdbChecked -ResolvedAdbPath $ResolvedAdbPath -Arguments @("-s", $DeviceSerial, "shell", "input", "keyevent", "ENTER")
         Start-Sleep -Milliseconds 1000
-    } -ExpectedAnyText @($QueryText, "Answer", "Results", "Search", "Ask"))
+    } -ExpectedAnyText @("Answer", "Results", "Sources", "Related guides", "No matching result") -RequireChangedDump)
 
     [void](Invoke-InteractionStep -Steps $steps -Name "back" -Action {
         Invoke-AdbChecked -ResolvedAdbPath $ResolvedAdbPath -Arguments @("-s", $DeviceSerial, "shell", "input", "keyevent", "BACK")
         Start-Sleep -Milliseconds 500
-    } -ExpectedAnyText @("Saved", "Search", "Ask"))
+    } -ExpectedAnyText (Get-SavedDestinationEvidenceFragments) -RequireChangedDump)
 
     return @($steps)
 }

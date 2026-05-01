@@ -329,6 +329,18 @@ def _validate_post_check(post_check: Any, errors: list[str], *, scope: str) -> N
     if isinstance(dump_sha256, str) and not re.fullmatch(r"[0-9a-f]{64}", dump_sha256):
         errors.append(f"expected {scope}.dump_sha256 to be a lowercase sha256 hex digest")
 
+    baseline_dump_sha256 = post_check.get("baseline_dump_sha256")
+    if baseline_dump_sha256 is not None:
+        _validate_sha256(baseline_dump_sha256, errors, key=f"{scope}.baseline_dump_sha256")
+
+    dump_changed = post_check.get("dump_changed")
+    if dump_changed is not None and not isinstance(dump_changed, bool):
+        errors.append(f"expected {scope}.dump_changed to be bool when present")
+
+    require_changed_dump = post_check.get("require_changed_dump")
+    if require_changed_dump is not None and not isinstance(require_changed_dump, bool):
+        errors.append(f"expected {scope}.require_changed_dump to be bool when present")
+
     step_name = post_check.get("step_name")
     if step_name is not None:
         if not isinstance(step_name, str) or not step_name.strip():
@@ -485,6 +497,7 @@ def _validate_completed(data: dict[str, Any], errors: list[str]) -> None:
 
     interaction = data.get("interaction")
     if isinstance(interaction, dict) and isinstance(interaction.get("steps"), list):
+        interaction_query = interaction.get("query")
         for index, step in enumerate(interaction["steps"]):
             if isinstance(step, dict) and step.get("status") != "success":
                 errors.append(
@@ -505,9 +518,26 @@ def _validate_completed(data: dict[str, Any], errors: list[str]) -> None:
                         f"expected root.interaction.steps[{index}].post_check.passed to be True"
                     )
                 elif not post_check.get("matched_text"):
-                    errors.append(
-                        f"expected root.interaction.steps[{index}].post_check.matched_text to be non-empty"
-                    )
+                    if post_check.get("dump_changed") is not True:
+                        errors.append(
+                            f"expected root.interaction.steps[{index}].post_check.matched_text or dump_changed evidence"
+                        )
+                if step.get("name") in {"submit_query", "back"}:
+                    matched_text = post_check.get("matched_text")
+                    strong_matches = []
+                    if isinstance(matched_text, list):
+                        weak_matches = {"Search", "Ask"}
+                        if step.get("name") == "submit_query" and isinstance(interaction_query, str):
+                            weak_matches.add(interaction_query)
+                        strong_matches = [
+                            item
+                            for item in matched_text
+                            if isinstance(item, str) and item not in weak_matches
+                        ]
+                    if not strong_matches and post_check.get("dump_changed") is not True:
+                        errors.append(
+                            f"expected root.interaction.steps[{index}].post_check to include route/state text or changed UI evidence"
+                        )
 
 
 def validate_summary(path: Path) -> tuple[dict[str, Any] | None, list[str]]:

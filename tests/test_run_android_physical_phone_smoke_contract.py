@@ -58,6 +58,9 @@ class AndroidPhysicalPhoneSmokeContractTests(unittest.TestCase):
         self.assertIn("function Wait-UiPostStepEvidence", self.script)
         self.assertIn("function Get-SavedDestinationEvidenceFragments", self.script)
         self.assertIn("post_check", self.script)
+        self.assertIn("baseline_dump_sha256", self.script)
+        self.assertIn("dump_changed", self.script)
+        self.assertIn("RequireChangedDump", self.script)
         self.assertIn("selected_destination", self.script)
         self.assertIn("dump_sha256", self.script)
         self.assertIn("function Invoke-SenkuSimpleInteraction", self.script)
@@ -65,8 +68,12 @@ class AndroidPhysicalPhoneSmokeContractTests(unittest.TestCase):
         self.assertIn("tap_query_field", self.script)
         self.assertIn("enter_query", self.script)
         self.assertIn("submit_query", self.script)
+        self.assertNotIn('@($QueryText, "Answer", "Results", "Search", "Ask")', self.script)
+        self.assertIn('@("Answer", "Results", "Sources", "Related guides", "No matching result") -RequireChangedDump', self.script)
         self.assertIn('"input", "text"', self.script)
         self.assertIn('"input", "keyevent", "BACK"', self.script)
+        self.assertNotIn('@("Saved", "Search", "Ask")', self.script)
+        self.assertIn("-ExpectedAnyText (Get-SavedDestinationEvidenceFragments) -RequireChangedDump", self.script)
         self.assertIn('"logcat", "-d", "-v", "time"', self.script)
         self.assertIn("physical_device = $true", self.script)
         self.assertIn("launches_emulators = $false", self.script)
@@ -408,6 +415,9 @@ class AndroidPhysicalPhoneSmokeContractTests(unittest.TestCase):
             apk = root / "app-debug.apk"
             adb = root / "adb.cmd"
             calls = root / "adb_calls.txt"
+            saved = root / "saved.txt"
+            entered = root / "entered.txt"
+            backed = root / "backed.txt"
             apk.write_text("apk", encoding="utf-8")
             adb.write_text(
                 "\r\n".join(
@@ -428,9 +438,13 @@ class AndroidPhysicalPhoneSmokeContractTests(unittest.TestCase):
                         "if \"%4\"==\"dumpsys\" if \"%5\"==\"activity\" (echo topResumedActivity=com.senku.mobile/.MainActivity& exit /b 0)",
                         "if \"%4\"==\"dumpsys\" if \"%5\"==\"input\" (echo SurfaceOrientation: 0& exit /b 0)",
                         "if \"%3\"==\"exec-out\" (echo PNGDATA& exit /b 0)",
-                        "if \"%4\"==\"uiautomator\" (echo ^<hierarchy^>^<node text=\"Saved\" content-desc=\"Saved\" bounds=\"[10,20][110,120]\" /^>^<node text=\"Boil water safely\" content-desc=\"Saved guide 1 of 1: Boil water safely\" /^>^<node class=\"android.widget.EditText\" resource-id=\"com.senku.mobile:id/search\" bounds=\"[30,200][330,260]\" /^>^</hierarchy^>& exit /b 0)",
-                        "if \"%4\"==\"input\" if \"%5\"==\"tap\" (echo tapped& exit /b 0)",
+                        f"if \"%4\"==\"uiautomator\" if exist \"{entered}\" if not exist \"{backed}\" (echo ^<hierarchy^>^<node text=\"Answer\" /^>^<node text=\"Results\" /^>^</hierarchy^>& exit /b 0)",
+                        f"if \"%4\"==\"uiautomator\" if exist \"{saved}\" (echo ^<hierarchy^>^<node text=\"Saved\" content-desc=\"Saved\" bounds=\"[10,20][110,120]\" /^>^<node text=\"Boil water safely\" content-desc=\"Saved guide 1 of 1: Boil water safely\" /^>^<node class=\"android.widget.EditText\" resource-id=\"com.senku.mobile:id/search\" bounds=\"[30,200][330,260]\" /^>^</hierarchy^>& exit /b 0)",
+                        "if \"%4\"==\"uiautomator\" (echo ^<hierarchy^>^<node text=\"Saved\" content-desc=\"Saved\" bounds=\"[10,20][110,120]\" /^>^<node class=\"android.widget.EditText\" resource-id=\"com.senku.mobile:id/search\" bounds=\"[30,200][330,260]\" /^>^</hierarchy^>& exit /b 0)",
+                        f"if \"%4\"==\"input\" if \"%5\"==\"tap\" (echo saved> \"{saved}\"& echo tapped& exit /b 0)",
                         "if \"%4\"==\"input\" if \"%5\"==\"text\" (echo typed& exit /b 0)",
+                        f"if \"%4\"==\"input\" if \"%5\"==\"keyevent\" if \"%6\"==\"ENTER\" (echo entered> \"{entered}\"& echo key& exit /b 0)",
+                        f"if \"%4\"==\"input\" if \"%5\"==\"keyevent\" if \"%6\"==\"BACK\" (echo backed> \"{backed}\"& echo key& exit /b 0)",
                         "if \"%4\"==\"input\" if \"%5\"==\"keyevent\" (echo key& exit /b 0)",
                         "exit /b 1",
                     ]
@@ -484,15 +498,30 @@ class AndroidPhysicalPhoneSmokeContractTests(unittest.TestCase):
                 self.assertTrue(step_by_name[step_name]["post_check"]["passed"])
                 self.assertGreater(step_by_name[step_name]["post_check"]["dump_length"], 0)
                 self.assertRegex(step_by_name[step_name]["post_check"]["dump_sha256"], r"^[0-9a-f]{64}$")
-                self.assertGreaterEqual(len(step_by_name[step_name]["post_check"]["matched_text"]), 1)
-                self.assertIn("Saved", step_by_name[step_name]["post_check"]["ui_text_sample"])
+                if step_name in ["submit_query", "back"]:
+                    self.assertTrue(step_by_name[step_name]["post_check"]["dump_changed"])
+                    self.assertTrue(step_by_name[step_name]["post_check"]["require_changed_dump"])
+                    self.assertRegex(
+                        step_by_name[step_name]["post_check"]["baseline_dump_sha256"],
+                        r"^[0-9a-f]{64}$",
+                    )
             self.assertEqual(
                 step_by_name["tap_saved"]["post_check"]["expected_any_text"],
                 ["No saved guides yet", "This tab only shows saved guides", "Saved guide "],
             )
             self.assertIn("Saved guide ", step_by_name["tap_saved"]["post_check"]["matched_text"])
+            self.assertIn("Saved", step_by_name["tap_saved"]["post_check"]["ui_text_sample"])
             self.assertEqual(step_by_name["tap_saved"]["post_check"]["selected_destination"], "saved")
-            self.assertIn("Search", step_by_name["submit_query"]["post_check"]["matched_text"])
+            self.assertEqual(
+                step_by_name["submit_query"]["post_check"]["expected_any_text"],
+                ["Answer", "Results", "Sources", "Related guides", "No matching result"],
+            )
+            self.assertIn("Answer", step_by_name["submit_query"]["post_check"]["matched_text"])
+            self.assertEqual(
+                step_by_name["back"]["post_check"]["expected_any_text"],
+                ["No saved guides yet", "This tab only shows saved guides", "Saved guide "],
+            )
+            self.assertIn("Saved guide ", step_by_name["back"]["post_check"]["matched_text"])
             self.assertNotIn("post_check", step_by_name["tap_query_field"])
             self.assertNotIn("post_check", step_by_name["enter_query"])
             call_text = calls.read_text(encoding="utf-8")
@@ -501,6 +530,96 @@ class AndroidPhysicalPhoneSmokeContractTests(unittest.TestCase):
             self.assertIn("-s R5CT123456A shell input text boil%swater", call_text)
             self.assertIn("-s R5CT123456A shell input keyevent ENTER", call_text)
             self.assertIn("-s R5CT123456A shell input keyevent BACK", call_text)
+        finally:
+            shutil.rmtree(root, ignore_errors=True)
+
+    def test_fake_adb_unchanged_generic_submit_post_check_fails(self):
+        root = Path(tempfile.mkdtemp(prefix="physical_phone_smoke_unchanged_submit_"))
+        try:
+            output_dir = root / "out"
+            apk = root / "app-debug.apk"
+            adb = root / "adb.cmd"
+            apk.write_text("apk", encoding="utf-8")
+            unchanged_dump = (
+                "^<hierarchy^>"
+                "^<node text=\"Saved\" content-desc=\"Saved\" bounds=\"[10,20][110,120]\" /^>"
+                "^<node text=\"No saved guides yet. This tab only shows saved guides, not threads or sections.\" /^>"
+                "^<node class=\"android.widget.EditText\" text=\"boil water\" content-desc=\"Ask\" resource-id=\"com.senku.mobile:id/search\" bounds=\"[30,200][330,260]\" /^>"
+                "^<node text=\"Search\" /^>"
+                "^</hierarchy^>"
+            )
+            adb.write_text(
+                "\r\n".join(
+                    [
+                        "@echo off",
+                        "if \"%1\"==\"devices\" (",
+                        "  echo List of devices attached",
+                        "  echo R5CT123456A\tdevice",
+                        "  exit /b 0",
+                        ")",
+                        "if \"%5\"==\"ro.kernel.qemu\" (echo 0& exit /b 0)",
+                        "if \"%5\"==\"ro.boot.qemu\" (echo 0& exit /b 0)",
+                        "if \"%4\"==\"getprop\" (echo fake-%5& exit /b 0)",
+                        "if \"%3\"==\"install\" (echo Success& exit /b 0)",
+                        "if \"%4\"==\"am\" (echo Starting: Intent& exit /b 0)",
+                        "if \"%4\"==\"dumpsys\" if \"%5\"==\"window\" (echo mCurrentFocus=Window{u0 com.senku.mobile/.MainActivity}& exit /b 0)",
+                        "if \"%4\"==\"dumpsys\" if \"%5\"==\"activity\" (echo topResumedActivity=com.senku.mobile/.MainActivity& exit /b 0)",
+                        "if \"%4\"==\"dumpsys\" if \"%5\"==\"input\" (echo SurfaceOrientation: 0& exit /b 0)",
+                        "if \"%3\"==\"exec-out\" (echo PNGDATA& exit /b 0)",
+                        f"if \"%4\"==\"uiautomator\" (echo {unchanged_dump}& exit /b 0)",
+                        "if \"%4\"==\"input\" (echo ok& exit /b 0)",
+                        "exit /b 1",
+                    ]
+                ),
+                encoding="utf-8",
+            )
+
+            result = subprocess.run(
+                [
+                    "powershell",
+                    "-NoProfile",
+                    "-ExecutionPolicy",
+                    "Bypass",
+                    "-File",
+                    str(SCRIPT),
+                    "-OutputDir",
+                    str(output_dir),
+                    "-Serial",
+                    "R5CT123456A",
+                    "-ApkPath",
+                    str(apk),
+                    "-AdbPath",
+                    str(adb),
+                    "-Interact",
+                    "-InteractionQuery",
+                    "boil water",
+                ],
+                cwd=REPO_ROOT,
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+
+            self.assertNotEqual(result.returncode, 0, result.stderr + result.stdout)
+            self.assertIn("interaction failed step", result.stderr + result.stdout)
+            self.assertIn("last post_check step=submit_query", result.stderr + result.stdout)
+            summary = json.loads((output_dir / "summary.json").read_text(encoding="utf-8-sig"))
+            step_by_name = {step["name"]: step for step in summary["interaction"]["steps"]}
+            submit_step = step_by_name["submit_query"]
+            self.assertEqual(submit_step["status"], "failed")
+            post_check = submit_step["post_check"]
+            self.assertFalse(post_check["passed"])
+            self.assertEqual(
+                post_check["expected_any_text"],
+                ["Answer", "Results", "Sources", "Related guides", "No matching result"],
+            )
+            self.assertEqual(post_check["matched_text"], [])
+            self.assertIn("Search", post_check["ui_text_sample"])
+            self.assertIn("Ask", post_check["ui_text_sample"])
+            self.assertIn("boil water", post_check["ui_text_sample"])
+            self.assertFalse(post_check["dump_changed"])
+            self.assertTrue(post_check["require_changed_dump"])
+            self.assertRegex(post_check["baseline_dump_sha256"], r"^[0-9a-f]{64}$")
         finally:
             shutil.rmtree(root, ignore_errors=True)
 
@@ -564,7 +683,7 @@ class AndroidPhysicalPhoneSmokeContractTests(unittest.TestCase):
 
             self.assertNotEqual(result.returncode, 0, result.stderr + result.stdout)
             self.assertIn("interaction failed step", result.stderr + result.stdout)
-            self.assertIn("last post_check step=tap_saved", result.stderr + result.stdout)
+            self.assertIn("tap_saved", result.stderr + result.stdout)
             summary = json.loads((output_dir / "summary.json").read_text(encoding="utf-8-sig"))
             first_step = summary["interaction"]["steps"][0]
             self.assertEqual(first_step["name"], "tap_saved")
@@ -716,7 +835,7 @@ class AndroidPhysicalPhoneSmokeContractTests(unittest.TestCase):
             self.assertIn("dump_sha256=", result.stderr + result.stdout)
             summary = json.loads((output_dir / "summary.json").read_text(encoding="utf-8-sig"))
             step_by_name = {step["name"]: step for step in summary["interaction"]["steps"]}
-            failed_step = step_by_name["submit_query"]
+            failed_step = step_by_name["back"]
             self.assertEqual(failed_step["status"], "failed")
             self.assertIn("Post-step UI check", failed_step["message"])
             self.assertIn("post_check", failed_step)
@@ -724,17 +843,20 @@ class AndroidPhysicalPhoneSmokeContractTests(unittest.TestCase):
             self.assertFalse(post_check["passed"])
             self.assertEqual(
                 post_check["expected_any_text"],
-                ["boil water", "Answer", "Results", "Search", "Ask"],
+                ["No saved guides yet", "This tab only shows saved guides", "Saved guide "],
             )
             self.assertEqual(post_check["matched_text"], [])
             self.assertIn("No matching result", post_check["ui_text_sample"])
             self.assertGreater(post_check["dump_length"], 0)
             self.assertRegex(post_check["dump_sha256"], r"^[0-9a-f]{64}$")
-            self.assertEqual(post_check["step_name"], "submit_query")
+            self.assertRegex(post_check["baseline_dump_sha256"], r"^[0-9a-f]{64}$")
+            self.assertFalse(post_check["dump_changed"])
+            self.assertTrue(post_check["require_changed_dump"])
+            self.assertEqual(post_check["step_name"], "back")
             self.assertEqual(summary["interaction"]["last_post_check"], step_by_name["back"]["post_check"])
             self.assertEqual(summary["interaction"]["last_post_check"]["step_name"], "back")
             summary_markdown = (output_dir / "summary.md").read_text(encoding="utf-8-sig")
-            self.assertIn("- interaction_post_check: submit_query=", summary_markdown)
+            self.assertIn("- interaction_post_check: back=", summary_markdown)
             self.assertIn('"passed":false', summary_markdown)
             self.assertIn('"ui_text_sample":["No matching result"]', summary_markdown)
         finally:
