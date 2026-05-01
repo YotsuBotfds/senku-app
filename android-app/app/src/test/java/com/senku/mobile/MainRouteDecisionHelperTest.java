@@ -532,6 +532,118 @@ public final class MainRouteDecisionHelperTest {
     }
 
     @Test
+    public void explicitFlowDestinationRoutesBrowseSurfacesThroughVisibleOwners() {
+        MainRouteDecisionHelper.RouteState current =
+            new MainRouteDecisionHelper.RouteState(
+                MainRouteDecisionHelper.Surface.RECENT_THREADS,
+                BottomTabDestination.ASK,
+                true
+            );
+
+        assertRoute(
+            MainRouteDecisionHelper.routeStateForExplicitFlowDestination(current, BottomTabDestination.HOME),
+            MainRouteDecisionHelper.Surface.BROWSE,
+            BottomTabDestination.HOME,
+            false
+        );
+        assertRoute(
+            MainRouteDecisionHelper.routeStateForExplicitFlowDestination(current, BottomTabDestination.SEARCH),
+            MainRouteDecisionHelper.Surface.BROWSE,
+            BottomTabDestination.HOME,
+            false
+        );
+        assertRoute(
+            MainRouteDecisionHelper.routeStateForExplicitFlowDestination(current, BottomTabDestination.ASK),
+            MainRouteDecisionHelper.Surface.RECENT_THREADS,
+            BottomTabDestination.ASK,
+            true
+        );
+        assertRoute(
+            MainRouteDecisionHelper.routeStateForExplicitFlowDestination(current, BottomTabDestination.THREADS),
+            MainRouteDecisionHelper.Surface.RECENT_THREADS,
+            BottomTabDestination.ASK,
+            false
+        );
+        assertRoute(
+            MainRouteDecisionHelper.routeStateForExplicitFlowDestination(current, BottomTabDestination.PINS),
+            MainRouteDecisionHelper.Surface.SAVED_GUIDES,
+            BottomTabDestination.PINS,
+            false
+        );
+    }
+
+    @Test
+    public void explicitFlowDestinationPreservesResultSurfaceMode() {
+        MainRouteDecisionHelper.RouteState current =
+            new MainRouteDecisionHelper.RouteState(
+                MainRouteDecisionHelper.Surface.ASK_RESULTS,
+                BottomTabDestination.ASK,
+                true
+            );
+
+        assertRoute(
+            MainRouteDecisionHelper.routeStateForExplicitFlowDestination(current, BottomTabDestination.HOME),
+            MainRouteDecisionHelper.Surface.SEARCH_RESULTS,
+            BottomTabDestination.HOME,
+            false
+        );
+        assertRoute(
+            MainRouteDecisionHelper.routeStateForExplicitFlowDestination(current, BottomTabDestination.SEARCH),
+            MainRouteDecisionHelper.Surface.SEARCH_RESULTS,
+            BottomTabDestination.HOME,
+            false
+        );
+        assertRoute(
+            MainRouteDecisionHelper.routeStateForExplicitFlowDestination(current, BottomTabDestination.ASK),
+            MainRouteDecisionHelper.Surface.ASK_RESULTS,
+            BottomTabDestination.ASK,
+            true
+        );
+        assertRoute(
+            MainRouteDecisionHelper.routeStateForExplicitFlowDestination(current, BottomTabDestination.THREADS),
+            MainRouteDecisionHelper.Surface.ASK_RESULTS,
+            BottomTabDestination.ASK,
+            false
+        );
+        assertRoute(
+            MainRouteDecisionHelper.routeStateForExplicitFlowDestination(current, BottomTabDestination.PINS),
+            MainRouteDecisionHelper.Surface.SEARCH_RESULTS,
+            BottomTabDestination.PINS,
+            false
+        );
+    }
+
+    @Test
+    public void explicitFlowDestinationPreservesCurrentAskLaneForMissingDestination() {
+        assertRoute(
+            MainRouteDecisionHelper.routeStateForExplicitFlowDestination(
+                new MainRouteDecisionHelper.RouteState(
+                    MainRouteDecisionHelper.Surface.RECENT_THREADS,
+                    BottomTabDestination.ASK,
+                    true
+                ),
+                null
+            ),
+            MainRouteDecisionHelper.Surface.BROWSE,
+            BottomTabDestination.HOME,
+            true
+        );
+        assertRoute(
+            MainRouteDecisionHelper.routeStateForExplicitFlowDestination(
+                new MainRouteDecisionHelper.RouteState(
+                    MainRouteDecisionHelper.Surface.ASK_RESULTS,
+                    BottomTabDestination.ASK,
+                    true
+                ),
+                null
+            ),
+            MainRouteDecisionHelper.Surface.ASK_RESULTS,
+            BottomTabDestination.HOME,
+            true
+        );
+    }
+
+    @Test
     public void routeStateCodecEncodesNormalizedValues() {
         MainRouteDecisionHelper.EncodedRouteState encoded =
             MainRouteDecisionHelper.encodeRouteState(new MainRouteDecisionHelper.RouteState(

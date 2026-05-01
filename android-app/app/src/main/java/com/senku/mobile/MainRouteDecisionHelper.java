@@ -149,6 +149,19 @@ public final class MainRouteDecisionHelper {
         return new RouteState(surface, activePhoneTab, askLaneActive);
     }
 
+    static RouteState routeStateForExplicitFlowDestination(
+        RouteState currentState,
+        BottomTabDestination destination
+    ) {
+        RouteState route = normalize(currentState);
+        BottomTabDestination activeTab = phoneTabSelectionOwner(destination);
+        boolean explicitAskLaneActive = AskSearchCoordinator.resolveAskLaneActiveForExplicitPhoneFlow(
+            destination,
+            route.askLaneActive
+        );
+        return routeStateForMode(isBrowseSurface(route.surface), activeTab, explicitAskLaneActive);
+    }
+
     static EncodedRouteState encodeRouteState(RouteState routeState) {
         RouteState safeRouteState = normalize(routeState);
         return new EncodedRouteState(

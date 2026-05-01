@@ -3092,9 +3092,10 @@ public final class MainActivity extends AppCompatActivity {
         if (!shouldHandleMainSurfaceNavigationTabs(isPhoneFormFactor(), isTabletSearchLayout())) {
             return;
         }
-        activePhoneTab = phoneTabSelectionOwner(destination);
-        askLaneActive = resolveAskLaneActiveForExplicitPhoneFlow(destination, askLaneActive);
-        updatePhoneTabBarState();
+        applyMainRouteState(MainRouteDecisionHelper.routeStateForExplicitFlowDestination(
+            currentMainRouteState(),
+            destination
+        ));
     }
 
     static boolean resolveAskLaneActiveForExplicitPhoneFlow(
