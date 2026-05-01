@@ -389,6 +389,83 @@ public final class DetailSourcePresentationFormatterTest {
     }
 
     @Test
+    public void reviewDemoStationFallbackDoesNotPromoteUnrecognizedSourceEntry() {
+        DetailSourcePresentationFormatter formatter = reviewDemoFormatter();
+        SearchResult unrecognizedAnchor = new SearchResult(
+            "shop safety",
+            "",
+            "Keep the work area clear.",
+            "",
+            "GD-220",
+            "Workshop setup",
+            "materials",
+            "lexical"
+        );
+        SearchResult unrecognizedRelated = new SearchResult(
+            "forge setup",
+            "",
+            "Stage tools before heating stock.",
+            "",
+            "GD-132",
+            "Shop planning",
+            "metal",
+            "lexical"
+        );
+        SearchResult foundryRelated = reviewedStackResult("GD-132", "Foundry & Metal Casting", "foundry metal casting");
+
+        assertEquals(
+            "GD-220 \u00B7 ANCHOR\nAbrasives Manufacturing",
+            formatter.buildStationSourceButtonLabel(unrecognizedAnchor, 0, 3, true)
+        );
+        assertEquals(
+            "GD-132 \u00B7 RELATED\nFoundry & Metal Casting",
+            formatter.buildStationSourceButtonLabel(unrecognizedRelated, 1, 3, false)
+        );
+
+        DetailSourcePresentationFormatter.EvidenceCard card =
+            formatter.buildEvidenceCard(unrecognizedAnchor, 0, "anchor");
+        assertEquals("ANCHOR", card.roleLabel);
+        assertEquals("68%", card.matchLabel);
+        assertEquals("shop safety", card.title);
+
+        List<SearchResult> ordered = formatter.orderAnswerSourceStack(
+            List.of(unrecognizedAnchor, foundryRelated)
+        );
+        assertEquals(foundryRelated, ordered.get(0));
+        assertEquals(unrecognizedAnchor, ordered.get(1));
+    }
+
+    @Test
+    public void reviewDemoPrimitiveShelterEntryKeepsEvidenceTitleFallback() {
+        DetailSourcePresentationFormatter formatter = reviewDemoFormatter();
+        SearchResult primitiveShelter = new SearchResult(
+            "primitive shelter",
+            "",
+            "Use available cover and secure edges before weather arrives.",
+            "",
+            "GD-345",
+            "Wood Quality Evaluation for Shelter Construction",
+            "survival",
+            "lexical",
+            "",
+            "",
+            "emergency_shelter",
+            "foundation,weatherproofing,site_selection"
+        );
+
+        assertEquals(
+            "GD-345 \u00B7 TOPIC\nTarp & Cord Shelters",
+            formatter.buildStationSourceButtonLabel(primitiveShelter, 2, 3, false)
+        );
+
+        DetailSourcePresentationFormatter.EvidenceCard card =
+            formatter.buildEvidenceCard(primitiveShelter, 2, "related");
+        assertEquals("TOPIC", card.roleLabel);
+        assertEquals("61%", card.matchLabel);
+        assertEquals("primitive shelter", card.title);
+    }
+
+    @Test
     public void evidenceCardsUseRainShelterMockRolesAndScores() {
         DetailSourcePresentationFormatter formatter = reviewDemoFormatter();
         SearchResult abrasiveAnchor = reviewedStackResult("GD-220", "Abrasives Manufacturing", "abrasives manufacturing");

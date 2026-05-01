@@ -48,6 +48,103 @@ final class DetailSourcePresentationFormatter {
         }
     }
 
+    private static final class ReviewedSourceStackEntry {
+        static final ReviewedSourceStackEntry NONE = new ReviewedSourceStackEntry(
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            Integer.MAX_VALUE
+        );
+
+        final String guideId;
+        final String roleLabel;
+        final String matchLabel;
+        final String evidenceTitle;
+        final String stationTitle;
+        final String quote;
+        final int rank;
+
+        private ReviewedSourceStackEntry(
+            String guideId,
+            String roleLabel,
+            String matchLabel,
+            String evidenceTitle,
+            String stationTitle,
+            String quote,
+            int rank
+        ) {
+            this.guideId = guideId;
+            this.roleLabel = roleLabel;
+            this.matchLabel = matchLabel;
+            this.evidenceTitle = evidenceTitle;
+            this.stationTitle = stationTitle;
+            this.quote = quote;
+            this.rank = rank;
+        }
+
+        boolean isPresent() {
+            return rank < Integer.MAX_VALUE;
+        }
+
+        boolean isAnchor() {
+            return "ANCHOR".equals(roleLabel);
+        }
+
+        String stationLabel() {
+            if (!isPresent()) {
+                return "";
+            }
+            return guideId + " \u00B7 " + roleLabel + "\n" + stationTitle;
+        }
+
+        static ReviewedSourceStackEntry from(boolean enabled, SearchResult source) {
+            if (!enabled || source == null) {
+                return NONE;
+            }
+            String guideId = safe(source.guideId).trim();
+            if ("GD-220".equalsIgnoreCase(guideId)
+                && containsReviewedRainShelterText(source, "abrasives", "manufacturing")) {
+                return new ReviewedSourceStackEntry(
+                    "GD-220",
+                    "ANCHOR",
+                    "74%",
+                    "Abrasives Manufacturing",
+                    "Abrasives Manufacturing",
+                    "Every melt starts with a foundry safety check, not with metal charge...",
+                    0
+                );
+            }
+            if ("GD-132".equalsIgnoreCase(guideId)
+                && containsReviewedRainShelterText(source, "foundry", "metal", "casting")) {
+                return new ReviewedSourceStackEntry(
+                    "GD-132",
+                    "RELATED",
+                    "68%",
+                    "Foundry & Metal Casting",
+                    "Foundry & Metal Casting",
+                    "Pitch the ridgeline along prevailing wind. Tension corners with prusik or taut-line hitches.",
+                    1
+                );
+            }
+            if ("GD-345".equalsIgnoreCase(guideId) && isRainShelterStackSource(source)) {
+                String evidenceTitle = hasRainShelterEvidenceTitleOverride(source) ? "Tarp & Cord Shelters" : "";
+                return new ReviewedSourceStackEntry(
+                    "GD-345",
+                    "TOPIC",
+                    "61%",
+                    evidenceTitle,
+                    "Tarp & Cord Shelters",
+                    "A simple ridgeline shelter requires only tarp, cord, and two anchor points.",
+                    2
+                );
+            }
+            return NONE;
+        }
+    }
+
     DetailSourcePresentationFormatter(Context context) {
         this(context, false);
     }
@@ -61,7 +158,8 @@ final class DetailSourcePresentationFormatter {
         String guideId = safe(source == null ? null : source.guideId).trim();
         String title = sourceStackTitle(source);
         String section = safe(source == null ? null : source.sectionHeading).trim();
-        String quote = reviewedRainShelterQuote(source);
+        ReviewedSourceStackEntry reviewedStackEntry = reviewedSourceStackEntry(source);
+        String quote = reviewedStackEntry.quote;
         if (quote.isEmpty()) {
             quote = safe(source == null ? null : source.snippet).trim();
         }
@@ -69,13 +167,13 @@ final class DetailSourcePresentationFormatter {
             quote = firstBodyLine(source == null ? null : source.body);
         }
 
-        String reviewedRainShelterRole = reviewedRainShelterRoleLabel(source);
-        boolean anchor = reviewedRainShelterRole.isEmpty()
+        String reviewedRainShelterRole = reviewedStackEntry.roleLabel;
+        boolean anchor = !reviewedStackEntry.isPresent()
             ? isAnchorEvidenceCard(position, mode)
-            : "ANCHOR".equals(reviewedRainShelterRole);
+            : reviewedStackEntry.isAnchor();
         return new EvidenceCard(
             guideId,
-            reviewedRainShelterRole.isEmpty()
+            !reviewedStackEntry.isPresent()
                 ? buildEvidenceRoleLabel(anchor, mode, position)
                 : reviewedRainShelterRole,
             buildEvidenceMatchLabel(source, position),
@@ -468,51 +566,13 @@ final class DetailSourcePresentationFormatter {
     }
 
     private String buildEvidenceMatchLabel(SearchResult source, int position) {
-        String reviewedRainShelterMatch = reviewedRainShelterMatchLabel(source, position);
-        if (!reviewedRainShelterMatch.isEmpty()) {
-            return reviewedRainShelterMatch;
+        ReviewedSourceStackEntry reviewedStackEntry = reviewedSourceStackEntry(source);
+        if (position >= 0 && position <= 2 && reviewedStackEntry.isPresent()) {
+            return reviewedStackEntry.matchLabel;
         }
         int rankPenalty = Math.max(0, position) * 6;
         int score = baseEvidenceMatchScore(source == null ? null : source.retrievalMode) - rankPenalty;
         return Math.max(55, Math.min(99, score)) + "%";
-    }
-
-    private String reviewedRainShelterMatchLabel(SearchResult source, int position) {
-        if (!reviewDemoSourceStackEnabled || source == null || position < 0 || position > 2) {
-            return "";
-        }
-        String guideId = safe(source.guideId).trim();
-        if ("GD-220".equalsIgnoreCase(guideId)
-            && containsReviewedRainShelterText(source, "abrasives", "manufacturing")) {
-            return "74%";
-        }
-        if ("GD-132".equalsIgnoreCase(guideId)
-            && containsReviewedRainShelterText(source, "foundry", "metal", "casting")) {
-            return "68%";
-        }
-        if ("GD-345".equalsIgnoreCase(guideId) && isRainShelterStackSource(source)) {
-            return "61%";
-        }
-        return "";
-    }
-
-    private String reviewedRainShelterQuote(SearchResult source) {
-        if (!reviewDemoSourceStackEnabled || source == null) {
-            return "";
-        }
-        String guideId = safe(source.guideId).trim();
-        if ("GD-220".equalsIgnoreCase(guideId)
-            && containsReviewedRainShelterText(source, "abrasives", "manufacturing")) {
-            return "Every melt starts with a foundry safety check, not with metal charge...";
-        }
-        if ("GD-132".equalsIgnoreCase(guideId)
-            && containsReviewedRainShelterText(source, "foundry", "metal", "casting")) {
-            return "Pitch the ridgeline along prevailing wind. Tension corners with prusik or taut-line hitches.";
-        }
-        if ("GD-345".equalsIgnoreCase(guideId) && isRainShelterStackSource(source)) {
-            return "A simple ridgeline shelter requires only tarp, cord, and two anchor points.";
-        }
-        return "";
     }
 
     private static int baseEvidenceMatchScore(String retrievalMode) {
@@ -589,70 +649,35 @@ final class DetailSourcePresentationFormatter {
         if (!reviewDemoSourceStackEnabled || source == null || total < 3 || index < 0 || index > 2) {
             return "";
         }
+        ReviewedSourceStackEntry reviewedStackEntry = reviewedSourceStackEntry(source);
+        if (reviewedStackEntry.isPresent()) {
+            return reviewedStackEntry.stationLabel();
+        }
         String guideId = safe(source.guideId).trim();
         if ("GD-220".equalsIgnoreCase(guideId)) {
-            if (index == 0 || containsReviewedRainShelterText(source, "abrasives", "manufacturing")) {
+            if (index == 0) {
                 return "GD-220 \u00B7 ANCHOR\nAbrasives Manufacturing";
             }
-            return "";
         }
         if ("GD-132".equalsIgnoreCase(guideId)) {
-            if (index == 1 || containsReviewedRainShelterText(source, "foundry", "metal", "casting")) {
+            if (index == 1) {
                 return "GD-132 \u00B7 RELATED\nFoundry & Metal Casting";
             }
-            return "";
-        }
-        if ("GD-345".equalsIgnoreCase(guideId) && isRainShelterStackSource(source)) {
-            return "GD-345 \u00B7 TOPIC\nTarp & Cord Shelters";
         }
         return "";
     }
 
     private String reviewedRainShelterRoleLabel(SearchResult source) {
-        if (!reviewDemoSourceStackEnabled || source == null) {
-            return "";
-        }
-        String guideId = safe(source.guideId).trim();
-        if ("GD-220".equalsIgnoreCase(guideId)
-            && containsReviewedRainShelterText(source, "abrasives", "manufacturing")) {
-            return "ANCHOR";
-        }
-        if ("GD-132".equalsIgnoreCase(guideId)
-            && containsReviewedRainShelterText(source, "foundry", "metal", "casting")) {
-            return "RELATED";
-        }
-        if ("GD-345".equalsIgnoreCase(guideId) && isRainShelterStackSource(source)) {
-            return "TOPIC";
-        }
-        return "";
+        return reviewedSourceStackEntry(source).roleLabel;
     }
 
     private String sourceStackTitle(SearchResult source) {
         if (source == null) {
             return "";
         }
-        String guideId = safe(source.guideId).trim();
-        String combined = (
-            safe(source.title) + " " +
-                safe(source.sectionHeading) + " " +
-                safe(source.snippet) + " " +
-                safe(source.body) + " " +
-                safe(source.topicTags) + " " +
-                safe(source.structureType)
-        ).toLowerCase(Locale.US);
-        if (reviewDemoSourceStackEnabled) {
-            if ("GD-220".equalsIgnoreCase(guideId) && containsAll(combined, "abrasives", "manufacturing")) {
-                return "Abrasives Manufacturing";
-            }
-            if ("GD-132".equalsIgnoreCase(guideId) && containsAll(combined, "foundry", "metal", "casting")) {
-                return "Foundry & Metal Casting";
-            }
-            if ("GD-345".equalsIgnoreCase(guideId)
-                && (containsAll(combined, "tarp", "cord")
-                    || containsAll(combined, "rain", "shelter")
-                    || combined.contains("ridgeline shelter"))) {
-                return "Tarp & Cord Shelters";
-            }
+        ReviewedSourceStackEntry reviewedStackEntry = reviewedSourceStackEntry(source);
+        if (!reviewedStackEntry.evidenceTitle.isEmpty()) {
+            return reviewedStackEntry.evidenceTitle;
         }
         String title = safe(source.title).trim();
         if (!title.isEmpty()) {
@@ -692,6 +717,20 @@ final class DetailSourcePresentationFormatter {
                 || containsAll(combined, "primitive", "shelter"));
     }
 
+    private static boolean hasRainShelterEvidenceTitleOverride(SearchResult source) {
+        String combined = (
+            safe(source == null ? null : source.title) + " " +
+                safe(source == null ? null : source.sectionHeading) + " " +
+                safe(source == null ? null : source.snippet) + " " +
+                safe(source == null ? null : source.body) + " " +
+                safe(source == null ? null : source.topicTags) + " " +
+                safe(source == null ? null : source.structureType)
+        ).toLowerCase(Locale.US);
+        return containsAll(combined, "tarp", "cord")
+            || containsAll(combined, "rain", "shelter")
+            || combined.contains("ridgeline shelter");
+    }
+
     private static boolean containsReviewedRainShelterText(SearchResult source, String... terms) {
         String combined = (
             safe(source == null ? null : source.title) + " " +
@@ -717,22 +756,11 @@ final class DetailSourcePresentationFormatter {
     }
 
     private int reviewedRainShelterSourceRank(SearchResult source) {
-        if (!reviewDemoSourceStackEnabled || source == null) {
-            return Integer.MAX_VALUE;
-        }
-        String guideId = safe(source.guideId).trim();
-        if ("GD-220".equalsIgnoreCase(guideId)
-            && containsReviewedRainShelterText(source, "abrasives", "manufacturing")) {
-            return 0;
-        }
-        if ("GD-132".equalsIgnoreCase(guideId)
-            && containsReviewedRainShelterText(source, "foundry", "metal", "casting")) {
-            return 1;
-        }
-        if ("GD-345".equalsIgnoreCase(guideId) && isRainShelterStackSource(source)) {
-            return 2;
-        }
-        return Integer.MAX_VALUE;
+        return reviewedSourceStackEntry(source).rank;
+    }
+
+    private ReviewedSourceStackEntry reviewedSourceStackEntry(SearchResult source) {
+        return ReviewedSourceStackEntry.from(reviewDemoSourceStackEnabled, source);
     }
 
     private static String firstBodyLine(String body) {
