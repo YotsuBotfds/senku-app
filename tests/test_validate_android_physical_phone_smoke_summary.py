@@ -40,8 +40,12 @@ def make_summary(*, completed: bool = False) -> dict:
         "launch_activity": "com.senku.mobile/.MainActivity",
         "evidence": {
             "focus_path": "artifacts/bench/android_physical_phone_smoke/focus.txt",
-            "screenshot_path": None,
-            "dump_path": None,
+            "screenshot_path": "artifacts/bench/android_physical_phone_smoke/screenshot.png"
+            if completed
+            else None,
+            "dump_path": "artifacts/bench/android_physical_phone_smoke/uiautomator.xml"
+            if completed
+            else None,
             "logcat_path": None,
             "focus_contains_launch_activity": True if completed else None,
             "focused_package": "com.senku.mobile" if completed else None,
@@ -53,8 +57,8 @@ def make_summary(*, completed: bool = False) -> dict:
             },
             "artifact_hashes": {
                 "focus_sha256": "2" * 64 if completed else None,
-                "screenshot_sha256": None,
-                "dump_sha256": None,
+                "screenshot_sha256": "3" * 64 if completed else None,
+                "dump_sha256": "4" * 64 if completed else None,
                 "logcat_sha256": None,
             },
         },
@@ -337,6 +341,26 @@ class ValidateAndroidPhysicalPhoneSmokeSummaryTests(unittest.TestCase):
 
         self.assertIn("expected root.serial to be non-empty", errors)
         self.assertIn("expected root.serial to be non-empty for completed physical-phone smoke", errors)
+
+    def test_completed_summary_requires_screenshot_and_dump_hashes(self):
+        summary = make_summary(completed=True)
+        summary["evidence"]["screenshot_path"] = None
+        summary["evidence"]["dump_path"] = " "
+        summary["evidence"]["artifact_hashes"]["screenshot_sha256"] = None
+        summary["evidence"]["artifact_hashes"]["dump_sha256"] = "not-a-sha"
+
+        _, errors = validate_summary(self.write_summary(summary))
+
+        self.assertIn("expected root.evidence.screenshot_path for completed summaries", errors)
+        self.assertIn("expected root.evidence.dump_path for completed summaries", errors)
+        self.assertIn(
+            "expected root.evidence.artifact_hashes.screenshot_sha256 for completed summaries",
+            errors,
+        )
+        self.assertIn(
+            "expected root.evidence.artifact_hashes.dump_sha256 to be a lowercase sha256 hex digest",
+            errors,
+        )
 
     def test_dry_run_rejects_emulator_serial_and_real_focus_evidence(self):
         summary = make_summary()

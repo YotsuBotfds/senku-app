@@ -411,6 +411,10 @@ def _validate_completed(data: dict[str, Any], errors: list[str]) -> None:
 
     evidence = data.get("evidence")
     if isinstance(evidence, dict):
+        for path_key in ("screenshot_path", "dump_path"):
+            path_value = evidence.get(path_key)
+            if not isinstance(path_value, str) or not path_value.strip():
+                errors.append(f"expected root.evidence.{path_key} for completed summaries")
         _expect_equal(
             evidence,
             "focus_contains_launch_activity",
@@ -427,6 +431,18 @@ def _validate_completed(data: dict[str, Any], errors: list[str]) -> None:
                 errors.append("expected root.evidence.orientation.orientation for completed summaries")
         artifact_hashes = evidence.get("artifact_hashes")
         if isinstance(artifact_hashes, dict):
+            for hash_key in ("screenshot_sha256", "dump_sha256"):
+                hash_value = artifact_hashes.get(hash_key)
+                if not isinstance(hash_value, str) or not hash_value.strip():
+                    errors.append(
+                        f"expected root.evidence.artifact_hashes.{hash_key} for completed summaries"
+                    )
+                else:
+                    _validate_sha256(
+                        hash_value,
+                        errors,
+                        key=f"root.evidence.artifact_hashes.{hash_key}",
+                    )
             for path_key, hash_key in {
                 "focus_path": "focus_sha256",
                 "screenshot_path": "screenshot_sha256",

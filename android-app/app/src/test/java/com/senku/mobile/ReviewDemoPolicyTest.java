@@ -501,6 +501,24 @@ public final class ReviewDemoPolicyTest {
         );
     }
 
+    @Test
+    public void productionCodeResolvesRawReviewExtrasOnlyThroughPolicy() throws Exception {
+        Path productionSourceRoot = productionSourceRoot();
+        List<String> violations = new ArrayList<>();
+
+        try (Stream<Path> files = Files.walk(productionSourceRoot)) {
+            files
+                .filter(Files::isRegularFile)
+                .filter(ReviewDemoPolicyTest::isProductionSourceFile)
+                .forEach(file -> collectRawReviewExtraViolation(productionSourceRoot, file, violations));
+        }
+
+        assertTrue(
+            "Raw product-review extras must resolve only inside ReviewDemoPolicy: " + violations,
+            violations.isEmpty()
+        );
+    }
+
     private static List<SearchResult> rainShelterAdjacentGuides() {
         return Arrays.asList(
             new SearchResult(
@@ -643,6 +661,34 @@ public final class ReviewDemoPolicyTest {
         } catch (IOException exception) {
             throw new AssertionError("Unable to scan " + relativePath, exception);
         }
+    }
+
+    private static void collectRawReviewExtraViolation(
+        Path sourceRoot,
+        Path file,
+        List<String> violations
+    ) {
+        String relativePath = sourceRoot.relativize(file).toString().replace('\\', '/');
+        if (relativePath.equals("com/senku/mobile/ReviewDemoPolicy.java")) {
+            return;
+        }
+        try {
+            String content = new String(Files.readAllBytes(file), StandardCharsets.UTF_8);
+            if (containsRawReviewExtraAccess(content)) {
+                violations.add(relativePath);
+            }
+        } catch (IOException exception) {
+            throw new AssertionError("Unable to scan " + relativePath, exception);
+        }
+    }
+
+    private static boolean containsRawReviewExtraAccess(String content) {
+        return content.contains(".hasExtra(EXTRA_PRODUCT_REVIEW_MODE)")
+            || content.contains(".getBooleanExtra(EXTRA_PRODUCT_REVIEW_MODE")
+            || content.contains(".getStringExtra(EXTRA_PRODUCT_REVIEW_AUTOMATION_AUTH)")
+            || content.contains(".getStringExtra(ReviewDemoPolicy.EXTRA_PRODUCT_REVIEW_AUTOMATION_AUTH)")
+            || content.contains("\"product_review_mode\"")
+            || content.contains("\"com.senku.mobile.extra.PRODUCT_REVIEW_AUTOMATION_AUTH\"");
     }
 
     private static ChatSessionStore.ConversationPreview preview(

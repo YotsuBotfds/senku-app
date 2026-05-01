@@ -268,6 +268,32 @@ public final class MainRouteDecisionHelperTest {
     }
 
     @Test
+    public void zeroResultSearchKeepsExplicitSearchRouteUntilBack() {
+        MainRouteDecisionHelper.RouteState zeroResultSearch =
+            MainRouteDecisionHelper.enterSearch(MainRouteDecisionHelper.browseHome()).routeState;
+
+        assertRoute(
+            zeroResultSearch,
+            MainRouteDecisionHelper.Surface.SEARCH_RESULTS,
+            BottomTabDestination.HOME,
+            false
+        );
+        assertTrue(MainRouteDecisionHelper.shouldShowHomeChromeBack(zeroResultSearch));
+        assertInstallCompletionAction(
+            false,
+            zeroResultSearch,
+            MainInstallCompletionPolicy.Action.PRESERVE_CURRENT_RESULTS
+        );
+        assertTransition(
+            MainRouteDecisionHelper.systemBack(zeroResultSearch, null),
+            MainRouteDecisionHelper.Surface.BROWSE,
+            BottomTabDestination.HOME,
+            false,
+            MainRouteDecisionHelper.Effect.RETURN_TO_BROWSE
+        );
+    }
+
+    @Test
     public void askUnavailableOrNoSourceFailureReturnsToAskBrowseOwnerWithoutAskLane() {
         MainRouteDecisionHelper.RouteState routeState =
             MainRouteDecisionHelper.askUnavailableOrNoSourceFailure();
@@ -317,6 +343,23 @@ public final class MainRouteDecisionHelperTest {
         assertFalse(MainRouteDecisionHelper.shouldShowHomeChromeBack(
             MainRouteDecisionHelper.askUnavailableOrNoSourceFailure()
         ));
+    }
+
+    @Test
+    public void askUnavailableOrNoSourceFailurePreservesAutoQueryInstallCompletion() {
+        MainRouteDecisionHelper.RouteState failureRoute =
+            MainRouteDecisionHelper.askUnavailableOrNoSourceFailure();
+
+        assertInstallCompletionAction(
+            false,
+            failureRoute,
+            MainInstallCompletionPolicy.Action.PUBLISH_BROWSE_GUIDES
+        );
+        assertInstallCompletionAction(
+            true,
+            failureRoute,
+            MainInstallCompletionPolicy.Action.PRESERVE_CURRENT_RESULTS
+        );
     }
 
     @Test
@@ -492,6 +535,34 @@ public final class MainRouteDecisionHelperTest {
     }
 
     @Test
+    public void openSavedIntentThenBackReturnsToPreviousOwnerOrHome() {
+        MainRouteDecisionHelper.RouteState savedFromSearch =
+            MainRouteDecisionHelper.openSavedIntent(
+                true,
+                new MainRouteDecisionHelper.RouteState(
+                    MainRouteDecisionHelper.Surface.SEARCH_RESULTS,
+                    BottomTabDestination.HOME,
+                    false
+                )
+            ).routeState;
+
+        assertTransition(
+            MainRouteDecisionHelper.systemBack(savedFromSearch, BottomTabDestination.HOME),
+            MainRouteDecisionHelper.Surface.BROWSE,
+            BottomTabDestination.HOME,
+            false,
+            MainRouteDecisionHelper.Effect.SHOW_PREVIOUS_TAB
+        );
+        assertTransition(
+            MainRouteDecisionHelper.systemBack(savedFromSearch, null),
+            MainRouteDecisionHelper.Surface.BROWSE,
+            BottomTabDestination.HOME,
+            false,
+            MainRouteDecisionHelper.Effect.SHOW_PREVIOUS_TAB
+        );
+    }
+
+    @Test
     public void openSavedIntentFalseKeepsCurrentRouteState() {
         assertTransition(
             MainRouteDecisionHelper.openSavedIntent(
@@ -506,6 +577,24 @@ public final class MainRouteDecisionHelperTest {
             BottomTabDestination.ASK,
             true,
             MainRouteDecisionHelper.Effect.NONE
+        );
+    }
+
+    @Test
+    public void previousTabBackCanReturnFromRecentThreadsToSavedGuides() {
+        MainRouteDecisionHelper.RouteState recentThreads =
+            new MainRouteDecisionHelper.RouteState(
+                MainRouteDecisionHelper.Surface.RECENT_THREADS,
+                BottomTabDestination.ASK,
+                false
+            );
+
+        assertTransition(
+            MainRouteDecisionHelper.systemBack(recentThreads, BottomTabDestination.PINS),
+            MainRouteDecisionHelper.Surface.SAVED_GUIDES,
+            BottomTabDestination.PINS,
+            false,
+            MainRouteDecisionHelper.Effect.SHOW_PREVIOUS_TAB
         );
     }
 

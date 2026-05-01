@@ -1140,15 +1140,15 @@ public final class PromptHarnessSmokeTest {
                 "linked-guide handoff should open detail; harness signals=" + HarnessTestSignals.snapshot(),
                 waitForDetailBodyReady(DETAIL_WAIT_MS, 8)
             );
-            if (!expectedTitleFragment[0].isEmpty()) {
+            if (!expectedGuideId[0].isEmpty()) {
+                Assert.assertTrue(
+                    "linked-guide handoff should open the expected guide",
+                    waitForDetailGuideId(expectedGuideId[0], DETAIL_WAIT_MS)
+                );
+            } else if (!expectedTitleFragment[0].isEmpty()) {
                 Assert.assertTrue(
                     "linked-guide handoff should open the expected guide title",
                     waitForDetailTitleContains(expectedTitleFragment[0], DETAIL_WAIT_MS)
-                );
-            } else if (!expectedGuideId[0].isEmpty()) {
-                Assert.assertTrue(
-                    "linked-guide handoff should open the expected guide",
-                    waitForDetailMetaContains(expectedGuideId[0], DETAIL_WAIT_MS)
                 );
             }
             String expectedPrimarySourceContext = !expectedSourceGuideId[0].isEmpty()
@@ -2686,9 +2686,8 @@ public final class PromptHarnessSmokeTest {
                     );
                     Assert.assertNotNull("preview-first mode should show the selected guide label", previewMeta);
                     Assert.assertTrue(
-                        "preview meta should surface the selected guide title",
-                        safe(previewMeta.getText().toString()).toLowerCase(Locale.US)
-                            .contains(safe(seed.relatedGuide.title).toLowerCase(Locale.US))
+                        "preview meta should surface selected-guide identity",
+                        visibleTextIdentifiesGuide(previewMeta, seed.relatedGuide)
                     );
                     Assert.assertNotNull("preview-first mode should expose an explicit open button", openButton);
                     Assert.assertEquals(
@@ -2713,7 +2712,7 @@ public final class PromptHarnessSmokeTest {
             if (guideSectionsMode[0]) {
                 Assert.assertTrue(
                     "phone landscape guide sections rail should keep the guide detail visible",
-                    waitForDetailTitleContains(seed.guide.title, DETAIL_WAIT_MS)
+                    waitForDetailGuideId(safe(seed.guide == null ? null : seed.guide.guideId), DETAIL_WAIT_MS)
                 );
                 return;
             }
@@ -2721,7 +2720,7 @@ public final class PromptHarnessSmokeTest {
                 previewFirstMode[0]
                     ? "tapping preview open should open the related guide detail screen"
                     : "tapping a related guide should open its detail screen",
-                waitForDetailTitleContains(seed.relatedGuide.title, DETAIL_WAIT_MS)
+                waitForDetailGuideId(safe(seed.relatedGuide == null ? null : seed.relatedGuide.guideId), DETAIL_WAIT_MS)
             );
             String expectedCrossReferenceAnchor = !safe(seed.guide.guideId).trim().isEmpty()
                 ? safe(seed.guide.guideId)
@@ -2881,9 +2880,8 @@ public final class PromptHarnessSmokeTest {
                 );
                 Assert.assertNotNull("non-rail preview should expose selected guide copy", previewMeta);
                 Assert.assertTrue(
-                    "non-rail preview should surface the selected linked guide title",
-                    safe(previewMeta.getText().toString()).toLowerCase(Locale.US)
-                        .contains(safe(seed.relatedGuide.title).toLowerCase(Locale.US))
+                    "non-rail preview should surface selected linked-guide identity",
+                    visibleTextIdentifiesGuide(previewMeta, seed.relatedGuide)
                 );
                 Assert.assertNotNull("non-rail preview should expose an Open full guide action", previewOpen);
                 Assert.assertEquals(
@@ -2898,8 +2896,7 @@ public final class PromptHarnessSmokeTest {
                 if (currentTitle != null) {
                     Assert.assertTrue(
                         "preview-first tap should keep the source guide detail in place until Open full guide is used",
-                        safe(currentTitle.getText().toString()).toLowerCase(Locale.US)
-                            .contains(safe(seed.guide.title).toLowerCase(Locale.US))
+                        detailIdentityMatches(activity, seed.guide)
                     );
                 }
                 previewShown[0] = true;
@@ -2913,7 +2910,7 @@ public final class PromptHarnessSmokeTest {
             }
             Assert.assertTrue(
                 "Open full guide from the non-rail preview should open the related guide detail screen",
-                waitForDetailTitleContains(seed.relatedGuide.title, DETAIL_WAIT_MS)
+                waitForDetailGuideId(safe(seed.relatedGuide == null ? null : seed.relatedGuide.guideId), DETAIL_WAIT_MS)
             );
             Assert.assertTrue(
                 "non-rail destination should keep cross-reference mode context after preview handoff",
@@ -3250,15 +3247,13 @@ public final class PromptHarnessSmokeTest {
                         Assert.assertNotNull("source graph preview should expose selected guide copy", previewMeta);
                         String previewMetaText = safe(previewMeta.getText().toString()).toLowerCase(Locale.US);
                         Assert.assertTrue(
-                            "source graph preview should surface the selected linked guide title",
-                            previewMetaText.contains(safe(seed.relatedGuide.title).toLowerCase(Locale.US))
-                                || previewMetaText.contains(safe(seed.relatedGuide.guideId).toLowerCase(Locale.US))
+                            "source graph preview should surface selected linked-guide identity",
+                            textIdentifiesGuide(previewMetaText, seed.relatedGuide)
                         );
                         String previewSelectedSourceText = safe(provenanceMeta.getText().toString()).toLowerCase(Locale.US);
                         Assert.assertTrue(
                             "source-context card should stay anchored to the selected source while preview is shown",
-                            previewSelectedSourceText.contains(safe(seed.guide.title).toLowerCase(Locale.US))
-                                || previewSelectedSourceText.contains(safe(seed.guide.guideId).toLowerCase(Locale.US))
+                            textIdentifiesGuide(previewSelectedSourceText, seed.guide)
                         );
                         Assert.assertNotNull("source graph preview should expose an Open full guide action", previewOpen);
                         Assert.assertEquals(
@@ -3280,7 +3275,7 @@ public final class PromptHarnessSmokeTest {
 
                 Assert.assertTrue(
                     "cross-reference tap should open the linked destination guide",
-                    waitForDetailTitleContains(seed.relatedGuide.title, DETAIL_WAIT_MS)
+                    waitForDetailGuideId(safe(seed.relatedGuide == null ? null : seed.relatedGuide.guideId), DETAIL_WAIT_MS)
                 );
                 final boolean[] tabletComposeDestination = {false};
                 InstrumentationRegistry.getInstrumentation().runOnMainSync(() -> {
@@ -3403,7 +3398,7 @@ public final class PromptHarnessSmokeTest {
             }
             Assert.assertTrue(
                 "answer provenance open should land on the source guide detail",
-                waitForDetailTitleContains(seed.guide.title, DETAIL_WAIT_MS)
+                waitForDetailGuideId(safe(seed.guide == null ? null : seed.guide.guideId), DETAIL_WAIT_MS)
             );
             Assert.assertTrue(
                 "answer-mode provenance opens should keep guide mode neutral",
@@ -3472,7 +3467,7 @@ public final class PromptHarnessSmokeTest {
             }
             Assert.assertTrue(
                 "answer provenance open should land on the source guide detail before back",
-                waitForDetailTitleContains(seed.guide.title, DETAIL_WAIT_MS)
+                waitForDetailGuideId(safe(seed.guide == null ? null : seed.guide.guideId), DETAIL_WAIT_MS)
             );
 
             device.pressBack();
@@ -3572,7 +3567,7 @@ public final class PromptHarnessSmokeTest {
 
             Assert.assertTrue(
                 "compact landscape cue should open the linked destination guide",
-                waitForDetailTitleContains(seed.relatedGuide.title, DETAIL_WAIT_MS)
+                waitForDetailGuideId(safe(seed.relatedGuide == null ? null : seed.relatedGuide.guideId), DETAIL_WAIT_MS)
             );
             Assert.assertTrue(
                 "landscape compact cross-reference cue should keep source-guide context on destination detail",
@@ -3744,7 +3739,7 @@ public final class PromptHarnessSmokeTest {
             });
             Assert.assertTrue(
                 "utility-rail cross-reference should open the related guide detail screen",
-                waitForDetailTitleContains(seed.relatedGuide.title, DETAIL_WAIT_MS)
+                waitForDetailGuideId(safe(seed.relatedGuide == null ? null : seed.relatedGuide.guideId), DETAIL_WAIT_MS)
             );
             Assert.assertTrue(
                 "utility-rail destination should preserve the source-guide context",
@@ -4469,6 +4464,7 @@ public final class PromptHarnessSmokeTest {
                     safe(bodyLabel.getText().toString())
                 );
             }
+            assertNoRawDetailDiagnostics(activity, "saved guide detail");
         });
     }
 
@@ -6095,6 +6091,48 @@ public final class PromptHarnessSmokeTest {
             UiObject2 anchorChip = device.findObject(By.res(APP_PACKAGE, "detail_anchor_chip"));
             String combined = safe(title == null ? null : title.getText())
                 + " | " + safe(meta == null ? null : meta.getText())
+                + " | " + safe(anchorChip == null ? null : anchorChip.getText());
+            if (combined.toLowerCase(Locale.US).contains(expectedLower)) {
+                return true;
+            }
+            InstrumentationRegistry.getInstrumentation().waitForIdleSync();
+            SystemClock.sleep(50L);
+        }
+        return false;
+    }
+
+    private boolean waitForDetailGuideId(String expectedGuideId, long timeoutMs) {
+        long deadline = SystemClock.uptimeMillis() + timeoutMs;
+        String expectedLower = safe(expectedGuideId).trim().toLowerCase(Locale.US);
+        if (expectedLower.isEmpty()) {
+            return false;
+        }
+        while (SystemClock.uptimeMillis() < deadline) {
+            final boolean[] matched = {false};
+            InstrumentationRegistry.getInstrumentation().runOnMainSync(() -> {
+                Activity activity = getResumedActivityOnMainThread();
+                if (activity == null) {
+                    return;
+                }
+                DetailSettleSignals signals = collectDetailSettleSignals(activity);
+                String combined = safe(signals.guideId)
+                    + " | " + safe(signals.title)
+                    + " | " + String.join(" | ", signals.metaLabels)
+                    + " | " + visibleText(activity.findViewById(R.id.detail_screen_meta))
+                    + " | " + visibleText(activity.findViewById(R.id.detail_anchor_chip));
+                matched[0] = combined.toLowerCase(Locale.US).contains(expectedLower)
+                    && !signals.answerMode
+                    && safe(signals.bodyText).trim().length() >= 8;
+                if (matched[0]) {
+                    assertNoRawDetailDiagnostics(activity, "guide detail destination");
+                }
+            });
+            if (matched[0]) {
+                return true;
+            }
+            UiObject2 meta = device.findObject(By.res(APP_PACKAGE, "detail_screen_meta"));
+            UiObject2 anchorChip = device.findObject(By.res(APP_PACKAGE, "detail_anchor_chip"));
+            String combined = safe(meta == null ? null : meta.getText())
                 + " | " + safe(anchorChip == null ? null : anchorChip.getText());
             if (combined.toLowerCase(Locale.US).contains(expectedLower)) {
                 return true;
@@ -8400,6 +8438,44 @@ public final class PromptHarnessSmokeTest {
             return "";
         }
         return safe(((TextView) view).getText().toString());
+    }
+
+    private boolean visibleTextIdentifiesGuide(TextView view, SearchResult guide) {
+        return view != null && textIdentifiesGuide(safe(view.getText().toString()), guide);
+    }
+
+    private boolean detailIdentityMatches(Activity activity, SearchResult expectedGuide) {
+        if (activity == null || expectedGuide == null) {
+            return false;
+        }
+        DetailSettleSignals signals = collectDetailSettleSignals(activity);
+        String surface = safe(signals.guideId)
+            + " | " + safe(signals.title)
+            + " | " + visibleText(activity.findViewById(R.id.detail_title))
+            + " | " + visibleText(activity.findViewById(R.id.detail_screen_title))
+            + " | " + visibleText(activity.findViewById(R.id.detail_screen_meta));
+        return textIdentifiesGuide(surface, expectedGuide);
+    }
+
+    private boolean textIdentifiesGuide(String text, SearchResult guide) {
+        String haystack = safe(text).toLowerCase(Locale.US);
+        String guideId = safe(guide == null ? null : guide.guideId).trim().toLowerCase(Locale.US);
+        String title = safe(guide == null ? null : guide.title).trim().toLowerCase(Locale.US);
+        return (!guideId.isEmpty() && haystack.contains(guideId))
+            || (!title.isEmpty() && haystack.contains(title));
+    }
+
+    private void assertNoRawDetailDiagnostics(Activity activity, String contextLabel) {
+        if (activity == null) {
+            return;
+        }
+        DetailSettleSignals signals = collectDetailSettleSignals(activity);
+        String visibleMeta = visibleText(activity.findViewById(R.id.detail_screen_meta));
+        String combined = safe(visibleMeta) + " | " + String.join(" | ", signals.metaLabels);
+        Assert.assertFalse(
+            contextLabel + " should avoid raw pack/db diagnostics",
+            containsAny(combined, "pack v", "db ", "hybrid retrieval", "lexical retrieval", "top_k")
+        );
     }
 
     private void openFirstAvailableAnswerSource(Activity activity) {

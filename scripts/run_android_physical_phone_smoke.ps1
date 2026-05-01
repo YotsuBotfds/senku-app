@@ -668,6 +668,12 @@ if (-not $DryRun) {
     if (-not (Test-Path -LiteralPath $resolvedApkPath)) {
         throw "APK not found at $resolvedApkPath"
     }
+    if ($null -eq $resolvedScreenshotPath) {
+        $resolvedScreenshotPath = Join-Path $resolvedOutputDir "screenshot.png"
+    }
+    if ($null -eq $resolvedDumpPath) {
+        $resolvedDumpPath = Join-Path $resolvedOutputDir "uiautomator.xml"
+    }
 
     Assert-SerialIsConnectedPhysicalDevice -ResolvedAdbPath $resolvedAdbPath -DeviceSerial $Serial
     $deviceIdentity = Get-PhysicalDeviceIdentity -ResolvedAdbPath $resolvedAdbPath -DeviceSerial $Serial
