@@ -1,6 +1,6 @@
 # Backend Cleanup Phase Tracker
 
-Last updated after pushed validation and cleanup through `51ae1f69` on 2026-05-01.
+Last updated after local validation and cleanup through `49e7fd2a` on 2026-05-01.
 
 Purpose: prevent future agents from rerunning Ask/query backend cleanup that is already complete. Keep this note short; implementation detail belongs in commits and tests.
 
@@ -133,6 +133,27 @@ Purpose: prevent future agents from rerunning Ask/query backend cleanup that is 
   `-AllowRetrievalWarnings` and still reports the 3 known retrieval warnings;
   a fresh installed `phone-functional` PromptHarness smoke passed on
   `emulator-5554` with 3/3 tests.
+- Compose presentation policy helpers are current through `69ee33eb`:
+  answer-body parsing, search-result card policy, tablet evidence rows, guide
+  paper text policy, and thread-rail policy now live outside their larger
+  render files while preserving focused UI policy proof.
+- Route row filtering is current through `1d94318c`:
+  route-focused candidate gates for specialized topic rows, broad water/house
+  rows, and direct anchor signal requirements now live in
+  `PackRouteRowFilterPolicy`, with repository wrappers kept for compatibility
+  and a current-head route matrix characterizing high-signal backend queries.
+- Saved-guide route ownership is current through `a32b3a5a`:
+  saved/pinned refresh planning, load caps, section visibility, browse-load
+  decisions, and pending section focus now live in `MainSavedGuidesController`
+  while `MainActivity` keeps Android view mutation.
+- Chrome and rail metrics are current through `49e7fd2a`:
+  Compose topbar measurements and host action shaping are named behind
+  topbar policy helpers, and Compose nav-rail dimensions now live in
+  `NavRailMetrics` with legacy aliases preserved for existing callers.
+- Latest local proof after `49e7fd2a`: `git diff --check` passed; full Android
+  `:app:testDebugUnitTest :app:assembleDebug :app:assembleDebugAndroidTest`
+  passed; the preceding fresh installed `phone-functional` PromptHarness smoke
+  after `69ee33eb` passed on `emulator-5554` with 3/3 tests.
 
 ## Remaining Next Slices
 
