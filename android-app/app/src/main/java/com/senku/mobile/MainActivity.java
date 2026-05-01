@@ -105,6 +105,8 @@ public final class MainActivity extends AppCompatActivity {
     private final MainHomeRelatedGuideController homeRelatedGuideController = new MainHomeRelatedGuideController();
     private final MainResultPreviewBridgeController resultPreviewBridgeController =
         new MainResultPreviewBridgeController();
+    private final MainAutomationRouteController automationRouteController =
+        new MainAutomationRouteController(new MainAutomationRouteHost());
 
     private MainReviewDisplayPolicy reviewDisplayPolicy;
     private MainPresentationFormatter presentationFormatter;
@@ -232,6 +234,63 @@ public final class MainActivity extends AppCompatActivity {
 
         HomeGuideAnchor withLabel(String updatedLabel) {
             return new HomeGuideAnchor(guideId, updatedLabel, fromRecentThread);
+        }
+    }
+
+    private final class MainAutomationRouteHost implements MainAutomationRouteController.Host {
+        @Override
+        public void setSharedQuery(String query) {
+            searchInput.setText(query);
+        }
+
+        @Override
+        public void setPhoneTabFromFlow(BottomTabDestination destination) {
+            MainActivity.this.setPhoneTabFromFlow(destination);
+        }
+
+        @Override
+        public void showBrowseChrome(boolean show) {
+            MainActivity.this.showBrowseChrome(show);
+        }
+
+        @Override
+        public void enterAskResultsRoute() {
+            MainActivity.this.enterAskResultsRoute();
+        }
+
+        @Override
+        public void enterSearchResultsRoute() {
+            MainActivity.this.enterSearchResultsRoute();
+        }
+
+        @Override
+        public void runAsk(String query) {
+            MainActivity.this.runAsk(query);
+        }
+
+        @Override
+        public void runSearch(String query) {
+            MainActivity.this.runSearch(query);
+        }
+
+        @Override
+        public void setPendingAutoFollowUpQuery(String query) {
+            pendingAutoFollowUpQuery = query;
+        }
+
+        @Override
+        public void setSuppressSearchFocusForAutomation(boolean suppressSearchFocus) {
+            suppressSearchFocusForAutomation = suppressSearchFocus;
+        }
+
+        @Override
+        public void markAutoIntentHandled(boolean handled) {
+            autoIntentHandled = handled;
+        }
+
+        @Override
+        public void openEmptyAskLane(boolean focusInput) {
+            MainActivity.this.openEmptyAskLane(focusInput);
         }
     }
 
@@ -965,17 +1024,7 @@ public final class MainActivity extends AppCompatActivity {
     }
 
     private void applyIntentQuery(Intent intent) {
-        MainAutomationIntentPolicy.ApplyDecision decision =
-            MainAutomationIntentPolicy.resolveApply(automationIntentState(intent));
-        if (decision.effect == MainAutomationIntentPolicy.ApplyEffect.OPEN_EMPTY_ASK_LANE) {
-            openEmptyAskLane(false);
-            return;
-        }
-        if (decision.effect == MainAutomationIntentPolicy.ApplyEffect.SET_QUERY) {
-            searchInput.setText(decision.query);
-            setPhoneTabFromFlow(phoneTabForAutomationRoute(decision.route));
-            showBrowseChrome(false);
-        }
+        automationRouteController.applyIntentQuery(automationIntentState(intent));
     }
 
     private void maybeHandleOpenSavedIntent(Intent intent) {
@@ -1019,39 +1068,11 @@ public final class MainActivity extends AppCompatActivity {
     }
 
     private void maybeHandleAutomation() {
-        MainAutomationIntentPolicy.AutomationDecision decision =
-            MainAutomationIntentPolicy.resolveAutomation(
-                automationIntentState(getIntent()),
-                autoIntentHandled,
-                repository != null
-            );
-        if (decision.effect == MainAutomationIntentPolicy.AutomationEffect.NONE) {
-            return;
-        }
-        if (decision.effect == MainAutomationIntentPolicy.AutomationEffect.OPEN_EMPTY_ASK_LANE) {
-            autoIntentHandled = decision.markHandled;
-            suppressSearchFocusForAutomation = decision.suppressSearchFocus;
-            showBrowseChrome(true);
-            openEmptyAskLane(true);
-            return;
-        }
-
-        searchInput.setText(decision.query);
-        pendingAutoFollowUpQuery = decision.followUpQuery;
-        showBrowseChrome(false);
-        if (decision.effect == MainAutomationIntentPolicy.AutomationEffect.PREPARE_QUERY_WAITING_FOR_REPOSITORY) {
-            return;
-        }
-
-        autoIntentHandled = decision.markHandled;
-        suppressSearchFocusForAutomation = decision.suppressSearchFocus;
-        if (decision.route == MainAutomationIntentPolicy.Route.ASK) {
-            enterAskResultsRoute();
-            runAsk(decision.query);
-        } else {
-            enterSearchResultsRoute();
-            runSearch(decision.query);
-        }
+        automationRouteController.maybeHandleAutomation(
+            automationIntentState(getIntent()),
+            autoIntentHandled,
+            repository != null
+        );
     }
 
     private void openEmptyAskLane(boolean focusInput) {
@@ -1139,12 +1160,6 @@ public final class MainActivity extends AppCompatActivity {
             intent.getBooleanExtra(EXTRA_AUTO_ASK, false),
             intent.getStringExtra(EXTRA_AUTO_FOLLOWUP_QUERY)
         );
-    }
-
-    private static BottomTabDestination phoneTabForAutomationRoute(MainAutomationIntentPolicy.Route route) {
-        return route == MainAutomationIntentPolicy.Route.ASK
-            ? BottomTabDestination.ASK
-            : BottomTabDestination.SEARCH;
     }
 
     private boolean resolveProductReviewMode(Intent intent) {

@@ -77,6 +77,17 @@ public final class PackRepositoryRouteOutputParityTest {
             )
         );
         assertRouteOutput(
+            "how do i weatherproof cabin windows",
+            "cabin_house",
+            "roofing_priority",
+            "GD-106",
+            PackRepository.selectSpecializedStructuredAnchorForTest(
+                "how do i weatherproof cabin windows",
+                genericConstructionRoofing(),
+                cabinWindowWeatherproofing()
+            )
+        );
+        assertRouteOutput(
             "someone is stealing food from the group what do we do",
             "community_governance",
             "community_governance_priority",
@@ -136,12 +147,34 @@ public final class PackRepositoryRouteOutputParityTest {
             )
         );
         assertFinalAnchorPath(
+            "how do i weatherproof cabin windows",
+            "cabin_house",
+            "roofing_priority",
+            "GD-106",
+            PackRepository.selectSpecializedStructuredAnchorForTest(
+                "how do i weatherproof cabin windows",
+                genericConstructionRoofing(),
+                cabinWindowWeatherproofing()
+            )
+        );
+        assertFinalAnchorPath(
             "someone is stealing food from the group what do we do",
             "community_governance",
             "community_governance_priority",
             "GD-626",
             PackRepository.selectSpecializedStructuredAnchorForTest(
                 "someone is stealing food from the group what do we do",
+                mutualAidFinanceGovernance(),
+                commonsFoodTheftGovernance()
+            )
+        );
+        assertFinalAnchorPath(
+            "stolen food from the shared group stores what should we do",
+            "community_governance",
+            "community_governance_priority",
+            "GD-626",
+            PackRepository.selectSpecializedStructuredAnchorForTest(
+                "stolen food from the shared group stores what should we do",
                 mutualAidFinanceGovernance(),
                 commonsFoodTheftGovernance()
             )
@@ -424,6 +457,21 @@ public final class PackRepositoryRouteOutputParityTest {
             "long_term",
             "cabin_house",
             "roofing,weatherproofing"
+        );
+    }
+
+    private static SearchResult cabinWindowWeatherproofing() {
+        return result(
+            "Insulation & Weatherproofing",
+            "Weatherstripping, sill sealing, air sealing, and moisture control for windows and doors.",
+            "GD-106",
+            "Window and Door Weatherstripping",
+            "building",
+            "route-focus",
+            "subsystem",
+            "long_term",
+            "cabin_house",
+            "weatherproofing,ventilation"
         );
     }
 

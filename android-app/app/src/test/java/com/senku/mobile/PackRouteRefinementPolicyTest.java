@@ -121,6 +121,74 @@ public final class PackRouteRefinementPolicyTest {
     }
 
     @Test
+    public void currentHeadBroadHouseOrderingPriorityPrefersGeneralSequenceOverFoundationOnlyDetail() {
+        String query = "how do i build a cabin";
+        SearchResult foundationOnly = result(
+            "Foundations and Footings",
+            "Frost Line and Frost Heave",
+            "GD-383",
+            "building",
+            "starter",
+            "long_term",
+            "general",
+            "drainage,foundation",
+            "Footing choices, frost line depth, and drainage for long-term houses."
+        );
+        SearchResult constructionSequence = result(
+            "Construction & Carpentry",
+            "Wall Construction and Roofing Systems",
+            "GD-094",
+            "building",
+            "starter",
+            "long_term",
+            "cabin_house",
+            "drainage,foundation,wall_construction,roofing,weatherproofing",
+            "Build sequence for a cabin: drainage, foundations, walls, roofing, and weatherproofing."
+        );
+
+        PackRepository.QueryTerms queryTerms = PackRepository.QueryTerms.fromQuery(query);
+
+        assertTrue(
+            PackRouteRefinementPolicy.currentHeadRouteOrderingPriority(queryTerms, constructionSequence)
+                > PackRouteRefinementPolicy.currentHeadRouteOrderingPriority(queryTerms, foundationOnly)
+        );
+    }
+
+    @Test
+    public void currentHeadWindowWeatherproofingBonusKeepsHouseOpeningWeatherproofingAheadOfConstruction() {
+        String query = "how do i weatherproof cabin windows";
+        SearchResult construction = result(
+            "Construction & Carpentry",
+            "Roofing Systems",
+            "GD-094",
+            "building",
+            "starter",
+            "long_term",
+            "cabin_house",
+            "foundation,wall_construction,roofing",
+            "General framing and roofing systems for off-grid construction."
+        );
+        SearchResult openingWeatherproofing = result(
+            "Insulation & Weatherproofing",
+            "Window and Door Weatherstripping",
+            "GD-106",
+            "building",
+            "subsystem",
+            "long_term",
+            "cabin_house",
+            "weatherproofing,ventilation",
+            "Weatherstripping, sill sealing, air sealing, and moisture control for windows and doors."
+        );
+
+        PackRepository.QueryTerms queryTerms = PackRepository.QueryTerms.fromQuery(query);
+
+        assertTrue(
+            PackRouteRefinementPolicy.currentHeadRouteRefinementBonus(queryTerms, openingWeatherproofing)
+                > PackRouteRefinementPolicy.currentHeadRouteRefinementBonus(queryTerms, construction)
+        );
+    }
+
+    @Test
     public void currentHeadRouteMethodsReturnZeroForMissingInputs() {
         SearchResult result = result(
             "Glass, Optics & Ceramics",
