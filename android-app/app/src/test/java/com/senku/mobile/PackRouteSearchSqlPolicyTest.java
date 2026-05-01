@@ -211,6 +211,57 @@ public final class PackRouteSearchSqlPolicyTest {
     }
 
     @Test
+    public void ftsPlansNoOpWhenTermsTableOrLimitAreInvalid() {
+        PackRepository.QueryTerms queryTerms = PackRepository.QueryTerms.fromQuery("how do i build a house");
+        PackRepository.QueryTerms specTerms = PackRepository.QueryTerms.fromText("site foundation", queryTerms.routeProfile);
+
+        PackRouteSearchSqlPolicy.RouteFtsSqlPlan missingSpecTerms = PackRouteSearchSqlPolicy.chunkFtsPlan(
+            queryTerms,
+            null,
+            List.of("building"),
+            72,
+            "chunks_fts",
+            true
+        );
+        PackRouteSearchSqlPolicy.RouteFtsSqlPlan missingTable = PackRouteSearchSqlPolicy.chunkFtsPlan(
+            queryTerms,
+            specTerms,
+            List.of("building"),
+            72,
+            "   ",
+            true
+        );
+        PackRouteSearchSqlPolicy.RouteFtsSqlPlan zeroLimit = PackRouteSearchSqlPolicy.guideFtsPlan(
+            queryTerms,
+            specTerms,
+            List.of("building"),
+            0,
+            "chunks_fts",
+            true
+        );
+        PackRouteSearchSqlPolicy.RouteFtsSqlPlan missingQueryTermsNoBm25 = PackRouteSearchSqlPolicy.guideFtsPlan(
+            null,
+            specTerms,
+            List.of("building"),
+            72,
+            "chunks_fts",
+            false
+        );
+
+        assertTrue(missingSpecTerms.isEmpty());
+        assertTrue(missingSpecTerms.args.isEmpty());
+        assertEquals("", missingSpecTerms.ftsQuery);
+        assertTrue(missingTable.isEmpty());
+        assertTrue(missingTable.args.isEmpty());
+        assertEquals(PackRepository.buildFtsQuery(specTerms, 8, true), missingTable.ftsQuery);
+        assertTrue(zeroLimit.isEmpty());
+        assertTrue(zeroLimit.args.isEmpty());
+        assertEquals(PackRepository.buildFtsQuery(specTerms, 8, true), zeroLimit.ftsQuery);
+        assertEquals("rowid", missingQueryTermsNoBm25.orderLabel);
+        assertEquals("24", missingQueryTermsNoBm25.args.get(missingQueryTermsNoBm25.args.size() - 1));
+    }
+
+    @Test
     public void chunkLikePlanPreservesSqlAndRepeatedTokenArgs() {
         PackRouteSearchSqlPolicy.RouteLikeSqlPlan plan = PackRouteSearchSqlPolicy.chunkLikePlan(
             List.of("alpha", "beta"),
@@ -296,6 +347,25 @@ public final class PackRouteSearchSqlPolicyTest {
         assertTrue(nullCategories.args.isEmpty());
         assertTrue(blankCategories.isEmpty());
         assertTrue(blankCategories.args.isEmpty());
+    }
+
+    @Test
+    public void likePlansNoOpWhenLimitIsNonPositive() {
+        PackRouteSearchSqlPolicy.RouteLikeSqlPlan chunkZeroLimit = PackRouteSearchSqlPolicy.chunkLikePlan(
+            List.of("alpha"),
+            List.of("building"),
+            0
+        );
+        PackRouteSearchSqlPolicy.RouteLikeSqlPlan guideNegativeLimit = PackRouteSearchSqlPolicy.guideLikePlan(
+            List.of("alpha"),
+            List.of("building"),
+            -1
+        );
+
+        assertTrue(chunkZeroLimit.isEmpty());
+        assertTrue(chunkZeroLimit.args.isEmpty());
+        assertTrue(guideNegativeLimit.isEmpty());
+        assertTrue(guideNegativeLimit.args.isEmpty());
     }
 
     @Test

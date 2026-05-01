@@ -18,7 +18,7 @@ final class PackRouteSearchSqlPolicy {
     ) {
         List<String> safeCategories = usableValues(categories);
         String ftsQuery = PackRepository.buildFtsQuery(specTerms, ftsSupportsBm25 ? 8 : 4, ftsSupportsBm25);
-        if (ftsQuery.isEmpty() || safeCategories.isEmpty()) {
+        if (ftsQuery.isEmpty() || safeCategories.isEmpty() || !hasUsableTableName(ftsTableName) || candidateLimit <= 0) {
             return RouteFtsSqlPlan.empty(ftsQuery);
         }
 
@@ -31,7 +31,7 @@ final class PackRouteSearchSqlPolicy {
         }
         int effectiveCandidateLimit = ftsSupportsBm25
             ? candidateLimit
-            : Math.min(candidateLimit, queryTerms.routeProfile.isStarterBuildProject() ? 120 : 84);
+            : Math.min(candidateLimit, isStarterBuildProject(queryTerms) ? 120 : 84);
         RouteFtsOrderSpec orderSpec = routeFtsOrder(queryTerms, ftsTableName, ftsSupportsBm25);
         args.addAll(orderSpec.args);
         args.add(String.valueOf(effectiveCandidateLimit));
@@ -58,7 +58,7 @@ final class PackRouteSearchSqlPolicy {
     ) {
         List<String> safeTokens = usableValues(tokens);
         List<String> safeCategories = usableValues(categories);
-        if (safeTokens.isEmpty() || safeCategories.isEmpty()) {
+        if (safeTokens.isEmpty() || safeCategories.isEmpty() || candidateLimit <= 0) {
             return RouteLikeSqlPlan.empty();
         }
 
@@ -98,7 +98,7 @@ final class PackRouteSearchSqlPolicy {
     ) {
         List<String> safeCategories = usableValues(categories);
         String ftsQuery = PackRepository.buildFtsQuery(specTerms, ftsSupportsBm25 ? 8 : 4, ftsSupportsBm25);
-        if (ftsQuery.isEmpty() || safeCategories.isEmpty()) {
+        if (ftsQuery.isEmpty() || safeCategories.isEmpty() || !hasUsableTableName(ftsTableName) || candidateLimit <= 0) {
             return RouteFtsSqlPlan.empty(ftsQuery);
         }
 
@@ -111,7 +111,7 @@ final class PackRouteSearchSqlPolicy {
         }
         int effectiveCandidateLimit = ftsSupportsBm25
             ? candidateLimit
-            : Math.min(candidateLimit, queryTerms.routeProfile.isStarterBuildProject() ? 48 : 24);
+            : Math.min(candidateLimit, isStarterBuildProject(queryTerms) ? 48 : 24);
         RouteFtsOrderSpec orderSpec = routeFtsOrder(queryTerms, ftsTableName, ftsSupportsBm25);
         args.addAll(orderSpec.args);
         args.add(String.valueOf(effectiveCandidateLimit));
@@ -138,7 +138,7 @@ final class PackRouteSearchSqlPolicy {
     ) {
         List<String> safeTokens = usableValues(tokens);
         List<String> safeCategories = usableValues(categories);
-        if (safeTokens.isEmpty() || safeCategories.isEmpty()) {
+        if (safeTokens.isEmpty() || safeCategories.isEmpty() || candidateLimit <= 0) {
             return RouteLikeSqlPlan.empty();
         }
 
@@ -188,6 +188,16 @@ final class PackRouteSearchSqlPolicy {
                 "bm25"
             )
             : noBm25RouteFtsOrder(queryTerms);
+    }
+
+    private static boolean hasUsableTableName(String tableName) {
+        return tableName != null && !tableName.trim().isEmpty();
+    }
+
+    private static boolean isStarterBuildProject(PackRepository.QueryTerms queryTerms) {
+        return queryTerms != null
+            && queryTerms.routeProfile != null
+            && queryTerms.routeProfile.isStarterBuildProject();
     }
 
     private static List<String> usableValues(List<String> values) {
