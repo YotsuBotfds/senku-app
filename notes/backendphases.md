@@ -82,6 +82,10 @@ Purpose: prevent future agents from rerunning Ask/query backend cleanup that is 
   branching.
 - Retry presentation is routed through the composer controller.
 - Stale async search suppression has focused proof for dropped outdated results.
+- Search score marker rendering now sits behind extracted policy.
+- Restored route back transitions have explicit route-coverage proof.
+- Reviewed-card metadata behavior is centralized behind policy.
+- Tablet Ask rail submit routing has focused proof.
 - Physical smoke proof is current for the completed backend cleanup stack.
 
 ## Remaining Next Slices
