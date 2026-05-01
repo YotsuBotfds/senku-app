@@ -310,6 +310,16 @@ class PowerShellQualityGateTests(unittest.TestCase):
         self.assertIn("Resolve-AndroidHarnessDeviceList", validation)
         self.assertIn("$normalizedDevices = @(Resolve-AndroidHarnessDeviceList -Devices $Devices)", validation)
 
+    def test_android_harness_lock_reports_wait_progress_and_timeout_path(self):
+        common = (REPO_ROOT / "scripts" / "android_harness_common.psm1").read_text(encoding="utf-8")
+
+        self.assertIn("[string]$ProgressLabel = \"\"", common)
+        self.assertIn("[int]$ProgressIntervalSeconds = 15", common)
+        self.assertIn("waiting for device lock on {1}", common)
+        self.assertIn("remaining_seconds={3}", common)
+        self.assertIn("lock_path={4}", common)
+        self.assertIn("Timed out waiting for device lock on $DeviceName after ${elapsedSeconds}s at $lockPath", common)
+
     def test_android_ui_validation_uses_shared_posture_helpers(self):
         validation = (REPO_ROOT / "scripts" / "run_android_ui_validation_pack.ps1").read_text(encoding="utf-8")
 

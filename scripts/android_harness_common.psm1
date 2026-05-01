@@ -88,7 +88,9 @@ function Acquire-AndroidHarnessDeviceLock {
     param(
         [string]$DeviceName,
         [string]$LockRoot,
-        [int]$TimeoutSeconds = 900
+        [int]$TimeoutSeconds = 900,
+        [string]$ProgressLabel = "",
+        [int]$ProgressIntervalSeconds = 15
     )
 
     New-Item -ItemType Directory -Force -Path $LockRoot | Out-Null
@@ -96,15 +98,29 @@ function Acquire-AndroidHarnessDeviceLock {
     $safeName = ($DeviceName -replace '[^A-Za-z0-9._-]', '_')
     $lockPath = Join-Path $LockRoot ($safeName + ".lock")
     $deadline = (Get-Date).AddSeconds($TimeoutSeconds)
+    $startedAt = Get-Date
+    $nextProgressAt = $startedAt
     while ((Get-Date) -lt $deadline) {
         try {
             $stream = [System.IO.File]::Open($lockPath, [System.IO.FileMode]::OpenOrCreate, [System.IO.FileAccess]::ReadWrite, [System.IO.FileShare]::None)
+            $elapsedSeconds = [Math]::Round(((Get-Date) - $startedAt).TotalSeconds, 1)
+            if ($elapsedSeconds -ge 1 -and -not [string]::IsNullOrWhiteSpace($ProgressLabel)) {
+                Write-Host ("{0} device lock acquired for {1} after {2}s" -f $ProgressLabel, $DeviceName, $elapsedSeconds)
+            }
             return New-AndroidHarnessDeviceLockHandle -Stream $stream -LockPath $lockPath
         } catch [System.IO.IOException] {
+            $now = Get-Date
+            if (-not [string]::IsNullOrWhiteSpace($ProgressLabel) -and $now -ge $nextProgressAt) {
+                $elapsedSeconds = [Math]::Round(($now - $startedAt).TotalSeconds, 1)
+                $remainingSeconds = [Math]::Max(0, [Math]::Round(($deadline - $now).TotalSeconds, 1))
+                Write-Host ("{0} waiting for device lock on {1}; elapsed_seconds={2}; remaining_seconds={3}; lock_path={4}" -f $ProgressLabel, $DeviceName, $elapsedSeconds, $remainingSeconds, $lockPath)
+                $nextProgressAt = $now.AddSeconds([Math]::Max(1, $ProgressIntervalSeconds))
+            }
             Start-Sleep -Milliseconds 500
         }
     }
-    throw "Timed out waiting for device lock on $DeviceName"
+    $elapsedSeconds = [Math]::Round(((Get-Date) - $startedAt).TotalSeconds, 1)
+    throw "Timed out waiting for device lock on $DeviceName after ${elapsedSeconds}s at $lockPath"
 }
 
 function Invoke-AndroidAdbCommandCapture {

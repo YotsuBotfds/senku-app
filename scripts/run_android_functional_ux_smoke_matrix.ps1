@@ -71,6 +71,7 @@ if ($PhysicalDevice -and $Device -like "emulator-*") {
 $repoRoot = (Resolve-Path (Join-Path $PSScriptRoot "..")).Path
 $smokeScript = Join-Path $PSScriptRoot "run_android_instrumented_ui_smoke.ps1"
 $adb = Join-Path $env:LOCALAPPDATA "Android\Sdk\platform-tools\adb.exe"
+$lockRoot = Join-Path $repoRoot "artifacts\harness_locks"
 $commonHarnessModule = Join-Path $PSScriptRoot "android_harness_common.psm1"
 if (-not (Test-Path -LiteralPath $smokeScript -PathType Leaf)) {
     throw "Missing smoke script: $smokeScript"
@@ -82,6 +83,16 @@ if (-not (Test-Path -LiteralPath $commonHarnessModule -PathType Leaf)) {
     throw "android_harness_common.psm1 not found at $commonHarnessModule"
 }
 Import-Module $commonHarnessModule -Force -DisableNameChecking
+New-Item -ItemType Directory -Force -Path $lockRoot | Out-Null
+
+function Acquire-MatrixDeviceLock {
+    param(
+        [string]$DeviceName,
+        [int]$TimeoutSeconds = 900
+    )
+
+    return Acquire-AndroidHarnessDeviceLock -DeviceName $DeviceName -LockRoot $lockRoot -TimeoutSeconds $TimeoutSeconds -ProgressLabel ("[functional-ux-matrix:{0}]" -f $DeviceName)
+}
 
 function Assert-FunctionalUxPhoneDevice {
     Write-Host ("[functional-ux-matrix:{0}] preflighting phone-preset device role" -f $Device)
@@ -123,8 +134,6 @@ $presets = @(
     "phone-functional-back-provenance"
 )
 
-Assert-FunctionalUxPhoneDevice
-
 function Convert-ToRepoRelativePath {
     param([string]$Path)
 
@@ -152,6 +161,8 @@ $powerShellExe = Get-PowerShellExecutable
 $results = New-Object System.Collections.Generic.List[object]
 $anyFailed = $false
 $canReuseInstalledApks = $false
+$matrixDeviceLock = $null
+$matrixDeviceLockUsed = $false
 
 function Read-JsonFileOrNull {
     param([string]$Path)
@@ -165,6 +176,18 @@ function Read-JsonFileOrNull {
         return $null
     }
 }
+
+try {
+if (-not $SkipDeviceLock) {
+    Write-Host ("[functional-ux-matrix:{0}] acquiring matrix device lock for {1} preset(s)" -f $Device, $presets.Count)
+    $matrixDeviceLock = Acquire-MatrixDeviceLock -DeviceName $Device
+    $matrixDeviceLockUsed = $true
+    Write-Host ("[functional-ux-matrix:{0}] matrix device lock acquired; child smoke runs will skip nested lock acquisition" -f $Device)
+} else {
+    Write-Host ("[functional-ux-matrix:{0}] matrix device lock skipped; child smoke runs will also skip device locks" -f $Device)
+}
+
+Assert-FunctionalUxPhoneDevice
 
 foreach ($preset in $presets) {
     $presetRoot = Join-Path $matrixRoot $preset
@@ -200,7 +223,7 @@ foreach ($preset in $presets) {
     if ($SkipInstall -or $canReuseInstalledApks) {
         $arguments += "-SkipInstall"
     }
-    if ($SkipDeviceLock) {
+    if ($SkipDeviceLock -or $matrixDeviceLockUsed) {
         $arguments += "-SkipDeviceLock"
     }
 
@@ -255,11 +278,18 @@ $summary = [ordered]@{
     capture_logcat = $true
     capture_logcat_requested = [bool]$CaptureLogcat
     clear_logcat_before_run = [bool]$ClearLogcatBeforeRun
+    device_lock_used = [bool]$matrixDeviceLockUsed
+    device_lock_posture = $(if ($matrixDeviceLockUsed) { "matrix_lock_children_skip_nested" } else { "skipped" })
     presets = $results
     passed = -not $anyFailed
 }
 $summary | ConvertTo-Json -Depth 8 | Set-Content -Path $matrixSummaryPath -Encoding UTF8
 Write-Host ("[functional-ux-matrix:{0}] wrote {1}" -f $Device, (Convert-ToRepoRelativePath -Path $matrixSummaryPath))
+} finally {
+    if ($matrixDeviceLock) {
+        $matrixDeviceLock.Dispose()
+    }
+}
 
 if ($anyFailed) {
     exit 1

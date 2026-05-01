@@ -83,7 +83,7 @@ function Acquire-DeviceLock {
         [int]$TimeoutSeconds = 900
     )
 
-    return Acquire-AndroidHarnessDeviceLock -DeviceName $DeviceName -LockRoot $lockRoot -TimeoutSeconds $TimeoutSeconds
+    return Acquire-AndroidHarnessDeviceLock -DeviceName $DeviceName -LockRoot $lockRoot -TimeoutSeconds $TimeoutSeconds -ProgressLabel ("[instrumented-ui-smoke:{0}]" -f $DeviceName)
 }
 
 $deviceLock = $null

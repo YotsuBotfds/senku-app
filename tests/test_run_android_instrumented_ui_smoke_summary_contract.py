@@ -154,6 +154,9 @@ class RunAndroidInstrumentedUiSmokeSummaryContractTests(unittest.TestCase):
             self.assertIn(phase, self.script)
         self.assertIn("with timeout {1} ms", self.script)
 
+    def test_runner_passes_progress_label_to_shared_device_lock(self):
+        self.assertIn('ProgressLabel ("[instrumented-ui-smoke:{0}]" -f $DeviceName)', self.script)
+
     def test_failure_path_attempts_best_effort_artifact_sync(self):
         self.assertIn("attempting best-effort artifact sync after failure", self.script)
         self.assertIn("$failureArtifactFiles = @(Get-RunAsArtifactFiles)", self.script)

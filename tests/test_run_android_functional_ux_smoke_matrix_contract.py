@@ -39,6 +39,15 @@ class RunAndroidFunctionalUxSmokeMatrixContractTests(unittest.TestCase):
         self.assertIn('"-CaptureLogcat"', self.script)
         self.assertIn('$canReuseInstalledApks = $true', self.script)
 
+    def test_matrix_holds_single_outer_device_lock_for_child_runs(self):
+        self.assertIn('$lockRoot = Join-Path $repoRoot "artifacts\\harness_locks"', self.script)
+        self.assertIn("function Acquire-MatrixDeviceLock", self.script)
+        self.assertIn('ProgressLabel ("[functional-ux-matrix:{0}]" -f $DeviceName)', self.script)
+        self.assertIn("acquiring matrix device lock", self.script)
+        self.assertIn("child smoke runs will skip nested lock acquisition", self.script)
+        self.assertIn("if ($SkipDeviceLock -or $matrixDeviceLockUsed)", self.script)
+        self.assertIn("device_lock_posture = $(if ($matrixDeviceLockUsed) { \"matrix_lock_children_skip_nested\" } else { \"skipped\" })", self.script)
+
     def test_matrix_preflights_phone_device_role(self):
         self.assertIn("function Assert-FunctionalUxPhoneDevice", self.script)
         self.assertIn("Resolve-AndroidDeviceFacts -AdbPath $adb -DeviceName $Device", self.script)
