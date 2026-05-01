@@ -1,6 +1,6 @@
 # Backend Cleanup Phase Tracker
 
-Last updated after local validation and cleanup through `8d333c6c` on 2026-05-01.
+Last updated after local validation and cleanup through `18ea1b6e` on 2026-05-01.
 
 Purpose: prevent future agents from rerunning Ask/query backend cleanup that is already complete. Keep this note short; implementation detail belongs in commits and tests.
 
@@ -262,13 +262,22 @@ Purpose: prevent future agents from rerunning Ask/query backend cleanup that is 
   review placeholders route through `ReviewDemoPolicy`.
 - Query routing test isolation is current through `5373e6b4`: vector-focused
   tests mock lexical fallback and no longer open sqlite during those paths.
-- Latest local proof after `8d333c6c`: `git diff --check` passed; full Android
+- Physical smoke summary ergonomics are current through `2326e46a`: the
+  validator success output now prints proof breadcrumbs such as summary
+  Markdown, serial, focused package, screenshot, dump, and interaction status.
+- Tablet search header review shaping is current through `399eca6b`:
+  `ReviewDemoPolicy` owns the review-latency decision instead of direct
+  `MainActivity` branching.
+- Tablet visual-owner source selection is current through `c4bcbe19`:
+  `DetailTabletStateBuilder` owns the source/question overlap scoring seam.
+- Pack text matching is current through `18ea1b6e`: `PackTextMatchPolicy`
+  owns marker/term normalization used by `PackRepository`.
+- Latest local proof after `18ea1b6e`: `git diff --check` passed; full Android
   `:app:testDebugUnitTest :app:assembleDebug :app:assembleDebugAndroidTest`
   passed; fresh physical phone `phone-functional` PromptHarness smoke passed on
   `RFCX607ZM8L` with APK SHA
-  `1705e0e595d679b5806e31d6bc41656e05b9232cf0b6dccffb66d823bbc5d3e1` at
-  `artifacts/physical_phone_functional_after_8d333c6c/run_summary.json`;
-  `tests.test_query_routing` ran 94 tests OK without ResourceWarning noise.
+  `fd0bfbf6810cfe682e228799e2c1dc694f5a7a6e9ed7e398f0b30a2aed158d8d` at
+  `artifacts/physical_phone_functional_after_18ea1b6e/run_summary.json`.
 
 ## Remaining Next Slices
 
@@ -282,6 +291,9 @@ Purpose: prevent future agents from rerunning Ask/query backend cleanup that is 
 - Review/demo leakage follow-up: continue moving remaining fixture-shaped
   display decisions through explicit review-policy gates; the product search CTA
   resource-name leak is closed and guarded.
+- Physical smoke follow-up: tighten post-step checks so `submit_query` and
+  `back` prove route transitions instead of matching generic labels that could
+  remain visible after a no-op.
 - Do not rerun the result-publication extraction unless a regression points
   there; future `MainActivity` cleanup should target still-mixed route side
   effects outside `MainResultPublicationPolicy`.

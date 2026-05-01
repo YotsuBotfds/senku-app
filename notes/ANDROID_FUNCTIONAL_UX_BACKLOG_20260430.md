@@ -1,6 +1,6 @@
 # Android Functional UX Backlog - 2026-04-30
 
-Status after pushed validation/code-health head `51ae1f69`.
+Status after local validation/code-health head `18ea1b6e`.
 
 ## Fixed This Loop
 
@@ -80,6 +80,11 @@ Status after pushed validation/code-health head `51ae1f69`.
   passed, and physical `phone-functional` PromptHarness smoke passed on
   `RFCX607ZM8L` at
   `artifacts/physical_phone_functional_after_a8b7445c/run_summary.json`.
+- Latest physical proof after `18ea1b6e`: full Android
+  `:app:testDebugUnitTest :app:assembleDebug :app:assembleDebugAndroidTest`
+  passed, and physical `phone-functional` PromptHarness smoke passed on
+  `RFCX607ZM8L` at
+  `artifacts/physical_phone_functional_after_18ea1b6e/run_summary.json`.
 
 ## Top Queue - Phone Chrome Normalization
 
@@ -197,8 +202,12 @@ the exported mocks.
      helpers from the adapter/presenter surfaces.
 
 10. Physical device install/smoke
-   - ADB only reported the emulator matrix during the pre-noon check:
-     `emulator-5554`, `emulator-5556`, `emulator-5558`, and `emulator-5560`.
-   - Status: addressed for the current evening head. Physical `phone-functional`
-     preset passed on `RFCX607ZM8L`, covering Ask/Search, Saved back, and
-     answer provenance open/back.
+   - Status: partially addressed. Physical `phone-functional` preset passed on
+     `RFCX607ZM8L`, covering Ask/Search, Saved back, and answer provenance
+     open/back through PromptHarness assertions.
+   - New validation gap: the standalone physical-phone smoke interaction
+     post-checks are too broad. `submit_query` and `back` can match generic
+     labels that may remain visible after a no-op.
+   - Next safe slice: make post-step checks prove route transitions, add a
+     fake-adb unchanged-dump regression, and add/plan an Ask-owned interaction
+     path on physical hardware.
