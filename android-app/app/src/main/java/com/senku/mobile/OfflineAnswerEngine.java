@@ -1346,7 +1346,34 @@ public final class OfflineAnswerEngine {
         if (topChunks == null || topChunks.isEmpty()) {
             return Collections.emptyList();
         }
-        return new ArrayList<>(topChunks.subList(0, Math.min(ABSTAIN_TOP_CHUNK_LIMIT, topChunks.size())));
+        ArrayList<SearchResult> selected = new ArrayList<>();
+        LinkedHashSet<String> seenSourceKeys = new LinkedHashSet<>();
+        for (SearchResult chunk : topChunks) {
+            if (seenSourceKeys.add(sourceKey(chunk))) {
+                selected.add(chunk);
+            }
+            if (selected.size() >= ABSTAIN_TOP_CHUNK_LIMIT) {
+                break;
+            }
+        }
+        return selected;
+    }
+
+    private static List<SearchResult> topAbstainGuideRepresentatives(List<SearchResult> topChunks) {
+        if (topChunks == null || topChunks.isEmpty()) {
+            return Collections.emptyList();
+        }
+        ArrayList<SearchResult> selected = new ArrayList<>();
+        LinkedHashSet<String> seenGuideKeys = new LinkedHashSet<>();
+        for (SearchResult chunk : topChunks) {
+            if (seenGuideKeys.add(abstainGuideKey(chunk))) {
+                selected.add(chunk);
+            }
+            if (selected.size() >= ABSTAIN_TOP_CHUNK_LIMIT) {
+                break;
+            }
+        }
+        return selected;
     }
 
     private static ConfidenceLabel normalizeConfidenceLabel(
@@ -1804,7 +1831,7 @@ public final class OfflineAnswerEngine {
     }
 
     static String buildAbstainAnswerBody(String query, List<SearchResult> topChunks, boolean safetyCritical) {
-        List<SearchResult> adjacent = topAbstainChunks(topChunks);
+        List<SearchResult> adjacent = topAbstainGuideRepresentatives(topChunks);
         List<String> queryTokens = queryTokens(query);
         LinkedHashMap<String, Integer> categoryCounts = new LinkedHashMap<>();
         StringBuilder builder = new StringBuilder();
@@ -1888,7 +1915,7 @@ public final class OfflineAnswerEngine {
         boolean safetyCritical,
         boolean productReviewMode
     ) {
-        List<SearchResult> adjacent = topAbstainChunks(topChunks);
+        List<SearchResult> adjacent = topAbstainGuideRepresentatives(topChunks);
         if (productReviewMode) {
             String reviewDemoAnswer = ReviewDemoPolicy.buildRainShelterUncertainFitAnswerBody(
                 true,
@@ -1965,13 +1992,14 @@ public final class OfflineAnswerEngine {
         boolean safetyCritical,
         boolean productReviewMode
     ) {
+        List<SearchResult> distinctAdjacent = topAbstainGuideRepresentatives(adjacent);
         if (!productReviewMode) {
-            return adjacent == null ? Collections.emptyList() : new ArrayList<>(adjacent);
+            return distinctAdjacent;
         }
         return ReviewDemoPolicy.shapeRainShelterUncertainFitSources(
             true,
             query,
-            adjacent,
+            distinctAdjacent,
             safetyCritical
         );
     }
@@ -2137,6 +2165,17 @@ public final class OfflineAnswerEngine {
             return guideId + "::" + sectionHeading;
         }
         return title;
+    }
+
+    private static String abstainGuideKey(SearchResult result) {
+        if (result == null) {
+            return "unknown";
+        }
+        String guideId = safe(result.guideId).trim().toLowerCase(QUERY_LOCALE);
+        if (!guideId.isEmpty()) {
+            return guideId;
+        }
+        return sourceKey(result);
     }
 
     private static String guideKey(SearchResult result) {

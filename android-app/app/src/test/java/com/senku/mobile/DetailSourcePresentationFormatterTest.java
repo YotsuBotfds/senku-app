@@ -559,6 +559,77 @@ public final class DetailSourcePresentationFormatterTest {
     }
 
     @Test
+    public void orderAnswerSourceStackDedupesExactGuideSourceRows() {
+        DetailSourcePresentationFormatter formatter = reviewDemoFormatter();
+        SearchResult first = new SearchResult(
+            "Tarp & Cord Shelters",
+            "",
+            "A simple ridgeline shelter requires only tarp, cord, and two anchor points.",
+            "Drape the tarp evenly across the ridge.",
+            "GD-345",
+            "Rain shelter",
+            "survival",
+            "lexical",
+            "",
+            "",
+            "emergency_shelter",
+            "foundation,weatherproofing,site_selection"
+        );
+        SearchResult duplicateFromAnotherRoute = new SearchResult(
+            "Tarp & Cord Shelters",
+            "",
+            "A simple ridgeline shelter requires only tarp, cord, and two anchor points.",
+            "Drape the tarp evenly across the ridge.",
+            "GD-345",
+            "Rain shelter",
+            "survival",
+            "hybrid",
+            "source_anchor",
+            "short",
+            "emergency_shelter",
+            "foundation,weatherproofing,site_selection"
+        );
+
+        List<SearchResult> ordered = formatter.orderAnswerSourceStack(
+            List.of(first, duplicateFromAnotherRoute, first)
+        );
+
+        assertEquals(1, ordered.size());
+        assertEquals(first, ordered.get(0));
+    }
+
+    @Test
+    public void orderAnswerSourceStackPreservesDistinctSameGuideSourceRowsInOrder() {
+        DetailSourcePresentationFormatter formatter = new DetailSourcePresentationFormatter(null);
+        SearchResult first = new SearchResult(
+            "Tarp & Cord Shelters",
+            "",
+            "Set a ridgeline first.",
+            "",
+            "GD-345",
+            "Ridgeline",
+            "survival",
+            "lexical"
+        );
+        SearchResult second = new SearchResult(
+            "Tarp & Cord Shelters",
+            "",
+            "Stake the windward edge low.",
+            "",
+            "GD-345",
+            "Windward pitch",
+            "survival",
+            "lexical"
+        );
+
+        List<SearchResult> ordered = formatter.orderAnswerSourceStack(
+            List.of(first, second, first)
+        );
+
+        assertEquals(List.of(first, second), ordered);
+    }
+
+    @Test
     public void orderAnswerSourceStackPreservesNonMockSourceOrder() {
         DetailSourcePresentationFormatter formatter = new DetailSourcePresentationFormatter(null);
         SearchResult first = new SearchResult("Water Storage", "", "", "", "GD-214", "", "", "");

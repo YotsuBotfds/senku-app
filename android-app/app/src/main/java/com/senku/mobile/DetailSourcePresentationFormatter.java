@@ -11,8 +11,10 @@ import android.text.style.TypefaceSpan;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 final class DetailSourcePresentationFormatter {
     private final Context context;
@@ -230,7 +232,7 @@ final class DetailSourcePresentationFormatter {
         if (sources == null || sources.isEmpty()) {
             return new ArrayList<>();
         }
-        ArrayList<SearchResult> ordered = new ArrayList<>(sources);
+        ArrayList<SearchResult> ordered = dedupeExactSourceRows(sources);
         if (!containsReviewedRainShelterSource(ordered)) {
             return ordered;
         }
@@ -243,6 +245,26 @@ final class DetailSourcePresentationFormatter {
             return 0;
         });
         return ordered;
+    }
+
+    private static ArrayList<SearchResult> dedupeExactSourceRows(List<SearchResult> sources) {
+        ArrayList<SearchResult> deduped = new ArrayList<>();
+        Set<String> seenSourceRows = new HashSet<>();
+        for (SearchResult source : sources) {
+            String key = exactSourceRowKey(source);
+            if (seenSourceRows.add(key)) {
+                deduped.add(source);
+            }
+        }
+        return deduped;
+    }
+
+    private static String exactSourceRowKey(SearchResult source) {
+        return safe(source == null ? null : source.guideId).trim().toUpperCase(Locale.US)
+            + "\u001F" + safe(source == null ? null : source.title).trim()
+            + "\u001F" + safe(source == null ? null : source.sectionHeading).trim()
+            + "\u001F" + safe(source == null ? null : source.snippet).trim()
+            + "\u001F" + safe(source == null ? null : source.body).trim();
     }
 
     String buildNextStepChipContentDescription(String nextStep, int index, int total) {

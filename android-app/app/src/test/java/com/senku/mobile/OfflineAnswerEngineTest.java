@@ -2631,12 +2631,62 @@ public final class OfflineAnswerEngineTest {
             false
         );
 
-        assertEquals(2, sources.size());
+        assertEquals(1, sources.size());
         assertEquals("GD-345", sources.get(0).guideId);
         assertEquals("Primitive Shelter Construction Techniques", sources.get(0).title);
         assertEquals("Wood Quality Evaluation for Shelter Construction", sources.get(0).sectionHeading);
-        assertEquals("GD-345", sources.get(1).guideId);
-        assertEquals("Debris Hut (Emergency Shelter)", sources.get(1).sectionHeading);
+    }
+
+    @Test
+    public void uncertainFitSourcesDedupeRepeatedGuideSectionsBeforePresentation() {
+        SearchResult first = new SearchResult(
+            "Tarp & Cord Shelters",
+            "",
+            "A simple ridgeline shelter requires only tarp, cord, and two anchor points.",
+            "",
+            "GD-345",
+            "Tarp & Cord Shelters",
+            "shelter",
+            "lexical"
+        );
+        SearchResult duplicate = new SearchResult(
+            "Tarp & Cord Shelters",
+            "",
+            "A simple ridgeline shelter requires only tarp, cord, and two anchor points.",
+            "",
+            "GD-345",
+            "Tarp & Cord Shelters",
+            "shelter",
+            "hybrid"
+        );
+        SearchResult distinctSection = new SearchResult(
+            "Tarp & Cord Shelters",
+            "",
+            "Stake the windward edge low.",
+            "",
+            "GD-345",
+            "Windward Pitch",
+            "shelter",
+            "lexical"
+        );
+
+        List<SearchResult> sources = OfflineAnswerEngine.shapeUncertainFitSourcesForPresentation(
+            "How do I build a simple rain shelter from tarp and cord?",
+            List.of(first, duplicate, distinctSection),
+            false
+        );
+        String answerBody = OfflineAnswerEngine.buildUncertainFitAnswerBody(
+            "How do I build a simple rain shelter from tarp and cord?",
+            List.of(first, duplicate, distinctSection),
+            OfflineAnswerEngine.ConfidenceLabel.MEDIUM,
+            false
+        );
+
+        assertEquals(List.of(first), sources);
+        assertEquals(
+            answerBody.indexOf("Tarp & Cord Shelters — Tarp & Cord Shelters"),
+            answerBody.lastIndexOf("Tarp & Cord Shelters — Tarp & Cord Shelters")
+        );
     }
 
     @Test
