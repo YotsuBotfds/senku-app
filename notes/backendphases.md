@@ -1,6 +1,6 @@
 # Backend Cleanup Phase Tracker
 
-Last updated after cleanup through `28d77046` on 2026-05-01.
+Last updated after cleanup through `fae768cb` on 2026-05-01.
 
 Purpose: prevent future agents from rerunning Ask/query backend cleanup that is already complete. Keep this note short; implementation detail belongs in commits and tests.
 
@@ -552,7 +552,33 @@ Purpose: prevent future agents from rerunning Ask/query backend cleanup that is 
   `tests.test_run_android_instrumented_ui_smoke_summary_contract`, parser gate
   for the two Android smoke scripts, `:app:assembleDebugAndroidTest`, and
   `git diff --check`.
-- Tracker is refreshed through `28d77046`.
+- Plain search SQL planning is current through `304d91ea`:
+  `PackPlainSearchSqlPolicy` owns FTS, keyword, plain LIKE, and vector-neighbor
+  SQL plan construction while `PackRepository` keeps cursor mapping/scoring.
+  The policy no-ops on invalid FTS/table/limit inputs, null/empty plain LIKE
+  queries, and empty/null-only vector-neighbor lists.
+- Current-head route parity proof is current through `fae768cb`: the bundled
+  pack androidTest covers broad house, gravity-fed water/storage, soapmaking,
+  glassmaking, cabin roof/weatherproofing, and food-theft/governance prompts.
+  It intentionally opens `PackRepository` without vectors so the test exercises
+  current Android route/lexical behavior without the large vector memory path.
+- Tablet header smoke readiness is current through `542bcc3a`: the tablet
+  portrait guide chip-dedup smoke waits on guide identity/detail state instead
+  of the legacy XML title. The child smoke runner now bounds cleanup/settings
+  ADB calls so a finished smoke cannot sit quietly behind a wedged raw ADB
+  command.
+- Latest local proof after `fae768cb`: focused retrieval JVM tests passed
+  (`PackPlainSearchSqlPolicyTest`, `PackRepositoryTest`,
+  `PackRepositoryTelemetryTest`, `PackRouteFocusedCandidateCollectorTest`,
+  `PackRouteFocusedResultRankerTest`, `PackTextMatchPolicyTest`,
+  `PackRouteRefinementPolicyTest`); smoke script contract/parser tests passed;
+  `:app:assembleDebug :app:assembleDebugAndroidTest` passed; tablet header
+  smoke passed on `emulator-5554` at
+  `artifacts/instrumented_ui_smoke_tablet_header_fix/20260501_141553_032/emulator-5554/summary.json`;
+  six-row current-head route parity passed on `emulator-5556` in about 611s,
+  with logcat captured at
+  `artifacts/route_parity_emulator5556_20260501_1437_logcat.txt`.
+- Tracker is refreshed through `fae768cb`.
 
 ## Remaining Next Slices
 
@@ -594,10 +620,11 @@ Purpose: prevent future agents from rerunning Ask/query backend cleanup that is 
   pack/runtime identity on manual home shells, phone landscape composer
   crowding, tablet evidence/context truncation, and remaining brittle UI-copy
   assertions. Keep these as separate slices.
-- Current backend scout priority after `28d77046`: add a real-pack route parity
-  androidTest before deeper route/anchor extraction, covering house,
-  water-distribution/storage, soap, glass, roof/weatherproofing, and food-theft
-  governance prompts through the bundled current-head pack.
+- Current backend scout priority after `28d77046` is closed by `fae768cb`:
+  the real-pack route parity androidTest covers house, water-distribution /
+  storage, soap, glass, roof/weatherproofing, and food-theft governance through
+  the bundled current-head pack. Future route/anchor extraction should extend
+  that test only when the expected owner windows intentionally change.
 - Do not collapse the new presentation, category-filter, route-ranking,
   water-distribution anchor, or route-refinement helper boundaries back into
   activity/repository/executor bodies.
