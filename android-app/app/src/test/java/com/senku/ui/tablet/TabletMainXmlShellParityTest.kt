@@ -145,6 +145,22 @@ class TabletMainXmlShellParityTest {
     }
 
     @Test
+    fun portraitAndLandscapeHomeShellsExposeLiveIdentityStrip() {
+        listOf("layout-sw600dp-port", "layout-sw600dp-land").forEach { qualifier ->
+            val layout = mainLayout(qualifier)
+            val strip = layout.elementByAndroidId("home_identity_strip")
+
+            assertEquals("com.senku.ui.home.IdentityStripHostView", strip.tagName)
+            assertEquals("match_parent", strip.android("layout_width"))
+            assertEquals("wrap_content", strip.android("layout_height"))
+            assertFalse(
+                "$qualifier should not keep the stale static pack-loading subtitle",
+                mainLayoutText(qualifier).contains("android:text=\"@string/home_identity_subtitle_loading\""),
+            )
+        }
+    }
+
+    @Test
     fun genericTabletSearchChromeMockRowHasSharedTypography() {
         assertSearchChrome(
             layout = mainLayout("layout-sw600dp"),

@@ -1086,7 +1086,7 @@
         android:background="@drawable/bg_detail_followup_dock"
         android:clipToOutline="true"
         android:orientation="vertical"
-        android:padding="12dp"
+        android:padding="8dp"
         android:visibility="gone">
 
         <com.senku.ui.composer.DockedComposerHostView

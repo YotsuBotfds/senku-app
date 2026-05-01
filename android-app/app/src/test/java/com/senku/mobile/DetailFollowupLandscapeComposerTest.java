@@ -144,12 +144,15 @@ public final class DetailFollowupLandscapeComposerTest {
 
     @Test
     public void landscapePhoneFollowUpPanelUsesTightVerticalBudget() {
+        assertEquals(8, DetailActivity.resolveFollowUpPanelHorizontalPaddingDp(true, true));
         assertEquals(3, DetailActivity.resolveFollowUpPanelVerticalPaddingDp(true, true));
         assertEquals(8, DetailActivity.resolveFollowUpPanelBottomPaddingDp(true, true));
     }
 
     @Test
     public void followUpPanelKeepsExistingVerticalPaddingOutsideLandscapePhone() {
+        assertEquals(12, DetailActivity.resolveFollowUpPanelHorizontalPaddingDp(false, true));
+        assertEquals(14, DetailActivity.resolveFollowUpPanelHorizontalPaddingDp(false, false));
         assertEquals(8, DetailActivity.resolveFollowUpPanelVerticalPaddingDp(false, true));
         assertEquals(14, DetailActivity.resolveFollowUpPanelVerticalPaddingDp(false, false));
         assertEquals(12, DetailActivity.resolveFollowUpPanelBottomPaddingDp(false, true));

@@ -8452,7 +8452,7 @@ public final class DetailActivity extends AppCompatActivity {
                 followUpRow.setLayoutParams(params);
             }
         }
-        int horizontal = compactFollowUp ? dp(12) : dp(14);
+        int horizontal = dp(resolveFollowUpPanelHorizontalPaddingDp(compactLandscapePhone, compactFollowUp));
         int topPadding = dp(resolveFollowUpPanelVerticalPaddingDp(compactLandscapePhone, compactFollowUp));
         int bottomPadding = dp(resolveFollowUpPanelBottomPaddingDp(compactLandscapePhone, compactFollowUp));
         followUpPanel.setPadding(horizontal, topPadding, horizontal, bottomPadding);
@@ -8493,6 +8493,13 @@ public final class DetailActivity extends AppCompatActivity {
             followUpRetryButton.setPadding(buttonHorizontal, buttonVertical, buttonHorizontal, buttonVertical);
         }
         renderDockedComposer();
+    }
+
+    static int resolveFollowUpPanelHorizontalPaddingDp(boolean landscapePhone, boolean compactFollowUp) {
+        if (landscapePhone) {
+            return 8;
+        }
+        return compactFollowUp ? 12 : 14;
     }
 
     static int resolveFollowUpPanelVerticalPaddingDp(boolean landscapePhone, boolean compactFollowUp) {

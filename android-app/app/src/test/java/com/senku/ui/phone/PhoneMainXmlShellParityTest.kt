@@ -63,6 +63,19 @@ class PhoneMainXmlShellParityTest {
     }
 
     @Test
+    fun manualPhoneHomeShellsExposeLiveIdentityStrip() {
+        listOf("" to "14dp", "layout-land" to "10dp").forEach { (qualifier, expectedTopMargin) ->
+            val layout = mainLayout(qualifier)
+            val strip = layout.elementByAndroidId("home_identity_strip")
+
+            assertEquals("com.senku.ui.home.IdentityStripHostView", strip.tagName)
+            assertEquals("match_parent", strip.android("layout_width"))
+            assertEquals("wrap_content", strip.android("layout_height"))
+            assertEquals(expectedTopMargin, strip.android("layout_marginTop"))
+        }
+    }
+
+    @Test
     fun phoneChromeSearchActionsUseSharedMutedInkTokenAcrossPostures() {
         listOf("", "layout-land").forEach { qualifier ->
             val layout = mainLayout(qualifier)

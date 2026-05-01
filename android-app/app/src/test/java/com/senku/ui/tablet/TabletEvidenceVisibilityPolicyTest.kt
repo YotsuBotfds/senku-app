@@ -383,6 +383,32 @@ class TabletEvidenceVisibilityPolicyTest {
     }
 
     @Test
+    fun answerModeSourceRowsKeepAnchorSnippetAsVisibleProofText() {
+        val rows = tabletAnswerModeSourceRows(
+            anchor = AnchorState(
+                key = "gd-214",
+                id = "GD-214",
+                title = "Water purification and storage",
+                section = "water storage",
+                snippet = "Keep treated water sealed between uses so the answer/source relationship is visible.",
+                hasSource = true,
+            ),
+            xrefs = listOf(
+                XRefState(id = "GD-215", title = "Rainwater Catchment"),
+            ),
+        )
+
+        assertEquals("GD-214", rows.first().guideId)
+        assertEquals("ANCHOR", rows.first().relation)
+        assertEquals("water storage", rows.first().section)
+        assertEquals(
+            "Keep treated water sealed between uses so the answer/source relationship is visible.",
+            rows.first().quote,
+        )
+        assertEquals("", rows[1].quote)
+    }
+
+    @Test
     fun answerModeSourceRowsCollapseRainShelterStackOnlyWhenReviewDemoEnabled() {
         val anchor = AnchorState(
             key = "gd-345",

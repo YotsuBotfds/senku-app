@@ -61,6 +61,19 @@ object DockedComposerTouchTargetTokens {
     const val ADD_ACTION_ENABLED_ALPHA = 1.0f
 }
 
+object DockedComposerLayoutTokens {
+    const val STANDARD_ROW_HORIZONTAL_PADDING_DP = 16
+    const val LANDSCAPE_PHONE_ROW_HORIZONTAL_PADDING_DP = 8
+    const val STANDARD_ROW_VERTICAL_PADDING_DP = 4
+    const val LANDSCAPE_PHONE_ROW_VERTICAL_PADDING_DP = 2
+    const val STANDARD_ROW_SPACING_DP = 8
+    const val LANDSCAPE_PHONE_ROW_SPACING_DP = 6
+    const val STANDARD_SEND_HORIZONTAL_PADDING_DP = 14
+    const val LANDSCAPE_PHONE_SEND_HORIZONTAL_PADDING_DP = 10
+    const val STANDARD_SEND_VERTICAL_PADDING_DP = 6
+    const val LANDSCAPE_PHONE_SEND_VERTICAL_PADDING_DP = 5
+}
+
 data class DockedComposerAddActionState(
     val enabled: Boolean,
     val contentDescription: String,
@@ -185,12 +198,35 @@ fun DockedComposer(
     val typography = SenkuTheme.typography
     val focusRequester = remember { FocusRequester() }
     val fieldVerticalPadding = 6.dp
-    val rowVerticalPadding = if (landscapePhoneBudgeted) 5.dp else 4.dp
+    val rowHorizontalPadding = if (landscapePhoneBudgeted) {
+        DockedComposerLayoutTokens.LANDSCAPE_PHONE_ROW_HORIZONTAL_PADDING_DP.dp
+    } else {
+        DockedComposerLayoutTokens.STANDARD_ROW_HORIZONTAL_PADDING_DP.dp
+    }
+    val rowVerticalPadding = if (landscapePhoneBudgeted) {
+        DockedComposerLayoutTokens.LANDSCAPE_PHONE_ROW_VERTICAL_PADDING_DP.dp
+    } else {
+        DockedComposerLayoutTokens.STANDARD_ROW_VERTICAL_PADDING_DP.dp
+    }
+    val rowSpacing = if (landscapePhoneBudgeted) {
+        DockedComposerLayoutTokens.LANDSCAPE_PHONE_ROW_SPACING_DP.dp
+    } else {
+        DockedComposerLayoutTokens.STANDARD_ROW_SPACING_DP.dp
+    }
     val actionTouchTargetSize = DockedComposerTouchTargetTokens.ADD_ACTION_TOUCH_TARGET_DP.dp
     val actionVisualSize = DockedComposerTouchTargetTokens.ADD_ACTION_VISUAL_SIZE_DP.dp
     val actionPadding = DockedComposerTouchTargetTokens.ADD_ACTION_PADDING_DP.dp
     val addActionState = DockedComposerAddActionPolicy.resolve(addActionAvailable = false)
-    val sendVerticalPadding = if (landscapePhoneBudgeted) 7.dp else 6.dp
+    val sendHorizontalPadding = if (landscapePhoneBudgeted) {
+        DockedComposerLayoutTokens.LANDSCAPE_PHONE_SEND_HORIZONTAL_PADDING_DP.dp
+    } else {
+        DockedComposerLayoutTokens.STANDARD_SEND_HORIZONTAL_PADDING_DP.dp
+    }
+    val sendVerticalPadding = if (landscapePhoneBudgeted) {
+        DockedComposerLayoutTokens.LANDSCAPE_PHONE_SEND_VERTICAL_PADDING_DP.dp
+    } else {
+        DockedComposerLayoutTokens.STANDARD_SEND_VERTICAL_PADDING_DP.dp
+    }
     val hasSendText = model.enabled && model.text.trim().isNotEmpty()
     val contextHint = model.contextHint.trim()
     val fieldHint = model.hint
@@ -229,9 +265,12 @@ fun DockedComposer(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = if (model.compact) 16.dp else 24.dp, vertical = rowVerticalPadding),
+                .padding(
+                    horizontal = if (model.compact) rowHorizontalPadding else 24.dp,
+                    vertical = rowVerticalPadding,
+                ),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            horizontalArrangement = Arrangement.spacedBy(rowSpacing),
         ) {
             if (model.showRetry && onRetryClick != null) {
                 Surface(
@@ -372,7 +411,7 @@ fun DockedComposer(
                 Box(contentAlignment = Alignment.Center) {
                     Text(
                         text = "Send",
-                        modifier = Modifier.padding(horizontal = 14.dp, vertical = sendVerticalPadding),
+                        modifier = Modifier.padding(horizontal = sendHorizontalPadding, vertical = sendVerticalPadding),
                         style = typography.tag.copy(
                             fontSize = 12.sp,
                             lineHeight = 15.sp,

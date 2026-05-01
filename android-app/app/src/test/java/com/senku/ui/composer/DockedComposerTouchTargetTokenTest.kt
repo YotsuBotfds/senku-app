@@ -35,6 +35,34 @@ class DockedComposerTouchTargetTokenTest {
     }
 
     @Test
+    fun landscapePhoneComposerUsesTighterPaddingWithoutShrinkingTouchTargets() {
+        assertTrue(
+            DockedComposerLayoutTokens.LANDSCAPE_PHONE_ROW_HORIZONTAL_PADDING_DP <
+                DockedComposerLayoutTokens.STANDARD_ROW_HORIZONTAL_PADDING_DP
+        )
+        assertTrue(
+            DockedComposerLayoutTokens.LANDSCAPE_PHONE_ROW_VERTICAL_PADDING_DP <
+                DockedComposerLayoutTokens.STANDARD_ROW_VERTICAL_PADDING_DP
+        )
+        assertTrue(
+            DockedComposerLayoutTokens.LANDSCAPE_PHONE_ROW_SPACING_DP <
+                DockedComposerLayoutTokens.STANDARD_ROW_SPACING_DP
+        )
+        assertEquals(48, DockedComposerTouchTargetTokens.ADD_ACTION_TOUCH_TARGET_DP)
+        assertEquals(48, DockedComposerTouchTargetTokens.SEND_ACTION_TOUCH_TARGET_MIN_DP)
+    }
+
+    @Test
+    fun landscapePhoneSendAffordanceKeepsTextPaddingWhileSavingWidth() {
+        assertTrue(DockedComposerLayoutTokens.LANDSCAPE_PHONE_SEND_HORIZONTAL_PADDING_DP > 0)
+        assertTrue(DockedComposerLayoutTokens.LANDSCAPE_PHONE_SEND_VERTICAL_PADDING_DP > 0)
+        assertTrue(
+            DockedComposerLayoutTokens.LANDSCAPE_PHONE_SEND_HORIZONTAL_PADDING_DP <
+                DockedComposerLayoutTokens.STANDARD_SEND_HORIZONTAL_PADDING_DP
+        )
+    }
+
+    @Test
     fun addActionPaddingPreservesVisualCircleInsideTouchTarget() {
         assertEquals(
             DockedComposerTouchTargetTokens.ADD_ACTION_TOUCH_TARGET_DP,

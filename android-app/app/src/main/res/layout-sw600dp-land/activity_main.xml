@@ -289,25 +289,11 @@
                     android:layout_weight="1.35"
                     android:orientation="vertical">
 
-                    <TextView
+                    <com.senku.ui.home.IdentityStripHostView
+                        android:id="@+id/home_identity_strip"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:includeFontPadding="false"
-                        android:text="Field manual"
-                        android:textAppearance="?android:attr/textAppearanceLarge"
-                        android:textColor="@color/senku_rev03_ink_0"
-                        android:textSize="20sp"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="6dp"
-                        android:includeFontPadding="false"
-                        android:text="@string/home_identity_subtitle_loading"
-                        android:textAppearance="?android:attr/textAppearanceSmall"
-                        android:textColor="@color/senku_rev03_ink_1"
-                        android:textSize="13sp" />
+                        android:layout_marginTop="0dp" />
 
                     <LinearLayout
                         android:layout_width="match_parent"

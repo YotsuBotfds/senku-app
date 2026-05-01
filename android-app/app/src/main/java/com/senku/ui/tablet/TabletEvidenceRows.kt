@@ -133,6 +133,7 @@ internal fun tabletAnswerModeSourceRows(
             relation = "ANCHOR",
             title = anchor.title,
             section = anchor.section,
+            quote = anchor.snippet,
         )
     }
     rows += visibleXRefs.map { xref ->

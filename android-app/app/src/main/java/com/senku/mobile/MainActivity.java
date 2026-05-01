@@ -2334,6 +2334,10 @@ public final class MainActivity extends AppCompatActivity {
     }
 
     private void installIdentityStrip() {
+        identityStripView = findViewById(R.id.home_identity_strip);
+        if (identityStripView != null) {
+            return;
+        }
         if (legacyHomeHeroPanel == null) {
             return;
         }
