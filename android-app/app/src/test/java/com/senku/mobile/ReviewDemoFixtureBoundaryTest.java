@@ -123,6 +123,43 @@ public final class ReviewDemoFixtureBoundaryTest {
         }
     }
 
+    @Test
+    public void productionModeSearchAndRelatedGuideShapingDoNotEmitRainShelterFixtureContent() {
+        boolean productionMode = ReviewDemoPolicy.resolveProductReviewModeForTest(true, true, true, false);
+        List<SearchResult> liveSearchResults = Arrays.asList(
+            result("GD-501", "Live Rain Shelter Notes", "Use the current catalog result."),
+            result("GD-502", "Live Knot Reference", "Use the current knot result.")
+        );
+        ReviewDemoPolicy.GuideLookup forbiddenLookup = guideId -> {
+            throw new AssertionError("Production mode must not load review fixture guide " + guideId);
+        };
+
+        List<SearchResult> shapedSearchResults = ReviewDemoPolicy.shapeSearchResults(
+            "rain shelter",
+            productionMode,
+            liveSearchResults,
+            forbiddenLookup
+        );
+
+        assertSame(liveSearchResults, shapedSearchResults);
+        assertNoRainShelterFixtureContent(shapedSearchResults);
+
+        ArrayList<SearchResult> liveRelatedGuides = new ArrayList<>(Arrays.asList(
+            result("GD-501", "Live Shelter Site Selection", "Avoid runoff channels."),
+            result("GD-109", "Live Natural Materials", "Inspect branches before use."),
+            result("GD-502", "Live Knot Reference", "Choose a knot that can be untied.")
+        ));
+
+        ArrayList<SearchResult> shapedRelatedGuides = ReviewDemoPolicy.shapeAnswerModeRelatedGuides(
+            productionMode,
+            "GD-345",
+            liveRelatedGuides
+        );
+
+        assertEquals(liveRelatedGuides, shapedRelatedGuides);
+        assertNoRainShelterFixtureContent(shapedRelatedGuides);
+    }
+
     private static boolean[] disabledOrDeniedReviewModes() {
         return new boolean[] {
             false,
@@ -167,6 +204,44 @@ public final class ReviewDemoFixtureBoundaryTest {
             "",
             ""
         );
+    }
+
+    private static void assertNoRainShelterFixtureContent(List<SearchResult> results) {
+        String serialized = serializeResults(results);
+        assertFalse(serialized.contains("Survival Basics & First 72 Hours"));
+        assertFalse(serialized.contains("Primitive Technology & Stone Age"));
+        assertFalse(serialized.contains("Tarp & Cord Shelters"));
+        assertFalse(serialized.contains("Abrasives Manufacturing"));
+        assertFalse(serialized.contains("Foundry & Metal Casting"));
+        assertFalse(serialized.contains("GD-023 | survival | review"));
+        assertFalse(serialized.contains("GD-027"));
+        assertFalse(serialized.contains("A simple ridgeline shelter requires only tarp, cord"));
+        assertFalse(serialized.contains("Build a ridgeline first"));
+    }
+
+    private static String serializeResults(List<SearchResult> results) {
+        StringBuilder builder = new StringBuilder();
+        if (results == null) {
+            return "";
+        }
+        for (SearchResult result : results) {
+            if (result == null) {
+                continue;
+            }
+            builder.append(result.title).append('\n');
+            builder.append(result.subtitle).append('\n');
+            builder.append(result.snippet).append('\n');
+            builder.append(result.body).append('\n');
+            builder.append(result.guideId).append('\n');
+            builder.append(result.sectionHeading).append('\n');
+            builder.append(result.category).append('\n');
+            builder.append(result.retrievalMode).append('\n');
+            builder.append(result.contentRole).append('\n');
+            builder.append(result.timeHorizon).append('\n');
+            builder.append(result.structureType).append('\n');
+            builder.append(result.topicTags).append('\n');
+        }
+        return builder.toString();
     }
 
     private static boolean containsGuideId(List<SearchResult> results, String guideId) {
