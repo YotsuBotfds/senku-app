@@ -50,8 +50,8 @@ class TabletDetailAppRailPolicyTest {
     fun tabletGuideTopbarBackAffordanceUsesSharedIconOnlyChrome() {
         val policy = tabletDetailBackActionPolicy()
 
-        assertEquals(28, policy.widthDp)
-        assertEquals(28, policy.heightDp)
+        assertEquals(48, policy.widthDp)
+        assertEquals(48, policy.heightDp)
         assertEquals(18, policy.iconSizeDp)
         assertEquals("Back to previous screen", policy.contentDescription)
         assertFalse(policy.showsTextLabel)

@@ -431,11 +431,15 @@
             android:textColor="@color/senku_rev03_ink_0" />
 
             <TextView
+                android:id="@+id/saved_button"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/home_nav_segment_gap"
                 android:layout_weight="1"
                 android:background="@drawable/bg_manual_home_row"
+                android:clickable="true"
+                android:contentDescription="@string/bottom_tab_pins"
+                android:focusable="true"
                 android:drawableStart="@drawable/ic_home_saved"
                 android:drawablePadding="8dp"
                 android:gravity="center"

@@ -9,9 +9,10 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -53,6 +54,7 @@ object DockedComposerTouchTargetTokens {
     const val ADD_ACTION_TOUCH_TARGET_DP = FIELD_USE_TOUCH_TARGET_MIN_DP
     const val ADD_ACTION_VISUAL_SIZE_DP = 32
     const val ADD_ACTION_PADDING_DP = (ADD_ACTION_TOUCH_TARGET_DP - ADD_ACTION_VISUAL_SIZE_DP) / 2
+    const val SEND_ACTION_TOUCH_TARGET_MIN_DP = FIELD_USE_TOUCH_TARGET_MIN_DP
     const val ADD_ACTION_DISABLED_CONTENT_DESCRIPTION = "Add action unavailable"
     const val ADD_ACTION_ENABLED_CONTENT_DESCRIPTION = "Add action"
     const val ADD_ACTION_DISABLED_ALPHA = 0.64f
@@ -182,7 +184,6 @@ fun DockedComposer(
     val colors = SenkuTheme.colors
     val typography = SenkuTheme.typography
     val focusRequester = remember { FocusRequester() }
-    val fieldHeight = 34.dp
     val fieldVerticalPadding = 6.dp
     val rowVerticalPadding = if (landscapePhoneBudgeted) 5.dp else 4.dp
     val actionTouchTargetSize = DockedComposerTouchTargetTokens.ADD_ACTION_TOUCH_TARGET_DP.dp
@@ -299,7 +300,7 @@ fun DockedComposer(
                 onValueChange = onTextChange,
                 modifier = Modifier
                     .weight(1f)
-                    .height(fieldHeight)
+                    .heightIn(min = DockedComposerTouchTargetTokens.FIELD_USE_TOUCH_TARGET_MIN_DP.dp)
                     .clip(RoundedCornerShape(9.dp))
                     .background(colors.bg2.copy(alpha = 0.72f))
                     .focusRequester(focusRequester)
@@ -351,6 +352,10 @@ fun DockedComposer(
             )
 
             Surface(
+                modifier = Modifier.sizeIn(
+                    minWidth = DockedComposerTouchTargetTokens.SEND_ACTION_TOUCH_TARGET_MIN_DP.dp,
+                    minHeight = DockedComposerTouchTargetTokens.SEND_ACTION_TOUCH_TARGET_MIN_DP.dp,
+                ),
                 color = colors.bg0,
                 contentColor = if (hasSendText) colors.ink0 else colors.ink2,
                 shape = RoundedCornerShape(9.dp),

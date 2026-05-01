@@ -8762,8 +8762,9 @@ public final class DetailActivity extends AppCompatActivity {
             }
         }
         int horizontal = compactFollowUp ? dp(12) : dp(14);
-        int vertical = dp(resolveFollowUpPanelVerticalPaddingDp(compactLandscapePhone, compactFollowUp));
-        followUpPanel.setPadding(horizontal, vertical, horizontal, vertical);
+        int topPadding = dp(resolveFollowUpPanelVerticalPaddingDp(compactLandscapePhone, compactFollowUp));
+        int bottomPadding = dp(resolveFollowUpPanelBottomPaddingDp(compactLandscapePhone, compactFollowUp));
+        followUpPanel.setPadding(horizontal, topPadding, horizontal, bottomPadding);
         if (followUpInput != null) {
             followUpInput.setHint(emergencySurface
                 ? "Ask about safe re-entry..."
@@ -8785,8 +8786,8 @@ public final class DetailActivity extends AppCompatActivity {
                 : R.string.detail_loop4_followup_send);
             followUpSendButton.setMinHeight(dp(48));
             followUpSendButton.setMinimumHeight(dp(48));
-            followUpSendButton.setMinWidth(0);
-            followUpSendButton.setMinimumWidth(0);
+            followUpSendButton.setMinWidth(dp(48));
+            followUpSendButton.setMinimumWidth(dp(48));
             int buttonHorizontal = compactFollowUp ? dp(12) : dp(18);
             int buttonVertical = compactFollowUp ? dp(8) : dp(10);
             followUpSendButton.setPadding(buttonHorizontal, buttonVertical, buttonHorizontal, buttonVertical);
@@ -8794,8 +8795,8 @@ public final class DetailActivity extends AppCompatActivity {
         if (followUpRetryButton != null) {
             followUpRetryButton.setMinHeight(dp(48));
             followUpRetryButton.setMinimumHeight(dp(48));
-            followUpRetryButton.setMinWidth(0);
-            followUpRetryButton.setMinimumWidth(0);
+            followUpRetryButton.setMinWidth(dp(48));
+            followUpRetryButton.setMinimumWidth(dp(48));
             int buttonHorizontal = compactFollowUp ? dp(10) : dp(14);
             int buttonVertical = compactFollowUp ? dp(8) : dp(10);
             followUpRetryButton.setPadding(buttonHorizontal, buttonVertical, buttonHorizontal, buttonVertical);
@@ -8808,6 +8809,13 @@ public final class DetailActivity extends AppCompatActivity {
             return 3;
         }
         return compactFollowUp ? 8 : 14;
+    }
+
+    static int resolveFollowUpPanelBottomPaddingDp(boolean landscapePhone, boolean compactFollowUp) {
+        if (landscapePhone) {
+            return 8;
+        }
+        return compactFollowUp ? 12 : 18;
     }
 
     static boolean shouldShowCompactFollowUpContextTitle(

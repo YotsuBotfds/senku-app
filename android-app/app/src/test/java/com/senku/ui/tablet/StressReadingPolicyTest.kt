@@ -98,10 +98,10 @@ class StressReadingPolicyTest {
 
     @Test
     fun tabletAnswerComposerReservesNavigationBoundary() {
-        assertEquals(8, tabletAnswerComposerBottomPaddingDp(isLandscape = true))
-        assertEquals(18, tabletAnswerComposerBottomPaddingDp(isLandscape = false))
-        assertEquals(8, tabletComposerBottomPaddingDp(TabletDetailMode.Answer, isLandscape = true))
-        assertEquals(18, tabletComposerBottomPaddingDp(TabletDetailMode.Answer, isLandscape = false))
+        assertEquals(12, tabletAnswerComposerBottomPaddingDp(isLandscape = true))
+        assertEquals(24, tabletAnswerComposerBottomPaddingDp(isLandscape = false))
+        assertEquals(12, tabletComposerBottomPaddingDp(TabletDetailMode.Answer, isLandscape = true))
+        assertEquals(24, tabletComposerBottomPaddingDp(TabletDetailMode.Answer, isLandscape = false))
         assertEquals(0, tabletComposerBottomPaddingDp(TabletDetailMode.Thread, isLandscape = true))
         assertEquals(12, tabletComposerBottomPaddingDp(TabletDetailMode.Thread, isLandscape = false))
         assertEquals(0, tabletComposerBottomPaddingDp(TabletDetailMode.Guide, isLandscape = false))
@@ -151,14 +151,14 @@ class StressReadingPolicyTest {
 
         assertEquals(48, landscapePolicy.topBarMinHeightDp)
         assertEquals(32, landscapePolicy.topBarHorizontalPaddingDp)
-        assertEquals(9, landscapePolicy.topBarVerticalPaddingDp)
+        assertEquals(0, landscapePolicy.topBarVerticalPaddingDp)
         assertEquals(14, landscapePolicy.topBarTitleFontSizeSp)
         assertEquals(18, landscapePolicy.topBarTitleLineHeightSp)
         assertEquals(54, portraitPolicy.topBarMinHeightDp)
         assertEquals(18, portraitPolicy.topBarHorizontalPaddingDp)
-        assertEquals(12, portraitPolicy.topBarVerticalPaddingDp)
+        assertEquals(3, portraitPolicy.topBarVerticalPaddingDp)
         assertEquals(14, portraitPolicy.topBarTitleFontSizeSp)
-        assertEquals(28, tabletDetailBackActionWidthDp())
+        assertEquals(48, tabletDetailBackActionWidthDp())
         assertEquals(18, tabletDetailBackActionIconSizeDp())
         assertTrue(portraitPolicy.topBarMinHeightDp > landscapePolicy.topBarMinHeightDp)
         assertTrue(landscapePolicy.topBarHorizontalPaddingDp > portraitPolicy.topBarHorizontalPaddingDp)

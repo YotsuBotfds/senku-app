@@ -22,6 +22,19 @@ class DockedComposerTouchTargetTokenTest {
     }
 
     @Test
+    fun sendActionUsesSameFortyEightDpTouchTargetFloorAsFieldAndAddAction() {
+        assertEquals(48, DockedComposerTouchTargetTokens.SEND_ACTION_TOUCH_TARGET_MIN_DP)
+        assertEquals(
+            DockedComposerTouchTargetTokens.FIELD_USE_TOUCH_TARGET_MIN_DP,
+            DockedComposerTouchTargetTokens.SEND_ACTION_TOUCH_TARGET_MIN_DP,
+        )
+        assertEquals(
+            DockedComposerTouchTargetTokens.ADD_ACTION_TOUCH_TARGET_DP,
+            DockedComposerTouchTargetTokens.SEND_ACTION_TOUCH_TARGET_MIN_DP,
+        )
+    }
+
+    @Test
     fun addActionPaddingPreservesVisualCircleInsideTouchTarget() {
         assertEquals(
             DockedComposerTouchTargetTokens.ADD_ACTION_TOUCH_TARGET_DP,

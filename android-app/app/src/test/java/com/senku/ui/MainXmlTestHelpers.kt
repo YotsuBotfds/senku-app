@@ -33,6 +33,7 @@ internal data class RailShellSpec(
     val firstItemTopMargin: String,
     val itemTopMargin: String,
     val labelTopMargin: String,
+    val itemMinTouchHeight: String = "48dp",
 )
 
 internal data class RailItemSpec(
@@ -206,6 +207,9 @@ internal fun assertRailShell(layout: Element, spec: RailShellSpec) {
     assertEquals(spec.firstItemTopMargin, home.android("layout_marginTop"))
     assertEquals(spec.itemTopMargin, ask.android("layout_marginTop"))
     assertEquals(spec.itemTopMargin, pins.android("layout_marginTop"))
+    listOf(home, ask, pins).forEach { item ->
+        assertEquals(spec.itemMinTouchHeight, item.android("minHeight"))
+    }
 
     listOf("phone_nav_home_icon", "phone_nav_ask_icon", "phone_nav_pins_icon").forEach { id ->
         val icon = layout.elementByAndroidId(id)

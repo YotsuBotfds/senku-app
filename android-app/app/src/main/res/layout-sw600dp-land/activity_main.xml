@@ -47,6 +47,7 @@
             android:layout_marginTop="18dp"
             android:contentDescription="@string/bottom_tab_home"
             android:gravity="center"
+            android:minHeight="48dp"
             android:orientation="vertical">
 
             <ImageView
@@ -78,6 +79,7 @@
             android:layout_marginTop="12dp"
             android:contentDescription="@string/bottom_tab_ask"
             android:gravity="center"
+            android:minHeight="48dp"
             android:orientation="vertical">
 
             <ImageView
@@ -108,6 +110,7 @@
             android:layout_marginTop="12dp"
             android:contentDescription="@string/bottom_tab_pins"
             android:gravity="center"
+            android:minHeight="48dp"
             android:orientation="vertical">
 
             <ImageView
@@ -149,15 +152,15 @@
             android:layout_height="48dp"
             android:gravity="center_vertical"
             android:orientation="horizontal"
-            android:paddingTop="9dp"
+            android:paddingTop="0dp"
             android:paddingStart="32dp"
             android:paddingEnd="32dp"
-            android:paddingBottom="9dp">
+            android:paddingBottom="0dp">
 
             <LinearLayout
                 android:id="@+id/home_chrome_back_button"
-                android:layout_width="28dp"
-                android:layout_height="28dp"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
                 android:clickable="true"
                 android:contentDescription="@string/detail_back_content_description"
                 android:focusable="true"
@@ -230,13 +233,13 @@
 
             <ImageView
                 android:id="@+id/home_chrome_search_icon"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:clickable="true"
                 android:contentDescription="@string/home_chrome_search_content_description"
                 android:focusable="true"
-                android:padding="8dp"
+                android:padding="15dp"
                 android:src="@drawable/ic_search_magnifier"
                 android:tint="@color/senku_rev03_ink_2" />
 

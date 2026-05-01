@@ -467,7 +467,7 @@ internal fun tabletThreadComposerBottomPaddingDp(isLandscape: Boolean): Int =
     if (isLandscape) 0 else 12
 
 internal fun tabletAnswerComposerBottomPaddingDp(isLandscape: Boolean): Int =
-    if (isLandscape) 8 else 18
+    if (isLandscape) 12 else 24
 
 internal fun tabletComposerBottomPaddingDp(detailMode: TabletDetailMode, isLandscape: Boolean): Int =
     when (detailMode) {
@@ -553,12 +553,12 @@ internal fun tabletChromeHeaderHorizontalPaddingDp(isLandscape: Boolean): Int =
     if (isLandscape) 32 else 18
 
 internal fun tabletChromeHeaderVerticalPaddingDp(isLandscape: Boolean): Int =
-    if (isLandscape) 9 else 12
+    if (isLandscape) 0 else 3
 
 internal fun tabletDetailBackActionPolicy(): TabletDetailBackActionPolicy =
     TabletDetailBackActionPolicy(
-        widthDp = 28,
-        heightDp = 28,
+        widthDp = 48,
+        heightDp = 48,
         iconSizeDp = 18,
         contentDescription = "Back to previous screen",
         showsTextLabel = false,
@@ -1853,9 +1853,10 @@ private fun GuideAppRailItem(
     Column(
         modifier = modifier
             .fillMaxWidth()
+            .heightIn(min = 48.dp)
             .clickable(onClick = onClick),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Top,
+        verticalArrangement = Arrangement.Center,
     ) {
         Icon(
             painter = painterResource(iconRes),

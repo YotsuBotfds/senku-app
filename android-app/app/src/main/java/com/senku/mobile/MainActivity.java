@@ -129,6 +129,7 @@ public final class MainActivity extends AppCompatActivity {
     private Button hostInferenceButton;
     private Button reviewedCardRuntimeButton;
     private Button browseButton;
+    private View savedButton;
     private Button reinstallButton;
     private View sessionPanel;
     private TextView sessionText;
@@ -280,6 +281,7 @@ public final class MainActivity extends AppCompatActivity {
         hostInferenceButton = findViewById(R.id.host_inference_button);
         reviewedCardRuntimeButton = findViewById(R.id.reviewed_card_runtime_button);
         browseButton = findViewById(R.id.browse_button);
+        savedButton = findViewById(R.id.saved_button);
         reinstallButton = findViewById(R.id.reinstall_button);
         sessionPanel = findViewById(R.id.session_panel);
         sessionText = findViewById(R.id.session_text);
@@ -404,6 +406,9 @@ public final class MainActivity extends AppCompatActivity {
             setPhoneTabFromFlow(BottomTabDestination.HOME);
             browseGuides();
         });
+        if (savedButton != null) {
+            savedButton.setOnClickListener(v -> openPhoneTabFromTap(BottomTabDestination.PINS));
+        }
         if (homeChromeBackButton != null) {
             homeChromeBackButton.setOnClickListener(v -> handleHomeChromeBack());
         }

@@ -109,6 +109,24 @@ public final class MainActivityPhoneNavigationTest {
     }
 
     @Test
+    public void savedNavigationTapUsesSameSavedPinsRouteAsOpenSavedIntent() {
+        MainRouteDecisionHelper.RouteState startingRoute = MainRouteDecisionHelper.browseHome();
+
+        MainRouteDecisionHelper.Transition tapTransition =
+            MainRouteDecisionHelper.openPhoneTab(startingRoute, BottomTabDestination.PINS);
+        MainRouteDecisionHelper.Transition intentTransition =
+            MainRouteDecisionHelper.openSavedIntent(true, startingRoute);
+
+        assertEquals(intentTransition.effect, tapTransition.effect);
+        assertRouteState(
+            tapTransition.routeState,
+            MainRouteDecisionHelper.Surface.SAVED_GUIDES,
+            BottomTabDestination.PINS,
+            false
+        );
+    }
+
+    @Test
     public void missingOpenSavedExtraDoesNotRequestSavedDestination() {
         assertFalse(MainActivity.shouldOpenSavedDestination(false));
     }

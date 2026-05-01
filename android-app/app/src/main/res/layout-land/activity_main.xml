@@ -33,7 +33,8 @@
             android:layout_width="match_parent"
             android:layout_height="58dp"
             android:layout_marginTop="18dp"
-            android:contentDescription="@string/bottom_tab_home">
+            android:contentDescription="@string/bottom_tab_home"
+            android:minHeight="48dp">
 
             <View
                 android:layout_width="2dp"
@@ -77,6 +78,7 @@
             android:layout_marginTop="4dp"
             android:contentDescription="@string/bottom_tab_ask"
             android:gravity="center"
+            android:minHeight="48dp"
             android:orientation="vertical">
 
             <ImageView
@@ -107,6 +109,7 @@
             android:layout_marginTop="4dp"
             android:contentDescription="@string/bottom_tab_pins"
             android:gravity="center"
+            android:minHeight="48dp"
             android:orientation="vertical">
 
             <ImageView
@@ -154,8 +157,9 @@
             android:paddingBottom="8dp">
 
             <LinearLayout
+                android:id="@+id/home_chrome_row"
                 android:layout_width="match_parent"
-                android:layout_height="36dp"
+                android:layout_height="48dp"
                 android:gravity="center_vertical"
                 android:orientation="horizontal">
 
@@ -186,13 +190,13 @@
 
                 <ImageView
                     android:id="@+id/home_chrome_back_button"
-                    android:layout_width="18dp"
-                    android:layout_height="18dp"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
                     android:clickable="true"
                     android:contentDescription="@null"
                     android:focusable="true"
                     android:importantForAccessibility="no"
-                    android:padding="3dp"
+                    android:padding="15dp"
                     android:src="@drawable/ic_home_back_chevron"
                     android:tint="@color/senku_rev03_ink_2" />
 
@@ -219,13 +223,13 @@
 
                 <ImageView
                     android:id="@+id/home_chrome_search_icon"
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:clickable="true"
                     android:contentDescription="@string/home_chrome_search_content_description"
                     android:focusable="true"
-                    android:padding="8dp"
+                    android:padding="15dp"
                     android:src="@drawable/ic_search_magnifier"
                     android:tint="@color/senku_rev03_ink_2" />
             </LinearLayout>

@@ -107,6 +107,9 @@ class TabletMainXmlShellParityTest {
                 qualifier = "layout-sw600dp-port",
                 height = "54dp",
                 horizontalPadding = "18dp",
+                verticalPadding = "3dp",
+                searchActionSize = "48dp",
+                searchPadding = "15dp",
             ),
         )
         assertSharedMainChrome(
@@ -115,6 +118,9 @@ class TabletMainXmlShellParityTest {
                 qualifier = "layout-sw600dp-land",
                 height = "48dp",
                 horizontalPadding = "32dp",
+                verticalPadding = "0dp",
+                searchActionSize = "48dp",
+                searchPadding = "15dp",
             ),
         )
         assertSearchChrome(
@@ -146,6 +152,18 @@ class TabletMainXmlShellParityTest {
                 queryMarginStart = "14dp",
             ),
         )
+    }
+
+    @Test
+    fun genericTabletSavedShortcutKeepsSavedLabelIconAndActionSemantics() {
+        val layout = mainLayout("layout-sw600dp")
+        val saved = layout.elementByAndroidId("saved_button")
+
+        assertEquals("@string/bottom_tab_pins", saved.android("text"))
+        assertEquals("@drawable/ic_home_saved", saved.android("drawableStart"))
+        assertEquals("@string/bottom_tab_pins", saved.android("contentDescription"))
+        assertEquals("true", saved.android("clickable"))
+        assertEquals("true", saved.android("focusable"))
     }
 
     @Test
