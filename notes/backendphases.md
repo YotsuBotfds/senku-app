@@ -1,6 +1,6 @@
 # Backend Cleanup Phase Tracker
 
-Last updated after local validation and cleanup through `88ff4815` on 2026-05-01.
+Last updated after pushed cleanup through `8b0fd85d` on 2026-05-01.
 
 Purpose: prevent future agents from rerunning Ask/query backend cleanup that is already complete. Keep this note short; implementation detail belongs in commits and tests.
 
@@ -285,6 +285,11 @@ Purpose: prevent future agents from rerunning Ask/query backend cleanup that is 
 - Latest local proof after `88ff4815`: `git diff --check` passed; full Android
   `:app:testDebugUnitTest :app:assembleDebug :app:assembleDebugAndroidTest`
   passed; physical-smoke contract and summary validator tests ran 40 tests OK.
+- Backend cleanup is current through `8b0fd85d`: recent threads now sort by
+  last activity, strict follow-up proof forwards through wrapper seams,
+  route-effect tests live with the controller, route-search SQL handles
+  hardening/no-op/SQLiteException paths, and Ask result publication helper
+  names are cleaned up.
 
 ## Remaining Next Slices
 
