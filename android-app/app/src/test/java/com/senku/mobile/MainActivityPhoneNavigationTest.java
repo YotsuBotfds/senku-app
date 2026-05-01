@@ -84,7 +84,7 @@ public final class MainActivityPhoneNavigationTest {
 
     @Test
     public void openSavedExtraSelectsSavedPinsRouteAndSavedGuideSection() {
-        MainRouteDecisionHelper.Transition transition = MainRouteDecisionHelper.openSavedIntent(
+        MainRouteDecisionHelper.Transition transition = MainActivity.resolveOpenSavedDestination(
             true,
             new MainRouteDecisionHelper.RouteState(
                 MainRouteDecisionHelper.Surface.ASK_RESULTS,

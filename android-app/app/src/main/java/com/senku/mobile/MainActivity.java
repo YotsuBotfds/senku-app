@@ -1007,11 +1007,11 @@ public final class MainActivity extends AppCompatActivity {
             == MainRouteDecisionHelper.Effect.SHOW_SAVED_GUIDES;
     }
 
-    private static MainRouteDecisionHelper.Transition resolveOpenSavedDestination(
+    static MainRouteDecisionHelper.Transition resolveOpenSavedDestination(
         boolean openSavedExtra,
         MainRouteDecisionHelper.RouteState routeState
     ) {
-        return SavedGuidesPolicy.openSavedDestination(openSavedExtra, routeState);
+        return MainRouteDecisionHelper.openSavedIntent(openSavedExtra, routeState);
     }
 
     private void maybeHandleAutomation() {
