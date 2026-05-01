@@ -122,6 +122,29 @@ public final class MainReviewDisplayPolicyTest {
     }
 
     @Test
+    public void manualHomeRecentThreadLabelMatchesReviewDemoPolicyDecision() {
+        long fourHoursTwentyOneMinutesAgo = System.currentTimeMillis() - ((4L * 60L + 21L) * 60_000L);
+        ChatSessionStore.ConversationPreview preview = preview(
+            "can I make a rain shelter with cord",
+            "GD-345",
+            "",
+            ReviewedCardMetadata.empty(),
+            fourHoursTwentyOneMinutesAgo
+        );
+        MainReviewDisplayPolicy enabled = new MainReviewDisplayPolicy(true);
+        MainReviewDisplayPolicy disabled = new MainReviewDisplayPolicy(false);
+
+        assertEquals(
+            ReviewDemoPolicy.manualHomeRecentThreadLabel(true, preview, 0),
+            enabled.manualHomeRecentThreadLabel(preview, 0)
+        );
+        assertEquals(
+            ReviewDemoPolicy.manualHomeRecentThreadLabel(false, preview, 0),
+            disabled.manualHomeRecentThreadLabel(preview, 0)
+        );
+    }
+
+    @Test
     public void categoryFixtureGateKeepsModeShellAndGuideChecksTogether() {
         assertTrue(MainReviewDisplayPolicy.shouldUseHomeCategoryFixtureCounts(
             true,
@@ -139,6 +162,27 @@ public final class MainReviewDisplayPolicyTest {
             Collections.singletonList(guide("Guide", "water"))
         ));
         assertFalse(MainReviewDisplayPolicy.shouldUseHomeCategoryFixtureCounts(true, true, Collections.emptyList()));
+    }
+
+    private static ChatSessionStore.ConversationPreview preview(
+        String question,
+        String guideId,
+        String ruleId,
+        ReviewedCardMetadata metadata,
+        long lastActivityEpoch
+    ) {
+        SessionMemory.TurnSnapshot turn = new SessionMemory.TurnSnapshot(
+            question,
+            "",
+            "answer",
+            Collections.emptyList(),
+            Arrays.asList(guideWithId(guideId + " title", guideId)),
+            ruleId,
+            metadata,
+            null,
+            lastActivityEpoch
+        );
+        return new ChatSessionStore.ConversationPreview("conversation-" + guideId, turn, 1, lastActivityEpoch);
     }
 
     private static SearchResult guide(String title, String category) {

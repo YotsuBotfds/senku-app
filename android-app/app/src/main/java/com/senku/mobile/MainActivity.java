@@ -1921,7 +1921,7 @@ public final class MainActivity extends AppCompatActivity {
         ChatSessionStore.ConversationPreview preview,
         int index
     ) {
-        String label = ReviewDemoPolicy.manualHomeRecentThreadLabel(productReviewMode, preview, index);
+        String label = reviewDisplayPolicy().manualHomeRecentThreadLabel(preview, index);
         android.text.SpannableString spannable = new android.text.SpannableString(label);
         int lineBreak = label.indexOf('\n');
         if (lineBreak < 0) {

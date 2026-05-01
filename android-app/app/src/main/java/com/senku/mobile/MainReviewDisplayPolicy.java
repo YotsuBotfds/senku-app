@@ -55,6 +55,10 @@ final class MainReviewDisplayPolicy {
         return searchRowVisualStateEnabled(productReviewMode);
     }
 
+    String manualHomeRecentThreadLabel(ChatSessionStore.ConversationPreview preview, int index) {
+        return manualHomeRecentThreadLabel(preview, index, productReviewMode);
+    }
+
     static boolean shouldUseHomeCategoryFixtureCounts(
         boolean productReviewMode,
         boolean manualHomeShell,
@@ -132,6 +136,14 @@ final class MainReviewDisplayPolicy {
 
     static boolean searchRowVisualStateEnabled(boolean productReviewMode) {
         return productReviewMode;
+    }
+
+    static String manualHomeRecentThreadLabel(
+        ChatSessionStore.ConversationPreview preview,
+        int index,
+        boolean productReviewMode
+    ) {
+        return ReviewDemoPolicy.manualHomeRecentThreadLabel(productReviewMode, preview, index);
     }
 
     private static void addNonEmptyPart(List<String> parts, String value) {
