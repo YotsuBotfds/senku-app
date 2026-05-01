@@ -1,6 +1,6 @@
 # Backend Cleanup Phase Tracker
 
-Last updated after cleanup through `40db1999` on 2026-05-01.
+Last updated after cleanup through `3fc7e03b` on 2026-05-01.
 
 Purpose: prevent future agents from rerunning Ask/query backend cleanup that is already complete. Keep this note short; implementation detail belongs in commits and tests.
 
@@ -478,22 +478,30 @@ Purpose: prevent future agents from rerunning Ask/query backend cleanup that is 
   `SearchResultInteractionModel`, review-demo fixture copy scans guard
   production runtime code, and guide rail section anchors use the shared guide
   sanitizer parse.
-- Latest reported validation after `40db1999`: focused JVM proof for
+- Functional route proof hardening is current through `3fc7e03b`: no-source
+  Ask system Back now has a targeted PromptHarness proof, home chrome tablet
+  search-topbar visibility is delegated to `MainHomeChromePolicy`, docked retry
+  action attachment is delegated to `FollowUpComposerController`, and the
+  functional UX matrix watchdog argument/process path has stronger contract
+  coverage.
+- Latest reported validation after `3fc7e03b`: focused JVM proof for
   `DetailTabletStateBuilderTest`, `SearchResultCardModelMapperTest`,
   `FollowUpComposerControllerTest`, `MainRouteCoordinatorTest`,
   `DetailFollowupLandscapeComposerTest`, `MainResultPublicationPolicyTest`,
   `TabletEvidenceVisibilityPolicyTest`, `StressReadingPolicyTest`,
   `FollowUpComposerStateTest`, `ReviewDemoFixtureBoundaryTest`, and
-  `DetailGuidePresentationFormatterTest`; script contract proof for
+  `DetailGuidePresentationFormatterTest`; route/home chrome proof for
+  `MainActivityHomeChromeTest` and `MainRouteDecisionHelperTest`; script
+  contract proof for
   `tests.test_run_android_functional_ux_smoke_matrix_contract` and
   `tests.test_powershell_quality_gate`; compile validation with
   `:app:assembleDebugAndroidTest`; and `git diff --check`.
 - Current validation commands:
   `git diff --check`;
-  `cd android-app; ./gradlew.bat :app:testDebugUnitTest --tests com.senku.mobile.DetailTabletStateBuilderTest --tests com.senku.mobile.SearchResultCardModelMapperTest --tests com.senku.mobile.FollowUpComposerControllerTest --tests com.senku.mobile.MainRouteCoordinatorTest --tests com.senku.mobile.DetailFollowupLandscapeComposerTest --tests com.senku.mobile.MainResultPublicationPolicyTest --tests com.senku.ui.tablet.TabletEvidenceVisibilityPolicyTest --tests com.senku.ui.tablet.StressReadingPolicyTest --tests com.senku.mobile.FollowUpComposerStateTest --tests com.senku.mobile.ReviewDemoFixtureBoundaryTest --tests com.senku.mobile.DetailGuidePresentationFormatterTest`;
+  `cd android-app; ./gradlew.bat :app:testDebugUnitTest --tests com.senku.mobile.DetailTabletStateBuilderTest --tests com.senku.mobile.SearchResultCardModelMapperTest --tests com.senku.mobile.FollowUpComposerControllerTest --tests com.senku.mobile.MainRouteCoordinatorTest --tests com.senku.mobile.DetailFollowupLandscapeComposerTest --tests com.senku.mobile.MainResultPublicationPolicyTest --tests com.senku.ui.tablet.TabletEvidenceVisibilityPolicyTest --tests com.senku.ui.tablet.StressReadingPolicyTest --tests com.senku.mobile.FollowUpComposerStateTest --tests com.senku.mobile.ReviewDemoFixtureBoundaryTest --tests com.senku.mobile.DetailGuidePresentationFormatterTest --tests com.senku.mobile.MainActivityHomeChromeTest --tests com.senku.mobile.MainRouteDecisionHelperTest`;
   `.\\.venvs\\senku-validate\\Scripts\\python.exe -B -m unittest tests.test_run_android_functional_ux_smoke_matrix_contract tests.test_powershell_quality_gate -v`;
   `cd android-app; ./gradlew.bat :app:assembleDebugAndroidTest`.
-- Tracker is refreshed through `40db1999`.
+- Tracker is refreshed through `3fc7e03b`.
 
 ## Remaining Next Slices
 
@@ -522,12 +530,10 @@ Purpose: prevent future agents from rerunning Ask/query backend cleanup that is 
   phone path; future Ask proof should use a deterministic/review-runtime query
   only when the goal is to prove full answer-detail rendering rather than
   Ask-owned submit routing.
-- Functional proof backlog from scout: no-source Back live proof remains if a
-  future slice needs device-level confirmation. Ask-unavailable Back is covered
-  in route coordinator proof, task-root detail visible Back has AndroidTest
-  harness coverage, zero-result search system Back has compile-validated
-  AndroidTest coverage, and Saved tab semantics assertions are covered in the
-  Android harness.
+- Functional proof backlog from scout: no-source Back now has targeted
+  PromptHarness coverage for a deterministic no-source/abstain detail returning
+  to Ask then Browse/Home. Any remaining no-source concern is broader live
+  retrieval/model generation behavior, not route Back ownership.
 - UI normalization is a future explicit Android-only slice (`UI-NORM1 Shared
   Chrome Contract`): align `TopBar`, `BottomTabBar`/`NavRailMetrics`,
   `IdentityStrip`, `SenkuTypography`, XML text appearances/dimens, and Java
