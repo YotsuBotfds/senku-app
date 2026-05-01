@@ -568,6 +568,38 @@ public final class PromptHarnessSmokeTest {
     }
 
     @Test
+    public void restoredSavedNavigationBackReturnsManualHomeDestination() {
+        clearPinnedGuidesForTest();
+        try (ActivityScenario<MainActivity> scenario = launchProductReviewMainActivity()) {
+            awaitHarnessIdle();
+            Assert.assertTrue(
+                "home launch should settle before restored Saved back smoke; harness signals="
+                    + HarnessTestSignals.snapshot(),
+                device.wait(Until.hasObject(By.res(APP_PACKAGE, "search_input")), SEARCH_WAIT_MS)
+            );
+
+            Assert.assertTrue(
+                "Saved navigation tab should be tappable before restored back smoke",
+                tapSavedNavigationFromMain()
+            );
+            waitForSavedGuidesDestination(scenario, false, DETAIL_WAIT_MS);
+
+            scenario.recreate();
+            awaitHarnessIdle();
+            waitForMainSearchInputReady(SEARCH_WAIT_MS);
+            waitForSavedGuidesDestination(scenario, false, DETAIL_WAIT_MS);
+            scenario.onActivity(activity -> assertSavedGuidesDestination(activity, false));
+
+            device.pressBack();
+            InstrumentationRegistry.getInstrumentation().waitForIdleSync();
+            assertResumedManualHomeDestination("system back from restored Saved should return to manual home");
+            captureUiState("restored_saved_tab_back_home");
+        } finally {
+            clearPinnedGuidesForTest();
+        }
+    }
+
+    @Test
     public void savedTabPinnedGuideStateOpensSavedGuideDestination() {
         clearPinnedGuidesForTest();
         Context context = ApplicationProvider.getApplicationContext();
