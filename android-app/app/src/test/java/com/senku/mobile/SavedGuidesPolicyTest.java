@@ -177,6 +177,60 @@ public final class SavedGuidesPolicyTest {
     }
 
     @Test
+    public void controllerRefreshPlanKeepsNewestUniqueSavedGuidesAfterDuplicateOverflow() {
+        MainSavedGuidesController controller = new MainSavedGuidesController();
+
+        MainSavedGuidesController.RefreshPlan refreshPlan = controller.planRefresh(
+            true,
+            List.of(
+                " gd-012 ",
+                "GD-011",
+                "gd-010",
+                "GD-009",
+                "GD-008",
+                "GD-012",
+                "GD-007",
+                "GD-006",
+                "GD-005",
+                "GD-004",
+                "GD-003",
+                "GD-002",
+                "GD-001",
+                "GD-000"
+            )
+        );
+
+        assertFalse(refreshPlan.renderEmpty);
+        assertEquals(
+            List.of(
+                "GD-012",
+                "GD-011",
+                "GD-010",
+                "GD-009",
+                "GD-008",
+                "GD-007",
+                "GD-006",
+                "GD-005",
+                "GD-004",
+                "GD-003",
+                "GD-002",
+                "GD-001"
+            ),
+            refreshPlan.guideIdsToLoad
+        );
+    }
+
+    @Test(expected = UnsupportedOperationException.class)
+    public void controllerRefreshPlanGuideIdsAreImmutable() {
+        MainSavedGuidesController controller = new MainSavedGuidesController();
+
+        MainSavedGuidesController.RefreshPlan refreshPlan =
+            controller.planRefresh(true, List.of("GD-001"));
+
+        refreshPlan.guideIdsToLoad.add("GD-002");
+    }
+
+    @Test
     public void controllerRefreshPlanClearsWhenOnlyInvalidSavedGuideIdsRemain() {
         MainSavedGuidesController controller = new MainSavedGuidesController();
 
@@ -215,6 +269,36 @@ public final class SavedGuidesPolicyTest {
     }
 
     @Test
+    public void controllerInvalidIdRefreshStillInvalidatesOlderSavedGuideLoad() {
+        MainSavedGuidesController controller = new MainSavedGuidesController();
+
+        MainSavedGuidesController.RefreshPlan olderRefresh =
+            controller.beginRefresh(true, List.of("GD-001"));
+        MainSavedGuidesController.RefreshPlan invalidRefresh =
+            controller.beginRefresh(true, List.of(" ", ""));
+
+        assertTrue(invalidRefresh.renderEmpty);
+        assertTrue(invalidRefresh.guideIdsToLoad.isEmpty());
+        assertFalse(controller.isCurrentRefresh(olderRefresh.refreshToken));
+        assertTrue(controller.isCurrentRefresh(invalidRefresh.refreshToken));
+    }
+
+    @Test
+    public void controllerRejectsMissingZeroAndStaleRefreshTokens() {
+        MainSavedGuidesController controller = new MainSavedGuidesController();
+
+        MainSavedGuidesController.RefreshPlan firstRefresh =
+            controller.beginRefresh(true, List.of("GD-001"));
+        MainSavedGuidesController.RefreshPlan secondRefresh =
+            controller.beginRefresh(true, List.of("GD-002"));
+
+        assertFalse(controller.isCurrentRefresh(0L));
+        assertFalse(controller.isCurrentRefresh(-1L));
+        assertFalse(controller.isCurrentRefresh(firstRefresh.refreshToken));
+        assertTrue(controller.isCurrentRefresh(secondRefresh.refreshToken));
+    }
+
+    @Test
     public void controllerConsumesPendingFocusOnlyWhenBrowseSectionIsVisible() {
         MainSavedGuidesController controller = new MainSavedGuidesController();
 
@@ -225,6 +309,24 @@ public final class SavedGuidesPolicyTest {
         assertFalse(controller.consumeSectionFocusIfReady(true, false));
         assertTrue(controller.hasPendingSectionFocusForTest());
 
+        assertTrue(controller.consumeSectionFocusIfReady(true, true));
+        assertFalse(controller.hasPendingSectionFocusForTest());
+    }
+
+    @Test
+    public void controllerKeepsPendingFocusUntilSavedSectionIsVisibleInBrowse() {
+        MainSavedGuidesController controller = new MainSavedGuidesController();
+
+        controller.requestSectionFocus();
+
+        assertFalse(controller.shouldAttemptSectionFocus(false));
+        assertFalse(controller.consumeSectionFocusIfReady(false, true));
+        assertTrue(controller.hasPendingSectionFocusForTest());
+
+        assertFalse(controller.consumeSectionFocusIfReady(true, false));
+        assertTrue(controller.hasPendingSectionFocusForTest());
+
+        assertTrue(controller.shouldAttemptSectionFocus(true));
         assertTrue(controller.consumeSectionFocusIfReady(true, true));
         assertFalse(controller.hasPendingSectionFocusForTest());
     }

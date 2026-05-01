@@ -54,6 +54,38 @@ public final class PinnedGuideStoreTest {
     }
 
     @Test
+    public void addCleansExistingOverflowAndKeepsNewestFirstUniquePins() {
+        ArrayList<String> current = new ArrayList<>();
+        current.add(" gd-003 ");
+        current.add("GD-002");
+        current.add("gd-003");
+        current.add(" ");
+        for (int index = 1; index <= 12; index++) {
+            current.add(String.format("gd-%03d", index));
+        }
+
+        List<String> guideIds = PinnedGuideStore.guideIdsAfterAddForTest(current, " gd-013 ");
+
+        assertEquals(
+            List.of(
+                "GD-013",
+                "GD-003",
+                "GD-002",
+                "GD-001",
+                "GD-004",
+                "GD-005",
+                "GD-006",
+                "GD-007",
+                "GD-008",
+                "GD-009",
+                "GD-010",
+                "GD-011"
+            ),
+            guideIds
+        );
+    }
+
+    @Test
     public void clearPreferencesForTestRemovesStoredGuideIds() {
         InMemorySharedPreferences preferences = new InMemorySharedPreferences();
         preferences.edit().putString(
