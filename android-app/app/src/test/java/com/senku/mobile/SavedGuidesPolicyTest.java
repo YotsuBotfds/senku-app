@@ -76,6 +76,28 @@ public final class SavedGuidesPolicyTest {
     }
 
     @Test
+    public void openSavedExtraPreservesSavedSectionFocusEligibility() {
+        MainRouteDecisionHelper.Transition transition = SavedGuidesPolicy.openSavedDestination(
+            true,
+            new MainRouteDecisionHelper.RouteState(
+                MainRouteDecisionHelper.Surface.SEARCH_RESULTS,
+                BottomTabDestination.HOME,
+                false
+            )
+        );
+
+        boolean browseMode = MainRouteDecisionHelper.isBrowseSurface(transition.routeState.surface);
+        boolean savedSectionVisible = SavedGuidesPolicy.shouldShowSection(
+            browseMode,
+            transition.routeState.activePhoneTab,
+            0
+        );
+
+        assertEquals(MainRouteDecisionHelper.Effect.SHOW_SAVED_GUIDES, transition.effect);
+        assertTrue(SavedGuidesPolicy.shouldFocusSection(true, browseMode, savedSectionVisible));
+    }
+
+    @Test
     public void missingOpenSavedExtraLeavesCurrentRouteUntouched() {
         MainRouteDecisionHelper.RouteState currentRoute = new MainRouteDecisionHelper.RouteState(
             MainRouteDecisionHelper.Surface.SEARCH_RESULTS,

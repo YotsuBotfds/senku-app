@@ -1012,7 +1012,7 @@ public final class MainActivity extends AppCompatActivity {
         boolean openSavedExtra,
         MainRouteDecisionHelper.RouteState routeState
     ) {
-        return MainRouteDecisionHelper.openSavedIntent(openSavedExtra, routeState);
+        return SavedGuidesPolicy.openSavedDestination(openSavedExtra, routeState);
     }
 
     private void maybeHandleAutomation() {
