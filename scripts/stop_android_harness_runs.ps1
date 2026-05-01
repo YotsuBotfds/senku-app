@@ -6,6 +6,33 @@ param(
 $ErrorActionPreference = "Stop"
 $adb = Join-Path $env:LOCALAPPDATA "Android\\Sdk\\platform-tools\\adb.exe"
 $repoRoot = (Resolve-Path (Join-Path $PSScriptRoot "..")).Path
+$senkuPackageNames = @(
+    "com.senku.mobile.test",
+    "com.senku.mobile"
+)
+
+function Test-ScopedAndroidDeviceId {
+    param([string]$DeviceId)
+
+    if ([string]::IsNullOrWhiteSpace($DeviceId)) {
+        return $false
+    }
+
+    return $DeviceId.Trim() -match '^(emulator-\d+|[A-Za-z0-9][A-Za-z0-9._:-]{2,127})$'
+}
+
+function Assert-ScopedHarnessScriptPatterns {
+    param([string[]]$ScriptPatterns)
+
+    foreach ($pattern in $ScriptPatterns) {
+        if ([string]::IsNullOrWhiteSpace($pattern)) {
+            throw "Android harness stop pattern must not be empty."
+        }
+        if ($pattern -notmatch '^[A-Za-z0-9_.-]+\.ps1$') {
+            throw ("Android harness stop pattern must be a literal .ps1 basename: {0}" -f $pattern)
+        }
+    }
+}
 
 function Matches-TargetEmulator {
     param(
@@ -35,15 +62,19 @@ function Get-TargetDevices {
     param([string[]]$RequestedDevices)
 
     $normalized = @()
+    $sawRequestedDevice = $false
     foreach ($entry in $RequestedDevices) {
         foreach ($split in ($entry -split ",")) {
             $trimmed = $split.Trim()
             if (-not [string]::IsNullOrWhiteSpace($trimmed)) {
+                $sawRequestedDevice = $true
+            }
+            if (Test-ScopedAndroidDeviceId -DeviceId $trimmed) {
                 $normalized += $trimmed
             }
         }
     }
-    if ($normalized.Count -gt 0) {
+    if ($normalized.Count -gt 0 -or $sawRequestedDevice) {
         return $normalized
     }
     if (-not (Test-Path -LiteralPath $adb)) {
@@ -54,10 +85,40 @@ function Get-TargetDevices {
     $adbOutput = & $adb devices 2>$null
     foreach ($line in $adbOutput) {
         if ($line -match '^\s*([^\s]+)\s+device\s*$') {
-            $devices += $matches[1]
+            $deviceId = $matches[1]
+            if (Test-ScopedAndroidDeviceId -DeviceId $deviceId) {
+                $devices += $deviceId
+            }
         }
     }
     return $devices
+}
+
+function Get-SenkuPackagePidFromPsLine {
+    param([string]$Line)
+
+    if ([string]::IsNullOrWhiteSpace($Line)) {
+        return $null
+    }
+
+    $columns = ($Line.Trim() -split "\s+")
+    if ($columns.Count -lt 2) {
+        return $null
+    }
+
+    $targetPid = $columns[0]
+    if ($targetPid -notmatch '^\d+$') {
+        return $null
+    }
+
+    $processFields = @($columns | Select-Object -Skip 1)
+    foreach ($field in $processFields) {
+        if ($senkuPackageNames -contains $field) {
+            return $targetPid
+        }
+    }
+
+    return $null
 }
 
 function Stop-AndroidPackages {
@@ -69,20 +130,17 @@ function Stop-AndroidPackages {
     }
 
     foreach ($device in $Devices) {
+        if (-not (Test-ScopedAndroidDeviceId -DeviceId $device)) {
+            Write-Warning ("Skipping unscoped Android device id: {0}" -f $device)
+            continue
+        }
         try {
             & $adb -s $device shell am force-stop com.senku.mobile.test | Out-Null
             & $adb -s $device shell am force-stop com.senku.mobile | Out-Null
             $psOutput = (& $adb -s $device shell ps -A -o PID,NAME,ARGS 2>$null | Out-String)
             foreach ($line in ($psOutput -split "`r?`n")) {
-                if ($line -notmatch "com\\.senku\\.mobile(?:\\.test)?") {
-                    continue
-                }
-                $columns = ($line.Trim() -split "\s+")
-                if ($columns.Count -lt 1) {
-                    continue
-                }
-                $targetPid = $columns[0]
-                if ($targetPid -match '^\d+$') {
+                $targetPid = Get-SenkuPackagePidFromPsLine -Line $line
+                if ($null -ne $targetPid) {
                     & $adb -s $device shell kill -9 $targetPid 2>$null | Out-Null
                 }
             }
@@ -99,8 +157,23 @@ function Matches-HarnessCommand {
         [string[]]$ScriptPatterns
     )
 
-    if ($ScriptPatterns | Where-Object { $CommandLine -like ("*" + $_ + "*") }) {
-        return $true
+    if ([string]::IsNullOrWhiteSpace($CommandLine)) {
+        return $false
+    }
+
+    Assert-ScopedHarnessScriptPatterns -ScriptPatterns $ScriptPatterns
+
+    foreach ($pattern in $ScriptPatterns) {
+        $escapedPattern = [regex]::Escape($pattern)
+        $scriptPattern = "(?i)(^|[\s`"'])" + $escapedPattern + "($|[\s`"':])"
+        if ($CommandLine -match $scriptPattern) {
+            return $true
+        }
+
+        $pathPattern = "(?i)[\\/]" + $escapedPattern + "($|[\s`"':])"
+        if ($CommandLine -match $pathPattern) {
+            return $true
+        }
     }
 
     $normalizedCommand = $CommandLine.Replace("/", "\")
@@ -124,6 +197,8 @@ $patterns = @(
 if ($IncludePromptRunner) {
     $patterns += "run_android_prompt.ps1"
 }
+
+Assert-ScopedHarnessScriptPatterns -ScriptPatterns $patterns
 
 $targets = Get-CimInstance Win32_Process | Where-Object {
     $commandLine = $_.CommandLine
