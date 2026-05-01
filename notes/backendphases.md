@@ -240,14 +240,38 @@ Purpose: prevent future agents from rerunning Ask/query backend cleanup that is 
   `RFCX607ZM8L` with APK SHA
   `ea86e50c0ff966c447dfb43d34655e11247ef96b50f5837ac77005c1f16dedb1` at
   `artifacts/physical_phone_functional_after_1321e8f2/run_summary.json`.
+- Main route ownership is current through `fc21d50e`: `MainRouteCoordinator`
+  owns route state, browse/result mode, and phone tab history while
+  `MainActivity` keeps view rendering and lifecycle work.
+- Detail save language is current through `5bf82801` and `67351deb`: detail
+  chrome now uses Save/Saved resource names and copy consistently, and the
+  PromptHarness follows the renamed resources.
+- Pack search directive parsing is current through `28d88aef`:
+  `PackSearchQueryParser` owns anchor-prior directive parsing while
+  `PackRepository.search()` delegates to the parser.
+- PromptHarness route assertions are current through `a8b7445c`: androidTest
+  route checks read `currentMainRouteState()` instead of stale MainActivity
+  route fields removed by the coordinator extraction.
+- Latest local proof after `a8b7445c`: `git diff --check` passed; full Android
+  `:app:testDebugUnitTest :app:assembleDebug :app:assembleDebugAndroidTest`
+  passed; fresh physical phone `phone-functional` PromptHarness smoke passed on
+  `RFCX607ZM8L` with APK SHA
+  `e1986d26c09c382066204164f22cfe022977855c5d473699f1856bdd78d0ccff` at
+  `artifacts/physical_phone_functional_after_a8b7445c/run_summary.json`.
 
 ## Remaining Next Slices
 
 - Continue shrinking `MainActivity` only where backend lifecycle or route
-  orchestration still owns too much.
-- Architecture scout priority: tackle a narrow Main route/view boundary next,
-  then a tablet detail state-builder extraction; do not start a broad
-  `PackRepository` search pipeline rewrite without route-output parity proof.
+  orchestration still owns too much; new route work should extend
+  `MainRouteCoordinator` tests rather than restoring route fields to
+  `MainActivity`.
+- Architecture scout next priority: tablet detail state-builder extraction; do
+  not start a broad `PackRepository` search pipeline rewrite without
+  route-output parity proof.
+- Review/demo leakage scout found a P1 cleanup: product `activity_main` layouts
+  and `SharedInputChromePolicy` still reference an `external_review_*` search
+  CTA resource name. Rename or route those resources through explicit
+  review-policy gates in the next review-isolation slice.
 - Do not rerun the result-publication extraction unless a regression points
   there; future `MainActivity` cleanup should target still-mixed route side
   effects outside `MainResultPublicationPolicy`.

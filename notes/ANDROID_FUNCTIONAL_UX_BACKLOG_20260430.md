@@ -75,6 +75,11 @@ Status after pushed validation/code-health head `51ae1f69`.
   passed, and physical `phone-functional` PromptHarness smoke passed on
   `RFCX607ZM8L` at
   `artifacts/physical_phone_functional_after_1321e8f2/run_summary.json`.
+- Latest physical proof after `a8b7445c`: full Android
+  `:app:testDebugUnitTest :app:assembleDebug :app:assembleDebugAndroidTest`
+  passed, and physical `phone-functional` PromptHarness smoke passed on
+  `RFCX607ZM8L` at
+  `artifacts/physical_phone_functional_after_a8b7445c/run_summary.json`.
 
 ## Top Queue - Phone Chrome Normalization
 
@@ -112,21 +117,24 @@ the exported mocks.
      placeholders now require the resolved review mode.
    - Next safe slice: continue moving direct fixture-shaped display decisions
      behind explicit `ReviewDemoPolicy` guards without changing production UI.
+   - Current scout finding: product shared-input search controls still reference
+     `external_review_home_search_button` by resource name from normal
+     `activity_main` layouts and `SharedInputChromePolicy`; rename to a neutral
+     production resource or gate it explicitly through review policy.
    - Key code: `MainActivity.resolveProductReviewMode()`,
-     `buildReviewSearchResults()`, `reviewHomeCategoryCount()`, and
-     `appendReviewSearchLatency()`.
+     `buildReviewSearchResults()`, `reviewHomeCategoryCount()`,
+     `appendReviewSearchLatency()`, and `SharedInputChromePolicy`.
 
 2. Route/back state extraction
    - Code-health risk: back behavior is coupled to adapter contents and tab
      side effects. Empty search, Ask-unavailable, and Saved paths should be
      explicit routes rather than inferred from `items`.
-   - Status: partially addressed. Route state/effect helpers are live,
-     previous-tab transitions apply helper-resolved route state directly, and
-     result publication now flows through `MainResultPublicationPolicy`
-     presentations.
-   - Next safe slice: move a remaining `MainActivity` route side effect into
-     `MainRouteEffectController`; do not reopen result publication unless a
-     regression points there.
+   - Status: partially addressed. `MainRouteCoordinator` now owns Main route
+     state, browse/result mode, and phone tab history; route state/effect
+     helpers and result-publication presentations remain live.
+   - Next safe slice: extend the coordinator around remaining route side
+     effects only when a concrete branch remains in `MainActivity`; do not
+     reopen result publication unless a regression points there.
    - Validation: zero-result search back, Ask unavailable back, Saved back,
      and detail return tests.
 
@@ -158,9 +166,9 @@ the exported mocks.
    - Code-health risk: Home/Ask/Saved/Back/Pin/Share/Overflow are encoded in
      several phone/tablet renderers. Consolidate action/destination mapping
      while keeping XML/Compose renderers separate.
-   - Visual scout follow-up: detail chrome still reads like a pin/pushpin while
-     nav says Saved/bookmark. Decide whether detail should adopt bookmark/save
-     language or document why pin remains distinct.
+   - Status: detail visible save action now uses Save/Saved resource names and
+     copy. Internal implementation names such as `detail_pin_button` and
+     `PinnedGuideStore` remain to avoid route/store churn.
    - Key code: `MainActivity`, `DetailActivity`, `BottomTabBar.kt`, and
      `TopBar.kt`.
 
