@@ -234,22 +234,6 @@ public final class MainActivity extends AppCompatActivity {
         }
     }
 
-    private static final class GuideHandoffContext {
-        final String sourceKind;
-        final String sourceGuideId;
-        final String sourceGuideLabel;
-
-        GuideHandoffContext(String sourceKind, String sourceGuideId, String sourceGuideLabel) {
-            this.sourceKind = safe(sourceKind).trim();
-            this.sourceGuideId = safe(sourceGuideId).trim();
-            this.sourceGuideLabel = safe(sourceGuideLabel).trim();
-        }
-
-        boolean isEmpty() {
-            return sourceKind.isEmpty() && sourceGuideId.isEmpty() && sourceGuideLabel.isEmpty();
-        }
-    }
-
     private static final class CategoryTileState {
         final String bucketKey;
         final View card;
@@ -1398,7 +1382,7 @@ public final class MainActivity extends AppCompatActivity {
         openDetail(result, null);
     }
 
-    private void openDetail(SearchResult result, GuideHandoffContext handoffContext) {
+    private void openDetail(SearchResult result, DetailGuideHandoffIntentBridge.HandoffContext handoffContext) {
         Intent intent = buildGuideDetailIntent(result, handoffContext);
         applyPackDetailExtras(intent);
         startActivity(intent);
@@ -1640,7 +1624,7 @@ public final class MainActivity extends AppCompatActivity {
             }
         }
         button.setLayoutParams(params);
-        GuideHandoffContext handoffContext = buildHomeRelatedGuideHandoffContext(anchor);
+        DetailGuideHandoffIntentBridge.HandoffContext handoffContext = buildHomeRelatedGuideHandoffContext(anchor);
         button.setOnClickListener(v -> openDetail(result, handoffContext));
         return button;
     }
@@ -1666,7 +1650,7 @@ public final class MainActivity extends AppCompatActivity {
         String guideId,
         String fallbackLabel,
         int unavailableMessageResId,
-        GuideHandoffContext handoffContext
+        DetailGuideHandoffIntentBridge.HandoffContext handoffContext
     ) {
         String normalizedGuideId = safe(guideId).trim();
         if (normalizedGuideId.isEmpty()) {
@@ -1717,55 +1701,27 @@ public final class MainActivity extends AppCompatActivity {
         ).show();
     }
 
-    private Intent buildGuideDetailIntent(SearchResult result, GuideHandoffContext handoffContext) {
-        if (handoffContext == null || handoffContext.isEmpty()) {
-            return DetailActivity.newGuideIntent(this, result, conversationId);
-        }
-        String anchorLabel = !safe(handoffContext.sourceGuideLabel).trim().isEmpty()
-            ? handoffContext.sourceGuideLabel
-            : safe(handoffContext.sourceGuideId).trim();
-        if (anchorLabel.isEmpty()) {
-            return DetailActivity.newGuideIntent(this, result, conversationId);
-        }
-        if ("browse_cross_ref".equals(handoffContext.sourceKind)) {
-            return DetailActivity.newCrossReferenceGuideIntent(this, result, conversationId, anchorLabel, false);
-        }
-        if ("home_related_recent".equals(handoffContext.sourceKind)
-            || "home_related_pinned".equals(handoffContext.sourceKind)) {
-            return DetailActivity.newHomeGuideIntent(this, result, conversationId, anchorLabel);
-        }
-        return DetailActivity.newGuideIntent(this, result, conversationId);
+    private Intent buildGuideDetailIntent(
+        SearchResult result,
+        DetailGuideHandoffIntentBridge.HandoffContext handoffContext
+    ) {
+        return DetailGuideHandoffIntentBridge.buildIntent(this, result, conversationId, handoffContext);
     }
 
-    private GuideHandoffContext buildLinkedGuideHandoffContext(SearchResult sourceResult) {
+    private DetailGuideHandoffIntentBridge.HandoffContext buildLinkedGuideHandoffContext(SearchResult sourceResult) {
         if (sourceResult == null) {
             return null;
         }
         String sourceGuideId = safe(sourceResult.guideId).trim();
         String sourceGuideLabel = presentationFormatter().buildGuideHandoffAnchorLabel(sourceResult, sourceGuideId);
-        GuideHandoffContext handoffContext = new GuideHandoffContext(
-            "browse_cross_ref",
-            sourceGuideId,
-            sourceGuideLabel
-        );
-        return handoffContext.isEmpty() ? null : handoffContext;
+        return DetailGuideHandoffIntentBridge.crossReference(sourceGuideId, sourceGuideLabel);
     }
 
-    private GuideHandoffContext buildHomeRelatedGuideHandoffContext(HomeGuideAnchor anchor) {
+    private DetailGuideHandoffIntentBridge.HandoffContext buildHomeRelatedGuideHandoffContext(HomeGuideAnchor anchor) {
         if (anchor == null) {
             return null;
         }
-        String sourceGuideId = safe(anchor.guideId).trim();
-        String sourceGuideLabel = safe(anchor.label).trim();
-        if (sourceGuideLabel.isEmpty()) {
-            sourceGuideLabel = sourceGuideId;
-        }
-        GuideHandoffContext handoffContext = new GuideHandoffContext(
-            anchor.fromRecentThread ? "home_related_recent" : "home_related_pinned",
-            sourceGuideId,
-            sourceGuideLabel
-        );
-        return handoffContext.isEmpty() ? null : handoffContext;
+        return DetailGuideHandoffIntentBridge.homeRelated(anchor.fromRecentThread, anchor.guideId, anchor.label);
     }
 
     private Button createRecentThreadButton(ChatSessionStore.ConversationPreview preview, int index) {
