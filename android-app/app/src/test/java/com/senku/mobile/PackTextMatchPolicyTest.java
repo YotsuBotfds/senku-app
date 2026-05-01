@@ -30,6 +30,15 @@ public final class PackTextMatchPolicyTest {
     }
 
     @Test
+    public void containsTermNormalizesTermAndReturnsFalseForMissingInputs() {
+        assertTrue(PackTextMatchPolicy.containsTerm("wet weather fire lay", "wet-weather fire"));
+
+        assertFalse(PackTextMatchPolicy.containsTerm(null, "fire"));
+        assertFalse(PackTextMatchPolicy.containsTerm("fire", null));
+        assertFalse(PackTextMatchPolicy.containsTerm("fire", " "));
+    }
+
+    @Test
     public void containsAnyMarkerNormalizesMarkersAndRequiresBoundedMatch() {
         Set<String> markers = Set.of("site assessment", "wind-exposure");
 
