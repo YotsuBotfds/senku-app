@@ -1609,7 +1609,8 @@ public final class PackRepository implements AutoCloseable {
         }
         final String anchorText = relatedGuideText(anchor);
         final boolean fireWorkflow = isFireStartingWorkflow(anchorText);
-        final boolean survivalWorkflow = fireWorkflow || isSurvivalWorkflow(anchorText);
+        final boolean shelterWorkflow = isShelterWorkflow(anchorText);
+        final boolean survivalWorkflow = fireWorkflow || shelterWorkflow || isSurvivalWorkflow(anchorText);
         if (!survivalWorkflow) {
             ArrayList<SearchResult> unchanged = new ArrayList<>();
             for (IndexedSearchResult item : indexed) {
@@ -1692,6 +1693,42 @@ public final class PackRepository implements AutoCloseable {
                 "catalog", "taxonomy", "field guide", "archaeological", "ancient techniques"
             );
             score -= markerScore(text, 70, "black powder", "blasting", "weapons", "martial arts");
+        } else if (isShelterWorkflow(anchorText)) {
+            score += markerScore(
+                text,
+                125,
+                "emergency shelter", "primitive shelter", "shelter construction",
+                "tarp shelter", "rain shelter", "debris hut", "lean-to", "lean to",
+                "a-frame shelter", "windbreak"
+            );
+            score += markerScore(
+                text,
+                110,
+                "waterproofing", "weatherproofing", "rainproofing", "material protection",
+                "dry storage", "keep tinder dry", "protect tinder", "wet-weather fire",
+                "wet weather fire", "fire in wet conditions", "wet fire", "dry tinder"
+            );
+            score += markerScore(
+                text,
+                95,
+                "fire lay", "fire lays", "fire layout", "teepee fire", "log cabin fire",
+                "platform fire", "upside-down fire", "fire-starting", "fire starting",
+                "fire by friction", "friction fire", "tinder bundle"
+            );
+            score += markerScore(
+                text,
+                75,
+                "survival basics", "first 72 hours", "winter survival",
+                "temperate forest survival", "water purification", "quick reference"
+            );
+            score -= markerScore(
+                text,
+                105,
+                "agriculture", "gardening", "animal husbandry", "veterinary",
+                "livestock", "breeding", "pasture", "zoology", "butchering"
+            );
+            score -= markerScore(text, 55, "catalog", "taxonomy", "field guide", "archaeological");
+            score -= markerScore(text, 45, "weapons", "martial arts", "black powder", "blasting");
         } else if (isSurvivalWorkflow(anchorText)) {
             score += markerScore(
                 text,
@@ -1754,6 +1791,18 @@ public final class PackRepository implements AutoCloseable {
             || text.contains("primitive shelter")
             || text.contains("winter survival")
             || text.contains("temperate forest survival");
+    }
+
+    private static boolean isShelterWorkflow(String text) {
+        return text.contains("emergency shelter")
+            || text.contains("primitive shelter")
+            || text.contains("shelter construction")
+            || text.contains("tarp shelter")
+            || text.contains("rain shelter")
+            || text.contains("debris hut")
+            || text.contains("lean-to")
+            || text.contains("lean to")
+            || text.contains("a-frame shelter");
     }
 
     private static String relatedGuideText(SearchResult result) {

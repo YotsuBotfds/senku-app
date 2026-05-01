@@ -488,14 +488,12 @@ internal fun buildFooterMeta(content: AnswerContent): String {
         if (host.isNotBlank()) {
             tokens += host
         }
-        tokens += "CONTEXT KEPT"
         return tokens.joinToString(" \u2022 ")
     }
     val tokens = mutableListOf<String>()
     if (reviewedGuideId.isNotBlank()) {
         tokens += reviewedGuideId
         if (content.sourceCount > 0) {
-            tokens += "CONTEXT KEPT"
             tokens += "${content.sourceCount} ${sourceCountNoun(content.sourceCount).uppercase(Locale.US)} VISIBLE"
             return tokens.joinToString(" \u2022 ")
         }

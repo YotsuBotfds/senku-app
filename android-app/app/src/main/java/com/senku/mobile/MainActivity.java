@@ -4520,8 +4520,23 @@ public final class MainActivity extends AppCompatActivity {
             homeChromeModeText.setText(mode);
         }
         if (homeChromeTitleText != null) {
-            homeChromeTitleText.setText(title);
+            homeChromeTitleText.setText(buildHomeChromeTitleForVisibleMode(mode, title));
         }
+    }
+
+    private CharSequence buildHomeChromeTitleForVisibleMode(CharSequence mode, CharSequence title) {
+        if (homeChromeModeText != null || !isLandscapePhoneLayout()) {
+            return title;
+        }
+        String cleanMode = safe(mode == null ? null : mode.toString()).trim();
+        String cleanTitle = safe(title == null ? null : title.toString()).trim();
+        if (cleanMode.isEmpty()) {
+            return title;
+        }
+        if (cleanTitle.isEmpty()) {
+            return cleanMode;
+        }
+        return cleanMode + " \u2022 " + cleanTitle;
     }
 
     private static CharSequence buildHomeChromeTitleText() {

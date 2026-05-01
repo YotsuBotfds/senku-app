@@ -454,6 +454,48 @@ public final class PackRepositoryTest {
     }
 
     @Test
+    public void emergencyShelterRelatedGuidesPreferUseAdjacentFireAndWaterproofing() {
+        SearchResult anchor = relatedGuide(
+            "GD-345",
+            "Emergency Shelters",
+            "survival",
+            "emergency shelter rain shelter tarp shelter debris hut"
+        );
+
+        List<SearchResult> ordered = PackRepository.orderRelatedGuidesByWorkflowRelevanceForTest(
+            anchor,
+            java.util.List.of(
+                relatedGuide("GD-064", "Agriculture & Gardening", "agriculture", "crops gardening"),
+                relatedGuide("GD-067", "Animal Husbandry & Veterinary", "agriculture", "livestock veterinary"),
+                relatedGuide(
+                    "GD-702",
+                    "Waterproofing Field Materials",
+                    "building",
+                    "waterproofing material protection dry storage keep tinder dry"
+                ),
+                relatedGuide(
+                    "GD-701",
+                    "Fire Layouts for Wet Weather",
+                    "survival",
+                    "fire layout platform fire windbreak tinder bundle"
+                ),
+                relatedGuide(
+                    "GD-023",
+                    "Survival Basics & First 72 Hours",
+                    "survival",
+                    "survival basics first 72 hours water purification quick reference"
+                )
+            )
+        );
+
+        assertEquals("GD-701", ordered.get(0).guideId);
+        assertEquals("GD-702", ordered.get(1).guideId);
+        assertEquals("GD-023", ordered.get(2).guideId);
+        assertEquals("GD-064", ordered.get(3).guideId);
+        assertEquals("GD-067", ordered.get(4).guideId);
+    }
+
+    @Test
     public void nonSurvivalRelatedGuidesKeepRepositoryOrder() {
         SearchResult anchor = relatedGuide(
             "GD-700",

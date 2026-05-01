@@ -185,6 +185,7 @@ public final class PromptHarnessSmokeTest {
                 Assert.assertNotNull("home manual stamp should exist", manualStamp);
                 Assert.assertNotNull("home lane hint should exist", laneHint);
                 Assert.assertTrue("home search input should be visible", isVisible(input));
+                assertHomeChromeShowsHomeState(activity);
                 if (isManualHomeShellActivity(activity)) {
                     Assert.assertNotNull("manual-shell home should expose a category header", categoryHeader);
                     Assert.assertNotNull("manual-shell home should expose category content", categoryContainer);
@@ -828,6 +829,7 @@ public final class PromptHarnessSmokeTest {
                 Button ask = activity.findViewById(R.id.ask_button);
                 TextView laneHint = activity.findViewById(R.id.home_entry_hint);
                 TextView resultsHeader = activity.findViewById(R.id.results_header);
+                TextView phoneSearchQueryText = activity.findViewById(R.id.phone_search_query_text);
                 TextView phoneSearchCountText = activity.findViewById(R.id.phone_search_count_text);
                 RecyclerView resultsList = activity.findViewById(R.id.results_list);
                 View browseRail = activity.findViewById(R.id.browse_rail);
@@ -843,6 +845,7 @@ public final class PromptHarnessSmokeTest {
                     "search results should populate the list instead of bouncing back to the browse shell",
                     resultsList.getAdapter() != null && resultsList.getAdapter().getItemCount() > 0
                 );
+                assertPhoneSearchChromeShowsQuery(activity, query);
                 if (isLandscapePhoneActivity(activity)) {
                     Assert.assertTrue(
                         "landscape-phone search should keep the top search context row visible",
@@ -855,6 +858,11 @@ public final class PromptHarnessSmokeTest {
                     Assert.assertTrue(
                         "landscape-phone search count should stay in the compact count slot",
                         isVisible(phoneSearchCountText)
+                    );
+                    Assert.assertTrue(
+                        "landscape-phone search query should stay in the compact query slot",
+                        isVisible(phoneSearchQueryText)
+                            && containsAny(safe(phoneSearchQueryText.getText().toString()), query)
                     );
                     Assert.assertTrue(
                         "landscape-phone search count should keep the result count out of the context row",
@@ -8008,6 +8016,79 @@ public final class PromptHarnessSmokeTest {
         Configuration configuration = activity.getResources().getConfiguration();
         return configuration.smallestScreenWidthDp < 600
             && configuration.orientation == Configuration.ORIENTATION_LANDSCAPE;
+    }
+
+    private boolean isPhoneActivity(Activity activity) {
+        if (activity == null) {
+            return false;
+        }
+        return activity.getResources().getConfiguration().smallestScreenWidthDp < 600;
+    }
+
+    private void assertHomeChromeShowsHomeState(Activity activity) {
+        if (!isPhoneActivity(activity)) {
+            return;
+        }
+        TextView mode = activity.findViewById(R.id.home_chrome_mode);
+        TextView title = activity.findViewById(R.id.home_chrome_title);
+        Assert.assertNotNull("phone home chrome should expose a title view", title);
+        Assert.assertTrue("phone home chrome title should be visible", isEffectivelyVisible(title));
+        String titleText = safe(title.getText() == null ? null : title.getText().toString());
+        if (mode != null) {
+            Assert.assertTrue("phone home chrome mode should be visible", isEffectivelyVisible(mode));
+            Assert.assertEquals(
+                "phone home chrome should keep the HOME SENKU mode token",
+                "HOME SENKU",
+                safe(mode.getText() == null ? null : mode.getText().toString())
+            );
+            Assert.assertTrue(
+                "phone home chrome title should keep Field manual context",
+                containsAny(titleText, "Field manual")
+            );
+            return;
+        }
+        Assert.assertTrue(
+            "landscape-phone home chrome should retain HOME SENKU and Field manual in the compact title",
+            containsAny(titleText, "HOME SENKU") && containsAny(titleText, "Field manual")
+        );
+    }
+
+    private void assertPhoneSearchChromeShowsQuery(Activity activity, String query) {
+        if (!isPhoneActivity(activity)) {
+            return;
+        }
+        String expectedQuery = safe(query).trim();
+        TextView mode = activity.findViewById(R.id.home_chrome_mode);
+        TextView title = activity.findViewById(R.id.home_chrome_title);
+        TextView queryText = activity.findViewById(R.id.phone_search_query_text);
+        Assert.assertNotNull("phone search chrome should expose a query slot", queryText);
+        Assert.assertTrue("phone search chrome query slot should be visible", isEffectivelyVisible(queryText));
+        Assert.assertTrue(
+            "phone search chrome query slot should show the submitted query",
+            containsAny(safe(queryText.getText() == null ? null : queryText.getText().toString()), expectedQuery)
+        );
+        if (mode != null) {
+            Assert.assertTrue("phone search chrome mode token should be visible", isEffectivelyVisible(mode));
+            Assert.assertEquals(
+                "phone search chrome should visibly switch to SEARCH mode",
+                "SEARCH",
+                safe(mode.getText() == null ? null : mode.getText().toString())
+            );
+            Assert.assertNotNull("phone search chrome should expose a title view", title);
+            Assert.assertTrue("phone search chrome title should be visible", isEffectivelyVisible(title));
+            Assert.assertTrue(
+                "phone search chrome title should show the submitted query",
+                containsAny(safe(title.getText() == null ? null : title.getText().toString()), expectedQuery)
+            );
+            return;
+        }
+        TextView resultsHeader = activity.findViewById(R.id.results_header);
+        Assert.assertNotNull("landscape-phone search chrome should expose the compact context row", resultsHeader);
+        String contextText = safe(resultsHeader.getText() == null ? null : resultsHeader.getText().toString());
+        Assert.assertTrue(
+            "landscape-phone search context row should show SEARCH mode and query",
+            containsAny(contextText, "SEARCH") && containsAny(contextText, expectedQuery)
+        );
     }
 
     private boolean hasVisibleEmergencySourceOrHandoffContext(Activity activity) {

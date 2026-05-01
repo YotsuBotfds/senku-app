@@ -12,6 +12,13 @@ internal data class MainChromeSpec(
     val height: String,
     val horizontalPadding: String,
     val expectedModeFontFamily: String? = null,
+    val verticalPadding: String? = null,
+    val backActionSize: String? = null,
+    val backIconSize: String? = null,
+    val searchActionSize: String = "32dp",
+    val searchPadding: String = "8dp",
+    val searchTint: String = "@color/senku_rev03_ink_2",
+    val expectsOverflowPlaceholder: Boolean = true,
 )
 
 internal data class SearchChromeSpec(
@@ -56,10 +63,12 @@ internal fun assertSharedMainChrome(layout: Element, spec: MainChromeSpec) {
     val mode = layout.elementByAndroidId("home_chrome_mode")
     val title = layout.elementByAndroidId("home_chrome_title")
     val searchIcon = layout.elementByAndroidId("home_chrome_search_icon")
-    val overflow = row.directElementChildren("TextView").single { it.android("text") == "..." }
+    val overflowPlaceholders = row.directElementChildren("TextView").filter { it.android("text") == "..." }
     val bottomRule = layout.elementByAndroidId("home_chrome_bottom_rule")
-    val verticalPadding = if (spec.height == "48dp") "9dp" else "12dp"
+    val verticalPadding = spec.verticalPadding ?: if (spec.height == "48dp") "9dp" else "12dp"
     val backPolicy = tabletDetailBackActionPolicy()
+    val backActionSize = spec.backActionSize ?: "${backPolicy.widthDp}dp"
+    val backIconSize = spec.backIconSize ?: "${backPolicy.iconSizeDp}dp"
 
     assertEquals("${spec.qualifier} topbar height", spec.height, row.android("layout_height"))
     assertEquals("${spec.qualifier} topbar start padding", spec.horizontalPadding, row.android("paddingStart"))
@@ -78,15 +87,15 @@ internal fun assertSharedMainChrome(layout: Element, spec: MainChromeSpec) {
         ),
     )
 
-    assertEquals("${backPolicy.widthDp}dp", back.android("layout_width"))
-    assertEquals("${backPolicy.heightDp}dp", back.android("layout_height"))
+    assertEquals(backActionSize, back.android("layout_width"))
+    assertEquals(spec.backActionSize ?: "${backPolicy.heightDp}dp", back.android("layout_height"))
     assertEquals("@string/detail_back_content_description", back.android("contentDescription"))
     assertEquals("horizontal", back.android("orientation"))
     assertEquals("center", back.android("gravity"))
     assertEquals("0dp", back.android("paddingStart"))
     assertEquals("0dp", back.android("paddingEnd"))
-    assertEquals("${backPolicy.iconSizeDp}dp", backIcon.android("layout_width"))
-    assertEquals("${backPolicy.iconSizeDp}dp", backIcon.android("layout_height"))
+    assertEquals(backIconSize, backIcon.android("layout_width"))
+    assertEquals(backIconSize, backIcon.android("layout_height"))
     assertEquals("@drawable/ic_home_back_chevron", backIcon.android("src"))
     assertEquals("@color/senku_rev03_ink_0", backIcon.android("tint"))
     assertEquals(backPolicy.showsTextLabel, backLabel.android("visibility") != "gone")
@@ -124,11 +133,15 @@ internal fun assertSharedMainChrome(layout: Element, spec: MainChromeSpec) {
     assertEquals("@color/senku_rev03_ink_0", title.android("textColor"))
     assertEquals("Field manual \u2022 ed.2", title.android("text"))
 
+    assertEquals(spec.searchActionSize, searchIcon.android("layout_width"))
+    assertEquals(spec.searchActionSize, searchIcon.android("layout_height"))
+    assertEquals(spec.searchPadding, searchIcon.android("padding"))
     assertEquals("@drawable/ic_search_magnifier", searchIcon.android("src"))
+    assertEquals(spec.searchTint, searchIcon.android("tint"))
     assertEquals("@string/home_chrome_search_content_description", searchIcon.android("contentDescription"))
     assertEquals("true", searchIcon.android("clickable"))
     assertEquals("true", searchIcon.android("focusable"))
-    assertEquals("...", overflow.android("text"))
+    assertEquals(spec.expectsOverflowPlaceholder, overflowPlaceholders.isNotEmpty())
     assertEquals("1dp", bottomRule.android("layout_height"))
     assertEquals("@color/senku_rev03_hairline_strong", bottomRule.android("background"))
 }

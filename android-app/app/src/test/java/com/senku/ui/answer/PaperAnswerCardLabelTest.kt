@@ -79,7 +79,7 @@ class PaperAnswerCardLabelTest {
     }
 
     @Test
-    fun buildFooterMeta_usesContextKeptForRainShelterLimitedFit() {
+    fun buildFooterMeta_omitsContextKeptForRainShelterLimitedFit() {
         val content = answer(
             sourceCount = 3,
             host = "This device",
@@ -94,11 +94,11 @@ class PaperAnswerCardLabelTest {
             ),
         )
 
-        assertEquals("GD-345 \u2022 THIS DEVICE \u2022 CONTEXT KEPT", buildFooterMeta(content))
+        assertEquals("GD-345 \u2022 THIS DEVICE", buildFooterMeta(content))
     }
 
     @Test
-    fun buildFooterMeta_keepsAnswerAnchorAndVisibleSourceState() {
+    fun buildFooterMeta_keepsAnswerAnchorAndVisibleSourceStateWithoutContextKept() {
         val content = answer(
             sourceCount = 3,
             host = "This device",
@@ -114,7 +114,7 @@ class PaperAnswerCardLabelTest {
             ),
         )
 
-        assertEquals("GD-345 \u2022 CONTEXT KEPT \u2022 3 SOURCES VISIBLE", buildFooterMeta(content))
+        assertEquals("GD-345 \u2022 3 SOURCES VISIBLE", buildFooterMeta(content))
     }
 
     @Test
