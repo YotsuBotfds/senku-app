@@ -159,6 +159,31 @@ public final class FollowUpComposerControllerTest {
     }
 
     @Test
+    public void failureRetryPreservesSubmittedQueryAfterGenerationStartClearsDraft() {
+        FollowUpComposerState submitted = FollowUpComposerState.idle(
+            "  inspect the ridge line  ",
+            FollowUpComposerState.Surface.PHONE
+        ).asSubmitting();
+
+        FollowUpComposerState started =
+            FollowUpComposerController.resolveGenerationStart(submitted);
+        FollowUpComposerState failed =
+            FollowUpComposerController.resolveGenerationFailure(
+                started,
+                "offline answer failed",
+                "  inspect the ridge line  "
+            );
+        FollowUpComposerState completed =
+            FollowUpComposerController.resolveGenerationSuccess(failed);
+
+        assertEquals("", started.draftText);
+        assertEquals("inspect the ridge line", failed.draftText);
+        assertEquals("inspect the ridge line", failed.retryQuery());
+        assertEquals("", completed.draftText);
+        assertEquals("", completed.retryQuery());
+    }
+
+    @Test
     public void rawSubmitDecisionNormalizesEmptyPhoneDraft() {
         FollowUpComposerController.SubmitDecision decision =
             FollowUpComposerController.resolveSubmit(
@@ -195,6 +220,33 @@ public final class FollowUpComposerControllerTest {
 
         assertEquals(FollowUpComposerController.SubmitAction.SUBMIT, decision.action);
         assertEquals("what should I check next?", decision.query);
+    }
+
+    @Test
+    public void phoneSendAndImeSubmitShareRawDecisionPolicy() {
+        String sendDraft = "  what changed overnight?\r\n";
+        String imeDraft = "  what changed overnight?\r\n";
+
+        FollowUpComposerController.SubmitDecision sendDecision =
+            FollowUpComposerController.resolveSubmit(
+                sendDraft,
+                FollowUpComposerState.Surface.PHONE,
+                false
+            );
+        FollowUpComposerController.SubmitDecision imeDecision =
+            FollowUpComposerController.resolveSubmit(
+                imeDraft,
+                FollowUpComposerState.Surface.PHONE,
+                false
+            );
+
+        assertEquals(FollowUpComposerController.SubmitAction.SUBMIT, sendDecision.action);
+        assertEquals(sendDecision.action, imeDecision.action);
+        assertEquals(sendDecision.query, imeDecision.query);
+        assertEquals(
+            FollowUpComposerController.resolvePhoneSubmitRoute(sendDraft),
+            FollowUpComposerController.resolvePhoneSubmitRoute(imeDraft)
+        );
     }
 
     @Test
