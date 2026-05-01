@@ -410,13 +410,13 @@ public final class PackRepository implements AutoCloseable {
         if (vectorStore == null) {
             maybeLogCandidateTelemetry(buildVectorCandidateTelemetryLine(query, Collections.emptyList()));
             List<CombinedHit> lexicalCombinedHits = mergeHybrid(lexicalHits, Collections.emptyList(), anchorPrior);
-            maybeLogCandidateTelemetry(buildPrerankCandidateTelemetryLine(query, lexicalCombinedHits, limit));
-            List<SearchResult> lexicalResults = toSearchResults(lexicalCombinedHits, limit);
-            long rerankStartedAtNs = elapsedRealtimeNanosSafe();
-            List<RerankedResult> rerankedDetails = maybeRerankResultsDetailed(queryTerms, lexicalResults, limit);
-            List<SearchResult> reranked = extractSearchResults(rerankedDetails);
-            rerankElapsedMs = elapsedRealtimeMsSince(rerankStartedAtNs);
-            maybeLogCandidateTelemetry(buildRerankedCandidateTelemetryLine(query, rerankedDetails));
+            SearchFinalization lexicalFinalization = finalizeCombinedHitsForSearch(
+                query,
+                queryTerms,
+                lexicalCombinedHits,
+                limit
+            );
+            rerankElapsedMs = lexicalFinalization.rerankElapsedMs;
             SearchLatencyBreakdown breakdown = new SearchLatencyBreakdown(
                 routeElapsedMs,
                 ftsElapsedMs,
@@ -439,7 +439,7 @@ public final class PackRepository implements AutoCloseable {
                 )
             );
             logSearchTripwireIfNeeded(query, breakdown);
-            return mergePreferredResults(routeResults, reranked, limit);
+            return mergePreferredResults(routeResults, lexicalFinalization.rerankedResults, limit);
         }
 
         List<Integer> seedRows = new ArrayList<>();
@@ -456,12 +456,13 @@ public final class PackRepository implements AutoCloseable {
         if (centroid == null) {
             maybeLogCandidateTelemetry(buildVectorCandidateTelemetryLine(query, Collections.emptyList()));
             List<CombinedHit> lexicalCombinedHits = mergeHybrid(lexicalHits, Collections.emptyList(), anchorPrior);
-            maybeLogCandidateTelemetry(buildPrerankCandidateTelemetryLine(query, lexicalCombinedHits, limit));
-            List<SearchResult> lexicalResults = toSearchResults(lexicalCombinedHits, limit);
-            long rerankStartedAtNs = elapsedRealtimeNanosSafe();
-            List<RerankedResult> rerankedDetails = maybeRerankResultsDetailed(queryTerms, lexicalResults, limit);
-            rerankElapsedMs = elapsedRealtimeMsSince(rerankStartedAtNs);
-            maybeLogCandidateTelemetry(buildRerankedCandidateTelemetryLine(query, rerankedDetails));
+            SearchFinalization lexicalFinalization = finalizeCombinedHitsForSearch(
+                query,
+                queryTerms,
+                lexicalCombinedHits,
+                limit
+            );
+            rerankElapsedMs = lexicalFinalization.rerankElapsedMs;
             SearchLatencyBreakdown breakdown = new SearchLatencyBreakdown(
                 routeElapsedMs,
                 ftsElapsedMs,
@@ -486,7 +487,7 @@ public final class PackRepository implements AutoCloseable {
             logSearchTripwireIfNeeded(query, breakdown);
             return mergeResultsWhenCentroidMissing(
                 routeResults,
-                extractSearchResults(rerankedDetails),
+                lexicalFinalization.rerankedResults,
                 limit
             );
         }
@@ -495,13 +496,14 @@ public final class PackRepository implements AutoCloseable {
         List<RankedChunk> vectorHits = loadVectorNeighborHits(neighbors);
         maybeLogCandidateTelemetry(buildVectorCandidateTelemetryLine(query, vectorHits));
         List<CombinedHit> hybridCombinedHits = mergeHybrid(lexicalHits, vectorHits, anchorPrior);
-        maybeLogCandidateTelemetry(buildPrerankCandidateTelemetryLine(query, hybridCombinedHits, limit));
-        List<SearchResult> hybridResults = toSearchResults(hybridCombinedHits, limit);
-        long rerankStartedAtNs = elapsedRealtimeNanosSafe();
-        List<RerankedResult> rerankedDetails = maybeRerankResultsDetailed(queryTerms, hybridResults, limit);
-        List<SearchResult> reranked = extractSearchResults(rerankedDetails);
-        rerankElapsedMs = elapsedRealtimeMsSince(rerankStartedAtNs);
-        maybeLogCandidateTelemetry(buildRerankedCandidateTelemetryLine(query, rerankedDetails));
+        SearchFinalization hybridFinalization = finalizeCombinedHitsForSearch(
+            query,
+            queryTerms,
+            hybridCombinedHits,
+            limit
+        );
+        List<SearchResult> reranked = hybridFinalization.rerankedResults;
+        rerankElapsedMs = hybridFinalization.rerankElapsedMs;
         long vectorElapsedMs = System.currentTimeMillis() - vectorStartedAt;
         SearchLatencyBreakdown breakdown = new SearchLatencyBreakdown(
             routeElapsedMs,
@@ -647,6 +649,22 @@ public final class PackRepository implements AutoCloseable {
     private List<SearchResult> maybeRerankResults(QueryTerms queryTerms, List<SearchResult> results, int limit) {
         List<RerankedResult> detailed = maybeRerankResultsDetailed(queryTerms, results, limit);
         return extractSearchResults(detailed);
+    }
+
+    private SearchFinalization finalizeCombinedHitsForSearch(
+        String query,
+        QueryTerms queryTerms,
+        List<CombinedHit> combinedHits,
+        int limit
+    ) {
+        maybeLogCandidateTelemetry(buildPrerankCandidateTelemetryLine(query, combinedHits, limit));
+        List<SearchResult> projectedResults = toSearchResults(combinedHits, limit);
+        long rerankStartedAtNs = elapsedRealtimeNanosSafe();
+        List<RerankedResult> rerankedDetails = maybeRerankResultsDetailed(queryTerms, projectedResults, limit);
+        List<SearchResult> reranked = extractSearchResults(rerankedDetails);
+        long rerankElapsedMs = elapsedRealtimeMsSince(rerankStartedAtNs);
+        maybeLogCandidateTelemetry(buildRerankedCandidateTelemetryLine(query, rerankedDetails));
+        return new SearchFinalization(reranked, rerankElapsedMs);
     }
 
     private static boolean shouldApplyMetadataRerank(QueryTerms queryTerms) {
@@ -2072,6 +2090,16 @@ public final class PackRepository implements AutoCloseable {
 
     static int supportStructurePenalty(boolean diversifyContext, String retrievalMode, String sectionHeading) {
         return PackSupportScoringPolicy.supportStructurePenalty(diversifyContext, retrievalMode, sectionHeading);
+    }
+
+    private static final class SearchFinalization {
+        final List<SearchResult> rerankedResults;
+        final long rerankElapsedMs;
+
+        SearchFinalization(List<SearchResult> rerankedResults, long rerankElapsedMs) {
+            this.rerankedResults = rerankedResults;
+            this.rerankElapsedMs = rerankElapsedMs;
+        }
     }
 
     static String emptySafe(String text) {
