@@ -163,7 +163,7 @@ final class PackRouteSearchSqlPolicy {
     }
 
     static RouteFtsOrderSpec noBm25RouteFtsOrder(PackRepository.QueryTerms queryTerms) {
-        RetrievalRoutePolicy.RouteFtsOrderSpec orderSpec = RetrievalRoutePolicy.noBm25RouteFtsOrder(
+        PackRouteFtsOrderPolicy.RouteFtsOrderSpec orderSpec = PackRouteFtsOrderPolicy.noBm25RouteFtsOrder(
             queryTerms == null ? "" : queryTerms.queryLower,
             queryTerms == null ? null : queryTerms.metadataProfile
         );

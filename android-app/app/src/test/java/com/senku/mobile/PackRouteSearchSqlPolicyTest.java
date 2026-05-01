@@ -89,6 +89,38 @@ public final class PackRouteSearchSqlPolicyTest {
     }
 
     @Test
+    public void chunkFtsPlanKeepsEveryNoBm25OrderArgsBeforeLimit() {
+        assertNoBm25OrderArgsBeforeLimit("how do i make soap from animal fat and ash", "soapmaking_priority");
+        assertNoBm25OrderArgsBeforeLimit(
+            "how do i design a gravity-fed water distribution system",
+            "water_distribution_priority"
+        );
+        assertNoBm25OrderArgsBeforeLimit("how do i build a clay oven", "clay_oven_priority");
+        assertNoBm25OrderArgsBeforeLimit(
+            "How do we merge with another group if we don't trust each other yet?",
+            "community_governance_priority"
+        );
+        assertNoBm25OrderArgsBeforeLimit(
+            "winter sun summer shade site selection cabin house",
+            "site_selection_microclimate_priority"
+        );
+        assertNoBm25OrderArgsBeforeLimit(
+            "How do I choose a building site if drainage, wind, sun, and access all matter?",
+            "site_selection_priority"
+        );
+        assertNoBm25OrderArgsBeforeLimit("what about sealing the roof", "roofing_priority");
+        assertNoBm25OrderArgsBeforeLimit(
+            "how do i frame a cabin wall with rough lumber",
+            "wall_construction_priority"
+        );
+        assertNoBm25OrderArgsBeforeLimit(
+            "how do i pour a cabin foundation with limited cement",
+            "foundation_priority"
+        );
+        assertNoBm25OrderArgsBeforeLimit("how do i build a house", "rowid");
+    }
+
+    @Test
     public void guideFtsPlanPreservesNoBm25StarterLimitCapAndProjection() {
         PackRepository.QueryTerms queryTerms = PackRepository.QueryTerms.fromQuery("how do i build a house");
         PackRepository.QueryTerms specTerms = PackRepository.QueryTerms.fromText("site foundation", queryTerms.routeProfile);
@@ -241,5 +273,29 @@ public final class PackRouteSearchSqlPolicyTest {
         assertTrue(noTokens.args.isEmpty());
         assertTrue(noCategories.isEmpty());
         assertTrue(noCategories.args.isEmpty());
+    }
+
+    private static void assertNoBm25OrderArgsBeforeLimit(String query, String expectedLabel) {
+        PackRepository.QueryTerms queryTerms = PackRepository.QueryTerms.fromQuery(query);
+        PackRepository.QueryTerms specTerms = PackRepository.QueryTerms.fromText("route focus", queryTerms.routeProfile);
+        PackRouteFtsOrderPolicy.RouteFtsOrderSpec orderSpec =
+            PackRouteFtsOrderPolicy.noBm25RouteFtsOrder(queryTerms.queryLower, queryTerms.metadataProfile);
+
+        PackRouteSearchSqlPolicy.RouteFtsSqlPlan plan = PackRouteSearchSqlPolicy.chunkFtsPlan(
+            queryTerms,
+            specTerms,
+            List.of("route-category"),
+            600,
+            "chunks_fts",
+            false
+        );
+
+        int orderArgStart = 2;
+        int orderArgEnd = orderArgStart + PackRouteFtsOrderPolicy.argCountForLabelForTest(expectedLabel);
+        assertEquals(query, expectedLabel, plan.orderLabel);
+        assertEquals(query, expectedLabel, orderSpec.label);
+        assertEquals(query, orderSpec.args, plan.args.subList(orderArgStart, orderArgEnd));
+        assertEquals(query, String.valueOf(plan.effectiveCandidateLimit), plan.args.get(orderArgEnd));
+        assertEquals(query, orderArgEnd + 1, plan.args.size());
     }
 }
