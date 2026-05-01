@@ -102,6 +102,7 @@ public final class MainActivity extends AppCompatActivity {
         new LinkedHashMap<>();
     private final MainSearchController searchController = new MainSearchController(new MainSearchHost());
     private final AskQueryController askQueryController = new AskQueryController(new MainAskQueryHost());
+    private final MainGuideOpenController guideOpenController = new MainGuideOpenController();
 
     private MainPresentationFormatter presentationFormatter;
     private HomeGuidePresentationFormatter homeGuidePresentationFormatter;
@@ -1623,19 +1624,6 @@ public final class MainActivity extends AppCompatActivity {
         return button;
     }
 
-    private SearchResult findGuideById(List<SearchResult> guides, String guideId) {
-        String normalizedGuideId = safe(guideId).trim();
-        if (normalizedGuideId.isEmpty() || guides == null) {
-            return null;
-        }
-        for (SearchResult guide : guides) {
-            if (normalizedGuideId.equalsIgnoreCase(safe(guide == null ? null : guide.guideId).trim())) {
-                return guide;
-            }
-        }
-        return null;
-    }
-
     private void openGuideById(String guideId, String fallbackLabel, int unavailableMessageResId) {
         openGuideById(guideId, fallbackLabel, unavailableMessageResId, null);
     }
@@ -1646,48 +1634,58 @@ public final class MainActivity extends AppCompatActivity {
         int unavailableMessageResId,
         DetailGuideHandoffIntentBridge.HandoffContext handoffContext
     ) {
-        String normalizedGuideId = safe(guideId).trim();
-        if (normalizedGuideId.isEmpty()) {
-            return;
-        }
-        SearchResult loadedGuide = findGuideById(allGuides, normalizedGuideId);
-        if (loadedGuide != null) {
-            openDetail(loadedGuide, handoffContext);
-            return;
-        }
         PackRepository repo = repository;
+        MainGuideOpenController.Decision initialDecision = guideOpenController.resolveInitial(
+            guideId,
+            fallbackLabel,
+            unavailableMessageResId,
+            allGuides,
+            repo != null
+        );
+        if (initialDecision.action != MainGuideOpenController.Action.LOAD_FROM_REPOSITORY) {
+            handleGuideOpenDecision(initialDecision, handoffContext);
+            return;
+        }
         if (repo == null) {
             setBusy("Pack is not ready yet", false);
             return;
         }
         executor.execute(() -> {
-            SearchResult result = null;
-            try {
-                result = repo.loadGuideById(normalizedGuideId);
-            } catch (Exception ignored) {
-            }
-            SearchResult resolvedResult = result;
+            MainGuideOpenController.Decision resolvedDecision =
+                guideOpenController.resolveRepositoryLoad(initialDecision.request, repo::loadGuideById);
             runOnUiThread(() -> {
-                if (resolvedResult != null) {
-                    openDetail(resolvedResult, handoffContext);
-                    return;
-                }
-                showGuideUnavailableToast(fallbackLabel, normalizedGuideId, unavailableMessageResId);
+                handleGuideOpenDecision(resolvedDecision, handoffContext);
             });
         });
     }
 
-    private void showGuideUnavailableToast(String fallbackLabel, String guideId, int unavailableMessageResId) {
-        String label = safe(fallbackLabel).trim();
-        if (label.isEmpty()) {
-            label = safe(guideId).trim();
+    private void handleGuideOpenDecision(
+        MainGuideOpenController.Decision decision,
+        DetailGuideHandoffIntentBridge.HandoffContext handoffContext
+    ) {
+        if (decision == null) {
+            return;
         }
-        if (label.isEmpty()) {
-            label = "selected guide";
+        if (decision.action == MainGuideOpenController.Action.OPEN_GUIDE) {
+            openDetail(decision.guide, handoffContext);
+            return;
         }
+        if (decision.action == MainGuideOpenController.Action.PACK_UNAVAILABLE) {
+            setBusy("Pack is not ready yet", false);
+            return;
+        }
+        if (decision.action == MainGuideOpenController.Action.GUIDE_UNAVAILABLE) {
+            showGuideUnavailableToast(decision.request);
+        }
+    }
+
+    private void showGuideUnavailableToast(MainGuideOpenController.Request request) {
+        String label = request == null ? "selected guide" : request.unavailableLabel;
+        int unavailableMessageResId = request == null ? 0 : request.unavailableMessageResId;
+        String clippedLabel = presentationFormatter().clipLabel(label, 40);
         String message = unavailableMessageResId != 0
-            ? getString(unavailableMessageResId, presentationFormatter().clipLabel(label, 40))
-            : getString(R.string.result_linked_guide_unavailable, presentationFormatter().clipLabel(label, 40));
+            ? getString(unavailableMessageResId, clippedLabel)
+            : getString(R.string.result_linked_guide_unavailable, clippedLabel);
         Toast.makeText(
             this,
             message,
