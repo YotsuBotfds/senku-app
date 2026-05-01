@@ -358,6 +358,141 @@ public final class MainRouteEffectControllerTest {
     }
 
     @Test
+    public void routeEffectControllerAppliesHomeTabEffectsInRouteOrder() {
+        RecordingRouteEffects effects = new RecordingRouteEffects(true);
+
+        MainRouteEffectController.applyPhoneTabTransitionEffect(
+            MainRouteDecisionHelper.Effect.SHOW_BROWSE_HOME,
+            effects
+        );
+
+        assertEquals(
+            Arrays.asList(
+                "updateActionLabels",
+                "dismissSearchKeyboard",
+                "ensureBrowseHomeVisible",
+                "scrollBrowseToTop"
+            ),
+            effects.calls
+        );
+    }
+
+    @Test
+    public void routeEffectControllerFocusesSharedInputWithoutBrowseScrollOnResultSurfaces() {
+        RecordingRouteEffects effects = new RecordingRouteEffects(false);
+
+        MainRouteEffectController.applyPhoneTabTransitionEffect(
+            MainRouteDecisionHelper.Effect.FOCUS_ASK_INPUT,
+            effects
+        );
+
+        assertEquals(
+            Arrays.asList("updateActionLabels", "focusSharedInput"),
+            effects.calls
+        );
+    }
+
+    @Test
+    public void routeEffectControllerAppliesSavedAndRecentSectionEffects() {
+        RecordingRouteEffects savedEffects = new RecordingRouteEffects(true);
+        RecordingRouteEffects recentEffects = new RecordingRouteEffects(true);
+
+        MainRouteEffectController.applyPhoneTabTransitionEffect(
+            MainRouteDecisionHelper.Effect.SHOW_SAVED_GUIDES,
+            savedEffects
+        );
+        MainRouteEffectController.applyPhoneTabTransitionEffect(
+            MainRouteDecisionHelper.Effect.SHOW_RECENT_THREADS,
+            recentEffects
+        );
+
+        assertEquals(
+            Arrays.asList("updateActionLabels", "dismissSearchKeyboard", "prepareSavedGuidesDestination"),
+            savedEffects.calls
+        );
+        assertEquals(
+            Arrays.asList(
+                "updateActionLabels",
+                "dismissSearchKeyboard",
+                "ensureBrowseHomeVisible",
+                "scrollRecentThreadsIntoView"
+            ),
+            recentEffects.calls
+        );
+    }
+
+    @Test
+    public void routeEffectControllerAppliesPreviousTabTransitionRouteWithoutReopeningAskLane() {
+        MainRouteDecisionHelper.Transition transition = MainRouteDecisionHelper.systemBack(
+            new MainRouteDecisionHelper.RouteState(
+                MainRouteDecisionHelper.Surface.SAVED_GUIDES,
+                BottomTabDestination.PINS,
+                false
+            ),
+            BottomTabDestination.ASK
+        );
+        RecordingRouteEffects effects = new RecordingRouteEffects(true);
+
+        MainRouteEffectController.applyPhoneTabTransitionEffect(transition, effects);
+
+        assertEquals(MainRouteDecisionHelper.Effect.SHOW_PREVIOUS_TAB, transition.effect);
+        assertRouteState(
+            transition.routeState,
+            MainRouteDecisionHelper.Surface.RECENT_THREADS,
+            BottomTabDestination.ASK,
+            false
+        );
+        assertEquals(
+            Arrays.asList(
+                "updateActionLabels",
+                "dismissSearchKeyboard",
+                "ensureBrowseHomeVisible",
+                "scrollRecentThreadsIntoView"
+            ),
+            effects.calls
+        );
+    }
+
+    @Test
+    public void routeEffectControllerReturnsPreviousSavedAndHomeRoutesByTransitionSurface() {
+        RecordingRouteEffects savedEffects = new RecordingRouteEffects(true);
+        RecordingRouteEffects homeEffects = new RecordingRouteEffects(true);
+
+        MainRouteEffectController.applyPhoneTabTransitionEffect(
+            new MainRouteDecisionHelper.Transition(
+                new MainRouteDecisionHelper.RouteState(
+                    MainRouteDecisionHelper.Surface.SAVED_GUIDES,
+                    BottomTabDestination.PINS,
+                    false
+                ),
+                MainRouteDecisionHelper.Effect.SHOW_PREVIOUS_TAB
+            ),
+            savedEffects
+        );
+        MainRouteEffectController.applyPhoneTabTransitionEffect(
+            new MainRouteDecisionHelper.Transition(
+                MainRouteDecisionHelper.browseHome(),
+                MainRouteDecisionHelper.Effect.SHOW_PREVIOUS_TAB
+            ),
+            homeEffects
+        );
+
+        assertEquals(
+            Arrays.asList("updateActionLabels", "dismissSearchKeyboard", "prepareSavedGuidesDestination"),
+            savedEffects.calls
+        );
+        assertEquals(
+            Arrays.asList(
+                "updateActionLabels",
+                "dismissSearchKeyboard",
+                "ensureBrowseHomeVisible",
+                "scrollBrowseToTop"
+            ),
+            homeEffects.calls
+        );
+    }
+
+    @Test
     public void callbackBackEffectsDelegateAllActivityGlueMethods() {
         List<String> calls = new ArrayList<>();
         MainRouteDecisionHelper.RouteState routeState =
@@ -419,6 +554,66 @@ public final class MainRouteEffectControllerTest {
             ),
             calls
         );
+    }
+
+    private static void assertRouteState(
+        MainRouteDecisionHelper.RouteState routeState,
+        MainRouteDecisionHelper.Surface surface,
+        BottomTabDestination activePhoneTab,
+        boolean askLaneActive
+    ) {
+        assertEquals(surface, routeState.surface);
+        assertEquals(activePhoneTab, routeState.activePhoneTab);
+        assertEquals(askLaneActive, routeState.askLaneActive);
+    }
+
+    private static final class RecordingRouteEffects implements MainRouteEffectController.Effects {
+        final List<String> calls = new ArrayList<>();
+        private final boolean browseModeActive;
+
+        RecordingRouteEffects(boolean browseModeActive) {
+            this.browseModeActive = browseModeActive;
+        }
+
+        @Override
+        public boolean isBrowseModeActive() {
+            return browseModeActive;
+        }
+
+        @Override
+        public void updateActionLabels() {
+            calls.add("updateActionLabels");
+        }
+
+        @Override
+        public void dismissSearchKeyboard() {
+            calls.add("dismissSearchKeyboard");
+        }
+
+        @Override
+        public void ensureBrowseHomeVisible() {
+            calls.add("ensureBrowseHomeVisible");
+        }
+
+        @Override
+        public void scrollBrowseToTop() {
+            calls.add("scrollBrowseToTop");
+        }
+
+        @Override
+        public void focusSharedInput() {
+            calls.add("focusSharedInput");
+        }
+
+        @Override
+        public void scrollRecentThreadsIntoView() {
+            calls.add("scrollRecentThreadsIntoView");
+        }
+
+        @Override
+        public void prepareSavedGuidesDestination() {
+            calls.add("prepareSavedGuidesDestination");
+        }
     }
 
     private static final class RecordingBackEffects implements MainRouteEffectController.BackEffects {
