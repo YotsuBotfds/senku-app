@@ -986,7 +986,7 @@ class PromptExpectationValidatorTests(unittest.TestCase):
         self.assertEqual(report["issues"][0]["code"], "retrieval_missing_primary_expected_owner")
         self.assertEqual(report["issues"][0]["guide_ids"], ["GD-397"])
 
-    def test_retrieval_eval_markdown_flags_empty_primary_expected_owner_field(self):
+    def test_retrieval_eval_markdown_ignores_blank_primary_expected_owner_field(self):
         root = self.make_tmpdir()
         self.write_guide(root, "GD-120", "metalworking")
         pack = root / "pack.jsonl"
@@ -1016,11 +1016,50 @@ class PromptExpectationValidatorTests(unittest.TestCase):
             retrieval_eval_paths=[md],
         )
 
-        self.assertEqual(report["status"], "fail")
-        self.assertIn(
-            "retrieval_primary_expected_guide_field_without_guide_id",
-            {item["code"] for item in report["issues"]},
+        self.assertEqual(report["status"], "pass")
+        self.assertEqual(report["issues"], [])
+
+    def test_retrieval_eval_json_ignores_blank_string_primary_expected_owner_field(self):
+        root = self.make_tmpdir()
+        self.write_guide(root, "GD-120", "metalworking")
+        pack = root / "pack.jsonl"
+        pack.write_text(
+            json.dumps(
+                {
+                    "id": "P-1",
+                    "expected_guide_ids": ["GD-120"],
+                    "prompt": "Primary expectation intentionally blank in json.",
+                }
+            )
+            + "\n",
+            encoding="utf-8",
         )
+        retrieval = root / "retrieval.json"
+        retrieval.write_text(
+            json.dumps(
+                {
+                    "rows": [
+                        {
+                            "prompt_id": "P-1",
+                            "expected_guide_ids": ["GD-120"],
+                            "primary_expected_guide_ids": "",
+                            "top_retrieved_guide_ids": ["GD-120"],
+                        }
+                    ]
+                }
+            ),
+            encoding="utf-8",
+        )
+
+        report = validator.validate(
+            [pack],
+            guides_dir=root / "guides",
+            root=root,
+            retrieval_eval_paths=[retrieval],
+        )
+
+        self.assertEqual(report["status"], "pass")
+        self.assertEqual(report["issues"], [])
 
     def test_retrieval_eval_markdown_flags_malformed_primary_expected_owner_field(self):
         root = self.make_tmpdir()

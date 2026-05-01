@@ -861,7 +861,7 @@ def explicit_primary_expectation_issues(
                 )
             )
             continue
-        if is_empty_structured_value(value):
+        if is_empty_primary_metadata_value(value):
             continue
         if not extracted:
             issues.append(
@@ -878,10 +878,11 @@ def explicit_primary_expectation_issues(
     return dedupe(ids), issues
 
 
-def is_empty_structured_value(value: Any) -> bool:
+def is_empty_primary_metadata_value(value: Any) -> bool:
+    if isinstance(value, (str, bytes, bytearray)):
+        return _clean_text(value) == ""
     return (
         isinstance(value, (Mapping, Sequence))
-        and not isinstance(value, (str, bytes, bytearray))
         and not bool(value)
     )
 
