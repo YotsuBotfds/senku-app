@@ -653,7 +653,9 @@ function Invoke-PowerShellChildScript {
             Wait-Job -Id $job.Id
         }
         $timedOut = ($null -eq $completed)
+        $timeoutEvidence = ""
         if ($timedOut) {
+            $timeoutEvidence = "Child PowerShell job timed out after {0} seconds." -f $TimeoutSeconds
             Stop-Job -Id $job.Id -ErrorAction SilentlyContinue | Out-Null
         }
 
@@ -669,6 +671,9 @@ function Invoke-PowerShellChildScript {
             $exitCode = [int]$exitMarker.Groups[1].Value
             $output = [regex]::Replace($rawOutput, '(?m)^\s*__SENKU_EXIT_CODE__=\d+\s*$', '').Trim()
         }
+        if ($timedOut -and -not [string]::IsNullOrWhiteSpace($timeoutEvidence)) {
+            $output = (($output, $timeoutEvidence) | Where-Object { -not [string]::IsNullOrWhiteSpace([string]$_) }) -join [Environment]::NewLine
+        }
         if (-not [string]::IsNullOrWhiteSpace($LogPath)) {
             $parent = Split-Path -Parent $LogPath
             if ($parent) {
@@ -680,6 +685,8 @@ function Invoke-PowerShellChildScript {
         return [pscustomobject]@{
             timed_out = $timedOut
             exit_code = $exitCode
+            timeout_seconds = [int]$TimeoutSeconds
+            timeout_evidence = $timeoutEvidence
             output = $output
             stdout_path = $null
             stderr_path = $null

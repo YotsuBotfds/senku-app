@@ -42,6 +42,27 @@ class RunAndroidUiValidationPackContractTests(unittest.TestCase):
             self.script.index("& $adb -s $Device shell wm size reset"),
         )
 
+    def test_child_script_timeout_contract_fails_closed_and_records_evidence(self):
+        start = self.script.index("function Invoke-PowerShellChildScript {")
+        end = self.script.index("function Set-DeviceOrientation", start)
+        body = self.script[start:end]
+
+        self.assertIn("Start-Job -ScriptBlock", body)
+        self.assertIn("Wait-Job -Id $job.Id -Timeout $TimeoutSeconds", body)
+        self.assertIn("$timedOut = ($null -eq $completed)", body)
+        self.assertIn("Stop-Job -Id $job.Id -ErrorAction SilentlyContinue", body)
+        self.assertIn("Receive-Job -Id $job.Id -ErrorAction SilentlyContinue", body)
+        self.assertIn("Remove-Job -Id $job.Id -Force -ErrorAction SilentlyContinue", body)
+        self.assertLess(body.index("Stop-Job -Id $job.Id"), body.index("Receive-Job -Id $job.Id"))
+        self.assertLess(body.index("Receive-Job -Id $job.Id"), body.index("Remove-Job -Id $job.Id"))
+        self.assertIn('timed_out = $timedOut', body)
+        self.assertIn('exit_code = $exitCode', body)
+        self.assertIn('timeout_seconds = [int]$TimeoutSeconds', body)
+        self.assertIn('timeout_evidence = $timeoutEvidence', body)
+        self.assertIn('Child PowerShell job timed out after {0} seconds.', body)
+        self.assertIn('$output = (($output, $timeoutEvidence)', body)
+        self.assertLess(body.index('$output = (($output, $timeoutEvidence)'), body.index('$output | Set-Content'))
+
     def test_parser_gate_passes(self):
         result = subprocess.run(
             [
