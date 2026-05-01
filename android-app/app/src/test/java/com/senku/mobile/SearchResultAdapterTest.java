@@ -398,6 +398,78 @@ public final class SearchResultAdapterTest {
     }
 
     @Test
+    public void linkedGuideCuePresentationKeepsDefaultAdapterCueContract() {
+        SearchLinkedGuideCuePresentation presentation = SearchLinkedGuideCuePresentation.decide(
+            false,
+            linkedPreview("GD-214", "Water Storage", "Stored water"),
+            true,
+            false,
+            false,
+            true
+        );
+
+        assertTrue(presentation.showCue);
+        assertFalse(presentation.showPreviewLine);
+        assertTrue(presentation.bindCueAction);
+        assertFalse(presentation.bindPreviewAction);
+        assertEquals("Guide connection", presentation.cueLabel);
+        assertEquals(0.72f, presentation.cueAlpha, 0.001f);
+        assertEquals("Open cross-reference guide: GD-214 - Water Storage", presentation.cueContentDescription);
+        assertEquals("GD-214 - Water Storage", presentation.actionLabel);
+    }
+
+    @Test
+    public void linkedGuideCuePresentationKeepsPreviewLineActionContractWhenEnabled() {
+        SearchLinkedGuideCuePresentation presentation = SearchLinkedGuideCuePresentation.decide(
+            false,
+            linkedPreview("GD-214", "Water Storage", "Stored water"),
+            true,
+            true,
+            false,
+            false
+        );
+
+        assertTrue(presentation.showCue);
+        assertTrue(presentation.showPreviewLine);
+        assertFalse(presentation.bindCueAction);
+        assertTrue(presentation.bindPreviewAction);
+        assertEquals("Guide connection", presentation.cueLabel);
+        assertEquals(0.78f, presentation.cueAlpha, 0.001f);
+        assertEquals("Guide connection available: GD-214 - Water Storage", presentation.cueContentDescription);
+        assertEquals("Guide: Water Storage", presentation.previewLine);
+        assertEquals(0.92f, presentation.previewLineAlpha, 0.001f);
+        assertEquals("Open cross-reference guide: GD-214 - Water Storage", presentation.previewLineContentDescription);
+    }
+
+    @Test
+    public void linkedGuideCuePresentationOwnsSuppressionAndHiddenStates() {
+        assertFalse(SearchLinkedGuideCuePresentation.decide(
+            true,
+            linkedPreview("GD-214", "Water Storage", "Stored water"),
+            true,
+            false,
+            false,
+            true
+        ).showCue);
+        assertFalse(SearchLinkedGuideCuePresentation.decide(
+            false,
+            linkedPreview("", "Water Storage", "Stored water"),
+            true,
+            false,
+            false,
+            true
+        ).showCue);
+        assertFalse(SearchLinkedGuideCuePresentation.decide(
+            false,
+            linkedPreview("GD-214", "Water Storage", "Stored water"),
+            true,
+            false,
+            true,
+            true
+        ).showCue);
+    }
+
+    @Test
     public void defaultProductionVisualStateDoesNotSuppressMockLinkedGuideCue() {
         SearchResult reviewResult = resultWithSubtitle("GD-023 | Survival | review");
 
@@ -413,6 +485,14 @@ public final class SearchResultAdapterTest {
         assertFalse(SearchResultAdapter.shouldSuppressLinkedGuideCueForResultForTest(true, " rain shelter ", normalResult));
         assertFalse(SearchResultAdapter.shouldSuppressLinkedGuideCueForResultForTest(true, "water", reviewResult));
         assertFalse(SearchResultAdapter.shouldSuppressLinkedGuideCueForResultForTest(true, "", reviewResult));
+    }
+
+    private static SearchResultAdapter.LinkedGuidePreview linkedPreview(
+        String guideId,
+        String title,
+        String displayLabel
+    ) {
+        return new SearchResultAdapter.LinkedGuidePreview(guideId, title, displayLabel);
     }
 
     private static SearchResult resultWithSubtitle(String subtitle) {

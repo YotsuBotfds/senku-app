@@ -196,24 +196,20 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
         holder.meta.setMaxLines(1);
         holder.meta.setEllipsize(TextUtils.TruncateAt.END);
         holder.categoryBadge.setVisibility(View.GONE);
-        boolean suppressReviewLinkedCue = shouldSuppressLinkedGuideCueForResult(
-            reviewDemoSearchRowVisualStateEnabled,
-            activeQuery,
-            result
+        bindLinkedGuideCue(
+            holder.linkedGuideCue,
+            holder.linkedGuidePreview,
+            result,
+            true,
+            shouldShowLinkedGuidePreviewLine(),
+            false,
+            true,
+            shouldSuppressLinkedGuideCueForResult(
+                reviewDemoSearchRowVisualStateEnabled,
+                activeQuery,
+                result
+            )
         );
-        if (suppressReviewLinkedCue) {
-            hideLinkedGuideChrome(holder.linkedGuideCue, holder.linkedGuidePreview);
-        } else {
-            bindLinkedGuideCue(
-                holder.linkedGuideCue,
-                holder.linkedGuidePreview,
-                result,
-                true,
-                shouldShowLinkedGuidePreviewLine(),
-                false,
-                true
-            );
-        }
         bindTabletScoreMarker(holder.retrievalBadge, holder.scoreBar, position);
         holder.accent.setAlpha(rankAccentAlpha(position));
         bindTabletAttributeLine(holder.section, result);
@@ -627,23 +623,6 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
         return drawable;
     }
 
-    private void hideLinkedGuideChrome(TextView cue, TextView previewView) {
-        if (cue != null) {
-            cue.setVisibility(View.GONE);
-            cue.setText("");
-            cue.setOnClickListener(null);
-            cue.setClickable(false);
-            cue.setFocusable(false);
-        }
-        if (previewView != null) {
-            previewView.setVisibility(View.GONE);
-            previewView.setText("");
-            previewView.setOnClickListener(null);
-            previewView.setClickable(false);
-            previewView.setFocusable(false);
-        }
-    }
-
     private void bindLinkedGuideCue(
         TextView cue,
         TextView previewView,
@@ -651,7 +630,8 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
         boolean compactLinkedCue,
         boolean allowLinkedGuidePreviewLine,
         boolean stressCompactCard,
-        boolean richTabletCard
+        boolean richTabletCard,
+        boolean suppressCue
     ) {
         if (cue == null || previewView == null) {
             return;
@@ -664,50 +644,44 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
         previewView.setOnClickListener(null);
         previewView.setClickable(false);
         previewView.setFocusable(false);
-        if (stressCompactCard) {
-            cue.setVisibility(View.GONE);
-            return;
-        }
         String normalizedGuideId = normalizeGuideIdKey(result == null ? null : result.guideId);
         LinkedGuidePreview preview = normalizedGuideId.isEmpty() ? null : linkedGuidePreviewMap.get(normalizedGuideId);
-        if (preview == null || !preview.hasTargetGuide()) {
+        SearchLinkedGuideCuePresentation presentation = SearchLinkedGuideCuePresentation.decide(
+            suppressCue,
+            preview,
+            compactLinkedCue,
+            allowLinkedGuidePreviewLine,
+            stressCompactCard,
+            richTabletCard
+        );
+        if (!presentation.showCue) {
             cue.setVisibility(View.GONE);
             return;
         }
-        String previewLabel = cleanDisplayText(
-            buildLinkedGuidePreviewLabel(preview),
-            richTabletCard ? 92 : 72
-        );
-        String actionLabel = buildLinkedGuideActionLabel(preview);
-        boolean usePreviewLineAction = allowLinkedGuidePreviewLine && !previewLabel.isEmpty();
         applyBadgeStyle(
             cue,
-            usePreviewLineAction
-                ? "Guide connection"
-                : buildCompactLinkedGuideCueLabel(preview, compactLinkedCue),
+            presentation.cueLabel,
             guideColor
         );
-        cue.setAlpha(usePreviewLineAction ? 0.78f : (richTabletCard ? 0.72f : 0.94f));
-        cue.setContentDescription(
-            usePreviewLineAction
-                ? buildLinkedGuideAvailableDescription(actionLabel)
-                : buildLinkedGuideOpenDescription(actionLabel)
-        );
-        if (!usePreviewLineAction) {
+        cue.setAlpha(presentation.cueAlpha);
+        cue.setContentDescription(presentation.cueContentDescription);
+        if (presentation.bindCueAction) {
             bindLinkedGuideAction(cue, result, preview);
             return;
         }
         cue.setClickable(false);
         cue.setFocusable(false);
         cue.setOnClickListener(null);
-        if (!allowLinkedGuidePreviewLine) {
+        if (!presentation.showPreviewLine) {
             return;
         }
         previewView.setVisibility(View.VISIBLE);
-        previewView.setText(buildLinkedGuidePreviewLine(preview, richTabletCard));
-        previewView.setAlpha(0.92f);
-        previewView.setContentDescription(buildLinkedGuideOpenDescription(actionLabel));
-        bindLinkedGuideAction(previewView, result, preview);
+        previewView.setText(presentation.previewLine);
+        previewView.setAlpha(presentation.previewLineAlpha);
+        previewView.setContentDescription(presentation.previewLineContentDescription);
+        if (presentation.bindPreviewAction) {
+            bindLinkedGuideAction(previewView, result, preview);
+        }
     }
 
     private void bindSection(TextView sectionView, String section) {
@@ -795,37 +769,6 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
             preview.guideId,
             preview.title
         );
-    }
-
-    private String buildLinkedGuideActionLabel(LinkedGuidePreview preview) {
-        if (preview == null) {
-            return "";
-        }
-        String guideId = safe(preview.guideId).trim();
-        String title = safe(preview.title).trim();
-        if (!guideId.isEmpty() && !title.isEmpty()) {
-            return guideId + " - " + title;
-        }
-        if (!title.isEmpty()) {
-            return title;
-        }
-        return guideId;
-    }
-
-    private String buildCompactLinkedGuideCueLabel(LinkedGuidePreview preview, boolean compactLinkedCue) {
-        if (preview == null) {
-            return SearchResultCardModelMapper.buildCompactLinkedGuideCueLabel(null, null, null, compactLinkedCue);
-        }
-        return SearchResultCardModelMapper.buildCompactLinkedGuideCueLabel(
-            preview.displayLabel,
-            preview.guideId,
-            preview.title,
-            compactLinkedCue
-        );
-    }
-
-    private String buildLinkedGuideAvailableDescription(String actionLabel) {
-        return SearchResultCardModelMapper.buildLinkedGuideAvailableDescription(actionLabel);
     }
 
     private String buildLinkedGuideOpenDescription(String actionLabel) {
@@ -1171,22 +1114,6 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
         SearchResult result
     ) {
         return ReviewDemoPolicy.shouldSuppressSearchRowLinkedGuideCue(reviewDemoEnabled, query, result);
-    }
-
-    private String buildLinkedGuidePreviewLine(LinkedGuidePreview preview, boolean richTabletCard) {
-        if (preview == null) {
-            return "";
-        }
-        return SearchResultCardModelMapper.buildLinkedGuidePreviewLine(
-            preview.displayLabel,
-            preview.guideId,
-            preview.title,
-            richTabletCard
-        );
-    }
-
-    private static String buildLinkedGuidePreviewLineLabel() {
-        return SearchResultCardModelMapper.buildLinkedGuidePreviewLineLabel();
     }
 
     private String formatSectionAnchor(String section) {
