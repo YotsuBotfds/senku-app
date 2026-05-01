@@ -104,6 +104,7 @@ public final class MainActivity extends AppCompatActivity {
     private final ArrayList<SearchResult> homeRelatedGuides = new ArrayList<>();
     private final LinkedHashMap<String, SearchResultAdapter.LinkedGuidePreview> resultPreviewBridgeMap =
         new LinkedHashMap<>();
+    private final MainSearchController searchController = new MainSearchController(new MainSearchHost());
     private final AskQueryController askQueryController = new AskQueryController(new MainAskQueryHost());
 
     private MainPresentationFormatter presentationFormatter;
@@ -627,96 +628,7 @@ public final class MainActivity extends AppCompatActivity {
     }
 
     private void runSearch(String query) {
-        PackRepository repo = repository;
-        if (repo == null) {
-            setBusy(presentationFormatter().buildPackUnavailableStatus(), false);
-            return;
-        }
-        dismissSearchKeyboard();
-        if (handleSessionCommand(query)) {
-            return;
-        }
-        if (!query.isEmpty()) {
-            DeterministicAnswerRouter.DeterministicAnswer deterministic = DeterministicAnswerRouter.match(query);
-            if (deterministic != null) {
-                showDeterministicSearch(query, deterministic);
-                return;
-            }
-        }
-        enterSearchResultsRoute();
-        SessionMemory.RetrievalPlan retrievalPlan = sessionMemory.buildRetrievalPlan(query);
-        boolean sessionUsed = retrievalPlan.sessionUsed;
-        String displayQuery = query.isEmpty() ? "guides" : query;
-        MainResultPublicationPolicy loadingPublication =
-            MainResultPublicationPolicy.resultSurfaceWithSearchChrome(query, displayQuery, 0);
-        setResultHighlightQuery(loadingPublication.highlightQuery());
-        publishSearchQueryChrome(loadingPublication);
-        showBrowseChrome(loadingPublication.browseChromeVisible());
-        replaceItems(Collections.emptyList());
-        resultsHeader.setText(R.string.results_header_searching);
-        setBusy(sessionUsed
-            ? "Searching for \"" + displayQuery + "\" with chat memory..."
-            : "Searching for \"" + displayQuery + "\"...", true);
-        int harnessToken = beginHarnessTask("main.search");
-        executor.execute(() -> {
-            try {
-                List<SearchResult> results = repo.search(
-                    retrievalPlan.searchQuery,
-                    SEARCH_RESULT_LIMIT,
-                    retrievalPlan.anchorPrior
-                );
-                List<SearchResult> displayResults = ReviewDemoPolicy.shapeSearchResults(
-                    displayQuery,
-                    productReviewMode,
-                    results,
-                    repo::loadGuideById
-                );
-                runTrackedOnUiThread(harnessToken, () -> {
-                    setBusy("Search complete", false);
-                    MainResultPublicationPolicy publication =
-                        MainResultPublicationPolicy.resultSurfaceWithSearchChrome(
-                            query,
-                            displayQuery,
-                            displayResults.size()
-                        );
-                    publishResultItems(publication, displayResults);
-                    String header = presentationFormatter().buildResultsHeader(
-                        displayQuery,
-                        displayResults,
-                        repo.hasVectorStore(),
-                        SEARCH_RESULT_LIMIT,
-                        shouldUseCompactResultsHeader(),
-                        isLandscapePhoneLayout(),
-                        isLargeFontScale(),
-                        sessionUsed
-                    );
-                    if (isTabletSearchLayout()) {
-                        header = buildTabletSearchHeader(displayQuery, displayResults.size());
-                    } else if (isPhoneFormFactor()) {
-                        header = buildPhoneSearchHeader(displayQuery, displayResults.size());
-                    }
-                    header = appendReviewSearchLatency(header, displayQuery);
-                    resultsHeader.setText(header);
-                    updateHomeChromeTitle(false, displayQuery);
-                    publishSearchQueryChrome(publication);
-                    updateSessionPanel();
-                    updatePortraitPhoneResultsPriority();
-                });
-            } catch (Exception exc) {
-                runTrackedOnUiThread(harnessToken, () -> {
-                    setBusy("Search failed", false);
-                    publishResultItems(
-                        MainResultPublicationPolicy.resultSurfaceWithBrowseFallback(
-                            query,
-                            !hasAutoQuery(getIntent())
-                        ),
-                        Collections.emptyList()
-                    );
-                    resultsHeader.setText("Search failed");
-                    setInfoTextMessage(exc.toString(), true);
-                });
-            }
-        });
+        searchController.runSearch(query);
     }
 
     private void showDeterministicSearch(String query, DeterministicAnswerRouter.DeterministicAnswer deterministic) {
@@ -742,6 +654,141 @@ public final class MainActivity extends AppCompatActivity {
 
     private void runAsk(String query) {
         askQueryController.runAsk(query);
+    }
+
+    private final class MainSearchHost implements MainSearchController.Host {
+        @Override
+        public ExecutorService executor() {
+            return executor;
+        }
+
+        @Override
+        public SessionMemory sessionMemory() {
+            return sessionMemory;
+        }
+
+        @Override
+        public boolean isRepositoryAvailable() {
+            return repository != null;
+        }
+
+        @Override
+        public PackRepository repository() {
+            return repository;
+        }
+
+        @Override
+        public boolean productReviewMode() {
+            return productReviewMode;
+        }
+
+        @Override
+        public int searchResultLimit() {
+            return SEARCH_RESULT_LIMIT;
+        }
+
+        @Override
+        public boolean handleSessionCommand(String query) {
+            dismissSearchKeyboard();
+            return MainActivity.this.handleSessionCommand(query);
+        }
+
+        @Override
+        public int beginHarnessTask(String label) {
+            return MainActivity.this.beginHarnessTask(label);
+        }
+
+        @Override
+        public void runTrackedOnUiThread(int harnessToken, Runnable action) {
+            MainActivity.this.runTrackedOnUiThread(harnessToken, action);
+        }
+
+        @Override
+        public SearchResult loadGuideById(String guideId) {
+            PackRepository repo = repository;
+            return repo == null ? null : repo.loadGuideById(guideId);
+        }
+
+        @Override
+        public void onPackUnavailable() {
+            setBusy(presentationFormatter().buildPackUnavailableStatus(), false);
+        }
+
+        @Override
+        public void onSearchStarted(String query, String displayQuery, boolean sessionUsed) {
+            enterSearchResultsRoute();
+            MainResultPublicationPolicy loadingPublication =
+                MainResultPublicationPolicy.resultSurfaceWithSearchChrome(query, displayQuery, 0);
+            setResultHighlightQuery(loadingPublication.highlightQuery());
+            publishSearchQueryChrome(loadingPublication);
+            showBrowseChrome(loadingPublication.browseChromeVisible());
+            replaceItems(Collections.emptyList());
+            resultsHeader.setText(R.string.results_header_searching);
+            setBusy(sessionUsed
+                ? "Searching for \"" + displayQuery + "\" with chat memory..."
+                : "Searching for \"" + displayQuery + "\"...", true);
+        }
+
+        @Override
+        public void onDeterministicSearch(
+            String query,
+            DeterministicAnswerRouter.DeterministicAnswer deterministic
+        ) {
+            showDeterministicSearch(query, deterministic);
+        }
+
+        @Override
+        public void onSearchSuccess(
+            String query,
+            String displayQuery,
+            List<SearchResult> displayResults,
+            boolean hasVectorStore,
+            boolean sessionUsed
+        ) {
+            setBusy("Search complete", false);
+            MainResultPublicationPolicy publication =
+                MainResultPublicationPolicy.resultSurfaceWithSearchChrome(
+                    query,
+                    displayQuery,
+                    displayResults.size()
+                );
+            publishResultItems(publication, displayResults);
+            String header = presentationFormatter().buildResultsHeader(
+                displayQuery,
+                displayResults,
+                hasVectorStore,
+                SEARCH_RESULT_LIMIT,
+                shouldUseCompactResultsHeader(),
+                isLandscapePhoneLayout(),
+                isLargeFontScale(),
+                sessionUsed
+            );
+            if (isTabletSearchLayout()) {
+                header = buildTabletSearchHeader(displayQuery, displayResults.size());
+            } else if (isPhoneFormFactor()) {
+                header = buildPhoneSearchHeader(displayQuery, displayResults.size());
+            }
+            header = appendReviewSearchLatency(header, displayQuery);
+            resultsHeader.setText(header);
+            updateHomeChromeTitle(false, displayQuery);
+            publishSearchQueryChrome(publication);
+            updateSessionPanel();
+            updatePortraitPhoneResultsPriority();
+        }
+
+        @Override
+        public void onSearchFailure(String query, Exception exception) {
+            setBusy("Search failed", false);
+            publishResultItems(
+                MainResultPublicationPolicy.resultSurfaceWithBrowseFallback(
+                    query,
+                    !hasAutoQuery(getIntent())
+                ),
+                Collections.emptyList()
+            );
+            resultsHeader.setText("Search failed");
+            setInfoTextMessage(exception.toString(), true);
+        }
     }
 
     private final class MainAskQueryHost implements AskQueryController.Host {
@@ -3151,26 +3198,18 @@ public final class MainActivity extends AppCompatActivity {
     }
 
     private void pushPhoneTab(BottomTabDestination destination) {
-        if (destination == null) {
-            return;
-        }
-        if (!phoneTabBackStack.isEmpty() && phoneTabBackStack.get(phoneTabBackStack.size() - 1) == destination) {
-            return;
-        }
-        phoneTabBackStack.add(destination);
-        if (phoneTabBackStack.size() > 8) {
-            phoneTabBackStack.remove(0);
-        }
+        MainPhoneTabHistoryPolicy.StackState stackState =
+            MainPhoneTabHistoryPolicy.push(phoneTabBackStack, destination);
+        phoneTabBackStack.clear();
+        phoneTabBackStack.addAll(stackState.stack);
     }
 
     private BottomTabDestination popPreviousPhoneTab() {
-        while (!phoneTabBackStack.isEmpty()) {
-            BottomTabDestination previous = phoneTabBackStack.remove(phoneTabBackStack.size() - 1);
-            if (previous != activePhoneTab) {
-                return previous;
-            }
-        }
-        return null;
+        MainPhoneTabHistoryPolicy.PopResult popResult =
+            MainPhoneTabHistoryPolicy.popPrevious(phoneTabBackStack, activePhoneTab);
+        phoneTabBackStack.clear();
+        phoneTabBackStack.addAll(popResult.stack);
+        return popResult.destination;
     }
 
     private void ensureBrowseHomeVisible() {

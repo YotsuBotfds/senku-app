@@ -48,6 +48,22 @@ Purpose: prevent future agents from rerunning Ask/query backend cleanup that is 
   covers normalization, dedupe, newest-first movement, and cap behavior;
   `MainActivity.refreshPinnedGuidesAsync()` shows the saved tab resolving the
   stored IDs as full guide records.
+- Main route surface ownership now flows through `MainRouteDecisionHelper.RouteState`;
+  `MainActivity.applyMainRouteState()` derives browse/result visibility from
+  the route surface and renders chrome separately, so `browseChromeActive` is no
+  longer a parallel route decision source.
+- Search orchestration has a first controller boundary:
+  `MainSearchController` owns repository availability checks, session-command
+  short-circuiting, deterministic search routing, async search, review-demo
+  result shaping, and stale async suppression; `MainActivity` keeps UI rendering
+  in host callbacks. Focused proof: `MainSearchControllerTest`.
+- Phone tab history stack behavior is covered by `MainPhoneTabHistoryPolicy`,
+  including null filtering, duplicate suppression, eight-entry cap, and pop to a
+  destination different from the active tab.
+- Route/helper guardrails now cover zero-result search, no-source Ask failure,
+  saved open/back, previous-tab back, install-completion preservation,
+  review-fixture boundary scans, less brittle guide/detail smoke assertions, and
+  stricter physical smoke evidence contracts.
 
 ## Remaining Next Slices
 
