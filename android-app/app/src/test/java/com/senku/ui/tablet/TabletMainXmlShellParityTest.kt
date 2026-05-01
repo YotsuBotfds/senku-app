@@ -5,6 +5,7 @@ import com.senku.ui.RailItemSpec
 import com.senku.ui.RailShellSpec
 import com.senku.ui.SearchChromeSpec
 import com.senku.ui.android
+import com.senku.ui.androidAttributeValues
 import com.senku.ui.assertRailItemTokens
 import com.senku.ui.assertRailShell
 import com.senku.ui.assertSearchChrome
@@ -193,8 +194,11 @@ class TabletMainXmlShellParityTest {
     @Test
     fun portraitAndLandscapeTabletShellsDoNotUsePlatformMonospaceAlias() {
         listOf("layout-sw600dp-port", "layout-sw600dp-land").forEach { qualifier ->
-            val xml = mainLayoutText(qualifier)
-            assertFalse("$qualifier should use explicit font resources", xml.contains("android:fontFamily=\"monospace\""))
+            val layout = mainLayout(qualifier)
+            assertFalse(
+                "$qualifier should use explicit font resources",
+                layout.androidAttributeValues("fontFamily").contains("monospace"),
+            )
         }
     }
 

@@ -316,6 +316,11 @@ internal fun Element.android(name: String): String =
 internal fun Element.requiredAndroidId(): String =
     android("id").removePrefix("@+id/").removePrefix("@id/")
 
+internal fun Element.androidAttributeValues(name: String): List<String> =
+    allElements()
+        .map { element -> element.android(name) }
+        .filter { it.isNotBlank() }
+
 private fun mainLayoutFile(qualifier: String): File {
     val folder = if (qualifier.isBlank()) "layout" else qualifier
     return locateFile(
