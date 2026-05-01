@@ -812,11 +812,22 @@ Purpose: prevent future agents from rerunning Ask/query backend cleanup that is 
 - Offline answer telemetry is current through `54bc5893`:
   `OfflineAnswerTelemetryPolicy` owns first-token, latency, final-mode log
   formatting, and prepared final-mode route resolution.
+- Android policy seam cleanup is current through `3d8b7813`:
+  `MainActivity.onBackPressed()` now delegates main-surface navigation directly
+  to `MainRouteCoordinator`, review-demo search row visuals are query-scoped at
+  the `MainReviewDisplayPolicy` boundary, tablet source selection/source-rail
+  shaping sits behind `DetailTabletStateBuilder`, legacy search row budgets are
+  owned by `SearchResultCardModelMapper.SearchResultRowPresentation`, and
+  prompt harness parsing helpers are split into `PromptHarnessParsing`.
 - Latest local proof after `54bc5893`: full Android
   `:app:testDebugUnitTest :app:assembleDebug :app:assembleDebugAndroidTest`
   passed; focused Pack rerank/repository parity and OfflineAnswer telemetry
   tests passed; UI validation child-timeout contract and parser gate passed;
   `git diff --check` passed before tracker refresh.
+- Latest local proof after `3d8b7813`: focused MainRoute, DetailTablet,
+  ReviewDemo, and SearchResultCardModelMapper JVM tests passed together;
+  `:app:assembleDebug :app:assembleDebugAndroidTest` passed; `git diff --check`
+  passed.
 
 ## Remaining Next Slices
 
