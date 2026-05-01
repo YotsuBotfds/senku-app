@@ -115,7 +115,7 @@ internal fun tabletAnswerModeSourceRows(
                 relation = "RELATED",
                 title = "Foundry & Metal Casting",
                 match = "68%",
-                quote = "Pitch the ridgeline along prevailing wind. Tension corners with prusik or taut-line hitches.",
+                quote = "Keep water, damp charge, and bystanders out of the pour zone before any metal is heated.",
             ),
             TabletEvidenceCardRow(
                 guideId = "GD-345",

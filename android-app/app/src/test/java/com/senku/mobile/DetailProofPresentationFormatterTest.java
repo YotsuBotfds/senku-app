@@ -310,7 +310,7 @@ public final class DetailProofPresentationFormatterTest {
             new SearchResult(
                 "Foundry & Metal Casting",
                 "",
-                "Pitch the ridgeline along prevailing wind.",
+                "Keep water, damp charge, and bystanders out of the pour zone.",
                 "",
                 "GD-132",
                 "Foundry & Metal Casting",

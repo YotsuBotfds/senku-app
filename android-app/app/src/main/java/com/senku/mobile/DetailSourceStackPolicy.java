@@ -108,7 +108,7 @@ final class DetailSourceStackPolicy {
                 "68%",
                 "Foundry & Metal Casting",
                 "Foundry & Metal Casting",
-                "Pitch the ridgeline along prevailing wind. Tension corners with prusik or taut-line hitches.",
+                "Keep water, damp charge, and bystanders out of the pour zone before any metal is heated.",
                 1
             );
         }

@@ -513,7 +513,7 @@ public final class DetailActionBlockPresentationFormatterTest {
                 "RELATED",
                 "68%",
                 "Foundry & Metal Casting",
-                "Pitch the ridgeline along prevailing wind.",
+                "Keep water, damp charge, and bystanders out of the pour zone.",
                 "Reviewed Answer-Card Boundary",
                 false
             );

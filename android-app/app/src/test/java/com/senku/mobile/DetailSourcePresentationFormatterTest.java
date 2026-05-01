@@ -490,7 +490,7 @@ public final class DetailSourcePresentationFormatterTest {
         assertEquals("68%", related.matchLabel);
         assertEquals("Foundry & Metal Casting", related.title);
         assertEquals(
-            "Pitch the ridgeline along prevailing wind. Tension corners with prusik or taut-line hitches.",
+            "Keep water, damp charge, and bystanders out of the pour zone before any metal is heated.",
             related.quote
         );
         assertEquals("TOPIC", topic.roleLabel);
