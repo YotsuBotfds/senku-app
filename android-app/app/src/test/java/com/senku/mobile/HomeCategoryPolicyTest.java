@@ -132,6 +132,14 @@ public final class HomeCategoryPolicyTest {
         assertEquals(0xFFC9B682, HomeCategoryPolicy.accentForBucket("unknown"));
     }
 
+    @Test
+    public void manualHomeCategoryPresentationPolicyReservesRowsByFormFactor() {
+        assertEquals(0, MainHomeCategoryPresentationPolicy.shelfMinimumHeightDp(-1, false));
+        assertEquals(74, MainHomeCategoryPresentationPolicy.shelfMinimumHeightDp(3, false));
+        assertEquals(157, MainHomeCategoryPresentationPolicy.shelfMinimumHeightDp(6, false));
+        assertEquals(146, MainHomeCategoryPresentationPolicy.shelfMinimumHeightDp(6, true));
+    }
+
     private static SearchResult guide(String title, String category, String topicTags) {
         return new SearchResult(
             title,

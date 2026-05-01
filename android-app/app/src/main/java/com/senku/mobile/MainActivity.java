@@ -75,10 +75,6 @@ public final class MainActivity extends AppCompatActivity {
     private static final int MIN_SEARCH_SUGGESTION_QUERY = MainSearchSuggestionPolicy.MIN_QUERY_LENGTH;
     private static final int MAX_RECENT_THREAD_PREVIEWS = 3;
     private static final int MAX_HOME_RELATED_GUIDES = 4;
-    private static final int MANUAL_HOME_CATEGORY_CARD_HEIGHT_DP = 74;
-    private static final int TABLET_MANUAL_HOME_CATEGORY_CARD_HEIGHT_DP = 68;
-    private static final int MANUAL_HOME_CATEGORY_ROW_GAP_DP = 9;
-    private static final int TABLET_MANUAL_HOME_CATEGORY_ROW_GAP_DP = 10;
     private static final float TABLET_HOME_PRIMARY_LANDSCAPE_WEIGHT = 1.42f;
     private static final float TABLET_HOME_RECENT_LANDSCAPE_WEIGHT = 1.02f;
     private static final float TABLET_HOME_PRIMARY_PORTRAIT_WEIGHT = 1.02f;
@@ -2599,27 +2595,11 @@ public final class MainActivity extends AppCompatActivity {
     }
 
     static int resolveManualHomeCategoryShelfMinimumHeightDp(int itemCount) {
-        return resolveManualHomeCategoryShelfMinimumHeightDp(
-            itemCount,
-            MANUAL_HOME_CATEGORY_CARD_HEIGHT_DP,
-            MANUAL_HOME_CATEGORY_ROW_GAP_DP
-        );
+        return MainHomeCategoryPresentationPolicy.shelfMinimumHeightDp(itemCount, false);
     }
 
     static int resolveTabletManualHomeCategoryShelfMinimumHeightDp(int itemCount) {
-        return resolveManualHomeCategoryShelfMinimumHeightDp(
-            itemCount,
-            TABLET_MANUAL_HOME_CATEGORY_CARD_HEIGHT_DP,
-            TABLET_MANUAL_HOME_CATEGORY_ROW_GAP_DP
-        );
-    }
-
-    private static int resolveManualHomeCategoryShelfMinimumHeightDp(
-        int itemCount,
-        int cardHeightDp,
-        int rowGapDp
-    ) {
-        return HomeCategoryPolicy.shelfMinimumHeightDp(itemCount, cardHeightDp, rowGapDp);
+        return MainHomeCategoryPresentationPolicy.shelfMinimumHeightDp(itemCount, true);
     }
 
     private void allowChildOverflow(View view) {
