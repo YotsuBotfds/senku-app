@@ -71,6 +71,17 @@ Purpose: prevent future agents from rerunning Ask/query backend cleanup that is 
   the coordinator/helper boundaries for route-facing backend logic.
 - Chrome policy and review-boundary cleanup are characterized by focused tests
   so route chrome decisions and review-only data gates remain explicit.
+- Route-focused executor extraction keeps route execution out of the activity
+  while preserving focused route proof.
+- Detail source opens now flow through a coordinator boundary, with saved-open
+  policy routing kept explicit.
+- Review search fixture gating keeps review-only search data behind policy.
+- Recent-thread rendering and thread surface decisions now sit behind focused
+  renderer/policy boundaries.
+- Tablet evidence rail behavior is captured as policy instead of activity-local
+  branching.
+- Retry presentation is routed through the composer controller.
+- Stale async search suppression has focused proof for dropped outdated results.
 - Physical smoke proof is current for the completed backend cleanup stack.
 
 ## Remaining Next Slices
