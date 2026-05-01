@@ -44,10 +44,59 @@ final class SearchResultCardModelMapper {
         );
     }
 
+    static SearchResultRowModel mapLegacyRow(SearchResult result, int position, Options options) {
+        Options safeOptions = options == null ? Options.defaults() : options;
+        boolean stressCompactCard = safeOptions.landscapePhoneCard && safeOptions.largeFontCard;
+        return new SearchResultRowModel(
+            searchRowTitleBudget(safeOptions.richTabletCard, safeOptions.landscapePhoneCard),
+            (safeOptions.landscapePhoneCard || stressCompactCard) ? 1 : 2,
+            buildTabletGuideMarker(result == null ? null : result.guideId, position),
+            buildTabletAttributeLineForResult(
+                result == null ? null : result.category,
+                result == null ? null : result.contentRole,
+                result == null ? null : result.timeHorizon,
+                result == null ? null : result.retrievalMode
+            ),
+            buildCompactRowSnippetForResult(
+                result,
+                safeOptions.richTabletCard,
+                safeOptions.landscapePhoneCard,
+                safeOptions.smallPhonePortraitCard
+            ),
+            safeOptions.richTabletCard ? 2 : ((safeOptions.landscapePhoneCard || stressCompactCard) ? 1 : 2)
+        );
+    }
+
+    static final class SearchResultRowModel {
+        final int titleBudget;
+        final int titleMaxLines;
+        final String guideMarker;
+        final String attributeLine;
+        final String snippet;
+        final int snippetMaxLines;
+
+        SearchResultRowModel(
+            int titleBudget,
+            int titleMaxLines,
+            String guideMarker,
+            String attributeLine,
+            String snippet,
+            int snippetMaxLines
+        ) {
+            this.titleBudget = titleBudget;
+            this.titleMaxLines = titleMaxLines;
+            this.guideMarker = guideMarker;
+            this.attributeLine = attributeLine;
+            this.snippet = snippet;
+            this.snippetMaxLines = snippetMaxLines;
+        }
+    }
+
     static final class Options {
         final boolean richTabletCard;
         final boolean landscapePhoneCard;
         final boolean smallPhonePortraitCard;
+        final boolean largeFontCard;
         final int laneColorArgb;
         final boolean showContinueThreadChip;
         final String linkedGuideLabel;
@@ -66,6 +115,7 @@ final class SearchResultCardModelMapper {
             this.richTabletCard = richTabletCard;
             this.landscapePhoneCard = landscapePhoneCard;
             this.smallPhonePortraitCard = smallPhonePortraitCard;
+            this.largeFontCard = false;
             this.laneColorArgb = laneColorArgb;
             this.interactionModel = new SearchResultInteractionModel(
                 showContinueThreadChip,
@@ -86,9 +136,28 @@ final class SearchResultCardModelMapper {
             int laneColorArgb,
             SearchResultInteractionModel interactionModel
         ) {
+            this(
+                richTabletCard,
+                landscapePhoneCard,
+                smallPhonePortraitCard,
+                false,
+                laneColorArgb,
+                interactionModel
+            );
+        }
+
+        Options(
+            boolean richTabletCard,
+            boolean landscapePhoneCard,
+            boolean smallPhonePortraitCard,
+            boolean largeFontCard,
+            int laneColorArgb,
+            SearchResultInteractionModel interactionModel
+        ) {
             this.richTabletCard = richTabletCard;
             this.landscapePhoneCard = landscapePhoneCard;
             this.smallPhonePortraitCard = smallPhonePortraitCard;
+            this.largeFontCard = largeFontCard;
             this.laneColorArgb = laneColorArgb;
             this.interactionModel = interactionModel == null ? SearchResultInteractionModel.hidden() : interactionModel;
             this.showContinueThreadChip = this.interactionModel.showContinueThreadChip;
@@ -155,6 +224,20 @@ final class SearchResultCardModelMapper {
             return cleanedGuideId;
         }
         return buildOrdinalRankLabel(position);
+    }
+
+    static int searchRowTitleBudgetForTest(boolean richTabletCard, boolean landscapePhoneCard) {
+        return searchRowTitleBudget(richTabletCard, landscapePhoneCard);
+    }
+
+    private static int searchRowTitleBudget(boolean richTabletCard, boolean landscapePhoneCard) {
+        if (richTabletCard) {
+            return 112;
+        }
+        if (landscapePhoneCard) {
+            return 90;
+        }
+        return 88;
     }
 
     static String buildOrdinalRankLabelForTest(int position) {

@@ -251,6 +251,67 @@ public final class SearchResultCardModelMapperTest {
     }
 
     @Test
+    public void legacyRowModelOwnsViewportTextBudgetsAndVisibilityText() {
+        SearchResult result = new SearchResult(
+            "Shelter setup",
+            "",
+            "Use a ridgeline, pitch one side low into the wind, keep runoff from pooling, and pin corners before loading gear.",
+            "",
+            "GD-345",
+            "Tarp & Cord Shelters",
+            "shelter",
+            "vector",
+            "role_topic",
+            "short-term",
+            "",
+            ""
+        );
+
+        SearchResultCardModelMapper.SearchResultRowModel rowModel = SearchResultCardModelMapper.mapLegacyRow(
+            result,
+            2,
+            new SearchResultCardModelMapper.Options(
+                false,
+                true,
+                false,
+                true,
+                0,
+                SearchResultInteractionModel.hidden()
+            )
+        );
+
+        assertEquals(90, rowModel.titleBudget);
+        assertEquals(1, rowModel.titleMaxLines);
+        assertEquals("GD-345", rowModel.guideMarker);
+        assertEquals("SHELTER \u00b7 TOPIC \u00b7 WINDOW SHORT", rowModel.attributeLine);
+        assertEquals(
+            SearchResultCardModelMapper.buildCompactRowSnippetForTest(result.snippet, result.sectionHeading, 142),
+            rowModel.snippet
+        );
+        assertEquals(1, rowModel.snippetMaxLines);
+    }
+
+    @Test
+    public void legacyRowModelKeepsTabletSnippetTwoLineContract() {
+        SearchResultCardModelMapper.SearchResultRowModel rowModel = SearchResultCardModelMapper.mapLegacyRow(
+            null,
+            0,
+            new SearchResultCardModelMapper.Options(
+                true,
+                false,
+                false,
+                true,
+                0,
+                SearchResultInteractionModel.hidden()
+            )
+        );
+
+        assertEquals(112, rowModel.titleBudget);
+        assertEquals(2, rowModel.titleMaxLines);
+        assertEquals(2, rowModel.snippetMaxLines);
+    }
+
+    @Test
     public void rowMetaFallbackSkipsDuplicatedGuideSectionAndRetrievalLabels() {
         SearchResult result = new SearchResult(
             "Water setup",

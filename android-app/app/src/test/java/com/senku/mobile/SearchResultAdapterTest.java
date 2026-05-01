@@ -478,18 +478,74 @@ public final class SearchResultAdapterTest {
     public void defaultProductionVisualStateDoesNotSuppressMockLinkedGuideCue() {
         SearchResult reviewResult = resultWithSubtitle("GD-023 | Survival | review");
 
-        assertFalse(SearchResultAdapter.shouldSuppressLinkedGuideCueForResultForTest(false, " rain shelter ", reviewResult));
+        assertTrue(SearchLinkedGuideCuePresentation.decide(
+            ReviewDemoPolicy.shouldSuppressSearchRowLinkedGuideCue(
+                false,
+                " rain shelter ",
+                reviewResult
+            ),
+            linkedPreview("GD-214", "Water Storage", "Stored water"),
+            true,
+            false,
+            false,
+            true
+        ).showCue);
     }
 
     @Test
     public void reviewRainShelterVisualStateSuppressesLinkedGuideCueOnlyWhenEnabledForMockQuery() {
         SearchResult reviewResult = resultWithSubtitle("GD-023 | Survival | review");
         SearchResult normalResult = resultWithSubtitle("");
+        SearchResultAdapter.LinkedGuidePreview linkedPreview = linkedPreview("GD-214", "Water Storage", "Stored water");
 
-        assertTrue(SearchResultAdapter.shouldSuppressLinkedGuideCueForResultForTest(true, " rain shelter ", reviewResult));
-        assertFalse(SearchResultAdapter.shouldSuppressLinkedGuideCueForResultForTest(true, " rain shelter ", normalResult));
-        assertFalse(SearchResultAdapter.shouldSuppressLinkedGuideCueForResultForTest(true, "water", reviewResult));
-        assertFalse(SearchResultAdapter.shouldSuppressLinkedGuideCueForResultForTest(true, "", reviewResult));
+        assertFalse(SearchLinkedGuideCuePresentation.decide(
+            ReviewDemoPolicy.shouldSuppressSearchRowLinkedGuideCue(
+                true,
+                " rain shelter ",
+                reviewResult
+            ),
+            linkedPreview,
+            true,
+            false,
+            false,
+            true
+        ).showCue);
+        assertTrue(SearchLinkedGuideCuePresentation.decide(
+            ReviewDemoPolicy.shouldSuppressSearchRowLinkedGuideCue(
+                true,
+                " rain shelter ",
+                normalResult
+            ),
+            linkedPreview,
+            true,
+            false,
+            false,
+            true
+        ).showCue);
+        assertTrue(SearchLinkedGuideCuePresentation.decide(
+            ReviewDemoPolicy.shouldSuppressSearchRowLinkedGuideCue(
+                true,
+                "water",
+                reviewResult
+            ),
+            linkedPreview,
+            true,
+            false,
+            false,
+            true
+        ).showCue);
+        assertTrue(SearchLinkedGuideCuePresentation.decide(
+            ReviewDemoPolicy.shouldSuppressSearchRowLinkedGuideCue(
+                true,
+                "",
+                reviewResult
+            ),
+            linkedPreview,
+            true,
+            false,
+            false,
+            true
+        ).showCue);
     }
 
     private static SearchResultAdapter.LinkedGuidePreview linkedPreview(

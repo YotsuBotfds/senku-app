@@ -188,10 +188,18 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
         boolean smallPhonePortraitCard = isSmallPhonePortraitCard(context);
         boolean largeFontCard = isLargeFontScale(context);
         boolean stressCompactCard = landscapePhoneCard && largeFontCard;
-        holder.title.setText(formatDisplayText(result.title, searchRowTitleBudget(richTabletCard, landscapePhoneCard), 2));
-        holder.title.setMaxLines((landscapePhoneCard || stressCompactCard) ? 1 : 2);
+        SearchResultCardModelMapper.SearchResultRowModel rowModel = buildLegacyRowModel(
+            result,
+            position,
+            richTabletCard,
+            landscapePhoneCard,
+            smallPhonePortraitCard,
+            largeFontCard
+        );
+        holder.title.setText(formatDisplayText(result.title, rowModel.titleBudget, 2));
+        holder.title.setMaxLines(rowModel.titleMaxLines);
         holder.title.setEllipsize(TextUtils.TruncateAt.END);
-        holder.meta.setText(buildTabletGuideMarker(result, position));
+        holder.meta.setText(rowModel.guideMarker);
         holder.meta.setMaxLines(1);
         holder.meta.setEllipsize(TextUtils.TruncateAt.END);
         holder.categoryBadge.setVisibility(View.GONE);
@@ -202,24 +210,13 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
             true,
             shouldShowLinkedGuidePreviewLine(),
             false,
-            true,
-            shouldSuppressLinkedGuideCueForResult(
-                reviewDemoSearchRowVisualStateEnabled,
-                activeQuery,
-                result
-            )
+            true
         );
         bindTabletScoreMarker(holder.retrievalBadge, holder.scoreBar, position);
         holder.accent.setAlpha(rankAccentAlpha(position));
-        bindTabletAttributeLine(holder.section, result);
-        String snippet = SearchResultCardModelMapper.buildCompactRowSnippetForResult(
-            result,
-            richTabletCard,
-            landscapePhoneCard,
-            smallPhonePortraitCard
-        );
-        holder.snippet.setText(cleanDisplayText(snippet, 0));
-        holder.snippet.setMaxLines(richTabletCard ? 2 : ((landscapePhoneCard || stressCompactCard) ? 1 : 2));
+        bindTabletAttributeLine(holder.section, rowModel);
+        holder.snippet.setText(cleanDisplayText(rowModel.snippet, 0));
+        holder.snippet.setMaxLines(rowModel.snippetMaxLines);
         holder.snippet.setEllipsize(TextUtils.TruncateAt.END);
         if (smallPhonePortraitCard || stressCompactCard) {
             holder.snippet.setAlpha(0.90f);
@@ -631,8 +628,7 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
         boolean compactLinkedCue,
         boolean allowLinkedGuidePreviewLine,
         boolean stressCompactCard,
-        boolean richTabletCard,
-        boolean suppressCue
+        boolean richTabletCard
     ) {
         if (cue == null || previewView == null) {
             return;
@@ -648,7 +644,11 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
         String normalizedGuideId = normalizeGuideIdKey(result == null ? null : result.guideId);
         LinkedGuidePreview preview = normalizedGuideId.isEmpty() ? null : linkedGuidePreviewMap.get(normalizedGuideId);
         SearchLinkedGuideCuePresentation presentation = SearchLinkedGuideCuePresentation.decide(
-            suppressCue,
+            ReviewDemoPolicy.shouldSuppressSearchRowLinkedGuideCue(
+                reviewDemoSearchRowVisualStateEnabled,
+                activeQuery,
+                result
+            ),
             preview,
             compactLinkedCue,
             allowLinkedGuidePreviewLine,
@@ -805,16 +805,6 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
         bindSearchResultCard(holder.composeView, model, cardClick, continueThreadClick, linkedGuideClick);
     }
 
-    private static int searchRowTitleBudget(boolean richTabletCard, boolean landscapePhoneCard) {
-        if (richTabletCard) {
-            return 112;
-        }
-        if (landscapePhoneCard) {
-            return 90;
-        }
-        return 88;
-    }
-
     private SearchResultCardModel buildSearchResultCardModel(SearchResult result, int position) {
         LinkedGuidePreview linkedPreview = resolveLinkedGuidePreview(result);
         SearchResultInteractionModel interactionModel = buildSearchResultInteractionModel(result, linkedPreview);
@@ -827,6 +817,28 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
                 isSmallPhonePortraitCard(inflater.getContext()),
                 colorForRetrievalMode(safe(result == null ? null : result.retrievalMode).trim().toLowerCase(Locale.US)),
                 interactionModel
+            )
+        );
+    }
+
+    private SearchResultCardModelMapper.SearchResultRowModel buildLegacyRowModel(
+        SearchResult result,
+        int position,
+        boolean richTabletCard,
+        boolean landscapePhoneCard,
+        boolean smallPhonePortraitCard,
+        boolean largeFontCard
+    ) {
+        return SearchResultCardModelMapper.mapLegacyRow(
+            result,
+            position,
+            new SearchResultCardModelMapper.Options(
+                richTabletCard,
+                landscapePhoneCard,
+                smallPhonePortraitCard,
+                largeFontCard,
+                0,
+                SearchResultInteractionModel.hidden()
             )
         );
     }
@@ -844,23 +856,16 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
         );
     }
 
-    private String buildTabletGuideMarker(SearchResult result, int position) {
-        return SearchResultCardModelMapper.buildTabletGuideMarker(result == null ? null : result.guideId, position);
-    }
-
-    private void bindTabletAttributeLine(TextView sectionView, SearchResult result) {
-        String line = SearchResultCardModelMapper.buildTabletAttributeLineForResult(
-            result == null ? null : result.category,
-            result == null ? null : result.contentRole,
-            result == null ? null : result.timeHorizon,
-            result == null ? null : result.retrievalMode
-        );
-        if (line.isEmpty()) {
+    private void bindTabletAttributeLine(
+        TextView sectionView,
+        SearchResultCardModelMapper.SearchResultRowModel rowModel
+    ) {
+        if (rowModel == null || rowModel.attributeLine.isEmpty()) {
             sectionView.setVisibility(View.GONE);
             return;
         }
         sectionView.setVisibility(View.VISIBLE);
-        sectionView.setText(line);
+        sectionView.setText(rowModel.attributeLine);
     }
 
     private LinkedGuidePreview resolveLinkedGuidePreview(SearchResult result) {
@@ -1014,26 +1019,6 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
 
     private static boolean shouldShowLinkedGuidePreviewLine() {
         return SearchResultCardModelMapper.shouldShowLinkedGuidePreviewLine();
-    }
-
-    static boolean shouldSuppressLinkedGuideCueForQueryForTest(boolean reviewDemoEnabled, String query) {
-        return ReviewDemoPolicy.shouldApplySearchRowReviewVisualState(reviewDemoEnabled, query);
-    }
-
-    static boolean shouldSuppressLinkedGuideCueForResultForTest(
-        boolean reviewDemoEnabled,
-        String query,
-        SearchResult result
-    ) {
-        return shouldSuppressLinkedGuideCueForResult(reviewDemoEnabled, query, result);
-    }
-
-    private static boolean shouldSuppressLinkedGuideCueForResult(
-        boolean reviewDemoEnabled,
-        String query,
-        SearchResult result
-    ) {
-        return ReviewDemoPolicy.shouldSuppressSearchRowLinkedGuideCue(reviewDemoEnabled, query, result);
     }
 
     private String formatSectionAnchor(String section) {
