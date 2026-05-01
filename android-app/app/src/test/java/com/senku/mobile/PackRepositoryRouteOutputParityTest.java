@@ -108,6 +108,36 @@ public final class PackRepositoryRouteOutputParityTest {
         assertEquals("lexical", merged.get(3).retrievalMode);
     }
 
+    @Test
+    public void routeFocusedAnchorHelperPreservesRepositoryOutputForDirectSignalFiltering() {
+        String query = "how do i make soap from animal fat and ash";
+        List<SearchResult> rankedResults = List.of(genericChemistrySafety(), soapmakingProcess());
+
+        assertEquals(
+            PackRepository.routeFocusedAnchorForTest(query, rankedResults, true).guideId,
+            PackRouteFocusedAnchorPolicy.selectRouteFocusedAnchor(
+                PackRepository.QueryTerms.fromQuery(query),
+                rankedResults,
+                true
+            ).guideId
+        );
+    }
+
+    @Test
+    public void routeFocusedAnchorHelperPreservesRepositoryOutputForBroadRouteSelection() {
+        String query = "how do i build a house";
+        List<SearchResult> rankedResults = List.of(genericStructuralOverview(), foundationRouteOutput());
+
+        assertEquals(
+            PackRepository.routeFocusedAnchorForTest(query, rankedResults, false).guideId,
+            PackRouteFocusedAnchorPolicy.selectRouteFocusedAnchor(
+                PackRepository.QueryTerms.fromQuery(query),
+                rankedResults,
+                false
+            ).guideId
+        );
+    }
+
     private static void assertRouteOutput(
         String query,
         String expectedStructure,

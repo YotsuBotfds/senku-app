@@ -1876,7 +1876,7 @@ public final class PackRepository implements AutoCloseable {
         return hasDirectAnchorSignal(queryTerms, result);
     }
 
-    private static boolean hasDirectAnchorSignal(QueryTerms queryTerms, SearchResult result) {
+    static boolean hasDirectAnchorSignal(QueryTerms queryTerms, SearchResult result) {
         if (queryTerms.metadataProfile.hasExplicitTopic("water_distribution")) {
             boolean distributionTagged = SpecializedAnchorCandidatePolicy.hasTopicTag(result, "water_distribution");
             if (!distributionTagged) {
@@ -2179,39 +2179,7 @@ public final class PackRepository implements AutoCloseable {
         List<SearchResult> rankedResults,
         boolean requireDirectSignal
     ) {
-        if (rankedResults == null || rankedResults.isEmpty()) {
-            return null;
-        }
-
-        SearchResult best = null;
-        int bestScore = Integer.MIN_VALUE;
-        for (int index = 0; index < rankedResults.size(); index++) {
-            SearchResult candidate = rankedResults.get(index);
-            String mode = emptySafe(candidate.retrievalMode).trim().toLowerCase(QUERY_LOCALE);
-            if (!"route-focus".equals(mode)) {
-                continue;
-            }
-            if (!isSpecializedExplicitAnchorCandidate(queryTerms, candidate)) {
-                continue;
-            }
-            if (requireDirectSignal && !hasDirectAnchorSignal(queryTerms, candidate)) {
-                continue;
-            }
-
-            int score = AnswerAnchorPolicy.routeFocusedAnchorScore(
-                PackSupportScoringPolicy.supportBreakdown(queryTerms, candidate).supportWithMetadata(),
-                index,
-                PackSupportScoringPolicy.anchorAlignmentBonus(queryTerms, candidate),
-                broadRouteSectionPreferenceBonus(queryTerms, candidate),
-                cabinSiteSelectionAnchorBias(queryTerms, candidate),
-                roofWeatherproofAnchorBias(queryTerms, candidate)
-            );
-            if (score > bestScore) {
-                bestScore = score;
-                best = candidate;
-            }
-        }
-        return best;
+        return PackRouteFocusedAnchorPolicy.selectRouteFocusedAnchor(queryTerms, rankedResults, requireDirectSignal);
     }
 
     private static boolean prefersCabinSiteSelectionRouteAnchor(QueryTerms queryTerms) {
@@ -2234,7 +2202,7 @@ public final class PackRepository implements AutoCloseable {
         return containsAnyMarker(normalized, HOUSE_SITE_SELECTION_ANCHOR_MARKERS);
     }
 
-    private static int cabinSiteSelectionAnchorBias(QueryTerms queryTerms, SearchResult candidate) {
+    static int cabinSiteSelectionAnchorBias(QueryTerms queryTerms, SearchResult candidate) {
         if (!prefersCabinSiteSelectionRouteAnchor(queryTerms) || candidate == null) {
             return 0;
         }
@@ -2276,7 +2244,7 @@ public final class PackRepository implements AutoCloseable {
         return PackRouteSignalPolicy.hasRoofWeatherproofDistractorSignal(candidate);
     }
 
-    private static int roofWeatherproofAnchorBias(QueryTerms queryTerms, SearchResult candidate) {
+    static int roofWeatherproofAnchorBias(QueryTerms queryTerms, SearchResult candidate) {
         if (!prefersRoofWeatherproofRouteAnchor(queryTerms) || candidate == null) {
             return 0;
         }
@@ -2318,7 +2286,7 @@ public final class PackRepository implements AutoCloseable {
         );
     }
 
-    private static boolean isSpecializedExplicitAnchorCandidate(QueryTerms queryTerms, SearchResult result) {
+    static boolean isSpecializedExplicitAnchorCandidate(QueryTerms queryTerms, SearchResult result) {
         QueryMetadataProfile metadataProfile = queryTerms == null ? null : queryTerms.metadataProfile;
         boolean strongSoapmakingSignal = metadataProfile != null
             && "soapmaking".equals(metadataProfile.preferredStructureType())
@@ -2562,7 +2530,7 @@ public final class PackRepository implements AutoCloseable {
         return 0;
     }
 
-    private static int broadRouteSectionPreferenceBonus(QueryTerms queryTerms, SearchResult result) {
+    static int broadRouteSectionPreferenceBonus(QueryTerms queryTerms, SearchResult result) {
         if (queryTerms == null || result == null || queryTerms.metadataProfile == null) {
             return 0;
         }
