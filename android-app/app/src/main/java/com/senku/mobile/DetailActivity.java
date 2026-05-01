@@ -104,18 +104,12 @@ public final class DetailActivity extends AppCompatActivity {
     private static final float STREAMING_FIRST_CHUNK_ALPHA = 0.88f;
     private static final long GENERATION_STALL_NOTICE_MS = 12000L;
     private static final long GENERATION_STALL_POLL_MS = 1000L;
-    private static final int TABLET_APP_RAIL_WIDTH_DP = 72;
-    private static final int TABLET_APP_RAIL_DIVIDER_WIDTH_DP = 1;
     private static final int TABLET_APP_RAIL_TOP_PADDING_DP = 20;
     private static final int TABLET_APP_RAIL_BADGE_WIDTH_DP = 36;
     private static final int TABLET_APP_RAIL_BADGE_HEIGHT_DP = 36;
     private static final int TABLET_APP_RAIL_FIRST_ITEM_TOP_MARGIN_DP = 24;
     private static final int TABLET_APP_RAIL_ITEM_TOP_MARGIN_DP = 18;
     private static final int TABLET_APP_RAIL_ICON_SIZE_DP = 22;
-    private static final int TABLET_EMERGENCY_PORTRAIT_LEFT_MARGIN_DP =
-        TABLET_APP_RAIL_WIDTH_DP + TABLET_APP_RAIL_DIVIDER_WIDTH_DP;
-    private static final int TABLET_EMERGENCY_PORTRAIT_RIGHT_MARGIN_DP = 24;
-    private static final int TABLET_EMERGENCY_PORTRAIT_TOP_MARGIN_DP = 0;
     private static final int TABLET_EMERGENCY_PORTRAIT_HORIZONTAL_PADDING_DP = 16;
     private static final int TABLET_EMERGENCY_PORTRAIT_VERTICAL_PADDING_DP = 12;
     private static final int TABLET_EMERGENCY_CHROME_BOTTOM_MARGIN_DP = 12;
@@ -137,12 +131,6 @@ public final class DetailActivity extends AppCompatActivity {
     private static final float TABLET_HEADER_BACK_LABEL_LETTER_SPACING = 0.09f;
     private static final int DETAIL_TOP_CHROME_BACK_ACTION_MIN_WIDTH_DP = TABLET_HEADER_BACK_ACTION_WIDTH_DP;
     private static final int TABLET_EMERGENCY_CHROME_NAV_ICON_SIZE_DP = DETAIL_TOP_CHROME_ICON_ACTION_SIZE_DP;
-    private static final float TABLET_APP_RAIL_LABEL_TEXT_SIZE_SP = 10.0f;
-    private static final float TABLET_APP_RAIL_LABEL_LINE_HEIGHT_SP = 13.0f;
-    private static final float TABLET_APP_RAIL_LABEL_LETTER_SPACING = 0.0f;
-    private static final int TABLET_EMERGENCY_LANDSCAPE_LEFT_MARGIN_DP = 336;
-    private static final int TABLET_EMERGENCY_LANDSCAPE_RIGHT_MARGIN_DP = 24;
-    private static final int TABLET_EMERGENCY_LANDSCAPE_TOP_MARGIN_DP = 16;
     private static final int EMERGENCY_PORTRAIT_ACTION_ROW_GAP_DP = 10;
     private static final int EMERGENCY_PORTRAIT_PROOF_CARD_HORIZONTAL_PADDING_DP = 14;
     private static final int EMERGENCY_PORTRAIT_PROOF_CARD_VERTICAL_PADDING_DP = 10;
@@ -1883,7 +1871,7 @@ public final class DetailActivity extends AppCompatActivity {
         View divider = new View(this);
         divider.setBackgroundColor(getColor(R.color.senku_rev03_hairline_strong));
         LinearLayout.LayoutParams dividerParams = new LinearLayout.LayoutParams(
-            dp(TABLET_APP_RAIL_DIVIDER_WIDTH_DP),
+            dp(resolveTabletEmergencyAppRailDividerWidthDp()),
             dp(TABLET_HEADER_DIVIDER_HEIGHT_DP)
         );
         dividerParams.leftMargin = dp(TABLET_HEADER_DIVIDER_GAP_DP);
@@ -2510,22 +2498,13 @@ public final class DetailActivity extends AppCompatActivity {
     }
 
     static TabletEmergencyOverlayMargins resolveTabletEmergencyOverlayMarginsDp(boolean tabletPortrait) {
-        if (tabletPortrait) {
-            return new TabletEmergencyOverlayMargins(
-                TABLET_EMERGENCY_PORTRAIT_LEFT_MARGIN_DP,
-                TABLET_EMERGENCY_PORTRAIT_RIGHT_MARGIN_DP,
-                TABLET_EMERGENCY_PORTRAIT_TOP_MARGIN_DP
-            );
-        }
-        return new TabletEmergencyOverlayMargins(
-            TABLET_EMERGENCY_LANDSCAPE_LEFT_MARGIN_DP,
-            TABLET_EMERGENCY_LANDSCAPE_RIGHT_MARGIN_DP,
-            TABLET_EMERGENCY_LANDSCAPE_TOP_MARGIN_DP
-        );
+        DetailTabletEmergencyChromePolicy.OverlayMargins margins =
+            DetailTabletEmergencyChromePolicy.resolveOverlayMarginsDp(tabletPortrait);
+        return new TabletEmergencyOverlayMargins(margins.left, margins.right, margins.top);
     }
 
     static int resolveTabletEmergencyOverlayHeight(boolean tabletPortrait) {
-        return tabletPortrait ? ViewGroup.LayoutParams.MATCH_PARENT : ViewGroup.LayoutParams.WRAP_CONTENT;
+        return DetailTabletEmergencyChromePolicy.resolveOverlayHeight(tabletPortrait);
     }
 
     static int resolveTabletEmergencyChromeNavIconSizeDp() {
@@ -2545,23 +2524,23 @@ public final class DetailActivity extends AppCompatActivity {
     }
 
     static int resolveTabletEmergencyAppRailWidthDp() {
-        return TABLET_APP_RAIL_WIDTH_DP;
+        return DetailTabletEmergencyChromePolicy.appRailWidthDp();
     }
 
     static int resolveTabletEmergencyAppRailDividerWidthDp() {
-        return TABLET_APP_RAIL_DIVIDER_WIDTH_DP;
+        return DetailTabletEmergencyChromePolicy.appRailDividerWidthDp();
     }
 
     static boolean shouldShowTabletEmergencyHomeChromeAction() {
-        return false;
+        return DetailTabletEmergencyChromePolicy.shouldShowHomeChromeAction();
     }
 
     static int resolveTabletEmergencyAppRailHomeLabelResource() {
-        return R.string.detail_emergency_app_rail_manual_label;
+        return DetailTabletEmergencyChromePolicy.appRailHomeLabelResource();
     }
 
     static int resolveTabletEmergencyAppRailHomeContentDescriptionResource() {
-        return R.string.detail_emergency_app_rail_manual_content_description;
+        return DetailTabletEmergencyChromePolicy.appRailHomeContentDescriptionResource();
     }
 
     enum TabletEmergencyAppRailDestination {
@@ -2571,25 +2550,25 @@ public final class DetailActivity extends AppCompatActivity {
     }
 
     static TabletEmergencyAppRailDestination resolveTabletEmergencyAppRailActiveDestination() {
-        return TabletEmergencyAppRailDestination.ASK;
+        return toActivityDestination(DetailTabletEmergencyChromePolicy.activeDestination());
     }
 
     static boolean isTabletEmergencyAppRailDestinationActive(
         TabletEmergencyAppRailDestination destination
     ) {
-        return destination == resolveTabletEmergencyAppRailActiveDestination();
+        return DetailTabletEmergencyChromePolicy.isDestinationActive(toPolicyDestination(destination));
     }
 
     static float resolveTabletEmergencyAppRailLabelTextSizeSp() {
-        return TABLET_APP_RAIL_LABEL_TEXT_SIZE_SP;
+        return DetailTabletEmergencyChromePolicy.appRailLabelTextSizeSp();
     }
 
     static float resolveTabletEmergencyAppRailLabelLineHeightSp() {
-        return TABLET_APP_RAIL_LABEL_LINE_HEIGHT_SP;
+        return DetailTabletEmergencyChromePolicy.appRailLabelLineHeightSp();
     }
 
     static float resolveTabletEmergencyAppRailLabelLetterSpacing() {
-        return TABLET_APP_RAIL_LABEL_LETTER_SPACING;
+        return DetailTabletEmergencyChromePolicy.appRailLabelLetterSpacing();
     }
 
     static boolean shouldShowTabletEmergencyAppRailOverlay(
@@ -2597,7 +2576,11 @@ public final class DetailActivity extends AppCompatActivity {
         boolean tabletPortrait,
         boolean emergencySurfaceEligible
     ) {
-        return shouldUseTabletEmergencyFullHeightPage(answerMode, tabletPortrait, emergencySurfaceEligible);
+        return DetailTabletEmergencyChromePolicy.shouldShowAppRailOverlay(
+            answerMode,
+            tabletPortrait,
+            emergencySurfaceEligible
+        );
     }
 
     static boolean shouldUseTabletEmergencyFullHeightPage(
@@ -2605,7 +2588,11 @@ public final class DetailActivity extends AppCompatActivity {
         boolean tabletDetailShell,
         boolean emergencySurfaceEligible
     ) {
-        return answerMode && tabletDetailShell && emergencySurfaceEligible;
+        return DetailTabletEmergencyChromePolicy.shouldUseFullHeightPage(
+            answerMode,
+            tabletDetailShell,
+            emergencySurfaceEligible
+        );
     }
 
     static boolean shouldSuppressTabletEmergencyStaleChrome(
@@ -2613,7 +2600,11 @@ public final class DetailActivity extends AppCompatActivity {
         boolean tabletPortrait,
         boolean emergencySurfaceEligible
     ) {
-        return shouldUseTabletEmergencyFullHeightPage(answerMode, tabletPortrait, emergencySurfaceEligible);
+        return DetailTabletEmergencyChromePolicy.evaluate(
+            answerMode,
+            tabletPortrait,
+            emergencySurfaceEligible
+        ).suppressStaleChrome;
     }
 
     static boolean shouldHideTabletDetailRootBehindEmergencyOverlay(
@@ -2621,7 +2612,11 @@ public final class DetailActivity extends AppCompatActivity {
         boolean tabletPortrait,
         boolean emergencySurfaceEligible
     ) {
-        return shouldUseTabletEmergencyFullHeightPage(answerMode, tabletPortrait, emergencySurfaceEligible);
+        return DetailTabletEmergencyChromePolicy.evaluate(
+            answerMode,
+            tabletPortrait,
+            emergencySurfaceEligible
+        ).hideDetailRoot;
     }
 
     static boolean shouldSuppressTabletEmergencyFloatingRail(
@@ -2629,7 +2624,38 @@ public final class DetailActivity extends AppCompatActivity {
         boolean tabletPortrait,
         boolean emergencySurfaceEligible
     ) {
-        return shouldUseTabletEmergencyFullHeightPage(answerMode, tabletPortrait, emergencySurfaceEligible);
+        return DetailTabletEmergencyChromePolicy.evaluate(
+            answerMode,
+            tabletPortrait,
+            emergencySurfaceEligible
+        ).suppressFloatingRail;
+    }
+
+    private static TabletEmergencyAppRailDestination toActivityDestination(
+        DetailTabletEmergencyChromePolicy.AppRailDestination destination
+    ) {
+        if (destination == DetailTabletEmergencyChromePolicy.AppRailDestination.HOME) {
+            return TabletEmergencyAppRailDestination.HOME;
+        }
+        if (destination == DetailTabletEmergencyChromePolicy.AppRailDestination.SAVED) {
+            return TabletEmergencyAppRailDestination.SAVED;
+        }
+        return TabletEmergencyAppRailDestination.ASK;
+    }
+
+    private static DetailTabletEmergencyChromePolicy.AppRailDestination toPolicyDestination(
+        TabletEmergencyAppRailDestination destination
+    ) {
+        if (destination == TabletEmergencyAppRailDestination.HOME) {
+            return DetailTabletEmergencyChromePolicy.AppRailDestination.HOME;
+        }
+        if (destination == TabletEmergencyAppRailDestination.SAVED) {
+            return DetailTabletEmergencyChromePolicy.AppRailDestination.SAVED;
+        }
+        if (destination == TabletEmergencyAppRailDestination.ASK) {
+            return DetailTabletEmergencyChromePolicy.AppRailDestination.ASK;
+        }
+        return null;
     }
 
     private boolean isTabletEmergencyFullHeightPage() {
@@ -5122,50 +5148,50 @@ public final class DetailActivity extends AppCompatActivity {
     }
 
     static String buildPhonePortraitSourceCardLabel(DetailSourcePresentationFormatter.EvidenceCard card) {
-        return buildPhonePortraitSourceCardLabel(card, false);
+        return DetailPhoneSourceCardPolicy.buildLabel(card);
     }
 
     static int resolvePhonePortraitSourceCardHorizontalPaddingDp() {
-        return 10;
+        return DetailPhoneSourceCardPolicy.horizontalPaddingDp();
     }
 
     static int resolvePhonePortraitSourceCardVerticalPaddingDp() {
-        return 5;
+        return DetailPhoneSourceCardPolicy.verticalPaddingDp();
     }
 
     static int resolvePhonePortraitSourceCardVerticalPaddingDp(boolean compactAnswerPreview) {
-        return compactAnswerPreview ? 4 : resolvePhonePortraitSourceCardVerticalPaddingDp();
+        return DetailPhoneSourceCardPolicy.verticalPaddingDp(compactAnswerPreview);
     }
 
     static int resolvePhonePortraitSourceCardMaxLines(boolean compactAnswerPreview, boolean emergencyContext) {
-        return compactAnswerPreview && !emergencyContext ? 2 : 3;
+        return DetailPhoneSourceCardPolicy.maxLines(compactAnswerPreview, emergencyContext);
     }
 
     static int resolvePhonePortraitSourceCardTopMarginDp() {
-        return 5;
+        return DetailPhoneSourceCardPolicy.topMarginDp();
     }
 
     static float resolvePhonePortraitSourceCardTextSizeSp() {
-        return 10.0f;
+        return DetailPhoneSourceCardPolicy.textSizeSp();
     }
 
     static int resolvePhoneLandscapeSourceRailCardVerticalPaddingDp() {
-        return 4;
+        return DetailPhoneSourceCardPolicy.landscapeRailVerticalPaddingDp();
     }
 
     static int resolvePhoneLandscapeSourceRailCardTopMarginDp() {
-        return 4;
+        return DetailPhoneSourceCardPolicy.landscapeRailTopMarginDp();
     }
 
     static float resolvePhoneLandscapeSourceRailCardTextSizeSp() {
-        return 9.5f;
+        return DetailPhoneSourceCardPolicy.landscapeRailTextSizeSp();
     }
 
     static String buildPhonePortraitSourceCardLabel(
         DetailSourcePresentationFormatter.EvidenceCard card,
         boolean emergencyContext
     ) {
-        return buildPhonePortraitSourceCardLabel(card, emergencyContext, false);
+        return DetailPhoneSourceCardPolicy.buildLabel(card, emergencyContext);
     }
 
     static String buildPhonePortraitSourceCardLabel(
@@ -5173,51 +5199,7 @@ public final class DetailActivity extends AppCompatActivity {
         boolean emergencyContext,
         boolean compactAnswerPreview
     ) {
-        if (card == null) {
-            return "Source guide";
-        }
-        boolean emergencyAnchor = emergencyContext && isGd132EmergencyAnchorCard(card);
-        ArrayList<String> metaParts = new ArrayList<>();
-        if (!card.guideId.isEmpty()) {
-            metaParts.add(card.guideId);
-        }
-        if (!card.roleLabel.isEmpty()) {
-            metaParts.add(card.roleLabel);
-        }
-        if (!card.matchLabel.isEmpty()) {
-            metaParts.add(emergencyAnchor ? "93%" : card.matchLabel);
-        }
-        StringBuilder builder = new StringBuilder();
-        if (!metaParts.isEmpty()) {
-            if (emergencyAnchor && metaParts.size() >= 3) {
-                builder.append(metaParts.get(0))
-                    .append(" \u2022 ")
-                    .append(metaParts.get(1))
-                    .append("    ")
-                    .append(metaParts.get(2));
-            } else {
-                builder.append(String.join(" \u2022 ", metaParts));
-            }
-        }
-        String title = emergencyAnchor
-            ? "Foundry & Metal Casting \u00b7 \u00a71 Area readiness"
-            : safe(card.title).trim();
-        if (!title.isEmpty()) {
-            if (builder.length() > 0) {
-                builder.append('\n');
-            }
-            builder.append(title);
-        }
-        String quote = emergencyAnchor
-            ? "A single drop of water contacting molten metal causes a violent steam explosion, spraying molten metal 3+ meters in all directions."
-            : safe(card.quote).trim();
-        if (!quote.isEmpty() && !compactAnswerPreview) {
-            if (builder.length() > 0) {
-                builder.append('\n');
-            }
-            builder.append('"').append(trimPhonePortraitSourceQuote(quote)).append('"');
-        }
-        return builder.length() == 0 ? "Source guide" : builder.toString();
+        return DetailPhoneSourceCardPolicy.buildLabel(card, emergencyContext, compactAnswerPreview);
     }
 
     static boolean shouldUseCompactPhoneAnswerSourcePreviewCard(
@@ -5225,7 +5207,11 @@ public final class DetailActivity extends AppCompatActivity {
         boolean compactPortraitPhone,
         boolean emergencyPortrait
     ) {
-        return answerMode && compactPortraitPhone && !emergencyPortrait;
+        return DetailPhoneSourceCardPolicy.shouldUseCompactAnswerPreviewCard(
+            answerMode,
+            compactPortraitPhone,
+            emergencyPortrait
+        );
     }
 
     private CharSequence buildStyledPhonePortraitSourceCardLabel(String label) {
@@ -5273,17 +5259,7 @@ public final class DetailActivity extends AppCompatActivity {
     }
 
     private static boolean isGd132EmergencyAnchorCard(DetailSourcePresentationFormatter.EvidenceCard card) {
-        return card != null
-            && "GD-132".equalsIgnoreCase(safe(card.guideId).trim())
-            && safe(card.title).toLowerCase(Locale.US).contains("foundry");
-    }
-
-    private static String trimPhonePortraitSourceQuote(String quote) {
-        String cleaned = safe(quote).replaceAll("\\s+", " ").trim();
-        if (cleaned.length() <= 82) {
-            return cleaned;
-        }
-        return cleaned.substring(0, 82).trim() + "...";
+        return DetailPhoneSourceCardPolicy.isGd132EmergencyAnchorCard(card);
     }
 
     private void renderMaterialsPanel() {

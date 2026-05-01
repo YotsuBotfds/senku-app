@@ -177,6 +177,52 @@ public final class EmergencySurfacePolicyTest {
     }
 
     @Test
+    public void tabletEmergencyChromePolicyOwnsFullHeightRailAndOverlayDecision() {
+        DetailTabletEmergencyChromePolicy.Decision decision =
+            DetailTabletEmergencyChromePolicy.evaluate(true, true, true);
+
+        assertTrue(decision.fullHeightPage);
+        assertTrue(decision.suppressStaleChrome);
+        assertTrue(decision.hideDetailRoot);
+        assertTrue(decision.suppressFloatingRail);
+        assertTrue(decision.showAppRailOverlay);
+        assertTrue(decision.showOverlayChrome);
+        assertEquals(72, decision.appRailWidthDp);
+        assertEquals(1, decision.appRailDividerWidthDp);
+        assertEquals(10.0f, decision.appRailLabelTextSizeSp, 0.0f);
+        assertEquals(13.0f, decision.appRailLabelLineHeightSp, 0.0f);
+        assertEquals(0.0f, decision.appRailLabelLetterSpacing, 0.0f);
+        assertEquals(R.string.detail_emergency_app_rail_manual_label, decision.appRailHomeLabelResource);
+        assertEquals(
+            R.string.detail_emergency_app_rail_manual_content_description,
+            decision.appRailHomeContentDescriptionResource
+        );
+        assertFalse(decision.showHomeChromeAction);
+        assertEquals(DetailTabletEmergencyChromePolicy.AppRailDestination.ASK, decision.activeDestination);
+        assertEquals(73, decision.overlayMarginsDp.left);
+        assertEquals(24, decision.overlayMarginsDp.right);
+        assertEquals(0, decision.overlayMarginsDp.top);
+        assertEquals(android.view.ViewGroup.LayoutParams.MATCH_PARENT, decision.overlayHeight);
+    }
+
+    @Test
+    public void tabletEmergencyChromePolicyKeepsLandscapeOverlayAnchoredWithoutFullHeightRail() {
+        DetailTabletEmergencyChromePolicy.Decision decision =
+            DetailTabletEmergencyChromePolicy.evaluate(true, false, true);
+
+        assertFalse(decision.fullHeightPage);
+        assertFalse(decision.suppressStaleChrome);
+        assertFalse(decision.hideDetailRoot);
+        assertFalse(decision.suppressFloatingRail);
+        assertFalse(decision.showAppRailOverlay);
+        assertFalse(decision.showOverlayChrome);
+        assertEquals(336, decision.overlayMarginsDp.left);
+        assertEquals(24, decision.overlayMarginsDp.right);
+        assertEquals(16, decision.overlayMarginsDp.top);
+        assertEquals(android.view.ViewGroup.LayoutParams.WRAP_CONTENT, decision.overlayHeight);
+    }
+
+    @Test
     public void tabletPortraitEmergencyChromeDoesNotShowMisleadingHomeMenuGlyph() {
         assertFalse(DetailActivity.shouldShowTabletEmergencyHomeChromeAction());
     }
