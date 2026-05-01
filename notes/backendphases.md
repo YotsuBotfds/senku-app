@@ -1,6 +1,6 @@
 # Backend Cleanup Phase Tracker
 
-Last updated after cleanup through `c5988e6f` on 2026-05-01.
+Last updated after cleanup through `237613d4` on 2026-05-01.
 
 Purpose: prevent future agents from rerunning Ask/query backend cleanup that is already complete. Keep this note short; implementation detail belongs in commits and tests.
 
@@ -650,7 +650,30 @@ Purpose: prevent future agents from rerunning Ask/query backend cleanup that is 
   passed; full Android
   `:app:testDebugUnitTest :app:assembleDebug :app:assembleDebugAndroidTest`
   passed.
-- Tracker is refreshed through `c5988e6f`.
+- Saved guide contracts are current through `3b231b02`: policy/store tests
+  cover duplicate overflow cleanup, newest-first caps, immutable refresh plans,
+  invalid refresh invalidation, missing/stale refresh tokens, and pending focus
+  persistence until the Saved section is actually visible.
+- Home/Search browse chrome state is current through `f5fd0796`:
+  `MainHomeChromePolicy.BrowseChromeState` now bundles browse content
+  visibility, tablet search topbar visibility, and home chrome title/action
+  state so `MainActivity.renderBrowseChrome()` mostly mutates views from a
+  policy result.
+- Route-focused executor loop consolidation is current through `f3b82444`:
+  chunk/guide and FTS/LIKE route sweeps share executor helpers while preserving
+  SQL planning, collector calls, ranking, filters, and log labels.
+- Detail chrome presentation extraction is current through `237613d4`:
+  `DetailChromePresentationPolicy` owns Rev03 topbar state, phone guide title
+  shaping, meta strip item construction/visibility, freshness token appends,
+  and route-tone precedence while `DetailActivity` keeps callbacks and Compose
+  host mounting.
+- Latest local proof after `237613d4`: focused JVM tests passed for home
+  chrome, detail chrome, Saved guide contracts, route-focused executor/search
+  policies, current-head route matrices, route output parity, and session
+  retrieval context; `git diff --check` passed; full Android
+  `:app:testDebugUnitTest :app:assembleDebug :app:assembleDebugAndroidTest`
+  passed.
+- Tracker is refreshed through `237613d4`.
 
 ## Remaining Next Slices
 
