@@ -3958,10 +3958,10 @@ public final class MainActivity extends AppCompatActivity {
     }
 
     private void renderBrowseChrome(boolean show) {
-        updateHomeChromeTitle(show, searchInput == null ? "" : searchInput.getText().toString());
-        boolean showSearchTopbar = tabletSearchTopbarRow != null
-            && MainHomeChromePolicy.shouldShowTabletSearchTopbar(isTabletSearchLayout(), show);
-        int visibility = show ? View.VISIBLE : View.GONE;
+        MainHomeChromePolicy.BrowseChromeState chromeState = resolveBrowseChromeState(show);
+        applyHomeChromeState(chromeState.homeChrome);
+        boolean showSearchTopbar = tabletSearchTopbarRow != null && chromeState.tabletSearchTopbarVisible;
+        int visibility = chromeState.browseContentVisible ? View.VISIBLE : View.GONE;
         if (browseScrollView != null) {
             browseScrollView.setVisibility(visibility);
         }
@@ -3974,7 +3974,7 @@ public final class MainActivity extends AppCompatActivity {
         updateRecentThreadsVisibility();
         updatePinnedSectionVisibility();
         updateHomeRelatedSectionVisibility();
-        if (show) {
+        if (chromeState.browseContentVisible) {
             focusSavedGuideSectionIfReady();
         }
         if (categorySectionHeader != null) {
@@ -3984,9 +3984,9 @@ public final class MainActivity extends AppCompatActivity {
             categorySectionContainer.setVisibility(visibility);
         }
         if (developerPanel != null) {
-            applyDeveloperToolsPanelVisibility(show, !items.isEmpty());
+            applyDeveloperToolsPanelVisibility(chromeState.browseContentVisible, !items.isEmpty());
         }
-        if (show) {
+        if (chromeState.browseContentVisible) {
             collapseDeveloperToolsPanel();
             if (resultsList != null) {
                 resultsList.setVisibility(View.GONE);
@@ -4010,7 +4010,7 @@ public final class MainActivity extends AppCompatActivity {
             }
         }
         if (isSmallPhonePortraitLayout()) {
-            if (show) {
+            if (chromeState.browseContentVisible) {
                 if (statusText != null) {
                     statusText.setVisibility(View.VISIBLE);
                 }
@@ -4025,13 +4025,22 @@ public final class MainActivity extends AppCompatActivity {
                 }
             }
         }
-        updateLandscapeTabletResultsPriority(show);
-        updatePortraitTabletResultsPriority(show);
+        updateLandscapeTabletResultsPriority(chromeState.browseContentVisible);
+        updatePortraitTabletResultsPriority(chromeState.browseContentVisible);
         updateLandscapePhoneResultsPriority();
         updatePortraitPhoneResultsPriority();
         updateInfoTextVisibility();
         updateActionLabels();
         refreshSearchSuggestions(searchInput == null ? "" : searchInput.getText().toString());
+    }
+
+    private MainHomeChromePolicy.BrowseChromeState resolveBrowseChromeState(boolean browseMode) {
+        return MainHomeChromePolicy.resolveBrowseChrome(
+            browseMode,
+            searchInput == null ? "" : searchInput.getText().toString(),
+            currentMainRouteState(),
+            isTabletSearchLayout()
+        );
     }
 
     private void updateLandscapeTabletResultsPriority(boolean browseMode) {
@@ -4386,12 +4395,16 @@ public final class MainActivity extends AppCompatActivity {
     private void updateHomeChromeTitle(boolean browseMode, String query) {
         MainHomeChromePolicy.ChromeState chromeState =
             MainHomeChromePolicy.resolve(browseMode, query, currentMainRouteState());
+        applyHomeChromeState(chromeState);
+    }
+
+    private void applyHomeChromeState(MainHomeChromePolicy.ChromeState chromeState) {
         updateHomeChromeBackAvailability(chromeState.backAvailable);
-        if (homeChromeTitleText == null && homeChromeModeText == null) {
-            return;
-        }
         if (homeChromeSearchIcon != null) {
             homeChromeSearchIcon.setVisibility(chromeState.searchActionVisible ? View.VISIBLE : View.GONE);
+        }
+        if (homeChromeTitleText == null && homeChromeModeText == null) {
+            return;
         }
         setHomeChromeModeAndTitle(
             chromeState.mode,

@@ -506,6 +506,35 @@ public final class MainActivityHomeChromeTest {
     }
 
     @Test
+    public void browseChromePolicyBundlesHomeTitleAndTabletSearchTopbarVisibility() {
+        MainHomeChromePolicy.BrowseChromeState browseState = MainHomeChromePolicy.resolveBrowseChrome(
+            true,
+            " rain shelter ",
+            MainRouteDecisionHelper.browseHome(),
+            true
+        );
+        MainHomeChromePolicy.BrowseChromeState searchState = MainHomeChromePolicy.resolveBrowseChrome(
+            false,
+            " rain shelter ",
+            new MainRouteDecisionHelper.RouteState(
+                MainRouteDecisionHelper.Surface.SEARCH_RESULTS,
+                BottomTabDestination.HOME,
+                false
+            ),
+            true
+        );
+
+        assertTrue(browseState.browseContentVisible);
+        assertFalse(browseState.tabletSearchTopbarVisible);
+        assertTrue(browseState.homeChrome.searchActionVisible);
+        assertTrue(browseState.homeChrome.usesStyledHomeTitle);
+        assertFalse(searchState.browseContentVisible);
+        assertTrue(searchState.tabletSearchTopbarVisible);
+        assertFalse(searchState.homeChrome.searchActionVisible);
+        assertEquals("rain shelter", searchState.homeChrome.title);
+    }
+
+    @Test
     public void landscapePhoneSearchChromeKeepsTopContextSeparateFromCountRow() {
         assertEquals(
             "\u2039  |  SEARCH rain shelter",

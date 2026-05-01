@@ -23,6 +23,19 @@ final class MainHomeChromePolicy {
         return new ChromeState(backAvailable, false, false, SEARCH_MODE, searchChrome.title, false);
     }
 
+    static BrowseChromeState resolveBrowseChrome(
+        boolean browseMode,
+        String query,
+        MainRouteDecisionHelper.RouteState routeState,
+        boolean tabletSearchLayout
+    ) {
+        return new BrowseChromeState(
+            browseMode,
+            shouldShowTabletSearchTopbar(tabletSearchLayout, browseMode),
+            resolve(browseMode, query, routeState)
+        );
+    }
+
     static SearchChromeState resolveSearch(String query, int resultCount) {
         String cleanQuery = safe(query).trim();
         String queryLabel = cleanQuery.isEmpty() || DEFAULT_SEARCH_QUERY_LABEL.equalsIgnoreCase(cleanQuery)
@@ -85,6 +98,22 @@ final class MainHomeChromePolicy {
             this.mode = mode;
             this.title = title;
             this.usesStyledHomeTitle = usesStyledHomeTitle;
+        }
+    }
+
+    static final class BrowseChromeState {
+        final boolean browseContentVisible;
+        final boolean tabletSearchTopbarVisible;
+        final ChromeState homeChrome;
+
+        BrowseChromeState(
+            boolean browseContentVisible,
+            boolean tabletSearchTopbarVisible,
+            ChromeState homeChrome
+        ) {
+            this.browseContentVisible = browseContentVisible;
+            this.tabletSearchTopbarVisible = tabletSearchTopbarVisible;
+            this.homeChrome = homeChrome;
         }
     }
 
