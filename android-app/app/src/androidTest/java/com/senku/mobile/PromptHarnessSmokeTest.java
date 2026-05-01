@@ -798,7 +798,7 @@ public final class PromptHarnessSmokeTest {
     }
 
     @Test
-    public void tabletDetailRailAskTapOpensEmptyAskLane() {
+    public void tabletDetailRailAskTapOpensEmptyAskLaneAndSubmitRoutesToAnswerDetail() {
         try (ActivityScenario<DetailActivity> scenario = launchTabletRailProofDetail()) {
             awaitHarnessIdle();
             assumeTabletDetailRailVisible(scenario);
@@ -811,7 +811,26 @@ public final class PromptHarnessSmokeTest {
 
             waitForMainSearchInputReady(DETAIL_WAIT_MS);
             assertResumedEmptyAskDestination("tablet detail Ask rail tap should open the empty Ask lane");
-            captureUiState("tablet_detail_rail_ask");
+            captureUiState("tablet_detail_rail_ask_empty");
+
+            submitSearchInputImeActionFromResumedMainAndAssertRoute(
+                "How do I start a fire in rain?",
+                EditorInfo.IME_ACTION_DONE,
+                MainRouteDecisionHelper.Surface.ASK_RESULTS,
+                BottomTabDestination.ASK,
+                true,
+                BottomTabDestination.ASK,
+                "Tablet detail Ask rail shared-input submit should keep Ask routing before answer-detail handoff"
+            );
+
+            assertResumedDetailActivitySettled(
+                DETAIL_WAIT_MS,
+                8,
+                "",
+                false,
+                "Tablet detail Ask rail submit should open answer detail instead of guide search"
+            );
+            captureUiState("tablet_detail_rail_ask_submit_answer_detail");
         }
     }
 
