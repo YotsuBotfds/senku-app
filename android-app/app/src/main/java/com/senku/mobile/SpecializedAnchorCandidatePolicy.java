@@ -1,9 +1,11 @@
 package com.senku.mobile;
 
 import java.util.Locale;
+import java.util.regex.Pattern;
 
 final class SpecializedAnchorCandidatePolicy {
     private static final Locale LOCALE = Locale.US;
+    private static final Pattern TOPIC_TAG_DELIMITERS = Pattern.compile("[,;|\\r\\n]+");
 
     private SpecializedAnchorCandidatePolicy() {
     }
@@ -119,7 +121,7 @@ final class SpecializedAnchorCandidatePolicy {
         if (normalizedTerm.isEmpty()) {
             return false;
         }
-        for (String part : emptySafe(topicTags).split(",")) {
+        for (String part : TOPIC_TAG_DELIMITERS.split(emptySafe(topicTags))) {
             if (normalizedTerm.equals(normalize(part))) {
                 return true;
             }

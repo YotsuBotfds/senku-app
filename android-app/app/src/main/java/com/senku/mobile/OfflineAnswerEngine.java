@@ -767,8 +767,9 @@ public final class OfflineAnswerEngine {
             resolvedAnswer = PromptBuilder.buildSourceFallbackSummary(prepared.query, prepared.sources);
             usedSourceFallback = true;
         }
+        boolean generatedWithoutSources = !usedSourceFallback && prepared.sources.isEmpty();
         boolean lowCoverage = !usedSourceFallback
-            && PromptBuilder.isLowCoverageAnswer(resolvedAnswer);
+            && (generatedWithoutSources || PromptBuilder.isLowCoverageAnswer(resolvedAnswer));
         String answerBody = usedSourceFallback
             ? PromptBuilder.buildStreamingAnswerBody(resolvedAnswer)
             : PromptBuilder.buildAnswerBody(resolvedAnswer, prepared.sources, elapsedMs);

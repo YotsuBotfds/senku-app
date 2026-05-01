@@ -2219,6 +2219,31 @@ public final class PackRepositoryTest {
     }
 
     @Test
+    public void specializedAnchorPolicyAcceptsCommonTopicTagSeparatorsWithoutSubstringMatches() {
+        assertEquals(
+            true,
+            SpecializedAnchorCandidatePolicy.hasTopicTag(
+                "water_storage; water_distribution|container_sanitation\nwater_rotation",
+                "water_distribution"
+            )
+        );
+        assertEquals(
+            true,
+            SpecializedAnchorCandidatePolicy.hasTopicTag(
+                "water_storage; water_distribution|container_sanitation\nwater_rotation",
+                "water_rotation"
+            )
+        );
+        assertEquals(
+            false,
+            SpecializedAnchorCandidatePolicy.hasTopicTag(
+                "water_storage; rainwater_distribution|water_distribution_backup",
+                "water_distribution"
+            )
+        );
+    }
+
+    @Test
     public void soapmakingAnchorCandidateRejectsWrongFamilyGuideWithoutTopicTags() {
         SearchResult candidate = new SearchResult(
             "Chemistry Fundamentals",

@@ -136,6 +136,7 @@ $dumpDir = Join-Path $artifactDir "dumps"
 $harnessStateDir = Join-Path $repoRoot "artifacts\\harness_state"
 $installStatePath = Join-Path $harnessStateDir ("instrumented_ui_smoke_" + $Device + ".json")
 $identityStatePath = Join-Path $harnessStateDir ("instrumented_ui_smoke_identity_" + $Device + ".json")
+$apkInstallTimeoutMilliseconds = 180000
 $script:IdentityCacheHit = $false
 New-Item -ItemType Directory -Force -Path $screenshotDir | Out-Null
 New-Item -ItemType Directory -Force -Path $dumpDir | Out-Null
@@ -1483,9 +1484,9 @@ Wait-ForDeviceReadiness
 Write-RunPhase -Phase "device ready"
 if (-not $EffectiveSkipInstall) {
     Write-RunPhase -Phase "installing app APK"
-    Invoke-ApkInstallWithPhysicalNoStreamingFallback -ApkPath $appApk -FailureMessage "App APK install failed" -ApkLabel "app APK"
+    Invoke-ApkInstallWithPhysicalNoStreamingFallback -ApkPath $appApk -FailureMessage "App APK install failed" -ApkLabel "app APK" -TimeoutMilliseconds $apkInstallTimeoutMilliseconds
     Write-RunPhase -Phase "installing test APK"
-    Invoke-ApkInstallWithPhysicalNoStreamingFallback -ApkPath $testApk -FailureMessage "Test APK install failed" -ApkLabel "test APK"
+    Invoke-ApkInstallWithPhysicalNoStreamingFallback -ApkPath $testApk -FailureMessage "Test APK install failed" -ApkLabel "test APK" -TimeoutMilliseconds $apkInstallTimeoutMilliseconds
     Write-RunPhase -Phase "APK install complete"
 } else {
     Write-RunPhase -Phase "install skipped; verifying packages"
@@ -1909,6 +1910,14 @@ try {
         skip_install = [bool]$EffectiveSkipInstall
         install_cache_matches = [bool]$InstallCacheMatches
         install_no_streaming_fallback_attempted = [bool]$script:InstallNoStreamingFallbackAttempted
+        install_contract = [pscustomobject]@{
+            apk_install_timeout_ms = [int]$apkInstallTimeoutMilliseconds
+            primary_install_mode = "adb install -r"
+            physical_no_streaming_fallback_enabled = [bool]($Device -notlike "emulator-*")
+            fallback_install_mode = "adb install --no-streaming -r"
+            fallback_attempted = [bool]$script:InstallNoStreamingFallbackAttempted
+            timeout_failure_is_reported = $true
+        }
         scripted_query = $ScriptedQuery
         scripted_ask = [bool]$ScriptedAsk
         scripted_followup_query = $ScriptedFollowUpQuery

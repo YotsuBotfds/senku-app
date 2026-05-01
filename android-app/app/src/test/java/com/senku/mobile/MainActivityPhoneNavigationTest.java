@@ -347,6 +347,22 @@ public final class MainActivityPhoneNavigationTest {
     }
 
     @Test
+    public void installCompletionPreservesRestoredResultPayloadWhenBrowsePublishIsSkipped() {
+        assertInstallCompletionKeepsRestoredResultPayload(
+            MainRouteDecisionHelper.Surface.SEARCH_RESULTS,
+            BottomTabDestination.HOME,
+            false,
+            "rain shelter"
+        );
+        assertInstallCompletionKeepsRestoredResultPayload(
+            MainRouteDecisionHelper.Surface.ASK_RESULTS,
+            BottomTabDestination.ASK,
+            true,
+            "child swallowed cleaner"
+        );
+    }
+
+    @Test
     public void sharedInputSubmitRoutesToAskWhenAskOwnsTheVisibleFlow() {
         assertEquals(
             SubmitTarget.ASK,
@@ -582,6 +598,38 @@ public final class MainActivityPhoneNavigationTest {
         assertRouteState(restoredRouteState, surface, activePhoneTab, askLaneActive);
         assertFalse(MainRouteDecisionHelper.isBrowseSurface(restoredRouteState.surface));
         assertFalse(MainRouteDecisionHelper.shouldPublishInstalledBrowseGuides(false, restoredRouteState));
+    }
+
+    private static void assertInstallCompletionKeepsRestoredResultPayload(
+        MainRouteDecisionHelper.Surface surface,
+        BottomTabDestination activePhoneTab,
+        boolean askLaneActive,
+        String restoredQuery
+    ) {
+        MainRouteDecisionHelper.RouteState restoredRouteState =
+            MainActivity.resolveRestoredMainRouteState(
+                surface.name(),
+                activePhoneTab.name(),
+                askLaneActive,
+                true,
+                BottomTabDestination.HOME.name()
+            );
+        List<String> restoredResults = Arrays.asList("restored:" + surface.name());
+        List<String> installedBrowseGuides = Arrays.asList("browse:GD-001", "browse:GD-002");
+        List<String> visibleResults = new java.util.ArrayList<>(restoredResults);
+        String activeHighlightQuery = restoredQuery;
+
+        MainInstallCompletionPolicy.Action action =
+            MainInstallCompletionPolicy.resolve(false, restoredRouteState);
+        if (action == MainInstallCompletionPolicy.Action.PUBLISH_BROWSE_GUIDES) {
+            visibleResults = new java.util.ArrayList<>(installedBrowseGuides);
+            activeHighlightQuery = "";
+        }
+
+        assertEquals(MainInstallCompletionPolicy.Action.PRESERVE_CURRENT_RESULTS, action);
+        assertEquals(restoredResults, visibleResults);
+        assertFalse("restored results should remain non-empty after skipped browse publication", visibleResults.isEmpty());
+        assertEquals(restoredQuery, activeHighlightQuery);
     }
 
     private static final class RecordingRouteEffects implements MainRouteEffectController.Effects {

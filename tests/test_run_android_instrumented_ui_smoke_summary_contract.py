@@ -44,6 +44,7 @@ class RunAndroidInstrumentedUiSmokeSummaryContractTests(unittest.TestCase):
     def test_physical_install_retries_with_no_streaming_and_reports_summary_flag(self):
         self.assertIn("function Invoke-ApkInstallWithPhysicalNoStreamingFallback", self.script)
         self.assertIn("[int]$TimeoutMilliseconds = 180000", self.script)
+        self.assertIn("$apkInstallTimeoutMilliseconds = 180000", self.script)
         self.assertIn("Invoke-AndroidAdbCommandCapture -AdbPath $adb -Arguments $Arguments -TimeoutMilliseconds $TimeoutMilliseconds", self.script)
         self.assertIn("timed out after {2} ms", self.script)
         self.assertIn('"install", "-r", $ApkPath', self.script)
@@ -55,8 +56,20 @@ class RunAndroidInstrumentedUiSmokeSummaryContractTests(unittest.TestCase):
         self.assertIn("$script:InstallNoStreamingFallbackAttempted = $true", self.script)
         self.assertIn("$script:InstallNoStreamingFallbackAttempted = $false", self.script)
         self.assertIn("install_no_streaming_fallback_attempted = [bool]$script:InstallNoStreamingFallbackAttempted", self.script)
-        self.assertIn('Invoke-ApkInstallWithPhysicalNoStreamingFallback -ApkPath $appApk -FailureMessage "App APK install failed" -ApkLabel "app APK"', self.script)
-        self.assertIn('Invoke-ApkInstallWithPhysicalNoStreamingFallback -ApkPath $testApk -FailureMessage "Test APK install failed" -ApkLabel "test APK"', self.script)
+        self.assertIn('Invoke-ApkInstallWithPhysicalNoStreamingFallback -ApkPath $appApk -FailureMessage "App APK install failed" -ApkLabel "app APK" -TimeoutMilliseconds $apkInstallTimeoutMilliseconds', self.script)
+        self.assertIn('Invoke-ApkInstallWithPhysicalNoStreamingFallback -ApkPath $testApk -FailureMessage "Test APK install failed" -ApkLabel "test APK" -TimeoutMilliseconds $apkInstallTimeoutMilliseconds', self.script)
+
+    def test_final_summary_exposes_bounded_install_contract(self):
+        for expected in (
+            "install_contract = [pscustomobject]@{",
+            "apk_install_timeout_ms = [int]$apkInstallTimeoutMilliseconds",
+            'primary_install_mode = "adb install -r"',
+            'physical_no_streaming_fallback_enabled = [bool]($Device -notlike "emulator-*")',
+            'fallback_install_mode = "adb install --no-streaming -r"',
+            "fallback_attempted = [bool]$script:InstallNoStreamingFallbackAttempted",
+            "timeout_failure_is_reported = $true",
+        ):
+            self.assertIn(expected, self.script)
 
     def test_functional_smoke_profile_targets_existing_prompt_harness_methods(self):
         self.assertIn('"phone-functional"', self.script)

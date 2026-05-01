@@ -971,7 +971,18 @@ public final class OfflineAnswerEngineTest {
 
         OfflineAnswerEngine.PreparedAnswer prepared = OfflineAnswerEngine.PreparedAnswer.restoredGenerative(
             "How do I improvise a rain shelter?",
-            List.of(),
+            List.of(
+                new SearchResult(
+                    "Emergency Shelter",
+                    "",
+                    "Rig a tarp at an angle and route water away from the sleeping area.",
+                    "Use a ridgeline, stake the tarp securely, and keep drainage away from bedding.",
+                    "GD-094",
+                    "Rain tarp setup",
+                    "shelter",
+                    "guide-focus"
+                )
+            ),
             false,
             System.currentTimeMillis() - 1500L,
             true,
@@ -1292,7 +1303,18 @@ public final class OfflineAnswerEngineTest {
         );
         OfflineAnswerEngine.PreparedAnswer prepared = OfflineAnswerEngine.PreparedAnswer.restoredGenerative(
             "How do i make a simple fire starter?",
-            List.of(),
+            List.of(
+                new SearchResult(
+                    "Fire Starting",
+                    "",
+                    "Keep tinder dry and feed small kindling before larger fuel.",
+                    "Use dry tinder, protect it from wind, and add kindling gradually.",
+                    "GD-122",
+                    "Simple fire starter",
+                    "fire",
+                    "guide-focus"
+                )
+            ),
             false,
             System.currentTimeMillis() - 1200L,
             false,
@@ -1432,7 +1454,18 @@ public final class OfflineAnswerEngineTest {
         );
         OfflineAnswerEngine.PreparedAnswer prepared = OfflineAnswerEngine.PreparedAnswer.restoredGenerative(
             "How do i make a simple fire starter?",
-            List.of(),
+            List.of(
+                new SearchResult(
+                    "Fire Starting",
+                    "",
+                    "Keep tinder dry and feed small kindling before larger fuel.",
+                    "Use dry tinder, protect it from wind, and add kindling gradually.",
+                    "GD-122",
+                    "Simple fire starter",
+                    "fire",
+                    "guide-focus"
+                )
+            ),
             false,
             System.currentTimeMillis() - 1200L,
             false,
@@ -1592,6 +1625,76 @@ public final class OfflineAnswerEngineTest {
     }
 
     @Test
+    public void generateNoSourceGenericAnswerDowngradesOnDeviceInsteadOfConfident() throws Exception {
+        File tempModel = File.createTempFile("senku-no-source-generic", ".litertlm");
+        tempModel.deleteOnExit();
+        OfflineAnswerEngine.setGeneratorsForTest(
+            (settings, systemPrompt, prompt, maxTokens) -> {
+                throw new AssertionError("host generation should not run");
+            },
+            (context, modelFile, prompt, maxTokens, listener) -> "No specific information available."
+        );
+        OfflineAnswerEngine.PreparedAnswer prepared = OfflineAnswerEngine.PreparedAnswer.restoredGenerative(
+            "How should I treat a minor sunburn?",
+            List.of(),
+            false,
+            System.currentTimeMillis() - 1000L,
+            false,
+            "",
+            "",
+            "system",
+            "prompt"
+        );
+
+        OfflineAnswerEngine.AnswerRun answerRun = OfflineAnswerEngine.generate(null, tempModel, prepared);
+
+        assertEquals(OfflineAnswerEngine.AnswerMode.ABSTAIN, answerRun.mode);
+        assertTrue(answerRun.abstain);
+        assertTrue(answerRun.sources.isEmpty());
+        assertFalse(answerRun.hostBackendUsed);
+        assertFalse(answerRun.hostFallbackUsed);
+        assertTrue(answerRun.answerBody.contains("Senku doesn't have a guide"));
+    }
+
+    @Test
+    public void generateNoSourceSubstantiveHostAnswerDowngradesInsteadOfConfident() throws Exception {
+        List<String> finalModeLines = captureFinalModeLines();
+        OfflineAnswerEngine.setGeneratorsForTest(
+            (settings, systemPrompt, prompt, maxTokens) ->
+                new HostInferenceClient.Result(
+                    "Short answer: Rinse the area, cool it with clean water, cover it loosely, and watch for worsening symptoms.",
+                    "mock-host",
+                    0.55
+                ),
+            (context, modelFile, prompt, maxTokens, listener) -> {
+                throw new AssertionError("on-device generation should not run");
+            }
+        );
+        OfflineAnswerEngine.PreparedAnswer prepared = OfflineAnswerEngine.PreparedAnswer.restoredGenerative(
+            "How should I treat a minor burn?",
+            List.of(),
+            false,
+            System.currentTimeMillis() - 1000L,
+            true,
+            "http://127.0.0.1:9/v1",
+            "gemma-4-e2b-it-litert",
+            "system",
+            "prompt"
+        );
+
+        OfflineAnswerEngine.AnswerRun answerRun = OfflineAnswerEngine.generate(null, null, prepared);
+
+        assertEquals(OfflineAnswerEngine.AnswerMode.ABSTAIN, answerRun.mode);
+        assertTrue(answerRun.abstain);
+        assertTrue(answerRun.sources.isEmpty());
+        assertTrue(answerRun.hostBackendUsed);
+        assertFalse(answerRun.hostFallbackUsed);
+        assertTrue(answerRun.answerBody.contains("Senku doesn't have a guide"));
+        assertEquals(1, finalModeLines.size());
+        assertTrue(finalModeLines.get(0).contains("final_mode=abstain route=low_coverage_downgrade"));
+    }
+
+    @Test
     public void generateDeterministicNoSourceAnswerDoesNotEnterNoSourceDowngrade() throws Exception {
         OfflineAnswerEngine.setGeneratorsForTest(
             (settings, systemPrompt, prompt, maxTokens) -> {
@@ -1731,7 +1834,18 @@ public final class OfflineAnswerEngineTest {
         );
         OfflineAnswerEngine.PreparedAnswer confidentPrepared = OfflineAnswerEngine.PreparedAnswer.restoredGenerative(
             "How do i make a simple water filter?",
-            List.of(),
+            List.of(
+                new SearchResult(
+                    "Water Filtration",
+                    "",
+                    "Layer cloth, sand, charcoal, and gravel to filter debris before disinfecting water.",
+                    "Use a filter only as a debris step, then boil or disinfect the water before drinking.",
+                    "GD-201",
+                    "Simple water filter",
+                    "water",
+                    "guide-focus"
+                )
+            ),
             false,
             System.currentTimeMillis() - 1200L,
             false,
