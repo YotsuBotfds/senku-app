@@ -203,7 +203,9 @@ class ValidateAndroidPhysicalPhoneSmokeSummaryTests(unittest.TestCase):
             "dump_length": 96,
             "dump_sha256": "b" * 64,
             "captured_at_utc": "2026-04-30T00:00:02.0000000Z",
+            "step_name": "submit_query",
         }
+        summary["interaction"]["last_post_check"] = summary["interaction"]["steps"][3]["post_check"]
 
         _, errors = validate_summary(self.write_summary(summary))
 
@@ -240,6 +242,7 @@ class ValidateAndroidPhysicalPhoneSmokeSummaryTests(unittest.TestCase):
         post_check["matched_text"] = ["Other"]
         post_check["dump_length"] = 0
         post_check["dump_sha256"] = "not-a-sha"
+        post_check["step_name"] = "unknown"
 
         _, errors = validate_summary(self.write_summary(summary))
 
@@ -254,6 +257,10 @@ class ValidateAndroidPhysicalPhoneSmokeSummaryTests(unittest.TestCase):
         self.assertIn("expected root.interaction.steps[0].post_check.dump_length to be positive", errors)
         self.assertIn(
             "expected root.interaction.steps[0].post_check.dump_sha256 to be a lowercase sha256 hex digest",
+            errors,
+        )
+        self.assertIn(
+            "expected root.interaction.steps[0].post_check.step_name to be a known interaction step, got 'unknown'",
             errors,
         )
 

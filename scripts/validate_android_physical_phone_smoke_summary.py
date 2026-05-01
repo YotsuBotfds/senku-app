@@ -259,6 +259,10 @@ def _validate_interaction(interaction: dict[str, Any], errors: list[str]) -> Non
     if interaction.get("enabled") is not True:
         errors.append(f"expected root.interaction.enabled to be True, got {interaction.get('enabled')!r}")
 
+    last_post_check = interaction.get("last_post_check")
+    if last_post_check is not None:
+        _validate_post_check(last_post_check, errors, scope="root.interaction.last_post_check")
+
     steps = interaction.get("steps")
     if not isinstance(steps, list):
         return
@@ -324,6 +328,13 @@ def _validate_post_check(post_check: Any, errors: list[str], *, scope: str) -> N
     dump_sha256 = post_check.get("dump_sha256")
     if isinstance(dump_sha256, str) and not re.fullmatch(r"[0-9a-f]{64}", dump_sha256):
         errors.append(f"expected {scope}.dump_sha256 to be a lowercase sha256 hex digest")
+
+    step_name = post_check.get("step_name")
+    if step_name is not None:
+        if not isinstance(step_name, str) or not step_name.strip():
+            errors.append(f"expected {scope}.step_name to be non-empty str when present")
+        elif step_name not in EXPECTED_INTERACTION_STEPS:
+            errors.append(f"expected {scope}.step_name to be a known interaction step, got {step_name!r}")
 
 
 def _expect_interaction_string_list(

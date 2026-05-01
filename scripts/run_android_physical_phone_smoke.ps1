@@ -391,7 +391,8 @@ function Get-UiDumpTextFragments {
 function Get-UiPostStepEvidence {
     param(
         [string]$DumpText,
-        [string[]]$ExpectedAnyText
+        [string[]]$ExpectedAnyText,
+        [string]$StepName = ""
     )
 
     $expected = @($ExpectedAnyText | Where-Object { -not [string]::IsNullOrWhiteSpace($_) })
@@ -403,7 +404,7 @@ function Get-UiPostStepEvidence {
     }
 
     $textFragments = @(Get-UiDumpTextFragments -DumpText $DumpText | Select-Object -First 25)
-    return [ordered]@{
+    $evidence = [ordered]@{
         passed = ($expected.Count -eq 0) -or ($matched.Count -gt 0)
         expected_any_text = $expected
         matched_text = $matched
@@ -412,6 +413,10 @@ function Get-UiPostStepEvidence {
         dump_sha256 = Get-UiDumpHash -DumpText $DumpText
         captured_at_utc = (Get-Date).ToUniversalTime().ToString("o")
     }
+    if (-not [string]::IsNullOrWhiteSpace($StepName)) {
+        $evidence.step_name = $StepName
+    }
+    return $evidence
 }
 
 function Wait-UiPostStepEvidence {
@@ -419,6 +424,7 @@ function Wait-UiPostStepEvidence {
         [string]$ResolvedAdbPath,
         [string]$DeviceSerial,
         [string[]]$ExpectedAnyText,
+        [string]$StepName = "",
         [int]$TimeoutMs = 3000,
         [int]$PollMs = 500
     )
@@ -427,7 +433,8 @@ function Wait-UiPostStepEvidence {
     $lastEvidence = $null
     do {
         $dumpText = Read-UiAutomatorDump -ResolvedAdbPath $ResolvedAdbPath -DeviceSerial $DeviceSerial
-        $lastEvidence = Get-UiPostStepEvidence -DumpText $dumpText -ExpectedAnyText $ExpectedAnyText
+        $lastEvidence = Get-UiPostStepEvidence -DumpText $dumpText -ExpectedAnyText $ExpectedAnyText -StepName $StepName
+        $script:LastUiPostStepEvidence = $lastEvidence
         if ($lastEvidence.passed) {
             return $lastEvidence
         }
@@ -550,7 +557,7 @@ function Invoke-InteractionStep {
     try {
         & $Action
         if ($ExpectedAnyText.Count -gt 0) {
-            $postCheck = Wait-UiPostStepEvidence -ResolvedAdbPath $ResolvedAdbPath -DeviceSerial $DeviceSerial -ExpectedAnyText $ExpectedAnyText
+            $postCheck = Wait-UiPostStepEvidence -ResolvedAdbPath $ResolvedAdbPath -DeviceSerial $DeviceSerial -ExpectedAnyText $ExpectedAnyText -StepName $Name
             if (-not $postCheck.passed) {
                 $message = "Post-step UI check for '$Name' did not find expected text fragment(s): $($ExpectedAnyText -join ', ')"
                 [void]$Steps.Add((New-InteractionStep -Name $Name -Status "failed" -Message $message -PostCheck $postCheck))
@@ -560,6 +567,12 @@ function Invoke-InteractionStep {
         [void]$Steps.Add((New-InteractionStep -Name $Name -Status "success" -PostCheck $postCheck))
         return $true
     } catch {
+        if ($null -eq $postCheck -and $ExpectedAnyText.Count -gt 0 -and $null -ne $script:LastUiPostStepEvidence) {
+            $lastEvidenceStepName = [string]$script:LastUiPostStepEvidence.step_name
+            if ([string]::IsNullOrWhiteSpace($lastEvidenceStepName) -or $lastEvidenceStepName -eq $Name) {
+                $postCheck = $script:LastUiPostStepEvidence
+            }
+        }
         [void]$Steps.Add((New-InteractionStep -Name $Name -Status "failed" -Message $_.Exception.Message -PostCheck $postCheck))
         return $false
     }
@@ -653,6 +666,7 @@ $deviceIdentity = $null
 $textCheckFailureMessage = $null
 $interactionFailureMessage = $null
 $interactionSteps = [System.Collections.ArrayList]::new()
+$script:LastUiPostStepEvidence = $null
 $requestedTextFragments = @(Expand-RequiredTextFragments -Fragments $RequiredText)
 $textChecks = if ($requestedTextFragments.Count -gt 0) {
     [ordered]@{
@@ -706,6 +720,17 @@ if (-not $DryRun) {
         $failedInteractionSteps = @($interactionSteps | Where-Object { $_.status -ne "success" })
         if ($failedInteractionSteps.Count -gt 0) {
             $interactionFailureMessage = "Physical phone smoke interaction failed step(s): $((@($failedInteractionSteps | ForEach-Object { $_.name })) -join ', ')"
+            $failedPostCheckEvidence = @($failedInteractionSteps | Where-Object { $null -ne $_.post_check } | Select-Object -Last 1)
+            if ($failedPostCheckEvidence.Count -gt 0) {
+                $postCheck = $failedPostCheckEvidence[0].post_check
+                $interactionFailureMessage = "{0}; last post_check step={1} expected_any_text=[{2}] matched_text=[{3}] dump_length={4} dump_sha256={5}" -f `
+                    $interactionFailureMessage,
+                    $failedPostCheckEvidence[0].name,
+                    ((@($postCheck.expected_any_text) | ForEach-Object { [string]$_ }) -join ", "),
+                    ((@($postCheck.matched_text) | ForEach-Object { [string]$_ }) -join ", "),
+                    $postCheck.dump_length,
+                    $postCheck.dump_sha256
+            }
         }
     }
 
@@ -804,6 +829,10 @@ if ($Interact) {
         enabled = $true
         query = $InteractionQuery
         steps = @($interactionSteps)
+    }
+    $failedPostCheckSteps = @($interactionSteps | Where-Object { $_.status -ne "success" -and $null -ne $_.post_check })
+    if ($failedPostCheckSteps.Count -gt 0) {
+        $summaryData.interaction.last_post_check = $failedPostCheckSteps[-1].post_check
     }
 }
 $summary = [pscustomobject]$summaryData

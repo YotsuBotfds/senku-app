@@ -77,6 +77,8 @@ class AndroidPhysicalPhoneSmokeContractTests(unittest.TestCase):
         self.assertIn('$message = "Post-step UI check for', self.script)
         self.assertIn('-PostCheck $postCheck))', self.script)
         self.assertIn('[void]$Steps.Add((New-InteractionStep -Name $Name -Status "failed"', self.script)
+        self.assertIn("$summaryData.interaction.last_post_check = $failedPostCheckSteps[-1].post_check", self.script)
+        self.assertIn("last post_check step={1} expected_any_text=[{2}] matched_text=[{3}] dump_length={4} dump_sha256={5}", self.script)
         self.assertIn("return $false", self.script)
 
     def test_parser_gate_passes(self):
@@ -626,6 +628,8 @@ class AndroidPhysicalPhoneSmokeContractTests(unittest.TestCase):
 
             self.assertNotEqual(result.returncode, 0, result.stderr + result.stdout)
             self.assertIn("interaction failed step", result.stderr + result.stdout)
+            self.assertIn("last post_check step=back", result.stderr + result.stdout)
+            self.assertIn("dump_sha256=", result.stderr + result.stdout)
             summary = json.loads((output_dir / "summary.json").read_text(encoding="utf-8-sig"))
             step_by_name = {step["name"]: step for step in summary["interaction"]["steps"]}
             failed_step = step_by_name["submit_query"]
@@ -642,6 +646,9 @@ class AndroidPhysicalPhoneSmokeContractTests(unittest.TestCase):
             self.assertIn("No matching result", post_check["ui_text_sample"])
             self.assertGreater(post_check["dump_length"], 0)
             self.assertRegex(post_check["dump_sha256"], r"^[0-9a-f]{64}$")
+            self.assertEqual(post_check["step_name"], "submit_query")
+            self.assertEqual(summary["interaction"]["last_post_check"], step_by_name["back"]["post_check"])
+            self.assertEqual(summary["interaction"]["last_post_check"]["step_name"], "back")
             summary_markdown = (output_dir / "summary.md").read_text(encoding="utf-8-sig")
             self.assertIn("- interaction_post_check: submit_query=", summary_markdown)
             self.assertIn('"passed":false', summary_markdown)
