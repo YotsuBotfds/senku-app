@@ -5,6 +5,8 @@ import java.util.Collections;
 import java.util.List;
 
 final class PackRouteFocusedSearchHelper {
+    private static final int DEFAULT_ROUTE_SEARCH_TOKEN_LIMIT = 6;
+
     private PackRouteFocusedSearchHelper() {
     }
 
@@ -24,6 +26,13 @@ final class PackRouteFocusedSearchHelper {
             }
         }
         return steps;
+    }
+
+    static RouteSearchStep routeSearchStep(
+        PackRepository.QueryTerms queryTerms,
+        QueryRouteProfile.RouteSearchSpec routeSpec
+    ) {
+        return routeSearchStep(queryTerms, routeSpec, DEFAULT_ROUTE_SEARCH_TOKEN_LIMIT);
     }
 
     static RouteSearchStep routeSearchStep(

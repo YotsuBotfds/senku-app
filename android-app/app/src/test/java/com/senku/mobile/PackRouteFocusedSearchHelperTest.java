@@ -49,6 +49,21 @@ public final class PackRouteFocusedSearchHelperTest {
     }
 
     @Test
+    public void defaultRouteSearchStepPreservesExecutorTokenCap() {
+        PackRepository.QueryTerms queryTerms = PackRepository.QueryTerms.fromQuery("how do i build a house");
+        QueryRouteProfile.RouteSearchSpec routeSpec = new QueryRouteProfile.RouteSearchSpec(
+            "alpha beta gamma delta epsilon zeta eta theta",
+            Collections.emptySet(),
+            0
+        );
+
+        PackRouteFocusedSearchHelper.RouteSearchStep routeStep =
+            PackRouteFocusedSearchHelper.routeSearchStep(queryTerms, routeSpec);
+
+        assertEquals(List.of("alpha", "beta", "gamma", "delta", "epsilon", "zeta"), routeStep.tokens);
+    }
+
+    @Test
     public void fullRouteCursorScanEnablesSpecializedDirectTopicRoutes() {
         assertFullRouteCursorScan("how do i make soap from animal fat and ash", true);
         assertFullRouteCursorScan("how do i make glass from silica sand and soda ash", true);

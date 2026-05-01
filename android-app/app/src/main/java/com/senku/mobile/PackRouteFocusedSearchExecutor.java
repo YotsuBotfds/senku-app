@@ -54,7 +54,7 @@ final class PackRouteFocusedSearchExecutor {
                 break;
             }
             PackRouteFocusedSearchHelper.RouteSearchStep routeStep =
-                PackRouteFocusedSearchHelper.routeSearchStep(queryTerms, routeSpec, 6);
+                PackRouteFocusedSearchHelper.routeSearchStep(queryTerms, routeSpec);
             if (routeStep == null) {
                 continue;
             }
@@ -337,7 +337,7 @@ final class PackRouteFocusedSearchExecutor {
                 break;
             }
             PackRouteFocusedSearchHelper.RouteSearchStep routeStep =
-                PackRouteFocusedSearchHelper.routeSearchStep(queryTerms, routeSpec, 6);
+                PackRouteFocusedSearchHelper.routeSearchStep(queryTerms, routeSpec);
             if (routeStep == null) {
                 continue;
             }
