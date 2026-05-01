@@ -829,8 +829,7 @@ public final class OfflineAnswerEngine {
     private static void logFirstTokenMs(String query, String path, long firstTokenMs) {
         logDebug(
             TAG,
-            "ask.first_token_ms=" + Math.max(0L, firstTokenMs) +
-                " query=\"" + safe(query) + "\" path=" + safe(path)
+            OfflineAnswerTelemetryPolicy.buildFirstTokenLine(query, path, firstTokenMs)
         );
     }
 
@@ -842,18 +841,7 @@ public final class OfflineAnswerEngine {
     }
 
     static String buildLatencySummaryLine(String query, LatencyBreakdown latencyBreakdown) {
-        LatencyBreakdown safeBreakdown = latencyBreakdown == null
-            ? new LatencyBreakdown("", 0L, 0L, 0L, 0L, 0L, 0L)
-            : latencyBreakdown;
-        return "ask.latency"
-            + " queryClass=\"" + safe(safeBreakdown.queryClass) + "\""
-            + " retrievalMs=" + safeBreakdown.retrievalMs
-            + " rerankMs=" + safeBreakdown.rerankMs
-            + " promptBuildMs=" + safeBreakdown.promptBuildMs
-            + " firstTokenMs=" + safeBreakdown.firstTokenMs
-            + " decodeMs=" + safeBreakdown.decodeMs
-            + " totalMs=" + safeBreakdown.totalMs
-            + " query=\"" + safe(query) + "\"";
+        return OfflineAnswerTelemetryPolicy.buildLatencySummaryLine(query, latencyBreakdown);
     }
 
     private static final class BestStreamCandidate {
@@ -2275,11 +2263,12 @@ public final class OfflineAnswerEngine {
     }
 
     private static void logAskFinalMode(String query, AnswerMode finalMode, String route, long totalElapsedMs) {
-        String message =
-            "ask.generate final_mode=" + finalMode.name().toLowerCase(QUERY_LOCALE) +
-                " route=" + route +
-                " query=\"" + safe(query) + "\"" +
-                " totalElapsedMs=" + Math.max(0L, totalElapsedMs);
+        String message = OfflineAnswerTelemetryPolicy.buildFinalModeLine(
+            query,
+            finalMode,
+            route,
+            totalElapsedMs
+        );
         logDebug(TAG, message);
         if (debugLogSink == DEFAULT_DEBUG_LOG_SINK) {
             logInfo(TAG, message);
@@ -2290,23 +2279,13 @@ public final class OfflineAnswerEngine {
         if (prepared == null || prepared.finalModeEmitted) {
             return;
         }
-        AnswerMode finalMode = null;
-        String route = "";
-        if (prepared.deterministic) {
-            finalMode = AnswerMode.CONFIDENT;
-            route = "deterministic";
-        } else if (prepared.abstain) {
-            finalMode = AnswerMode.ABSTAIN;
-            route = "early_abstain";
-        } else if (prepared.mode == AnswerMode.UNCERTAIN_FIT) {
-            finalMode = AnswerMode.UNCERTAIN_FIT;
-            route = "early_uncertain_fit";
-        }
-        if (finalMode == null || route.isEmpty()) {
+        OfflineAnswerTelemetryPolicy.FinalModeRoute finalModeRoute =
+            OfflineAnswerTelemetryPolicy.resolvePreparedFinalModeRoute(prepared);
+        if (!finalModeRoute.isReady()) {
             return;
         }
         long totalElapsedMs = Math.max(0L, System.currentTimeMillis() - prepared.startedAtMs);
-        logAskFinalMode(prepared.query, finalMode, route, totalElapsedMs);
+        logAskFinalMode(prepared.query, finalModeRoute.finalMode, finalModeRoute.route, totalElapsedMs);
         prepared.finalModeEmitted = true;
     }
 
