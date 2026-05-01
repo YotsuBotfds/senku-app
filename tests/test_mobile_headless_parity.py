@@ -1,7 +1,10 @@
+import json
+from pathlib import Path
 import unittest
 from unittest import mock
 
 from scripts.mobile_headless_parity import (
+    DEFAULT_PACK_MANIFEST,
     PackAssets,
     QueryMetadataProfileLite,
     QueryTerms,
@@ -30,6 +33,31 @@ class MobileHeadlessParityRouteTests(unittest.TestCase):
 
         self.assertIn("(gravity* AND fed*)", fts_query)
         self.assertNotIn("gravity-fed*", fts_query)
+
+    def test_force_no_fts_real_pack_external_review_prompts_keep_primary_guide_coverage(self):
+        prompts_path = Path("artifacts/prompts/adhoc/external_review_retrieval_panel_20260430.jsonl")
+        if not DEFAULT_PACK_MANIFEST.exists():
+            self.skipTest(f"mobile pack manifest not found: {DEFAULT_PACK_MANIFEST}")
+        if not prompts_path.exists():
+            self.skipTest(f"external-review prompt panel not found: {prompts_path}")
+
+        cases = [json.loads(line) for line in prompts_path.read_text(encoding="utf-8").splitlines() if line.strip()]
+        self.assertEqual(6, len(cases))
+
+        runner = HeadlessRunner(PackAssets.load(), force_no_fts=True)
+        try:
+            self.assertFalse(runner.fts_available)
+            self.assertEqual("", runner.fts_table)
+            for case in cases:
+                with self.subTest(case_id=case["id"]):
+                    ranked = runner.search(case["prompt"], 16)
+                    context = runner.build_context(case["prompt"], ranked, 4)
+                    primary_expected = set(case["primary_expected_guides"])
+
+                    self.assertTrue(primary_expected.intersection(row.guide_id for row in ranked))
+                    self.assertTrue(primary_expected.intersection(row.guide_id for row in context))
+        finally:
+            runner.close()
 
     def test_clay_oven_query_routes_to_clay_oven(self):
         terms = QueryTerms.from_query("how do i build a clay oven")
