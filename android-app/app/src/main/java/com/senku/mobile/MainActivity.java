@@ -49,7 +49,6 @@ import com.senku.mobile.AskSearchCoordinator.SubmitTarget;
 import java.io.File;
 import java.text.NumberFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -2701,15 +2700,24 @@ public final class MainActivity extends AppCompatActivity {
     }
 
     static boolean shouldInstallRuntimePhoneBottomTabBar(boolean phoneFormFactor, boolean landscapePhone) {
-        return phoneFormFactor && !landscapePhone;
+        return MainPhoneNavigationSurfacePolicy.shouldInstallRuntimePhoneBottomTabBar(
+            phoneFormFactor,
+            landscapePhone
+        );
     }
 
     static boolean shouldBindStaticNavigationRail(boolean landscapePhoneLayout, boolean tabletSearchLayout) {
-        return landscapePhoneLayout || tabletSearchLayout;
+        return MainPhoneNavigationSurfacePolicy.shouldBindStaticNavigationRail(
+            landscapePhoneLayout,
+            tabletSearchLayout
+        );
     }
 
     static boolean shouldHandleMainSurfaceNavigationTabs(boolean phoneFormFactor, boolean tabletSearchLayout) {
-        return phoneFormFactor || tabletSearchLayout;
+        return MainPhoneNavigationSurfacePolicy.shouldHandleMainSurfaceNavigationTabs(
+            phoneFormFactor,
+            tabletSearchLayout
+        );
     }
 
     private boolean resolveInitialBrowseChromeVisible(Bundle savedInstanceState, Intent intent) {
@@ -2874,30 +2882,17 @@ public final class MainActivity extends AppCompatActivity {
     }
 
     static List<BottomTabDestination> buildVisiblePhoneTabDestinations() {
-        return phoneTabSurfaceDestinations(buildPhonePrimaryDestinations());
+        return MainPhoneNavigationSurfacePolicy.buildVisiblePhoneTabDestinations();
     }
 
     static List<BottomTabDestination> buildPhonePrimaryDestinations() {
-        return Arrays.asList(
-            BottomTabDestination.HOME,
-            BottomTabDestination.ASK,
-            BottomTabDestination.PINS
-        );
+        return MainPhoneNavigationSurfacePolicy.buildPhonePrimaryDestinations();
     }
 
     static List<BottomTabDestination> phoneTabSurfaceDestinations(
         List<BottomTabDestination> primaryDestinations
     ) {
-        if (primaryDestinations == null || primaryDestinations.isEmpty()) {
-            return Collections.emptyList();
-        }
-        ArrayList<BottomTabDestination> destinations = new ArrayList<>(primaryDestinations.size());
-        for (BottomTabDestination destination : primaryDestinations) {
-            if (destination != null) {
-                destinations.add(destination);
-            }
-        }
-        return destinations;
+        return MainPhoneNavigationSurfacePolicy.phoneTabSurfaceDestinations(primaryDestinations);
     }
 
     private static BottomTabDestination phoneTabSelectionOwner(BottomTabDestination destination) {
@@ -2905,13 +2900,11 @@ public final class MainActivity extends AppCompatActivity {
     }
 
     static boolean isLibraryPhoneFlowIntent(BottomTabDestination destination) {
-        return destination != null
-            && phoneTabSelectionOwner(destination) == BottomTabDestination.HOME;
+        return MainPhoneNavigationSurfacePolicy.isLibraryPhoneFlowIntent(destination);
     }
 
     static boolean isAskPhoneFlowIntent(BottomTabDestination destination) {
-        return destination != null
-            && phoneTabSelectionOwner(destination) == BottomTabDestination.ASK;
+        return MainPhoneNavigationSurfacePolicy.isAskPhoneFlowIntent(destination);
     }
 
     static boolean shouldSubmitSharedInputAsAsk(
@@ -2956,7 +2949,7 @@ public final class MainActivity extends AppCompatActivity {
     }
 
     static boolean isSavedPhoneFlowIntent(BottomTabDestination destination) {
-        return SavedGuidesPolicy.isSavedPhoneFlowIntent(destination);
+        return MainPhoneNavigationSurfacePolicy.isSavedPhoneFlowIntent(destination);
     }
 
     static boolean shouldShowSavedGuideSection(
