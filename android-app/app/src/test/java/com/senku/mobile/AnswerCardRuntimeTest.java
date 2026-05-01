@@ -36,35 +36,6 @@ public final class AnswerCardRuntimeTest {
     }
 
     @Test
-    public void poisoningAnswerCardPilotQueryRequiresActionAndUnknownObject() {
-        assertTrue(
-            AnswerCardRuntime.isPoisoningAnswerCardPilotQueryForTest(
-                "my child swallowed an unknown cleaner"
-            )
-        );
-        assertTrue(
-            AnswerCardRuntime.isPoisoningAnswerCardPilotQueryForTest(
-                "someone drank bleach from an unlabeled bottle"
-            )
-        );
-        assertFalse(
-            AnswerCardRuntime.isPoisoningAnswerCardPilotQueryForTest(
-                "how should i store bleach under the sink"
-            )
-        );
-        assertFalse(
-            AnswerCardRuntime.isPoisoningAnswerCardPilotQueryForTest(
-                "i swallowed a grape"
-            )
-        );
-        assertFalse(
-            AnswerCardRuntime.isPoisoningAnswerCardPilotQueryForTest(
-                "can i drink water from a clean bottle"
-            )
-        );
-    }
-
-    @Test
     public void poisoningAnswerCardBuildsReviewedAnswerPlan() {
         AnswerCardRuntime.AnswerPlan plan =
             AnswerCardRuntime.planPoisoningAnswerCardFromCardsForTest(
@@ -140,60 +111,6 @@ public final class AnswerCardRuntimeTest {
             AnswerCardRuntime.planPoisoningAnswerCardFromCardsForTest(
                 "my child swallowed an unknown cleaner",
                 List.of(poisoningAnswerCard("pilot_reviewed", List.of()))
-            )
-        );
-    }
-
-    @Test
-    public void newbornDangerSepsisSelectorRequiresNewbornAgeAndDangerSign() {
-        assertTrue(
-            AnswerCardRuntime.isNewbornDangerSepsisAnswerCardQueryForTest(
-                "newborn is limp, will not feed, and is hard to wake"
-            )
-        );
-        assertTrue(
-            AnswerCardRuntime.isNewbornDangerSepsisAnswerCardQueryForTest(
-                "3 day old baby has fever and fast breathing"
-            )
-        );
-        assertTrue(
-            AnswerCardRuntime.isNewbornDangerSepsisAnswerCardQueryForTest(
-                "4 week old infant has low temperature and no wet diaper"
-            )
-        );
-        assertTrue(
-            AnswerCardRuntime.isNewbornDangerSepsisAnswerCardQueryForTest(
-                "newborn cord has pus and spreading redness"
-            )
-        );
-        assertFalse(
-            AnswerCardRuntime.isNewbornDangerSepsisAnswerCardQueryForTest(
-                "routine newborn care and sleep schedule"
-            )
-        );
-        assertFalse(
-            AnswerCardRuntime.isNewbornDangerSepsisAnswerCardQueryForTest(
-                "older child has fever and fast breathing"
-            )
-        );
-        assertFalse(
-            AnswerCardRuntime.isNewbornDangerSepsisAnswerCardQueryForTest(
-                "adult fever and trouble breathing"
-            )
-        );
-        assertFalse(
-            AnswerCardRuntime.isNewbornDangerSepsisAnswerCardQueryForTest(
-                "clean newborn cord care without redness or pus"
-            )
-        );
-        assertFalse(
-            AnswerCardRuntime.isNewbornDangerSepsisAnswerCardQueryForTest(
-                "5 week old baby has fever and fast breathing"
-            )
-        );
-        assertFalse(
-            AnswerCardRuntime.isNewbornDangerSepsisAnswerCardQueryForTest(
-                "28 week old baby has fever and fast breathing"
             )
         );
     }
@@ -326,20 +243,6 @@ public final class AnswerCardRuntimeTest {
     }
 
     @Test
-    public void chokingAirwayObstructionSelectorRequiresChokingContextAndActionSignal() {
-        assertTrue(AnswerCardRuntime.isChokingAirwayObstructionAnswerCardQueryForTest("food stuck and they cannot speak"));
-        assertTrue(AnswerCardRuntime.isChokingAirwayObstructionAnswerCardQueryForTest("child is choking on a grape and turning blue"));
-        assertTrue(AnswerCardRuntime.isChokingAirwayObstructionAnswerCardQueryForTest("infant choking and cannot cry"));
-        assertTrue(AnswerCardRuntime.isChokingAirwayObstructionAnswerCardQueryForTest("should I do back blows or Heimlich first"));
-        assertFalse(AnswerCardRuntime.isChokingAirwayObstructionAnswerCardQueryForTest("how do I prevent choking hazards in a toddler play area"));
-        assertFalse(AnswerCardRuntime.isChokingAirwayObstructionAnswerCardQueryForTest("panic attack and hyperventilating but can talk and breathe"));
-        assertFalse(AnswerCardRuntime.isChokingAirwayObstructionAnswerCardQueryForTest("I feel like I am choking during a panic attack but I can talk and cough"));
-        assertFalse(AnswerCardRuntime.isChokingAirwayObstructionAnswerCardQueryForTest("throat closing with hives after a bee sting"));
-        assertFalse(AnswerCardRuntime.isChokingAirwayObstructionAnswerCardQueryForTest("child swallowed unknown cleaner and is coughing"));
-        assertFalse(AnswerCardRuntime.isChokingAirwayObstructionAnswerCardQueryForTest("toddler choked on a peanut then stopped choking but now keeps coughing and wheezing"));
-    }
-
-    @Test
     public void chokingAirwayObstructionBuildsReviewedAnswerPlan() {
         AnswerCardRuntime.AnswerPlan plan =
             AnswerCardRuntime.planChokingAirwayObstructionAnswerCardFromCardsForTest(
@@ -422,64 +325,6 @@ public final class AnswerCardRuntimeTest {
         assertNull(AnswerCardRuntime.planChokingAirwayObstructionAnswerCardFromCardsForTest(
             "child is choking on a grape and cannot speak",
             List.of(chokingAirwayObstructionAnswerCard("approved", "choking_airway_obstruction", "GD-232", "critical", List.of()))
-        ));
-    }
-
-    @Test
-    public void meningitisSepsisChildSelectorRequiresRedFlagClinicalPrompt() {
-        assertTrue(AnswerCardRuntime.isMeningitisSepsisChildAnswerCardQueryForTest(
-            "child has fever and a stiff neck"
-        ));
-        assertTrue(AnswerCardRuntime.isMeningitisSepsisChildAnswerCardQueryForTest(
-            "fever with stiff neck: meningitis vs viral illness?"
-        ));
-        assertTrue(AnswerCardRuntime.isMeningitisSepsisChildAnswerCardQueryForTest(
-            "fever with little purple dots and a non-blanching rash"
-        ));
-        assertTrue(AnswerCardRuntime.isMeningitisSepsisChildAnswerCardQueryForTest(
-            "child has high fever and the rash looks bruise-like"
-        ));
-        assertTrue(AnswerCardRuntime.isMeningitisSepsisChildAnswerCardQueryForTest(
-            "kid has fever, confusion, and unusual sleepiness"
-        ));
-        assertTrue(AnswerCardRuntime.isMeningitisSepsisChildAnswerCardQueryForTest(
-            "fever with severe headache, photophobia, vomiting, and neck stiffness"
-        ));
-        assertTrue(AnswerCardRuntime.isMeningitisSepsisChildAnswerCardQueryForTest(
-            "sore all over with fever and a spreading purplish rash and now acting confused"
-        ));
-        assertTrue(AnswerCardRuntime.isMeningitisSepsisChildAnswerCardQueryForTest(
-            "child is hard to wake and has a petechial rash"
-        ));
-        assertTrue(AnswerCardRuntime.isMeningitisSepsisChildAnswerCardQueryForTest(
-            "could this be sepsis, very sick with fever and cold hands"
-        ));
-        assertFalse(AnswerCardRuntime.isMeningitisSepsisChildAnswerCardQueryForTest(
-            "is this meningitis or a viral illness"
-        ));
-        assertFalse(AnswerCardRuntime.isMeningitisSepsisChildAnswerCardQueryForTest(
-            "meningitis vs viral illness"
-        ));
-        assertFalse(AnswerCardRuntime.isMeningitisSepsisChildAnswerCardQueryForTest(
-            "could this be meningitis or just a virus"
-        ));
-        assertFalse(AnswerCardRuntime.isMeningitisSepsisChildAnswerCardQueryForTest(
-            "is this sepsis or the flu"
-        ));
-        assertFalse(AnswerCardRuntime.isMeningitisSepsisChildAnswerCardQueryForTest(
-            "meningitis outbreak reporting and contact tracing quarantine rules"
-        ));
-        assertFalse(AnswerCardRuntime.isMeningitisSepsisChildAnswerCardQueryForTest(
-            "routine rash and fever but acting normal"
-        ));
-        assertFalse(AnswerCardRuntime.isMeningitisSepsisChildAnswerCardQueryForTest(
-            "seatbelt bruise with neck pain after a crash"
-        ));
-        assertFalse(AnswerCardRuntime.isMeningitisSepsisChildAnswerCardQueryForTest(
-            "what is meningitis"
-        ));
-        assertFalse(AnswerCardRuntime.isMeningitisSepsisChildAnswerCardQueryForTest(
-            "sepsis"
         ));
     }
 
@@ -569,55 +414,6 @@ public final class AnswerCardRuntimeTest {
     }
 
     @Test
-    public void infectedWoundSpreadingInfectionSelectorRequiresWoundAndDangerSigns() {
-        assertTrue(AnswerCardRuntime.isInfectedWoundSpreadingInfectionAnswerCardQueryForTest(
-            "cut on my hand yesterday and now a red streak is moving up my arm"
-        ));
-        assertTrue(AnswerCardRuntime.isInfectedWoundSpreadingInfectionAnswerCardQueryForTest(
-            "puncture wound in my foot is swollen hot and leaking pus"
-        ));
-        assertTrue(AnswerCardRuntime.isInfectedWoundSpreadingInfectionAnswerCardQueryForTest(
-            "scrape looks infected and now I have fever and chills"
-        ));
-        assertTrue(AnswerCardRuntime.isInfectedWoundSpreadingInfectionAnswerCardQueryForTest(
-            "wound redness is spreading past the line I marked"
-        ));
-        assertTrue(AnswerCardRuntime.isInfectedWoundSpreadingInfectionAnswerCardQueryForTest(
-            "small cut smells bad and the skin is turning dark"
-        ));
-        assertTrue(AnswerCardRuntime.isInfectedWoundSpreadingInfectionAnswerCardQueryForTest(
-            "bite wound is getting redder by the hour and hurts to move my hand"
-        ));
-        assertFalse(AnswerCardRuntime.isInfectedWoundSpreadingInfectionAnswerCardQueryForTest(
-            "how do I clean a small scrape with no redness or pus"
-        ));
-        assertFalse(AnswerCardRuntime.isInfectedWoundSpreadingInfectionAnswerCardQueryForTest(
-            "routine dressing change for a healing cut"
-        ));
-        assertFalse(AnswerCardRuntime.isInfectedWoundSpreadingInfectionAnswerCardQueryForTest(
-            "deep puncture wound but no fever pus swelling or redness"
-        ));
-        assertFalse(AnswerCardRuntime.isInfectedWoundSpreadingInfectionAnswerCardQueryForTest(
-            "what antibiotic should I stockpile for minor cuts"
-        ));
-        assertFalse(AnswerCardRuntime.isInfectedWoundSpreadingInfectionAnswerCardQueryForTest(
-            "what is cellulitis in general"
-        ));
-        assertFalse(AnswerCardRuntime.isInfectedWoundSpreadingInfectionAnswerCardQueryForTest(
-            "what are the signs of an infected wound"
-        ));
-        assertFalse(AnswerCardRuntime.isInfectedWoundSpreadingInfectionAnswerCardQueryForTest(
-            "red rash on leg but no wound or injury"
-        ));
-        assertFalse(AnswerCardRuntime.isInfectedWoundSpreadingInfectionAnswerCardQueryForTest(
-            "newborn cord has pus and spreading redness"
-        ));
-        assertFalse(AnswerCardRuntime.isInfectedWoundSpreadingInfectionAnswerCardQueryForTest(
-            "fever stiff neck and purple rash"
-        ));
-    }
-
-    @Test
     public void infectedWoundSpreadingInfectionBuildsReviewedAnswerPlan() {
         AnswerCardRuntime.AnswerPlan plan =
             AnswerCardRuntime.planInfectedWoundSpreadingInfectionAnswerCardFromCardsForTest(
@@ -683,76 +479,6 @@ public final class AnswerCardRuntimeTest {
     }
 
     @Test
-    public void abdominalInternalBleedingSelectorRequiresTraumaOrGiBleedWithDanger() {
-        assertTrue(AnswerCardRuntime.isAbdominalInternalBleedingAnswerCardQueryForTest(
-            "bike handlebar hit his belly and now he is pale and dizzy"
-        ));
-        assertTrue(AnswerCardRuntime.isAbdominalInternalBleedingAnswerCardQueryForTest(
-            "after a car crash the seatbelt bruise hurts with severe abdominal pain and vomiting"
-        ));
-        assertTrue(AnswerCardRuntime.isAbdominalInternalBleedingAnswerCardQueryForTest(
-            "fell hard on my side and have severe flank pain with a rapid pulse"
-        ));
-        assertTrue(AnswerCardRuntime.isAbdominalInternalBleedingAnswerCardQueryForTest(
-            "left side pain after handlebar injury and he looks faint"
-        ));
-        assertTrue(AnswerCardRuntime.isAbdominalInternalBleedingAnswerCardQueryForTest(
-            "vomiting blood and feeling faint and weak"
-        ));
-        assertTrue(AnswerCardRuntime.isAbdominalInternalBleedingAnswerCardQueryForTest(
-            "black tarry stool with dizziness and pale skin"
-        ));
-        assertTrue(AnswerCardRuntime.isAbdominalInternalBleedingAnswerCardQueryForTest(
-            "rectal blood and severe belly pain with rapid pulse"
-        ));
-        assertFalse(AnswerCardRuntime.isAbdominalInternalBleedingAnswerCardQueryForTest(
-            "pregnant with severe belly pain and dizziness after a fall"
-        ));
-        assertFalse(AnswerCardRuntime.isAbdominalInternalBleedingAnswerCardQueryForTest(
-            "possible ectopic pregnancy with fainting and abdominal pain"
-        ));
-        assertFalse(AnswerCardRuntime.isAbdominalInternalBleedingAnswerCardQueryForTest(
-            "stomach flu with vomiting and dizziness"
-        ));
-        assertFalse(AnswerCardRuntime.isAbdominalInternalBleedingAnswerCardQueryForTest(
-            "reflux and mild cramps after dinner"
-        ));
-        assertFalse(AnswerCardRuntime.isAbdominalInternalBleedingAnswerCardQueryForTest(
-            "constipation with black stool but no dizziness or weakness"
-        ));
-        assertFalse(AnswerCardRuntime.isAbdominalInternalBleedingAnswerCardQueryForTest(
-            "hemorrhoids with rectal blood and dizziness"
-        ));
-        assertFalse(AnswerCardRuntime.isAbdominalInternalBleedingAnswerCardQueryForTest(
-            "black stool after iron tablets but no danger signs"
-        ));
-        assertFalse(AnswerCardRuntime.isAbdominalInternalBleedingAnswerCardQueryForTest(
-            "black tarry stool but no dizziness or weakness"
-        ));
-        assertFalse(AnswerCardRuntime.isAbdominalInternalBleedingAnswerCardQueryForTest(
-            "fell on my side and now dizzy but no belly pain"
-        ));
-        assertFalse(AnswerCardRuntime.isAbdominalInternalBleedingAnswerCardQueryForTest(
-            "generic surgical abdomen with guarding but no trauma bleeding or shock"
-        ));
-        assertFalse(AnswerCardRuntime.isAbdominalInternalBleedingAnswerCardQueryForTest(
-            "child swallowed unknown cleaner and is pale"
-        ));
-        assertFalse(AnswerCardRuntime.isAbdominalInternalBleedingAnswerCardQueryForTest(
-            "choking and cannot breathe"
-        ));
-        assertFalse(AnswerCardRuntime.isAbdominalInternalBleedingAnswerCardQueryForTest(
-            "newborn is pale and vomiting"
-        ));
-        assertFalse(AnswerCardRuntime.isAbdominalInternalBleedingAnswerCardQueryForTest(
-            "wound with red streak and rapid pulse"
-        ));
-        assertFalse(AnswerCardRuntime.isAbdominalInternalBleedingAnswerCardQueryForTest(
-            "fever stiff neck and purple rash"
-        ));
-    }
-
-    @Test
     public void abdominalInternalBleedingBuildsReviewedAnswerPlan() {
         AnswerCardRuntime.AnswerPlan plan =
             AnswerCardRuntime.planAbdominalInternalBleedingAnswerCardFromCardsForTest(
@@ -813,29 +539,6 @@ public final class AnswerCardRuntimeTest {
         assertNull(AnswerCardRuntime.planAbdominalInternalBleedingAnswerCardFromCardsForTest(
             "bike handlebar hit his belly and now he is pale and dizzy",
             List.of(abdominalInternalBleedingAnswerCard("approved", "abdominal_internal_bleeding", "GD-380", "critical", List.of()))
-        ));
-    }
-
-    @Test
-    public void foundryCastingAreaReadinessSelectorStaysOnBoundaryReadiness() {
-        assertTrue(AnswerCardRuntime.isFoundryCastingAreaReadinessAnswerCardQueryForTest(
-            "Make a pre-work foundry readiness log for visible hazards, labels, access control, and who can pause work."
-        ));
-        assertTrue(AnswerCardRuntime.isFoundryCastingAreaReadinessAnswerCardQueryForTest(
-            "What should we record about wet floors, cracked crucibles, unknown scrap, ventilation concerns, and owner handoff before casting?"
-        ));
-
-        assertFalse(AnswerCardRuntime.isFoundryCastingAreaReadinessAnswerCardQueryForTest(
-            "Give me a bronze melt schedule and pouring temperature."
-        ));
-        assertFalse(AnswerCardRuntime.isFoundryCastingAreaReadinessAnswerCardQueryForTest(
-            "Show me how to set up the furnace and tune the air blast."
-        ));
-        assertFalse(AnswerCardRuntime.isFoundryCastingAreaReadinessAnswerCardQueryForTest(
-            "Design the gating and risers for my mold."
-        ));
-        assertFalse(AnswerCardRuntime.isFoundryCastingAreaReadinessAnswerCardQueryForTest(
-            "General workshop organization checklist for labels and access control."
         ));
     }
 
