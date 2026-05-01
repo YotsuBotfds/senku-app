@@ -51,6 +51,10 @@ final class MainReviewDisplayPolicy {
         return tabletPreviewBody(result, productReviewMode);
     }
 
+    boolean searchRowVisualStateEnabled() {
+        return searchRowVisualStateEnabled(productReviewMode);
+    }
+
     static boolean shouldUseHomeCategoryFixtureCounts(
         boolean productReviewMode,
         boolean manualHomeShell,
@@ -124,6 +128,10 @@ final class MainReviewDisplayPolicy {
             "Tap a result to open the full guide."
         );
         return ReviewDemoPolicy.shapeTabletPreviewBody(productReviewMode, result, defaultBody);
+    }
+
+    static boolean searchRowVisualStateEnabled(boolean productReviewMode) {
+        return productReviewMode;
     }
 
     private static void addNonEmptyPart(List<String> parts, String value) {

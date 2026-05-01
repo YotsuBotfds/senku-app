@@ -114,6 +114,14 @@ public final class MainReviewDisplayPolicyTest {
     }
 
     @Test
+    public void searchRowVisualStateGateFollowsReviewMode() {
+        assertTrue(new MainReviewDisplayPolicy(true).searchRowVisualStateEnabled());
+        assertFalse(new MainReviewDisplayPolicy(false).searchRowVisualStateEnabled());
+        assertTrue(MainReviewDisplayPolicy.searchRowVisualStateEnabled(true));
+        assertFalse(MainReviewDisplayPolicy.searchRowVisualStateEnabled(false));
+    }
+
+    @Test
     public void categoryFixtureGateKeepsModeShellAndGuideChecksTogether() {
         assertTrue(MainReviewDisplayPolicy.shouldUseHomeCategoryFixtureCounts(
             true,

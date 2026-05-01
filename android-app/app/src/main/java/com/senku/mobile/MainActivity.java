@@ -1370,7 +1370,7 @@ public final class MainActivity extends AppCompatActivity {
 
     private void updateAdapterReviewDemoSearchRowState() {
         if (adapter != null) {
-            adapter.setReviewDemoSearchRowVisualStateEnabled(productReviewMode);
+            adapter.setReviewDemoSearchRowVisualStateEnabled(reviewDisplayPolicy().searchRowVisualStateEnabled());
         }
     }
 
