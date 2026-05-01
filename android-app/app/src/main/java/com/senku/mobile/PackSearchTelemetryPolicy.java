@@ -34,6 +34,45 @@ final class PackSearchTelemetryPolicy {
         );
     }
 
+    static OutcomeTelemetry buildOutcomeTelemetry(
+        String query,
+        boolean routeFocused,
+        int routeSpecCount,
+        int lexicalHits,
+        int vectorHits,
+        int routeResults,
+        long routeMs,
+        long ftsMs,
+        long keywordMs,
+        long vectorMs,
+        long rerankMs,
+        long totalMs,
+        String outcome
+    ) {
+        SearchLatencyBreakdown breakdown = buildBreakdown(
+            routeMs,
+            ftsMs,
+            keywordMs,
+            vectorMs,
+            rerankMs,
+            totalMs,
+            outcome
+        );
+        String summaryLine = PackQueryPipelineHelper.buildSearchSummaryLine(
+            query,
+            routeFocused,
+            routeSpecCount,
+            lexicalHits,
+            vectorHits,
+            routeResults,
+            breakdown
+        );
+        String slowTripwireLine = breakdown.hasSlowStage()
+            ? PackQueryPipelineHelper.buildSlowQueryTripwireDebugLine(query, breakdown)
+            : "";
+        return new OutcomeTelemetry(breakdown, summaryLine, slowTripwireLine);
+    }
+
     static String buildLexicalCandidateTelemetryLine(String query, List<PackRepository.RankedChunk> hits) {
         ArrayList<String> rows = new ArrayList<>();
         if (hits != null) {
@@ -76,5 +115,17 @@ final class PackSearchTelemetryPolicy {
             }
         }
         return CandidateTelemetryFormatter.buildLine("vector", query, rows);
+    }
+
+    static final class OutcomeTelemetry {
+        final SearchLatencyBreakdown breakdown;
+        final String summaryLine;
+        final String slowTripwireLine;
+
+        OutcomeTelemetry(SearchLatencyBreakdown breakdown, String summaryLine, String slowTripwireLine) {
+            this.breakdown = breakdown;
+            this.summaryLine = summaryLine == null ? "" : summaryLine;
+            this.slowTripwireLine = slowTripwireLine == null ? "" : slowTripwireLine;
+        }
     }
 }

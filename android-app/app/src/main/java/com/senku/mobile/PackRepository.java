@@ -275,7 +275,13 @@ public final class PackRepository implements AutoCloseable {
         QueryTerms queryTerms = QueryTerms.fromQuery(query);
         if (queryTerms.isEmpty()) {
             List<SearchResult> fallbackResults = searchPlainLikeResults(query, limit);
-            SearchLatencyBreakdown breakdown = PackSearchTelemetryPolicy.buildBreakdown(
+            PackSearchTelemetryPolicy.OutcomeTelemetry telemetry = PackSearchTelemetryPolicy.buildOutcomeTelemetry(
+                query,
+                false,
+                0,
+                0,
+                0,
+                0,
                 0L,
                 0L,
                 0L,
@@ -284,14 +290,15 @@ public final class PackRepository implements AutoCloseable {
                 Math.max(0L, System.currentTimeMillis() - startedAt),
                 PackSearchTelemetryPolicy.OUTCOME_PLAIN_LIKE_NO_TERMS
             );
-            Log.d(TAG, buildSearchSummaryLine(query, false, 0, 0, 0, 0, breakdown));
-            logSearchTripwireIfNeeded(query, breakdown);
+            logSearchOutcomeTelemetry(telemetry);
             return fallbackResults;
         }
+        boolean routeFocused = queryTerms.routeProfile.isRouteFocused();
+        int routeSpecCount = queryTerms.routeProfile.routeSearchSpecs(queryTerms.queryLower).size();
         Log.d(
             TAG,
-            "search.start query=\"" + query + "\" routeFocused=" + queryTerms.routeProfile.isRouteFocused() +
-                " routeSpecs=" + queryTerms.routeProfile.routeSearchSpecs(queryTerms.queryLower).size() +
+            "search.start query=\"" + query + "\" routeFocused=" + routeFocused +
+                " routeSpecs=" + routeSpecCount +
                 " structure=" + emptySafe(queryTerms.metadataProfile.preferredStructureType()) +
                 " explicitTopics=" + queryTerms.metadataProfile.preferredTopicTags() +
                 " limit=" + limit
@@ -299,7 +306,7 @@ public final class PackRepository implements AutoCloseable {
 
         int routeResultLimit = PackRetrievalOrchestrationPolicy.routeResultLimit(queryTerms.routeProfile, limit);
         long routeStartedAt = System.currentTimeMillis();
-        List<SearchResult> routeResults = queryTerms.routeProfile.isRouteFocused()
+        List<SearchResult> routeResults = routeFocused
             ? searchRouteFocusedResults(queryTerms, routeResultLimit)
             : Collections.emptyList();
         long routeElapsedMs = System.currentTimeMillis() - routeStartedAt;
@@ -329,7 +336,13 @@ public final class PackRepository implements AutoCloseable {
 
         if (lexicalHits.isEmpty()) {
             if (!routeResults.isEmpty()) {
-                SearchLatencyBreakdown breakdown = PackSearchTelemetryPolicy.buildBreakdown(
+                PackSearchTelemetryPolicy.OutcomeTelemetry telemetry = PackSearchTelemetryPolicy.buildOutcomeTelemetry(
+                    query,
+                    routeFocused,
+                    routeSpecCount,
+                    0,
+                    0,
+                    routeResults.size(),
                     routeElapsedMs,
                     ftsElapsedMs,
                     keywordElapsedMs,
@@ -338,22 +351,16 @@ public final class PackRepository implements AutoCloseable {
                     Math.max(0L, System.currentTimeMillis() - startedAt),
                     PackSearchTelemetryPolicy.OUTCOME_ROUTE_ONLY
                 );
-                Log.d(
-                    TAG,
-                    buildSearchSummaryLine(
-                        query,
-                        queryTerms.routeProfile.isRouteFocused(),
-                        queryTerms.routeProfile.routeSearchSpecs(queryTerms.queryLower).size(),
-                        0,
-                        0,
-                        routeResults.size(),
-                        breakdown
-                    )
-                );
-                logSearchTripwireIfNeeded(query, breakdown);
+                logSearchOutcomeTelemetry(telemetry);
                 return new ArrayList<>(routeResults.subList(0, Math.min(limit, routeResults.size())));
             }
-            SearchLatencyBreakdown breakdown = PackSearchTelemetryPolicy.buildBreakdown(
+            PackSearchTelemetryPolicy.OutcomeTelemetry telemetry = PackSearchTelemetryPolicy.buildOutcomeTelemetry(
+                query,
+                routeFocused,
+                routeSpecCount,
+                0,
+                0,
+                0,
                 routeElapsedMs,
                 ftsElapsedMs,
                 keywordElapsedMs,
@@ -362,19 +369,7 @@ public final class PackRepository implements AutoCloseable {
                 Math.max(0L, System.currentTimeMillis() - startedAt),
                 PackSearchTelemetryPolicy.OUTCOME_PLAIN_LIKE_EMPTY_LEXICAL
             );
-            Log.d(
-                TAG,
-                buildSearchSummaryLine(
-                    query,
-                    queryTerms.routeProfile.isRouteFocused(),
-                    queryTerms.routeProfile.routeSearchSpecs(queryTerms.queryLower).size(),
-                    0,
-                    0,
-                    0,
-                    breakdown
-                )
-            );
-            logSearchTripwireIfNeeded(query, breakdown);
+            logSearchOutcomeTelemetry(telemetry);
             return searchPlainLikeResults(query, limit);
         }
 
@@ -388,7 +383,13 @@ public final class PackRepository implements AutoCloseable {
                 limit
             );
             rerankElapsedMs = lexicalFinalization.rerankElapsedMs;
-            SearchLatencyBreakdown breakdown = PackSearchTelemetryPolicy.buildBreakdown(
+            PackSearchTelemetryPolicy.OutcomeTelemetry telemetry = PackSearchTelemetryPolicy.buildOutcomeTelemetry(
+                query,
+                routeFocused,
+                routeSpecCount,
+                lexicalHits.size(),
+                0,
+                routeResults.size(),
                 routeElapsedMs,
                 ftsElapsedMs,
                 keywordElapsedMs,
@@ -397,19 +398,7 @@ public final class PackRepository implements AutoCloseable {
                 Math.max(0L, System.currentTimeMillis() - startedAt),
                 PackSearchTelemetryPolicy.OUTCOME_VECTOR_DISABLED
             );
-            Log.d(
-                TAG,
-                buildSearchSummaryLine(
-                    query,
-                    queryTerms.routeProfile.isRouteFocused(),
-                    queryTerms.routeProfile.routeSearchSpecs(queryTerms.queryLower).size(),
-                    lexicalHits.size(),
-                    0,
-                    routeResults.size(),
-                    breakdown
-                )
-            );
-            logSearchTripwireIfNeeded(query, breakdown);
+            logSearchOutcomeTelemetry(telemetry);
             return mergePreferredResults(routeResults, lexicalFinalization.rerankedResults, limit);
         }
 
@@ -434,7 +423,13 @@ public final class PackRepository implements AutoCloseable {
                 limit
             );
             rerankElapsedMs = lexicalFinalization.rerankElapsedMs;
-            SearchLatencyBreakdown breakdown = PackSearchTelemetryPolicy.buildBreakdown(
+            PackSearchTelemetryPolicy.OutcomeTelemetry telemetry = PackSearchTelemetryPolicy.buildOutcomeTelemetry(
+                query,
+                routeFocused,
+                routeSpecCount,
+                lexicalHits.size(),
+                0,
+                routeResults.size(),
                 routeElapsedMs,
                 ftsElapsedMs,
                 keywordElapsedMs,
@@ -443,19 +438,7 @@ public final class PackRepository implements AutoCloseable {
                 Math.max(0L, System.currentTimeMillis() - startedAt),
                 PackSearchTelemetryPolicy.OUTCOME_CENTROID_MISSING
             );
-            Log.d(
-                TAG,
-                buildSearchSummaryLine(
-                    query,
-                    queryTerms.routeProfile.isRouteFocused(),
-                    queryTerms.routeProfile.routeSearchSpecs(queryTerms.queryLower).size(),
-                    lexicalHits.size(),
-                    0,
-                    routeResults.size(),
-                    breakdown
-                )
-            );
-            logSearchTripwireIfNeeded(query, breakdown);
+            logSearchOutcomeTelemetry(telemetry);
             return mergeResultsWhenCentroidMissing(
                 routeResults,
                 lexicalFinalization.rerankedResults,
@@ -476,7 +459,13 @@ public final class PackRepository implements AutoCloseable {
         List<SearchResult> reranked = hybridFinalization.rerankedResults;
         rerankElapsedMs = hybridFinalization.rerankElapsedMs;
         long vectorElapsedMs = System.currentTimeMillis() - vectorStartedAt;
-        SearchLatencyBreakdown breakdown = PackSearchTelemetryPolicy.buildBreakdown(
+        PackSearchTelemetryPolicy.OutcomeTelemetry telemetry = PackSearchTelemetryPolicy.buildOutcomeTelemetry(
+            query,
+            routeFocused,
+            routeSpecCount,
+            lexicalHits.size(),
+            vectorHits.size(),
+            routeResults.size(),
             routeElapsedMs,
             ftsElapsedMs,
             keywordElapsedMs,
@@ -485,19 +474,7 @@ public final class PackRepository implements AutoCloseable {
             Math.max(0L, System.currentTimeMillis() - startedAt),
             PackSearchTelemetryPolicy.OUTCOME_HYBRID
         );
-        Log.d(
-            TAG,
-            buildSearchSummaryLine(
-                query,
-                queryTerms.routeProfile.isRouteFocused(),
-                queryTerms.routeProfile.routeSearchSpecs(queryTerms.queryLower).size(),
-                lexicalHits.size(),
-                vectorHits.size(),
-                routeResults.size(),
-                breakdown
-            )
-        );
-        logSearchTripwireIfNeeded(query, breakdown);
+        logSearchOutcomeTelemetry(telemetry);
         List<SearchResult> merged = mergePreferredResults(routeResults, reranked, limit);
         if (!merged.isEmpty()) {
             StringBuilder debug = new StringBuilder();
@@ -856,23 +833,21 @@ public final class PackRepository implements AutoCloseable {
         long totalMs,
         String fallbackMode
     ) {
-        return buildSearchSummaryLine(
+        return PackSearchTelemetryPolicy.buildOutcomeTelemetry(
             query,
             routeFocused,
             routeSpecCount,
             lexicalHits,
             vectorHits,
             routeResults,
-            PackSearchTelemetryPolicy.buildBreakdown(
-                routeMs,
-                ftsMs,
-                keywordMs,
-                vectorMs,
-                rerankMs,
-                totalMs,
-                fallbackMode
-            )
-        );
+            routeMs,
+            ftsMs,
+            keywordMs,
+            vectorMs,
+            rerankMs,
+            totalMs,
+            fallbackMode
+        ).summaryLine;
     }
 
     static String buildSlowQueryTripwireDebugLineForTest(
@@ -885,18 +860,21 @@ public final class PackRepository implements AutoCloseable {
         long totalMs,
         String fallbackMode
     ) {
-        return buildSlowQueryTripwireDebugLine(
+        return PackSearchTelemetryPolicy.buildOutcomeTelemetry(
             query,
-            PackSearchTelemetryPolicy.buildBreakdown(
-                routeMs,
-                ftsMs,
-                keywordMs,
-                vectorMs,
-                rerankMs,
-                totalMs,
-                fallbackMode
-            )
-        );
+            false,
+            0,
+            0,
+            0,
+            0,
+            routeMs,
+            ftsMs,
+            keywordMs,
+            vectorMs,
+            rerankMs,
+            totalMs,
+            fallbackMode
+        ).slowTripwireLine;
     }
 
     private List<SearchResult> searchRouteFocusedResults(QueryTerms queryTerms, int limit) {
@@ -2022,6 +2000,16 @@ public final class PackRepository implements AutoCloseable {
         return PackSearchTelemetryPolicy.buildVectorCandidateTelemetryLine(query, hits);
     }
 
+    private static void logSearchOutcomeTelemetry(PackSearchTelemetryPolicy.OutcomeTelemetry telemetry) {
+        if (telemetry == null) {
+            return;
+        }
+        Log.d(TAG, telemetry.summaryLine);
+        if (!emptySafe(telemetry.slowTripwireLine).isEmpty()) {
+            Log.w(TAG, telemetry.slowTripwireLine);
+        }
+    }
+
     private static void safeLogDebug(String message) {
         try {
             Log.d(TAG, emptySafe(message));
@@ -2044,37 +2032,6 @@ public final class PackRepository implements AutoCloseable {
 
     private static boolean hasWaterDistributionDetailSignal(SearchResult result) {
         return PackRouteSignalPolicy.hasWaterDistributionDetailSignal(result);
-    }
-
-    private static String buildSearchSummaryLine(
-        String query,
-        boolean routeFocused,
-        int routeSpecCount,
-        int lexicalHits,
-        int vectorHits,
-        int routeResults,
-        SearchLatencyBreakdown breakdown
-    ) {
-        return PackQueryPipelineHelper.buildSearchSummaryLine(
-            query,
-            routeFocused,
-            routeSpecCount,
-            lexicalHits,
-            vectorHits,
-            routeResults,
-            breakdown
-        );
-    }
-
-    private static String buildSlowQueryTripwireDebugLine(String query, SearchLatencyBreakdown breakdown) {
-        return PackQueryPipelineHelper.buildSlowQueryTripwireDebugLine(query, breakdown);
-    }
-
-    private static void logSearchTripwireIfNeeded(String query, SearchLatencyBreakdown breakdown) {
-        if (breakdown == null || !breakdown.hasSlowStage()) {
-            return;
-        }
-        Log.w(TAG, buildSlowQueryTripwireDebugLine(query, breakdown));
     }
 
     private void appendRelatedGuides(
