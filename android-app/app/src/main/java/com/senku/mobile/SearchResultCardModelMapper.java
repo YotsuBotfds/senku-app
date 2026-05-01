@@ -509,7 +509,7 @@ final class SearchResultCardModelMapper {
         if (cleaned.isEmpty()) {
             return "";
         }
-        cleaned = DetailActivity.sanitizeWarningResidualCopy(cleaned);
+        cleaned = DetailWarningCopySanitizer.sanitizeWarningResidualCopy(cleaned);
         cleaned = cleaned.replaceAll("\\s+", " ").trim();
         if (maxLen > 0 && cleaned.length() > maxLen) {
             return cleaned.substring(0, Math.max(0, maxLen - 1)).trim() + "\u2026";

@@ -177,6 +177,21 @@ public final class SearchResultCardModelMapperTest {
     }
 
     @Test
+    public void cleanDisplayTextRemovesWarningProofResidueFromSearchCards() {
+        String cleaned = SearchResultCardModelMapper.cleanDisplayTextForTest(
+            "Use boiled water only [Safety Warning Implied by High Heat Processes] [GD-123]. "
+                + "Keep the action visible [Backend Route reviewed_card_runtime]. "
+                + "Use reviewed card evidence [Proof Metadata].",
+            0
+        );
+
+        assertEquals(
+            "Use boiled water only [GD-123]. Keep the action visible. Use reviewed card evidence.",
+            cleaned
+        );
+    }
+
+    @Test
     public void linkedGuidePreviewLinePolicyKeepsSearchRowsCompact() {
         assertFalse(SearchResultCardModelMapper.shouldShowLinkedGuidePreviewLineForTest());
     }
