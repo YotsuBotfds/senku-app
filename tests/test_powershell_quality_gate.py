@@ -328,10 +328,18 @@ class PowerShellQualityGateTests(unittest.TestCase):
 
         self.assertIn("[string]$ProgressLabel = \"\"", common)
         self.assertIn("[int]$ProgressIntervalSeconds = 15", common)
+        self.assertIn("function New-AndroidHarnessLockMetadata", common)
+        self.assertIn("function Get-AndroidHarnessLockDiagnosticText", common)
+        self.assertIn("[System.IO.FileShare]::Read", common)
+        self.assertIn("owner_pid = [int]$PID", common)
+        self.assertIn("owner_process_name", common)
+        self.assertIn("lock_age_seconds={0}", common)
+        self.assertIn("owner_metadata=unreadable", common)
         self.assertIn("waiting for device lock on {1}", common)
         self.assertIn("remaining_seconds={3}", common)
         self.assertIn("lock_path={4}", common)
-        self.assertIn("Timed out waiting for device lock on $DeviceName after ${elapsedSeconds}s at $lockPath", common)
+        self.assertIn("Get-AndroidHarnessLockDiagnosticText -LockPath $lockPath", common)
+        self.assertIn("Timed out waiting for device lock on $DeviceName after ${elapsedSeconds}s at $lockPath; $lockDiagnostics", common)
 
     def test_android_ui_validation_uses_shared_posture_helpers(self):
         validation = (REPO_ROOT / "scripts" / "run_android_ui_validation_pack.ps1").read_text(encoding="utf-8")

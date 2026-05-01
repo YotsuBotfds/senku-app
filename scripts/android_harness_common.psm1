@@ -62,6 +62,109 @@ function New-AndroidHarnessDeviceLockHandle {
     return $handle
 }
 
+function New-AndroidHarnessLockMetadata {
+    param(
+        [string]$DeviceName,
+        [string]$LockPath
+    )
+
+    $processName = $null
+    try {
+        $currentProcess = Get-Process -Id $PID -ErrorAction Stop
+        $processName = $currentProcess.ProcessName
+    } catch {
+    }
+
+    return [ordered]@{
+        device = $DeviceName
+        owner_pid = [int]$PID
+        owner_process_name = $processName
+        acquired_utc = (Get-Date).ToUniversalTime().ToString("o")
+        lock_path = $LockPath
+    }
+}
+
+function Set-AndroidHarnessLockMetadata {
+    param(
+        [System.IO.FileStream]$Stream,
+        [object]$Metadata
+    )
+
+    try {
+        $json = ($Metadata | ConvertTo-Json -Depth 4 -Compress)
+        $bytes = [System.Text.UTF8Encoding]::new($false).GetBytes($json + [Environment]::NewLine)
+        $Stream.SetLength(0)
+        $Stream.Position = 0
+        $Stream.Write($bytes, 0, $bytes.Length)
+        $Stream.Flush($true)
+    } catch {
+    }
+}
+
+function Get-AndroidHarnessLockDiagnosticText {
+    param([string]$LockPath)
+
+    if ([string]::IsNullOrWhiteSpace($LockPath) -or -not (Test-Path -LiteralPath $LockPath)) {
+        return "lock_exists=false"
+    }
+
+    $lastWriteUtc = $null
+    $ageSeconds = $null
+    $length = $null
+    try {
+        $item = Get-Item -LiteralPath $LockPath -ErrorAction Stop
+        $lastWriteUtc = $item.LastWriteTimeUtc.ToString("o")
+        $ageSeconds = [Math]::Round(((Get-Date).ToUniversalTime() - $item.LastWriteTimeUtc).TotalSeconds, 1)
+        $length = [int64]$item.Length
+    } catch {
+    }
+
+    $details = New-Object System.Collections.Generic.List[string]
+    $details.Add("lock_exists=true")
+    if ($null -ne $ageSeconds) {
+        $details.Add(("lock_age_seconds={0}" -f $ageSeconds))
+    }
+    if (-not [string]::IsNullOrWhiteSpace($lastWriteUtc)) {
+        $details.Add(("lock_last_write_utc={0}" -f $lastWriteUtc))
+    }
+    if ($null -ne $length) {
+        $details.Add(("lock_bytes={0}" -f $length))
+    }
+
+    try {
+        $stream = [System.IO.File]::Open($LockPath, [System.IO.FileMode]::Open, [System.IO.FileAccess]::Read, [System.IO.FileShare]::ReadWrite)
+        try {
+            $reader = [System.IO.StreamReader]::new($stream, [System.Text.Encoding]::UTF8, $true)
+            try {
+                $text = $reader.ReadToEnd()
+            } finally {
+                $reader.Dispose()
+            }
+        } finally {
+            if ($stream) {
+                $stream.Dispose()
+            }
+        }
+
+        if (-not [string]::IsNullOrWhiteSpace($text)) {
+            $metadata = $text | ConvertFrom-Json -ErrorAction Stop
+            if ($metadata.PSObject.Properties.Name -contains "owner_pid") {
+                $details.Add(("owner_pid={0}" -f $metadata.owner_pid))
+            }
+            if ($metadata.PSObject.Properties.Name -contains "owner_process_name" -and -not [string]::IsNullOrWhiteSpace([string]$metadata.owner_process_name)) {
+                $details.Add(("owner_process_name={0}" -f $metadata.owner_process_name))
+            }
+            if ($metadata.PSObject.Properties.Name -contains "acquired_utc" -and -not [string]::IsNullOrWhiteSpace([string]$metadata.acquired_utc)) {
+                $details.Add(("owner_acquired_utc={0}" -f $metadata.acquired_utc))
+            }
+        }
+    } catch {
+        $details.Add("owner_metadata=unreadable")
+    }
+
+    return ($details -join "; ")
+}
+
 function Remove-StaleAndroidHarnessLocks {
     param([string]$LockRoot)
 
@@ -102,7 +205,8 @@ function Acquire-AndroidHarnessDeviceLock {
     $nextProgressAt = $startedAt
     while ((Get-Date) -lt $deadline) {
         try {
-            $stream = [System.IO.File]::Open($lockPath, [System.IO.FileMode]::OpenOrCreate, [System.IO.FileAccess]::ReadWrite, [System.IO.FileShare]::None)
+            $stream = [System.IO.File]::Open($lockPath, [System.IO.FileMode]::OpenOrCreate, [System.IO.FileAccess]::ReadWrite, [System.IO.FileShare]::Read)
+            Set-AndroidHarnessLockMetadata -Stream $stream -Metadata (New-AndroidHarnessLockMetadata -DeviceName $DeviceName -LockPath $lockPath)
             $elapsedSeconds = [Math]::Round(((Get-Date) - $startedAt).TotalSeconds, 1)
             if ($elapsedSeconds -ge 1 -and -not [string]::IsNullOrWhiteSpace($ProgressLabel)) {
                 Write-Host ("{0} device lock acquired for {1} after {2}s" -f $ProgressLabel, $DeviceName, $elapsedSeconds)
@@ -113,14 +217,16 @@ function Acquire-AndroidHarnessDeviceLock {
             if (-not [string]::IsNullOrWhiteSpace($ProgressLabel) -and $now -ge $nextProgressAt) {
                 $elapsedSeconds = [Math]::Round(($now - $startedAt).TotalSeconds, 1)
                 $remainingSeconds = [Math]::Max(0, [Math]::Round(($deadline - $now).TotalSeconds, 1))
-                Write-Host ("{0} waiting for device lock on {1}; elapsed_seconds={2}; remaining_seconds={3}; lock_path={4}" -f $ProgressLabel, $DeviceName, $elapsedSeconds, $remainingSeconds, $lockPath)
+                $lockDiagnostics = Get-AndroidHarnessLockDiagnosticText -LockPath $lockPath
+                Write-Host ("{0} waiting for device lock on {1}; elapsed_seconds={2}; remaining_seconds={3}; lock_path={4}; {5}" -f $ProgressLabel, $DeviceName, $elapsedSeconds, $remainingSeconds, $lockPath, $lockDiagnostics)
                 $nextProgressAt = $now.AddSeconds([Math]::Max(1, $ProgressIntervalSeconds))
             }
             Start-Sleep -Milliseconds 500
         }
     }
     $elapsedSeconds = [Math]::Round(((Get-Date) - $startedAt).TotalSeconds, 1)
-    throw "Timed out waiting for device lock on $DeviceName after ${elapsedSeconds}s at $lockPath"
+    $lockDiagnostics = Get-AndroidHarnessLockDiagnosticText -LockPath $lockPath
+    throw "Timed out waiting for device lock on $DeviceName after ${elapsedSeconds}s at $lockPath; $lockDiagnostics"
 }
 
 function Invoke-AndroidAdbCommandCapture {
