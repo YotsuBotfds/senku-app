@@ -4531,8 +4531,10 @@ public final class MainActivity extends AppCompatActivity {
     }
 
     private void handleHomeChromeBack() {
-        MainRouteDecisionHelper.Transition transition = MainRouteDecisionHelper.homeChromeBack(currentMainRouteState());
-        applyMainRouteBackTransition(transition);
+        MainRouteEffectController.applyHomeChromeBackTransition(
+            currentMainRouteState(),
+            mainRouteBackEffects()
+        );
     }
 
     private void updateHomeChromeBackAvailability(boolean available) {

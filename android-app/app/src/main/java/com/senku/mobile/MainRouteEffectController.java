@@ -56,6 +56,18 @@ final class MainRouteEffectController {
         return applyBackTransition(transition, effects);
     }
 
+    static boolean applyHomeChromeBackTransition(
+        MainRouteDecisionHelper.RouteState currentRouteState,
+        BackEffects effects
+    ) {
+        if (effects == null) {
+            return false;
+        }
+        MainRouteDecisionHelper.Transition transition =
+            MainRouteDecisionHelper.homeChromeBack(currentRouteState);
+        return applyBackTransition(transition, effects);
+    }
+
     static boolean applyBackTransition(
         MainRouteDecisionHelper.Transition transition,
         BackEffects effects

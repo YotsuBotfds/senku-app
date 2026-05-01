@@ -215,6 +215,46 @@ public final class MainRouteEffectControllerTest {
     }
 
     @Test
+    public void homeChromeBackDelegatesResultSurfacesToBrowseReturn() {
+        RecordingBackEffects effects = new RecordingBackEffects(false, BottomTabDestination.ASK);
+        effects.previousPhoneTab = BottomTabDestination.PINS;
+
+        assertTrue(MainRouteEffectController.applyHomeChromeBackTransition(
+            new MainRouteDecisionHelper.RouteState(
+                MainRouteDecisionHelper.Surface.ASK_RESULTS,
+                BottomTabDestination.ASK,
+                true
+            ),
+            effects
+        ));
+
+        assertEquals(
+            Arrays.asList(
+                "applyRouteState:BROWSE:HOME:false",
+                "returnToBrowse"
+            ),
+            effects.calls
+        );
+    }
+
+    @Test
+    public void homeChromeBackIgnoresBrowseSurfaces() {
+        RecordingBackEffects effects = new RecordingBackEffects(true, BottomTabDestination.PINS);
+        effects.previousPhoneTab = BottomTabDestination.ASK;
+
+        assertFalse(MainRouteEffectController.applyHomeChromeBackTransition(
+            new MainRouteDecisionHelper.RouteState(
+                MainRouteDecisionHelper.Surface.SAVED_GUIDES,
+                BottomTabDestination.PINS,
+                false
+            ),
+            effects
+        ));
+
+        assertTrue(effects.calls.isEmpty());
+    }
+
+    @Test
     public void backTransitionReturnToBrowseAppliesRouteBeforeBrowseLoad() {
         MainRouteDecisionHelper.Transition transition =
             new MainRouteDecisionHelper.Transition(
