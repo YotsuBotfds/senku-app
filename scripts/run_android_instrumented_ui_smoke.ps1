@@ -1219,6 +1219,7 @@ function Resolve-InstrumentationMethodNames {
         "functional" {
             return @(
                 "homeAndAskImeSubmitRouteToSearchResultsAndAnswerDetail",
+                "searchButtonFromAskLaneUsesAskSubmitOwnership",
                 "savedNavigationBackReturnsManualHomeDestination",
                 "answerModeProvenanceOpenBackReturnsAnswerContext"
             )

@@ -93,6 +93,7 @@ class RunAndroidInstrumentedUiSmokeSummaryContractTests(unittest.TestCase):
         self.assertIn('"functional-saved" { return 300000 }', self.script)
         self.assertIn('"functional-back-provenance" { return 300000 }', self.script)
         self.assertIn('"homeAndAskImeSubmitRouteToSearchResultsAndAnswerDetail"', self.script)
+        self.assertIn('"searchButtonFromAskLaneUsesAskSubmitOwnership"', self.script)
         self.assertIn('"savedNavigationBackReturnsManualHomeDestination"', self.script)
         self.assertIn('"answerModeProvenanceOpenBackReturnsAnswerContext"', self.script)
         self.assertIn('${BaseClass}#$methodName', self.script)
