@@ -355,6 +355,38 @@ public final class SearchResultCardModelMapper {
         return cleanedGuideId;
     }
 
+    static String buildCompactLinkedGuideCueLabelForTest(
+        String displayLabel,
+        String guideId,
+        String title,
+        boolean compactLinkedCue
+    ) {
+        return buildCompactLinkedGuideCueLabel(displayLabel, guideId, title, compactLinkedCue);
+    }
+
+    static String buildCompactLinkedGuideCueLabel(
+        String displayLabel,
+        String guideId,
+        String title,
+        boolean compactLinkedCue
+    ) {
+        String cleanedGuideId = safe(guideId).trim();
+        if (!cleanedGuideId.isEmpty()) {
+            if (compactLinkedCue) {
+                return "Guide connection";
+            }
+            return cleanDisplayText(
+                "Linked guide " + cleanedGuideId,
+                20
+            );
+        }
+        String label = buildLinkedGuidePreviewLabel(displayLabel, guideId, title);
+        if (!label.isEmpty()) {
+            return "Guide connection";
+        }
+        return "Guide connection";
+    }
+
     static String buildLinkedGuideAvailableDescriptionForTest(String actionLabel) {
         return buildLinkedGuideAvailableDescription(actionLabel);
     }

@@ -354,6 +354,18 @@ public final class SearchResultAdapterTest {
     }
 
     @Test
+    public void linkedGuideCompactCueLabelUsesMapperOwnedDisplayFallbacks() {
+        assertEquals(
+            SearchResultCardModelMapper.buildCompactLinkedGuideCueLabelForTest("", " GD-214 ", "Water Storage", false),
+            SearchResultAdapter.buildCompactLinkedGuideCueLabelForTest("", " GD-214 ", "Water Storage", false)
+        );
+        assertEquals(
+            SearchResultCardModelMapper.buildCompactLinkedGuideCueLabelForTest("Stored water", "GD-214", "", true),
+            SearchResultAdapter.buildCompactLinkedGuideCueLabelForTest("Stored water", "GD-214", "", true)
+        );
+    }
+
+    @Test
     public void linkedGuidePreviewLineKeepsRowsCompact() {
         assertEquals(
             SearchResultCardModelMapper.buildLinkedGuidePreviewLineLabelForTest(),

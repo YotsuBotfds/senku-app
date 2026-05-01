@@ -854,23 +854,14 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
 
     private String buildCompactLinkedGuideCueLabel(LinkedGuidePreview preview, boolean compactLinkedCue) {
         if (preview == null) {
-            return "Guide connection";
+            return SearchResultCardModelMapper.buildCompactLinkedGuideCueLabel(null, null, null, compactLinkedCue);
         }
-        String guideId = safe(preview.guideId).trim();
-        if (!guideId.isEmpty()) {
-            if (compactLinkedCue) {
-                return "Guide connection";
-            }
-            return cleanDisplayText(
-                "Linked guide " + guideId,
-                20
-            );
-        }
-        String label = buildLinkedGuidePreviewLabel(preview);
-        if (!label.isEmpty()) {
-            return "Guide connection";
-        }
-        return "Guide connection";
+        return SearchResultCardModelMapper.buildCompactLinkedGuideCueLabel(
+            preview.displayLabel,
+            preview.guideId,
+            preview.title,
+            compactLinkedCue
+        );
     }
 
     private String buildLinkedGuideAvailableDescription(String actionLabel) {
@@ -1065,6 +1056,20 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
 
     static String buildLinkedGuidePreviewLabelForTest(String displayLabel, String guideId, String title) {
         return SearchResultCardModelMapper.buildLinkedGuidePreviewLabelForTest(displayLabel, guideId, title);
+    }
+
+    static String buildCompactLinkedGuideCueLabelForTest(
+        String displayLabel,
+        String guideId,
+        String title,
+        boolean compactLinkedCue
+    ) {
+        return SearchResultCardModelMapper.buildCompactLinkedGuideCueLabelForTest(
+            displayLabel,
+            guideId,
+            title,
+            compactLinkedCue
+        );
     }
 
     private static String buildLinkedGuideChipLabel() {

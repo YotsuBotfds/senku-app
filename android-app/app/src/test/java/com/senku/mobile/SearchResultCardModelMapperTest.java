@@ -197,6 +197,50 @@ public final class SearchResultCardModelMapperTest {
     }
 
     @Test
+    public void compactLinkedGuideCueLabelPreservesAdapterDisplayContract() {
+        assertEquals(
+            "Guide connection",
+            SearchResultCardModelMapper.buildCompactLinkedGuideCueLabelForTest(
+                "Stored water",
+                "GD-214",
+                "Water Storage",
+                true
+            )
+        );
+        assertEquals(
+            "Linked guide GD-214",
+            SearchResultCardModelMapper.buildCompactLinkedGuideCueLabelForTest(
+                "",
+                " GD-214 ",
+                "Water Storage",
+                false
+            )
+        );
+        assertEquals(
+            "Linked guide GD-214\u2026",
+            SearchResultCardModelMapper.buildCompactLinkedGuideCueLabelForTest(
+                "",
+                "GD-214-LONG-SECTION",
+                "",
+                false
+            )
+        );
+        assertEquals(
+            "Guide connection",
+            SearchResultCardModelMapper.buildCompactLinkedGuideCueLabelForTest(
+                "Stored water",
+                "",
+                "Water Storage",
+                false
+            )
+        );
+        assertEquals(
+            "Guide connection",
+            SearchResultCardModelMapper.buildCompactLinkedGuideCueLabelForTest(null, null, null, false)
+        );
+    }
+
+    @Test
     public void linkedGuideHandoffDescriptionsUseConnectionLanguage() {
         assertEquals(
             "Guide connection available: GD-214 - Water Storage",
