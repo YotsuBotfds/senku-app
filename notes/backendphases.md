@@ -1,6 +1,6 @@
 # Backend Cleanup Phase Tracker
 
-Last updated after cleanup through `c6157657` on 2026-05-01.
+Last updated after cleanup through `6a269f63` on 2026-05-01.
 
 Purpose: prevent future agents from rerunning Ask/query backend cleanup that is already complete. Keep this note short; implementation detail belongs in commits and tests.
 
@@ -744,6 +744,26 @@ Purpose: prevent future agents from rerunning Ask/query backend cleanup that is 
   `MainRouteCoordinatorTest`; `git diff --check` passed before tracker
   refresh.
 - Tracker is refreshed through `8767a1eb`.
+- Search outcome telemetry is current through `543f0368`:
+  `PackSearchTelemetryPolicy` now builds the outcome breakdown, summary line,
+  and slow-query tripwire line while `PackRepository` keeps search orchestration
+  and logging only.
+- Android proof-script wait bounds are current through `d0c865ce`: harness and
+  detail-follow-up matrix jobs have parent watchdogs and timeout diagnostics,
+  detail follow-up adb pulls are bounded, and the debug-detail launch helper
+  uses the shared bounded adb capture helper.
+- Phone navigation surface policy is current through `2cb4519c`:
+  `MainPhoneNavigationSurfacePolicy` owns phone tab surface/posture predicates,
+  visible destination filtering, and flow-owner predicates while `MainActivity`
+  keeps compatibility wrappers.
+- Detail phone-landscape rail policy is current through `6a269f63`:
+  `DetailPhoneLandscapeRailPolicy` owns guide-section rail labels/counts,
+  answer source-rail/thread-top decisions, source-rail titles, and visible
+  source merge behavior while `DetailActivity` keeps rendering wrappers.
+- Latest local proof after `6a269f63`: full Android
+  `:app:testDebugUnitTest :app:assembleDebug :app:assembleDebugAndroidTest`
+  passed; 26 Python harness/script contract tests passed; `git diff --check`
+  passed before tracker refresh.
 
 ## Remaining Next Slices
 
