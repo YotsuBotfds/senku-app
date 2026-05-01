@@ -58,8 +58,7 @@ final class AskQueryController {
     private final Host host;
     private final Engine engine;
     private final DeterministicMatcher deterministicMatcher;
-    private final Object jobLock = new Object();
-    private long currentJobToken;
+    private final LatestJobGate latestJobGate = new LatestJobGate();
 
     AskQueryController(Host host) {
         this(host, DEFAULT_ENGINE, DEFAULT_MATCHER);
@@ -72,7 +71,7 @@ final class AskQueryController {
     }
 
     void runAsk(String rawQuery) {
-        long jobToken = nextJobToken();
+        long jobToken = latestJobGate.nextJobToken();
         String query = safe(rawQuery).trim();
         if (!host.isRepositoryAvailable()) {
             host.onPackUnavailable();
@@ -113,7 +112,7 @@ final class AskQueryController {
                 prepared = engine.prepare(context, repo, sessionMemory, modelFile, query);
                 OfflineAnswerEngine.PreparedAnswer preparedAnswer = prepared;
                 host.runTrackedOnUiThread(harnessToken, () -> {
-                    if (isCurrentJob(jobToken)) {
+                    if (latestJobGate.isCurrentJob(jobToken)) {
                         host.onPrepareSuccess(preparedAnswer);
                     }
                 });
@@ -122,26 +121,13 @@ final class AskQueryController {
                 host.runTrackedOnUiThread(
                     harnessToken,
                     () -> {
-                        if (isCurrentJob(jobToken)) {
+                        if (latestJobGate.isCurrentJob(jobToken)) {
                             host.onPrepareFailure(query, failedPrepared, exc, hasAutoQuery);
                         }
                     }
                 );
             }
         });
-    }
-
-    private long nextJobToken() {
-        synchronized (jobLock) {
-            currentJobToken += 1;
-            return currentJobToken;
-        }
-    }
-
-    private boolean isCurrentJob(long jobToken) {
-        synchronized (jobLock) {
-            return currentJobToken == jobToken;
-        }
     }
 
     private static String safe(String value) {

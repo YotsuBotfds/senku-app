@@ -53,8 +53,7 @@ final class MainSearchController {
     private final Host host;
     private final Engine engine;
     private final DeterministicMatcher deterministicMatcher;
-    private final Object jobLock = new Object();
-    private long currentJobToken;
+    private final LatestJobGate latestJobGate = new LatestJobGate();
 
     MainSearchController(Host host) {
         this(host, DEFAULT_ENGINE, DEFAULT_MATCHER);
@@ -67,7 +66,7 @@ final class MainSearchController {
     }
 
     void runSearch(String rawQuery) {
-        long jobToken = nextJobToken();
+        long jobToken = latestJobGate.nextJobToken();
         String query = safe(rawQuery).trim();
         if (!host.isRepositoryAvailable()) {
             host.onPackUnavailable();
@@ -109,31 +108,18 @@ final class MainSearchController {
                     host::loadGuideById
                 );
                 host.runTrackedOnUiThread(harnessToken, () -> {
-                    if (isCurrentJob(jobToken)) {
+                    if (latestJobGate.isCurrentJob(jobToken)) {
                         host.onSearchSuccess(query, displayQuery, displayResults, hasVectorStore, sessionUsed);
                     }
                 });
             } catch (Exception exc) {
                 host.runTrackedOnUiThread(harnessToken, () -> {
-                    if (isCurrentJob(jobToken)) {
+                    if (latestJobGate.isCurrentJob(jobToken)) {
                         host.onSearchFailure(query, exc);
                     }
                 });
             }
         });
-    }
-
-    private long nextJobToken() {
-        synchronized (jobLock) {
-            currentJobToken += 1;
-            return currentJobToken;
-        }
-    }
-
-    private boolean isCurrentJob(long jobToken) {
-        synchronized (jobLock) {
-            return currentJobToken == jobToken;
-        }
     }
 
     private static String safe(String value) {
