@@ -865,19 +865,11 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
     }
 
     private String buildLinkedGuideAvailableDescription(String actionLabel) {
-        return buildLinkedGuideAvailableDescriptionForTest(actionLabel);
+        return SearchResultCardModelMapper.buildLinkedGuideAvailableDescription(actionLabel);
     }
 
     private String buildLinkedGuideOpenDescription(String actionLabel) {
-        return buildLinkedGuideOpenDescriptionForTest(actionLabel);
-    }
-
-    static String buildLinkedGuideAvailableDescriptionForTest(String actionLabel) {
-        return SearchResultCardModelMapper.buildLinkedGuideAvailableDescriptionForTest(actionLabel);
-    }
-
-    static String buildLinkedGuideOpenDescriptionForTest(String actionLabel) {
-        return SearchResultCardModelMapper.buildLinkedGuideOpenDescriptionForTest(actionLabel);
+        return SearchResultCardModelMapper.buildLinkedGuideOpenDescription(actionLabel);
     }
 
     private void bindLinkedGuideAction(View view, SearchResult result, LinkedGuidePreview preview) {
@@ -960,26 +952,8 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
         return SearchResultCardModelMapper.buildTabletGuideMarker(result == null ? null : result.guideId, position);
     }
 
-    static String buildTabletAttributeLineForTest(String category, String contentRole, String timeHorizon) {
-        return SearchResultCardModelMapper.buildTabletAttributeLineForTest(category, contentRole, timeHorizon);
-    }
-
-    static String buildTabletAttributeLineForResultForTest(
-        String category,
-        String contentRole,
-        String timeHorizon,
-        String retrievalMode
-    ) {
-        return SearchResultCardModelMapper.buildTabletAttributeLineForResultForTest(
-            category,
-            contentRole,
-            timeHorizon,
-            retrievalMode
-        );
-    }
-
     private void bindTabletAttributeLine(TextView sectionView, SearchResult result) {
-        String line = buildTabletAttributeLineForResultForTest(
+        String line = SearchResultCardModelMapper.buildTabletAttributeLineForResult(
             result == null ? null : result.category,
             result == null ? null : result.contentRole,
             result == null ? null : result.timeHorizon,
@@ -1028,15 +1002,11 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
     }
 
     private String buildCardMetadataLine(SearchResult result) {
-        return buildCardMetadataLineForTest(
+        return SearchResultCardModelMapper.buildCardMetadataLine(
             result == null ? null : result.contentRole,
             result == null ? null : result.timeHorizon,
             result == null ? null : result.category
         );
-    }
-
-    static String buildCardMetadataLineForTest(String rawRole, String rawWindow, String rawCategory) {
-        return SearchResultCardModelMapper.buildCardMetadataLineForTest(rawRole, rawWindow, rawCategory);
     }
 
     private String buildCardSnippet(SearchResult result) {
@@ -1048,28 +1018,6 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
             return snippet;
         }
         return cleanDisplayText(result == null ? null : result.body, maxLen);
-    }
-
-    static String buildLinkedGuideChipLabelForTest() {
-        return SearchResultCardModelMapper.buildLinkedGuideChipLabelForTest();
-    }
-
-    static String buildLinkedGuidePreviewLabelForTest(String displayLabel, String guideId, String title) {
-        return SearchResultCardModelMapper.buildLinkedGuidePreviewLabelForTest(displayLabel, guideId, title);
-    }
-
-    static String buildCompactLinkedGuideCueLabelForTest(
-        String displayLabel,
-        String guideId,
-        String title,
-        boolean compactLinkedCue
-    ) {
-        return SearchResultCardModelMapper.buildCompactLinkedGuideCueLabelForTest(
-            displayLabel,
-            guideId,
-            title,
-            compactLinkedCue
-        );
     }
 
     private static String buildLinkedGuideChipLabel() {
@@ -1260,20 +1208,12 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
             && !"none".equals(normalized);
     }
 
-    static String humanizeContentRoleForTest(String raw, int maxLen) {
-        return SearchResultCardModelMapper.humanizeContentRoleForTest(raw, maxLen);
-    }
-
     private String humanizeContentRole(String raw, int maxLen) {
-        return SearchResultCardModelMapper.humanizeContentRoleForTest(raw, maxLen);
+        return SearchResultCardModelMapper.humanizeContentRole(raw, maxLen);
     }
 
     private String humanizeMetadataValue(String raw, int maxLen) {
         return cleanDisplayText(humanize(safe(raw).trim().toLowerCase(Locale.US)), maxLen);
-    }
-
-    static String buildCompactRowSnippetForTest(String rawSnippet, String sectionHeading, int maxLen) {
-        return SearchResultCardModelMapper.buildCompactRowSnippetForTest(rawSnippet, sectionHeading, maxLen);
     }
 
     private String buildCompactRowSnippet(SearchResult result, int maxLen) {
@@ -1282,14 +1222,6 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
             result == null ? null : result.sectionHeading,
             maxLen
         );
-    }
-
-    static String buildLinkedGuidePreviewLineForTest() {
-        return buildLinkedGuidePreviewLineLabel();
-    }
-
-    static boolean shouldShowLinkedGuidePreviewLineForTest() {
-        return shouldShowLinkedGuidePreviewLine();
     }
 
     private static boolean shouldShowLinkedGuidePreviewLine() {
@@ -1351,10 +1283,6 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
     private boolean isRichTabletCard(Context context) {
         Configuration configuration = context.getResources().getConfiguration();
         return configuration.smallestScreenWidthDp >= 600;
-    }
-
-    static String cleanDisplayTextForTest(String raw, int maxLen) {
-        return cleanDisplayTextInternal(raw, maxLen);
     }
 
     private String cleanDisplayText(String raw, int maxLen) {

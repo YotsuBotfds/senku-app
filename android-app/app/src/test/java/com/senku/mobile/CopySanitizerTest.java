@@ -38,7 +38,7 @@ public final class CopySanitizerTest {
 
     @Test
     public void searchResultDisplayCleanupPreservesMeaningfulBrackets() {
-        String cleaned = SearchResultAdapter.cleanDisplayTextForTest(
+        String cleaned = SearchResultCardModelMapper.cleanDisplayTextForTest(
             "Seal containers [Safety Warning]. Use the agreed mark from [Community leader] [GD-123].",
             0
         );

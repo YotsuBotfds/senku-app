@@ -236,14 +236,18 @@ final class SearchResultCardModelMapper {
     }
 
     static String buildCardMetadataLineForTest(String rawRole, String rawWindow, String rawCategory) {
+        return buildCardMetadataLine(rawRole, rawWindow, rawCategory);
+    }
+
+    static String buildCardMetadataLine(String rawRole, String rawWindow, String rawCategory) {
         String role = humanizeContentRole(rawRole, 22);
         String window = cleanDisplayText(humanize(safe(rawWindow).trim().toLowerCase(Locale.US)), 22);
         String category = cleanDisplayText(humanize(safe(rawCategory).trim().toLowerCase(Locale.US)), 24);
         return metadataLineForSearchResultCard(role, window, category);
     }
 
-    private static String buildCardMetadataLine(SearchResult result) {
-        return buildCardMetadataLineForTest(
+    static String buildCardMetadataLine(SearchResult result) {
+        return buildCardMetadataLine(
             result == null ? null : result.contentRole,
             result == null ? null : result.timeHorizon,
             result == null ? null : result.category
@@ -283,7 +287,7 @@ final class SearchResultCardModelMapper {
         return humanizeContentRole(raw, maxLen);
     }
 
-    private static String humanizeContentRole(String raw, int maxLen) {
+    static String humanizeContentRole(String raw, int maxLen) {
         String normalized = safe(raw).trim().toLowerCase(Locale.US);
         normalized = normalized.replaceFirst("^role[\\s_-]+", "");
         return cleanDisplayText(humanize(normalized), maxLen);

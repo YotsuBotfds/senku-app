@@ -11,13 +11,13 @@ import static org.junit.Assert.assertTrue;
 public final class SearchResultAdapterTest {
     @Test
     public void humanizeContentRoleStripsLegacyRolePrefixForDisplay() {
-        assertEquals("Subsystem", SearchResultAdapter.humanizeContentRoleForTest("ROLE_SUBSYSTEM", 22));
-        assertEquals("Planning", SearchResultAdapter.humanizeContentRoleForTest("role-planning", 22));
+        assertEquals("Subsystem", SearchResultCardModelMapper.humanizeContentRoleForTest("ROLE_SUBSYSTEM", 22));
+        assertEquals("Planning", SearchResultCardModelMapper.humanizeContentRoleForTest("role-planning", 22));
     }
 
     @Test
     public void humanizeContentRoleKeepsUnprefixedValuesReadable() {
-        assertEquals("Safety", SearchResultAdapter.humanizeContentRoleForTest("safety", 22));
+        assertEquals("Safety", SearchResultCardModelMapper.humanizeContentRoleForTest("safety", 22));
     }
 
     @Test
@@ -169,33 +169,33 @@ public final class SearchResultAdapterTest {
 
     @Test
     public void tabletRowsFlattenMetadataIntoPreviewRailTokens() {
-        String immediateShelter = SearchResultAdapter.buildTabletAttributeLineForTest("shelter", "role_topic", "immediate");
+        String immediateShelter = SearchResultCardModelMapper.buildTabletAttributeLineForTest("shelter", "role_topic", "immediate");
         assertContains(immediateShelter, "SHELTER");
         assertContains(immediateShelter, "TOPIC");
         assertContains(immediateShelter, "IMMEDIATE");
 
-        String starterSurvival = SearchResultAdapter.buildTabletAttributeLineForTest("survival", "role_starter", "immediate");
+        String starterSurvival = SearchResultCardModelMapper.buildTabletAttributeLineForTest("survival", "role_starter", "immediate");
         assertContains(starterSurvival, "SURVIVAL");
         assertContains(starterSurvival, "STARTER");
         assertContains(starterSurvival, "IMMEDIATE");
 
-        String longTermShelter = SearchResultAdapter.buildTabletAttributeLineForTest("shelter", "role_topic", "long-term");
+        String longTermShelter = SearchResultCardModelMapper.buildTabletAttributeLineForTest("shelter", "role_topic", "long-term");
         assertContains(longTermShelter, "SHELTER");
         assertContains(longTermShelter, "TOPIC");
         assertContains(longTermShelter, "LONG");
 
-        assertEquals("", SearchResultAdapter.buildTabletAttributeLineForTest("general", "none", "unknown"));
+        assertEquals("", SearchResultCardModelMapper.buildTabletAttributeLineForTest("general", "none", "unknown"));
     }
 
     @Test
     public void tabletRowsFallbackToRetrievalLaneForStableMetadataRhythm() {
         assertEquals(
             "CONCEPT MATCH",
-            SearchResultAdapter.buildTabletAttributeLineForResultForTest("general", "none", "unknown", "vector")
+            SearchResultCardModelMapper.buildTabletAttributeLineForResultForTest("general", "none", "unknown", "vector")
         );
         assertEquals(
             "BEST MATCH",
-            SearchResultAdapter.buildTabletAttributeLineForResultForTest("", "", "", "")
+            SearchResultCardModelMapper.buildTabletAttributeLineForResultForTest("", "", "", "")
         );
     }
 
@@ -203,7 +203,7 @@ public final class SearchResultAdapterTest {
     public void compactRowSnippetCollapsesRepeatedSectionLeadBeforeTruncating() {
         assertEquals(
             "Shelter Building: Protection from the Elements Day signaling vs. night signaling.",
-            SearchResultAdapter.buildCompactRowSnippetForTest(
+            SearchResultCardModelMapper.buildCompactRowSnippetForTest(
                 "Shelter Building: Shelter Building: Protection from the Elements Day signaling vs. night signaling.",
                 "Shelter Building",
                 120
@@ -211,7 +211,7 @@ public final class SearchResultAdapterTest {
         );
         assertEquals(
             "Shelter Building: Protection from the Elements Day\u2026",
-            SearchResultAdapter.buildCompactRowSnippetForTest(
+            SearchResultCardModelMapper.buildCompactRowSnippetForTest(
                 "Shelter Building: Shelter Building: Protection from the Elements Day signaling vs. night signaling.",
                 "Shelter Building",
                 52
@@ -223,7 +223,7 @@ public final class SearchResultAdapterTest {
     public void compactRowSnippetRemovesGuidePrefixNoise() {
         assertEquals(
             "Shelter Building: Protection from the Elements.",
-            SearchResultAdapter.buildCompactRowSnippetForTest(
+            SearchResultCardModelMapper.buildCompactRowSnippetForTest(
                 "Guide: GD-023 Shelter Building: Protection from the Elements.",
                 "Shelter Building",
                 120
@@ -231,7 +231,7 @@ public final class SearchResultAdapterTest {
         );
         assertEquals(
             "Use a ridgeline to shed rain.",
-            SearchResultAdapter.buildCompactRowSnippetForTest(
+            SearchResultCardModelMapper.buildCompactRowSnippetForTest(
                 "Guide: Tarp & Cord Shelters Use a ridgeline to shed rain.",
                 "Tarp & Cord Shelters",
                 120
@@ -243,7 +243,7 @@ public final class SearchResultAdapterTest {
     public void compactRowSnippetUsesShorterPreviewBudgetForDenseRows() {
         assertEquals(
             "Use a ridgeline, pitch one side low into the wind, keep runoff from pooling, and pin\u2026",
-            SearchResultAdapter.buildCompactRowSnippetForTest(
+            SearchResultCardModelMapper.buildCompactRowSnippetForTest(
                 "Use a ridgeline, pitch one side low into the wind, keep runoff from pooling, and pin corners before loading gear.",
                 "Tarp & Cord Shelters",
                 86
@@ -255,27 +255,27 @@ public final class SearchResultAdapterTest {
     public void composeBridgeMetadataLineUsesRoleWindowAndCategory() {
         assertEquals(
             "Role: Safety // Window: Immediate // Category: Water",
-            SearchResultAdapter.buildCardMetadataLineForTest("role_safety", "immediate", "water")
+            SearchResultCardModelMapper.buildCardMetadataLineForTest("role_safety", "immediate", "water")
         );
         assertEquals(
             "Category: Shelter",
-            SearchResultAdapter.buildCardMetadataLineForTest("general", "unknown", "shelter")
+            SearchResultCardModelMapper.buildCardMetadataLineForTest("general", "unknown", "shelter")
         );
     }
 
     @Test
     public void composeBridgeMetadataLineSuppressesPlaceholderTokens() {
-        assertEquals("", SearchResultAdapter.buildCardMetadataLineForTest("general", "none", "unknown"));
+        assertEquals("", SearchResultCardModelMapper.buildCardMetadataLineForTest("general", "none", "unknown"));
         assertEquals(
             "Window: Long Term",
-            SearchResultAdapter.buildCardMetadataLineForTest("none", "long-term", "general")
+            SearchResultCardModelMapper.buildCardMetadataLineForTest("none", "long-term", "general")
         );
     }
 
     @Test
     public void cleanDisplayTextStripsMarkdownBeforeTruncating() {
-        assertEquals("Boil water", SearchResultAdapter.cleanDisplayTextForTest(" **Boil** `water` ", 40));
-        assertEquals("Use clean\u2026", SearchResultAdapter.cleanDisplayTextForTest("Use clean containers", 10));
+        assertEquals("Boil water", SearchResultCardModelMapper.cleanDisplayTextForTest(" **Boil** `water` ", 40));
+        assertEquals("Use clean\u2026", SearchResultCardModelMapper.cleanDisplayTextForTest("Use clean containers", 10));
     }
 
     @Test
@@ -320,24 +320,24 @@ public final class SearchResultAdapterTest {
     public void linkedGuideBrowseHandoffDescriptionsUseConnectionLanguage() {
         assertEquals(
             "Guide connection available: GD-214 - Water Storage",
-            SearchResultAdapter.buildLinkedGuideAvailableDescriptionForTest("GD-214 - Water Storage")
+            SearchResultCardModelMapper.buildLinkedGuideAvailableDescriptionForTest("GD-214 - Water Storage")
         );
         assertEquals(
             "Open cross-reference guide: GD-214 - Water Storage",
-            SearchResultAdapter.buildLinkedGuideOpenDescriptionForTest("GD-214 - Water Storage")
+            SearchResultCardModelMapper.buildLinkedGuideOpenDescriptionForTest("GD-214 - Water Storage")
         );
     }
 
     @Test
     public void linkedGuideChipKeepsCompactVisibleCue() {
-        assertEquals("Guide", SearchResultAdapter.buildLinkedGuideChipLabelForTest());
+        assertEquals("Guide", SearchResultCardModelMapper.buildLinkedGuideChipLabelForTest());
     }
 
     @Test
     public void linkedGuidePreviewLabelUsesMapperOwnedDisplayFallbacks() {
         assertEquals(
             "Stored water",
-            SearchResultAdapter.buildLinkedGuidePreviewLabelForTest(
+            SearchResultCardModelMapper.buildLinkedGuidePreviewLabelForTest(
                 " Stored water ",
                 "GD-214",
                 "Water Storage"
@@ -345,11 +345,11 @@ public final class SearchResultAdapterTest {
         );
         assertEquals(
             "GD-214 - Water Storage",
-            SearchResultAdapter.buildLinkedGuidePreviewLabelForTest("", " GD-214 ", " Water Storage ")
+            SearchResultCardModelMapper.buildLinkedGuidePreviewLabelForTest("", " GD-214 ", " Water Storage ")
         );
         assertEquals(
             SearchResultCardModelMapper.buildLinkedGuidePreviewLabelForTest(null, "", " Water Storage "),
-            SearchResultAdapter.buildLinkedGuidePreviewLabelForTest(null, "", " Water Storage ")
+            SearchResultCardModelMapper.buildLinkedGuidePreviewLabelForTest(null, "", " Water Storage ")
         );
     }
 
@@ -357,25 +357,22 @@ public final class SearchResultAdapterTest {
     public void linkedGuideCompactCueLabelUsesMapperOwnedDisplayFallbacks() {
         assertEquals(
             SearchResultCardModelMapper.buildCompactLinkedGuideCueLabelForTest("", " GD-214 ", "Water Storage", false),
-            SearchResultAdapter.buildCompactLinkedGuideCueLabelForTest("", " GD-214 ", "Water Storage", false)
+            SearchResultCardModelMapper.buildCompactLinkedGuideCueLabelForTest("", " GD-214 ", "Water Storage", false)
         );
         assertEquals(
             SearchResultCardModelMapper.buildCompactLinkedGuideCueLabelForTest("Stored water", "GD-214", "", true),
-            SearchResultAdapter.buildCompactLinkedGuideCueLabelForTest("Stored water", "GD-214", "", true)
+            SearchResultCardModelMapper.buildCompactLinkedGuideCueLabelForTest("Stored water", "GD-214", "", true)
         );
     }
 
     @Test
     public void linkedGuidePreviewLineKeepsRowsCompact() {
-        assertEquals(
-            SearchResultCardModelMapper.buildLinkedGuidePreviewLineLabelForTest(),
-            SearchResultAdapter.buildLinkedGuidePreviewLineForTest()
-        );
+        assertEquals("Guide", SearchResultCardModelMapper.buildLinkedGuidePreviewLineLabelForTest());
     }
 
     @Test
     public void linkedGuidePreviewLineIsSuppressedInSearchRows() {
-        assertFalse(SearchResultAdapter.shouldShowLinkedGuidePreviewLineForTest());
+        assertFalse(SearchResultCardModelMapper.shouldShowLinkedGuidePreviewLineForTest());
     }
 
     @Test
