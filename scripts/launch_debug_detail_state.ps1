@@ -4,10 +4,21 @@ param(
     [string]$DebugDetailSubtitle = "AI-generated answer",
     [string]$DebugDetailBody = "Synthetic debug answer body.",
     [switch]$ForceStop,
-    [string]$DumpPath
+    [string]$DumpPath,
+    [int]$AdbCommandTimeoutMilliseconds = 60000
 )
 
 $ErrorActionPreference = "Stop"
+
+$androidHarnessCommonPath = Join-Path $PSScriptRoot "android_harness_common.psm1"
+if (-not (Test-Path -LiteralPath $androidHarnessCommonPath)) {
+    throw "android_harness_common.psm1 not found at $androidHarnessCommonPath"
+}
+Import-Module $androidHarnessCommonPath -Force
+
+if ($AdbCommandTimeoutMilliseconds -le 0) {
+    throw "-AdbCommandTimeoutMilliseconds must be a positive integer."
+}
 
 $adb = Join-Path $env:LOCALAPPDATA "Android\Sdk\platform-tools\adb.exe"
 if (-not (Test-Path $adb)) {
@@ -15,34 +26,26 @@ if (-not (Test-Path $adb)) {
 }
 
 function Invoke-AdbChecked {
-    param([Parameter(Mandatory = $true)][string[]]$Arguments)
+    param(
+        [Parameter(Mandatory = $true)][string[]]$Arguments,
+        [int]$TimeoutMilliseconds = $AdbCommandTimeoutMilliseconds
+    )
 
-    $stdoutFile = Join-Path ([System.IO.Path]::GetTempPath()) ("senku_adb_" + [guid]::NewGuid().ToString("N") + ".out")
-    $stderrFile = Join-Path ([System.IO.Path]::GetTempPath()) ("senku_adb_" + [guid]::NewGuid().ToString("N") + ".err")
-    try {
-        $fullArgs = @("-s", $Emulator) + $Arguments
-        $process = Start-Process -FilePath $adb `
-            -ArgumentList $fullArgs `
-            -NoNewWindow `
-            -Wait `
-            -PassThru `
-            -RedirectStandardOutput $stdoutFile `
-            -RedirectStandardError $stderrFile
-        $stdout = if (Test-Path $stdoutFile) { Get-Content $stdoutFile } else { @() }
-        $stderr = if (Test-Path $stderrFile) { Get-Content $stderrFile } else { @() }
-        $script:LastAdbOutput = @($stdout + $stderr)
-        $script:LastAdbExitCode = $process.ExitCode
-    } finally {
-        if (Test-Path $stdoutFile) {
-            Remove-Item -LiteralPath $stdoutFile -Force
-        }
-        if (Test-Path $stderrFile) {
-            Remove-Item -LiteralPath $stderrFile -Force
-        }
+    if ($TimeoutMilliseconds -le 0) {
+        throw "-TimeoutMilliseconds must be a positive integer."
     }
 
+    $fullArgs = @("-s", $Emulator) + $Arguments
+    $result = Invoke-AndroidAdbCommandCapture -AdbPath $adb -Arguments $fullArgs -TimeoutMilliseconds $TimeoutMilliseconds
+    $outputText = if ($null -eq $result.output) { "" } else { [string]$result.output }
+    $script:LastAdbOutput = @($outputText -split "`r?`n")
+    $script:LastAdbExitCode = [int]$result.exit_code
+    $joinedArgs = ($Arguments -join " ")
+
+    if ($result.timed_out) {
+        throw ("adb timed out after {0}ms ({1}): {2}" -f $TimeoutMilliseconds, $joinedArgs, $outputText).TrimEnd()
+    }
     if ($script:LastAdbExitCode -ne 0) {
-        $joinedArgs = @($Arguments -join " ")
         $message = ($script:LastAdbOutput | Out-String).Trim()
         throw "adb failed ($joinedArgs): $message"
     }
@@ -50,8 +53,12 @@ function Invoke-AdbChecked {
 }
 
 function Test-DetailForeground {
-    $activityOutput = & $adb -s $Emulator shell "dumpsys activity activities" 2>$null
-    if ($LASTEXITCODE -ne 0 -or [string]::IsNullOrWhiteSpace($activityOutput)) {
+    try {
+        $activityOutput = Invoke-AdbChecked -Arguments @("shell", "dumpsys", "activity", "activities")
+    } catch {
+        return $false
+    }
+    if ([string]::IsNullOrWhiteSpace(($activityOutput | Out-String))) {
         return $false
     }
     return ($activityOutput -match "topResumedActivity=.*com\.senku\.mobile/\.DetailActivity") -or
@@ -61,7 +68,11 @@ function Test-DetailForeground {
 function Save-UiDump {
     param([Parameter(Mandatory = $true)][string]$LocalDump)
 
-    $xml = (& $adb -s $Emulator exec-out uiautomator dump /dev/tty 2>$null | Out-String)
+    try {
+        $xml = (Invoke-AdbChecked -Arguments @("exec-out", "uiautomator", "dump", "/dev/tty") | Out-String)
+    } catch {
+        return $false
+    }
     if ([string]::IsNullOrWhiteSpace($xml)) {
         return $false
     }

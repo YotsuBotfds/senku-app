@@ -12,6 +12,7 @@ param(
     [switch]$StopOnError,
     [int]$InitialMaxWaitSeconds = 260,
     [int]$FollowUpMaxWaitSeconds = 180,
+    [int]$JobTimeoutSeconds = 900,
     [int]$PollSeconds = 5
 )
 
@@ -93,6 +94,7 @@ function Assert-PositiveWaitParameter {
 function Assert-WaitParameters {
     Assert-PositiveWaitParameter -Name "InitialMaxWaitSeconds" -Value $InitialMaxWaitSeconds
     Assert-PositiveWaitParameter -Name "FollowUpMaxWaitSeconds" -Value $FollowUpMaxWaitSeconds
+    Assert-PositiveWaitParameter -Name "JobTimeoutSeconds" -Value $JobTimeoutSeconds
     Assert-PositiveWaitParameter -Name "PollSeconds" -Value $PollSeconds
 }
 
@@ -176,6 +178,59 @@ function Receive-CompletedJobs {
     }
 }
 
+function Stop-TimedOutJobs {
+    param(
+        [System.Collections.ArrayList]$ActiveJobs,
+        [System.Collections.ArrayList]$Results
+    )
+
+    $now = [DateTimeOffset]::UtcNow
+    for ($index = $ActiveJobs.Count - 1; $index -ge 0; $index--) {
+        $entry = $ActiveJobs[$index]
+        $elapsedSeconds = [int](($now - $entry.startedAt).TotalSeconds)
+        if ($elapsedSeconds -lt $JobTimeoutSeconds) {
+            continue
+        }
+
+        $job = $entry.job
+        $runLabel = if ($entry.runArgs.ContainsKey("RunLabel")) { $entry.runArgs.RunLabel } else { "" }
+        $diagnostics = @(
+            ("Timed out after {0}s; stopping job {1}." -f $elapsedSeconds, $job.Id),
+            ("timeout_seconds={0}" -f $JobTimeoutSeconds),
+            ("job_state_before_stop={0}" -f $job.State),
+            ("emulator={0}" -f $entry.runArgs.Emulator),
+            ("run_label={0}" -f $runLabel),
+            ("initial_query={0}" -f $entry.runArgs.InitialQuery),
+            ("follow_up_query={0}" -f $entry.runArgs.FollowUpQuery)
+        )
+
+        try {
+            Stop-Job -Job $job -ErrorAction SilentlyContinue | Out-Null
+            $received = Receive-Job -Job $job -Keep -ErrorAction SilentlyContinue
+            if ($received) {
+                $diagnostics += "partial_output:"
+                $diagnostics += ($received | Out-String).Trim()
+            }
+        } catch {
+            $diagnostics += ("timeout_cleanup_error={0}" -f $_.ToString())
+        }
+
+        $Results.Add([pscustomobject]@{
+            emulator = $entry.runArgs.Emulator
+            initial_query = $entry.runArgs.InitialQuery
+            follow_up_query = $entry.runArgs.FollowUpQuery
+            run_label = $runLabel
+            status = "timed_out"
+            job_state = $job.State
+            output = ($diagnostics -join [Environment]::NewLine)
+        }) | Out-Null
+        Write-Warning ($diagnostics -join [Environment]::NewLine)
+
+        Remove-Job -Job $job -Force | Out-Null
+        $ActiveJobs.RemoveAt($index)
+    }
+}
+
 $resolvedOutputDir = Resolve-TargetPath -Path $OutputDir
 New-Item -ItemType Directory -Force -Path $resolvedOutputDir | Out-Null
 
@@ -192,6 +247,7 @@ $results = New-Object System.Collections.ArrayList
 
 foreach ($run in $runs) {
     while ($activeJobs.Count -ge $parallelLimit) {
+        Stop-TimedOutJobs -ActiveJobs $activeJobs -Results $results
         Receive-CompletedJobs -ActiveJobs $activeJobs -Results $results
         Start-Sleep -Milliseconds 500
     }
@@ -201,11 +257,13 @@ foreach ($run in $runs) {
     $activeJobs.Add([pscustomobject]@{
         job = $job
         runArgs = $runArgs
+        startedAt = [DateTimeOffset]::UtcNow
     }) | Out-Null
     Write-Host ("Started {0} on {1}" -f $runArgs.InitialQuery, $runArgs.Emulator)
 }
 
 while ($activeJobs.Count -gt 0) {
+    Stop-TimedOutJobs -ActiveJobs $activeJobs -Results $results
     Receive-CompletedJobs -ActiveJobs $activeJobs -Results $results
     if ($activeJobs.Count -gt 0) {
         Start-Sleep -Milliseconds 500

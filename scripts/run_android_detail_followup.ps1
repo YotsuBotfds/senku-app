@@ -21,6 +21,7 @@ param(
     [switch]$RequireStrictFollowUpProof,
     [int]$InitialMaxWaitSeconds = 260,
     [int]$FollowUpMaxWaitSeconds = 180,
+    [int]$AdbPullTimeoutMilliseconds = 30000,
     [int]$PollSeconds = 5
 )
 
@@ -33,6 +34,14 @@ $repoRoot = Split-Path -Parent $PSScriptRoot
 $adb = Join-Path $env:LOCALAPPDATA "Android\Sdk\platform-tools\adb.exe"
 if (-not (Test-Path $adb)) {
     throw "adb not found at $adb"
+}
+$commonHarnessModule = Join-Path $PSScriptRoot "android_harness_common.psm1"
+if (-not (Test-Path -LiteralPath $commonHarnessModule)) {
+    throw "android_harness_common.psm1 not found at $commonHarnessModule"
+}
+Import-Module $commonHarnessModule -Force -DisableNameChecking
+if ($AdbPullTimeoutMilliseconds -le 0) {
+    throw "-AdbPullTimeoutMilliseconds must be a positive integer."
 }
 
 function Resolve-HostInferenceUrlForDevice {
@@ -207,33 +216,21 @@ function Capture-Screenshot {
 function Invoke-AdbPullQuiet {
     param(
         [string]$DeviceDump,
-        [string]$LocalDump
+        [string]$LocalDump,
+        [int]$TimeoutMilliseconds = $AdbPullTimeoutMilliseconds
     )
 
-    $token = [guid]::NewGuid().ToString("N")
-    $redirectStdout = Join-Path $env:TEMP ("senku_adb_pull_" + $token + "_out.log")
-    $redirectStderr = Join-Path $env:TEMP ("senku_adb_pull_" + $token + "_err.log")
-    try {
-        $process = Start-Process `
-            -FilePath $adb `
-            -ArgumentList @("-s", $Emulator, "pull", $DeviceDump, $LocalDump) `
-            -NoNewWindow `
-            -Wait `
-            -PassThru `
-            -RedirectStandardOutput $redirectStdout `
-            -RedirectStandardError $redirectStderr
-        return ($process.ExitCode -eq 0)
-    } finally {
-        foreach ($path in @($redirectStdout, $redirectStderr)) {
-            if (-not (Test-Path $path)) {
-                continue
-            }
-            try {
-                Remove-Item -LiteralPath $path -Force -ErrorAction Stop
-            } catch {
-            }
-        }
+    if ($TimeoutMilliseconds -le 0) {
+        throw "-TimeoutMilliseconds must be a positive integer."
     }
+    $result = Invoke-AndroidAdbCommandCapture `
+        -AdbPath $adb `
+        -Arguments @("-s", $Emulator, "pull", $DeviceDump, $LocalDump) `
+        -TimeoutMilliseconds $TimeoutMilliseconds
+    if ($result.timed_out) {
+        return $false
+    }
+    return ($result.exit_code -eq 0)
 }
 
 function Copy-DumpSnapshot {

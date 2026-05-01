@@ -97,6 +97,21 @@ class RunAndroidDetailFollowupContractTests(unittest.TestCase):
             self.script,
         )
 
+    def test_adb_pull_uses_bounded_common_harness_helper(self):
+        self.assertIn("[int]$AdbPullTimeoutMilliseconds = 30000", self.script)
+        self.assertIn('throw "-AdbPullTimeoutMilliseconds must be a positive integer."', self.script)
+        self.assertIn('$commonHarnessModule = Join-Path $PSScriptRoot "android_harness_common.psm1"', self.script)
+        self.assertIn("Import-Module $commonHarnessModule -Force -DisableNameChecking", self.script)
+        self.assertIn("[int]$TimeoutMilliseconds = $AdbPullTimeoutMilliseconds", self.script)
+        self.assertIn("Invoke-AndroidAdbCommandCapture `", self.script)
+        self.assertIn('-Arguments @("-s", $Emulator, "pull", $DeviceDump, $LocalDump) `', self.script)
+        self.assertIn("-TimeoutMilliseconds $TimeoutMilliseconds", self.script)
+        self.assertIn("if ($result.timed_out) {", self.script)
+        self.assertNotRegex(
+            self.script,
+            r"Start-Process\s+`(?s:.*?)\s-Wait\s+`(?s:.*?)pull",
+        )
+
     def test_followup_submit_mode_is_attempted_and_recorded(self):
         self.assertIn(
             '[ValidateSet("auto", "in_detail_ui", "send_button", "ime_send", "ime_done", "hardware_enter")]',

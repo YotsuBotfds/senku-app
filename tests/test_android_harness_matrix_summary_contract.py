@@ -70,7 +70,9 @@ class AndroidHarnessMatrixSummaryContractTests(unittest.TestCase):
         self.assertIn("duration_seconds_avg:", self.script)
         self.assertIn("duration_seconds_total:", self.script)
         self.assertIn("[switch]$PlanOnly", self.script)
+        self.assertIn("[int]$JobTimeoutSeconds = 3600", self.script)
         self.assertIn("function New-MatrixPlan", self.script)
+        self.assertIn("job_timeout_seconds = [int]$JobTimeoutSeconds", self.script)
         self.assertIn('plan_kind = "android_harness_matrix"', self.script)
         self.assertIn("will_touch_emulators = $false", self.script)
         self.assertIn("runner_commands =", self.script)
@@ -79,6 +81,20 @@ class AndroidHarnessMatrixSummaryContractTests(unittest.TestCase):
         self.assertIn('validate_android_migration_summary.py', self.script)
         self.assertIn('PlanOnly validation only; does not start jobs or touch emulators.', self.script)
         self.assertIn('## Validation Commands', self.script)
+        self.assertIn("function Stop-TimedOutJobs", self.script)
+        self.assertIn("Stop-Job -Job $job", self.script)
+        self.assertIn('status = "timed_out"', self.script)
+        self.assertIn("timeout_seconds = [int]$TimeoutSeconds", self.script)
+        self.assertIn("elapsed_seconds = $elapsedSeconds", self.script)
+        self.assertIn("timed_out_at = $timedOutAt.ToString", self.script)
+        self.assertIn("Timed out [{0}] {1} on {2}", self.script)
+        self.assertIn("Stop-TimedOutJobs -ActiveJobs $activeJobs -Results $results -TimeoutSeconds $JobTimeoutSeconds", self.script)
+        self.assertIn("$timedOut = @($Results | Where-Object { $_.status -eq \"timed_out\" })", self.script)
+        self.assertIn("timed_out = $timedOut.Count", self.script)
+        self.assertIn('timed_out = ($_.status -eq "timed_out")', self.script)
+        self.assertIn('timeout_seconds = $(if ($_.PSObject.Properties.Name -contains "timeout_seconds")', self.script)
+        self.assertIn("elapsed_seconds=$($item.elapsed_seconds)", self.script)
+        self.assertIn("timed_out: $($Summary.timed_out)", self.script)
 
     def test_plan_only_writes_matrix_plan_without_starting_jobs(self):
         temp_dir = tempfile.TemporaryDirectory()
@@ -126,6 +142,8 @@ class AndroidHarnessMatrixSummaryContractTests(unittest.TestCase):
                 str(run_file),
                 "-OutputDir",
                 str(output_dir),
+                "-JobTimeoutSeconds",
+                "42",
                 "-Emulators",
                 "emulator-5556",
                 "-PlanOnly",
@@ -151,6 +169,7 @@ class AndroidHarnessMatrixSummaryContractTests(unittest.TestCase):
         self.assertFalse(summary["acceptance_evidence"])
         self.assertFalse(summary["will_start_jobs"])
         self.assertFalse(summary["will_touch_emulators"])
+        self.assertEqual(summary["job_timeout_seconds"], 42)
         self.assertEqual(summary["row_count"], 2)
         self.assertEqual(summary["rows"][0]["emulator"], "emulator-5556")
         self.assertEqual(summary["rows"][0]["posture"], "phone_portrait")

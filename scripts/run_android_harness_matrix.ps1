@@ -9,6 +9,8 @@ param(
     [string]$PushPackDir = "",
     [string[]]$Emulators = @("emulator-5554", "emulator-5556", "emulator-5558", "emulator-5560"),
     [int]$MaxParallel = 3,
+    [ValidateRange(1, 2147483647)]
+    [int]$JobTimeoutSeconds = 3600,
     [switch]$DefaultWarmStart,
     [switch]$SkipPackPushIfCurrent,
     [switch]$ForcePackPush,
@@ -600,6 +602,7 @@ function New-MatrixPlan {
         output_dir = $ResolvedOutputDir
         max_parallel = [int]$MaxParallel
         effective_max_parallel = [Math]::Max(1, $MaxParallel)
+        job_timeout_seconds = [int]$JobTimeoutSeconds
         inference_mode = $InferenceMode
         host_inference_url = $HostInferenceUrl
         host_inference_model = $HostInferenceModel
@@ -857,6 +860,105 @@ function Receive-CompletedJobs {
     }
 }
 
+function Stop-TimedOutJobs {
+    param(
+        [System.Collections.ArrayList]$ActiveJobs,
+        [System.Collections.ArrayList]$Results,
+        [int]$TimeoutSeconds
+    )
+
+    $now = Get-Date
+    for ($index = $ActiveJobs.Count - 1; $index -ge 0; $index--) {
+        $entry = $ActiveJobs[$index]
+        $job = $entry.job
+        if ($job.State -ne "Running" -and $job.State -ne "NotStarted") {
+            continue
+        }
+
+        $startedAt = Convert-ToDateTimeOrNull -Value $entry.runner.started_at
+        if ($null -eq $startedAt) {
+            continue
+        }
+
+        $elapsedSeconds = [math]::Round(($now - $startedAt).TotalSeconds, 2)
+        if ($elapsedSeconds -lt $TimeoutSeconds) {
+            continue
+        }
+
+        $outputText = ""
+        $errorText = "Matrix job timed out after $TimeoutSeconds seconds while state was $($job.State)."
+        try {
+            Stop-Job -Job $job -ErrorAction SilentlyContinue
+            Wait-Job -Job $job -Timeout 5 -ErrorAction SilentlyContinue | Out-Null
+            $received = Receive-Job -Job $job -Keep -ErrorAction SilentlyContinue
+            if ($received) {
+                $outputText = ($received | Out-String).Trim()
+            }
+        } catch {
+            $errorText = $errorText + " Stop diagnostics: " + $_.ToString()
+        }
+
+        $reason = $job.ChildJobs | ForEach-Object {
+            if ($_.JobStateInfo.Reason) {
+                $_.JobStateInfo.Reason.ToString()
+            }
+        } | Select-Object -First 1
+        $jobErrors = $job.ChildJobs | ForEach-Object {
+            if ($_.Error.Count -gt 0) {
+                ($_.Error | Out-String).Trim()
+            }
+        } | Where-Object { -not [string]::IsNullOrWhiteSpace($_) }
+        if ($jobErrors.Count -gt 0) {
+            $errorText = $errorText + [Environment]::NewLine + ($jobErrors -join [Environment]::NewLine)
+        } elseif (-not [string]::IsNullOrWhiteSpace($reason)) {
+            $errorText = $errorText + [Environment]::NewLine + $reason
+        }
+
+        $manifest = Read-RunJson -Path $entry.runner.manifest_path
+        $timedOutAt = Get-Date
+        $durationSeconds = Get-RunDurationSeconds -Manifest $manifest -FallbackStartedAt $entry.runner.started_at -FallbackCompletedAt $timedOutAt
+        if ($null -eq $durationSeconds) {
+            $durationSeconds = $elapsedSeconds
+        }
+        $hostAdbPlatformToolsVersion = Get-HostAdbPlatformToolsVersion -Manifest $manifest -OutputText $outputText
+
+        $Results.Add([pscustomobject]@{
+            mode = $entry.runner.mode
+            emulator = $entry.runner.args.Emulator
+            run_label = $entry.runner.run_label
+            device_role = $entry.runner.device_role
+            orientation = $entry.runner.orientation
+            posture = $entry.runner.posture
+            warm_start = [bool]$entry.runner.args.WarmStart
+            push_pack_dir = $(if ($entry.runner.args.Contains("PushPackDir")) { [string]$entry.runner.args.PushPackDir } else { $null })
+            push_pack_summary_path = $(if ($manifest -and ($manifest.PSObject.Properties.Name -contains "push_pack_summary_path")) { [string]$manifest.push_pack_summary_path } else { $null })
+            push_pack_cache_hit = $(if ($manifest -and ($manifest.PSObject.Properties.Name -contains "push_pack_cache_hit")) { $manifest.push_pack_cache_hit } else { $null })
+            push_pack_pushed = $(if ($manifest -and ($manifest.PSObject.Properties.Name -contains "push_pack_pushed")) { $manifest.push_pack_pushed } else { $null })
+            push_pack_state_path = $(if ($manifest -and ($manifest.PSObject.Properties.Name -contains "push_pack_state_path")) { [string]$manifest.push_pack_state_path } else { $null })
+            host_adb_platform_tools_version = $hostAdbPlatformToolsVersion
+            started_at = $entry.runner.started_at
+            completed_at = $timedOutAt.ToString("o")
+            duration_seconds = $durationSeconds
+            status = "timed_out"
+            job_state = $job.State
+            job_id = $job.Id
+            timeout_seconds = [int]$TimeoutSeconds
+            elapsed_seconds = $elapsedSeconds
+            timed_out_at = $timedOutAt.ToString("o")
+            manifest_path = $entry.runner.manifest_path
+            logcat_path = $entry.runner.logcat_path
+            final_title = Get-ResultTitle -Manifest $manifest
+            final_subtitle = Get-ResultSubtitle -Manifest $manifest
+            error = $errorText
+            output = $outputText
+        }) | Out-Null
+
+        Write-Warning ("Timed out [{0}] {1} on {2} after {3}s; stopped job {4}." -f $entry.runner.mode, $entry.runner.run_label, $entry.runner.args.Emulator, $TimeoutSeconds, $job.Id)
+        Remove-Job -Job $job -Force -ErrorAction SilentlyContinue | Out-Null
+        $ActiveJobs.RemoveAt($index)
+    }
+}
+
 function New-MatrixSummary {
     param(
         [Parameter(Mandatory = $true)]
@@ -869,6 +971,7 @@ function New-MatrixSummary {
 
     $completed = @($Results | Where-Object { $_.status -eq "completed" })
     $failed = @($Results | Where-Object { $_.status -ne "completed" })
+    $timedOut = @($Results | Where-Object { $_.status -eq "timed_out" })
     $statusGroups = @()
     foreach ($statusName in @("completed", "failed")) {
         $source = if ($statusName -eq "completed") { $completed } else { $failed }
@@ -957,6 +1060,10 @@ function New-MatrixSummary {
             warm_start = $_.warm_start
             push_pack_cache_hit = $_.push_pack_cache_hit
             push_pack_pushed = $_.push_pack_pushed
+            timed_out = ($_.status -eq "timed_out")
+            timeout_seconds = $(if ($_.PSObject.Properties.Name -contains "timeout_seconds") { $_.timeout_seconds } else { $null })
+            elapsed_seconds = $(if ($_.PSObject.Properties.Name -contains "elapsed_seconds") { $_.elapsed_seconds } else { $null })
+            job_id = $(if ($_.PSObject.Properties.Name -contains "job_id") { $_.job_id } else { $null })
             error = $_.error
             artifact_paths = $artifactPaths
         }
@@ -991,6 +1098,7 @@ function New-MatrixSummary {
         total = $Results.Count
         completed = $completed.Count
         failed = $failed.Count
+        timed_out = $timedOut.Count
         status_groups = $statusGroups
         emulator_groups = $emulatorGroups
         failed_items = $failedItems
@@ -1013,6 +1121,7 @@ function ConvertTo-MatrixSummaryMarkdown {
         "- total: $($Summary.total)",
         "- completed: $($Summary.completed)",
         "- failed: $($Summary.failed)",
+        "- timed_out: $($Summary.timed_out)",
         "- duration_samples: $($Summary.duration_seconds.count)",
         "- push_pack_cache_hit_count: $($Summary.push_pack_cache_hit_count)",
         "- push_pack_pushed_count: $($Summary.push_pack_pushed_count)",
@@ -1042,7 +1151,7 @@ function ConvertTo-MatrixSummaryMarkdown {
         $lines += "- none"
     } else {
         foreach ($item in $Summary.failed_items) {
-            $lines += "- run_label=$($item.run_label) mode=$($item.mode) emulator=$($item.emulator) posture=$($item.posture) warm_start=$($item.warm_start) pack_cache_hit=$($item.push_pack_cache_hit) pack_pushed=$($item.push_pack_pushed) error=$($item.error)"
+            $lines += "- run_label=$($item.run_label) mode=$($item.mode) emulator=$($item.emulator) posture=$($item.posture) warm_start=$($item.warm_start) pack_cache_hit=$($item.push_pack_cache_hit) pack_pushed=$($item.push_pack_pushed) timed_out=$($item.timed_out) timeout_seconds=$($item.timeout_seconds) elapsed_seconds=$($item.elapsed_seconds) job_id=$($item.job_id) error=$($item.error)"
             foreach ($path in $item.artifact_paths) {
                 $lines += "  - $($path.kind): $($path.path)"
             }
@@ -1130,6 +1239,7 @@ $results = New-Object System.Collections.ArrayList
 foreach ($runIndex in 0..($runs.Count - 1)) {
     $run = $runs[$runIndex]
     while ($activeJobs.Count -ge $parallelLimit) {
+        Stop-TimedOutJobs -ActiveJobs $activeJobs -Results $results -TimeoutSeconds $JobTimeoutSeconds
         Receive-CompletedJobs -ActiveJobs $activeJobs -Results $results
         Start-Sleep -Milliseconds 500
     }
@@ -1145,6 +1255,7 @@ foreach ($runIndex in 0..($runs.Count - 1)) {
 }
 
 while ($activeJobs.Count -gt 0) {
+    Stop-TimedOutJobs -ActiveJobs $activeJobs -Results $results -TimeoutSeconds $JobTimeoutSeconds
     Receive-CompletedJobs -ActiveJobs $activeJobs -Results $results
     if ($activeJobs.Count -gt 0) {
         Start-Sleep -Milliseconds 500

@@ -56,6 +56,7 @@ class RunAndroidDetailFollowupMatrixContractTests(unittest.TestCase):
         for field in (
             "InitialMaxWaitSeconds",
             "FollowUpMaxWaitSeconds",
+            "JobTimeoutSeconds",
             "PollSeconds",
         ):
             self.assertIn(f'Assert-PositiveWaitParameter -Name "{field}" -Value ${field}', self.script)
@@ -76,6 +77,37 @@ class RunAndroidDetailFollowupMatrixContractTests(unittest.TestCase):
         self.assertIn("& $ScriptPath @Arguments", self.script)
         self.assertIn("} -ArgumentList $repoRoot, $loggedScript, $RunArgs", self.script)
         self.assertIn("$parallelLimit = [Math]::Max(1, $MaxParallel)", self.script)
+
+    def test_parent_job_watchdog_stops_timed_out_jobs_with_diagnostics(self):
+        self.assertIn("[int]$JobTimeoutSeconds = 900", self.script)
+        self.assertIn("function Stop-TimedOutJobs", self.script)
+        self.assertIn("$elapsedSeconds = [int](($now - $entry.startedAt).TotalSeconds)", self.script)
+        self.assertIn("if ($elapsedSeconds -lt $JobTimeoutSeconds)", self.script)
+        self.assertIn('("Timed out after {0}s; stopping job {1}." -f $elapsedSeconds, $job.Id)', self.script)
+        self.assertIn('("timeout_seconds={0}" -f $JobTimeoutSeconds)', self.script)
+        self.assertIn('("job_state_before_stop={0}" -f $job.State)', self.script)
+        self.assertIn('("emulator={0}" -f $entry.runArgs.Emulator)', self.script)
+        self.assertIn('("initial_query={0}" -f $entry.runArgs.InitialQuery)', self.script)
+        self.assertIn('("follow_up_query={0}" -f $entry.runArgs.FollowUpQuery)', self.script)
+        self.assertIn("Stop-Job -Job $job -ErrorAction SilentlyContinue", self.script)
+        self.assertIn('status = "timed_out"', self.script)
+        self.assertIn("Write-Warning ($diagnostics -join [Environment]::NewLine)", self.script)
+        self.assertIn("startedAt = [DateTimeOffset]::UtcNow", self.script)
+
+    def test_timeout_watchdog_runs_during_slot_wait_and_final_drain(self):
+        slot_wait_index = self.script.index("while ($activeJobs.Count -ge $parallelLimit)")
+        final_drain_index = self.script.index("while ($activeJobs.Count -gt 0)")
+        timeout_call = "Stop-TimedOutJobs -ActiveJobs $activeJobs -Results $results"
+        self.assertLess(slot_wait_index, self.script.index(timeout_call, slot_wait_index))
+        self.assertLess(
+            self.script.index(timeout_call, slot_wait_index),
+            self.script.index("Receive-CompletedJobs -ActiveJobs $activeJobs -Results $results", slot_wait_index),
+        )
+        self.assertLess(final_drain_index, self.script.index(timeout_call, final_drain_index))
+        self.assertLess(
+            self.script.index(timeout_call, final_drain_index),
+            self.script.index("Receive-CompletedJobs -ActiveJobs $activeJobs -Results $results", final_drain_index),
+        )
 
     def test_summary_and_stop_on_error_contract_are_stable(self):
         self.assertIn('Write-Host "Matrix run summary:"', self.script)
