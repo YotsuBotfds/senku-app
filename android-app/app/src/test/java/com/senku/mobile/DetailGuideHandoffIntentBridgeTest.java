@@ -50,6 +50,20 @@ public final class DetailGuideHandoffIntentBridgeTest {
     }
 
     @Test
+    public void homeRelatedRecentContextUsesRecentSourceKindAndRoutesHomeGuide() {
+        DetailGuideHandoffIntentBridge.HandoffContext context =
+            DetailGuideHandoffIntentBridge.homeRelated(true, " GD-585 ", " Recent thread ");
+
+        assertEquals("home_related_recent", context.sourceKind);
+        assertEquals("GD-585", context.sourceGuideId);
+        assertEquals("Recent thread", context.anchorLabel());
+        assertEquals(
+            DetailGuideHandoffIntentBridge.Route.HOME_GUIDE,
+            DetailGuideHandoffIntentBridge.routeFor(context)
+        );
+    }
+
+    @Test
     public void crossReferenceContextFallsBackToTrimmedSourceGuideWhenLabelIsBlank() {
         DetailGuideHandoffIntentBridge.HandoffContext context =
             DetailGuideHandoffIntentBridge.crossReference(" GD-111 ", "   ");
@@ -60,6 +74,20 @@ public final class DetailGuideHandoffIntentBridgeTest {
         assertEquals("GD-111", context.anchorLabel());
         assertEquals(
             DetailGuideHandoffIntentBridge.Route.CROSS_REFERENCE_GUIDE,
+            DetailGuideHandoffIntentBridge.routeFor(context)
+        );
+    }
+
+    @Test
+    public void plainGuideRouteIsUsedForNormalUnannotatedGuideContext() {
+        DetailGuideHandoffIntentBridge.HandoffContext context =
+            new DetailGuideHandoffIntentBridge.HandoffContext("", " GD-898 ", " Poisoning ");
+
+        assertEquals("", context.sourceKind);
+        assertEquals("GD-898", context.sourceGuideId);
+        assertEquals("Poisoning", context.anchorLabel());
+        assertEquals(
+            DetailGuideHandoffIntentBridge.Route.GUIDE,
             DetailGuideHandoffIntentBridge.routeFor(context)
         );
     }
@@ -91,11 +119,27 @@ public final class DetailGuideHandoffIntentBridgeTest {
     }
 
     @Test
-    public void contextFactoriesPreserveSourceKindOnlyPayloadsForPlainGuideFallback() {
+    public void sourceKindOnlyCrossReferencePayloadFallsBackToPlainGuideRoute() {
         DetailGuideHandoffIntentBridge.HandoffContext context =
             DetailGuideHandoffIntentBridge.crossReference("", "");
 
         assertNotNull(context);
+        assertEquals("browse_cross_ref", context.sourceKind);
+        assertEquals("", context.anchorLabel());
+        assertEquals(
+            DetailGuideHandoffIntentBridge.Route.GUIDE,
+            DetailGuideHandoffIntentBridge.routeFor(context)
+        );
+    }
+
+    @Test
+    public void sourceKindOnlyHomePayloadFallsBackToPlainGuideRoute() {
+        DetailGuideHandoffIntentBridge.HandoffContext context =
+            DetailGuideHandoffIntentBridge.homeRelated(true, null, null);
+
+        assertNotNull(context);
+        assertEquals("home_related_recent", context.sourceKind);
+        assertEquals("", context.anchorLabel());
         assertEquals(
             DetailGuideHandoffIntentBridge.Route.GUIDE,
             DetailGuideHandoffIntentBridge.routeFor(context)
