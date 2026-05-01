@@ -1,6 +1,6 @@
 # Backend Cleanup Phase Tracker
 
-Last updated after cleanup through `ca44dcb8` on 2026-05-01.
+Last updated after cleanup through `c6157657` on 2026-05-01.
 
 Purpose: prevent future agents from rerunning Ask/query backend cleanup that is already complete. Keep this note short; implementation detail belongs in commits and tests.
 
@@ -46,6 +46,21 @@ Purpose: prevent future agents from rerunning Ask/query backend cleanup that is 
   detail, and IME follow-up submit reaching the same settled inline-thread
   outcome as the visible send click. The new proofs are registered in the
   focused functional smoke presets and guarded by smoke-script contract tests.
+- Detail tablet evidence and Saved rendering cleanup are current through
+  `f3c8c031`: `DetailTabletEvidencePolicy` owns tablet evidence selection,
+  stale-token, loaded-preview, xref-cap, and placeholder decisions, while
+  `MainSavedGuidesController.RenderPlan` owns saved-refresh render eligibility,
+  stale/repository-swap rejection, missing-guide dropping, and loaded ordering.
+- Remaining Android harness wait bounds are current through `c6157657`:
+  parallel UI state-pack role slices now have a parent watchdog and timeout
+  artifacts, `run_android_prompt.ps1` uses bounded adb pull inside completion
+  polling, and `probe_litert_model_transport.ps1` bounds native adb/process
+  stream waits with timeout evidence.
+- Latest local proof after `c6157657`: focused tablet evidence/state-builder
+  and Saved policy JVM tests passed; full Android
+  `:app:testDebugUnitTest :app:assembleDebug :app:assembleDebugAndroidTest`
+  passed; 48 Python harness/contract tests for state-pack parallel,
+  PowerShell quality gate, and LiteRT probe passed; `git diff --check` passed.
 - Ask/Search route helpers are consolidated, with saved-route proof and
   follow-up failure restore proof covering the key route handoffs.
 - Anchor-prior behavior is extracted behind policy, and route-output parity is
