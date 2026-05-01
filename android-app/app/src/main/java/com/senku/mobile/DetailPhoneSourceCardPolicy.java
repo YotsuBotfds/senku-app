@@ -31,7 +31,7 @@ final class DetailPhoneSourceCardPolicy {
         if (!card.guideId.isEmpty()) {
             metaParts.add(card.guideId);
         }
-        if (!card.roleLabel.isEmpty()) {
+        if (!compactAnswerPreview && !card.roleLabel.isEmpty()) {
             metaParts.add(card.roleLabel);
         }
         if (!compactAnswerPreview && !card.matchLabel.isEmpty()) {
@@ -79,7 +79,7 @@ final class DetailPhoneSourceCardPolicy {
     }
 
     static int verticalPaddingDp(boolean compactAnswerPreview) {
-        return compactAnswerPreview ? 4 : verticalPaddingDp();
+        return compactAnswerPreview ? 3 : verticalPaddingDp();
     }
 
     static int maxLines(boolean compactAnswerPreview, boolean emergencyContext) {
@@ -90,8 +90,16 @@ final class DetailPhoneSourceCardPolicy {
         return 5;
     }
 
+    static int topMarginDp(boolean compactAnswerPreview) {
+        return compactAnswerPreview ? 4 : topMarginDp();
+    }
+
     static float textSizeSp() {
         return 10.0f;
+    }
+
+    static float textSizeSp(boolean compactAnswerPreview) {
+        return compactAnswerPreview ? 9.5f : textSizeSp();
     }
 
     static int landscapeRailVerticalPaddingDp() {

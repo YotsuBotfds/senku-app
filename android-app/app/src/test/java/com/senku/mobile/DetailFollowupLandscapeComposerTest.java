@@ -1202,9 +1202,11 @@ public final class DetailFollowupLandscapeComposerTest {
         assertFalse(DetailActivity.shouldUseCompactPhoneAnswerSourcePreviewCard(true, true, true));
         assertEquals(2, DetailActivity.resolvePhonePortraitSourceCardMaxLines(true, false));
         assertEquals(3, DetailActivity.resolvePhonePortraitSourceCardMaxLines(true, true));
-        assertEquals(4, DetailActivity.resolvePhonePortraitSourceCardVerticalPaddingDp(true));
+        assertEquals(3, DetailActivity.resolvePhonePortraitSourceCardVerticalPaddingDp(true));
+        assertEquals(4, DetailActivity.resolvePhonePortraitSourceCardTopMarginDp(true));
+        assertEquals(9.5f, DetailActivity.resolvePhonePortraitSourceCardTextSizeSp(true), 0.0f);
         assertEquals(
-            "GD-345 \u2022 ANCHOR\nTarp & Cord Shelters",
+            "GD-345\nTarp & Cord Shelters",
             DetailActivity.buildPhonePortraitSourceCardLabel(card, false, true)
         );
     }

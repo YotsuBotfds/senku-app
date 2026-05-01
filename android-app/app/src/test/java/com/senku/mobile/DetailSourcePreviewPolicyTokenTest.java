@@ -11,14 +11,16 @@ public final class DetailSourcePreviewPolicyTokenTest {
     public void phoneSourceEntryPreviewUsesCompactReadablePolicyDensity() {
         assertEquals(10, DetailActivity.resolvePhonePortraitSourceCardHorizontalPaddingDp());
         assertEquals(5, DetailActivity.resolvePhonePortraitSourceCardVerticalPaddingDp(false));
+        assertEquals(3, DetailActivity.resolvePhonePortraitSourceCardVerticalPaddingDp(true));
         assertEquals(5, DetailActivity.resolvePhonePortraitSourceCardTopMarginDp());
+        assertEquals(4, DetailActivity.resolvePhonePortraitSourceCardTopMarginDp(true));
         assertEquals(10.0f, DetailActivity.resolvePhonePortraitSourceCardTextSizeSp(), 0.0f);
+        assertEquals(9.5f, DetailActivity.resolvePhonePortraitSourceCardTextSizeSp(true), 0.0f);
 
         assertEquals(3, DetailActivity.resolvePhonePortraitSourceCardMaxLines(false, false));
         assertEquals(3, DetailActivity.resolvePhonePortraitSourceCardMaxLines(false, true));
         assertEquals(2, DetailActivity.resolvePhonePortraitSourceCardMaxLines(true, false));
         assertEquals(3, DetailActivity.resolvePhonePortraitSourceCardMaxLines(true, true));
-        assertEquals(4, DetailActivity.resolvePhonePortraitSourceCardVerticalPaddingDp(true));
     }
 
     @Test

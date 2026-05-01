@@ -4288,7 +4288,7 @@ public final class DetailActivity extends AppCompatActivity {
                 button.setTextSize(styledSourceCard
                     ? (landscapePhoneSideRail
                     ? resolvePhoneLandscapeSourceRailCardTextSizeSp()
-                    : resolvePhonePortraitSourceCardTextSizeSp())
+                    : resolvePhonePortraitSourceCardTextSizeSp(compactAnswerSourcePreviewCard))
                     : 14f);
                 button.setLineSpacing(0f, (phonePortraitSourceCards || flatAnswerSourceCards) ? 1.0f : 1f);
                 if (styledSourceCard) {
@@ -4315,7 +4315,7 @@ public final class DetailActivity extends AppCompatActivity {
                     params.topMargin = landscapePhoneSideRail
                         ? dp(resolvePhoneLandscapeSourceRailCardTopMarginDp())
                         : (phonePortraitSourceCards || flatAnswerSourceCards)
-                        ? dp(resolvePhonePortraitSourceCardTopMarginDp())
+                        ? dp(resolvePhonePortraitSourceCardTopMarginDp(compactAnswerSourcePreviewCard))
                         : (showUtilityRail() ? dp(4) : dp(8));
                 }
                 sourcesContainer.addView(button, params);
@@ -4796,8 +4796,16 @@ public final class DetailActivity extends AppCompatActivity {
         return DetailPhoneSourceCardPolicy.topMarginDp();
     }
 
+    static int resolvePhonePortraitSourceCardTopMarginDp(boolean compactAnswerPreview) {
+        return DetailPhoneSourceCardPolicy.topMarginDp(compactAnswerPreview);
+    }
+
     static float resolvePhonePortraitSourceCardTextSizeSp() {
         return DetailPhoneSourceCardPolicy.textSizeSp();
+    }
+
+    static float resolvePhonePortraitSourceCardTextSizeSp(boolean compactAnswerPreview) {
+        return DetailPhoneSourceCardPolicy.textSizeSp(compactAnswerPreview);
     }
 
     static int resolvePhoneLandscapeSourceRailCardVerticalPaddingDp() {

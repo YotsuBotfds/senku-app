@@ -40,14 +40,16 @@ public final class DetailPhoneSourceCardPolicyTest {
         );
 
         assertEquals(
-            "GD-444 \u2022 ANCHOR\nEmergency Shelter",
+            "GD-444\nEmergency Shelter",
             DetailPhoneSourceCardPolicy.buildLabel(card, false, true)
         );
         assertTrue(DetailPhoneSourceCardPolicy.shouldUseCompactAnswerPreviewCard(true, true, false));
         assertFalse(DetailPhoneSourceCardPolicy.shouldUseCompactAnswerPreviewCard(true, true, true));
         assertEquals(2, DetailPhoneSourceCardPolicy.maxLines(true, false));
         assertEquals(3, DetailPhoneSourceCardPolicy.maxLines(true, true));
-        assertEquals(4, DetailPhoneSourceCardPolicy.verticalPaddingDp(true));
+        assertEquals(3, DetailPhoneSourceCardPolicy.verticalPaddingDp(true));
+        assertEquals(4, DetailPhoneSourceCardPolicy.topMarginDp(true));
+        assertEquals(9.5f, DetailPhoneSourceCardPolicy.textSizeSp(true), 0.0f);
     }
 
     @Test
@@ -77,6 +79,8 @@ public final class DetailPhoneSourceCardPolicyTest {
         assertEquals(5, DetailPhoneSourceCardPolicy.verticalPaddingDp());
         assertEquals(5, DetailPhoneSourceCardPolicy.topMarginDp());
         assertEquals(10.0f, DetailPhoneSourceCardPolicy.textSizeSp(), 0.0f);
+        assertEquals(5, DetailPhoneSourceCardPolicy.topMarginDp(false));
+        assertEquals(10.0f, DetailPhoneSourceCardPolicy.textSizeSp(false), 0.0f);
         assertEquals(4, DetailPhoneSourceCardPolicy.landscapeRailVerticalPaddingDp());
         assertEquals(4, DetailPhoneSourceCardPolicy.landscapeRailTopMarginDp());
         assertEquals(9.5f, DetailPhoneSourceCardPolicy.landscapeRailTextSizeSp(), 0.0f);
