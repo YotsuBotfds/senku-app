@@ -14,6 +14,58 @@ import org.junit.Test;
 
 public final class MainRouteEffectControllerTest {
     @Test
+    public void phoneTabTransitionPushesHistoryBeforeRouteAndSavedEffects() {
+        MainRouteDecisionHelper.Transition transition =
+            new MainRouteDecisionHelper.Transition(
+                new MainRouteDecisionHelper.RouteState(
+                    MainRouteDecisionHelper.Surface.SAVED_GUIDES,
+                    BottomTabDestination.PINS,
+                    false
+                ),
+                MainRouteDecisionHelper.Effect.SHOW_SAVED_GUIDES
+            );
+        RecordingBackEffects effects = new RecordingBackEffects(true, BottomTabDestination.ASK);
+
+        MainRouteEffectController.applyPhoneTabTransition(transition, true, effects);
+
+        assertEquals(
+            Arrays.asList(
+                "pushPhoneTab:ASK",
+                "applyRouteState:SAVED_GUIDES:PINS:false",
+                "updateActionLabels",
+                "dismissSearchKeyboard",
+                "prepareSavedGuidesDestination"
+            ),
+            effects.calls
+        );
+    }
+
+    @Test
+    public void phoneTabTransitionDoesNotPushHistoryWhenSelectionOwnerIsUnchanged() {
+        MainRouteDecisionHelper.Transition transition =
+            new MainRouteDecisionHelper.Transition(
+                new MainRouteDecisionHelper.RouteState(
+                    MainRouteDecisionHelper.Surface.RECENT_THREADS,
+                    BottomTabDestination.ASK,
+                    true
+                ),
+                MainRouteDecisionHelper.Effect.FOCUS_ASK_INPUT
+            );
+        RecordingBackEffects effects = new RecordingBackEffects(false, BottomTabDestination.ASK);
+
+        MainRouteEffectController.applyPhoneTabTransition(transition, true, effects);
+
+        assertEquals(
+            Arrays.asList(
+                "applyRouteState:RECENT_THREADS:ASK:true",
+                "updateActionLabels",
+                "focusSearchInput"
+            ),
+            effects.calls
+        );
+    }
+
+    @Test
     public void backTransitionToPreviousTabAppliesRouteBeforeSectionEffects() {
         MainRouteDecisionHelper.Transition transition =
             new MainRouteDecisionHelper.Transition(
@@ -76,9 +128,25 @@ public final class MainRouteEffectControllerTest {
     private static final class RecordingBackEffects implements MainRouteEffectController.BackEffects {
         final List<String> calls = new ArrayList<>();
         private final boolean browseModeActive;
+        private final BottomTabDestination activePhoneTab;
 
         RecordingBackEffects(boolean browseModeActive) {
+            this(browseModeActive, BottomTabDestination.HOME);
+        }
+
+        RecordingBackEffects(boolean browseModeActive, BottomTabDestination activePhoneTab) {
             this.browseModeActive = browseModeActive;
+            this.activePhoneTab = activePhoneTab;
+        }
+
+        @Override
+        public BottomTabDestination activePhoneTab() {
+            return activePhoneTab;
+        }
+
+        @Override
+        public void pushPhoneTab(BottomTabDestination destination) {
+            calls.add("pushPhoneTab:" + destination);
         }
 
         @Override

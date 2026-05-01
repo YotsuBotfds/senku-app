@@ -1,5 +1,7 @@
 package com.senku.mobile;
 
+import com.senku.ui.primitives.BottomTabDestination;
+
 final class MainRouteEffectController {
     interface Effects {
         boolean isBrowseModeActive();
@@ -19,9 +21,15 @@ final class MainRouteEffectController {
         void prepareSavedGuidesDestination();
     }
 
-    interface BackEffects extends Effects {
-        void applyRouteState(MainRouteDecisionHelper.RouteState routeState);
+    interface RouteEffects extends Effects {
+        BottomTabDestination activePhoneTab();
 
+        void pushPhoneTab(BottomTabDestination destination);
+
+        void applyRouteState(MainRouteDecisionHelper.RouteState routeState);
+    }
+
+    interface BackEffects extends RouteEffects {
         void returnToBrowse();
     }
 
@@ -47,6 +55,22 @@ final class MainRouteEffectController {
             default:
                 return false;
         }
+    }
+
+    static void applyPhoneTabTransition(
+        MainRouteDecisionHelper.Transition transition,
+        boolean pushHistory,
+        RouteEffects effects
+    ) {
+        if (transition == null || transition.effect == MainRouteDecisionHelper.Effect.NONE || effects == null) {
+            return;
+        }
+        BottomTabDestination selectionOwner = transition.routeState.activePhoneTab;
+        if (pushHistory && selectionOwner != effects.activePhoneTab()) {
+            effects.pushPhoneTab(effects.activePhoneTab());
+        }
+        effects.applyRouteState(transition.routeState);
+        applyPhoneTabTransitionEffect(transition, effects);
     }
 
     static void applyPhoneTabTransitionEffect(

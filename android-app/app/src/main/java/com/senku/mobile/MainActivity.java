@@ -2988,23 +2988,25 @@ public final class MainActivity extends AppCompatActivity {
     }
 
     private void applyPhoneTabTransition(MainRouteDecisionHelper.Transition transition, boolean pushHistory) {
-        if (transition == null || transition.effect == MainRouteDecisionHelper.Effect.NONE) {
-            return;
-        }
-        BottomTabDestination selectionOwner = transition.routeState.activePhoneTab;
-        if (pushHistory && selectionOwner != activePhoneTab) {
-            pushPhoneTab(activePhoneTab);
-        }
-        applyMainRouteState(transition.routeState);
-        MainRouteEffectController.applyPhoneTabTransitionEffect(transition, mainRouteEffects());
+        MainRouteEffectController.applyPhoneTabTransition(transition, pushHistory, mainRouteEffects());
     }
 
-    private MainRouteEffectController.Effects mainRouteEffects() {
+    private MainRouteEffectController.RouteEffects mainRouteEffects() {
         return mainRouteBackEffects();
     }
 
     private MainRouteEffectController.BackEffects mainRouteBackEffects() {
         return new MainRouteEffectController.BackEffects() {
+            @Override
+            public BottomTabDestination activePhoneTab() {
+                return activePhoneTab;
+            }
+
+            @Override
+            public void pushPhoneTab(BottomTabDestination destination) {
+                MainActivity.this.pushPhoneTab(destination);
+            }
+
             @Override
             public void applyRouteState(MainRouteDecisionHelper.RouteState routeState) {
                 MainActivity.this.applyMainRouteState(routeState);
