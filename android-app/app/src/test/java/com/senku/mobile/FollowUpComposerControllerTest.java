@@ -333,4 +333,26 @@ public final class FollowUpComposerControllerTest {
         assertEquals(false, presentation.actionEnabled);
         assertEquals("", presentation.query);
     }
+
+    @Test
+    public void nullStateResolvesToEmptyPhoneComposerDecisions() {
+        FollowUpComposerController.SubmitDecision submit =
+            FollowUpComposerController.resolveSubmit(null);
+        FollowUpComposerController.RetryDecision retry =
+            FollowUpComposerController.resolveRetry(null, " \t\n ");
+        FollowUpComposerController.RetryPresentation presentation =
+            FollowUpComposerController.resolveRetryPresentation(null, true);
+        FollowUpComposerState completed =
+            FollowUpComposerController.resolveGenerationSuccess(null);
+
+        assertEquals(FollowUpComposerController.SubmitAction.EMPTY, submit.action);
+        assertEquals("", submit.query);
+        assertEquals(FollowUpComposerController.RetryAction.EMPTY, retry.action);
+        assertEquals("", retry.query);
+        assertEquals(false, presentation.visible);
+        assertEquals(false, presentation.actionEnabled);
+        assertEquals("", presentation.query);
+        assertEquals("", completed.draftText);
+        assertEquals(FollowUpComposerState.Surface.PHONE, completed.surface);
+    }
 }
