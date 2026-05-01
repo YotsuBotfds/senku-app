@@ -139,6 +139,7 @@ public final class PackRepository implements AutoCloseable {
         }
 
         int cappedLimit = Math.max(limit, 1);
+        int candidateLimit = relatedGuideCandidateLimit(cappedLimit);
         LinkedHashMap<String, SearchResult> related = new LinkedHashMap<>();
         appendRelatedGuides(
             related,
@@ -150,10 +151,10 @@ public final class PackRepository implements AutoCloseable {
                 "AND gr.related_guide_id IS NOT NULL " +
                 "AND gr.related_guide_id != ? " +
                 "ORDER BY g.title LIMIT ?",
-            new String[]{guideId, guideId, String.valueOf(cappedLimit)},
-            cappedLimit
+            new String[]{guideId, guideId, String.valueOf(candidateLimit)},
+            candidateLimit
         );
-        if (related.size() < cappedLimit) {
+        if (related.size() < candidateLimit) {
             appendRelatedGuides(
                 related,
                 "SELECT DISTINCT g.title, g.guide_id, g.category, g.difficulty, g.description, g.body_markdown, " +
@@ -163,12 +164,13 @@ public final class PackRepository implements AutoCloseable {
                     "WHERE gr.related_guide_id = ? " +
                     "AND gr.guide_id != ? " +
                     "ORDER BY g.title LIMIT ?",
-                new String[]{guideId, guideId, String.valueOf(cappedLimit)},
-                cappedLimit
+                new String[]{guideId, guideId, String.valueOf(candidateLimit)},
+                candidateLimit
             );
         }
 
-        ArrayList<SearchResult> ordered = new ArrayList<>(related.values());
+        SearchResult anchor = loadGuideById(guideId);
+        ArrayList<SearchResult> ordered = orderRelatedGuidesByWorkflowRelevance(anchor, related.values());
         if (ordered.size() > cappedLimit) {
             return new ArrayList<>(ordered.subList(0, cappedLimit));
         }
@@ -1509,6 +1511,17 @@ public final class PackRepository implements AutoCloseable {
         return guideIds;
     }
 
+    static List<SearchResult> orderRelatedGuidesByWorkflowRelevanceForTest(
+        SearchResult anchor,
+        List<SearchResult> relatedGuides
+    ) {
+        return orderRelatedGuidesByWorkflowRelevance(anchor, relatedGuides);
+    }
+
+    static int relatedGuideCandidateLimitForTest(int requestedLimit) {
+        return relatedGuideCandidateLimit(requestedLimit);
+    }
+
     static String resolveAnchorSnippetForTest(String sessionChunkText, String guideChunkText, String guideBody) {
         return AnchorSnippetFormatter.resolve(sessionChunkText, guideChunkText, guideBody);
     }
@@ -1566,6 +1579,147 @@ public final class PackRepository implements AutoCloseable {
             }
         }
         return new ArrayList<>(merged.values());
+    }
+
+    private static int relatedGuideCandidateLimit(int requestedLimit) {
+        int limit = Math.max(requestedLimit, 1);
+        return Math.min(32, Math.max(limit, Math.max(limit * 4, 12)));
+    }
+
+    private static ArrayList<SearchResult> orderRelatedGuidesByWorkflowRelevance(
+        SearchResult anchor,
+        Iterable<SearchResult> relatedGuides
+    ) {
+        ArrayList<IndexedSearchResult> indexed = new ArrayList<>();
+        int index = 0;
+        for (SearchResult guide : relatedGuides) {
+            if (guide != null) {
+                indexed.add(new IndexedSearchResult(guide, index));
+            }
+            index += 1;
+        }
+        final String anchorText = relatedGuideText(anchor);
+        final boolean fireWorkflow = isFireStartingWorkflow(anchorText);
+        final boolean survivalWorkflow = fireWorkflow || isSurvivalWorkflow(anchorText);
+        if (!survivalWorkflow) {
+            ArrayList<SearchResult> unchanged = new ArrayList<>();
+            for (IndexedSearchResult item : indexed) {
+                unchanged.add(item.result);
+            }
+            return unchanged;
+        }
+
+        indexed.sort((left, right) -> {
+            int leftPriority = relatedWorkflowPriority(anchorText, left.result);
+            int rightPriority = relatedWorkflowPriority(anchorText, right.result);
+            if (leftPriority != rightPriority) {
+                return Integer.compare(rightPriority, leftPriority);
+            }
+            return Integer.compare(left.index, right.index);
+        });
+
+        ArrayList<SearchResult> ordered = new ArrayList<>();
+        for (IndexedSearchResult item : indexed) {
+            ordered.add(item.result);
+        }
+        return ordered;
+    }
+
+    private static int relatedWorkflowPriority(String anchorText, SearchResult guide) {
+        String text = relatedGuideText(guide);
+        int score = 0;
+
+        if (isFireStartingWorkflow(anchorText)) {
+            score += markerScore(
+                text,
+                140,
+                "fire by friction", "friction fire", "fire-starting", "fire starting",
+                "bow drill", "hand drill", "fire plow", "tinder", "kindling", "ember"
+            );
+            score += markerScore(
+                text,
+                95,
+                "survival basics", "first 72 hours", "temperate forest survival",
+                "winter survival", "primitive technology"
+            );
+            score += markerScore(
+                text,
+                80,
+                "daily cooking fire", "fire management", "cookstove", "stove",
+                "charcoal", "fuel", "combustion", "flame", "fire suppression"
+            );
+            score += markerScore(text, 35, "wood selection", "woodcarving", "dry wood", "bark");
+            score -= markerScore(
+                text,
+                120,
+                "agriculture", "gardening", "animal husbandry", "veterinary",
+                "livestock", "breeding", "pasture", "zoology", "butchering"
+            );
+            score -= markerScore(text, 70, "black powder", "blasting", "weapons", "martial arts");
+        } else if (isSurvivalWorkflow(anchorText)) {
+            score += markerScore(
+                text,
+                110,
+                "fire by friction", "fire-starting", "water purification", "water storage",
+                "primitive shelter", "shelter construction", "go-bag", "search rescue",
+                "night navigation", "quick reference", "winter survival", "fire suppression"
+            );
+            score += markerScore(text, 55, "first aid", "triage", "disaster", "family emergency");
+            score -= markerScore(
+                text,
+                90,
+                "agriculture", "gardening", "animal husbandry", "veterinary",
+                "livestock", "breeding", "pasture", "zoology"
+            );
+            score -= markerScore(text, 45, "weapons", "martial arts", "butchering", "trapping");
+        }
+
+        return score;
+    }
+
+    private static int markerScore(String text, int weight, String... markers) {
+        for (String marker : markers) {
+            if (text.contains(marker)) {
+                return weight;
+            }
+        }
+        return 0;
+    }
+
+    private static boolean isFireStartingWorkflow(String text) {
+        return text.contains("gd-343")
+            || text.contains("fire by friction")
+            || text.contains("friction fire")
+            || text.contains("fire-starting")
+            || text.contains("fire starting")
+            || text.contains("bow drill")
+            || text.contains("hand drill");
+    }
+
+    private static boolean isSurvivalWorkflow(String text) {
+        return text.contains("gd-023")
+            || text.contains("survival basics")
+            || text.contains("first 72 hours")
+            || text.contains("primitive shelter")
+            || text.contains("winter survival")
+            || text.contains("temperate forest survival");
+    }
+
+    private static String relatedGuideText(SearchResult result) {
+        if (result == null) {
+            return "";
+        }
+        return (
+            emptySafe(result.guideId) + " " +
+            emptySafe(result.title) + " " +
+            emptySafe(result.subtitle) + " " +
+            emptySafe(result.sectionHeading) + " " +
+            emptySafe(result.category) + " " +
+            emptySafe(result.contentRole) + " " +
+            emptySafe(result.structureType) + " " +
+            emptySafe(result.topicTags) + " " +
+            emptySafe(result.snippet)
+        ).toLowerCase(QUERY_LOCALE);
     }
 
     private SearchResult selectAnswerAnchor(QueryTerms queryTerms, List<SearchResult> rankedResults) {
@@ -4035,6 +4189,16 @@ public final class PackRepository implements AutoCloseable {
             this.result = result;
             this.originalIndex = originalIndex;
             this.score = score;
+        }
+    }
+
+    private static final class IndexedSearchResult {
+        final SearchResult result;
+        final int index;
+
+        IndexedSearchResult(SearchResult result, int index) {
+            this.result = result;
+            this.index = index;
         }
     }
 }

@@ -43,4 +43,16 @@ public final class DetailMetaPresentationFormatterTest {
             DetailMetaPresentationFormatter.buildHeaderMetaText(primary, false, freshness)
         );
     }
+
+    @Test
+    public void compactHeaderMetaCarriesAnswerBackendAndTurnContext() {
+        assertEquals(
+            "ANSWER \u00B7 THIS DEVICE \u00B7 evidence limited \u00B7 1 turn",
+            DetailMetaPresentationFormatter.buildHeaderMetaText(
+                List.of("ANSWER", "THIS DEVICE", "evidence limited", "1 turn"),
+                false,
+                ""
+            )
+        );
+    }
 }

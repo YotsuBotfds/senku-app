@@ -645,6 +645,33 @@ public final class DetailSourcePresentationFormatterTest {
     }
 
     @Test
+    public void materialChipLabelNamesIndexedMaterial() {
+        assertEquals(
+            "Material 01: Bark",
+            DetailSourcePresentationFormatter.buildMaterialChipPlainLabel(0, " Bark ")
+        );
+        assertEquals(
+            "Material 01",
+            DetailSourcePresentationFormatter.buildMaterialChipPlainLabel(-4, " ")
+        );
+        assertFalse(
+            DetailSourcePresentationFormatter.buildMaterialChipPlainLabel(0, "Bark").startsWith("[01]")
+        );
+    }
+
+    @Test
+    public void materialChipContentDescriptionIncludesActionAffordance() {
+        assertEquals(
+            "Material 01: Bark. Long press to copy.",
+            DetailSourcePresentationFormatter.buildMaterialChipContentDescriptionText(0, " Bark ", "materials in play")
+        );
+        assertEquals(
+            "Material 02: materials in play. Long press to copy.",
+            DetailSourcePresentationFormatter.buildMaterialChipContentDescriptionText(1, " ", "materials in play")
+        );
+    }
+
+    @Test
     public void inlineSourceChipLabelUsesAnchorGuideAndPlainSeparator() {
         DetailSourcePresentationFormatter formatter = new DetailSourcePresentationFormatter(null);
 

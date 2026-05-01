@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
@@ -33,6 +34,7 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.AbstractComposeView
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextOverflow
@@ -41,6 +43,12 @@ import androidx.compose.ui.unit.sp
 import com.senku.ui.theme.SenkuAppTheme
 import com.senku.ui.theme.SenkuTheme
 import java.util.function.Consumer
+
+object DockedComposerTouchTargetTokens {
+    const val ADD_ACTION_TOUCH_TARGET_DP = 48
+    const val ADD_ACTION_VISUAL_SIZE_DP = 32
+    const val ADD_ACTION_PADDING_DP = 8
+}
 
 data class DockedComposerModel @JvmOverloads constructor(
     val text: String,
@@ -144,7 +152,9 @@ fun DockedComposer(
     val fieldHeight = 34.dp
     val fieldVerticalPadding = 6.dp
     val rowVerticalPadding = if (landscapePhoneBudgeted) 5.dp else 4.dp
-    val actionSize = 32.dp
+    val actionTouchTargetSize = DockedComposerTouchTargetTokens.ADD_ACTION_TOUCH_TARGET_DP.dp
+    val actionVisualSize = DockedComposerTouchTargetTokens.ADD_ACTION_VISUAL_SIZE_DP.dp
+    val actionPadding = DockedComposerTouchTargetTokens.ADD_ACTION_PADDING_DP.dp
     val sendVerticalPadding = if (landscapePhoneBudgeted) 7.dp else 6.dp
     val hasSendText = model.enabled && model.text.trim().isNotEmpty()
     val contextHint = model.contextHint.trim()
@@ -209,24 +219,32 @@ fun DockedComposer(
                 }
             }
 
-            Surface(
-                modifier = Modifier.size(actionSize),
-                color = colors.bg0,
-                contentColor = colors.ink2,
-                shape = CircleShape,
-                border = BorderStroke(1.dp, colors.hairline),
-                onClick = { },
+            Box(
+                modifier = Modifier
+                    .size(actionTouchTargetSize)
+                    .clip(CircleShape)
+                    .clickable(role = Role.Button, onClick = { })
+                    .padding(actionPadding),
+                contentAlignment = Alignment.Center,
             ) {
-                Box(contentAlignment = Alignment.Center) {
-                    Text(
-                        text = "+",
-                        style = typography.tag.copy(
-                            fontSize = 16.sp,
-                            lineHeight = 16.sp,
-                            fontWeight = FontWeight.Medium,
-                        ),
-                        color = colors.ink2,
-                    )
+                Surface(
+                    modifier = Modifier.size(actionVisualSize),
+                    color = colors.bg0,
+                    contentColor = colors.ink2,
+                    shape = CircleShape,
+                    border = BorderStroke(1.dp, colors.hairline),
+                ) {
+                    Box(contentAlignment = Alignment.Center) {
+                        Text(
+                            text = "+",
+                            style = typography.tag.copy(
+                                fontSize = 16.sp,
+                                lineHeight = 16.sp,
+                                fontWeight = FontWeight.Medium,
+                            ),
+                            color = colors.ink2,
+                        )
+                    }
                 }
             }
 

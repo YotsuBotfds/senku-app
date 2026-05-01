@@ -351,6 +351,90 @@ public final class PackRepositoryTest {
     }
 
     @Test
+    public void fireStartingRelatedGuidesPreferWorkflowProximityOverAlphabeticalOrder() {
+        SearchResult anchor = relatedGuide(
+            "GD-343",
+            "Fire by Friction Methods",
+            "survival",
+            "fire-starting friction-fire bow-drill tinder kindling"
+        );
+
+        List<SearchResult> ordered = PackRepository.orderRelatedGuidesByWorkflowRelevanceForTest(
+            anchor,
+            java.util.List.of(
+                relatedGuide("GD-010", "Agriculture & Gardening", "agriculture", "crops gardening"),
+                relatedGuide("GD-011", "Animal Husbandry & Veterinary", "agriculture", "livestock breeding"),
+                relatedGuide("GD-250", "Daily Cooking Fire Management", "survival", "fire management fuel coals"),
+                relatedGuide("GD-023", "Survival Basics & First 72 Hours", "survival", "survival basics fire water shelter"),
+                relatedGuide("GD-190", "Combustion & Fire Chemistry Basics", "chemistry", "combustion flame fuel")
+            )
+        );
+
+        assertEquals("GD-023", ordered.get(0).guideId);
+        assertEquals("GD-250", ordered.get(1).guideId);
+        assertEquals("GD-190", ordered.get(2).guideId);
+        assertEquals("GD-010", ordered.get(3).guideId);
+        assertEquals("GD-011", ordered.get(4).guideId);
+    }
+
+    @Test
+    public void survivalRelatedGuidesPreferImmediateUseBeforeAnimalCatalogNeighbors() {
+        SearchResult anchor = relatedGuide(
+            "GD-023",
+            "Survival Basics & First 72 Hours",
+            "survival",
+            "survival basics first 72 hours fire water shelter navigation rescue"
+        );
+
+        List<SearchResult> ordered = PackRepository.orderRelatedGuidesByWorkflowRelevanceForTest(
+            anchor,
+            java.util.List.of(
+                relatedGuide("GD-120", "Animal Tracking", "survival", "tracking spoor"),
+                relatedGuide("GD-121", "Butchering", "food", "meat processing"),
+                relatedGuide("GD-343", "Fire by Friction Methods", "survival", "fire-starting tinder bow drill"),
+                relatedGuide("GD-423", "Water Purification", "survival", "water purification boiling filtration"),
+                relatedGuide("GD-386", "Water Storage & Rationing", "survival", "water storage rationing")
+            )
+        );
+
+        assertEquals("GD-343", ordered.get(0).guideId);
+        assertEquals("GD-423", ordered.get(1).guideId);
+        assertEquals("GD-386", ordered.get(2).guideId);
+        assertEquals("GD-120", ordered.get(3).guideId);
+        assertEquals("GD-121", ordered.get(4).guideId);
+    }
+
+    @Test
+    public void nonSurvivalRelatedGuidesKeepRepositoryOrder() {
+        SearchResult anchor = relatedGuide(
+            "GD-700",
+            "Soap Making",
+            "crafts",
+            "soap lye oils washing"
+        );
+
+        List<SearchResult> ordered = PackRepository.orderRelatedGuidesByWorkflowRelevanceForTest(
+            anchor,
+            java.util.List.of(
+                relatedGuide("GD-250", "Daily Cooking Fire Management", "survival", "fire management"),
+                relatedGuide("GD-010", "Agriculture & Gardening", "agriculture", "gardening"),
+                relatedGuide("GD-190", "Combustion & Fire Chemistry Basics", "chemistry", "combustion")
+            )
+        );
+
+        assertEquals("GD-250", ordered.get(0).guideId);
+        assertEquals("GD-010", ordered.get(1).guideId);
+        assertEquals("GD-190", ordered.get(2).guideId);
+    }
+
+    @Test
+    public void relatedGuideCandidatePoolLetsLimitOneOutrankAlphabeticalFirstPage() {
+        assertEquals(12, PackRepository.relatedGuideCandidateLimitForTest(1));
+        assertEquals(12, PackRepository.relatedGuideCandidateLimitForTest(3));
+        assertEquals(32, PackRepository.relatedGuideCandidateLimitForTest(20));
+    }
+
+    @Test
     public void expiredAnchorDoesNotChangeHybridOrdering() {
         java.util.List<String> merged = PackRepository.mergeGuideIdsWithAnchorPriorForTest(
             java.util.List.of("GD-999", "GD-444"),
@@ -4195,5 +4279,22 @@ public final class PackRepositoryTest {
             }
         }
         return false;
+    }
+
+    private static SearchResult relatedGuide(String guideId, String title, String category, String topicTags) {
+        return new SearchResult(
+            title,
+            "",
+            topicTags,
+            "",
+            guideId,
+            "",
+            category,
+            "related",
+            "",
+            "",
+            "",
+            topicTags
+        );
     }
 }

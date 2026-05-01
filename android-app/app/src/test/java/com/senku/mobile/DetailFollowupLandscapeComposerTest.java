@@ -210,6 +210,18 @@ public final class DetailFollowupLandscapeComposerTest {
     }
 
     @Test
+    public void phoneAnswerDockedComposerSuppressesRedundantContextWhenTopChromeOwnsIt() {
+        assertEquals(
+            "",
+            DetailActivity.buildAnswerDockedComposerContextHint("GD-345", true)
+        );
+        assertTrue(DetailActivity.shouldSuppressDockedComposerContextHintForTopChrome(true, true, false));
+        assertFalse(DetailActivity.shouldSuppressDockedComposerContextHintForTopChrome(true, true, true));
+        assertFalse(DetailActivity.shouldSuppressDockedComposerContextHintForTopChrome(true, false, false));
+        assertFalse(DetailActivity.shouldSuppressDockedComposerContextHintForTopChrome(false, true, false));
+    }
+
+    @Test
     public void phoneThreadDockedComposerCarriesThreadContextHint() {
         assertEquals(
             "THREAD CONTEXT \u2022 2 TURNS \u2022 GD-220 ANCHOR",
@@ -218,6 +230,14 @@ public final class DetailFollowupLandscapeComposerTest {
         assertEquals(
             "THREAD CONTEXT \u2022 1 TURN",
             DetailActivity.buildThreadDockedComposerContextHint("", 0)
+        );
+    }
+
+    @Test
+    public void phoneThreadDockedComposerSuppressesRedundantContextWhenTopChromeOwnsIt() {
+        assertEquals(
+            "",
+            DetailActivity.buildThreadDockedComposerContextHint("GD-220", 2, true)
         );
     }
 

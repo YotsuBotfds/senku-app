@@ -4056,13 +4056,32 @@ public final class DetailActivity extends AppCompatActivity {
         if (isCurrentThreadDetailRoute()) {
             return buildThreadDockedComposerContextHint(
                 resolveThreadAnchorGuideId(guideId),
-                currentAnswerThreadTurnCount()
+                currentAnswerThreadTurnCount(),
+                shouldSuppressDockedComposerContextHintForTopChrome(
+                    answerMode,
+                    isCompactPortraitPhoneLayout() || isLandscapePhoneLayout(),
+                    false
+                )
             );
         }
-        return buildAnswerDockedComposerContextHint(guideId);
+        return buildAnswerDockedComposerContextHint(
+            guideId,
+            shouldSuppressDockedComposerContextHintForTopChrome(
+                answerMode,
+                isCompactPortraitPhoneLayout() || isLandscapePhoneLayout(),
+                false
+            )
+        );
     }
 
     static String buildAnswerDockedComposerContextHint(String guideId) {
+        return buildAnswerDockedComposerContextHint(guideId, false);
+    }
+
+    static String buildAnswerDockedComposerContextHint(String guideId, boolean topChromeCarriesAnswerContext) {
+        if (topChromeCarriesAnswerContext) {
+            return "";
+        }
         ArrayList<String> parts = new ArrayList<>();
         String cleanGuideId = safe(guideId).trim();
         if (!cleanGuideId.isEmpty()) {
@@ -4112,6 +4131,17 @@ public final class DetailActivity extends AppCompatActivity {
     }
 
     static String buildThreadDockedComposerContextHint(String guideId, int totalTurnCount) {
+        return buildThreadDockedComposerContextHint(guideId, totalTurnCount, false);
+    }
+
+    static String buildThreadDockedComposerContextHint(
+        String guideId,
+        int totalTurnCount,
+        boolean topChromeCarriesThreadContext
+    ) {
+        if (topChromeCarriesThreadContext) {
+            return "";
+        }
         ArrayList<String> parts = new ArrayList<>();
         parts.add("THREAD CONTEXT");
         int turns = Math.max(1, totalTurnCount);
@@ -4121,6 +4151,14 @@ public final class DetailActivity extends AppCompatActivity {
             parts.add(cleanGuideId + " ANCHOR");
         }
         return String.join(HEADER_BULLET, parts);
+    }
+
+    static boolean shouldSuppressDockedComposerContextHintForTopChrome(
+        boolean answerMode,
+        boolean phoneTopChromeCarriesContext,
+        boolean emergencySurface
+    ) {
+        return answerMode && phoneTopChromeCarriesContext && !emergencySurface;
     }
 
     static boolean shouldRequestLandscapeDockedComposerFocus(

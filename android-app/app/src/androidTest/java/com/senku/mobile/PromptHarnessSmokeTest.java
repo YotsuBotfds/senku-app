@@ -2834,6 +2834,49 @@ public final class PromptHarnessSmokeTest {
     }
 
     @Test
+    public void answerModeMaterialChipLabelsIndexedMaterialRole() throws Exception {
+        RelatedGuideSeed rainShelterSeed = findRainShelterGuideWithRelations();
+        RelatedGuideSeed seed = rainShelterSeed == null ? findGuideWithRelations() : rainShelterSeed;
+        Assume.assumeNotNull("no guide available for answer material chip smoke", seed);
+
+        ArrayList<SearchResult> sources = new ArrayList<>();
+        sources.add(seed.guide);
+        Intent intent = DetailActivity.newAnswerIntent(
+            ApplicationProvider.getApplicationContext(),
+            "How do I build a simple rain shelter from tarp and cord?",
+            "GD-345 \u00B7 3 sources \u00B7 rev 04-27 04:21",
+            "Short answer:\nUse the attached source guide ["
+                + safe(seed.guide.guideId)
+                + "] to build a simple rain shelter from tarp and cord.\n\n"
+                + "Materials: tarp, cord, two anchor points",
+            sources,
+            null,
+            "answer-material-chip"
+        );
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+
+        try (ActivityScenario<DetailActivity> scenario = ActivityScenario.launch(intent)) {
+            awaitHarnessIdle();
+            Assert.assertTrue(
+                "answer detail should render before material chip validation",
+                waitForDetailBodyReady(DETAIL_WAIT_MS, 8)
+            );
+            scenario.onActivity(activity -> {
+                DetailSettleSignals signals = collectDetailSettleSignals(activity);
+                if (signals.tabletCompose) {
+                    Assert.assertTrue(
+                        "tablet answer detail should still surface the scripted materials cue",
+                        containsAny(signals.bodyText, "Materials", "tarp", "cord")
+                    );
+                    return;
+                }
+                assertMaterialIndexVisible(activity, "Tarp");
+            });
+            captureUiState("answer_material_chip_label");
+        }
+    }
+
+    @Test
     public void answerModeSourceSelectionKeepsSourceAnchoredCrossReferenceLane() throws Exception {
         RelatedGuideSeed rainShelterSeed = findRainShelterGuideWithRelations();
         RelatedGuideSeed seed = rainShelterSeed == null ? findGuideWithRelations() : rainShelterSeed;
@@ -8007,12 +8050,17 @@ public final class PromptHarnessSmokeTest {
         String chipText = safe(firstChip.getText().toString());
         String chipLower = chipText.toLowerCase(Locale.US);
         Assert.assertTrue(
-            "material chips should adopt the indexed field-manual tab treatment",
-            chipText.startsWith("[01]")
+            "material chips should label the indexed material role explicitly",
+            chipText.startsWith("Material 01:")
         );
         Assert.assertTrue(
             "material chips should keep the material label readable after indexing",
             chipLower.contains(safe(expectedFirstMaterial).toLowerCase(Locale.US))
+        );
+        String chipDescription = safe(String.valueOf(firstChip.getContentDescription()));
+        Assert.assertTrue(
+            "material chips should expose the long-press copy affordance to accessibility",
+            chipDescription.contains("Long press to copy")
         );
     }
 

@@ -258,14 +258,12 @@ final class DetailSourcePresentationFormatter {
     }
 
     CharSequence buildMaterialChipLabel(int index, String material) {
-        int displayIndex = Math.max(0, index) + 1;
-        String label = safe(material).trim();
         SpannableStringBuilder builder = new SpannableStringBuilder(
-            context.getString(R.string.detail_external_review_material_chip_label, displayIndex, label)
+            buildMaterialChipPlainLabel(index, material)
         );
-        int markerEnd = builder.toString().indexOf(']');
+        int markerEnd = builder.toString().indexOf(':');
         if (markerEnd >= 0) {
-            int spanEnd = markerEnd + 1;
+            int spanEnd = markerEnd;
             builder.setSpan(new StyleSpan(Typeface.BOLD), 0, spanEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             builder.setSpan(new TypefaceSpan("monospace"), 0, spanEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             builder.setSpan(new RelativeSizeSpan(0.9f), 0, spanEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
@@ -279,14 +277,26 @@ final class DetailSourcePresentationFormatter {
         return builder;
     }
 
-    String buildMaterialChipContentDescription(String material, int index) {
+    static String buildMaterialChipPlainLabel(int index, String material) {
         int displayIndex = Math.max(0, index) + 1;
         String label = safe(material).trim();
-        return context.getString(
-            R.string.detail_external_review_material_chip_content_description,
-            displayIndex,
-            label.isEmpty() ? context.getString(R.string.detail_materials_title).toLowerCase(Locale.US) : label
-        );
+        if (label.isEmpty()) {
+            return String.format(Locale.US, "Material %02d", displayIndex);
+        }
+        return String.format(Locale.US, "Material %02d: %s", displayIndex, label);
+    }
+
+    String buildMaterialChipContentDescription(String material, int index) {
+        String label = safe(material).trim();
+        String fallback = context.getString(R.string.detail_materials_title).toLowerCase(Locale.US);
+        return buildMaterialChipContentDescriptionText(index, label, fallback);
+    }
+
+    static String buildMaterialChipContentDescriptionText(int index, String material, String fallbackMaterial) {
+        String label = safe(material).trim();
+        String fallback = safe(fallbackMaterial).trim();
+        String materialLabel = label.isEmpty() ? (fallback.isEmpty() ? "material item" : fallback) : label;
+        return buildMaterialChipPlainLabel(index, materialLabel) + ". Long press to copy.";
     }
 
     String buildSourceSummary(List<String> sourceLabels) {
