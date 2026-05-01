@@ -187,6 +187,27 @@ public final class MainSearchControllerTest {
     }
 
     @Test
+    public void staleSuccessIsSuppressedAfterNewerSessionCommandRouteWins() {
+        FakeHost host = readyHost();
+        host.queueUiActions = true;
+        FakeEngine engine = new FakeEngine();
+        SearchResult first = sampleResult("First", "GD-001");
+        engine.resultsByQuery.put("first", List.of(first));
+        MainSearchController controller = new MainSearchController(host, engine, query -> null);
+
+        controller.runSearch("first");
+        host.sessionCommandHandled = true;
+        controller.runSearch("/state");
+        host.runQueuedUiAction(0);
+
+        assertEquals(
+            List.of("started:first:first:false", "session-command:/state"),
+            host.events
+        );
+        assertNull(host.lastResults);
+    }
+
+    @Test
     public void staleSuccessIsSuppressedAfterNewerUnavailableRouteWins() {
         FakeHost host = readyHost();
         host.queueUiActions = true;

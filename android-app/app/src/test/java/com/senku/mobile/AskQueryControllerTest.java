@@ -195,6 +195,59 @@ public final class AskQueryControllerTest {
     }
 
     @Test
+    public void stalePrepareSuccessIsIgnoredAfterNewerBlankQueryWins() {
+        FakeHost host = readyHost();
+        host.queueUiActions = true;
+        FakeEngine engine = new FakeEngine();
+        OfflineAnswerEngine.PreparedAnswer firstPrepared = generativePrepared("first ask");
+        engine.preparedAnswers.put("first ask", firstPrepared);
+        AskQueryController controller = new AskQueryController(host, engine, query -> null);
+
+        controller.runAsk("first ask");
+        controller.runAsk("   ");
+        host.runQueuedUiAction(0);
+
+        assertEquals(
+            List.of("prepare-started:first ask", "blank-query"),
+            host.events
+        );
+        assertNull(host.lastPreparedSuccess);
+        assertEquals(1, engine.prepareCalls);
+    }
+
+    @Test
+    public void stalePrepareSuccessIsIgnoredAfterNewerDeterministicRouteWins() {
+        FakeHost host = readyHost();
+        host.queueUiActions = true;
+        FakeEngine engine = new FakeEngine();
+        OfflineAnswerEngine.PreparedAnswer firstPrepared = generativePrepared("first ask");
+        engine.preparedAnswers.put("first ask", firstPrepared);
+        DeterministicAnswerRouter.DeterministicAnswer deterministic =
+            new DeterministicAnswerRouter.DeterministicAnswer(
+                "rule-id",
+                "Use a proven shortcut.",
+                List.of(sampleSource())
+            );
+        AskQueryController controller = new AskQueryController(
+            host,
+            engine,
+            query -> "second ask".equals(query) ? deterministic : null
+        );
+
+        controller.runAsk("first ask");
+        controller.runAsk("second ask");
+        host.runQueuedUiAction(0);
+
+        assertEquals(
+            List.of("prepare-started:first ask", "deterministic"),
+            host.events
+        );
+        assertNull(host.lastPreparedSuccess);
+        assertSame(deterministic, host.lastDeterministicAnswer);
+        assertEquals(1, engine.prepareCalls);
+    }
+
+    @Test
     public void stalePrepareFailureIsIgnoredAfterNewerAskStarts() {
         FakeHost host = readyHost();
         host.queueUiActions = true;
