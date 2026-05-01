@@ -352,6 +352,7 @@ public final class MainActivityHomeChromeTest {
 
         assertFalse(chromeState.backAvailable);
         assertTrue(chromeState.searchActionVisible);
+        assertFalse(chromeState.overflowActionVisible);
         assertTrue(chromeState.usesStyledHomeTitle);
         assertEquals("HOME SENKU", chromeState.mode);
         assertEquals("Field manual \u2022 ed.2", chromeState.title);
@@ -371,6 +372,7 @@ public final class MainActivityHomeChromeTest {
 
         assertTrue(chromeState.backAvailable);
         assertFalse(chromeState.searchActionVisible);
+        assertFalse(chromeState.overflowActionVisible);
         assertFalse(chromeState.usesStyledHomeTitle);
         assertEquals("SEARCH", chromeState.mode);
         assertEquals("Senku", chromeState.title);
@@ -391,6 +393,35 @@ public final class MainActivityHomeChromeTest {
         assertEquals("SEARCH", chromeState.mode);
         assertEquals("rain shelter", chromeState.title);
         assertFalse(chromeState.searchActionVisible);
+        assertFalse(chromeState.overflowActionVisible);
+    }
+
+    @Test
+    public void searchChromePolicyNormalizesQueryCountAndLandscapeHeader() {
+        MainHomeChromePolicy.SearchChromeState chromeState =
+            MainHomeChromePolicy.resolveSearch(" rain shelter ", 4);
+
+        assertEquals("rain shelter", chromeState.queryLabel);
+        assertEquals("rain shelter", chromeState.title);
+        assertEquals("rain shelter \u2022 4 results", chromeState.titleWithCount);
+        assertEquals("4 RESULTS", chromeState.countLabel);
+        assertEquals("\u2039  |  SEARCH rain shelter", chromeState.landscapePhoneHeader);
+    }
+
+    @Test
+    public void searchChromePolicyDefaultsBlankOrGuidesQuery() {
+        MainHomeChromePolicy.SearchChromeState blankState =
+            MainHomeChromePolicy.resolveSearch("", 1);
+        MainHomeChromePolicy.SearchChromeState guidesState =
+            MainHomeChromePolicy.resolveSearch(" GUIDES ", 0);
+
+        assertEquals("guides", blankState.queryLabel);
+        assertEquals("Senku", blankState.title);
+        assertEquals("guides \u2022 1 result", blankState.titleWithCount);
+        assertEquals("1 RESULT", blankState.countLabel);
+        assertEquals("guides", guidesState.queryLabel);
+        assertEquals("Senku", guidesState.title);
+        assertEquals("guides \u2022 0 results", guidesState.titleWithCount);
     }
 
     @Test

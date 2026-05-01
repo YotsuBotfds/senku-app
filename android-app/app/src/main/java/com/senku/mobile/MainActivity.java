@@ -4375,11 +4375,7 @@ public final class MainActivity extends AppCompatActivity {
     }
 
     private static String buildSearchChromeQueryLabel(String query) {
-        String cleanQuery = safe(query).trim();
-        if (cleanQuery.isEmpty() || "guides".equalsIgnoreCase(cleanQuery)) {
-            return "guides";
-        }
-        return cleanQuery;
+        return MainHomeChromePolicy.resolveSearch(query, 0).queryLabel;
     }
 
     private String buildSearchChromeCountLabel(String query, int resultCount) {
@@ -4387,8 +4383,11 @@ public final class MainActivity extends AppCompatActivity {
     }
 
     private static String buildSearchChromeCountLabel(String query, int resultCount, boolean productReviewMode) {
-        String countLabel = resultCount + (resultCount == 1 ? " RESULT" : " RESULTS");
-        return appendReviewSearchLatency(countLabel, query, productReviewMode);
+        return appendReviewSearchLatency(
+            MainHomeChromePolicy.resolveSearch(query, resultCount).countLabel,
+            query,
+            productReviewMode
+        );
     }
 
     private String appendReviewSearchLatency(String header, String query) {
@@ -4404,15 +4403,16 @@ public final class MainActivity extends AppCompatActivity {
             return;
         }
         String cleanQuery = safe(query).trim();
+        MainHomeChromePolicy.SearchChromeState searchChrome =
+            MainHomeChromePolicy.resolveSearch(cleanQuery, resultCount);
         if (!isBrowseModeActive()) {
-            String chromeQuery = cleanQuery.isEmpty() ? "guides" : cleanQuery;
             setHomeChromeModeAndTitle(
-                "SEARCH",
-                chromeQuery + " \u2022 " + resultCount + (resultCount == 1 ? " result" : " results")
+                MainHomeChromePolicy.SEARCH_MODE,
+                searchChrome.titleWithCount
             );
         }
         if (tabletSearchQueryText != null) {
-            tabletSearchQueryText.setText(buildSearchChromeQueryLabel(cleanQuery));
+            tabletSearchQueryText.setText(searchChrome.queryLabel);
         }
         if (tabletSearchCountText != null) {
             tabletSearchCountText.setText(buildSearchChromeCountLabel(cleanQuery, resultCount));
@@ -4424,11 +4424,13 @@ public final class MainActivity extends AppCompatActivity {
             return;
         }
         String cleanQuery = safe(query).trim();
+        MainHomeChromePolicy.SearchChromeState searchChrome =
+            MainHomeChromePolicy.resolveSearch(cleanQuery, resultCount);
         if (isLandscapePhoneLayout() && resultsHeader != null) {
-            resultsHeader.setText(buildLandscapePhoneSearchChromeLabel(cleanQuery));
+            resultsHeader.setText(searchChrome.landscapePhoneHeader);
         }
         if (phoneSearchQueryText != null) {
-            phoneSearchQueryText.setText(buildSearchChromeQueryLabel(cleanQuery));
+            phoneSearchQueryText.setText(searchChrome.queryLabel);
         }
         if (phoneSearchCountText != null) {
             phoneSearchCountText.setText(buildSearchChromeCountLabel(cleanQuery, resultCount));
@@ -4440,9 +4442,7 @@ public final class MainActivity extends AppCompatActivity {
     }
 
     private static String buildLandscapePhoneSearchChromeLabel(String query) {
-        String cleanQuery = safe(query).trim();
-        String chromeQuery = cleanQuery.isEmpty() ? "guides" : cleanQuery;
-        return "\u2039  |  SEARCH " + chromeQuery;
+        return MainHomeChromePolicy.resolveSearch(query, 0).landscapePhoneHeader;
     }
 
     private void updateHomeChromeTitle(boolean browseMode, String query) {
