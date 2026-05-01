@@ -102,6 +102,44 @@ public final class MainResultPublicationPolicyTest {
     }
 
     @Test
+    public void resolvedRouteStateComesFromExplicitPolicySurface() {
+        assertRouteState(
+            MainResultPublicationPolicy.resolveRouteState(
+                MainResultPublicationPolicy.searchResultSurfaceWithSearchChrome("rain", "Rain", 2)
+            ),
+            MainRouteDecisionHelper.Surface.SEARCH_RESULTS,
+            BottomTabDestination.HOME,
+            false
+        );
+        assertRouteState(
+            MainResultPublicationPolicy.resolveRouteState(
+                MainResultPublicationPolicy.askResultSurface("cleaner")
+            ),
+            MainRouteDecisionHelper.Surface.ASK_RESULTS,
+            BottomTabDestination.ASK,
+            true
+        );
+        assertRouteState(
+            MainResultPublicationPolicy.resolveRouteState(
+                MainResultPublicationPolicy.askResultSurfaceWithBrowseFallback("cleaner", true)
+            ),
+            MainRouteDecisionHelper.Surface.RECENT_THREADS,
+            BottomTabDestination.ASK,
+            false
+        );
+    }
+
+    @Test
+    public void resolvedRouteStateFallsBackToBrowseHomeForMissingPublication() {
+        assertRouteState(
+            MainResultPublicationPolicy.resolveRouteState(null),
+            MainRouteDecisionHelper.Surface.BROWSE,
+            BottomTabDestination.HOME,
+            false
+        );
+    }
+
+    @Test
     public void searchQueryChromePresentationPublishesSanitizedChromeState() {
         MainResultPublicationPolicy policy = MainResultPublicationPolicy.searchResultSurfaceWithSearchChrome(
             "rain",

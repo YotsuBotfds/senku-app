@@ -795,7 +795,7 @@ public final class MainActivity extends AppCompatActivity {
                 MainResultPublicationPolicy.searchResultSurfaceWithSearchChrome(query, displayQuery, 0);
             setResultHighlightQuery(loadingPublication.highlightQuery());
             publishSearchQueryChrome(loadingPublication);
-            applyMainRouteState(resolveResultPublicationRouteState(loadingPublication));
+            applyMainRouteState(MainResultPublicationPolicy.resolveRouteState(loadingPublication));
             replaceItems(Collections.emptyList());
             resultsHeader.setText(R.string.results_header_searching);
             setBusy(sessionUsed
@@ -1326,14 +1326,6 @@ public final class MainActivity extends AppCompatActivity {
         setResultHighlightQuery(presentation.highlightQuery());
         replaceItems(results);
         applyMainRouteState(presentation.routeState());
-    }
-
-    static MainRouteDecisionHelper.RouteState resolveResultPublicationRouteState(
-        MainResultPublicationPolicy publication
-    ) {
-        return publication == null
-            ? MainRouteDecisionHelper.browseHome()
-            : publication.resultItemsPresentation().routeState();
     }
 
     private void publishSearchQueryChrome(MainResultPublicationPolicy publication) {

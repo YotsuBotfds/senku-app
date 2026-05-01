@@ -163,6 +163,12 @@ final class MainResultPublicationPolicy {
         return new SearchQueryChromePresentation(updateSearchQueryChrome, searchQueryLabel, resultCount);
     }
 
+    static MainRouteDecisionHelper.RouteState resolveRouteState(MainResultPublicationPolicy publication) {
+        return publication == null
+            ? MainRouteDecisionHelper.browseHome()
+            : publication.resultItemsPresentation().routeState();
+    }
+
     String searchQueryLabel() {
         return searchQueryLabel;
     }

@@ -396,34 +396,6 @@ public final class MainActivityPhoneNavigationTest {
     }
 
     @Test
-    public void resultPublicationRouteComesFromExplicitPolicySurface() {
-        assertRouteState(
-            MainActivity.resolveResultPublicationRouteState(
-                MainResultPublicationPolicy.searchResultSurfaceWithSearchChrome("rain", "Rain", 2)
-            ),
-            MainRouteDecisionHelper.Surface.SEARCH_RESULTS,
-            BottomTabDestination.HOME,
-            false
-        );
-        assertRouteState(
-            MainActivity.resolveResultPublicationRouteState(
-                MainResultPublicationPolicy.askResultSurface("cleaner")
-            ),
-            MainRouteDecisionHelper.Surface.ASK_RESULTS,
-            BottomTabDestination.ASK,
-            true
-        );
-        assertRouteState(
-            MainActivity.resolveResultPublicationRouteState(
-                MainResultPublicationPolicy.askResultSurfaceWithBrowseFallback("cleaner", true)
-            ),
-            MainRouteDecisionHelper.Surface.RECENT_THREADS,
-            BottomTabDestination.ASK,
-            false
-        );
-    }
-
-    @Test
     public void sharedInputSubmitRoutesToAskWhenAskOwnsTheVisibleFlow() {
         assertEquals(
             SubmitTarget.ASK,
