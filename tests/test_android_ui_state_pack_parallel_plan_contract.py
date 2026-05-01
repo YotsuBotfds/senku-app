@@ -31,6 +31,8 @@ class AndroidUiStatePackParallelPlanContractTests(unittest.TestCase):
                     str(output_root),
                     "-RoleFilter",
                     "phone_portrait,tablet_landscape",
+                    "-RoleProcessTimeoutSeconds",
+                    "1234",
                     "-PlanOnly",
                 ],
                 cwd=REPO_ROOT,
@@ -74,6 +76,7 @@ class AndroidUiStatePackParallelPlanContractTests(unittest.TestCase):
             )
             self.assertEqual(plan["max_parallel_devices"], 4)
             self.assertEqual(plan["effective_max_parallel_devices"], 4)
+            self.assertEqual(plan["role_process_timeout_seconds"], 1234)
             self.assertEqual(
                 plan["goal_pack"]["normalized_tablet_review_directory"],
                 "normalized_tablet_review",
@@ -106,6 +109,7 @@ class AndroidUiStatePackParallelPlanContractTests(unittest.TestCase):
             self.assertFalse(intent["skip_flags"]["skip_host_states"])
             self.assertEqual(intent["max_parallel_devices"], 4)
             self.assertEqual(intent["effective_max_parallel_devices"], 4)
+            self.assertEqual(intent["role_process_timeout_seconds"], 1234)
             self.assertTrue(
                 all("-SkipFinalize -SkipBuild" in launcher["command"] for launcher in plan["launchers"])
             )
@@ -180,6 +184,23 @@ class AndroidUiStatePackParallelPlanContractTests(unittest.TestCase):
         self.assertLess(plan_only_index, launcher_index)
         self.assertLess(plan_only_index, finalize_index)
         self.assertLess(plan_only_index, finalize_skip_build_index)
+
+    def test_role_process_timeout_contract_kills_and_records_timed_out_slices(self):
+        script = SCRIPT_PATH.read_text(encoding="utf-8-sig")
+
+        self.assertIn("[ValidateRange(1, 86400)]", script)
+        self.assertIn("[int]$RoleProcessTimeoutSeconds = 7200", script)
+        self.assertIn("timeout_at = $startedAt.AddSeconds($RoleProcessTimeoutSeconds)", script)
+        self.assertIn("timeout_seconds = [int]$RoleProcessTimeoutSeconds", script)
+        self.assertIn("timed_out = $false", script)
+        self.assertIn("function Get-TimedOutRoleProcesses", script)
+        self.assertIn("function Stop-RoleProcessTree", script)
+        self.assertIn("& taskkill.exe /PID $Entry.process.Id /T /F", script)
+        self.assertIn("$Entry.process.Kill()", script)
+        self.assertIn("return -1", script)
+        self.assertIn("Set-Content -LiteralPath $entry.timeout_path -Encoding UTF8", script)
+        self.assertIn("Role slice timed out on {0} after {1}s; killing process tree for PID {2}.", script)
+        self.assertIn("process tree was killed and exit code {3} recorded", script)
 
     def test_followup_state_name_matches_seeded_thread_method(self):
         build_script = BUILD_SCRIPT_PATH.read_text(encoding="utf-8-sig")

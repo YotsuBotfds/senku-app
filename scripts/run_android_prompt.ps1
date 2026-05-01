@@ -302,33 +302,18 @@ function Invoke-SenkuLaunch {
 function Invoke-AdbPullQuiet {
     param(
         [string]$DeviceDump,
-        [string]$LocalDump
+        [string]$LocalDump,
+        [int]$TimeoutMilliseconds = 30000
     )
 
-    $token = [guid]::NewGuid().ToString("N")
-    $redirectStdout = Join-Path $env:TEMP ("senku_adb_pull_" + $token + "_out.log")
-    $redirectStderr = Join-Path $env:TEMP ("senku_adb_pull_" + $token + "_err.log")
-    try {
-        $process = Start-Process `
-            -FilePath $adb `
-            -ArgumentList @("-s", $Emulator, "pull", $DeviceDump, $LocalDump) `
-            -NoNewWindow `
-            -Wait `
-            -PassThru `
-            -RedirectStandardOutput $redirectStdout `
-            -RedirectStandardError $redirectStderr
-        return ($process.ExitCode -eq 0)
-    } finally {
-        foreach ($path in @($redirectStdout, $redirectStderr)) {
-            if (-not (Test-Path $path)) {
-                continue
-            }
-            try {
-                Remove-Item -LiteralPath $path -Force -ErrorAction Stop
-            } catch {
-            }
-        }
+    $result = Invoke-AndroidAdbCommandCapture `
+        -AdbPath $adb `
+        -Arguments @("-s", $Emulator, "pull", $DeviceDump, $LocalDump) `
+        -TimeoutMilliseconds $TimeoutMilliseconds
+    if ($result.timed_out) {
+        return $false
     }
+    return ($result.exit_code -eq 0)
 }
 
 function Normalize-UiText {

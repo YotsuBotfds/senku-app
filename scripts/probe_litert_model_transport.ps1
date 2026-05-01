@@ -4,12 +4,28 @@ param(
     [string]$OutputDir,
     [string]$ConfirmDevice = "",
     [string]$PackageName = "com.senku.mobile",
-    [string]$ModelPath = ""
+    [string]$ModelPath = "",
+    [int]$AdbCommandTimeoutMilliseconds = 60000,
+    [int]$AdbPushTimeoutMilliseconds = 1800000,
+    [int]$AdbDeviceWaitTimeoutMilliseconds = 120000,
+    [int]$ProcessStreamTimeoutMilliseconds = 1800000
 )
 
 $ErrorActionPreference = "Stop"
 if (Get-Variable -Name PSNativeCommandUseErrorActionPreference -ErrorAction SilentlyContinue) {
     $PSNativeCommandUseErrorActionPreference = $false
+}
+if ($AdbCommandTimeoutMilliseconds -le 0) {
+    throw "-AdbCommandTimeoutMilliseconds must be a positive integer."
+}
+if ($AdbPushTimeoutMilliseconds -le 0) {
+    throw "-AdbPushTimeoutMilliseconds must be a positive integer."
+}
+if ($AdbDeviceWaitTimeoutMilliseconds -le 0) {
+    throw "-AdbDeviceWaitTimeoutMilliseconds must be a positive integer."
+}
+if ($ProcessStreamTimeoutMilliseconds -le 0) {
+    throw "-ProcessStreamTimeoutMilliseconds must be a positive integer."
 }
 
 $repoRoot = Split-Path -Parent $PSScriptRoot
@@ -80,7 +96,8 @@ function Invoke-NativeCapture {
         [Parameter(Mandatory = $true)]
         [string]$FilePath,
         [Parameter(Mandatory = $true)]
-        [string[]]$Arguments
+        [string[]]$Arguments,
+        [int]$TimeoutMilliseconds = $AdbCommandTimeoutMilliseconds
     )
 
     $stdoutFile = Join-Path ([System.IO.Path]::GetTempPath()) ("senku_transport_" + [guid]::NewGuid().ToString("N") + ".out")
@@ -90,12 +107,26 @@ function Invoke-NativeCapture {
         $process = Start-Process -FilePath $FilePath `
             -ArgumentList $Arguments `
             -NoNewWindow `
-            -Wait `
             -PassThru `
             -RedirectStandardOutput $stdoutFile `
             -RedirectStandardError $stderrFile
+        $finished = $process.WaitForExit($TimeoutMilliseconds)
+        if (-not $finished) {
+            try {
+                $process.Kill()
+            } catch {
+            }
+            try {
+                [void]$process.WaitForExit(5000)
+            } catch {
+            }
+        }
         $stdout = if (Test-Path -LiteralPath $stdoutFile) { Get-TextValue (Get-Content -LiteralPath $stdoutFile -Raw) } else { "" }
         $stderr = if (Test-Path -LiteralPath $stderrFile) { Get-TextValue (Get-Content -LiteralPath $stderrFile -Raw) } else { "" }
+        if (-not $finished) {
+            $timeoutText = "HOST PROCESS TIMEOUT: timed out after ${TimeoutMilliseconds}ms"
+            $stderr = ((Get-TextValue $stderr).TrimEnd() + [Environment]::NewLine + $timeoutText).Trim()
+        }
     } finally {
         if (Test-Path -LiteralPath $stdoutFile) {
             Remove-Item -LiteralPath $stdoutFile -Force
@@ -109,7 +140,9 @@ function Invoke-NativeCapture {
         file_path = $FilePath
         arguments = @($Arguments)
         command_text = $FilePath + " " + (Join-CommandText -Arguments $Arguments)
-        exit_code = $process.ExitCode
+        exit_code = if ($finished) { $process.ExitCode } else { -1 }
+        timed_out = (-not $finished)
+        timeout_ms = [int]$TimeoutMilliseconds
         stdout = $stdout
         stderr = $stderr
         started_utc = $started.ToString("o")
@@ -195,10 +228,11 @@ function New-RandomPayload {
 function Invoke-Adb {
     param(
         [Parameter(Mandatory = $true)]
-        [string[]]$Arguments
+        [string[]]$Arguments,
+        [int]$TimeoutMilliseconds = $AdbCommandTimeoutMilliseconds
     )
 
-    return Invoke-NativeCapture -FilePath $adb -Arguments $Arguments
+    return Invoke-NativeCapture -FilePath $adb -Arguments $Arguments -TimeoutMilliseconds $TimeoutMilliseconds
 }
 
 function Get-HostAdbVersionEvidence {
@@ -235,7 +269,10 @@ function Assert-DeviceReady {
         [string]$Serial
     )
 
-    $waitResult = Invoke-Adb -Arguments @("-s", $Serial, "wait-for-device")
+    $waitResult = Invoke-Adb -Arguments @("-s", $Serial, "wait-for-device") -TimeoutMilliseconds $AdbDeviceWaitTimeoutMilliseconds
+    if ($waitResult.timed_out) {
+        throw "wait-for-device timed out after ${AdbDeviceWaitTimeoutMilliseconds}ms for ${Serial}: $($waitResult.stderr.Trim())"
+    }
     if ($waitResult.exit_code -ne 0) {
         throw "wait-for-device failed for ${Serial}: $($waitResult.stderr.Trim())"
     }
@@ -336,7 +373,7 @@ function Invoke-TmpStagingMethod {
     )
 
     $steps = @()
-    $steps += Invoke-Adb -Arguments @("-s", $Serial, "push", $Payload.path, $RemoteTmpPath)
+    $steps += Invoke-Adb -Arguments @("-s", $Serial, "push", $Payload.path, $RemoteTmpPath) -TimeoutMilliseconds $AdbPushTimeoutMilliseconds
     if ($steps[-1].exit_code -eq 0) {
         $steps += Invoke-Adb -Arguments @("-s", $Serial, "shell", "run-as", $PackageName, "cp", $RemoteTmpPath, $RemoteAbsolutePath)
     }
@@ -366,7 +403,7 @@ function Invoke-CmdScriptMethod {
         }
         $scriptContent = "@echo off`r`n" + $scriptLine + "`r`n"
         [System.IO.File]::WriteAllText($tempScript, $scriptContent, [System.Text.Encoding]::ASCII)
-        return @(Invoke-NativeCapture -FilePath "cmd.exe" -Arguments @("/d", "/c", $tempScript))
+        return @(Invoke-NativeCapture -FilePath "cmd.exe" -Arguments @("/d", "/c", $tempScript) -TimeoutMilliseconds $AdbPushTimeoutMilliseconds)
     } finally {
         if (Test-Path -LiteralPath $tempScript) {
             Remove-Item -LiteralPath $tempScript -Force
@@ -398,16 +435,39 @@ function Invoke-ProcessStreamMethod {
     $stderr = ""
     $exitCode = -1
     $copyErrorText = ""
+    $timedOut = $false
+    $timeoutPhase = ""
     $null = $process.Start()
+    $stdoutTask = $process.StandardOutput.ReadToEndAsync()
+    $stderrTask = $process.StandardError.ReadToEndAsync()
     $payloadStream = [System.IO.File]::OpenRead($Payload.path)
     try {
-        $payloadStream.CopyTo($process.StandardInput.BaseStream)
-        $process.StandardInput.BaseStream.Flush()
-        $process.StandardInput.Close()
-        $stdout = $process.StandardOutput.ReadToEnd()
-        $stderr = $process.StandardError.ReadToEnd()
-        $process.WaitForExit()
-        $exitCode = $process.ExitCode
+        $copyTask = $payloadStream.CopyToAsync($process.StandardInput.BaseStream)
+        $copyFinished = $copyTask.Wait($ProcessStreamTimeoutMilliseconds)
+        if (-not $copyFinished) {
+            $timedOut = $true
+            $timeoutPhase = "stdin copy"
+            try {
+                $process.Kill()
+            } catch {
+            }
+        } else {
+            $process.StandardInput.BaseStream.Flush()
+            $process.StandardInput.Close()
+            $elapsedMilliseconds = [int]([DateTime]::UtcNow - $started).TotalMilliseconds
+            $remainingMilliseconds = [Math]::Max(1000, $ProcessStreamTimeoutMilliseconds - $elapsedMilliseconds)
+            $finished = $process.WaitForExit($remainingMilliseconds)
+            if ($finished) {
+                $exitCode = $process.ExitCode
+            } else {
+                $timedOut = $true
+                $timeoutPhase = "process exit"
+                try {
+                    $process.Kill()
+                } catch {
+                }
+            }
+        }
     } catch {
         $copyErrorText = $_.Exception.Message
         try {
@@ -415,17 +475,7 @@ function Invoke-ProcessStreamMethod {
         } catch {
         }
         try {
-            $stdout = Get-TextValue ($process.StandardOutput.ReadToEnd())
-        } catch {
-            $stdout = ""
-        }
-        try {
-            $stderr = Get-TextValue ($process.StandardError.ReadToEnd())
-        } catch {
-            $stderr = ""
-        }
-        try {
-            $process.WaitForExit(30000) | Out-Null
+            [void]$process.WaitForExit([Math]::Min(30000, $ProcessStreamTimeoutMilliseconds))
         } catch {
         }
         if ($process.HasExited) {
@@ -435,9 +485,27 @@ function Invoke-ProcessStreamMethod {
                 $process.Kill()
             } catch {
             }
+            $timedOut = $true
+            $timeoutPhase = "copy error cleanup"
             $exitCode = -1
         }
     } finally {
+        try {
+            [void]$stdoutTask.Wait(5000)
+            if ($stdoutTask.IsCompleted) {
+                $stdout = Get-TextValue $stdoutTask.Result
+            }
+        } catch {
+            $stdout = ""
+        }
+        try {
+            [void]$stderrTask.Wait(5000)
+            if ($stderrTask.IsCompleted) {
+                $stderr = Get-TextValue $stderrTask.Result
+            }
+        } catch {
+            $stderr = ""
+        }
         $payloadStream.Dispose()
         $process.Dispose()
     }
@@ -445,12 +513,18 @@ function Invoke-ProcessStreamMethod {
     if (-not [string]::IsNullOrWhiteSpace($copyErrorText)) {
         $stderr = ((Get-TextValue $stderr).TrimEnd() + [Environment]::NewLine + "HOST COPY ERROR: $copyErrorText").Trim()
     }
+    if ($timedOut) {
+        $stderr = ((Get-TextValue $stderr).TrimEnd() + [Environment]::NewLine + "HOST PROCESS TIMEOUT: timed out after ${ProcessStreamTimeoutMilliseconds}ms during $timeoutPhase").Trim()
+        $exitCode = -1
+    }
 
     return @([pscustomobject]@{
         file_path = $adb
         arguments = @($processInfo.Arguments)
         command_text = $adb + " " + $processInfo.Arguments
         exit_code = $exitCode
+        timed_out = [bool]$timedOut
+        timeout_ms = [int]$ProcessStreamTimeoutMilliseconds
         stdout = $stdout
         stderr = $stderr
         started_utc = $started.ToString("o")
@@ -468,6 +542,10 @@ function Get-CombinedOutputText {
     foreach ($step in $Steps) {
         $lines.Add("COMMAND: $($step.command_text)")
         $lines.Add("EXIT: $($step.exit_code)")
+        if ($step.PSObject.Properties.Name -contains "timed_out") {
+            $lines.Add("TIMED_OUT: $($step.timed_out)")
+            $lines.Add("TIMEOUT_MS: $($step.timeout_ms)")
+        }
         if (-not [string]::IsNullOrWhiteSpace($step.stdout)) {
             $lines.Add("STDOUT:")
             $lines.Add($step.stdout.TrimEnd())
@@ -717,11 +795,13 @@ function Write-EnvironmentLog {
     $lines.Add($AdbVersionEvidence.adb_version_output)
     $lines.Add("")
     $lines.Add("adb_devices:")
-    $lines.Add(((& $adb devices) | Out-String).TrimEnd())
+    $devicesResult = Invoke-Adb -Arguments @("devices")
+    $lines.Add((($devicesResult.stdout + [Environment]::NewLine + $devicesResult.stderr).TrimEnd()))
     $lines.Add("")
     foreach ($serial in @($PrimarySerial, $SecondarySerial) | Where-Object { -not [string]::IsNullOrWhiteSpace($_) }) {
         $lines.Add("df_${serial}:")
-        $lines.Add(((& $adb -s $serial shell df -k /data /data/local/tmp) | Out-String).TrimEnd())
+        $dfResult = Invoke-Adb -Arguments @("-s", $serial, "shell", "df", "-k", "/data", "/data/local/tmp")
+        $lines.Add((($dfResult.stdout + [Environment]::NewLine + $dfResult.stderr).TrimEnd()))
         $lines.Add("")
     }
     Set-Content -LiteralPath $environmentPath -Value ($lines -join [Environment]::NewLine) -Encoding UTF8

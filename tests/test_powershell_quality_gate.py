@@ -1,3 +1,4 @@
+import re
 import subprocess
 import tempfile
 import unittest
@@ -185,16 +186,20 @@ class PowerShellQualityGateTests(unittest.TestCase):
 
         self.assertIn('[switch]$SkipHostStates', script)
         self.assertIn("[switch]$PlanOnly", script)
+        self.assertIn("[int]$RoleProcessTimeoutSeconds = 7200", script)
         self.assertIn('$allRoles = @("phone_portrait", "phone_landscape", "tablet_portrait", "tablet_landscape")', script)
         self.assertIn("$roles = @($allRoles)", script)
         self.assertIn("if ($PlanOnly) {", script)
         self.assertIn('plan_only = $true', script)
+        self.assertIn('role_process_timeout_seconds = [int]$RoleProcessTimeoutSeconds', script)
         self.assertIn('launchers = @($roles | ForEach-Object', script)
         self.assertIn('Write-Host ("Plan: {0}" -f $planPath)', script)
         self.assertIn('-RunId "{2}" -RoleFilter "{3}" -SkipFinalize -SkipBuild{4}', script)
         self.assertIn("$(if ($SkipHostStates) { ' -SkipHostStates' } else { '' })", script)
         self.assertIn('"-FinalizeOnly",', script)
         self.assertIn('"-SkipBuild",', script)
+        self.assertIn("function Get-TimedOutRoleProcesses", script)
+        self.assertIn("function Stop-RoleProcessTree", script)
 
     def test_android_stop_helper_covers_fts_fallback_matrix(self):
         script = (REPO_ROOT / "scripts" / "stop_android_harness_runs.ps1").read_text(encoding="utf-8")
@@ -405,6 +410,33 @@ class PowerShellQualityGateTests(unittest.TestCase):
             "Write-RunAndroidPromptMetadata -HostAdbPlatformToolsVersion $hostAdbPlatformToolsVersion",
             script,
         )
+
+    def test_android_prompt_adb_pull_quiet_is_bounded_and_captured(self):
+        script = ANDROID_PROMPT_PATH.read_text(encoding="utf-8")
+        body = script[
+            script.index("function Invoke-AdbPullQuiet {") : script.index("function Normalize-UiText")
+        ]
+
+        self.assertNotIn("Start-Process", body)
+        self.assertNotIn("-Wait", body)
+        self.assertIn("[int]$TimeoutMilliseconds = 30000", body)
+        self.assertIn("Invoke-AndroidAdbCommandCapture", body)
+        self.assertIn("-AdbPath $adb", body)
+        self.assertIn('-Arguments @("-s", $Emulator, "pull", $DeviceDump, $LocalDump)', body)
+        self.assertIn("-TimeoutMilliseconds $TimeoutMilliseconds", body)
+        self.assertIn("if ($result.timed_out)", body)
+        self.assertIn("return $false", body)
+        self.assertIn("return ($result.exit_code -eq 0)", body)
+
+    def test_android_prompt_wait_loop_uses_bounded_quiet_pull(self):
+        script = ANDROID_PROMPT_PATH.read_text(encoding="utf-8")
+        wait_loop = script[
+            script.index("if ($WaitForCompletion) {") : script.index("function Ensure-SenkuForeground")
+        ]
+
+        self.assertIn("Save-UiDump -DeviceDump $deviceDump -LocalDump $completionDump", wait_loop)
+        self.assertIn("Invoke-AdbPullQuiet -DeviceDump $DeviceDump -LocalDump $LocalDump", script)
+        self.assertNotRegex(wait_loop, r"Start-Process[\s\S]*?-Wait")
 
     def test_quality_gate_dry_run_lists_selected_files(self):
         result = run_gate(

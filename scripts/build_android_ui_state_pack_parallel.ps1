@@ -6,6 +6,8 @@ param(
     [string]$HostInferenceUrl = "http://10.0.2.2:1235/v1",
     [string]$HostInferenceModel = "gemma-4-e2b-it-litert",
     [int]$MaxParallelDevices = 4,
+    [ValidateRange(1, 86400)]
+    [int]$RoleProcessTimeoutSeconds = 7200,
     [string[]]$RoleFilter = @(),
     [switch]$PlanOnly,
     [object]$NormalizeFilteredReview = $true
@@ -135,6 +137,7 @@ if ($PlanOnly) {
         host_inference_model = $HostInferenceModel
         max_parallel_devices = [int]$MaxParallelDevices
         effective_max_parallel_devices = [Math]::Max(1, $MaxParallelDevices)
+        role_process_timeout_seconds = [int]$RoleProcessTimeoutSeconds
         plan_only = $true
         goal_pack = [pscustomobject]@{
             canonical_directory = "mocks"
@@ -171,6 +174,7 @@ if ($PlanOnly) {
             }
             max_parallel_devices = [int]$MaxParallelDevices
             effective_max_parallel_devices = [Math]::Max(1, $MaxParallelDevices)
+            role_process_timeout_seconds = [int]$RoleProcessTimeoutSeconds
             acceptance_evidence = $false
             non_acceptance_evidence = $true
             preflight_only = $true
@@ -208,6 +212,7 @@ function Start-RoleProcess {
     $errPath = Join-Path $logsDir ($Role + ".err.log")
     $exitCodePath = Join-Path $logsDir ($Role + ".exitcode.txt")
     $launcherPath = Join-Path $logsDir ($Role + ".launcher.ps1")
+    $timeoutPath = Join-Path $logsDir ($Role + ".timeout.json")
     $invokeLine = New-RoleInvokeLine -Role $Role
     $launcherLines = @(
         '$ErrorActionPreference = ''Stop''',
@@ -225,18 +230,28 @@ function Start-RoleProcess {
         "-File", $launcherPath
     )
 
+    $startedAt = Get-Date
     $process = Start-Process -FilePath "powershell" -ArgumentList $argList -RedirectStandardOutput $logPath -RedirectStandardError $errPath -PassThru -WindowStyle Hidden
     return [pscustomobject]@{
         role = $Role
         process = $process
+        started_at = $startedAt
+        timeout_at = $startedAt.AddSeconds($RoleProcessTimeoutSeconds)
+        timeout_seconds = [int]$RoleProcessTimeoutSeconds
+        timed_out = $false
         log_path = $logPath
         err_path = $errPath
         exit_code_path = $exitCodePath
+        timeout_path = $timeoutPath
     }
 }
 
 function Get-RoleProcessExitCode {
     param([object]$Entry)
+
+    if ($Entry.timed_out) {
+        return -1
+    }
 
     $Entry.process.WaitForExit()
     $Entry.process.Refresh()
@@ -258,6 +273,7 @@ function Get-RoleFailureDetails {
         [int]$ExitCode
     )
 
+    $elapsedSeconds = [Math]::Round(((Get-Date) - $Entry.started_at).TotalSeconds, 1)
     $tail = ""
     if (Test-Path -LiteralPath $Entry.log_path) {
         $tail = (Get-Content -LiteralPath $Entry.log_path -Tail 80 | Out-String)
@@ -269,10 +285,76 @@ function Get-RoleFailureDetails {
     return [pscustomobject]@{
         role = $Entry.role
         exit_code = $exitCode
+        timed_out = [bool]$Entry.timed_out
+        elapsed_seconds = $elapsedSeconds
+        timeout_seconds = [int]$Entry.timeout_seconds
         details = $tail.Trim()
         log_path = $Entry.log_path
         err_path = $Entry.err_path
+        timeout_path = $Entry.timeout_path
     }
+}
+
+function Stop-RoleProcessTree {
+    param([object]$Entry)
+
+    try {
+        $Entry.process.Refresh()
+    } catch {
+    }
+    if ($Entry.process.HasExited) {
+        return
+    }
+
+    try {
+        & taskkill.exe /PID $Entry.process.Id /T /F | Out-Null
+    } catch {
+    }
+
+    try {
+        $Entry.process.Refresh()
+    } catch {
+    }
+    if (-not $Entry.process.HasExited) {
+        try {
+            $Entry.process.Kill()
+        } catch {
+        }
+    }
+
+    try {
+        [void]$Entry.process.WaitForExit(5000)
+    } catch {
+    }
+}
+
+function Get-TimedOutRoleProcesses {
+    $now = Get-Date
+    $timedOutEntries = @()
+    foreach ($entry in @($active)) {
+        if ($entry.timed_out -or $entry.process.HasExited -or $now -lt $entry.timeout_at) {
+            continue
+        }
+
+        $entry.timed_out = $true
+        $elapsedSeconds = [Math]::Round(($now - $entry.started_at).TotalSeconds, 1)
+        $timeoutSummary = [pscustomobject]@{
+            role = $entry.role
+            pid = [int]$entry.process.Id
+            timed_out = $true
+            timeout_seconds = [int]$entry.timeout_seconds
+            elapsed_seconds = $elapsedSeconds
+            started_at = $entry.started_at.ToUniversalTime().ToString("o")
+            timed_out_at = $now.ToUniversalTime().ToString("o")
+            log_path = $entry.log_path
+            err_path = $entry.err_path
+        }
+        $timeoutSummary | ConvertTo-Json -Depth 4 | Set-Content -LiteralPath $entry.timeout_path -Encoding UTF8
+        [Console]::Error.WriteLine(("Role slice timed out on {0} after {1}s; killing process tree for PID {2}." -f $entry.role, $elapsedSeconds, $entry.process.Id))
+        Stop-RoleProcessTree -Entry $entry
+        $timedOutEntries += $entry
+    }
+    return $timedOutEntries
 }
 
 function Complete-FinishedRoleProcesses {
@@ -289,6 +371,11 @@ function Complete-FinishedRoleProcesses {
 
 foreach ($role in $roles) {
     while ($active.Count -ge [Math]::Max(1, $MaxParallelDevices)) {
+        $timedOut = @(Get-TimedOutRoleProcesses)
+        if ($timedOut.Count -gt 0) {
+            Complete-FinishedRoleProcesses -FinishedEntries $timedOut
+            continue
+        }
         $finished = @($active | Where-Object { $_.process.HasExited })
         if ($finished.Count -eq 0) {
             Start-Sleep -Seconds 2
@@ -300,6 +387,11 @@ foreach ($role in $roles) {
 }
 
 while ($active.Count -gt 0) {
+    $timedOut = @(Get-TimedOutRoleProcesses)
+    if ($timedOut.Count -gt 0) {
+        Complete-FinishedRoleProcesses -FinishedEntries $timedOut
+        continue
+    }
     $finished = @($active | Where-Object { $_.process.HasExited })
     if ($finished.Count -eq 0) {
         Start-Sleep -Seconds 2
@@ -329,7 +421,14 @@ $summaryPath = Join-Path $repoRoot (Join-Path (Join-Path $OutputRoot $runId) "su
 
 if ($sliceFailures.Count -gt 0) {
     foreach ($failure in $sliceFailures) {
-        $message = "Role slice failed on {0} with exit code {1}." -f $failure.role, $failure.exit_code
+        if ($failure.timed_out) {
+            $message = "Role slice timed out on {0} after {1}s (timeout {2}s); process tree was killed and exit code {3} recorded." -f $failure.role, $failure.elapsed_seconds, $failure.timeout_seconds, $failure.exit_code
+            if (-not [string]::IsNullOrWhiteSpace([string]$failure.timeout_path)) {
+                $message = "{0}{1}Timeout: {2}" -f $message, [Environment]::NewLine, $failure.timeout_path
+            }
+        } else {
+            $message = "Role slice failed on {0} with exit code {1}." -f $failure.role, $failure.exit_code
+        }
         if (-not [string]::IsNullOrWhiteSpace([string]$failure.details)) {
             $message = "{0}{1}{2}" -f $message, [Environment]::NewLine, $failure.details
         }
