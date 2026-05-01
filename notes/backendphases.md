@@ -1,6 +1,6 @@
 # Backend Cleanup Phase Tracker
 
-Last updated after cleanup through `6898a3ee` on 2026-05-01.
+Last updated after cleanup through `8442a9ac` on 2026-05-01.
 
 Purpose: prevent future agents from rerunning Ask/query backend cleanup that is already complete. Keep this note short; implementation detail belongs in commits and tests.
 
@@ -601,7 +601,27 @@ Purpose: prevent future agents from rerunning Ask/query backend cleanup that is 
   `tests.test_run_android_functional_ux_smoke_matrix_contract`,
   `tests.test_run_android_instrumented_ui_smoke_summary_contract`);
   `git diff --check` passed before tracker refresh.
-- Tracker is refreshed through `6898a3ee`.
+- Repository fallback hardening is current through `71db0cee`: plain LIKE
+  fallback and vector-neighbor row loading now fail closed on `SQLiteException`,
+  and route guide thresholds are owned directly by `RetrievalRoutePolicy`
+  instead of `PackRepository` pass-through wrappers.
+- Saved-guide refresh race handling is current through `ca093966`:
+  `MainSavedGuidesController` issues latest-refresh tokens, and
+  `MainActivity.refreshPinnedGuidesAsync()` drops stale empty/loaded refreshes
+  when a newer refresh or repository instance supersedes them.
+- Android smoke startup waits are current through `8442a9ac`: the functional
+  UX matrix and child instrumented smoke runner bound `adb wait-for-device`
+  and direct package/font probes so stale or wedged devices fail with explicit
+  timeout diagnostics instead of appearing idle.
+- Latest local proof after `8442a9ac`: focused Android JVM tests passed for
+  repository fallback, route thresholds, route-focused search helpers/rankers,
+  Saved refresh behavior, pinned guides, and phone navigation; AndroidTest
+  assembly passed; smoke harness contract/capture tests passed
+  (`tests.test_run_android_instrumented_ui_smoke_summary_contract`,
+  `tests.test_run_android_functional_ux_smoke_matrix_contract`,
+  `tests.test_run_android_instrumented_ui_smoke_capture_summary`);
+  `git diff --check` passed before tracker refresh.
+- Tracker is refreshed through `8442a9ac`.
 
 ## Remaining Next Slices
 
