@@ -3241,72 +3241,73 @@ public final class DetailActivity extends AppCompatActivity {
     }
 
     private void ensureTabletEvidenceSelection(SearchResult activeSource) {
-        String guideId = safe(activeSource == null ? null : activeSource.guideId).trim();
-        String selectionKey = buildSourceSelectionKey(activeSource);
-        if (selectionKey.equals(tabletEvidenceSelectionKey)) {
+        DetailTabletEvidencePolicy.SelectionDecision selection =
+            DetailTabletEvidencePolicy.decideSelection(
+                activeSource,
+                tabletEvidenceSelectionKey,
+                tabletEvidenceLoadToken
+            );
+        if (!selection.shouldApplySelection()) {
             return;
         }
-        tabletEvidenceSelectionKey = selectionKey;
-        tabletEvidenceAnchorId = guideId;
-        tabletEvidenceAnchorTitle = safe(activeSource == null ? null : activeSource.title).trim();
-        tabletEvidenceAnchorSection = safe(activeSource == null ? null : activeSource.sectionHeading).trim();
+        tabletEvidenceSelectionKey = selection.selectionKey;
+        tabletEvidenceAnchorId = selection.guideId;
+        tabletEvidenceAnchorTitle = selection.anchorTitle;
+        tabletEvidenceAnchorSection = selection.anchorSection;
         tabletEvidenceAnchorSnippet = "";
         tabletEvidenceXRefs.clear();
-        int requestToken = ++tabletEvidenceLoadToken;
-        if (guideId.isEmpty()) {
+        tabletEvidenceLoadToken = selection.requestToken;
+        if (!selection.shouldLoadPreview()) {
             return;
         }
 
         executor.execute(() -> {
             String snippet = "";
-            String resolvedTitle = tabletEvidenceAnchorTitle;
-            String resolvedSection = tabletEvidenceAnchorSection;
+            SearchResult loadedAnchorGuide = null;
             ArrayList<SearchResult> xrefs = new ArrayList<>();
             try {
                 PackRepository repo = ensureRepository();
-                snippet = safe(repo.getAnchorSnippet(guideId, null)).trim();
-                if (resolvedTitle.isEmpty()) {
-                    SearchResult loadedGuide = repo.loadGuideById(guideId);
-                    if (loadedGuide != null) {
-                        resolvedTitle = safe(loadedGuide.title).trim();
-                        if (resolvedSection.isEmpty()) {
-                            resolvedSection = safe(loadedGuide.sectionHeading).trim();
-                        }
-                    }
+                snippet = safe(repo.getAnchorSnippet(selection.guideId, null)).trim();
+                if (selection.anchorTitle.isEmpty()) {
+                    loadedAnchorGuide = repo.loadGuideById(selection.guideId);
                 }
-                Set<String> reciprocalLinks = repo.getReciprocalLinks(guideId);
+                Set<String> reciprocalLinks = repo.getReciprocalLinks(selection.guideId);
                 int loaded = 0;
                 for (String reciprocalGuideId : reciprocalLinks) {
-                    if (loaded >= 6) {
+                    if (!DetailTabletEvidencePolicy.canLoadMoreXRefs(loaded)) {
                         break;
                     }
                     SearchResult guide = repo.loadGuideById(reciprocalGuideId);
-                    if (guide == null) {
-                        guide = new SearchResult("", "", "", "", reciprocalGuideId, "", "", "");
-                    }
-                    xrefs.add(guide);
+                    xrefs.add(DetailTabletEvidencePolicy.resolvedXRefGuide(reciprocalGuideId, guide));
                     loaded += 1;
                 }
             } catch (Exception exc) {
-                Log.w(TAG, "tabletEvidence.loadFailed guideId=" + guideId, exc);
+                Log.w(TAG, "tabletEvidence.loadFailed guideId=" + selection.guideId, exc);
             }
-            String finalSelectionKey = selectionKey;
-            String finalSnippet = snippet;
-            String finalTitle = resolvedTitle;
-            String finalSection = resolvedSection;
+            DetailTabletEvidencePolicy.LoadedPreview preview =
+                DetailTabletEvidencePolicy.buildLoadedPreview(
+                    selection,
+                    snippet,
+                    loadedAnchorGuide,
+                    xrefs
+                );
             runOnUiThread(() -> {
-                if (requestToken != tabletEvidenceLoadToken
-                    || isFinishing()
-                    || isDestroyed()
-                    || !safe(tabletEvidenceSelectionKey).equals(finalSelectionKey)) {
+                if (!DetailTabletEvidencePolicy.shouldApplyLoadedPreview(
+                    selection.requestToken,
+                    tabletEvidenceLoadToken,
+                    tabletEvidenceSelectionKey,
+                    preview,
+                    isFinishing(),
+                    isDestroyed()
+                )) {
                     return;
                 }
-                tabletEvidenceAnchorId = guideId;
-                tabletEvidenceAnchorTitle = finalTitle;
-                tabletEvidenceAnchorSection = finalSection;
-                tabletEvidenceAnchorSnippet = finalSnippet;
+                tabletEvidenceAnchorId = preview.guideId;
+                tabletEvidenceAnchorTitle = preview.title;
+                tabletEvidenceAnchorSection = preview.section;
+                tabletEvidenceAnchorSnippet = preview.snippet;
                 tabletEvidenceXRefs.clear();
-                tabletEvidenceXRefs.addAll(xrefs);
+                tabletEvidenceXRefs.addAll(preview.xrefs);
                 syncTabletDetailScreen();
             });
         });

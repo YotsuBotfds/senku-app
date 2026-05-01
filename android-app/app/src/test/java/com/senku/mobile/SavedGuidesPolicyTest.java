@@ -8,6 +8,7 @@ import com.senku.ui.primitives.BottomTabDestination;
 
 import org.junit.Test;
 
+import java.util.Arrays;
 import java.util.List;
 
 public final class SavedGuidesPolicyTest {
@@ -299,6 +300,70 @@ public final class SavedGuidesPolicyTest {
     }
 
     @Test
+    public void controllerEmptyRefreshProducesRepositoryNotReadyEmptyRenderPlan() {
+        MainSavedGuidesController controller = new MainSavedGuidesController();
+
+        MainSavedGuidesController.RefreshPlan refreshPlan =
+            controller.beginRefresh(false, List.of("GD-001"));
+        MainSavedGuidesController.RenderPlan renderPlan =
+            controller.planRender(refreshPlan, true, List.of(guide("GD-001")));
+
+        assertTrue(refreshPlan.renderEmpty);
+        assertTrue(renderPlan.shouldRender);
+        assertTrue(renderPlan.guides.isEmpty());
+    }
+
+    @Test
+    public void controllerRenderPlanRejectsStaleOrRepositorySwappedRefreshes() {
+        MainSavedGuidesController controller = new MainSavedGuidesController();
+
+        MainSavedGuidesController.RefreshPlan staleRefresh =
+            controller.beginRefresh(true, List.of("GD-001"));
+        MainSavedGuidesController.RefreshPlan currentRefresh =
+            controller.beginRefresh(true, List.of("GD-002"));
+
+        MainSavedGuidesController.RenderPlan staleRender =
+            controller.planRender(staleRefresh, true, List.of(guide("GD-001")));
+        MainSavedGuidesController.RenderPlan swappedRepositoryRender =
+            controller.planRender(currentRefresh, false, List.of(guide("GD-002")));
+        MainSavedGuidesController.RenderPlan currentRender =
+            controller.planRender(currentRefresh, true, List.of(guide("GD-002")));
+
+        assertFalse(staleRender.shouldRender);
+        assertFalse(swappedRepositoryRender.shouldRender);
+        assertTrue(currentRender.shouldRender);
+        assertEquals(List.of(guide("GD-002")), currentRender.guides);
+    }
+
+    @Test
+    public void controllerRenderPlanDropsMissingGuidesAndPreservesLoadedOrder() {
+        MainSavedGuidesController controller = new MainSavedGuidesController();
+
+        MainSavedGuidesController.RefreshPlan refreshPlan =
+            controller.beginRefresh(true, List.of("GD-001", "GD-002", "GD-003"));
+        MainSavedGuidesController.RenderPlan renderPlan = controller.planRender(
+            refreshPlan,
+            true,
+            Arrays.asList(guide("GD-001"), null, guide("GD-003"))
+        );
+
+        assertTrue(renderPlan.shouldRender);
+        assertEquals(List.of(guide("GD-001"), guide("GD-003")), renderPlan.guides);
+    }
+
+    @Test(expected = UnsupportedOperationException.class)
+    public void controllerRenderPlanGuidesAreImmutable() {
+        MainSavedGuidesController controller = new MainSavedGuidesController();
+
+        MainSavedGuidesController.RefreshPlan refreshPlan =
+            controller.beginRefresh(true, List.of("GD-001"));
+        MainSavedGuidesController.RenderPlan renderPlan =
+            controller.planRender(refreshPlan, true, List.of(guide("GD-001")));
+
+        renderPlan.guides.add(guide("GD-002"));
+    }
+
+    @Test
     public void controllerConsumesPendingFocusOnlyWhenBrowseSectionIsVisible() {
         MainSavedGuidesController controller = new MainSavedGuidesController();
 
@@ -371,5 +436,9 @@ public final class SavedGuidesPolicyTest {
         assertFalse(savedGuideWhileAnswerVisible.sectionVisible);
         assertFalse(savedGuideWhileAnswerVisible.emptyTextVisible);
         assertFalse(savedGuideWhileAnswerVisible.savedGuidesVisible);
+    }
+
+    private static SearchResult guide(String guideId) {
+        return new SearchResult("Guide " + guideId, "", "", "", guideId, "", "", "");
     }
 }

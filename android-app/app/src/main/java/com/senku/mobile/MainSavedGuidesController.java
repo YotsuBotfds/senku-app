@@ -24,6 +24,24 @@ final class MainSavedGuidesController {
         return refreshToken > 0L && refreshGate.isCurrentJob(refreshToken);
     }
 
+    RenderPlan planRender(RefreshPlan refreshPlan, boolean sameRepository, List<SearchResult> loadedGuides) {
+        if (refreshPlan == null || !sameRepository || !isCurrentRefresh(refreshPlan.refreshToken)) {
+            return RenderPlan.skip();
+        }
+        if (refreshPlan.renderEmpty) {
+            return RenderPlan.render(Collections.emptyList());
+        }
+        ArrayList<SearchResult> renderGuides = new ArrayList<>();
+        if (loadedGuides != null) {
+            for (SearchResult guide : loadedGuides) {
+                if (guide != null) {
+                    renderGuides.add(guide);
+                }
+            }
+        }
+        return RenderPlan.render(renderGuides);
+    }
+
     RefreshPlan planRefresh(boolean repositoryReady, List<String> savedGuideIds) {
         if (!repositoryReady || savedGuideIds == null || savedGuideIds.isEmpty()) {
             return RefreshPlan.empty();
@@ -112,6 +130,24 @@ final class MainSavedGuidesController {
 
         private RefreshPlan withRefreshToken(long refreshToken) {
             return new RefreshPlan(refreshToken, renderEmpty, guideIdsToLoad);
+        }
+    }
+
+    static final class RenderPlan {
+        final boolean shouldRender;
+        final List<SearchResult> guides;
+
+        private RenderPlan(boolean shouldRender, List<SearchResult> guides) {
+            this.shouldRender = shouldRender;
+            this.guides = Collections.unmodifiableList(new ArrayList<>(guides));
+        }
+
+        static RenderPlan skip() {
+            return new RenderPlan(false, Collections.emptyList());
+        }
+
+        static RenderPlan render(List<SearchResult> guides) {
+            return new RenderPlan(true, guides == null ? Collections.emptyList() : guides);
         }
     }
 
