@@ -30,10 +30,30 @@ final class MainRouteEffectController {
     }
 
     interface BackEffects extends RouteEffects {
+        BottomTabDestination popPreviousPhoneTab();
+
         void returnToBrowse();
     }
 
     private MainRouteEffectController() {
+    }
+
+    static boolean applySystemBackTransition(
+        MainRouteDecisionHelper.RouteState currentRouteState,
+        BackEffects effects
+    ) {
+        if (effects == null) {
+            return false;
+        }
+        BottomTabDestination previousTab = effects.isBrowseModeActive()
+            && effects.activePhoneTab() != BottomTabDestination.HOME
+            ? effects.popPreviousPhoneTab()
+            : null;
+        MainRouteDecisionHelper.Transition transition = MainRouteDecisionHelper.systemBack(
+            currentRouteState,
+            previousTab
+        );
+        return applyBackTransition(transition, effects);
     }
 
     static boolean applyBackTransition(

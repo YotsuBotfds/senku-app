@@ -93,6 +93,46 @@ public final class MainRouteEffectControllerTest {
     }
 
     @Test
+    public void systemBackPopsPreviousTabBeforeApplyingRouteTransition() {
+        RecordingBackEffects effects = new RecordingBackEffects(true, BottomTabDestination.PINS);
+        effects.previousPhoneTab = BottomTabDestination.ASK;
+
+        assertTrue(MainRouteEffectController.applySystemBackTransition(
+            new MainRouteDecisionHelper.RouteState(
+                MainRouteDecisionHelper.Surface.SAVED_GUIDES,
+                BottomTabDestination.PINS,
+                false
+            ),
+            effects
+        ));
+
+        assertEquals(
+            Arrays.asList(
+                "popPreviousPhoneTab",
+                "applyRouteState:RECENT_THREADS:ASK:false",
+                "updateActionLabels",
+                "dismissSearchKeyboard",
+                "ensureBrowseHomeVisible",
+                "scrollRecentThreadsIntoView"
+            ),
+            effects.calls
+        );
+    }
+
+    @Test
+    public void systemBackDoesNotPopHistoryWhenBrowseHomeOwnsBack() {
+        RecordingBackEffects effects = new RecordingBackEffects(true, BottomTabDestination.HOME);
+        effects.previousPhoneTab = BottomTabDestination.ASK;
+
+        assertFalse(MainRouteEffectController.applySystemBackTransition(
+            MainRouteDecisionHelper.browseHome(),
+            effects
+        ));
+
+        assertTrue(effects.calls.isEmpty());
+    }
+
+    @Test
     public void backTransitionReturnToBrowseAppliesRouteBeforeBrowseLoad() {
         MainRouteDecisionHelper.Transition transition =
             new MainRouteDecisionHelper.Transition(
@@ -129,6 +169,7 @@ public final class MainRouteEffectControllerTest {
         final List<String> calls = new ArrayList<>();
         private final boolean browseModeActive;
         private final BottomTabDestination activePhoneTab;
+        private BottomTabDestination previousPhoneTab;
 
         RecordingBackEffects(boolean browseModeActive) {
             this(browseModeActive, BottomTabDestination.HOME);
@@ -157,6 +198,12 @@ public final class MainRouteEffectControllerTest {
                 + routeState.activePhoneTab
                 + ":"
                 + routeState.askLaneActive);
+        }
+
+        @Override
+        public BottomTabDestination popPreviousPhoneTab() {
+            calls.add("popPreviousPhoneTab");
+            return previousPhoneTab;
         }
 
         @Override

@@ -536,18 +536,15 @@ public final class MainActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         if (shouldHandleMainSurfaceNavigationTabs(isPhoneFormFactor(), isTabletSearchLayout())) {
-            BottomTabDestination previousTab = isBrowseModeActive() && activePhoneTab != BottomTabDestination.HOME
-                ? popPreviousPhoneTab()
-                : null;
-            MainRouteDecisionHelper.Transition transition = MainRouteDecisionHelper.systemBack(
-                currentMainRouteState(),
-                previousTab
-            );
-            if (applyMainRouteBackTransition(transition)) {
+            if (applyMainRouteBackTransition(currentMainRouteState())) {
                 return;
             }
         }
         super.onBackPressed();
+    }
+
+    private boolean applyMainRouteBackTransition(MainRouteDecisionHelper.RouteState currentRouteState) {
+        return MainRouteEffectController.applySystemBackTransition(currentRouteState, mainRouteBackEffects());
     }
 
     private boolean applyMainRouteBackTransition(MainRouteDecisionHelper.Transition transition) {
@@ -3010,6 +3007,11 @@ public final class MainActivity extends AppCompatActivity {
             @Override
             public void applyRouteState(MainRouteDecisionHelper.RouteState routeState) {
                 MainActivity.this.applyMainRouteState(routeState);
+            }
+
+            @Override
+            public BottomTabDestination popPreviousPhoneTab() {
+                return MainActivity.this.popPreviousPhoneTab();
             }
 
             @Override
