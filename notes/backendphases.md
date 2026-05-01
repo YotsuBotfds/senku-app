@@ -196,6 +196,32 @@ Purpose: prevent future agents from rerunning Ask/query backend cleanup that is 
   passed; the full functional UX matrix passed on `emulator-5554` with all
   three presets green at
   `artifacts/android_functional_ux_smoke_matrix/current_head_0748/matrix_summary.json`.
+- Search-card row snippet mapping is current through `2e79e050`:
+  compact/regular row snippet viewport decisions now live in
+  `SearchResultCardModelMapper.Options`, keeping `SearchResultAdapter`
+  focused on binding the mapped model.
+- Pack retrieval orchestration is current through `c000d67d`:
+  route result limits and preferred/centroid fallback merging now live in
+  `PackRetrievalOrchestrationPolicy`, with repository compatibility wrappers
+  preserving current callers.
+- Guide body section metadata is current through `92ec879d`:
+  `GuideBodySanitizer` now emits parsed section and callout metadata so guide
+  presentation formatting can count/style parsed structure instead of
+  re-scanning rendered lines.
+- Detail chrome/source presentation polish is current through `a64d0a2e`:
+  guide and emergency headers use the normalized source-aware labels, and
+  compact selected-source cards drop the heavy match percent.
+- Landscape home/search chrome polish is current through `48a42348`:
+  landscape phone Home/Search share the same Back/divider/mode/title/search
+  header rhythm, and hidden Home chrome back is fully noninteractive and
+  nonsemantic.
+- Latest local proof after `48a42348`: focused integrated JVM tests passed;
+  `git diff --check` passed; full Android
+  `:app:testDebugUnitTest :app:assembleDebug :app:assembleDebugAndroidTest`
+  passed; fresh physical phone `phone-basic` PromptHarness smoke passed on
+  `RFCX607ZM8L` with APK SHA
+  `5510bc32948dc8e677ae7681307f617a1b097ce1b70506db5e9cc908168829f0` at
+  `artifacts/instrumented_ui_smoke/20260501_080839_375/RFCX607ZM8L/summary.json`.
 
 ## Remaining Next Slices
 
