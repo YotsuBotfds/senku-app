@@ -945,22 +945,32 @@ public final class MainActivity extends AppCompatActivity {
             DeterministicAnswerRouter.DeterministicAnswer deterministic,
             String answerBody
         ) {
+            MainAskResultPresentationController.DeterministicPublication publication =
+                MainAskResultPresentationController.deterministicAnswer(query, deterministic);
             dismissSearchKeyboard();
             enterAskResultsRoute();
-            sessionMemory.recordTurn(query, answerBody, deterministic.sources, deterministic.ruleId);
-            ChatSessionStore.persist(MainActivity.this);
-            setBusy("Deterministic offline answer ready", false);
-            publishResultItems(MainResultPublicationPolicy.askResultSurface(query), deterministic.sources);
-            resultsHeader.setText("Deterministic offline answer for \"" + query + "\"");
+            if (publication.recordSessionTurn) {
+                sessionMemory.recordTurn(query, answerBody, publication.sources, publication.ruleId);
+            }
+            if (publication.persistSession) {
+                ChatSessionStore.persist(MainActivity.this);
+            }
+            setBusy(publication.status, false);
+            publishResultItems(publication.resultPublication, publication.sources);
+            resultsHeader.setText(publication.header);
             updateInfoText();
-            updateSessionPanel();
-            refreshRecentThreads();
+            if (publication.refreshSessionPanel) {
+                updateSessionPanel();
+            }
+            if (publication.refreshRecentThreads) {
+                refreshRecentThreads();
+            }
             openAnswerDetail(
                 query,
-                "Offline answer | deterministic | instant",
+                publication.detailSubtitle,
                 answerBody,
-                deterministic.sources,
-                deterministic.ruleId,
+                publication.sources,
+                publication.ruleId,
                 OfflineAnswerEngine.AnswerMode.CONFIDENT,
                 OfflineAnswerEngine.ConfidenceLabel.HIGH
             );
@@ -968,10 +978,12 @@ public final class MainActivity extends AppCompatActivity {
 
         @Override
         public void onModelUnavailable(boolean hasAutoQuery) {
+            MainAskResultPresentationController.ModelUnavailablePublication publication =
+                MainAskResultPresentationController.modelUnavailable(hasAutoQuery);
             dismissSearchKeyboard();
-            applyMainRouteState(MainRouteDecisionHelper.askUnavailableOrNoSourceFailure());
+            applyMainRouteState(publication.routeState);
             setBusy(presentationFormatter().buildModelUnavailableStatus(), false);
-            if (!hasAutoQuery) {
+            if (publication.showBrowseChrome) {
                 showBrowseChrome(true);
             }
             updateInfoText();
@@ -987,22 +999,28 @@ public final class MainActivity extends AppCompatActivity {
 
         @Override
         public void onPrepareSuccess(OfflineAnswerEngine.PreparedAnswer preparedAnswer) {
-            String status = preparedAnswer.sources.isEmpty()
+            MainAskResultPresentationController.PrepareSuccessPublication publication =
+                MainAskResultPresentationController.prepareSuccess(preparedAnswer);
+            String status = publication.useGeneratingStatus
                 ? OfflineAnswerEngine.buildGeneratingStatus(getApplicationContext())
-                : OfflineAnswerEngine.buildSourcesReadyStatus(MainActivity.this, preparedAnswer.sources.size());
+                : OfflineAnswerEngine.buildSourcesReadyStatus(MainActivity.this, publication.sourceCount);
             setBusy(status, false);
             publishResultItems(
-                MainResultPublicationPolicy.askResultSurface(preparedAnswer.query),
+                publication.resultPublication,
                 preparedAnswer.sources
             );
             resultsHeader.setText(presentationFormatter().buildAnswerContextHeader(
-                preparedAnswer.query,
-                preparedAnswer.sources.size(),
-                preparedAnswer.sessionUsed
+                publication.headerQuery,
+                publication.headerSourceCount,
+                publication.headerSessionUsed
             ));
             updateInfoText();
-            updateSessionPanel();
-            openPendingAnswerDetail(preparedAnswer);
+            if (publication.refreshSessionPanel) {
+                updateSessionPanel();
+            }
+            if (publication.openPendingAnswerDetail) {
+                openPendingAnswerDetail(preparedAnswer);
+            }
         }
 
         @Override
@@ -1012,24 +1030,21 @@ public final class MainActivity extends AppCompatActivity {
             Exception exc,
             boolean hasAutoQuery
         ) {
-            setBusy("Offline answer failed", false);
-            if (failedPrepared != null && !failedPrepared.sources.isEmpty()) {
-                publishResultItems(
-                    MainResultPublicationPolicy.askResultSurface(failedPrepared.query),
-                    failedPrepared.sources
-                );
+            MainAskResultPresentationController.PrepareFailurePublication publication =
+                MainAskResultPresentationController.prepareFailure(query, failedPrepared, hasAutoQuery);
+            setBusy(publication.status, false);
+            if (publication.preliminaryRouteState != null) {
+                applyMainRouteState(publication.preliminaryRouteState);
+            }
+            publishResultItems(publication.resultPublication, publication.sources);
+            if (publication.hasPreparedSources()) {
                 resultsHeader.setText(presentationFormatter().buildAnswerContextHeader(
-                    failedPrepared.query,
-                    failedPrepared.sources.size(),
-                    failedPrepared.sessionUsed
+                    publication.headerQuery,
+                    publication.headerSourceCount,
+                    publication.headerSessionUsed
                 ));
             } else {
-                applyMainRouteState(MainRouteDecisionHelper.askUnavailableOrNoSourceFailure());
-                publishResultItems(
-                    MainResultPublicationPolicy.askResultSurfaceWithBrowseFallback(query, !hasAutoQuery),
-                    Collections.emptyList()
-                );
-                resultsHeader.setText("Offline answer failed");
+                resultsHeader.setText(publication.fixedHeader);
             }
             updateInfoText();
             setInfoTextMessage(buildInfoWithError(exc), true);
