@@ -3202,33 +3202,21 @@ public final class DetailActivity extends AppCompatActivity {
             selectedSourceKey = "";
             return null;
         }
-        if (!safe(selectedSourceKey).isEmpty()) {
-            for (SearchResult source : activeTurn.sources) {
-                if (safe(buildSourceSelectionKey(source)).equals(selectedSourceKey)) {
-                    return source;
-                }
-            }
-        }
-        SearchResult fallback = firstRealSource(activeTurn.sources);
-        if (fallback == null) {
-            fallback = activeTurn.sources.get(0);
-        }
-        selectedSourceKey = buildSourceSelectionKey(fallback);
-        return fallback;
+        DetailTabletSourceOwnershipPolicy.ActiveSourceSelection selection =
+            DetailTabletSourceOwnershipPolicy.resolveActiveSource(activeTurn.sources, selectedSourceKey);
+        selectedSourceKey = selection.selectedKey;
+        return selection.source;
     }
 
     private SearchResult resolveTabletVisualOwnerSource(
         List<TabletTurnBinding> turnBindings,
         SearchResult activeSource
     ) {
-        if (!answerMode || tabletSourceSelectionExplicit) {
-            return activeSource;
-        }
         ArrayList<String> questions = tabletTurnQuestions(turnBindings);
         ArrayList<SearchResult> sources = tabletTurnSources(turnBindings);
-        return DetailTabletStateBuilder.resolveVisualOwnerSource(
+        return DetailTabletSourceOwnershipPolicy.resolveVisualOwnerSource(
             answerMode,
-            false,
+            tabletSourceSelectionExplicit,
             productReviewMode,
             questions,
             activeSource,
@@ -3421,22 +3409,7 @@ public final class DetailActivity extends AppCompatActivity {
     }
 
     private String tabletXRefRelationLabel(SearchResult guide) {
-        String guideId = safe(guide == null ? null : guide.guideId).trim();
-        if ("GD-499".equalsIgnoreCase(guideId) || "GD-225".equalsIgnoreCase(guideId)) {
-            return "REQUIRED";
-        }
-        String relationText = (
-            safe(guide == null ? null : guide.contentRole) + " " +
-                safe(guide == null ? null : guide.structureType) + " " +
-                safe(guide == null ? null : guide.topicTags)
-        ).replace('_', ' ').replace('-', ' ').toLowerCase(Locale.US);
-        if (relationText.contains("required") || relationText.contains("prereq")) {
-            return "REQUIRED";
-        }
-        if (relationText.contains("anchor") || relationText.contains("source")) {
-            return "ANCHOR";
-        }
-        return "RELATED";
+        return DetailTabletSourceOwnershipPolicy.tabletXRefRelationLabel(guide);
     }
 
     private static String extractGuideIdFromLabel(String label) {
@@ -3457,23 +3430,15 @@ public final class DetailActivity extends AppCompatActivity {
     }
 
     private String buildTabletGuideId(SearchResult activeSource, boolean allowFallback) {
-        if (isCurrentThreadDetailRoute()) {
-            return resolveThreadAnchorGuideId("");
-        }
-        String guideId = safe(activeSource == null ? null : activeSource.guideId).trim();
-        if (!guideId.isEmpty()) {
-            return guideId;
-        }
-        if (!allowFallback) {
-            return "";
-        }
-        if (!safe(tabletEvidenceAnchorId).trim().isEmpty()) {
-            return safe(tabletEvidenceAnchorId).trim();
-        }
-        if (!safe(currentGuideId).trim().isEmpty()) {
-            return safe(currentGuideId).trim();
-        }
-        return resolveDisplayGuideId();
+        return DetailTabletSourceOwnershipPolicy.resolveTabletGuideId(
+            isCurrentThreadDetailRoute(),
+            resolveThreadAnchorGuideId(""),
+            activeSource,
+            allowFallback,
+            tabletEvidenceAnchorId,
+            currentGuideId,
+            resolveDisplayGuideId()
+        );
     }
 
     private SearchResult resolveTabletDisplaySource(
@@ -11598,84 +11563,7 @@ public final class DetailActivity extends AppCompatActivity {
     }
 
     static String primaryGuideIdForSources(List<SearchResult> sources, boolean productReviewMode) {
-        if (sources == null) {
-            return "";
-        }
-        SearchResult readerFacing = readerFacingPrimarySourceForSources(
-            sources,
-            ReviewDemoPolicy.isSourceStackDemoEnabled(productReviewMode)
-        );
-        String readerFacingGuideId = safe(readerFacing == null ? null : readerFacing.guideId).trim();
-        if (!readerFacingGuideId.isEmpty()) {
-            return readerFacingGuideId;
-        }
-        for (SearchResult source : sources) {
-            String guideId = safe(source == null ? null : source.guideId).trim();
-            if (!guideId.isEmpty()) {
-                return guideId;
-            }
-        }
-        return "";
-    }
-
-    private static SearchResult readerFacingPrimarySourceForSources(
-        List<SearchResult> sources,
-        boolean reviewDemoSourcePolicy
-    ) {
-        if (sources == null || sources.isEmpty()) {
-            return null;
-        }
-        SearchResult best = null;
-        int bestScore = Integer.MIN_VALUE;
-        for (int index = 0; index < sources.size(); index++) {
-            SearchResult source = sources.get(index);
-            if (source == null) {
-                continue;
-            }
-            int score = readerFacingSourceScoreForGuideId(source, index, reviewDemoSourcePolicy);
-            if (best == null || score > bestScore) {
-                best = source;
-                bestScore = score;
-            }
-        }
-        return bestScore > 0 ? best : null;
-    }
-
-    private static int readerFacingSourceScoreForGuideId(
-        SearchResult source,
-        int index,
-        boolean reviewDemoSourcePolicy
-    ) {
-        String role = safe(source == null ? null : source.contentRole).replace('_', ' ').toLowerCase(Locale.US);
-        String retrievalMode = safe(source == null ? null : source.retrievalMode).replace('_', ' ').toLowerCase(Locale.US);
-        String combined = (
-            safe(source == null ? null : source.title) + " " +
-                safe(source == null ? null : source.sectionHeading) + " " +
-                safe(source == null ? null : source.snippet) + " " +
-                safe(source == null ? null : source.body) + " " +
-                safe(source == null ? null : source.topicTags) + " " +
-                safe(source == null ? null : source.category) + " " +
-                safe(source == null ? null : source.structureType)
-        ).replace('_', ' ').toLowerCase(Locale.US);
-        int score = Math.max(0, 16 - index);
-        if ("topic".equals(role)) {
-            score += 22;
-        }
-        if (role.contains("reviewed source")) {
-            score -= 14;
-        }
-        if (retrievalMode.contains("guide-focus") || retrievalMode.contains("guide focus")) {
-            score += 6;
-        }
-        if (reviewDemoSourcePolicy) {
-            if (combined.contains("rain") && combined.contains("shelter")) {
-                score += 24;
-            }
-            if (combined.contains("tarp") && combined.contains("cord")) {
-                score += 18;
-            }
-        }
-        return score;
+        return DetailTabletSourceOwnershipPolicy.primaryGuideIdForSources(sources, productReviewMode);
     }
 
     private static String summarizeSource(SearchResult result) {
