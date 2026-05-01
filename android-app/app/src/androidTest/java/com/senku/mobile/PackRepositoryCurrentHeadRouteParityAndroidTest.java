@@ -1,9 +1,13 @@
 package com.senku.mobile;
 
 import android.content.Context;
+import android.os.Bundle;
+import android.os.SystemClock;
+import android.util.Log;
 
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
+import androidx.test.platform.app.InstrumentationRegistry;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -19,6 +23,8 @@ import static org.junit.Assert.assertTrue;
 
 @RunWith(AndroidJUnit4.class)
 public final class PackRepositoryCurrentHeadRouteParityAndroidTest {
+    private static final String TAG = "SenkuRouteParity";
+    private static final String TIMING_KEY = "route_parity_timing";
     private static final int SEARCH_LIMIT = 8;
     private static final int CONTEXT_LIMIT = 4;
     private static final int OWNER_SEARCH_WINDOW = 4;
@@ -26,28 +32,22 @@ public final class PackRepositoryCurrentHeadRouteParityAndroidTest {
     @Test
     public void bundledCurrentHeadPackPreservesHighSignalRouteOwnerLanes() throws Exception {
         Context context = ApplicationProvider.getApplicationContext();
+        long installStartedAt = SystemClock.elapsedRealtime();
         PackInstaller.InstalledPack pack = CurrentHeadAnswerCardPackTestSupport.installBundledCurrentHeadPack(
             context,
             "current-head route parity"
         );
+        recordTiming("install current-head route parity pack", installStartedAt);
 
-        try (PackRepository repository = new PackRepository(pack.databaseFile, null)) {
+        long repositoryOpenedAt = SystemClock.elapsedRealtime();
+        PackRepository repository = new PackRepository(pack.databaseFile, null);
+        recordTiming("open current-head route parity repository", repositoryOpenedAt);
+        try {
             for (RouteSpec spec : routeSpecs()) {
                 assertRouteParity(repository, spec);
             }
-        }
-    }
-
-    @Test
-    public void bundledCurrentHeadPackPreservesRainShelterRouteOwnerLane() throws Exception {
-        Context context = ApplicationProvider.getApplicationContext();
-        PackInstaller.InstalledPack pack = CurrentHeadAnswerCardPackTestSupport.installBundledCurrentHeadPack(
-            context,
-            "current-head rain shelter route parity"
-        );
-
-        try (PackRepository repository = new PackRepository(pack.databaseFile, null)) {
-            assertRainShelterOwnerParity(repository, rainShelterRouteSpec());
+        } finally {
+            repository.close();
         }
     }
 
@@ -92,21 +92,15 @@ public final class PackRepositoryCurrentHeadRouteParityAndroidTest {
         );
     }
 
-    private static RouteSpec rainShelterRouteSpec() {
-        return new RouteSpec(
-            "How do I build a simple rain shelter from tarp and cord?",
-            "emergency_shelter",
-            ids("GD-345"),
-            ids("GD-345")
-        );
-    }
-
     private static void assertRouteParity(PackRepository repository, RouteSpec spec) {
+        long routeStartedAt = SystemClock.elapsedRealtime();
         QueryMetadataProfile metadataProfile = QueryMetadataProfile.fromQuery(spec.query);
         assertEquals(spec.query, spec.expectedStructure, metadataProfile.preferredStructureType());
         assertTrue(spec.query, QueryRouteProfile.fromQuery(spec.query).isRouteFocused());
 
+        long searchStartedAt = SystemClock.elapsedRealtime();
         List<SearchResult> searchResults = repository.search(spec.query, SEARCH_LIMIT);
+        recordTiming("search " + spec.expectedStructure + " route: \"" + spec.query + "\"", searchStartedAt);
         assertFalse("search results should not be empty for " + spec.query, searchResults.isEmpty());
         SearchResult ownerSearchResult = assertAnyGuideWithinTopK(
             "search",
@@ -117,7 +111,9 @@ public final class PackRepositoryCurrentHeadRouteParityAndroidTest {
         );
         assertOwnerLane(spec.query, spec.expectedStructure, ownerSearchResult);
 
+        long contextStartedAt = SystemClock.elapsedRealtime();
         List<SearchResult> context = repository.buildGuideAnswerContext(spec.query, searchResults, CONTEXT_LIMIT);
+        recordTiming("context " + spec.expectedStructure + " route: \"" + spec.query + "\"", contextStartedAt);
         assertFalse("answer context should not be empty for " + spec.query, context.isEmpty());
         SearchResult ownerContextResult = assertAnyGuideWithinTopK(
             "answer context",
@@ -127,31 +123,7 @@ public final class PackRepositoryCurrentHeadRouteParityAndroidTest {
             CONTEXT_LIMIT
         );
         assertOwnerLane(spec.query, spec.expectedStructure, ownerContextResult);
-    }
-
-    private static void assertRainShelterOwnerParity(PackRepository repository, RouteSpec spec) {
-        QueryMetadataProfile metadataProfile = QueryMetadataProfile.fromQuery(spec.query);
-        assertEquals(spec.query, spec.expectedStructure, metadataProfile.preferredStructureType());
-
-        List<SearchResult> searchResults = repository.search(spec.query, SEARCH_LIMIT);
-        assertFalse("search results should not be empty for " + spec.query, searchResults.isEmpty());
-        assertAnyGuideWithinTopK(
-            "search",
-            spec.query,
-            searchResults,
-            spec.expectedSearchGuideIds,
-            OWNER_SEARCH_WINDOW
-        );
-
-        List<SearchResult> context = repository.buildGuideAnswerContext(spec.query, searchResults, CONTEXT_LIMIT);
-        assertFalse("answer context should not be empty for " + spec.query, context.isEmpty());
-        assertAnyGuideWithinTopK(
-            "answer context",
-            spec.query,
-            context,
-            spec.expectedContextGuideIds,
-            CONTEXT_LIMIT
-        );
+        recordTiming("total " + spec.expectedStructure + " route: \"" + spec.query + "\"", routeStartedAt);
     }
 
     private static SearchResult assertAnyGuideWithinTopK(
@@ -218,6 +190,14 @@ public final class PackRepositoryCurrentHeadRouteParityAndroidTest {
 
     private static Set<String> ids(String... values) {
         return new LinkedHashSet<>(Arrays.asList(values));
+    }
+
+    private static void recordTiming(String label, long startedAt) {
+        String message = label + " took " + (SystemClock.elapsedRealtime() - startedAt) + "ms";
+        Log.i(TAG, message);
+        Bundle status = new Bundle();
+        status.putString(TIMING_KEY, message);
+        InstrumentationRegistry.getInstrumentation().sendStatus(0, status);
     }
 
     private static final class RouteSpec {

@@ -1,6 +1,8 @@
 # Stabilization Checkpoint - 2026-05-01
 
-Current checkpoint head: `0dc5dfc7`.
+Current checkpoint head: `41778ac7`.
+
+This checkpoint began at `0dc5dfc7` and was completed by `41778ac7`.
 
 This cycle is stabilization, not another extraction wave.
 
@@ -56,6 +58,8 @@ This cycle is stabilization, not another extraction wave.
 - Isolated live route proof on `emulator-5554`:
   `PackRepositoryCurrentHeadRouteParityAndroidTest#bundledCurrentHeadPackPreservesRainShelterRouteOwnerLane`
   passed, `OK (1 test)`.
+- Live-safe route smoke after the test split on `emulator-5554`:
+  `PackRepositoryCurrentHeadRouteSmokeAndroidTest` passed, `OK (1 test)`.
 
 ## Integration Notes
 
@@ -69,3 +73,18 @@ This cycle is stabilization, not another extraction wave.
 - Shared Search/Ask `LatestJobGate` audit found one gate injected into both
   `MainSearchController` and `AskQueryController`; both controllers advance the
   gate before early returns and guard async publication with `isCurrentJob(...)`.
+
+## Route Parity Test Organization
+
+- Fast live proof now belongs in
+  `PackRepositoryCurrentHeadRouteSmokeAndroidTest`, which keeps the rain-shelter
+  `GD-345` owner-lane check separate from the broad parity sweep.
+- The broad `PackRepositoryCurrentHeadRouteParityAndroidTest` remains for
+  longer manual/current-head parity validation across house, water distribution,
+  soap, glass, roof, and governance prompts.
+- The broad parity test emits install, repository-open, per-route search,
+  per-route context, and per-route total timing breadcrumbs through Android
+  instrumentation status and logcat under `SenkuRouteParity`.
+- Expected expensive broad specs are house, water distribution, and soapmaking;
+  keep treating broad parity timeouts as test observability/performance debt
+  unless assertion output proves a route regression.
