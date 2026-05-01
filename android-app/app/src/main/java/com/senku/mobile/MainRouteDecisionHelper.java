@@ -111,6 +111,23 @@ public final class MainRouteDecisionHelper {
         return new RouteState(Surface.RECENT_THREADS, BottomTabDestination.ASK, false);
     }
 
+    static RouteState openEmptyAskLane(RouteState state) {
+        RouteState route = normalize(state);
+        return routeStateForMode(isBrowseSurface(route.surface), BottomTabDestination.ASK, true);
+    }
+
+    static RouteState browseGuides(RouteState state) {
+        return withAskLaneInactive(state);
+    }
+
+    static RouteState filterGuidesByCategory(RouteState state) {
+        return withAskLaneInactive(state);
+    }
+
+    static RouteState clearChatSession() {
+        return browseHome();
+    }
+
     static Transition returnHome(RouteState state) {
         normalize(state);
         return new Transition(browseHome(), Effect.SHOW_BROWSE_HOME);
@@ -232,6 +249,11 @@ public final class MainRouteDecisionHelper {
 
     private static RouteState routeForBrowseDestination(BottomTabDestination destination) {
         return new RouteState(browseSurfaceForPhoneTab(destination), destination, false);
+    }
+
+    private static RouteState withAskLaneInactive(RouteState state) {
+        RouteState route = normalize(state);
+        return new RouteState(route.surface, route.activePhoneTab, false);
     }
 
     private static Surface browseSurfaceForPhoneTab(BottomTabDestination destination) {

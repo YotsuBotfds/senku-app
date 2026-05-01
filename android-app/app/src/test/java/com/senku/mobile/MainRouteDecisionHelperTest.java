@@ -297,6 +297,64 @@ public final class MainRouteDecisionHelperTest {
     }
 
     @Test
+    public void openEmptyAskLaneSelectsAskAndActivatesLaneWithinCurrentSurfaceMode() {
+        assertRoute(
+            MainRouteDecisionHelper.openEmptyAskLane(new MainRouteDecisionHelper.RouteState(
+                MainRouteDecisionHelper.Surface.SEARCH_RESULTS,
+                BottomTabDestination.HOME,
+                false
+            )),
+            MainRouteDecisionHelper.Surface.ASK_RESULTS,
+            BottomTabDestination.ASK,
+            true
+        );
+        assertRoute(
+            MainRouteDecisionHelper.openEmptyAskLane(new MainRouteDecisionHelper.RouteState(
+                MainRouteDecisionHelper.Surface.SAVED_GUIDES,
+                BottomTabDestination.PINS,
+                false
+            )),
+            MainRouteDecisionHelper.Surface.RECENT_THREADS,
+            BottomTabDestination.ASK,
+            true
+        );
+    }
+
+    @Test
+    public void browseGuideFlowsClearAskLaneWithoutChangingCurrentTabOwner() {
+        assertRoute(
+            MainRouteDecisionHelper.browseGuides(new MainRouteDecisionHelper.RouteState(
+                MainRouteDecisionHelper.Surface.ASK_RESULTS,
+                BottomTabDestination.ASK,
+                true
+            )),
+            MainRouteDecisionHelper.Surface.ASK_RESULTS,
+            BottomTabDestination.ASK,
+            false
+        );
+        assertRoute(
+            MainRouteDecisionHelper.filterGuidesByCategory(new MainRouteDecisionHelper.RouteState(
+                MainRouteDecisionHelper.Surface.SAVED_GUIDES,
+                BottomTabDestination.PINS,
+                true
+            )),
+            MainRouteDecisionHelper.Surface.SAVED_GUIDES,
+            BottomTabDestination.PINS,
+            false
+        );
+    }
+
+    @Test
+    public void clearingChatSessionReturnsToHomeBrowseRoute() {
+        assertRoute(
+            MainRouteDecisionHelper.clearChatSession(),
+            MainRouteDecisionHelper.Surface.BROWSE,
+            BottomTabDestination.HOME,
+            false
+        );
+    }
+
+    @Test
     public void returningHomeClearsAskLaneAndSearchResults() {
         MainRouteDecisionHelper.RouteState askResults =
             new MainRouteDecisionHelper.RouteState(

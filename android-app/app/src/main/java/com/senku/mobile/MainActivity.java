@@ -1041,8 +1041,7 @@ public final class MainActivity extends AppCompatActivity {
     }
 
     private void openEmptyAskLane(boolean focusInput) {
-        askLaneActive = true;
-        setPhoneTabFromFlow(BottomTabDestination.ASK);
+        applyMainRouteState(MainRouteDecisionHelper.openEmptyAskLane(currentMainRouteState()));
         if (searchInput != null) {
             searchInput.setText("");
         }
@@ -1185,7 +1184,7 @@ public final class MainActivity extends AppCompatActivity {
             return;
         }
         if (!allGuides.isEmpty()) {
-            askLaneActive = false;
+            applyMainRouteState(MainRouteDecisionHelper.browseGuides(currentMainRouteState()));
             setBusy(presentationFormatter().buildHomeReadyStatus(allGuides.size()), false);
             updateCategoryCards(allGuides);
             publishResultItems(MainResultPublicationPolicy.browseSurface(), allGuides);
@@ -1199,7 +1198,7 @@ public final class MainActivity extends AppCompatActivity {
             try {
                 List<SearchResult> guides = repo.browseGuides(ALL_GUIDES);
                 runTrackedOnUiThread(harnessToken, () -> {
-                    askLaneActive = false;
+                    applyMainRouteState(MainRouteDecisionHelper.browseGuides(currentMainRouteState()));
                     setBusy(presentationFormatter().buildHomeReadyStatus(guides.size()), false);
                     allGuides.clear();
                     allGuides.addAll(guides);
@@ -3524,8 +3523,7 @@ public final class MainActivity extends AppCompatActivity {
         conversationId = ChatSessionStore.createConversation();
         sessionMemory = ChatSessionStore.memoryFor(conversationId);
         ChatSessionStore.persist(this);
-        askLaneActive = false;
-        setPhoneTabFromFlow(BottomTabDestination.HOME);
+        applyMainRouteState(MainRouteDecisionHelper.clearChatSession());
         if (searchInput != null) {
             searchInput.setText("");
         }
@@ -3663,7 +3661,7 @@ public final class MainActivity extends AppCompatActivity {
             browseGuides();
             return;
         }
-        askLaneActive = false;
+        applyMainRouteState(MainRouteDecisionHelper.filterGuidesByCategory(currentMainRouteState()));
         ArrayList<SearchResult> filtered = new ArrayList<>();
         for (SearchResult result : allGuides) {
             if (matchesCategoryBucket(result, bucketKey)) {

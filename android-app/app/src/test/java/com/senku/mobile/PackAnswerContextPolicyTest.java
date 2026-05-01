@@ -183,6 +183,91 @@ public final class PackAnswerContextPolicyTest {
         assertTrue(ordered.contains(commonsSupport));
     }
 
+    @Test
+    public void assembleGuideAnswerContextDiversifiedNonWaterOrdersSupportBeforeExtraAnchorSections() {
+        PackRepository.QueryTerms queryTerms = PackRepository.QueryTerms.fromQuery("how do i build a tarp shelter");
+        SearchResult anchor = result("GD-A", "Tarp Shelter", "Anchor", "guide-focus");
+        SearchResult anchorDetail = result("GD-A", "Tarp Shelter", "Ridgeline", "guide-focus");
+        SearchResult anchorFill = result("GD-A", "Tarp Shelter", "Drainage", "guide-focus");
+        SearchResult support = result("GD-S", "Weatherproofing", "Runoff", "route-focus");
+        List<PackAnswerContextPolicy.SupportCandidate> supports = new ArrayList<>();
+        supports.add(new PackAnswerContextPolicy.SupportCandidate(support, 1, 10));
+
+        List<SearchResult> context = PackAnswerContextPolicy.assembleGuideAnswerContext(
+            queryTerms,
+            true,
+            anchor,
+            java.util.List.of(anchor, anchorDetail, anchorFill),
+            supports,
+            4
+        );
+
+        assertEquals("Anchor", context.get(0).sectionHeading);
+        assertEquals("Runoff", context.get(1).sectionHeading);
+        assertEquals("Ridgeline", context.get(2).sectionHeading);
+        assertEquals("Drainage", context.get(3).sectionHeading);
+        assertEquals("route-focus", context.get(1).retrievalMode);
+    }
+
+    @Test
+    public void assembleGuideAnswerContextWaterDistributionSeedsAnchorGuideBeforeSupport() {
+        PackRepository.QueryTerms queryTerms = PackRepository.QueryTerms.fromQuery(
+            "how do i design a gravity fed water distribution system"
+        );
+        SearchResult anchor = result("GD-W", "Water Distribution", "Gravity-Fed Distribution", "guide-focus");
+        SearchResult storage = result("GD-W", "Water Distribution", "Storage Tank", "guide-focus");
+        SearchResult taps = result("GD-W", "Water Distribution", "Household Taps", "guide-focus");
+        SearchResult support = result("GD-S", "Spring Box", "Source Capture", "route-focus");
+        List<PackAnswerContextPolicy.SupportCandidate> supports = new ArrayList<>();
+        supports.add(new PackAnswerContextPolicy.SupportCandidate(support, 1, 10));
+
+        List<SearchResult> context = PackAnswerContextPolicy.assembleGuideAnswerContext(
+            queryTerms,
+            true,
+            anchor,
+            java.util.List.of(anchor, storage, taps),
+            supports,
+            4
+        );
+
+        assertEquals("Gravity-Fed Distribution", context.get(0).sectionHeading);
+        assertEquals("Storage Tank", context.get(1).sectionHeading);
+        assertEquals("Household Taps", context.get(2).sectionHeading);
+        assertEquals("Source Capture", context.get(3).sectionHeading);
+        assertEquals("guide-focus", context.get(2).retrievalMode);
+        assertEquals("route-focus", context.get(3).retrievalMode);
+    }
+
+    @Test
+    public void assembleGuideAnswerContextSuppressesDuplicateSectionsAndRespectsLimit() {
+        PackRepository.QueryTerms queryTerms = PackRepository.QueryTerms.fromQuery("how do i build a tarp shelter");
+        SearchResult anchor = result("GD-A", "Tarp Shelter", "Anchor", "guide-focus");
+        SearchResult anchorDetail = result("GD-A", "Tarp Shelter", "Ridgeline", "guide-focus");
+        SearchResult anchorFill = result("GD-A", "Tarp Shelter", "Drainage", "guide-focus");
+        SearchResult duplicateSupport = result("GD-A", "Tarp Shelter", "Ridgeline", "route-focus");
+        SearchResult support = result("GD-S", "Weatherproofing", "Runoff", "route-focus");
+        SearchResult extraSupport = result("GD-X", "Cordage", "Knots", "route-focus");
+        List<PackAnswerContextPolicy.SupportCandidate> supports = new ArrayList<>();
+        supports.add(new PackAnswerContextPolicy.SupportCandidate(duplicateSupport, 1, 12));
+        supports.add(new PackAnswerContextPolicy.SupportCandidate(support, 2, 10));
+        supports.add(new PackAnswerContextPolicy.SupportCandidate(extraSupport, 3, 8));
+
+        List<SearchResult> context = PackAnswerContextPolicy.assembleGuideAnswerContext(
+            queryTerms,
+            false,
+            anchor,
+            java.util.List.of(anchor, anchorDetail, anchorFill),
+            supports,
+            3
+        );
+
+        assertEquals(3, context.size());
+        assertEquals("Anchor", context.get(0).sectionHeading);
+        assertEquals("Ridgeline", context.get(1).sectionHeading);
+        assertEquals("Runoff", context.get(2).sectionHeading);
+        assertEquals("route-focus", context.get(2).retrievalMode);
+    }
+
     private static SearchResult waterDistributionSupport(
         String title,
         String sectionHeading,
@@ -224,6 +309,24 @@ public final class PackAnswerContextPolicyTest {
             "long_term",
             "community_governance",
             "community_governance,conflict_resolution"
+        );
+    }
+
+    private static SearchResult result(String guideId, String title, String sectionHeading, String retrievalMode) {
+        String text = title + " " + sectionHeading;
+        return new SearchResult(
+            title,
+            "",
+            text,
+            text,
+            guideId,
+            sectionHeading,
+            "building",
+            retrievalMode,
+            "planning",
+            "long_term",
+            "cabin_house",
+            "shelter,weatherproofing"
         );
     }
 }

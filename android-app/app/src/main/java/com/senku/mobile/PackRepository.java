@@ -601,31 +601,6 @@ public final class PackRepository implements AutoCloseable {
             return context;
         }
         List<SearchResult> guideSections = loadGuideSectionsForAnswer(queryTerms, anchor, limit);
-        if (!guideSections.isEmpty()) {
-            context.add(guideSections.get(0));
-        } else {
-            context.add(anchor);
-        }
-
-        Set<String> seenSections = new LinkedHashSet<>();
-        for (SearchResult result : context) {
-            seenSections.add(buildGuideSectionKey(result.guideId, result.title, result.sectionHeading));
-        }
-
-        int anchorGuideBudget = anchorGuideBudget(queryTerms, diversifyContext, limit);
-        boolean seedAnchorBeforeSupport = shouldSeedAnchorBeforeSupport(queryTerms, diversifyContext);
-        if (!diversifyContext || seedAnchorBeforeSupport) {
-            for (int index = 1; index < guideSections.size() && context.size() < anchorGuideBudget; index++) {
-                SearchResult result = guideSections.get(index);
-                String sectionKey = buildGuideSectionKey(result.guideId, result.title, result.sectionHeading);
-                if (seenSections.contains(sectionKey)) {
-                    continue;
-                }
-                context.add(result);
-                seenSections.add(sectionKey);
-            }
-        }
-
         ArrayList<PackAnswerContextPolicy.SupportCandidate> supportingCandidates =
             PackAnswerContextPolicy.rankSupportCandidates(
                 queryTerms,
@@ -658,40 +633,14 @@ public final class PackRepository implements AutoCloseable {
             );
         }
 
-        for (PackAnswerContextPolicy.SupportCandidate scoredCandidate : supportingCandidates) {
-            if (context.size() >= limit) {
-                break;
-            }
-            SearchResult candidate = scoredCandidate.result;
-            String sectionKey = buildGuideSectionKey(candidate.guideId, candidate.title, candidate.sectionHeading);
-            if (seenSections.contains(sectionKey)) {
-                continue;
-            }
-            context.add(candidate);
-            seenSections.add(sectionKey);
-        }
-
-        if (diversifyContext && !seedAnchorBeforeSupport) {
-            for (int index = 1; index < guideSections.size() && context.size() < anchorGuideBudget; index++) {
-                SearchResult result = guideSections.get(index);
-                String sectionKey = buildGuideSectionKey(result.guideId, result.title, result.sectionHeading);
-                if (seenSections.contains(sectionKey)) {
-                    continue;
-                }
-                context.add(result);
-                seenSections.add(sectionKey);
-            }
-        }
-
-        for (int index = 1; index < guideSections.size() && context.size() < limit; index++) {
-            SearchResult result = guideSections.get(index);
-            String sectionKey = buildGuideSectionKey(result.guideId, result.title, result.sectionHeading);
-            if (seenSections.contains(sectionKey)) {
-                continue;
-            }
-            context.add(result);
-            seenSections.add(sectionKey);
-        }
+        context = PackAnswerContextPolicy.assembleGuideAnswerContext(
+            queryTerms,
+            diversifyContext,
+            anchor,
+            guideSections,
+            supportingCandidates,
+            limit
+        );
 
         if (!context.isEmpty()) {
             StringBuilder selected = new StringBuilder();
@@ -720,14 +669,6 @@ public final class PackRepository implements AutoCloseable {
                 " totalMs=" + (System.currentTimeMillis() - startedAt)
         );
         return context;
-    }
-
-    private static int anchorGuideBudget(QueryTerms queryTerms, boolean diversifyContext, int limit) {
-        return PackAnswerContextPolicy.anchorGuideBudget(queryTerms, diversifyContext, limit);
-    }
-
-    private static boolean shouldSeedAnchorBeforeSupport(QueryTerms queryTerms, boolean diversifyContext) {
-        return PackAnswerContextPolicy.shouldSeedAnchorBeforeSupport(queryTerms, diversifyContext);
     }
 
     static boolean shouldApplyMetadataRerankForTest(String query) {
