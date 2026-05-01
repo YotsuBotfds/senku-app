@@ -53,13 +53,7 @@ final class DetailFollowUpActionController {
     private static Decision submit(FollowUpComposerState state, Target target) {
         FollowUpComposerController.SubmitDecision submit =
             FollowUpComposerController.resolveSubmit(state);
-        if (submit.action == FollowUpComposerController.SubmitAction.EMPTY) {
-            return new Decision(Action.EMPTY, target, "");
-        }
-        if (submit.action == FollowUpComposerController.SubmitAction.BLOCKED) {
-            return new Decision(Action.BLOCKED, target, submit.query);
-        }
-        return new Decision(Action.START_GENERATION, target, submit.query);
+        return fromSubmitDecision(submit, target);
     }
 
     private static Decision retry(
@@ -75,11 +69,28 @@ final class DetailFollowUpActionController {
 
         FollowUpComposerState retryState = safeState(
             state,
-            target == Target.TABLET_FOLLOWUP
-                ? FollowUpComposerState.Surface.TABLET
-                : FollowUpComposerState.Surface.PHONE
+            surfaceForTarget(target)
         ).withDraft(retry.query);
         return submit(retryState, target);
+    }
+
+    private static Decision fromSubmitDecision(
+        FollowUpComposerController.SubmitDecision submit,
+        Target target
+    ) {
+        if (submit.action == FollowUpComposerController.SubmitAction.EMPTY) {
+            return new Decision(Action.EMPTY, target, "");
+        }
+        if (submit.action == FollowUpComposerController.SubmitAction.BLOCKED) {
+            return new Decision(Action.BLOCKED, target, submit.query);
+        }
+        return new Decision(Action.START_GENERATION, target, submit.query);
+    }
+
+    private static FollowUpComposerState.Surface surfaceForTarget(Target target) {
+        return target == Target.TABLET_FOLLOWUP
+            ? FollowUpComposerState.Surface.TABLET
+            : FollowUpComposerState.Surface.PHONE;
     }
 
     private static FollowUpComposerState safeState(

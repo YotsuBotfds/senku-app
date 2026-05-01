@@ -71,6 +71,26 @@ public final class DetailFollowUpActionControllerTest {
     }
 
     @Test
+    public void nullPhoneSubmitResolvesToEmptyPhoneTarget() {
+        DetailFollowUpActionController.Decision decision =
+            DetailFollowUpActionController.resolvePhoneSubmit(null);
+
+        assertEquals(DetailFollowUpActionController.Action.EMPTY, decision.action);
+        assertEquals(DetailFollowUpActionController.Target.PHONE_FOLLOWUP, decision.target);
+        assertEquals("", decision.query);
+    }
+
+    @Test
+    public void nullTabletSubmitResolvesToEmptyTabletTarget() {
+        DetailFollowUpActionController.Decision decision =
+            DetailFollowUpActionController.resolveTabletSubmit(null, null);
+
+        assertEquals(DetailFollowUpActionController.Action.EMPTY, decision.action);
+        assertEquals(DetailFollowUpActionController.Target.TABLET_FOLLOWUP, decision.target);
+        assertEquals("", decision.query);
+    }
+
+    @Test
     public void phoneRetryStartsGenerationFromFailedQueryBeforeVisibleDraftFallback() {
         FollowUpComposerState phoneState = FollowUpComposerState.idle(
             "visible edited draft",
