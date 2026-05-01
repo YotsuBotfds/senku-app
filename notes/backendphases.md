@@ -1,6 +1,6 @@
 # Backend Cleanup Phase Tracker
 
-Last updated after local validation and cleanup through `49e7fd2a` on 2026-05-01.
+Last updated after local validation and cleanup through `f7887fc6` on 2026-05-01.
 
 Purpose: prevent future agents from rerunning Ask/query backend cleanup that is already complete. Keep this note short; implementation detail belongs in commits and tests.
 
@@ -154,6 +154,26 @@ Purpose: prevent future agents from rerunning Ask/query backend cleanup that is 
   `:app:testDebugUnitTest :app:assembleDebug :app:assembleDebugAndroidTest`
   passed; the preceding fresh installed `phone-functional` PromptHarness smoke
   after `69ee33eb` passed on `emulator-5554` with 3/3 tests.
+- Answer-anchor guide scoring is current through `4d798f4d`:
+  `PackAnswerAnchorScoringPolicy` owns anchor guide score aggregation while
+  `PackRepository` keeps compatibility wrappers for existing callers/tests.
+- Main search suggestion routing is current through `e7688fc2`:
+  `MainSearchSuggestionController` turns suggestion taps into category-filter,
+  search, or ignore routes while `MainActivity` keeps host-side UI actions.
+- Visible XML typography auditing is current through `a8d0268d`:
+  `TypographyTokenAuditTest` now guards visible Rev03 XML shell layouts against
+  new raw monospace/framework text-appearance islands, with documented legacy
+  and hidden-placeholder exceptions.
+- Functional UX smoke orchestration is current through `f7887fc6`:
+  `scripts/run_android_functional_ux_smoke_matrix.ps1` runs the local-only
+  `phone-functional`, `phone-functional-saved`, and
+  `phone-functional-back-provenance` presets and writes a matrix summary; the
+  PromptHarness also covers restored Saved destination Back returning Home.
+- Latest local proof after `f7887fc6`: focused backend/search/typography tests
+  passed; `git diff --check` passed; full Android
+  `:app:testDebugUnitTest :app:assembleDebug :app:assembleDebugAndroidTest`
+  passed. The new restored Saved/back androidTest also passed directly on
+  `emulator-5554` before integration.
 
 ## Remaining Next Slices
 
