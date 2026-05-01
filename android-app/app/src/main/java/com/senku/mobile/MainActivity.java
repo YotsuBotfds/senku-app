@@ -107,6 +107,7 @@ public final class MainActivity extends AppCompatActivity {
     private final MainSavedGuidesController savedGuidesController = new MainSavedGuidesController();
     private final MainAutomationRouteController automationRouteController =
         new MainAutomationRouteController(new MainAutomationRouteHost());
+    private final MainRouteCoordinator routeCoordinator = new MainRouteCoordinator(new MainRouteHost());
 
     private MainReviewDisplayPolicy reviewDisplayPolicy;
     private MainPresentationFormatter presentationFormatter;
@@ -211,14 +212,10 @@ public final class MainActivity extends AppCompatActivity {
     private String pendingAutoFollowUpQuery;
     private boolean suppressSearchFocusForAutomation;
     private boolean initialSearchFocusApplied;
-    private boolean askLaneActive;
-    private boolean browseChromeActive = true;
     private boolean productReviewMode = false;
     private HomeGuideAnchor homeGuideAnchor;
     private int homeRelatedRequestVersion;
     private boolean showHomeInfoCard = true;
-    private BottomTabDestination activePhoneTab = BottomTabDestination.HOME;
-    private final ArrayList<BottomTabDestination> phoneTabBackStack = new ArrayList<>();
 
     static final class HomeGuideAnchor {
         final String guideId;
@@ -290,6 +287,62 @@ public final class MainActivity extends AppCompatActivity {
         @Override
         public void openEmptyAskLane(boolean focusInput) {
             MainActivity.this.openEmptyAskLane(focusInput);
+        }
+    }
+
+    private final class MainRouteHost implements MainRouteCoordinator.Host {
+        @Override
+        public boolean shouldHandleMainSurfaceNavigation() {
+            return shouldHandleMainSurfaceNavigationTabs(isPhoneFormFactor(), isTabletSearchLayout());
+        }
+
+        @Override
+        public void onRouteStateApplied(
+            MainRouteDecisionHelper.RouteState routeState,
+            boolean browseChromeVisible
+        ) {
+            updatePhoneTabBarState(routeState);
+            renderBrowseChrome(browseChromeVisible);
+        }
+
+        @Override
+        public void returnToBrowse() {
+            browseGuides();
+        }
+
+        @Override
+        public void updateActionLabels() {
+            MainActivity.this.updateActionLabels();
+        }
+
+        @Override
+        public void dismissSearchKeyboard() {
+            MainActivity.this.dismissSearchKeyboard();
+        }
+
+        @Override
+        public void ensureBrowseHomeVisible() {
+            MainActivity.this.ensureBrowseHomeVisible();
+        }
+
+        @Override
+        public void scrollBrowseToTop() {
+            MainActivity.this.scrollBrowseToTop();
+        }
+
+        @Override
+        public void focusSharedInput() {
+            MainActivity.this.focusSharedInput();
+        }
+
+        @Override
+        public void scrollRecentThreadsIntoView() {
+            MainActivity.this.scrollBrowseSectionIntoView(recentThreadsSection);
+        }
+
+        @Override
+        public void prepareSavedGuidesDestination() {
+            MainActivity.this.prepareSavedGuidesDestination();
         }
     }
 
@@ -447,8 +500,8 @@ public final class MainActivity extends AppCompatActivity {
 
         searchButton.setOnClickListener(v -> {
             SharedSubmitAction action = resolveSearchButtonSubmitAction(
-                activePhoneTab,
-                askLaneActive,
+                routeCoordinator.activePhoneTab(),
+                routeCoordinator.askLaneActive(),
                 isAnswerRuntimeReady()
             );
             setPhoneTabFromFlow(AskSearchCoordinator.tabForSubmitTarget(action.target));
@@ -492,14 +545,14 @@ public final class MainActivity extends AppCompatActivity {
         bindCategoryCard(communicationsCategoryCard, "communications", "Communications");
         bindCategoryCard(communityCategoryCard, "community", "Community");
         searchInput.setOnClickListener(v -> {
-            if (activePhoneTab != BottomTabDestination.ASK) {
+            if (routeCoordinator.activePhoneTab() != BottomTabDestination.ASK) {
                 setPhoneTabFromFlow(BottomTabDestination.SEARCH);
             }
             showSearchKeyboard();
         });
         searchInput.setOnFocusChangeListener((v, hasFocus) -> {
             if (hasFocus) {
-                if (activePhoneTab != BottomTabDestination.ASK) {
+                if (routeCoordinator.activePhoneTab() != BottomTabDestination.ASK) {
                     setPhoneTabFromFlow(BottomTabDestination.SEARCH);
                 }
                 showSearchKeyboard();
@@ -525,7 +578,7 @@ public final class MainActivity extends AppCompatActivity {
             public void afterTextChanged(Editable s) {
                 updateActionLabels();
                 if (searchInput != null && searchInput.hasFocus()) {
-                    if (activePhoneTab == BottomTabDestination.ASK) {
+                    if (routeCoordinator.activePhoneTab() == BottomTabDestination.ASK) {
                         setPhoneTabFromFlow(BottomTabDestination.ASK);
                     } else {
                         setPhoneTabFromFlow(BottomTabDestination.SEARCH);
@@ -598,19 +651,11 @@ public final class MainActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         if (shouldHandleMainSurfaceNavigationTabs(isPhoneFormFactor(), isTabletSearchLayout())) {
-            if (applyMainRouteBackTransition(currentMainRouteState())) {
+            if (routeCoordinator.applySystemBackTransition()) {
                 return;
             }
         }
         super.onBackPressed();
-    }
-
-    private boolean applyMainRouteBackTransition(MainRouteDecisionHelper.RouteState currentRouteState) {
-        return MainRouteEffectController.applySystemBackTransition(currentRouteState, mainRouteBackEffects());
-    }
-
-    private boolean applyMainRouteBackTransition(MainRouteDecisionHelper.Transition transition) {
-        return MainRouteEffectController.applyBackTransition(transition, mainRouteBackEffects());
     }
 
     private void installPack(boolean force) {
@@ -1075,7 +1120,7 @@ public final class MainActivity extends AppCompatActivity {
     }
 
     private void openEmptyAskLane(boolean focusInput) {
-        applyMainRouteState(MainRouteDecisionHelper.openEmptyAskLane(currentMainRouteState()));
+        routeCoordinator.openEmptyAskLane();
         if (searchInput != null) {
             searchInput.setText("");
         }
@@ -1228,7 +1273,7 @@ public final class MainActivity extends AppCompatActivity {
             return;
         }
         if (!allGuides.isEmpty()) {
-            applyMainRouteState(MainRouteDecisionHelper.browseGuides(currentMainRouteState()));
+            routeCoordinator.browseGuidesRoute();
             setBusy(presentationFormatter().buildHomeReadyStatus(allGuides.size()), false);
             updateCategoryCards(allGuides);
             publishResultItems(MainResultPublicationPolicy.browseSurface(currentMainRouteState()), allGuides);
@@ -1242,7 +1287,7 @@ public final class MainActivity extends AppCompatActivity {
             try {
                 List<SearchResult> guides = repo.browseGuides(ALL_GUIDES);
                 runTrackedOnUiThread(harnessToken, () -> {
-                    applyMainRouteState(MainRouteDecisionHelper.browseGuides(currentMainRouteState()));
+                    routeCoordinator.browseGuidesRoute();
                     setBusy(presentationFormatter().buildHomeReadyStatus(guides.size()), false);
                     allGuides.clear();
                     allGuides.addAll(guides);
@@ -1332,7 +1377,13 @@ public final class MainActivity extends AppCompatActivity {
     }
 
     private void handleSharedQuerySubmit(String rawQuery) {
-        handleSharedQuerySubmit(rawQuery, resolveSharedSubmitTarget(activePhoneTab, askLaneActive));
+        handleSharedQuerySubmit(
+            rawQuery,
+            resolveSharedSubmitTarget(
+                routeCoordinator.activePhoneTab(),
+                routeCoordinator.askLaneActive()
+            )
+        );
     }
 
     private boolean isAnswerRuntimeReady() {
@@ -2107,7 +2158,7 @@ public final class MainActivity extends AppCompatActivity {
         }
         MainSavedGuidesController.SectionState sectionState = savedGuidesController.sectionState(
             isBrowseModeActive(),
-            activePhoneTab,
+            routeCoordinator.activePhoneTab(),
             pinnedGuides.size()
         );
         pinnedSection.setVisibility(sectionState.sectionVisible ? View.VISIBLE : View.GONE);
@@ -2117,7 +2168,7 @@ public final class MainActivity extends AppCompatActivity {
     private void updatePinnedEmptyState() {
         MainSavedGuidesController.SectionState sectionState = savedGuidesController.sectionState(
             isBrowseModeActive(),
-            activePhoneTab,
+            routeCoordinator.activePhoneTab(),
             pinnedGuides.size()
         );
         if (pinnedEmptyText != null) {
@@ -2149,7 +2200,7 @@ public final class MainActivity extends AppCompatActivity {
     }
 
     private boolean isBrowseModeActive() {
-        return browseChromeActive;
+        return routeCoordinator.isBrowseModeActive();
     }
 
     private void installRev03Chrome(Bundle savedInstanceState) {
@@ -2843,7 +2894,10 @@ public final class MainActivity extends AppCompatActivity {
     }
 
     private void updatePhoneTabBarState() {
-        MainRouteDecisionHelper.RouteState routeState = currentMainRouteState();
+        updatePhoneTabBarState(currentMainRouteState());
+    }
+
+    private void updatePhoneTabBarState(MainRouteDecisionHelper.RouteState routeState) {
         if (bottomTabBarView != null) {
             bottomTabBarView.updateLayoutMode(
                 isLandscapePhoneLayout()
@@ -2978,40 +3032,11 @@ public final class MainActivity extends AppCompatActivity {
     }
 
     private void openPhoneTab(BottomTabDestination destination, boolean pushHistory) {
-        if (!shouldHandleMainSurfaceNavigationTabs(isPhoneFormFactor(), isTabletSearchLayout())) {
-            return;
-        }
-        MainRouteDecisionHelper.Transition transition = MainRouteDecisionHelper.openPhoneTab(
-            currentMainRouteState(),
-            destination
-        );
-        applyPhoneTabTransition(transition, pushHistory);
+        routeCoordinator.openPhoneTab(destination, pushHistory);
     }
 
     private void applyPhoneTabTransition(MainRouteDecisionHelper.Transition transition, boolean pushHistory) {
-        MainRouteEffectController.applyPhoneTabTransition(transition, pushHistory, mainRouteEffects());
-    }
-
-    private MainRouteEffectController.RouteEffects mainRouteEffects() {
-        return mainRouteBackEffects();
-    }
-
-    private MainRouteEffectController.BackEffects mainRouteBackEffects() {
-        return MainRouteEffectController.backEffects(
-            () -> activePhoneTab,
-            this::pushPhoneTab,
-            this::applyMainRouteState,
-            this::popPreviousPhoneTab,
-            this::browseGuides,
-            this::isBrowseModeActive,
-            this::updateActionLabels,
-            this::dismissSearchKeyboard,
-            this::ensureBrowseHomeVisible,
-            this::scrollBrowseToTop,
-            this::focusSharedInput,
-            () -> scrollBrowseSectionIntoView(recentThreadsSection),
-            this::prepareSavedGuidesDestination
-        );
+        routeCoordinator.applyPhoneTabTransition(transition, pushHistory);
     }
 
     private void prepareSavedGuidesDestination() {
@@ -3021,14 +3046,7 @@ public final class MainActivity extends AppCompatActivity {
     }
 
     private void setPhoneTabFromFlow(BottomTabDestination destination) {
-        if (!shouldHandleMainSurfaceNavigationTabs(isPhoneFormFactor(), isTabletSearchLayout())) {
-            return;
-        }
-        MainRouteEffectController.applyExplicitFlowDestination(
-            currentMainRouteState(),
-            destination,
-            mainRouteEffects()
-        );
+        routeCoordinator.setPhoneTabFromFlow(destination);
     }
 
     static boolean resolveAskLaneActiveForExplicitPhoneFlow(
@@ -3039,49 +3057,19 @@ public final class MainActivity extends AppCompatActivity {
     }
 
     private MainRouteDecisionHelper.RouteState currentMainRouteState() {
-        return routeStateForMode(isBrowseModeActive(), activePhoneTab, askLaneActive);
+        return routeCoordinator.currentRouteState();
     }
 
     private void enterSearchResultsRoute() {
-        applyMainRouteState(MainRouteDecisionHelper.enterSearch(currentMainRouteState()).routeState);
+        routeCoordinator.enterSearchResultsRoute();
     }
 
     private void enterAskResultsRoute() {
-        applyMainRouteState(MainRouteDecisionHelper.enterAsk(currentMainRouteState()).routeState);
-    }
-
-    private static MainRouteDecisionHelper.RouteState routeStateForMode(
-        boolean browseMode,
-        BottomTabDestination activePhoneTab,
-        boolean askLaneActive
-    ) {
-        return MainRouteDecisionHelper.routeStateForMode(browseMode, activePhoneTab, askLaneActive);
+        routeCoordinator.enterAskResultsRoute();
     }
 
     private void applyMainRouteState(MainRouteDecisionHelper.RouteState routeState) {
-        MainRouteDecisionHelper.RouteState safeRouteState = routeState == null
-            ? MainRouteDecisionHelper.browseHome()
-            : routeState;
-        activePhoneTab = safeRouteState.activePhoneTab;
-        askLaneActive = safeRouteState.askLaneActive;
-        browseChromeActive = MainRouteDecisionHelper.isBrowseSurface(safeRouteState.surface);
-        updatePhoneTabBarState();
-        renderBrowseChrome(browseChromeActive);
-    }
-
-    private void pushPhoneTab(BottomTabDestination destination) {
-        MainPhoneTabHistoryPolicy.StackState stackState =
-            MainPhoneTabHistoryPolicy.push(phoneTabBackStack, destination);
-        phoneTabBackStack.clear();
-        phoneTabBackStack.addAll(stackState.stack);
-    }
-
-    private BottomTabDestination popPreviousPhoneTab() {
-        MainPhoneTabHistoryPolicy.PopResult popResult =
-            MainPhoneTabHistoryPolicy.popPrevious(phoneTabBackStack, activePhoneTab);
-        phoneTabBackStack.clear();
-        phoneTabBackStack.addAll(popResult.stack);
-        return popResult.destination;
+        routeCoordinator.applyRouteState(routeState);
     }
 
     private void ensureBrowseHomeVisible() {
@@ -3453,7 +3441,7 @@ public final class MainActivity extends AppCompatActivity {
         conversationId = ChatSessionStore.createConversation();
         sessionMemory = ChatSessionStore.memoryFor(conversationId);
         ChatSessionStore.persist(this);
-        applyMainRouteState(MainRouteDecisionHelper.clearChatSession());
+        routeCoordinator.clearChatSessionRoute();
         if (searchInput != null) {
             searchInput.setText("");
         }
@@ -3486,7 +3474,11 @@ public final class MainActivity extends AppCompatActivity {
 
     private void updateActionLabels() {
         boolean answerReady = isAnswerRuntimeReady();
-        SharedSubmitAction searchAction = resolveSearchButtonSubmitAction(activePhoneTab, askLaneActive, answerReady);
+        SharedSubmitAction searchAction = resolveSearchButtonSubmitAction(
+            routeCoordinator.activePhoneTab(),
+            routeCoordinator.askLaneActive(),
+            answerReady
+        );
         askButton.setText(answerReady ? R.string.ask_button_ready : R.string.ask_button);
         askButton.setContentDescription(
             getString(SharedInputChromePolicy.submitButtonDescriptionResource(SubmitTarget.ASK))
@@ -3494,7 +3486,10 @@ public final class MainActivity extends AppCompatActivity {
         searchButton.setText(searchAction.buttonTextResource);
         searchButton.setContentDescription(getString(searchAction.buttonDescriptionResource));
         boolean askMode = isAskLaneActive();
-        updateSharedInputChrome(resolveSharedSubmitTarget(activePhoneTab, askLaneActive));
+        updateSharedInputChrome(resolveSharedSubmitTarget(
+            routeCoordinator.activePhoneTab(),
+            routeCoordinator.askLaneActive()
+        ));
         if (browseButton != null) {
             browseButton.setText(isBrowseModeActive() ? R.string.browse_guides_button : R.string.home_button);
             boolean browsePrimary = !askMode;
@@ -3982,7 +3977,7 @@ public final class MainActivity extends AppCompatActivity {
     }
 
     private void showBrowseChrome(boolean show) {
-        applyMainRouteState(MainRouteDecisionHelper.routeStateForMode(show, activePhoneTab, askLaneActive));
+        routeCoordinator.showBrowseChrome(show);
     }
 
     private void renderBrowseChrome(boolean show) {
@@ -4460,10 +4455,7 @@ public final class MainActivity extends AppCompatActivity {
     }
 
     private void handleHomeChromeBack() {
-        MainRouteEffectController.applyHomeChromeBackTransition(
-            currentMainRouteState(),
-            mainRouteBackEffects()
-        );
+        routeCoordinator.applyHomeChromeBackTransition();
     }
 
     private void updateHomeChromeBackAvailability(boolean available) {
@@ -4586,7 +4578,7 @@ public final class MainActivity extends AppCompatActivity {
     }
 
     private boolean isAskLaneActive() {
-        return askLaneActive;
+        return routeCoordinator.askLaneActive();
     }
 
     boolean hasPackRepositoryForTesting() {

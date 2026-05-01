@@ -1,0 +1,215 @@
+package com.senku.mobile;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
+import com.senku.ui.primitives.BottomTabDestination;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import org.junit.Test;
+
+public final class MainRouteCoordinatorTest {
+    @Test
+    public void applyRouteStateOwnsRouteFieldsAndNotifiesHostViewBoundary() {
+        RecordingHost host = new RecordingHost();
+        MainRouteCoordinator coordinator = new MainRouteCoordinator(host);
+
+        coordinator.applyRouteState(new MainRouteDecisionHelper.RouteState(
+            MainRouteDecisionHelper.Surface.ASK_RESULTS,
+            BottomTabDestination.ASK,
+            true
+        ));
+
+        assertRoute(
+            coordinator.currentRouteState(),
+            MainRouteDecisionHelper.Surface.ASK_RESULTS,
+            BottomTabDestination.ASK,
+            true
+        );
+        assertEquals(BottomTabDestination.ASK, coordinator.activePhoneTab());
+        assertTrue(coordinator.askLaneActive());
+        assertFalse(coordinator.isBrowseModeActive());
+        assertEquals(
+            Arrays.asList("route:ASK_RESULTS:ASK:true:browse=false"),
+            host.calls
+        );
+    }
+
+    @Test
+    public void phoneTabTransitionPushesHistoryAndAppliesSameSectionEffects() {
+        RecordingHost host = new RecordingHost();
+        MainRouteCoordinator coordinator = new MainRouteCoordinator(host);
+
+        coordinator.openPhoneTab(BottomTabDestination.ASK, true);
+        coordinator.openPhoneTab(BottomTabDestination.PINS, true);
+
+        assertRoute(
+            coordinator.currentRouteState(),
+            MainRouteDecisionHelper.Surface.SAVED_GUIDES,
+            BottomTabDestination.PINS,
+            false
+        );
+        assertEquals(
+            Arrays.asList(
+                "route:RECENT_THREADS:ASK:true:browse=true",
+                "updateActionLabels",
+                "scrollBrowseToTop",
+                "focusSharedInput",
+                "route:SAVED_GUIDES:PINS:false:browse=true",
+                "updateActionLabels",
+                "dismissSearchKeyboard",
+                "prepareSavedGuidesDestination"
+            ),
+            host.calls
+        );
+    }
+
+    @Test
+    public void systemBackUsesInternalTabHistoryBeforeBrowseHomeFallback() {
+        RecordingHost host = new RecordingHost();
+        MainRouteCoordinator coordinator = new MainRouteCoordinator(host);
+        coordinator.openPhoneTab(BottomTabDestination.ASK, true);
+        coordinator.openPhoneTab(BottomTabDestination.PINS, true);
+        host.calls.clear();
+
+        assertTrue(coordinator.applySystemBackTransition());
+
+        assertRoute(
+            coordinator.currentRouteState(),
+            MainRouteDecisionHelper.Surface.RECENT_THREADS,
+            BottomTabDestination.ASK,
+            false
+        );
+        assertEquals(
+            Arrays.asList(
+                "route:RECENT_THREADS:ASK:false:browse=true",
+                "updateActionLabels",
+                "dismissSearchKeyboard",
+                "ensureBrowseHomeVisible",
+                "scrollRecentThreadsIntoView"
+            ),
+            host.calls
+        );
+    }
+
+    @Test
+    public void systemBackFromResultsReturnsThroughHostBrowseEffect() {
+        RecordingHost host = new RecordingHost();
+        MainRouteCoordinator coordinator = new MainRouteCoordinator(host);
+        coordinator.enterSearchResultsRoute();
+        host.calls.clear();
+
+        assertTrue(coordinator.applySystemBackTransition());
+
+        assertRoute(
+            coordinator.currentRouteState(),
+            MainRouteDecisionHelper.Surface.BROWSE,
+            BottomTabDestination.HOME,
+            false
+        );
+        assertEquals(
+            Arrays.asList(
+                "route:BROWSE:HOME:false:browse=true",
+                "returnToBrowse"
+            ),
+            host.calls
+        );
+    }
+
+    @Test
+    public void disabledNavigationHostLeavesTabTapUnhandled() {
+        RecordingHost host = new RecordingHost();
+        host.handleNavigation = false;
+        MainRouteCoordinator coordinator = new MainRouteCoordinator(host);
+
+        coordinator.openPhoneTab(BottomTabDestination.PINS, true);
+
+        assertRoute(
+            coordinator.currentRouteState(),
+            MainRouteDecisionHelper.Surface.BROWSE,
+            BottomTabDestination.HOME,
+            false
+        );
+        assertTrue(host.calls.isEmpty());
+    }
+
+    private static void assertRoute(
+        MainRouteDecisionHelper.RouteState state,
+        MainRouteDecisionHelper.Surface surface,
+        BottomTabDestination activePhoneTab,
+        boolean askLaneActive
+    ) {
+        assertEquals(surface, state.surface);
+        assertEquals(activePhoneTab, state.activePhoneTab);
+        assertEquals(askLaneActive, state.askLaneActive);
+    }
+
+    private static final class RecordingHost implements MainRouteCoordinator.Host {
+        final List<String> calls = new ArrayList<>();
+        boolean handleNavigation = true;
+
+        @Override
+        public boolean shouldHandleMainSurfaceNavigation() {
+            return handleNavigation;
+        }
+
+        @Override
+        public void onRouteStateApplied(
+            MainRouteDecisionHelper.RouteState routeState,
+            boolean browseChromeVisible
+        ) {
+            calls.add("route:"
+                + routeState.surface
+                + ":"
+                + routeState.activePhoneTab
+                + ":"
+                + routeState.askLaneActive
+                + ":browse="
+                + browseChromeVisible);
+        }
+
+        @Override
+        public void returnToBrowse() {
+            calls.add("returnToBrowse");
+        }
+
+        @Override
+        public void updateActionLabels() {
+            calls.add("updateActionLabels");
+        }
+
+        @Override
+        public void dismissSearchKeyboard() {
+            calls.add("dismissSearchKeyboard");
+        }
+
+        @Override
+        public void ensureBrowseHomeVisible() {
+            calls.add("ensureBrowseHomeVisible");
+        }
+
+        @Override
+        public void scrollBrowseToTop() {
+            calls.add("scrollBrowseToTop");
+        }
+
+        @Override
+        public void focusSharedInput() {
+            calls.add("focusSharedInput");
+        }
+
+        @Override
+        public void scrollRecentThreadsIntoView() {
+            calls.add("scrollRecentThreadsIntoView");
+        }
+
+        @Override
+        public void prepareSavedGuidesDestination() {
+            calls.add("prepareSavedGuidesDestination");
+        }
+    }
+}
