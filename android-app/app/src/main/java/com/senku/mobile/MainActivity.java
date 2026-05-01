@@ -3051,40 +3051,53 @@ public final class MainActivity extends AppCompatActivity {
             pushPhoneTab(activePhoneTab);
         }
         applyMainRouteState(transition.routeState);
-        updateActionLabels();
-        switch (transition.effect) {
-            case SHOW_BROWSE_HOME:
-                updateActionLabels();
-                dismissSearchKeyboard();
-                ensureBrowseHomeVisible();
-                scrollBrowseToTop();
-                break;
-            case FOCUS_SEARCH_INPUT:
-                if (isBrowseModeActive()) {
-                    scrollBrowseToTop();
-                }
-                focusSearchInput();
-                break;
-            case FOCUS_ASK_INPUT:
-                if (isBrowseModeActive()) {
-                    scrollBrowseToTop();
-                }
-                focusSearchInput();
-                break;
-            case SHOW_RECENT_THREADS:
-                dismissSearchKeyboard();
-                ensureBrowseHomeVisible();
-                scrollBrowseSectionIntoView(recentThreadsSection);
-                break;
-            case SHOW_SAVED_GUIDES:
-                dismissSearchKeyboard();
+        MainRouteEffectController.applyPhoneTabTransitionEffect(transition.effect, mainRouteEffects());
+    }
+
+    private MainRouteEffectController.Effects mainRouteEffects() {
+        return new MainRouteEffectController.Effects() {
+            @Override
+            public boolean isBrowseModeActive() {
+                return MainActivity.this.isBrowseModeActive();
+            }
+
+            @Override
+            public void updateActionLabels() {
+                MainActivity.this.updateActionLabels();
+            }
+
+            @Override
+            public void dismissSearchKeyboard() {
+                MainActivity.this.dismissSearchKeyboard();
+            }
+
+            @Override
+            public void ensureBrowseHomeVisible() {
+                MainActivity.this.ensureBrowseHomeVisible();
+            }
+
+            @Override
+            public void scrollBrowseToTop() {
+                MainActivity.this.scrollBrowseToTop();
+            }
+
+            @Override
+            public void focusSearchInput() {
+                MainActivity.this.focusSearchInput();
+            }
+
+            @Override
+            public void scrollRecentThreadsIntoView() {
+                MainActivity.this.scrollBrowseSectionIntoView(recentThreadsSection);
+            }
+
+            @Override
+            public void prepareSavedGuidesDestination() {
                 pendingSavedGuideSectionFocus = true;
-                ensureSavedGuidesDestinationVisible();
-                focusSavedGuideSectionIfReady();
-                break;
-            default:
-                break;
-        }
+                MainActivity.this.ensureSavedGuidesDestinationVisible();
+                MainActivity.this.focusSavedGuideSectionIfReady();
+            }
+        };
     }
 
     private void setPhoneTabFromFlow(BottomTabDestination destination) {
