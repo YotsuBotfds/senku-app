@@ -1026,6 +1026,11 @@ internal fun tabletThreadAnswerSourceChipLabels(
 ): List<String> =
     tabletThreadAnswerSourceIds(content, turnIndex, reviewDemoMode)
 
+internal fun tabletThreadAnswerSourceChipContentDescription(label: String): String {
+    val guideId = label.trim().ifEmpty { "guide" }
+    return "Open guide $guideId"
+}
+
 internal fun tabletThreadAnswerStatusLabel(content: AnswerContent, status: Status): String =
     when {
         content.abstain -> "NO MATCH"
@@ -1682,6 +1687,7 @@ private fun CenterPane(
                         guideMode = true,
                         onTurnClick = onTurnClick,
                         onAnchorClick = onAnchorClick,
+                        onXRefClick = onXRefClick,
                     )
                 }
             } else if (state.isThreadMode()) {
@@ -1690,6 +1696,7 @@ private fun CenterPane(
                     typeScalePolicy = typeScalePolicy,
                     onTurnClick = onTurnClick,
                     onAnchorClick = onAnchorClick,
+                    onXRefClick = onXRefClick,
                 )
             } else {
                 AnswerReadingSurface(
@@ -1710,6 +1717,7 @@ private fun ThreadReadingSurface(
     typeScalePolicy: TabletDetailTypeScalePolicy,
     onTurnClick: (String) -> Unit,
     onAnchorClick: () -> Unit,
+    onXRefClick: (String) -> Unit,
 ) {
     val threadTypeScalePolicy = tabletThreadDetailTypeScalePolicy(
         basePolicy = typeScalePolicy,
@@ -1727,6 +1735,7 @@ private fun ThreadReadingSurface(
             guideMode = false,
             onTurnClick = onTurnClick,
             onAnchorClick = onAnchorClick,
+            onXRefClick = onXRefClick,
         )
         Spacer(modifier = Modifier.height(12.dp))
     }
@@ -2536,6 +2545,7 @@ private fun AnswerReadingSurface(
             typeScalePolicy = typeScalePolicy,
             sourceCount = state.resolvedAnswerSourceCount(),
             onShowProof = onShowProof,
+            onXRefClick = onXRefClick,
         )
 
         val relatedGuides = tabletAnswerRelatedGuideRows(
@@ -2575,6 +2585,7 @@ private fun AnswerReadingSurface(
                     turnIndex = index + 1,
                     typeScalePolicy = typeScalePolicy,
                     onFocusTurn = { onTurnClick(turn.id) },
+                    onXRefClick = onXRefClick,
                     isLandscape = state.isLandscape,
                     reviewDemoMode = state.reviewDemoMode,
                 )
@@ -2699,6 +2710,7 @@ private fun PrimaryAnswerBlock(
     typeScalePolicy: TabletDetailTypeScalePolicy,
     sourceCount: Int,
     onShowProof: () -> Unit,
+    onXRefClick: (String) -> Unit,
 ) {
     val colors = SenkuTheme.colors
     val typography = SenkuTheme.typography
@@ -2769,6 +2781,10 @@ private fun PrimaryAnswerBlock(
             showProofLabel = "View sources",
             onShowProof = onShowProof,
         )
+        ThreadAnswerSourceChipRow(
+            labels = tabletThreadAnswerSourceChipLabels(content, turnIndex),
+            onChipClick = onXRefClick,
+        )
     }
 }
 
@@ -2778,6 +2794,7 @@ private fun SecondaryTurnBlock(
     turnIndex: Int,
     typeScalePolicy: TabletDetailTypeScalePolicy,
     onFocusTurn: () -> Unit,
+    onXRefClick: (String) -> Unit,
     isLandscape: Boolean,
     reviewDemoMode: Boolean,
 ) {
@@ -2797,6 +2814,7 @@ private fun SecondaryTurnBlock(
             canOpenProof = false,
             onFocusTurn = onFocusTurn,
             onOpenProof = onFocusTurn,
+            onXRefClick = onXRefClick,
             guideMode = false,
             threadMode = true,
             isLandscape = isLandscape,
@@ -2911,6 +2929,7 @@ private fun ThreadTurnList(
     guideMode: Boolean,
     onTurnClick: (String) -> Unit,
     onAnchorClick: () -> Unit,
+    onXRefClick: (String) -> Unit,
 ) {
     val colors = SenkuTheme.colors
 
@@ -2939,6 +2958,7 @@ private fun ThreadTurnList(
             canOpenProof = turn.isActive && state.anchor.hasSource,
             onFocusTurn = { onTurnClick(turn.id) },
             onOpenProof = onAnchorClick,
+            onXRefClick = onXRefClick,
             guideMode = guideMode,
             threadMode = state.isThreadMode(),
             isLandscape = state.isLandscape,
@@ -3148,6 +3168,7 @@ private fun ThreadTurnBlock(
     canOpenProof: Boolean,
     onFocusTurn: () -> Unit,
     onOpenProof: () -> Unit,
+    onXRefClick: (String) -> Unit,
     guideMode: Boolean,
     threadMode: Boolean,
     isLandscape: Boolean,
@@ -3177,6 +3198,7 @@ private fun ThreadTurnBlock(
             typeScalePolicy = typeScalePolicy,
             proofLabel = if (canOpenProof) "Open proof" else "Focus turn",
             onProofClick = if (canOpenProof) onOpenProof else onFocusTurn,
+            onXRefClick = onXRefClick,
             guideMode = guideMode,
             threadMode = threadMode,
             isLandscape = isLandscape,
@@ -3264,6 +3286,7 @@ private fun AnswerInlineBlock(
     typeScalePolicy: TabletDetailTypeScalePolicy,
     proofLabel: String,
     onProofClick: () -> Unit,
+    onXRefClick: (String) -> Unit,
     guideMode: Boolean,
     threadMode: Boolean,
     isLandscape: Boolean,
@@ -3340,6 +3363,7 @@ private fun AnswerInlineBlock(
         if (threadMode) {
             ThreadAnswerSourceChipRow(
                 labels = tabletThreadAnswerSourceChipLabels(content, turnIndex, reviewDemoMode),
+                onChipClick = onXRefClick,
             )
         }
         if (!content.steps.isNullOrEmpty() && !content.abstain) {
@@ -3435,7 +3459,10 @@ private fun AnswerInlineBlock(
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-private fun ThreadAnswerSourceChipRow(labels: List<String>) {
+private fun ThreadAnswerSourceChipRow(
+    labels: List<String>,
+    onChipClick: (String) -> Unit,
+) {
     val normalizedLabels = labels
         .map { it.trim() }
         .filter { it.isNotEmpty() }
@@ -3449,16 +3476,30 @@ private fun ThreadAnswerSourceChipRow(labels: List<String>) {
         verticalArrangement = Arrangement.spacedBy(5.dp),
     ) {
         normalizedLabels.forEach { label ->
-            ThreadAnswerSourceChip(label = label)
+            ThreadAnswerSourceChip(
+                label = label,
+                onClick = { onChipClick(label) },
+            )
         }
     }
 }
 
 @Composable
-private fun ThreadAnswerSourceChip(label: String) {
+private fun ThreadAnswerSourceChip(
+    label: String,
+    onClick: () -> Unit,
+) {
     val colors = SenkuTheme.colors
     val typography = SenkuTheme.typography
     Surface(
+        modifier = Modifier
+            .semantics {
+                contentDescription = tabletThreadAnswerSourceChipContentDescription(label)
+            }
+            .clickable(
+                role = Role.Button,
+                onClick = onClick,
+            ),
         color = Color.Transparent,
         contentColor = colors.accent,
         shape = RoundedCornerShape(4.dp),

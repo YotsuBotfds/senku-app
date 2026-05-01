@@ -733,6 +733,12 @@ class StressReadingPolicyTest {
     }
 
     @Test
+    fun tabletThreadAnswerSourceChipsDescribeGuideOpenAction() {
+        assertEquals("Open guide GD-345", tabletThreadAnswerSourceChipContentDescription(" GD-345 "))
+        assertEquals("Open guide guide", tabletThreadAnswerSourceChipContentDescription(" "))
+    }
+
+    @Test
     fun tabletThreadSourceLabelsUseMockSeparators() {
         assertEquals("SOURCES \u2022 2", tabletThreadSourcePaneTitle(2, isLandscape = false))
         assertEquals("SOURCES IN THREAD \u2022 2", tabletThreadSourcePaneTitle(2, isLandscape = true))
