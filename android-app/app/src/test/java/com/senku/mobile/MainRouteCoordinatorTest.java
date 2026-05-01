@@ -333,6 +333,25 @@ public final class MainRouteCoordinatorTest {
         assertTrue(host.calls.isEmpty());
     }
 
+    @Test
+    public void disabledNavigationHostLeavesSystemBackUnhandled() {
+        RecordingHost host = new RecordingHost();
+        MainRouteCoordinator coordinator = new MainRouteCoordinator(host);
+        coordinator.enterSearchResultsRoute();
+        host.calls.clear();
+        host.handleNavigation = false;
+
+        assertFalse(coordinator.applySystemBackTransition());
+
+        assertRoute(
+            coordinator.currentRouteState(),
+            MainRouteDecisionHelper.Surface.SEARCH_RESULTS,
+            BottomTabDestination.HOME,
+            false
+        );
+        assertTrue(host.calls.isEmpty());
+    }
+
     private static void assertRoute(
         MainRouteDecisionHelper.RouteState state,
         MainRouteDecisionHelper.Surface surface,
