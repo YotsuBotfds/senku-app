@@ -193,6 +193,39 @@ public final class AnswerPresenterTest {
     }
 
     @Test
+    public void followUpGenerationFailureAfterPreviewKeepsSubmittedQueryForRestore() {
+        FakeHost host = new FakeHost(31);
+        FakeEngine engine = new FakeEngine();
+        engine.preparedToReturn = generativePrepared("draft that should come back");
+        engine.generateException = new IllegalStateException("generation failed");
+        AnswerPresenter presenter = new AnswerPresenter(host, engine, (body, token) -> body, repo -> repo);
+
+        presenter.prepareThenGenerate(
+            31,
+            AnswerPresenter.Kind.PHONE_FOLLOWUP,
+            null,
+            "  draft that should come back  "
+        );
+
+        assertEquals(
+            List.of(
+                AnswerPresenter.HARNESS_FOLLOWUP_PREPARE,
+                AnswerPresenter.HARNESS_FOLLOWUP_GENERATE,
+                AnswerPresenter.HARNESS_FOLLOWUP_FAILURE
+            ),
+            host.begunTags
+        );
+        assertEquals(
+            List.of("preview:PHONE_FOLLOWUP", "failure:PHONE_FOLLOWUP"),
+            host.events
+        );
+        assertSame(engine.preparedToReturn, host.lastPreparedPreview);
+        assertEquals("draft that should come back", host.lastFallbackQuery);
+        assertEquals(1, engine.prepareCalls);
+        assertEquals(1, engine.generateCalls);
+    }
+
+    @Test
     public void staleRequestTokenIsDroppedSilently() {
         FakeHost host = new FakeHost(99);
         FakeEngine engine = new FakeEngine();

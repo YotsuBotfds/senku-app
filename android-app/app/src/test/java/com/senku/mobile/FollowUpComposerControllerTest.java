@@ -53,6 +53,38 @@ public final class FollowUpComposerControllerTest {
     }
 
     @Test
+    public void lifecycleKeepsBusySubmitAndFailedQueryRetryDecisionsSeparate() {
+        FollowUpComposerState idle = FollowUpComposerState.idle(
+            "  inspect the ridge line  ",
+            FollowUpComposerState.Surface.PHONE
+        );
+
+        FollowUpComposerController.SubmitDecision initialSubmit =
+            FollowUpComposerController.resolveSubmit(idle);
+        FollowUpComposerController.SubmitDecision duplicateSubmit =
+            FollowUpComposerController.resolveSubmit(idle.asSubmitting());
+
+        assertEquals(FollowUpComposerController.SubmitAction.SUBMIT, initialSubmit.action);
+        assertEquals("inspect the ridge line", initialSubmit.query);
+        assertEquals(FollowUpComposerController.SubmitAction.BLOCKED, duplicateSubmit.action);
+        assertEquals("inspect the ridge line", duplicateSubmit.query);
+
+        FollowUpComposerState failedAfterRestore = FollowUpComposerState.idle(
+            initialSubmit.query,
+            FollowUpComposerState.Surface.PHONE
+        ).withFailure("offline answer failed", initialSubmit.query);
+        FollowUpComposerController.RetryDecision retryRestoredFailure =
+            FollowUpComposerController.resolveRetry(failedAfterRestore.withDraft("new draft"), "visible fallback");
+        FollowUpComposerController.SubmitDecision submitEditedDraft =
+            FollowUpComposerController.resolveSubmit(failedAfterRestore.withDraft("  new draft  "));
+
+        assertEquals(FollowUpComposerController.RetryAction.RETRY, retryRestoredFailure.action);
+        assertEquals("inspect the ridge line", retryRestoredFailure.query);
+        assertEquals(FollowUpComposerController.SubmitAction.SUBMIT, submitEditedDraft.action);
+        assertEquals("new draft", submitEditedDraft.query);
+    }
+
+    @Test
     public void rawSubmitDecisionNormalizesEmptyPhoneDraft() {
         FollowUpComposerController.SubmitDecision decision =
             FollowUpComposerController.resolveSubmit(
