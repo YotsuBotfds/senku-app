@@ -1,5 +1,7 @@
 package com.senku.mobile;
 
+import java.util.Arrays;
+
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -274,6 +276,44 @@ public final class SearchResultAdapterTest {
     public void cleanDisplayTextStripsMarkdownBeforeTruncating() {
         assertEquals("Boil water", SearchResultAdapter.cleanDisplayTextForTest(" **Boil** `water` ", 40));
         assertEquals("Use clean\u2026", SearchResultAdapter.cleanDisplayTextForTest("Use clean containers", 10));
+    }
+
+    @Test
+    public void queryHighlightingSplitsPunctuationHyphenAndUnderscoreTerms() {
+        assertEquals(
+            Arrays.asList("tarp", "Tie", "rain"),
+            SearchResultAdapter.highlightedSegmentsForTest(
+                "Pack tarp. Tie cord; shed rain.",
+                "TARP.tie_RAIN",
+                0,
+                4
+            )
+        );
+    }
+
+    @Test
+    public void queryHighlightingKeepsLowercaseBoundaryBehavior() {
+        assertEquals(
+            Arrays.asList("Rain", "SHELTER", "cord"),
+            SearchResultAdapter.highlightedSegmentsForTest(
+                "Rain SHELTER cord",
+                "rain-shelter_cord",
+                0,
+                4
+            )
+        );
+    }
+
+    @Test
+    public void queryHighlightingReturnsNoSegmentsWhenTermsDoNotMatch() {
+        assertTrue(
+            SearchResultAdapter.highlightedSegmentsForTest(
+                "Boil water before storage.",
+                "rain-shelter_cord",
+                0,
+                4
+            ).isEmpty()
+        );
     }
 
     @Test

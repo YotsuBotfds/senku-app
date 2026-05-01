@@ -1369,28 +1369,55 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
         if (cleaned.isEmpty() || queryHighlightTerms.isEmpty() || maxMatches <= 0) {
             return cleaned;
         }
-        String lowerText = cleaned.toLowerCase(Locale.US);
         SpannableString highlighted = new SpannableString(cleaned);
+        List<HighlightRange> ranges = buildHighlightRanges(cleaned, queryHighlightTerms, maxMatches);
+        for (HighlightRange range : ranges) {
+            highlighted.setSpan(new StyleSpan(Typeface.BOLD), range.start, range.end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        }
+        return ranges.isEmpty() ? cleaned : highlighted;
+    }
+
+    static List<String> highlightedSegmentsForTest(String raw, String query, int maxLen, int maxMatches) {
+        String cleaned = cleanDisplayTextInternal(raw, maxLen);
+        List<String> terms = buildHighlightTermsForQuery(query);
+        List<HighlightRange> ranges = buildHighlightRanges(cleaned, terms, maxMatches);
+        ArrayList<String> segments = new ArrayList<>();
+        for (HighlightRange range : ranges) {
+            segments.add(cleaned.substring(range.start, range.end));
+        }
+        return segments;
+    }
+
+    private static List<HighlightRange> buildHighlightRanges(String cleaned, List<String> terms, int maxMatches) {
+        if (cleaned.isEmpty() || terms.isEmpty() || maxMatches <= 0) {
+            return Collections.emptyList();
+        }
+        String lowerText = cleaned.toLowerCase(Locale.US);
         boolean[] occupied = new boolean[cleaned.length()];
+        ArrayList<HighlightRange> ranges = new ArrayList<>();
         int matchesApplied = 0;
-        for (String term : queryHighlightTerms) {
+        for (String term : terms) {
             if (matchesApplied >= maxMatches) {
                 break;
             }
-            matchesApplied += applyTermHighlight(
-                highlighted,
+            int applied = collectTermHighlightRanges(
+                ranges,
                 cleaned,
                 lowerText,
                 term,
                 occupied,
                 maxMatches - matchesApplied
             );
+            matchesApplied += applied;
         }
-        return matchesApplied > 0 ? highlighted : cleaned;
+        if (ranges.isEmpty()) {
+            return Collections.emptyList();
+        }
+        return ranges;
     }
 
-    private int applyTermHighlight(
-        SpannableString text,
+    private static int collectTermHighlightRanges(
+        List<HighlightRange> ranges,
         String original,
         String lowerText,
         String term,
@@ -1409,7 +1436,7 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
             }
             int matchEnd = matchStart + term.length();
             if (isWordBoundaryMatch(original, matchStart, matchEnd) && !hasOverlap(occupied, matchStart, matchEnd)) {
-                text.setSpan(new StyleSpan(Typeface.BOLD), matchStart, matchEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                ranges.add(new HighlightRange(matchStart, matchEnd));
                 markOccupied(occupied, matchStart, matchEnd);
                 applied += 1;
             }
@@ -1418,18 +1445,18 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
         return applied;
     }
 
-    private boolean isWordBoundaryMatch(String text, int start, int end) {
+    private static boolean isWordBoundaryMatch(String text, int start, int end) {
         return isBoundary(text, start - 1) && isBoundary(text, end);
     }
 
-    private boolean isBoundary(String text, int index) {
+    private static boolean isBoundary(String text, int index) {
         if (index < 0 || index >= text.length()) {
             return true;
         }
         return !Character.isLetterOrDigit(text.charAt(index));
     }
 
-    private boolean hasOverlap(boolean[] occupied, int start, int end) {
+    private static boolean hasOverlap(boolean[] occupied, int start, int end) {
         for (int i = start; i < end; i++) {
             if (occupied[i]) {
                 return true;
@@ -1438,20 +1465,19 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
         return false;
     }
 
-    private void markOccupied(boolean[] occupied, int start, int end) {
+    private static void markOccupied(boolean[] occupied, int start, int end) {
         for (int i = start; i < end; i++) {
             occupied[i] = true;
         }
     }
 
     private List<String> buildHighlightTerms(String query) {
-        String normalizedQuery = safe(query).trim().toLowerCase(Locale.US);
-        if (normalizedQuery.isEmpty()) {
-            return Collections.emptyList();
-        }
-        String[] parts = normalizedQuery.split("[^a-z0-9]+");
+        return buildHighlightTermsForQuery(query);
+    }
+
+    private static List<String> buildHighlightTermsForQuery(String query) {
         LinkedHashSet<String> terms = new LinkedHashSet<>();
-        for (String part : parts) {
+        for (String part : QueryTextTokenPolicy.normalizedParts(query)) {
             String term = safe(part).trim();
             if (!shouldHighlightTerm(term)) {
                 continue;
@@ -1467,7 +1493,7 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
         return new ArrayList<>(terms);
     }
 
-    private boolean shouldHighlightTerm(String term) {
+    private static boolean shouldHighlightTerm(String term) {
         if (term.isEmpty()) {
             return false;
         }
@@ -1501,13 +1527,23 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
         }
     }
 
-    private boolean containsDigit(String term) {
+    private static boolean containsDigit(String term) {
         for (int i = 0; i < term.length(); i++) {
             if (Character.isDigit(term.charAt(i))) {
                 return true;
             }
         }
         return false;
+    }
+
+    private static final class HighlightRange {
+        final int start;
+        final int end;
+
+        HighlightRange(int start, int end) {
+            this.start = start;
+            this.end = end;
+        }
     }
 
     private int dp(int value) {
