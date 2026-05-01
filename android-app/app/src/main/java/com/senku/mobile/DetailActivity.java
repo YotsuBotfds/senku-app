@@ -8983,7 +8983,7 @@ public final class DetailActivity extends AppCompatActivity {
         refreshPinButton();
         Toast.makeText(
             this,
-            getString(alreadyPinned ? R.string.detail_pin_removed : R.string.detail_pin_added, guideId),
+            getString(detailSaveToastResource(alreadyPinned), guideId),
             Toast.LENGTH_SHORT
         ).show();
         renderRev03ComposeChrome();
@@ -8999,11 +8999,25 @@ public final class DetailActivity extends AppCompatActivity {
             return;
         }
         boolean pinned = PinnedGuideStore.contains(this, guideId);
-        pinButton.setText(pinned ? R.string.detail_unpin : R.string.detail_pin);
+        pinButton.setText(detailSaveActionLabelResource(pinned));
         pinButton.setContentDescription(getString(
-            pinned ? R.string.detail_unpin_content_description : R.string.detail_pin_content_description,
+            detailSaveActionContentDescriptionResource(pinned),
             guideId
         ));
+    }
+
+    static int detailSaveActionLabelResource(boolean saved) {
+        return saved ? R.string.detail_saved : R.string.detail_save;
+    }
+
+    static int detailSaveActionContentDescriptionResource(boolean saved) {
+        return saved
+            ? R.string.detail_remove_saved_content_description
+            : R.string.detail_save_content_description;
+    }
+
+    static int detailSaveToastResource(boolean removingSavedGuide) {
+        return removingSavedGuide ? R.string.detail_save_removed : R.string.detail_save_added;
     }
 
     private String resolvePinnableGuideId() {
@@ -9109,8 +9123,8 @@ public final class DetailActivity extends AppCompatActivity {
                 getString(R.string.detail_home_content_description),
                 getString(
                     pinActive
-                        ? R.string.detail_unpin_content_description
-                        : R.string.detail_pin_content_description,
+                        ? R.string.detail_remove_saved_content_description
+                        : R.string.detail_save_content_description,
                     pinVisible ? pinnableGuideId : resolveDisplayGuideId()
                 ),
                 getString(R.string.detail_share_content_description),
@@ -9524,7 +9538,7 @@ public final class DetailActivity extends AppCompatActivity {
             0,
             DetailOverflowPolicy.SAVE_GUIDE_MENU_ID,
             0,
-            getString(pinned ? R.string.detail_unpin : R.string.detail_pin)
+            getString(detailSaveActionLabelResource(pinned))
         );
         menu.getMenu().add(
             0,

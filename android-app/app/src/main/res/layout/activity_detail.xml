@@ -72,7 +72,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:background="@drawable/bg_detail_topbar_chip"
-                android:contentDescription="@string/detail_pin_content_description_default"
+                android:contentDescription="@string/detail_save_content_description_default"
                 android:gravity="center"
                 android:minHeight="0dp"
                 android:minWidth="0dp"
@@ -80,7 +80,7 @@
                 android:paddingTop="0dp"
                 android:paddingEnd="8dp"
                 android:paddingBottom="0dp"
-                android:text="@string/detail_pin"
+                android:text="@string/detail_save"
                 android:textAllCaps="false"
                 android:textColor="@color/senku_rev03_ink_0"
                 android:visibility="gone" />

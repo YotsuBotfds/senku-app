@@ -6,6 +6,9 @@ import static org.junit.Assert.assertTrue;
 
 import com.senku.ui.primitives.BottomTabDestination;
 
+import java.io.File;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.Collections;
 
@@ -99,6 +102,28 @@ public final class DetailActivityPhoneGuideChromeTest {
         );
         assertEquals(DetailOverflowPolicy.SAVE_GUIDE_MENU_ID, DetailOverflowPolicy.menuId(DetailOverflowPolicy.Action.SAVE_GUIDE));
         assertEquals(DetailOverflowPolicy.HOME_MENU_ID, DetailOverflowPolicy.menuId(DetailOverflowPolicy.Action.HOME));
+    }
+
+    @Test
+    public void detailSaveActionBindingUsesSavedVocabularyResources() {
+        assertEquals(R.string.detail_save, DetailActivity.detailSaveActionLabelResource(false));
+        assertEquals(R.string.detail_saved, DetailActivity.detailSaveActionLabelResource(true));
+        assertEquals(
+            R.string.detail_save_content_description,
+            DetailActivity.detailSaveActionContentDescriptionResource(false)
+        );
+        assertEquals(
+            R.string.detail_remove_saved_content_description,
+            DetailActivity.detailSaveActionContentDescriptionResource(true)
+        );
+        assertEquals(R.string.detail_save_added, DetailActivity.detailSaveToastResource(false));
+        assertEquals(R.string.detail_save_removed, DetailActivity.detailSaveToastResource(true));
+    }
+
+    @Test
+    public void detailPhoneXmlSaveButtonUsesSavedVocabularyResources() throws Exception {
+        assertDetailLayoutUsesSavedVocabulary("layout");
+        assertDetailLayoutUsesSavedVocabulary("layout-land");
     }
 
     @Test
@@ -257,5 +282,29 @@ public final class DetailActivityPhoneGuideChromeTest {
                 pinnableGuideId
             ).isEmpty()
         );
+    }
+
+    private static void assertDetailLayoutUsesSavedVocabulary(String qualifier) throws Exception {
+        String layout = new String(
+            Files.readAllBytes(locateRepoFile("android-app/app/src/main/res/" + qualifier + "/activity_detail.xml").toPath()),
+            StandardCharsets.UTF_8
+        );
+        assertTrue(layout.contains("@+id/detail_pin_button"));
+        assertTrue(layout.contains("@string/detail_save"));
+        assertTrue(layout.contains("@string/detail_save_content_description_default"));
+        assertFalse(layout.contains("@string/detail_pin"));
+        assertFalse(layout.contains("@string/detail_pin_content_description_default"));
+    }
+
+    private static File locateRepoFile(String relativePath) {
+        File root = new File(System.getProperty("user.dir")).getAbsoluteFile();
+        while (root != null) {
+            File candidate = new File(root, relativePath);
+            if (candidate.exists()) {
+                return candidate;
+            }
+            root = root.getParentFile();
+        }
+        throw new AssertionError("Unable to locate " + relativePath);
     }
 }
