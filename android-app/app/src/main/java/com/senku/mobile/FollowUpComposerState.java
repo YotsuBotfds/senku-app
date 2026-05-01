@@ -153,6 +153,17 @@ public final class FollowUpComposerState {
         return normalizeSavedDraft(visibleDraft);
     }
 
+    public static String resolveActiveRetryQuery(
+        boolean busy,
+        boolean generationStallNoticeVisible,
+        String currentQuery
+    ) {
+        if (!busy || !generationStallNoticeVisible) {
+            return "";
+        }
+        return normalizeDraft(currentQuery);
+    }
+
     private boolean hasActiveRetryQuery() {
         return !activeRetryQuery.isEmpty();
     }

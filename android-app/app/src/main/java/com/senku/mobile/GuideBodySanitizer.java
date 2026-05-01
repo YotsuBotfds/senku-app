@@ -4,7 +4,7 @@ import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-final class GuideBodySanitizer {
+public final class GuideBodySanitizer {
     private static final Locale QUERY_LOCALE = Locale.US;
     private static final Pattern GUIDE_ADMONITION_FENCE_PATTERN = Pattern.compile("^:::\\s*([a-zA-Z][a-zA-Z-]*)?\\s*$");
     private static final Pattern GUIDE_ADMONITION_LABEL_PATTERN = Pattern.compile("^(DANGER|WARNING|CAUTION|IMPORTANT|NOTE):?$");
@@ -110,6 +110,36 @@ final class GuideBodySanitizer {
 
     static String sanitizeGuideBodyForDisplay(String body) {
         return parseGuideBodyForDisplay(body).displayText;
+    }
+
+    public static String[] guideSectionAnchorLabelsForDisplay(String body) {
+        ParsedGuideBody parsedBody = parseGuideBodyForDisplay(body);
+        java.util.ArrayList<String> labels = new java.util.ArrayList<>();
+        boolean hasRequiredReading = false;
+        for (GuideBodyLine line : parsedBody.lines) {
+            if (line.kind == GuideBodyLine.Kind.SECTION && line.section != null) {
+                labels.add("\u00a7" + (labels.size() + 1) + " " + sentenceCase(line.section.value));
+            } else if (line.kind == GuideBodyLine.Kind.REQUIRED_READING && !hasRequiredReading) {
+                labels.add("\u00a7" + (labels.size() + 1) + " Required reading");
+                hasRequiredReading = true;
+            }
+        }
+        return labels.toArray(new String[0]);
+    }
+
+    static int countRawGuideSectionMarkers(String body) {
+        String cleaned = safe(body);
+        if (cleaned.trim().isEmpty()) {
+            return 0;
+        }
+        int sections = 0;
+        String[] lines = cleaned.split("\\n", -1);
+        for (String line : lines) {
+            if (isRawGuideSectionMarkerLine(line)) {
+                sections++;
+            }
+        }
+        return sections;
     }
 
     static ParsedGuideBody parseGuideBodyForDisplay(String body) {
@@ -487,6 +517,14 @@ final class GuideBodySanitizer {
         return cleaned.startsWith(GUIDE_SECTION_ANCHOR_MARKER)
             || GUIDE_SECTION_LINE_PATTERN.matcher(cleaned).matches()
             || GUIDE_BRACKET_SECTION_LINE_PATTERN.matcher(cleaned).matches();
+    }
+
+    private static boolean isRawGuideSectionMarkerLine(String line) {
+        String trimmed = safe(line).trim();
+        return trimmed.matches("(?i)^<section\\b.*")
+            || trimmed.matches("^##\\s+.+")
+            || isGuideSectionMarkerLine(trimmed)
+            || isGuideSectionDisplayLine(trimmed);
     }
 
     private static String extractGuideSectionValue(String line) {

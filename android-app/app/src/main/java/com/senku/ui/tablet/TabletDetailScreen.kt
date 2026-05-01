@@ -55,6 +55,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.em
+import com.senku.mobile.GuideBodySanitizer
 import com.senku.mobile.R
 import com.senku.ui.answer.AnswerContent
 import com.senku.ui.answer.AnswerSurfaceLabel
@@ -3875,22 +3876,7 @@ internal fun buildGuideSectionAnchorTurns(turns: List<ThreadTurnState>): List<Th
 }
 
 internal fun guideSectionAnchorLabels(text: String): List<String> {
-    val labels = mutableListOf<String>()
-    text.lineSequence()
-        .map { normalizeGuidePaperTokenLine(it) }
-        .filter { it.isNotEmpty() }
-        .forEach { line ->
-            val sectionTitle = parseGuideSectionAnchorTitle(line)
-            if (sectionTitle != null) {
-                labels += "\u00A7${labels.size + 1} $sectionTitle"
-            } else if (
-                tabletGuideBodyLineKind(line) == TabletGuideBodyLineKind.RequiredReading &&
-                labels.none { it.endsWith("Required reading", ignoreCase = true) }
-            ) {
-                labels += "\u00A7${labels.size + 1} Required reading"
-            }
-        }
-    return labels
+    return GuideBodySanitizer.guideSectionAnchorLabelsForDisplay(text).toList()
 }
 
 private fun TabletDetailState.isFoundryGuideReader(): Boolean {

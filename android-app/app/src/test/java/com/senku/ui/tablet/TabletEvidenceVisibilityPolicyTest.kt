@@ -26,10 +26,11 @@ class TabletEvidenceVisibilityPolicyTest {
         assertTrue(policy.portraitCollapsedByDefault)
         assertTrue(policy.collapsedTitleMaxLines >= 2)
         assertTrue(policy.collapsedSnippetMaxLines >= 4)
+        assertFalse(policy.answerSourcesOpenRailByDefault)
     }
 
     @Test
-    fun tabletEvidenceRailPresentationPinsAnswerVisibilityAndDensity() {
+    fun tabletEvidenceRailPresentationKeepsAnswerRailClosedUntilPolicyAllowsOrExpanded() {
         val hidden = tabletEvidenceRailPresentation(
             TabletEvidenceRailVisibilityInput(
                 detailMode = TabletDetailMode.Answer,
@@ -40,7 +41,7 @@ class TabletEvidenceVisibilityPolicyTest {
                 threadSourceCount = 0,
             )
         )
-        val landscape = tabletEvidenceRailPresentation(
+        val sourcesOnly = tabletEvidenceRailPresentation(
             TabletEvidenceRailVisibilityInput(
                 detailMode = TabletDetailMode.Answer,
                 isLandscape = true,
@@ -62,14 +63,7 @@ class TabletEvidenceVisibilityPolicyTest {
         )
 
         assertEquals(TabletEvidenceRailPresentation(false, 0, EvidenceRailDensity.Hidden), hidden)
-        assertEquals(
-            TabletEvidenceRailPresentation(
-                visible = true,
-                widthDp = tabletLandscapeReadingLayoutPolicy().evidenceRailWidthDp,
-                density = EvidenceRailDensity.Full,
-            ),
-            landscape,
-        )
+        assertEquals(TabletEvidenceRailPresentation(false, 0, EvidenceRailDensity.Hidden), sourcesOnly)
         assertEquals(
             TabletEvidenceRailPresentation(
                 visible = true,
@@ -168,7 +162,7 @@ class TabletEvidenceVisibilityPolicyTest {
 
     @Test
     fun tabletStateEvidenceRailPresentationFeedsLegacyVisibilityHelper() {
-        val state = stateWithSources(sourceCount = 3, isLandscape = false)
+        val state = stateWithSources(sourceCount = 3, evidenceExpanded = true, isLandscape = false)
         val presentation = tabletEvidenceRailPresentation(state, guideMode = false)
 
         assertEquals(TabletEvidenceRailPresentation(true, 300, EvidenceRailDensity.Collapsed), presentation)
@@ -583,10 +577,10 @@ class TabletEvidenceVisibilityPolicyTest {
     }
 
     @Test
-    fun tabletAnswerModeShowsPortraitSourceRailWhenSourcesExist() {
+    fun tabletAnswerModeKeepsPortraitSourceRailClosedWhenSourcesExistUntilExpanded() {
         val state = stateWithSources(sourceCount = 3, isLandscape = false)
 
-        assertTrue(
+        assertFalse(
             tabletShouldShowEvidencePane(
                 state = state,
                 guideMode = false,

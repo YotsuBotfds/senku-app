@@ -353,6 +353,18 @@ class StressReadingPolicyTest {
     }
 
     @Test
+    fun tabletGuideRailUsesStructuredSanitizerForRawSectionMarkers() {
+        assertEquals(
+            listOf("\u00A71 Area readiness", "\u00A72 Required reading", "\u00A73 Dry tools"),
+            guideSectionAnchorLabels(
+                "[[SECTION]] Area readiness\n" +
+                    "Required Reading: Read GD-220 first.\n" +
+                    "Source section: Dry tools",
+            ),
+        )
+    }
+
+    @Test
     fun tabletFoundryGuideRailUsesLiveSectionsByDefault() {
         val state = tabletDetailState(
             guideId = "GD-132",
@@ -894,7 +906,7 @@ class StressReadingPolicyTest {
     }
 
     @Test
-    fun tabletAnswerModeShowsEvidencePaneWhenSourcesExist() {
+    fun tabletAnswerModeKeepsEvidencePaneClosedWhenSourcesExistUntilExpanded() {
         val state = tabletDetailState(
             sources = listOf(
                 SourceState("s1", "GD-001", "Anchor guide", isAnchor = true, isSelected = true),
@@ -902,7 +914,7 @@ class StressReadingPolicyTest {
             ),
         )
 
-        assertTrue(tabletShouldShowEvidencePane(state, guideMode = false))
+        assertFalse(tabletShouldShowEvidencePane(state, guideMode = false))
         assertEquals(2, state.resolvedAnswerSourceCount())
     }
 

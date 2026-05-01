@@ -179,6 +179,42 @@ public final class FollowUpComposerStateTest {
     }
 
     @Test
+    public void activeRetryQueryRequiresBusyStallNoticeAndCurrentQuery() {
+        assertEquals(
+            "current answer title",
+            FollowUpComposerState.resolveActiveRetryQuery(
+                true,
+                true,
+                "  current answer title\r\n"
+            )
+        );
+        assertEquals(
+            "",
+            FollowUpComposerState.resolveActiveRetryQuery(
+                false,
+                true,
+                "current answer title"
+            )
+        );
+        assertEquals(
+            "",
+            FollowUpComposerState.resolveActiveRetryQuery(
+                true,
+                false,
+                "current answer title"
+            )
+        );
+        assertEquals(
+            "",
+            FollowUpComposerState.resolveActiveRetryQuery(
+                true,
+                true,
+                " \n\t "
+            )
+        );
+    }
+
+    @Test
     public void copyHelpersPreserveExistingStateDecisions() {
         FollowUpComposerState state = FollowUpComposerState.idle(
             "draft",

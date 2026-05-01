@@ -761,21 +761,6 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
         return buildMetaFallback(result);
     }
 
-    private String buildLinkedGuidePreviewLabel(LinkedGuidePreview preview) {
-        if (preview == null) {
-            return "";
-        }
-        return SearchResultCardModelMapper.buildLinkedGuidePreviewLabel(
-            preview.displayLabel,
-            preview.guideId,
-            preview.title
-        );
-    }
-
-    private String buildLinkedGuideOpenDescription(String actionLabel) {
-        return SearchResultCardModelMapper.buildLinkedGuideOpenDescription(actionLabel);
-    }
-
     private void bindLinkedGuideAction(View view, SearchResult result, LinkedGuidePreview preview) {
         if (view == null || preview == null || !preview.hasTargetGuide()) {
             return;
@@ -801,14 +786,15 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
         };
         Runnable linkedGuideClick = null;
         LinkedGuidePreview linkedPreview = resolveLinkedGuidePreview(result);
-        if (linkedPreview != null && linkedPreview.hasTargetGuide()) {
+        SearchResultInteractionModel interactionModel = buildSearchResultInteractionModel(result, linkedPreview);
+        if (interactionModel.bindLinkedGuideAction) {
             linkedGuideClick = () -> {
                 if (linkedGuideClickListener != null) {
                     linkedGuideClickListener.onLinkedGuideClick(result, linkedPreview);
                 }
             };
         }
-        Runnable continueThreadClick = shouldShowContinueThreadChip(result)
+        Runnable continueThreadClick = interactionModel.bindContinueThreadAction
             ? () -> {
                 if (listener != null) {
                     listener.onResultClick(result);
@@ -830,13 +816,7 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
 
     private SearchResultCardModel buildSearchResultCardModel(SearchResult result, int position) {
         LinkedGuidePreview linkedPreview = resolveLinkedGuidePreview(result);
-        String linkedLabel = linkedPreview != null && linkedPreview.hasTargetGuide()
-            ? buildLinkedGuideChipLabel()
-            : null;
-        String linkedDescription = linkedPreview != null && linkedPreview.hasTargetGuide()
-            ? buildLinkedGuideOpenDescription(buildLinkedGuidePreviewLabel(linkedPreview))
-            : null;
-        boolean showContinueThreadChip = shouldShowContinueThreadChip(result);
+        SearchResultInteractionModel interactionModel = buildSearchResultInteractionModel(result, linkedPreview);
         return SearchResultCardModelMapper.map(
             result,
             position,
@@ -845,10 +825,21 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
                 isLandscapePhoneCard(inflater.getContext()),
                 isSmallPhonePortraitCard(inflater.getContext()),
                 colorForRetrievalMode(safe(result == null ? null : result.retrievalMode).trim().toLowerCase(Locale.US)),
-                showContinueThreadChip,
-                linkedLabel,
-                linkedDescription
+                interactionModel
             )
+        );
+    }
+
+    private SearchResultInteractionModel buildSearchResultInteractionModel(
+        SearchResult result,
+        LinkedGuidePreview linkedPreview
+    ) {
+        return SearchResultInteractionModel.decide(
+            shouldShowContinueThreadChip(result),
+            linkedPreview != null && linkedPreview.hasTargetGuide(),
+            linkedPreview == null ? null : linkedPreview.displayLabel,
+            linkedPreview == null ? null : linkedPreview.guideId,
+            linkedPreview == null ? null : linkedPreview.title
         );
     }
 
@@ -887,10 +878,6 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
     private String buildContinueThreadContentDescription(SearchResult result) {
         String guideId = cleanDisplayText(result == null ? null : result.guideId, 32);
         return continueConversationContentDescription(guideId);
-    }
-
-    private static String buildLinkedGuideChipLabel() {
-        return SearchResultCardModelMapper.buildLinkedGuideChipLabel();
     }
 
     private int colorForCategory(String category) {

@@ -6513,7 +6513,7 @@ public final class DetailActivity extends AppCompatActivity {
             "",
             FollowUpComposerState.Surface.PHONE,
             lastFailedQuery,
-            isGenerationStallRetryAvailable(busy) ? currentTitle : ""
+            FollowUpComposerState.resolveActiveRetryQuery(busy, generationStallNoticeVisible, currentTitle)
         );
     }
 
@@ -6525,7 +6525,7 @@ public final class DetailActivity extends AppCompatActivity {
             "",
             FollowUpComposerState.Surface.TABLET,
             lastFailedQuery,
-            isGenerationStallRetryAvailable(tabletBusy) ? currentTitle : ""
+            FollowUpComposerState.resolveActiveRetryQuery(tabletBusy, generationStallNoticeVisible, currentTitle)
         );
     }
 
@@ -6555,10 +6555,6 @@ public final class DetailActivity extends AppCompatActivity {
             followUpSendButton.setEnabled(presentation.submitEnabled);
         }
         refreshPhoneFollowUpRetryButton();
-    }
-
-    private boolean isGenerationStallRetryAvailable(boolean busy) {
-        return busy && generationStallNoticeVisible && !safe(currentTitle).trim().isEmpty();
     }
 
     void setBusy(String status, boolean busy) {

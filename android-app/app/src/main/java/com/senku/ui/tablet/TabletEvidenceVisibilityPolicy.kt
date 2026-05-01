@@ -8,6 +8,7 @@ internal data class TabletEvidenceVisibilityPolicy(
     val portraitCollapsedByDefault: Boolean,
     val collapsedTitleMaxLines: Int,
     val collapsedSnippetMaxLines: Int,
+    val answerSourcesOpenRailByDefault: Boolean,
 )
 
 internal enum class EvidenceRailDensity {
@@ -40,6 +41,7 @@ internal fun tabletEvidenceVisibilityPolicy(): TabletEvidenceVisibilityPolicy =
         portraitCollapsedByDefault = true,
         collapsedTitleMaxLines = 2,
         collapsedSnippetMaxLines = 4,
+        answerSourcesOpenRailByDefault = false,
     )
 
 internal fun tabletEvidenceRailPresentation(
@@ -60,7 +62,8 @@ internal fun tabletEvidenceRailPresentation(
             )
         input.detailMode == TabletDetailMode.Answer ->
             TabletEvidenceRailPresentation(
-                visible = input.evidenceExpanded || input.answerSourceCount > 0,
+                visible = input.evidenceExpanded ||
+                    (tabletEvidenceVisibilityPolicy().answerSourcesOpenRailByDefault && input.answerSourceCount > 0),
                 widthDp = tabletReadingLayoutPolicy(input.isLandscape).evidenceRailWidthDp,
                 density = if (input.isLandscape) EvidenceRailDensity.Full else EvidenceRailDensity.Collapsed,
             )

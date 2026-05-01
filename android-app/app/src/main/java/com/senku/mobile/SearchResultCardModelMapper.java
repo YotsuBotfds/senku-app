@@ -52,6 +52,7 @@ final class SearchResultCardModelMapper {
         final boolean showContinueThreadChip;
         final String linkedGuideLabel;
         final String linkedGuideContentDescription;
+        final SearchResultInteractionModel interactionModel;
 
         Options(
             boolean richTabletCard,
@@ -66,9 +67,33 @@ final class SearchResultCardModelMapper {
             this.landscapePhoneCard = landscapePhoneCard;
             this.smallPhonePortraitCard = smallPhonePortraitCard;
             this.laneColorArgb = laneColorArgb;
-            this.showContinueThreadChip = showContinueThreadChip;
-            this.linkedGuideLabel = linkedGuideLabel;
-            this.linkedGuideContentDescription = linkedGuideContentDescription;
+            this.interactionModel = new SearchResultInteractionModel(
+                showContinueThreadChip,
+                showContinueThreadChip,
+                linkedGuideLabel != null,
+                linkedGuideLabel,
+                linkedGuideContentDescription
+            );
+            this.showContinueThreadChip = this.interactionModel.showContinueThreadChip;
+            this.linkedGuideLabel = this.interactionModel.linkedGuideLabel;
+            this.linkedGuideContentDescription = this.interactionModel.linkedGuideContentDescription;
+        }
+
+        Options(
+            boolean richTabletCard,
+            boolean landscapePhoneCard,
+            boolean smallPhonePortraitCard,
+            int laneColorArgb,
+            SearchResultInteractionModel interactionModel
+        ) {
+            this.richTabletCard = richTabletCard;
+            this.landscapePhoneCard = landscapePhoneCard;
+            this.smallPhonePortraitCard = smallPhonePortraitCard;
+            this.laneColorArgb = laneColorArgb;
+            this.interactionModel = interactionModel == null ? SearchResultInteractionModel.hidden() : interactionModel;
+            this.showContinueThreadChip = this.interactionModel.showContinueThreadChip;
+            this.linkedGuideLabel = this.interactionModel.linkedGuideLabel;
+            this.linkedGuideContentDescription = this.interactionModel.linkedGuideContentDescription;
         }
 
         static Options defaults() {

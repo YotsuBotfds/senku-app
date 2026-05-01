@@ -783,25 +783,7 @@ final class DetailGuidePresentationFormatter {
     }
 
     private static int countRawGuideSections(String body) {
-        String cleaned = safe(body);
-        if (cleaned.trim().isEmpty()) {
-            return 0;
-        }
-        int sections = 0;
-        String[] lines = cleaned.split("\\n", -1);
-        for (String line : lines) {
-            String trimmed = safe(line).trim();
-            if (trimmed.matches("(?i)^<section\\b.*")) {
-                sections++;
-            } else if (trimmed.matches("^##\\s+.+")) {
-                sections++;
-            } else if (trimmed.startsWith("[[SECTION]] ")
-                || trimmed.matches("(?i)^Source section:\\s*.+$")
-                || GuideBodySanitizer.isGuideSectionDisplayLine(trimmed)) {
-                sections++;
-            }
-        }
-        return sections;
+        return GuideBodySanitizer.countRawGuideSectionMarkers(body);
     }
 
     private static int countFrontMatterListEntries(String body, String key) {

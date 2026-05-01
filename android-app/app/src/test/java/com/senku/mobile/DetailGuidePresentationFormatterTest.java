@@ -1,5 +1,6 @@
 package com.senku.mobile;
 
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -767,6 +768,22 @@ public final class DetailGuidePresentationFormatterTest {
         assertEquals("area readiness", parsed.lines[0].section.normalizedValue);
         assertEquals(GuideBodySanitizer.GuideBodyLine.Kind.REQUIRED_READING, parsed.lines[1].kind);
         assertEquals("REQUIRED READING", parsed.lines[1].label);
+    }
+
+    @Test
+    public void guideBodySanitizerExportsDenseRailAnchorsFromStructuredLines() {
+        assertArrayEquals(
+            new String[]{
+                "\u00a71 Area readiness",
+                "\u00a72 Required reading",
+                "\u00a73 Dry tools"
+            },
+            GuideBodySanitizer.guideSectionAnchorLabelsForDisplay(
+                "[[SECTION]] Area readiness\n"
+                    + "Required Reading: Read GD-220 first.\n"
+                    + "\u2014 \u00a7 9 \u00b7 DRY TOOLS"
+            )
+        );
     }
 
     @Test

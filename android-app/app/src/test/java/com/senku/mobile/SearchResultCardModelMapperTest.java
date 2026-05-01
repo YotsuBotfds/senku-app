@@ -95,6 +95,43 @@ public final class SearchResultCardModelMapperTest {
     }
 
     @Test
+    public void interactionModelOwnsOptionalCardActionPresentation() {
+        SearchResultInteractionModel interactionModel = SearchResultInteractionModel.decide(
+            true,
+            true,
+            "Stored water",
+            "GD-214",
+            "Water Storage"
+        );
+
+        assertTrue(interactionModel.showContinueThreadChip);
+        assertTrue(interactionModel.bindContinueThreadAction);
+        assertTrue(interactionModel.bindLinkedGuideAction);
+        assertEquals("Guide", interactionModel.linkedGuideLabel);
+        assertEquals(
+            "Open cross-reference guide: Stored water",
+            interactionModel.linkedGuideContentDescription
+        );
+    }
+
+    @Test
+    public void interactionModelSuppressesLinkedGuidePresentationWithoutTargetGuide() {
+        SearchResultInteractionModel interactionModel = SearchResultInteractionModel.decide(
+            false,
+            false,
+            "Stored water",
+            "",
+            "Water Storage"
+        );
+
+        assertFalse(interactionModel.showContinueThreadChip);
+        assertFalse(interactionModel.bindContinueThreadAction);
+        assertFalse(interactionModel.bindLinkedGuideAction);
+        assertNull(interactionModel.linkedGuideLabel);
+        assertNull(interactionModel.linkedGuideContentDescription);
+    }
+
+    @Test
     public void cardPreviewSuppressesDuplicateGuideSubtitleAndCleansFallbackBody() {
         SearchResult result = new SearchResult(
             "Water setup",
@@ -429,4 +466,5 @@ public final class SearchResultCardModelMapperTest {
             actual.contains(expectedToken)
         );
     }
+
 }
