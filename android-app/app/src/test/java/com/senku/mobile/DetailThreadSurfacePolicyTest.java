@@ -47,6 +47,41 @@ public final class DetailThreadSurfacePolicyTest {
     }
 
     @Test
+    public void turnSurfaceStateDoesNotPromoteRainShelterSourceOutsideReviewDemoPolicy() {
+        DetailThreadHistoryRenderer.State phoneLandscapeNoRail = new DetailThreadHistoryRenderer.State(
+            false,
+            true,
+            false,
+            360,
+            true
+        );
+        SessionMemory.TurnSnapshot turn = new SessionMemory.TurnSnapshot(
+            "What should I do next after the ridge line is up?",
+            "Drape the tarp evenly and tension the corners.",
+            "Drape the tarp evenly and tension the corners.",
+            List.of("GD-220 Abrasives Manufacturing", "GD-345 Rain Shelter"),
+            List.of(
+                source("GD-220", "Abrasives Manufacturing", "abrasives manufacturing"),
+                source("GD-345", "Tarp & Cord Shelters", "tarp cord rain shelter ridgeline")
+            ),
+            "answer_card:rain_shelter",
+            0L
+        );
+
+        DetailThreadSurfacePolicy.TurnSurfaceState surfaceState = DetailThreadSurfacePolicy.turnSurfaceState(
+            turn,
+            "",
+            phoneLandscapeNoRail,
+            true,
+            1,
+            false
+        );
+
+        assertEquals("GD-220", surfaceState.answerAnchorGuideId);
+        assertEquals(List.of("GD-220"), surfaceState.guideChipLabels);
+    }
+
+    @Test
     public void turnSurfaceStateSuppressesUtilityRailChipsButKeepsFallbackAnchor() {
         DetailThreadHistoryRenderer.State utilityRail = new DetailThreadHistoryRenderer.State(
             true,

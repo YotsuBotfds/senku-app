@@ -724,6 +724,17 @@ public final class DetailFollowupLandscapeComposerTest {
     }
 
     @Test
+    public void primaryGuideKeepsRainShelterTextPromotionBehindReviewDemoPolicy() {
+        List<SearchResult> sources = Arrays.asList(
+            source("GD-220", "Abrasives Manufacturing", "abrasives manufacturing"),
+            source("GD-345", "Tarp & Cord Shelters", "rain shelter tarp cord")
+        );
+
+        assertEquals("GD-220", DetailActivity.primaryGuideIdForSources(sources, false));
+        assertEquals("GD-345", DetailActivity.primaryGuideIdForSources(sources, true));
+    }
+
+    @Test
     public void phoneLandscapeThreadSourceRailUsesOneRepresentativePerTurn() {
         SearchResult initialAnchor = source("GD-220", "Abrasives Manufacturing", "abrasives manufacturing");
         SearchResult relatedSafety = source("GD-132", "Foundry & Metal Casting", "foundry metal casting");

@@ -2363,14 +2363,14 @@ public final class DetailActivity extends AppCompatActivity {
     }
 
     private String buildTabletEmergencyOverlayChromeTitle() {
-        String primaryGuideId = primaryGuideIdForSources(currentSources);
+        String primaryGuideId = primaryGuideIdForSources(currentSources, productReviewMode);
         String primarySourceLabel = buildPrimarySourceLabel();
         return buildPhonePortraitAnswerHeaderTitle(primaryGuideId, primarySourceLabel);
     }
 
     private String buildTabletEmergencyOverlayChromeMeta() {
         ArrayList<String> labels = new ArrayList<>();
-        String guideId = primaryGuideIdForSources(currentSources);
+        String guideId = primaryGuideIdForSources(currentSources, productReviewMode);
         if (!safe(guideId).trim().isEmpty()) {
             labels.add(safe(guideId).trim());
         }
@@ -6581,7 +6581,7 @@ public final class DetailActivity extends AppCompatActivity {
         currentSources = new ArrayList<>(
             detailSourcePresentationFormatter().orderAnswerSourceStack(result.answerSources)
         );
-        currentGuideId = primaryGuideIdForSources(currentSources);
+        currentGuideId = primaryGuideIdForSources(currentSources, productReviewMode);
         pendingHostEnabled = answerRun.hostBackendUsed;
         currentAnswerHostFallbackUsed = answerRun.hostFallbackUsed;
         lastFailedQuery = "";
@@ -11717,10 +11717,17 @@ public final class DetailActivity extends AppCompatActivity {
     }
 
     static String primaryGuideIdForSources(List<SearchResult> sources) {
+        return primaryGuideIdForSources(sources, false);
+    }
+
+    static String primaryGuideIdForSources(List<SearchResult> sources, boolean productReviewMode) {
         if (sources == null) {
             return "";
         }
-        SearchResult readerFacing = readerFacingPrimarySourceForSources(sources);
+        SearchResult readerFacing = readerFacingPrimarySourceForSources(
+            sources,
+            ReviewDemoPolicy.isSourceStackDemoEnabled(productReviewMode)
+        );
         String readerFacingGuideId = safe(readerFacing == null ? null : readerFacing.guideId).trim();
         if (!readerFacingGuideId.isEmpty()) {
             return readerFacingGuideId;
@@ -11734,7 +11741,10 @@ public final class DetailActivity extends AppCompatActivity {
         return "";
     }
 
-    private static SearchResult readerFacingPrimarySourceForSources(List<SearchResult> sources) {
+    private static SearchResult readerFacingPrimarySourceForSources(
+        List<SearchResult> sources,
+        boolean reviewDemoSourcePolicy
+    ) {
         if (sources == null || sources.isEmpty()) {
             return null;
         }
@@ -11745,7 +11755,7 @@ public final class DetailActivity extends AppCompatActivity {
             if (source == null) {
                 continue;
             }
-            int score = readerFacingSourceScoreForGuideId(source, index);
+            int score = readerFacingSourceScoreForGuideId(source, index, reviewDemoSourcePolicy);
             if (best == null || score > bestScore) {
                 best = source;
                 bestScore = score;
@@ -11754,7 +11764,11 @@ public final class DetailActivity extends AppCompatActivity {
         return bestScore > 0 ? best : null;
     }
 
-    private static int readerFacingSourceScoreForGuideId(SearchResult source, int index) {
+    private static int readerFacingSourceScoreForGuideId(
+        SearchResult source,
+        int index,
+        boolean reviewDemoSourcePolicy
+    ) {
         String role = safe(source == null ? null : source.contentRole).replace('_', ' ').toLowerCase(Locale.US);
         String retrievalMode = safe(source == null ? null : source.retrievalMode).replace('_', ' ').toLowerCase(Locale.US);
         String combined = (
@@ -11776,11 +11790,13 @@ public final class DetailActivity extends AppCompatActivity {
         if (retrievalMode.contains("guide-focus") || retrievalMode.contains("guide focus")) {
             score += 6;
         }
-        if (combined.contains("rain") && combined.contains("shelter")) {
-            score += 24;
-        }
-        if (combined.contains("tarp") && combined.contains("cord")) {
-            score += 18;
+        if (reviewDemoSourcePolicy) {
+            if (combined.contains("rain") && combined.contains("shelter")) {
+                score += 24;
+            }
+            if (combined.contains("tarp") && combined.contains("cord")) {
+                score += 18;
+            }
         }
         return score;
     }
