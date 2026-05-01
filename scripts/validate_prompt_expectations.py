@@ -861,6 +861,8 @@ def explicit_primary_expectation_issues(
                 )
             )
             continue
+        if is_empty_structured_value(value):
+            continue
         if not extracted:
             issues.append(
                 issue(
@@ -874,6 +876,14 @@ def explicit_primary_expectation_issues(
                 )
             )
     return dedupe(ids), issues
+
+
+def is_empty_structured_value(value: Any) -> bool:
+    return (
+        isinstance(value, (Mapping, Sequence))
+        and not isinstance(value, (str, bytes, bytearray))
+        and not bool(value)
+    )
 
 
 def primary_retrieval_eval_issues(

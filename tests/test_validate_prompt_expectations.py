@@ -693,6 +693,50 @@ class PromptExpectationValidatorTests(unittest.TestCase):
         self.assertEqual(report["status"], "pass")
         self.assertEqual(report["issues"], [])
 
+    def test_retrieval_eval_json_ignores_empty_structured_primary_expected_owner_field(self):
+        root = self.make_tmpdir()
+        self.write_guide(root, "GD-120", "metalworking")
+        self.write_guide(root, "GD-397", "tool-sharpening-maintenance")
+        pack = root / "pack.jsonl"
+        pack.write_text(
+            json.dumps(
+                {
+                    "id": "P-1",
+                    "expected_guide_ids": ["GD-120"],
+                    "prompt": "Broad owner only.",
+                }
+            )
+            + "\n",
+            encoding="utf-8",
+        )
+        retrieval = root / "retrieval.json"
+        retrieval.write_text(
+            json.dumps(
+                {
+                    "rows": [
+                        {
+                            "prompt_id": "P-1",
+                            "expected_guide_ids": ["GD-120"],
+                            "primary_expected_guide_ids": [],
+                            "top_retrieved_guide_ids": ["GD-397", "GD-120"],
+                            "primary_hit_at_k": False,
+                        }
+                    ]
+                }
+            ),
+            encoding="utf-8",
+        )
+
+        report = validator.validate(
+            [pack],
+            guides_dir=root / "guides",
+            root=root,
+            retrieval_eval_paths=[retrieval],
+        )
+
+        self.assertEqual(report["status"], "pass")
+        self.assertEqual(report["issues"], [])
+
     def test_retrieval_eval_json_flags_primary_expected_owner_miss(self):
         root = self.make_tmpdir()
         self.write_guide(root, "GD-120", "metalworking")
