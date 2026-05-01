@@ -4276,15 +4276,7 @@ public final class MainActivity extends AppCompatActivity {
         int resultCount,
         MainReviewDisplayPolicy reviewDisplayPolicy
     ) {
-        String cleanQuery = safe(query).trim();
-        String countLabel = resultCount + (resultCount == 1 ? " result" : " results");
-        if (cleanQuery.isEmpty() || "guides".equalsIgnoreCase(cleanQuery)) {
-            return "Search - " + countLabel;
-        }
-        return reviewDisplayPolicy.searchLatency(
-            "Search " + cleanQuery + " - " + countLabel,
-            cleanQuery
-        );
+        return reviewDisplayPolicy.tabletSearchHeader(query, resultCount);
     }
 
     static String buildPhoneSearchHeaderForTest(String query, int resultCount) {

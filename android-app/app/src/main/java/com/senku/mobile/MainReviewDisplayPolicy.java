@@ -35,6 +35,10 @@ final class MainReviewDisplayPolicy {
         return phoneSearchHeader(query, resultCount, productReviewMode);
     }
 
+    String tabletSearchHeader(String query, int resultCount) {
+        return tabletSearchHeader(query, resultCount, productReviewMode);
+    }
+
     String searchChromeCountLabel(String query, int resultCount) {
         return searchChromeCountLabel(query, resultCount, productReviewMode);
     }
@@ -87,6 +91,10 @@ final class MainReviewDisplayPolicy {
             return "Search - " + countLabel;
         }
         return searchLatency("Search " + cleanQuery + "    " + countLabel, cleanQuery, productReviewMode);
+    }
+
+    static String tabletSearchHeader(String query, int resultCount, boolean productReviewMode) {
+        return ReviewDemoPolicy.buildTabletSearchHeader(productReviewMode, query, resultCount);
     }
 
     static String searchChromeCountLabel(String query, int resultCount, boolean productReviewMode) {

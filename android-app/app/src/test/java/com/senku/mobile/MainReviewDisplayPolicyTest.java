@@ -76,6 +76,27 @@ public final class MainReviewDisplayPolicyTest {
     }
 
     @Test
+    public void tabletSearchHeaderDecisionLivesBehindReviewDisplayPolicy() {
+        MainReviewDisplayPolicy enabled = new MainReviewDisplayPolicy(true);
+        MainReviewDisplayPolicy disabled = new MainReviewDisplayPolicy(false);
+
+        assertEquals(
+            ReviewDemoPolicy.buildTabletSearchHeader(true, "rain shelter", 4),
+            enabled.tabletSearchHeader("rain shelter", 4)
+        );
+        assertEquals(
+            ReviewDemoPolicy.buildTabletSearchHeader(false, "rain shelter", 4),
+            disabled.tabletSearchHeader("rain shelter", 4)
+        );
+        assertEquals("Search - 1 result", enabled.tabletSearchHeader("guides", 1));
+        assertEquals("Search - 2 results", enabled.tabletSearchHeader("   ", 2));
+        assertEquals(
+            enabled.tabletSearchHeader("rain shelter", 4),
+            MainActivity.buildTabletSearchHeaderForTest("rain shelter", 4, true)
+        );
+    }
+
+    @Test
     public void tabletPreviewCopyMatchesMainActivityParityHooks() {
         SearchResult reviewResult = ReviewDemoPolicy.shapeSearchResults(
             "rain shelter",
