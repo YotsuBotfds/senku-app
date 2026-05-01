@@ -82,6 +82,52 @@ public final class MainResultPublicationPolicyTest {
     }
 
     @Test
+    public void resultItemsPresentationCarriesHighlightAndRouteOnly() {
+        MainResultPublicationPolicy policy = MainResultPublicationPolicy.resultSurfaceWithSearchChrome(
+            "rain",
+            "Rain shelters",
+            7
+        );
+
+        MainResultPublicationPolicy.ResultItemsPresentation presentation =
+            policy.resultItemsPresentation();
+
+        assertEquals("rain", presentation.highlightQuery());
+        assertRouteState(
+            presentation.routeState(),
+            MainRouteDecisionHelper.Surface.SEARCH_RESULTS,
+            BottomTabDestination.HOME,
+            false
+        );
+    }
+
+    @Test
+    public void searchQueryChromePresentationPublishesSanitizedChromeState() {
+        MainResultPublicationPolicy policy = MainResultPublicationPolicy.resultSurfaceWithSearchChrome(
+            "rain",
+            null,
+            -9
+        );
+
+        MainResultPublicationPolicy.SearchQueryChromePresentation presentation =
+            policy.searchQueryChromePresentation();
+
+        assertTrue(presentation.shouldPublish());
+        assertEquals("", presentation.queryLabel());
+        assertEquals(0, presentation.resultCount());
+    }
+
+    @Test
+    public void browseSearchQueryChromePresentationDoesNotPublish() {
+        MainResultPublicationPolicy.SearchQueryChromePresentation presentation =
+            MainResultPublicationPolicy.browseSurface().searchQueryChromePresentation();
+
+        assertFalse(presentation.shouldPublish());
+        assertEquals("", presentation.queryLabel());
+        assertEquals(0, presentation.resultCount());
+    }
+
+    @Test
     public void failedSearchResultSurfaceCanReturnToBrowseChrome() {
         MainResultPublicationPolicy policy =
             MainResultPublicationPolicy.searchResultSurfaceWithBrowseFallback(null, true);

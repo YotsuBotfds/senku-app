@@ -1251,23 +1251,29 @@ public final class MainActivity extends AppCompatActivity {
     }
 
     private void publishResultItems(MainResultPublicationPolicy publication, List<SearchResult> results) {
-        setResultHighlightQuery(publication.highlightQuery());
+        MainResultPublicationPolicy.ResultItemsPresentation presentation =
+            publication.resultItemsPresentation();
+        setResultHighlightQuery(presentation.highlightQuery());
         replaceItems(results);
-        applyMainRouteState(resolveResultPublicationRouteState(publication));
+        applyMainRouteState(presentation.routeState());
     }
 
     static MainRouteDecisionHelper.RouteState resolveResultPublicationRouteState(
         MainResultPublicationPolicy publication
     ) {
-        return publication == null ? MainRouteDecisionHelper.browseHome() : publication.routeState();
+        return publication == null
+            ? MainRouteDecisionHelper.browseHome()
+            : publication.resultItemsPresentation().routeState();
     }
 
     private void publishSearchQueryChrome(MainResultPublicationPolicy publication) {
-        if (!publication.updateSearchQueryChrome()) {
+        MainResultPublicationPolicy.SearchQueryChromePresentation presentation =
+            publication.searchQueryChromePresentation();
+        if (!presentation.shouldPublish()) {
             return;
         }
-        updateTabletSearchQuery(publication.searchQueryLabel(), publication.resultCount());
-        updatePhoneSearchQuery(publication.searchQueryLabel(), publication.resultCount());
+        updateTabletSearchQuery(presentation.queryLabel(), presentation.resultCount());
+        updatePhoneSearchQuery(presentation.queryLabel(), presentation.resultCount());
     }
 
     private void replaceItems(List<SearchResult> results) {

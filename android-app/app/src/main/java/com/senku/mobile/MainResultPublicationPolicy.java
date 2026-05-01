@@ -3,6 +3,55 @@ package com.senku.mobile;
 import com.senku.ui.primitives.BottomTabDestination;
 
 final class MainResultPublicationPolicy {
+    static final class ResultItemsPresentation {
+        private final String highlightQuery;
+        private final MainRouteDecisionHelper.RouteState routeState;
+
+        private ResultItemsPresentation(
+            String highlightQuery,
+            MainRouteDecisionHelper.RouteState routeState
+        ) {
+            this.highlightQuery = safe(highlightQuery);
+            this.routeState = routeState == null ? MainRouteDecisionHelper.browseHome() : routeState;
+        }
+
+        String highlightQuery() {
+            return highlightQuery;
+        }
+
+        MainRouteDecisionHelper.RouteState routeState() {
+            return routeState;
+        }
+    }
+
+    static final class SearchQueryChromePresentation {
+        private final boolean shouldPublish;
+        private final String queryLabel;
+        private final int resultCount;
+
+        private SearchQueryChromePresentation(
+            boolean shouldPublish,
+            String queryLabel,
+            int resultCount
+        ) {
+            this.shouldPublish = shouldPublish;
+            this.queryLabel = safe(queryLabel);
+            this.resultCount = Math.max(0, resultCount);
+        }
+
+        boolean shouldPublish() {
+            return shouldPublish;
+        }
+
+        String queryLabel() {
+            return queryLabel;
+        }
+
+        int resultCount() {
+            return resultCount;
+        }
+    }
+
     private final String highlightQuery;
     private final MainRouteDecisionHelper.RouteState routeState;
     private final String searchQueryLabel;
@@ -108,6 +157,14 @@ final class MainResultPublicationPolicy {
 
     boolean updateSearchQueryChrome() {
         return updateSearchQueryChrome;
+    }
+
+    ResultItemsPresentation resultItemsPresentation() {
+        return new ResultItemsPresentation(highlightQuery, routeState);
+    }
+
+    SearchQueryChromePresentation searchQueryChromePresentation() {
+        return new SearchQueryChromePresentation(updateSearchQueryChrome, searchQueryLabel, resultCount);
     }
 
     String searchQueryLabel() {

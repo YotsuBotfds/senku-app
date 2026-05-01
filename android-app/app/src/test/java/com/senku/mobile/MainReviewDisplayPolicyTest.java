@@ -67,10 +67,12 @@ public final class MainReviewDisplayPolicyTest {
             MainActivity.buildSearchChromeCountLabelForTest("rain shelter", 4, true),
             enabled.searchChromeCountLabel("rain shelter", 4)
         );
-        assertEquals(
-            MainActivity.appendReviewSearchLatency("Search rain shelter - 4 results", "rain shelter", true),
-            enabled.searchLatency("Search rain shelter - 4 results", "rain shelter")
-        );
+        String rainShelterHeader = "Search rain shelter - 4 results";
+        String reviewLatencyHeader = enabled.searchLatency(rainShelterHeader, "rain shelter");
+        assertTrue(reviewLatencyHeader.startsWith(rainShelterHeader + " "));
+        assertFalse(rainShelterHeader.equals(reviewLatencyHeader));
+        assertEquals(rainShelterHeader, disabled.searchLatency(rainShelterHeader, "rain shelter"));
+        assertEquals(rainShelterHeader, enabled.searchLatency(rainShelterHeader, "water"));
     }
 
     @Test
