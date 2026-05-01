@@ -80,14 +80,7 @@ final class DetailTabletStateBuilder {
         if (source == null || questions == null || questions.isEmpty()) {
             return 0;
         }
-        String haystack = (
-            safe(source.guideId) + " " +
-                safe(source.title) + " " +
-                safe(source.sectionHeading) + " " +
-                safe(source.category) + " " +
-                safe(source.structureType) + " " +
-                safe(source.topicTags)
-        ).replace('_', ' ').toLowerCase(Locale.US);
+        String haystack = buildSourceTopicHaystack(source);
         if (!reviewDemoMode) {
             return genericSourceQuestionOverlapScore(haystack, questions);
         }
@@ -111,6 +104,17 @@ final class DetailTabletStateBuilder {
             }
         }
         return score;
+    }
+
+    private static String buildSourceTopicHaystack(SearchResult source) {
+        return (
+            safe(source.guideId) + " " +
+                safe(source.title) + " " +
+                safe(source.sectionHeading) + " " +
+                safe(source.category) + " " +
+                safe(source.structureType) + " " +
+                safe(source.topicTags)
+        ).replace('_', ' ').toLowerCase(Locale.US);
     }
 
     private static int genericSourceQuestionOverlapScore(String haystack, List<String> questions) {
