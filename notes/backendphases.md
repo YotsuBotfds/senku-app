@@ -1,6 +1,6 @@
 # Backend Cleanup Phase Tracker
 
-Last updated after cleanup through `0fecc0d6` on 2026-05-01.
+Last updated after cleanup through `ca44dcb8` on 2026-05-01.
 
 Purpose: prevent future agents from rerunning Ask/query backend cleanup that is already complete. Keep this note short; implementation detail belongs in commits and tests.
 
@@ -36,6 +36,16 @@ Purpose: prevent future agents from rerunning Ask/query backend cleanup that is 
   while preserving dry-run/cache semantics. Proof: 50 Python contract tests
   passed for LiteRT push, mobile-pack push, and the PowerShell quality gate;
   `git diff --check` passed.
+- Main identity strip presentation is current through `8d7a98d6`:
+  `MainIdentityPresentationPolicy` owns runtime model-tier labels and subtitle
+  joining while `MainActivity` keeps resources and view publication. Focused
+  proof lives in `MainActivityIdentityTest`.
+- Functional route proof is current through `ca44dcb8`: PromptHarness coverage
+  now includes visible Search-results Back returning to Browse without Ask
+  ownership, visible Saved submit routing to guide Search rather than Answer
+  detail, and IME follow-up submit reaching the same settled inline-thread
+  outcome as the visible send click. The new proofs are registered in the
+  focused functional smoke presets and guarded by smoke-script contract tests.
 - Ask/Search route helpers are consolidated, with saved-route proof and
   follow-up failure restore proof covering the key route handoffs.
 - Anchor-prior behavior is extracted behind policy, and route-output parity is
