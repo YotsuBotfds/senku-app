@@ -106,6 +106,7 @@ public final class MainActivity extends AppCompatActivity {
     private final MainResultPreviewBridgeController resultPreviewBridgeController =
         new MainResultPreviewBridgeController();
 
+    private MainReviewDisplayPolicy reviewDisplayPolicy;
     private MainPresentationFormatter presentationFormatter;
     private HomeGuidePresentationFormatter homeGuidePresentationFormatter;
     private DetailSessionPresentationFormatter detailSessionPresentationFormatter;
@@ -258,6 +259,7 @@ public final class MainActivity extends AppCompatActivity {
             getSupportActionBar().hide();
         }
         productReviewMode = resolveProductReviewMode(getIntent());
+        reviewDisplayPolicy = new MainReviewDisplayPolicy(productReviewMode);
         HostInferenceConfig.applyIntentOverrides(this, getIntent());
 
         initializeConversation(savedInstanceState);
@@ -1095,6 +1097,13 @@ public final class MainActivity extends AppCompatActivity {
         return presentationFormatter;
     }
 
+    private MainReviewDisplayPolicy reviewDisplayPolicy() {
+        if (reviewDisplayPolicy == null) {
+            reviewDisplayPolicy = new MainReviewDisplayPolicy(productReviewMode);
+        }
+        return reviewDisplayPolicy;
+    }
+
     private HomeGuidePresentationFormatter homeGuidePresentationFormatter() {
         if (homeGuidePresentationFormatter == null) {
             homeGuidePresentationFormatter = new HomeGuidePresentationFormatter(this, presentationFormatter());
@@ -1283,19 +1292,6 @@ public final class MainActivity extends AppCompatActivity {
         if (adapter != null) {
             adapter.setReviewDemoSearchRowVisualStateEnabled(productReviewMode);
         }
-    }
-
-    private static String firstNonEmptyStatic(String... values) {
-        if (values == null) {
-            return "";
-        }
-        for (String value : values) {
-            String clean = safe(value).trim();
-            if (!clean.isEmpty()) {
-                return clean;
-            }
-        }
-        return "";
     }
 
     private void focusSearchInput() {
@@ -3225,7 +3221,7 @@ public final class MainActivity extends AppCompatActivity {
     }
 
     private void setBusy(String status, boolean busy) {
-        statusText.setText(compactManualHomeStatus(status, isManualHomeShellLayout(), productReviewMode));
+        statusText.setText(reviewDisplayPolicy().manualHomeStatus(status, isManualHomeShellLayout()));
         progressBar.setVisibility(busy ? View.VISIBLE : View.GONE);
         if (!busy) {
             suppressSearchFocusForAutomation = false;
@@ -3310,7 +3306,7 @@ public final class MainActivity extends AppCompatActivity {
             homeSubtitleText.setText(R.string.home_subtitle);
             return;
         }
-        homeSubtitleText.setText(buildHomeSubtitleText(guideCount, productReviewMode));
+        homeSubtitleText.setText(reviewDisplayPolicy().homeSubtitle(guideCount));
     }
 
     private void updateHomeManualStamp() {
@@ -3729,17 +3725,11 @@ public final class MainActivity extends AppCompatActivity {
     }
 
     private int displayCountForHomeCategory(String bucketKey, int actualCount, List<SearchResult> guides) {
-        if (!shouldUseReviewHomeCategoryCounts(guides)) {
-            return actualCount;
-        }
-        return ReviewDemoPolicy.displayHomeCategoryCount(productReviewMode, bucketKey, actualCount);
-    }
-
-    private boolean shouldUseReviewHomeCategoryCounts(List<SearchResult> guides) {
-        return ReviewDemoPolicy.shouldUseHomeCategoryFixtureCounts(
-            productReviewMode,
-            isManualHomeShellLayout(),
-            guides != null && !guides.isEmpty()
+        return reviewDisplayPolicy().displayHomeCategoryCount(
+            bucketKey,
+            actualCount,
+            guides,
+            isManualHomeShellLayout()
         );
     }
 
@@ -4251,7 +4241,7 @@ public final class MainActivity extends AppCompatActivity {
         if (cleanQuery.isEmpty() || "guides".equalsIgnoreCase(cleanQuery)) {
             return "Search - " + countLabel;
         }
-        return appendReviewSearchLatency("Search " + cleanQuery + " - " + countLabel, cleanQuery);
+        return reviewDisplayPolicy().searchLatency("Search " + cleanQuery + " - " + countLabel, cleanQuery);
     }
 
     static String buildPhoneSearchHeaderForTest(String query, int resultCount) {
@@ -4283,8 +4273,7 @@ public final class MainActivity extends AppCompatActivity {
         boolean manualHomeShell,
         boolean productReviewMode
     ) {
-        String cleanStatus = safe(status).trim();
-        return ReviewDemoPolicy.shapeManualHomeStatus(productReviewMode, manualHomeShell, cleanStatus);
+        return MainReviewDisplayPolicy.manualHomeStatus(status, manualHomeShell, productReviewMode);
     }
 
     static String buildHomeSubtitleTextForTest(int guideCount, boolean productReviewMode) {
@@ -4292,28 +4281,15 @@ public final class MainActivity extends AppCompatActivity {
     }
 
     private static String buildHomeSubtitleText(int guideCount, boolean productReviewMode) {
-        if (guideCount <= 0) {
-            return "";
-        }
-        NumberFormat format = NumberFormat.getNumberInstance(Locale.US);
-        String guideLabel = guideCount == 1
-            ? format.format(guideCount) + " guide"
-            : format.format(guideCount) + " guides";
-        String defaultSubtitle = guideLabel + " in your offline field manual";
-        return ReviewDemoPolicy.shapeHomeSubtitle(productReviewMode, guideCount, defaultSubtitle);
+        return MainReviewDisplayPolicy.homeSubtitle(guideCount, productReviewMode);
     }
 
     private String buildPhoneSearchHeader(String query, int resultCount) {
-        return buildPhoneSearchHeader(query, resultCount, productReviewMode);
+        return reviewDisplayPolicy().phoneSearchHeader(query, resultCount);
     }
 
     private static String buildPhoneSearchHeader(String query, int resultCount, boolean productReviewMode) {
-        String cleanQuery = safe(query).trim();
-        String countLabel = resultCount + (resultCount == 1 ? " result" : " results");
-        if (cleanQuery.isEmpty()) {
-            return "Search - " + countLabel;
-        }
-        return appendReviewSearchLatency("Search " + cleanQuery + "    " + countLabel, cleanQuery, productReviewMode);
+        return MainReviewDisplayPolicy.phoneSearchHeader(query, resultCount, productReviewMode);
     }
 
     static String buildSearchChromeQueryLabelForTest(String query) {
@@ -4329,23 +4305,19 @@ public final class MainActivity extends AppCompatActivity {
     }
 
     private String buildSearchChromeCountLabel(String query, int resultCount) {
-        return buildSearchChromeCountLabel(query, resultCount, productReviewMode);
+        return reviewDisplayPolicy().searchChromeCountLabel(query, resultCount);
     }
 
     private static String buildSearchChromeCountLabel(String query, int resultCount, boolean productReviewMode) {
-        return appendReviewSearchLatency(
-            MainHomeChromePolicy.resolveSearch(query, resultCount).countLabel,
-            query,
-            productReviewMode
-        );
+        return MainReviewDisplayPolicy.searchChromeCountLabel(query, resultCount, productReviewMode);
     }
 
     private String appendReviewSearchLatency(String header, String query) {
-        return appendReviewSearchLatency(header, query, productReviewMode);
+        return reviewDisplayPolicy().searchLatency(header, query);
     }
 
     static String appendReviewSearchLatency(String header, String query, boolean productReviewMode) {
-        return ReviewDemoPolicy.appendSearchLatency(header, query, productReviewMode);
+        return MainReviewDisplayPolicy.searchLatency(header, query, productReviewMode);
     }
 
     private void updateTabletSearchQuery(String query, int resultCount) {
@@ -4516,55 +4488,27 @@ public final class MainActivity extends AppCompatActivity {
     }
 
     private String buildTabletPreviewMeta(SearchResult result) {
-        return buildTabletPreviewMetaStatic(result, productReviewMode);
+        return reviewDisplayPolicy().tabletPreviewMeta(result);
     }
 
     static String buildTabletPreviewMetaForTest(SearchResult result) {
-        return buildTabletPreviewMetaStatic(result, false);
+        return MainReviewDisplayPolicy.tabletPreviewMeta(result, false);
     }
 
     static String buildTabletPreviewMetaForTest(SearchResult result, boolean productReviewMode) {
-        return buildTabletPreviewMetaStatic(result, productReviewMode);
+        return MainReviewDisplayPolicy.tabletPreviewMeta(result, productReviewMode);
     }
 
     private String buildTabletPreviewBody(SearchResult result) {
-        return buildTabletPreviewBodyStatic(result, productReviewMode);
+        return reviewDisplayPolicy().tabletPreviewBody(result);
     }
 
     static String buildTabletPreviewBodyForTest(SearchResult result) {
-        return buildTabletPreviewBodyStatic(result, false);
+        return MainReviewDisplayPolicy.tabletPreviewBody(result, false);
     }
 
     static String buildTabletPreviewBodyForTest(SearchResult result, boolean productReviewMode) {
-        return buildTabletPreviewBodyStatic(result, productReviewMode);
-    }
-
-    private static String buildTabletPreviewMetaStatic(SearchResult result, boolean productReviewMode) {
-        ArrayList<String> parts = new ArrayList<>();
-        addNonEmptyPartStatic(parts, result == null ? null : result.contentRole);
-        addNonEmptyPartStatic(parts, result == null ? null : result.timeHorizon);
-        addNonEmptyPartStatic(parts, result == null ? null : result.category);
-        if (parts.isEmpty()) {
-            addNonEmptyPartStatic(parts, result == null ? null : result.subtitle);
-        }
-        String defaultMeta = parts.isEmpty() ? "Source guide" : String.join("  \u00B7  ", parts);
-        return ReviewDemoPolicy.shapeTabletPreviewMeta(productReviewMode, result, defaultMeta);
-    }
-
-    private static String buildTabletPreviewBodyStatic(SearchResult result, boolean productReviewMode) {
-        String defaultBody = firstNonEmptyStatic(
-            result == null ? null : result.snippet,
-            result == null ? null : result.body,
-            "Tap a result to open the full guide."
-        );
-        return ReviewDemoPolicy.shapeTabletPreviewBody(productReviewMode, result, defaultBody);
-    }
-
-    private static void addNonEmptyPartStatic(List<String> parts, String value) {
-        String clean = safe(value).trim();
-        if (!clean.isEmpty()) {
-            parts.add(clean.replace('-', ' '));
-        }
+        return MainReviewDisplayPolicy.tabletPreviewBody(result, productReviewMode);
     }
 
     private String firstNonEmpty(String... values) {

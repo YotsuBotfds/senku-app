@@ -1,0 +1,146 @@
+package com.senku.mobile;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
+import java.util.Arrays;
+import java.util.Collections;
+
+import org.junit.Test;
+
+public final class MainReviewDisplayPolicyTest {
+    @Test
+    public void homeCategoryCountsMatchReviewPolicyGateAndFixtures() {
+        MainReviewDisplayPolicy enabled = new MainReviewDisplayPolicy(true);
+        MainReviewDisplayPolicy disabled = new MainReviewDisplayPolicy(false);
+
+        assertEquals(
+            84,
+            enabled.displayHomeCategoryCount("shelter", 7, Collections.singletonList(guide("Guide", "shelter")), true)
+        );
+        assertEquals(
+            7,
+            enabled.displayHomeCategoryCount("shelter", 7, Collections.singletonList(guide("Guide", "shelter")), false)
+        );
+        assertEquals(
+            7,
+            enabled.displayHomeCategoryCount("shelter", 7, Collections.emptyList(), true)
+        );
+        assertEquals(
+            7,
+            disabled.displayHomeCategoryCount("shelter", 7, Collections.singletonList(guide("Guide", "shelter")), true)
+        );
+    }
+
+    @Test
+    public void homeSubtitleAndManualStatusMatchMainActivityParityHooks() {
+        MainReviewDisplayPolicy enabled = new MainReviewDisplayPolicy(true);
+        MainReviewDisplayPolicy disabled = new MainReviewDisplayPolicy(false);
+
+        assertEquals(MainActivity.buildHomeSubtitleTextForTest(271, true), enabled.homeSubtitle(271));
+        assertEquals(MainActivity.buildHomeSubtitleTextForTest(271, false), disabled.homeSubtitle(271));
+        assertEquals(
+            MainActivity.compactManualHomeStatusForTest("Ready offline | 754 guides", true, true),
+            enabled.manualHomeStatus("Ready offline | 754 guides", true)
+        );
+        assertEquals(
+            MainActivity.compactManualHomeStatusForTest("Ready offline | 754 guides", true, false),
+            disabled.manualHomeStatus("Ready offline | 754 guides", true)
+        );
+    }
+
+    @Test
+    public void searchLatencyHeadersMatchMainActivityParityHooks() {
+        MainReviewDisplayPolicy enabled = new MainReviewDisplayPolicy(true);
+        MainReviewDisplayPolicy disabled = new MainReviewDisplayPolicy(false);
+
+        assertEquals(
+            MainActivity.buildPhoneSearchHeaderForTest("rain shelter", 4, true),
+            enabled.phoneSearchHeader("rain shelter", 4)
+        );
+        assertEquals(
+            MainActivity.buildPhoneSearchHeaderForTest("rain shelter", 4, false),
+            disabled.phoneSearchHeader("rain shelter", 4)
+        );
+        assertEquals(
+            MainActivity.buildSearchChromeCountLabelForTest("rain shelter", 4, true),
+            enabled.searchChromeCountLabel("rain shelter", 4)
+        );
+        assertEquals(
+            MainActivity.appendReviewSearchLatency("Search rain shelter - 4 results", "rain shelter", true),
+            enabled.searchLatency("Search rain shelter - 4 results", "rain shelter")
+        );
+    }
+
+    @Test
+    public void tabletPreviewCopyMatchesMainActivityParityHooks() {
+        SearchResult reviewResult = ReviewDemoPolicy.shapeSearchResults(
+            "rain shelter",
+            true,
+            Arrays.asList(guideWithId("Survival Basics & First 72 Hours", "GD-023")),
+            null
+        ).get(0);
+        MainReviewDisplayPolicy enabled = new MainReviewDisplayPolicy(true);
+        MainReviewDisplayPolicy disabled = new MainReviewDisplayPolicy(false);
+
+        assertEquals(MainActivity.buildTabletPreviewMetaForTest(reviewResult, true), enabled.tabletPreviewMeta(reviewResult));
+        assertEquals(MainActivity.buildTabletPreviewBodyForTest(reviewResult, true), enabled.tabletPreviewBody(reviewResult));
+        assertEquals(MainActivity.buildTabletPreviewMetaForTest(reviewResult, false), disabled.tabletPreviewMeta(reviewResult));
+        assertEquals(MainActivity.buildTabletPreviewBodyForTest(reviewResult, false), disabled.tabletPreviewBody(reviewResult));
+    }
+
+    @Test
+    public void categoryFixtureGateKeepsModeShellAndGuideChecksTogether() {
+        assertTrue(MainReviewDisplayPolicy.shouldUseHomeCategoryFixtureCounts(
+            true,
+            true,
+            Collections.singletonList(guide("Guide", "water"))
+        ));
+        assertFalse(MainReviewDisplayPolicy.shouldUseHomeCategoryFixtureCounts(
+            false,
+            true,
+            Collections.singletonList(guide("Guide", "water"))
+        ));
+        assertFalse(MainReviewDisplayPolicy.shouldUseHomeCategoryFixtureCounts(
+            true,
+            false,
+            Collections.singletonList(guide("Guide", "water"))
+        ));
+        assertFalse(MainReviewDisplayPolicy.shouldUseHomeCategoryFixtureCounts(true, true, Collections.emptyList()));
+    }
+
+    private static SearchResult guide(String title, String category) {
+        return new SearchResult(
+            title,
+            "",
+            "",
+            "",
+            "",
+            "",
+            category,
+            "",
+            "",
+            "",
+            "",
+            ""
+        );
+    }
+
+    private static SearchResult guideWithId(String title, String guideId) {
+        return new SearchResult(
+            title,
+            "",
+            title + " snippet",
+            title + " body",
+            guideId,
+            "",
+            "",
+            "lexical",
+            "",
+            "",
+            "",
+            ""
+        );
+    }
+}
