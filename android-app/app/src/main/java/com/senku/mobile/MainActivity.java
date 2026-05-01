@@ -1722,32 +1722,32 @@ public final class MainActivity extends AppCompatActivity {
         Button button = new Button(this);
         button.setAllCaps(false);
         boolean manualHomeShell = isManualHomeShellLayout();
-        button.setBackgroundResource(isTabletSearchLayout()
-            ? R.drawable.bg_tablet_home_recent_row
-            : (manualHomeShell ? R.drawable.bg_manual_home_recent_row : R.drawable.bg_sources_stack_shell));
+        boolean compactPhoneHome = isCompactPhoneHomeLayout();
+        MainRecentThreadRenderer.ButtonModel buttonModel = MainRecentThreadRenderer.buildButtonModel(
+            preview,
+            index,
+            isTabletSearchLayout(),
+            manualHomeShell,
+            compactPhoneHome,
+            presentationFormatter().buildRecentThreadContentDescription(preview, index)
+        );
+        button.setBackgroundResource(buttonModel.backgroundResId);
         button.setMinWidth(0);
         button.setMinimumWidth(0);
         button.setMinHeight(0);
         button.setMinimumHeight(0);
-        boolean compactPhoneHome = isCompactPhoneHomeLayout();
-        MainRecentThreadPresentationPolicy.ButtonPresentation buttonPresentation =
-            MainRecentThreadPresentationPolicy.resolveButtonPresentation(
-                isTabletSearchLayout(),
-                manualHomeShell,
-                compactPhoneHome,
-                index
-            );
+        MainRecentThreadPresentationPolicy.ButtonPresentation buttonPresentation = buttonModel.presentation;
         button.setPadding(
             dp(buttonPresentation.horizontalPaddingDp),
             dp(buttonPresentation.verticalPaddingDp),
             dp(buttonPresentation.horizontalPaddingDp),
             dp(buttonPresentation.verticalPaddingDp)
         );
-        button.setTextColor(getResources().getColor(manualHomeShell
-            ? R.color.senku_rev03_ink_0
-            : R.color.senku_text_light));
-        if (manualHomeShell) {
-            button.setTextSize(isTabletSearchLayout() ? 13 : 12f);
+        button.setTextColor(getResources().getColor(buttonModel.textColorResId));
+        if (buttonModel.textSizeSp > 0f) {
+            button.setTextSize(buttonModel.textSizeSp);
+        }
+        if (buttonModel.boldTypeface) {
             button.setTypeface(android.graphics.Typeface.DEFAULT, android.graphics.Typeface.BOLD);
         }
         button.setTextAlignment(View.TEXT_ALIGNMENT_VIEW_START);
@@ -1758,15 +1758,12 @@ public final class MainActivity extends AppCompatActivity {
             button.setMinHeight(dp(buttonPresentation.minimumHeightDp));
             button.setMinimumHeight(dp(buttonPresentation.minimumHeightDp));
         }
-        button.setText(manualHomeShell
+        button.setText(buttonModel.manualLabel
             ? buildManualHomeRecentThreadLabelSpannable(preview, index)
-            : (compactPhoneHome
+            : (buttonModel.compactLabel
                 ? presentationFormatter().buildCompactRecentThreadLabel(preview)
                 : presentationFormatter().buildRecentThreadLabel(preview)));
-        button.setContentDescription(MainRecentThreadPresentationPolicy.contentDescriptionWithRemoveHint(
-            presentationFormatter().buildRecentThreadContentDescription(preview, index),
-            MainRecentThreadPresentationPolicy.isLongPressRemoveHintEligible(preview)
-        ));
+        button.setContentDescription(buttonModel.contentDescription);
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
             LinearLayout.LayoutParams.MATCH_PARENT,
             LinearLayout.LayoutParams.WRAP_CONTENT
@@ -1777,12 +1774,16 @@ public final class MainActivity extends AppCompatActivity {
         button.setLayoutParams(params);
         button.setOnClickListener(v -> openRecentThread(preview));
         button.setOnLongClickListener(v -> {
-            ChatSessionStore.removeConversation(this, preview.conversationId);
+            MainRecentThreadRenderer.RemoveCommand removeCommand = MainRecentThreadRenderer.buildRemoveCommand(preview);
+            ChatSessionStore.removeConversation(this, removeCommand.conversationId);
             refreshRecentThreads();
             updateRecentThreadsVisibility();
             Toast.makeText(
                 this,
-                getString(R.string.recent_thread_removed, presentationFormatter().clipLabel(preview.latestTurn.question, 28)),
+                getString(
+                    R.string.recent_thread_removed,
+                    presentationFormatter().clipLabel(removeCommand.toastQuestion, removeCommand.toastQuestionMaxLength)
+                ),
                 Toast.LENGTH_SHORT
             ).show();
             return true;
