@@ -154,7 +154,7 @@ final class PackQueryPipelineHelper {
         );
     }
 
-    private static String clip(String text, int limit) {
+    static String clip(String text, int limit) {
         String safe = emptySafe(text).replaceAll("\\s+", " ").trim();
         if (safe.length() <= limit) {
             return safe;
@@ -162,7 +162,19 @@ final class PackQueryPipelineHelper {
         return safe.substring(0, Math.max(0, limit - 3)).trim() + "...";
     }
 
-    private static String emptySafe(String text) {
+    static String combineTags(String tags, String topicTags) {
+        String safeTags = emptySafe(tags).trim();
+        String safeTopicTags = emptySafe(topicTags).trim();
+        if (safeTags.isEmpty()) {
+            return safeTopicTags;
+        }
+        if (safeTopicTags.isEmpty()) {
+            return safeTags;
+        }
+        return safeTags + "," + safeTopicTags;
+    }
+
+    static String emptySafe(String text) {
         return text == null ? "" : text;
     }
 }

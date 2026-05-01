@@ -34,9 +34,9 @@ final class PackRouteFocusedResultRanker {
             }
             int score = sectionScore.score + guideBonus + diversityBonus;
             if (conservativeWaterGuideBundling) {
-                score += PackRepository.broadWaterRouteRefinementBonus(queryTerms, sectionScore.result);
+                score += PackRouteRefinementPolicy.broadWaterRouteRefinementBonus(queryTerms, sectionScore.result);
             }
-            score += PackRepository.currentHeadRouteRefinementBonus(queryTerms, sectionScore.result);
+            score += PackRouteRefinementPolicy.currentHeadRouteRefinementBonus(queryTerms, sectionScore.result);
             scored.add(new PackRepository.ScoredSearchResult(
                 sectionScore.result,
                 sectionScore.originalIndex,
@@ -47,16 +47,16 @@ final class PackRouteFocusedResultRanker {
         scored.sort((left, right) -> {
             if (conservativeWaterGuideBundling) {
                 int priorityOrder = Integer.compare(
-                    PackRepository.broadWaterRouteOrderingPriority(queryTerms, right.result),
-                    PackRepository.broadWaterRouteOrderingPriority(queryTerms, left.result)
+                    PackRouteRefinementPolicy.broadWaterRouteOrderingPriority(queryTerms, right.result),
+                    PackRouteRefinementPolicy.broadWaterRouteOrderingPriority(queryTerms, left.result)
                 );
                 if (priorityOrder != 0) {
                     return priorityOrder;
                 }
             }
             int currentHeadPriorityOrder = Integer.compare(
-                PackRepository.currentHeadRouteOrderingPriority(queryTerms, right.result),
-                PackRepository.currentHeadRouteOrderingPriority(queryTerms, left.result)
+                PackRouteRefinementPolicy.currentHeadRouteOrderingPriority(queryTerms, right.result),
+                PackRouteRefinementPolicy.currentHeadRouteOrderingPriority(queryTerms, left.result)
             );
             if (currentHeadPriorityOrder != 0) {
                 return currentHeadPriorityOrder;

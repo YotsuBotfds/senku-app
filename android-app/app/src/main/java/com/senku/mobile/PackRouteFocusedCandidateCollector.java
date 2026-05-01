@@ -145,8 +145,8 @@ final class PackRouteFocusedCandidateCollector {
             return;
         }
 
-        String combinedTags = PackRepository.combineTags(row.tags, row.topicTags);
-        int specScore = PackRepository.lexicalKeywordScore(
+        String combinedTags = PackQueryPipelineHelper.combineTags(row.tags, row.topicTags);
+        int specScore = PackKeywordScoringPolicy.keywordScore(
             specTerms,
             row.title,
             row.section,
@@ -155,7 +155,7 @@ final class PackRouteFocusedCandidateCollector {
             row.description,
             row.body
         );
-        specScore += PackRepository.metadataBonus(
+        specScore += PackKeywordScoringPolicy.metadataBonus(
             specTerms,
             row.category,
             row.contentRole,
@@ -163,7 +163,7 @@ final class PackRouteFocusedCandidateCollector {
             row.structureType,
             row.topicTags
         );
-        int queryScore = PackRepository.lexicalKeywordScore(
+        int queryScore = PackKeywordScoringPolicy.keywordScore(
             queryTerms,
             row.title,
             row.section,
@@ -172,7 +172,7 @@ final class PackRouteFocusedCandidateCollector {
             row.description,
             row.body
         );
-        queryScore += PackRepository.metadataBonus(
+        queryScore += PackKeywordScoringPolicy.metadataBonus(
             queryTerms,
             row.category,
             row.contentRole,
@@ -190,7 +190,7 @@ final class PackRouteFocusedCandidateCollector {
         if (!PackRouteRowFilterPolicy.shouldKeepSpecializedDirectSignalRouteResult(queryTerms, result)) {
             return;
         }
-        String sectionKey = PackRepository.buildGuideSectionKey(
+        String sectionKey = PackQueryPipelineHelper.guideSectionKey(
             row.guideId,
             row.title,
             candidateKind.resultSection(row)
@@ -225,9 +225,9 @@ final class PackRouteFocusedCandidateCollector {
             );
         }
 
-        String guideId = PackRepository.emptySafe(cursor.getString(0));
-        String title = PackRepository.emptySafe(cursor.getString(1));
-        String section = cursor.getColumnCount() > 9 ? PackRepository.emptySafe(cursor.getString(2)) : "";
+        String guideId = PackQueryPipelineHelper.emptySafe(cursor.getString(0));
+        String title = PackQueryPipelineHelper.emptySafe(cursor.getString(1));
+        String section = cursor.getColumnCount() > 9 ? PackQueryPipelineHelper.emptySafe(cursor.getString(2)) : "";
         int categoryIndex = cursor.getColumnCount() > 9 ? 3 : 2;
         int descriptionIndex = cursor.getColumnCount() > 9 ? 4 : 3;
         int bodyIndex = cursor.getColumnCount() > 9 ? 5 : 4;
@@ -258,7 +258,7 @@ final class PackRouteFocusedCandidateCollector {
                 return new SearchResult(
                     row.title,
                     row.guideId + " | " + row.category + " | " + row.section + " | route-focus",
-                    PackRepository.clip(row.body, 220),
+                    PackQueryPipelineHelper.clip(row.body, 220),
                     row.body,
                     row.guideId,
                     row.section,
@@ -282,7 +282,7 @@ final class PackRouteFocusedCandidateCollector {
                 return new SearchResult(
                     row.title,
                     row.guideId + " | " + row.category + " | guide-focus",
-                    PackRepository.clip(row.body, 220),
+                    PackQueryPipelineHelper.clip(row.body, 220),
                     row.body,
                     row.guideId,
                     "",
@@ -342,17 +342,17 @@ final class PackRouteFocusedCandidateCollector {
             String structureType,
             String topicTags
         ) {
-            this.title = PackRepository.emptySafe(title);
-            this.guideId = PackRepository.emptySafe(guideId);
-            this.section = PackRepository.emptySafe(section);
-            this.category = PackRepository.emptySafe(category);
-            this.body = PackRepository.emptySafe(body);
-            this.tags = PackRepository.emptySafe(tags);
-            this.description = PackRepository.emptySafe(description);
-            this.contentRole = PackRepository.emptySafe(contentRole);
-            this.timeHorizon = PackRepository.emptySafe(timeHorizon);
-            this.structureType = PackRepository.emptySafe(structureType);
-            this.topicTags = PackRepository.emptySafe(topicTags);
+            this.title = PackQueryPipelineHelper.emptySafe(title);
+            this.guideId = PackQueryPipelineHelper.emptySafe(guideId);
+            this.section = PackQueryPipelineHelper.emptySafe(section);
+            this.category = PackQueryPipelineHelper.emptySafe(category);
+            this.body = PackQueryPipelineHelper.emptySafe(body);
+            this.tags = PackQueryPipelineHelper.emptySafe(tags);
+            this.description = PackQueryPipelineHelper.emptySafe(description);
+            this.contentRole = PackQueryPipelineHelper.emptySafe(contentRole);
+            this.timeHorizon = PackQueryPipelineHelper.emptySafe(timeHorizon);
+            this.structureType = PackQueryPipelineHelper.emptySafe(structureType);
+            this.topicTags = PackQueryPipelineHelper.emptySafe(topicTags);
         }
     }
 }

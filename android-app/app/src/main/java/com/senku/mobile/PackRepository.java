@@ -1552,23 +1552,18 @@ public final class PackRepository implements AutoCloseable {
     }
 
     private List<RankedChunk> searchWithFtsHits(QueryTerms queryTerms, int limit) {
-        String ftsQuery = buildFtsQuery(queryTerms);
-        if (ftsQuery.isEmpty()) {
+        PackPlainSearchSqlPolicy.PlainSqlPlan plan = PackPlainSearchSqlPolicy.ftsHitsPlan(
+            queryTerms,
+            limit,
+            ftsTableName,
+            ftsSupportsBm25
+        );
+        if (plan.isEmpty()) {
             return Collections.emptyList();
         }
 
-        String orderClause = ftsSupportsBm25 ? " ORDER BY bm25(" + ftsTableName + ") " : " ";
         ArrayList<RankedChunk> results = new ArrayList<>();
-        try (Cursor cursor = database.rawQuery(
-            "SELECT c.chunk_id, c.vector_row_id, c.guide_title, c.guide_id, c.section_heading, c.category, c.document, " +
-                "c.content_role, c.time_horizon, c.structure_type, c.topic_tags " +
-                "FROM " + ftsTableName + " f " +
-                "JOIN chunks c ON c.chunk_id = f.chunk_id " +
-                "WHERE " + ftsTableName + " MATCH ? " +
-                orderClause +
-                "LIMIT ?",
-            new String[]{ftsQuery, String.valueOf(limit)}
-        )) {
+        try (Cursor cursor = database.rawQuery(plan.sql, plan.argsArray())) {
             int rank = 0;
             while (cursor.moveToNext()) {
                 results.add(new RankedChunk(
@@ -1674,30 +1669,13 @@ public final class PackRepository implements AutoCloseable {
     }
 
     private List<RankedChunk> searchWithKeywordHits(QueryTerms queryTerms, int limit) {
-        List<String> tokens = queryTerms.keywordTokens();
-        if (tokens.isEmpty()) {
+        PackPlainSearchSqlPolicy.PlainSqlPlan plan = PackPlainSearchSqlPolicy.keywordHitsPlan(queryTerms, limit);
+        if (plan.isEmpty()) {
             return Collections.emptyList();
         }
 
-        int sqlLimit = keywordSqlLimit(queryTerms, limit);
-        ArrayList<String> clauses = new ArrayList<>();
-        ArrayList<String> args = new ArrayList<>();
-        for (String token : tokens) {
-            String like = "%" + token + "%";
-            clauses.add("(guide_title LIKE ? OR section_heading LIKE ? OR category LIKE ? OR tags LIKE ? OR description LIKE ? OR document LIKE ?)");
-            for (int i = 0; i < 6; i++) {
-                args.add(like);
-            }
-        }
-        args.add(String.valueOf(sqlLimit));
-
         ArrayList<ScoredChunk> scored = new ArrayList<>();
-        try (Cursor cursor = database.rawQuery(
-            "SELECT chunk_id, vector_row_id, guide_title, guide_id, section_heading, category, document, tags, description, " +
-                "content_role, time_horizon, structure_type, topic_tags " +
-                "FROM chunks WHERE " + String.join(" OR ", clauses) + " LIMIT ?",
-            args.toArray(new String[0])
-        )) {
+        try (Cursor cursor = database.rawQuery(plan.sql, plan.argsArray())) {
             while (cursor.moveToNext()) {
                 String title = cursor.getString(2);
                 String guideId = emptySafe(cursor.getString(3));
@@ -1785,16 +1763,13 @@ public final class PackRepository implements AutoCloseable {
     }
 
     private List<SearchResult> searchPlainLikeResults(String query, int limit) {
+        PackPlainSearchSqlPolicy.PlainSqlPlan plan = PackPlainSearchSqlPolicy.plainLikeResultsPlan(query, limit);
+        if (plan.isEmpty()) {
+            return Collections.emptyList();
+        }
+
         ArrayList<SearchResult> results = new ArrayList<>();
-        String like = "%" + query + "%";
-        try (Cursor cursor = database.rawQuery(
-            "SELECT guide_title, guide_id, section_heading, category, document, " +
-                "content_role, time_horizon, structure_type, topic_tags " +
-                "FROM chunks " +
-                "WHERE document LIKE ? OR guide_title LIKE ? OR tags LIKE ? OR category LIKE ? OR description LIKE ? " +
-                "LIMIT ?",
-            new String[]{like, like, like, like, like, String.valueOf(limit)}
-        )) {
+        try (Cursor cursor = database.rawQuery(plan.sql, plan.argsArray())) {
             while (cursor.moveToNext()) {
                 String title = cursor.getString(0);
                 String guideId = emptySafe(cursor.getString(1));
@@ -1826,27 +1801,21 @@ public final class PackRepository implements AutoCloseable {
     }
 
     private List<RankedChunk> loadVectorNeighborHits(List<VectorStore.VectorNeighbor> neighbors) {
-        if (neighbors.isEmpty()) {
+        PackPlainSearchSqlPolicy.PlainSqlPlan plan = PackPlainSearchSqlPolicy.vectorNeighborHitsPlan(neighbors);
+        if (plan.isEmpty()) {
             return Collections.emptyList();
         }
 
         HashMap<Integer, VectorStore.VectorNeighbor> byRowId = new HashMap<>();
-        ArrayList<String> placeholders = new ArrayList<>();
-        String[] args = new String[neighbors.size()];
-        for (int index = 0; index < neighbors.size(); index++) {
-            VectorStore.VectorNeighbor neighbor = neighbors.get(index);
+        for (VectorStore.VectorNeighbor neighbor : neighbors) {
+            if (neighbor == null) {
+                continue;
+            }
             byRowId.put(neighbor.rowId, neighbor);
-            placeholders.add("?");
-            args[index] = String.valueOf(neighbor.rowId);
         }
 
         HashMap<Integer, RankedChunk> loaded = new HashMap<>();
-        try (Cursor cursor = database.rawQuery(
-            "SELECT chunk_id, vector_row_id, guide_title, guide_id, section_heading, category, document, " +
-                "content_role, time_horizon, structure_type, topic_tags " +
-                "FROM chunks WHERE vector_row_id IN (" + String.join(",", placeholders) + ")",
-            args
-        )) {
+        try (Cursor cursor = database.rawQuery(plan.sql, plan.argsArray())) {
             while (cursor.moveToNext()) {
                 int vectorRowId = cursor.getInt(1);
                 VectorStore.VectorNeighbor neighbor = byRowId.get(vectorRowId);
@@ -1879,6 +1848,9 @@ public final class PackRepository implements AutoCloseable {
         ArrayList<RankedChunk> ordered = new ArrayList<>();
         int rank = 0;
         for (VectorStore.VectorNeighbor neighbor : neighbors) {
+            if (neighbor == null) {
+                continue;
+            }
             RankedChunk loadedHit = loaded.get(neighbor.rowId);
             if (loadedHit == null) {
                 continue;
