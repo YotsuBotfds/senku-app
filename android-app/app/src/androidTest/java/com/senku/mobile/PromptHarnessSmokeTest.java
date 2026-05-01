@@ -1021,6 +1021,83 @@ public final class PromptHarnessSmokeTest {
     }
 
     @Test
+    public void searchResultsVisibleHomeChromeBackReturnsBrowseWithoutAskOwnership() {
+        ActivityScenario<MainActivity> scenario = launchProductReviewMainActivity();
+        try {
+            awaitHarnessIdle();
+            Assert.assertTrue(
+                "home search input never appeared before visible search-results back smoke; harness signals="
+                    + HarnessTestSignals.snapshot(),
+                device.wait(Until.hasObject(By.res(APP_PACKAGE, "search_input")), SEARCH_WAIT_MS)
+            );
+
+            submitSearchFromResumedActivity("rain shelter", false);
+            assertResultsSettled(scenario, SEARCH_RESULTS_WAIT_MS);
+            dismissMainSearchKeyboardIfVisible();
+
+            Assert.assertTrue(
+                "search results should expose a visible home chrome back affordance before click; "
+                    + describeResumedActivityAndHarnessSignals(),
+                clickVisibleView("home_chrome_back_button", DETAIL_WAIT_MS)
+            );
+            assertResumedManualHomeDestination("visible chrome back from search results should return to Browse/Home");
+            captureUiState("search_results_visible_back_home");
+        } finally {
+            closeScenarioLeniently(scenario);
+        }
+    }
+
+    @Test
+    public void answerDetailVisibleBackButtonFinishesToPreviousMain() {
+        ActivityScenario<MainActivity> scenario = launchProductReviewMainActivity();
+        try {
+            awaitHarnessIdle();
+            Assert.assertTrue(
+                "home search input never appeared before answer visible-back smoke; harness signals="
+                    + HarnessTestSignals.snapshot(),
+                device.wait(Until.hasObject(By.res(APP_PACKAGE, "search_input")), SEARCH_WAIT_MS)
+            );
+
+            String query = "How do I start a fire in rain?";
+            submitSearchFromResumedActivity(query, true);
+            assertResumedDetailActivitySettled(
+                DETAIL_WAIT_MS,
+                8,
+                "",
+                false,
+                "Ask submit should open answer detail before visible-back click"
+            );
+
+            Assert.assertTrue(
+                "answer detail should expose a visible back button before click; "
+                    + describeResumedActivityAndHarnessSignals(),
+                clickVisibleViewOrContentDescription(
+                    "detail_back_button",
+                    R.string.detail_back_content_description,
+                    DETAIL_WAIT_MS
+                )
+            );
+            waitForMainSearchInputReady(SEARCH_WAIT_MS);
+            Assert.assertFalse(
+                "visible detail back should finish the answer detail activity",
+                isResumedActivity(DetailActivity.class)
+            );
+            scenario.onActivity(activity -> {
+                EditText input = activity.findViewById(R.id.search_input);
+                Assert.assertNotNull("returning from visible detail back should restore the shared input", input);
+                Assert.assertEquals(
+                    "visible detail back should return to the previous asked query",
+                    query,
+                    safe(input.getText().toString())
+                );
+            });
+            captureUiState("answer_detail_visible_back_main");
+        } finally {
+            closeScenarioLeniently(scenario);
+        }
+    }
+
+    @Test
     public void searchResultsLinkedGuideHandoffOpensLinkedGuideDetail() throws Exception {
         RelatedGuideSeed seed = findGuideWithRelations();
         Assume.assumeNotNull("no guide with related links available for browse handoff smoke", seed);
@@ -8575,6 +8652,59 @@ public final class PromptHarnessSmokeTest {
             SystemClock.sleep(50L);
         }
         return false;
+    }
+
+    private boolean clickVisibleView(String resId, long timeoutMs) {
+        long deadline = SystemClock.uptimeMillis() + timeoutMs;
+        while (SystemClock.uptimeMillis() < deadline) {
+            final boolean[] clicked = {false};
+            InstrumentationRegistry.getInstrumentation().runOnMainSync(() -> {
+                Activity activity = getResumedActivityOnMainThread();
+                if (activity == null) {
+                    return;
+                }
+                android.view.View view = activity.findViewById(resolveResId(resId));
+                if (isEffectivelyVisible(view) && view.isEnabled() && view.isClickable()) {
+                    view.performClick();
+                    clicked[0] = true;
+                }
+            });
+            if (clicked[0]) {
+                InstrumentationRegistry.getInstrumentation().waitForIdleSync();
+                awaitHarnessIdle();
+                return true;
+            }
+            InstrumentationRegistry.getInstrumentation().waitForIdleSync();
+            SystemClock.sleep(50L);
+        }
+        return false;
+    }
+
+    private boolean clickVisibleViewOrContentDescription(
+        String resId,
+        int contentDescriptionResId,
+        long timeoutMs
+    ) {
+        if (clickVisibleView(resId, Math.min(timeoutMs, 500L))) {
+            return true;
+        }
+        Context context = ApplicationProvider.getApplicationContext();
+        String description = context.getString(contentDescriptionResId);
+        if (clickVisibleUiObject(By.desc(description), timeoutMs)) {
+            return true;
+        }
+        return clickVisibleUiObject(By.descContains(description), 500L);
+    }
+
+    private boolean clickVisibleUiObject(BySelector selector, long timeoutMs) {
+        UiObject2 object = device.wait(Until.findObject(selector), timeoutMs);
+        if (object == null || !object.isEnabled() || !hasVisibleBounds(object)) {
+            return false;
+        }
+        object.click();
+        InstrumentationRegistry.getInstrumentation().waitForIdleSync();
+        awaitHarnessIdle();
+        return true;
     }
 
     private int resolveResId(String resId) {

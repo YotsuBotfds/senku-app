@@ -228,6 +228,22 @@ public final class MainRouteDecisionHelper {
         return destination == null ? BottomTabDestination.HOME : phoneTabSelectionOwner(destination);
     }
 
+    static BottomTabDestination displayedPhoneTab(RouteState state) {
+        RouteState route = normalize(state);
+        if (route.surface == Surface.SEARCH_RESULTS) {
+            return BottomTabDestination.SEARCH;
+        }
+        return route.activePhoneTab;
+    }
+
+    static BottomTabDestination displayedPhoneTabSlot(BottomTabDestination destination, RouteState state) {
+        BottomTabDestination owner = phoneTabSelectionOwner(destination);
+        if (owner == BottomTabDestination.HOME && displayedPhoneTab(state) == BottomTabDestination.SEARCH) {
+            return BottomTabDestination.SEARCH;
+        }
+        return destination == null ? BottomTabDestination.HOME : destination;
+    }
+
     static BottomTabDestination phoneTabSelectionOwner(BottomTabDestination destination) {
         if (destination == null) {
             return BottomTabDestination.HOME;

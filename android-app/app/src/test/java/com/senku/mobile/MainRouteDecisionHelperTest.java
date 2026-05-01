@@ -211,6 +211,55 @@ public final class MainRouteDecisionHelperTest {
     }
 
     @Test
+    public void displayedPhoneTabShowsSearchForSearchResultsWithoutChangingRouteOwner() {
+        MainRouteDecisionHelper.RouteState searchResults =
+            new MainRouteDecisionHelper.RouteState(
+                MainRouteDecisionHelper.Surface.SEARCH_RESULTS,
+                BottomTabDestination.HOME,
+                false
+            );
+
+        assertEquals(BottomTabDestination.HOME, searchResults.activePhoneTab);
+        assertEquals(BottomTabDestination.SEARCH, MainRouteDecisionHelper.displayedPhoneTab(searchResults));
+        assertEquals(
+            BottomTabDestination.SEARCH,
+            MainRouteDecisionHelper.displayedPhoneTabSlot(BottomTabDestination.HOME, searchResults)
+        );
+        assertEquals(
+            BottomTabDestination.ASK,
+            MainRouteDecisionHelper.displayedPhoneTabSlot(BottomTabDestination.ASK, searchResults)
+        );
+        assertEquals(
+            BottomTabDestination.PINS,
+            MainRouteDecisionHelper.displayedPhoneTabSlot(BottomTabDestination.PINS, searchResults)
+        );
+    }
+
+    @Test
+    public void displayedPhoneTabKeepsOwnedTabsForBrowseAndAskResults() {
+        assertEquals(
+            BottomTabDestination.HOME,
+            MainRouteDecisionHelper.displayedPhoneTab(MainRouteDecisionHelper.browseHome())
+        );
+        assertEquals(
+            BottomTabDestination.ASK,
+            MainRouteDecisionHelper.displayedPhoneTab(new MainRouteDecisionHelper.RouteState(
+                MainRouteDecisionHelper.Surface.ASK_RESULTS,
+                BottomTabDestination.ASK,
+                true
+            ))
+        );
+        assertEquals(
+            BottomTabDestination.PINS,
+            MainRouteDecisionHelper.displayedPhoneTab(new MainRouteDecisionHelper.RouteState(
+                MainRouteDecisionHelper.Surface.SAVED_GUIDES,
+                BottomTabDestination.PINS,
+                false
+            ))
+        );
+    }
+
+    @Test
     public void openingPhoneTabsUsesExistingDestinationOwnership() {
         MainRouteDecisionHelper.RouteState searchResults =
             new MainRouteDecisionHelper.RouteState(

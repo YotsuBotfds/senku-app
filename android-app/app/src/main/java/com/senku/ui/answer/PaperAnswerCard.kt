@@ -492,17 +492,27 @@ internal fun buildFooterMeta(content: AnswerContent): String {
     }
     val tokens = mutableListOf<String>()
     if (reviewedGuideId.isNotBlank()) {
-        tokens += reviewedGuideId
+        tokens += "EVIDENCE OWNER $reviewedGuideId"
         if (content.sourceCount > 0) {
-            tokens += "${content.sourceCount} ${sourceCountNoun(content.sourceCount).uppercase(Locale.US)} VISIBLE"
+            tokens += sourceCountLabel(content.sourceCount).uppercase(Locale.US)
             return tokens.joinToString(" \u2022 ")
         }
     }
+    tokens += sourceRoleLabel(content)
     tokens += sourceCountLabel(content.sourceCount).uppercase(Locale.US)
     if (content.elapsedSeconds > 0.0) {
         tokens += String.format(Locale.US, "%.1fs", content.elapsedSeconds)
     }
     return tokens.joinToString(" \u2022 ")
+}
+
+private fun sourceRoleLabel(content: AnswerContent): String {
+    return when (content.answerSurfaceLabel) {
+        AnswerSurfaceLabel.DeterministicRule -> "RULE EVIDENCE"
+        AnswerSurfaceLabel.Abstain -> "NO SOURCE MATCH"
+        AnswerSurfaceLabel.ReviewedCardEvidence -> "REVIEWED EVIDENCE"
+        else -> "SOURCE EVIDENCE"
+    }
 }
 
 private fun sourceCountLabel(sourceCount: Int): String {

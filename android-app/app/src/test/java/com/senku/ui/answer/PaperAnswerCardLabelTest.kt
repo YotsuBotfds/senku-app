@@ -68,18 +68,18 @@ class PaperAnswerCardLabelTest {
     }
 
     @Test
-    fun buildFooterMeta_usesCompactSourcePreview() {
+    fun buildFooterMeta_usesSourceEvidenceHierarchy() {
         val content = answer(
             sourceCount = 2,
             host = "On-device",
             elapsedSeconds = 0.8,
         )
 
-        assertEquals("2 SOURCES • 0.8s", buildFooterMeta(content))
+        assertEquals("SOURCE EVIDENCE \u2022 2 SOURCES \u2022 0.8s", buildFooterMeta(content))
     }
 
     @Test
-    fun buildFooterMeta_omitsContextKeptForRainShelterLimitedFit() {
+    fun buildFooterMeta_keepsLimitedFitContextWhenArticleChromeIsHidden() {
         val content = answer(
             sourceCount = 3,
             host = "This device",
@@ -98,7 +98,7 @@ class PaperAnswerCardLabelTest {
     }
 
     @Test
-    fun buildFooterMeta_keepsAnswerAnchorAndVisibleSourceStateWithoutContextKept() {
+    fun buildFooterMeta_emphasizesEvidenceOwnerInsteadOfAnswerContext() {
         val content = answer(
             sourceCount = 3,
             host = "This device",
@@ -114,7 +114,7 @@ class PaperAnswerCardLabelTest {
             ),
         )
 
-        assertEquals("GD-345 \u2022 3 SOURCES VISIBLE", buildFooterMeta(content))
+        assertEquals("EVIDENCE OWNER GD-345 \u2022 3 SOURCES", buildFooterMeta(content))
     }
 
     @Test

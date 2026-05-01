@@ -2279,23 +2279,30 @@ public final class MainActivity extends AppCompatActivity {
     }
 
     private void updateStaticPhoneNavRailState() {
+        updateStaticPhoneNavRailState(currentMainRouteState());
+    }
+
+    private void updateStaticPhoneNavRailState(MainRouteDecisionHelper.RouteState routeState) {
         if (!shouldBindStaticNavigationRail(isLandscapePhoneLayout(), isTabletSearchLayout())) {
             return;
         }
         updateStaticPhoneNavTabState(
             BottomTabDestination.HOME,
+            routeState,
             R.id.phone_nav_home,
             R.id.phone_nav_home_icon,
             R.id.phone_nav_home_label
         );
         updateStaticPhoneNavTabState(
             BottomTabDestination.ASK,
+            routeState,
             R.id.phone_nav_ask,
             R.id.phone_nav_ask_icon,
             R.id.phone_nav_ask_label
         );
         updateStaticPhoneNavTabState(
             BottomTabDestination.PINS,
+            routeState,
             R.id.phone_nav_pins,
             R.id.phone_nav_pins_icon,
             R.id.phone_nav_pins_label
@@ -2308,13 +2315,26 @@ public final class MainActivity extends AppCompatActivity {
         int iconId,
         int labelId
     ) {
-        boolean selected = phoneTabSelectionOwner(destination) == activePhoneTab;
+        updateStaticPhoneNavTabState(destination, currentMainRouteState(), tabId, iconId, labelId);
+    }
+
+    private void updateStaticPhoneNavTabState(
+        BottomTabDestination destination,
+        MainRouteDecisionHelper.RouteState routeState,
+        int tabId,
+        int iconId,
+        int labelId
+    ) {
+        BottomTabDestination displayDestination =
+            MainRouteDecisionHelper.displayedPhoneTabSlot(destination, routeState);
+        boolean selected = displayDestination == MainRouteDecisionHelper.displayedPhoneTab(routeState);
         int color = getColor(selected ? R.color.senku_rev03_accent : R.color.senku_rev03_ink_2);
         View tabView = findViewById(tabId);
         if (tabView != null) {
             tabView.setSelected(selected);
+            tabView.setOnClickListener(v -> openPhoneTabFromTap(displayDestination));
             tabView.setContentDescription(
-                presentationFormatter().buildMainNavigationContentDescription(destination)
+                buildMainNavigationContentDescription(displayDestination)
             );
         }
         View iconView = findViewById(iconId);
@@ -2325,7 +2345,7 @@ public final class MainActivity extends AppCompatActivity {
         View labelView = findViewById(labelId);
         if (labelView instanceof TextView) {
             TextView label = (TextView) labelView;
-            label.setText(presentationFormatter().buildMainNavigationLabel(destination));
+            label.setText(buildMainNavigationLabel(displayDestination));
             label.setTextColor(color);
             label.setTypeface(null, selected ? Typeface.BOLD : Typeface.NORMAL);
             label.setSelected(selected);
@@ -2887,6 +2907,7 @@ public final class MainActivity extends AppCompatActivity {
     }
 
     private void updatePhoneTabBarState() {
+        MainRouteDecisionHelper.RouteState routeState = currentMainRouteState();
         if (bottomTabBarView != null) {
             bottomTabBarView.updateLayoutMode(
                 isLandscapePhoneLayout()
@@ -2894,31 +2915,51 @@ public final class MainActivity extends AppCompatActivity {
                     : BottomTabBarLayoutMode.HORIZONTAL_BAR
             );
             bottomTabBarView.setTabs(
-                buildPhoneTabs(),
-                activePhoneTab,
+                buildPhoneTabs(routeState),
+                MainRouteDecisionHelper.displayedPhoneTab(routeState),
                 this::openPhoneTabFromTap
             );
         }
-        updateStaticPhoneNavRailState();
+        updateStaticPhoneNavRailState(routeState);
     }
 
     private List<BottomTabModel> buildPhoneTabs() {
+        return buildPhoneTabs(currentMainRouteState());
+    }
+
+    private List<BottomTabModel> buildPhoneTabs(MainRouteDecisionHelper.RouteState routeState) {
         List<BottomTabDestination> visibleDestinations = buildVisiblePhoneTabDestinations();
         ArrayList<BottomTabModel> tabs = new ArrayList<>(visibleDestinations.size());
         for (BottomTabDestination destination : visibleDestinations) {
-            int labelRes = phoneTabLabelResource(destination);
+            BottomTabDestination displayDestination =
+                MainRouteDecisionHelper.displayedPhoneTabSlot(destination, routeState);
+            int labelRes = phoneTabLabelResource(displayDestination);
             String fallbackLabel = getString(labelRes);
-            String label = presentationFormatter().buildMainNavigationLabel(destination);
+            String label = buildMainNavigationLabel(displayDestination);
             if (label.isEmpty()) {
                 label = fallbackLabel;
             }
             tabs.add(new BottomTabModel(
-                destination,
+                displayDestination,
                 label,
-                presentationFormatter().buildMainNavigationContentDescription(destination)
+                buildMainNavigationContentDescription(displayDestination)
             ));
         }
         return tabs;
+    }
+
+    private String buildMainNavigationLabel(BottomTabDestination destination) {
+        if (destination == BottomTabDestination.SEARCH) {
+            return getString(R.string.bottom_tab_search);
+        }
+        return presentationFormatter().buildMainNavigationLabel(destination);
+    }
+
+    private String buildMainNavigationContentDescription(BottomTabDestination destination) {
+        if (destination == BottomTabDestination.SEARCH) {
+            return getString(R.string.bottom_tab_search);
+        }
+        return presentationFormatter().buildMainNavigationContentDescription(destination);
     }
 
     static List<BottomTabDestination> buildVisiblePhoneTabDestinations() {
