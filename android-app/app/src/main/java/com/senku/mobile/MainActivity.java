@@ -73,7 +73,6 @@ public final class MainActivity extends AppCompatActivity {
     static final int SEARCH_RESULT_LIMIT = 4;
     private static final int ALL_GUIDES = 0;
     private static final int MIN_SEARCH_SUGGESTION_QUERY = MainSearchSuggestionPolicy.MIN_QUERY_LENGTH;
-    private static final int MAX_SAVED_GUIDES = 12;
     private static final int MAX_RECENT_THREAD_PREVIEWS = 3;
     private static final int MAX_HOME_RELATED_GUIDES = 4;
     private static final int MANUAL_HOME_CATEGORY_CARD_HEIGHT_DP = 74;
@@ -105,6 +104,7 @@ public final class MainActivity extends AppCompatActivity {
     private final MainHomeRelatedGuideController homeRelatedGuideController = new MainHomeRelatedGuideController();
     private final MainResultPreviewBridgeController resultPreviewBridgeController =
         new MainResultPreviewBridgeController();
+    private final MainSavedGuidesController savedGuidesController = new MainSavedGuidesController();
     private final MainAutomationRouteController automationRouteController =
         new MainAutomationRouteController(new MainAutomationRouteHost());
 
@@ -213,7 +213,6 @@ public final class MainActivity extends AppCompatActivity {
     private boolean initialSearchFocusApplied;
     private boolean askLaneActive;
     private boolean browseChromeActive = true;
-    private boolean pendingSavedGuideSectionFocus;
     private boolean productReviewMode = false;
     private HomeGuideAnchor homeGuideAnchor;
     private int homeRelatedRequestVersion;
@@ -1435,18 +1434,16 @@ public final class MainActivity extends AppCompatActivity {
 
     private void refreshPinnedGuidesAsync() {
         PackRepository repo = repository;
-        List<String> pinnedGuideIds = PinnedGuideStore.listGuideIds(this);
-        if (repo == null || pinnedGuideIds.isEmpty()) {
+        MainSavedGuidesController.RefreshPlan refreshPlan =
+            savedGuidesController.planRefresh(repo != null, PinnedGuideStore.listGuideIds(this));
+        if (refreshPlan.renderEmpty) {
             runOnUiThread(() -> renderPinnedGuides(Collections.emptyList()));
             return;
         }
         int harnessToken = beginHarnessTask("main.refreshPinnedGuides");
         executor.execute(() -> {
             ArrayList<SearchResult> loaded = new ArrayList<>();
-            for (String guideId : pinnedGuideIds) {
-                if (loaded.size() >= MAX_SAVED_GUIDES) {
-                    break;
-                }
+            for (String guideId : refreshPlan.guideIdsToLoad) {
                 SearchResult result = repo.loadGuideById(guideId);
                 if (result != null) {
                     loaded.add(result);
@@ -2103,22 +2100,27 @@ public final class MainActivity extends AppCompatActivity {
         if (pinnedSection == null) {
             return;
         }
-        pinnedSection.setVisibility(shouldShowSavedGuideSection(
+        MainSavedGuidesController.SectionState sectionState = savedGuidesController.sectionState(
             isBrowseModeActive(),
             activePhoneTab,
             pinnedGuides.size()
-        ) ? View.VISIBLE : View.GONE);
+        );
+        pinnedSection.setVisibility(sectionState.sectionVisible ? View.VISIBLE : View.GONE);
         updatePinnedEmptyState();
     }
 
     private void updatePinnedEmptyState() {
-        boolean hasSavedGuides = !pinnedGuides.isEmpty();
+        MainSavedGuidesController.SectionState sectionState = savedGuidesController.sectionState(
+            isBrowseModeActive(),
+            activePhoneTab,
+            pinnedGuides.size()
+        );
         if (pinnedEmptyText != null) {
-            pinnedEmptyText.setVisibility(hasSavedGuides ? View.GONE : View.VISIBLE);
+            pinnedEmptyText.setVisibility(sectionState.emptyTextVisible ? View.VISIBLE : View.GONE);
             pinnedEmptyText.setText(presentationFormatter().buildSavedGuidesEmptyState());
         }
         if (pinnedScroll != null) {
-            pinnedScroll.setVisibility(hasSavedGuides ? View.VISIBLE : View.GONE);
+            pinnedScroll.setVisibility(sectionState.savedGuidesVisible ? View.VISIBLE : View.GONE);
         }
     }
 
@@ -3008,7 +3010,7 @@ public final class MainActivity extends AppCompatActivity {
     }
 
     private void prepareSavedGuidesDestination() {
-        pendingSavedGuideSectionFocus = true;
+        savedGuidesController.requestSectionFocus();
         ensureSavedGuidesDestinationVisible();
         focusSavedGuideSectionIfReady();
     }
@@ -3090,7 +3092,7 @@ public final class MainActivity extends AppCompatActivity {
     }
 
     private void ensureSavedGuidesDestinationVisible() {
-        if (shouldLoadBrowseGuidesForSavedDestination(repository != null, allGuides.size())) {
+        if (savedGuidesController.shouldLoadBrowseGuidesForDestination(repository != null, allGuides.size())) {
             browseGuides();
             return;
         }
@@ -3132,18 +3134,16 @@ public final class MainActivity extends AppCompatActivity {
     }
 
     private void focusSavedGuideSectionIfReady() {
-        if (!pendingSavedGuideSectionFocus || !isBrowseModeActive()) {
+        if (!savedGuidesController.shouldAttemptSectionFocus(isBrowseModeActive())) {
             return;
         }
         updatePinnedSectionVisibility();
-        if (!SavedGuidesPolicy.shouldFocusSection(
-            pendingSavedGuideSectionFocus,
+        if (!savedGuidesController.consumeSectionFocusIfReady(
             true,
             pinnedSection != null && pinnedSection.getVisibility() == View.VISIBLE
         )) {
             return;
         }
-        pendingSavedGuideSectionFocus = false;
         scrollBrowseSectionIntoView(pinnedSection);
     }
 

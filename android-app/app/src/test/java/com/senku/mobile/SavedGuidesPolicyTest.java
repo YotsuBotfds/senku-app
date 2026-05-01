@@ -8,6 +8,8 @@ import com.senku.ui.primitives.BottomTabDestination;
 
 import org.junit.Test;
 
+import java.util.List;
+
 public final class SavedGuidesPolicyTest {
     @Test
     public void pinsBrowseFlowShowsEmptySavedSection() {
@@ -121,5 +123,82 @@ public final class SavedGuidesPolicyTest {
         assertFalse(SavedGuidesPolicy.shouldFocusSection(false, true, true));
         assertFalse(SavedGuidesPolicy.shouldFocusSection(true, false, true));
         assertFalse(SavedGuidesPolicy.shouldFocusSection(true, true, false));
+    }
+
+    @Test
+    public void controllerRefreshPlanClearsWhenRepositoryOrSavedGuidesAreMissing() {
+        MainSavedGuidesController controller = new MainSavedGuidesController();
+
+        assertTrue(controller.planRefresh(false, List.of("GD-001")).renderEmpty);
+        assertTrue(controller.planRefresh(true, List.of()).renderEmpty);
+        assertTrue(controller.planRefresh(true, null).renderEmpty);
+    }
+
+    @Test
+    public void controllerRefreshPlanCapsSavedGuideIdsForLoading() {
+        MainSavedGuidesController controller = new MainSavedGuidesController();
+
+        MainSavedGuidesController.RefreshPlan refreshPlan = controller.planRefresh(
+            true,
+            List.of(
+                "GD-001",
+                "GD-002",
+                "GD-003",
+                "GD-004",
+                "GD-005",
+                "GD-006",
+                "GD-007",
+                "GD-008",
+                "GD-009",
+                "GD-010",
+                "GD-011",
+                "GD-012",
+                "GD-013"
+            )
+        );
+
+        assertFalse(refreshPlan.renderEmpty);
+        assertEquals(12, refreshPlan.guideIdsToLoad.size());
+        assertEquals("GD-001", refreshPlan.guideIdsToLoad.get(0));
+        assertEquals("GD-012", refreshPlan.guideIdsToLoad.get(11));
+    }
+
+    @Test
+    public void controllerConsumesPendingFocusOnlyWhenBrowseSectionIsVisible() {
+        MainSavedGuidesController controller = new MainSavedGuidesController();
+
+        controller.requestSectionFocus();
+        assertTrue(controller.hasPendingSectionFocusForTest());
+        assertTrue(controller.shouldAttemptSectionFocus(true));
+
+        assertFalse(controller.consumeSectionFocusIfReady(true, false));
+        assertTrue(controller.hasPendingSectionFocusForTest());
+
+        assertTrue(controller.consumeSectionFocusIfReady(true, true));
+        assertFalse(controller.hasPendingSectionFocusForTest());
+    }
+
+    @Test
+    public void controllerSectionStateSeparatesSectionAndEmptyContentVisibility() {
+        MainSavedGuidesController controller = new MainSavedGuidesController();
+
+        MainSavedGuidesController.SectionState savedFlowEmpty =
+            controller.sectionState(true, BottomTabDestination.PINS, 0);
+        MainSavedGuidesController.SectionState homeFlowEmpty =
+            controller.sectionState(true, BottomTabDestination.HOME, 0);
+        MainSavedGuidesController.SectionState homeFlowSaved =
+            controller.sectionState(true, BottomTabDestination.HOME, 1);
+
+        assertTrue(savedFlowEmpty.sectionVisible);
+        assertTrue(savedFlowEmpty.emptyTextVisible);
+        assertFalse(savedFlowEmpty.savedGuidesVisible);
+
+        assertFalse(homeFlowEmpty.sectionVisible);
+        assertTrue(homeFlowEmpty.emptyTextVisible);
+        assertFalse(homeFlowEmpty.savedGuidesVisible);
+
+        assertTrue(homeFlowSaved.sectionVisible);
+        assertFalse(homeFlowSaved.emptyTextVisible);
+        assertTrue(homeFlowSaved.savedGuidesVisible);
     }
 }
