@@ -11799,7 +11799,7 @@ public final class DetailActivity extends AppCompatActivity {
 
     private void openSourceGuide(SearchResult source) {
         DetailSourceOpenNavigationCoordinator.Decision navigation =
-            DetailSourceOpenNavigationCoordinator.decide(source);
+            DetailSourceOpenNavigationCoordinator.decideSourceGuide(source);
         String guideModeLabel = answerMode ? "" : buildCurrentGuideHandoffLabel();
         String guideModeSummary = answerMode ? "" : buildCurrentGuideHandoffSummary();
         String guideModeAnchorLabel = answerMode
@@ -11821,7 +11821,7 @@ public final class DetailActivity extends AppCompatActivity {
 
         executor.execute(() -> {
             SearchResult target = navigation.source;
-            int harnessToken = beginHarnessTask("detail.openSourceGuide");
+            int harnessToken = beginHarnessTask(navigation.harnessTaskLabel);
             try {
                 PackRepository repo = ensureRepository();
                 SearchResult loadedGuide = repo.loadGuideById(navigation.guideId);
@@ -11832,7 +11832,7 @@ public final class DetailActivity extends AppCompatActivity {
                     );
                 }
             } catch (Exception exc) {
-                Log.w(TAG, "openSourceGuide.loadFailed guideId=" + navigation.guideId, exc);
+                Log.w(TAG, navigation.loadFailureLogLabel + " guideId=" + navigation.guideId, exc);
             }
             SearchResult finalTarget = target;
             runTrackedOnUiThread(harnessToken, () -> {
@@ -11852,13 +11852,13 @@ public final class DetailActivity extends AppCompatActivity {
     }
 
     private void openCrossReferenceGuide(SearchResult guide, SearchResult sourceAnchor) {
-        SearchResult fallback = guide == null ? new SearchResult("", "", "", "") : guide;
-        String guideId = safe(fallback.guideId).trim();
+        DetailSourceOpenNavigationCoordinator.Decision navigation =
+            DetailSourceOpenNavigationCoordinator.decideCrossReferenceGuide(guide);
         String anchorLabel = detailRelatedGuidePresentationFormatter().buildAnswerModeRelatedGuidesAnchorLabel(sourceAnchor);
-        if (guideId.isEmpty()) {
+        if (!navigation.shouldLoadGuideBeforeOpen) {
             startActivity(newCrossReferenceGuideIntent(
                 this,
-                fallback,
+                navigation.source,
                 conversationId,
                 anchorLabel,
                 showUtilityRail()
@@ -11867,16 +11867,19 @@ public final class DetailActivity extends AppCompatActivity {
         }
 
         executor.execute(() -> {
-            SearchResult target = fallback;
-            int harnessToken = beginHarnessTask("detail.openCrossReferenceGuide");
+            SearchResult target = navigation.source;
+            int harnessToken = beginHarnessTask(navigation.harnessTaskLabel);
             try {
                 PackRepository repo = ensureRepository();
-                SearchResult loadedGuide = repo.loadGuideById(guideId);
+                SearchResult loadedGuide = repo.loadGuideById(navigation.guideId);
                 if (loadedGuide != null) {
-                    target = detailSourcePresentationFormatter().mergeGuideForSourceNavigation(fallback, loadedGuide);
+                    target = detailSourcePresentationFormatter().mergeGuideForSourceNavigation(
+                        navigation.source,
+                        loadedGuide
+                    );
                 }
             } catch (Exception exc) {
-                Log.w(TAG, "openCrossReferenceGuide.loadFailed guideId=" + guideId, exc);
+                Log.w(TAG, navigation.loadFailureLogLabel + " guideId=" + navigation.guideId, exc);
             }
             SearchResult finalTarget = target;
             runTrackedOnUiThread(harnessToken, () -> {
