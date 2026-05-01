@@ -97,10 +97,8 @@ final class PackRouteFocusedSearchHelper {
     }
 
     static RouteFtsOrderSpec noBm25RouteFtsOrder(PackRepository.QueryTerms queryTerms) {
-        RetrievalRoutePolicy.RouteFtsOrderSpec orderSpec = RetrievalRoutePolicy.noBm25RouteFtsOrder(
-            queryTerms == null ? "" : queryTerms.queryLower,
-            queryTerms == null ? null : queryTerms.metadataProfile
-        );
+        PackRouteSearchSqlPolicy.RouteFtsOrderSpec orderSpec =
+            PackRouteSearchSqlPolicy.noBm25RouteFtsOrder(queryTerms);
         return new RouteFtsOrderSpec(orderSpec.clause, orderSpec.args, orderSpec.label);
     }
 

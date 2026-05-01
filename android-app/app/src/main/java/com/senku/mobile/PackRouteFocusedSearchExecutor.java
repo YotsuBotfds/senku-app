@@ -5,7 +5,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.util.Log;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -152,42 +151,20 @@ final class PackRouteFocusedSearchExecutor {
         if (!ftsAvailable) {
             return 0;
         }
-        String ftsQuery = PackRepository.buildFtsQuery(specTerms, ftsSupportsBm25 ? 8 : 4, ftsSupportsBm25);
-        if (ftsQuery.isEmpty()) {
+        PackRouteSearchSqlPolicy.RouteFtsSqlPlan plan = PackRouteSearchSqlPolicy.chunkFtsPlan(
+            queryTerms,
+            specTerms,
+            categories,
+            candidateLimit,
+            ftsTableName,
+            ftsSupportsBm25
+        );
+        if (plan.isEmpty()) {
             Log.d(TAG, "routeChunkFts.skip query=\"" + queryTerms.queryLower + "\" reason=empty_fts_query");
             return 0;
         }
 
-        ArrayList<String> categoryPlaceholders = new ArrayList<>();
-        ArrayList<String> args = new ArrayList<>();
-        args.add(ftsQuery);
-        for (String category : categories) {
-            categoryPlaceholders.add("?");
-            args.add(category);
-        }
-        int effectiveCandidateLimit = ftsSupportsBm25
-            ? candidateLimit
-            : Math.min(candidateLimit, queryTerms.routeProfile.isStarterBuildProject() ? 120 : 84);
-        PackRouteFocusedSearchHelper.RouteFtsOrderSpec orderSpec = ftsSupportsBm25
-            ? new PackRouteFocusedSearchHelper.RouteFtsOrderSpec(
-                " ORDER BY bm25(" + ftsTableName + ") ",
-                Collections.emptyList(),
-                "bm25"
-            )
-            : PackRouteFocusedSearchHelper.noBm25RouteFtsOrder(queryTerms);
-        args.addAll(orderSpec.args);
-        args.add(String.valueOf(effectiveCandidateLimit));
-
-        try (Cursor cursor = database.rawQuery(
-            "SELECT c.guide_title, c.guide_id, c.section_heading, c.category, c.document, c.tags, c.description, " +
-                "c.content_role, c.time_horizon, c.structure_type, c.topic_tags " +
-                "FROM " + ftsTableName + " f " +
-                "JOIN chunks c ON c.chunk_id = f.chunk_id " +
-                "WHERE " + ftsTableName + " MATCH ? " +
-                "AND c.category IN (" + String.join(",", categoryPlaceholders) + ") " +
-                orderSpec.clause + " LIMIT ?",
-            args.toArray(new String[0])
-        )) {
+        try (Cursor cursor = database.rawQuery(plan.sql, plan.argsArray())) {
             int added = PackRouteFocusedCandidateCollector.collectChunkCursor(
                 cursor,
                 queryTerms,
@@ -198,15 +175,15 @@ final class PackRouteFocusedSearchExecutor {
             );
             Log.d(
                 TAG,
-                "routeChunkFts query=\"" + queryTerms.queryLower + "\" ftsQuery=\"" + ftsQuery +
-                    "\" added=" + added + " candidateLimit=" + effectiveCandidateLimit +
-                    " order=" + orderSpec.label
+                "routeChunkFts query=\"" + queryTerms.queryLower + "\" ftsQuery=\"" + plan.ftsQuery +
+                    "\" added=" + added + " candidateLimit=" + plan.effectiveCandidateLimit +
+                    " order=" + plan.orderLabel
             );
             return added;
         } catch (SQLiteException error) {
             Log.w(
                 TAG,
-                "routeChunkFts.fail query=\"" + queryTerms.queryLower + "\" ftsQuery=\"" + ftsQuery + "\"",
+                "routeChunkFts.fail query=\"" + queryTerms.queryLower + "\" ftsQuery=\"" + plan.ftsQuery + "\"",
                 error
             );
             return 0;
@@ -223,30 +200,12 @@ final class PackRouteFocusedSearchExecutor {
         int candidateTarget,
         LinkedHashMap<String, PackRepository.ScoredSearchResult> bestBySection
     ) {
-        ArrayList<String> categoryPlaceholders = new ArrayList<>();
-        ArrayList<String> args = new ArrayList<>();
-        for (String category : categories) {
-            categoryPlaceholders.add("?");
-            args.add(category);
-        }
-
-        ArrayList<String> clauses = new ArrayList<>();
-        for (String token : tokens) {
-            String like = "%" + token + "%";
-            clauses.add("(guide_title LIKE ? OR section_heading LIKE ? OR tags LIKE ? OR description LIKE ? OR document LIKE ?)");
-            for (int index = 0; index < 5; index++) {
-                args.add(like);
-            }
-        }
-        args.add(String.valueOf(candidateLimit));
-
-        try (Cursor cursor = database.rawQuery(
-            "SELECT guide_title, guide_id, section_heading, category, document, tags, description, " +
-                "content_role, time_horizon, structure_type, topic_tags " +
-                "FROM chunks WHERE category IN (" + String.join(",", categoryPlaceholders) + ") " +
-                "AND (" + String.join(" OR ", clauses) + ") LIMIT ?",
-            args.toArray(new String[0])
-        )) {
+        PackRouteSearchSqlPolicy.RouteLikeSqlPlan plan = PackRouteSearchSqlPolicy.chunkLikePlan(
+            tokens,
+            categories,
+            candidateLimit
+        );
+        try (Cursor cursor = database.rawQuery(plan.sql, plan.argsArray())) {
             return PackRouteFocusedCandidateCollector.collectChunkCursor(
                 cursor,
                 queryTerms,
@@ -325,42 +284,20 @@ final class PackRouteFocusedSearchExecutor {
         if (!ftsAvailable) {
             return 0;
         }
-        String ftsQuery = PackRepository.buildFtsQuery(specTerms, ftsSupportsBm25 ? 8 : 4, ftsSupportsBm25);
-        if (ftsQuery.isEmpty()) {
+        PackRouteSearchSqlPolicy.RouteFtsSqlPlan plan = PackRouteSearchSqlPolicy.guideFtsPlan(
+            queryTerms,
+            specTerms,
+            categories,
+            candidateLimit,
+            ftsTableName,
+            ftsSupportsBm25
+        );
+        if (plan.isEmpty()) {
             Log.d(TAG, "routeGuideFts.skip query=\"" + queryTerms.queryLower + "\" reason=empty_fts_query");
             return 0;
         }
 
-        ArrayList<String> categoryPlaceholders = new ArrayList<>();
-        ArrayList<String> args = new ArrayList<>();
-        args.add(ftsQuery);
-        for (String category : categories) {
-            categoryPlaceholders.add("?");
-            args.add(category);
-        }
-        int effectiveCandidateLimit = ftsSupportsBm25
-            ? candidateLimit
-            : Math.min(candidateLimit, queryTerms.routeProfile.isStarterBuildProject() ? 48 : 24);
-        PackRouteFocusedSearchHelper.RouteFtsOrderSpec orderSpec = ftsSupportsBm25
-            ? new PackRouteFocusedSearchHelper.RouteFtsOrderSpec(
-                " ORDER BY bm25(" + ftsTableName + ") ",
-                Collections.emptyList(),
-                "bm25"
-            )
-            : PackRouteFocusedSearchHelper.noBm25RouteFtsOrder(queryTerms);
-        args.addAll(orderSpec.args);
-        args.add(String.valueOf(effectiveCandidateLimit));
-
-        try (Cursor cursor = database.rawQuery(
-            "SELECT c.guide_id, c.guide_title, c.section_heading, c.category, c.description, c.document, " +
-                "c.content_role, c.time_horizon, c.structure_type, c.topic_tags, c.tags " +
-                "FROM " + ftsTableName + " f " +
-                "JOIN chunks c ON c.chunk_id = f.chunk_id " +
-                "WHERE " + ftsTableName + " MATCH ? " +
-                "AND c.category IN (" + String.join(",", categoryPlaceholders) + ") " +
-                orderSpec.clause + " LIMIT ?",
-            args.toArray(new String[0])
-        )) {
+        try (Cursor cursor = database.rawQuery(plan.sql, plan.argsArray())) {
             int added = PackRouteFocusedCandidateCollector.collectGuideCursor(
                 cursor,
                 queryTerms,
@@ -371,15 +308,15 @@ final class PackRouteFocusedSearchExecutor {
             );
             Log.d(
                 TAG,
-                "routeGuideFts query=\"" + queryTerms.queryLower + "\" ftsQuery=\"" + ftsQuery +
-                    "\" added=" + added + " candidateLimit=" + effectiveCandidateLimit +
-                    " order=" + orderSpec.label
+                "routeGuideFts query=\"" + queryTerms.queryLower + "\" ftsQuery=\"" + plan.ftsQuery +
+                    "\" added=" + added + " candidateLimit=" + plan.effectiveCandidateLimit +
+                    " order=" + plan.orderLabel
             );
             return added;
         } catch (SQLiteException error) {
             Log.w(
                 TAG,
-                "routeGuideFts.fail query=\"" + queryTerms.queryLower + "\" ftsQuery=\"" + ftsQuery + "\"",
+                "routeGuideFts.fail query=\"" + queryTerms.queryLower + "\" ftsQuery=\"" + plan.ftsQuery + "\"",
                 error
             );
             return 0;
@@ -396,32 +333,12 @@ final class PackRouteFocusedSearchExecutor {
         int targetTotal,
         LinkedHashMap<String, PackRepository.ScoredSearchResult> bestBySection
     ) {
-        ArrayList<String> categoryPlaceholders = new ArrayList<>();
-        ArrayList<String> args = new ArrayList<>();
-        for (String category : categories) {
-            categoryPlaceholders.add("?");
-            args.add(category);
-        }
-
-        ArrayList<String> clauses = new ArrayList<>();
-        for (String token : tokens) {
-            String like = "%" + token + "%";
-            // Guide-level route search is only a supplemental diversity pass. Keep it on
-            // lightweight guide metadata instead of scanning full guide bodies again.
-            clauses.add("(title LIKE ? OR description LIKE ? OR topic_tags LIKE ?)");
-            args.add(like);
-            args.add(like);
-            args.add(like);
-        }
-        args.add(String.valueOf(candidateLimit));
-
-        try (Cursor cursor = database.rawQuery(
-            "SELECT guide_id, title, category, description, body_markdown, " +
-                "content_role, time_horizon, structure_type, topic_tags " +
-                "FROM guides WHERE category IN (" + String.join(",", categoryPlaceholders) + ") " +
-                "AND (" + String.join(" OR ", clauses) + ") LIMIT ?",
-            args.toArray(new String[0])
-        )) {
+        PackRouteSearchSqlPolicy.RouteLikeSqlPlan plan = PackRouteSearchSqlPolicy.guideLikePlan(
+            tokens,
+            categories,
+            candidateLimit
+        );
+        try (Cursor cursor = database.rawQuery(plan.sql, plan.argsArray())) {
             return PackRouteFocusedCandidateCollector.collectGuideCursor(
                 cursor,
                 queryTerms,
