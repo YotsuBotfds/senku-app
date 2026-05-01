@@ -980,18 +980,15 @@ public final class MainActivity extends AppCompatActivity {
     }
 
     private void applyIntentQuery(Intent intent) {
-        if (intent == null) {
-            return;
-        }
-        String query = decodeAutoQuery(intent.getStringExtra(EXTRA_AUTO_QUERY));
-        boolean autoAsk = intent.getBooleanExtra(EXTRA_AUTO_ASK, false);
-        if (shouldOpenEmptyAutoAskLane(query, autoAsk)) {
+        MainAutomationIntentPolicy.ApplyDecision decision =
+            MainAutomationIntentPolicy.resolveApply(automationIntentState(intent));
+        if (decision.effect == MainAutomationIntentPolicy.ApplyEffect.OPEN_EMPTY_ASK_LANE) {
             openEmptyAskLane(false);
             return;
         }
-        if (query != null && !query.trim().isEmpty()) {
-            searchInput.setText(query.trim());
-            setPhoneTabFromFlow(autoAsk ? BottomTabDestination.ASK : BottomTabDestination.SEARCH);
+        if (decision.effect == MainAutomationIntentPolicy.ApplyEffect.SET_QUERY) {
+            searchInput.setText(decision.query);
+            setPhoneTabFromFlow(phoneTabForAutomationRoute(decision.route));
             showBrowseChrome(false);
         }
     }
@@ -1037,44 +1034,38 @@ public final class MainActivity extends AppCompatActivity {
     }
 
     private void maybeHandleAutomation() {
-        if (autoIntentHandled) {
+        MainAutomationIntentPolicy.AutomationDecision decision =
+            MainAutomationIntentPolicy.resolveAutomation(
+                automationIntentState(getIntent()),
+                autoIntentHandled,
+                repository != null
+            );
+        if (decision.effect == MainAutomationIntentPolicy.AutomationEffect.NONE) {
             return;
         }
-        Intent intent = getIntent();
-        if (intent == null) {
-            return;
-        }
-        String query = decodeAutoQuery(intent.getStringExtra(EXTRA_AUTO_QUERY));
-        boolean autoAsk = intent.getBooleanExtra(EXTRA_AUTO_ASK, false);
-        if (shouldOpenEmptyAutoAskLane(query, autoAsk)) {
-            autoIntentHandled = true;
-            suppressSearchFocusForAutomation = true;
+        if (decision.effect == MainAutomationIntentPolicy.AutomationEffect.OPEN_EMPTY_ASK_LANE) {
+            autoIntentHandled = decision.markHandled;
+            suppressSearchFocusForAutomation = decision.suppressSearchFocus;
             showBrowseChrome(true);
             openEmptyAskLane(true);
             return;
         }
-        if (query == null) {
-            return;
-        }
-        String trimmedQuery = query.trim();
-        if (trimmedQuery.isEmpty()) {
-            return;
-        }
-        searchInput.setText(trimmedQuery);
-        pendingAutoFollowUpQuery = decodeAutoQuery(intent.getStringExtra(EXTRA_AUTO_FOLLOWUP_QUERY));
+
+        searchInput.setText(decision.query);
+        pendingAutoFollowUpQuery = decision.followUpQuery;
         showBrowseChrome(false);
-        if (repository == null) {
+        if (decision.effect == MainAutomationIntentPolicy.AutomationEffect.PREPARE_QUERY_WAITING_FOR_REPOSITORY) {
             return;
         }
 
-        autoIntentHandled = true;
-        suppressSearchFocusForAutomation = true;
-        if (autoAsk) {
+        autoIntentHandled = decision.markHandled;
+        suppressSearchFocusForAutomation = decision.suppressSearchFocus;
+        if (decision.route == MainAutomationIntentPolicy.Route.ASK) {
             enterAskResultsRoute();
-            runAsk(trimmedQuery);
+            runAsk(decision.query);
         } else {
             enterSearchResultsRoute();
-            runSearch(trimmedQuery);
+            runSearch(decision.query);
         }
     }
 
@@ -1135,24 +1126,33 @@ public final class MainActivity extends AppCompatActivity {
         return detailSessionPresentationFormatter;
     }
 
-    private String decodeAutoQuery(String query) {
-        if (query == null) {
-            return null;
-        }
-        return Uri.decode(query);
-    }
-
     private boolean hasAutoQuery(Intent intent) {
-        String query = intent == null ? null : decodeAutoQuery(intent.getStringExtra(EXTRA_AUTO_QUERY));
-        return query != null && !query.trim().isEmpty();
+        return MainAutomationIntentPolicy.hasAutoQuery(automationIntentState(intent));
     }
 
     private static boolean shouldOpenEmptyAutoAskLane(String decodedAutoQuery, boolean autoAsk) {
-        return autoAsk && safe(decodedAutoQuery).trim().isEmpty();
+        return MainAutomationIntentPolicy.shouldOpenEmptyAutoAskLane(decodedAutoQuery, autoAsk);
     }
 
     static boolean shouldOpenEmptyAutoAskLaneForTest(String decodedAutoQuery, boolean autoAsk) {
         return shouldOpenEmptyAutoAskLane(decodedAutoQuery, autoAsk);
+    }
+
+    private MainAutomationIntentPolicy.IntentState automationIntentState(Intent intent) {
+        if (intent == null) {
+            return null;
+        }
+        return MainAutomationIntentPolicy.IntentState.fromEncoded(
+            intent.getStringExtra(EXTRA_AUTO_QUERY),
+            intent.getBooleanExtra(EXTRA_AUTO_ASK, false),
+            intent.getStringExtra(EXTRA_AUTO_FOLLOWUP_QUERY)
+        );
+    }
+
+    private static BottomTabDestination phoneTabForAutomationRoute(MainAutomationIntentPolicy.Route route) {
+        return route == MainAutomationIntentPolicy.Route.ASK
+            ? BottomTabDestination.ASK
+            : BottomTabDestination.SEARCH;
     }
 
     private boolean resolveProductReviewMode(Intent intent) {
