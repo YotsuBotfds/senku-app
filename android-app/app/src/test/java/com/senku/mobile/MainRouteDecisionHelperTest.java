@@ -297,6 +297,29 @@ public final class MainRouteDecisionHelperTest {
     }
 
     @Test
+    public void askUnavailableOrNoSourceFailureBackReturnsHomeBeforeExit() {
+        MainRouteDecisionHelper.RouteState failureRoute =
+            MainRouteDecisionHelper.askUnavailableOrNoSourceFailure();
+
+        MainRouteDecisionHelper.Transition firstBack =
+            MainRouteDecisionHelper.systemBack(failureRoute, null);
+        MainRouteDecisionHelper.Transition secondBack =
+            MainRouteDecisionHelper.systemBack(firstBack.routeState, null);
+
+        assertEquals(MainRouteDecisionHelper.Effect.SHOW_PREVIOUS_TAB, firstBack.effect);
+        assertRoute(firstBack.routeState, MainRouteDecisionHelper.Surface.BROWSE, BottomTabDestination.HOME, false);
+        assertEquals(MainRouteDecisionHelper.Effect.EXIT_ACTIVITY, secondBack.effect);
+        assertRoute(secondBack.routeState, MainRouteDecisionHelper.Surface.BROWSE, BottomTabDestination.HOME, false);
+    }
+
+    @Test
+    public void askUnavailableOrNoSourceFailureDoesNotShowHomeChromeBack() {
+        assertFalse(MainRouteDecisionHelper.shouldShowHomeChromeBack(
+            MainRouteDecisionHelper.askUnavailableOrNoSourceFailure()
+        ));
+    }
+
+    @Test
     public void openEmptyAskLaneSelectsAskAndActivatesLaneWithinCurrentSurfaceMode() {
         assertRoute(
             MainRouteDecisionHelper.openEmptyAskLane(new MainRouteDecisionHelper.RouteState(

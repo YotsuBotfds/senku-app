@@ -152,6 +152,30 @@ public final class AskBackendRouteTest {
         assertSame(deterministic, host.lastDeterministicAnswer);
     }
 
+    @Test
+    public void staleBackendSuccessIsIgnoredAfterNewerUnavailableRouteWins() {
+        RouteHost host = availableHost();
+        host.queueUiActions = true;
+        OfflineAnswerEngine.PreparedAnswer stalePrepared = generativePrepared("first generated ask", true);
+        RouteEngine engine = new RouteEngine(stalePrepared);
+        AskQueryController controller = new AskQueryController(host, engine, query -> null);
+
+        controller.runAsk("first generated ask");
+        host.modelFile = null;
+        host.hostInferenceSettings = settings(false);
+        host.reviewedCardRuntimeEnabled = false;
+        host.hasAutoQuery = true;
+        controller.runAsk("second generated ask");
+        host.runQueuedUiAction(0);
+
+        assertEquals(
+            List.of("prepare-started:first generated ask", "model-unavailable:true"),
+            host.events
+        );
+        assertEquals(1, engine.prepareCalls);
+        assertNull(host.lastPreparedSuccess);
+    }
+
     private static RouteHost availableHost() {
         RouteHost host = new RouteHost();
         host.repositoryAvailable = true;

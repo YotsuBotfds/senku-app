@@ -759,7 +759,10 @@ public final class OfflineAnswerEngine {
                 resolvedAnswer = streamedAnswer;
             }
         }
-        if (resolvedAnswer.isEmpty()) {
+        if (resolvedAnswer.isEmpty() && prepared.sources.isEmpty()) {
+            logWarn(TAG, "ask.generate using_no_source_fallback query=\"" + prepared.query + "\"", null);
+            resolvedAnswer = "No specific information available.";
+        } else if (resolvedAnswer.isEmpty()) {
             logWarn(TAG, "ask.generate using_source_summary_fallback query=\"" + prepared.query + "\"", null);
             resolvedAnswer = PromptBuilder.buildSourceFallbackSummary(prepared.query, prepared.sources);
             usedSourceFallback = true;
@@ -2456,7 +2459,8 @@ public final class OfflineAnswerEngine {
         boolean hostFallbackUsed
     ) {
         QueryMetadataProfile metadataProfile = QueryMetadataProfile.fromQuery(prepared.query);
-        boolean abstainShape = shouldAbstain(prepared.sources, prepared.sources, prepared.query, metadataProfile);
+        boolean abstainShape = prepared.sources.isEmpty()
+            || shouldAbstain(prepared.sources, prepared.sources, prepared.query, metadataProfile);
         ConfidenceLabel downgradedConfidence = ConfidenceLabel.LOW;
         String downgradedBody = abstainShape
             ? buildAbstainAnswerBody(prepared.query, prepared.sources, prepared.safetyCritical)

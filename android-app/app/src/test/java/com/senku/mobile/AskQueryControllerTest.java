@@ -170,6 +170,31 @@ public final class AskQueryControllerTest {
     }
 
     @Test
+    public void stalePrepareSuccessIsIgnoredAfterNewerUnavailableRouteWins() {
+        FakeHost host = readyHost();
+        host.queueUiActions = true;
+        FakeEngine engine = new FakeEngine();
+        OfflineAnswerEngine.PreparedAnswer firstPrepared = generativePrepared("first ask");
+        engine.preparedAnswers.put("first ask", firstPrepared);
+        AskQueryController controller = new AskQueryController(host, engine, query -> null);
+
+        controller.runAsk("first ask");
+        host.modelFile = null;
+        host.hostInferenceSettings = settings(false);
+        host.reviewedCardRuntimeEnabled = false;
+        host.hasAutoQuery = true;
+        controller.runAsk("second ask unavailable");
+        host.runQueuedUiAction(0);
+
+        assertEquals(
+            List.of("prepare-started:first ask", "model-unavailable:true"),
+            host.events
+        );
+        assertNull(host.lastPreparedSuccess);
+        assertEquals(1, engine.prepareCalls);
+    }
+
+    @Test
     public void stalePrepareFailureIsIgnoredAfterNewerAskStarts() {
         FakeHost host = readyHost();
         host.queueUiActions = true;
@@ -191,6 +216,28 @@ public final class AskQueryControllerTest {
         );
         assertSame(secondPrepared, host.lastPreparedSuccess);
         assertNull(host.lastFailure);
+    }
+
+    @Test
+    public void stalePrepareFailureIsIgnoredAfterNewerPackUnavailableRouteWins() {
+        FakeHost host = readyHost();
+        host.queueUiActions = true;
+        FakeEngine engine = new FakeEngine();
+        IllegalStateException firstFailure = new IllegalStateException("old failure");
+        engine.prepareExceptions.put("first ask", firstFailure);
+        AskQueryController controller = new AskQueryController(host, engine, query -> null);
+
+        controller.runAsk("first ask");
+        host.repositoryAvailable = false;
+        controller.runAsk("second ask no pack");
+        host.runQueuedUiAction(0);
+
+        assertEquals(
+            List.of("prepare-started:first ask", "pack-unavailable"),
+            host.events
+        );
+        assertNull(host.lastFailure);
+        assertEquals(1, engine.prepareCalls);
     }
 
     @Test

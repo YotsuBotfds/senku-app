@@ -1512,7 +1512,18 @@ public final class OfflineAnswerEngineTest {
         );
         OfflineAnswerEngine.PreparedAnswer prepared = OfflineAnswerEngine.PreparedAnswer.restoredGenerative(
             "What is the safest way to carry a battery in stormy weather?",
-            List.of(),
+            List.of(
+                new SearchResult(
+                    "Battery Transport",
+                    "",
+                    "Keep spare batteries dry and isolate terminals during transport.",
+                    "Keep batteries in a dry container and cover terminals so they cannot short.",
+                    "GD-207",
+                    "Battery storm transport",
+                    "power",
+                    "guide-focus"
+                )
+            ),
             false,
             System.currentTimeMillis() - 1000L,
             false,
@@ -1528,6 +1539,48 @@ public final class OfflineAnswerEngineTest {
         assertTrue(
             Pattern.compile(
                 "^ask\\.generate final_mode=confident route=source_summary_fallback query=\"What is the safest way to carry a battery in stormy weather\\?\" totalElapsedMs=\\d+$"
+            ).matcher(finalModeLines.get().get(0)).matches()
+        );
+    }
+
+    @Test
+    public void generateNoSourceEmptyAnswerDowngradesInsteadOfConfidentSourceFallback() throws Exception {
+        AtomicReference<List<String>> finalModeLines = new AtomicReference<>(new ArrayList<>());
+        OfflineAnswerEngine.setDebugLogSinkForTest((tag, message) -> {
+            if ("SenkuMobile".equals(tag) && message.startsWith("ask.generate final_mode=")) {
+                finalModeLines.get().add(message);
+            }
+        });
+        File tempModel = File.createTempFile("senku-no-source-fallback", ".litertlm");
+        tempModel.deleteOnExit();
+        OfflineAnswerEngine.setGeneratorsForTest(
+            (settings, systemPrompt, prompt, maxTokens) -> {
+                throw new AssertionError("host generation should not run");
+            },
+            (context, modelFile, prompt, maxTokens, listener) -> ""
+        );
+        OfflineAnswerEngine.PreparedAnswer prepared = OfflineAnswerEngine.PreparedAnswer.restoredGenerative(
+            "What is the safest way to carry a battery in stormy weather?",
+            List.of(),
+            false,
+            System.currentTimeMillis() - 1000L,
+            false,
+            "",
+            "",
+            "system",
+            "prompt"
+        );
+
+        OfflineAnswerEngine.AnswerRun answerRun = OfflineAnswerEngine.generate(null, tempModel, prepared);
+
+        assertEquals(OfflineAnswerEngine.AnswerMode.ABSTAIN, answerRun.mode);
+        assertTrue(answerRun.abstain);
+        assertTrue(answerRun.sources.isEmpty());
+        assertTrue(answerRun.answerBody.contains("Senku doesn't have a guide"));
+        assertEquals(1, finalModeLines.get().size());
+        assertTrue(
+            Pattern.compile(
+                "^ask\\.generate final_mode=abstain route=low_coverage_downgrade query=\"What is the safest way to carry a battery in stormy weather\\?\" totalElapsedMs=\\d+$"
             ).matcher(finalModeLines.get().get(0)).matches()
         );
     }
@@ -1667,7 +1720,18 @@ public final class OfflineAnswerEngineTest {
         );
         OfflineAnswerEngine.PreparedAnswer sourceSummaryPrepared = OfflineAnswerEngine.PreparedAnswer.restoredGenerative(
             "How do i maintain a fire in wind?",
-            List.of(),
+            List.of(
+                new SearchResult(
+                    "Fire Management",
+                    "",
+                    "Shield small flames from wind and keep dry tinder close.",
+                    "Use a windbreak, keep tinder dry, and feed fuel gradually.",
+                    "GD-122",
+                    "Wind fire management",
+                    "fire",
+                    "guide-focus"
+                )
+            ),
             false,
             System.currentTimeMillis() - 1000L,
             false,
