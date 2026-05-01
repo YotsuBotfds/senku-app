@@ -6,7 +6,7 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
-public final class DetailSourcePreviewDensityTokenTest {
+public final class DetailSourcePreviewPolicyTokenTest {
     @Test
     public void phoneSourceEntryPreviewUsesCompactReadablePolicyDensity() {
         assertEquals(10, DetailActivity.resolvePhonePortraitSourceCardHorizontalPaddingDp());
