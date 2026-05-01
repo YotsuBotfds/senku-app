@@ -22,7 +22,6 @@ import java.util.Set;
 public final class PackRepository implements AutoCloseable {
     private static final String TAG = "SenkuPackRepo";
     private static final Locale QUERY_LOCALE = Locale.US;
-    private static final int HYBRID_RRF_K = 60;
     private static final int LEXICAL_CANDIDATE_LIMIT = 72;
     private static final int VECTOR_NEIGHBOR_LIMIT = 28;
     private static final int VECTOR_SEED_COUNT = 6;
@@ -956,43 +955,29 @@ public final class PackRepository implements AutoCloseable {
         int turnCount,
         Map<String, Double> relatedWeights
     ) {
-        LinkedHashMap<String, CombinedHit> merged = new LinkedHashMap<>();
+        ArrayList<RankedChunk> lexicalHits = new ArrayList<>();
         int rank = 0;
         for (String guideId : lexicalGuideIds) {
-            RankedChunk hit = buildAnchorPriorTestChunk(guideId, "lexical", rank);
-            CombinedHit combined = merged.get(hit.chunkId);
-            if (combined == null) {
-                combined = new CombinedHit(hit);
-                merged.put(hit.chunkId, combined);
-            }
-            combined.lexicalRank = Math.min(combined.lexicalRank, rank);
-            combined.rrfScore += reciprocalRank(rank);
+            lexicalHits.add(buildAnchorPriorTestChunk(guideId, "lexical", rank));
             rank += 1;
         }
+        ArrayList<RankedChunk> vectorHits = new ArrayList<>();
         rank = 0;
         for (String guideId : vectorGuideIds) {
-            RankedChunk hit = buildAnchorPriorTestChunk(guideId, "vector", rank);
-            CombinedHit combined = merged.get(hit.chunkId);
-            if (combined == null) {
-                combined = new CombinedHit(hit);
-                merged.put(hit.chunkId, combined);
-            }
-            combined.vectorRank = Math.min(combined.vectorRank, rank);
-            combined.vectorScore = Math.max(combined.vectorScore, hit.vectorScore);
-            combined.rrfScore += reciprocalRank(rank);
+            vectorHits.add(buildAnchorPriorTestChunk(guideId, "vector", rank));
             rank += 1;
         }
 
         LinkedHashMap<String, Map<String, Double>> weightsByGuide = new LinkedHashMap<>();
         weightsByGuide.put(anchorGuideId, relatedWeights == null ? Collections.emptyMap() : relatedWeights);
-        applyAnchorPrior(
-            merged,
+        List<CombinedHit> ordered = PackRetrievalFusionPolicy.mergeHybrid(
+            lexicalHits,
+            vectorHits,
             new AnchorPriorDirective(anchorGuideId, turnsSinceAnchor, turnCount),
-            weightsByGuide
+            weightsByGuide,
+            message -> {
+            }
         );
-
-        ArrayList<CombinedHit> ordered = new ArrayList<>(merged.values());
-        ordered.sort((left, right) -> Double.compare(right.rrfScore, left.rrfScore));
         ArrayList<String> guideIds = new ArrayList<>();
         for (CombinedHit combined : ordered) {
             guideIds.add(combined.chunk.guideId);
@@ -1839,188 +1824,25 @@ public final class PackRepository implements AutoCloseable {
         List<RankedChunk> vectorHits,
         AnchorPriorDirective anchorPrior
     ) {
-        LinkedHashMap<String, CombinedHit> merged = new LinkedHashMap<>();
-
-        for (int index = 0; index < lexicalHits.size(); index++) {
-            RankedChunk hit = lexicalHits.get(index);
-            CombinedHit combined = merged.get(hit.chunkId);
-            if (combined == null) {
-                combined = new CombinedHit(hit);
-                merged.put(hit.chunkId, combined);
-            }
-            combined.lexicalRank = Math.min(combined.lexicalRank, index);
-            combined.rrfScore += reciprocalRank(index);
-        }
-
-        for (int index = 0; index < vectorHits.size(); index++) {
-            RankedChunk hit = vectorHits.get(index);
-            CombinedHit combined = merged.get(hit.chunkId);
-            if (combined == null) {
-                combined = new CombinedHit(hit);
-                merged.put(hit.chunkId, combined);
-            }
-            combined.vectorRank = Math.min(combined.vectorRank, index);
-            combined.vectorScore = Math.max(combined.vectorScore, hit.vectorScore);
-            combined.rrfScore += reciprocalRank(index);
-        }
-
-        applyAnchorPrior(merged, anchorPrior, anchorRelatedLinkWeights);
-
-        ArrayList<CombinedHit> ordered = new ArrayList<>(merged.values());
-        ordered.sort((left, right) -> {
-            int scoreOrder = Double.compare(right.rrfScore, left.rrfScore);
-            if (scoreOrder != 0) {
-                return scoreOrder;
-            }
-            int modeOrder = Integer.compare(modePriority(right), modePriority(left));
-            if (modeOrder != 0) {
-                return modeOrder;
-            }
-            int vectorOrder = Float.compare(right.vectorScore, left.vectorScore);
-            if (vectorOrder != 0) {
-                return vectorOrder;
-            }
-            return Integer.compare(left.lexicalRank, right.lexicalRank);
-        });
-        return ordered;
-    }
-
-    private static void applyAnchorPrior(
-        Map<String, CombinedHit> merged,
-        AnchorPriorDirective anchorPrior,
-        Map<String, Map<String, Double>> relatedWeightsByGuide
-    ) {
-        if (merged == null || merged.isEmpty() || anchorPrior == null) {
-            return;
-        }
-        Map<String, Double> relatedWeights = relatedWeightsByGuide.get(anchorPrior.anchorGuideId);
-        if (relatedWeights == null) {
-            relatedWeights = Collections.emptyMap();
-        }
-        for (CombinedHit combined : merged.values()) {
-            String guideId = emptySafe(combined.chunk.guideId).trim();
-            PackAnchorPriorPolicy.AnchorPriorAdjustment adjustment = PackAnchorPriorPolicy.adjustment(
-                anchorPrior.anchorGuideId,
-                anchorPrior.turnsSinceAnchor,
-                guideId,
-                relatedWeights
-            );
-            if (!adjustment.hasBonus()) {
-                continue;
-            }
-            combined.rrfScore += adjustment.bonus;
-            safeLogDebug(
-                "anchor_prior turn=" + anchorPrior.turnCount +
-                    " anchor_gid=" + anchorPrior.anchorGuideId +
-                    " chunk_gid=" + guideId +
-                    " base=" + PackAnchorPriorPolicy.BASE_BONUS +
-                    " decay=" + adjustment.decay +
-                    " weight=" + adjustment.weight +
-                    " bonus=" + adjustment.bonus
-            );
-        }
+        return PackRetrievalFusionPolicy.mergeHybrid(
+            lexicalHits,
+            vectorHits,
+            anchorPrior,
+            anchorRelatedLinkWeights,
+            PackRepository::safeLogDebug
+        );
     }
 
     private List<RankedChunk> mergeLexicalHits(List<RankedChunk> ftsHits, List<RankedChunk> keywordHits) {
-        if (ftsHits.isEmpty()) {
-            return reindexLexicalHits(keywordHits);
-        }
-        if (keywordHits.isEmpty()) {
-            return reindexLexicalHits(ftsHits);
-        }
-
-        LinkedHashMap<String, LexicalCombinedHit> merged = new LinkedHashMap<>();
-
-        for (int index = 0; index < ftsHits.size(); index++) {
-            RankedChunk hit = ftsHits.get(index);
-            LexicalCombinedHit combined = merged.get(hit.chunkId);
-            if (combined == null) {
-                combined = new LexicalCombinedHit(hit);
-                merged.put(hit.chunkId, combined);
-            }
-            combined.ftsRank = Math.min(combined.ftsRank, index);
-            combined.score += reciprocalRank(index) * 1.25;
-        }
-
-        for (int index = 0; index < keywordHits.size(); index++) {
-            RankedChunk hit = keywordHits.get(index);
-            LexicalCombinedHit combined = merged.get(hit.chunkId);
-            if (combined == null) {
-                combined = new LexicalCombinedHit(hit);
-                merged.put(hit.chunkId, combined);
-            }
-            combined.keywordRank = Math.min(combined.keywordRank, index);
-            combined.score += reciprocalRank(index);
-        }
-
-        ArrayList<LexicalCombinedHit> ordered = new ArrayList<>(merged.values());
-        ordered.sort((left, right) -> {
-            int scoreOrder = Double.compare(right.score, left.score);
-            if (scoreOrder != 0) {
-                return scoreOrder;
-            }
-            int bestRankOrder = Integer.compare(bestLexicalRank(left), bestLexicalRank(right));
-            if (bestRankOrder != 0) {
-                return bestRankOrder;
-            }
-            return Integer.compare(left.chunk.document.length(), right.chunk.document.length());
-        });
-
-        ArrayList<RankedChunk> results = new ArrayList<>();
-        for (int index = 0; index < ordered.size(); index++) {
-            results.add(ordered.get(index).chunk.withLexicalRank(index, ordered.get(index).score));
-        }
-        return results;
+        return PackRetrievalFusionPolicy.mergeLexicalHits(ftsHits, keywordHits);
     }
 
     private List<SearchResult> toSearchResults(List<CombinedHit> combinedHits, int limit) {
-        ArrayList<SearchResult> results = new ArrayList<>();
-        Set<String> seenGuideSections = new LinkedHashSet<>();
-        int capped = limit <= 0 ? combinedHits.size() : limit;
-        for (int index = 0; index < combinedHits.size() && results.size() < capped; index++) {
-            CombinedHit combined = combinedHits.get(index);
-            RankedChunk hit = combined.chunk;
-            String guideSectionKey = buildGuideSectionKey(hit.guideId, hit.guideTitle, hit.sectionHeading);
-            if (seenGuideSections.contains(guideSectionKey)) {
-                continue;
-            }
-            seenGuideSections.add(guideSectionKey);
-            String retrievalMode = PackQueryPipelineHelper.retrievalModeForRanks(
-                combined.lexicalRank,
-                combined.vectorRank
-            );
-            results.add(PackQueryPipelineHelper.mapChunkResult(
-                hit.guideTitle,
-                hit.guideId,
-                hit.sectionHeading,
-                hit.category,
-                hit.document,
-                retrievalMode,
-                hit.contentRole,
-                hit.timeHorizon,
-                hit.structureType,
-                hit.topicTags
-            ));
-        }
-        return results;
+        return PackRetrievalFusionPolicy.toSearchResults(combinedHits, limit);
     }
 
     static String buildGuideSectionKey(String guideId, String guideTitle, String sectionHeading) {
         return PackQueryPipelineHelper.guideSectionKey(guideId, guideTitle, sectionHeading);
-    }
-
-    private static int modePriority(CombinedHit hit) {
-        if (hit.lexicalRank != Integer.MAX_VALUE && hit.vectorRank != Integer.MAX_VALUE) {
-            return 3;
-        }
-        if (hit.vectorRank != Integer.MAX_VALUE) {
-            return 2;
-        }
-        return 1;
-    }
-
-    private static double reciprocalRank(int rank) {
-        return 1.0 / (HYBRID_RRF_K + rank + 1.0);
     }
 
     static String buildFtsQuery(QueryTerms queryTerms) {
@@ -2153,18 +1975,6 @@ public final class PackRepository implements AutoCloseable {
             structureType,
             topicTags
         );
-    }
-
-    private List<RankedChunk> reindexLexicalHits(List<RankedChunk> hits) {
-        ArrayList<RankedChunk> reindexed = new ArrayList<>();
-        for (int index = 0; index < hits.size(); index++) {
-            reindexed.add(hits.get(index).withLexicalRank(index));
-        }
-        return reindexed;
-    }
-
-    private static int bestLexicalRank(LexicalCombinedHit hit) {
-        return Math.min(hit.ftsRank, hit.keywordRank);
     }
 
     private static Set<String> buildStopTokens() {
@@ -2656,7 +2466,7 @@ public final class PackRepository implements AutoCloseable {
         }
     }
 
-    private static final class RankedChunk {
+    static final class RankedChunk {
         final String chunkId;
         final int vectorRowId;
         final String guideTitle;
@@ -2752,7 +2562,7 @@ public final class PackRepository implements AutoCloseable {
         }
     }
 
-    private static final class CombinedHit {
+    static final class CombinedHit {
         final RankedChunk chunk;
         double rrfScore;
         int lexicalRank = Integer.MAX_VALUE;
@@ -2764,7 +2574,7 @@ public final class PackRepository implements AutoCloseable {
         }
     }
 
-    private static final class LexicalCombinedHit {
+    static final class LexicalCombinedHit {
         final RankedChunk chunk;
         double score;
         int ftsRank = Integer.MAX_VALUE;
