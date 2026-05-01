@@ -166,9 +166,9 @@ Purpose: prevent future agents from rerunning Ask/query backend cleanup that is 
   and hidden-placeholder exceptions.
 - Functional UX smoke orchestration is current through `f7887fc6`:
   `scripts/run_android_functional_ux_smoke_matrix.ps1` runs the local-only
-  `phone-functional`, `phone-functional-saved`, and
-  `phone-functional-back-provenance` presets and writes a matrix summary; the
-  PromptHarness also covers restored Saved destination Back returning Home.
+  `phone-functional`, `phone-functional-follow-up`, `phone-functional-saved`,
+  and `phone-functional-back-provenance` presets and writes a matrix summary;
+  the PromptHarness also covers restored Saved destination Back returning Home.
 - Latest local proof after `f7887fc6`: focused backend/search/typography tests
   passed; `git diff --check` passed; full Android
   `:app:testDebugUnitTest :app:assembleDebug :app:assembleDebugAndroidTest`

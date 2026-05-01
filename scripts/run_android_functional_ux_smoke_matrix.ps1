@@ -27,6 +27,7 @@ Functional UX smoke matrix wrapper.
 Runs the existing run_android_instrumented_ui_smoke.ps1 presets used by the
 release-scout functional UX check:
   - phone-functional
+  - phone-functional-follow-up
   - phone-functional-saved
   - phone-functional-back-provenance
 
@@ -86,6 +87,7 @@ New-Item -ItemType Directory -Force -Path $matrixRoot | Out-Null
 
 $presets = @(
     "phone-functional",
+    "phone-functional-follow-up",
     "phone-functional-saved",
     "phone-functional-back-provenance"
 )
