@@ -2258,12 +2258,12 @@ public final class MainActivity extends AppCompatActivity {
         }
         View tabView = findViewById(viewIds[0]);
         if (tabView != null) {
-            tabView.setOnClickListener(v -> openPhoneTabFromTap(destination));
+            MainNavigationTabPolicy.TabDisplayModel model =
+                MainNavigationTabPolicy.modelForSlot(destination, currentMainRouteState());
+            tabView.setOnClickListener(v -> openPhoneTabFromTap(model.displayedDestination));
             tabView.setClickable(true);
             tabView.setFocusable(true);
-            tabView.setContentDescription(
-                presentationFormatter().buildMainNavigationContentDescription(destination)
-            );
+            tabView.setContentDescription(model.contentDescription);
         }
         for (int index = 1; index < viewIds.length; index++) {
             View child = findViewById(viewIds[index]);
@@ -2325,17 +2325,16 @@ public final class MainActivity extends AppCompatActivity {
         int iconId,
         int labelId
     ) {
-        BottomTabDestination displayDestination =
-            MainRouteDecisionHelper.displayedPhoneTabSlot(destination, routeState);
-        boolean selected = displayDestination == MainRouteDecisionHelper.displayedPhoneTab(routeState);
+        MainNavigationTabPolicy.TabDisplayModel model =
+            MainNavigationTabPolicy.modelForSlot(destination, routeState);
+        BottomTabDestination displayDestination = model.displayedDestination;
+        boolean selected = model.selected;
         int color = getColor(selected ? R.color.senku_rev03_accent : R.color.senku_rev03_ink_2);
         View tabView = findViewById(tabId);
         if (tabView != null) {
             tabView.setSelected(selected);
             tabView.setOnClickListener(v -> openPhoneTabFromTap(displayDestination));
-            tabView.setContentDescription(
-                buildMainNavigationContentDescription(displayDestination)
-            );
+            tabView.setContentDescription(model.contentDescription);
         }
         View iconView = findViewById(iconId);
         if (iconView instanceof ImageView) {
@@ -2345,7 +2344,7 @@ public final class MainActivity extends AppCompatActivity {
         View labelView = findViewById(labelId);
         if (labelView instanceof TextView) {
             TextView label = (TextView) labelView;
-            label.setText(buildMainNavigationLabel(displayDestination));
+            label.setText(model.label);
             label.setTextColor(color);
             label.setTypeface(null, selected ? Typeface.BOLD : Typeface.NORMAL);
             label.setSelected(selected);
@@ -2916,7 +2915,7 @@ public final class MainActivity extends AppCompatActivity {
             );
             bottomTabBarView.setTabs(
                 buildPhoneTabs(routeState),
-                MainRouteDecisionHelper.displayedPhoneTab(routeState),
+                MainNavigationTabPolicy.displayedActiveDestination(routeState),
                 this::openPhoneTabFromTap
             );
         }
@@ -2929,37 +2928,17 @@ public final class MainActivity extends AppCompatActivity {
 
     private List<BottomTabModel> buildPhoneTabs(MainRouteDecisionHelper.RouteState routeState) {
         List<BottomTabDestination> visibleDestinations = buildVisiblePhoneTabDestinations();
-        ArrayList<BottomTabModel> tabs = new ArrayList<>(visibleDestinations.size());
-        for (BottomTabDestination destination : visibleDestinations) {
-            BottomTabDestination displayDestination =
-                MainRouteDecisionHelper.displayedPhoneTabSlot(destination, routeState);
-            int labelRes = phoneTabLabelResource(displayDestination);
-            String fallbackLabel = getString(labelRes);
-            String label = buildMainNavigationLabel(displayDestination);
-            if (label.isEmpty()) {
-                label = fallbackLabel;
-            }
+        List<MainNavigationTabPolicy.TabDisplayModel> tabModels =
+            MainNavigationTabPolicy.modelsForSlots(visibleDestinations, routeState);
+        ArrayList<BottomTabModel> tabs = new ArrayList<>(tabModels.size());
+        for (MainNavigationTabPolicy.TabDisplayModel tabModel : tabModels) {
             tabs.add(new BottomTabModel(
-                displayDestination,
-                label,
-                buildMainNavigationContentDescription(displayDestination)
+                tabModel.displayedDestination,
+                tabModel.label,
+                tabModel.contentDescription
             ));
         }
         return tabs;
-    }
-
-    private String buildMainNavigationLabel(BottomTabDestination destination) {
-        if (destination == BottomTabDestination.SEARCH) {
-            return getString(R.string.bottom_tab_search);
-        }
-        return presentationFormatter().buildMainNavigationLabel(destination);
-    }
-
-    private String buildMainNavigationContentDescription(BottomTabDestination destination) {
-        if (destination == BottomTabDestination.SEARCH) {
-            return getString(R.string.bottom_tab_search);
-        }
-        return presentationFormatter().buildMainNavigationContentDescription(destination);
     }
 
     static List<BottomTabDestination> buildVisiblePhoneTabDestinations() {
@@ -3055,23 +3034,6 @@ public final class MainActivity extends AppCompatActivity {
         int savedGuideCount
     ) {
         return SavedGuidesPolicy.shouldShowSection(browseMode, activePhoneTab, savedGuideCount);
-    }
-
-    private static int phoneTabLabelResource(BottomTabDestination destination) {
-        switch (destination) {
-            case HOME:
-                return R.string.bottom_tab_home;
-            case ASK:
-                return R.string.bottom_tab_ask;
-            case PINS:
-                return R.string.bottom_tab_pins;
-            case SEARCH:
-                return R.string.bottom_tab_search;
-            case THREADS:
-                return R.string.bottom_tab_threads;
-            default:
-                return R.string.bottom_tab_home;
-        }
     }
 
     private void openPhoneTabFromTap(BottomTabDestination destination) {
