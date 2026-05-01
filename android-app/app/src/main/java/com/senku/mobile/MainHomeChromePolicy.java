@@ -55,6 +55,10 @@ final class MainHomeChromePolicy {
         return cleanMode + " \u2022 " + cleanTitle;
     }
 
+    static boolean shouldShowTabletSearchTopbar(boolean tabletSearchLayout, boolean browseMode) {
+        return tabletSearchLayout && !browseMode;
+    }
+
     private static String safe(String value) {
         return value == null ? "" : value;
     }

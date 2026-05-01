@@ -3607,7 +3607,9 @@ public final class DetailActivity extends AppCompatActivity {
             model,
             this::syncFollowUpDraftFromCompose,
             this::runFollowUp,
-            showRetry && retryPresentation.actionEnabled ? this::retryLastFailedQuery : null,
+            FollowUpComposerController.shouldAttachDockedRetryAction(showRetry, retryPresentation)
+                ? this::retryLastFailedQuery
+                : null,
             this::onDockedComposerFocusChanged
         );
         preservePhoneLandscapeThreadTopAfterComposerSetup();

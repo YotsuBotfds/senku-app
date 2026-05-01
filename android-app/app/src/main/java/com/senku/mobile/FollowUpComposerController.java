@@ -123,6 +123,15 @@ final class FollowUpComposerController {
         return retryAvailable && !landscapePhone;
     }
 
+    static boolean shouldAttachDockedRetryAction(
+        boolean retryControlVisible,
+        RetryPresentation retryPresentation
+    ) {
+        return retryControlVisible
+            && retryPresentation != null
+            && retryPresentation.actionEnabled;
+    }
+
     static FollowUpComposerState resolveGenerationStart(FollowUpComposerState state) {
         return safeState(state).withClearedDraft();
     }

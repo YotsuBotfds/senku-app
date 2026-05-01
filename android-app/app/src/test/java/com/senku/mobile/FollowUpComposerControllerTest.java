@@ -520,6 +520,35 @@ public final class FollowUpComposerControllerTest {
     }
 
     @Test
+    public void dockedRetryActionAttachesOnlyWhenVisibleAndEnabled() {
+        FollowUpComposerState retryState = FollowUpComposerState.idle(
+            "",
+            FollowUpComposerState.Surface.PHONE
+        ).withFailure("offline failure", "retry this query");
+        FollowUpComposerController.RetryPresentation visibleEnabled =
+            FollowUpComposerController.resolveRetryPresentation(retryState, true);
+        FollowUpComposerController.RetryPresentation suppressed =
+            FollowUpComposerController.resolveRetryPresentation(retryState, false);
+
+        assertEquals(
+            true,
+            FollowUpComposerController.shouldAttachDockedRetryAction(true, visibleEnabled)
+        );
+        assertEquals(
+            false,
+            FollowUpComposerController.shouldAttachDockedRetryAction(false, visibleEnabled)
+        );
+        assertEquals(
+            false,
+            FollowUpComposerController.shouldAttachDockedRetryAction(true, suppressed)
+        );
+        assertEquals(
+            false,
+            FollowUpComposerController.shouldAttachDockedRetryAction(true, null)
+        );
+    }
+
+    @Test
     public void nullStateResolvesToEmptyPhoneComposerDecisions() {
         FollowUpComposerController.SubmitDecision submit =
             FollowUpComposerController.resolveSubmit(null);

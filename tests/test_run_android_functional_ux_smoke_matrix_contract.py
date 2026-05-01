@@ -1,5 +1,6 @@
 import re
 import subprocess
+import tempfile
 import unittest
 from pathlib import Path
 
@@ -104,6 +105,124 @@ class RunAndroidFunctionalUxSmokeMatrixContractTests(unittest.TestCase):
         self.assertIn('$matrixPresetStatus = if ($presetResult.timed_out) {', self.script)
         self.assertIn('"matrix_timeout"', self.script)
         self.assertIn('"Matrix preset watchdog timed out after $PresetTimeoutSeconds seconds."', self.script)
+
+    def test_process_argument_builder_quotes_child_runner_arguments(self):
+        function_match = re.search(
+            r"function Convert-ToProcessArgumentString \{.*?\n\}",
+            self.script,
+            re.S,
+        )
+        self.assertIsNotNone(function_match)
+
+        with tempfile.TemporaryDirectory() as temp_dir:
+            harness = Path(temp_dir) / "quote_child_runner_arguments.ps1"
+            harness.write_text(
+                function_match.group(0)
+                + r'''
+$actual = Convert-ToProcessArgumentString -Arguments @(
+    "-NoProfile",
+    "-File",
+    "C:\repo path\scripts\run_android_instrumented_ui_smoke.ps1",
+    "-Device",
+    "emulator-5554",
+    "-ArtifactRoot",
+    "artifacts/android functional ux/phone-functional",
+    "-SummaryPath",
+    "C:\repo path\out\run summary.json",
+    "-LiteralQuote",
+    'value"withquote'
+)
+$expected = '-NoProfile -File "C:\repo path\scripts\run_android_instrumented_ui_smoke.ps1" -Device emulator-5554 -ArtifactRoot "artifacts/android functional ux/phone-functional" -SummaryPath "C:\repo path\out\run summary.json" -LiteralQuote "value\"withquote"'
+if ($actual -ne $expected) {
+    Write-Error ("Expected [{0}] but got [{1}]" -f $expected, $actual)
+    exit 1
+}
+''',
+                encoding="utf-8",
+            )
+
+            result = subprocess.run(
+                [
+                    "powershell",
+                    "-NoProfile",
+                    "-ExecutionPolicy",
+                    "Bypass",
+                    "-File",
+                    str(harness),
+                ],
+                cwd=REPO_ROOT,
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+
+        self.assertEqual(result.returncode, 0, result.stderr + result.stdout)
+
+    def test_watchdog_process_start_info_contract_uses_argument_array_and_timeout_kill(self):
+        inspector_source = r'''
+param([string]$Path)
+$tokens = $null
+$errors = $null
+$ast = [System.Management.Automation.Language.Parser]::ParseFile($Path, [ref]$tokens, [ref]$errors)
+if ($errors.Count -gt 0) {
+    throw "PowerShell parser errors were found."
+}
+$watchdog = $ast.Find({
+    param($node)
+    $node -is [System.Management.Automation.Language.FunctionDefinitionAst] -and
+        $node.Name -eq "Invoke-SmokePresetProcess"
+}, $true)
+if ($null -eq $watchdog) {
+    throw "Invoke-SmokePresetProcess was not found."
+}
+$call = $ast.Find({
+    param($node)
+    $node -is [System.Management.Automation.Language.CommandAst] -and
+        $node.GetCommandName() -eq "Invoke-SmokePresetProcess"
+}, $true)
+if ($null -eq $call) {
+    throw "Invoke-SmokePresetProcess call was not found."
+}
+$watchdogText = $watchdog.Extent.Text
+$callText = $call.Extent.Text
+[pscustomobject]@{
+    start_info_created = $watchdogText -match "New-Object\s+System\.Diagnostics\.ProcessStartInfo"
+    filename_from_parameter = $watchdogText -match "\$psi\.FileName\s*=\s*\$ExecutablePath"
+    arguments_from_converter = $watchdogText -match "\$psi\.Arguments\s*=\s*Convert-ToProcessArgumentString\s+-Arguments\s+\$Arguments"
+    shell_execute_disabled = $watchdogText -match "\$psi\.UseShellExecute\s*=\s*\$false"
+    process_uses_start_info = $watchdogText -match "\$process\.StartInfo\s*=\s*\$psi"
+    waits_in_one_second_ticks = $watchdogText -match "\$process\.WaitForExit\(1000\)"
+    timeout_path_sets_flag = $watchdogText -match "\$timedOut\s*=\s*\$true"
+    timeout_path_kills_tree = $watchdogText -match "Stop-ProcessTreeBestEffort\s+-Process\s+\$process"
+    timeout_exit_code_is_124 = $watchdogText -match "if\s*\(\$timedOut\)\s*\{\s*124\s*\}"
+    call_passes_executable = $callText -match "-ExecutablePath\s+\$powerShellExe"
+    call_passes_argument_array = $callText -match "-Arguments\s+\$arguments"
+    call_passes_timeout = $callText -match "-TimeoutSeconds\s+\$PresetTimeoutSeconds"
+    call_passes_progress_interval = $callText -match "-ProgressIntervalSeconds\s+\$PresetProgressIntervalSeconds"
+} | ConvertTo-Json -Compress
+'''
+        with tempfile.TemporaryDirectory() as temp_dir:
+            inspector = Path(temp_dir) / "inspect_watchdog_contract.ps1"
+            inspector.write_text(inspector_source, encoding="utf-8")
+            result = subprocess.run(
+                [
+                    "powershell",
+                    "-NoProfile",
+                    "-ExecutionPolicy",
+                    "Bypass",
+                    "-File",
+                    str(inspector),
+                    "-Path",
+                    str(SCRIPT),
+                ],
+                cwd=REPO_ROOT,
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+
+        self.assertEqual(result.returncode, 0, result.stderr + result.stdout)
+        self.assertNotIn(":false", result.stdout, result.stdout)
 
     def test_parser_gate_passes(self):
         result = subprocess.run(

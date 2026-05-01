@@ -1344,6 +1344,90 @@ public final class PromptHarnessSmokeTest {
     }
 
     @Test
+    public void noSourceAskSystemBackReturnsToStableMainRoute() throws Exception {
+        Intent launchIntent = productReviewMainActivityIntent();
+        launchIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        launchIntent.putExtra(EXTRA_AUTO_ASK, true);
+        ActivityScenario<MainActivity> scenario = ActivityScenario.launch(launchIntent);
+        try {
+            awaitHarnessIdle();
+            Assert.assertTrue(
+                "home search input never appeared before no-source Ask Back proof; harness signals="
+                    + HarnessTestSignals.snapshot(),
+                device.wait(Until.hasObject(By.res(APP_PACKAGE, "search_input")), SEARCH_WAIT_MS)
+            );
+            scenario.onActivity(activity -> {
+                assertCurrentMainRouteState(
+                    activity,
+                    "no-source Ask Back proof should start from the Ask lane",
+                    MainRouteDecisionHelper.Surface.RECENT_THREADS,
+                    BottomTabDestination.ASK,
+                    true,
+                    BottomTabDestination.ASK
+                );
+                activity.startActivity(noSourceAskBackProofIntent(activity));
+            });
+            assertResumedDetailActivitySettled(
+                DETAIL_WAIT_MS,
+                8,
+                "",
+                false,
+                "no-source Ask should open an abstain detail before Back"
+            );
+            InstrumentationRegistry.getInstrumentation().runOnMainSync(() -> {
+                Activity activity = getResumedActivityOnMainThread();
+                Assert.assertTrue("no-source Ask should resume DetailActivity", activity instanceof DetailActivity);
+                DetailSettleSignals signals = collectDetailSettleSignals(activity);
+                Assert.assertTrue(
+                    "no-source Ask should settle as an abstain/no-match route; " + describeDetailSignals(signals),
+                    signals.abstainRoute
+                );
+                Assert.assertEquals(
+                    "no-source Ask should not attach source chips to the no-match answer",
+                    0,
+                    signals.sourceCount
+                );
+                Assert.assertTrue(
+                    "no-source Ask body should tell the user the pack has no matching guide",
+                    containsAny(signals.bodyText, "doesn't have a guide", "no guide match")
+                );
+            });
+
+            device.pressBack();
+            waitForMainSearchInputReady(SEARCH_WAIT_MS);
+            Assert.assertFalse(
+                "system Back from no-source Ask should finish the detail activity",
+                isResumedActivity(DetailActivity.class)
+            );
+            scenario.onActivity(activity -> {
+                assertCurrentMainRouteState(
+                    activity,
+                    "system Back from no-source Ask detail should return to the Ask lane underneath",
+                    MainRouteDecisionHelper.Surface.RECENT_THREADS,
+                    BottomTabDestination.ASK,
+                    true,
+                    BottomTabDestination.ASK
+                );
+            });
+            device.pressBack();
+            waitForMainSearchInputReady(SEARCH_WAIT_MS);
+            scenario.onActivity(activity -> {
+                assertCurrentMainRouteState(
+                    activity,
+                    "system Back from the no-source Ask result route should return to Browse/Home",
+                    MainRouteDecisionHelper.Surface.BROWSE,
+                    BottomTabDestination.HOME,
+                    false,
+                    BottomTabDestination.HOME
+                );
+            });
+            captureUiState("no_source_ask_system_back_main");
+        } finally {
+            closeScenarioLeniently(scenario);
+        }
+    }
+
+    @Test
     public void explicitSearchAfterAnswerBackClearsAskOwnership() {
         ActivityScenario<MainActivity> scenario = launchProductReviewMainActivity();
         try {
@@ -2320,6 +2404,23 @@ public final class PromptHarnessSmokeTest {
             });
             captureUiState("emergency_portrait_answer");
         }
+    }
+
+    private Intent noSourceAskBackProofIntent(Context context) {
+        return DetailActivity.newAnswerIntent(
+            context,
+            "Glass forging",
+            "Abstain | no guide match | instant",
+            "Senku doesn't have a guide for \"glass forging\" in this pack.\n\n"
+                + "Closest matches in the library:\n- Fire basics\n- Improvised tools\n\n"
+                + "Ask a narrower field question or open a nearby guide before acting.",
+            new ArrayList<>(),
+            null,
+            null,
+            "no-source-ask-back-proof",
+            OfflineAnswerEngine.AnswerMode.ABSTAIN,
+            OfflineAnswerEngine.ConfidenceLabel.LOW
+        );
     }
 
     private Intent emergencyBurnHazardAnswerIntent(Context context) {

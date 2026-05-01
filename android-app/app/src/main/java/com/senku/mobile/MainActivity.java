@@ -3950,7 +3950,8 @@ public final class MainActivity extends AppCompatActivity {
 
     private void renderBrowseChrome(boolean show) {
         updateHomeChromeTitle(show, searchInput == null ? "" : searchInput.getText().toString());
-        boolean showSearchTopbar = isTabletSearchLayout() && tabletSearchTopbarRow != null && !show;
+        boolean showSearchTopbar = tabletSearchTopbarRow != null
+            && MainHomeChromePolicy.shouldShowTabletSearchTopbar(isTabletSearchLayout(), show);
         int visibility = show ? View.VISIBLE : View.GONE;
         if (browseScrollView != null) {
             browseScrollView.setVisibility(visibility);

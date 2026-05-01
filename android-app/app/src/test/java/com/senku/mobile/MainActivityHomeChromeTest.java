@@ -499,6 +499,13 @@ public final class MainActivityHomeChromeTest {
     }
 
     @Test
+    public void tabletSearchTopbarOnlyShowsOnTabletResultSurfaces() {
+        assertTrue(MainHomeChromePolicy.shouldShowTabletSearchTopbar(true, false));
+        assertFalse(MainHomeChromePolicy.shouldShowTabletSearchTopbar(true, true));
+        assertFalse(MainHomeChromePolicy.shouldShowTabletSearchTopbar(false, false));
+    }
+
+    @Test
     public void landscapePhoneSearchChromeKeepsTopContextSeparateFromCountRow() {
         assertEquals(
             "\u2039  |  SEARCH rain shelter",
