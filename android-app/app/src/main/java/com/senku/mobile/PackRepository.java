@@ -662,26 +662,15 @@ public final class PackRepository implements AutoCloseable {
     }
 
     private static boolean shouldApplyMetadataRerank(QueryTerms queryTerms) {
-        if (queryTerms == null) {
-            return false;
-        }
-        boolean routeFocused = queryTerms.routeProfile != null && queryTerms.routeProfile.isRouteFocused();
-        boolean hasStructureHint = queryTerms.metadataProfile != null
-            && !emptySafe(queryTerms.metadataProfile.preferredStructureType()).isEmpty();
-        return routeFocused || hasStructureHint;
+        return PackSearchRerankPolicy.shouldApplyMetadataRerank(queryTerms);
     }
 
     private static List<RerankedResult> passthroughRerankedResults(List<SearchResult> results, int limit) {
-        ArrayList<RerankedResult> passthrough = new ArrayList<>();
-        int capped = limit <= 0 ? results.size() : Math.min(limit, results.size());
-        for (int index = 0; index < capped; index++) {
-            passthrough.add(new RerankedResult(results.get(index), index, 0, 0.0));
-        }
-        return passthrough;
+        return PackSearchRerankPolicy.passthroughRerankedResults(results, limit);
     }
 
     private static List<RerankedResult> maybeRerankResultsDetailed(QueryTerms queryTerms, List<SearchResult> results, int limit) {
-        if (results.isEmpty()) {
+        if (results == null || results.isEmpty()) {
             return Collections.emptyList();
         }
         if (!shouldApplyMetadataRerank(queryTerms)) {
@@ -689,47 +678,11 @@ public final class PackRepository implements AutoCloseable {
         }
 
         long rerankStartedAtNanos = elapsedRealtimeNanosSafe();
-        LinkedHashMap<String, PackAnswerAnchorScoringPolicy.GuideScore> guides = new LinkedHashMap<>();
-        ArrayList<RerankedResult> scored = new ArrayList<>();
-        for (int index = 0; index < results.size(); index++) {
-            SearchResult result = results.get(index);
-            PackSupportScoringPolicy.SupportBreakdown support =
-                PackSupportScoringPolicy.supportBreakdown(queryTerms, result);
-            int metadataBonus = support.metadataBonus;
-            int score = support.supportWithMetadata();
-            score += rerankModeBonus(result.retrievalMode);
-
-            String guideKey = PackSupportScoringPolicy.guideGroupKey(result);
-            PackAnswerAnchorScoringPolicy.GuideScore guide = guides.get(guideKey);
-            if (guide == null) {
-                guide = new PackAnswerAnchorScoringPolicy.GuideScore(result);
-                guides.put(guideKey, guide);
-            }
-            guide.totalScore += Math.max(1, score);
-            guide.bestScore = Math.max(guide.bestScore, score);
-            guide.sectionKeys.add(buildGuideSectionKey(result.guideId, result.title, result.sectionHeading));
-            scored.add(new RerankedResult(result, index, metadataBonus, score));
-        }
-
-        for (RerankedResult scoredResult : scored) {
-            PackAnswerAnchorScoringPolicy.GuideScore guide =
-                guides.get(PackSupportScoringPolicy.guideGroupKey(scoredResult.result));
-            if (guide == null) {
-                continue;
-            }
-            scoredResult.addGuideBonus(guideAggregationBonus(guide));
-        }
-
-        scored.sort((left, right) -> {
-            int scoreOrder = Double.compare(right.finalScore, left.finalScore);
-            if (scoreOrder != 0) {
-                return scoreOrder;
-            }
-            return Integer.compare(left.originalIndex, right.originalIndex);
-        });
-
-        int capped = limit <= 0 ? scored.size() : Math.min(limit, scored.size());
-        ArrayList<RerankedResult> ordered = new ArrayList<>(scored.subList(0, capped));
+        List<RerankedResult> ordered = PackSearchRerankPolicy.maybeRerankResultsDetailed(
+            queryTerms,
+            results,
+            limit
+        );
         safeLogDebug(
             buildRerankTimingDebugLine(
                 queryTerms.queryLower,
@@ -747,31 +700,11 @@ public final class PackRepository implements AutoCloseable {
     }
 
     private static int rerankModeBonus(String retrievalMode) {
-        String mode = emptySafe(retrievalMode).trim().toLowerCase(QUERY_LOCALE);
-        if ("route-focus".equals(mode)) {
-            return 8;
-        }
-        if ("hybrid".equals(mode)) {
-            return 4;
-        }
-        if ("guide-focus".equals(mode)) {
-            return 3;
-        }
-        if ("lexical".equals(mode)) {
-            return 2;
-        }
-        return 0;
+        return PackSearchRerankPolicy.rerankModeBonus(retrievalMode);
     }
 
     private static int guideAggregationBonus(PackAnswerAnchorScoringPolicy.GuideScore guide) {
-        if (guide == null) {
-            return 0;
-        }
-        int bonus = Math.min(24, guide.totalScore / 3);
-        if (guide.sectionKeys.size() >= 2) {
-            bonus += 6;
-        }
-        return bonus;
+        return PackSearchRerankPolicy.guideAggregationBonus(guide);
     }
 
     private static String buildRerankTimingDebugLine(
