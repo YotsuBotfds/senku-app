@@ -101,7 +101,7 @@ final class PackRouteFocusedCandidateCollector {
         if (row == null || queryTerms == null || queryTerms.routeProfile == null || routeSpec == null) {
             return;
         }
-        if (!PackRepository.matchesSpecializedExplicitTopicRow(queryTerms, row.structureType, row.topicTags)) {
+        if (!PackRouteRowFilterPolicy.matchesSpecializedExplicitTopicRow(queryTerms, row.structureType, row.topicTags)) {
             return;
         }
         if (!queryTerms.routeProfile.supportsRouteResult(
@@ -114,7 +114,7 @@ final class PackRouteFocusedCandidateCollector {
         )) {
             return;
         }
-        if (!PackRepository.matchesSpecializedRouteMetadata(
+        if (!PackRouteRowFilterPolicy.matchesSpecializedRouteMetadata(
             queryTerms,
             row.section,
             row.structureType,
@@ -124,7 +124,7 @@ final class PackRouteFocusedCandidateCollector {
         }
 
         int sectionHeadingScore = queryTerms.metadataProfile.sectionHeadingBonus(row.section);
-        if (!PackRepository.shouldKeepBroadWaterRouteRow(
+        if (!PackRouteRowFilterPolicy.shouldKeepBroadWaterRouteRow(
             queryTerms,
             row.section,
             row.contentRole,
@@ -134,7 +134,7 @@ final class PackRouteFocusedCandidateCollector {
         )) {
             return;
         }
-        if (!PackRepository.shouldKeepBroadHouseRouteRow(
+        if (!PackRouteRowFilterPolicy.shouldKeepBroadHouseRouteRow(
             queryTerms,
             row.section,
             row.category,
@@ -187,7 +187,7 @@ final class PackRouteFocusedCandidateCollector {
         }
 
         SearchResult result = candidateKind.toSearchResult(row);
-        if (!PackRepository.shouldKeepSpecializedDirectSignalRouteResult(queryTerms, result)) {
+        if (!PackRouteRowFilterPolicy.shouldKeepSpecializedDirectSignalRouteResult(queryTerms, result)) {
             return;
         }
         String sectionKey = PackRepository.buildGuideSectionKey(

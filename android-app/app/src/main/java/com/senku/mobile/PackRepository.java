@@ -1550,83 +1550,11 @@ public final class PackRepository implements AutoCloseable {
     }
 
     static boolean shouldKeepSpecializedDirectSignalRouteResult(QueryTerms queryTerms, SearchResult result) {
-        if (queryTerms == null || result == null || queryTerms.metadataProfile == null) {
-            return true;
-        }
-        String preferredStructureType = queryTerms.metadataProfile.preferredStructureType();
-        if (!"soapmaking".equals(preferredStructureType) || !shouldRequireDirectAnchorSignal(queryTerms)) {
-            return true;
-        }
-        return hasDirectAnchorSignal(queryTerms, result);
+        return PackRouteRowFilterPolicy.shouldKeepSpecializedDirectSignalRouteResult(queryTerms, result);
     }
 
     static boolean hasDirectAnchorSignal(QueryTerms queryTerms, SearchResult result) {
-        if (queryTerms.metadataProfile.hasExplicitTopic("water_distribution")) {
-            boolean distributionTagged = SpecializedAnchorCandidatePolicy.hasTopicTag(result, "water_distribution");
-            if (!distributionTagged) {
-                return false;
-            }
-            boolean titleSignal = hasWaterDistributionTitleSignal(result);
-            String retrievalMode = emptySafe(result.retrievalMode).trim().toLowerCase(QUERY_LOCALE);
-            if ("guide-focus".equals(retrievalMode) && emptySafe(result.sectionHeading).trim().isEmpty()) {
-                return PackRouteSignalPolicy.hasStrongWaterDistributionGuideSignal(result);
-            }
-            if (queryTerms.metadataProfile.sectionHeadingBonus(result.sectionHeading) > 0) {
-                return true;
-            }
-            String category = emptySafe(result.category).trim().toLowerCase(QUERY_LOCALE);
-            if (!"building".equals(category) && !"utility".equals(category)) {
-                return false;
-            }
-            return titleSignal || PackRouteSignalPolicy.hasWaterDistributionDetailSignal(result);
-        }
-        if (queryTerms.metadataProfile.hasExplicitTopicFocus()) {
-            if (SpecializedAnchorCandidatePolicy.hasDirectSectionHeadingSignal(queryTerms.metadataProfile, result)) {
-                return true;
-            }
-            if (!SpecializedAnchorCandidatePolicy.hasDirectExplicitTopicOverlap(queryTerms.metadataProfile, result)) {
-                return false;
-            }
-            String preferredStructureType = queryTerms.metadataProfile.preferredStructureType();
-            if ("soapmaking".equals(preferredStructureType)) {
-                return PackRouteSignalPolicy.hasStrongSoapmakingGuideSignal(result);
-            }
-            if (requiresSpecializedRouteAnchorSignal(preferredStructureType)) {
-                if (SpecializedAnchorCandidatePolicy.isBlankGuideFocusOutsidePreferredStructure(
-                    queryTerms.metadataProfile,
-                    result
-                )) {
-                    return false;
-                }
-                int lexicalScore = lexicalKeywordScore(
-                    queryTerms,
-                    result.title,
-                    result.sectionHeading,
-                    result.category,
-                    "",
-                    "",
-                    ""
-                );
-                return lexicalScore > 0;
-            }
-            return true;
-        }
-        int lexicalScore = lexicalKeywordScore(
-            queryTerms,
-            result.title,
-            result.sectionHeading,
-            result.category,
-            result.topicTags,
-            result.snippet,
-            result.body
-        );
-        if (lexicalScore > 0) {
-            return true;
-        }
-        if (queryTerms.metadataProfile.sectionHeadingBonus(result.sectionHeading) > 0) {
-            return true;
-        }
-        return SpecializedAnchorCandidatePolicy.hasDirectExplicitTopicOverlap(queryTerms.metadataProfile, result);
+        return PackRouteRowFilterPolicy.hasDirectAnchorSignal(queryTerms, result);
     }
 
     static boolean matchesSpecializedRouteMetadataForTest(String query, SearchResult result) {
@@ -1648,8 +1576,8 @@ public final class PackRepository implements AutoCloseable {
         String structureType,
         String topicTags
     ) {
-        return SpecializedAnchorCandidatePolicy.matchesRouteMetadata(
-            queryTerms == null ? null : queryTerms.metadataProfile,
+        return PackRouteRowFilterPolicy.matchesSpecializedRouteMetadata(
+            queryTerms,
             sectionHeading,
             structureType,
             topicTags
@@ -1722,33 +1650,14 @@ public final class PackRepository implements AutoCloseable {
         String topicTags,
         int sectionHeadingScore
     ) {
-        if (queryTerms == null || queryTerms.metadataProfile == null) {
-            return true;
-        }
-        QueryMetadataProfile metadataProfile = queryTerms.metadataProfile;
-        if (!"water_storage".equals(metadataProfile.preferredStructureType())
-            || metadataProfile.hasExplicitTopic("water_distribution")) {
-            return true;
-        }
-        if (sectionHeadingScore < 0) {
-            return false;
-        }
-
-        boolean specializedWaterTopic = containsTerm(topicTags, "container_sanitation")
-            || containsTerm(topicTags, "water_rotation")
-            || containsTerm(topicTags, "disinfection");
-        String normalizedRole = emptySafe(contentRole).trim().toLowerCase(QUERY_LOCALE);
-        String normalizedHeading = emptySafe(sectionHeading).trim().toLowerCase(QUERY_LOCALE);
-        if (sectionHeadingScore == 0 && !specializedWaterTopic) {
-            return false;
-        }
-        if (!specializedWaterTopic
-            && "starter".equals(normalizedRole)
-            && (normalizedHeading.contains("water storage")
-                || normalizedHeading.contains("purification"))) {
-            return false;
-        }
-        return true;
+        return PackRouteRowFilterPolicy.shouldKeepBroadWaterRouteRow(
+            queryTerms,
+            sectionHeading,
+            contentRole,
+            structureType,
+            topicTags,
+            sectionHeadingScore
+        );
     }
 
     static boolean shouldKeepBroadHouseRouteRow(
@@ -1759,30 +1668,14 @@ public final class PackRepository implements AutoCloseable {
         String topicTags,
         int sectionHeadingScore
     ) {
-        if (queryTerms == null || queryTerms.metadataProfile == null) {
-            return true;
-        }
-        QueryMetadataProfile metadataProfile = queryTerms.metadataProfile;
-        if (!"cabin_house".equals(metadataProfile.preferredStructureType())) {
-            return true;
-        }
-        if (metadataProfile.hasExplicitTopicFocus()) {
-            return sectionHeadingScore > 0;
-        }
-        if (sectionHeadingScore < 0) {
-            return false;
-        }
-
-        String normalizedCategory = emptySafe(category).trim().toLowerCase(QUERY_LOCALE);
-        String normalizedStructure = emptySafe(structureType).trim().toLowerCase(QUERY_LOCALE);
-        int overlap = metadataProfile.preferredTopicOverlapCount(topicTags);
-        if (sectionHeadingScore == 0
-            && !"building".equals(normalizedCategory)
-            && !"cabin_house".equals(normalizedStructure)
-            && overlap < 2) {
-            return false;
-        }
-        return true;
+        return PackRouteRowFilterPolicy.shouldKeepBroadHouseRouteRow(
+            queryTerms,
+            sectionHeading,
+            category,
+            structureType,
+            topicTags,
+            sectionHeadingScore
+        );
     }
 
     private static boolean shouldScanFullRouteCursor(QueryTerms queryTerms) {
@@ -1890,11 +1783,7 @@ public final class PackRepository implements AutoCloseable {
         String structureType,
         String topicTags
     ) {
-        return SpecializedAnchorCandidatePolicy.matchesExplicitTopicRow(
-            queryTerms == null ? null : queryTerms.metadataProfile,
-            structureType,
-            topicTags
-        );
+        return PackRouteRowFilterPolicy.matchesSpecializedExplicitTopicRow(queryTerms, structureType, topicTags);
     }
 
     static boolean isSpecializedExplicitAnchorCandidate(QueryTerms queryTerms, SearchResult result) {
