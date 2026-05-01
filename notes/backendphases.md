@@ -1,6 +1,6 @@
 # Backend Cleanup Phase Tracker
 
-Last updated after cleanup through `fae768cb` on 2026-05-01.
+Last updated after cleanup through `6898a3ee` on 2026-05-01.
 
 Purpose: prevent future agents from rerunning Ask/query backend cleanup that is already complete. Keep this note short; implementation detail belongs in commits and tests.
 
@@ -578,7 +578,30 @@ Purpose: prevent future agents from rerunning Ask/query backend cleanup that is 
   six-row current-head route parity passed on `emulator-5556` in about 611s,
   with logcat captured at
   `artifacts/route_parity_emulator5556_20260501_1437_logcat.txt`.
-- Tracker is refreshed through `fae768cb`.
+- Follow-up retry blocking is covered through `46687385`: visible stalled
+  tablet retry controls still resolve to a blocked action while generation is
+  busy/submitting, so the visible retry affordance cannot start duplicate
+  follow-up generation.
+- Compact phone source-entry density is current through `a8cc953f`: compact
+  answer source preview cards now show guide ID plus title only, with tighter
+  compact-only padding, margin, and text size while leaving emergency cards,
+  tablet/source rail behavior, and full-guide routing intact.
+- Android harness lock diagnostics are current through `98ae28e1`: lock owners
+  write readable metadata to the lock file, and wait/timeout messages now
+  include lock age, owner PID/process, and acquisition time when available.
+- Category result routing is current through `6898a3ee`:
+  `MainResultPublicationPolicy` is the single source of truth for category
+  filter result-route and search-chrome publication; the old pre-publication
+  category route helper path has been removed.
+- Latest local proof after `6898a3ee`: focused Android JVM tests passed for
+  source-card density, follow-up retry blocking, category filtering, search
+  suggestion routing, route decision/coordinator/effect, and result
+  publication; AndroidTest assembly passed; smoke harness quality/contract
+  tests passed (`tests.test_powershell_quality_gate`,
+  `tests.test_run_android_functional_ux_smoke_matrix_contract`,
+  `tests.test_run_android_instrumented_ui_smoke_summary_contract`);
+  `git diff --check` passed before tracker refresh.
+- Tracker is refreshed through `6898a3ee`.
 
 ## Remaining Next Slices
 
