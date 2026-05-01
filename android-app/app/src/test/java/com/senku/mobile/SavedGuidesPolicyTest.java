@@ -1,6 +1,7 @@
 package com.senku.mobile;
 
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import com.senku.ui.primitives.BottomTabDestination;
@@ -50,6 +51,45 @@ public final class SavedGuidesPolicyTest {
         assertFalse(SavedGuidesPolicy.isSavedPhoneFlowIntent(BottomTabDestination.ASK));
         assertFalse(SavedGuidesPolicy.isSavedPhoneFlowIntent(BottomTabDestination.THREADS));
         assertFalse(SavedGuidesPolicy.isSavedPhoneFlowIntent(null));
+    }
+
+    @Test
+    public void openSavedExtraSelectsWholeSavedRoute() {
+        MainRouteDecisionHelper.Transition transition = SavedGuidesPolicy.openSavedDestination(
+            true,
+            new MainRouteDecisionHelper.RouteState(
+                MainRouteDecisionHelper.Surface.ASK_RESULTS,
+                BottomTabDestination.ASK,
+                true
+            )
+        );
+
+        assertEquals(MainRouteDecisionHelper.Effect.SHOW_SAVED_GUIDES, transition.effect);
+        assertEquals(MainRouteDecisionHelper.Surface.SAVED_GUIDES, transition.routeState.surface);
+        assertEquals(BottomTabDestination.PINS, transition.routeState.activePhoneTab);
+        assertFalse(transition.routeState.askLaneActive);
+        assertTrue(SavedGuidesPolicy.shouldShowSection(
+            MainRouteDecisionHelper.isBrowseSurface(transition.routeState.surface),
+            transition.routeState.activePhoneTab,
+            0
+        ));
+    }
+
+    @Test
+    public void missingOpenSavedExtraLeavesCurrentRouteUntouched() {
+        MainRouteDecisionHelper.RouteState currentRoute = new MainRouteDecisionHelper.RouteState(
+            MainRouteDecisionHelper.Surface.SEARCH_RESULTS,
+            BottomTabDestination.HOME,
+            false
+        );
+
+        MainRouteDecisionHelper.Transition transition =
+            SavedGuidesPolicy.openSavedDestination(false, currentRoute);
+
+        assertEquals(MainRouteDecisionHelper.Effect.NONE, transition.effect);
+        assertEquals(currentRoute.surface, transition.routeState.surface);
+        assertEquals(currentRoute.activePhoneTab, transition.routeState.activePhoneTab);
+        assertEquals(currentRoute.askLaneActive, transition.routeState.askLaneActive);
     }
 
     @Test

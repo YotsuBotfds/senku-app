@@ -26,6 +26,13 @@ final class SavedGuidesPolicy {
             && MainRouteDecisionHelper.phoneTabSelectionOwner(destination) == BottomTabDestination.PINS;
     }
 
+    static MainRouteDecisionHelper.Transition openSavedDestination(
+        boolean openSavedExtra,
+        MainRouteDecisionHelper.RouteState routeState
+    ) {
+        return MainRouteDecisionHelper.openSavedIntent(openSavedExtra, routeState);
+    }
+
     static boolean shouldFocusSection(
         boolean pendingFocus,
         boolean browseMode,
