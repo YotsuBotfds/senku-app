@@ -53,4 +53,45 @@ public final class PackTextMatchPolicyTest {
         assertFalse(PackTextMatchPolicy.containsAnyMarker("fire", null));
         assertFalse(PackTextMatchPolicy.containsAnyMarker("fire", Set.of()));
     }
+
+    @Test
+    public void keywordScoringPolicyPreservesRepositoryWrapperScore() {
+        PackRepository.QueryTerms queryTerms = PackRepository.QueryTerms.fromQuery(
+            "how do i store treated water long term"
+        );
+
+        int policyScore = PackKeywordScoringPolicy.scoreCandidate(
+            queryTerms,
+            "Storage & Material Management",
+            "Water Storage & Rotation",
+            "resource-management",
+            "water_storage,container_sanitation,water_rotation",
+            "Use food-safe containers, sanitize them, seal them, and rotate treated water on a schedule.",
+            "Store treated water in sealed containers and inspect rotation dates.",
+            "planning",
+            "long_term",
+            "water_storage",
+            "water_storage,container_sanitation,water_rotation"
+        );
+
+        int repositoryScore = PackRepository.lexicalKeywordScore(
+            queryTerms,
+            "Storage & Material Management",
+            "Water Storage & Rotation",
+            "resource-management",
+            "water_storage,container_sanitation,water_rotation",
+            "Use food-safe containers, sanitize them, seal them, and rotate treated water on a schedule.",
+            "Store treated water in sealed containers and inspect rotation dates."
+        ) + PackRepository.metadataBonus(
+            queryTerms,
+            "resource-management",
+            "planning",
+            "long_term",
+            "water_storage",
+            "water_storage,container_sanitation,water_rotation"
+        );
+
+        assertEquals(repositoryScore, policyScore);
+        assertTrue(policyScore > 0);
+    }
 }

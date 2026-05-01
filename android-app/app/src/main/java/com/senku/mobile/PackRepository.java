@@ -1715,8 +1715,19 @@ public final class PackRepository implements AutoCloseable {
                 String timeHorizon = emptySafe(cursor.getString(10));
                 String structureType = emptySafe(cursor.getString(11));
                 String topicTags = emptySafe(cursor.getString(12));
-                int score = lexicalKeywordScore(queryTerms, title, section, category, combineTags(tags, topicTags), description, document);
-                score += metadataBonus(queryTerms, category, contentRole, timeHorizon, structureType, topicTags);
+                int score = PackKeywordScoringPolicy.scoreCandidate(
+                    queryTerms,
+                    title,
+                    section,
+                    category,
+                    combineTags(tags, topicTags),
+                    description,
+                    document,
+                    contentRole,
+                    timeHorizon,
+                    structureType,
+                    topicTags
+                );
                 if (score <= 0) {
                     continue;
                 }
@@ -1930,98 +1941,15 @@ public final class PackRepository implements AutoCloseable {
         String description,
         String document
     ) {
-        String titleLower = emptySafe(title).toLowerCase(QUERY_LOCALE);
-        String sectionLower = emptySafe(section).toLowerCase(QUERY_LOCALE);
-        String categoryLower = emptySafe(category).toLowerCase(QUERY_LOCALE);
-        String tagsLower = emptySafe(tags).toLowerCase(QUERY_LOCALE);
-        String descriptionLower = emptySafe(description).toLowerCase(QUERY_LOCALE);
-        String documentLower = emptySafe(document).toLowerCase(QUERY_LOCALE);
-        String queryLower = queryTerms.queryLower;
-
-        int score = 0;
-        if (PackTextMatchPolicy.containsTerm(titleLower, queryLower)) {
-            score += 18;
-        }
-        if (PackTextMatchPolicy.containsTerm(sectionLower, queryLower)) {
-            score += 14;
-        }
-        if (PackTextMatchPolicy.containsTerm(descriptionLower, queryLower)) {
-            score += 8;
-        }
-
-        int strongMatches = 0;
-        for (String token : queryTerms.primaryKeywordTokens()) {
-            if (PackTextMatchPolicy.containsTerm(titleLower, token)) {
-                score += 12;
-                strongMatches += 1;
-            }
-            if (PackTextMatchPolicy.containsTerm(sectionLower, token)) {
-                score += 10;
-                strongMatches += 1;
-            }
-            if (PackTextMatchPolicy.containsTerm(tagsLower, token)) {
-                score += 8;
-                strongMatches += 1;
-            }
-            if (PackTextMatchPolicy.containsTerm(categoryLower, token)) {
-                score += 5;
-            }
-            if (PackTextMatchPolicy.containsTerm(descriptionLower, token)) {
-                score += 6;
-                strongMatches += 1;
-            }
-            if (PackTextMatchPolicy.containsTerm(documentLower, token)) {
-                score += 3;
-                strongMatches += 1;
-            }
-        }
-
-        int expansionMatches = 0;
-        for (String token : queryTerms.expansionTokens) {
-            if (PackTextMatchPolicy.containsTerm(titleLower, token)) {
-                score += 6;
-                expansionMatches += 1;
-            }
-            if (PackTextMatchPolicy.containsTerm(sectionLower, token)) {
-                score += 5;
-                expansionMatches += 1;
-            }
-            if (PackTextMatchPolicy.containsTerm(tagsLower, token)) {
-                score += 4;
-                expansionMatches += 1;
-            }
-            if (PackTextMatchPolicy.containsTerm(categoryLower, token)) {
-                score += 3;
-            }
-            if (PackTextMatchPolicy.containsTerm(descriptionLower, token)) {
-                score += 3;
-                expansionMatches += 1;
-            }
-            if (PackTextMatchPolicy.containsTerm(documentLower, token)) {
-                score += 2;
-                expansionMatches += 1;
-            }
-        }
-
-        score += queryTerms.routeProfile.metadataBonus(
-            titleLower,
-            sectionLower,
-            categoryLower,
-            tagsLower,
-            descriptionLower,
-            documentLower
+        return PackKeywordScoringPolicy.keywordScore(
+            queryTerms,
+            title,
+            section,
+            category,
+            tags,
+            description,
+            document
         );
-
-        if (strongMatches >= 2) {
-            score += 10;
-        }
-        if (!queryTerms.primaryKeywordTokens().isEmpty() && strongMatches >= queryTerms.primaryKeywordTokens().size()) {
-            score += 8;
-        }
-        if (expansionMatches >= 2) {
-            score += 4;
-        }
-        return score;
     }
 
     static int metadataBonus(
@@ -2032,7 +1960,8 @@ public final class PackRepository implements AutoCloseable {
         String structureType,
         String topicTags
     ) {
-        return queryTerms.metadataProfile.metadataBonus(
+        return PackKeywordScoringPolicy.metadataBonus(
+            queryTerms,
             category,
             contentRole,
             timeHorizon,
