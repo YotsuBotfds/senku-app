@@ -49,6 +49,16 @@ final class FollowUpComposerController {
         }
     }
 
+    static final class ControlPresentation {
+        final boolean inputEnabled;
+        final boolean submitEnabled;
+
+        private ControlPresentation(boolean inputEnabled, boolean submitEnabled) {
+            this.inputEnabled = inputEnabled;
+            this.submitEnabled = submitEnabled;
+        }
+    }
+
     private FollowUpComposerController() {
     }
 
@@ -98,6 +108,14 @@ final class FollowUpComposerController {
             visible,
             visible && safeState.retryActionEnabled(),
             visible ? safeState.retryQuery() : ""
+        );
+    }
+
+    static ControlPresentation resolveControlPresentation(FollowUpComposerState state) {
+        FollowUpComposerState safeState = safeState(state);
+        return new ControlPresentation(
+            safeState.inputEnabled(),
+            safeState.submitEnabled()
         );
     }
 

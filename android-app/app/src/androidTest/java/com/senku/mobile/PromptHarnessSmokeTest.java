@@ -62,6 +62,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -1218,6 +1219,78 @@ public final class PromptHarnessSmokeTest {
             captureUiState("answer_detail_visible_back_main");
         } finally {
             closeScenarioLeniently(scenario);
+        }
+    }
+
+    @Test
+    public void taskRootAnswerDetailVisibleAffordanceNavigatesToManualHome() throws Exception {
+        Context context = ApplicationProvider.getApplicationContext();
+        Intent intent = DetailActivity.newAnswerIntent(
+            context,
+            "Task-root visible Back proof",
+            "Offline answer | activity proof",
+            "Task-root detail should expose Home semantics on the visible Back affordance.",
+            Collections.emptyList(),
+            null,
+            "task-root-visible-back-proof"
+        );
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+
+        try (ActivityScenario<DetailActivity> scenario = ActivityScenario.launch(intent)) {
+            awaitHarnessIdle();
+            Assert.assertTrue(
+                "task-root detail should render before visible-back proof; harness signals="
+                    + HarnessTestSignals.snapshot(),
+                waitForDetailBodyReady(DETAIL_WAIT_MS, 8)
+            );
+            scenario.onActivity(activity -> {
+                Assert.assertTrue("proof detail should be the task root", activity.isTaskRoot());
+                Button back = activity.findViewById(R.id.detail_back_button);
+                if (back != null) {
+                    Assert.assertEquals(
+                        "task-root visible Back should use Home label",
+                        activity.getString(R.string.home_button),
+                        safe(back.getText() == null ? null : back.getText().toString())
+                    );
+                    Assert.assertEquals(
+                        "task-root visible Back should describe returning home",
+                        activity.getString(R.string.detail_home_content_description),
+                        safe(back.getContentDescription() == null ? null : back.getContentDescription().toString())
+                    );
+                } else {
+                    View tabletRoot = activity.findViewById(R.id.tablet_detail_root);
+                    Assert.assertNotNull(
+                        "task-root detail should mount either the phone Back button or tablet Compose root",
+                        tabletRoot
+                    );
+                    Assert.assertTrue(
+                        "task-root tablet detail root should be visible before Home affordance click",
+                        isVisible(tabletRoot)
+                    );
+                }
+            });
+
+            boolean clickedHomeAffordance = clickVisibleViewOrContentDescription(
+                "detail_back_button",
+                R.string.detail_home_content_description,
+                1_000L
+            );
+            boolean clickedBackAffordance = clickedHomeAffordance || clickVisibleViewOrContentDescription(
+                "detail_back_button",
+                R.string.detail_back_content_description,
+                DETAIL_WAIT_MS
+            );
+            Assert.assertTrue(
+                "task-root answer detail should expose a visible Home/Back affordance before click; "
+                    + describeResumedActivityAndHarnessSignals(),
+                clickedBackAffordance
+            );
+            assertResumedManualHomeDestination("task-root visible Back should navigate to manual home");
+            Assert.assertFalse(
+                "task-root visible Back should finish the root detail after launching Main",
+                isResumedActivity(DetailActivity.class)
+            );
+            captureUiState("task_root_answer_detail_visible_back_manual_home");
         }
     }
 

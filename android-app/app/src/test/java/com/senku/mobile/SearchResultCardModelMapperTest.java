@@ -214,6 +214,46 @@ public final class SearchResultCardModelMapperTest {
     }
 
     @Test
+    public void rowMetaFallbackSkipsDuplicatedGuideSectionAndRetrievalLabels() {
+        SearchResult result = new SearchResult(
+            "Water setup",
+            " GD-214 | Water Storage | Concept match | Vector | storage | short term | field note ",
+            "",
+            "",
+            "GD-214",
+            "Water Storage",
+            "water",
+            "vector",
+            "",
+            "",
+            "",
+            ""
+        );
+
+        assertEquals("storage // short term // field note", SearchResultCardModelMapper.buildMetaFallbackForTest(result));
+    }
+
+    @Test
+    public void rowMetaFallbackUsesGuideIdWhenSubtitleHasNoDisplayTokens() {
+        SearchResult result = new SearchResult(
+            "Water setup",
+            "GD-214 | Water Storage | Best match | Route",
+            "",
+            "",
+            "GD-214",
+            "Water Storage",
+            "water",
+            "route-focus",
+            "",
+            "",
+            "",
+            ""
+        );
+
+        assertEquals("GD-214", SearchResultCardModelMapper.buildMetaFallbackForTest(result));
+    }
+
+    @Test
     public void cleanDisplayTextRemovesWarningProofResidueFromSearchCards() {
         String cleaned = SearchResultCardModelMapper.cleanDisplayTextForTest(
             "Use boiled water only [Safety Warning Implied by High Heat Processes] [GD-123]. "

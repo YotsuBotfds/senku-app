@@ -1525,6 +1525,7 @@ public final class DetailActivity extends AppCompatActivity {
             @Override
             public void afterTextChanged(Editable s) {
                 refreshFollowUpInputShell(isFollowUpInputShellActive());
+                applyPhoneFollowUpComposerControls();
                 if (!syncingFollowUpInputFromCompose) {
                     renderDockedComposer();
                 }
@@ -1545,6 +1546,7 @@ public final class DetailActivity extends AppCompatActivity {
         });
         refreshFollowUpCopy();
         refreshFollowUpInputShell(false);
+        applyPhoneFollowUpComposerControls();
         renderDockedComposer();
     }
 
@@ -2841,10 +2843,16 @@ public final class DetailActivity extends AppCompatActivity {
                 visualOwnerSource,
                 turnBindings,
                 buildTabletThreadTopicTitle(turnBindings)
-            );
+        );
         return new TabletDetailState(
             buildTabletGuideId(displaySource, allowGuideIdFallback),
-            buildTabletGuideTitle(displaySource, turnBindings),
+            DetailTabletStateBuilder.buildGuideTitle(
+                answerMode,
+                displaySource,
+                turnBindings,
+                tabletEvidenceAnchorTitle,
+                currentTitle
+            ),
             buildRev03MetaStripItems(),
             turns,
             suppressTabletEmergencyFloatingRail ? Collections.emptyList() : sources,
@@ -2870,7 +2878,7 @@ public final class DetailActivity extends AppCompatActivity {
             guideModeState.summary,
             guideModeState.anchorLabel,
             safe(tabletStatusText),
-            buildTabletGuideSectionCount(displaySource),
+            DetailTabletStateBuilder.buildGuideSectionCount(answerMode, displaySource),
             detailMode,
             productReviewMode
         );
@@ -2884,19 +2892,6 @@ public final class DetailActivity extends AppCompatActivity {
             return getString(R.string.detail_followup_hint_answer);
         }
         return getString(R.string.detail_followup_hint);
-    }
-
-    private int buildTabletGuideSectionCount(SearchResult displaySource) {
-        if (answerMode) {
-            return 0;
-        }
-        String sourceBody = safe(displaySource == null ? null : displaySource.body);
-        String displayBody = DetailGuidePresentationFormatter.buildGuideBody(displaySource);
-        return DetailGuidePresentationFormatter.inferGuideSectionCountForRail(
-            displaySource,
-            sourceBody,
-            displayBody
-        );
     }
 
     private TabletDetailMode resolveTabletDetailMode(ArrayList<TabletTurnBinding> turnBindings) {
@@ -2913,13 +2908,13 @@ public final class DetailActivity extends AppCompatActivity {
         TabletDetailMode detailMode,
         boolean emergencyFullHeightPage
     ) {
-        return utilityRail
-            || shouldUseTabletPortraitCompactStructuralShell(
-                tabletPortrait,
-                answerMode,
-                detailMode,
-                emergencyFullHeightPage
-            );
+        return DetailTabletStateBuilder.resolveLandscapeFlag(
+            utilityRail,
+            tabletPortrait,
+            answerMode,
+            detailMode,
+            emergencyFullHeightPage
+        );
     }
 
     static boolean shouldUseTabletPortraitCompactStructuralShell(
@@ -2928,18 +2923,16 @@ public final class DetailActivity extends AppCompatActivity {
         TabletDetailMode detailMode,
         boolean emergencyFullHeightPage
     ) {
-        return tabletPortrait
-            && answerMode
-            && emergencyFullHeightPage;
+        return DetailTabletStateBuilder.shouldUseTabletPortraitCompactStructuralShell(
+            tabletPortrait,
+            answerMode,
+            detailMode,
+            emergencyFullHeightPage
+        );
     }
 
     static TabletDetailMode resolveTabletDetailModeForState(boolean answerMode, int turnCount) {
-        if (!answerMode) {
-            return TabletDetailMode.Guide;
-        }
-        return isThreadDetailRoute(answerMode, turnCount)
-            ? TabletDetailMode.Thread
-            : TabletDetailMode.Answer;
+        return DetailTabletStateBuilder.resolveDetailMode(answerMode, turnCount);
     }
 
     static String buildTabletAnswerGuideModeSummary(String guideId, String threadTopic) {
@@ -3341,102 +3334,19 @@ public final class DetailActivity extends AppCompatActivity {
         ArrayList<TabletTurnBinding> turnBindings,
         SearchResult activeSource
     ) {
-        if (!answerMode || turnBindings == null || turnBindings.size() <= 1) {
-            return activeSource;
-        }
-        SearchResult best = activeSource;
-        int bestScore = sourceThreadTopicScore(activeSource, turnBindings);
-        for (TabletTurnBinding turn : turnBindings) {
-            if (turn == null || turn.sources == null) {
-                continue;
-            }
-            for (SearchResult source : turn.sources) {
-                int score = sourceThreadTopicScore(source, turnBindings);
-                if (score > bestScore) {
-                    bestScore = score;
-                    best = source;
-                }
-            }
-        }
-        return best;
-    }
-
-    private static int sourceThreadTopicScore(SearchResult source, List<TabletTurnBinding> turnBindings) {
-        if (source == null || turnBindings == null || turnBindings.isEmpty()) {
-            return 0;
-        }
-        String haystack = (
-            safe(source.guideId) + " " +
-                safe(source.title) + " " +
-                safe(source.sectionHeading) + " " +
-                safe(source.category) + " " +
-                safe(source.structureType) + " " +
-                safe(source.topicTags)
-        ).replace('_', ' ').toLowerCase(Locale.US);
-        int score = 0;
-        for (TabletTurnBinding turn : turnBindings) {
-            String question = safe(turn == null ? null : turn.question).toLowerCase(Locale.US);
-            for (String token : question.split("[^a-z0-9]+")) {
-                if (token.length() < 3) {
-                    continue;
-                }
-                if (haystack.contains(token)) {
-                    score += ("shelter".equals(token) || "rain".equals(token) || "tarp".equals(token) || "cord".equals(token))
-                        ? 8
-                        : 2;
-                }
-            }
-        }
-        return score;
-    }
-
-    private String buildTabletGuideTitle(SearchResult activeSource, List<TabletTurnBinding> turnBindings) {
-        String answerTopic = buildTabletAnswerTopicTitle(turnBindings);
-        if (answerMode && !answerTopic.isEmpty()) {
-            return answerTopic;
-        }
-        String title = safe(activeSource == null ? null : activeSource.title).trim();
-        if (!title.isEmpty()) {
-            return title;
-        }
-        if (!safe(tabletEvidenceAnchorTitle).trim().isEmpty()) {
-            return safe(tabletEvidenceAnchorTitle).trim();
-        }
-        if (!safe(currentTitle).trim().isEmpty()) {
-            return safe(currentTitle).trim();
-        }
-        return "Guide evidence";
+        return DetailTabletStateBuilder.resolveDisplaySource(answerMode, turnBindings, activeSource);
     }
 
     private String buildTabletThreadTopicTitle(List<TabletTurnBinding> turnBindings) {
-        if (!answerMode || turnBindings == null || turnBindings.size() <= 1) {
-            return "";
-        }
-        return buildTabletAnswerTopicTitle(turnBindings);
+        return DetailTabletStateBuilder.buildThreadTopicTitle(answerMode, turnBindings);
     }
 
     private String buildTabletAnswerTopicTitle(List<TabletTurnBinding> turnBindings) {
-        if (!answerMode || turnBindings == null || turnBindings.isEmpty()) {
-            return "";
-        }
-        return buildTabletAnswerTopicTitleForQuestions(tabletTurnQuestions(turnBindings), turnBindings.size());
+        return DetailTabletStateBuilder.buildAnswerTopicTitle(answerMode, turnBindings);
     }
 
     static String buildTabletAnswerTopicTitleForQuestions(List<String> questions, int turnCount) {
-        int safeTurnCount = Math.max(1, turnCount);
-        String suffix = safeTurnCount > 1 ? " - " + safeTurnCount + " turns" : "";
-        if (questions != null) {
-            for (String rawQuestion : questions) {
-                String question = safe(rawQuestion).toLowerCase(Locale.US);
-                if (question.contains("rain") && question.contains("shelter")) {
-                    return "Rain shelter" + suffix;
-                }
-                if (question.contains("shelter")) {
-                    return "Shelter thread" + suffix;
-                }
-            }
-        }
-        return safeTurnCount > 1 ? "Thread - " + safeTurnCount + " turns" : "";
+        return DetailTabletStateBuilder.buildAnswerTopicTitleForQuestions(questions, turnCount);
     }
 
     private SearchResult selectedTabletSourceForAction() {
@@ -6635,6 +6545,18 @@ public final class DetailActivity extends AppCompatActivity {
         followUpRetryButton.setVisibility(retryPresentation.visible ? View.VISIBLE : View.GONE);
     }
 
+    private void applyPhoneFollowUpComposerControls() {
+        FollowUpComposerController.ControlPresentation presentation =
+            FollowUpComposerController.resolveControlPresentation(buildPhoneFollowUpComposerState());
+        if (followUpInput != null) {
+            followUpInput.setEnabled(presentation.inputEnabled);
+        }
+        if (followUpSendButton != null) {
+            followUpSendButton.setEnabled(presentation.submitEnabled);
+        }
+        refreshPhoneFollowUpRetryButton();
+    }
+
     private boolean isGenerationStallRetryAvailable(boolean busy) {
         return busy && generationStallNoticeVisible && !safe(currentTitle).trim().isEmpty();
     }
@@ -6657,10 +6579,8 @@ public final class DetailActivity extends AppCompatActivity {
             stopStreamingCursor();
             clearGenerationStallMonitor();
         }
-        followUpInput.setEnabled(!busy);
-        followUpSendButton.setEnabled(!busy);
+        applyPhoneFollowUpComposerControls();
         refreshFollowUpInputShell(isFollowUpInputShellActive());
-        refreshPhoneFollowUpRetryButton();
         renderDockedComposer();
         updateHeroPanelVisibility();
         refreshProvenanceOpenButtonText();

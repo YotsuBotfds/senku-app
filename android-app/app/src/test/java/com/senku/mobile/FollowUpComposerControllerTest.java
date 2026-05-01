@@ -479,6 +479,40 @@ public final class FollowUpComposerControllerTest {
     }
 
     @Test
+    public void controlPresentationDisablesSubmitForEmptyDraftWhileInputRemainsAvailable() {
+        FollowUpComposerController.ControlPresentation presentation =
+            FollowUpComposerController.resolveControlPresentation(
+                FollowUpComposerState.idle(" \n\t ", FollowUpComposerState.Surface.PHONE)
+            );
+
+        assertEquals(true, presentation.inputEnabled);
+        assertEquals(false, presentation.submitEnabled);
+    }
+
+    @Test
+    public void controlPresentationEnablesSubmitOnlyForSendableIdleDraft() {
+        FollowUpComposerController.ControlPresentation presentation =
+            FollowUpComposerController.resolveControlPresentation(
+                FollowUpComposerState.idle("  what changed?  ", FollowUpComposerState.Surface.PHONE)
+            );
+
+        assertEquals(true, presentation.inputEnabled);
+        assertEquals(true, presentation.submitEnabled);
+    }
+
+    @Test
+    public void controlPresentationBlocksInputAndSubmitWhileBusy() {
+        FollowUpComposerController.ControlPresentation presentation =
+            FollowUpComposerController.resolveControlPresentation(
+                FollowUpComposerState.idle("retry this", FollowUpComposerState.Surface.PHONE)
+                    .asSubmitting()
+            );
+
+        assertEquals(false, presentation.inputEnabled);
+        assertEquals(false, presentation.submitEnabled);
+    }
+
+    @Test
     public void dockedRetryVisibilitySuppressesLandscapePhoneChrome() {
         assertEquals(false, FollowUpComposerController.shouldShowDockedComposerRetry(true, true));
         assertEquals(true, FollowUpComposerController.shouldShowDockedComposerRetry(true, false));
@@ -495,6 +529,8 @@ public final class FollowUpComposerControllerTest {
             FollowUpComposerController.resolveRetryPresentation(null, true);
         FollowUpComposerState completed =
             FollowUpComposerController.resolveGenerationSuccess(null);
+        FollowUpComposerController.ControlPresentation controls =
+            FollowUpComposerController.resolveControlPresentation(null);
 
         assertEquals(FollowUpComposerController.SubmitAction.EMPTY, submit.action);
         assertEquals("", submit.query);
@@ -505,5 +541,7 @@ public final class FollowUpComposerControllerTest {
         assertEquals("", presentation.query);
         assertEquals("", completed.draftText);
         assertEquals(FollowUpComposerState.Surface.PHONE, completed.surface);
+        assertEquals(true, controls.inputEnabled);
+        assertEquals(false, controls.submitEnabled);
     }
 }

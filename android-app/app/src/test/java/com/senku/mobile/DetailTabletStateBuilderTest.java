@@ -11,6 +11,7 @@ import com.senku.ui.answer.AnswerContentFactory;
 import com.senku.ui.answer.Evidence;
 import com.senku.ui.tablet.AnchorState;
 import com.senku.ui.tablet.SourceState;
+import com.senku.ui.tablet.TabletDetailMode;
 import com.senku.ui.tablet.Status;
 import com.senku.ui.tablet.ThreadTurnState;
 import com.senku.ui.tablet.XRefState;
@@ -292,6 +293,144 @@ public final class DetailTabletStateBuilderTest {
         );
 
         assertNull(owner);
+    }
+
+    @Test
+    public void detailModeAndLandscapePolicyMoveBehindBuilder() {
+        assertEquals(TabletDetailMode.Guide, DetailTabletStateBuilder.resolveDetailMode(false, 2));
+        assertEquals(TabletDetailMode.Answer, DetailTabletStateBuilder.resolveDetailMode(true, 1));
+        assertEquals(TabletDetailMode.Thread, DetailTabletStateBuilder.resolveDetailMode(true, 2));
+
+        assertFalse(DetailTabletStateBuilder.resolveLandscapeFlag(
+            false,
+            true,
+            true,
+            TabletDetailMode.Answer,
+            false
+        ));
+        assertTrue(DetailTabletStateBuilder.resolveLandscapeFlag(
+            false,
+            true,
+            true,
+            TabletDetailMode.Answer,
+            true
+        ));
+        assertTrue(DetailTabletStateBuilder.resolveLandscapeFlag(
+            true,
+            false,
+            false,
+            TabletDetailMode.Guide,
+            false
+        ));
+    }
+
+    @Test
+    public void displaySourcePrefersThreadTopicMatchOnlyForAnswerThreads() {
+        SearchResult abrasives = topicSource(
+            "GD-220",
+            "Abrasives Manufacturing",
+            "materials abrasives grinding"
+        );
+        SearchResult shelter = topicSource(
+            "GD-345",
+            "Rain shelter in wet weather",
+            "field shelter rain tarp cord"
+        );
+        DetailActivity.TabletTurnBinding first = turnWithSources(
+            "T1",
+            "How do I build a rain shelter?",
+            List.of(abrasives)
+        );
+        DetailActivity.TabletTurnBinding second = turnWithSources(
+            "T2",
+            "What cord should I use?",
+            List.of(shelter)
+        );
+
+        assertSame(
+            shelter,
+            DetailTabletStateBuilder.resolveDisplaySource(
+                true,
+                List.of(first, second),
+                abrasives
+            )
+        );
+        assertSame(
+            abrasives,
+            DetailTabletStateBuilder.resolveDisplaySource(
+                false,
+                List.of(first, second),
+                abrasives
+            )
+        );
+    }
+
+    @Test
+    public void guideTitleUsesAnswerTopicThenSourceAndFallbacks() {
+        DetailActivity.TabletTurnBinding first = turnWithSources(
+            "T1",
+            "How do I build a rain shelter?",
+            List.of(source("GD-345", "Rain Shelter", "Rigging"))
+        );
+        DetailActivity.TabletTurnBinding second = turnWithSources(
+            "T2",
+            "What cord should I use?",
+            List.of(source("GD-220", "Cordage", "Materials"))
+        );
+
+        assertEquals(
+            "Rain shelter - 2 turns",
+            DetailTabletStateBuilder.buildGuideTitle(
+                true,
+                source("GD-345", "Source title", "Rigging"),
+                List.of(first, second),
+                "Evidence title",
+                "Current title"
+            )
+        );
+        assertEquals(
+            "Source title",
+            DetailTabletStateBuilder.buildGuideTitle(
+                false,
+                source("GD-345", "Source title", "Rigging"),
+                List.of(first),
+                "Evidence title",
+                "Current title"
+            )
+        );
+        assertEquals(
+            "Evidence title",
+            DetailTabletStateBuilder.buildGuideTitle(
+                false,
+                null,
+                List.of(first),
+                " Evidence title ",
+                "Current title"
+            )
+        );
+        assertEquals(
+            "Guide evidence",
+            DetailTabletStateBuilder.buildGuideTitle(false, null, List.of(first), "", "")
+        );
+    }
+
+    @Test
+    public void answerTopicTitleAndGuideSectionCountStayPureBuilderPolicy() {
+        assertEquals(
+            "Shelter thread",
+            DetailTabletStateBuilder.buildAnswerTopicTitleForQuestions(
+                List.of("How should I pitch a shelter?"),
+                1
+            )
+        );
+        assertEquals(
+            "Thread - 3 turns",
+            DetailTabletStateBuilder.buildAnswerTopicTitleForQuestions(
+                List.of("How do I plan the calendar?"),
+                3
+            )
+        );
+        assertEquals(0, DetailTabletStateBuilder.buildGuideSectionCount(true, null));
     }
 
     @Test

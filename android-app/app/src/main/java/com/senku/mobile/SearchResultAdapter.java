@@ -990,16 +990,6 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
         return humanize(category);
     }
 
-    private String humanizeMode(String mode) {
-        if ("route-focus".equals(mode)) {
-            return "Route";
-        }
-        if ("guide-focus".equals(mode)) {
-            return "Guide";
-        }
-        return humanize(mode);
-    }
-
     private String humanize(String value) {
         return humanizeStatic(value);
     }
@@ -1023,42 +1013,7 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
     }
 
     private String buildMetaFallback(SearchResult result) {
-        ArrayList<String> fragments = new ArrayList<>();
-        String subtitle = cleanDisplayText(result == null ? null : result.subtitle, 96);
-        if (!subtitle.isEmpty()) {
-            String[] parts = subtitle.split("\\|");
-            String normalizedGuideId = safe(result == null ? null : result.guideId).trim();
-            String normalizedSection = cleanDisplayText(result == null ? null : result.sectionHeading, 48);
-            String rawRetrievalMode = safe(result == null ? null : result.retrievalMode).trim().toLowerCase(Locale.US);
-            String normalizedRetrieval = SearchResultCardModelMapper.displayLabelForRetrievalMode(rawRetrievalMode);
-            String legacyRetrieval = humanizeMode(rawRetrievalMode);
-            for (String part : parts) {
-                String cleaned = cleanDisplayText(part, 30);
-                if (cleaned.isEmpty()) {
-                    continue;
-                }
-                if (!normalizedGuideId.isEmpty() && cleaned.equalsIgnoreCase(normalizedGuideId)) {
-                    continue;
-                }
-                if (!normalizedSection.isEmpty() && cleaned.equalsIgnoreCase(normalizedSection)) {
-                    continue;
-                }
-                if (!normalizedRetrieval.isEmpty() && cleaned.equalsIgnoreCase(normalizedRetrieval)) {
-                    continue;
-                }
-                if (!legacyRetrieval.isEmpty() && cleaned.equalsIgnoreCase(legacyRetrieval)) {
-                    continue;
-                }
-                fragments.add(cleaned);
-                if (fragments.size() >= 3) {
-                    break;
-                }
-            }
-        }
-        if (!fragments.isEmpty()) {
-            return TextUtils.join(" // ", fragments);
-        }
-        return cleanDisplayText(result == null ? null : result.guideId, 40);
+        return SearchResultCardModelMapper.buildMetaFallback(result);
     }
 
     private boolean shouldSurfaceMetadataToken(String value) {

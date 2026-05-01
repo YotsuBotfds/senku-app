@@ -3,6 +3,7 @@ package com.senku.mobile;
 import com.senku.ui.tablet.AnchorState;
 import com.senku.ui.tablet.SourceState;
 import com.senku.ui.tablet.ThreadTurnState;
+import com.senku.ui.tablet.TabletDetailMode;
 import com.senku.ui.tablet.XRefState;
 
 import java.util.ArrayList;
@@ -146,6 +147,141 @@ final class DetailTabletStateBuilder {
         );
     }
 
+    static TabletDetailMode resolveDetailMode(boolean answerMode, int turnCount) {
+        if (!answerMode) {
+            return TabletDetailMode.Guide;
+        }
+        return isThreadDetailRoute(answerMode, turnCount)
+            ? TabletDetailMode.Thread
+            : TabletDetailMode.Answer;
+    }
+
+    static boolean resolveLandscapeFlag(
+        boolean utilityRail,
+        boolean tabletPortrait,
+        boolean answerMode,
+        TabletDetailMode detailMode,
+        boolean emergencyFullHeightPage
+    ) {
+        return utilityRail
+            || shouldUseTabletPortraitCompactStructuralShell(
+                tabletPortrait,
+                answerMode,
+                detailMode,
+                emergencyFullHeightPage
+            );
+    }
+
+    static boolean shouldUseTabletPortraitCompactStructuralShell(
+        boolean tabletPortrait,
+        boolean answerMode,
+        TabletDetailMode detailMode,
+        boolean emergencyFullHeightPage
+    ) {
+        return tabletPortrait
+            && answerMode
+            && emergencyFullHeightPage;
+    }
+
+    static SearchResult resolveDisplaySource(
+        boolean answerMode,
+        List<DetailActivity.TabletTurnBinding> turnBindings,
+        SearchResult activeSource
+    ) {
+        if (!answerMode || turnBindings == null || turnBindings.size() <= 1) {
+            return activeSource;
+        }
+        SearchResult best = activeSource;
+        int bestScore = sourceThreadTopicScore(activeSource, turnBindings);
+        for (DetailActivity.TabletTurnBinding turn : turnBindings) {
+            if (turn == null || turn.sources == null) {
+                continue;
+            }
+            for (SearchResult source : turn.sources) {
+                int score = sourceThreadTopicScore(source, turnBindings);
+                if (score > bestScore) {
+                    bestScore = score;
+                    best = source;
+                }
+            }
+        }
+        return best;
+    }
+
+    static String buildGuideTitle(
+        boolean answerMode,
+        SearchResult activeSource,
+        List<DetailActivity.TabletTurnBinding> turnBindings,
+        String evidenceAnchorTitle,
+        String currentTitle
+    ) {
+        String answerTopic = buildAnswerTopicTitle(answerMode, turnBindings);
+        if (answerMode && !answerTopic.isEmpty()) {
+            return answerTopic;
+        }
+        String title = safe(activeSource == null ? null : activeSource.title).trim();
+        if (!title.isEmpty()) {
+            return title;
+        }
+        if (!safe(evidenceAnchorTitle).trim().isEmpty()) {
+            return safe(evidenceAnchorTitle).trim();
+        }
+        if (!safe(currentTitle).trim().isEmpty()) {
+            return safe(currentTitle).trim();
+        }
+        return "Guide evidence";
+    }
+
+    static int buildGuideSectionCount(boolean answerMode, SearchResult displaySource) {
+        if (answerMode) {
+            return 0;
+        }
+        String sourceBody = safe(displaySource == null ? null : displaySource.body);
+        String displayBody = DetailGuidePresentationFormatter.buildGuideBody(displaySource);
+        return DetailGuidePresentationFormatter.inferGuideSectionCountForRail(
+            displaySource,
+            sourceBody,
+            displayBody
+        );
+    }
+
+    static String buildThreadTopicTitle(
+        boolean answerMode,
+        List<DetailActivity.TabletTurnBinding> turnBindings
+    ) {
+        if (!answerMode || turnBindings == null || turnBindings.size() <= 1) {
+            return "";
+        }
+        return buildAnswerTopicTitle(answerMode, turnBindings);
+    }
+
+    static String buildAnswerTopicTitle(
+        boolean answerMode,
+        List<DetailActivity.TabletTurnBinding> turnBindings
+    ) {
+        if (!answerMode || turnBindings == null || turnBindings.isEmpty()) {
+            return "";
+        }
+        return buildAnswerTopicTitleForQuestions(tabletTurnQuestions(turnBindings), turnBindings.size());
+    }
+
+    static String buildAnswerTopicTitleForQuestions(List<String> questions, int turnCount) {
+        int safeTurnCount = Math.max(1, turnCount);
+        String suffix = safeTurnCount > 1 ? " - " + safeTurnCount + " turns" : "";
+        if (questions != null) {
+            for (String rawQuestion : questions) {
+                String question = safe(rawQuestion).toLowerCase(Locale.US);
+                if (question.contains("rain") && question.contains("shelter")) {
+                    return "Rain shelter" + suffix;
+                }
+                if (question.contains("shelter")) {
+                    return "Shelter thread" + suffix;
+                }
+            }
+        }
+        return safeTurnCount > 1 ? "Thread - " + safeTurnCount + " turns" : "";
+    }
+
     private static String buildAnswerGuideModeSummary(
         SearchResult activeSource,
         List<DetailActivity.TabletTurnBinding> turnBindings,
@@ -160,6 +296,10 @@ final class DetailTabletStateBuilder {
 
     private static boolean isThreadDetailRoute(int totalTurnCount) {
         return totalTurnCount > 1;
+    }
+
+    private static boolean isThreadDetailRoute(boolean answerMode, int turnCount) {
+        return answerMode && turnCount > 1;
     }
 
     private static int countDistinctTabletThreadSources(List<DetailActivity.TabletTurnBinding> turnBindings) {
@@ -179,6 +319,49 @@ final class DetailTabletStateBuilder {
             }
         }
         return keys.size();
+    }
+
+    private static int sourceThreadTopicScore(
+        SearchResult source,
+        List<DetailActivity.TabletTurnBinding> turnBindings
+    ) {
+        if (source == null || turnBindings == null || turnBindings.isEmpty()) {
+            return 0;
+        }
+        String haystack = (
+            safe(source.guideId) + " " +
+                safe(source.title) + " " +
+                safe(source.sectionHeading) + " " +
+                safe(source.category) + " " +
+                safe(source.structureType) + " " +
+                safe(source.topicTags)
+        ).replace('_', ' ').toLowerCase(Locale.US);
+        int score = 0;
+        for (DetailActivity.TabletTurnBinding turn : turnBindings) {
+            String question = safe(turn == null ? null : turn.question).toLowerCase(Locale.US);
+            for (String token : question.split("[^a-z0-9]+")) {
+                if (token.length() < 3) {
+                    continue;
+                }
+                if (haystack.contains(token)) {
+                    score += ("shelter".equals(token) || "rain".equals(token) || "tarp".equals(token) || "cord".equals(token))
+                        ? 8
+                        : 2;
+                }
+            }
+        }
+        return score;
+    }
+
+    private static ArrayList<String> tabletTurnQuestions(List<DetailActivity.TabletTurnBinding> turnBindings) {
+        ArrayList<String> questions = new ArrayList<>();
+        if (turnBindings == null) {
+            return questions;
+        }
+        for (DetailActivity.TabletTurnBinding turn : turnBindings) {
+            questions.add(safe(turn == null ? null : turn.question));
+        }
+        return questions;
     }
 
     static AnchorState buildAnchorState(
