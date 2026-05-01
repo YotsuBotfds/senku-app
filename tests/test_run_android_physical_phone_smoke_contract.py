@@ -66,6 +66,13 @@ class AndroidPhysicalPhoneSmokeContractTests(unittest.TestCase):
         self.assertIn('$summaryJsonPath = Join-Path $resolvedOutputDir "summary.json"', self.script)
         self.assertIn('$summaryMarkdownPath = Join-Path $resolvedOutputDir "summary.md"', self.script)
 
+    def test_failed_post_check_is_recorded_without_discarding_payload(self):
+        self.assertIn("if (-not $postCheck.passed) {", self.script)
+        self.assertIn('$message = "Post-step UI check for', self.script)
+        self.assertIn('-PostCheck $postCheck))', self.script)
+        self.assertIn('[void]$Steps.Add((New-InteractionStep -Name $Name -Status "failed"', self.script)
+        self.assertIn("return $false", self.script)
+
     def test_parser_gate_passes(self):
         result = subprocess.run(
             [

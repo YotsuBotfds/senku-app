@@ -445,7 +445,9 @@ function Invoke-InteractionStep {
         if ($ExpectedAnyText.Count -gt 0) {
             $postCheck = Wait-UiPostStepEvidence -ResolvedAdbPath $ResolvedAdbPath -DeviceSerial $DeviceSerial -ExpectedAnyText $ExpectedAnyText
             if (-not $postCheck.passed) {
-                throw "Post-step UI check for '$Name' did not find expected text fragment(s): $($ExpectedAnyText -join ', ')"
+                $message = "Post-step UI check for '$Name' did not find expected text fragment(s): $($ExpectedAnyText -join ', ')"
+                [void]$Steps.Add((New-InteractionStep -Name $Name -Status "failed" -Message $message -PostCheck $postCheck))
+                return $false
             }
         }
         [void]$Steps.Add((New-InteractionStep -Name $Name -Status "success" -PostCheck $postCheck))
