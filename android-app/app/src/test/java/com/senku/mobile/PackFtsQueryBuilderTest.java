@@ -34,6 +34,14 @@ public final class PackFtsQueryBuilderTest {
     }
 
     @Test
+    public void expressionFormattingPreservesSplitPartOrder() {
+        assertEquals(
+            "(gravity* AND fed* AND water*)",
+            PackFtsQueryBuilder.buildExpression("Gravity-fed_water")
+        );
+    }
+
+    @Test
     public void expansionTokensAreOptional() {
         PackRepository.QueryTerms queryTerms = PackRepository.QueryTerms.fromQuery("wet fire");
 
