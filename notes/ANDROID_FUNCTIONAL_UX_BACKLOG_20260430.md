@@ -70,6 +70,11 @@ Status after pushed validation/code-health head `51ae1f69`.
   `phone-functional` PromptHarness smoke on `emulator-5554` passed 3/3 tests
   with screenshots, dumps, and logcat captured under
   `artifacts/instrumented_ui_smoke/20260501_063203_907`.
+- Latest physical proof after `1321e8f2`: full Android
+  `:app:testDebugUnitTest :app:assembleDebug :app:assembleDebugAndroidTest`
+  passed, and physical `phone-functional` PromptHarness smoke passed on
+  `RFCX607ZM8L` at
+  `artifacts/physical_phone_functional_after_1321e8f2/run_summary.json`.
 
 ## Top Queue - Phone Chrome Normalization
 
@@ -127,7 +132,9 @@ the exported mocks.
 
 3. Follow-up composer submit behavior
    - Status: addressed at proof level. AndroidTest coverage now proves Send,
-     IME SEND, and empty input behavior on real `DetailActivity`.
+     IME SEND, and empty input behavior on real `DetailActivity`; controller
+     coverage now also preserves newer visible drafts across success/failure
+     completion while retry remains tied to the submitted query.
    - Key code: `DetailActivity.configureFollowUpInput()` and `runFollowUp()`.
 
 4. Back affordance click behavior
@@ -142,14 +149,18 @@ the exported mocks.
 
 5. Saved entry path
    - Status: covered. Saved intent, nav, back, non-empty guide tap-through, and
-     guide detail return paths have androidTest coverage. Saved semantics are
-     documented in `notes/backendphases.md`.
+     guide detail return paths have androidTest coverage. Saved refresh
+     semantics now normalize/dedupe saved guide IDs and hide Saved child views
+     outside the visible Saved destination.
    - Key code: `MainActivity.maybeHandleOpenSavedIntent()`.
 
 6. Shared chrome action model
    - Code-health risk: Home/Ask/Saved/Back/Pin/Share/Overflow are encoded in
      several phone/tablet renderers. Consolidate action/destination mapping
      while keeping XML/Compose renderers separate.
+   - Visual scout follow-up: detail chrome still reads like a pin/pushpin while
+     nav says Saved/bookmark. Decide whether detail should adopt bookmark/save
+     language or document why pin remains distinct.
    - Key code: `MainActivity`, `DetailActivity`, `BottomTabBar.kt`, and
      `TopBar.kt`.
 

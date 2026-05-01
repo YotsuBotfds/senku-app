@@ -222,11 +222,32 @@ Purpose: prevent future agents from rerunning Ask/query backend cleanup that is 
   `RFCX607ZM8L` with APK SHA
   `5510bc32948dc8e677ae7681307f617a1b097ce1b70506db5e9cc908168829f0` at
   `artifacts/instrumented_ui_smoke/20260501_080839_375/RFCX607ZM8L/summary.json`.
+- Saved guide semantics are current through `d7287a4a`: saved refresh planning
+  now normalizes/dedupes guide IDs, drops blank entries, caps loads at 12, and
+  only exposes empty/list children when the Saved section itself is visible.
+- Follow-up composer draft safety is current through `686c3f68`: successful
+  follow-up completion clears only the completed draft, preserves newer visible
+  phone/tablet drafts, and failure handling preserves the visible draft while
+  retry remains tied to the submitted query.
+- Related-guide relevance cleanup is current through `1321e8f2`:
+  `PackRelatedGuidePolicy` owns related-guide candidate limits and
+  workflow-proximity ordering, leaving `PackRepository` as a thin delegator for
+  that policy.
+- Latest local proof after `1321e8f2`: focused Saved/follow-up/related-guide
+  JVM tests passed; `git diff --check` passed; full Android
+  `:app:testDebugUnitTest :app:assembleDebug :app:assembleDebugAndroidTest`
+  passed; fresh physical phone `phone-functional` PromptHarness smoke passed on
+  `RFCX607ZM8L` with APK SHA
+  `ea86e50c0ff966c447dfb43d34655e11247ef96b50f5837ac77005c1f16dedb1` at
+  `artifacts/physical_phone_functional_after_1321e8f2/run_summary.json`.
 
 ## Remaining Next Slices
 
 - Continue shrinking `MainActivity` only where backend lifecycle or route
   orchestration still owns too much.
+- Architecture scout priority: tackle a narrow Main route/view boundary next,
+  then a tablet detail state-builder extraction; do not start a broad
+  `PackRepository` search pipeline rewrite without route-output parity proof.
 - Do not rerun the result-publication extraction unless a regression points
   there; future `MainActivity` cleanup should target still-mixed route side
   effects outside `MainResultPublicationPolicy`.
