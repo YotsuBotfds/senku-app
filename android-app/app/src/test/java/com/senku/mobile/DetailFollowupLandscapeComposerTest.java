@@ -1039,6 +1039,38 @@ public final class DetailFollowupLandscapeComposerTest {
     }
 
     @Test
+    public void compactPhoneAnswerSourcePreviewDropsRedundantQuoteLine() {
+        DetailSourcePresentationFormatter.EvidenceCard card =
+            new DetailSourcePresentationFormatter.EvidenceCard(
+                "GD-345",
+                "ANCHOR",
+                "93%",
+                "Tarp & Cord Shelters",
+                "A simple ridgeline shelter requires only tarp, cord, and two anchor points.",
+                "",
+                true
+            );
+
+        assertTrue(DetailActivity.shouldUseCompactPhoneAnswerSourcePreviewCard(true, true, false));
+        assertFalse(DetailActivity.shouldUseCompactPhoneAnswerSourcePreviewCard(true, true, true));
+        assertEquals(2, DetailActivity.resolvePhonePortraitSourceCardMaxLines(true, false));
+        assertEquals(3, DetailActivity.resolvePhonePortraitSourceCardMaxLines(true, true));
+        assertEquals(4, DetailActivity.resolvePhonePortraitSourceCardVerticalPaddingDp(true));
+        assertEquals(
+            "GD-345 \u2022 ANCHOR \u2022 93%\nTarp & Cord Shelters",
+            DetailActivity.buildPhonePortraitSourceCardLabel(card, false, true)
+        );
+    }
+
+    @Test
+    public void compactPhoneAnswerRelatedPreviewKeepsCtaCloserToViewport() {
+        assertEquals(3, DetailActivity.resolveRelatedGuidePreviewCollapsedMaxLines(true, true));
+        assertEquals(5, DetailActivity.resolveRelatedGuidePreviewCollapsedMaxLines(true, false));
+        assertEquals(5, DetailActivity.resolveRelatedGuidePreviewCollapsedMaxLines(false, true));
+        assertTrue(DetailActivity.shouldApplyRelatedGuidePreviewCtaClearance(true, true, true, true, true));
+    }
+
+    @Test
     public void metaStripAppendsFreshnessTokens() {
         ArrayList<MetaItem> items = new ArrayList<>();
         DetailActivity.appendMetaStripTokens(

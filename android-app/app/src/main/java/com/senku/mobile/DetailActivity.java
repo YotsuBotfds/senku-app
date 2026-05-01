@@ -4583,6 +4583,11 @@ public final class DetailActivity extends AppCompatActivity {
             boolean stationRail = shouldUseSourceProvenancePanel() || landscapePhoneSideRail;
             boolean compactPreview = shouldUseCompactSourceProvenancePreview();
             boolean previewMode = stationRail || compactPreview;
+            boolean compactAnswerSourcePreviewCard = shouldUseCompactPhoneAnswerSourcePreviewCard(
+                answerMode,
+                isCompactPortraitPhoneLayout(),
+                isEmergencyPortraitSurface()
+            );
             for (int i = 0; i < visibleSources.size(); i++) {
                 SearchResult source = visibleSources.get(i);
                 DetailSourcePresentationFormatter.EvidenceCard evidenceCard =
@@ -4599,12 +4604,16 @@ public final class DetailActivity extends AppCompatActivity {
                 int btnPadV = landscapePhoneSideRail
                     ? dp(resolvePhoneLandscapeSourceRailCardVerticalPaddingDp())
                     : (phonePortraitSourceCards || flatAnswerSourceCards)
-                    ? dp(resolvePhonePortraitSourceCardVerticalPaddingDp())
+                    ? dp(resolvePhonePortraitSourceCardVerticalPaddingDp(compactAnswerSourcePreviewCard))
                     : (stationRail ? dp(8) : dp(12));
                 button.setPadding(btnPadH, btnPadV, btnPadH, btnPadV);
                 boolean styledSourceCard = phonePortraitSourceCards || flatAnswerSourceCards;
                 String sourceLabel = styledSourceCard
-                    ? buildPhonePortraitSourceCardLabel(evidenceCard, isEmergencyPortraitSurface())
+                    ? buildPhonePortraitSourceCardLabel(
+                        evidenceCard,
+                        isEmergencyPortraitSurface(),
+                        compactAnswerSourcePreviewCard
+                    )
                     : (stationRail
                         ? detailSourcePresentationFormatter().buildStationSourceButtonLabel(source, i, visibleSourceCount, i == 0)
                         : detailSourcePresentationFormatter().buildSourceButtonLabel(source));
@@ -4621,7 +4630,9 @@ public final class DetailActivity extends AppCompatActivity {
                 );
                 button.setTextAlignment(View.TEXT_ALIGNMENT_VIEW_START);
                 button.setGravity(Gravity.START | Gravity.CENTER_VERTICAL);
-                button.setMaxLines((phonePortraitSourceCards || flatAnswerSourceCards) ? 3 : 2);
+                button.setMaxLines((phonePortraitSourceCards || flatAnswerSourceCards)
+                    ? resolvePhonePortraitSourceCardMaxLines(compactAnswerSourcePreviewCard, isEmergencyPortraitSurface())
+                    : 2);
                 button.setEllipsize(TextUtils.TruncateAt.END);
                 button.setTextSize(styledSourceCard
                     ? (landscapePhoneSideRail
@@ -5122,6 +5133,14 @@ public final class DetailActivity extends AppCompatActivity {
         return 5;
     }
 
+    static int resolvePhonePortraitSourceCardVerticalPaddingDp(boolean compactAnswerPreview) {
+        return compactAnswerPreview ? 4 : resolvePhonePortraitSourceCardVerticalPaddingDp();
+    }
+
+    static int resolvePhonePortraitSourceCardMaxLines(boolean compactAnswerPreview, boolean emergencyContext) {
+        return compactAnswerPreview && !emergencyContext ? 2 : 3;
+    }
+
     static int resolvePhonePortraitSourceCardTopMarginDp() {
         return 5;
     }
@@ -5145,6 +5164,14 @@ public final class DetailActivity extends AppCompatActivity {
     static String buildPhonePortraitSourceCardLabel(
         DetailSourcePresentationFormatter.EvidenceCard card,
         boolean emergencyContext
+    ) {
+        return buildPhonePortraitSourceCardLabel(card, emergencyContext, false);
+    }
+
+    static String buildPhonePortraitSourceCardLabel(
+        DetailSourcePresentationFormatter.EvidenceCard card,
+        boolean emergencyContext,
+        boolean compactAnswerPreview
     ) {
         if (card == null) {
             return "Source guide";
@@ -5184,13 +5211,21 @@ public final class DetailActivity extends AppCompatActivity {
         String quote = emergencyAnchor
             ? "A single drop of water contacting molten metal causes a violent steam explosion, spraying molten metal 3+ meters in all directions."
             : safe(card.quote).trim();
-        if (!quote.isEmpty()) {
+        if (!quote.isEmpty() && !compactAnswerPreview) {
             if (builder.length() > 0) {
                 builder.append('\n');
             }
             builder.append('"').append(trimPhonePortraitSourceQuote(quote)).append('"');
         }
         return builder.length() == 0 ? "Source guide" : builder.toString();
+    }
+
+    static boolean shouldUseCompactPhoneAnswerSourcePreviewCard(
+        boolean answerMode,
+        boolean compactPortraitPhone,
+        boolean emergencyPortrait
+    ) {
+        return answerMode && compactPortraitPhone && !emergencyPortrait;
     }
 
     private CharSequence buildStyledPhonePortraitSourceCardLabel(String label) {
@@ -10165,7 +10200,11 @@ public final class DetailActivity extends AppCompatActivity {
     }
 
     private int getCollapsedRelatedGuidePreviewMaxLines() {
-        return 5;
+        return resolveRelatedGuidePreviewCollapsedMaxLines(answerMode, isCompactPortraitPhoneLayout());
+    }
+
+    static int resolveRelatedGuidePreviewCollapsedMaxLines(boolean answerMode, boolean compactPortraitPhone) {
+        return answerMode && compactPortraitPhone ? 3 : 5;
     }
 
     private void applyRelatedGuidePreviewIdentity() {
