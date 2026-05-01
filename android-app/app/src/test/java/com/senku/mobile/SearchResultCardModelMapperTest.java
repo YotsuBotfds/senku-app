@@ -172,6 +172,41 @@ public final class SearchResultCardModelMapperTest {
     }
 
     @Test
+    public void linkedGuidePreviewLinePrefersTitleWhenTargetGuideExists() {
+        assertEquals(
+            "Guide: Water Storage",
+            SearchResultCardModelMapper.buildLinkedGuidePreviewLineForTest(
+                "Stored water",
+                "GD-214",
+                " Water Storage ",
+                false
+            )
+        );
+    }
+
+    @Test
+    public void linkedGuidePreviewLineFallsBackToDisplayLabelAndRequiresTargetGuide() {
+        assertEquals(
+            "Guide: Stored water",
+            SearchResultCardModelMapper.buildLinkedGuidePreviewLineForTest(
+                "Stored water",
+                "GD-214",
+                "",
+                false
+            )
+        );
+        assertEquals(
+            "",
+            SearchResultCardModelMapper.buildLinkedGuidePreviewLineForTest(
+                "Stored water",
+                "",
+                "Water Storage",
+                false
+            )
+        );
+    }
+
+    @Test
     public void linkedGuidePreviewLabelPrefersDisplayLabelThenGuideAndTitle() {
         assertEquals(
             "Stored water",

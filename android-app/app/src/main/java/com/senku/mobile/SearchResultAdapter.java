@@ -1317,15 +1317,15 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
     }
 
     private String buildLinkedGuidePreviewLine(LinkedGuidePreview preview, boolean richTabletCard) {
-        if (preview == null || !preview.hasTargetGuide()) {
+        if (preview == null) {
             return "";
         }
-        String title = cleanDisplayText(preview.title, richTabletCard ? 54 : 42);
-        if (!title.isEmpty()) {
-            return buildLinkedGuidePreviewLineLabel() + ": " + title;
-        }
-        String label = cleanDisplayText(buildLinkedGuidePreviewLabel(preview), richTabletCard ? 58 : 46);
-        return label.isEmpty() ? buildLinkedGuidePreviewLineLabel() : buildLinkedGuidePreviewLineLabel() + ": " + label;
+        return SearchResultCardModelMapper.buildLinkedGuidePreviewLine(
+            preview.displayLabel,
+            preview.guideId,
+            preview.title,
+            richTabletCard
+        );
     }
 
     private static String buildLinkedGuidePreviewLineLabel() {

@@ -335,6 +335,35 @@ final class SearchResultCardModelMapper {
         return "Guide";
     }
 
+    static String buildLinkedGuidePreviewLineForTest(
+        String displayLabel,
+        String guideId,
+        String title,
+        boolean richTabletCard
+    ) {
+        return buildLinkedGuidePreviewLine(displayLabel, guideId, title, richTabletCard);
+    }
+
+    static String buildLinkedGuidePreviewLine(
+        String displayLabel,
+        String guideId,
+        String title,
+        boolean richTabletCard
+    ) {
+        if (safe(guideId).trim().isEmpty()) {
+            return "";
+        }
+        String cleanedTitle = cleanDisplayText(title, richTabletCard ? 54 : 42);
+        if (!cleanedTitle.isEmpty()) {
+            return buildLinkedGuidePreviewLineLabel() + ": " + cleanedTitle;
+        }
+        String label = cleanDisplayText(
+            buildLinkedGuidePreviewLabel(displayLabel, guideId, title),
+            richTabletCard ? 58 : 46
+        );
+        return label.isEmpty() ? buildLinkedGuidePreviewLineLabel() : buildLinkedGuidePreviewLineLabel() + ": " + label;
+    }
+
     static String buildLinkedGuidePreviewLabelForTest(String displayLabel, String guideId, String title) {
         return buildLinkedGuidePreviewLabel(displayLabel, guideId, title);
     }
