@@ -45,10 +45,12 @@ public final class DetailBackPolicyTest {
     @Test
     public void sourceRouteIsClassifiedButDoesNotChangeBackEffect() {
         assertRouteEffect(false, DetailBackPolicy.SourceRoute.ANSWER, DetailBackPolicy.Effect.FINISH_ACTIVITY);
+        assertRouteEffect(false, DetailBackPolicy.SourceRoute.EMERGENCY_ANSWER, DetailBackPolicy.Effect.FINISH_ACTIVITY);
         assertRouteEffect(false, DetailBackPolicy.SourceRoute.GUIDE, DetailBackPolicy.Effect.FINISH_ACTIVITY);
         assertRouteEffect(false, DetailBackPolicy.SourceRoute.HOME_GUIDE, DetailBackPolicy.Effect.FINISH_ACTIVITY);
         assertRouteEffect(false, DetailBackPolicy.SourceRoute.CROSS_REFERENCE_GUIDE, DetailBackPolicy.Effect.FINISH_ACTIVITY);
         assertRouteEffect(true, DetailBackPolicy.SourceRoute.ANSWER, DetailBackPolicy.Effect.NAVIGATE_HOME);
+        assertRouteEffect(true, DetailBackPolicy.SourceRoute.EMERGENCY_ANSWER, DetailBackPolicy.Effect.NAVIGATE_HOME);
         assertRouteEffect(true, DetailBackPolicy.SourceRoute.GUIDE, DetailBackPolicy.Effect.NAVIGATE_HOME);
         assertRouteEffect(true, DetailBackPolicy.SourceRoute.HOME_GUIDE, DetailBackPolicy.Effect.NAVIGATE_HOME);
         assertRouteEffect(true, DetailBackPolicy.SourceRoute.CROSS_REFERENCE_GUIDE, DetailBackPolicy.Effect.NAVIGATE_HOME);
@@ -95,27 +97,37 @@ public final class DetailBackPolicyTest {
     }
 
     @Test
-    public void emergencyAnswerSurfacesKeepExplicitBackAffordanceAndTaskRootFallback() {
-        DetailBackPolicy.VisibleBackAffordance stacked = DetailBackPolicy.visibleBackAffordance(false);
-        DetailBackPolicy.VisibleBackAffordance taskRoot = DetailBackPolicy.visibleBackAffordance(true);
+    public void emergencyAnswerSurfacesKeepExplicitBackAffordanceAndTaskRootManualFallback() {
+        DetailBackPolicy.Inputs stackedInputs = new DetailBackPolicy.Inputs(
+            false,
+            DetailBackPolicy.SourceRoute.EMERGENCY_ANSWER,
+            DetailBackPolicy.BackTrigger.VISIBLE_BACK_BUTTON
+        );
+        DetailBackPolicy.Inputs taskRootInputs = new DetailBackPolicy.Inputs(
+            true,
+            DetailBackPolicy.SourceRoute.EMERGENCY_ANSWER,
+            DetailBackPolicy.BackTrigger.VISIBLE_BACK_BUTTON
+        );
+        DetailBackPolicy.VisibleBackAffordance stacked = DetailBackPolicy.visibleBackAffordance(stackedInputs);
+        DetailBackPolicy.VisibleBackAffordance taskRoot = DetailBackPolicy.visibleBackAffordance(taskRootInputs);
 
         assertEquals(R.string.detail_back, stacked.labelResource);
         assertEquals(R.string.detail_back_content_description, stacked.contentDescriptionResource);
         assertFalse(stacked.longPressHomeShortcutEnabled);
 
-        assertEquals(R.string.home_button, taskRoot.labelResource);
-        assertEquals(R.string.detail_home_content_description, taskRoot.contentDescriptionResource);
+        assertEquals(R.string.detail_emergency_app_rail_manual_label, taskRoot.labelResource);
+        assertEquals(R.string.detail_emergency_app_rail_manual_content_description, taskRoot.contentDescriptionResource);
         assertFalse(taskRoot.longPressHomeShortcutEnabled);
 
         assertCurrentClassifiedBackDecision(
             false,
-            DetailBackPolicy.SourceRoute.ANSWER,
+            DetailBackPolicy.SourceRoute.EMERGENCY_ANSWER,
             DetailBackPolicy.BackTrigger.VISIBLE_BACK_BUTTON,
             DetailBackPolicy.Effect.FINISH_ACTIVITY
         );
         assertCurrentClassifiedBackDecision(
             true,
-            DetailBackPolicy.SourceRoute.ANSWER,
+            DetailBackPolicy.SourceRoute.EMERGENCY_ANSWER,
             DetailBackPolicy.BackTrigger.SYSTEM_BACK,
             DetailBackPolicy.Effect.NAVIGATE_HOME
         );
@@ -150,8 +162,7 @@ public final class DetailBackPolicyTest {
                 assertEquals(R.string.detail_back_content_description, stacked.contentDescriptionResource);
                 assertFalse(stacked.longPressHomeShortcutEnabled);
 
-                assertEquals(R.string.home_button, taskRoot.labelResource);
-                assertEquals(R.string.detail_home_content_description, taskRoot.contentDescriptionResource);
+                assertTaskRootAffordanceResources(sourceRoute, taskRoot);
                 assertFalse(taskRoot.longPressHomeShortcutEnabled);
             }
         }
@@ -282,8 +293,7 @@ public final class DetailBackPolicyTest {
 
             assertEquals(DetailBackPolicy.Effect.NAVIGATE_HOME, decision.effect);
             assertEquals(DetailBackPolicy.FinishBehavior.FINISH, decision.finishBehavior);
-            assertEquals(R.string.home_button, affordance.labelResource);
-            assertEquals(R.string.detail_home_content_description, affordance.contentDescriptionResource);
+            assertTaskRootAffordanceResources(sourceRoute, affordance);
             assertFalse(affordance.longPressHomeShortcutEnabled);
         }
     }
@@ -324,6 +334,25 @@ public final class DetailBackPolicyTest {
         assertEquals(DetailBackPolicy.FinishBehavior.FINISH, decision.finishBehavior);
         assertEquals(R.string.home_button, affordance.labelResource);
         assertEquals(R.string.detail_home_content_description, affordance.contentDescriptionResource);
+        assertFalse(affordance.longPressHomeShortcutEnabled);
+    }
+
+    @Test
+    public void emergencyAnswerSourceVisibleBackUsesManualChromeAndNavigatesHomeAtTaskRoot() {
+        DetailBackPolicy.Inputs emergencyAnswerTaskRoot = new DetailBackPolicy.Inputs(
+            true,
+            DetailBackPolicy.SourceRoute.EMERGENCY_ANSWER,
+            DetailBackPolicy.BackTrigger.VISIBLE_BACK_BUTTON
+        );
+
+        DetailBackPolicy.Decision decision = DetailBackPolicy.decide(emergencyAnswerTaskRoot);
+        DetailBackPolicy.VisibleBackAffordance affordance =
+            DetailBackPolicy.visibleBackAffordance(emergencyAnswerTaskRoot);
+
+        assertEquals(DetailBackPolicy.Effect.NAVIGATE_HOME, decision.effect);
+        assertEquals(DetailBackPolicy.FinishBehavior.FINISH, decision.finishBehavior);
+        assertEquals(R.string.detail_emergency_app_rail_manual_label, affordance.labelResource);
+        assertEquals(R.string.detail_emergency_app_rail_manual_content_description, affordance.contentDescriptionResource);
         assertFalse(affordance.longPressHomeShortcutEnabled);
     }
 
@@ -484,5 +513,21 @@ public final class DetailBackPolicyTest {
 
         assertEquals(expectedEffect, decision.effect);
         assertEquals(DetailBackPolicy.FinishBehavior.FINISH, decision.finishBehavior);
+    }
+
+    private static void assertTaskRootAffordanceResources(
+        DetailBackPolicy.SourceRoute sourceRoute,
+        DetailBackPolicy.VisibleBackAffordance affordance
+    ) {
+        if (sourceRoute == DetailBackPolicy.SourceRoute.EMERGENCY_ANSWER) {
+            assertEquals(R.string.detail_emergency_app_rail_manual_label, affordance.labelResource);
+            assertEquals(
+                R.string.detail_emergency_app_rail_manual_content_description,
+                affordance.contentDescriptionResource
+            );
+            return;
+        }
+        assertEquals(R.string.home_button, affordance.labelResource);
+        assertEquals(R.string.detail_home_content_description, affordance.contentDescriptionResource);
     }
 }

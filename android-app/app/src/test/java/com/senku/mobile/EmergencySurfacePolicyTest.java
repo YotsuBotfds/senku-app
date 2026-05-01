@@ -184,12 +184,41 @@ public final class EmergencySurfacePolicyTest {
     @Test
     public void tabletPortraitEmergencyAppRailHomeActionNamesLibraryExit() {
         assertEquals(
-            R.string.bottom_tab_home,
+            R.string.detail_emergency_app_rail_manual_label,
             DetailActivity.resolveTabletEmergencyAppRailHomeLabelResource()
         );
         assertEquals(
             R.string.detail_emergency_app_rail_manual_content_description,
             DetailActivity.resolveTabletEmergencyAppRailHomeContentDescriptionResource()
+        );
+    }
+
+    @Test
+    public void detailBackPolicyClassifiesOnlyEligibleAnswerAsEmergencyAnswer() {
+        assertEquals(
+            DetailBackPolicy.SourceRoute.EMERGENCY_ANSWER,
+            DetailActivity.detailBackPolicySourceRouteForSurface(
+                DetailBackPolicy.SourceRoute.ANSWER,
+                true
+            )
+        );
+        assertEquals(
+            DetailBackPolicy.SourceRoute.ANSWER,
+            DetailActivity.detailBackPolicySourceRouteForSurface(
+                DetailBackPolicy.SourceRoute.ANSWER,
+                false
+            )
+        );
+        assertEquals(
+            DetailBackPolicy.SourceRoute.GUIDE,
+            DetailActivity.detailBackPolicySourceRouteForSurface(
+                DetailBackPolicy.SourceRoute.GUIDE,
+                true
+            )
+        );
+        assertEquals(
+            DetailBackPolicy.SourceRoute.UNKNOWN,
+            DetailActivity.detailBackPolicySourceRouteForSurface(null, true)
         );
     }
 

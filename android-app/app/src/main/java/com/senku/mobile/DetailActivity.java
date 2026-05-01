@@ -2557,7 +2557,7 @@ public final class DetailActivity extends AppCompatActivity {
     }
 
     static int resolveTabletEmergencyAppRailHomeLabelResource() {
-        return R.string.bottom_tab_home;
+        return R.string.detail_emergency_app_rail_manual_label;
     }
 
     static int resolveTabletEmergencyAppRailHomeContentDescriptionResource() {
@@ -9358,7 +9358,10 @@ public final class DetailActivity extends AppCompatActivity {
     private DetailBackPolicy.Inputs detailBackPolicyInputs(DetailBackPolicy.BackTrigger trigger) {
         return new DetailBackPolicy.Inputs(
             isTaskRoot(),
-            currentDetailSourceRoute,
+            detailBackPolicySourceRouteForSurface(
+                currentDetailSourceRoute,
+                isCurrentEmergencySurfaceEligible()
+            ),
             trigger
         );
     }
@@ -9382,6 +9385,16 @@ public final class DetailActivity extends AppCompatActivity {
             }
         }
         return answerMode ? DetailBackPolicy.SourceRoute.ANSWER : DetailBackPolicy.SourceRoute.GUIDE;
+    }
+
+    static DetailBackPolicy.SourceRoute detailBackPolicySourceRouteForSurface(
+        DetailBackPolicy.SourceRoute currentRoute,
+        boolean emergencySurfaceEligible
+    ) {
+        if (currentRoute == DetailBackPolicy.SourceRoute.ANSWER && emergencySurfaceEligible) {
+            return DetailBackPolicy.SourceRoute.EMERGENCY_ANSWER;
+        }
+        return currentRoute == null ? DetailBackPolicy.SourceRoute.UNKNOWN : currentRoute;
     }
 
     private void applyDetailBackDecision(DetailBackPolicy.Decision decision) {

@@ -4,6 +4,7 @@ public final class DetailBackPolicy {
     enum SourceRoute {
         UNKNOWN,
         ANSWER,
+        EMERGENCY_ANSWER,
         GUIDE,
         HOME_GUIDE,
         CROSS_REFERENCE_GUIDE
@@ -50,6 +51,13 @@ public final class DetailBackPolicy {
         Inputs normalized = inputs == null ? Inputs.defaultState() : inputs.normalized();
         Decision decision = decide(normalized);
         if (decision.effect == Effect.NAVIGATE_HOME) {
+            if (normalized.sourceRoute == SourceRoute.EMERGENCY_ANSWER) {
+                return new VisibleBackAffordance(
+                    R.string.detail_emergency_app_rail_manual_label,
+                    R.string.detail_emergency_app_rail_manual_content_description,
+                    false
+                );
+            }
             return new VisibleBackAffordance(
                 R.string.home_button,
                 R.string.detail_home_content_description,
