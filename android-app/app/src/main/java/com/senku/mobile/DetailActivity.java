@@ -3677,24 +3677,20 @@ public final class DetailActivity extends AppCompatActivity {
         FollowUpComposerState composerState = buildPhoneFollowUpComposerState();
         FollowUpComposerController.RetryPresentation retryPresentation =
             FollowUpComposerController.resolveRetryPresentation(composerState, true);
-        boolean showRetry = FollowUpComposerController.shouldShowDockedComposerRetry(
-            retryPresentation.visible,
-            landscapePhone
-        );
-        DockedComposerModel model = new DockedComposerModel(
-            composerState.draftText,
-            DetailDockedComposerPresentationPolicy.resolveHint(
-                fullHint,
-                compactHint,
-                compactFollowUpMode,
-                isCurrentEmergencySurfaceEligible()
-            ),
-            composerState.inputEnabled() && followUpInput.isEnabled() && followUpSendButton != null && followUpSendButton.isEnabled(),
-            showRetry,
-            retryLabel,
+        DockedComposerModel model = DetailDockedComposerPresentationPolicy.resolveModel(
+            composerState,
+            fullHint,
+            compactHint,
             compactFollowUpMode,
+            isCurrentEmergencySurfaceEligible(),
+            followUpInput.isEnabled(),
+            followUpSendButton != null && followUpSendButton.isEnabled(),
+            retryPresentation,
+            landscapePhone,
+            retryLabel,
             buildDockedComposerContextHint()
         );
+        boolean showRetry = model.getShowRetry();
         followUpComposeView.setLandscapePhoneBudgeted(landscapePhone);
         followUpComposeView.setVisibility(View.VISIBLE);
         followUpComposeView.updateModel(

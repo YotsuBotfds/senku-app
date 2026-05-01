@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.KeyEvent;
 import android.view.inputmethod.EditorInfo;
 
+import com.senku.ui.composer.DockedComposerModel;
 import com.senku.ui.primitives.MetaItem;
 import com.senku.ui.tablet.TabletDetailMode;
 
@@ -198,6 +199,112 @@ public final class DetailFollowupLandscapeComposerTest {
                 false
             )
         );
+    }
+
+    @Test
+    public void dockedComposerPolicyAssemblesCompactModel() {
+        FollowUpComposerState state = FollowUpComposerState.idle(
+            "  check the ridge line  ",
+            FollowUpComposerState.Surface.PHONE
+        ).withFailure("offline failure", "  retry ridge line  ");
+        FollowUpComposerController.RetryPresentation retryPresentation =
+            FollowUpComposerController.resolveRetryPresentation(state, true);
+
+        DockedComposerModel model = DetailDockedComposerPresentationPolicy.resolveModel(
+            state,
+            "Ask another question without leaving this thread",
+            "Ask follow-up",
+            true,
+            false,
+            true,
+            true,
+            retryPresentation,
+            false,
+            "  Retry  ",
+            "  GD-345 \u2022 CONTEXT KEPT  "
+        );
+
+        assertEquals("check the ridge line", model.getText());
+        assertEquals("Ask follow-up", model.getHint());
+        assertTrue(model.getEnabled());
+        assertTrue(model.getShowRetry());
+        assertEquals("Retry", model.getRetryLabel());
+        assertTrue(model.getCompact());
+        assertEquals("GD-345 \u2022 CONTEXT KEPT", model.getContextHint());
+    }
+
+    @Test
+    public void dockedComposerPolicySuppressesRetryOnLandscapePhone() {
+        FollowUpComposerState state = FollowUpComposerState.idle(
+            "",
+            FollowUpComposerState.Surface.PHONE
+        ).withFailure("offline failure", "retry ridge line");
+        FollowUpComposerController.RetryPresentation retryPresentation =
+            FollowUpComposerController.resolveRetryPresentation(state, true);
+
+        DockedComposerModel model = DetailDockedComposerPresentationPolicy.resolveModel(
+            state,
+            "Ask another question without leaving this thread",
+            "Ask follow-up",
+            true,
+            false,
+            true,
+            true,
+            retryPresentation,
+            true,
+            "Retry",
+            ""
+        );
+
+        assertFalse(model.getShowRetry());
+    }
+
+    @Test
+    public void dockedComposerPolicyDisablesInputWhenStateOrActionsAreUnavailable() {
+        FollowUpComposerState busyState = FollowUpComposerState.idle(
+            "draft",
+            FollowUpComposerState.Surface.PHONE
+        ).asSubmitting();
+
+        assertFalse(DetailDockedComposerPresentationPolicy.resolveModel(
+            busyState,
+            "Ask another question without leaving this thread",
+            "Ask follow-up",
+            false,
+            false,
+            true,
+            true,
+            null,
+            false,
+            "Retry",
+            ""
+        ).getEnabled());
+        assertFalse(DetailDockedComposerPresentationPolicy.resolveModel(
+            FollowUpComposerState.idle("draft", FollowUpComposerState.Surface.PHONE),
+            "Ask another question without leaving this thread",
+            "Ask follow-up",
+            false,
+            false,
+            false,
+            true,
+            null,
+            false,
+            "Retry",
+            ""
+        ).getEnabled());
+        assertFalse(DetailDockedComposerPresentationPolicy.resolveModel(
+            FollowUpComposerState.idle("draft", FollowUpComposerState.Surface.PHONE),
+            "Ask another question without leaving this thread",
+            "Ask follow-up",
+            false,
+            false,
+            true,
+            false,
+            null,
+            false,
+            "Retry",
+            ""
+        ).getEnabled());
     }
 
     @Test
