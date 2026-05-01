@@ -6509,7 +6509,9 @@ public final class DetailActivity extends AppCompatActivity {
     }
 
     private void startFollowUpGeneration(AnswerPresenter.Kind kind, String query) {
-        lastFailedQuery = "";
+        FollowUpGenerationCoordinator.GenerationStartDecision generationStart =
+            FollowUpGenerationCoordinator.resolveGenerationStart(buildFollowUpComposerStateForKind(kind));
+        lastFailedQuery = generationStart.lastFailedQuery;
         collapseHeroAfterStableAnswer = false;
         int requestToken = ++followUpRenderToken;
         beginStreamingCapture(requestToken);
@@ -6519,19 +6521,17 @@ public final class DetailActivity extends AppCompatActivity {
         currentAnswerHostFallbackUsed = false;
         reviewedCardMetadataBridge.reset();
         setBusy(OfflineAnswerEngine.buildRetrievalStatus(query, sessionMemory), true);
-        clearSubmittedFollowUpDraft(kind);
+        applyStartedFollowUpDraft(kind, generationStart.draftText);
         answerPresenter.prepareThenGenerate(requestToken, kind, repository, query);
     }
 
-    private void clearSubmittedFollowUpDraft(AnswerPresenter.Kind kind) {
-        FollowUpComposerState cleared =
-            FollowUpComposerController.resolveGenerationStart(buildFollowUpComposerStateForKind(kind));
+    private void applyStartedFollowUpDraft(AnswerPresenter.Kind kind, String draftText) {
         if (kind == AnswerPresenter.Kind.TABLET_FOLLOWUP) {
-            tabletComposerText = cleared.draftText;
+            tabletComposerText = draftText;
             return;
         }
         if (followUpInput != null) {
-            followUpInput.setText(cleared.draftText);
+            followUpInput.setText(draftText);
         }
     }
 
