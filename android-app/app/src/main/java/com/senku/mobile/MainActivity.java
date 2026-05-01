@@ -2431,15 +2431,6 @@ public final class MainActivity extends AppCompatActivity {
             params.height = Math.max(params.height, dp(38));
             chromeRow.setLayoutParams(params);
         }
-        for (int i = 0; i < chromeRow.getChildCount(); i++) {
-            View child = chromeRow.getChildAt(i);
-            if (child instanceof TextView && child != homeChromeTitleText) {
-                CharSequence text = ((TextView) child).getText();
-                if ("754 guides".contentEquals(text)) {
-                    child.setVisibility(View.GONE);
-                }
-            }
-        }
     }
 
     private void applyTabletMockParityPolish() {

@@ -242,6 +242,21 @@ public final class ReviewDemoFixtureBoundaryTest {
         );
     }
 
+    @Test
+    public void mainActivityDoesNotCarryReviewDemoGuideCountSentinel() throws Exception {
+        Path mainActivity = productionSourceRoot()
+            .resolve("com")
+            .resolve("senku")
+            .resolve("mobile")
+            .resolve("MainActivity.java");
+        String content = new String(Files.readAllBytes(mainActivity), StandardCharsets.UTF_8);
+
+        assertFalse(
+            "MainActivity should not carry review/demo fixture guide-count sentinels",
+            content.contains("754 guides")
+        );
+    }
+
     private static boolean[] disabledOrDeniedReviewModes() {
         return new boolean[] {
             false,
