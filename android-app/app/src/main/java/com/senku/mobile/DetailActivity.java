@@ -56,7 +56,6 @@ import com.senku.ui.answer.AnswerContentFactory;
 import com.senku.ui.answer.AnswerSurfaceInference;
 import com.senku.ui.answer.AnswerSurfaceLabel;
 import com.senku.ui.answer.Evidence;
-import com.senku.ui.answer.Mode;
 import com.senku.ui.answer.PaperAnswerCardHostView;
 import com.senku.ui.answer.PaperAnswerCardModel;
 import com.senku.ui.composer.DockedComposerHostView;
@@ -3801,28 +3800,28 @@ public final class DetailActivity extends AppCompatActivity {
             answerCardView.setVisibility(View.GONE);
             return;
         }
-        AnswerSurfaceInference answerSurface = inferCurrentAnswerSurface();
-        AnswerContent content = AnswerContentFactory.fromRenderedAnswer(
-            formatAnswerBody(currentBody),
-            currentAnswerShellSourceCount(),
-            buildAnswerCardHostLabel(),
-            AnswerContentFactory.parseElapsedSeconds(currentSubtitle),
-            buildAnswerCardEvidence(),
-            isAbstainRoute(),
-            isAnswerShellUncertainFitRoute(),
-            showStreamingCursor,
-            answerSurface.getAnswerSurfaceLabel(),
-            answerSurface.getAnswerProvenance(),
-            answerSurface.getAnswerSurfaceLabel() == AnswerSurfaceLabel.ReviewedCardEvidence,
-            reviewedCardMetadataBridge.current()
+        PaperAnswerCardModel model = DetailAnswerCardModelFactory.buildPaperModel(
+            new DetailAnswerCardModelFactory.State(
+                formatAnswerBody(currentBody),
+                currentSubtitle,
+                currentAnswerShellSourceCount(),
+                getEvidenceStrengthLabel(),
+                getString(R.string.detail_evidence_strong),
+                getString(R.string.detail_evidence_moderate),
+                isAbstainRoute(),
+                isLowCoverageRoute(),
+                isAnswerShellUncertainFitRoute(),
+                isDeterministicRoute(),
+                showStreamingCursor,
+                currentAnswerResponseMode,
+                currentRuleId,
+                reviewedCardMetadataBridge.current()
+            )
         );
+        AnswerContent content = model.getContent();
         answerCardView.setVisibility(View.VISIBLE);
         answerCardView.updateModel(
-            new PaperAnswerCardModel(
-                content,
-                Mode.Paper,
-                "Show proof"
-            ),
+            model,
             this::scrollToFullProvenancePanel
         );
         Log.d(
