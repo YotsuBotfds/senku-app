@@ -2,6 +2,7 @@ package com.senku.mobile;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import com.senku.ui.tablet.SourceState;
@@ -63,7 +64,81 @@ public final class DetailTabletStateBuilderTest {
         assertFalse(states.get(0).isSelected());
     }
 
+    @Test
+    public void visualOwnerUsesGenericQuestionSourceOverlap() {
+        SearchResult abrasives = topicSource(
+            "GD-220",
+            "Abrasives Manufacturing",
+            "materials abrasives grinding"
+        );
+        SearchResult kiln = topicSource(
+            "GD-812",
+            "Clay Kiln Firing",
+            "clay kiln firing masonry"
+        );
+
+        SearchResult owner = DetailTabletStateBuilder.resolveVisualOwnerSource(
+            true,
+            false,
+            false,
+            List.of("How should I fire a clay kiln after the masonry dries?"),
+            abrasives,
+            List.of(abrasives, kiln)
+        );
+
+        assertEquals("GD-812", owner.guideId);
+    }
+
+    @Test
+    public void visualOwnerKeepsExplicitSelection() {
+        SearchResult abrasives = topicSource(
+            "GD-220",
+            "Abrasives Manufacturing",
+            "materials abrasives grinding"
+        );
+        SearchResult shelter = topicSource(
+            "GD-345",
+            "Rain shelter in wet weather",
+            "field shelter rain tarp cord"
+        );
+
+        SearchResult owner = DetailTabletStateBuilder.resolveVisualOwnerSource(
+            true,
+            true,
+            false,
+            List.of("How do I build a simple rain shelter from tarp and cord?"),
+            abrasives,
+            List.of(abrasives, shelter)
+        );
+
+        assertEquals("GD-220", owner.guideId);
+    }
+
+    @Test
+    public void visualOwnerReturnsNullWhenThreadHasNoSourceMatch() {
+        SearchResult abrasives = topicSource(
+            "GD-220",
+            "Abrasives Manufacturing",
+            "materials abrasives grinding"
+        );
+
+        SearchResult owner = DetailTabletStateBuilder.resolveVisualOwnerSource(
+            true,
+            false,
+            false,
+            List.of("How do I plan the calendar?"),
+            abrasives,
+            List.of(abrasives)
+        );
+
+        assertNull(owner);
+    }
+
     private static SearchResult source(String guideId, String title, String section) {
         return new SearchResult(title, "", "", "", guideId, section, "", "");
+    }
+
+    private static SearchResult topicSource(String guideId, String title, String topicTags) {
+        return new SearchResult(title, "", "", "", guideId, "", "", "", "", "", "", topicTags);
     }
 }
