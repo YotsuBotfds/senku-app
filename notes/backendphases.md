@@ -1,6 +1,6 @@
 # Backend Cleanup Phase Tracker
 
-Last updated after cleanup through `a9908b44` on 2026-05-01.
+Last updated after cleanup through `7d2b8cfc` on 2026-05-01.
 
 Purpose: prevent future agents from rerunning Ask/query backend cleanup that is already complete. Keep this note short; implementation detail belongs in commits and tests.
 
@@ -498,6 +498,13 @@ Purpose: prevent future agents from rerunning Ask/query backend cleanup that is 
   without long emulator loops.
 - Saved-flow canary proof after UI-NORM1 passed on `emulator-5556`:
   `artifacts/android_functional_ux_smoke_canary/ui_norm_saved_20260501/20260501_131715_614/emulator-5556/summary.json`.
+- Route SQL and chrome guardrails are current through `7d2b8cfc`: route
+  FTS/LIKE builders now report local no-op reasons for empty query/token/category,
+  blank table, and nonpositive-limit plans; route LIKE fallback collection stays
+  protected by `SQLiteException` handling; the phone home search action tint
+  uses the shared muted chrome token; tablet detail back icon sizing uses the
+  shared tablet back-action policy; and the no-source Ask route test asserts
+  essential callback effects without locking incidental order.
 - Latest reported validation after `acc43d0b`: focused JVM proof for
   `DetailTabletStateBuilderTest`, `SearchResultCardModelMapperTest`,
   `FollowUpComposerControllerTest`, `MainRouteCoordinatorTest`,
@@ -523,7 +530,12 @@ Purpose: prevent future agents from rerunning Ask/query backend cleanup that is 
   `tests.test_run_android_functional_ux_smoke_matrix_contract`, the PowerShell
   parser gate for `scripts/run_android_functional_ux_smoke_matrix.ps1`, and
   `git diff --check`.
-- Tracker is refreshed through `a9908b44`.
+- Additional validation after `7d2b8cfc`: `PackRouteSearchSqlPolicyTest`,
+  `PackRouteFocusedSearchHelperTest`, `PackRouteFocusedCandidateCollectorTest`,
+  `MainRouteCoordinatorTest`, `PhoneMainXmlShellParityTest`,
+  `TypographyTokenAuditTest`, `TopBarTest`, `TabletDetailAppRailPolicyTest`,
+  and `git diff --check`.
+- Tracker is refreshed through `7d2b8cfc`.
 
 ## Remaining Next Slices
 
@@ -560,6 +572,11 @@ Purpose: prevent future agents from rerunning Ask/query backend cleanup that is 
   bridge is landed, but future visual work should continue with small
   chrome/token slices and targeted screenshots rather than broad redesign
   commits. Do not mix this with backend cleanup.
+- Current scout priority after `7d2b8cfc`: add a tablet functional UX matrix
+  preset using existing tablet rail/header smoke methods, then consider visible
+  pack/runtime identity on manual home shells, phone landscape composer
+  crowding, tablet evidence/context truncation, and remaining brittle UI-copy
+  assertions. Keep these as separate slices.
 - Do not collapse the new presentation, category-filter, route-ranking,
   water-distribution anchor, or route-refinement helper boundaries back into
   activity/repository/executor bodies.
