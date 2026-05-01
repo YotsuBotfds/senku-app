@@ -374,6 +374,22 @@ public final class MainActivityHomeChromeTest {
     }
 
     @Test
+    public void tabletSearchHeaderDelegatesReviewLatencyToPolicy() {
+        assertEquals(
+            ReviewDemoPolicy.buildTabletSearchHeader(true, "rain shelter", 4),
+            MainActivity.buildTabletSearchHeaderForTest("rain shelter", 4, true)
+        );
+        assertEquals(
+            ReviewDemoPolicy.buildTabletSearchHeader(false, "rain shelter", 4),
+            MainActivity.buildTabletSearchHeaderForTest("rain shelter", 4, false)
+        );
+        assertEquals(
+            "Search - 1 result",
+            MainActivity.buildTabletSearchHeaderForTest("guides", 1, true)
+        );
+    }
+
+    @Test
     public void searchChromeSplitsTargetQueryAndCountLatency() {
         assertEquals("rain shelter", MainActivity.buildSearchChromeQueryLabelForTest(" rain shelter "));
         assertEquals(

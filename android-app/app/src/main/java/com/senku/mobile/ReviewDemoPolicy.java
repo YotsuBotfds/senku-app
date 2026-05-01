@@ -195,6 +195,15 @@ final class ReviewDemoPolicy {
         return cleanHeader + " \u2022 " + ReviewDemoFixtureSet.latencyLabel();
     }
 
+    static String buildTabletSearchHeader(boolean productReviewMode, String query, int resultCount) {
+        String cleanQuery = safe(query).trim();
+        String countLabel = resultCount + (resultCount == 1 ? " result" : " results");
+        if (cleanQuery.isEmpty() || "guides".equalsIgnoreCase(cleanQuery)) {
+            return "Search - " + countLabel;
+        }
+        return appendSearchLatency("Search " + cleanQuery + " - " + countLabel, cleanQuery, productReviewMode);
+    }
+
     static boolean shouldSuppressSearchRowLinkedGuideCue(
         boolean productReviewMode,
         String query,

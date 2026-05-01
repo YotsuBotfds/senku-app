@@ -307,6 +307,22 @@ public final class ReviewDemoPolicyTest {
     }
 
     @Test
+    public void tabletSearchHeaderOwnsReviewLatencyDecision() {
+        assertEquals(
+            "Search rain shelter - 4 results \u2022 12MS",
+            ReviewDemoPolicy.buildTabletSearchHeader(true, " rain shelter ", 4)
+        );
+        assertEquals(
+            "Search rain shelter - 4 results",
+            ReviewDemoPolicy.buildTabletSearchHeader(false, " rain shelter ", 4)
+        );
+        assertEquals(
+            "Search - 1 result",
+            ReviewDemoPolicy.buildTabletSearchHeader(true, " guides ", 1)
+        );
+    }
+
+    @Test
     public void disabledModeDoesNotAppendSearchLatency() {
         assertEquals(
             "Search  rain shelter - 4 results",
