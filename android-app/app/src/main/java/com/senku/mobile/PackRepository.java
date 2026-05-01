@@ -657,14 +657,51 @@ public final class PackRepository implements AutoCloseable {
         List<CombinedHit> combinedHits,
         int limit
     ) {
-        maybeLogCandidateTelemetry(buildPrerankCandidateTelemetryLine(query, combinedHits, limit));
-        List<SearchResult> projectedResults = toSearchResults(combinedHits, limit);
+        return finalizeCombinedHitsForSearch(
+            query,
+            queryTerms,
+            combinedHits,
+            limit,
+            PackRepository::maybeLogCandidateTelemetry
+        );
+    }
+
+    static SearchFinalization finalizeCombinedHitsForSearchForTest(
+        String query,
+        List<CombinedHit> combinedHits,
+        int limit,
+        CandidateTelemetrySink telemetrySink
+    ) {
+        return finalizeCombinedHitsForSearch(
+            query,
+            QueryTerms.fromQuery(query),
+            combinedHits,
+            limit,
+            telemetrySink
+        );
+    }
+
+    private static SearchFinalization finalizeCombinedHitsForSearch(
+        String query,
+        QueryTerms queryTerms,
+        List<CombinedHit> combinedHits,
+        int limit,
+        CandidateTelemetrySink telemetrySink
+    ) {
+        emitCandidateTelemetry(telemetrySink, buildPrerankCandidateTelemetryLine(query, combinedHits, limit));
+        List<SearchResult> projectedResults = PackRetrievalFusionPolicy.toSearchResults(combinedHits, limit);
         long rerankStartedAtNs = elapsedRealtimeNanosSafe();
         List<RerankedResult> rerankedDetails = maybeRerankResultsDetailed(queryTerms, projectedResults, limit);
         List<SearchResult> reranked = extractSearchResults(rerankedDetails);
         long rerankElapsedMs = elapsedRealtimeMsSince(rerankStartedAtNs);
-        maybeLogCandidateTelemetry(buildRerankedCandidateTelemetryLine(query, rerankedDetails));
+        emitCandidateTelemetry(telemetrySink, buildRerankedCandidateTelemetryLine(query, rerankedDetails));
         return new SearchFinalization(reranked, rerankElapsedMs);
+    }
+
+    private static void emitCandidateTelemetry(CandidateTelemetrySink telemetrySink, String line) {
+        if (telemetrySink != null) {
+            telemetrySink.accept(line);
+        }
     }
 
     private static boolean shouldApplyMetadataRerank(QueryTerms queryTerms) {
@@ -2092,7 +2129,11 @@ public final class PackRepository implements AutoCloseable {
         return PackSupportScoringPolicy.supportStructurePenalty(diversifyContext, retrievalMode, sectionHeading);
     }
 
-    private static final class SearchFinalization {
+    interface CandidateTelemetrySink {
+        void accept(String line);
+    }
+
+    static final class SearchFinalization {
         final List<SearchResult> rerankedResults;
         final long rerankElapsedMs;
 

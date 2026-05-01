@@ -412,6 +412,61 @@ public final class PackRepositoryTelemetryTest {
         assertTrue(reranked.isEmpty());
     }
 
+    @Test
+    public void finalizationPreservesTelemetryAndRerankTimingForFallbackAndHybridShapes() {
+        assertFinalizationTelemetryAndTiming(
+            "vector_disabled",
+            PackRetrievalFusionPolicy.mergeHybrid(
+                Arrays.asList(
+                    rankedChunk("lex-shelter", "GD-345", "Tarp Shelter Setup", "emergency_shelter", 0),
+                    rankedChunk("lex-storage", "GD-727", "Storage Basics", "general", 1)
+                ),
+                Collections.emptyList(),
+                null,
+                Collections.emptyMap(),
+                message -> {
+                }
+            ),
+            0,
+            0L
+        );
+        assertFinalizationTelemetryAndTiming(
+            "centroid_missing",
+            PackRetrievalFusionPolicy.mergeHybrid(
+                Arrays.asList(
+                    rankedChunk("centroid-shelter", "GD-345", "Tarp Shelter Setup", "emergency_shelter", 0),
+                    rankedChunk("centroid-storage", "GD-727", "Storage Basics", "general", 1)
+                ),
+                Collections.emptyList(),
+                null,
+                Collections.emptyMap(),
+                message -> {
+                }
+            ),
+            0,
+            7L
+        );
+        assertFinalizationTelemetryAndTiming(
+            "hybrid",
+            PackRetrievalFusionPolicy.mergeHybrid(
+                Arrays.asList(
+                    rankedChunk("hybrid-shelter", "GD-345", "Tarp Shelter Setup", "emergency_shelter", 0),
+                    rankedChunk("hybrid-storage", "GD-727", "Storage Basics", "general", 1)
+                ),
+                Collections.singletonList(
+                    rankedChunk("hybrid-shelter", "GD-345", "Tarp Shelter Setup", "emergency_shelter", 0)
+                        .withVectorRank(0, 0.92f)
+                ),
+                null,
+                Collections.emptyMap(),
+                message -> {
+                }
+            ),
+            1,
+            11L
+        );
+    }
+
     private static SearchResult searchResult(
         String guideId,
         String sectionHeading,
@@ -461,6 +516,72 @@ public final class PackRepositoryTelemetryTest {
             structureType,
             topicTags
         );
+    }
+
+    private static PackRepository.RankedChunk rankedChunk(
+        String chunkId,
+        String guideId,
+        String sectionHeading,
+        String structureType,
+        int rank
+    ) {
+        return new PackRepository.RankedChunk(
+            chunkId,
+            rank,
+            "Guide " + guideId,
+            guideId,
+            sectionHeading,
+            "survival",
+            "Use tarp angle, ridgeline, and drainage so rain sheds cleanly.",
+            "starter",
+            "immediate",
+            structureType,
+            "shelter,tarp_shelter,weatherproofing",
+            1.0 / (rank + 1),
+            rank,
+            Integer.MAX_VALUE,
+            Float.NEGATIVE_INFINITY
+        );
+    }
+
+    private static void assertFinalizationTelemetryAndTiming(
+        String fallbackMode,
+        List<PackRepository.CombinedHit> combinedHits,
+        int vectorHits,
+        long vectorMs
+    ) {
+        String query = "How do I build a simple rain shelter from tarp and cord?";
+        ArrayList<String> telemetryLines = new ArrayList<>();
+
+        PackRepository.SearchFinalization finalization =
+            PackRepository.finalizeCombinedHitsForSearchForTest(query, combinedHits, 2, telemetryLines::add);
+
+        assertEquals(2, telemetryLines.size());
+        assertTrue(telemetryLines.get(0).startsWith("search.candidates.prerank"));
+        assertTrue(telemetryLines.get(1).startsWith("search.candidates.reranked"));
+        assertTrue(telemetryLines.get(0).contains("GD-345"));
+        assertTrue(telemetryLines.get(1).contains("GD-345"));
+        assertFalse(finalization.rerankedResults.isEmpty());
+        assertTrue(finalization.rerankElapsedMs >= 0L);
+
+        String summaryLine = PackRepository.buildSearchSummaryLineForTest(
+            query,
+            true,
+            1,
+            combinedHits.size(),
+            vectorHits,
+            1,
+            2L,
+            3L,
+            4L,
+            vectorMs,
+            finalization.rerankElapsedMs,
+            20L,
+            fallbackMode
+        );
+
+        assertTrue(summaryLine.contains("fallback=" + fallbackMode));
+        assertTrue(summaryLine.contains("rerankMs=" + finalization.rerankElapsedMs));
     }
 
     private static PackRepository.RerankedResult rerankedResult(
