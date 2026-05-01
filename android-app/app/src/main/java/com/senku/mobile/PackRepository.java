@@ -26,30 +26,6 @@ public final class PackRepository implements AutoCloseable {
     private static final int VECTOR_NEIGHBOR_LIMIT = 28;
     private static final int VECTOR_SEED_COUNT = 6;
     private final Object closeLock = new Object();
-    private static final Set<String> HOUSE_SITE_SELECTION_ANCHOR_MARKERS = buildMarkerSet(
-        "terrain analysis",
-        "site assessment checklist",
-        "wind exposure",
-        "water proximity",
-        "natural hazards",
-        "seasonal considerations",
-        "access routes",
-        "sun exposure",
-        "microclimate"
-    );
-    private static final Set<String> HOUSE_FOUNDATION_DETAIL_MARKERS = buildMarkerSet(
-        "foundations",
-        "foundation planning",
-        "foundation layout",
-        "frost line",
-        "frost heave",
-        "footing",
-        "footings",
-        "footing sizing",
-        "rubble trench",
-        "french drain",
-        "drainage and waterproofing"
-    );
     private static final Set<String> STOP_TOKENS = buildStopTokens();
     private static final Set<String> LOW_SIGNAL_TOKENS = buildLowSignalTokens();
     private static final Map<String, String[]> QUERY_EXPANSIONS = buildQueryExpansions();
@@ -1426,57 +1402,19 @@ public final class PackRepository implements AutoCloseable {
     }
 
     static boolean prefersCabinSiteSelectionRouteAnchor(QueryTerms queryTerms) {
-        if (queryTerms == null || queryTerms.metadataProfile == null) {
-            return false;
-        }
-        return "cabin_house".equals(queryTerms.metadataProfile.preferredStructureType())
-            && queryTerms.metadataProfile.siteSelectionLeadIntent()
-            && queryTerms.metadataProfile.hasExplicitTopic("site_selection")
-            && queryTerms.metadataProfile.hasExplicitTopic("foundation");
+        return PackRouteAnchorBiasPolicy.prefersCabinSiteSelectionRouteAnchor(queryTerms);
     }
 
     static boolean hasCabinSiteSelectionAnchorSignal(SearchResult candidate) {
-        if (candidate == null) {
-            return false;
-        }
-        return PackTextMatchPolicy.containsAnyMarker(
-            emptySafe(candidate.title) + " " + emptySafe(candidate.sectionHeading),
-            HOUSE_SITE_SELECTION_ANCHOR_MARKERS
-        );
+        return PackRouteAnchorBiasPolicy.hasCabinSiteSelectionAnchorSignal(candidate);
     }
 
     static int cabinSiteSelectionAnchorBias(QueryTerms queryTerms, SearchResult candidate) {
-        if (!prefersCabinSiteSelectionRouteAnchor(queryTerms) || candidate == null) {
-            return 0;
-        }
-        int score = 0;
-        String normalizedCategory = emptySafe(candidate.category).trim().toLowerCase(QUERY_LOCALE);
-        boolean siteSignal = hasCabinSiteSelectionAnchorSignal(candidate);
-        boolean foundationOnlySignal = PackTextMatchPolicy.containsAnyMarker(
-            emptySafe(candidate.title) + " " + emptySafe(candidate.sectionHeading),
-            HOUSE_FOUNDATION_DETAIL_MARKERS
-        );
-        if (siteSignal) {
-            score += 16;
-            if ("survival".equals(normalizedCategory)) {
-                score += 4;
-            }
-        }
-        if (foundationOnlySignal && !siteSignal) {
-            score -= 6;
-        }
-        return score;
+        return PackRouteAnchorBiasPolicy.cabinSiteSelectionAnchorBias(queryTerms, candidate);
     }
 
     static boolean prefersRoofWeatherproofRouteAnchor(QueryTerms queryTerms) {
-        if (queryTerms == null || queryTerms.metadataProfile == null) {
-            return false;
-        }
-        return PackRouteSignalPolicy.prefersRoofWeatherproofContext(queryTerms.metadataProfile);
-    }
-
-    private static boolean prefersRoofWeatherproofContext(QueryMetadataProfile metadataProfile) {
-        return PackRouteSignalPolicy.prefersRoofWeatherproofContext(metadataProfile);
+        return PackRouteAnchorBiasPolicy.prefersRoofWeatherproofRouteAnchor(queryTerms);
     }
 
     static boolean hasRoofWeatherproofAnchorSignal(SearchResult candidate) {
@@ -1488,17 +1426,7 @@ public final class PackRepository implements AutoCloseable {
     }
 
     static int roofWeatherproofAnchorBias(QueryTerms queryTerms, SearchResult candidate) {
-        if (!prefersRoofWeatherproofRouteAnchor(queryTerms) || candidate == null) {
-            return 0;
-        }
-        int score = 0;
-        if (hasRoofWeatherproofAnchorSignal(candidate)) {
-            score += 16;
-        }
-        if (hasRoofWeatherproofDistractorSignal(candidate) && !hasRoofWeatherproofAnchorSignal(candidate)) {
-            score -= 14;
-        }
-        return score;
+        return PackRouteAnchorBiasPolicy.roofWeatherproofAnchorBias(queryTerms, candidate);
     }
 
     static boolean matchesSpecializedExplicitTopicRowForTest(String query, String structureType, String topicTags) {
@@ -1996,12 +1924,6 @@ public final class PackRepository implements AutoCloseable {
         expansions.put("wet", new String[]{"rain", "damp", "dry tinder"});
         expansions.put("wound", new String[]{"first aid", "infection prevention", "dressings"});
         return Collections.unmodifiableMap(expansions);
-    }
-
-    private static Set<String> buildMarkerSet(String... values) {
-        LinkedHashSet<String> markers = new LinkedHashSet<>();
-        Collections.addAll(markers, values);
-        return Collections.unmodifiableSet(markers);
     }
 
     static String clip(String text, int limit) {
