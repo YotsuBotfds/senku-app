@@ -237,6 +237,24 @@ internal fun assertRailItemTokens(layout: Element, spec: RailItemSpec) {
     assertEquals(spec.expectedTint, label.android("textColor"))
 }
 
+internal fun assertLayoutDoesNotReferenceResources(
+    layout: Element,
+    forbiddenResources: List<String>,
+    message: String,
+) {
+    val resourceReferences = layout.allElements()
+        .flatMap { element ->
+            (0 until element.attributes.length)
+                .map { index -> element.attributes.item(index).nodeValue }
+        }
+        .filter { value -> value.startsWith("@") }
+        .toSet()
+
+    forbiddenResources.forEach { resource ->
+        assertTrue("$message should not reference $resource", resource !in resourceReferences)
+    }
+}
+
 internal fun Element.elementByAndroidId(id: String): Element {
     val nodes = getElementsByTagName("*")
     for (index in 0 until nodes.length) {
@@ -276,6 +294,10 @@ internal fun Element.directElementChildren(): List<Element> =
     (0 until childNodes.length)
         .map { childNodes.item(it) }
         .filterIsInstance<Element>()
+
+private fun Element.allElements(): List<Element> =
+    listOf(this) + (0 until getElementsByTagName("*").length)
+        .mapNotNull { index -> getElementsByTagName("*").item(index) as? Element }
 
 private fun assertDirectChildIdsContain(row: Element, message: String, expectedIds: List<String>) {
     val directChildIds = row.directElementChildren()
