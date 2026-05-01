@@ -4,9 +4,12 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.junit.Test;
 
 public final class ChatSessionStoreTest {
@@ -147,6 +150,24 @@ public final class ChatSessionStoreTest {
         assertEquals("GD-035", previews.get(0).latestTurn.sourceResults.get(0).guideId);
     }
 
+    @Test
+    public void corruptSavedStateDoesNotClearLiveStateOrBlockLaterRestore() throws Exception {
+        ChatSessionStore.resetForTest();
+        String liveConversationId = ChatSessionStore.createConversation();
+        recordTurn(liveConversationId, "live question", "GD-101");
+
+        ChatSessionStore.restoreSavedStateForTest("{");
+
+        assertEquals(1, ChatSessionStore.conversationCountForTest());
+        assertTrue(ChatSessionStore.containsConversationIdForTest(liveConversationId));
+
+        ChatSessionStore.restoreSavedStateForTest(savedStateWithConversation("restored-conversation", "GD-202"));
+
+        assertEquals(2, ChatSessionStore.conversationCountForTest());
+        assertTrue(ChatSessionStore.containsConversationIdForTest(liveConversationId));
+        assertTrue(ChatSessionStore.containsConversationIdForTest("restored-conversation"));
+    }
+
     private static void recordTurn(String conversationId, String question, String guideId) {
         ChatSessionStore.memoryFor(conversationId).recordTurn(
             question,
@@ -164,5 +185,31 @@ public final class ChatSessionStoreTest {
                 )
             )
         );
+    }
+
+    private static String savedStateWithConversation(String conversationId, String guideId) throws Exception {
+        SessionMemory memory = new SessionMemory();
+        memory.recordTurn(
+            "restored question",
+            "Short answer: Restore this thread.",
+            List.of(
+                new SearchResult(
+                    "Guide " + guideId,
+                    "",
+                    "",
+                    "",
+                    guideId,
+                    "Restore",
+                    "survival",
+                    "guide-focus"
+                )
+            )
+        );
+        JSONObject conversationJson = new JSONObject()
+            .put("id", conversationId)
+            .put("memory", memory.toJson());
+        return new JSONObject()
+            .put("conversations", new JSONArray().put(conversationJson))
+            .toString();
     }
 }

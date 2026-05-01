@@ -71,40 +71,49 @@ public final class ChatSessionStore {
         if (context == null) {
             return;
         }
+        restoreSavedState(preferences(context).getString(KEY_STATE, ""));
+    }
+
+    private static void restoreSavedState(String saved) {
         synchronized (LOCK) {
             if (restored) {
                 return;
             }
-            restored = true;
-            String saved = preferences(context).getString(KEY_STATE, "");
             if (saved == null || saved.trim().isEmpty()) {
+                restored = true;
                 return;
             }
             try {
-                JSONObject root = new JSONObject(saved);
-                JSONArray conversations = root.optJSONArray("conversations");
-                if (conversations == null) {
-                    return;
-                }
-                for (int index = 0; index < conversations.length(); index++) {
-                    JSONObject conversationJson = conversations.optJSONObject(index);
-                    if (conversationJson == null) {
-                        continue;
-                    }
-                    String conversationId = conversationJson.optString("id", "").trim();
-                    if (conversationId.isEmpty()) {
-                        continue;
-                    }
-                    SessionMemory memory = SessionMemory.fromJson(conversationJson.optString("memory", ""));
-                    if (!memory.hasState()) {
-                        continue;
-                    }
-                    CONVERSATIONS.put(conversationId, memory);
-                }
+                CONVERSATIONS.putAll(parseSavedConversations(saved));
+                restored = true;
             } catch (JSONException ignored) {
-                CONVERSATIONS.clear();
             }
         }
+    }
+
+    private static LinkedHashMap<String, SessionMemory> parseSavedConversations(String saved) throws JSONException {
+        LinkedHashMap<String, SessionMemory> restoredConversations = new LinkedHashMap<>();
+        JSONObject root = new JSONObject(saved);
+        JSONArray conversations = root.optJSONArray("conversations");
+        if (conversations == null) {
+            return restoredConversations;
+        }
+        for (int index = 0; index < conversations.length(); index++) {
+            JSONObject conversationJson = conversations.optJSONObject(index);
+            if (conversationJson == null) {
+                continue;
+            }
+            String conversationId = conversationJson.optString("id", "").trim();
+            if (conversationId.isEmpty()) {
+                continue;
+            }
+            SessionMemory memory = SessionMemory.fromJson(conversationJson.optString("memory", ""));
+            if (!memory.hasState()) {
+                continue;
+            }
+            restoredConversations.put(conversationId, memory);
+        }
+        return restoredConversations;
     }
 
     public static void persist(Context context) {
@@ -258,5 +267,9 @@ public final class ChatSessionStore {
 
     static String ensureConversationIdForTest(String conversationId, long nowEpochMs) {
         return ensureConversationId(conversationId, nowEpochMs);
+    }
+
+    static void restoreSavedStateForTest(String saved) {
+        restoreSavedState(saved);
     }
 }
