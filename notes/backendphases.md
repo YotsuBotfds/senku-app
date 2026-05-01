@@ -1,6 +1,6 @@
 # Backend Cleanup Phase Tracker
 
-Last updated after cleanup through `7d2b8cfc` on 2026-05-01.
+Last updated after cleanup through `28d77046` on 2026-05-01.
 
 Purpose: prevent future agents from rerunning Ask/query backend cleanup that is already complete. Keep this note short; implementation detail belongs in commits and tests.
 
@@ -505,6 +505,15 @@ Purpose: prevent future agents from rerunning Ask/query backend cleanup that is 
   uses the shared muted chrome token; tablet detail back icon sizing uses the
   shared tablet back-action policy; and the no-source Ask route test asserts
   essential callback effects without locking incidental order.
+- UI polish is current through `62ad2833`: manual home shells expose the live
+  `IdentityStripHostView`, phone landscape composer padding is tokenized and
+  tighter while preserving 48dp action touch targets, and tablet answer-mode
+  evidence rows keep the anchor snippet visible as proof text.
+- Functional smoke packaging is current through `28d77046`: phone functional
+  remains the default matrix package, tablet functional rail/header presets are
+  available through `-PresetPackage tablet-functional`, and remaining brittle
+  PromptHarness navigation lookups now prefer resource-backed labels where
+  practical.
 - Latest reported validation after `acc43d0b`: focused JVM proof for
   `DetailTabletStateBuilderTest`, `SearchResultCardModelMapperTest`,
   `FollowUpComposerControllerTest`, `MainRouteCoordinatorTest`,
@@ -535,7 +544,15 @@ Purpose: prevent future agents from rerunning Ask/query backend cleanup that is 
   `MainRouteCoordinatorTest`, `PhoneMainXmlShellParityTest`,
   `TypographyTokenAuditTest`, `TopBarTest`, `TabletDetailAppRailPolicyTest`,
   and `git diff --check`.
-- Tracker is refreshed through `7d2b8cfc`.
+- Additional validation after `28d77046`: `MainActivityIdentityTest`,
+  `PhoneMainXmlShellParityTest`, `TabletMainXmlShellParityTest`,
+  `DetailFollowupLandscapeComposerTest`, `DockedComposerTouchTargetTokenTest`,
+  `TabletEvidenceVisibilityPolicyTest`,
+  `tests.test_run_android_functional_ux_smoke_matrix_contract`,
+  `tests.test_run_android_instrumented_ui_smoke_summary_contract`, parser gate
+  for the two Android smoke scripts, `:app:assembleDebugAndroidTest`, and
+  `git diff --check`.
+- Tracker is refreshed through `28d77046`.
 
 ## Remaining Next Slices
 
@@ -577,6 +594,10 @@ Purpose: prevent future agents from rerunning Ask/query backend cleanup that is 
   pack/runtime identity on manual home shells, phone landscape composer
   crowding, tablet evidence/context truncation, and remaining brittle UI-copy
   assertions. Keep these as separate slices.
+- Current backend scout priority after `28d77046`: add a real-pack route parity
+  androidTest before deeper route/anchor extraction, covering house,
+  water-distribution/storage, soap, glass, roof/weatherproofing, and food-theft
+  governance prompts through the bundled current-head pack.
 - Do not collapse the new presentation, category-filter, route-ranking,
   water-distribution anchor, or route-refinement helper boundaries back into
   activity/repository/executor bodies.
