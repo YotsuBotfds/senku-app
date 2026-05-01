@@ -288,6 +288,10 @@ function Write-SummaryMarkdown {
         foreach ($step in $Summary.interaction.steps) {
             $message = if ([string]::IsNullOrWhiteSpace($step.message)) { "" } else { " - $($step.message)" }
             $lines += "- interaction_step: $($step.name)=$($step.status)$message"
+            if ($step.status -ne "success" -and $null -ne $step.post_check) {
+                $postCheckJson = $step.post_check | ConvertTo-Json -Depth 6 -Compress
+                $lines += "- interaction_post_check: $($step.name)=$postCheckJson"
+            }
         }
     }
     $lines | Set-Content -Path $Path -Encoding UTF8

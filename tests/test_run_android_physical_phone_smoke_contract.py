@@ -642,6 +642,10 @@ class AndroidPhysicalPhoneSmokeContractTests(unittest.TestCase):
             self.assertIn("No matching result", post_check["ui_text_sample"])
             self.assertGreater(post_check["dump_length"], 0)
             self.assertRegex(post_check["dump_sha256"], r"^[0-9a-f]{64}$")
+            summary_markdown = (output_dir / "summary.md").read_text(encoding="utf-8-sig")
+            self.assertIn("- interaction_post_check: submit_query=", summary_markdown)
+            self.assertIn('"passed":false', summary_markdown)
+            self.assertIn('"ui_text_sample":["No matching result"]', summary_markdown)
         finally:
             shutil.rmtree(root, ignore_errors=True)
 
