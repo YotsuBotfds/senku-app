@@ -1,6 +1,6 @@
 # Backend Cleanup Phase Tracker
 
-Last updated after cleanup through `8767a1eb` on 2026-05-01.
+Last updated after cleanup through `dc20a05a` on 2026-05-01.
 
 Purpose: prevent future agents from rerunning Ask/query backend cleanup that is already complete. Keep this note short; implementation detail belongs in commits and tests.
 
@@ -8,6 +8,27 @@ Purpose: prevent future agents from rerunning Ask/query backend cleanup that is 
 
 - Local-only workflow guard is in place so backend validation stays on the
   intended local path.
+- Functional UX validation docs are current through `4d964a47`: default proof
+  language now uses local emulator/instrumentation contract-first lanes, while
+  physical devices are reserved for milestone truth checks instead of routine
+  Ask-owned validation loops.
+- Search row presentation cleanup is current through `95afae84`:
+  `SearchResultCardModelMapper` owns row title budgets, guide markers,
+  attribute lines, snippet budgets, and large-card options; review-demo cue
+  suppression remains inside the approved adapter boundary. Focused proof lives
+  in `SearchResultAdapterTest`, `SearchResultCardModelMapperTest`, and
+  `ReviewDemoFixtureBoundaryTest`.
+- Detail presentation cleanup is current through `dc20a05a`:
+  `DetailRelatedGuidePreviewPolicy` owns preview-panel selection/body/source
+  decisions without importing review-demo fixtures, and
+  `DetailTabletEmergencyChromePolicy` owns the tablet emergency chrome sizing,
+  spacing, type, and meta formatting tokens. Focused proof lives in
+  `DetailRelatedGuidePreviewPolicyTest`,
+  `DetailTabletEmergencyChromePolicyTest`, and existing detail/emergency
+  presentation tests.
+- Latest local proof after `dc20a05a`: `git diff --check` passed; full Android
+  `:app:testDebugUnitTest :app:assembleDebug :app:assembleDebugAndroidTest`
+  passed.
 - Ask/Search route helpers are consolidated, with saved-route proof and
   follow-up failure restore proof covering the key route handoffs.
 - Anchor-prior behavior is extracted behind policy, and route-output parity is
