@@ -985,41 +985,6 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
         return continueConversationContentDescription(guideId);
     }
 
-    private String buildCardSubtitle(SearchResult result) {
-        if (result == null) {
-            return "";
-        }
-        String section = cleanDisplayText(result.sectionHeading, 46);
-        if (!section.isEmpty()) {
-            return section;
-        }
-        String subtitle = cleanDisplayText(result.subtitle, 46);
-        String guideId = cleanDisplayText(result.guideId, 32);
-        if (!subtitle.isEmpty() && !subtitle.equalsIgnoreCase(guideId)) {
-            return subtitle;
-        }
-        return "";
-    }
-
-    private String buildCardMetadataLine(SearchResult result) {
-        return SearchResultCardModelMapper.buildCardMetadataLine(
-            result == null ? null : result.contentRole,
-            result == null ? null : result.timeHorizon,
-            result == null ? null : result.category
-        );
-    }
-
-    private String buildCardSnippet(SearchResult result) {
-        int maxLen = isRichTabletCard(inflater.getContext())
-            ? 170
-            : (isLandscapePhoneCard(inflater.getContext()) ? 180 : (isSmallPhonePortraitCard(inflater.getContext()) ? 126 : 220));
-        String snippet = buildCompactRowSnippet(result, maxLen);
-        if (!snippet.isEmpty()) {
-            return snippet;
-        }
-        return cleanDisplayText(result == null ? null : result.body, maxLen);
-    }
-
     private static String buildLinkedGuideChipLabel() {
         return SearchResultCardModelMapper.buildLinkedGuideChipLabel();
     }
