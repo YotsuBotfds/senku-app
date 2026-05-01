@@ -267,6 +267,12 @@ public final class MainRouteDecisionHelperTest {
                 BottomTabDestination.HOME,
                 false
             );
+        MainRouteDecisionHelper.RouteState askResults =
+            new MainRouteDecisionHelper.RouteState(
+                MainRouteDecisionHelper.Surface.ASK_RESULTS,
+                BottomTabDestination.ASK,
+                true
+            );
 
         assertTransition(
             MainRouteDecisionHelper.openPhoneTab(searchResults, BottomTabDestination.SEARCH),
@@ -277,10 +283,17 @@ public final class MainRouteDecisionHelperTest {
         );
         assertTransition(
             MainRouteDecisionHelper.openPhoneTab(searchResults, BottomTabDestination.ASK),
-            MainRouteDecisionHelper.Surface.SEARCH_RESULTS,
+            MainRouteDecisionHelper.Surface.ASK_RESULTS,
             BottomTabDestination.ASK,
             true,
             MainRouteDecisionHelper.Effect.FOCUS_ASK_INPUT
+        );
+        assertTransition(
+            MainRouteDecisionHelper.openPhoneTab(askResults, BottomTabDestination.SEARCH),
+            MainRouteDecisionHelper.Surface.SEARCH_RESULTS,
+            BottomTabDestination.HOME,
+            false,
+            MainRouteDecisionHelper.Effect.FOCUS_SEARCH_INPUT
         );
         assertTransition(
             MainRouteDecisionHelper.openPhoneTab(searchResults, BottomTabDestination.THREADS),

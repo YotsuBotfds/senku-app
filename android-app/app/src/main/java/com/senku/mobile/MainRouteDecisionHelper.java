@@ -67,12 +67,12 @@ public final class MainRouteDecisionHelper {
         switch (destination == null ? BottomTabDestination.HOME : destination) {
             case SEARCH:
                 return new Transition(
-                    new RouteState(route.surface, BottomTabDestination.HOME, false),
+                    routeStateForMode(isBrowseSurface(route.surface), BottomTabDestination.HOME, false),
                     Effect.FOCUS_SEARCH_INPUT
                 );
             case ASK:
                 return new Transition(
-                    new RouteState(route.surface, BottomTabDestination.ASK, true),
+                    routeStateForMode(isBrowseSurface(route.surface), BottomTabDestination.ASK, true),
                     Effect.FOCUS_ASK_INPUT
                 );
             case THREADS:
