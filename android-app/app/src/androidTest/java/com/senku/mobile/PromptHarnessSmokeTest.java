@@ -409,15 +409,15 @@ public final class PromptHarnessSmokeTest {
                 Assert.assertEquals(
                     "empty auto ask should select the Ask phone lane",
                     BottomTabDestination.ASK,
-                    readPrivateField(activity, "activePhoneTab")
+                    readMainRouteActivePhoneTab(activity)
                 );
                 Assert.assertTrue(
                     "empty auto ask should activate ask-lane submit semantics",
-                    readPrivateBooleanField(activity, "askLaneActive")
+                    readMainRouteAskLaneActive(activity)
                 );
                 Assert.assertFalse(
                     "empty auto ask must not select hidden Search mode",
-                    BottomTabDestination.SEARCH.equals(readPrivateField(activity, "activePhoneTab"))
+                    BottomTabDestination.SEARCH.equals(readMainRouteActivePhoneTab(activity))
                 );
 
                 BottomTabBarHostView tabHost =
@@ -771,7 +771,7 @@ public final class PromptHarnessSmokeTest {
             scenario.onActivity(activity -> {
                 Assert.assertFalse(
                     "Saved shared-input submit should clear Ask ownership before routing to guide search",
-                    readPrivateBooleanField(activity, "askLaneActive")
+                    readMainRouteAskLaneActive(activity)
                 );
                 RecyclerView resultsList = activity.findViewById(R.id.results_list);
                 Assert.assertNotNull("Saved submit should keep the guide-result list mounted", resultsList);
@@ -975,7 +975,7 @@ public final class PromptHarnessSmokeTest {
                 );
                 Assert.assertFalse(
                     "Home shared-input submit should keep Ask ownership inactive",
-                    readPrivateBooleanField(activity, "askLaneActive")
+                    readMainRouteAskLaneActive(activity)
                 );
                 RecyclerView resultsList = activity.findViewById(R.id.results_list);
                 Assert.assertNotNull("Home submit should keep the guide-result list mounted", resultsList);
@@ -1206,12 +1206,12 @@ public final class PromptHarnessSmokeTest {
                 Assert.assertNotNull("Browse button should exist after returning from answer detail", browse);
                 Assert.assertTrue(
                     "returning from answer detail should keep Ask submit semantics active",
-                    readPrivateBooleanField(activity, "askLaneActive")
+                    readMainRouteAskLaneActive(activity)
                 );
                 Assert.assertEquals(
                     "returning from answer detail should keep Ask selected",
                     BottomTabDestination.ASK,
-                    readPrivateField(activity, "activePhoneTab")
+                    readMainRouteActivePhoneTab(activity)
                 );
                 Assert.assertEquals(
                     "Ask should remain visually emphasized after answer back",
@@ -4390,15 +4390,15 @@ public final class PromptHarnessSmokeTest {
             RecyclerView resultsList = activity.findViewById(R.id.results_list);
             View pinnedSection = activity.findViewById(R.id.pinned_section);
             Assert.assertNotNull("manual home should keep the shared input mounted", input);
-            Assert.assertEquals(
-                "manual home should select the Library lane",
-                BottomTabDestination.HOME,
-                readPrivateField(activity, "activePhoneTab")
-            );
-            Assert.assertFalse(
-                "manual home should clear Ask submit semantics",
-                readPrivateBooleanField(activity, "askLaneActive")
-            );
+        Assert.assertEquals(
+            "manual home should select the Library lane",
+            BottomTabDestination.HOME,
+            readMainRouteActivePhoneTab(activity)
+        );
+        Assert.assertFalse(
+            "manual home should clear Ask submit semantics",
+            readMainRouteAskLaneActive(activity)
+        );
             Assert.assertEquals(
                 "manual home should use guide-search input semantics",
                 activity.getString(R.string.search_hint),
@@ -4424,15 +4424,15 @@ public final class PromptHarnessSmokeTest {
             EditText input = activity.findViewById(R.id.search_input);
             RecyclerView resultsList = activity.findViewById(R.id.results_list);
             Assert.assertNotNull("empty Ask lane should keep the shared input mounted", input);
-            Assert.assertEquals(
-                "empty Ask rail handoff should select the Ask lane",
-                BottomTabDestination.ASK,
-                readPrivateField(activity, "activePhoneTab")
-            );
-            Assert.assertTrue(
-                "empty Ask rail handoff should activate Ask submit semantics",
-                readPrivateBooleanField(activity, "askLaneActive")
-            );
+        Assert.assertEquals(
+            "empty Ask rail handoff should select the Ask lane",
+            BottomTabDestination.ASK,
+            readMainRouteActivePhoneTab(activity)
+        );
+        Assert.assertTrue(
+            "empty Ask rail handoff should activate Ask submit semantics",
+            readMainRouteAskLaneActive(activity)
+        );
             Assert.assertEquals(
                 "empty Ask rail handoff should use question input semantics",
                 activity.getString(R.string.ask_hint),
@@ -4577,15 +4577,15 @@ public final class PromptHarnessSmokeTest {
         Assert.assertEquals(
             "saved destination should select the Saved phone lane",
             BottomTabDestination.PINS,
-            readPrivateField(activity, "activePhoneTab")
+            readPrivateField(routeState, "activePhoneTab")
         );
         Assert.assertFalse(
             "saved destination must not masquerade as Search",
-            BottomTabDestination.SEARCH.equals(readPrivateField(activity, "activePhoneTab"))
+            BottomTabDestination.SEARCH.equals(readPrivateField(routeState, "activePhoneTab"))
         );
         Assert.assertFalse(
             "saved destination must not keep Ask submit semantics active",
-            readPrivateBooleanField(activity, "askLaneActive")
+            readPrivateBooleanField(routeState, "askLaneActive")
         );
         Assert.assertEquals(
             "saved destination should keep search-style input semantics for finding guides",
@@ -7880,6 +7880,18 @@ public final class PromptHarnessSmokeTest {
 
     private Object readPrivateField(Object target, String fieldName) {
         return PromptHarnessReflection.readPrivateField(target, fieldName);
+    }
+
+    private BottomTabDestination readMainRouteActivePhoneTab(Activity activity) {
+        Object routeState = invokePrivateNoArgMethod(activity, "currentMainRouteState");
+        return routeState == null
+            ? null
+            : (BottomTabDestination) readPrivateField(routeState, "activePhoneTab");
+    }
+
+    private boolean readMainRouteAskLaneActive(Activity activity) {
+        Object routeState = invokePrivateNoArgMethod(activity, "currentMainRouteState");
+        return routeState != null && readPrivateBooleanField(routeState, "askLaneActive");
     }
 
     private Object invokePrivateNoArgMethod(Object target, String methodName) {
