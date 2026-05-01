@@ -729,16 +729,7 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
     }
 
     private float rankAccentAlpha(int position) {
-        if (position <= 0) {
-            return 1.0f;
-        }
-        if (position == 1) {
-            return 0.82f;
-        }
-        if (position == 2) {
-            return 0.65f;
-        }
-        return 0.50f;
+        return SearchRowAccentPolicy.alphaForPosition(position);
     }
 
     private boolean isLandscapePhoneCard(Context context) {

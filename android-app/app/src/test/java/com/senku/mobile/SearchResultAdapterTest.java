@@ -91,6 +91,16 @@ public final class SearchResultAdapterTest {
     }
 
     @Test
+    public void searchRowsKeepRankSensitiveAccentAlpha() {
+        assertEquals(1.0f, SearchRowAccentPolicy.alphaForPosition(-1), 0.001f);
+        assertEquals(1.0f, SearchRowAccentPolicy.alphaForPosition(0), 0.001f);
+        assertEquals(0.82f, SearchRowAccentPolicy.alphaForPosition(1), 0.001f);
+        assertEquals(0.65f, SearchRowAccentPolicy.alphaForPosition(2), 0.001f);
+        assertEquals(0.50f, SearchRowAccentPolicy.alphaForPosition(3), 0.001f);
+        assertEquals(0.50f, SearchRowAccentPolicy.alphaForPosition(9), 0.001f);
+    }
+
+    @Test
     public void tabletRowsPreferGuideIdAsRankMarker() {
         assertEquals("GD-345", SearchResultCardModelMapper.buildTabletGuideMarkerForTest("GD-345", 2));
         assertEquals("#3", SearchResultCardModelMapper.buildTabletGuideMarkerForTest("", 2));
