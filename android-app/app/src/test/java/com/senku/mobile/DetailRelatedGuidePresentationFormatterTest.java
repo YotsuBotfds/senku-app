@@ -80,11 +80,11 @@ public final class DetailRelatedGuidePresentationFormatterTest {
         DetailRelatedGuidePresentationFormatter formatter = new DetailRelatedGuidePresentationFormatter(null);
 
         assertEquals(
-            "\u2014 RELATED GUIDES \u00b7 4",
+            "\u2014 CROSS-REFERENCE \u00b7 4",
             formatter.buildAnswerModeRelatedGuidesTitle(4)
         );
         assertEquals(
-            "2 guides",
+            "2 linked guides \u00b7 from [GD-214] Water Storage.",
             formatter.buildAnswerModeRelatedGuidesSubtitle(
                 new DetailRelatedGuidePresentationFormatter.State(false, false, "", "", "[GD-214] Water Storage"),
                 2
@@ -163,16 +163,19 @@ public final class DetailRelatedGuidePresentationFormatterTest {
 
         assertContainsInOrder(
             formatter.buildAnswerModeRelatedGuidesPanelContentDescription(state, 2),
-            "Related guides",
-            "2 guides"
+            "Cross-reference",
+            "2 linked guides",
+            "[GD-214] Water Storage"
         );
         String description = formatter.buildAnswerModeRelatedGuideButtonContentDescription(state, guide, 0, 2, true);
         assertContainsInOrder(
             description,
-            "Related guide",
+            "Cross-reference",
+            "linked guide",
             "1 of 2",
             "GD-215",
             "Rainwater Catchment",
+            "Anchored to [GD-214] Water Storage",
             "Previews here"
         );
         assertContains(description, "Open full guide");
@@ -388,12 +391,14 @@ public final class DetailRelatedGuidePresentationFormatterTest {
             );
         assertContainsInOrder(
             description,
-            "Related guide",
+            "Cross-reference",
+            "linked guide",
             "1 of 4",
             "GD-294",
-            "Cave Shelter Systems & Cold-Weather"
+            "Cave Shelter Systems & Cold-Weather",
+            "Anchored to GD-345 \u00b7 Tarp & Cord Shelters"
         );
-        assertContains(description, "Opens this related guide");
+        assertContains(description, "Opens this cross-reference guide");
     }
 
     @Test

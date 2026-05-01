@@ -9,6 +9,9 @@ final class PackRouteSignalPolicy {
     private static final Locale QUERY_LOCALE = Locale.US;
     private static final Set<String> HOUSE_ROOF_WEATHERPROOF_ANCHOR_MARKERS = buildMarkerSet(
         "roofing",
+        "weatherproofing",
+        "insulation weatherproofing",
+        "roof insulation",
         "roof waterproofing",
         "roof waterproofing and sealants",
         "rainproofing and water shedding",

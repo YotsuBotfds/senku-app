@@ -405,6 +405,35 @@ public final class DetailFollowupLandscapeComposerTest {
     }
 
     @Test
+    public void phonePortraitSourceSelectionRevealsCrossReferenceLaneOnlyAfterGuideAnchor() {
+        assertTrue(DetailActivity.shouldRevealAnswerSourceGraphAfterSelection(true, true, "gd-345|tarp", 3));
+        assertFalse(DetailActivity.shouldRevealAnswerSourceGraphAfterSelection(true, true, "", 3));
+        assertFalse(DetailActivity.shouldRevealAnswerSourceGraphAfterSelection(true, true, "gd-345|tarp", 0));
+        assertFalse(DetailActivity.shouldRevealAnswerSourceGraphAfterSelection(true, false, "gd-345|tarp", 3));
+        assertFalse(DetailActivity.shouldRevealAnswerSourceGraphAfterSelection(false, true, "gd-345|tarp", 3));
+
+        assertTrue(DetailActivity.shouldExpandAnswerSourceGraphAfterSourceSelection(true, true, "gd-345|tarp"));
+        assertFalse(DetailActivity.shouldExpandAnswerSourceGraphAfterSourceSelection(true, true, ""));
+        assertFalse(DetailActivity.shouldExpandAnswerSourceGraphAfterSourceSelection(true, false, "gd-345|tarp"));
+        assertFalse(DetailActivity.shouldExpandAnswerSourceGraphAfterSourceSelection(false, true, "gd-345|tarp"));
+    }
+
+    @Test
+    public void phonePortraitSourcePreviewOpenCtaGetsComposerClearance() {
+        assertTrue(DetailActivity.shouldApplyRelatedGuidePreviewCtaClearance(true, true, true, true, true));
+        assertFalse(DetailActivity.shouldApplyRelatedGuidePreviewCtaClearance(false, true, true, true, true));
+        assertFalse(DetailActivity.shouldApplyRelatedGuidePreviewCtaClearance(true, false, true, true, true));
+        assertFalse(DetailActivity.shouldApplyRelatedGuidePreviewCtaClearance(true, true, false, true, true));
+        assertFalse(DetailActivity.shouldApplyRelatedGuidePreviewCtaClearance(true, true, true, false, true));
+        assertFalse(DetailActivity.shouldApplyRelatedGuidePreviewCtaClearance(true, true, true, true, false));
+
+        assertEquals(112, DetailActivity.resolveRelatedGuidePreviewCtaBottomClearancePx(14, 96, 16));
+        assertEquals(120, DetailActivity.resolveRelatedGuidePreviewCtaBottomClearancePx(120, 80, 16));
+        assertEquals(228, DetailActivity.computeScrollYToKeepViewBottomVisible(680, 48, 560, 60, 0));
+        assertEquals(300, DetailActivity.computeScrollYToKeepViewBottomVisible(680, 48, 560, 60, 300));
+    }
+
+    @Test
     public void emergencyPortraitAnswerDoesNotRestoreGenericQuestionChrome() {
         assertFalse(DetailActivity.shouldRestoreAnswerSemanticPresentation(true, true));
         assertTrue(DetailActivity.shouldRestoreAnswerSemanticPresentation(true, false));

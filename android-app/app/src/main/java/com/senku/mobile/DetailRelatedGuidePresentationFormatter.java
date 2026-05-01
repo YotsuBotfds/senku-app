@@ -99,16 +99,20 @@ final class DetailRelatedGuidePresentationFormatter {
     }
 
     String buildAnswerModeRelatedGuidesSubtitle(State state, int count) {
-        return formatCountLabel(count, "guide", "guides");
+        String anchorLabel = resolveSourceAnchorLabel(state);
+        return formatCountLabel(count, "linked guide", "linked guides")
+            + " \u00b7 from "
+            + anchorLabel
+            + ".";
     }
 
     String buildAnswerModeRelatedGuidesTitle(int count) {
         int safeCount = Math.max(count, 0);
-        return safeCount > 0 ? "\u2014 RELATED GUIDES \u00b7 " + safeCount : "\u2014 RELATED GUIDES";
+        return safeCount > 0 ? "\u2014 CROSS-REFERENCE \u00b7 " + safeCount : "\u2014 CROSS-REFERENCE";
     }
 
     String buildAnswerModeRelatedGuidesPanelContentDescription(State state, int count) {
-        return "Related guides. " + buildAnswerModeRelatedGuidesSubtitle(state, count);
+        return "Cross-reference. " + buildAnswerModeRelatedGuidesSubtitle(state, count);
     }
 
     String buildAnswerModeRelatedGuideButtonLabel(SearchResult guide) {
@@ -210,15 +214,20 @@ final class DetailRelatedGuidePresentationFormatter {
         boolean opensPreview
     ) {
         StringBuilder builder = new StringBuilder();
-        builder.append("Related guide ");
+        builder.append("Cross-reference linked guide ");
         builder.append(index + 1);
         builder.append(" of ");
         builder.append(total);
         builder.append(". ");
         builder.append(buildRelatedGuideCompactAccessibleLabel(guide));
+        String anchorLabel = resolveSourceAnchorLabel(state);
+        if (!anchorLabel.isEmpty()) {
+            builder.append(". Anchored to ");
+            builder.append(anchorLabel);
+        }
         builder.append(opensPreview
             ? ". Previews here. Open full guide switches pages."
-            : ". Opens this related guide.");
+            : ". Opens this cross-reference guide.");
         return builder.toString();
     }
 

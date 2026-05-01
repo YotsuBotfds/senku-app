@@ -674,9 +674,11 @@
                         android:layout_height="wrap_content"
                         android:fontFamily="monospace"
                         android:letterSpacing="0.08"
+                        android:lineHeight="13sp"
                         android:text="@string/detail_external_review_provenance_stamp"
                         android:textAppearance="?android:attr/textAppearanceSmall"
                         android:textColor="@color/senku_rev03_ink_2"
+                        android:textSize="10sp"
                         android:textStyle="bold" />
 
                     <View
@@ -698,6 +700,7 @@
                         android:text="@string/detail_provenance_title"
                         android:textAppearance="?android:attr/textAppearanceMedium"
                         android:textColor="@color/senku_rev03_ink_0"
+                        android:textSize="13sp"
                         android:textStyle="bold" />
 
                     <TextView
@@ -706,9 +709,12 @@
                         android:layout_height="wrap_content"
                         android:ellipsize="end"
                         android:fontFamily="monospace"
+                        android:lineHeight="15sp"
+                        android:lineSpacingExtra="1dp"
                         android:maxLines="4"
                         android:textAppearance="?android:attr/textAppearanceMedium"
                         android:textColor="@color/senku_rev03_ink_0"
+                        android:textSize="12sp"
                         android:textStyle="bold" />
 
                     <TextView
@@ -717,10 +723,12 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
                         android:ellipsize="end"
-                        android:lineSpacingExtra="2dp"
+                        android:lineHeight="17sp"
+                        android:lineSpacingExtra="1dp"
                         android:maxLines="3"
                         android:textAppearance="?android:attr/textAppearanceSmall"
-                        android:textColor="@color/senku_rev03_ink_0" />
+                        android:textColor="@color/senku_rev03_ink_0"
+                        android:textSize="13sp" />
 
                     <Button
                         android:id="@+id/detail_provenance_open"

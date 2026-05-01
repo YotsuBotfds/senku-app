@@ -40,6 +40,9 @@ final class PackStructuredAnchorPolicy {
     );
     private static final Set<String> CABIN_ROOF_DETAIL_MARKERS = buildMarkerSet(
         "roof waterproofing",
+        "weatherproofing",
+        "insulation weatherproofing",
+        "roof insulation",
         "waterproofing and sealants",
         "rainproofing and water shedding",
         "water shedding",
@@ -281,6 +284,9 @@ final class PackStructuredAnchorPolicy {
         if ("soapmaking".equals(preferredStructureType)) {
             return soapmakingStructuredAnchorBias(queryTerms, candidate);
         }
+        if ("glassmaking".equals(preferredStructureType)) {
+            return glassmakingStructuredAnchorBias(candidate);
+        }
         if ("community_governance".equals(preferredStructureType)) {
             return communityGovernanceStructuredAnchorBias(queryTerms, candidate);
         }
@@ -323,11 +329,22 @@ final class PackStructuredAnchorPolicy {
         if (metadataProfile.hasExplicitTopic("roofing") || metadataProfile.hasExplicitTopic("weatherproofing")) {
             boolean roofSignal = PackRouteSignalPolicy.hasRoofWeatherproofAnchorSignal(candidate);
             boolean detailSignal = containsAnyMarker(titleSection, CABIN_ROOF_DETAIL_MARKERS);
+            boolean waterproofQuery = queryTerms.queryLower.contains("waterproof");
+            boolean waterproofDetailSignal = titleSection.contains("waterproofing")
+                || titleSection.contains("sealant");
             if (roofSignal) {
                 score += 12;
             }
             if (detailSignal) {
                 score += 18;
+            }
+            if (waterproofQuery && waterproofDetailSignal) {
+                score += 64;
+            }
+            if (waterproofQuery
+                && titleSection.contains("construction carpentry")
+                && !waterproofDetailSignal) {
+                score -= 36;
             }
             if (PackRouteSignalPolicy.hasRoofWeatherproofDistractorSignal(candidate) && !roofSignal) {
                 score -= 18;
@@ -377,6 +394,32 @@ final class PackStructuredAnchorPolicy {
         }
         if (PackRouteSignalPolicy.hasSoapmakingProcessSignal(combined)) {
             score += 6;
+        }
+        return score;
+    }
+
+    private static int glassmakingStructuredAnchorBias(SearchResult candidate) {
+        String titleSection = normalizeMatchText(
+            PackRepository.emptySafe(candidate.title) + " " + PackRepository.emptySafe(candidate.sectionHeading)
+        );
+        String role = normalized(candidate.contentRole);
+        int score = 0;
+        if (titleSection.contains("glass optics ceramics")
+            && titleSection.contains("glassmaking from scratch")) {
+            score += 42;
+        } else if (titleSection.contains("glass optics ceramics")) {
+            score += 18;
+        }
+        if (titleSection.contains("glass making raw materials")
+            && (titleSection.contains("raw materials")
+                || titleSection.contains("batch preparation")
+                || titleSection.contains("furnace construction"))) {
+            score -= 18;
+        }
+        if ("reference".equals(role)) {
+            score -= 8;
+        } else if ("subsystem".equals(role) || "starter".equals(role) || "planning".equals(role)) {
+            score += 8;
         }
         return score;
     }

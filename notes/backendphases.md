@@ -1,6 +1,6 @@
 # Backend Cleanup Phase Tracker
 
-Last updated after commit `b96f325` on 2026-04-30.
+Last updated after local validation of the source-graph/route-anchor integration slice on 2026-04-30.
 
 Purpose: prevent future agents from rerunning Ask/query backend cleanup that is already complete. Keep this note short; implementation detail belongs in commits and tests.
 
@@ -31,6 +31,15 @@ Purpose: prevent future agents from rerunning Ask/query backend cleanup that is 
   repository coverage for relevance ordering and candidate limits.
 - Physical material-chip smoke coverage passed for the indexed material label
   and long-press copy affordance.
+- Answer-mode source selection now reopens the compact phone cross-reference
+  lane even when the explicit tap selects the same source already used as the
+  implicit anchor; the physical phone source-graph smoke passed with direct,
+  preview, and cleared-state artifacts.
+- The source-entry preview was tightened and given composer clearance so the
+  Open full guide CTA remains reachable above the docked composer.
+- Current-head route refinements now bias glass-from-scratch, cabin
+  weatherproofing, and broad house-building prompts away from generic or
+  adjacent drift candidates, with focused route-output policy coverage.
 
 ## Remaining Next Slices
 
@@ -42,9 +51,9 @@ Purpose: prevent future agents from rerunning Ask/query backend cleanup that is 
   production query paths stay fixture-free.
 - Prefer backend/code-health slices that remove mixed responsibilities from
   activities/repositories without changing chrome, copy, or layout behavior.
-- Source-selection cross-reference still has an exposed bug: answer-mode source
-  selection can lose the source-anchored cross-reference lane and needs a
-  focused follow-up before treating that path as closed.
+- Source-entry preview density and composer clearance are improved, but the
+  compact phone selected-entry card is still visually heavy and should be
+  revisited in a polish slice rather than mixed into route/backend work.
 - Re-run focused backend tests after each backend slice; use UI state packs only
   when behavior could affect screenshots.
 

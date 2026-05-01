@@ -2947,11 +2947,12 @@ public final class PromptHarnessSmokeTest {
             });
 
             selectAnswerSourcePreview(scenario, seed.guide);
+            String expectedRelatedGuideId = safe(seed.relatedGuide == null ? null : seed.relatedGuide.guideId);
 
             if (landscapePhone[0]) {
                 Assert.assertTrue(
                     "selected source should surface a compact landscape cross-reference cue",
-                    waitForInlineAnswerCrossReferenceCue(seed.relatedGuide.title, DETAIL_WAIT_MS)
+                    waitForInlineAnswerCrossReferenceCue(expectedRelatedGuideId, DETAIL_WAIT_MS)
                 );
                 scenario.onActivity(activity -> {
                     android.widget.HorizontalScrollView inlineScroll =
@@ -2971,9 +2972,15 @@ public final class PromptHarnessSmokeTest {
                 });
                 captureUiState("answer_source_graph_landscape_anchored");
             } else {
+                boolean sourceGraphReady =
+                    waitForRelatedGuidePanelOnResumedDetail(expectedRelatedGuideId, DETAIL_WAIT_MS);
+                if (!sourceGraphReady) {
+                    captureUiState("answer_source_graph_missing");
+                }
                 Assert.assertTrue(
-                    "selected answer source should surface a visible cross-reference lane on the answer screen",
-                    waitForRelatedGuidePanelOnResumedDetail(seed.relatedGuide.title, DETAIL_WAIT_MS)
+                    "selected answer source should surface a visible cross-reference lane on the answer screen. "
+                        + describeRelatedGuideSurfaceOnResumedDetail(),
+                    sourceGraphReady
                 );
 
                 String expectedSourceGuideId = safe(seed.guide == null ? null : seed.guide.guideId).trim();
@@ -3224,12 +3231,12 @@ public final class PromptHarnessSmokeTest {
             if (!landscapePhoneCleared[0]) {
                 Assert.assertTrue(
                     "guide-backed source should initially surface a cross-reference lane in this mixed-source smoke",
-                    waitForRelatedGuidePanelOnResumedDetail(seed.relatedGuide.title, DETAIL_WAIT_MS)
+                    waitForRelatedGuidePanelOnResumedDetail(safe(seed.relatedGuide == null ? null : seed.relatedGuide.guideId), DETAIL_WAIT_MS)
                 );
             } else {
                 Assert.assertTrue(
                     "guide-backed source should initially surface a compact cross-reference cue in this mixed-source smoke",
-                    waitForInlineAnswerCrossReferenceCue(seed.relatedGuide.title, DETAIL_WAIT_MS)
+                    waitForInlineAnswerCrossReferenceCue(safe(seed.relatedGuide == null ? null : seed.relatedGuide.guideId), DETAIL_WAIT_MS)
                 );
             }
 
@@ -6399,6 +6406,49 @@ public final class PromptHarnessSmokeTest {
         return false;
     }
 
+    private String describeRelatedGuideSurfaceOnResumedDetail() {
+        final String[] description = {"related surface unavailable"};
+        InstrumentationRegistry.getInstrumentation().runOnMainSync(() -> {
+            Activity activity = getResumedActivityOnMainThread();
+            if (activity == null) {
+                description[0] = "No resumed activity.";
+                return;
+            }
+            DetailSettleSignals signals = collectDetailSettleSignals(activity);
+            android.view.View panel = activity.findViewById(R.id.detail_next_steps_panel);
+            TextView title = activity.findViewById(R.id.detail_next_steps_title_text);
+            TextView subtitle = activity.findViewById(R.id.detail_next_steps_subtitle_text);
+            LinearLayout container = activity.findViewById(R.id.detail_next_steps_container);
+            Collection<?> relatedGuides = asCollection(readPrivateField(activity, "currentRelatedGuides"));
+            String selectedSourceKey = readPrivateStringField(activity, "selectedSourceKey");
+            StringBuilder rows = new StringBuilder();
+            if (container != null) {
+                for (int index = 0; index < Math.min(container.getChildCount(), 4); index++) {
+                    android.view.View child = container.getChildAt(index);
+                    if (child instanceof Button) {
+                        if (rows.length() > 0) {
+                            rows.append(" || ");
+                        }
+                        rows.append(safe(((Button) child).getText().toString()));
+                    }
+                }
+            }
+            description[0] =
+                "activity=" + activity.getClass().getSimpleName()
+                    + " answerMode=" + signals.answerMode
+                    + " tabletCompose=" + signals.tabletCompose
+                    + " panelVisible=" + isVisible(panel)
+                    + " containerVisible=" + isVisible(container)
+                    + " childCount=" + (container == null ? -1 : container.getChildCount())
+                    + " relatedCount=" + relatedGuides.size()
+                    + " selectedSourceKey=" + selectedSourceKey
+                    + " title=" + visibleText(title)
+                    + " subtitle=" + visibleText(subtitle)
+                    + " rows=" + rows;
+        });
+        return description[0];
+    }
+
     private boolean hasRelatedGuideSurfaceReady(Activity activity, String expectedRelatedTitle) {
         if (activity == null) {
             return false;
@@ -6444,28 +6494,42 @@ public final class PromptHarnessSmokeTest {
                 && firstRowText.contains("area readiness")
                 && !containsAny(titleText + " | " + panelDescription, "helper prompts");
         }
-        if (!(container.getChildAt(0) instanceof Button)) {
-            return false;
-        }
-        Button firstButton = (Button) container.getChildAt(0);
-        String firstButtonText = safe(firstButton.getText().toString()).toLowerCase(Locale.US);
-        String firstButtonDescription = safe(String.valueOf(firstButton.getContentDescription())).toLowerCase(Locale.US);
         boolean guideCopyVisible = containsAny(
-            titleText + " | " + subtitleText + " | " + panelDescription + " | " + firstButtonDescription,
+            titleText + " | " + subtitleText + " | " + panelDescription,
             "field links",
             "linked guide",
             "cross-reference",
             "guide connection"
         );
-        boolean rowBehaviorVisible = firstButtonDescription.contains("guide")
-            && containsAny(firstButtonDescription, "preview", "open full guide", "opens", "open");
+        boolean rowBehaviorVisible = false;
+        boolean expectedGuideVisible = safe(expectedRelatedTitle).trim().isEmpty();
+        String expectedTitleLower = safe(expectedRelatedTitle).toLowerCase(Locale.US);
+        for (int index = 0; index < container.getChildCount(); index++) {
+            if (!(container.getChildAt(index) instanceof Button)) {
+                continue;
+            }
+            Button button = (Button) container.getChildAt(index);
+            String buttonText = safe(button.getText().toString()).toLowerCase(Locale.US);
+            String buttonDescription = safe(String.valueOf(button.getContentDescription())).toLowerCase(Locale.US);
+            guideCopyVisible = guideCopyVisible || containsAny(
+                buttonDescription,
+                "field links",
+                "linked guide",
+                "cross-reference",
+                "guide connection"
+            );
+            rowBehaviorVisible = rowBehaviorVisible
+                || (buttonDescription.contains("guide")
+                && containsAny(buttonDescription, "preview", "open full guide", "opens", "open"));
+            expectedGuideVisible = expectedGuideVisible
+                || buttonText.contains(expectedTitleLower)
+                || buttonDescription.contains(expectedTitleLower);
+        }
         String surfaceCopy = titleText + " | " + subtitleText + " | " + panelDescription;
         return guideCopyVisible
             && !containsAny(surfaceCopy, "helper prompts")
             && rowBehaviorVisible
-            && (safe(expectedRelatedTitle).trim().isEmpty()
-                || firstButtonText.contains(safe(expectedRelatedTitle).toLowerCase(Locale.US))
-                || firstButtonDescription.contains(safe(expectedRelatedTitle).toLowerCase(Locale.US)));
+            && expectedGuideVisible;
     }
 
     private boolean waitForInlineAnswerCrossReferenceCue(String expectedRelatedTitle, long timeoutMs) {

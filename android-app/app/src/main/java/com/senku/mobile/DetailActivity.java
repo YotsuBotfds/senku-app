@@ -5611,6 +5611,14 @@ public final class DetailActivity extends AppCompatActivity {
         } else {
             clearRelatedGuidePreviewPanel();
         }
+        if (shouldRevealAnswerSourceGraphAfterSelection(
+            answerMode,
+            isCompactPortraitPhoneLayout(),
+            selectedSourceKey,
+            currentRelatedGuides.size()
+        )) {
+            scrollToSection(nextStepsPanel);
+        }
     }
 
     private void renderRelatedGuidesPanel() {
@@ -9621,6 +9629,65 @@ public final class DetailActivity extends AppCompatActivity {
         return compactPreview && !compactPortraitPhone;
     }
 
+    static boolean shouldRevealAnswerSourceGraphAfterSelection(
+        boolean answerMode,
+        boolean compactPortraitPhone,
+        String selectedSourceKey,
+        int relatedGuideCount
+    ) {
+        return answerMode
+            && compactPortraitPhone
+            && !safe(selectedSourceKey).trim().isEmpty()
+            && relatedGuideCount > 0;
+    }
+
+    static boolean shouldExpandAnswerSourceGraphAfterSourceSelection(
+        boolean answerMode,
+        boolean compactPortraitPhone,
+        String selectedSourceKey
+    ) {
+        return answerMode
+            && compactPortraitPhone
+            && !safe(selectedSourceKey).trim().isEmpty();
+    }
+
+    static boolean shouldApplyRelatedGuidePreviewCtaClearance(
+        boolean phoneXmlDetailLayoutActive,
+        boolean compactPortraitPhone,
+        boolean answerMode,
+        boolean followUpVisible,
+        boolean previewOpenVisible
+    ) {
+        return phoneXmlDetailLayoutActive
+            && compactPortraitPhone
+            && answerMode
+            && followUpVisible
+            && previewOpenVisible;
+    }
+
+    static int resolveRelatedGuidePreviewCtaBottomClearancePx(
+        int currentContentBottomPaddingPx,
+        int followUpPanelHeightPx,
+        int extraClearancePx
+    ) {
+        return Math.max(
+            0,
+            Math.max(currentContentBottomPaddingPx, followUpPanelHeightPx + Math.max(0, extraClearancePx))
+        );
+    }
+
+    static int computeScrollYToKeepViewBottomVisible(
+        int targetTopPx,
+        int targetHeightPx,
+        int viewportHeightPx,
+        int bottomClearancePx,
+        int currentScrollY
+    ) {
+        int targetBottom = Math.max(0, targetTopPx) + Math.max(0, targetHeightPx);
+        int desiredScrollY = targetBottom + Math.max(0, bottomClearancePx) - Math.max(0, viewportHeightPx);
+        return Math.max(Math.max(0, currentScrollY), Math.max(0, desiredScrollY));
+    }
+
     static int resolveWhyTextMaxLines(
         boolean emergencyPortrait,
         boolean collapseWhyText,
@@ -9896,6 +9963,7 @@ public final class DetailActivity extends AppCompatActivity {
         });
         relatedGuidePreviewPanel.setAlpha(0f);
         relatedGuidePreviewPanel.animate().alpha(1f).setDuration(150).start();
+        revealRelatedGuidePreviewCtaAboveComposer();
 
         String guideId = safe(relatedGuide.guideId).trim();
         int requestToken = ++relatedGuidePreviewToken;
@@ -9931,8 +9999,54 @@ public final class DetailActivity extends AppCompatActivity {
                     relatedGuidePreviewBody.setText(buildRelatedGuidePreviewBody(resolvedPreviewGuide, false));
                     applyRelatedGuidePreviewExpansionState();
                     refreshRelatedGuidePreviewToggleVisibility();
+                    revealRelatedGuidePreviewCtaAboveComposer();
                 }
             });
+        });
+    }
+
+    private void revealRelatedGuidePreviewCtaAboveComposer() {
+        if (!shouldApplyRelatedGuidePreviewCtaClearance(
+            phoneXmlDetailLayoutActive(),
+            isCompactPortraitPhoneLayout(),
+            answerMode,
+            followUpPanel != null && followUpPanel.getVisibility() == View.VISIBLE,
+            relatedGuidePreviewOpenButton != null && relatedGuidePreviewOpenButton.getVisibility() == View.VISIBLE
+        ) || detailScroll == null || relatedGuidePreviewOpenButton == null || detailScroll.getChildCount() == 0) {
+            return;
+        }
+        View content = detailScroll.getChildAt(0);
+        int bottomClearance = resolveRelatedGuidePreviewCtaBottomClearancePx(
+            content.getPaddingBottom(),
+            followUpPanel == null ? 0 : followUpPanel.getHeight(),
+            dp(16)
+        );
+        if (content.getPaddingBottom() < bottomClearance) {
+            content.setPadding(
+                content.getPaddingLeft(),
+                content.getPaddingTop(),
+                content.getPaddingRight(),
+                bottomClearance
+            );
+        }
+        detailScroll.post(() -> {
+            if (isFinishing()
+                || isDestroyed()
+                || relatedGuidePreviewOpenButton == null
+                || relatedGuidePreviewOpenButton.getVisibility() != View.VISIBLE) {
+                return;
+            }
+            int targetTop = computeViewTopInScroll(relatedGuidePreviewOpenButton);
+            int targetScrollY = computeScrollYToKeepViewBottomVisible(
+                targetTop,
+                relatedGuidePreviewOpenButton.getHeight(),
+                detailScroll.getHeight(),
+                bottomClearance,
+                detailScroll.getScrollY()
+            );
+            if (targetScrollY > detailScroll.getScrollY()) {
+                detailScroll.smoothScrollTo(0, targetScrollY);
+            }
         });
     }
 
@@ -10188,8 +10302,20 @@ public final class DetailActivity extends AppCompatActivity {
         provenancePanel.setAlpha(0f);
         provenancePanel.animate().alpha(1f).setDuration(150).start();
         String sourceSelectionKey = buildSourceSelectionKey(source);
-        if (answerMode && !safe(sourceSelectionKey).equals(relatedGuideAnchorKey)) {
+        boolean anchorChanged = !safe(sourceSelectionKey).equals(relatedGuideAnchorKey);
+        boolean shouldRevealSourceGraph = shouldExpandAnswerSourceGraphAfterSourceSelection(
+            answerMode,
+            isCompactPortraitPhoneLayout(),
+            sourceSelectionKey
+        );
+        if (shouldRevealSourceGraph) {
+            portraitNextStepsExpanded = true;
+        }
+        if (answerMode && anchorChanged) {
             refreshRelatedGuides();
+        } else if (shouldRevealSourceGraph) {
+            renderNextSteps();
+            renderInlineNextSteps();
         }
         updateDetailAccessibilityRegions();
     }
