@@ -32,9 +32,9 @@ param(
     [string]$HostInferenceUrl = "http://10.0.2.2:1235/v1",
     [string]$HostInferenceModel = "gemma-4-e2b-it-litert",
     [string]$ArtifactRoot = "artifacts/instrumented_ui_smoke",
-    [ValidateSet("", "phone-basic", "phone-host", "phone-full", "phone-functional", "tablet-landscape", "large-font", "tablet-large-font")]
+    [ValidateSet("", "phone-basic", "phone-host", "phone-full", "phone-functional", "phone-functional-follow-up", "phone-functional-saved", "phone-functional-back-provenance", "tablet-landscape", "large-font", "tablet-large-font")]
     [string]$SmokePreset = "",
-    [ValidateSet("basic", "host", "full", "functional", "custom")]
+    [ValidateSet("basic", "host", "full", "functional", "functional-follow-up", "functional-saved", "functional-back-provenance", "custom")]
     [string]$SmokeProfile = "basic",
     [ValidateSet("portrait", "landscape")]
     [string]$Orientation = "portrait",
@@ -1098,6 +1098,9 @@ function Get-InstrumentationTimeoutMs {
         "basic" { return 150000 }
         "host" { return 300000 }
         "functional" { return 300000 }
+        "functional-follow-up" { return 300000 }
+        "functional-saved" { return 300000 }
+        "functional-back-provenance" { return 300000 }
         "full" { return 420000 }
         default { return 300000 }
     }
@@ -1153,45 +1156,88 @@ function Get-ResolvedDeviceFacts {
     return Resolve-AndroidDeviceFacts -AdbPath $adb -DeviceName $Device -RequestedOrientation $RequestedOrientation
 }
 
-function Resolve-InstrumentationClassArgument {
+function Resolve-InstrumentationMethodNames {
     param(
-        [string]$BaseClass,
         [string]$Profile
     )
 
     switch ($Profile) {
         "basic" {
             return @(
-                "${BaseClass}#searchQueryShowsResultsWithoutShellPolling",
-                "${BaseClass}#deterministicAskNavigatesToDetailScreen"
-            ) -join ","
+                "searchQueryShowsResultsWithoutShellPolling",
+                "deterministicAskNavigatesToDetailScreen"
+            )
         }
         "host" {
             return @(
-                "${BaseClass}#searchQueryShowsResultsWithoutShellPolling",
-                "${BaseClass}#deterministicAskNavigatesToDetailScreen",
-                "${BaseClass}#generativeAskWithHostInferenceNavigatesToDetailScreen"
-            ) -join ","
+                "searchQueryShowsResultsWithoutShellPolling",
+                "deterministicAskNavigatesToDetailScreen",
+                "generativeAskWithHostInferenceNavigatesToDetailScreen"
+            )
         }
         "full" {
             return @(
-                "${BaseClass}#searchQueryShowsResultsWithoutShellPolling",
-                "${BaseClass}#deterministicAskNavigatesToDetailScreen",
-                "${BaseClass}#generativeAskWithHostInferenceNavigatesToDetailScreen",
-                "${BaseClass}#autoFollowUpWithHostInferenceBuildsInlineThreadHistory"
-            ) -join ","
+                "searchQueryShowsResultsWithoutShellPolling",
+                "deterministicAskNavigatesToDetailScreen",
+                "generativeAskWithHostInferenceNavigatesToDetailScreen",
+                "autoFollowUpWithHostInferenceBuildsInlineThreadHistory"
+            )
         }
         "functional" {
             return @(
-                "${BaseClass}#homeAndAskImeSubmitRouteToSearchResultsAndAnswerDetail",
-                "${BaseClass}#savedNavigationBackReturnsManualHomeDestination",
-                "${BaseClass}#answerModeProvenanceOpenBackReturnsAnswerContext"
-            ) -join ","
+                "homeAndAskImeSubmitRouteToSearchResultsAndAnswerDetail",
+                "savedNavigationBackReturnsManualHomeDestination",
+                "answerModeProvenanceOpenBackReturnsAnswerContext"
+            )
+        }
+        "functional-follow-up" {
+            return @(
+                "homeAndAskImeSubmitRouteToSearchResultsAndAnswerDetail"
+            )
+        }
+        "functional-saved" {
+            return @(
+                "savedNavigationBackReturnsManualHomeDestination"
+            )
+        }
+        "functional-back-provenance" {
+            return @(
+                "answerModeProvenanceOpenBackReturnsAnswerContext"
+            )
         }
         default {
-            return $BaseClass
+            return @()
         }
     }
+}
+
+function Resolve-InstrumentationTargetList {
+    param(
+        [string]$BaseClass,
+        [string[]]$MethodNames
+    )
+
+    if ($null -eq $MethodNames -or $MethodNames.Count -eq 0) {
+        return @($BaseClass)
+    }
+
+    $targets = @()
+    foreach ($methodName in $MethodNames) {
+        if (-not [string]::IsNullOrWhiteSpace($methodName)) {
+            $targets += "${BaseClass}#$methodName"
+        }
+    }
+    return $targets
+}
+
+function Resolve-InstrumentationClassArgument {
+    param(
+        [string]$BaseClass,
+        [string]$Profile
+    )
+
+    $methodNames = @(Resolve-InstrumentationMethodNames -Profile $Profile)
+    return (@(Resolve-InstrumentationTargetList -BaseClass $BaseClass -MethodNames $methodNames) -join ",")
 }
 
 function Use-ScriptedPromptRun {
@@ -1216,6 +1262,21 @@ switch ($SmokePreset) {
     }
     "phone-functional" {
         $SmokeProfile = "functional"
+        $Orientation = "portrait"
+        $FontScale = 1.0
+    }
+    "phone-functional-follow-up" {
+        $SmokeProfile = "functional-follow-up"
+        $Orientation = "portrait"
+        $FontScale = 1.0
+    }
+    "phone-functional-saved" {
+        $SmokeProfile = "functional-saved"
+        $Orientation = "portrait"
+        $FontScale = 1.0
+    }
+    "phone-functional-back-provenance" {
+        $SmokeProfile = "functional-back-provenance"
         $Orientation = "portrait"
         $FontScale = 1.0
     }
@@ -1373,11 +1434,13 @@ $testFingerprint = Get-ApkFingerprint -Path $testApk
 $InstallCacheMatches = Test-InstallCacheMatch -StatePath $installStatePath -AppFingerprint $appFingerprint -TestFingerprint $testFingerprint
 $EffectiveSkipInstall = [bool]$SkipInstall
 $script:InstallNoStreamingFallbackAttempted = $false
-$EffectiveTestClass = if (Use-ScriptedPromptRun) {
-    "${TestClass}#scriptedPromptFlowCompletes"
+$EffectiveTestMethods = if (Use-ScriptedPromptRun) {
+    @("scriptedPromptFlowCompletes")
 } else {
-    Resolve-InstrumentationClassArgument -BaseClass $TestClass -Profile $SmokeProfile
+    @(Resolve-InstrumentationMethodNames -Profile $SmokeProfile)
 }
+$EffectiveTestTargets = @(Resolve-InstrumentationTargetList -BaseClass $TestClass -MethodNames $EffectiveTestMethods)
+$EffectiveTestClass = $EffectiveTestTargets -join ","
 
 if ($EnableHostInferenceSmoke -and [string]::IsNullOrWhiteSpace($EffectiveHostInferenceUrl)) {
     throw "Host inference smoke requested but no host inference URL was provided."
@@ -1811,6 +1874,8 @@ try {
         device = $Device
         test_class = $EffectiveTestClass
         requested_test_class = $TestClass
+        selected_test_methods = @($EffectiveTestMethods)
+        selected_test_targets = @($EffectiveTestTargets)
         smoke_preset = $(if ([string]::IsNullOrWhiteSpace($SmokePreset)) { $null } else { $SmokePreset })
         smoke_profile = $SmokeProfile
         skip_build = [bool]$SkipBuild

@@ -54,13 +54,36 @@ class RunAndroidInstrumentedUiSmokeSummaryContractTests(unittest.TestCase):
 
     def test_functional_smoke_profile_targets_existing_prompt_harness_methods(self):
         self.assertIn('"phone-functional"', self.script)
+        self.assertIn('"phone-functional-follow-up"', self.script)
+        self.assertIn('"phone-functional-saved"', self.script)
+        self.assertIn('"phone-functional-back-provenance"', self.script)
         self.assertIn('"functional"', self.script)
+        self.assertIn('"functional-follow-up"', self.script)
+        self.assertIn('"functional-saved"', self.script)
+        self.assertIn('"functional-back-provenance"', self.script)
         self.assertIn('"phone-functional" {', self.script)
         self.assertIn('$SmokeProfile = "functional"', self.script)
+        self.assertIn('"phone-functional-follow-up" {', self.script)
+        self.assertIn('$SmokeProfile = "functional-follow-up"', self.script)
+        self.assertIn('"phone-functional-saved" {', self.script)
+        self.assertIn('$SmokeProfile = "functional-saved"', self.script)
+        self.assertIn('"phone-functional-back-provenance" {', self.script)
+        self.assertIn('$SmokeProfile = "functional-back-provenance"', self.script)
         self.assertIn('"functional" { return 300000 }', self.script)
-        self.assertIn('${BaseClass}#homeAndAskImeSubmitRouteToSearchResultsAndAnswerDetail', self.script)
-        self.assertIn('${BaseClass}#savedNavigationBackReturnsManualHomeDestination', self.script)
-        self.assertIn('${BaseClass}#answerModeProvenanceOpenBackReturnsAnswerContext', self.script)
+        self.assertIn('"functional-follow-up" { return 300000 }', self.script)
+        self.assertIn('"functional-saved" { return 300000 }', self.script)
+        self.assertIn('"functional-back-provenance" { return 300000 }', self.script)
+        self.assertIn('"homeAndAskImeSubmitRouteToSearchResultsAndAnswerDetail"', self.script)
+        self.assertIn('"savedNavigationBackReturnsManualHomeDestination"', self.script)
+        self.assertIn('"answerModeProvenanceOpenBackReturnsAnswerContext"', self.script)
+        self.assertIn('${BaseClass}#$methodName', self.script)
+
+    def test_final_summary_includes_selected_instrumentation_methods(self):
+        self.assertIn("$EffectiveTestMethods = if (Use-ScriptedPromptRun) {", self.script)
+        self.assertIn("$EffectiveTestTargets = @(Resolve-InstrumentationTargetList -BaseClass $TestClass -MethodNames $EffectiveTestMethods)", self.script)
+        self.assertIn("$EffectiveTestClass = $EffectiveTestTargets -join", self.script)
+        self.assertIn("selected_test_methods = @($EffectiveTestMethods)", self.script)
+        self.assertIn("selected_test_targets = @($EffectiveTestTargets)", self.script)
 
     def test_runner_logs_slow_phase_progress_and_timeout(self):
         for phase in (
