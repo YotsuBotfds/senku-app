@@ -80,6 +80,18 @@ class PaperAnswerCardLabelTest {
     }
 
     @Test
+    fun sharedSourceCountPolicyKeepsPaperZeroCountNumeric() {
+        val content = answer(
+            sourceCount = 0,
+            host = "On-device",
+        )
+
+        assertEquals("SOURCE EVIDENCE \u2022 0 SOURCES", buildFooterMeta(content))
+        assertEquals("No sources", answerEvidenceSourceCountLabel(0))
+        assertEquals("0 SOURCES", answerEvidenceSourceCountLabelUpper(0, zeroLabel = "0 sources"))
+    }
+
+    @Test
     fun buildFooterMeta_keepsLimitedFitContextWhenArticleChromeIsHidden() {
         val content = answer(
             sourceCount = 3,

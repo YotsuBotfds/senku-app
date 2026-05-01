@@ -62,6 +62,11 @@ import com.senku.ui.answer.AnswerSurfaceLabel
 import com.senku.ui.answer.Evidence
 import com.senku.ui.answer.Mode as PaperAnswerMode
 import com.senku.ui.answer.PaperAnswerCard
+import com.senku.ui.answer.answerEvidenceBulletJoin
+import com.senku.ui.answer.answerEvidenceDashJoin
+import com.senku.ui.answer.answerEvidenceSourceCountLabel
+import com.senku.ui.answer.answerEvidenceSourceCountLabelUpper
+import com.senku.ui.answer.answerEvidenceStatusToken
 import com.senku.ui.answer.buildFooterMeta
 import com.senku.ui.answer.compactEvidenceLabel
 import com.senku.ui.composer.DockedComposer
@@ -791,16 +796,19 @@ internal fun tabletComposerContextHint(
         else -> if (guideMode) "$count sections" else "$count turns"
     }
     if (state.isThreadMode()) {
-        return listOf("Thread context kept", turnLabel, tabletThreadContextAnchorLabel(state))
-            .joinToString(" \u2022 ")
+        return answerEvidenceBulletJoin(listOf("Thread context kept", turnLabel, tabletThreadContextAnchorLabel(state)))
             .uppercase()
     }
 
     val sourceCount = if (guideMode) state.sources.size else state.resolvedAnswerSourceCount()
-    val sourceLabel = when (sourceCount) {
-        0 -> if (guideMode) "No references" else "No sources"
-        1 -> if (guideMode) "1 reference" else "1 source"
-        else -> if (guideMode) "$sourceCount references" else "$sourceCount sources"
+    val sourceLabel = if (guideMode) {
+        when (sourceCount) {
+            0 -> "No references"
+            1 -> "1 reference"
+            else -> "$sourceCount references"
+        }
+    } else {
+        answerEvidenceSourceCountLabel(sourceCount)
     }
 
     if (state.detailMode == TabletDetailMode.Answer) {
@@ -811,13 +819,11 @@ internal fun tabletComposerContextHint(
                 ?.trim()
                 .orEmpty()
         }.ifEmpty { "ANSWER" }
-        return listOf(answerAnchor, "CONTEXT KEPT")
-            .joinToString(" \u2022 ")
+        return answerEvidenceBulletJoin(listOf(answerAnchor, "CONTEXT KEPT"))
             .uppercase()
     }
 
-    return listOf(if (guideMode) "Guide context kept" else "Thread context kept", turnLabel, sourceLabel)
-        .joinToString(" \u2022 ")
+    return answerEvidenceBulletJoin(listOf(if (guideMode) "Guide context kept" else "Thread context kept", turnLabel, sourceLabel))
         .uppercase()
 }
 
@@ -882,7 +888,7 @@ internal fun tabletAnswerRelatedGuideRows(
 
 internal fun tabletThreadSourcePaneTitle(count: Int, isLandscape: Boolean): String {
     val label = if (isLandscape) "SOURCES IN THREAD" else "SOURCES"
-    return "$label \u2022 ${count.coerceAtLeast(0)}"
+    return answerEvidenceBulletJoin(listOf(label, count.coerceAtLeast(0).toString()))
 }
 
 internal fun tabletThreadSourceCardMeta(sourceId: String, relation: String): String {
@@ -891,7 +897,7 @@ internal fun tabletThreadSourceCardMeta(sourceId: String, relation: String): Str
     return if (normalizedId.isEmpty()) {
         normalizedRelation
     } else {
-        "$normalizedId \u2022 $normalizedRelation"
+        answerEvidenceBulletJoin(listOf(normalizedId, normalizedRelation))
     }
 }
 
@@ -934,7 +940,13 @@ internal fun tabletTitleBarShouldShowSupportRows(detailMode: TabletDetailMode): 
     detailMode == TabletDetailMode.Guide
 
 internal fun tabletThreadQuestionMetaLabel(turnIndex: Int): String =
-    "Q${turnIndex.coerceAtLeast(1)} \u2022 ${tabletThreadTimestampLabel(turnIndex)} \u2022 FIELD QUESTION"
+    answerEvidenceBulletJoin(
+        listOf(
+            "Q${turnIndex.coerceAtLeast(1)}",
+            tabletThreadTimestampLabel(turnIndex),
+            "FIELD QUESTION",
+        ),
+    )
 
 internal fun tabletThreadAnswerMetaLabel(
     turnIndex: Int,
@@ -943,7 +955,13 @@ internal fun tabletThreadAnswerMetaLabel(
 ): String {
     val sourceId = tabletThreadAnswerSourceId(content, turnIndex, reviewDemoMode)
     val anchorLabel = sourceId.takeIf { it.isNotBlank() }?.let { "ANCHOR $it" } ?: "ANSWER"
-    return "A${turnIndex.coerceAtLeast(1)} \u2022 ${tabletThreadTimestampLabel(turnIndex)} \u2022 $anchorLabel"
+    return answerEvidenceBulletJoin(
+        listOf(
+            "A${turnIndex.coerceAtLeast(1)}",
+            tabletThreadTimestampLabel(turnIndex),
+            anchorLabel,
+        ),
+    )
 }
 
 internal fun tabletThreadDetailTypeScalePolicy(
@@ -1021,13 +1039,13 @@ internal fun tabletThreadAnswerSourceChipContentDescription(label: String): Stri
 internal fun tabletThreadAnswerStatusLabel(content: AnswerContent, status: Status): String =
     when {
         content.abstain -> "NO MATCH"
-        content.uncertainFit -> "\u2022 UNSURE"
-        content.answerSurfaceLabel == AnswerSurfaceLabel.LimitedFit -> "\u2022 UNSURE"
-        status == Status.Pending -> "\u2022 UNSURE"
+        content.uncertainFit -> answerEvidenceStatusToken("UNSURE")
+        content.answerSurfaceLabel == AnswerSurfaceLabel.LimitedFit -> answerEvidenceStatusToken("UNSURE")
+        status == Status.Pending -> answerEvidenceStatusToken("UNSURE")
         content.evidence != Evidence.Strong &&
             content.answerSurfaceLabel != AnswerSurfaceLabel.DeterministicRule &&
-            content.answerSurfaceLabel != AnswerSurfaceLabel.ReviewedCardEvidence -> "\u2022 UNSURE"
-        else -> "\u2022 CONFIDENT"
+            content.answerSurfaceLabel != AnswerSurfaceLabel.ReviewedCardEvidence -> answerEvidenceStatusToken("UNSURE")
+        else -> answerEvidenceStatusToken("CONFIDENT")
     }
 
 internal data class PhoneStressReadingPolicy(
@@ -3954,12 +3972,16 @@ private fun buildTitleSummary(
 ): String {
     val title = guideTitle.trim().ifEmpty { "Guide evidence" }
     val turnLabel = if (turnCount == 1) "1 turn" else "$turnCount turns"
-    val titleWithTurns = if (title.contains(turnLabel, ignoreCase = true)) title else "$title \u2022 $turnLabel"
+    val titleWithTurns = if (title.contains(turnLabel, ignoreCase = true)) {
+        title
+    } else {
+        answerEvidenceBulletJoin(listOf(title, turnLabel))
+    }
     val normalizedGuideId = guideId.trim()
     return if (normalizedGuideId.isEmpty() || titleWithTurns.startsWith(normalizedGuideId, ignoreCase = true)) {
         titleWithTurns
     } else {
-        "$normalizedGuideId \u2022 $titleWithTurns"
+        answerEvidenceBulletJoin(listOf(normalizedGuideId, titleWithTurns))
     }
 }
 
@@ -3974,14 +3996,10 @@ private fun buildPrimaryAnswerMeta(
     content: AnswerContent,
     sourceCount: Int,
 ): String {
-    val sourceLabel = when (val count = maxOf(sourceCount, content.sourceCount)) {
-        0 -> "NO SOURCES"
-        1 -> "1 SOURCE"
-        else -> "$count SOURCES"
-    }
+    val sourceLabel = answerEvidenceSourceCountLabelUpper(maxOf(sourceCount, content.sourceCount))
     return listOf(content.host.trim().ifEmpty { null }, sourceLabel)
         .filterNotNull()
-        .joinToString(" - ")
+        .let(::answerEvidenceDashJoin)
         .uppercase()
 }
 

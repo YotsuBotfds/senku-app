@@ -438,12 +438,12 @@ private fun evidenceToneColor(
 internal fun compactEvidenceLabel(content: AnswerContent): String {
     return when (content.answerSurfaceLabel) {
         AnswerSurfaceLabel.DeterministicRule -> "Rule match"
-        AnswerSurfaceLabel.LimitedFit -> "\u2022 UNSURE"
+        AnswerSurfaceLabel.LimitedFit -> answerEvidenceStatusToken("UNSURE")
         AnswerSurfaceLabel.Abstain -> "No match"
         AnswerSurfaceLabel.ReviewedCardEvidence -> sourceEvidenceLabel(content)
         AnswerSurfaceLabel.GeneratedEvidence,
         AnswerSurfaceLabel.Unknown -> when {
-            content.uncertainFit -> "\u2022 UNSURE"
+            content.uncertainFit -> answerEvidenceStatusToken("UNSURE")
             content.evidence == Evidence.Strong -> sourceEvidenceLabel(content)
             content.evidence == Evidence.Moderate -> sourceEvidenceLabel(content)
             content.abstain -> "No match"
@@ -461,7 +461,7 @@ private fun statusHeaderLabel(content: AnswerContent): String {
     if (content.uncertainFit || content.answerSurfaceLabel == AnswerSurfaceLabel.LimitedFit) {
         tokens += "1 TURN"
     }
-    return tokens.joinToString(" \u2022 ")
+    return answerEvidenceBulletJoin(tokens)
 }
 
 private fun displayHostLabel(host: String): String {
@@ -488,22 +488,22 @@ internal fun buildFooterMeta(content: AnswerContent): String {
         if (host.isNotBlank()) {
             tokens += host
         }
-        return tokens.joinToString(" \u2022 ")
+        return answerEvidenceBulletJoin(tokens)
     }
     val tokens = mutableListOf<String>()
     if (reviewedGuideId.isNotBlank()) {
         tokens += "EVIDENCE OWNER $reviewedGuideId"
         if (content.sourceCount > 0) {
-            tokens += sourceCountLabel(content.sourceCount).uppercase(Locale.US)
-            return tokens.joinToString(" \u2022 ")
+            tokens += answerEvidenceSourceCountLabelUpper(content.sourceCount)
+            return answerEvidenceBulletJoin(tokens)
         }
     }
     tokens += sourceRoleLabel(content)
-    tokens += sourceCountLabel(content.sourceCount).uppercase(Locale.US)
+    tokens += answerEvidenceSourceCountLabelUpper(content.sourceCount, zeroLabel = "0 sources")
     if (content.elapsedSeconds > 0.0) {
         tokens += String.format(Locale.US, "%.1fs", content.elapsedSeconds)
     }
-    return tokens.joinToString(" \u2022 ")
+    return answerEvidenceBulletJoin(tokens)
 }
 
 private fun sourceRoleLabel(content: AnswerContent): String {
@@ -513,14 +513,6 @@ private fun sourceRoleLabel(content: AnswerContent): String {
         AnswerSurfaceLabel.ReviewedCardEvidence -> "REVIEWED EVIDENCE"
         else -> "SOURCE EVIDENCE"
     }
-}
-
-private fun sourceCountLabel(sourceCount: Int): String {
-    return "$sourceCount ${sourceCountNoun(sourceCount)}"
-}
-
-private fun sourceCountNoun(sourceCount: Int): String {
-    return if (sourceCount == 1) "source" else "sources"
 }
 
 internal fun shouldShowUncertainFitNotice(content: AnswerContent): Boolean {

@@ -7,6 +7,9 @@ import com.senku.mobile.ReviewedCardMetadata
 import java.util.Locale
 import kotlin.math.round
 
+internal const val AnswerEvidenceBulletSeparator = " \u2022 "
+internal const val AnswerEvidenceDashSeparator = " - "
+
 enum class AnswerSurfaceLabel {
     ReviewedCardEvidence,
     GeneratedEvidence,
@@ -32,6 +35,31 @@ data class AnswerContent(
     val reviewedCardBacked: Boolean = false,
     val reviewedCardMetadata: ReviewedCardMetadata = ReviewedCardMetadata.empty(),
 )
+
+internal fun answerEvidenceBulletJoin(tokens: Iterable<String>): String =
+    tokens.joinToString(AnswerEvidenceBulletSeparator)
+
+internal fun answerEvidenceDashJoin(tokens: Iterable<String>): String =
+    tokens.joinToString(AnswerEvidenceDashSeparator)
+
+internal fun answerEvidenceSourceCountLabel(
+    sourceCount: Int,
+    zeroLabel: String = "No sources",
+): String =
+    when (sourceCount) {
+        0 -> zeroLabel
+        1 -> "1 source"
+        else -> "$sourceCount sources"
+    }
+
+internal fun answerEvidenceSourceCountLabelUpper(
+    sourceCount: Int,
+    zeroLabel: String = "No sources",
+): String =
+    answerEvidenceSourceCountLabel(sourceCount, zeroLabel).uppercase(Locale.US)
+
+internal fun answerEvidenceStatusToken(label: String): String =
+    "\u2022 ${label.trim().uppercase(Locale.US)}"
 
 fun fromAnswerRun(run: OfflineAnswerEngine.AnswerRun): AnswerContent {
     val answerSurface = inferAnswerSurface(

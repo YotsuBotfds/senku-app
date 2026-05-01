@@ -1,5 +1,6 @@
 package com.senku.ui.evidence
 
+import com.senku.ui.answer.answerEvidenceSourceCountLabel
 import java.util.Locale
 
 private const val FallbackSourceTitle = "Source guide"
@@ -60,7 +61,7 @@ internal fun EvidenceSurfaceModel.toEvidenceSurfaceViewData(): EvidenceSurfaceVi
     }
     return EvidenceSurfaceViewData(
         label = normalizeEvidenceLabel(label).ifEmpty { FallbackSurfaceLabel },
-        sourceCountLabel = sourceCountLabel(rows.size),
+        sourceCountLabel = answerEvidenceSourceCountLabel(rows.size),
         activeSource = activeSource,
         rows = rows,
         isEmpty = rows.isEmpty(),
@@ -134,11 +135,4 @@ internal fun evidenceAnchorLabel(style: EvidenceAnchorLabelStyle): String =
     when (style) {
         EvidenceAnchorLabelStyle.Short -> AnchorLabel
         EvidenceAnchorLabelStyle.Guide -> AnchorGuideLabel
-    }
-
-private fun sourceCountLabel(sourceCount: Int): String =
-    when (sourceCount) {
-        0 -> "No sources"
-        1 -> "1 source"
-        else -> "$sourceCount sources"
     }
