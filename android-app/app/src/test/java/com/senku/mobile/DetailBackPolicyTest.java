@@ -8,6 +8,58 @@ import org.junit.Test;
 
 public final class DetailBackPolicyTest {
     @Test
+    public void rawSourceRouteParsesValidEnumRoute() {
+        assertEquals(
+            DetailBackPolicy.SourceRoute.CROSS_REFERENCE_GUIDE,
+            DetailBackPolicy.sourceRouteFromRawValue("cross_reference_guide", true)
+        );
+    }
+
+    @Test
+    public void rawSourceRouteFallsBackForInvalidRouteInAnswerMode() {
+        assertEquals(
+            DetailBackPolicy.SourceRoute.ANSWER,
+            DetailBackPolicy.sourceRouteFromRawValue("not-a-real-route", true)
+        );
+    }
+
+    @Test
+    public void rawSourceRouteFallsBackForInvalidRouteInGuideMode() {
+        assertEquals(
+            DetailBackPolicy.SourceRoute.GUIDE,
+            DetailBackPolicy.sourceRouteFromRawValue("not-a-real-route", false)
+        );
+    }
+
+    @Test
+    public void rawSourceRouteFallsBackForBlankRoute() {
+        assertEquals(
+            DetailBackPolicy.SourceRoute.ANSWER,
+            DetailBackPolicy.sourceRouteFromRawValue("   ", true)
+        );
+    }
+
+    @Test
+    public void rawSourceRouteFallsBackForNullRoute() {
+        assertEquals(
+            DetailBackPolicy.SourceRoute.GUIDE,
+            DetailBackPolicy.sourceRouteFromRawValue(null, false)
+        );
+    }
+
+    @Test
+    public void rawSourceRouteFallbackTracksAnswerAndGuideMode() {
+        assertEquals(
+            DetailBackPolicy.SourceRoute.ANSWER,
+            DetailBackPolicy.sourceRouteFromRawValue("", true)
+        );
+        assertEquals(
+            DetailBackPolicy.SourceRoute.GUIDE,
+            DetailBackPolicy.sourceRouteFromRawValue("", false)
+        );
+    }
+
+    @Test
     public void nonTaskRootBackFinishesActivityForEveryCurrentRouteAndTrigger() {
         assertCurrentMatrixDecision(false, DetailBackPolicy.Effect.FINISH_ACTIVITY);
     }

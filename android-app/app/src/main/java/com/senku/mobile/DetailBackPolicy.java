@@ -1,5 +1,7 @@
 package com.senku.mobile;
 
+import java.util.Locale;
+
 final class DetailBackPolicy {
     enum SourceRoute {
         UNKNOWN,
@@ -103,9 +105,25 @@ final class DetailBackPolicy {
         return decide(taskRoot).effect == Effect.NAVIGATE_HOME;
     }
 
+    static SourceRoute sourceRouteFromRawValue(String rawRoute, boolean answerMode) {
+        String normalized = rawRoute == null ? "" : rawRoute.trim();
+        if (!normalized.isEmpty()) {
+            try {
+                return SourceRoute.valueOf(normalized.toUpperCase(Locale.US));
+            } catch (IllegalArgumentException ignored) {
+                return fallbackSourceRoute(answerMode);
+            }
+        }
+        return fallbackSourceRoute(answerMode);
+    }
+
     private static RouteBackIntent routeBackIntent(Inputs inputs) {
         RouteBackContract contract = routeBackContract(inputs.sourceRoute);
         return inputs.taskRoot ? contract.taskRootIntent : contract.stackedIntent;
+    }
+
+    private static SourceRoute fallbackSourceRoute(boolean answerMode) {
+        return answerMode ? SourceRoute.ANSWER : SourceRoute.GUIDE;
     }
 
     private static RouteBackContract routeBackContract(SourceRoute sourceRoute) {

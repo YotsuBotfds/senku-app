@@ -9427,15 +9427,10 @@ public final class DetailActivity extends AppCompatActivity {
         if (intent == null) {
             return DetailBackPolicy.SourceRoute.UNKNOWN;
         }
-        String rawRoute = safe(intent.getStringExtra(EXTRA_DETAIL_SOURCE_ROUTE)).trim();
-        if (!rawRoute.isEmpty()) {
-            try {
-                return DetailBackPolicy.SourceRoute.valueOf(rawRoute.toUpperCase(Locale.US));
-            } catch (IllegalArgumentException ignored) {
-                return answerMode ? DetailBackPolicy.SourceRoute.ANSWER : DetailBackPolicy.SourceRoute.GUIDE;
-            }
-        }
-        return answerMode ? DetailBackPolicy.SourceRoute.ANSWER : DetailBackPolicy.SourceRoute.GUIDE;
+        return DetailBackPolicy.sourceRouteFromRawValue(
+            intent.getStringExtra(EXTRA_DETAIL_SOURCE_ROUTE),
+            answerMode
+        );
     }
 
     static DetailBackPolicy.SourceRoute detailBackPolicySourceRouteForSurface(
