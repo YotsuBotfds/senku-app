@@ -5,6 +5,8 @@ param(
     [string]$RemoteTempDir = "/data/local/tmp/senku_litert_model_push",
     [string]$SummaryPath = "",
     [string]$SummaryMarkdownPath = "",
+    [int]$AdbCommandTimeoutMilliseconds = 60000,
+    [int]$AdbPushTimeoutMilliseconds = 1800000,
     [switch]$DryRun,
     [switch]$SkipDataSpaceCheck,
     [switch]$RestartApp,
@@ -18,41 +20,45 @@ if (Get-Variable -Name PSNativeCommandUseErrorActionPreference -ErrorAction Sile
 }
 
 $repoRoot = Split-Path -Parent $PSScriptRoot
+$androidHarnessCommonPath = Join-Path $PSScriptRoot "android_harness_common.psm1"
+Import-Module $androidHarnessCommonPath -Force
 $adb = Join-Path $env:LOCALAPPDATA "Android\Sdk\platform-tools\adb.exe"
+
+if ($AdbCommandTimeoutMilliseconds -le 0) {
+    throw "-AdbCommandTimeoutMilliseconds must be a positive integer."
+}
+if ($AdbPushTimeoutMilliseconds -le 0) {
+    throw "-AdbPushTimeoutMilliseconds must be a positive integer."
+}
 
 function Invoke-AdbChecked {
     param(
         [Parameter(Mandatory = $true)]
         [string[]]$Arguments,
+        [int]$TimeoutMilliseconds = $AdbCommandTimeoutMilliseconds,
         [switch]$AllowFailure
     )
 
-    $stdoutFile = Join-Path ([System.IO.Path]::GetTempPath()) ("senku_adb_" + [guid]::NewGuid().ToString("N") + ".out")
-    $stderrFile = Join-Path ([System.IO.Path]::GetTempPath()) ("senku_adb_" + [guid]::NewGuid().ToString("N") + ".err")
-    try {
-        $process = Start-Process -FilePath $adb `
-            -ArgumentList $Arguments `
-            -NoNewWindow `
-            -Wait `
-            -PassThru `
-            -RedirectStandardOutput $stdoutFile `
-            -RedirectStandardError $stderrFile
-        $stdout = if (Test-Path $stdoutFile) { Get-Content $stdoutFile } else { @() }
-        $stderr = if (Test-Path $stderrFile) { Get-Content $stderrFile } else { @() }
-        $output = @($stdout + $stderr)
-    } finally {
-        if (Test-Path $stdoutFile) {
-            Remove-Item -LiteralPath $stdoutFile -Force
-        }
-        if (Test-Path $stderrFile) {
-            Remove-Item -LiteralPath $stderrFile -Force
-        }
+    $result = Invoke-AndroidAdbCommandCapture -AdbPath $adb -Arguments $Arguments -TimeoutMilliseconds $TimeoutMilliseconds
+    $outputText = if ($null -eq $result.output) { "" } else { [string]$result.output }
+    $output = @()
+    if (-not [string]::IsNullOrWhiteSpace($outputText)) {
+        $output = @($outputText -split "`r?`n")
     }
 
-    $script:LastAdbExitCode = $process.ExitCode
+    if ($result.timed_out) {
+        $joined = $Arguments -join " "
+        $timeoutMessage = "adb timed out after ${TimeoutMilliseconds}ms ($joined): $outputText".TrimEnd()
+        $output = @($output + $timeoutMessage)
+    }
+
+    $script:LastAdbExitCode = [int]$result.exit_code
     if (-not $AllowFailure -and $script:LastAdbExitCode -ne 0) {
         $joined = $Arguments -join " "
         $message = ($output | Out-String).Trim()
+        if ($result.timed_out) {
+            throw "adb timed out after ${TimeoutMilliseconds}ms ($joined): $message"
+        }
         throw "adb failed ($joined): $message"
     }
     return $output
@@ -341,8 +347,8 @@ try {
 
     $remoteModelPath = "$RemoteTempDir/$modelFileName"
     $remotePrefsPath = "$RemoteTempDir/senku_model_store.xml"
-    Invoke-AdbChecked -Arguments @("-s", $Device, "push", $resolvedModelPath, $remoteModelPath) | Out-Null
-    Invoke-AdbChecked -Arguments @("-s", $Device, "push", $localPrefsPath, $remotePrefsPath) | Out-Null
+    Invoke-AdbChecked -Arguments @("-s", $Device, "push", $resolvedModelPath, $remoteModelPath) -TimeoutMilliseconds $AdbPushTimeoutMilliseconds | Out-Null
+    Invoke-AdbChecked -Arguments @("-s", $Device, "push", $localPrefsPath, $remotePrefsPath) -TimeoutMilliseconds $AdbPushTimeoutMilliseconds | Out-Null
     Invoke-AdbChecked -Arguments @("-s", $Device, "shell", "run-as", $PackageName, "cp", $remoteModelPath, $appModelPath) | Out-Null
     Invoke-AdbChecked -Arguments @("-s", $Device, "shell", "run-as", $PackageName, "cp", $remotePrefsPath, "$appPrefsDir/senku_model_store.xml") | Out-Null
 

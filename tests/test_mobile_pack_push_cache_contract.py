@@ -23,6 +23,32 @@ class MobilePackPushCacheContractTests(unittest.TestCase):
         self.assertIn("[switch]$ForcePush", self.script)
         self.assertIn('[string]$SummaryPath = ""', self.script)
 
+    def test_exposes_positive_adb_timeout_controls(self):
+        self.assertIn("[int]$AdbCommandTimeoutMilliseconds = 30000", self.script)
+        self.assertIn("[int]$AdbPushTimeoutMilliseconds = 300000", self.script)
+        self.assertIn("AdbCommandTimeoutMilliseconds must be greater than zero.", self.script)
+        self.assertIn("AdbPushTimeoutMilliseconds must be greater than zero.", self.script)
+
+    def test_uses_bounded_android_harness_adb_helper(self):
+        self.assertIn('Join-Path $PSScriptRoot "android_harness_common.psm1"', self.script)
+        self.assertIn("Import-Module $androidHarnessCommonPath -Force", self.script)
+        self.assertIn("Invoke-AndroidAdbCommandCapture -AdbPath $adb -Arguments $Arguments -TimeoutMilliseconds $TimeoutMilliseconds", self.script)
+
+    def test_does_not_use_unbounded_start_process_wait_for_adb(self):
+        self.assertNotIn("Start-Process -FilePath $adb", self.script)
+        self.assertNotIn("-Wait `", self.script)
+
+    def test_uses_push_timeout_only_for_adb_push(self):
+        self.assertIn("[int]$TimeoutMilliseconds = $AdbCommandTimeoutMilliseconds", self.script)
+        self.assertIn(
+            'Invoke-AdbChecked -Arguments @("-s", $Device, "push", $file.local, $remoteFile) -TimeoutMilliseconds $AdbPushTimeoutMilliseconds',
+            self.script,
+        )
+
+    def test_emits_timeout_failure_text(self):
+        self.assertIn('if ($result.timed_out) {', self.script)
+        self.assertIn('throw "adb timed out after ${TimeoutMilliseconds}ms ($joined): $message"', self.script)
+
     def test_uses_device_scoped_harness_state_file(self):
         self.assertIn('Join-Path $repoRoot "artifacts\\harness_state"', self.script)
         self.assertIn('"mobile_pack_push_" + (Get-SafeStateName -Value $Device) + ".json"', self.script)

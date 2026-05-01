@@ -9,6 +9,8 @@ param(
     [switch]$ShowInstalledManifest,
     [switch]$SkipIfCurrent,
     [switch]$ForcePush,
+    [int]$AdbCommandTimeoutMilliseconds = 30000,
+    [int]$AdbPushTimeoutMilliseconds = 300000,
     [string]$SummaryPath = ""
 )
 
@@ -18,6 +20,16 @@ if (Get-Variable -Name PSNativeCommandUseErrorActionPreference -ErrorAction Sile
 }
 
 $repoRoot = Split-Path -Parent $PSScriptRoot
+$androidHarnessCommonPath = Join-Path $PSScriptRoot "android_harness_common.psm1"
+Import-Module $androidHarnessCommonPath -Force
+
+if ($AdbCommandTimeoutMilliseconds -le 0) {
+    throw "AdbCommandTimeoutMilliseconds must be greater than zero."
+}
+if ($AdbPushTimeoutMilliseconds -le 0) {
+    throw "AdbPushTimeoutMilliseconds must be greater than zero."
+}
+
 $adb = Join-Path $env:LOCALAPPDATA "Android\Sdk\platform-tools\adb.exe"
 if (-not (Test-Path $adb)) {
     throw "adb not found at $adb"
@@ -163,35 +175,24 @@ function Invoke-AdbChecked {
     param(
         [Parameter(Mandatory = $true)]
         [string[]]$Arguments,
+        [int]$TimeoutMilliseconds = $AdbCommandTimeoutMilliseconds,
         [switch]$AllowFailure
     )
 
-    $stdoutFile = Join-Path ([System.IO.Path]::GetTempPath()) ("senku_adb_" + [guid]::NewGuid().ToString("N") + ".out")
-    $stderrFile = Join-Path ([System.IO.Path]::GetTempPath()) ("senku_adb_" + [guid]::NewGuid().ToString("N") + ".err")
-    try {
-        $process = Start-Process -FilePath $adb `
-            -ArgumentList $Arguments `
-            -NoNewWindow `
-            -Wait `
-            -PassThru `
-            -RedirectStandardOutput $stdoutFile `
-            -RedirectStandardError $stderrFile
-        $stdout = if (Test-Path $stdoutFile) { Get-Content $stdoutFile } else { @() }
-        $stderr = if (Test-Path $stderrFile) { Get-Content $stderrFile } else { @() }
-        $output = @($stdout + $stderr)
-    } finally {
-        if (Test-Path $stdoutFile) {
-            Remove-Item -LiteralPath $stdoutFile -Force
-        }
-        if (Test-Path $stderrFile) {
-            Remove-Item -LiteralPath $stderrFile -Force
-        }
+    $result = Invoke-AndroidAdbCommandCapture -AdbPath $adb -Arguments $Arguments -TimeoutMilliseconds $TimeoutMilliseconds
+    $script:LastAdbExitCode = [int]$result.exit_code
+    $output = if ([string]::IsNullOrWhiteSpace([string]$result.output)) {
+        @()
+    } else {
+        @(([string]$result.output) -split "`r?`n")
     }
 
-    $script:LastAdbExitCode = $process.ExitCode
     if (-not $AllowFailure -and $script:LastAdbExitCode -ne 0) {
         $joined = $Arguments -join " "
         $message = ($output | Out-String).Trim()
+        if ($result.timed_out) {
+            throw "adb timed out after ${TimeoutMilliseconds}ms ($joined): $message"
+        }
         throw "adb failed ($joined): $message"
     }
     return $output
@@ -333,7 +334,7 @@ Invoke-AdbChecked -Arguments @("-s", $Device, "shell", "run-as", $PackageName, "
 foreach ($file in $packFiles) {
     $remoteFile = "$RemoteTempDir/$($file.name)"
     Write-Host "Uploading $($file.name)..."
-    Invoke-AdbChecked -Arguments @("-s", $Device, "push", $file.local, $remoteFile) | Out-Null
+    Invoke-AdbChecked -Arguments @("-s", $Device, "push", $file.local, $remoteFile) -TimeoutMilliseconds $AdbPushTimeoutMilliseconds | Out-Null
     Invoke-AdbChecked -Arguments @("-s", $Device, "shell", "run-as", $PackageName, "cp", $remoteFile, "$appPackDir/$($file.name)") | Out-Null
 }
 

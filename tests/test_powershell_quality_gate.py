@@ -29,6 +29,7 @@ ANDROID_HARNESS_SCRIPT_PATHS = (
     "scripts\\build_android_ui_state_pack.ps1",
     "scripts\\build_android_ui_state_pack_parallel.ps1",
     "scripts\\start_litert_host_server.ps1",
+    "scripts\\push_mobile_pack_to_android.ps1",
     "scripts\\push_litert_model_to_android.ps1",
 )
 WRAPPER_SLICE_PATHS = (

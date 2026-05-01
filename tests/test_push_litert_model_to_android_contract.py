@@ -20,6 +20,10 @@ class PushLiteRtModelToAndroidContractTests(unittest.TestCase):
     def test_contract_includes_conservative_preflight_controls(self):
         self.assertIn("[switch]$DryRun", self.script)
         self.assertIn("[switch]$SkipDataSpaceCheck", self.script)
+        self.assertIn("[int]$AdbCommandTimeoutMilliseconds = 60000", self.script)
+        self.assertIn("[int]$AdbPushTimeoutMilliseconds = 1800000", self.script)
+        self.assertIn('throw "-AdbCommandTimeoutMilliseconds must be a positive integer."', self.script)
+        self.assertIn('throw "-AdbPushTimeoutMilliseconds must be a positive integer."', self.script)
         self.assertIn('[string]$SummaryPath = ""', self.script)
         self.assertIn('[string]$SummaryMarkdownPath = ""', self.script)
         self.assertIn('throw "-SummaryMarkdownPath is only supported with -DryRun."', self.script)
@@ -77,6 +81,28 @@ class PushLiteRtModelToAndroidContractTests(unittest.TestCase):
         finallyStart = self.script.index("} finally {")
         cleanup = self.script.index('Invoke-AdbChecked -Arguments @("-s", $Device, "shell", "rm", "-rf", $RemoteTempDir) -AllowFailure', finallyStart)
         self.assertLess(preflight, cleanup)
+
+    def test_adb_processes_are_bounded_by_common_capture_helper(self):
+        self.assertIn('$androidHarnessCommonPath = Join-Path $PSScriptRoot "android_harness_common.psm1"', self.script)
+        self.assertIn("Import-Module $androidHarnessCommonPath -Force", self.script)
+        self.assertIn(
+            "Invoke-AndroidAdbCommandCapture -AdbPath $adb -Arguments $Arguments -TimeoutMilliseconds $TimeoutMilliseconds",
+            self.script,
+        )
+        self.assertNotIn("Start-Process -FilePath $adb", self.script)
+        self.assertNotIn("-Wait `", self.script)
+        self.assertIn("[int]$TimeoutMilliseconds = $AdbCommandTimeoutMilliseconds", self.script)
+        self.assertIn(
+            'Invoke-AdbChecked -Arguments @("-s", $Device, "push", $resolvedModelPath, $remoteModelPath) -TimeoutMilliseconds $AdbPushTimeoutMilliseconds',
+            self.script,
+        )
+        self.assertIn(
+            'Invoke-AdbChecked -Arguments @("-s", $Device, "push", $localPrefsPath, $remotePrefsPath) -TimeoutMilliseconds $AdbPushTimeoutMilliseconds',
+            self.script,
+        )
+        self.assertIn('adb timed out after ${TimeoutMilliseconds}ms ($joined): $outputText', self.script)
+        self.assertIn('throw "adb timed out after ${TimeoutMilliseconds}ms ($joined): $message"', self.script)
+        self.assertIn("$script:LastAdbExitCode = [int]$result.exit_code", self.script)
 
     def test_dry_run_summary_output_uses_tiny_model_without_adb(self):
         with tempfile.TemporaryDirectory() as tmp:
