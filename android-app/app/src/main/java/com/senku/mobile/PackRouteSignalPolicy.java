@@ -61,6 +61,35 @@ final class PackRouteSignalPolicy {
         "record-keeping",
         "mutual aid funds"
     );
+    private static final Set<String> COMMUNITY_GOVERNANCE_COMMONS_RESOURCE_MARKERS = buildMarkerSet(
+        "commons management",
+        "sustainable resource governance",
+        "resource governance",
+        "resource rules",
+        "monitoring",
+        "graduated sanctions",
+        "sanctions",
+        "restitution",
+        "proportional consequences",
+        "membership rules",
+        "conflict resolution"
+    );
+    private static final Set<String> COMMUNITY_GOVERNANCE_FOOD_OPS_DISTRACTOR_MARKERS = buildMarkerSet(
+        "kitchen",
+        "community kitchen",
+        "meal",
+        "meals",
+        "cooking",
+        "cookhouse",
+        "food preparation",
+        "food service",
+        "serving line",
+        "recipe",
+        "recipes",
+        "menu",
+        "menus",
+        "kitchen operations"
+    );
     private static final Set<String> WATER_DISTRIBUTION_ANCHOR_MARKERS = buildMarkerSet(
         "water distribution",
         "distribution system",
@@ -166,6 +195,25 @@ final class PackRouteSignalPolicy {
 
     static boolean hasGovernanceFinanceDistractorSignal(String text) {
         return containsAnyMarker(text, COMMUNITY_GOVERNANCE_FINANCE_DISTRACTOR_MARKERS);
+    }
+
+    static boolean hasGovernanceCommonsResourceSignal(SearchResult candidate) {
+        if (candidate == null) {
+            return false;
+        }
+        String text = titleSectionText(candidate) + " " + PackRepository.emptySafe(candidate.snippet);
+        return hasGovernanceCommonsResourceTextSignal(text);
+    }
+
+    static boolean hasGovernanceCommonsResourceTextSignal(String text) {
+        return containsAnyMarker(text, COMMUNITY_GOVERNANCE_COMMONS_RESOURCE_MARKERS);
+    }
+
+    static boolean hasGovernanceFoodOpsDistractorSignal(SearchResult candidate) {
+        if (candidate == null) {
+            return false;
+        }
+        return containsAnyMarker(titleSectionText(candidate), COMMUNITY_GOVERNANCE_FOOD_OPS_DISTRACTOR_MARKERS);
     }
 
     static boolean hasGovernanceSupportMixDistractor(SearchResult candidate) {

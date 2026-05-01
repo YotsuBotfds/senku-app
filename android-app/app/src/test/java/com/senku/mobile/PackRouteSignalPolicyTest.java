@@ -120,6 +120,37 @@ public final class PackRouteSignalPolicyTest {
     }
 
     @Test
+    public void governanceSignalsSeparateCommonsResourceRowsFromFoodOpsNoise() {
+        SearchResult commons = result(
+            "Commons Management & Sustainable Resource Governance",
+            "Monitoring and Graduated Sanctions",
+            "Resource rules, restitution, and proportional consequences for shared food stores.",
+            "Resource rules, restitution, and proportional consequences for shared food stores.",
+            "resource-management",
+            "route-focus",
+            "subsystem",
+            "community_governance",
+            "community_governance,conflict_resolution"
+        );
+        SearchResult kitchenOps = result(
+            "Community Kitchen Operations",
+            "Meal Service and Cooking Rotations",
+            "Food prep, serving lines, and cook rotation logistics.",
+            "Food prep, serving lines, and cook rotation logistics.",
+            "resource-management",
+            "route-focus",
+            "planning",
+            "community_governance",
+            "community_governance"
+        );
+
+        assertTrue(PackRouteSignalPolicy.hasGovernanceCommonsResourceSignal(commons));
+        assertFalse(PackRouteSignalPolicy.hasGovernanceFoodOpsDistractorSignal(commons));
+        assertTrue(PackRouteSignalPolicy.hasGovernanceFoodOpsDistractorSignal(kitchenOps));
+        assertFalse(PackRouteSignalPolicy.hasGovernanceCommonsResourceSignal(kitchenOps));
+    }
+
+    @Test
     public void soapmakingStrongGuideRequiresProcessHeadingAndRejectsGenericChemistry() {
         SearchResult dedicatedSoap = result(
             "Everyday Compounds and Production",

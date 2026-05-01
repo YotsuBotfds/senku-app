@@ -17,6 +17,38 @@ final class PackStructuredAnchorPolicy {
         "vessel",
         "vessels"
     );
+    private static final Set<String> CABIN_SITE_SELECTION_ANCHOR_MARKERS = buildMarkerSet(
+        "shelter site selection",
+        "site selection",
+        "site assessment",
+        "terrain analysis",
+        "wind exposure",
+        "sun exposure",
+        "microclimate",
+        "water proximity",
+        "natural hazards",
+        "access routes"
+    );
+    private static final Set<String> CABIN_FOUNDATION_DETAIL_MARKERS = buildMarkerSet(
+        "foundation",
+        "foundations",
+        "footing",
+        "footings",
+        "frost line",
+        "frost heave",
+        "rubble trench"
+    );
+    private static final Set<String> CABIN_ROOF_DETAIL_MARKERS = buildMarkerSet(
+        "roof waterproofing",
+        "waterproofing and sealants",
+        "rainproofing and water shedding",
+        "water shedding",
+        "sealants",
+        "flashing",
+        "ridge cap",
+        "drip edge",
+        "underlayment"
+    );
 
     private PackStructuredAnchorPolicy() {
     }
@@ -147,8 +179,10 @@ final class PackStructuredAnchorPolicy {
         }
         QueryMetadataProfile metadataProfile = queryTerms.metadataProfile;
         String preferredStructureType = metadataProfile.preferredStructureType();
+        boolean cabinHouseExplicitAnchor = isCabinHouseExplicitAnchorProfile(metadataProfile);
         if (!metadataProfile.hasExplicitTopicFocus()
-            || !RetrievalRoutePolicy.requiresSpecializedRouteAnchorSignal(preferredStructureType)) {
+            || (!RetrievalRoutePolicy.requiresSpecializedRouteAnchorSignal(preferredStructureType)
+                && !cabinHouseExplicitAnchor)) {
             return null;
         }
 
@@ -250,7 +284,63 @@ final class PackStructuredAnchorPolicy {
         if ("community_governance".equals(preferredStructureType)) {
             return communityGovernanceStructuredAnchorBias(queryTerms, candidate);
         }
+        if (isCabinHouseExplicitAnchorProfile(queryTerms.metadataProfile)) {
+            return cabinHouseStructuredAnchorBias(queryTerms, candidate);
+        }
         return 0;
+    }
+
+    private static boolean isCabinHouseExplicitAnchorProfile(QueryMetadataProfile metadataProfile) {
+        return metadataProfile != null
+            && "cabin_house".equals(metadataProfile.preferredStructureType())
+            && (metadataProfile.hasExplicitTopic("site_selection")
+                || metadataProfile.hasExplicitTopic("roofing")
+                || metadataProfile.hasExplicitTopic("weatherproofing"));
+    }
+
+    private static int cabinHouseStructuredAnchorBias(PackRepository.QueryTerms queryTerms, SearchResult candidate) {
+        QueryMetadataProfile metadataProfile = queryTerms.metadataProfile;
+        String titleSection = normalizeMatchText(
+            PackRepository.emptySafe(candidate.title) + " " + PackRepository.emptySafe(candidate.sectionHeading)
+        );
+        int score = 0;
+
+        if (metadataProfile.hasExplicitTopic("site_selection")) {
+            boolean siteSignal = containsAnyMarker(titleSection, CABIN_SITE_SELECTION_ANCHOR_MARKERS);
+            boolean foundationOnlySignal = containsAnyMarker(titleSection, CABIN_FOUNDATION_DETAIL_MARKERS)
+                && !siteSignal;
+            if (siteSignal) {
+                score += 24;
+            }
+            if (foundationOnlySignal) {
+                score -= 14;
+            }
+            if (titleSection.contains("construction carpentry") && !siteSignal) {
+                score -= 10;
+            }
+        }
+
+        if (metadataProfile.hasExplicitTopic("roofing") || metadataProfile.hasExplicitTopic("weatherproofing")) {
+            boolean roofSignal = PackRouteSignalPolicy.hasRoofWeatherproofAnchorSignal(candidate);
+            boolean detailSignal = containsAnyMarker(titleSection, CABIN_ROOF_DETAIL_MARKERS);
+            if (roofSignal) {
+                score += 12;
+            }
+            if (detailSignal) {
+                score += 18;
+            }
+            if (PackRouteSignalPolicy.hasRoofWeatherproofDistractorSignal(candidate) && !roofSignal) {
+                score -= 18;
+            }
+            if (titleSection.contains("construction carpentry") && !detailSignal) {
+                score -= 24;
+            }
+            if ("starter".equals(normalized(candidate.contentRole)) && !detailSignal) {
+                score -= 12;
+            }
+        }
+
+        return score;
     }
 
     private static int soapmakingStructuredAnchorBias(PackRepository.QueryTerms queryTerms, SearchResult candidate) {
@@ -366,9 +456,18 @@ final class PackStructuredAnchorPolicy {
         boolean monitoringDistractor =
             PackRouteSignalPolicy.hasGovernanceMonitoringDistractorSignal(normalizedSection);
         boolean trustRepairSignal = PackRouteSignalPolicy.hasGovernanceTrustRepairTextSignal(normalizedSection);
+        boolean commonsResourceSignal = PackRouteSignalPolicy.hasGovernanceCommonsResourceSignal(candidate);
+        boolean foodOpsDistractor = PackRouteSignalPolicy.hasGovernanceFoodOpsDistractorSignal(candidate);
 
         if (!financialIntent && financeDistractor) {
             score -= 28;
+        }
+
+        if (commonsResourceSignal) {
+            score += 14;
+        }
+        if (foodOpsDistractor && !commonsResourceSignal) {
+            score -= 24;
         }
 
         if (trustRepairIntent && trustRepairSignal) {

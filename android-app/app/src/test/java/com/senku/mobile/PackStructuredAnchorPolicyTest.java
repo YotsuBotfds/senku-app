@@ -91,6 +91,100 @@ public final class PackStructuredAnchorPolicyTest {
         assertEquals("Construction & Carpentry", selected.title);
     }
 
+    @Test
+    public void communityGovernanceAnchorPrefersCommonsGuideOverKitchenOpsForFoodTheftPrompt() {
+        SearchResult kitchenOps = result(
+            "Community Kitchen Operations",
+            "Meal Service and Cooking Rotations",
+            "resource-management",
+            "route-focus",
+            "planning",
+            "community_governance",
+            "community_governance"
+        );
+        SearchResult commonsGuide = new SearchResult(
+            "Commons Management & Sustainable Resource Governance",
+            "",
+            "Resource rules, monitoring, restitution, and graduated sanctions for shared food stores.",
+            "Resource rules, monitoring, restitution, and graduated sanctions for shared food stores.",
+            "GD-626",
+            "Monitoring and Graduated Sanctions",
+            "resource-management",
+            "route-focus",
+            "subsystem",
+            "long_term",
+            "community_governance",
+            "community_governance,conflict_resolution"
+        );
+
+        SearchResult selected = PackStructuredAnchorPolicy.selectSpecializedStructuredAnchor(
+            PackRepository.QueryTerms.fromQuery("someone is stealing food from the group what do we do"),
+            Arrays.asList(kitchenOps, commonsGuide)
+        );
+
+        assertEquals("GD-626", selected.guideId);
+    }
+
+    @Test
+    public void explicitSiteSelectionAnchorPrefersSiteGuideOverGenericConstructionFoundation() {
+        SearchResult genericFoundation = result(
+            "Construction & Carpentry",
+            "Foundations",
+            "building",
+            "guide-focus",
+            "starter",
+            "cabin_house",
+            "site_selection,foundation,wall_construction"
+        );
+        SearchResult siteSelection = result(
+            "Shelter Site Selection & Hazard Assessment",
+            "Terrain Analysis",
+            "survival",
+            "route-focus",
+            "safety",
+            "cabin_house",
+            "site_selection,drainage"
+        );
+
+        SearchResult selected = PackStructuredAnchorPolicy.selectSpecializedStructuredAnchor(
+            PackRepository.QueryTerms.fromQuery(
+                "How do I choose a building site if drainage, wind, sun, and access all matter?"
+            ),
+            Arrays.asList(genericFoundation, siteSelection)
+        );
+
+        assertEquals("Shelter Site Selection & Hazard Assessment", selected.title);
+    }
+
+    @Test
+    public void explicitRoofAnchorPrefersDedicatedWaterproofingOverGenericConstructionRoofing() {
+        SearchResult genericRoofing = result(
+            "Construction & Carpentry",
+            "Roofing and Weatherproofing",
+            "building",
+            "guide-focus",
+            "starter",
+            "cabin_house",
+            "foundation,wall_construction,roofing,weatherproofing"
+        );
+        SearchResult dedicatedRoof = result(
+            "Roofing & Weatherproofing",
+            "Waterproofing and Sealants",
+            "building",
+            "route-focus",
+            "subsystem",
+            "cabin_house",
+            "roofing,weatherproofing"
+        );
+
+        SearchResult selected = PackStructuredAnchorPolicy.selectSpecializedStructuredAnchor(
+            PackRepository.QueryTerms.fromQuery("how do i waterproof a roof with no tar or shingles"),
+            Arrays.asList(genericRoofing, dedicatedRoof)
+        );
+
+        assertEquals("Roofing & Weatherproofing", selected.title);
+    }
+
     private static SearchResult result(
         String title,
         String sectionHeading,

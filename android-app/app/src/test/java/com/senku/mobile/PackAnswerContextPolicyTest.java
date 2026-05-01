@@ -140,6 +140,49 @@ public final class PackAnswerContextPolicyTest {
         assertTrue(ordered.contains(support));
     }
 
+    @Test
+    public void foodTheftGovernanceContextRejectsKitchenOpsSupportAndKeepsCommonsSupport() {
+        SearchResult anchor = governanceSupport(
+            "Commons Management & Sustainable Resource Governance",
+            "Monitoring and Graduated Sanctions",
+            "Resource rules, monitoring, restitution, and graduated sanctions for shared food stores.",
+            "GD-626"
+        );
+        SearchResult kitchenOps = new SearchResult(
+            "Community Kitchen Operations",
+            "",
+            "Food prep, serving lines, kitchen operations, and cooking rotation logistics.",
+            "Food prep, serving lines, kitchen operations, and cooking rotation logistics.",
+            "GD-KITCHEN",
+            "Meal Service and Cooking Rotations",
+            "resource-management",
+            "route-focus",
+            "subsystem",
+            "long_term",
+            "community_governance",
+            "community_governance,resource_governance"
+        );
+        SearchResult commonsSupport = governanceSupport(
+            "Resource Governance Field Notes",
+            "Restitution and Proportional Consequences",
+            "Verify facts, document the loss, apply restitution, and protect the commons.",
+            "GD-COMMONS"
+        );
+        List<SearchResult> ranked = new ArrayList<>();
+        ranked.add(anchor);
+        ranked.add(kitchenOps);
+        ranked.add(commonsSupport);
+
+        List<SearchResult> ordered = PackAnswerContextPolicy.rankSupportCandidatesForTest(
+            "someone is stealing food from the group what do we do",
+            anchor,
+            ranked
+        );
+
+        assertFalse(ordered.contains(kitchenOps));
+        assertTrue(ordered.contains(commonsSupport));
+    }
+
     private static SearchResult waterDistributionSupport(
         String title,
         String sectionHeading,
@@ -159,6 +202,28 @@ public final class PackAnswerContextPolicyTest {
             "long_term",
             "water_distribution",
             "water_distribution,water_storage"
+        );
+    }
+
+    private static SearchResult governanceSupport(
+        String title,
+        String sectionHeading,
+        String text,
+        String guideId
+    ) {
+        return new SearchResult(
+            title,
+            "",
+            text,
+            text,
+            guideId,
+            sectionHeading,
+            "resource-management",
+            "route-focus",
+            "subsystem",
+            "long_term",
+            "community_governance",
+            "community_governance,conflict_resolution"
         );
     }
 }

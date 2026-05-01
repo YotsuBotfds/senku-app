@@ -171,6 +171,11 @@ final class PackRouteSupportPolicy {
             && !hasGovernanceTrustRepairSignal(candidate)) {
             return false;
         }
+        if ("community_governance".equals(metadataProfile.preferredStructureType())
+            && hasGovernanceFoodOpsDistractorSignal(candidate)
+            && !hasGovernanceCommonsResourceSignal(candidate)) {
+            return false;
+        }
         if (RetrievalRoutePolicy.requiresSpecializedRouteAnchorSignal(metadataProfile.preferredStructureType())
             && "guide-focus".equals(retrievalMode)
             && safe(candidate.sectionHeading).trim().isEmpty()
@@ -277,6 +282,14 @@ final class PackRouteSupportPolicy {
 
     private static boolean hasGovernanceSupportMixDistractor(SearchResult candidate) {
         return PackRouteSignalPolicy.hasGovernanceSupportMixDistractor(candidate);
+    }
+
+    private static boolean hasGovernanceCommonsResourceSignal(SearchResult candidate) {
+        return PackRouteSignalPolicy.hasGovernanceCommonsResourceSignal(candidate);
+    }
+
+    private static boolean hasGovernanceFoodOpsDistractorSignal(SearchResult candidate) {
+        return PackRouteSignalPolicy.hasGovernanceFoodOpsDistractorSignal(candidate);
     }
 
     private static boolean hasWaterDistributionTitleSignal(SearchResult result) {
