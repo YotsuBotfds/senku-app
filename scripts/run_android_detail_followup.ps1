@@ -18,6 +18,7 @@ param(
     [ValidateSet("auto", "in_detail_ui", "auto_intent", "send_button", "ime_send", "ime_done", "hardware_enter")]
     [string]$FollowUpSubmissionMode = "auto",
     [switch]$SkipSourceProbe,
+    [switch]$RequireStrictFollowUpProof,
     [int]$InitialMaxWaitSeconds = 260,
     [int]$FollowUpMaxWaitSeconds = 180,
     [int]$PollSeconds = 5
@@ -1047,6 +1048,38 @@ function Probe-FirstSourceLink {
     return [pscustomobject]$probe
 }
 
+function Get-StrictFollowUpProofErrors {
+    param(
+        $SubmissionResult,
+        $SourceProbe
+    )
+
+    $errors = @()
+
+    if (-not $SubmissionResult) {
+        $errors += "followup_submission_missing"
+    } else {
+        if ($SubmissionResult.used_fallback -eq $true) {
+            $errors += ("followup_submission_used_fallback:{0}" -f $SubmissionResult.mode)
+        }
+        if ($SubmissionResult.advanced_after_submit -ne $true) {
+            $errors += ("followup_submission_did_not_advance_after_submit:{0}" -f $SubmissionResult.primary_signal)
+        }
+    }
+
+    if (-not $SourceProbe) {
+        $errors += "source_link_probe_missing"
+    } elseif ($SourceProbe.verified -ne $true) {
+        if ($SourceProbe.attempted -ne $true) {
+            $errors += ("source_link_probe_not_attempted:{0}" -f $SourceProbe.error)
+        } else {
+            $errors += ("source_link_not_verified:{0}" -f $SourceProbe.error)
+        }
+    }
+
+    return @($errors)
+}
+
 function Start-AskActivity {
     param(
         [string]$Query,
@@ -1627,6 +1660,8 @@ try {
 }
 
 $pushPackSummary = Read-JsonFileOrNull -Path $PushPackSummaryPath
+$strictFollowUpProofErrors = @(Get-StrictFollowUpProofErrors -SubmissionResult $submissionResult -SourceProbe $sourceProbe)
+$strictFollowUpProofPassed = ($strictFollowUpProofErrors.Count -eq 0)
 
 $record = [ordered]@{
     emulator = $Emulator
@@ -1674,10 +1709,17 @@ $record = [ordered]@{
     source_link_probe_observed_subtitle = if ($sourceProbe) { $sourceProbe.observed_subtitle } else { $null }
     source_link_probe_followup_available = if ($sourceProbe) { $sourceProbe.followup_available } else { $null }
     source_link_probe_error = if ($sourceProbe) { $sourceProbe.error } else { $null }
+    strict_followup_proof_required = [bool]$RequireStrictFollowUpProof
+    strict_followup_proof_passed = $strictFollowUpProofPassed
+    strict_followup_proof_errors = $strictFollowUpProofErrors
     completed_at = (Get-Date).ToString("o")
 }
 
 $record | ConvertTo-Json -Depth 6 | Set-Content -Path $manifestPath -Encoding UTF8
 Write-Host "Detail follow-up artifacts written to $manifestPath"
+
+if ($RequireStrictFollowUpProof -and -not $strictFollowUpProofPassed) {
+    throw ("Strict follow-up proof failed: {0}" -f ($strictFollowUpProofErrors -join "; "))
+}
 
 exit 0

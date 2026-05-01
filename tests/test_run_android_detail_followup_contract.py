@@ -18,6 +18,36 @@ class RunAndroidDetailFollowupContractTests(unittest.TestCase):
         self.assertIn("[switch]$ForcePackPush", self.script)
         self.assertIn('[string]$PushPackSummaryPath = ""', self.script)
 
+    def test_exposes_opt_in_strict_followup_proof_switch(self):
+        self.assertIn("[switch]$RequireStrictFollowUpProof", self.script)
+        self.assertIn("function Get-StrictFollowUpProofErrors", self.script)
+        self.assertIn(
+            "$strictFollowUpProofErrors = @(Get-StrictFollowUpProofErrors -SubmissionResult $submissionResult -SourceProbe $sourceProbe)",
+            self.script,
+        )
+        self.assertIn("strict_followup_proof_required = [bool]$RequireStrictFollowUpProof", self.script)
+        self.assertIn("strict_followup_proof_passed = $strictFollowUpProofPassed", self.script)
+        self.assertIn("strict_followup_proof_errors = $strictFollowUpProofErrors", self.script)
+
+    def test_strict_followup_proof_fails_on_fallback_no_advance_or_source_miss(self):
+        self.assertIn('followup_submission_used_fallback:{0}', self.script)
+        self.assertIn('followup_submission_did_not_advance_after_submit:{0}', self.script)
+        self.assertIn('source_link_probe_missing', self.script)
+        self.assertIn('source_link_probe_not_attempted:{0}', self.script)
+        self.assertIn('source_link_not_verified:{0}', self.script)
+        self.assertIn(
+            'if ($RequireStrictFollowUpProof -and -not $strictFollowUpProofPassed) {',
+            self.script,
+        )
+        self.assertIn(
+            'throw ("Strict follow-up proof failed: {0}" -f ($strictFollowUpProofErrors -join "; "))',
+            self.script,
+        )
+        self.assertLess(
+            self.script.index("$record | ConvertTo-Json -Depth 6 | Set-Content"),
+            self.script.index('if ($RequireStrictFollowUpProof -and -not $strictFollowUpProofPassed) {'),
+        )
+
     def test_forwards_pack_push_cache_controls_to_push_script(self):
         self.assertIn(
             '$pushArgs = @(',
