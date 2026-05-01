@@ -3137,18 +3137,10 @@ public final class DetailActivity extends AppCompatActivity {
     }
 
     private TabletTurnBinding resolveActiveTabletTurn(List<TabletTurnBinding> turnBindings) {
-        if (turnBindings == null || turnBindings.isEmpty()) {
-            selectedTabletTurnId = "";
-            return null;
-        }
-        for (TabletTurnBinding turn : turnBindings) {
-            if (safe(turn.id).equals(safe(selectedTabletTurnId))) {
-                return turn;
-            }
-        }
-        TabletTurnBinding fallback = turnBindings.get(turnBindings.size() - 1);
-        selectedTabletTurnId = safe(fallback.id);
-        return fallback;
+        DetailTabletStateBuilder.ActiveTurnSelection selection =
+            DetailTabletStateBuilder.resolveActiveTurn(turnBindings, selectedTabletTurnId);
+        selectedTabletTurnId = selection.selectedTurnId;
+        return selection.turn;
     }
 
     private SearchResult resolveActiveTabletSource(TabletTurnBinding activeTurn) {

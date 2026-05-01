@@ -226,6 +226,58 @@ public final class DetailTabletStateBuilderTest {
     }
 
     @Test
+    public void activeTurnSelectionKeepsMatchingSelectedTurn() {
+        DetailActivity.TabletTurnBinding first = turn(
+            "T1",
+            "Earlier question",
+            answer("Earlier answer"),
+            Status.Done,
+            true
+        );
+        DetailActivity.TabletTurnBinding second = turn(
+            "T2",
+            "Current question",
+            answer("Current answer"),
+            Status.Active,
+            true
+        );
+
+        DetailTabletStateBuilder.ActiveTurnSelection selection =
+            DetailTabletStateBuilder.resolveActiveTurn(List.of(first, second), "T1");
+
+        assertEquals("T1", selection.selectedTurnId);
+        assertSame(first, selection.turn);
+    }
+
+    @Test
+    public void activeTurnSelectionFallsBackToLastTurnAndClearsEmptyState() {
+        DetailActivity.TabletTurnBinding first = turn(
+            "T1",
+            "Earlier question",
+            answer("Earlier answer"),
+            Status.Done,
+            true
+        );
+        DetailActivity.TabletTurnBinding second = turn(
+            "T2",
+            "Current question",
+            answer("Current answer"),
+            Status.Active,
+            true
+        );
+
+        DetailTabletStateBuilder.ActiveTurnSelection fallback =
+            DetailTabletStateBuilder.resolveActiveTurn(List.of(first, second), "missing");
+        DetailTabletStateBuilder.ActiveTurnSelection empty =
+            DetailTabletStateBuilder.resolveActiveTurn(List.of(), "T1");
+
+        assertEquals("T2", fallback.selectedTurnId);
+        assertSame(second, fallback.turn);
+        assertEquals("", empty.selectedTurnId);
+        assertNull(empty.turn);
+    }
+
+    @Test
     public void visualOwnerUsesGenericQuestionSourceOverlap() {
         SearchResult abrasives = topicSource(
             "GD-220",

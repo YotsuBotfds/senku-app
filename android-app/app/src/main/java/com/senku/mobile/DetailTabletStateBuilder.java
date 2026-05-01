@@ -27,6 +27,33 @@ final class DetailTabletStateBuilder {
         }
     }
 
+    static final class ActiveTurnSelection {
+        final String selectedTurnId;
+        final DetailActivity.TabletTurnBinding turn;
+
+        ActiveTurnSelection(String selectedTurnId, DetailActivity.TabletTurnBinding turn) {
+            this.selectedTurnId = safe(selectedTurnId);
+            this.turn = turn;
+        }
+    }
+
+    static ActiveTurnSelection resolveActiveTurn(
+        List<DetailActivity.TabletTurnBinding> turnBindings,
+        String selectedTurnId
+    ) {
+        if (turnBindings == null || turnBindings.isEmpty()) {
+            return new ActiveTurnSelection("", null);
+        }
+        String currentSelection = safe(selectedTurnId);
+        for (DetailActivity.TabletTurnBinding turn : turnBindings) {
+            if (safe(turn.id).equals(currentSelection)) {
+                return new ActiveTurnSelection(currentSelection, turn);
+            }
+        }
+        DetailActivity.TabletTurnBinding fallback = turnBindings.get(turnBindings.size() - 1);
+        return new ActiveTurnSelection(safe(fallback.id), fallback);
+    }
+
     static GuideModeState buildGuideModeState(
         boolean answerMode,
         boolean currentThreadDetailRoute,
