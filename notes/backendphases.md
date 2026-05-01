@@ -1,6 +1,6 @@
 # Backend Cleanup Phase Tracker
 
-Last updated after local validation of the source-graph/route-anchor integration slice on 2026-04-30.
+Last updated after local validation of the backend cleanup slices through physical smoke proof on 2026-05-01.
 
 Purpose: prevent future agents from rerunning Ask/query backend cleanup that is already complete. Keep this note short; implementation detail belongs in commits and tests.
 
@@ -64,6 +64,14 @@ Purpose: prevent future agents from rerunning Ask/query backend cleanup that is 
   saved open/back, previous-tab back, install-completion preservation,
   review-fixture boundary scans, less brittle guide/detail smoke assertions, and
   stricter physical smoke evidence contracts.
+- Route-back effects, follow-up answer outcomes, and saved/shared input smoke
+  route assertions are covered so route restoration and input handoffs stay
+  observable without broad UI rewrites.
+- Source provenance/open coordinators and query/search mapper helpers now carry
+  the coordinator/helper boundaries for route-facing backend logic.
+- Chrome policy and review-boundary cleanup are characterized by focused tests
+  so route chrome decisions and review-only data gates remain explicit.
+- Physical smoke proof is current for the completed backend cleanup stack.
 
 ## Remaining Next Slices
 
