@@ -221,6 +221,48 @@ public final class MainActivityHomeChromeTest {
     }
 
     @Test
+    public void compactHomeRelatedGuideButtonsUseStackedSingleLineDensity() {
+        MainHomeButtonPresentationPolicy.HomeRelatedGuideButtonPresentation firstButton =
+            MainHomeButtonPresentationPolicy.resolveHomeRelatedGuideButtonPresentation(true, 0);
+        MainHomeButtonPresentationPolicy.HomeRelatedGuideButtonPresentation secondButton =
+            MainHomeButtonPresentationPolicy.resolveHomeRelatedGuideButtonPresentation(true, 1);
+
+        assertEquals(40, firstButton.minimumHeightDp);
+        assertEquals(20, firstButton.leftPaddingDp);
+        assertEquals(10, firstButton.topPaddingDp);
+        assertEquals(12, firstButton.rightPaddingDp);
+        assertEquals(9, firstButton.bottomPaddingDp);
+        assertTrue(firstButton.singleLine);
+        assertEquals(1, firstButton.maxLines);
+        assertTrue(firstButton.matchParentWidth);
+        assertTrue(firstButton.compactLabel);
+        assertEquals(0, firstButton.topMarginDp);
+        assertEquals(6, secondButton.topMarginDp);
+        assertEquals(0, secondButton.startMarginDp);
+    }
+
+    @Test
+    public void regularHomeRelatedGuideButtonsUseHorizontalTwoLineDensity() {
+        MainHomeButtonPresentationPolicy.HomeRelatedGuideButtonPresentation firstButton =
+            MainHomeButtonPresentationPolicy.resolveHomeRelatedGuideButtonPresentation(false, 0);
+        MainHomeButtonPresentationPolicy.HomeRelatedGuideButtonPresentation secondButton =
+            MainHomeButtonPresentationPolicy.resolveHomeRelatedGuideButtonPresentation(false, 1);
+
+        assertEquals(46, firstButton.minimumHeightDp);
+        assertEquals(16, firstButton.leftPaddingDp);
+        assertEquals(12, firstButton.topPaddingDp);
+        assertEquals(14, firstButton.rightPaddingDp);
+        assertEquals(10, firstButton.bottomPaddingDp);
+        assertFalse(firstButton.singleLine);
+        assertEquals(2, firstButton.maxLines);
+        assertFalse(firstButton.matchParentWidth);
+        assertFalse(firstButton.compactLabel);
+        assertEquals(0, firstButton.startMarginDp);
+        assertEquals(0, secondButton.topMarginDp);
+        assertEquals(8, secondButton.startMarginDp);
+    }
+
+    @Test
     public void searchResultLimitMatchesCompactStatePackSurface() {
         assertEquals(4, MainActivity.SEARCH_RESULT_LIMIT);
     }

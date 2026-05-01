@@ -1583,31 +1583,39 @@ public final class MainActivity extends AppCompatActivity {
         button.setMinWidth(0);
         button.setMinimumWidth(0);
         boolean compactPhoneHome = isCompactPhoneHomeLayout();
-        button.setMinHeight(dp(compactPhoneHome ? 40 : 46));
-        button.setMinimumHeight(dp(compactPhoneHome ? 40 : 46));
-        button.setPadding(dp(compactPhoneHome ? 20 : 16), dp(compactPhoneHome ? 10 : 12), dp(compactPhoneHome ? 12 : 14), dp(compactPhoneHome ? 9 : 10));
+        MainHomeButtonPresentationPolicy.HomeRelatedGuideButtonPresentation buttonPresentation =
+            MainHomeButtonPresentationPolicy.resolveHomeRelatedGuideButtonPresentation(compactPhoneHome, index);
+        button.setMinHeight(dp(buttonPresentation.minimumHeightDp));
+        button.setMinimumHeight(dp(buttonPresentation.minimumHeightDp));
+        button.setPadding(
+            dp(buttonPresentation.leftPaddingDp),
+            dp(buttonPresentation.topPaddingDp),
+            dp(buttonPresentation.rightPaddingDp),
+            dp(buttonPresentation.bottomPaddingDp)
+        );
         button.setTextColor(getResources().getColor(R.color.senku_text_light));
-        button.setSingleLine(compactPhoneHome);
-        button.setMaxLines(compactPhoneHome ? 1 : 2);
+        button.setSingleLine(buttonPresentation.singleLine);
+        button.setMaxLines(buttonPresentation.maxLines);
         button.setEllipsize(TextUtils.TruncateAt.END);
         button.setTextAlignment(View.TEXT_ALIGNMENT_VIEW_START);
         button.setGravity(android.view.Gravity.START | android.view.Gravity.CENTER_VERTICAL);
-        button.setText(compactPhoneHome
+        button.setText(buttonPresentation.compactLabel
             ? presentationFormatter().buildGuideButtonLabel(result)
             : homeGuidePresentationFormatter().buildHomeRelatedGuideButtonLabel(result, anchor));
         button.setContentDescription(
             homeGuidePresentationFormatter().buildHomeRelatedGuideContentDescription(result, anchor, index, total)
         );
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-            compactPhoneHome ? LinearLayout.LayoutParams.MATCH_PARENT : LinearLayout.LayoutParams.WRAP_CONTENT,
+            buttonPresentation.matchParentWidth
+                ? LinearLayout.LayoutParams.MATCH_PARENT
+                : LinearLayout.LayoutParams.WRAP_CONTENT,
             LinearLayout.LayoutParams.WRAP_CONTENT
         );
-        if (index > 0) {
-            if (compactPhoneHome) {
-                params.topMargin = dp(6);
-            } else {
-                params.setMarginStart(dp(8));
-            }
+        if (buttonPresentation.topMarginDp > 0) {
+            params.topMargin = dp(buttonPresentation.topMarginDp);
+        }
+        if (buttonPresentation.startMarginDp > 0) {
+            params.setMarginStart(dp(buttonPresentation.startMarginDp));
         }
         button.setLayoutParams(params);
         DetailGuideHandoffIntentBridge.HandoffContext handoffContext = buildHomeRelatedGuideHandoffContext(anchor);
