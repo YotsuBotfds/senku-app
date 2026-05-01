@@ -875,6 +875,19 @@ Purpose: prevent future agents from rerunning Ask/query backend cleanup that is 
   contract tests passed; the PowerShell parser gate passed for
   `scripts/android_harness_common.psm1`; `:app:assembleDebug
   :app:assembleDebugAndroidTest` passed.
+- Saved/Home async containment is current through the latest working batch:
+  Saved-guide refresh catches per-guide repository load failures and Home
+  related-guide refresh renders a recoverable empty related set when anchor or
+  related lookup fails, so background exceptions do not leak harness busy tokens.
+  Direct helper-policy coverage now exists for `PromptAnswerTextPolicy`,
+  `HostInferenceResponsePolicy`, `DetailSourceStackPolicy`,
+  `SearchLinkedGuideCuePolicy`, and `PackSearchFinalizationPolicy`.
+- Latest local proof for the Saved/Home/helper-test batch: focused JVM tests
+  passed for `PromptAnswerTextPolicyTest`, `HostInferenceResponsePolicyTest`,
+  `DetailSourceStackPolicyTest`, `SearchLinkedGuideCuePolicyTest`,
+  `PackSearchFinalizationPolicyTest`, `SavedGuidesPolicyTest`, and
+  `MainHomeRelatedGuideControllerTest`; `:app:assembleDebug
+  :app:assembleDebugAndroidTest` passed; `git diff --check` passed.
 
 ## Remaining Next Slices
 
@@ -882,16 +895,13 @@ Purpose: prevent future agents from rerunning Ask/query backend cleanup that is 
   when they remove real production logic from a god class, have production call
   sites, and add focused tests; do not continue extracting helpers merely
   because logic can be moved.
-- Highest priority functional fix from the latest scout: Saved/Home async
-  exception containment in `MainActivity.refreshPinnedGuidesAsync()` and
-  `refreshHomeRelatedGuidesAsync()` so harness busy tokens always end and failed
-  guide loads render recoverable states instead of leaking work.
-- Current integration priority: add direct tests for high-risk helpers that are
-  production-used but thinly covered (`PromptAnswerTextPolicy`,
-  `HostInferenceResponsePolicy`, `DetailSourceStackPolicy`,
-  `SearchLinkedGuideCuePolicy`, and `PackSearchFinalizationPolicy`), then run a
-  single current-head focused backend gate before the next broad behavior
-  change.
+- Highest priority retrieval proof gap from the latest scout: add one real-pack
+  route parity assertion for rain shelter landing on `GD-345`, and optionally a
+  named pure JVM no-source/unsupported Ask golden near the existing
+  `OfflineAnswerEngineTest` no-source coverage.
+- Current integration priority: run a single current-head focused backend gate
+  before the next broad behavior change, then prefer golden route/behavior tests
+  over more extraction unless a real god-class branch is being removed.
 - Retrieval policy work should pause until route behavior is protected with
   golden route tests over the high-value prompts; avoid broad `PackRepository`
   or route-focused search rewrites without route-output parity proof.

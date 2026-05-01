@@ -1504,8 +1504,14 @@ public final class MainActivity extends AppCompatActivity {
         executor.execute(() -> {
             ArrayList<SearchResult> loaded = new ArrayList<>();
             for (String guideId : refreshPlan.guideIdsToLoad) {
-                SearchResult result = repo.loadGuideById(guideId);
-                loaded.add(result);
+                try {
+                    SearchResult result = repo.loadGuideById(guideId);
+                    if (result != null) {
+                        loaded.add(result);
+                    }
+                } catch (Exception ignored) {
+                    // A stale or corrupt saved guide should not keep the harness busy forever.
+                }
             }
             runTrackedOnUiThread(harnessToken, () -> {
                 MainSavedGuidesController.RenderPlan renderPlan =
@@ -2000,17 +2006,23 @@ public final class MainActivity extends AppCompatActivity {
         int harnessToken = beginHarnessTask("main.refreshHomeRelatedGuides");
         executor.execute(() -> {
             String anchorLabel = anchor.label;
-            if (anchorLabel.isEmpty()) {
-                SearchResult loadedAnchor = repo.loadGuideById(anchor.guideId);
-                anchorLabel = presentationFormatter().buildGuideReference(loadedAnchor, anchor.guideId);
+            List<SearchResult> related = Collections.emptyList();
+            try {
+                if (anchorLabel.isEmpty()) {
+                    SearchResult loadedAnchor = repo.loadGuideById(anchor.guideId);
+                    anchorLabel = presentationFormatter().buildGuideReference(loadedAnchor, anchor.guideId);
+                }
+                related = repo.loadRelatedGuides(anchor.guideId, getHomeRelatedGuideLimit());
+            } catch (Exception ignored) {
+                // Keep home usable if related-guide lookup fails for a stale/corrupt pack row.
             }
-            List<SearchResult> related = repo.loadRelatedGuides(anchor.guideId, getHomeRelatedGuideLimit());
             HomeGuideAnchor resolvedAnchor = anchor.withLabel(anchorLabel);
+            List<SearchResult> resolvedRelated = related;
             runTrackedOnUiThread(harnessToken, () -> {
                 if (requestVersion != homeRelatedRequestVersion) {
                     return;
                 }
-                renderHomeRelatedGuides(resolvedAnchor, related);
+                renderHomeRelatedGuides(resolvedAnchor, resolvedRelated);
             });
         });
     }
