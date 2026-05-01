@@ -57,13 +57,13 @@ public final class SearchResultAdapterTest {
 
     @Test
     public void tabletRowsUseCompactScoreBarWidths() {
-        int firstWidth = SearchResultAdapter.scoreBarWidthDpForPositionForTest(0);
+        int firstWidth = SearchScoreMarkerPolicy.markerForPosition(0).trackWidthDp;
 
         assertTrue(firstWidth > 0);
-        assertEquals(firstWidth, SearchResultAdapter.scoreBarWidthDpForPositionForTest(1));
-        assertEquals(firstWidth, SearchResultAdapter.scoreBarWidthDpForPositionForTest(2));
-        assertEquals(firstWidth, SearchResultAdapter.scoreBarWidthDpForPositionForTest(3));
-        assertEquals(firstWidth, SearchResultAdapter.scoreBarWidthDpForPositionForTest(7));
+        assertEquals(firstWidth, SearchScoreMarkerPolicy.markerForPosition(1).trackWidthDp);
+        assertEquals(firstWidth, SearchScoreMarkerPolicy.markerForPosition(2).trackWidthDp);
+        assertEquals(firstWidth, SearchScoreMarkerPolicy.markerForPosition(3).trackWidthDp);
+        assertEquals(firstWidth, SearchScoreMarkerPolicy.markerForPosition(7).trackWidthDp);
     }
 
     @Test
@@ -71,11 +71,23 @@ public final class SearchResultAdapterTest {
         float previousFill = Float.MAX_VALUE;
 
         for (int i : new int[] {0, 1, 2, 3, 7}) {
-            float fill = SearchResultAdapter.scoreBarFillFractionForPositionForTest(i);
+            float fill = SearchScoreMarkerPolicy.markerForPosition(i).fillFraction;
             assertTrue(fill > 0f && fill <= 1f);
             assertTrue(fill <= previousFill);
             previousFill = fill;
         }
+    }
+
+    @Test
+    public void tabletScoreMarkerPolicyOwnsToneAndAccessibilityLabel() {
+        SearchScoreMarkerPolicy.Marker first = SearchScoreMarkerPolicy.markerForPosition(0);
+        SearchScoreMarkerPolicy.Marker later = SearchScoreMarkerPolicy.markerForPosition(4);
+
+        assertTrue(first.highEmphasisTone);
+        assertFalse(later.highEmphasisTone);
+        assertEquals("92", first.label);
+        assertEquals("Rank #1, score marker 92", first.contentDescription);
+        assertEquals("Rank #5, score marker 55", later.contentDescription);
     }
 
     @Test

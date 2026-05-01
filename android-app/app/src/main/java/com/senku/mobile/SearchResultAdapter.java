@@ -43,7 +43,6 @@ import static com.senku.ui.search.SearchResultCardKt.laneLabelForRetrievalMode;
 public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResultAdapter.ResultViewHolder> {
     private static final int MAX_HIGHLIGHT_TERMS = 4;
     private static final int DEFAULT_MAX_DISPLAYED_ITEMS = 4;
-    private static final int SCORE_TICK_TRACK_WIDTH_DP = 22;
     private static final int LANDSCAPE_ROW_TOP_PADDING_DP = 13;
     private static final int PORTRAIT_TABLET_ROW_TOP_PADDING_DP = 15;
     private static final int LANDSCAPE_ROW_TITLE_TOP_MARGIN_DP = 4;
@@ -295,7 +294,7 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
         View scoreBar = new View(context);
         scoreBar.setId(R.id.result_accent_strip);
         scoreCluster.addView(scoreBar, new LinearLayout.LayoutParams(
-            dp(SCORE_TICK_TRACK_WIDTH_DP),
+            dp(SearchScoreMarkerPolicy.markerForPosition(0).trackWidthDp),
             dp(3)
         ));
 
@@ -577,58 +576,28 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
         if (badge == null) {
             return;
         }
-        int score = SearchResultCardModelMapper.tabletScoreForPosition(position);
+        SearchScoreMarkerPolicy.Marker marker = SearchScoreMarkerPolicy.markerForPosition(position);
         badge.setVisibility(View.VISIBLE);
-        badge.setText(SearchResultCardModelMapper.buildTabletScoreLabel(position));
-        badge.setTextColor(score >= 70
+        badge.setText(marker.label);
+        badge.setTextColor(marker.highEmphasisTone
             ? ContextCompat.getColor(badge.getContext(), R.color.senku_rev03_accent)
             : ContextCompat.getColor(badge.getContext(), R.color.senku_rev03_ink_2));
         badge.setTypeface(rev03MonoTypeface(badge.getContext(), Typeface.BOLD));
         badge.setBackground(null);
         badge.setCompoundDrawablesRelativeWithIntrinsicBounds(0, 0, 0, 0);
-        badge.setContentDescription(
-            "Rank " + SearchResultCardModelMapper.buildOrdinalRankLabel(position) + ", score marker " + score
-        );
+        badge.setContentDescription(marker.contentDescription);
         if (scoreBar != null) {
             scoreBar.setVisibility(View.VISIBLE);
-            scoreBar.setBackground(buildScoreBarDrawable(score));
+            scoreBar.setBackground(buildScoreBarDrawable(marker));
             ViewGroup.LayoutParams params = scoreBar.getLayoutParams();
             if (params != null) {
-                params.width = dp(scoreBarWidthDpForScore(score));
+                params.width = dp(marker.trackWidthDp);
                 scoreBar.setLayoutParams(params);
             }
         }
     }
 
-    static int scoreBarWidthDpForPositionForTest(int position) {
-        return scoreBarWidthDpForScore(SearchResultCardModelMapper.tabletScoreForPosition(position));
-    }
-
-    private static int scoreBarWidthDpForScore(int score) {
-        return SCORE_TICK_TRACK_WIDTH_DP;
-    }
-
-    static float scoreBarFillFractionForPositionForTest(int position) {
-        return scoreBarFillFractionForScore(SearchResultCardModelMapper.tabletScoreForPosition(position));
-    }
-
-    private static float scoreBarFillFractionForScore(int score) {
-        if (score >= 90) {
-            return 0.94f;
-        }
-        if (score >= 75) {
-            return 0.82f;
-        }
-        if (score >= 70) {
-            return 0.74f;
-        }
-        if (score >= 60) {
-            return 0.62f;
-        }
-        return 0.52f;
-    }
-
-    private LayerDrawable buildScoreBarDrawable(int score) {
+    private LayerDrawable buildScoreBarDrawable(SearchScoreMarkerPolicy.Marker marker) {
         GradientDrawable track = new GradientDrawable();
         track.setShape(GradientDrawable.RECTANGLE);
         track.setCornerRadius(dp(1));
@@ -637,11 +606,11 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
         GradientDrawable fill = new GradientDrawable();
         fill.setShape(GradientDrawable.RECTANGLE);
         fill.setCornerRadius(dp(1));
-        fill.setColor(score >= 70
+        fill.setColor(marker.highEmphasisTone
             ? ContextCompat.getColor(inflater.getContext(), R.color.senku_rev03_accent)
             : ContextCompat.getColor(inflater.getContext(), R.color.senku_rev03_ink_2));
         ClipDrawable clippedFill = new ClipDrawable(fill, android.view.Gravity.START, ClipDrawable.HORIZONTAL);
-        clippedFill.setLevel(Math.round(scoreBarFillFractionForScore(score) * 10000f));
+        clippedFill.setLevel(Math.round(marker.fillFraction * 10000f));
 
         return new LayerDrawable(new android.graphics.drawable.Drawable[]{track, clippedFill});
     }
