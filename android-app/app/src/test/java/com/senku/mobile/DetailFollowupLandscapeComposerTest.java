@@ -59,6 +59,32 @@ public final class DetailFollowupLandscapeComposerTest {
     }
 
     @Test
+    public void visibleBusyRetryButtonClickDoesNotStartDuplicateFollowUp() {
+        FollowUpRetryButtonHarness harness = new FollowUpRetryButtonHarness(
+            new FollowUpComposerState(
+                "",
+                true,
+                true,
+                null,
+                FollowUpComposerState.Surface.PHONE,
+                null,
+                "  active stalled query  "
+            )
+        );
+
+        FollowUpComposerController.RetryPresentation presentation =
+            FollowUpComposerController.resolveRetryPresentation(harness.phoneState, true);
+        harness.clickRetryButton();
+
+        assertTrue(presentation.visible);
+        assertTrue(presentation.actionEnabled);
+        assertEquals("active stalled query", presentation.query);
+        assertEquals(0, harness.startedGenerationCount);
+        assertEquals(1, harness.blockedCount);
+        assertEquals("active stalled query", harness.visibleDraft);
+    }
+
+    @Test
     public void followUpNonSubmitImeActionDoesNotDispatchFollowUp() {
         FollowUpInteractionHarness harness = new FollowUpInteractionHarness();
 
@@ -1227,6 +1253,57 @@ public final class DetailFollowupLandscapeComposerTest {
             submitCount += 1;
             lastQuery = FollowUpComposerState.normalizeDraft(draft);
             lastRoute = FollowUpComposerController.resolvePhoneSubmitRoute(draft);
+        }
+    }
+
+    private static final class FollowUpRetryButtonHarness {
+        FollowUpComposerState phoneState;
+        String visibleDraft;
+        int blockedCount;
+        int startedGenerationCount;
+        final View.OnClickListener retryClickListener = v -> retryLastFailedQuery();
+
+        FollowUpRetryButtonHarness(FollowUpComposerState phoneState) {
+            this.phoneState = phoneState;
+            this.visibleDraft = phoneState == null ? "" : phoneState.draftText;
+        }
+
+        void clickRetryButton() {
+            retryClickListener.onClick(null);
+        }
+
+        private void retryLastFailedQuery() {
+            DetailFollowUpActionController.Decision decision =
+                DetailFollowUpActionController.resolveRetry(
+                    false,
+                    phoneState,
+                    visibleDraft,
+                    null,
+                    null
+                );
+            applyRetryDraft(decision);
+            applyFollowUpActionDecision(decision);
+        }
+
+        private void applyRetryDraft(DetailFollowUpActionController.Decision decision) {
+            if (decision == null || decision.action == DetailFollowUpActionController.Action.EMPTY) {
+                return;
+            }
+            visibleDraft = decision.query;
+            phoneState = phoneState == null
+                ? FollowUpComposerState.idle(decision.query, FollowUpComposerState.Surface.PHONE)
+                : phoneState.withDraft(decision.query);
+        }
+
+        private void applyFollowUpActionDecision(DetailFollowUpActionController.Decision decision) {
+            if (decision == null || decision.action == DetailFollowUpActionController.Action.EMPTY) {
+                return;
+            }
+            if (decision.action == DetailFollowUpActionController.Action.BLOCKED) {
+                blockedCount += 1;
+                return;
+            }
+            startedGenerationCount += 1;
         }
     }
 }
