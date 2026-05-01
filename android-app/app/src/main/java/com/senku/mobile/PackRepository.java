@@ -1384,14 +1384,11 @@ public final class PackRepository implements AutoCloseable {
         if (routedAnchor == null) {
             return rankedAnchor;
         }
-        return chooseRankedOrRoutedAnchor(queryTerms, rankedAnchor, routedAnchor);
+        return PackAnswerAnchorSelector.chooseRankedOrRoutedAnchor(queryTerms, rankedAnchor, routedAnchor);
     }
 
     private static boolean shouldPreferRouteAnchorOverRankedGuide(QueryTerms queryTerms, SearchResult rankedAnchor) {
-        return AnswerAnchorPolicy.shouldPreferRouteAnchorOverRankedGuide(
-            queryTerms.metadataProfile.preferredStructureType(),
-            rankedAnchor
-        );
+        return PackAnswerAnchorSelector.shouldPreferRouteAnchorOverRankedGuide(queryTerms, rankedAnchor);
     }
 
     static boolean shouldPreferRouteAnchorOverRankedGuideForTest(String query, SearchResult rankedAnchor) {
@@ -1403,45 +1400,10 @@ public final class PackRepository implements AutoCloseable {
      * Callers must supply the already-selected non-null ranked and routed anchor candidates.
      */
     static SearchResult selectAnswerAnchorForTest(String query, SearchResult rankedAnchor, SearchResult routedAnchor) {
-        return chooseRankedOrRoutedAnchor(QueryTerms.fromQuery(query), rankedAnchor, routedAnchor);
-    }
-
-    private static SearchResult chooseRankedOrRoutedAnchor(
-        QueryTerms queryTerms,
-        SearchResult rankedAnchor,
-        SearchResult routedAnchor
-    ) {
-        if (!queryTerms.routeProfile.isRouteFocused()) {
-            return rankedAnchor;
-        }
-        boolean rankedGuideFocusWaterDistributionFallback =
-            queryTerms.metadataProfile.hasExplicitTopic("water_distribution")
-                && "guide-focus".equals(emptySafe(rankedAnchor.retrievalMode).trim().toLowerCase(QUERY_LOCALE))
-                && emptySafe(rankedAnchor.sectionHeading).trim().isEmpty()
-                && !hasWaterDistributionTitleSignal(rankedAnchor);
-        return AnswerAnchorPolicy.chooseRankedOrRoutedAnchor(
-            AnswerAnchorPolicy.anchorChoice(rankedAnchor, routedAnchor)
-                .routeFocused(queryTerms.routeProfile.isRouteFocused())
-                .preferRouteAnchorOverRankedGuide(shouldPreferRouteAnchorOverRankedGuide(queryTerms, rankedAnchor))
-                .preferCabinSiteSelectionRouteAnchor(prefersCabinSiteSelectionRouteAnchor(queryTerms))
-                .routedHasCabinSiteSelectionSignal(hasCabinSiteSelectionAnchorSignal(routedAnchor))
-                .rankedHasCabinSiteSelectionSignal(hasCabinSiteSelectionAnchorSignal(rankedAnchor))
-                .preferRoofWeatherproofRouteAnchor(prefersRoofWeatherproofRouteAnchor(queryTerms))
-                .routedHasRoofWeatherproofSignal(hasRoofWeatherproofAnchorSignal(routedAnchor))
-                .rankedHasRoofWeatherproofDistractorSignal(hasRoofWeatherproofDistractorSignal(rankedAnchor))
-                .rankedHasRoofWeatherproofSignal(hasRoofWeatherproofAnchorSignal(rankedAnchor))
-                .rankedGuideFocusWaterDistributionFallback(rankedGuideFocusWaterDistributionFallback)
-                .sameGuideGroup(
-                    PackSupportScoringPolicy.guideGroupKey(routedAnchor)
-                        .equals(PackSupportScoringPolicy.guideGroupKey(rankedAnchor))
-                )
-                .rankedSupportWithMetadata(
-                    PackSupportScoringPolicy.supportBreakdown(queryTerms, rankedAnchor).supportWithMetadata()
-                )
-                .routedSupportWithMetadata(
-                    PackSupportScoringPolicy.supportBreakdown(queryTerms, routedAnchor).supportWithMetadata()
-                )
-                .build()
+        return PackAnswerAnchorSelector.chooseRankedOrRoutedAnchor(
+            QueryTerms.fromQuery(query),
+            rankedAnchor,
+            routedAnchor
         );
     }
 
@@ -2034,7 +1996,7 @@ public final class PackRepository implements AutoCloseable {
         return PackRouteFocusedAnchorPolicy.selectRouteFocusedAnchor(queryTerms, rankedResults, requireDirectSignal);
     }
 
-    private static boolean prefersCabinSiteSelectionRouteAnchor(QueryTerms queryTerms) {
+    static boolean prefersCabinSiteSelectionRouteAnchor(QueryTerms queryTerms) {
         if (queryTerms == null || queryTerms.metadataProfile == null) {
             return false;
         }
@@ -2044,7 +2006,7 @@ public final class PackRepository implements AutoCloseable {
             && queryTerms.metadataProfile.hasExplicitTopic("foundation");
     }
 
-    private static boolean hasCabinSiteSelectionAnchorSignal(SearchResult candidate) {
+    static boolean hasCabinSiteSelectionAnchorSignal(SearchResult candidate) {
         if (candidate == null) {
             return false;
         }
@@ -2077,7 +2039,7 @@ public final class PackRepository implements AutoCloseable {
         return score;
     }
 
-    private static boolean prefersRoofWeatherproofRouteAnchor(QueryTerms queryTerms) {
+    static boolean prefersRoofWeatherproofRouteAnchor(QueryTerms queryTerms) {
         if (queryTerms == null || queryTerms.metadataProfile == null) {
             return false;
         }
@@ -2088,11 +2050,11 @@ public final class PackRepository implements AutoCloseable {
         return PackRouteSignalPolicy.prefersRoofWeatherproofContext(metadataProfile);
     }
 
-    private static boolean hasRoofWeatherproofAnchorSignal(SearchResult candidate) {
+    static boolean hasRoofWeatherproofAnchorSignal(SearchResult candidate) {
         return PackRouteSignalPolicy.hasRoofWeatherproofAnchorSignal(candidate);
     }
 
-    private static boolean hasRoofWeatherproofDistractorSignal(SearchResult candidate) {
+    static boolean hasRoofWeatherproofDistractorSignal(SearchResult candidate) {
         return PackRouteSignalPolicy.hasRoofWeatherproofDistractorSignal(candidate);
     }
 
@@ -3210,7 +3172,7 @@ public final class PackRepository implements AutoCloseable {
         }
     }
 
-    private static boolean hasWaterDistributionTitleSignal(SearchResult result) {
+    static boolean hasWaterDistributionTitleSignal(SearchResult result) {
         return PackRouteSignalPolicy.hasWaterDistributionTitleSignal(result);
     }
 
