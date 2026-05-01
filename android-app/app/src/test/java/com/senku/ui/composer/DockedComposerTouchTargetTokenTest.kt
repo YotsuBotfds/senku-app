@@ -8,12 +8,29 @@ import org.junit.Test
 class DockedComposerTouchTargetTokenTest {
     @Test
     fun addActionKeepsFortyEightDpTouchTargetAroundThirtyTwoDpVisualCircle() {
-        assertTrue(DockedComposerTouchTargetTokens.ADD_ACTION_TOUCH_TARGET_DP >= 48)
+        assertEquals(48, DockedComposerTouchTargetTokens.FIELD_USE_TOUCH_TARGET_MIN_DP)
+        assertTrue(
+            DockedComposerTouchTargetTokens.ADD_ACTION_TOUCH_TARGET_DP >=
+                DockedComposerTouchTargetTokens.FIELD_USE_TOUCH_TARGET_MIN_DP
+        )
         assertEquals(32, DockedComposerTouchTargetTokens.ADD_ACTION_VISUAL_SIZE_DP)
         assertEquals(
             (DockedComposerTouchTargetTokens.ADD_ACTION_TOUCH_TARGET_DP -
                 DockedComposerTouchTargetTokens.ADD_ACTION_VISUAL_SIZE_DP) / 2,
             DockedComposerTouchTargetTokens.ADD_ACTION_PADDING_DP,
+        )
+    }
+
+    @Test
+    fun addActionPaddingPreservesVisualCircleInsideTouchTarget() {
+        assertEquals(
+            DockedComposerTouchTargetTokens.ADD_ACTION_TOUCH_TARGET_DP,
+            DockedComposerTouchTargetTokens.ADD_ACTION_VISUAL_SIZE_DP +
+                DockedComposerTouchTargetTokens.ADD_ACTION_PADDING_DP * 2,
+        )
+        assertTrue(
+            DockedComposerTouchTargetTokens.ADD_ACTION_VISUAL_SIZE_DP <
+                DockedComposerTouchTargetTokens.ADD_ACTION_TOUCH_TARGET_DP
         )
     }
 

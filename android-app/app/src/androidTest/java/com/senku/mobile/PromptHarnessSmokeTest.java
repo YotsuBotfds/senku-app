@@ -970,7 +970,7 @@ public final class PromptHarnessSmokeTest {
     }
 
     @Test
-    public void searchButtonFromAskLaneStaysGuideResultSearch() {
+    public void searchButtonFromAskLaneUsesAskSubmitOwnership() {
         ActivityScenario<MainActivity> scenario = launchProductReviewMainActivity();
         try {
             awaitHarnessIdle();
@@ -981,34 +981,16 @@ public final class PromptHarnessSmokeTest {
             );
 
             openAskTabFromHomeChrome();
-            submitSearchFromResumedActivity("rain shelter", false);
-            assertResultsSettled(scenario, SEARCH_RESULTS_WAIT_MS);
-            dismissMainSearchKeyboardIfVisible();
+            submitSearchFromResumedActivity("How do I start a fire in rain?", false);
 
-            scenario.onActivity(activity -> {
-                Assert.assertEquals(
-                    "Search button should return visible selection ownership to the library lane",
-                    BottomTabDestination.HOME,
-                    readPrivateField(activity, "activePhoneTab")
-                );
-                Assert.assertFalse(
-                    "Search button should clear Ask submit ownership before submitting guide search",
-                    readPrivateBooleanField(activity, "askLaneActive")
-                );
-                RecyclerView resultsList = activity.findViewById(R.id.results_list);
-                Assert.assertNotNull("guide-result list should exist after Search button submit", resultsList);
-                Assert.assertTrue(
-                    "Search button should show guide results instead of answer detail",
-                    isVisible(resultsList)
-                        && resultsList.getAdapter() != null
-                        && resultsList.getAdapter().getItemCount() > 0
-                );
-            });
-            Assert.assertFalse(
-                "Search button from Ask lane must not navigate to answer detail",
-                isResumedActivity(DetailActivity.class)
+            assertResumedDetailActivitySettled(
+                DETAIL_WAIT_MS,
+                8,
+                "",
+                false,
+                "Search button from Ask lane should use Ask submit ownership and open answer detail"
             );
-            captureUiState("search_button_from_ask_lane_results");
+            captureUiState("search_button_from_ask_lane_answer_detail");
         } finally {
             closeScenarioLeniently(scenario);
         }
@@ -1025,7 +1007,6 @@ public final class PromptHarnessSmokeTest {
                 device.wait(Until.hasObject(By.res(APP_PACKAGE, "search_input")), SEARCH_WAIT_MS)
             );
 
-            openAskTabFromHomeChrome();
             submitSearchFromResumedActivity("rain shelter", false);
             assertResultsSettled(scenario, SEARCH_RESULTS_WAIT_MS);
             dismissMainSearchKeyboardIfVisible();

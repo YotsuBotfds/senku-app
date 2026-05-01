@@ -646,10 +646,12 @@ public final class DetailSourcePresentationFormatterTest {
 
     @Test
     public void materialChipLabelNamesIndexedMaterial() {
+        String label = DetailSourcePresentationFormatter.buildMaterialChipPlainLabel(0, " Bark ");
         assertEquals(
             "Material 01: Bark",
-            DetailSourcePresentationFormatter.buildMaterialChipPlainLabel(0, " Bark ")
+            label
         );
+        assertFalse(label, label.startsWith("[01]"));
         assertEquals(
             "Material 01",
             DetailSourcePresentationFormatter.buildMaterialChipPlainLabel(-4, " ")

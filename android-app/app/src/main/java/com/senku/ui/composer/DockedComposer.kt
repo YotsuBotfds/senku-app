@@ -49,9 +49,10 @@ import com.senku.ui.theme.SenkuTheme
 import java.util.function.Consumer
 
 object DockedComposerTouchTargetTokens {
-    const val ADD_ACTION_TOUCH_TARGET_DP = 48
+    const val FIELD_USE_TOUCH_TARGET_MIN_DP = 48
+    const val ADD_ACTION_TOUCH_TARGET_DP = FIELD_USE_TOUCH_TARGET_MIN_DP
     const val ADD_ACTION_VISUAL_SIZE_DP = 32
-    const val ADD_ACTION_PADDING_DP = 8
+    const val ADD_ACTION_PADDING_DP = (ADD_ACTION_TOUCH_TARGET_DP - ADD_ACTION_VISUAL_SIZE_DP) / 2
     const val ADD_ACTION_DISABLED_CONTENT_DESCRIPTION = "Add action unavailable"
     const val ADD_ACTION_ENABLED_CONTENT_DESCRIPTION = "Add action"
     const val ADD_ACTION_DISABLED_ALPHA = 0.44f
