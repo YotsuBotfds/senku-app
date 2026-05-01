@@ -198,23 +198,26 @@ final class SearchResultCardModelMapper {
         String window = compactWindowAttributeToken(
             cleanDisplayText(humanize(safe(rawWindow).trim().toLowerCase(Locale.US)), 18)
         );
-        addTabletAttributeToken(tokens, category);
-        addTabletAttributeToken(tokens, role);
-        if (shouldKeepTabletAttributeToken(window)) {
-            addTabletAttributeToken(tokens, "Window " + window);
+        addMetadataToken(tokens, category);
+        addMetadataToken(tokens, role);
+        if (shouldSurfaceMetadataToken(window)) {
+            addMetadataToken(tokens, "Window " + window);
         }
-        return joinTabletAttributeTokens(tokens).toUpperCase(Locale.US);
+        return joinMetadataTokens(tokens, " \u00b7 ").toUpperCase(Locale.US);
     }
 
-    private static void addTabletAttributeToken(ArrayList<String> tokens, String value) {
+    static void addMetadataToken(ArrayList<String> tokens, String value) {
+        if (tokens == null) {
+            return;
+        }
         String normalized = safe(value).trim();
-        if (!shouldKeepTabletAttributeToken(normalized)) {
+        if (!shouldSurfaceMetadataToken(normalized)) {
             return;
         }
         tokens.add(normalized);
     }
 
-    private static boolean shouldKeepTabletAttributeToken(String value) {
+    static boolean shouldSurfaceMetadataToken(String value) {
         String normalized = safe(value).trim();
         String lowered = normalized.toLowerCase(Locale.US);
         return !normalized.isEmpty()
@@ -223,16 +226,21 @@ final class SearchResultCardModelMapper {
             && !"none".equals(lowered);
     }
 
-    private static String joinTabletAttributeTokens(ArrayList<String> tokens) {
+    static String joinMetadataTokens(ArrayList<String> tokens, String delimiter) {
         if (tokens == null || tokens.isEmpty()) {
             return "";
         }
+        String safeDelimiter = delimiter == null ? "" : delimiter;
         StringBuilder builder = new StringBuilder();
         for (String token : tokens) {
-            if (builder.length() > 0) {
-                builder.append(" \u00b7 ");
+            String normalized = safe(token).trim();
+            if (normalized.isEmpty()) {
+                continue;
             }
-            builder.append(token);
+            if (builder.length() > 0) {
+                builder.append(safeDelimiter);
+            }
+            builder.append(normalized);
         }
         return builder.toString();
     }
@@ -325,7 +333,7 @@ final class SearchResultCardModelMapper {
             }
         }
         if (!fragments.isEmpty()) {
-            return joinMetaFragments(fragments);
+            return joinMetadataTokens(fragments, " // ");
         }
         return cleanDisplayText(result == null ? null : result.guideId, 40);
     }
@@ -338,17 +346,6 @@ final class SearchResultCardModelMapper {
             return "Guide";
         }
         return humanize(mode);
-    }
-
-    private static String joinMetaFragments(ArrayList<String> fragments) {
-        StringBuilder builder = new StringBuilder();
-        for (String fragment : fragments) {
-            if (builder.length() > 0) {
-                builder.append(" // ");
-            }
-            builder.append(fragment);
-        }
-        return builder.toString();
     }
 
     static String buildCardSnippetForTest(SearchResult result, int maxLen) {

@@ -746,17 +746,18 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
         if (!guideId.isEmpty()) {
             tokens.add(inflater.getContext().getString(R.string.browse_result_meta_ref, guideId));
         }
-        if (shouldSurfaceMetadataToken(contentRole)) {
+        if (SearchResultCardModelMapper.shouldSurfaceMetadataToken(contentRole)) {
             tokens.add(inflater.getContext().getString(R.string.browse_result_meta_role, contentRole));
         }
-        if (shouldSurfaceMetadataToken(timeHorizon)) {
+        if (SearchResultCardModelMapper.shouldSurfaceMetadataToken(timeHorizon)) {
             tokens.add(inflater.getContext().getString(R.string.browse_result_meta_window, timeHorizon));
         }
-        if (shouldSurfaceMetadataToken(structureType)) {
+        if (SearchResultCardModelMapper.shouldSurfaceMetadataToken(structureType)) {
             tokens.add(inflater.getContext().getString(R.string.browse_result_meta_frame, structureType));
         }
-        if (!tokens.isEmpty()) {
-            return TextUtils.join(" // ", tokens);
+        String metaLine = SearchResultCardModelMapper.joinMetadataTokens(tokens, " // ");
+        if (!metaLine.isEmpty()) {
+            return metaLine;
         }
         return buildMetaFallback(result);
     }
@@ -1001,14 +1002,6 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
 
     private String buildMetaFallback(SearchResult result) {
         return SearchResultCardModelMapper.buildMetaFallback(result);
-    }
-
-    private boolean shouldSurfaceMetadataToken(String value) {
-        String normalized = safe(value).trim().toLowerCase(Locale.US);
-        return !normalized.isEmpty()
-            && !"general".equals(normalized)
-            && !"unknown".equals(normalized)
-            && !"none".equals(normalized);
     }
 
     private String humanizeContentRole(String raw, int maxLen) {

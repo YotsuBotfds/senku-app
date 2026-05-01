@@ -145,22 +145,26 @@ fun metadataLineForSearchResultCard(
     category: String,
 ): String {
     val tokens = ArrayList<String>(3)
-    normalizedMetadataValue(role)?.let { tokens.add("Role: $it") }
-    normalizedMetadataValue(window)?.let { tokens.add("Window: $it") }
-    normalizedMetadataValue(category)?.let { tokens.add("Category: $it") }
+    normalizedMetadataToken(role)?.let { tokens.add("Role: $it") }
+    normalizedMetadataToken(window)?.let { tokens.add("Window: $it") }
+    normalizedMetadataToken(category)?.let { tokens.add("Category: $it") }
     return tokens.joinToString(" // ")
 }
 
-private fun normalizedMetadataValue(value: String): String? {
+private fun normalizedMetadataToken(value: String): String? {
     val cleaned = value.trim()
-    if (cleaned.isEmpty()) {
-        return null
-    }
-    val normalized = cleaned.lowercase(Locale.US)
-    if (normalized == "general" || normalized == "unknown" || normalized == "none") {
+    if (!shouldSurfaceMetadataToken(cleaned)) {
         return null
     }
     return cleaned
+}
+
+private fun shouldSurfaceMetadataToken(value: String): Boolean {
+    val normalized = value.trim().lowercase(Locale.US)
+    return normalized.isNotEmpty() &&
+        normalized != "general" &&
+        normalized != "unknown" &&
+        normalized != "none"
 }
 
 fun continueConversationContentDescription(guideId: String = ""): String {
