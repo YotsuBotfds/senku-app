@@ -1132,6 +1132,33 @@ public final class MainRouteDecisionHelperTest {
     }
 
     @Test
+    public void routeStateCodecRestoresSavedGuidesAsBrowseSurface() {
+        MainRouteDecisionHelper.RouteState restoredSaved =
+            MainRouteDecisionHelper.resolveRestoredMainRouteState(
+                MainRouteDecisionHelper.Surface.SAVED_GUIDES.name(),
+                BottomTabDestination.PINS.name(),
+                false,
+                true,
+                BottomTabDestination.HOME.name()
+            );
+
+        assertRoute(
+            restoredSaved,
+            MainRouteDecisionHelper.Surface.SAVED_GUIDES,
+            BottomTabDestination.PINS,
+            false
+        );
+        assertFalse(MainRouteDecisionHelper.shouldShowHomeChromeBack(restoredSaved));
+        assertTransition(
+            MainRouteDecisionHelper.systemBack(restoredSaved, BottomTabDestination.HOME),
+            MainRouteDecisionHelper.Surface.BROWSE,
+            BottomTabDestination.HOME,
+            false,
+            MainRouteDecisionHelper.Effect.SHOW_PREVIOUS_TAB
+        );
+    }
+
+    @Test
     public void restoredResultRoutesKeepBackAndChromeSemantics() {
         MainRouteDecisionHelper.RouteState restoredSearch =
             MainRouteDecisionHelper.resolveRestoredMainRouteState(
@@ -1200,6 +1227,41 @@ public final class MainRouteDecisionHelperTest {
             BottomTabDestination.HOME,
             false,
             MainRouteDecisionHelper.Effect.FOCUS_SEARCH_INPUT
+        );
+    }
+
+    @Test
+    public void openSavedIntentFromRestoredResultsDoesNotPreserveAskOrSearchState() {
+        MainRouteDecisionHelper.RouteState restoredSearch =
+            MainRouteDecisionHelper.resolveRestoredMainRouteState(
+                MainRouteDecisionHelper.Surface.SEARCH_RESULTS.name(),
+                BottomTabDestination.HOME.name(),
+                false,
+                true,
+                BottomTabDestination.PINS.name()
+            );
+        MainRouteDecisionHelper.RouteState restoredAsk =
+            MainRouteDecisionHelper.resolveRestoredMainRouteState(
+                MainRouteDecisionHelper.Surface.ASK_RESULTS.name(),
+                BottomTabDestination.ASK.name(),
+                true,
+                true,
+                BottomTabDestination.HOME.name()
+            );
+
+        assertTransition(
+            MainRouteDecisionHelper.openSavedIntent(true, restoredSearch),
+            MainRouteDecisionHelper.Surface.SAVED_GUIDES,
+            BottomTabDestination.PINS,
+            false,
+            MainRouteDecisionHelper.Effect.SHOW_SAVED_GUIDES
+        );
+        assertTransition(
+            MainRouteDecisionHelper.openSavedIntent(true, restoredAsk),
+            MainRouteDecisionHelper.Surface.SAVED_GUIDES,
+            BottomTabDestination.PINS,
+            false,
+            MainRouteDecisionHelper.Effect.SHOW_SAVED_GUIDES
         );
     }
 
