@@ -4341,11 +4341,18 @@ public final class PromptHarnessSmokeTest {
         View pinnedScroll = activity.findViewById(R.id.pinned_scroll);
         LinearLayout pinnedContainer = activity.findViewById(R.id.pinned_container);
         RecyclerView resultsList = activity.findViewById(R.id.results_list);
+        Object routeState = invokePrivateNoArgMethod(activity, "currentMainRouteState");
 
         Assert.assertNotNull("saved destination should keep the shared input mounted", input);
         Assert.assertNotNull("saved destination should expose the saved guide section", pinnedSection);
         Assert.assertNotNull("saved destination should expose saved empty text", pinnedEmptyText);
         Assert.assertNotNull("saved destination should expose saved guide container", pinnedContainer);
+        Assert.assertNotNull("saved destination should expose route state for selection proof", routeState);
+        Assert.assertEquals(
+            "saved destination should select the Saved Guides route surface, not only render the nav label",
+            MainRouteDecisionHelper.Surface.SAVED_GUIDES,
+            readPrivateField(routeState, "surface")
+        );
         Assert.assertEquals(
             "saved destination should select the Saved phone lane",
             BottomTabDestination.PINS,
