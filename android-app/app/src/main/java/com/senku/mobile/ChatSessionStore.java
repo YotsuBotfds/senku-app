@@ -146,19 +146,9 @@ public final class ChatSessionStore {
         restore(context);
         ArrayList<ConversationPreview> previews = new ArrayList<>();
         synchronized (LOCK) {
-            ArrayList<Map.Entry<String, SessionMemory>> entries = new ArrayList<>(CONVERSATIONS.entrySet());
-            entries.sort((left, right) -> {
-                long leftEpoch = left.getValue() == null ? 0L : left.getValue().lastActivityEpoch();
-                long rightEpoch = right.getValue() == null ? 0L : right.getValue().lastActivityEpoch();
-                int activityOrder = Long.compare(rightEpoch, leftEpoch);
-                if (activityOrder != 0) {
-                    return activityOrder;
-                }
-                return left.getKey().compareTo(right.getKey());
-            });
+            ArrayList<ConversationPreview> candidates = new ArrayList<>();
             LinkedHashMap<String, ConversationPreview> latestByQuestion = new LinkedHashMap<>();
-            for (int index = 0; index < entries.size() && previews.size() < maxCount; index++) {
-                Map.Entry<String, SessionMemory> entry = entries.get(index);
+            for (Map.Entry<String, SessionMemory> entry : CONVERSATIONS.entrySet()) {
                 SessionMemory memory = entry.getValue();
                 if (memory == null) {
                     continue;
@@ -173,7 +163,20 @@ public final class ChatSessionStore {
                     memory.turnCount(),
                     memory.lastActivityEpoch()
                 );
-                String questionKey = normalizeRecentThreadQuestion(latestTurn.question);
+                candidates.add(preview);
+            }
+            candidates.sort((left, right) -> {
+                int activityOrder = Long.compare(right.lastActivityEpoch, left.lastActivityEpoch);
+                if (activityOrder != 0) {
+                    return activityOrder;
+                }
+                return left.conversationId.compareTo(right.conversationId);
+            });
+            for (ConversationPreview preview : candidates) {
+                if (previews.size() >= maxCount) {
+                    break;
+                }
+                String questionKey = normalizeRecentThreadQuestion(preview.latestTurn.question);
                 ConversationPreview keptPreview = questionKey.isEmpty() ? null : latestByQuestion.get(questionKey);
                 if (keptPreview != null && isNearDuplicateRecentThread(keptPreview, preview)) {
                     continue;

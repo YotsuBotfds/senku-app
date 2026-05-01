@@ -149,6 +149,8 @@ public final class ChatSessionStoreTest {
         assertEquals(2, previews.size());
         assertEquals(secondConversationId, previews.get(0).conversationId);
         assertEquals(firstConversationId, previews.get(1).conversationId);
+        assertEquals(2_000L, previews.get(0).lastActivityEpoch);
+        assertEquals(1_000L, previews.get(1).lastActivityEpoch);
     }
 
     @Test
