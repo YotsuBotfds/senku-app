@@ -822,6 +822,11 @@ class BenchRuntimeTests(unittest.TestCase):
             mock_generate.call_args_list[1].kwargs["max_completion_tokens"],
             1024,
         )
+        retry_messages = mock_generate.call_args_list[1].kwargs["messages"]
+        self.assertEqual([message["role"] for message in retry_messages], ["system", "user"])
+        self.assertIn("finish the full answer", retry_messages[0]["content"])
+        self.assertIn("complete final response", retry_messages[1]["content"])
+        self.assertIn("prompt body", retry_messages[1]["content"])
         self.assertEqual(meta["completion_retry_count"], 1)
         self.assertTrue(meta["completion_attempts"][0]["incomplete_response"])
         self.assertFalse(meta["completion_attempts"][0]["incomplete_safety_response"])

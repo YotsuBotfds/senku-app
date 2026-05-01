@@ -48,6 +48,7 @@ from query import (
     _card_backed_runtime_answer_plan,
 )
 from query_completion_hardening import (
+    _build_generic_incomplete_retry_messages,
     _has_substantive_response as _hardening_has_substantive_response,
     _is_obviously_incomplete_crisis_response,
     _is_obviously_incomplete_response as _hardening_is_obviously_incomplete_response,
@@ -1426,6 +1427,14 @@ def process_prepared_prompt(
             if next_budget:
                 adaptive_retries_used += 1
                 current_max_completion_tokens = next_budget
+                if incomplete_response:
+                    retry_messages = _build_generic_incomplete_retry_messages(
+                        system_prompt_text or "",
+                        prompt_text,
+                    )
+                    request_messages = (
+                        retry_messages if use_system_prompt else retry_messages[1:]
+                    )
                 continue
 
         if (

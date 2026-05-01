@@ -224,3 +224,23 @@ def _build_crisis_retry_messages(system_prompt, prompt):
         {"role": "system", "content": retry_system_prompt},
         {"role": "user", "content": retry_prompt},
     ]
+
+
+def _build_generic_incomplete_retry_messages(system_prompt, prompt):
+    """Tighten completion shape for a single generic incomplete-output retry."""
+    retry_system_prompt = (
+        f"{system_prompt}\n\n"
+        "Completion hardening: finish the full answer before stopping. Do not "
+        "stop mid-sentence, mid-list, or mid-citation."
+    )
+    retry_prompt = (
+        f"{prompt}\n\n"
+        "Completion contract for this retry: rewrite the answer as a complete "
+        "final response, not a continuation. Keep it concise, but finish every "
+        "sentence, numbered item, and guide citation. Do not leave dangling "
+        "bullets, headings, transition words, or partial citations."
+    )
+    return [
+        {"role": "system", "content": retry_system_prompt},
+        {"role": "user", "content": retry_prompt},
+    ]

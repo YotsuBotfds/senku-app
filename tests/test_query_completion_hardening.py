@@ -63,6 +63,14 @@ class QueryCompletionHardeningExtractionTests(unittest.TestCase):
         self.assertIn("finish the full answer", messages[0]["content"])
         self.assertIn("exactly 4 numbered steps", messages[1]["content"])
 
+    def test_build_generic_incomplete_retry_messages_shape(self):
+        messages = hardening._build_generic_incomplete_retry_messages("system", "prompt")
+
+        self.assertEqual([message["role"] for message in messages], ["system", "user"])
+        self.assertIn("finish the full answer", messages[0]["content"])
+        self.assertIn("complete final response", messages[1]["content"])
+        self.assertIn("prompt", messages[1]["content"])
+
     def test_safety_response_helpers_detect_and_trim_dangling_tail(self):
         response = (
             "1. Check for shock.\n"
