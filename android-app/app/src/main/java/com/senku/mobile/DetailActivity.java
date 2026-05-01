@@ -8091,7 +8091,9 @@ public final class DetailActivity extends AppCompatActivity {
     }
 
     private boolean isReviewedCardRoute() {
-        return safe(currentRuleId).trim().toLowerCase(Locale.US).startsWith("answer_card:");
+        return ReviewedCardMetadata.isAnswerCardRuleId(
+            safe(currentRuleId).trim().toLowerCase(Locale.US)
+        );
     }
 
     private boolean isAbstainRoute() {
@@ -8246,7 +8248,9 @@ public final class DetailActivity extends AppCompatActivity {
     ) {
         ReviewedCardMetadata metadata = ReviewedCardMetadata.normalize(reviewedCardMetadata);
         String normalizedRuleId = safe(ruleId).trim().toLowerCase(Locale.US);
-        String normalizedCardRuleId = "answer_card:" + safe(metadata.cardId).trim().toLowerCase(Locale.US);
+        String normalizedCardRuleId = ReviewedCardMetadata.answerCardRuleId(
+            safe(metadata.cardId).trim().toLowerCase(Locale.US)
+        );
         if (metadata.isPresent()
             && !safe(metadata.cardId).trim().isEmpty()
             && normalizedRuleId.equals(normalizedCardRuleId)) {
@@ -8340,7 +8344,7 @@ public final class DetailActivity extends AppCompatActivity {
 
     static String buildEmergencyDangerHeaderTitle(String cardId, String category, String title) {
         String hazard = firstNonEmpty(cardId, category, title);
-        hazard = hazard.replace("answer_card:", "").replace('_', ' ').trim();
+        hazard = hazard.replace(ReviewedCardMetadata.ANSWER_CARD_RULE_PREFIX, "").replace('_', ' ').trim();
         if (hazard.isEmpty()) {
             return "\u2022 DANGER \u00b7 EXTREME BURN HAZARD";
         }
