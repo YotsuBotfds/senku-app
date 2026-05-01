@@ -10680,14 +10680,14 @@ public final class DetailActivity extends AppCompatActivity {
         if (actionBlocksPanel == null) {
             return;
         }
-        ActionBlockRenderPolicy.Decision decision = resolveActionBlockRenderDecision(
+        DetailActionBlockRenderPolicy.Decision decision = resolveActionBlockRenderDecision(
             isEmergencyPortraitSurface(),
             answerMode,
             isHighRiskRoute(),
             isDeterministicRoute(),
             currentBody
         );
-        if (decision == ActionBlockRenderPolicy.Decision.EMERGENCY_PORTRAIT) {
+        if (decision == DetailActionBlockRenderPolicy.Decision.EMERGENCY_PORTRAIT) {
             detailActionBlockPresentationFormatter().renderEmergencyPortraitActions(
                 actionBlocksPanel,
                 currentBody,
@@ -10696,7 +10696,7 @@ public final class DetailActivity extends AppCompatActivity {
             applyEmergencyActionListSpacing(actionBlocksPanel, false);
             return;
         }
-        if (decision == ActionBlockRenderPolicy.Decision.NONE) {
+        if (decision == DetailActionBlockRenderPolicy.Decision.NONE) {
             actionBlocksPanel.setVisibility(View.GONE);
             return;
         }
@@ -10707,14 +10707,14 @@ public final class DetailActivity extends AppCompatActivity {
         );
     }
 
-    static ActionBlockRenderPolicy.Decision resolveActionBlockRenderDecision(
+    static DetailActionBlockRenderPolicy.Decision resolveActionBlockRenderDecision(
         boolean emergencyPortraitSurface,
         boolean answerMode,
         boolean highRiskRoute,
         boolean deterministicRoute,
         String body
     ) {
-        return ActionBlockRenderPolicy.evaluate(
+        return DetailActionBlockRenderPolicy.evaluate(
             emergencyPortraitSurface,
             answerMode,
             highRiskRoute,
@@ -11909,33 +11909,6 @@ public final class DetailActivity extends AppCompatActivity {
                 ));
             });
         });
-    }
-
-    static final class ActionBlockRenderPolicy {
-        enum Decision {
-            NONE,
-            EMERGENCY_PORTRAIT,
-            HIGH_RISK
-        }
-
-        private ActionBlockRenderPolicy() {
-        }
-
-        static Decision evaluate(
-            boolean emergencyPortraitSurface,
-            boolean answerMode,
-            boolean highRiskRoute,
-            boolean deterministicRoute,
-            String body
-        ) {
-            if (emergencyPortraitSurface) {
-                return Decision.EMERGENCY_PORTRAIT;
-            }
-            if (answerMode && highRiskRoute && deterministicRoute && !safe(body).trim().isEmpty()) {
-                return Decision.HIGH_RISK;
-            }
-            return Decision.NONE;
-        }
     }
 
     static final class TabletEmergencyOverlayMargins {

@@ -384,7 +384,7 @@ public final class EmergencySurfacePolicyTest {
     @Test
     public void emergencyPortraitActionBlocksTakePriorityOverHighRiskBlocks() {
         assertEquals(
-            DetailActivity.ActionBlockRenderPolicy.Decision.EMERGENCY_PORTRAIT,
+            DetailActionBlockRenderPolicy.Decision.EMERGENCY_PORTRAIT,
             DetailActivity.resolveActionBlockRenderDecision(
                 true,
                 true,
@@ -398,7 +398,7 @@ public final class EmergencySurfacePolicyTest {
     @Test
     public void deterministicHighRiskAnswerWithBodyShowsHighRiskActionBlocks() {
         assertEquals(
-            DetailActivity.ActionBlockRenderPolicy.Decision.HIGH_RISK,
+            DetailActionBlockRenderPolicy.Decision.HIGH_RISK,
             DetailActivity.resolveActionBlockRenderDecision(
                 false,
                 true,
@@ -412,19 +412,19 @@ public final class EmergencySurfacePolicyTest {
     @Test
     public void highRiskActionBlocksStayHiddenOutsideOriginalEligibility() {
         assertEquals(
-            DetailActivity.ActionBlockRenderPolicy.Decision.NONE,
+            DetailActionBlockRenderPolicy.Decision.NONE,
             DetailActivity.resolveActionBlockRenderDecision(false, false, true, true, "1. Apply pressure.")
         );
         assertEquals(
-            DetailActivity.ActionBlockRenderPolicy.Decision.NONE,
+            DetailActionBlockRenderPolicy.Decision.NONE,
             DetailActivity.resolveActionBlockRenderDecision(false, true, false, true, "1. Apply pressure.")
         );
         assertEquals(
-            DetailActivity.ActionBlockRenderPolicy.Decision.NONE,
+            DetailActionBlockRenderPolicy.Decision.NONE,
             DetailActivity.resolveActionBlockRenderDecision(false, true, true, false, "1. Apply pressure.")
         );
         assertEquals(
-            DetailActivity.ActionBlockRenderPolicy.Decision.NONE,
+            DetailActionBlockRenderPolicy.Decision.NONE,
             DetailActivity.resolveActionBlockRenderDecision(false, true, true, true, "   ")
         );
     }
