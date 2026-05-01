@@ -71,6 +71,12 @@ public final class PackRepositoryCurrentHeadRouteParityAndroidTest {
                 ids("GD-106")
             ),
             new RouteSpec(
+                "How do I build a simple rain shelter from tarp and cord?",
+                "emergency_shelter",
+                ids("GD-345"),
+                ids("GD-345")
+            ),
+            new RouteSpec(
                 "someone is stealing food from the group what do we do",
                 "community_governance",
                 ids("GD-626"),

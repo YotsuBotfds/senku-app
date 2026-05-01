@@ -888,6 +888,20 @@ Purpose: prevent future agents from rerunning Ask/query backend cleanup that is 
   `PackSearchFinalizationPolicyTest`, `SavedGuidesPolicyTest`, and
   `MainHomeRelatedGuideControllerTest`; `:app:assembleDebug
   :app:assembleDebugAndroidTest` passed; `git diff --check` passed.
+- Current proof slice closes the latest route gaps without retrieval tuning:
+  `PackRepositoryCurrentHeadRouteParityAndroidTest` now includes one real-pack
+  rain-shelter owner assertion for `GD-345`, `OfflineAnswerEngineTest` has a
+  named no-source/unsupported Ask abstain golden, and
+  `MainSearchControllerTest` covers the shared Search/Ask `LatestJobGate` across
+  early returns (Ask no-pack/no-model/blank and Search no-pack/session-command/
+  deterministic). Direct live route-parity instrumentation was attempted on
+  `emulator-5554` and `emulator-5556` but timed out during the adb
+  install/instrumentation path with no assertion output; this is tracked as
+  live-run blocked, not route failure.
+- Latest local proof for the current proof slice: focused JVM tests passed for
+  `MainSearchControllerTest` and `OfflineAnswerEngineTest`; `:app:assembleDebug
+  :app:assembleDebugAndroidTest` passed; direct route-parity androidTest launch
+  timed out twice before reporting test status.
 
 ## Remaining Next Slices
 
@@ -895,13 +909,10 @@ Purpose: prevent future agents from rerunning Ask/query backend cleanup that is 
   when they remove real production logic from a god class, have production call
   sites, and add focused tests; do not continue extracting helpers merely
   because logic can be moved.
-- Highest priority retrieval proof gap from the latest scout: add one real-pack
-  route parity assertion for rain shelter landing on `GD-345`, and optionally a
-  named pure JVM no-source/unsupported Ask golden near the existing
-  `OfflineAnswerEngineTest` no-source coverage.
-- Current integration priority: run a single current-head focused backend gate
-  before the next broad behavior change, then prefer golden route/behavior tests
-  over more extraction unless a real god-class branch is being removed.
+- Current integration priority: produce a concise current-head integration
+  summary, run one short live PromptHarness smoke if the adb install/instrument
+  path is responsive, then prefer golden route/behavior tests over more
+  extraction unless a real god-class branch is being removed.
 - Retrieval policy work should pause until route behavior is protected with
   golden route tests over the high-value prompts; avoid broad `PackRepository`
   or route-focused search rewrites without route-output parity proof.

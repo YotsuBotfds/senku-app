@@ -1695,6 +1695,33 @@ public final class OfflineAnswerEngineTest {
     }
 
     @Test
+    public void generateNoSourceUnsupportedAskReturnsAbstainCopyAndNoSources() throws Exception {
+        OfflineAnswerEngine.setGeneratorsForTest(
+            (settings, systemPrompt, prompt, maxTokens) -> {
+                throw new AssertionError("host generation should not run");
+            },
+            (context, modelFile, prompt, maxTokens, listener) -> {
+                throw new AssertionError("device generation should not run");
+            }
+        );
+        String query = "how do i tune a violin bridge and soundpost";
+        String expectedBody = OfflineAnswerEngine.buildAbstainAnswerBody(query, List.of());
+        OfflineAnswerEngine.PreparedAnswer prepared = OfflineAnswerEngine.PreparedAnswer.abstain(
+            query,
+            expectedBody,
+            List.of(),
+            false
+        );
+
+        OfflineAnswerEngine.AnswerRun answerRun = OfflineAnswerEngine.generate(null, null, prepared);
+
+        assertEquals(OfflineAnswerEngine.AnswerMode.ABSTAIN, answerRun.mode);
+        assertTrue(answerRun.abstain);
+        assertTrue(answerRun.sources.isEmpty());
+        assertEquals(expectedBody, answerRun.answerBody);
+    }
+
+    @Test
     public void generateDeterministicNoSourceAnswerDoesNotEnterNoSourceDowngrade() throws Exception {
         OfflineAnswerEngine.setGeneratorsForTest(
             (settings, systemPrompt, prompt, maxTokens) -> {

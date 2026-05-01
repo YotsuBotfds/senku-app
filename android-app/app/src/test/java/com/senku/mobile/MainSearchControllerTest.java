@@ -292,6 +292,75 @@ public final class MainSearchControllerTest {
     }
 
     @Test
+    public void staleSearchSuccessIsSuppressedAfterNewerAskNoPackExit() {
+        LatestJobGate sharedGate = new LatestJobGate();
+        FakeHost searchHost = readyHost();
+        searchHost.queueUiActions = true;
+        FakeEngine searchEngine = new FakeEngine();
+        searchEngine.resultsByQuery.put("old search", List.of(sampleResult("Old Search", "GD-001")));
+        MainSearchController searchController =
+            new MainSearchController(searchHost, searchEngine, query -> null, sharedGate);
+        FakeAskHost askHost = readyAskHost();
+        askHost.repositoryAvailable = false;
+        AskQueryController askController =
+            new AskQueryController(askHost, new FakeAskEngine(), query -> null, sharedGate);
+
+        searchController.runSearch("old search");
+        askController.runAsk("new ask");
+        searchHost.runQueuedUiAction(0);
+
+        assertEquals(List.of("started:old search:old search:false"), searchHost.events);
+        assertNull(searchHost.lastResults);
+        assertEquals(List.of("pack-unavailable"), askHost.events);
+    }
+
+    @Test
+    public void staleSearchSuccessIsSuppressedAfterNewerAskNoModelExit() {
+        LatestJobGate sharedGate = new LatestJobGate();
+        FakeHost searchHost = readyHost();
+        searchHost.queueUiActions = true;
+        FakeEngine searchEngine = new FakeEngine();
+        searchEngine.resultsByQuery.put("old search", List.of(sampleResult("Old Search", "GD-001")));
+        MainSearchController searchController =
+            new MainSearchController(searchHost, searchEngine, query -> null, sharedGate);
+        FakeAskHost askHost = readyAskHost();
+        askHost.modelFile = null;
+        askHost.hostInferenceSettings = settings(false);
+        AskQueryController askController =
+            new AskQueryController(askHost, new FakeAskEngine(), query -> null, sharedGate);
+
+        searchController.runSearch("old search");
+        askController.runAsk("new ask");
+        searchHost.runQueuedUiAction(0);
+
+        assertEquals(List.of("started:old search:old search:false"), searchHost.events);
+        assertNull(searchHost.lastResults);
+        assertEquals(List.of("model-unavailable:false"), askHost.events);
+    }
+
+    @Test
+    public void staleSearchSuccessIsSuppressedAfterNewerBlankAskExit() {
+        LatestJobGate sharedGate = new LatestJobGate();
+        FakeHost searchHost = readyHost();
+        searchHost.queueUiActions = true;
+        FakeEngine searchEngine = new FakeEngine();
+        searchEngine.resultsByQuery.put("old search", List.of(sampleResult("Old Search", "GD-001")));
+        MainSearchController searchController =
+            new MainSearchController(searchHost, searchEngine, query -> null, sharedGate);
+        FakeAskHost askHost = readyAskHost();
+        AskQueryController askController =
+            new AskQueryController(askHost, new FakeAskEngine(), query -> null, sharedGate);
+
+        searchController.runSearch("old search");
+        askController.runAsk("  ");
+        searchHost.runQueuedUiAction(0);
+
+        assertEquals(List.of("started:old search:old search:false"), searchHost.events);
+        assertNull(searchHost.lastResults);
+        assertEquals(List.of("blank-query"), askHost.events);
+    }
+
+    @Test
     public void staleAskSuccessIsSuppressedAfterNewerSearchStarts() {
         LatestJobGate sharedGate = new LatestJobGate();
         FakeAskHost askHost = readyAskHost();
@@ -324,6 +393,81 @@ public final class MainSearchControllerTest {
             searchHost.events
         );
         assertSame(newSearchResult, searchHost.lastResults.get(0));
+    }
+
+    @Test
+    public void staleAskSuccessIsSuppressedAfterNewerSearchNoPackExit() {
+        LatestJobGate sharedGate = new LatestJobGate();
+        FakeAskHost askHost = readyAskHost();
+        askHost.queueUiActions = true;
+        FakeAskEngine askEngine = new FakeAskEngine();
+        askEngine.preparedAnswers.put("old ask", preparedAnswer("old ask"));
+        AskQueryController askController =
+            new AskQueryController(askHost, askEngine, query -> null, sharedGate);
+        FakeHost searchHost = readyHost();
+        searchHost.repositoryAvailable = false;
+        MainSearchController searchController =
+            new MainSearchController(searchHost, new FakeEngine(), query -> null, sharedGate);
+
+        askController.runAsk("old ask");
+        searchController.runSearch("new search");
+        askHost.runQueuedUiAction(0);
+
+        assertEquals(List.of("prepare-started:old ask"), askHost.events);
+        assertNull(askHost.lastPreparedSuccess);
+        assertEquals(List.of("pack-unavailable"), searchHost.events);
+    }
+
+    @Test
+    public void staleAskSuccessIsSuppressedAfterNewerSearchSessionCommandExit() {
+        LatestJobGate sharedGate = new LatestJobGate();
+        FakeAskHost askHost = readyAskHost();
+        askHost.queueUiActions = true;
+        FakeAskEngine askEngine = new FakeAskEngine();
+        askEngine.preparedAnswers.put("old ask", preparedAnswer("old ask"));
+        AskQueryController askController =
+            new AskQueryController(askHost, askEngine, query -> null, sharedGate);
+        FakeHost searchHost = readyHost();
+        searchHost.sessionCommandHandled = true;
+        MainSearchController searchController =
+            new MainSearchController(searchHost, new FakeEngine(), query -> null, sharedGate);
+
+        askController.runAsk("old ask");
+        searchController.runSearch("session clear");
+        askHost.runQueuedUiAction(0);
+
+        assertEquals(List.of("prepare-started:old ask"), askHost.events);
+        assertNull(askHost.lastPreparedSuccess);
+        assertEquals(List.of("session-command:session clear"), searchHost.events);
+    }
+
+    @Test
+    public void staleAskSuccessIsSuppressedAfterNewerSearchDeterministicExit() {
+        LatestJobGate sharedGate = new LatestJobGate();
+        FakeAskHost askHost = readyAskHost();
+        askHost.queueUiActions = true;
+        FakeAskEngine askEngine = new FakeAskEngine();
+        askEngine.preparedAnswers.put("old ask", preparedAnswer("old ask"));
+        AskQueryController askController =
+            new AskQueryController(askHost, askEngine, query -> null, sharedGate);
+        FakeHost searchHost = readyHost();
+        DeterministicAnswerRouter.DeterministicAnswer deterministic =
+            new DeterministicAnswerRouter.DeterministicAnswer(
+                "rule-id",
+                "Use the deterministic answer.",
+                List.of(sampleResult("Known Guide", "GD-002"))
+            );
+        MainSearchController searchController =
+            new MainSearchController(searchHost, new FakeEngine(), query -> deterministic, sharedGate);
+
+        askController.runAsk("old ask");
+        searchController.runSearch("known");
+        askHost.runQueuedUiAction(0);
+
+        assertEquals(List.of("prepare-started:old ask"), askHost.events);
+        assertNull(askHost.lastPreparedSuccess);
+        assertEquals(List.of("deterministic:known"), searchHost.events);
+        assertSame(deterministic, searchHost.lastDeterministic);
     }
 
     private static FakeHost readyHost() {
