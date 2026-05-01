@@ -1533,8 +1533,14 @@ public final class OfflineAnswerEngineTest {
             "prompt"
         );
 
-        OfflineAnswerEngine.generate(null, tempModel, prepared);
+        OfflineAnswerEngine.AnswerRun answerRun = OfflineAnswerEngine.generate(null, tempModel, prepared);
 
+        assertEquals(OfflineAnswerEngine.AnswerMode.CONFIDENT, answerRun.mode);
+        assertFalse(answerRun.abstain);
+        assertEquals(1, answerRun.sources.size());
+        assertEquals("GD-207", answerRun.sources.get(0).guideId);
+        assertTrue(answerRun.answerBody.contains("Short answer:"));
+        assertTrue(answerRun.answerBody.contains("Keep batteries in a dry container"));
         assertEquals(1, finalModeLines.get().size());
         assertTrue(
             Pattern.compile(
@@ -1583,6 +1589,34 @@ public final class OfflineAnswerEngineTest {
                 "^ask\\.generate final_mode=abstain route=low_coverage_downgrade query=\"What is the safest way to carry a battery in stormy weather\\?\" totalElapsedMs=\\d+$"
             ).matcher(finalModeLines.get().get(0)).matches()
         );
+    }
+
+    @Test
+    public void generateDeterministicNoSourceAnswerDoesNotEnterNoSourceDowngrade() throws Exception {
+        OfflineAnswerEngine.setGeneratorsForTest(
+            (settings, systemPrompt, prompt, maxTokens) -> {
+                throw new AssertionError("host generation should not run");
+            },
+            (context, modelFile, prompt, maxTokens, listener) -> {
+                throw new AssertionError("device generation should not run");
+            }
+        );
+        OfflineAnswerEngine.PreparedAnswer prepared = OfflineAnswerEngine.PreparedAnswer.restoredDeterministic(
+            "can i use old soda bottles",
+            "Use only known food-safe bottles and sanitize them first.",
+            List.of(),
+            true,
+            "reused_container_water",
+            System.currentTimeMillis() - 25L
+        );
+
+        OfflineAnswerEngine.AnswerRun answerRun = OfflineAnswerEngine.generate(null, null, prepared);
+
+        assertTrue(answerRun.deterministic);
+        assertFalse(answerRun.abstain);
+        assertEquals(OfflineAnswerEngine.AnswerMode.CONFIDENT, answerRun.mode);
+        assertTrue(answerRun.sources.isEmpty());
+        assertTrue(answerRun.answerBody.contains("Use only known food-safe bottles"));
     }
 
     @Test

@@ -1,6 +1,7 @@
 package com.senku.mobile;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
@@ -60,6 +61,9 @@ public final class AskBackendRouteTest {
         assertNull(engine.lastModelFile);
         assertSame(reviewedPrepared, host.lastPreparedSuccess);
         assertTrue(host.lastPreparedSuccess.deterministic);
+        assertEquals(OfflineAnswerEngine.AnswerMode.CONFIDENT, host.lastPreparedSuccess.mode);
+        assertFalse(host.lastPreparedSuccess.abstain);
+        assertEquals(1, host.lastPreparedSuccess.sources.size());
         assertEquals("answer_card:poisoning_unknown_ingestion", host.lastPreparedSuccess.ruleId);
         assertEquals(List.of(AskQueryController.HARNESS_PREPARE), host.begunHarnessTags);
     }
@@ -153,6 +157,37 @@ public final class AskBackendRouteTest {
     }
 
     @Test
+    public void staleNoSourceAbstainSuccessIsIgnoredAfterNewerDeterministicRouteWins() {
+        RouteHost host = availableHost();
+        host.queueUiActions = true;
+        OfflineAnswerEngine.PreparedAnswer stalePrepared = noSourceAbstainPrepared("first generated ask");
+        RouteEngine engine = new RouteEngine(stalePrepared);
+        DeterministicAnswerRouter.DeterministicAnswer deterministic =
+            new DeterministicAnswerRouter.DeterministicAnswer(
+                "instant:water",
+                "Keep water at a rolling boil before cooling it safely.",
+                List.of(source("GD-101", "Water Safety", "water", "guide-focus"))
+            );
+        AskQueryController controller = new AskQueryController(
+            host,
+            engine,
+            query -> "second instant ask".equals(query) ? deterministic : null
+        );
+
+        controller.runAsk("first generated ask");
+        controller.runAsk("second instant ask");
+        host.runQueuedUiAction(0);
+
+        assertEquals(
+            List.of("prepare-started:first generated ask", "deterministic"),
+            host.events
+        );
+        assertEquals(1, engine.prepareCalls);
+        assertNull(host.lastPreparedSuccess);
+        assertSame(deterministic, host.lastDeterministicAnswer);
+    }
+
+    @Test
     public void staleBackendSuccessIsIgnoredAfterNewerUnavailableRouteWins() {
         RouteHost host = availableHost();
         host.queueUiActions = true;
@@ -199,6 +234,18 @@ public final class AskBackendRouteTest {
             hostEnabled ? "test-model" : "",
             "system",
             "prompt"
+        );
+    }
+
+    private static OfflineAnswerEngine.PreparedAnswer noSourceAbstainPrepared(String query) {
+        return OfflineAnswerEngine.PreparedAnswer.abstain(
+            query,
+            OfflineAnswerEngine.buildAbstainAnswerBody(query, List.of()),
+            List.of(),
+            false,
+            System.currentTimeMillis() - 250L,
+            0L,
+            0L
         );
     }
 
