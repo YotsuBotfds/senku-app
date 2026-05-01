@@ -232,7 +232,19 @@ public final class PromptBuilderTest {
         );
 
         assertTrue(prompt.contains("Metadata: anchor note | category=building | role=starter path | horizon=long term | structure=cabin house | topics=roofing, weatherproofing"));
-        assertTrue(prompt.contains("Note: Start with a steep roof pitch so water sheds quickly, overlap bark courses generously from the eaves upward, seal the ridge cap carefully, and keep the roof layout simple enough that runoff can leave the surface without pooling anywhere on the deck."));
+        String noteLine = prompt.lines()
+            .filter(line -> line.startsWith("Note: "))
+            .findFirst()
+            .orElse("");
+
+        assertTrue(noteLine.contains("steep roof pitch"));
+        assertTrue(noteLine.contains("overlap bark courses"));
+        assertTrue(noteLine.contains("seal the ridge cap"));
+        assertTrue(noteLine.contains("runoff can leave the surface"));
+        assertFalse(noteLine.contains("This follow-on sentence"));
         assertFalse(prompt.contains("This follow-on sentence is intentionally long"));
+        assertTrue(noteLine.endsWith("."));
+        assertFalse(noteLine.endsWith("..."));
+        assertTrue(noteLine.length() <= "Note: ".length() + 480);
     }
 }

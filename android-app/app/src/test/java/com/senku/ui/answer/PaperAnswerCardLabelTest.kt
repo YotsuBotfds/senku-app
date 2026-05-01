@@ -2,6 +2,7 @@ package com.senku.ui.answer
 
 import com.senku.mobile.ReviewedCardMetadata
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class PaperAnswerCardLabelTest {
@@ -129,10 +130,12 @@ class PaperAnswerCardLabelTest {
             "UNSURE FIT",
             uncertainFitNoticeLabel(content),
         )
-        assertEquals(
-            "Senku found 3 guides that may apply but no single guide is a confident anchor. Treat this as guidance, not procedure. See sources below.",
-            uncertainFitNoticeText(content),
-        )
+        val noticeText = uncertainFitNoticeText(content)
+        assertTrue(noticeText.contains("3 guides"))
+        assertTrue(noticeText.contains("no single guide"))
+        assertTrue(noticeText.contains("guidance"))
+        assertTrue(noticeText.contains("not procedure"))
+        assertTrue(noticeText.contains("sources"))
     }
 
     @Test

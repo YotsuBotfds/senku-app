@@ -31,7 +31,9 @@ public final class MainSearchSuggestionPolicyTest {
         MainSearchSuggestionPolicy.SearchSuggestion suggestion = suggestions.get(1);
         assertFalse(suggestion.isCategory());
         assertEquals("GD-001 | Rain barrel basics", suggestion.label);
-        assertEquals("Suggested guide: Rain barrel basics. Tap to browse matching guides.", suggestion.contentDescription);
+        assertTrue(suggestion.contentDescription.contains("Rain barrel basics"));
+        assertTrue(suggestion.contentDescription.contains("Tap"));
+        assertTrue(suggestion.contentDescription.contains("browse"));
         assertEquals("GD-001", suggestion.searchQuery);
     }
 

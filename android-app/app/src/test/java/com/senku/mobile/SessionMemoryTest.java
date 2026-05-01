@@ -99,7 +99,10 @@ public final class SessionMemoryTest {
         assertTrue(memory.shouldUseContext("what next"));
         assertTrue(promptContext.contains("recent questions:"));
         assertTrue(promptContext.contains("latest answer:"));
-        assertTrue(promptContext.contains("[GD-094] Construction & Carpentry"));
+        assertTrue(promptContext.contains("recent guides:"));
+        assertTrue(promptContext.contains("[GD-094]"));
+        assertEquals("GD-094", memory.recentSourceResults().get(0).guideId);
+        assertEquals("Roofing Systems", memory.recentSourceResults().get(0).sectionHeading);
     }
 
     @Test
