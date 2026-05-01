@@ -207,6 +207,37 @@ public final class MainSearchControllerTest {
         assertNull(host.lastResults);
     }
 
+    @Test
+    public void staleSuccessIsSuppressedAfterNewerDeterministicRouteWins() {
+        FakeHost host = readyHost();
+        host.queueUiActions = true;
+        FakeEngine engine = new FakeEngine();
+        SearchResult first = sampleResult("First", "GD-001");
+        engine.resultsByQuery.put("first", List.of(first));
+        DeterministicAnswerRouter.DeterministicAnswer deterministic =
+            new DeterministicAnswerRouter.DeterministicAnswer(
+                "rule-id",
+                "Use the deterministic answer.",
+                List.of(sampleResult("Known Guide", "GD-002"))
+            );
+        MainSearchController controller = new MainSearchController(
+            host,
+            engine,
+            query -> "known".equals(query) ? deterministic : null
+        );
+
+        controller.runSearch("first");
+        controller.runSearch("known");
+        host.runQueuedUiAction(0);
+
+        assertEquals(
+            List.of("started:first:first:false", "deterministic:known"),
+            host.events
+        );
+        assertSame(deterministic, host.lastDeterministic);
+        assertNull(host.lastResults);
+    }
+
     private static FakeHost readyHost() {
         FakeHost host = new FakeHost();
         host.repositoryAvailable = true;
