@@ -95,6 +95,26 @@ public final class SearchResultCardModelMapperTest {
     }
 
     @Test
+    public void cardPreviewSuppressesDuplicateGuideSubtitleAndCleansFallbackBody() {
+        SearchResult result = new SearchResult(
+            "Water setup",
+            " GD-214 ",
+            "",
+            "### Storage basics\n\n- [ ] Use clean containers before storage.",
+            "GD-214",
+            "",
+            "water",
+            "keyword"
+        );
+
+        assertEquals("", SearchResultCardModelMapper.buildCardSubtitleForTest(result));
+        assertEquals(
+            "Storage basics Use clean containers before storage.",
+            SearchResultCardModelMapper.buildCardSnippetForTest(result, 120)
+        );
+    }
+
+    @Test
     public void rowRankScoreAndGuideMarkersMatchAdapterSearchRowContract() {
         int firstScore = scoreValue(SearchResultCardModelMapper.buildRankLabelForTest(0));
         int laterScore = scoreValue(SearchResultCardModelMapper.buildRankLabelForTest(3));
