@@ -16,15 +16,16 @@ final class PackRouteSearchSqlPolicy {
         String ftsTableName,
         boolean ftsSupportsBm25
     ) {
+        List<String> safeCategories = usableValues(categories);
         String ftsQuery = PackRepository.buildFtsQuery(specTerms, ftsSupportsBm25 ? 8 : 4, ftsSupportsBm25);
-        if (ftsQuery.isEmpty() || categories.isEmpty()) {
+        if (ftsQuery.isEmpty() || safeCategories.isEmpty()) {
             return RouteFtsSqlPlan.empty(ftsQuery);
         }
 
         ArrayList<String> categoryPlaceholders = new ArrayList<>();
         ArrayList<String> args = new ArrayList<>();
         args.add(ftsQuery);
-        for (String category : categories) {
+        for (String category : safeCategories) {
             categoryPlaceholders.add("?");
             args.add(category);
         }
@@ -55,19 +56,21 @@ final class PackRouteSearchSqlPolicy {
         List<String> categories,
         int candidateLimit
     ) {
-        if (tokens.isEmpty() || categories.isEmpty()) {
+        List<String> safeTokens = usableValues(tokens);
+        List<String> safeCategories = usableValues(categories);
+        if (safeTokens.isEmpty() || safeCategories.isEmpty()) {
             return RouteLikeSqlPlan.empty();
         }
 
         ArrayList<String> categoryPlaceholders = new ArrayList<>();
         ArrayList<String> args = new ArrayList<>();
-        for (String category : categories) {
+        for (String category : safeCategories) {
             categoryPlaceholders.add("?");
             args.add(category);
         }
 
         ArrayList<String> clauses = new ArrayList<>();
-        for (String token : tokens) {
+        for (String token : safeTokens) {
             String like = "%" + token + "%";
             clauses.add("(guide_title LIKE ? OR section_heading LIKE ? OR tags LIKE ? OR description LIKE ? OR document LIKE ?)");
             for (int index = 0; index < 5; index++) {
@@ -93,15 +96,16 @@ final class PackRouteSearchSqlPolicy {
         String ftsTableName,
         boolean ftsSupportsBm25
     ) {
+        List<String> safeCategories = usableValues(categories);
         String ftsQuery = PackRepository.buildFtsQuery(specTerms, ftsSupportsBm25 ? 8 : 4, ftsSupportsBm25);
-        if (ftsQuery.isEmpty() || categories.isEmpty()) {
+        if (ftsQuery.isEmpty() || safeCategories.isEmpty()) {
             return RouteFtsSqlPlan.empty(ftsQuery);
         }
 
         ArrayList<String> categoryPlaceholders = new ArrayList<>();
         ArrayList<String> args = new ArrayList<>();
         args.add(ftsQuery);
-        for (String category : categories) {
+        for (String category : safeCategories) {
             categoryPlaceholders.add("?");
             args.add(category);
         }
@@ -132,19 +136,21 @@ final class PackRouteSearchSqlPolicy {
         List<String> categories,
         int candidateLimit
     ) {
-        if (tokens.isEmpty() || categories.isEmpty()) {
+        List<String> safeTokens = usableValues(tokens);
+        List<String> safeCategories = usableValues(categories);
+        if (safeTokens.isEmpty() || safeCategories.isEmpty()) {
             return RouteLikeSqlPlan.empty();
         }
 
         ArrayList<String> categoryPlaceholders = new ArrayList<>();
         ArrayList<String> args = new ArrayList<>();
-        for (String category : categories) {
+        for (String category : safeCategories) {
             categoryPlaceholders.add("?");
             args.add(category);
         }
 
         ArrayList<String> clauses = new ArrayList<>();
-        for (String token : tokens) {
+        for (String token : safeTokens) {
             String like = "%" + token + "%";
             clauses.add("(title LIKE ? OR description LIKE ? OR topic_tags LIKE ?)");
             args.add(like);
@@ -182,6 +188,20 @@ final class PackRouteSearchSqlPolicy {
                 "bm25"
             )
             : noBm25RouteFtsOrder(queryTerms);
+    }
+
+    private static List<String> usableValues(List<String> values) {
+        if (values == null || values.isEmpty()) {
+            return Collections.emptyList();
+        }
+        ArrayList<String> usable = new ArrayList<>();
+        for (String value : values) {
+            String trimmed = value == null ? "" : value.trim();
+            if (!trimmed.isEmpty()) {
+                usable.add(trimmed);
+            }
+        }
+        return usable;
     }
 
     static final class RouteFtsSqlPlan {

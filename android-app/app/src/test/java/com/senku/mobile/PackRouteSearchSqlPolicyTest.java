@@ -3,6 +3,7 @@ package com.senku.mobile;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Test;
@@ -180,6 +181,36 @@ public final class PackRouteSearchSqlPolicyTest {
     }
 
     @Test
+    public void ftsPlansNoOpWhenCategoriesAreNullOrBlank() {
+        PackRepository.QueryTerms queryTerms = PackRepository.QueryTerms.fromQuery("how do i build a house");
+        PackRepository.QueryTerms specTerms = PackRepository.QueryTerms.fromText("site foundation", queryTerms.routeProfile);
+
+        PackRouteSearchSqlPolicy.RouteFtsSqlPlan nullCategories = PackRouteSearchSqlPolicy.chunkFtsPlan(
+            queryTerms,
+            specTerms,
+            null,
+            72,
+            "chunks_fts",
+            true
+        );
+        PackRouteSearchSqlPolicy.RouteFtsSqlPlan blankCategories = PackRouteSearchSqlPolicy.guideFtsPlan(
+            queryTerms,
+            specTerms,
+            Arrays.asList("", "   ", null),
+            72,
+            "chunks_fts",
+            true
+        );
+
+        assertTrue(nullCategories.isEmpty());
+        assertEquals(PackRepository.buildFtsQuery(specTerms, 8, true), nullCategories.ftsQuery);
+        assertTrue(nullCategories.args.isEmpty());
+        assertTrue(blankCategories.isEmpty());
+        assertEquals(PackRepository.buildFtsQuery(specTerms, 8, true), blankCategories.ftsQuery);
+        assertTrue(blankCategories.args.isEmpty());
+    }
+
+    @Test
     public void chunkLikePlanPreservesSqlAndRepeatedTokenArgs() {
         PackRouteSearchSqlPolicy.RouteLikeSqlPlan plan = PackRouteSearchSqlPolicy.chunkLikePlan(
             List.of("alpha", "beta"),
@@ -235,6 +266,39 @@ public final class PackRouteSearchSqlPolicyTest {
     }
 
     @Test
+    public void chunkLikePlanNoOpsWhenTokensOrCategoriesAreNullOrBlank() {
+        PackRouteSearchSqlPolicy.RouteLikeSqlPlan nullTokens = PackRouteSearchSqlPolicy.chunkLikePlan(
+            null,
+            List.of("building"),
+            42
+        );
+        PackRouteSearchSqlPolicy.RouteLikeSqlPlan blankTokens = PackRouteSearchSqlPolicy.chunkLikePlan(
+            Arrays.asList("", "   ", null),
+            List.of("building"),
+            42
+        );
+        PackRouteSearchSqlPolicy.RouteLikeSqlPlan nullCategories = PackRouteSearchSqlPolicy.chunkLikePlan(
+            List.of("alpha"),
+            null,
+            42
+        );
+        PackRouteSearchSqlPolicy.RouteLikeSqlPlan blankCategories = PackRouteSearchSqlPolicy.chunkLikePlan(
+            List.of("alpha"),
+            Arrays.asList("", "   ", null),
+            42
+        );
+
+        assertTrue(nullTokens.isEmpty());
+        assertTrue(nullTokens.args.isEmpty());
+        assertTrue(blankTokens.isEmpty());
+        assertTrue(blankTokens.args.isEmpty());
+        assertTrue(nullCategories.isEmpty());
+        assertTrue(nullCategories.args.isEmpty());
+        assertTrue(blankCategories.isEmpty());
+        assertTrue(blankCategories.args.isEmpty());
+    }
+
+    @Test
     public void guideLikePlanPreservesMetadataOnlySqlAndArgs() {
         PackRouteSearchSqlPolicy.RouteLikeSqlPlan plan = PackRouteSearchSqlPolicy.guideLikePlan(
             List.of("alpha", "beta"),
@@ -273,6 +337,28 @@ public final class PackRouteSearchSqlPolicyTest {
         assertTrue(noTokens.args.isEmpty());
         assertTrue(noCategories.isEmpty());
         assertTrue(noCategories.args.isEmpty());
+    }
+
+    @Test
+    public void guideLikePlanUsesOnlyNonBlankTokensAndCategories() {
+        PackRouteSearchSqlPolicy.RouteLikeSqlPlan plan = PackRouteSearchSqlPolicy.guideLikePlan(
+            Arrays.asList(" alpha ", "", null, "beta"),
+            Arrays.asList(" building ", "   ", null),
+            24
+        );
+
+        assertEquals(
+            "SELECT guide_id, title, category, description, body_markdown, " +
+                "content_role, time_horizon, structure_type, topic_tags " +
+                "FROM guides WHERE category IN (?) " +
+                "AND ((title LIKE ? OR description LIKE ? OR topic_tags LIKE ?) " +
+                "OR (title LIKE ? OR description LIKE ? OR topic_tags LIKE ?)) LIMIT ?",
+            plan.sql
+        );
+        assertEquals(
+            List.of("building", "%alpha%", "%alpha%", "%alpha%", "%beta%", "%beta%", "%beta%", "24"),
+            plan.args
+        );
     }
 
     private static void assertNoBm25OrderArgsBeforeLimit(String query, String expectedLabel) {
