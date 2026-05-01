@@ -183,32 +183,6 @@ public final class PackRepository implements AutoCloseable {
         return answerCardDao.loadCardsForGuideIds(guideIds, limit);
     }
 
-    private ParsedSearchQuery parseSearchQuery(String rawQuery) {
-        String query = emptySafe(rawQuery).trim();
-        if (!query.startsWith(PackAnchorPriorPolicy.DIRECTIVE_PREFIX)) {
-            return new ParsedSearchQuery(query, null);
-        }
-        int markerEnd = query.indexOf(' ');
-        if (markerEnd <= 0) {
-            return new ParsedSearchQuery(query, null);
-        }
-        String payload = query.substring(PackAnchorPriorPolicy.DIRECTIVE_PREFIX.length(), markerEnd);
-        String[] parts = payload.split(":");
-        if (parts.length != 3) {
-            return new ParsedSearchQuery(query, null);
-        }
-        try {
-            AnchorPriorDirective directive = new AnchorPriorDirective(
-                parts[0].trim(),
-                Integer.parseInt(parts[1].trim()),
-                Integer.parseInt(parts[2].trim())
-            );
-            return new ParsedSearchQuery(query.substring(markerEnd + 1).trim(), directive);
-        } catch (NumberFormatException ignored) {
-            return new ParsedSearchQuery(query, null);
-        }
-    }
-
     private Map<String, Map<String, Double>> loadAnchorRelatedLinkWeights() {
         LinkedHashMap<String, Set<String>> directedLinks = new LinkedHashMap<>();
         try {
@@ -316,7 +290,7 @@ public final class PackRepository implements AutoCloseable {
     }
 
     public List<SearchResult> search(String rawQuery, int limit) {
-        ParsedSearchQuery parsedQuery = parseSearchQuery(rawQuery);
+        PackSearchQueryParser.ParsedSearchQuery parsedQuery = PackSearchQueryParser.parse(rawQuery);
         return search(parsedQuery.query, limit, parsedQuery.anchorPrior);
     }
 
@@ -2974,16 +2948,6 @@ public final class PackRepository implements AutoCloseable {
             this.anchorGuideId = anchorGuideId == null ? "" : anchorGuideId;
             this.turnsSinceAnchor = turnsSinceAnchor;
             this.turnCount = turnCount;
-        }
-    }
-
-    private static final class ParsedSearchQuery {
-        final String query;
-        final AnchorPriorDirective anchorPrior;
-
-        ParsedSearchQuery(String query, AnchorPriorDirective anchorPrior) {
-            this.query = query == null ? "" : query;
-            this.anchorPrior = anchorPrior;
         }
     }
 
