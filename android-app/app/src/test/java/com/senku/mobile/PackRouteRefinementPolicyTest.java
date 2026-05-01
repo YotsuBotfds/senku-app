@@ -120,6 +120,97 @@ public final class PackRouteRefinementPolicyTest {
         );
     }
 
+    @Test
+    public void broadWaterRefinementBonusPenalizesGenericInventorySection() {
+        String query = "what's the safest way to store treated water long term";
+        SearchResult inventory = result(
+            "Home Inventory",
+            "Water Storage & Purification",
+            "GD-373",
+            "resource-management",
+            "starter",
+            "long_term",
+            "water_storage",
+            "water_storage",
+            "Keep a broad household inventory with basic emergency supplies."
+        );
+
+        PackRepository.QueryTerms queryTerms = PackRepository.QueryTerms.fromQuery(query);
+        int bonus = PackRouteRefinementPolicy.broadWaterRouteRefinementBonus(queryTerms, inventory);
+
+        assertTrue(bonus <= -40);
+        assertEquals(
+            PackRepository.broadWaterRouteRefinementBonusForTest(query, inventory),
+            bonus
+        );
+    }
+
+    @Test
+    public void broadWaterRefinementBonusBoostsSpecializedPlanningGuide() {
+        String query = "what's the safest way to store treated water long term";
+        SearchResult planning = result(
+            "Storage & Material Management",
+            "",
+            "GD-252",
+            "resource-management",
+            "planning",
+            "long_term",
+            "water_storage",
+            "water_storage,container_sanitation,water_rotation",
+            "Use food-safe containers, sanitize them, and rotate treated water on a schedule.",
+            "guide-focus"
+        );
+
+        PackRepository.QueryTerms queryTerms = PackRepository.QueryTerms.fromQuery(query);
+        int bonus = PackRouteRefinementPolicy.broadWaterRouteRefinementBonus(queryTerms, planning);
+
+        assertTrue(bonus >= 30);
+        assertEquals(
+            PackRepository.broadWaterRouteRefinementBonusForTest(query, planning),
+            bonus
+        );
+    }
+
+    @Test
+    public void broadWaterOrderingPriorityDemotesContainerCraftGuideWithoutBuildIntent() {
+        String query = "what's the safest way to store treated water long term";
+        SearchResult craftGuide = result(
+            "Storage Container and Vessel Making",
+            "",
+            "GD-417",
+            "building",
+            "safety",
+            "long_term",
+            "water_storage",
+            "water_storage,container_sanitation,water_rotation",
+            "Make storage vessels and containers from available materials.",
+            "guide-focus"
+        );
+        SearchResult planning = result(
+            "Storage & Material Management",
+            "",
+            "GD-252",
+            "resource-management",
+            "planning",
+            "long_term",
+            "water_storage",
+            "water_storage,container_sanitation,water_rotation",
+            "Use food-safe containers, sanitize them, and rotate treated water on a schedule.",
+            "guide-focus"
+        );
+
+        PackRepository.QueryTerms queryTerms = PackRepository.QueryTerms.fromQuery(query);
+
+        assertTrue(
+            PackRouteRefinementPolicy.broadWaterRouteOrderingPriority(queryTerms, planning)
+                > PackRouteRefinementPolicy.broadWaterRouteOrderingPriority(queryTerms, craftGuide)
+        );
+        assertEquals(
+            PackRepository.broadWaterRouteOrderingPriorityForTest(query, planning),
+            PackRouteRefinementPolicy.broadWaterRouteOrderingPriority(queryTerms, planning)
+        );
+    }
+
     private static SearchResult result(
         String title,
         String sectionHeading,
@@ -131,6 +222,32 @@ public final class PackRouteRefinementPolicyTest {
         String topicTags,
         String snippet
     ) {
+        return result(
+            title,
+            sectionHeading,
+            guideId,
+            category,
+            contentRole,
+            timeHorizon,
+            structureType,
+            topicTags,
+            snippet,
+            "route-focus"
+        );
+    }
+
+    private static SearchResult result(
+        String title,
+        String sectionHeading,
+        String guideId,
+        String category,
+        String contentRole,
+        String timeHorizon,
+        String structureType,
+        String topicTags,
+        String snippet,
+        String retrievalMode
+    ) {
         return new SearchResult(
             title,
             "",
@@ -139,7 +256,7 @@ public final class PackRouteRefinementPolicyTest {
             guideId,
             sectionHeading,
             category,
-            "route-focus",
+            retrievalMode,
             contentRole,
             timeHorizon,
             structureType,

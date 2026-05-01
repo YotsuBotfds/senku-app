@@ -1676,7 +1676,7 @@ public final class PackRepository implements AutoCloseable {
     }
 
     static int broadWaterRouteRefinementBonusForTest(String query, SearchResult result) {
-        return broadWaterRouteRefinementBonus(QueryTerms.fromQuery(query), result);
+        return PackRouteRefinementPolicy.broadWaterRouteRefinementBonus(QueryTerms.fromQuery(query), result);
     }
 
     static boolean matchesSpecializedRouteMetadata(
@@ -1694,66 +1694,11 @@ public final class PackRepository implements AutoCloseable {
     }
 
     static int broadWaterRouteRefinementBonus(QueryTerms queryTerms, SearchResult result) {
-        if (queryTerms == null || result == null || queryTerms.metadataProfile == null) {
-            return 0;
-        }
-        QueryMetadataProfile metadataProfile = queryTerms.metadataProfile;
-        if (!"water_storage".equals(metadataProfile.preferredStructureType())
-            || metadataProfile.hasExplicitTopic("water_distribution")) {
-            return 0;
-        }
-
-        int overlap = metadataProfile.preferredTopicOverlapCount(result.topicTags);
-        String normalizedRole = emptySafe(result.contentRole).trim().toLowerCase(QUERY_LOCALE);
-        String normalizedMode = emptySafe(result.retrievalMode).trim().toLowerCase(QUERY_LOCALE);
-        String normalizedTitle = emptySafe(result.title).trim().toLowerCase(QUERY_LOCALE);
-        String normalizedSection = emptySafe(result.sectionHeading).trim().toLowerCase(QUERY_LOCALE);
-        boolean containerMakingIntent = hasWaterStorageContainerMakingIntent(queryTerms.queryLower);
-
-        int score = 0;
-        if (("planning".equals(normalizedRole) || "subsystem".equals(normalizedRole)) && overlap >= 2) {
-            score += 24;
-        } else if ("safety".equals(normalizedRole) && overlap >= 2) {
-            score += 12;
-        }
-        if ("guide-focus".equals(normalizedMode) && overlap >= 2) {
-            score += 18;
-        }
-        if (overlap >= 2
-            && (normalizedSection.contains("container")
-                || normalizedSection.contains("rotation")
-                || normalizedSection.contains("inspection")
-                || normalizedSection.contains("storage strategy")
-                || normalizedSection.contains("purification"))) {
-            score += 12;
-        }
-        if (!containerMakingIntent
-            && (normalizedTitle.contains("making")
-                || normalizedTitle.contains("container")
-                || normalizedTitle.contains("vessel"))) {
-            score -= 22;
-        }
-        if (!containerMakingIntent
-            && "guide-focus".equals(normalizedMode)
-            && emptySafe(result.sectionHeading).trim().isEmpty()
-            && ("building".equals(emptySafe(result.category).trim().toLowerCase(QUERY_LOCALE))
-                || "crafts".equals(emptySafe(result.category).trim().toLowerCase(QUERY_LOCALE)))) {
-            score -= 14;
-        }
-        if ("starter".equals(normalizedRole) && overlap < 2) {
-            score -= 22;
-        }
-        if ("route-focus".equals(normalizedMode) && overlap < 2) {
-            score -= 12;
-        }
-        if (normalizedTitle.contains("inventory") && overlap < 2) {
-            score -= 32;
-        }
-        return score;
+        return PackRouteRefinementPolicy.broadWaterRouteRefinementBonus(queryTerms, result);
     }
 
     static int broadWaterRouteOrderingPriorityForTest(String query, SearchResult result) {
-        return broadWaterRouteOrderingPriority(QueryTerms.fromQuery(query), result);
+        return PackRouteRefinementPolicy.broadWaterRouteOrderingPriority(QueryTerms.fromQuery(query), result);
     }
 
     static int currentHeadRouteRefinementBonusForTest(String query, SearchResult result) {
@@ -1773,29 +1718,7 @@ public final class PackRepository implements AutoCloseable {
     }
 
     static int broadWaterRouteOrderingPriority(QueryTerms queryTerms, SearchResult result) {
-        if (queryTerms == null || result == null || queryTerms.metadataProfile == null) {
-            return 0;
-        }
-        QueryMetadataProfile metadataProfile = queryTerms.metadataProfile;
-        if (!"water_storage".equals(metadataProfile.preferredStructureType())
-            || metadataProfile.hasExplicitTopic("water_distribution")) {
-            return 0;
-        }
-
-        int overlap = metadataProfile.preferredTopicOverlapCount(result.topicTags);
-        String normalizedMode = emptySafe(result.retrievalMode).trim().toLowerCase(QUERY_LOCALE);
-        int priority = broadWaterRouteRefinementBonus(queryTerms, result) * 4 + overlap;
-        if ("guide-focus".equals(normalizedMode) && overlap >= 2) {
-            priority += 4;
-        }
-        if ("route-focus".equals(normalizedMode) && overlap < 2) {
-            priority -= 2;
-        }
-        return priority;
-    }
-
-    private static boolean hasWaterStorageContainerMakingIntent(String queryLower) {
-        return PackStructuredAnchorPolicy.hasWaterStorageContainerMakingIntent(queryLower);
+        return PackRouteRefinementPolicy.broadWaterRouteOrderingPriority(queryTerms, result);
     }
 
     static boolean shouldKeepBroadWaterRouteRowForTest(String query, SearchResult result) {
