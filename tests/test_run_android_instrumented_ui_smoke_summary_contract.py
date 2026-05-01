@@ -97,6 +97,7 @@ class RunAndroidInstrumentedUiSmokeSummaryContractTests(unittest.TestCase):
         self.assertIn('"savedNavigationBackReturnsManualHomeDestination"', self.script)
         self.assertIn('"guideDetailSaveButtonSurfacesGuideInSavedDestinationAndUnsaveRemovesIt"', self.script)
         self.assertIn('"answerModeProvenanceOpenBackReturnsAnswerContext"', self.script)
+        self.assertIn('"emergencyAnswerVisibleBackButtonReturnsManualHomeDestination"', self.script)
         self.assertIn('${BaseClass}#$methodName', self.script)
 
     def test_functional_saved_profile_includes_real_save_unsave_semantics(self):
@@ -106,6 +107,16 @@ class RunAndroidInstrumentedUiSmokeSummaryContractTests(unittest.TestCase):
                 "guideDetailSaveButtonSurfacesGuideInSavedDestinationAndUnsaveRemovesIt",
                 "savedTabImeSubmitRoutesToSearchResultsNotAnswerDetail",
                 "savedTabPinnedGuideButtonOpensGuideDetailAndBackReturnsSaved"
+            )
+        }'''
+        self.assertIn(expected_block, self.script)
+
+    def test_functional_back_provenance_profile_includes_emergency_visible_back_proof(self):
+        expected_block = '''"functional-back-provenance" {
+            return @(
+                "answerModeProvenanceOpenBackReturnsAnswerContext",
+                "emergencyAnswerVisibleBackButtonReturnsManualHomeDestination",
+                "answerSourceChipTapFollowsAdvertisedActionForSeededGuideSources"
             )
         }'''
         self.assertIn(expected_block, self.script)

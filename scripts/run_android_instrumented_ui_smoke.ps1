@@ -1243,6 +1243,7 @@ function Resolve-InstrumentationMethodNames {
         "functional-back-provenance" {
             return @(
                 "answerModeProvenanceOpenBackReturnsAnswerContext",
+                "emergencyAnswerVisibleBackButtonReturnsManualHomeDestination",
                 "answerSourceChipTapFollowsAdvertisedActionForSeededGuideSources"
             )
         }

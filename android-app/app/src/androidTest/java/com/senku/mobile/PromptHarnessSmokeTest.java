@@ -1165,6 +1165,55 @@ public final class PromptHarnessSmokeTest {
     }
 
     @Test
+    public void emergencyAnswerVisibleBackButtonReturnsManualHomeDestination() {
+        ActivityScenario<MainActivity> scenario = launchProductReviewMainActivity();
+        try {
+            awaitHarnessIdle();
+            Assert.assertTrue(
+                "home search input never appeared before emergency visible-back smoke; harness signals="
+                    + HarnessTestSignals.snapshot(),
+                device.wait(Until.hasObject(By.res(APP_PACKAGE, "search_input")), SEARCH_WAIT_MS)
+            );
+            assertResumedManualHomeDestination("emergency visible-back smoke should start from manual home");
+
+            scenario.onActivity(activity -> activity.startActivity(emergencyBurnHazardAnswerIntent(activity)));
+            Assert.assertTrue(
+                "emergency answer detail should resume before visible-back proof; harness signals="
+                    + HarnessTestSignals.snapshot(),
+                waitForResumedActivity(DetailActivity.class, DETAIL_WAIT_MS)
+            );
+            Assert.assertTrue(
+                "emergency answer should render before visible-back proof; harness signals="
+                    + HarnessTestSignals.snapshot(),
+                waitForDetailBodyReady(DETAIL_WAIT_MS, 8)
+            );
+            Assert.assertTrue(
+                "emergency visible-back proof should keep source or handoff context visible",
+                waitForVisibleEmergencySourceOrHandoffContext(DETAIL_WAIT_MS)
+            );
+            Assert.assertTrue(
+                "stacked emergency answer should expose a visible Back affordance before click; "
+                    + describeResumedActivityAndHarnessSignals(),
+                clickVisibleViewOrContentDescription(
+                    "detail_back_button",
+                    R.string.detail_back_content_description,
+                    DETAIL_WAIT_MS
+                )
+            );
+
+            waitForMainSearchInputReady(SEARCH_WAIT_MS);
+            Assert.assertFalse(
+                "visible Back from stacked emergency answer should finish the detail activity",
+                isResumedActivity(DetailActivity.class)
+            );
+            assertResumedManualHomeDestination("visible Back from emergency answer should return to manual home");
+            captureUiState("emergency_answer_visible_back_manual_home");
+        } finally {
+            closeScenarioLeniently(scenario);
+        }
+    }
+
+    @Test
     public void explicitSearchAfterAnswerBackClearsAskOwnership() {
         ActivityScenario<MainActivity> scenario = launchProductReviewMainActivity();
         try {
@@ -2064,45 +2113,7 @@ public final class PromptHarnessSmokeTest {
     @Test
     public void emergencyPortraitAnswerShowsImmediateActionState() {
         Context context = ApplicationProvider.getApplicationContext();
-        ArrayList<SearchResult> sources = new ArrayList<>();
-        sources.add(new SearchResult(
-            "Foundry & Metal Casting - §1 Area readiness",
-            "Emergency answer-card anchor",
-            "A single drop of water contacting molten metal can trigger violent steam explosion.",
-            "Stop work immediately, clear the floor, and confirm two paths of egress.",
-            "GD-132",
-            "Foundry & Metal Casting",
-            "workshop",
-            "reviewed"
-        ));
-        ArrayList<String> reviewedSourceGuideIds = new ArrayList<>();
-        reviewedSourceGuideIds.add("GD-132");
-        ReviewedCardMetadata reviewedCardMetadata = new ReviewedCardMetadata(
-            "foundry_casting_area_readiness_boundary",
-            "GD-132",
-            "reviewed",
-            "runtime_citation_required",
-            ReviewedCardMetadata.PROVENANCE_REVIEWED_CARD_RUNTIME,
-            reviewedSourceGuideIds
-        );
-        Intent intent = DetailActivity.newAnswerIntent(
-            context,
-            "Burn hazard response",
-            "Offline answer | deterministic | instant",
-            "Short answer:\nStop work immediately. Move to minimum 5 m from the active work zone. Confirm two paths of egress.\n\n"
-                + "Steps:\n1. Stop all hot work. No new charges, no new pours.\n"
-                + "2. Clear the floor to a 5 m radius. Move personnel upwind.\n"
-                + "3. Confirm two paths of egress. Doors and roll-up openings must be unobstructed.\n"
-                + "4. Notify the area owner. GD-132 §1 is current owner.\n\n"
-                + "Limits or safety:\nTreat water near molten metal as an extreme burn hazard and keep every tool, mold, crucible, and surface dry.",
-            sources,
-            null,
-            "emergency-portrait-answer-smoke",
-            "answer_card:foundry_casting_area_readiness_boundary",
-            OfflineAnswerEngine.AnswerMode.CONFIDENT,
-            OfflineAnswerEngine.ConfidenceLabel.HIGH,
-            reviewedCardMetadata
-        );
+        Intent intent = emergencyBurnHazardAnswerIntent(context);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 
         try (ActivityScenario<DetailActivity> scenario = ActivityScenario.launch(intent)) {
@@ -2179,6 +2190,48 @@ public final class PromptHarnessSmokeTest {
             });
             captureUiState("emergency_portrait_answer");
         }
+    }
+
+    private Intent emergencyBurnHazardAnswerIntent(Context context) {
+        ArrayList<SearchResult> sources = new ArrayList<>();
+        sources.add(new SearchResult(
+            "Foundry & Metal Casting - §1 Area readiness",
+            "Emergency answer-card anchor",
+            "A single drop of water contacting molten metal can trigger violent steam explosion.",
+            "Stop work immediately, clear the floor, and confirm two paths of egress.",
+            "GD-132",
+            "Foundry & Metal Casting",
+            "workshop",
+            "reviewed"
+        ));
+        ArrayList<String> reviewedSourceGuideIds = new ArrayList<>();
+        reviewedSourceGuideIds.add("GD-132");
+        ReviewedCardMetadata reviewedCardMetadata = new ReviewedCardMetadata(
+            "foundry_casting_area_readiness_boundary",
+            "GD-132",
+            "reviewed",
+            "runtime_citation_required",
+            ReviewedCardMetadata.PROVENANCE_REVIEWED_CARD_RUNTIME,
+            reviewedSourceGuideIds
+        );
+        return DetailActivity.newAnswerIntent(
+            context,
+            "Burn hazard response",
+            "Offline answer | deterministic | instant",
+            "Short answer:\nStop work immediately. Move to minimum 5 m from the active work zone. Confirm two paths of egress.\n\n"
+                + "Steps:\n1. Stop all hot work. No new charges, no new pours.\n"
+                + "2. Clear the floor to a 5 m radius. Move personnel upwind.\n"
+                + "3. Confirm two paths of egress. Doors and roll-up openings must be unobstructed.\n"
+                + "4. Notify the area owner. GD-132 §1 is current owner.\n\n"
+                + "Limits or safety:\nTreat water near molten metal as an extreme burn hazard and keep every tool, mold, crucible, and surface dry.",
+            sources,
+            null,
+            "emergency-portrait-answer-smoke",
+            "answer_card:foundry_casting_area_readiness_boundary",
+            OfflineAnswerEngine.AnswerMode.CONFIDENT,
+            OfflineAnswerEngine.ConfidenceLabel.HIGH,
+            reviewedCardMetadata
+        );
     }
 
     @Test
