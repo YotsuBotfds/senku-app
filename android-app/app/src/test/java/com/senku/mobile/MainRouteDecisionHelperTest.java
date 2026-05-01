@@ -330,6 +330,56 @@ public final class MainRouteDecisionHelperTest {
     }
 
     @Test
+    public void explicitSearchFromAskResultsOwnsSearchSurfaceAndClearsAskLane() {
+        MainRouteDecisionHelper.RouteState askResults =
+            new MainRouteDecisionHelper.RouteState(
+                MainRouteDecisionHelper.Surface.ASK_RESULTS,
+                BottomTabDestination.ASK,
+                true
+            );
+
+        assertTransition(
+            MainRouteDecisionHelper.enterSearch(askResults),
+            MainRouteDecisionHelper.Surface.SEARCH_RESULTS,
+            BottomTabDestination.HOME,
+            false,
+            MainRouteDecisionHelper.Effect.FOCUS_SEARCH_INPUT
+        );
+        assertTransition(
+            MainRouteDecisionHelper.openPhoneTab(askResults, BottomTabDestination.SEARCH),
+            MainRouteDecisionHelper.Surface.SEARCH_RESULTS,
+            BottomTabDestination.HOME,
+            false,
+            MainRouteDecisionHelper.Effect.FOCUS_SEARCH_INPUT
+        );
+    }
+
+    @Test
+    public void explicitAskFromSearchResultsOwnsAskSurfaceAndActivatesAskLane() {
+        MainRouteDecisionHelper.RouteState searchResults =
+            new MainRouteDecisionHelper.RouteState(
+                MainRouteDecisionHelper.Surface.SEARCH_RESULTS,
+                BottomTabDestination.HOME,
+                false
+            );
+
+        assertTransition(
+            MainRouteDecisionHelper.enterAsk(searchResults),
+            MainRouteDecisionHelper.Surface.ASK_RESULTS,
+            BottomTabDestination.ASK,
+            true,
+            MainRouteDecisionHelper.Effect.FOCUS_ASK_INPUT
+        );
+        assertTransition(
+            MainRouteDecisionHelper.openPhoneTab(searchResults, BottomTabDestination.ASK),
+            MainRouteDecisionHelper.Surface.ASK_RESULTS,
+            BottomTabDestination.ASK,
+            true,
+            MainRouteDecisionHelper.Effect.FOCUS_ASK_INPUT
+        );
+    }
+
+    @Test
     public void zeroResultSearchKeepsExplicitSearchRouteUntilBack() {
         MainRouteDecisionHelper.RouteState zeroResultSearch =
             MainRouteDecisionHelper.enterSearch(MainRouteDecisionHelper.browseHome()).routeState;
@@ -915,6 +965,80 @@ public final class MainRouteDecisionHelperTest {
             BottomTabDestination.PINS,
             false
         );
+    }
+
+    @Test
+    public void explicitAskSearchFlowDestinationsKeepResultRouteOwnershipAligned() {
+        MainRouteDecisionHelper.RouteState searchResults =
+            new MainRouteDecisionHelper.RouteState(
+                MainRouteDecisionHelper.Surface.SEARCH_RESULTS,
+                BottomTabDestination.HOME,
+                false
+            );
+        MainRouteDecisionHelper.RouteState askResults =
+            new MainRouteDecisionHelper.RouteState(
+                MainRouteDecisionHelper.Surface.ASK_RESULTS,
+                BottomTabDestination.ASK,
+                true
+            );
+
+        assertRoute(
+            MainRouteDecisionHelper.routeStateForExplicitFlowDestination(searchResults, BottomTabDestination.ASK),
+            MainRouteDecisionHelper.Surface.ASK_RESULTS,
+            BottomTabDestination.ASK,
+            true
+        );
+        assertRoute(
+            MainRouteDecisionHelper.routeStateForExplicitFlowDestination(askResults, BottomTabDestination.SEARCH),
+            MainRouteDecisionHelper.Surface.SEARCH_RESULTS,
+            BottomTabDestination.HOME,
+            false
+        );
+        assertRoute(
+            MainRouteDecisionHelper.routeStateForExplicitFlowDestination(
+                new MainRouteDecisionHelper.RouteState(
+                    MainRouteDecisionHelper.Surface.ASK_RESULTS,
+                    BottomTabDestination.HOME,
+                    true
+                ),
+                BottomTabDestination.SEARCH
+            ),
+            MainRouteDecisionHelper.Surface.SEARCH_RESULTS,
+            BottomTabDestination.HOME,
+            false
+        );
+        assertRoute(
+            MainRouteDecisionHelper.routeStateForExplicitFlowDestination(
+                new MainRouteDecisionHelper.RouteState(
+                    MainRouteDecisionHelper.Surface.SEARCH_RESULTS,
+                    BottomTabDestination.ASK,
+                    false
+                ),
+                BottomTabDestination.ASK
+            ),
+            MainRouteDecisionHelper.Surface.ASK_RESULTS,
+            BottomTabDestination.ASK,
+            true
+        );
+    }
+
+    @Test
+    public void resultRoutesRemainAlignedAcrossAskSearchTabSwitchSequence() {
+        MainRouteDecisionHelper.RouteState route =
+            new MainRouteDecisionHelper.RouteState(
+                MainRouteDecisionHelper.Surface.ASK_RESULTS,
+                BottomTabDestination.ASK,
+                true
+            );
+
+        route = MainRouteDecisionHelper.openPhoneTab(route, BottomTabDestination.SEARCH).routeState;
+        assertRoute(route, MainRouteDecisionHelper.Surface.SEARCH_RESULTS, BottomTabDestination.HOME, false);
+
+        route = MainRouteDecisionHelper.openPhoneTab(route, BottomTabDestination.ASK).routeState;
+        assertRoute(route, MainRouteDecisionHelper.Surface.ASK_RESULTS, BottomTabDestination.ASK, true);
+
+        route = MainRouteDecisionHelper.openPhoneTab(route, BottomTabDestination.SEARCH).routeState;
+        assertRoute(route, MainRouteDecisionHelper.Surface.SEARCH_RESULTS, BottomTabDestination.HOME, false);
     }
 
     @Test
