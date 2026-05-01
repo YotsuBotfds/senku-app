@@ -1445,46 +1445,7 @@ public final class PackRepository implements AutoCloseable {
         QueryTerms queryTerms,
         List<SearchResult> rankedResults
     ) {
-        if (!queryTerms.metadataProfile.hasExplicitTopic("water_distribution")
-            || rankedResults == null
-            || rankedResults.isEmpty()) {
-            return null;
-        }
-
-        SearchResult best = null;
-        int bestScore = Integer.MIN_VALUE;
-        for (int index = 0; index < rankedResults.size(); index++) {
-            SearchResult candidate = rankedResults.get(index);
-            if (!hasDirectAnchorSignal(queryTerms, candidate)) {
-                continue;
-            }
-
-            int score = Math.max(1, PackSupportScoringPolicy.supportBreakdown(queryTerms, candidate).supportWithMetadata())
-                + Math.max(0, 12 - index);
-            String category = emptySafe(candidate.category).trim().toLowerCase(QUERY_LOCALE);
-            if ("building".equals(category)) {
-                score += 10;
-            } else if ("utility".equals(category)) {
-                score += 8;
-            }
-            if (hasWaterDistributionTitleSignal(candidate)) {
-                score += 12;
-            }
-            score += waterDistributionAnchorFocusBonus(candidate);
-
-            String retrievalMode = emptySafe(candidate.retrievalMode).trim().toLowerCase(QUERY_LOCALE);
-            if ("route-focus".equals(retrievalMode)) {
-                score += 10;
-            } else if ("guide-focus".equals(retrievalMode)) {
-                score += emptySafe(candidate.sectionHeading).trim().isEmpty() ? -4 : 12;
-            }
-
-            if (score > bestScore) {
-                bestScore = score;
-                best = candidate;
-            }
-        }
-        return best;
+        return PackWaterDistributionAnchorPolicy.selectExplicitWaterDistributionAnchor(queryTerms, rankedResults);
     }
 
     private static SearchResult selectExplicitWaterStorageAnchor(
@@ -2889,60 +2850,8 @@ public final class PackRepository implements AutoCloseable {
         return PackRouteSignalPolicy.hasWaterDistributionTitleSignal(result);
     }
 
-    private static boolean hasStrongWaterDistributionGuideSignal(SearchResult result) {
-        return PackRouteSignalPolicy.hasStrongWaterDistributionGuideSignal(result);
-    }
-
     private static boolean hasWaterDistributionDetailSignal(SearchResult result) {
         return PackRouteSignalPolicy.hasWaterDistributionDetailSignal(result);
-    }
-
-    private static int waterDistributionAnchorFocusBonus(SearchResult result) {
-        String normalizedTitle = normalizeMatchText(emptySafe(result.title));
-        String normalizedSection = normalizeMatchText(emptySafe(result.sectionHeading));
-        String normalized = normalizeMatchText(emptySafe(result.title) + " " + emptySafe(result.sectionHeading));
-        int bonus = 0;
-        String contentRole = emptySafe(result.contentRole).trim().toLowerCase(QUERY_LOCALE);
-        String structureType = emptySafe(result.structureType).trim().toLowerCase(QUERY_LOCALE);
-        if (hasStrongWaterDistributionGuideSignal(result)) {
-            bonus += 10;
-        }
-        if ("planning".equals(contentRole) || "subsystem".equals(contentRole)) {
-            bonus += 10;
-        } else if ("reference".equals(contentRole)) {
-            bonus -= 8;
-        }
-        if ("water_distribution".equals(structureType)) {
-            bonus += 6;
-        }
-        if (normalized.contains("distribution")) {
-            bonus += 6;
-        }
-        if (normalized.contains("storage tank") || normalized.contains("cistern")) {
-            bonus += 4;
-        }
-        if (normalizedTitle.contains("lifecycle")) {
-            bonus -= 18;
-        }
-        if (normalizedSection.startsWith("phase ")) {
-            bonus -= 12;
-        }
-        if (normalized.contains("see also") || normalized.contains("checklist")) {
-            bonus -= 16;
-        }
-        if (normalized.contains("preventive maintenance") || normalized.contains("system care")) {
-            bonus -= 14;
-        }
-        if (normalizedTitle.contains("drilling") || normalizedTitle.contains("troubleshooting")) {
-            bonus -= 12;
-        }
-        if (normalized.contains("plumbing") && !normalized.contains("distribution")) {
-            bonus -= 6;
-        }
-        if (normalized.contains("water system") && !normalized.contains("distribution")) {
-            bonus -= 4;
-        }
-        return bonus;
     }
 
     private PackFtsRuntimeDetector.Runtime detectFtsAvailability() {

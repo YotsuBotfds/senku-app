@@ -3567,24 +3567,22 @@ public final class MainActivity extends AppCompatActivity {
     }
 
     private void filterGuidesByCategory(String bucketKey, String label) {
-        if (allGuides.isEmpty()) {
+        MainCategoryFilterController.FilterRoute route = MainCategoryFilterController.route(
+            allGuides,
+            bucketKey,
+            label,
+            currentMainRouteState()
+        );
+        if (route.shouldBrowseGuides()) {
             browseGuides();
             return;
         }
-        applyMainRouteState(MainRouteDecisionHelper.filterGuidesByCategory(currentMainRouteState()));
-        ArrayList<SearchResult> filtered = new ArrayList<>();
-        for (SearchResult result : allGuides) {
-            if (matchesCategoryBucket(result, bucketKey)) {
-                filtered.add(result);
-            }
-        }
-        String filterLabel = buildCategoryFilterLabel(label, filtered.size());
-        MainResultPublicationPolicy publication =
-            MainResultPublicationPolicy.resultSurfaceWithSearchChrome("", filterLabel, filtered.size());
-        publishResultItems(publication, filtered);
+        applyMainRouteState(route.routeStateBeforePublication());
+        MainResultPublicationPolicy publication = route.publication();
+        publishResultItems(publication, route.filteredResults());
         resultsHeader.setText(isTabletSearchLayout()
-            ? buildTabletSearchHeader(filterLabel, filtered.size())
-            : filterLabel);
+            ? buildTabletSearchHeader(route.searchQueryLabel(), route.resultCount())
+            : route.searchQueryLabel());
         publishSearchQueryChrome(publication);
         setBusy("Category ready", false);
         updatePortraitPhoneResultsPriority();

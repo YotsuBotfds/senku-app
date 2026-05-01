@@ -24,71 +24,101 @@ final class PackRouteRefinementPolicy {
         String candidateStructure = normalized(result.structureType);
         String category = normalized(result.category);
         String role = normalized(result.contentRole);
+        return glassmakingCurrentHeadBonus(structure, titleSection, role)
+            + roofWeatherproofCurrentHeadBonus(queryTerms, structure, titleSection, candidateStructure)
+            + broadHouseCurrentHeadBonus(queryTerms, structure, titleSection, candidateStructure, category);
+    }
+
+    private static int glassmakingCurrentHeadBonus(String structure, String titleSection, String role) {
+        if (!"glassmaking".equals(structure)) {
+            return 0;
+        }
+
         int score = 0;
+        if (titleSection.contains("glass optics ceramics")
+            && titleSection.contains("glassmaking from scratch")) {
+            score += 72;
+        } else if (titleSection.contains("glass optics ceramics")) {
+            score += 34;
+        }
+        if (titleSection.contains("glass making raw materials")
+            && (titleSection.contains("raw materials")
+                || titleSection.contains("batch preparation")
+                || titleSection.contains("furnace construction"))) {
+            score -= 18;
+        }
+        if ("reference".equals(role) && titleSection.contains("raw materials")) {
+            score -= 8;
+        }
+        return score;
+    }
 
-        if ("glassmaking".equals(structure)) {
-            if (titleSection.contains("glass optics ceramics")
-                && titleSection.contains("glassmaking from scratch")) {
-                score += 72;
-            } else if (titleSection.contains("glass optics ceramics")) {
-                score += 34;
-            }
-            if (titleSection.contains("glass making raw materials")
-                && (titleSection.contains("raw materials")
-                    || titleSection.contains("batch preparation")
-                    || titleSection.contains("furnace construction"))) {
-                score -= 18;
-            }
-            if ("reference".equals(role) && titleSection.contains("raw materials")) {
-                score -= 8;
-            }
+    private static int roofWeatherproofCurrentHeadBonus(
+        PackRepository.QueryTerms queryTerms,
+        String structure,
+        String titleSection,
+        String candidateStructure
+    ) {
+        if (!"cabin_house".equals(structure)
+            || (!queryTerms.metadataProfile.hasExplicitTopic("roofing")
+                && !queryTerms.metadataProfile.hasExplicitTopic("weatherproofing"))) {
+            return 0;
         }
 
-        if ("cabin_house".equals(structure)
-            && (queryTerms.metadataProfile.hasExplicitTopic("roofing")
-                || queryTerms.metadataProfile.hasExplicitTopic("weatherproofing"))) {
-            boolean weatherproofQuery = queryTerms.queryLower.contains("weatherproof")
-                || queryTerms.queryLower.contains("rainproof");
-            boolean waterproofQuery = queryTerms.queryLower.contains("waterproof");
-            if (weatherproofQuery && titleSection.contains("insulation weatherproofing")) {
-                score += 72;
-            }
-            if (waterproofQuery && titleSection.contains("waterproofing and sealants")) {
-                score += 48;
-            }
-            if ("cabin_house".equals(candidateStructure)) {
-                score += 18;
-            } else if ("small_watercraft".equals(candidateStructure)) {
-                score -= weatherproofQuery ? 18 : 4;
-            }
-            if (titleSection.contains("construction carpentry")) {
-                score -= 34;
-            }
+        boolean weatherproofQuery = queryTerms.queryLower.contains("weatherproof")
+            || queryTerms.queryLower.contains("rainproof");
+        boolean waterproofQuery = queryTerms.queryLower.contains("waterproof");
+        int score = 0;
+        if (weatherproofQuery && titleSection.contains("insulation weatherproofing")) {
+            score += 72;
+        }
+        if (waterproofQuery && titleSection.contains("waterproofing and sealants")) {
+            score += 48;
+        }
+        if ("cabin_house".equals(candidateStructure)) {
+            score += 18;
+        } else if ("small_watercraft".equals(candidateStructure)) {
+            score -= weatherproofQuery ? 18 : 4;
+        }
+        if (titleSection.contains("construction carpentry")) {
+            score -= 34;
+        }
+        return score;
+    }
+
+    private static int broadHouseCurrentHeadBonus(
+        PackRepository.QueryTerms queryTerms,
+        String structure,
+        String titleSection,
+        String candidateStructure,
+        String category
+    ) {
+        if (!"cabin_house".equals(structure)
+            || queryTerms.metadataProfile.hasExplicitTopicFocus()
+            || !queryTerms.routeProfile.isStarterBuildProject()) {
+            return 0;
         }
 
-        if ("cabin_house".equals(structure)
-            && !queryTerms.metadataProfile.hasExplicitTopicFocus()
-            && queryTerms.routeProfile.isStarterBuildProject()) {
-            if ("cabin_house".equals(candidateStructure)) {
-                score += 32;
-            }
-            if ("building".equals(category)) {
-                score += 12;
-            }
-            if (titleSection.contains("construction carpentry")) {
-                score += 74;
-            }
-            if (titleSection.contains("shelter site selection")) {
-                score -= 64;
-            }
-            if ("emergency_shelter".equals(candidateStructure) || "survival".equals(category)) {
-                score -= 34;
-            }
-            if (titleSection.contains("foundation")
-                || titleSection.contains("wall construction")
-                || titleSection.contains("roofing systems")) {
-                score += 10;
-            }
+        int score = 0;
+        if ("cabin_house".equals(candidateStructure)) {
+            score += 32;
+        }
+        if ("building".equals(category)) {
+            score += 12;
+        }
+        if (titleSection.contains("construction carpentry")) {
+            score += 74;
+        }
+        if (titleSection.contains("shelter site selection")) {
+            score -= 64;
+        }
+        if ("emergency_shelter".equals(candidateStructure) || "survival".equals(category)) {
+            score -= 34;
+        }
+        if (titleSection.contains("foundation")
+            || titleSection.contains("wall construction")
+            || titleSection.contains("roofing systems")) {
+            score += 10;
         }
         return score;
     }
