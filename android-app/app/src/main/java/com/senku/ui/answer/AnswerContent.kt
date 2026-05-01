@@ -211,10 +211,10 @@ fun inferAnswerSurface(
         )
         deterministic
             && sourceCount > 0
-            && ruleId.trim().startsWith("answer_card:")
-            && reviewedCardMetadata.isPresent()
-            && reviewedCardMetadata.provenance == ReviewedCardMetadata.PROVENANCE_REVIEWED_CARD_RUNTIME
-            && reviewedCardMetadata.citedReviewedSourceGuideIds.isNotEmpty() -> AnswerSurfaceInference(
+            && ReviewedCardMetadata.isReviewedRuntimeCardWithCitedSources(
+                ruleId,
+                reviewedCardMetadata,
+            ) -> AnswerSurfaceInference(
             answerSurfaceLabel = AnswerSurfaceLabel.ReviewedCardEvidence,
             answerProvenance = "reviewed_card_runtime",
         )

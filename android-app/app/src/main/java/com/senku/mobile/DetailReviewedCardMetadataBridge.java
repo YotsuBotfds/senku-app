@@ -3,8 +3,6 @@ package com.senku.mobile;
 import android.content.Intent;
 
 final class DetailReviewedCardMetadataBridge {
-    private static final String EXTRA_REVIEWED_CARD_METADATA = "reviewed_card_metadata";
-
     private ReviewedCardMetadata current = ReviewedCardMetadata.empty();
 
     void reset() {
@@ -27,17 +25,16 @@ final class DetailReviewedCardMetadataBridge {
         if (intent == null) {
             return;
         }
-        intent.putExtra(EXTRA_REVIEWED_CARD_METADATA, ReviewedCardMetadata.normalize(metadata));
+        intent.putExtra(ReviewedCardMetadata.TRANSPORT_FIELD, ReviewedCardMetadata.normalize(metadata));
     }
 
     static ReviewedCardMetadata fromIntent(Intent intent) {
         if (intent == null) {
             return ReviewedCardMetadata.empty();
         }
-        Object reviewedMetadataExtra = intent.getSerializableExtra(EXTRA_REVIEWED_CARD_METADATA);
-        return reviewedMetadataExtra instanceof ReviewedCardMetadata
-            ? ReviewedCardMetadata.normalize((ReviewedCardMetadata) reviewedMetadataExtra)
-            : ReviewedCardMetadata.empty();
+        return ReviewedCardMetadata.fromSerializable(
+            intent.getSerializableExtra(ReviewedCardMetadata.TRANSPORT_FIELD)
+        );
     }
 
     ReviewedCardMetadata forRuleId(String turnRuleId, String currentRuleId) {

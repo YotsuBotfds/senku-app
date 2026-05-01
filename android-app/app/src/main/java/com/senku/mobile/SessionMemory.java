@@ -525,8 +525,8 @@ public final class SessionMemory {
                 turnJson.put("rule_id", turn.ruleId);
                 if (turn.reviewedCardMetadata.isPresent()) {
                     turnJson.put(
-                        "reviewed_card_metadata",
-                        toReviewedCardMetadataJson(turn.reviewedCardMetadata)
+                        ReviewedCardMetadata.TRANSPORT_FIELD,
+                        ReviewedCardMetadata.toJsonObject(turn.reviewedCardMetadata)
                     );
                 }
                 if (turn.latencyBreakdown != null) {
@@ -578,7 +578,9 @@ public final class SessionMemory {
                     fromStringJsonArray(turnJson.optJSONArray("sources")),
                     fromSearchResultJsonArray(turnJson.optJSONArray("source_results")),
                     turnJson.optString("rule_id", ""),
-                    fromReviewedCardMetadataJson(turnJson.optJSONObject("reviewed_card_metadata")),
+                    ReviewedCardMetadata.fromJsonObject(
+                        turnJson.optJSONObject(ReviewedCardMetadata.TRANSPORT_FIELD)
+                    ),
                     fromLatencyBreakdownJson(turnJson.optJSONObject("latency_breakdown")),
                     turnJson.optLong("recorded_at_epoch_ms", 0L)
                 );
@@ -1334,38 +1336,6 @@ public final class SessionMemory {
             ));
         }
         return values;
-    }
-
-    private static JSONObject toReviewedCardMetadataJson(ReviewedCardMetadata metadata) throws JSONException {
-        JSONObject output = new JSONObject();
-        ReviewedCardMetadata normalized = ReviewedCardMetadata.normalize(metadata);
-        if (!normalized.isPresent()) {
-            return output;
-        }
-        output.put("card_id", normalized.cardId);
-        output.put("card_guide_id", normalized.cardGuideId);
-        output.put("review_status", normalized.reviewStatus);
-        output.put("runtime_citation_policy", normalized.runtimeCitationPolicy);
-        output.put("provenance", normalized.provenance);
-        output.put(
-            "cited_reviewed_source_guide_ids",
-            toStringJsonArray(normalized.citedReviewedSourceGuideIds)
-        );
-        return output;
-    }
-
-    private static ReviewedCardMetadata fromReviewedCardMetadataJson(JSONObject object) {
-        if (object == null) {
-            return ReviewedCardMetadata.empty();
-        }
-        return new ReviewedCardMetadata(
-            object.optString("card_id", ""),
-            object.optString("card_guide_id", ""),
-            object.optString("review_status", ""),
-            object.optString("runtime_citation_policy", ""),
-            object.optString("provenance", ""),
-            fromStringJsonArray(object.optJSONArray("cited_reviewed_source_guide_ids"))
-        );
     }
 
     private static JSONObject toLatencyBreakdownJson(OfflineAnswerEngine.LatencyBreakdown latencyBreakdown)

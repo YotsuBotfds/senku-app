@@ -19,7 +19,6 @@ final class AnswerCardRuntime {
     private static final String STRUCTURE_TYPE_SAFETY_INFECTED_WOUND = "safety_infected_wound";
     private static final String STRUCTURE_TYPE_SAFETY_INTERNAL_BLEEDING = "safety_internal_bleeding";
     private static final String STRUCTURE_TYPE_FOUNDRY_AREA_READINESS = "foundry_area_readiness";
-    private static final String ANSWER_CARD_RULE_PREFIX = "answer_card:";
     private static final String POISONING_UNKNOWN_INGESTION_CARD_ID = "poisoning_unknown_ingestion";
     private static final String POISONING_UNKNOWN_INGESTION_GUIDE_ID = "GD-898";
     private static final String NEWBORN_DANGER_SEPSIS_CARD_ID = "newborn_danger_sepsis";
@@ -781,7 +780,7 @@ final class AnswerCardRuntime {
         return new AnswerPlan(
             answerText,
             sources,
-            ANSWER_CARD_RULE_PREFIX + card.cardId,
+            ReviewedCardMetadata.answerCardRuleId(card.cardId),
             ReviewedCardMetadata.fromAnswerCard(card)
         );
     }

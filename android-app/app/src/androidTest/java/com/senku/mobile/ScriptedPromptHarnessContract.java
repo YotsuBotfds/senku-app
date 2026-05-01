@@ -66,7 +66,7 @@ final class ScriptedPromptHarnessContract {
         );
         Assert.assertTrue(
             "REVIEWED EVIDENCE expectation must use answer_card rule id",
-            safe(expectedRuleId).trim().startsWith("answer_card:")
+            ReviewedCardMetadata.isAnswerCardRuleId(expectedRuleId)
         );
         Assert.assertFalse(
             "REVIEWED EVIDENCE expectation must assert primary source guide id",

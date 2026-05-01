@@ -44,7 +44,7 @@ final class EmergencySurfacePolicy {
     static boolean isHighRiskEmergency(String ruleId, String category) {
         String normalizedRuleId = normalize(ruleId);
         String normalizedCategory = normalize(category);
-        return normalizedRuleId.startsWith("answer_card:")
+        return ReviewedCardMetadata.isAnswerCardRuleId(normalizedRuleId)
             && hasHighRiskEmergencyRule(normalizedRuleId)
             && hasEmergencyCategory(normalizedCategory);
     }
@@ -72,7 +72,9 @@ final class EmergencySurfacePolicy {
     }
 
     private static boolean isFoundryBurnHazardEmergency(String normalizedRuleId) {
-        return "answer_card:foundry_casting_area_readiness_boundary".equals(normalizedRuleId);
+        return ReviewedCardMetadata
+            .answerCardRuleId("foundry_casting_area_readiness_boundary")
+            .equals(normalizedRuleId);
     }
 
     private static boolean hasEmergencyCategory(String normalizedCategory) {
@@ -98,10 +100,7 @@ final class EmergencySurfacePolicy {
     }
 
     private static boolean isReviewed(String reviewStatus, String provenance) {
-        String normalizedStatus = normalize(reviewStatus);
-        String normalizedProvenance = normalize(provenance);
-        return ("reviewed".equals(normalizedStatus) || "pilot_reviewed".equals(normalizedStatus))
-            && ReviewedCardMetadata.PROVENANCE_REVIEWED_CARD_RUNTIME.equals(normalizedProvenance);
+        return ReviewedCardMetadata.isReviewedRuntimeStatus(reviewStatus, provenance);
     }
 
     private static boolean isLowCoverage(String coverageLabel, String confidenceLabel) {
