@@ -1,6 +1,6 @@
 # Backend Cleanup Phase Tracker
 
-Last updated after commit `20fe6ad` on 2026-04-30.
+Last updated after commit `b96f325` on 2026-04-30.
 
 Purpose: prevent future agents from rerunning Ask/query backend cleanup that is already complete. Keep this note short; implementation detail belongs in commits and tests.
 
@@ -22,6 +22,15 @@ Purpose: prevent future agents from rerunning Ask/query backend cleanup that is 
 - Topic-tag parsing is delimiter-robust for saved/current-head route output.
 - Physical smoke evidence passed with refreshed saved-route checks, and the
   instrumented UI smoke contract now includes install_contract evidence.
+- Answer detail field UX was refined through `b96f325`: material chips now use
+  explicit indexed material labels/copy affordance text, the composer add action
+  keeps a 48dp touch target around the 32dp visual circle, and redundant
+  context hints are suppressed when phone top chrome already carries context.
+- Related-guide ordering now prefers immediate workflow relevance for survival
+  and fire-starting anchors before truncating the candidate pool, with focused
+  repository coverage for relevance ordering and candidate limits.
+- Physical material-chip smoke coverage passed for the indexed material label
+  and long-press copy affordance.
 
 ## Remaining Next Slices
 
@@ -33,6 +42,9 @@ Purpose: prevent future agents from rerunning Ask/query backend cleanup that is 
   production query paths stay fixture-free.
 - Prefer backend/code-health slices that remove mixed responsibilities from
   activities/repositories without changing chrome, copy, or layout behavior.
+- Source-selection cross-reference still has an exposed bug: answer-mode source
+  selection can lose the source-anchored cross-reference lane and needs a
+  focused follow-up before treating that path as closed.
 - Re-run focused backend tests after each backend slice; use UI state packs only
   when behavior could affect screenshots.
 

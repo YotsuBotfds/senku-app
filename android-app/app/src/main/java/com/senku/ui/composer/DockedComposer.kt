@@ -35,6 +35,9 @@ import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.AbstractComposeView
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.disabled
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextOverflow
@@ -48,6 +51,8 @@ object DockedComposerTouchTargetTokens {
     const val ADD_ACTION_TOUCH_TARGET_DP = 48
     const val ADD_ACTION_VISUAL_SIZE_DP = 32
     const val ADD_ACTION_PADDING_DP = 8
+    const val ADD_ACTION_DISABLED_CONTENT_DESCRIPTION = "Add action unavailable"
+    const val ADD_ACTION_ENABLED = false
 }
 
 data class DockedComposerModel @JvmOverloads constructor(
@@ -222,8 +227,17 @@ fun DockedComposer(
             Box(
                 modifier = Modifier
                     .size(actionTouchTargetSize)
+                    .semantics {
+                        contentDescription =
+                            DockedComposerTouchTargetTokens.ADD_ACTION_DISABLED_CONTENT_DESCRIPTION
+                        disabled()
+                    }
                     .clip(CircleShape)
-                    .clickable(role = Role.Button, onClick = { })
+                    .clickable(
+                        enabled = DockedComposerTouchTargetTokens.ADD_ACTION_ENABLED,
+                        role = Role.Button,
+                        onClick = { },
+                    )
                     .padding(actionPadding),
                 contentAlignment = Alignment.Center,
             ) {
