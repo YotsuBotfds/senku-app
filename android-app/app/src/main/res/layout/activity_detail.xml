@@ -662,45 +662,47 @@
                     android:id="@+id/detail_provenance_panel"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="12dp"
+                    android:layout_marginTop="10dp"
                     android:background="@drawable/bg_provenance_panel"
                     android:clipToOutline="true"
                     android:orientation="vertical"
-                    android:padding="12dp"
+                    android:padding="10dp"
                     android:visibility="gone">
 
                     <TextView
+                        android:id="@+id/detail_provenance_stamp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:fontFamily="monospace"
-                        android:letterSpacing="0.08"
-                        android:lineHeight="13sp"
+                        android:letterSpacing="0.06"
+                        android:lineHeight="12sp"
                         android:text="@string/detail_external_review_provenance_stamp"
                         android:textAppearance="?android:attr/textAppearanceSmall"
                         android:textColor="@color/senku_rev03_ink_2"
-                        android:textSize="10sp"
+                        android:textSize="9sp"
                         android:textStyle="bold" />
 
                     <View
                         android:layout_width="match_parent"
-                        android:layout_height="2dp"
-                        android:layout_marginTop="6dp"
+                        android:layout_height="1dp"
+                        android:layout_marginTop="4dp"
                         android:background="@drawable/bg_detail_header_baseline" />
 
                     <TextView
                         android:id="@+id/detail_provenance_title_text"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
+                        android:layout_marginTop="6dp"
                         android:background="@drawable/bg_sources_section_pill"
-                        android:paddingStart="10dp"
-                        android:paddingTop="5dp"
-                        android:paddingEnd="10dp"
-                        android:paddingBottom="5dp"
+                        android:lineHeight="15sp"
+                        android:paddingStart="8dp"
+                        android:paddingTop="4dp"
+                        android:paddingEnd="8dp"
+                        android:paddingBottom="4dp"
                         android:text="@string/detail_provenance_title"
                         android:textAppearance="?android:attr/textAppearanceMedium"
                         android:textColor="@color/senku_rev03_ink_0"
-                        android:textSize="13sp"
+                        android:textSize="12sp"
                         android:textStyle="bold" />
 
                     <TextView
@@ -709,9 +711,9 @@
                         android:layout_height="wrap_content"
                         android:ellipsize="end"
                         android:fontFamily="monospace"
-                        android:lineHeight="15sp"
+                        android:lineHeight="14sp"
                         android:lineSpacingExtra="1dp"
-                        android:maxLines="4"
+                        android:maxLines="3"
                         android:textAppearance="?android:attr/textAppearanceMedium"
                         android:textColor="@color/senku_rev03_ink_0"
                         android:textSize="12sp"
@@ -721,21 +723,27 @@
                         android:id="@+id/detail_provenance_body"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
+                        android:layout_marginTop="6dp"
                         android:ellipsize="end"
-                        android:lineHeight="17sp"
+                        android:lineHeight="16sp"
                         android:lineSpacingExtra="1dp"
                         android:maxLines="3"
                         android:textAppearance="?android:attr/textAppearanceSmall"
                         android:textColor="@color/senku_rev03_ink_0"
-                        android:textSize="13sp" />
+                        android:textSize="12sp" />
 
                     <Button
                         android:id="@+id/detail_provenance_open"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="10dp"
+                        android:layout_marginTop="6dp"
                         android:background="@drawable/bg_source_link"
+                        android:minHeight="0dp"
+                        android:minWidth="0dp"
+                        android:paddingStart="10dp"
+                        android:paddingTop="6dp"
+                        android:paddingEnd="10dp"
+                        android:paddingBottom="6dp"
                         android:text="@string/detail_provenance_open"
                         android:textAllCaps="false"
                         android:textColor="@color/senku_rev03_ink_0" />
@@ -932,11 +940,11 @@
                     android:id="@+id/detail_related_guide_preview_panel"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
+                    android:layout_marginTop="8dp"
                     android:background="@drawable/bg_detail_guide_paper_panel"
                     android:clipToOutline="true"
                     android:orientation="vertical"
-                    android:padding="10dp"
+                    android:padding="8dp"
                     android:visibility="gone">
 
                     <TextView
@@ -944,13 +952,15 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:background="@drawable/bg_detail_guide_paper_section_label"
-                        android:paddingStart="10dp"
-                        android:paddingTop="5dp"
-                        android:paddingEnd="10dp"
-                        android:paddingBottom="5dp"
+                        android:lineHeight="15sp"
+                        android:paddingStart="8dp"
+                        android:paddingTop="4dp"
+                        android:paddingEnd="8dp"
+                        android:paddingBottom="4dp"
                         android:text="@string/detail_related_guides_preview_title"
                         android:textAppearance="?android:attr/textAppearanceMedium"
                         android:textColor="@color/senku_rev03_paper_ink_muted"
+                        android:textSize="12sp"
                         android:textStyle="bold" />
 
                     <TextView
@@ -958,37 +968,43 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
+                        android:lineHeight="15sp"
                         android:text="@string/detail_related_guides_preview_caption"
                         android:textAppearance="?android:attr/textAppearanceSmall"
-                        android:textColor="@color/senku_rev03_paper_ink_muted" />
+                        android:textColor="@color/senku_rev03_paper_ink_muted"
+                        android:textSize="12sp" />
 
                     <TextView
                         android:id="@+id/detail_related_guide_preview_meta"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
+                        android:layout_marginTop="6dp"
                         android:ellipsize="end"
+                        android:lineHeight="15sp"
                         android:maxLines="2"
                         android:textAppearance="?android:attr/textAppearanceMedium"
                         android:textColor="@color/senku_rev03_paper_ink"
+                        android:textSize="12sp"
                         android:textStyle="bold" />
 
                     <TextView
                         android:id="@+id/detail_related_guide_preview_body"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="6dp"
+                        android:layout_marginTop="4dp"
                         android:ellipsize="end"
-                        android:lineSpacingExtra="2dp"
-                        android:maxLines="5"
+                        android:lineHeight="16sp"
+                        android:lineSpacingExtra="1dp"
+                        android:maxLines="4"
                         android:text="@string/detail_related_guides_preview_loading"
                         android:textAppearance="?android:attr/textAppearanceSmall"
-                        android:textColor="@color/senku_rev03_paper_ink" />
+                        android:textColor="@color/senku_rev03_paper_ink"
+                        android:textSize="12sp" />
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
+                        android:layout_marginTop="6dp"
                         android:orientation="vertical">
 
                         <Button
@@ -996,6 +1012,10 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:background="@drawable/bg_detail_guide_paper_link_row"
+                            android:minHeight="0dp"
+                            android:minWidth="0dp"
+                            android:paddingTop="6dp"
+                            android:paddingBottom="6dp"
                             android:text="@string/detail_provenance_show_more"
                             android:textAllCaps="false"
                             android:textColor="@color/senku_rev03_paper_ink"
@@ -1005,8 +1025,12 @@
                             android:id="@+id/detail_related_guide_preview_open"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="6dp"
+                            android:layout_marginTop="4dp"
                             android:background="@drawable/bg_detail_guide_paper_link_row"
+                            android:minHeight="0dp"
+                            android:minWidth="0dp"
+                            android:paddingTop="6dp"
+                            android:paddingBottom="6dp"
                             android:text="@string/detail_related_guides_preview_open"
                             android:textAllCaps="false"
                             android:textColor="@color/senku_rev03_paper_ink" />

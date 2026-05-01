@@ -2944,13 +2944,13 @@ public final class MainActivity extends AppCompatActivity {
     }
 
     static boolean isLibraryPhoneFlowIntent(BottomTabDestination destination) {
-        return destination == BottomTabDestination.HOME
-            || destination == BottomTabDestination.SEARCH;
+        return destination != null
+            && phoneTabSelectionOwner(destination) == BottomTabDestination.HOME;
     }
 
     static boolean isAskPhoneFlowIntent(BottomTabDestination destination) {
-        return destination == BottomTabDestination.ASK
-            || destination == BottomTabDestination.THREADS;
+        return destination != null
+            && phoneTabSelectionOwner(destination) == BottomTabDestination.ASK;
     }
 
     static boolean shouldSubmitSharedInputAsAsk(
@@ -2996,7 +2996,8 @@ public final class MainActivity extends AppCompatActivity {
     }
 
     static boolean isSavedPhoneFlowIntent(BottomTabDestination destination) {
-        return destination == BottomTabDestination.PINS;
+        return destination != null
+            && phoneTabSelectionOwner(destination) == BottomTabDestination.PINS;
     }
 
     static boolean shouldShowSavedGuideSection(

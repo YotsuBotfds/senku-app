@@ -16,20 +16,75 @@ public final class DetailSourcePreviewDensityTokenTest {
     public void phoneSourceEntryPreviewUsesCompactTextTokens() throws Exception {
         Document document = parsePhoneDetailLayout();
 
+        Element panel = elementByAndroidId(document, "detail_provenance_panel");
+        assertEquals("10dp", android(panel, "padding"));
+
+        Element stamp = elementByAndroidId(document, "detail_provenance_stamp");
+        assertEquals("9sp", android(stamp, "textSize"));
+        assertEquals("12sp", android(stamp, "lineHeight"));
+
         Element title = elementByAndroidId(document, "detail_provenance_title_text");
-        assertEquals("13sp", android(title, "textSize"));
+        assertEquals("12sp", android(title, "textSize"));
+        assertEquals("15sp", android(title, "lineHeight"));
+        assertEquals("4dp", android(title, "paddingTop"));
+        assertEquals("4dp", android(title, "paddingBottom"));
 
         Element meta = elementByAndroidId(document, "detail_provenance_meta");
         assertEquals("12sp", android(meta, "textSize"));
-        assertEquals("15sp", android(meta, "lineHeight"));
+        assertEquals("14sp", android(meta, "lineHeight"));
         assertEquals("1dp", android(meta, "lineSpacingExtra"));
-        assertEquals("4", android(meta, "maxLines"));
+        assertEquals("3", android(meta, "maxLines"));
 
         Element body = elementByAndroidId(document, "detail_provenance_body");
-        assertEquals("13sp", android(body, "textSize"));
-        assertEquals("17sp", android(body, "lineHeight"));
+        assertEquals("12sp", android(body, "textSize"));
+        assertEquals("16sp", android(body, "lineHeight"));
         assertEquals("1dp", android(body, "lineSpacingExtra"));
         assertEquals("3", android(body, "maxLines"));
+
+        Element open = elementByAndroidId(document, "detail_provenance_open");
+        assertEquals("6dp", android(open, "layout_marginTop"));
+        assertEquals("0dp", android(open, "minHeight"));
+        assertEquals("6dp", android(open, "paddingTop"));
+        assertEquals("6dp", android(open, "paddingBottom"));
+    }
+
+    @Test
+    public void phoneRelatedGuidePreviewKeepsOpenCtaClearOfComposer() throws Exception {
+        Document document = parsePhoneDetailLayout();
+
+        Element panel = elementByAndroidId(document, "detail_related_guide_preview_panel");
+        assertEquals("8dp", android(panel, "layout_marginTop"));
+        assertEquals("8dp", android(panel, "padding"));
+
+        Element title = elementByAndroidId(document, "detail_related_guide_preview_title");
+        assertEquals("12sp", android(title, "textSize"));
+        assertEquals("15sp", android(title, "lineHeight"));
+        assertEquals("4dp", android(title, "paddingTop"));
+        assertEquals("4dp", android(title, "paddingBottom"));
+
+        Element meta = elementByAndroidId(document, "detail_related_guide_preview_meta");
+        assertEquals("6dp", android(meta, "layout_marginTop"));
+        assertEquals("12sp", android(meta, "textSize"));
+        assertEquals("15sp", android(meta, "lineHeight"));
+        assertEquals("2", android(meta, "maxLines"));
+
+        Element body = elementByAndroidId(document, "detail_related_guide_preview_body");
+        assertEquals("4dp", android(body, "layout_marginTop"));
+        assertEquals("12sp", android(body, "textSize"));
+        assertEquals("16sp", android(body, "lineHeight"));
+        assertEquals("1dp", android(body, "lineSpacingExtra"));
+        assertEquals("4", android(body, "maxLines"));
+
+        Element toggle = elementByAndroidId(document, "detail_related_guide_preview_toggle");
+        assertEquals("0dp", android(toggle, "minHeight"));
+        assertEquals("6dp", android(toggle, "paddingTop"));
+        assertEquals("6dp", android(toggle, "paddingBottom"));
+
+        Element open = elementByAndroidId(document, "detail_related_guide_preview_open");
+        assertEquals("4dp", android(open, "layout_marginTop"));
+        assertEquals("0dp", android(open, "minHeight"));
+        assertEquals("6dp", android(open, "paddingTop"));
+        assertEquals("6dp", android(open, "paddingBottom"));
     }
 
     private static Document parsePhoneDetailLayout() throws Exception {

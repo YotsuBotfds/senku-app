@@ -186,6 +186,21 @@ public final class MainActivityPhoneNavigationTest {
     }
 
     @Test
+    public void phoneFlowIntentPredicatesFollowRouteSelectionOwner() {
+        for (BottomTabDestination destination : BottomTabDestination.values()) {
+            BottomTabDestination owner = MainRouteDecisionHelper.phoneTabSelectionOwner(destination);
+
+            assertEquals(owner == BottomTabDestination.HOME, MainActivity.isLibraryPhoneFlowIntent(destination));
+            assertEquals(owner == BottomTabDestination.ASK, MainActivity.isAskPhoneFlowIntent(destination));
+            assertEquals(owner == BottomTabDestination.PINS, MainActivity.isSavedPhoneFlowIntent(destination));
+        }
+
+        assertFalse(MainActivity.isLibraryPhoneFlowIntent(null));
+        assertFalse(MainActivity.isAskPhoneFlowIntent(null));
+        assertFalse(MainActivity.isSavedPhoneFlowIntent(null));
+    }
+
+    @Test
     public void restoredPhoneTabUsesVisibleSelectionOwner() {
         assertEquals(
             BottomTabDestination.ASK,

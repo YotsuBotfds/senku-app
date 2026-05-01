@@ -90,6 +90,76 @@ public final class PackRepositoryRouteOutputParityTest {
     }
 
     @Test
+    public void externallyRecommendedQueriesCharacterizeFinalStructuredAnchorPath() {
+        assertFinalAnchorPath(
+            "how do i design a gravity-fed water distribution system",
+            "water_distribution",
+            "water_distribution_priority",
+            "GD-270",
+            PackRepository.selectExplicitWaterDistributionAnchorForTest(
+                "how do i design a gravity-fed water distribution system",
+                waterStorageDistributionOverview(),
+                waterDistributionSystemDesign()
+            )
+        );
+        assertFinalAnchorPath(
+            "how do i make soap from animal fat and ash",
+            "soapmaking",
+            "soapmaking_priority",
+            "GD-122",
+            PackRepository.selectSpecializedStructuredAnchorForTest(
+                "how do i make soap from animal fat and ash",
+                genericChemistrySafety(),
+                soapmakingProcess()
+            )
+        );
+        assertFinalAnchorPath(
+            "how do i make glass from silica sand and soda ash",
+            "glassmaking",
+            "rowid",
+            "GD-123",
+            PackRepository.selectSpecializedStructuredAnchorForTest(
+                "how do i make glass from silica sand and soda ash",
+                glassRawMaterialsBoundary(),
+                glassmakingFromScratch()
+            )
+        );
+        assertFinalAnchorPath(
+            "how do i weatherproof a cabin roof",
+            "cabin_house",
+            "roofing_priority",
+            "GD-106",
+            PackRepository.selectSpecializedStructuredAnchorForTest(
+                "how do i weatherproof a cabin roof",
+                genericConstructionRoofing(),
+                cabinRoofWeatherproofing()
+            )
+        );
+        assertFinalAnchorPath(
+            "someone is stealing food from the group what do we do",
+            "community_governance",
+            "community_governance_priority",
+            "GD-626",
+            PackRepository.selectSpecializedStructuredAnchorForTest(
+                "someone is stealing food from the group what do we do",
+                mutualAidFinanceGovernance(),
+                commonsFoodTheftGovernance()
+            )
+        );
+        assertFinalAnchorPath(
+            "how do i build a house",
+            "cabin_house",
+            "rowid",
+            "GD-094",
+            PackRepository.selectBroadHouseAnchorForTest(
+                "how do i build a house",
+                emergencyShelterSiteSelection(),
+                constructionAndCarpentrySequence()
+            )
+        );
+    }
+
+    @Test
     public void centroidMissingFallbackPreservesMultipleRouteOutputsBeforeLexicalFallback() {
         List<SearchResult> merged = PackRepository.mergeResultsWhenCentroidMissingForTest(
             List.of(waterDistributionSystemDesign(), treatedWaterStoragePlanning()),
@@ -150,6 +220,16 @@ public final class PackRepositoryRouteOutputParityTest {
         assertEquals(query, expectedOrderLabel, PackRepository.noBm25RouteFtsOrderLabelForTest(query));
         assertEquals(query, expectedGuideId, selected.guideId);
         assertEquals(query, "route-focus", selected.retrievalMode);
+    }
+
+    private static void assertFinalAnchorPath(
+        String query,
+        String expectedStructure,
+        String expectedOrderLabel,
+        String expectedGuideId,
+        SearchResult selected
+    ) {
+        assertRouteOutput(query, expectedStructure, expectedOrderLabel, expectedGuideId, selected);
     }
 
     private static SearchResult waterDistributionSystemDesign() {
@@ -302,6 +382,51 @@ public final class PackRepositoryRouteOutputParityTest {
         );
     }
 
+    private static SearchResult glassmakingFromScratch() {
+        return result(
+            "Glass, Optics & Ceramics",
+            "Start with silica sand, soda ash, limestone, furnace heat, forming, and annealing.",
+            "GD-123",
+            "Glassmaking from Scratch",
+            "crafts",
+            "route-focus",
+            "subsystem",
+            "long_term",
+            "glassmaking",
+            "glassmaking,annealing"
+        );
+    }
+
+    private static SearchResult genericConstructionRoofing() {
+        return result(
+            "Construction & Carpentry",
+            "General framing and roofing systems for off-grid construction.",
+            "GD-094",
+            "Roofing Systems",
+            "building",
+            "route-focus",
+            "starter",
+            "long_term",
+            "cabin_house",
+            "foundation,wall_construction,roofing"
+        );
+    }
+
+    private static SearchResult cabinRoofWeatherproofing() {
+        return result(
+            "Insulation & Weatherproofing",
+            "Weatherproofing, moisture barriers, roof insulation, air sealing, and climate control.",
+            "GD-106",
+            "Roof Insulation Techniques",
+            "building",
+            "route-focus",
+            "subsystem",
+            "long_term",
+            "cabin_house",
+            "roofing,weatherproofing"
+        );
+    }
+
     private static SearchResult roofWeatherproofingRouteOutput() {
         return result(
             "Roofing & Weatherproofing",
@@ -344,6 +469,36 @@ public final class PackRepositoryRouteOutputParityTest {
             "long_term",
             "community_governance",
             "community_governance,conflict_resolution,trust_systems"
+        );
+    }
+
+    private static SearchResult emergencyShelterSiteSelection() {
+        return result(
+            "Shelter Site Selection & Hazard Assessment",
+            "Terrain analysis, natural hazards, wind exposure, and water proximity.",
+            "GD-446",
+            "Terrain Analysis",
+            "survival",
+            "route-focus",
+            "safety",
+            "immediate",
+            "emergency_shelter",
+            "site_selection,drainage"
+        );
+    }
+
+    private static SearchResult constructionAndCarpentrySequence() {
+        return result(
+            "Construction & Carpentry",
+            "Build sequence for a house: drainage, foundations, walls, roofing, and weatherproofing.",
+            "GD-094",
+            "Foundations",
+            "building",
+            "route-focus",
+            "starter",
+            "long_term",
+            "cabin_house",
+            "drainage,foundation,wall_construction,roofing,weatherproofing"
         );
     }
 
