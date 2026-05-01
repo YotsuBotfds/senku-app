@@ -48,43 +48,15 @@ final class PackRouteFocusedSearchExecutor {
         int candidateLimit = PackRouteFocusedSearchHelper.routeChunkCandidateLimit(queryTerms, limit);
         int candidateTarget = PackRouteFocusedSearchHelper.routeChunkCandidateTarget(queryTerms, limit);
         boolean scanFullRouteCursor = PackRouteFocusedSearchHelper.shouldScanFullRouteCursor(queryTerms);
-        for (QueryRouteProfile.RouteSearchSpec routeSpec : routeSpecs) {
-            if (!scanFullRouteCursor && bestBySection.size() >= candidateTarget) {
-                break;
-            }
-            PackRouteFocusedSearchHelper.RouteSearchStep routeStep =
-                PackRouteFocusedSearchHelper.routeSearchStep(queryTerms, routeSpec);
-            if (routeStep == null) {
-                continue;
-            }
-            int addedWithFts = collectChunkResultsFts(
-                queryTerms,
-                routeStep.specTerms,
-                routeStep.routeSpec,
-                routeStep.categories,
-                candidateLimit,
-                candidateTarget,
-                bestBySection
-            );
-            if (!PackRouteFocusedSearchHelper.shouldBackfillLikeAfterFts(
-                queryTerms,
-                addedWithFts,
-                bestBySection.size(),
-                candidateTarget
-            )) {
-                continue;
-            }
-            collectChunkResultsLike(
-                queryTerms,
-                routeStep.specTerms,
-                routeStep.routeSpec,
-                routeStep.tokens,
-                routeStep.categories,
-                candidateLimit,
-                candidateTarget,
-                bestBySection
-            );
-        }
+        collectRouteResults(
+            RouteResultKind.CHUNK,
+            queryTerms,
+            routeSpecs,
+            candidateLimit,
+            candidateTarget,
+            scanFullRouteCursor,
+            bestBySection
+        );
 
         int guideSearchThreshold = RetrievalRoutePolicy.routeGuideSearchThreshold(
             queryTerms.routeProfile,
@@ -139,92 +111,6 @@ final class PackRouteFocusedSearchExecutor {
         return ordered;
     }
 
-    private int collectChunkResultsFts(
-        PackRepository.QueryTerms queryTerms,
-        PackRepository.QueryTerms specTerms,
-        QueryRouteProfile.RouteSearchSpec routeSpec,
-        List<String> categories,
-        int candidateLimit,
-        int candidateTarget,
-        LinkedHashMap<String, PackRepository.ScoredSearchResult> bestBySection
-    ) {
-        if (!ftsAvailable) {
-            return 0;
-        }
-        PackRouteSearchSqlPolicy.RouteFtsSqlPlan plan = PackRouteSearchSqlPolicy.chunkFtsPlan(
-            queryTerms,
-            specTerms,
-            categories,
-            candidateLimit,
-            ftsTableName,
-            ftsSupportsBm25
-        );
-        if (plan.isEmpty()) {
-            Log.d(TAG, "routeChunkFts.skip query=\"" + queryTerms.queryLower + "\" reason=" + plan.noOpReason);
-            return 0;
-        }
-
-        try (Cursor cursor = database.rawQuery(plan.sql, plan.argsArray())) {
-            int added = PackRouteFocusedCandidateCollector.collectChunkCursor(
-                cursor,
-                queryTerms,
-                specTerms,
-                routeSpec,
-                bestBySection,
-                candidateTarget
-            );
-            Log.d(
-                TAG,
-                "routeChunkFts query=\"" + queryTerms.queryLower + "\" ftsQuery=\"" + plan.ftsQuery +
-                    "\" added=" + added + " candidateLimit=" + plan.effectiveCandidateLimit +
-                    " order=" + plan.orderLabel
-            );
-            return added;
-        } catch (SQLiteException error) {
-            Log.w(
-                TAG,
-                "routeChunkFts.fail query=\"" + queryTerms.queryLower + "\" ftsQuery=\"" + plan.ftsQuery + "\"",
-                error
-            );
-            return 0;
-        }
-    }
-
-    private int collectChunkResultsLike(
-        PackRepository.QueryTerms queryTerms,
-        PackRepository.QueryTerms specTerms,
-        QueryRouteProfile.RouteSearchSpec routeSpec,
-        List<String> tokens,
-        List<String> categories,
-        int candidateLimit,
-        int candidateTarget,
-        LinkedHashMap<String, PackRepository.ScoredSearchResult> bestBySection
-    ) {
-        PackRouteSearchSqlPolicy.RouteLikeSqlPlan plan = PackRouteSearchSqlPolicy.chunkLikePlan(
-            tokens,
-            categories,
-            candidateLimit
-        );
-        if (plan.isEmpty()) {
-            Log.d(TAG, "routeChunkLike.skip query=\"" + queryTerms.queryLower + "\" reason=" + plan.noOpReason);
-            return 0;
-        }
-
-        try (Cursor cursor = database.rawQuery(plan.sql, plan.argsArray())) {
-            return PackRouteFocusedCandidateCollector.collectChunkCursor(
-                cursor,
-                queryTerms,
-                specTerms,
-                routeSpec,
-                bestBySection,
-                candidateTarget
-            );
-        } catch (SQLiteException error) {
-            Log.w(TAG, "routeChunkLike.fail query=\"" + queryTerms.queryLower + "\"", error);
-            return 0;
-        }
-    }
-
     private void collectGuideResults(
         PackRepository.QueryTerms queryTerms,
         List<QueryRouteProfile.RouteSearchSpec> routeSpecs,
@@ -234,8 +120,35 @@ final class PackRouteFocusedSearchExecutor {
     ) {
         long startedAt = System.currentTimeMillis();
         int beforeCount = bestBySection.size();
+        collectRouteResults(
+            RouteResultKind.GUIDE,
+            queryTerms,
+            routeSpecs,
+            candidateLimit,
+            targetTotal,
+            false,
+            bestBySection
+        );
+        Log.d(
+            TAG,
+            "routeGuideSearch query=\"" + queryTerms.queryLower + "\" specs=" + routeSpecs.size() +
+                " added=" + Math.max(0, bestBySection.size() - beforeCount) +
+                " total=" + bestBySection.size() +
+                " totalMs=" + (System.currentTimeMillis() - startedAt)
+        );
+    }
+
+    private void collectRouteResults(
+        RouteResultKind resultKind,
+        PackRepository.QueryTerms queryTerms,
+        List<QueryRouteProfile.RouteSearchSpec> routeSpecs,
+        int candidateLimit,
+        int targetTotal,
+        boolean scanFullRouteCursor,
+        LinkedHashMap<String, PackRepository.ScoredSearchResult> bestBySection
+    ) {
         for (QueryRouteProfile.RouteSearchSpec routeSpec : routeSpecs) {
-            if (bestBySection.size() >= targetTotal) {
+            if (shouldStopRouteSpecSweep(resultKind, scanFullRouteCursor, bestBySection.size(), targetTotal)) {
                 break;
             }
             PackRouteFocusedSearchHelper.RouteSearchStep routeStep =
@@ -243,7 +156,8 @@ final class PackRouteFocusedSearchExecutor {
             if (routeStep == null) {
                 continue;
             }
-            int addedWithFts = collectGuideResultsFts(
+            int addedWithFts = collectFtsResults(
+                resultKind,
                 queryTerms,
                 routeStep.specTerms,
                 routeStep.routeSpec,
@@ -260,7 +174,8 @@ final class PackRouteFocusedSearchExecutor {
             )) {
                 continue;
             }
-            collectGuideResultsLike(
+            collectLikeResults(
+                resultKind,
                 queryTerms,
                 routeStep.specTerms,
                 routeStep.routeSpec,
@@ -271,16 +186,19 @@ final class PackRouteFocusedSearchExecutor {
                 bestBySection
             );
         }
-        Log.d(
-            TAG,
-            "routeGuideSearch query=\"" + queryTerms.queryLower + "\" specs=" + routeSpecs.size() +
-                " added=" + Math.max(0, bestBySection.size() - beforeCount) +
-                " total=" + bestBySection.size() +
-                " totalMs=" + (System.currentTimeMillis() - startedAt)
-        );
     }
 
-    private int collectGuideResultsFts(
+    private boolean shouldStopRouteSpecSweep(
+        RouteResultKind resultKind,
+        boolean scanFullRouteCursor,
+        int currentSize,
+        int targetTotal
+    ) {
+        return (resultKind != RouteResultKind.CHUNK || !scanFullRouteCursor) && currentSize >= targetTotal;
+    }
+
+    private int collectFtsResults(
+        RouteResultKind resultKind,
         PackRepository.QueryTerms queryTerms,
         PackRepository.QueryTerms specTerms,
         QueryRouteProfile.RouteSearchSpec routeSpec,
@@ -292,7 +210,8 @@ final class PackRouteFocusedSearchExecutor {
         if (!ftsAvailable) {
             return 0;
         }
-        PackRouteSearchSqlPolicy.RouteFtsSqlPlan plan = PackRouteSearchSqlPolicy.guideFtsPlan(
+        PackRouteSearchSqlPolicy.RouteFtsSqlPlan plan = ftsPlan(
+            resultKind,
             queryTerms,
             specTerms,
             categories,
@@ -301,12 +220,17 @@ final class PackRouteFocusedSearchExecutor {
             ftsSupportsBm25
         );
         if (plan.isEmpty()) {
-            Log.d(TAG, "routeGuideFts.skip query=\"" + queryTerms.queryLower + "\" reason=" + plan.noOpReason);
+            Log.d(
+                TAG,
+                resultKind.ftsLogName + ".skip query=\"" + queryTerms.queryLower +
+                    "\" reason=" + plan.noOpReason
+            );
             return 0;
         }
 
         try (Cursor cursor = database.rawQuery(plan.sql, plan.argsArray())) {
-            int added = PackRouteFocusedCandidateCollector.collectGuideCursor(
+            int added = collectCursor(
+                resultKind,
                 cursor,
                 queryTerms,
                 specTerms,
@@ -316,7 +240,7 @@ final class PackRouteFocusedSearchExecutor {
             );
             Log.d(
                 TAG,
-                "routeGuideFts query=\"" + queryTerms.queryLower + "\" ftsQuery=\"" + plan.ftsQuery +
+                resultKind.ftsLogName + " query=\"" + queryTerms.queryLower + "\" ftsQuery=\"" + plan.ftsQuery +
                     "\" added=" + added + " candidateLimit=" + plan.effectiveCandidateLimit +
                     " order=" + plan.orderLabel
             );
@@ -324,14 +248,16 @@ final class PackRouteFocusedSearchExecutor {
         } catch (SQLiteException error) {
             Log.w(
                 TAG,
-                "routeGuideFts.fail query=\"" + queryTerms.queryLower + "\" ftsQuery=\"" + plan.ftsQuery + "\"",
+                resultKind.ftsLogName + ".fail query=\"" + queryTerms.queryLower +
+                    "\" ftsQuery=\"" + plan.ftsQuery + "\"",
                 error
             );
             return 0;
         }
     }
 
-    private int collectGuideResultsLike(
+    private int collectLikeResults(
+        RouteResultKind resultKind,
         PackRepository.QueryTerms queryTerms,
         PackRepository.QueryTerms specTerms,
         QueryRouteProfile.RouteSearchSpec routeSpec,
@@ -341,18 +267,76 @@ final class PackRouteFocusedSearchExecutor {
         int targetTotal,
         LinkedHashMap<String, PackRepository.ScoredSearchResult> bestBySection
     ) {
-        PackRouteSearchSqlPolicy.RouteLikeSqlPlan plan = PackRouteSearchSqlPolicy.guideLikePlan(
-            tokens,
-            categories,
-            candidateLimit
-        );
+        PackRouteSearchSqlPolicy.RouteLikeSqlPlan plan = likePlan(resultKind, tokens, categories, candidateLimit);
         if (plan.isEmpty()) {
-            Log.d(TAG, "routeGuideLike.skip query=\"" + queryTerms.queryLower + "\" reason=" + plan.noOpReason);
+            Log.d(
+                TAG,
+                resultKind.likeLogName + ".skip query=\"" + queryTerms.queryLower +
+                    "\" reason=" + plan.noOpReason
+            );
             return 0;
         }
 
         try (Cursor cursor = database.rawQuery(plan.sql, plan.argsArray())) {
-            return PackRouteFocusedCandidateCollector.collectGuideCursor(
+            return collectCursor(resultKind, cursor, queryTerms, specTerms, routeSpec, bestBySection, targetTotal);
+        } catch (SQLiteException error) {
+            Log.w(TAG, resultKind.likeLogName + ".fail query=\"" + queryTerms.queryLower + "\"", error);
+            return 0;
+        }
+    }
+
+    private PackRouteSearchSqlPolicy.RouteFtsSqlPlan ftsPlan(
+        RouteResultKind resultKind,
+        PackRepository.QueryTerms queryTerms,
+        PackRepository.QueryTerms specTerms,
+        List<String> categories,
+        int candidateLimit,
+        String ftsTableName,
+        boolean ftsSupportsBm25
+    ) {
+        if (resultKind == RouteResultKind.CHUNK) {
+            return PackRouteSearchSqlPolicy.chunkFtsPlan(
+                queryTerms,
+                specTerms,
+                categories,
+                candidateLimit,
+                ftsTableName,
+                ftsSupportsBm25
+            );
+        }
+        return PackRouteSearchSqlPolicy.guideFtsPlan(
+            queryTerms,
+            specTerms,
+            categories,
+            candidateLimit,
+            ftsTableName,
+            ftsSupportsBm25
+        );
+    }
+
+    private PackRouteSearchSqlPolicy.RouteLikeSqlPlan likePlan(
+        RouteResultKind resultKind,
+        List<String> tokens,
+        List<String> categories,
+        int candidateLimit
+    ) {
+        if (resultKind == RouteResultKind.CHUNK) {
+            return PackRouteSearchSqlPolicy.chunkLikePlan(tokens, categories, candidateLimit);
+        }
+        return PackRouteSearchSqlPolicy.guideLikePlan(tokens, categories, candidateLimit);
+    }
+
+    private int collectCursor(
+        RouteResultKind resultKind,
+        Cursor cursor,
+        PackRepository.QueryTerms queryTerms,
+        PackRepository.QueryTerms specTerms,
+        QueryRouteProfile.RouteSearchSpec routeSpec,
+        LinkedHashMap<String, PackRepository.ScoredSearchResult> bestBySection,
+        int targetTotal
+    ) {
+        if (resultKind == RouteResultKind.CHUNK) {
+            return PackRouteFocusedCandidateCollector.collectChunkCursor(
                 cursor,
                 queryTerms,
                 specTerms,
@@ -360,9 +344,27 @@ final class PackRouteFocusedSearchExecutor {
                 bestBySection,
                 targetTotal
             );
-        } catch (SQLiteException error) {
-            Log.w(TAG, "routeGuideLike.fail query=\"" + queryTerms.queryLower + "\"", error);
-            return 0;
+        }
+        return PackRouteFocusedCandidateCollector.collectGuideCursor(
+            cursor,
+            queryTerms,
+            specTerms,
+            routeSpec,
+            bestBySection,
+            targetTotal
+        );
+    }
+
+    private enum RouteResultKind {
+        CHUNK("routeChunkFts", "routeChunkLike"),
+        GUIDE("routeGuideFts", "routeGuideLike");
+
+        final String ftsLogName;
+        final String likeLogName;
+
+        RouteResultKind(String ftsLogName, String likeLogName) {
+            this.ftsLogName = ftsLogName;
+            this.likeLogName = likeLogName;
         }
     }
 }
