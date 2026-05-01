@@ -2831,6 +2831,17 @@ public final class DetailActivity extends AppCompatActivity {
         TabletDetailMode detailMode = resolveTabletDetailMode(turnBindings);
         SearchResult displaySource = resolveTabletDisplaySource(turnBindings, visualOwnerSource);
         boolean allowGuideIdFallback = !answerMode || visualOwnerSource != null;
+        DetailTabletStateBuilder.GuideModeState guideModeState =
+            DetailTabletStateBuilder.buildGuideModeState(
+                answerMode,
+                isCurrentThreadDetailRoute(),
+                currentGuideModeLabel,
+                currentGuideModeSummary,
+                currentGuideModeAnchorLabel,
+                visualOwnerSource,
+                turnBindings,
+                buildTabletThreadTopicTitle(turnBindings)
+            );
         return new TabletDetailState(
             buildTabletGuideId(displaySource, allowGuideIdFallback),
             buildTabletGuideTitle(displaySource, turnBindings),
@@ -2855,9 +2866,9 @@ public final class DetailActivity extends AppCompatActivity {
                 detailMode,
                 tabletEmergencyFullHeightPage
             ),
-            buildTabletGuideModeLabel(visualOwnerSource),
-            buildTabletGuideModeSummary(visualOwnerSource, turnBindings),
-            buildTabletGuideModeAnchorLabel(visualOwnerSource),
+            guideModeState.label,
+            guideModeState.summary,
+            guideModeState.anchorLabel,
             safe(tabletStatusText),
             buildTabletGuideSectionCount(displaySource),
             detailMode,
@@ -2932,67 +2943,15 @@ public final class DetailActivity extends AppCompatActivity {
     }
 
     static String buildTabletAnswerGuideModeSummary(String guideId, String threadTopic) {
-        String cleanGuideId = safe(guideId).trim();
-        if (!cleanGuideId.isEmpty()) {
-            return cleanGuideId;
-        }
-        String cleanTopic = safe(threadTopic).trim();
-        return cleanTopic.isEmpty() ? "Answer context" : cleanTopic;
+        return DetailTabletStateBuilder.buildTabletAnswerGuideModeSummary(guideId, threadTopic);
     }
 
     static String buildTabletAnswerGuideModeAnchorLabel(boolean threadDetailRoute) {
-        return threadDetailRoute ? "Thread sources" : "Sources";
+        return DetailTabletStateBuilder.buildTabletAnswerGuideModeAnchorLabel(threadDetailRoute);
     }
 
     static String buildDetailSourcesProofStampLabel() {
         return "SOURCES";
-    }
-
-    private String buildTabletGuideModeLabel(SearchResult activeSource) {
-        if (answerMode) {
-            if (isCurrentThreadDetailRoute()) {
-                return "THREAD";
-            }
-            return "ANSWER";
-        }
-        return safe(currentGuideModeLabel);
-    }
-
-    private String buildTabletGuideModeSummary(SearchResult activeSource, List<TabletTurnBinding> turnBindings) {
-        if (answerMode) {
-            if (isThreadDetailRoute(answerMode, turnBindings == null ? 0 : turnBindings.size())) {
-                return "Sources in thread - " + countDistinctTabletThreadSources(turnBindings);
-            }
-            String guideId = safe(activeSource == null ? null : activeSource.guideId).trim();
-            return buildTabletAnswerGuideModeSummary(guideId, buildTabletThreadTopicTitle(turnBindings));
-        }
-        return safe(currentGuideModeSummary);
-    }
-
-    private String buildTabletGuideModeAnchorLabel(SearchResult activeSource) {
-        if (answerMode) {
-            return buildTabletAnswerGuideModeAnchorLabel(isCurrentThreadDetailRoute());
-        }
-        return safe(currentGuideModeAnchorLabel);
-    }
-
-    private int countDistinctTabletThreadSources(List<TabletTurnBinding> turnBindings) {
-        if (turnBindings == null) {
-            return 0;
-        }
-        LinkedHashSet<String> keys = new LinkedHashSet<>();
-        for (TabletTurnBinding turn : turnBindings) {
-            if (turn == null || turn.sources == null) {
-                continue;
-            }
-            for (SearchResult source : turn.sources) {
-                String key = buildSourceSelectionKey(source);
-                if (!key.isEmpty()) {
-                    keys.add(key);
-                }
-            }
-        }
-        return keys.size();
     }
 
     private ArrayList<TabletTurnBinding> buildTabletTurnBindings() {

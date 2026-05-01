@@ -317,6 +317,77 @@ public final class DetailTabletStateBuilderTest {
         assertTrue(state.getHasSource());
     }
 
+    @Test
+    public void guideModeStateUsesAnswerSourceGuideId() {
+        DetailTabletStateBuilder.GuideModeState state =
+            DetailTabletStateBuilder.buildGuideModeState(
+                true,
+                false,
+                "Guide",
+                "Guide summary",
+                "Guide anchor",
+                source(" GD-345 ", " Rain Shelter ", " Rigging "),
+                List.of(turn("T1", "How do I build a rain shelter?", answer("Use tarp."), Status.Active, true)),
+                "Rain shelter"
+            );
+
+        assertEquals("ANSWER", state.label);
+        assertEquals("GD-345", state.summary);
+        assertEquals("Sources", state.anchorLabel);
+    }
+
+    @Test
+    public void guideModeStateUsesThreadDistinctSourceCount() {
+        DetailActivity.TabletTurnBinding first = turnWithSources(
+            "T1",
+            "How do I build a rain shelter?",
+            List.of(
+                source("GD-345", "Rain Shelter", "Rigging"),
+                source("GD-345", "Rain Shelter", "Rigging")
+            )
+        );
+        DetailActivity.TabletTurnBinding second = turnWithSources(
+            "T2",
+            "What cord should I use?",
+            List.of(source("GD-220", "Abrasives Manufacturing", "Materials"))
+        );
+
+        DetailTabletStateBuilder.GuideModeState state =
+            DetailTabletStateBuilder.buildGuideModeState(
+                true,
+                true,
+                "",
+                "",
+                "",
+                source("GD-345", "Rain Shelter", "Rigging"),
+                List.of(first, second),
+                "Rain shelter - 2 turns"
+            );
+
+        assertEquals("THREAD", state.label);
+        assertEquals("Sources in thread - 2", state.summary);
+        assertEquals("Thread sources", state.anchorLabel);
+    }
+
+    @Test
+    public void guideModeStatePreservesGuideHandoffLabels() {
+        DetailTabletStateBuilder.GuideModeState state =
+            DetailTabletStateBuilder.buildGuideModeState(
+                false,
+                true,
+                " Cross-reference ",
+                " Opened from GD-220. ",
+                " GD-220 \u00b7 Abrasives ",
+                source("GD-345", "Rain Shelter", "Rigging"),
+                List.of(turn("T1", "Guide", answer("Body"), Status.Active, true)),
+                ""
+            );
+
+        assertEquals(" Cross-reference ", state.label);
+        assertEquals(" Opened from GD-220. ", state.summary);
+        assertEquals(" GD-220 \u00b7 Abrasives ", state.anchorLabel);
+    }
+
     private static SearchResult source(String guideId, String title, String section) {
         return new SearchResult(title, "", "", "", guideId, section, "", "");
     }
@@ -339,6 +410,21 @@ public final class DetailTabletStateBuilderTest {
             status,
             showQuestion,
             new ArrayList<>()
+        );
+    }
+
+    private static DetailActivity.TabletTurnBinding turnWithSources(
+        String id,
+        String question,
+        List<SearchResult> sources
+    ) {
+        return new DetailActivity.TabletTurnBinding(
+            id,
+            question,
+            answer("Answer"),
+            Status.Active,
+            true,
+            new ArrayList<>(sources)
         );
     }
 

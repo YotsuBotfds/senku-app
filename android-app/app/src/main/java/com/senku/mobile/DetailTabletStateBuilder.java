@@ -14,6 +14,55 @@ final class DetailTabletStateBuilder {
     private DetailTabletStateBuilder() {
     }
 
+    static final class GuideModeState {
+        final String label;
+        final String summary;
+        final String anchorLabel;
+
+        GuideModeState(String label, String summary, String anchorLabel) {
+            this.label = safe(label);
+            this.summary = safe(summary);
+            this.anchorLabel = safe(anchorLabel);
+        }
+    }
+
+    static GuideModeState buildGuideModeState(
+        boolean answerMode,
+        boolean currentThreadDetailRoute,
+        String currentGuideModeLabel,
+        String currentGuideModeSummary,
+        String currentGuideModeAnchorLabel,
+        SearchResult activeSource,
+        List<DetailActivity.TabletTurnBinding> turnBindings,
+        String threadTopicTitle
+    ) {
+        if (!answerMode) {
+            return new GuideModeState(
+                currentGuideModeLabel,
+                currentGuideModeSummary,
+                currentGuideModeAnchorLabel
+            );
+        }
+        return new GuideModeState(
+            currentThreadDetailRoute ? "THREAD" : "ANSWER",
+            buildAnswerGuideModeSummary(activeSource, turnBindings, threadTopicTitle),
+            buildTabletAnswerGuideModeAnchorLabel(currentThreadDetailRoute)
+        );
+    }
+
+    static String buildTabletAnswerGuideModeSummary(String guideId, String threadTopic) {
+        String cleanGuideId = safe(guideId).trim();
+        if (!cleanGuideId.isEmpty()) {
+            return cleanGuideId;
+        }
+        String cleanTopic = safe(threadTopic).trim();
+        return cleanTopic.isEmpty() ? "Answer context" : cleanTopic;
+    }
+
+    static String buildTabletAnswerGuideModeAnchorLabel(boolean threadDetailRoute) {
+        return threadDetailRoute ? "Thread sources" : "Sources";
+    }
+
     static ArrayList<SourceState> buildSourceStates(
         List<SearchResult> sources,
         SearchResult anchorSource,
@@ -95,6 +144,41 @@ final class DetailTabletStateBuilder {
             activeSource,
             sources
         );
+    }
+
+    private static String buildAnswerGuideModeSummary(
+        SearchResult activeSource,
+        List<DetailActivity.TabletTurnBinding> turnBindings,
+        String threadTopicTitle
+    ) {
+        if (isThreadDetailRoute(turnBindings == null ? 0 : turnBindings.size())) {
+            return "Sources in thread - " + countDistinctTabletThreadSources(turnBindings);
+        }
+        String guideId = safe(activeSource == null ? null : activeSource.guideId).trim();
+        return buildTabletAnswerGuideModeSummary(guideId, threadTopicTitle);
+    }
+
+    private static boolean isThreadDetailRoute(int totalTurnCount) {
+        return totalTurnCount > 1;
+    }
+
+    private static int countDistinctTabletThreadSources(List<DetailActivity.TabletTurnBinding> turnBindings) {
+        if (turnBindings == null) {
+            return 0;
+        }
+        java.util.LinkedHashSet<String> keys = new java.util.LinkedHashSet<>();
+        for (DetailActivity.TabletTurnBinding turn : turnBindings) {
+            if (turn == null || turn.sources == null) {
+                continue;
+            }
+            for (SearchResult source : turn.sources) {
+                String key = buildSourceSelectionKey(source);
+                if (!key.isEmpty()) {
+                    keys.add(key);
+                }
+            }
+        }
+        return keys.size();
     }
 
     static AnchorState buildAnchorState(
