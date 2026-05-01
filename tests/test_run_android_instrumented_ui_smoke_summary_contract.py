@@ -112,6 +112,7 @@ class RunAndroidInstrumentedUiSmokeSummaryContractTests(unittest.TestCase):
         self.assertIn('"tabletDetailRailSavedTapOpensSavedDestination"', self.script)
         self.assertIn('"tabletDetailRailAskTapOpensEmptyAskLaneAndSubmitRoutesToAnswerDetail"', self.script)
         self.assertIn('"guideDetailTabletPortraitSuppressesRedundantStateChips"', self.script)
+        self.assertIn('"phoneAnswerDetailFollowUpImeSubmitReturnsThreadDetailWithInlineHistory"', self.script)
         self.assertIn('${BaseClass}#$methodName', self.script)
 
     def test_phone_and_tablet_smoke_presets_guard_device_role(self):
@@ -130,7 +131,20 @@ class RunAndroidInstrumentedUiSmokeSummaryContractTests(unittest.TestCase):
                 "savedNavigationBackReturnsManualHomeDestination",
                 "guideDetailSaveButtonSurfacesGuideInSavedDestinationAndUnsaveRemovesIt",
                 "savedTabImeSubmitRoutesToSearchResultsNotAnswerDetail",
+                "savedTabSearchButtonRoutesToSearchResultsNotAnswerDetail",
                 "savedTabPinnedGuideButtonOpensGuideDetailAndBackReturnsSaved"
+            )
+        }'''
+        self.assertIn(expected_block, self.script)
+
+    def test_functional_follow_up_profile_includes_ime_settled_thread_proof(self):
+        expected_block = '''"functional-follow-up" {
+            return @(
+                "homeAndAskImeSubmitRouteToSearchResultsAndAnswerDetail",
+                "detailFollowUpImeSendDispatchesLikeSendClick",
+                "detailFollowUpEmptySubmitDoesNotDispatchDraft",
+                "phoneAnswerDetailFollowUpSubmitReturnsThreadDetailWithInlineHistory",
+                "phoneAnswerDetailFollowUpImeSubmitReturnsThreadDetailWithInlineHistory"
             )
         }'''
         self.assertIn(expected_block, self.script)
@@ -138,6 +152,7 @@ class RunAndroidInstrumentedUiSmokeSummaryContractTests(unittest.TestCase):
     def test_functional_back_provenance_profile_includes_emergency_visible_back_proof(self):
         expected_block = '''"functional-back-provenance" {
             return @(
+                "searchResultsVisibleBackReturnsBrowseWithoutAskOwnership",
                 "answerModeProvenanceOpenBackReturnsAnswerContext",
                 "emergencyAnswerVisibleBackButtonReturnsManualHomeDestination",
                 "answerSourceChipTapFollowsAdvertisedActionForSeededGuideSources"

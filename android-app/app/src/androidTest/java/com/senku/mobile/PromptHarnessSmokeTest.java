@@ -827,6 +827,52 @@ public final class PromptHarnessSmokeTest {
     }
 
     @Test
+    public void savedTabSearchButtonRoutesToSearchResultsNotAnswerDetail() {
+        clearPinnedGuidesForTest();
+        Intent intent = productReviewMainActivityIntent();
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        intent.putExtra(MainActivity.EXTRA_OPEN_SAVED, true);
+
+        ActivityScenario<MainActivity> scenario = ActivityScenario.launch(intent);
+        try {
+            awaitHarnessIdle();
+            Assert.assertTrue(
+                "saved launch should settle before visible search-button submit; harness signals="
+                    + HarnessTestSignals.snapshot(),
+                device.wait(Until.hasObject(By.res(APP_PACKAGE, "search_input")), SEARCH_WAIT_MS)
+            );
+            waitForSavedGuidesDestination(scenario, false, DETAIL_WAIT_MS);
+
+            submitVisibleSearchButtonFromResumedActivity("rain shelter");
+            assertResultsSettled(scenario, SEARCH_RESULTS_WAIT_MS);
+            dismissMainSearchKeyboardIfVisible();
+
+            scenario.onActivity(activity -> {
+                Assert.assertFalse(
+                    "Saved visible submit should clear Ask ownership before routing to guide search",
+                    readMainRouteAskLaneActive(activity)
+                );
+                RecyclerView resultsList = activity.findViewById(R.id.results_list);
+                Assert.assertNotNull("Saved visible submit should keep the guide-result list mounted", resultsList);
+                Assert.assertTrue(
+                    "Saved visible submit should show guide search results",
+                    isVisible(resultsList)
+                        && resultsList.getAdapter() != null
+                        && resultsList.getAdapter().getItemCount() > 0
+                );
+            });
+            Assert.assertFalse(
+                "Saved visible submit must not navigate to answer detail",
+                isResumedActivity(DetailActivity.class)
+            );
+            captureUiState("saved_tab_search_button_submit_search_results");
+        } finally {
+            closeScenarioLeniently(scenario);
+            clearPinnedGuidesForTest();
+        }
+    }
+
+    @Test
     public void tabletDetailRailLibraryTapReturnsManualHome() {
         try (ActivityScenario<DetailActivity> scenario = launchTabletRailProofDetail()) {
             awaitHarnessIdle();
@@ -1146,7 +1192,7 @@ public final class PromptHarnessSmokeTest {
     }
 
     @Test
-    public void searchResultsVisibleHomeChromeBackReturnsBrowseWithoutAskOwnership() {
+    public void searchResultsVisibleBackReturnsBrowseWithoutAskOwnership() {
         ActivityScenario<MainActivity> scenario = launchProductReviewMainActivity();
         try {
             awaitHarnessIdle();
@@ -3026,6 +3072,18 @@ public final class PromptHarnessSmokeTest {
 
     @Test
     public void phoneAnswerDetailFollowUpSubmitReturnsThreadDetailWithInlineHistory() throws Exception {
+        assertPhoneAnswerDetailFollowUpSubmitReturnsThreadDetailWithInlineHistory(false, "phone_followup_submit");
+    }
+
+    @Test
+    public void phoneAnswerDetailFollowUpImeSubmitReturnsThreadDetailWithInlineHistory() throws Exception {
+        assertPhoneAnswerDetailFollowUpSubmitReturnsThreadDetailWithInlineHistory(true, "phone_followup_ime_submit");
+    }
+
+    private void assertPhoneAnswerDetailFollowUpSubmitReturnsThreadDetailWithInlineHistory(
+        boolean useImeSend,
+        String captureLabel
+    ) throws Exception {
         Context context = ApplicationProvider.getApplicationContext();
         ChatSessionStore.restore(context);
         String conversationId = ChatSessionStore.createConversation();
@@ -3099,9 +3157,10 @@ public final class PromptHarnessSmokeTest {
             );
 
             FollowUpSubmitDispatchSignals dispatchSignals =
-                submitFollowUpForDispatchProbe(followUpQuery, false);
+                submitFollowUpForDispatchProbe(followUpQuery, useImeSend);
             Assert.assertEquals(
-                "phone follow-up submit should dispatch exactly one request",
+                "phone follow-up submit should dispatch exactly one request via "
+                    + (useImeSend ? "IME SEND" : "send click"),
                 1,
                 dispatchSignals.requestTokenDelta()
             );
@@ -3120,17 +3179,20 @@ public final class PromptHarnessSmokeTest {
                 captureUiState("phone_followup_submit_missing_session_turn");
             }
             Assert.assertTrue(
-                "phone follow-up submit should record the submitted question as the latest session turn; "
+                "phone follow-up submit should record the submitted question as the latest session turn via "
+                    + (useImeSend ? "IME SEND" : "send click")
+                    + "; "
                     + describeSessionLatestTurn(sessionMemory) + "; "
                     + describeResumedActivityAndHarnessSignals(),
                 latestQuestionRecorded
             );
             Assert.assertTrue(
-                "phone follow-up submit should surface visible inline thread history",
+                "phone follow-up submit should surface visible inline thread history via "
+                    + (useImeSend ? "IME SEND" : "send click"),
                 waitForVisibleFollowUpHistorySurface(DETAIL_WAIT_MS)
             );
             scrollHistoryIntoView(scenario);
-            captureUiState("phone_followup_submit_thread_history");
+            captureUiState(captureLabel + "_thread_history");
         } finally {
             OfflineAnswerEngine.resetGeneratorsForTest();
             deleteTemporaryModelFileForFollowUpSmoke(temporaryModelFile);
@@ -6305,6 +6367,34 @@ public final class PromptHarnessSmokeTest {
             Button button = activity.findViewById(ask ? R.id.ask_button : R.id.search_button);
             Assert.assertNotNull("search input should exist", input);
             Assert.assertNotNull("submission button should exist", button);
+            input.requestFocus();
+            input.setText(query);
+            input.setSelection(query.length());
+            button.performClick();
+        });
+        InstrumentationRegistry.getInstrumentation().waitForIdleSync();
+    }
+
+    private void submitVisibleSearchButtonFromResumedActivity(String query) {
+        InstrumentationRegistry.getInstrumentation().runOnMainSync(() -> {
+            Activity activity = getResumedActivityOnMainThread();
+            Assert.assertNotNull("no resumed activity for visible search-button submission", activity);
+            EditText input = activity.findViewById(R.id.search_input);
+            Button button = activity.findViewById(R.id.search_button);
+            Assert.assertNotNull("search input should exist for visible search-button submission", input);
+            Assert.assertNotNull("visible search-button submit should exist", button);
+            Assert.assertTrue("visible search-button submit should be shown", isEffectivelyVisible(button));
+            Assert.assertTrue("visible search-button submit should be enabled", button.isEnabled());
+            Assert.assertEquals(
+                "visible Saved submit should advertise Search, not Ask",
+                activity.getString(R.string.home_search_button),
+                safe(button.getText().toString())
+            );
+            Assert.assertEquals(
+                "visible Saved submit should carry Search semantics",
+                activity.getString(R.string.search_button_description),
+                safe(button.getContentDescription() == null ? null : button.getContentDescription().toString())
+            );
             input.requestFocus();
             input.setText(query);
             input.setSelection(query.length());

@@ -1295,7 +1295,8 @@ function Resolve-InstrumentationMethodNames {
                 "homeAndAskImeSubmitRouteToSearchResultsAndAnswerDetail",
                 "detailFollowUpImeSendDispatchesLikeSendClick",
                 "detailFollowUpEmptySubmitDoesNotDispatchDraft",
-                "phoneAnswerDetailFollowUpSubmitReturnsThreadDetailWithInlineHistory"
+                "phoneAnswerDetailFollowUpSubmitReturnsThreadDetailWithInlineHistory",
+                "phoneAnswerDetailFollowUpImeSubmitReturnsThreadDetailWithInlineHistory"
             )
         }
         "functional-saved" {
@@ -1303,11 +1304,13 @@ function Resolve-InstrumentationMethodNames {
                 "savedNavigationBackReturnsManualHomeDestination",
                 "guideDetailSaveButtonSurfacesGuideInSavedDestinationAndUnsaveRemovesIt",
                 "savedTabImeSubmitRoutesToSearchResultsNotAnswerDetail",
+                "savedTabSearchButtonRoutesToSearchResultsNotAnswerDetail",
                 "savedTabPinnedGuideButtonOpensGuideDetailAndBackReturnsSaved"
             )
         }
         "functional-back-provenance" {
             return @(
+                "searchResultsVisibleBackReturnsBrowseWithoutAskOwnership",
                 "answerModeProvenanceOpenBackReturnsAnswerContext",
                 "emergencyAnswerVisibleBackButtonReturnsManualHomeDestination",
                 "answerSourceChipTapFollowsAdvertisedActionForSeededGuideSources"

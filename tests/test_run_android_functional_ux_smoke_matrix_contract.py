@@ -75,6 +75,36 @@ class RunAndroidFunctionalUxSmokeMatrixContractTests(unittest.TestCase):
         self.assertIn('"tablet-functional" {', self.script)
         self.assertIn("preset_package = $PresetPackage", self.script)
 
+    def test_back_provenance_preset_registers_visible_search_results_back_proof(self):
+        match = re.search(
+            r'"functional-back-provenance"\s*\{\s*return\s*@\((.*?)\)\s*\}',
+            self.smoke_script,
+            re.S,
+        )
+        self.assertIsNotNone(match, "Could not find functional-back-provenance preset methods.")
+        methods = re.findall(r'"([^"]+)"', match.group(1))
+
+        self.assertIn("searchResultsVisibleBackReturnsBrowseWithoutAskOwnership", methods)
+        self.assertIn(
+            "public void searchResultsVisibleBackReturnsBrowseWithoutAskOwnership()",
+            (REPO_ROOT / "android-app" / "app" / "src" / "androidTest" / "java" / "com" / "senku" / "mobile" / "PromptHarnessSmokeTest.java").read_text(encoding="utf-8"),
+        )
+
+    def test_functional_saved_preset_registers_visible_saved_submit_proof(self):
+        match = re.search(
+            r'"functional-saved"\s*\{\s*return\s*@\((.*?)\)\s*\}',
+            self.smoke_script,
+            re.S,
+        )
+        self.assertIsNotNone(match, "Could not find functional-saved preset methods.")
+        methods = re.findall(r'"([^"]+)"', match.group(1))
+
+        self.assertIn("savedTabSearchButtonRoutesToSearchResultsNotAnswerDetail", methods)
+        self.assertIn(
+            "public void savedTabSearchButtonRoutesToSearchResultsNotAnswerDetail()",
+            (REPO_ROOT / "android-app" / "app" / "src" / "androidTest" / "java" / "com" / "senku" / "mobile" / "PromptHarnessSmokeTest.java").read_text(encoding="utf-8"),
+        )
+
     def test_matrix_device_role_preflight_uses_bounded_adb_wait(self):
         self.assertIn("[int]$DeviceWaitTimeoutSeconds = 120", self.script)
         self.assertIn('throw "-DeviceWaitTimeoutSeconds must be 1 or greater."', self.script)
