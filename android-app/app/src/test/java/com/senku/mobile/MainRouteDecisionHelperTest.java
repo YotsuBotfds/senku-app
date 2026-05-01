@@ -886,6 +886,16 @@ public final class MainRouteDecisionHelperTest {
     }
 
     @Test
+    public void routeStateForModePreservesLegacyThreadResultModeNormalization() {
+        assertRoute(
+            MainRouteDecisionHelper.routeStateForMode(false, BottomTabDestination.THREADS, false),
+            MainRouteDecisionHelper.Surface.SEARCH_RESULTS,
+            BottomTabDestination.ASK,
+            false
+        );
+    }
+
+    @Test
     public void explicitFlowDestinationRoutesBrowseSurfacesThroughVisibleOwners() {
         MainRouteDecisionHelper.RouteState current =
             new MainRouteDecisionHelper.RouteState(

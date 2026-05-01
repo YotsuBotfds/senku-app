@@ -32,7 +32,7 @@ final class MainRouteDecisionHelper {
     }
 
     static RouteState browseHome() {
-        return new RouteState(Surface.BROWSE, BottomTabDestination.HOME, false);
+        return routeForBrowseDestination(BottomTabDestination.HOME);
     }
 
     static Transition systemBack(RouteState state, BottomTabDestination previousPhoneTab) {
@@ -94,7 +94,7 @@ final class MainRouteDecisionHelper {
     static Transition enterSearch(RouteState state) {
         normalize(state);
         return new Transition(
-            new RouteState(Surface.SEARCH_RESULTS, BottomTabDestination.HOME, false),
+            routeStateForMode(false, BottomTabDestination.HOME, false),
             Effect.FOCUS_SEARCH_INPUT
         );
     }
@@ -102,13 +102,13 @@ final class MainRouteDecisionHelper {
     static Transition enterAsk(RouteState state) {
         normalize(state);
         return new Transition(
-            new RouteState(Surface.ASK_RESULTS, BottomTabDestination.ASK, true),
+            routeStateForMode(false, BottomTabDestination.ASK, true),
             Effect.FOCUS_ASK_INPUT
         );
     }
 
     static RouteState askUnavailableOrNoSourceFailure() {
-        return new RouteState(Surface.RECENT_THREADS, BottomTabDestination.ASK, false);
+        return routeForBrowseDestination(BottomTabDestination.ASK);
     }
 
     static RouteState openEmptyAskLane(RouteState state) {
@@ -158,12 +158,9 @@ final class MainRouteDecisionHelper {
         BottomTabDestination activePhoneTab,
         boolean askLaneActive
     ) {
-        Surface surface = browseMode
-            ? browseSurfaceForPhoneTab(activePhoneTab)
-            : (askLaneActive || activePhoneTab == BottomTabDestination.ASK
-                ? Surface.ASK_RESULTS
-                : Surface.SEARCH_RESULTS);
-        return new RouteState(surface, activePhoneTab, askLaneActive);
+        RouteSelection selection = RouteSelection.from(activePhoneTab);
+        Surface surface = surfaceForMode(browseMode, activePhoneTab, selection.owner, askLaneActive);
+        return routeState(surface, selection.owner, askLaneActive);
     }
 
     static RouteState routeStateForExplicitFlowDestination(
@@ -199,7 +196,7 @@ final class MainRouteDecisionHelper {
             Surface surface = parseRouteSurface(rawSurface);
             BottomTabDestination activeTab = parsePhoneTab(rawActivePhoneTab);
             if (surface != null && activeTab != null) {
-                return new RouteState(surface, activeTab, askLaneActive);
+                return routeState(surface, activeTab, askLaneActive);
             }
         }
         BottomTabDestination legacyTab = resolveRestoredPhoneTab(legacyPhoneTab);
@@ -264,12 +261,34 @@ final class MainRouteDecisionHelper {
     }
 
     private static RouteState routeForBrowseDestination(BottomTabDestination destination) {
-        return new RouteState(browseSurfaceForPhoneTab(destination), destination, false);
+        return routeStateForMode(true, destination, false);
     }
 
     private static RouteState withAskLaneInactive(RouteState state) {
         RouteState route = normalize(state);
-        return new RouteState(route.surface, route.activePhoneTab, false);
+        return routeState(route.surface, route.activePhoneTab, false);
+    }
+
+    private static RouteState routeState(
+        Surface surface,
+        BottomTabDestination selectionOwner,
+        boolean askLaneActive
+    ) {
+        return new RouteState(surface, selectionOwner, askLaneActive);
+    }
+
+    private static Surface surfaceForMode(
+        boolean browseMode,
+        BottomTabDestination requestedDestination,
+        BottomTabDestination selectionOwner,
+        boolean askLaneActive
+    ) {
+        if (browseMode) {
+            return browseSurfaceForPhoneTab(selectionOwner);
+        }
+        return askLaneActive || requestedDestination == BottomTabDestination.ASK
+            ? Surface.ASK_RESULTS
+            : Surface.SEARCH_RESULTS;
     }
 
     private static Surface browseSurfaceForPhoneTab(BottomTabDestination destination) {
@@ -317,6 +336,18 @@ final class MainRouteDecisionHelper {
         return state == null ? browseHome() : state.normalized();
     }
 
+    private static final class RouteSelection {
+        final BottomTabDestination owner;
+
+        private RouteSelection(BottomTabDestination owner) {
+            this.owner = owner;
+        }
+
+        static RouteSelection from(BottomTabDestination destination) {
+            return new RouteSelection(phoneTabSelectionOwner(destination));
+        }
+    }
+
     static final class EncodedRouteState {
         final String surface;
         final String activePhoneTab;
@@ -337,14 +368,18 @@ final class MainRouteDecisionHelper {
         RouteState(Surface surface, BottomTabDestination activePhoneTab, boolean askLaneActive) {
             Surface safeSurface = surface == null ? Surface.BROWSE : surface;
             BottomTabDestination owner = phoneTabSelectionOwner(activePhoneTab);
-            this.surface = isBrowseSurface(safeSurface) ? browseSurfaceForPhoneTab(owner) : safeSurface;
+            this.surface = normalizeSurfaceForOwner(safeSurface, owner);
             this.activePhoneTab = owner;
             this.askLaneActive = askLaneActive;
         }
 
         private RouteState normalized() {
-            return new RouteState(surface, activePhoneTab, askLaneActive);
+            return routeState(surface, activePhoneTab, askLaneActive);
         }
+    }
+
+    private static Surface normalizeSurfaceForOwner(Surface surface, BottomTabDestination owner) {
+        return isBrowseSurface(surface) ? browseSurfaceForPhoneTab(owner) : surface;
     }
 
     static final class Transition {
