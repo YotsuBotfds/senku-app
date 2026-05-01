@@ -56,6 +56,7 @@ class AndroidPhysicalPhoneSmokeContractTests(unittest.TestCase):
         self.assertIn("function Get-OrientationEvidence", self.script)
         self.assertIn("text_checks", self.script)
         self.assertIn("function Wait-UiPostStepEvidence", self.script)
+        self.assertIn("function Get-SavedDestinationEvidenceFragments", self.script)
         self.assertIn("post_check", self.script)
         self.assertIn("dump_sha256", self.script)
         self.assertIn("function Invoke-SenkuSimpleInteraction", self.script)
@@ -426,7 +427,7 @@ class AndroidPhysicalPhoneSmokeContractTests(unittest.TestCase):
                         "if \"%4\"==\"dumpsys\" if \"%5\"==\"activity\" (echo topResumedActivity=com.senku.mobile/.MainActivity& exit /b 0)",
                         "if \"%4\"==\"dumpsys\" if \"%5\"==\"input\" (echo SurfaceOrientation: 0& exit /b 0)",
                         "if \"%3\"==\"exec-out\" (echo PNGDATA& exit /b 0)",
-                        "if \"%4\"==\"uiautomator\" (echo ^<hierarchy^>^<node text=\"Saved\" content-desc=\"Saved\" bounds=\"[10,20][110,120]\" /^>^<node class=\"android.widget.EditText\" resource-id=\"com.senku.mobile:id/search\" bounds=\"[30,200][330,260]\" /^>^</hierarchy^>& exit /b 0)",
+                        "if \"%4\"==\"uiautomator\" (echo ^<hierarchy^>^<node text=\"Saved\" content-desc=\"Saved\" bounds=\"[10,20][110,120]\" /^>^<node text=\"Boil water safely\" content-desc=\"Saved guide 1 of 1: Boil water safely\" /^>^<node class=\"android.widget.EditText\" resource-id=\"com.senku.mobile:id/search\" bounds=\"[30,200][330,260]\" /^>^</hierarchy^>& exit /b 0)",
                         "if \"%4\"==\"input\" if \"%5\"==\"tap\" (echo tapped& exit /b 0)",
                         "if \"%4\"==\"input\" if \"%5\"==\"text\" (echo typed& exit /b 0)",
                         "if \"%4\"==\"input\" if \"%5\"==\"keyevent\" (echo key& exit /b 0)",
@@ -484,6 +485,11 @@ class AndroidPhysicalPhoneSmokeContractTests(unittest.TestCase):
                 self.assertRegex(step_by_name[step_name]["post_check"]["dump_sha256"], r"^[0-9a-f]{64}$")
                 self.assertGreaterEqual(len(step_by_name[step_name]["post_check"]["matched_text"]), 1)
                 self.assertIn("Saved", step_by_name[step_name]["post_check"]["ui_text_sample"])
+            self.assertEqual(
+                step_by_name["tap_saved"]["post_check"]["expected_any_text"],
+                ["No saved guides yet", "This tab only shows saved guides", "Saved guide "],
+            )
+            self.assertIn("Saved guide ", step_by_name["tap_saved"]["post_check"]["matched_text"])
             self.assertIn("Search", step_by_name["submit_query"]["post_check"]["matched_text"])
             self.assertNotIn("post_check", step_by_name["tap_query_field"])
             self.assertNotIn("post_check", step_by_name["enter_query"])
@@ -493,6 +499,82 @@ class AndroidPhysicalPhoneSmokeContractTests(unittest.TestCase):
             self.assertIn("-s R5CT123456A shell input text boil%swater", call_text)
             self.assertIn("-s R5CT123456A shell input keyevent ENTER", call_text)
             self.assertIn("-s R5CT123456A shell input keyevent BACK", call_text)
+        finally:
+            shutil.rmtree(root, ignore_errors=True)
+
+    def test_fake_adb_tap_saved_nav_only_post_check_fails(self):
+        root = Path(tempfile.mkdtemp(prefix="physical_phone_smoke_saved_nav_only_"))
+        try:
+            output_dir = root / "out"
+            apk = root / "app-debug.apk"
+            adb = root / "adb.cmd"
+            apk.write_text("apk", encoding="utf-8")
+            adb.write_text(
+                "\r\n".join(
+                    [
+                        "@echo off",
+                        "if \"%1\"==\"devices\" (",
+                        "  echo List of devices attached",
+                        "  echo R5CT123456A\tdevice",
+                        "  exit /b 0",
+                        ")",
+                        "if \"%5\"==\"ro.kernel.qemu\" (echo 0& exit /b 0)",
+                        "if \"%5\"==\"ro.boot.qemu\" (echo 0& exit /b 0)",
+                        "if \"%4\"==\"getprop\" (echo fake-%5& exit /b 0)",
+                        "if \"%3\"==\"install\" (echo Success& exit /b 0)",
+                        "if \"%4\"==\"am\" (echo Starting: Intent& exit /b 0)",
+                        "if \"%4\"==\"dumpsys\" if \"%5\"==\"window\" (echo mCurrentFocus=Window{u0 com.senku.mobile/.MainActivity}& exit /b 0)",
+                        "if \"%4\"==\"dumpsys\" if \"%5\"==\"activity\" (echo topResumedActivity=com.senku.mobile/.MainActivity& exit /b 0)",
+                        "if \"%4\"==\"dumpsys\" if \"%5\"==\"input\" (echo SurfaceOrientation: 0& exit /b 0)",
+                        "if \"%3\"==\"exec-out\" (echo PNGDATA& exit /b 0)",
+                        "if \"%4\"==\"uiautomator\" (echo ^<hierarchy^>^<node text=\"Saved\" content-desc=\"Saved\" bounds=\"[10,20][110,120]\" /^>^<node class=\"android.widget.EditText\" resource-id=\"com.senku.mobile:id/search\" bounds=\"[30,200][330,260]\" /^>^</hierarchy^>& exit /b 0)",
+                        "if \"%4\"==\"input\" if \"%5\"==\"tap\" (echo tapped& exit /b 0)",
+                        "if \"%4\"==\"input\" (exit /b 0)",
+                        "exit /b 1",
+                    ]
+                ),
+                encoding="utf-8",
+            )
+
+            result = subprocess.run(
+                [
+                    "powershell",
+                    "-NoProfile",
+                    "-ExecutionPolicy",
+                    "Bypass",
+                    "-File",
+                    str(SCRIPT),
+                    "-OutputDir",
+                    str(output_dir),
+                    "-Serial",
+                    "R5CT123456A",
+                    "-ApkPath",
+                    str(apk),
+                    "-AdbPath",
+                    str(adb),
+                    "-Interact",
+                ],
+                cwd=REPO_ROOT,
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+
+            self.assertNotEqual(result.returncode, 0, result.stderr + result.stdout)
+            self.assertIn("interaction failed step", result.stderr + result.stdout)
+            self.assertIn("last post_check step=tap_saved", result.stderr + result.stdout)
+            summary = json.loads((output_dir / "summary.json").read_text(encoding="utf-8-sig"))
+            first_step = summary["interaction"]["steps"][0]
+            self.assertEqual(first_step["name"], "tap_saved")
+            self.assertEqual(first_step["status"], "failed")
+            self.assertIn("Post-step UI check", first_step["message"])
+            self.assertFalse(first_step["post_check"]["passed"])
+            self.assertEqual(
+                first_step["post_check"]["expected_any_text"],
+                ["No saved guides yet", "This tab only shows saved guides", "Saved guide "],
+            )
+            self.assertEqual(first_step["post_check"]["matched_text"], [])
+            self.assertIn("Saved", first_step["post_check"]["ui_text_sample"])
         finally:
             shutil.rmtree(root, ignore_errors=True)
 
@@ -589,7 +671,7 @@ class AndroidPhysicalPhoneSmokeContractTests(unittest.TestCase):
                         "if \"%4\"==\"dumpsys\" if \"%5\"==\"input\" (echo SurfaceOrientation: 0& exit /b 0)",
                         "if \"%3\"==\"exec-out\" (echo PNGDATA& exit /b 0)",
                         f"if \"%4\"==\"uiautomator\" if exist \"{entered}\" (echo ^<hierarchy^>^<node text=\"No matching result\" /^>^</hierarchy^>& exit /b 0)",
-                        "if \"%4\"==\"uiautomator\" (echo ^<hierarchy^>^<node text=\"Saved\" content-desc=\"Saved\" bounds=\"[10,20][110,120]\" /^>^<node class=\"android.widget.EditText\" resource-id=\"com.senku.mobile:id/search\" bounds=\"[30,200][330,260]\" /^>^</hierarchy^>& exit /b 0)",
+                        "if \"%4\"==\"uiautomator\" (echo ^<hierarchy^>^<node text=\"Saved\" content-desc=\"Saved\" bounds=\"[10,20][110,120]\" /^>^<node text=\"No saved guides yet. This tab only shows saved guides, not threads or sections.\" /^>^<node class=\"android.widget.EditText\" resource-id=\"com.senku.mobile:id/search\" bounds=\"[30,200][330,260]\" /^>^</hierarchy^>& exit /b 0)",
                         "if \"%4\"==\"input\" if \"%5\"==\"tap\" (echo tapped& exit /b 0)",
                         "if \"%4\"==\"input\" if \"%5\"==\"text\" (echo typed& exit /b 0)",
                         f"if \"%4\"==\"input\" if \"%5\"==\"keyevent\" if \"%6\"==\"ENTER\" (echo entered> \"{entered}\"& exit /b 0)",

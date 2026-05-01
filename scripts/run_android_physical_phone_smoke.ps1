@@ -419,6 +419,14 @@ function Get-UiPostStepEvidence {
     return $evidence
 }
 
+function Get-SavedDestinationEvidenceFragments {
+    return @(
+        "No saved guides yet",
+        "This tab only shows saved guides",
+        "Saved guide "
+    )
+}
+
 function Wait-UiPostStepEvidence {
     param(
         [string]$ResolvedAdbPath,
@@ -587,7 +595,7 @@ function Invoke-SenkuSimpleInteraction {
 
     $steps = [System.Collections.ArrayList]::new()
 
-    [void](Invoke-InteractionStep -Steps $steps -Name "tap_saved" -ExpectedAnyText @("Saved") -Action {
+    [void](Invoke-InteractionStep -Steps $steps -Name "tap_saved" -ExpectedAnyText (Get-SavedDestinationEvidenceFragments) -Action {
         $dumpText = Read-UiAutomatorDump -ResolvedAdbPath $ResolvedAdbPath -DeviceSerial $DeviceSerial
         $center = Find-UiNodeCenter -DumpText $dumpText -Predicate {
             param($attributes)
