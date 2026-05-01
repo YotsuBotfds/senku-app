@@ -2,6 +2,7 @@ package com.senku.mobile;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Collections;
@@ -61,6 +62,18 @@ public final class PackRouteFocusedSearchHelperTest {
             PackRouteFocusedSearchHelper.routeSearchStep(queryTerms, routeSpec);
 
         assertEquals(List.of("alpha", "beta", "gamma", "delta", "epsilon", "zeta"), routeStep.tokens);
+    }
+
+    @Test
+    public void routeSearchStepSkipsMissingOrBlankSpecs() {
+        PackRepository.QueryTerms queryTerms = PackRepository.QueryTerms.fromQuery("how do i build a house");
+
+        assertNull(PackRouteFocusedSearchHelper.routeSearchStep(queryTerms, null, 6));
+        assertNull(PackRouteFocusedSearchHelper.routeSearchStep(
+            queryTerms,
+            new QueryRouteProfile.RouteSearchSpec("  ", Collections.singleton("building"), 0),
+            6
+        ));
     }
 
     @Test

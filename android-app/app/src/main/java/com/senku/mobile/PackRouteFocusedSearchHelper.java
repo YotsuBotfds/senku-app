@@ -43,6 +43,9 @@ final class PackRouteFocusedSearchHelper {
         if (queryTerms == null || queryTerms.routeProfile == null || routeSpec == null) {
             return null;
         }
+        if (!hasRouteSearchText(routeSpec)) {
+            return null;
+        }
         PackRepository.QueryTerms specTerms = PackRepository.QueryTerms.fromText(
             routeSpec.text(),
             queryTerms.routeProfile
@@ -116,6 +119,10 @@ final class PackRouteFocusedSearchHelper {
         return queryTerms != null
             && queryTerms.routeProfile != null
             && queryTerms.routeProfile.usesCompactGuideSweep(queryTerms.queryLower);
+    }
+
+    private static boolean hasRouteSearchText(QueryRouteProfile.RouteSearchSpec routeSpec) {
+        return routeSpec.text() != null && !routeSpec.text().trim().isEmpty();
     }
 
     private static List<String> limitTokens(List<String> tokens, int max) {
