@@ -91,10 +91,6 @@ final class MainResultPublicationPolicy {
         );
     }
 
-    static MainResultPublicationPolicy resultSurface(String highlightQuery) {
-        return askResultSurface(highlightQuery);
-    }
-
     static MainResultPublicationPolicy searchResultSurface(String highlightQuery) {
         return new MainResultPublicationPolicy(highlightQuery, searchResultsRouteState(), "", 0, false);
     }

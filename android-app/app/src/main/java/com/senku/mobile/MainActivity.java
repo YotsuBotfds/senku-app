@@ -950,7 +950,7 @@ public final class MainActivity extends AppCompatActivity {
             sessionMemory.recordTurn(query, answerBody, deterministic.sources, deterministic.ruleId);
             ChatSessionStore.persist(MainActivity.this);
             setBusy("Deterministic offline answer ready", false);
-            publishResultItems(MainResultPublicationPolicy.resultSurface(query), deterministic.sources);
+            publishResultItems(MainResultPublicationPolicy.askResultSurface(query), deterministic.sources);
             resultsHeader.setText("Deterministic offline answer for \"" + query + "\"");
             updateInfoText();
             updateSessionPanel();
@@ -992,7 +992,7 @@ public final class MainActivity extends AppCompatActivity {
                 : OfflineAnswerEngine.buildSourcesReadyStatus(MainActivity.this, preparedAnswer.sources.size());
             setBusy(status, false);
             publishResultItems(
-                MainResultPublicationPolicy.resultSurface(preparedAnswer.query),
+                MainResultPublicationPolicy.askResultSurface(preparedAnswer.query),
                 preparedAnswer.sources
             );
             resultsHeader.setText(presentationFormatter().buildAnswerContextHeader(
@@ -1015,7 +1015,7 @@ public final class MainActivity extends AppCompatActivity {
             setBusy("Offline answer failed", false);
             if (failedPrepared != null && !failedPrepared.sources.isEmpty()) {
                 publishResultItems(
-                    MainResultPublicationPolicy.resultSurface(failedPrepared.query),
+                    MainResultPublicationPolicy.askResultSurface(failedPrepared.query),
                     failedPrepared.sources
                 );
                 resultsHeader.setText(presentationFormatter().buildAnswerContextHeader(

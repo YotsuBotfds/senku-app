@@ -47,7 +47,7 @@ public final class MainResultPublicationPolicyTest {
 
     @Test
     public void askResultSurfaceCarriesExplicitAskRouteWithoutUpdatingQueryWells() {
-        MainResultPublicationPolicy policy = MainResultPublicationPolicy.resultSurface("rain shelter");
+        MainResultPublicationPolicy policy = MainResultPublicationPolicy.askResultSurface("rain shelter");
 
         assertEquals("rain shelter", policy.highlightQuery());
         assertRouteState(
