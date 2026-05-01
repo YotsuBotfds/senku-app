@@ -651,7 +651,7 @@ public final class PackRepositoryTest {
             "water_storage"
         );
 
-        boolean keep = PackRepository.shouldKeepGuideSectionForContextForTest(
+        boolean keep = PackAnswerContextSectionLoader.shouldKeepGuideSectionForContextForTest(
             "what's the safest way to store treated water long term",
             candidate,
             false
@@ -677,7 +677,7 @@ public final class PackRepositoryTest {
             "water_storage,container_sanitation,water_rotation"
         );
 
-        boolean keep = PackRepository.shouldKeepGuideSectionForContextForTest(
+        boolean keep = PackAnswerContextSectionLoader.shouldKeepGuideSectionForContextForTest(
             "what's the safest way to store treated water long term",
             candidate,
             false
@@ -1119,7 +1119,7 @@ public final class PackRepositoryTest {
             "foundation,wall_construction,roofing,weatherproofing"
         );
 
-        boolean keep = PackRepository.shouldKeepGuideSectionForContextForTest(
+        boolean keep = PackAnswerContextSectionLoader.shouldKeepGuideSectionForContextForTest(
             "how do i waterproof a roof with no tar or shingles",
             candidate,
             false
@@ -2009,7 +2009,7 @@ public final class PackRepositoryTest {
             "community_governance,conflict_resolution,trust_systems"
         );
 
-        boolean keep = PackRepository.shouldKeepGuideSectionForContextForTest(
+        boolean keep = PackAnswerContextSectionLoader.shouldKeepGuideSectionForContextForTest(
             "How do we merge with another group if we don't trust each other yet?",
             candidate,
             false
