@@ -76,7 +76,6 @@ public final class MainActivity extends AppCompatActivity {
     private static final int MAX_SAVED_GUIDES = 12;
     private static final int MAX_RECENT_THREAD_PREVIEWS = 3;
     private static final int MAX_HOME_RELATED_GUIDES = 4;
-    private static final int RESULT_PREVIEW_BRIDGE_SIGNAL_LIMIT = 1;
     private static final int MANUAL_HOME_CATEGORY_CARD_HEIGHT_DP = 74;
     private static final int TABLET_MANUAL_HOME_CATEGORY_CARD_HEIGHT_DP = 68;
     private static final int MANUAL_HOME_CATEGORY_ROW_GAP_DP = 9;
@@ -104,6 +103,8 @@ public final class MainActivity extends AppCompatActivity {
     private final AskQueryController askQueryController = new AskQueryController(new MainAskQueryHost());
     private final MainGuideOpenController guideOpenController = new MainGuideOpenController();
     private final MainHomeRelatedGuideController homeRelatedGuideController = new MainHomeRelatedGuideController();
+    private final MainResultPreviewBridgeController resultPreviewBridgeController =
+        new MainResultPreviewBridgeController();
 
     private MainPresentationFormatter presentationFormatter;
     private HomeGuidePresentationFormatter homeGuidePresentationFormatter;
@@ -213,7 +214,6 @@ public final class MainActivity extends AppCompatActivity {
     private boolean productReviewMode = false;
     private HomeGuideAnchor homeGuideAnchor;
     private int homeRelatedRequestVersion;
-    private int resultPreviewBridgeRequestVersion;
     private boolean showHomeInfoCard = true;
     private BottomTabDestination activePhoneTab = BottomTabDestination.HOME;
     private final ArrayList<BottomTabDestination> phoneTabBackStack = new ArrayList<>();
@@ -1919,63 +1919,45 @@ public final class MainActivity extends AppCompatActivity {
     }
 
     private void refreshResultPreviewBridgesAsync(List<SearchResult> results) {
-        PackRepository repo = repository;
-        LinkedHashMap<String, String> previewGuideIds = ResultPreviewBridgePolicy.collectGuideIds(results);
-        int requestVersion = ++resultPreviewBridgeRequestVersion;
-        if (repo == null || previewGuideIds.isEmpty()) {
-            return;
-        }
-        int harnessToken = beginHarnessTask("main.refreshResultPreviewBridges");
-        executor.execute(() -> {
-            try {
-                LinkedHashMap<String, SearchResultAdapter.LinkedGuidePreview> previewSignals = new LinkedHashMap<>();
-                for (Map.Entry<String, String> entry : previewGuideIds.entrySet()) {
-                    List<SearchResult> related = repo.loadRelatedGuides(
-                        entry.getValue(),
-                        RESULT_PREVIEW_BRIDGE_SIGNAL_LIMIT
-                    );
-                    if (!related.isEmpty()) {
-                        SearchResult preview = related.get(0);
-                        String previewGuideId = safe(preview == null ? null : preview.guideId).trim();
-                        if (previewGuideId.isEmpty() || previewGuideId.equalsIgnoreCase(entry.getValue())) {
-                            continue;
-                        }
-                        String previewLabel = presentationFormatter().clipLabel(
-                            presentationFormatter().buildGuideReference(preview, entry.getValue()),
-                            68
-                        );
-                        if (!previewLabel.isEmpty()) {
-                            previewSignals.put(
-                                entry.getKey(),
-                                new SearchResultAdapter.LinkedGuidePreview(
-                                    previewGuideId,
-                                    safe(preview == null ? null : preview.title).trim(),
-                                    previewLabel
-                                )
-                            );
-                        }
-                    }
-                }
-                runTrackedOnUiThread(harnessToken, () -> applyResultPreviewBridgeSignals(requestVersion, previewSignals));
-            } catch (Exception ignored) {
-                runTrackedOnUiThread(harnessToken, () -> applyResultPreviewBridgeSignals(requestVersion, Collections.emptyMap()));
-            }
-        });
+        resultPreviewBridgeController.refreshAsync(results, repository, new MainResultPreviewBridgeHost());
     }
 
-    private void applyResultPreviewBridgeSignals(
-        int requestVersion,
-        Map<String, SearchResultAdapter.LinkedGuidePreview> previewSignals
-    ) {
-        if (requestVersion != resultPreviewBridgeRequestVersion) {
-            return;
-        }
+    private void applyResultPreviewBridgeSignals(Map<String, SearchResultAdapter.LinkedGuidePreview> previewSignals) {
         resultPreviewBridgeMap.clear();
         if (previewSignals != null) {
             resultPreviewBridgeMap.putAll(previewSignals);
         }
         adapter.setLinkedGuidePreviewMap(resultPreviewBridgeMap);
         adapter.notifyDataSetChanged();
+    }
+
+    private final class MainResultPreviewBridgeHost implements MainResultPreviewBridgeController.Host {
+        @Override
+        public ExecutorService executor() {
+            return executor;
+        }
+
+        @Override
+        public int beginHarnessTask(String label) {
+            return MainActivity.this.beginHarnessTask(label);
+        }
+
+        @Override
+        public void runTrackedOnUiThread(int harnessToken, Runnable action) {
+            MainActivity.this.runTrackedOnUiThread(harnessToken, action);
+        }
+
+        @Override
+        public MainPresentationFormatter presentationFormatter() {
+            return MainActivity.this.presentationFormatter();
+        }
+
+        @Override
+        public void onResultPreviewBridgeSignals(
+            Map<String, SearchResultAdapter.LinkedGuidePreview> previewSignals
+        ) {
+            applyResultPreviewBridgeSignals(previewSignals);
+        }
     }
 
     private HomeGuideAnchor selectHomeGuideAnchor() {
