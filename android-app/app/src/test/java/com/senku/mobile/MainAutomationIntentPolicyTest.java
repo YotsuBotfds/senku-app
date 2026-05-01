@@ -82,12 +82,14 @@ public final class MainAutomationIntentPolicyTest {
     @Test
     public void automationEmptyAutoAskMarksHandledAndSuppressesFocus() {
         MainAutomationIntentPolicy.AutomationDecision decision = MainAutomationIntentPolicy.resolveAutomation(
-            MainAutomationIntentPolicy.IntentState.fromEncoded(null, true, null),
+            MainAutomationIntentPolicy.IntentState.fromEncoded(null, true, "ignored%20followup"),
             false,
             false
         );
 
         assertEquals(MainAutomationIntentPolicy.AutomationEffect.OPEN_EMPTY_ASK_LANE, decision.effect);
+        assertEquals("", decision.query);
+        assertNull(decision.followUpQuery);
         assertEquals(MainAutomationIntentPolicy.Route.ASK, decision.route);
         assertTrue(decision.markHandled);
         assertTrue(decision.suppressSearchFocus);
@@ -114,6 +116,29 @@ public final class MainAutomationIntentPolicyTest {
         assertEquals(MainAutomationIntentPolicy.Route.ASK, decision.route);
         assertFalse(decision.markHandled);
         assertFalse(decision.suppressSearchFocus);
+    }
+
+    @Test
+    public void delayedAutoAskRunsOnlyAfterRepositoryReady() {
+        MainAutomationIntentPolicy.IntentState intentState =
+            MainAutomationIntentPolicy.IntentState.fromEncoded("boil%20water", true, "then%20cool");
+
+        MainAutomationIntentPolicy.AutomationDecision waitingDecision =
+            MainAutomationIntentPolicy.resolveAutomation(intentState, false, false);
+        MainAutomationIntentPolicy.AutomationDecision readyDecision =
+            MainAutomationIntentPolicy.resolveAutomation(intentState, false, true);
+
+        assertEquals(
+            MainAutomationIntentPolicy.AutomationEffect.PREPARE_QUERY_WAITING_FOR_REPOSITORY,
+            waitingDecision.effect
+        );
+        assertEquals("boil water", waitingDecision.query);
+        assertEquals("then cool", waitingDecision.followUpQuery);
+        assertEquals(MainAutomationIntentPolicy.Route.ASK, waitingDecision.route);
+        assertFalse(waitingDecision.markHandled);
+        assertFalse(waitingDecision.suppressSearchFocus);
+
+        assertRunDecision(readyDecision, "boil water", "then cool", MainAutomationIntentPolicy.Route.ASK);
     }
 
     @Test

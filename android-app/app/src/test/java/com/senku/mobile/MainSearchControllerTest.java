@@ -186,6 +186,27 @@ public final class MainSearchControllerTest {
         assertNull(host.lastFailure);
     }
 
+    @Test
+    public void staleSuccessIsSuppressedAfterNewerUnavailableRouteWins() {
+        FakeHost host = readyHost();
+        host.queueUiActions = true;
+        FakeEngine engine = new FakeEngine();
+        SearchResult first = sampleResult("First", "GD-001");
+        engine.resultsByQuery.put("first", List.of(first));
+        MainSearchController controller = new MainSearchController(host, engine, query -> null);
+
+        controller.runSearch("first");
+        host.repositoryAvailable = false;
+        controller.runSearch("second");
+        host.runQueuedUiAction(0);
+
+        assertEquals(
+            List.of("started:first:first:false", "pack-unavailable"),
+            host.events
+        );
+        assertNull(host.lastResults);
+    }
+
     private static FakeHost readyHost() {
         FakeHost host = new FakeHost();
         host.repositoryAvailable = true;
