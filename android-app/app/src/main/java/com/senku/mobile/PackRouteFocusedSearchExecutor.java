@@ -160,7 +160,7 @@ final class PackRouteFocusedSearchExecutor {
             ftsSupportsBm25
         );
         if (plan.isEmpty()) {
-            Log.d(TAG, "routeChunkFts.skip query=\"" + queryTerms.queryLower + "\" reason=empty_fts_query");
+            Log.d(TAG, "routeChunkFts.skip query=\"" + queryTerms.queryLower + "\" reason=" + plan.noOpReason);
             return 0;
         }
 
@@ -206,7 +206,7 @@ final class PackRouteFocusedSearchExecutor {
             candidateLimit
         );
         if (plan.isEmpty()) {
-            Log.d(TAG, "routeChunkLike.skip query=\"" + queryTerms.queryLower + "\" reason=empty_like_plan");
+            Log.d(TAG, "routeChunkLike.skip query=\"" + queryTerms.queryLower + "\" reason=" + plan.noOpReason);
             return 0;
         }
 
@@ -301,7 +301,7 @@ final class PackRouteFocusedSearchExecutor {
             ftsSupportsBm25
         );
         if (plan.isEmpty()) {
-            Log.d(TAG, "routeGuideFts.skip query=\"" + queryTerms.queryLower + "\" reason=empty_fts_query");
+            Log.d(TAG, "routeGuideFts.skip query=\"" + queryTerms.queryLower + "\" reason=" + plan.noOpReason);
             return 0;
         }
 
@@ -347,7 +347,7 @@ final class PackRouteFocusedSearchExecutor {
             candidateLimit
         );
         if (plan.isEmpty()) {
-            Log.d(TAG, "routeGuideLike.skip query=\"" + queryTerms.queryLower + "\" reason=empty_like_plan");
+            Log.d(TAG, "routeGuideLike.skip query=\"" + queryTerms.queryLower + "\" reason=" + plan.noOpReason);
             return 0;
         }
 

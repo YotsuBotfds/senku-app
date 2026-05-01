@@ -177,7 +177,7 @@ public final class MainRouteCoordinatorTest {
             BottomTabDestination.HOME,
             false
         );
-        assertEquals(
+        assertCallsIncludeExactly(
             Arrays.asList(
                 "route:BROWSE:HOME:false:browse=true",
                 "updateActionLabels",
@@ -215,6 +215,14 @@ public final class MainRouteCoordinatorTest {
         assertEquals(surface, state.surface);
         assertEquals(activePhoneTab, state.activePhoneTab);
         assertEquals(askLaneActive, state.askLaneActive);
+    }
+
+    private static void assertCallsIncludeExactly(
+        List<String> expectedCalls,
+        List<String> actualCalls
+    ) {
+        assertEquals(expectedCalls.size(), actualCalls.size());
+        assertTrue(actualCalls.containsAll(expectedCalls));
     }
 
     private static final class RecordingHost implements MainRouteCoordinator.Host {

@@ -4,6 +4,11 @@ import com.senku.ui.primitives.Rev03ComposeNavRailIconSizeDp
 import com.senku.ui.primitives.Rev03ComposeNavRailIconLabelGapDp
 import com.senku.ui.primitives.Rev03ComposeNavRailLabelFontSizeSp
 import com.senku.ui.primitives.Rev03ComposeNavRailLabelLineHeightSp
+import com.senku.ui.primitives.TopBarActionKind
+import com.senku.ui.primitives.topBarActionWidthDpForTest
+import com.senku.ui.primitives.topBarBackActionLabelForTest
+import com.senku.ui.primitives.topBarBackIconSizeDpForTest
+import com.senku.ui.primitives.topBarTitleFontSizeSpForTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Test
@@ -58,6 +63,21 @@ class TabletDetailAppRailPolicyTest {
         assertFalse(policy.showsTextLabel)
         assertEquals(policy.widthDp, tabletDetailBackActionWidthDp())
         assertEquals(policy.iconSizeDp, tabletDetailBackActionIconSizeDp())
+    }
+
+    @Test
+    fun tabletDetailHeaderKeepsBackAndTitleTokensAlignedWithSharedTopbar() {
+        val policy = tabletDetailBackActionPolicy()
+        val portraitTitleType = tabletTitleBarTitleTypePolicy(isLandscape = false)
+        val landscapeTitleType = tabletTitleBarTitleTypePolicy(isLandscape = true)
+
+        assertEquals(topBarBackIconSizeDpForTest(), policy.iconSizeDp)
+        assertEquals("Back", topBarBackActionLabelForTest())
+        assertFalse(policy.showsTextLabel)
+        assertEquals(48, policy.widthDp)
+        assertEquals(28, topBarActionWidthDpForTest(TopBarActionKind.Back))
+        assertEquals(topBarTitleFontSizeSpForTest().toInt() + 1, portraitTitleType.fontSizeSp)
+        assertEquals(portraitTitleType, landscapeTitleType)
     }
 
     @Test

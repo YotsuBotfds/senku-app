@@ -23,7 +23,7 @@ class PhoneMainXmlShellParityTest {
                 backActionSize = "48dp",
                 searchActionSize = "48dp",
                 searchPadding = "15dp",
-                searchTint = "@color/senku_rev03_ink_0",
+                searchTint = "@color/senku_rev03_ink_2",
                 expectsOverflowPlaceholder = false,
             ),
         )
@@ -60,6 +60,18 @@ class PhoneMainXmlShellParityTest {
             "@style/TextAppearance.Senku.Rev03.ChromeMono",
             layout.elementByAndroidId("category_section_header").android("textAppearance"),
         )
+    }
+
+    @Test
+    fun phoneChromeSearchActionsUseSharedMutedInkTokenAcrossPostures() {
+        listOf("", "layout-land").forEach { qualifier ->
+            val layout = mainLayout(qualifier)
+
+            assertEquals(
+                "@color/senku_rev03_ink_2",
+                layout.elementByAndroidId("home_chrome_search_icon").android("tint"),
+            )
+        }
     }
 
     @Test

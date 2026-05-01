@@ -114,7 +114,7 @@
             android:focusable="true"
             android:padding="15dp"
             android:src="@drawable/ic_search_magnifier"
-            android:tint="@color/senku_rev03_ink_0" />
+            android:tint="@color/senku_rev03_ink_2" />
     </LinearLayout>
 
     <View

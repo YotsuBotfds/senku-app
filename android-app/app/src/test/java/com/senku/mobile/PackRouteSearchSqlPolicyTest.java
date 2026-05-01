@@ -39,6 +39,7 @@ public final class PackRouteSearchSqlPolicyTest {
         );
         assertEquals(37, plan.effectiveCandidateLimit);
         assertEquals("bm25", plan.orderLabel);
+        assertEquals("", plan.noOpReason);
     }
 
     @Test
@@ -173,9 +174,11 @@ public final class PackRouteSearchSqlPolicyTest {
         );
 
         assertTrue(chunkPlan.isEmpty());
+        assertEquals("empty_categories", chunkPlan.noOpReason);
         assertEquals(PackRepository.buildFtsQuery(specTerms, 8, true), chunkPlan.ftsQuery);
         assertTrue(chunkPlan.args.isEmpty());
         assertTrue(guidePlan.isEmpty());
+        assertEquals("empty_categories", guidePlan.noOpReason);
         assertEquals(PackRepository.buildFtsQuery(specTerms, 8, true), guidePlan.ftsQuery);
         assertTrue(guidePlan.args.isEmpty());
     }
@@ -203,9 +206,11 @@ public final class PackRouteSearchSqlPolicyTest {
         );
 
         assertTrue(nullCategories.isEmpty());
+        assertEquals("empty_categories", nullCategories.noOpReason);
         assertEquals(PackRepository.buildFtsQuery(specTerms, 8, true), nullCategories.ftsQuery);
         assertTrue(nullCategories.args.isEmpty());
         assertTrue(blankCategories.isEmpty());
+        assertEquals("empty_categories", blankCategories.noOpReason);
         assertEquals(PackRepository.buildFtsQuery(specTerms, 8, true), blankCategories.ftsQuery);
         assertTrue(blankCategories.args.isEmpty());
     }
@@ -250,12 +255,15 @@ public final class PackRouteSearchSqlPolicyTest {
 
         assertTrue(missingSpecTerms.isEmpty());
         assertTrue(missingSpecTerms.args.isEmpty());
+        assertEquals("empty_fts_query", missingSpecTerms.noOpReason);
         assertEquals("", missingSpecTerms.ftsQuery);
         assertTrue(missingTable.isEmpty());
         assertTrue(missingTable.args.isEmpty());
+        assertEquals("empty_fts_table", missingTable.noOpReason);
         assertEquals(PackRepository.buildFtsQuery(specTerms, 8, true), missingTable.ftsQuery);
         assertTrue(zeroLimit.isEmpty());
         assertTrue(zeroLimit.args.isEmpty());
+        assertEquals("nonpositive_limit", zeroLimit.noOpReason);
         assertEquals(PackRepository.buildFtsQuery(specTerms, 8, true), zeroLimit.ftsQuery);
         assertEquals("rowid", missingQueryTermsNoBm25.orderLabel);
         assertEquals("24", missingQueryTermsNoBm25.args.get(missingQueryTermsNoBm25.args.size() - 1));
@@ -295,6 +303,7 @@ public final class PackRouteSearchSqlPolicyTest {
             ),
             plan.args
         );
+        assertEquals("", plan.noOpReason);
     }
 
     @Test
@@ -312,8 +321,10 @@ public final class PackRouteSearchSqlPolicyTest {
 
         assertTrue(noTokens.isEmpty());
         assertTrue(noTokens.args.isEmpty());
+        assertEquals("empty_tokens", noTokens.noOpReason);
         assertTrue(noCategories.isEmpty());
         assertTrue(noCategories.args.isEmpty());
+        assertEquals("empty_categories", noCategories.noOpReason);
     }
 
     @Test
@@ -341,12 +352,16 @@ public final class PackRouteSearchSqlPolicyTest {
 
         assertTrue(nullTokens.isEmpty());
         assertTrue(nullTokens.args.isEmpty());
+        assertEquals("empty_tokens", nullTokens.noOpReason);
         assertTrue(blankTokens.isEmpty());
         assertTrue(blankTokens.args.isEmpty());
+        assertEquals("empty_tokens", blankTokens.noOpReason);
         assertTrue(nullCategories.isEmpty());
         assertTrue(nullCategories.args.isEmpty());
+        assertEquals("empty_categories", nullCategories.noOpReason);
         assertTrue(blankCategories.isEmpty());
         assertTrue(blankCategories.args.isEmpty());
+        assertEquals("empty_categories", blankCategories.noOpReason);
     }
 
     @Test
@@ -364,8 +379,10 @@ public final class PackRouteSearchSqlPolicyTest {
 
         assertTrue(chunkZeroLimit.isEmpty());
         assertTrue(chunkZeroLimit.args.isEmpty());
+        assertEquals("nonpositive_limit", chunkZeroLimit.noOpReason);
         assertTrue(guideNegativeLimit.isEmpty());
         assertTrue(guideNegativeLimit.args.isEmpty());
+        assertEquals("nonpositive_limit", guideNegativeLimit.noOpReason);
     }
 
     @Test
@@ -388,6 +405,7 @@ public final class PackRouteSearchSqlPolicyTest {
             List.of("building", "%alpha%", "%alpha%", "%alpha%", "%beta%", "%beta%", "%beta%", "24"),
             plan.args
         );
+        assertEquals("", plan.noOpReason);
     }
 
     @Test
@@ -405,8 +423,10 @@ public final class PackRouteSearchSqlPolicyTest {
 
         assertTrue(noTokens.isEmpty());
         assertTrue(noTokens.args.isEmpty());
+        assertEquals("empty_tokens", noTokens.noOpReason);
         assertTrue(noCategories.isEmpty());
         assertTrue(noCategories.args.isEmpty());
+        assertEquals("empty_categories", noCategories.noOpReason);
     }
 
     @Test
@@ -429,6 +449,7 @@ public final class PackRouteSearchSqlPolicyTest {
             List.of("building", "%alpha%", "%alpha%", "%alpha%", "%beta%", "%beta%", "%beta%", "24"),
             plan.args
         );
+        assertEquals("", plan.noOpReason);
     }
 
     private static void assertNoBm25OrderArgsBeforeLimit(String query, String expectedLabel) {

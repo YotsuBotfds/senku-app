@@ -18,8 +18,9 @@ final class PackRouteSearchSqlPolicy {
     ) {
         List<String> safeCategories = usableValues(categories);
         String ftsQuery = PackRepository.buildFtsQuery(specTerms, ftsSupportsBm25 ? 8 : 4, ftsSupportsBm25);
-        if (ftsQuery.isEmpty() || safeCategories.isEmpty() || !hasUsableTableName(ftsTableName) || candidateLimit <= 0) {
-            return RouteFtsSqlPlan.empty(ftsQuery);
+        String noOpReason = routeFtsNoOpReason(ftsQuery, safeCategories, ftsTableName, candidateLimit);
+        if (!noOpReason.isEmpty()) {
+            return RouteFtsSqlPlan.empty(ftsQuery, noOpReason);
         }
 
         ArrayList<String> categoryPlaceholders = new ArrayList<>();
@@ -47,7 +48,8 @@ final class PackRouteSearchSqlPolicy {
             args,
             effectiveCandidateLimit,
             orderSpec.label,
-            ftsQuery
+            ftsQuery,
+            ""
         );
     }
 
@@ -58,8 +60,9 @@ final class PackRouteSearchSqlPolicy {
     ) {
         List<String> safeTokens = usableValues(tokens);
         List<String> safeCategories = usableValues(categories);
-        if (safeTokens.isEmpty() || safeCategories.isEmpty() || candidateLimit <= 0) {
-            return RouteLikeSqlPlan.empty();
+        String noOpReason = routeLikeNoOpReason(safeTokens, safeCategories, candidateLimit);
+        if (!noOpReason.isEmpty()) {
+            return RouteLikeSqlPlan.empty(noOpReason);
         }
 
         ArrayList<String> categoryPlaceholders = new ArrayList<>();
@@ -84,7 +87,8 @@ final class PackRouteSearchSqlPolicy {
                 "content_role, time_horizon, structure_type, topic_tags " +
                 "FROM chunks WHERE category IN (" + String.join(",", categoryPlaceholders) + ") " +
                 "AND (" + String.join(" OR ", clauses) + ") LIMIT ?",
-            args
+            args,
+            ""
         );
     }
 
@@ -98,8 +102,9 @@ final class PackRouteSearchSqlPolicy {
     ) {
         List<String> safeCategories = usableValues(categories);
         String ftsQuery = PackRepository.buildFtsQuery(specTerms, ftsSupportsBm25 ? 8 : 4, ftsSupportsBm25);
-        if (ftsQuery.isEmpty() || safeCategories.isEmpty() || !hasUsableTableName(ftsTableName) || candidateLimit <= 0) {
-            return RouteFtsSqlPlan.empty(ftsQuery);
+        String noOpReason = routeFtsNoOpReason(ftsQuery, safeCategories, ftsTableName, candidateLimit);
+        if (!noOpReason.isEmpty()) {
+            return RouteFtsSqlPlan.empty(ftsQuery, noOpReason);
         }
 
         ArrayList<String> categoryPlaceholders = new ArrayList<>();
@@ -127,7 +132,8 @@ final class PackRouteSearchSqlPolicy {
             args,
             effectiveCandidateLimit,
             orderSpec.label,
-            ftsQuery
+            ftsQuery,
+            ""
         );
     }
 
@@ -138,8 +144,9 @@ final class PackRouteSearchSqlPolicy {
     ) {
         List<String> safeTokens = usableValues(tokens);
         List<String> safeCategories = usableValues(categories);
-        if (safeTokens.isEmpty() || safeCategories.isEmpty() || candidateLimit <= 0) {
-            return RouteLikeSqlPlan.empty();
+        String noOpReason = routeLikeNoOpReason(safeTokens, safeCategories, candidateLimit);
+        if (!noOpReason.isEmpty()) {
+            return RouteLikeSqlPlan.empty(noOpReason);
         }
 
         ArrayList<String> categoryPlaceholders = new ArrayList<>();
@@ -164,7 +171,8 @@ final class PackRouteSearchSqlPolicy {
                 "content_role, time_horizon, structure_type, topic_tags " +
                 "FROM guides WHERE category IN (" + String.join(",", categoryPlaceholders) + ") " +
                 "AND (" + String.join(" OR ", clauses) + ") LIMIT ?",
-            args
+            args,
+            ""
         );
     }
 
@@ -194,6 +202,44 @@ final class PackRouteSearchSqlPolicy {
         return tableName != null && !tableName.trim().isEmpty();
     }
 
+    private static String routeFtsNoOpReason(
+        String ftsQuery,
+        List<String> safeCategories,
+        String ftsTableName,
+        int candidateLimit
+    ) {
+        if (ftsQuery.isEmpty()) {
+            return "empty_fts_query";
+        }
+        if (safeCategories.isEmpty()) {
+            return "empty_categories";
+        }
+        if (!hasUsableTableName(ftsTableName)) {
+            return "empty_fts_table";
+        }
+        if (candidateLimit <= 0) {
+            return "nonpositive_limit";
+        }
+        return "";
+    }
+
+    private static String routeLikeNoOpReason(
+        List<String> safeTokens,
+        List<String> safeCategories,
+        int candidateLimit
+    ) {
+        if (safeTokens.isEmpty()) {
+            return "empty_tokens";
+        }
+        if (safeCategories.isEmpty()) {
+            return "empty_categories";
+        }
+        if (candidateLimit <= 0) {
+            return "nonpositive_limit";
+        }
+        return "";
+    }
+
     private static boolean isStarterBuildProject(PackRepository.QueryTerms queryTerms) {
         return queryTerms != null
             && queryTerms.routeProfile != null
@@ -220,23 +266,26 @@ final class PackRouteSearchSqlPolicy {
         final int effectiveCandidateLimit;
         final String orderLabel;
         final String ftsQuery;
+        final String noOpReason;
 
         private RouteFtsSqlPlan(
             String sql,
             List<String> args,
             int effectiveCandidateLimit,
             String orderLabel,
-            String ftsQuery
+            String ftsQuery,
+            String noOpReason
         ) {
             this.sql = sql;
             this.args = args;
             this.effectiveCandidateLimit = effectiveCandidateLimit;
             this.orderLabel = orderLabel;
             this.ftsQuery = ftsQuery;
+            this.noOpReason = noOpReason;
         }
 
-        private static RouteFtsSqlPlan empty(String ftsQuery) {
-            return new RouteFtsSqlPlan("", Collections.emptyList(), 0, "", ftsQuery);
+        private static RouteFtsSqlPlan empty(String ftsQuery, String noOpReason) {
+            return new RouteFtsSqlPlan("", Collections.emptyList(), 0, "", ftsQuery, noOpReason);
         }
 
         boolean isEmpty() {
@@ -251,14 +300,16 @@ final class PackRouteSearchSqlPolicy {
     static final class RouteLikeSqlPlan {
         final String sql;
         final List<String> args;
+        final String noOpReason;
 
-        private RouteLikeSqlPlan(String sql, List<String> args) {
+        private RouteLikeSqlPlan(String sql, List<String> args, String noOpReason) {
             this.sql = sql;
             this.args = args;
+            this.noOpReason = noOpReason;
         }
 
-        private static RouteLikeSqlPlan empty() {
-            return new RouteLikeSqlPlan("", Collections.emptyList());
+        private static RouteLikeSqlPlan empty(String noOpReason) {
+            return new RouteLikeSqlPlan("", Collections.emptyList(), noOpReason);
         }
 
         boolean isEmpty() {

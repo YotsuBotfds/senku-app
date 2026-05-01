@@ -2107,10 +2107,11 @@ private fun GuideTopBarAction(
 @Composable
 private fun GuideRailBackGlyph() {
     val colors = SenkuTheme.colors
+    val policy = tabletDetailBackActionPolicy()
     Icon(
         painter = painterResource(R.drawable.ic_home_back_chevron),
         contentDescription = null,
-        modifier = Modifier.size(16.dp),
+        modifier = Modifier.size(policy.iconSizeDp.dp),
         tint = colors.ink1,
     )
 }
