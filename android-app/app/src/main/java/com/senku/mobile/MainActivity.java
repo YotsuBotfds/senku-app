@@ -709,7 +709,7 @@ public final class MainActivity extends AppCompatActivity {
         enterSearchResultsRoute();
         setBusy("Deterministic search ready", false);
         MainResultPublicationPolicy publication =
-            MainResultPublicationPolicy.resultSurfaceWithSearchChrome(query, query, deterministic.sources.size());
+            MainResultPublicationPolicy.searchResultSurfaceWithSearchChrome(query, query, deterministic.sources.size());
         publishResultItems(publication, deterministic.sources);
         String header;
         if (isTabletSearchLayout()) {
@@ -792,7 +792,7 @@ public final class MainActivity extends AppCompatActivity {
         public void onSearchStarted(String query, String displayQuery, boolean sessionUsed) {
             enterSearchResultsRoute();
             MainResultPublicationPolicy loadingPublication =
-                MainResultPublicationPolicy.resultSurfaceWithSearchChrome(query, displayQuery, 0);
+                MainResultPublicationPolicy.searchResultSurfaceWithSearchChrome(query, displayQuery, 0);
             setResultHighlightQuery(loadingPublication.highlightQuery());
             publishSearchQueryChrome(loadingPublication);
             applyMainRouteState(resolveResultPublicationRouteState(loadingPublication));
@@ -821,7 +821,7 @@ public final class MainActivity extends AppCompatActivity {
         ) {
             setBusy("Search complete", false);
             MainResultPublicationPolicy publication =
-                MainResultPublicationPolicy.resultSurfaceWithSearchChrome(
+                MainResultPublicationPolicy.searchResultSurfaceWithSearchChrome(
                     query,
                     displayQuery,
                     displayResults.size()

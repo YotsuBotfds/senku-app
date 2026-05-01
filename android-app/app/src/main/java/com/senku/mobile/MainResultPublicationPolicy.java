@@ -99,7 +99,7 @@ final class MainResultPublicationPolicy {
         return new MainResultPublicationPolicy(highlightQuery, askResultsRouteState(), "", 0, false);
     }
 
-    static MainResultPublicationPolicy resultSurfaceWithSearchChrome(
+    static MainResultPublicationPolicy searchResultSurfaceWithSearchChrome(
         String highlightQuery,
         String searchQueryLabel,
         int resultCount

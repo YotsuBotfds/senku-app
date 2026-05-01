@@ -399,7 +399,7 @@ public final class MainActivityPhoneNavigationTest {
     public void resultPublicationRouteComesFromExplicitPolicySurface() {
         assertRouteState(
             MainActivity.resolveResultPublicationRouteState(
-                MainResultPublicationPolicy.resultSurfaceWithSearchChrome("rain", "Rain", 2)
+                MainResultPublicationPolicy.searchResultSurfaceWithSearchChrome("rain", "Rain", 2)
             ),
             MainRouteDecisionHelper.Surface.SEARCH_RESULTS,
             BottomTabDestination.HOME,

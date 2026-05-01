@@ -62,7 +62,7 @@ public final class MainResultPublicationPolicyTest {
 
     @Test
     public void searchChromeSurfaceCarriesQueryLabelAndClampedResultCount() {
-        MainResultPublicationPolicy policy = MainResultPublicationPolicy.resultSurfaceWithSearchChrome(
+        MainResultPublicationPolicy policy = MainResultPublicationPolicy.searchResultSurfaceWithSearchChrome(
             "rain",
             "Rain shelters",
             -3
@@ -83,7 +83,7 @@ public final class MainResultPublicationPolicyTest {
 
     @Test
     public void resultItemsPresentationCarriesHighlightAndRouteOnly() {
-        MainResultPublicationPolicy policy = MainResultPublicationPolicy.resultSurfaceWithSearchChrome(
+        MainResultPublicationPolicy policy = MainResultPublicationPolicy.searchResultSurfaceWithSearchChrome(
             "rain",
             "Rain shelters",
             7
@@ -103,7 +103,7 @@ public final class MainResultPublicationPolicyTest {
 
     @Test
     public void searchQueryChromePresentationPublishesSanitizedChromeState() {
-        MainResultPublicationPolicy policy = MainResultPublicationPolicy.resultSurfaceWithSearchChrome(
+        MainResultPublicationPolicy policy = MainResultPublicationPolicy.searchResultSurfaceWithSearchChrome(
             "rain",
             null,
             -9

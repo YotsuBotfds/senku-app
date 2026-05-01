@@ -27,7 +27,7 @@ final class MainCategoryFilterController {
         return FilterRoute.filtered(
             filtered,
             MainRouteDecisionHelper.filterGuidesByCategory(currentRouteState),
-            MainResultPublicationPolicy.resultSurfaceWithSearchChrome("", filterLabel, filtered.size()),
+            MainResultPublicationPolicy.searchResultSurfaceWithSearchChrome("", filterLabel, filtered.size()),
             filterLabel
         );
     }
