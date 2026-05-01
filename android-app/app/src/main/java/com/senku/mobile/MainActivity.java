@@ -2216,11 +2216,8 @@ public final class MainActivity extends AppCompatActivity {
         }
         installStaticPhoneNavRail();
         MainRouteDecisionHelper.RouteState restoredRouteState = restoreMainRouteState(savedInstanceState);
-        activePhoneTab = restoredRouteState.activePhoneTab;
-        askLaneActive = restoredRouteState.askLaneActive;
-        browseChromeActive = isBrowseMainRouteSurface(restoredRouteState.surface);
+        applyMainRouteState(restoredRouteState);
         updateIdentityStrip();
-        updatePhoneTabBarState();
     }
 
     private void installStaticPhoneNavRail() {
@@ -3148,7 +3145,9 @@ public final class MainActivity extends AppCompatActivity {
             : routeState;
         activePhoneTab = safeRouteState.activePhoneTab;
         askLaneActive = safeRouteState.askLaneActive;
+        browseChromeActive = MainRouteDecisionHelper.isBrowseSurface(safeRouteState.surface);
         updatePhoneTabBarState();
+        renderBrowseChrome(browseChromeActive);
     }
 
     private void pushPhoneTab(BottomTabDestination destination) {
@@ -4070,7 +4069,10 @@ public final class MainActivity extends AppCompatActivity {
     }
 
     private void showBrowseChrome(boolean show) {
-        browseChromeActive = show;
+        applyMainRouteState(MainRouteDecisionHelper.routeStateForMode(show, activePhoneTab, askLaneActive));
+    }
+
+    private void renderBrowseChrome(boolean show) {
         updateHomeChromeTitle(show, searchInput == null ? "" : searchInput.getText().toString());
         boolean showSearchTopbar = isTabletSearchLayout() && tabletSearchTopbarRow != null && !show;
         int visibility = show ? View.VISIBLE : View.GONE;
