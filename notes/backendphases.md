@@ -1,6 +1,6 @@
 # Backend Cleanup Phase Tracker
 
-Last updated after pushed cleanup through `3b70f3a4` on 2026-05-01.
+Last updated after pushed cleanup through `dcd549f1` on 2026-05-01.
 
 Purpose: prevent future agents from rerunning Ask/query backend cleanup that is already complete. Keep this note short; implementation detail belongs in commits and tests.
 
@@ -379,26 +379,34 @@ Purpose: prevent future agents from rerunning Ask/query backend cleanup that is 
   tests cover Ask-results home-chrome Back returning through the same browse
   effect, and busy failed-query retry blocking duplicate generation while
   preserving the retry query.
-- Functional smoke matrix diagnostics are current through `dece1615`: the
+- Functional smoke matrix diagnostics are current through `96cc63ac`: the
   wrapper now reports preset progress, elapsed time, artifact roots, FailFast
-  stop messages, and completed/total preset counts in the summary.
-- Pack search finalization cleanup is current through `3b70f3a4`:
+  stop messages, completed/total preset counts, and effective skip/reuse build
+  state in the summary. Contract tests also guard matrix preset registration
+  against child smoke-runner drift.
+- Main shared-input submit ownership is current through `a6032456`: the visible
+  Search/Ask submit action now routes through `MainSharedInputSubmitPolicy`,
+  with focused chrome/phone-navigation coverage.
+- Pack search finalization and telemetry cleanup is current through `dcd549f1`:
   `PackRepository` funnels repeated combined-hit projection, prerank telemetry,
   rerank timing, and rerank telemetry through `finalizeCombinedHitsForSearch()`
   without changing route merge behavior; focused telemetry coverage now guards
   vector-disabled, centroid-missing, and hybrid finalization shapes. Telemetry
-  formatting and elapsed-time conversion now live in
-  `PackSearchFinalizationPolicy`.
-- Detail tablet state-builder cleanup is current through `1fde6516`:
+  formatting, elapsed-time conversion, outcome labels, latency breakdown
+  construction, and lexical/vector candidate telemetry now live in
+  `PackSearchFinalizationPolicy` and `PackSearchTelemetryPolicy`.
+- Detail tablet state-builder cleanup is current through `3085fc1e`:
   tablet xref row projection, turn-state projection, and anchor-state
-  projection now live in `DetailTabletStateBuilder`, with focused tests for
-  label trimming, relation buckets, active-turn selection, evidence anchor
-  projection, and null/empty input.
-- Tracker is refreshed through pushed head `3b70f3a4`. Final focused gate after
-  that head passed: Python `tests.test_powershell_quality_gate`,
-  `MainReviewDisplayPolicyTest`, `DetailTabletStateBuilderTest`,
-  `MainRouteCoordinatorTest`, `DetailFollowUpActionControllerTest`,
-  `PackRepositoryTelemetryTest`, and `PackRepositoryRerankTimingTest`.
+  projection, plus guide-mode label/summary/anchor projection, now live in
+  `DetailTabletStateBuilder`, with focused tests for label trimming, relation
+  buckets, active-turn selection, evidence anchor projection, guide-mode answer
+  and thread summaries, and null/empty input.
+- Tracker is refreshed through pushed head `dcd549f1`. Final focused gate after
+  that head passed: Python functional UX matrix contracts plus targeted
+  PowerShell parser/progress tests, `MainActivityPhoneNavigationTest`,
+  `SharedInputChromePolicyTest`, `DetailTabletStateBuilderTest`,
+  `PackRepositoryTelemetryTest`, `PackRepositoryRerankTimingTest`, and
+  `PackRepositoryRouteOutputParityTest`.
 
 ## Remaining Next Slices
 
@@ -423,6 +431,14 @@ Purpose: prevent future agents from rerunning Ask/query backend cleanup that is 
   and smoke harness helper splits. Avoid broad route-focused retrieval rewrites
   and avoid `TabletDetailScreen.kt` refactors unless a visual regression demands
   it.
+- Functional proof backlog from scout: physical Ask-owned submit proof on the
+  phone, zero-result search visible/system Back, Ask-unavailable/no-source Back,
+  task-root detail visible Back, and Saved tab semantics assertions in the
+  Android harness.
+- UI normalization is a future explicit Android-only slice (`UI-NORM1 Shared
+  Chrome Contract`): align `TopBar`, `BottomTabBar`/`NavRailMetrics`,
+  `IdentityStrip`, `SenkuTypography`, XML text appearances/dimens, and Java
+  chrome mount/bind points together. Do not mix this with backend cleanup.
 - Do not collapse the new presentation, category-filter, route-ranking,
   water-distribution anchor, or route-refinement helper boundaries back into
   activity/repository/executor bodies.
