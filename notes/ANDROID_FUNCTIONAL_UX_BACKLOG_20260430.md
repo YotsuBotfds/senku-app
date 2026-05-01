@@ -1,6 +1,6 @@
 # Android Functional UX Backlog - 2026-04-30
 
-Status after pre-noon polish head `567f96d`.
+Status after evening functional/code-health head `3b2bae3`.
 
 ## Fixed This Loop
 
@@ -9,6 +9,16 @@ Status after pre-noon polish head `567f96d`.
   now submits as Ask instead of guide search.
 - Coverage:
   `MainActivityPhoneNavigationTest.searchButtonSubmitUsesAskTargetWhenAskOwnsSharedInput`.
+- `070b3de` tightened answer detail field cues: material chips now read as
+  `Material 01: ...`, related wet-fire guides prioritize practical workflow
+  neighbors, compact answer composer context is suppressed when top chrome
+  already carries it, and the composer `+` action has an explicit disabled
+  48dp touch target policy.
+- `3b2bae3` hardened functional seams: previous-tab back transitions now apply
+  resolved route state through `MainRouteEffectController`, review/demo recent
+  thread placeholders require review mode, follow-up empty submit has
+  interaction proof, and another small search-result display helper moved into
+  `SearchResultCardModelMapper`.
 
 ## Current Proof
 
@@ -18,6 +28,10 @@ Status after pre-noon polish head `567f96d`.
   `matrix_homogeneous=true`.
 - Full unit tests passed after the final app-code commit:
   `:app:testDebugUnitTest`.
+- Current evening proof:
+  `:app:testDebugUnitTest` focused route/review/search suites,
+  `:app:assembleDebugAndroidTest`, and physical phone functional preset on
+  `RFCX607ZM8L` all passed after `3b2bae3`.
 
 ## Top Queue - Phone Chrome Normalization
 
@@ -50,8 +64,11 @@ the exported mocks.
 1. Review/demo harness isolation
    - Code-health risk: review/mock mode can shape default product behavior
      (home metadata, recent threads, category counts, search labels/results).
-   - Safe slice: extract an explicit review/demo policy and require a debug
-     test extra before any review-shaped data replaces real app state.
+   - Status: partially addressed. Review mode already requires debug automation
+     authorization, fixture access is policy-gated, and recent-thread
+     placeholders now require the resolved review mode.
+   - Next safe slice: continue moving direct fixture-shaped display decisions
+     behind explicit `ReviewDemoPolicy` guards without changing production UI.
    - Key code: `MainActivity.resolveProductReviewMode()`,
      `buildReviewSearchResults()`, `reviewHomeCategoryCount()`, and
      `appendReviewSearchLatency()`.
@@ -60,26 +77,32 @@ the exported mocks.
    - Code-health risk: back behavior is coupled to adapter contents and tab
      side effects. Empty search, Ask-unavailable, and Saved paths should be
      explicit routes rather than inferred from `items`.
-   - Safe slice: introduce a small pure route model first, then let
-     `MainActivity` delegate back handling to it.
+   - Status: partially addressed. Route state and effect helpers are live, and
+     previous-tab transitions now apply helper-resolved route state directly.
+   - Next safe slice: move another small `MainActivity` route side effect into
+     `MainRouteEffectController` with tests.
    - Validation: zero-result search back, Ask unavailable back, Saved back,
      and detail return tests.
 
 3. Follow-up composer submit behavior
-   - Add interaction-level coverage that Send, IME action, and empty input all
-     route through the expected follow-up path.
+   - Status: addressed at proof level. AndroidTest coverage now proves Send,
+     IME SEND, and empty input behavior on real `DetailActivity`.
    - Key code: `DetailActivity.configureFollowUpInput()` and `runFollowUp()`.
 
 4. Back affordance click behavior
    - Existing tests cover policy predicates and chrome shape; add interaction
      coverage for home chrome back and detail back in task-root and
      non-task-root cases.
+   - Status: partially addressed. Detail overflow visibility now derives from
+     concrete menu actions, and the shared detail action vocabulary explicitly
+     distinguishes chrome-only Back/Overflow from menu-backed Home/Save.
    - Key code: `MainActivity.handleHomeChromeBack()` and
      `DetailActivity.navigateBackFromDetail()`.
 
 5. Saved entry path
-   - Add intent-level coverage that `EXTRA_OPEN_SAVED` lands on the Saved/Pins
-     owner and shows saved-guide semantics.
+   - Status: covered. Saved intent, nav, back, non-empty guide tap-through, and
+     guide detail return paths have androidTest coverage. Saved semantics are
+     documented in `notes/backendphases.md`.
    - Key code: `MainActivity.maybeHandleOpenSavedIntent()`.
 
 6. Shared chrome action model
@@ -93,22 +116,28 @@ the exported mocks.
    - Code-health risk: the visible Compose composer mirrors a nearly hidden
      legacy `EditText`; draft, busy, and retry state are split across
      `DetailActivity` and `DetailAnswerPresenterHost`.
-   - Safe slice: introduce a pure `FollowUpComposerState`/controller and let
-     the legacy input mirror it temporarily.
+   - Status: partially addressed. Pure `FollowUpComposerState` and
+     `FollowUpComposerController` exist; retry presentation now centralizes
+     visibility, enabled state, and normalized retry query. Next slice is
+     wiring more of `DetailActivity` to these helpers.
 
 8. Tablet rail end-to-end navigation
-   - Policy tests cover rail order and callback dispatch. Add a small UI-level
-     smoke that rail taps trigger the intended route transitions.
+   - Status: covered. Existing androidTest methods
+     `tabletDetailRailLibraryTapReturnsManualHome`,
+     `tabletDetailRailSavedTapOpensSavedDestination`, and
+     `tabletDetailRailAskTapOpensEmptyAskLane` launch a tablet detail surface,
+     tap the rail, and assert the route transition.
 
 9. Search result card model extraction
    - Code-health risk: `SearchResultAdapter` still owns card heuristics and
      mapping as well as RecyclerView binding.
-   - Safe slice: extract `SearchResultCardModelMapper`; keep adapter as
-     binder/callback owner.
+   - Status: in progress. `SearchResultCardModelMapper` is live and now owns
+     multiple pure display labels/descriptions; continue trimming only small
+     pure helpers from the adapter.
 
 10. Physical device install/smoke
    - ADB only reported the emulator matrix during the pre-noon check:
      `emulator-5554`, `emulator-5556`, `emulator-5558`, and `emulator-5560`.
-   - When the USB phone is visible in `adb devices -l`, install
-     `android-app/app/build/outputs/apk/debug/app-debug.apk` and run a manual
-     Ask/Search/Saved/back-stack smoke.
+   - Status: addressed for the current evening head. Physical `phone-functional`
+     preset passed on `RFCX607ZM8L`, covering Ask/Search, Saved back, and
+     answer provenance open/back.

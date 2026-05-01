@@ -173,6 +173,43 @@ public final class ReviewDemoPolicyTest {
     }
 
     @Test
+    public void deniedProductReviewModeCannotShapeAnswerModeRelatedGuideFixtures() {
+        boolean productReviewMode = ReviewDemoPolicy.resolveProductReviewModeForTest(true, true, false, true);
+        ArrayList<SearchResult> relatedGuides = new ArrayList<>(Arrays.asList(
+            guideWithId("Live shelter adjacent", "GD-501"),
+            guideWithId("Displaced live related", "GD-109"),
+            guideWithId("Live knot guide", "GD-502")
+        ));
+
+        ArrayList<SearchResult> shaped = ReviewDemoPolicy.shapeAnswerModeRelatedGuides(
+            productReviewMode,
+            "GD-345",
+            relatedGuides
+        );
+
+        assertEquals(relatedGuides, shaped);
+        assertFalse(containsGuideId(shaped, "GD-027"));
+    }
+
+    @Test
+    public void disabledAnswerModeRelatedGuideShapingDoesNotSynthesizeCanonicalFixtureGuide() {
+        ArrayList<SearchResult> relatedGuides = new ArrayList<>(Arrays.asList(
+            guideWithId("Live shelter adjacent", "GD-501"),
+            guideWithId("Displaced live related", "GD-109"),
+            guideWithId("Live knot guide", "GD-502")
+        ));
+
+        ArrayList<SearchResult> shaped = ReviewDemoPolicy.shapeAnswerModeRelatedGuides(
+            false,
+            "GD-345",
+            relatedGuides
+        );
+
+        assertEquals(relatedGuides, shaped);
+        assertFalse(containsGuideId(shaped, "GD-027"));
+    }
+
+    @Test
     public void rainShelterUncertainFitBackendDemoDefaultsOffUntilWiredByCaller() {
         assertFalse(ReviewDemoPolicy.isRainShelterUncertainFitBackendDemoEnabled());
     }

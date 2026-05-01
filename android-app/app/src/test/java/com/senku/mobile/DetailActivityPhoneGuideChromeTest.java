@@ -126,6 +126,25 @@ public final class DetailActivityPhoneGuideChromeTest {
     }
 
     @Test
+    public void detailSharedActionVocabularyDistinguishesChromeFromMenuItems() {
+        assertEquals(
+            Arrays.asList(
+                DetailOverflowPolicy.Action.BACK,
+                DetailOverflowPolicy.Action.HOME,
+                DetailOverflowPolicy.Action.SAVE_GUIDE,
+                DetailOverflowPolicy.Action.OVERFLOW
+            ),
+            Arrays.asList(DetailOverflowPolicy.Action.values())
+        );
+        assertFalse(DetailOverflowPolicy.isOverflowMenuItem(DetailOverflowPolicy.Action.BACK));
+        assertTrue(DetailOverflowPolicy.isOverflowMenuItem(DetailOverflowPolicy.Action.HOME));
+        assertTrue(DetailOverflowPolicy.isOverflowMenuItem(DetailOverflowPolicy.Action.SAVE_GUIDE));
+        assertFalse(DetailOverflowPolicy.isOverflowMenuItem(DetailOverflowPolicy.Action.OVERFLOW));
+        assertEquals(DetailOverflowPolicy.NO_MENU_ID, DetailOverflowPolicy.menuId(DetailOverflowPolicy.Action.BACK));
+        assertEquals(DetailOverflowPolicy.NO_MENU_ID, DetailOverflowPolicy.menuId(DetailOverflowPolicy.Action.OVERFLOW));
+    }
+
+    @Test
     public void answerAndEmergencyScreensDoNotExposeEmptyOverflowGlyphs() {
         assertFalse(DetailActivity.shouldShowDetailOverflowAction(true, true, true, ""));
         assertEquals(

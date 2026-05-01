@@ -17,6 +17,18 @@ final class FollowUpComposerController {
         RETRY
     }
 
+    static final class RetryPresentation {
+        final boolean visible;
+        final boolean actionEnabled;
+        final String query;
+
+        private RetryPresentation(boolean visible, boolean actionEnabled, String query) {
+            this.visible = visible;
+            this.actionEnabled = actionEnabled;
+            this.query = FollowUpComposerState.normalizeDraft(query);
+        }
+    }
+
     static final class SubmitDecision {
         final SubmitAction action;
         final String query;
@@ -77,6 +89,16 @@ final class FollowUpComposerController {
             return new RetryDecision(RetryAction.EMPTY, "");
         }
         return new RetryDecision(RetryAction.RETRY, query);
+    }
+
+    static RetryPresentation resolveRetryPresentation(FollowUpComposerState state, boolean surfaceAllowsRetry) {
+        FollowUpComposerState safeState = safeState(state);
+        boolean visible = surfaceAllowsRetry && safeState.retryVisible();
+        return new RetryPresentation(
+            visible,
+            visible && safeState.retryActionEnabled(),
+            visible ? safeState.retryQuery() : ""
+        );
     }
 
     private static FollowUpComposerState safeState(FollowUpComposerState state) {

@@ -50,7 +50,6 @@ final class MainRouteEffectController {
         effects.updateActionLabels();
         switch (effect) {
             case SHOW_BROWSE_HOME:
-                effects.updateActionLabels();
                 effects.dismissSearchKeyboard();
                 effects.ensureBrowseHomeVisible();
                 effects.scrollBrowseToTop();

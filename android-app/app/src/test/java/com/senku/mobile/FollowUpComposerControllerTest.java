@@ -189,4 +189,74 @@ public final class FollowUpComposerControllerTest {
         assertEquals(FollowUpComposerController.RetryAction.EMPTY, decision.action);
         assertEquals("", decision.query);
     }
+
+    @Test
+    public void retryPresentationExposesFailureRetryWhenSurfaceAllowsIt() {
+        FollowUpComposerState state = FollowUpComposerState.idle(
+            "new draft",
+            FollowUpComposerState.Surface.PHONE
+        ).withFailure("offline failure", "  retry this query  ");
+
+        FollowUpComposerController.RetryPresentation presentation =
+            FollowUpComposerController.resolveRetryPresentation(state, true);
+
+        assertEquals(true, presentation.visible);
+        assertEquals(true, presentation.actionEnabled);
+        assertEquals("retry this query", presentation.query);
+    }
+
+    @Test
+    public void retryPresentationKeepsActiveStallRetryAvailableWhileBlocked() {
+        FollowUpComposerState state = new FollowUpComposerState(
+            "draft",
+            true,
+            true,
+            null,
+            FollowUpComposerState.Surface.TABLET,
+            null,
+            "  stalled answer query  "
+        );
+
+        FollowUpComposerController.RetryPresentation presentation =
+            FollowUpComposerController.resolveRetryPresentation(state, true);
+
+        assertEquals(true, presentation.visible);
+        assertEquals(true, presentation.actionEnabled);
+        assertEquals("stalled answer query", presentation.query);
+    }
+
+    @Test
+    public void retryPresentationSuppressesStaleRetryWhenBlockedWithoutActiveRetry() {
+        FollowUpComposerState state = new FollowUpComposerState(
+            "draft",
+            true,
+            true,
+            null,
+            FollowUpComposerState.Surface.PHONE,
+            "old failed query",
+            null
+        );
+
+        FollowUpComposerController.RetryPresentation presentation =
+            FollowUpComposerController.resolveRetryPresentation(state, true);
+
+        assertEquals(false, presentation.visible);
+        assertEquals(false, presentation.actionEnabled);
+        assertEquals("", presentation.query);
+    }
+
+    @Test
+    public void retryPresentationObeysSurfaceSuppression() {
+        FollowUpComposerState state = FollowUpComposerState.idle(
+            "",
+            FollowUpComposerState.Surface.PHONE
+        ).withFailure("offline failure", "retry this query");
+
+        FollowUpComposerController.RetryPresentation presentation =
+            FollowUpComposerController.resolveRetryPresentation(state, false);
+
+        assertEquals(false, presentation.visible);
+        assertEquals(false, presentation.actionEnabled);
+        assertEquals("", presentation.query);
+    }
 }

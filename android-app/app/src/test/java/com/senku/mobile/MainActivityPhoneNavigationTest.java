@@ -521,7 +521,7 @@ public final class MainActivityPhoneNavigationTest {
     }
 
     @Test
-    public void routeEffectControllerAppliesHomeTabEffectsInLegacyOrder() {
+    public void routeEffectControllerAppliesHomeTabEffectsInRouteOrder() {
         RecordingRouteEffects effects = new RecordingRouteEffects(true);
 
         MainRouteEffectController.applyPhoneTabTransitionEffect(
@@ -531,7 +531,6 @@ public final class MainActivityPhoneNavigationTest {
 
         assertEquals(
             Arrays.asList(
-                "updateActionLabels",
                 "updateActionLabels",
                 "dismissSearchKeyboard",
                 "ensureBrowseHomeVisible",

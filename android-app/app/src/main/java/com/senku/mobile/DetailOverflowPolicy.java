@@ -7,10 +7,21 @@ import java.util.List;
 final class DetailOverflowPolicy {
     static final int SAVE_GUIDE_MENU_ID = 1;
     static final int HOME_MENU_ID = 2;
+    static final int NO_MENU_ID = 0;
 
     enum Action {
-        SAVE_GUIDE,
-        HOME
+        BACK(NO_MENU_ID, false),
+        HOME(HOME_MENU_ID, true),
+        SAVE_GUIDE(SAVE_GUIDE_MENU_ID, true),
+        OVERFLOW(NO_MENU_ID, false);
+
+        final int menuId;
+        final boolean overflowMenuItem;
+
+        Action(int menuId, boolean overflowMenuItem) {
+            this.menuId = menuId;
+            this.overflowMenuItem = overflowMenuItem;
+        }
     }
 
     private DetailOverflowPolicy() {
@@ -22,9 +33,7 @@ final class DetailOverflowPolicy {
         boolean compactPortraitPhone,
         String pinnableGuideId
     ) {
-        return answerMode
-            && phoneXmlDetailLayoutActive
-            && !safe(pinnableGuideId).trim().isEmpty();
+        return !actions(answerMode, phoneXmlDetailLayoutActive, compactPortraitPhone, pinnableGuideId).isEmpty();
     }
 
     static List<Action> actions(
@@ -33,7 +42,7 @@ final class DetailOverflowPolicy {
         boolean compactPortraitPhone,
         String pinnableGuideId
     ) {
-        if (!shouldShow(answerMode, phoneXmlDetailLayoutActive, compactPortraitPhone, pinnableGuideId)) {
+        if (!answerMode || !phoneXmlDetailLayoutActive || safe(pinnableGuideId).trim().isEmpty()) {
             return Collections.emptyList();
         }
         ArrayList<Action> actions = new ArrayList<>();
@@ -43,13 +52,11 @@ final class DetailOverflowPolicy {
     }
 
     static int menuId(Action action) {
-        if (action == Action.SAVE_GUIDE) {
-            return SAVE_GUIDE_MENU_ID;
-        }
-        if (action == Action.HOME) {
-            return HOME_MENU_ID;
-        }
-        return 0;
+        return action == null ? NO_MENU_ID : action.menuId;
+    }
+
+    static boolean isOverflowMenuItem(Action action) {
+        return action != null && action.overflowMenuItem;
     }
 
     private static String safe(String text) {
