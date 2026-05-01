@@ -1,6 +1,6 @@
 # Backend Cleanup Phase Tracker
 
-Last updated after cleanup through `6a269f63` on 2026-05-01.
+Last updated after cleanup through `ed2bada0` on 2026-05-01.
 
 Purpose: prevent future agents from rerunning Ask/query backend cleanup that is already complete. Keep this note short; implementation detail belongs in commits and tests.
 
@@ -764,6 +764,31 @@ Purpose: prevent future agents from rerunning Ask/query backend cleanup that is 
   `:app:testDebugUnitTest :app:assembleDebug :app:assembleDebugAndroidTest`
   passed; 26 Python harness/script contract tests passed; `git diff --check`
   passed before tracker refresh.
+- Functional proof hardening is current through `80fa0f96`: follow-up retry
+  clicks are covered so a visible retry action cannot start duplicate
+  generation while submitting, restored Search/Ask result routes keep their
+  payloads through install-completion planning, and the functional UX smoke
+  matrix records tablet package role/local-watchdog metadata.
+- Route-search fallback safety is current through `22d35802`: route LIKE
+  fallback execution now catches `SQLiteException` and degrades to zero added
+  results, while direct guide LIKE SQL policy calls with null/blank tokens or
+  categories fail closed as empty plans.
+- Functional smoke route evidence is current through `b09ee48c`: the saved
+  profile includes selected Saved-destination semantics, and the back/provenance
+  profile includes exact route-state proof for no-source Ask Back hops.
+- Scripted detail settling is current through `e4e51838`: `assertDetailSettled`
+  now verifies the expected detail route, scripted Ask detail runs default to
+  answer-route proof, and `scriptedExpectedDetailRoute` accepts only answer,
+  guide, or emergency.
+- Android harness cleanup safety is current through `ed2bada0`: artifact cleanup
+  resolves and constrains deletion targets to approved harness artifact roots,
+  and the stop helper scopes process/device/package kill behavior with contract
+  tests instead of broad substring matching or unvalidated device fallbacks.
+- Latest local proof after `ed2bada0`: full Android
+  `:app:testDebugUnitTest :app:assembleDebug :app:assembleDebugAndroidTest`
+  passed; focused route SQL, smoke summary/capture, functional matrix, and
+  cleanup/stop script contract tests passed; PowerShell parser gates passed for
+  touched scripts; `git diff --check` passed before tracker refresh.
 
 ## Remaining Next Slices
 
