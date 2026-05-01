@@ -680,13 +680,13 @@ public final class MainActivity extends AppCompatActivity {
                     refreshHomeRelatedGuidesAsync();
                     refreshPinnedGuidesAsync();
                     boolean autoQueryPending = hasAutoQuery(getIntent());
-                    MainInstallCompletionPolicy.Action installCompletionAction = MainInstallCompletionPolicy.resolve(
-                        autoQueryPending,
-                        currentMainRouteState()
-                    );
-                    if (installCompletionAction == MainInstallCompletionPolicy.Action.PUBLISH_BROWSE_GUIDES) {
-                        setResultHighlightQuery("");
-                        publishResultItems(MainResultPublicationPolicy.browseSurface(currentMainRouteState()), guides);
+                    MainInstallCompletionPolicy.CompletionPlan installCompletionPlan =
+                        MainInstallCompletionPolicy.plan(
+                            autoQueryPending,
+                            currentMainRouteState()
+                        );
+                    if (installCompletionPlan.shouldPublishBrowseGuides()) {
+                        publishResultItems(installCompletionPlan.browsePublication(), guides);
                         resultsHeader.setText("Guide browser (" + guides.size() + " loaded)");
                     }
                     maybeHandleAutomation();
