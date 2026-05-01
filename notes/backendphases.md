@@ -819,6 +819,12 @@ Purpose: prevent future agents from rerunning Ask/query backend cleanup that is 
   shaping sits behind `DetailTabletStateBuilder`, legacy search row budgets are
   owned by `SearchResultCardModelMapper.SearchResultRowPresentation`, and
   prompt harness parsing helpers are split into `PromptHarnessParsing`.
+- Android backend helper extraction is current through `a957811a`:
+  `PromptAnswerTextPolicy` owns answer cleanup/section normalization/corruption
+  and low-coverage checks, `HostInferenceResponsePolicy` owns host response
+  parsing and mixed-content flattening, `ModelFileStorePolicy` owns model-file
+  naming/selection/size helpers, and `PackInstallValidationPolicy` owns bundled
+  pack refresh decisions.
 - Latest local proof after `54bc5893`: full Android
   `:app:testDebugUnitTest :app:assembleDebug :app:assembleDebugAndroidTest`
   passed; focused Pack rerank/repository parity and OfflineAnswer telemetry
@@ -828,6 +834,10 @@ Purpose: prevent future agents from rerunning Ask/query backend cleanup that is 
   ReviewDemo, and SearchResultCardModelMapper JVM tests passed together;
   `:app:assembleDebug :app:assembleDebugAndroidTest` passed; `git diff --check`
   passed.
+- Latest local proof after `a957811a`: focused PromptBuilder,
+  OfflineAnswerEngine, HostInference, ModelFileStore, PackInstaller, and
+  ChatSessionStore JVM tests passed together; `:app:assembleDebug
+  :app:assembleDebugAndroidTest` passed; `git diff --check` passed.
 
 ## Remaining Next Slices
 
