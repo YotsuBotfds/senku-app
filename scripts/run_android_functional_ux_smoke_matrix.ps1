@@ -197,6 +197,9 @@ for ($presetIndex = 0; $presetIndex -lt $presets.Count; $presetIndex++) {
     $presetRootForRunner = Convert-ToRepoRelativePath -Path $presetRoot
     $runSummaryPath = Join-Path $presetRoot "run_summary.json"
     $captureSummaryPath = Join-Path $presetRoot "capture_summary.json"
+    $reuseInstalledApksForPreset = [bool]$canReuseInstalledApks
+    $effectiveSkipBuild = [bool]($SkipBuild -or $reuseInstalledApksForPreset)
+    $effectiveSkipInstall = [bool]($SkipInstall -or $reuseInstalledApksForPreset)
     New-Item -ItemType Directory -Force -Path $presetRoot | Out-Null
 
     $arguments = @(
@@ -220,10 +223,10 @@ for ($presetIndex = 0; $presetIndex -lt $presets.Count; $presetIndex++) {
     if ($ClearLogcatBeforeRun) {
         $arguments += "-ClearLogcatBeforeRun"
     }
-    if ($SkipBuild -or $canReuseInstalledApks) {
+    if ($effectiveSkipBuild) {
         $arguments += "-SkipBuild"
     }
-    if ($SkipInstall -or $canReuseInstalledApks) {
+    if ($effectiveSkipInstall) {
         $arguments += "-SkipInstall"
     }
     if ($SkipDeviceLock -or $matrixDeviceLockUsed) {
@@ -250,6 +253,11 @@ for ($presetIndex = 0; $presetIndex -lt $presets.Count; $presetIndex++) {
         artifact_root = Convert-ToRepoRelativePath -Path $presetRoot
         run_summary_path = Convert-ToRepoRelativePath -Path $runSummaryPath
         capture_summary_path = Convert-ToRepoRelativePath -Path $captureSummaryPath
+        skip_build_requested = [bool]$SkipBuild
+        skip_install_requested = [bool]$SkipInstall
+        reused_installed_apks = [bool]$reuseInstalledApksForPreset
+        effective_skip_build = [bool]$effectiveSkipBuild
+        effective_skip_install = [bool]$effectiveSkipInstall
         status = $(if ($null -ne $runSummary) { $runSummary.status } else { $null })
         failure_reason = $(if ($null -ne $runSummary) { $runSummary.failure_reason } else { $null })
         selected_test_methods = $(if ($null -ne $runSummary) { @($runSummary.selected_test_methods) } else { @() })
