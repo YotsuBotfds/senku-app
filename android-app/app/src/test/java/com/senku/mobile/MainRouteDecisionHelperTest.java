@@ -1206,6 +1206,67 @@ public final class MainRouteDecisionHelperTest {
     }
 
     @Test
+    public void recreatedSearchResultsBackIgnoresStaleAskOwnerAndReturnsBrowseHome() {
+        MainRouteDecisionHelper.RouteState recreatedSearch =
+            MainRouteDecisionHelper.resolveRestoredMainRouteState(
+                MainRouteDecisionHelper.Surface.SEARCH_RESULTS.name(),
+                BottomTabDestination.SEARCH.name(),
+                true,
+                true,
+                BottomTabDestination.ASK.name()
+            );
+
+        assertRoute(
+            recreatedSearch,
+            MainRouteDecisionHelper.Surface.SEARCH_RESULTS,
+            BottomTabDestination.HOME,
+            true
+        );
+        assertTransition(
+            MainRouteDecisionHelper.systemBack(recreatedSearch, BottomTabDestination.ASK),
+            MainRouteDecisionHelper.Surface.BROWSE,
+            BottomTabDestination.HOME,
+            false,
+            MainRouteDecisionHelper.Effect.RETURN_TO_BROWSE
+        );
+    }
+
+    @Test
+    public void restoredAskRecentAndSavedBackUseBrowseOwnerSemantics() {
+        MainRouteDecisionHelper.RouteState restoredRecent =
+            MainRouteDecisionHelper.resolveRestoredMainRouteState(
+                MainRouteDecisionHelper.Surface.RECENT_THREADS.name(),
+                BottomTabDestination.THREADS.name(),
+                true,
+                true,
+                BottomTabDestination.HOME.name()
+            );
+        MainRouteDecisionHelper.RouteState restoredSaved =
+            MainRouteDecisionHelper.resolveRestoredMainRouteState(
+                MainRouteDecisionHelper.Surface.SAVED_GUIDES.name(),
+                BottomTabDestination.PINS.name(),
+                true,
+                true,
+                BottomTabDestination.ASK.name()
+            );
+
+        assertTransition(
+            MainRouteDecisionHelper.systemBack(restoredRecent, BottomTabDestination.PINS),
+            MainRouteDecisionHelper.Surface.SAVED_GUIDES,
+            BottomTabDestination.PINS,
+            false,
+            MainRouteDecisionHelper.Effect.SHOW_PREVIOUS_TAB
+        );
+        assertTransition(
+            MainRouteDecisionHelper.systemBack(restoredSaved, BottomTabDestination.ASK),
+            MainRouteDecisionHelper.Surface.RECENT_THREADS,
+            BottomTabDestination.ASK,
+            false,
+            MainRouteDecisionHelper.Effect.SHOW_PREVIOUS_TAB
+        );
+    }
+
+    @Test
     public void restoredResultRoutesSupportExplicitSearchAskTabSwitches() {
         MainRouteDecisionHelper.RouteState restoredSearch =
             MainRouteDecisionHelper.resolveRestoredMainRouteState(

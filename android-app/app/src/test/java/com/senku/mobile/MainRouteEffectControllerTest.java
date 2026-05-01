@@ -120,6 +120,33 @@ public final class MainRouteEffectControllerTest {
     }
 
     @Test
+    public void restoredSearchResultsSystemBackReturnsBrowseWithoutPoppingStaleAskOwner() {
+        MainRouteDecisionHelper.RouteState recreatedSearch =
+            MainRouteDecisionHelper.resolveRestoredMainRouteState(
+                MainRouteDecisionHelper.Surface.SEARCH_RESULTS.name(),
+                BottomTabDestination.SEARCH.name(),
+                true,
+                true,
+                BottomTabDestination.ASK.name()
+            );
+        RecordingBackEffects effects = new RecordingBackEffects(false, BottomTabDestination.ASK);
+        effects.previousPhoneTab = BottomTabDestination.PINS;
+
+        assertTrue(MainRouteEffectController.applySystemBackTransition(
+            recreatedSearch,
+            effects
+        ));
+
+        assertEquals(
+            Arrays.asList(
+                "applyRouteState:BROWSE:HOME:false",
+                "returnToBrowse"
+            ),
+            effects.calls
+        );
+    }
+
+    @Test
     public void savedTransitionAfterRestoredSearchPushesHomeOwnerForBack() {
         MainRouteDecisionHelper.RouteState restoredSearch =
             MainRouteDecisionHelper.resolveRestoredMainRouteState(
