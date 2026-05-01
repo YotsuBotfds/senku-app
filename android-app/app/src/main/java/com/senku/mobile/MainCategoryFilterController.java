@@ -11,8 +11,7 @@ final class MainCategoryFilterController {
     static FilterRoute route(
         List<SearchResult> loadedGuides,
         String bucketKey,
-        String label,
-        MainRouteDecisionHelper.RouteState currentRouteState
+        String label
     ) {
         if (loadedGuides == null || loadedGuides.isEmpty()) {
             return FilterRoute.browseFallback();
@@ -26,7 +25,6 @@ final class MainCategoryFilterController {
         String filterLabel = HomeCategoryPolicy.filterLabel(label, filtered.size());
         return FilterRoute.filtered(
             filtered,
-            MainRouteDecisionHelper.filterGuidesByCategory(currentRouteState),
             MainResultPublicationPolicy.searchResultSurfaceWithSearchChrome("", filterLabel, filtered.size()),
             filterLabel
         );
@@ -35,7 +33,6 @@ final class MainCategoryFilterController {
     static final class FilterRoute {
         private final boolean browseFallback;
         private final List<SearchResult> filteredResults;
-        private final MainRouteDecisionHelper.RouteState routeStateBeforePublication;
         private final MainResultPublicationPolicy publication;
         private final String searchQueryLabel;
         private final int resultCount;
@@ -43,7 +40,6 @@ final class MainCategoryFilterController {
         private FilterRoute(
             boolean browseFallback,
             List<SearchResult> filteredResults,
-            MainRouteDecisionHelper.RouteState routeStateBeforePublication,
             MainResultPublicationPolicy publication,
             String searchQueryLabel,
             int resultCount
@@ -52,21 +48,17 @@ final class MainCategoryFilterController {
             this.filteredResults = filteredResults == null
                 ? Collections.emptyList()
                 : Collections.unmodifiableList(new ArrayList<>(filteredResults));
-            this.routeStateBeforePublication = routeStateBeforePublication == null
-                ? MainRouteDecisionHelper.browseHome()
-                : routeStateBeforePublication;
             this.publication = publication;
             this.searchQueryLabel = safe(searchQueryLabel);
             this.resultCount = Math.max(0, resultCount);
         }
 
         private static FilterRoute browseFallback() {
-            return new FilterRoute(true, Collections.emptyList(), null, null, "", 0);
+            return new FilterRoute(true, Collections.emptyList(), null, "", 0);
         }
 
         private static FilterRoute filtered(
             List<SearchResult> filteredResults,
-            MainRouteDecisionHelper.RouteState routeStateBeforePublication,
             MainResultPublicationPolicy publication,
             String searchQueryLabel
         ) {
@@ -74,7 +66,6 @@ final class MainCategoryFilterController {
             return new FilterRoute(
                 false,
                 filteredResults,
-                routeStateBeforePublication,
                 publication,
                 searchQueryLabel,
                 resultCount
@@ -87,10 +78,6 @@ final class MainCategoryFilterController {
 
         List<SearchResult> filteredResults() {
             return filteredResults;
-        }
-
-        MainRouteDecisionHelper.RouteState routeStateBeforePublication() {
-            return routeStateBeforePublication;
         }
 
         MainResultPublicationPolicy publication() {

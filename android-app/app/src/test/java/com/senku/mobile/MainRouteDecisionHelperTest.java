@@ -499,7 +499,7 @@ public final class MainRouteDecisionHelperTest {
     }
 
     @Test
-    public void browseGuideFlowsClearAskLaneWithoutChangingCurrentTabOwner() {
+    public void browseGuideFlowClearsAskLaneWithoutChangingCurrentTabOwner() {
         assertRoute(
             MainRouteDecisionHelper.browseGuides(new MainRouteDecisionHelper.RouteState(
                 MainRouteDecisionHelper.Surface.ASK_RESULTS,
@@ -508,16 +508,6 @@ public final class MainRouteDecisionHelperTest {
             )),
             MainRouteDecisionHelper.Surface.ASK_RESULTS,
             BottomTabDestination.ASK,
-            false
-        );
-        assertRoute(
-            MainRouteDecisionHelper.filterGuidesByCategory(new MainRouteDecisionHelper.RouteState(
-                MainRouteDecisionHelper.Surface.SAVED_GUIDES,
-                BottomTabDestination.PINS,
-                true
-            )),
-            MainRouteDecisionHelper.Surface.SAVED_GUIDES,
-            BottomTabDestination.PINS,
             false
         );
     }

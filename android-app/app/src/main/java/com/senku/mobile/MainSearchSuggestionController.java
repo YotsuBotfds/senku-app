@@ -8,8 +8,7 @@ final class MainSearchSuggestionController {
 
     static SuggestionRoute route(
         MainSearchSuggestionPolicy.SearchSuggestion suggestion,
-        List<SearchResult> allGuides,
-        MainRouteDecisionHelper.RouteState currentRouteState
+        List<SearchResult> allGuides
     ) {
         if (suggestion == null) {
             return SuggestionRoute.ignore();
@@ -18,8 +17,7 @@ final class MainSearchSuggestionController {
             return SuggestionRoute.categoryFilter(MainCategoryFilterController.route(
                 allGuides,
                 suggestion.categoryKey,
-                suggestion.categoryLabel,
-                currentRouteState
+                suggestion.categoryLabel
             ));
         }
         String query = safe(suggestion.searchQuery).trim();

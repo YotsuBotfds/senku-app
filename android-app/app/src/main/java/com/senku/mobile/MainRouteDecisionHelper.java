@@ -120,10 +120,6 @@ final class MainRouteDecisionHelper {
         return withAskLaneInactive(state);
     }
 
-    static RouteState filterGuidesByCategory(RouteState state) {
-        return withAskLaneInactive(state);
-    }
-
     static RouteState clearChatSession() {
         return browseHome();
     }

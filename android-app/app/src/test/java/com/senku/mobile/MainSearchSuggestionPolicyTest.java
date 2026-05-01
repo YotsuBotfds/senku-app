@@ -130,8 +130,7 @@ public final class MainSearchSuggestionPolicyTest {
             Arrays.asList(
                 guide("GD-001", "Rain barrel basics", "water", "Water systems", "rainwater"),
                 guide("GD-002", "Cabin roof", "shelter", "Shelter", "roof")
-            ),
-            MainRouteDecisionHelper.browseHome()
+            )
         );
 
         assertTrue(route.isCategoryFilter());
@@ -153,8 +152,7 @@ public final class MainSearchSuggestionPolicyTest {
 
         MainSearchSuggestionController.SuggestionRoute route = MainSearchSuggestionController.route(
             suggestion,
-            sampleGuides(),
-            MainRouteDecisionHelper.browseHome()
+            sampleGuides()
         );
 
         assertTrue(route.isSearch());
@@ -169,13 +167,11 @@ public final class MainSearchSuggestionPolicyTest {
 
         assertTrue(MainSearchSuggestionController.route(
             null,
-            sampleGuides(),
-            MainRouteDecisionHelper.browseHome()
+            sampleGuides()
         ).shouldIgnore());
         assertTrue(MainSearchSuggestionController.route(
             emptyGuideSuggestion,
-            sampleGuides(),
-            MainRouteDecisionHelper.browseHome()
+            sampleGuides()
         ).shouldIgnore());
     }
 

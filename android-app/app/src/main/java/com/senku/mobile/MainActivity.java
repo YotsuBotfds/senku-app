@@ -1607,8 +1607,7 @@ public final class MainActivity extends AppCompatActivity {
     private void applySearchSuggestion(MainSearchSuggestionPolicy.SearchSuggestion suggestion) {
         MainSearchSuggestionController.SuggestionRoute route = MainSearchSuggestionController.route(
             suggestion,
-            allGuides,
-            currentMainRouteState()
+            allGuides
         );
         if (route.shouldIgnore()) {
             return;
@@ -3557,8 +3556,7 @@ public final class MainActivity extends AppCompatActivity {
         MainCategoryFilterController.FilterRoute route = MainCategoryFilterController.route(
             allGuides,
             bucketKey,
-            label,
-            currentMainRouteState()
+            label
         );
         applyCategoryFilterRoute(route);
     }
@@ -3571,7 +3569,6 @@ public final class MainActivity extends AppCompatActivity {
             browseGuides();
             return;
         }
-        applyMainRouteState(route.routeStateBeforePublication());
         MainResultPublicationPolicy publication = route.publication();
         publishResultItems(publication, route.filteredResults());
         resultsHeader.setText(isTabletSearchLayout()

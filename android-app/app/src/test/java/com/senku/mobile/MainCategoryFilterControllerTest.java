@@ -23,12 +23,7 @@ public final class MainCategoryFilterControllerTest {
         MainCategoryFilterController.FilterRoute route = MainCategoryFilterController.route(
             Arrays.asList(rainBarrel, cabinRoof, sandFilter),
             "water",
-            "Water & sanitation",
-            new MainRouteDecisionHelper.RouteState(
-                MainRouteDecisionHelper.Surface.ASK_RESULTS,
-                BottomTabDestination.ASK,
-                true
-            )
+            "Water & sanitation"
         );
 
         assertFalse(route.shouldBrowseGuides());
@@ -38,18 +33,16 @@ public final class MainCategoryFilterControllerTest {
         assertEquals("Water & sanitation (2)", route.searchQueryLabel());
         assertEquals(2, route.resultCount());
 
-        assertEquals(MainRouteDecisionHelper.Surface.ASK_RESULTS, route.routeStateBeforePublication().surface);
-        assertEquals(BottomTabDestination.ASK, route.routeStateBeforePublication().activePhoneTab);
-        assertFalse(route.routeStateBeforePublication().askLaneActive);
-
         MainResultPublicationPolicy.SearchQueryChromePresentation chrome =
             route.publication().searchQueryChromePresentation();
         assertTrue(chrome.shouldPublish());
         assertEquals("Water & sanitation (2)", chrome.queryLabel());
         assertEquals(2, chrome.resultCount());
-        assertEquals(
+        assertRoute(
+            route.publication().routeState(),
             MainRouteDecisionHelper.Surface.SEARCH_RESULTS,
-            route.publication().routeState().surface
+            BottomTabDestination.HOME,
+            false
         );
     }
 
@@ -58,8 +51,7 @@ public final class MainCategoryFilterControllerTest {
         MainCategoryFilterController.FilterRoute route = MainCategoryFilterController.route(
             Collections.singletonList(guide("Cabin roof", "building", "")),
             "medicine",
-            "Medicine",
-            MainRouteDecisionHelper.browseHome()
+            "Medicine"
         );
 
         assertFalse(route.shouldBrowseGuides());
@@ -74,8 +66,7 @@ public final class MainCategoryFilterControllerTest {
         MainCategoryFilterController.FilterRoute route = MainCategoryFilterController.route(
             Collections.emptyList(),
             "water",
-            "Water",
-            MainRouteDecisionHelper.browseHome()
+            "Water"
         );
 
         assertTrue(route.shouldBrowseGuides());
@@ -100,5 +91,16 @@ public final class MainCategoryFilterControllerTest {
             "",
             topicTags
         );
+    }
+
+    private static void assertRoute(
+        MainRouteDecisionHelper.RouteState routeState,
+        MainRouteDecisionHelper.Surface surface,
+        BottomTabDestination activePhoneTab,
+        boolean askLaneActive
+    ) {
+        assertEquals(surface, routeState.surface);
+        assertEquals(activePhoneTab, routeState.activePhoneTab);
+        assertEquals(askLaneActive, routeState.askLaneActive);
     }
 }
