@@ -1,6 +1,6 @@
 # Backend Cleanup Phase Tracker
 
-Last updated after pushed cleanup through `063acb5c` on 2026-05-01.
+Last updated after cleanup through `40db1999` on 2026-05-01.
 
 Purpose: prevent future agents from rerunning Ask/query backend cleanup that is already complete. Keep this note short; implementation detail belongs in commits and tests.
 
@@ -460,17 +460,40 @@ Purpose: prevent future agents from rerunning Ask/query backend cleanup that is 
   `PromptHarnessSmokeTest.taskRootAnswerDetailVisibleAffordanceNavigatesToManualHome`
   covers a task-root answer detail exposing Home semantics on the visible
   Back/Home affordance and returning to manual Home.
-- Latest reported validation after `063acb5c`: focused JVM proof for
+- Functional UX smoke matrix watchdog is current through `fcaaef51`: the
+  matrix wrapper emits per-preset heartbeat lines, applies a configurable
+  per-preset watchdog, records `matrix_timeout` / `timed_out=true` when a
+  child smoke runner exceeds the watchdog, and keeps full matrix execution
+  opt-in rather than automatic. Parser and contract proof lives in
+  `tests/test_run_android_functional_ux_smoke_matrix_contract.py` and the
+  PowerShell quality gate.
+- Result publication route ownership is current through `b6173c2e`:
+  `MainResultPublicationPolicy.resolveRouteState()` owns null-safe route-state
+  resolution for result publication, so `MainActivity` no longer carries that
+  fallback helper.
+- Android presentation cleanup is current through `40db1999`: tablet answer
+  mode no longer opens the source/evidence rail merely because sources exist,
+  active follow-up stall retry query selection lives in `FollowUpComposerState`,
+  optional search-card action presentation lives in
+  `SearchResultInteractionModel`, review-demo fixture copy scans guard
+  production runtime code, and guide rail section anchors use the shared guide
+  sanitizer parse.
+- Latest reported validation after `40db1999`: focused JVM proof for
   `DetailTabletStateBuilderTest`, `SearchResultCardModelMapperTest`,
   `FollowUpComposerControllerTest`, `MainRouteCoordinatorTest`,
-  `DetailFollowupLandscapeComposerTest`, and
-  `MainResultPublicationPolicyTest`; compile validation with
+  `DetailFollowupLandscapeComposerTest`, `MainResultPublicationPolicyTest`,
+  `TabletEvidenceVisibilityPolicyTest`, `StressReadingPolicyTest`,
+  `FollowUpComposerStateTest`, `ReviewDemoFixtureBoundaryTest`, and
+  `DetailGuidePresentationFormatterTest`; script contract proof for
+  `tests.test_run_android_functional_ux_smoke_matrix_contract` and
+  `tests.test_powershell_quality_gate`; compile validation with
   `:app:assembleDebugAndroidTest`; and `git diff --check`.
 - Current validation commands:
   `git diff --check`;
-  `cd android-app; ./gradlew.bat :app:testDebugUnitTest --tests com.senku.mobile.DetailTabletStateBuilderTest --tests com.senku.mobile.SearchResultCardModelMapperTest --tests com.senku.mobile.FollowUpComposerControllerTest --tests com.senku.mobile.MainRouteCoordinatorTest --tests com.senku.mobile.DetailFollowupLandscapeComposerTest --tests com.senku.mobile.MainResultPublicationPolicyTest`;
+  `cd android-app; ./gradlew.bat :app:testDebugUnitTest --tests com.senku.mobile.DetailTabletStateBuilderTest --tests com.senku.mobile.SearchResultCardModelMapperTest --tests com.senku.mobile.FollowUpComposerControllerTest --tests com.senku.mobile.MainRouteCoordinatorTest --tests com.senku.mobile.DetailFollowupLandscapeComposerTest --tests com.senku.mobile.MainResultPublicationPolicyTest --tests com.senku.ui.tablet.TabletEvidenceVisibilityPolicyTest --tests com.senku.ui.tablet.StressReadingPolicyTest --tests com.senku.mobile.FollowUpComposerStateTest --tests com.senku.mobile.ReviewDemoFixtureBoundaryTest --tests com.senku.mobile.DetailGuidePresentationFormatterTest`;
+  `.\\.venvs\\senku-validate\\Scripts\\python.exe -B -m unittest tests.test_run_android_functional_ux_smoke_matrix_contract tests.test_powershell_quality_gate -v`;
   `cd android-app; ./gradlew.bat :app:assembleDebugAndroidTest`.
-- Tracker is refreshed through pushed head `063acb5c`.
+- Tracker is refreshed through `40db1999`.
 
 ## Remaining Next Slices
 
