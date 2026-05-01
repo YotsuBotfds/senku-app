@@ -92,6 +92,14 @@ final class SearchResultCardModelMapper {
         return Integer.toString(tabletScoreForPosition(position));
     }
 
+    static String displayLabelForRetrievalModeForTest(String mode) {
+        return displayLabelForRetrievalMode(mode);
+    }
+
+    static String displayLabelForRetrievalMode(String mode) {
+        return laneLabelForRetrievalMode(safe(mode));
+    }
+
     static int tabletScoreForPositionForTest(int position) {
         return tabletScoreForPosition(position);
     }

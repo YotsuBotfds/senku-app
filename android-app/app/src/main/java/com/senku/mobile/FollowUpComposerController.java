@@ -101,6 +101,10 @@ final class FollowUpComposerController {
         );
     }
 
+    static boolean shouldShowDockedComposerRetry(boolean retryAvailable, boolean landscapePhone) {
+        return retryAvailable && !landscapePhone;
+    }
+
     static FollowUpComposerState resolveGenerationStart(FollowUpComposerState state) {
         return safeState(state).withClearedDraft();
     }

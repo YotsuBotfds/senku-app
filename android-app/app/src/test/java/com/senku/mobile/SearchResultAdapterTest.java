@@ -22,11 +22,11 @@ public final class SearchResultAdapterTest {
 
     @Test
     public void retrievalModeLabelsUseResultHierarchyLanguage() {
-        assertEquals("Best match", SearchResultAdapter.displayLabelForRetrievalModeForTest("hybrid"));
-        assertEquals("Best match", SearchResultAdapter.displayLabelForRetrievalModeForTest("route-focus"));
-        assertEquals("Concept match", SearchResultAdapter.displayLabelForRetrievalModeForTest("vector"));
-        assertEquals("Keyword match", SearchResultAdapter.displayLabelForRetrievalModeForTest("lexical"));
-        assertEquals("Related guide", SearchResultAdapter.displayLabelForRetrievalModeForTest("guide-focus"));
+        assertEquals("Best match", SearchResultCardModelMapper.displayLabelForRetrievalModeForTest("hybrid"));
+        assertEquals("Best match", SearchResultCardModelMapper.displayLabelForRetrievalModeForTest("route-focus"));
+        assertEquals("Concept match", SearchResultCardModelMapper.displayLabelForRetrievalModeForTest("vector"));
+        assertEquals("Keyword match", SearchResultCardModelMapper.displayLabelForRetrievalModeForTest("lexical"));
+        assertEquals("Related guide", SearchResultCardModelMapper.displayLabelForRetrievalModeForTest("guide-focus"));
     }
 
     @Test

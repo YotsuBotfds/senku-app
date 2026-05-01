@@ -91,13 +91,13 @@ public final class DetailFollowupLandscapeComposerTest {
 
     @Test
     public void dockedComposerHidesRetryChromeOnLandscapePhone() {
-        assertFalse(DetailActivity.shouldShowDockedComposerRetry(true, true));
+        assertFalse(FollowUpComposerController.shouldShowDockedComposerRetry(true, true));
     }
 
     @Test
     public void dockedComposerKeepsRetryChromeOutsideLandscapePhone() {
-        assertTrue(DetailActivity.shouldShowDockedComposerRetry(true, false));
-        assertFalse(DetailActivity.shouldShowDockedComposerRetry(false, false));
+        assertTrue(FollowUpComposerController.shouldShowDockedComposerRetry(true, false));
+        assertFalse(FollowUpComposerController.shouldShowDockedComposerRetry(false, false));
     }
 
     @Test

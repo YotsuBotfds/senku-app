@@ -141,6 +141,20 @@ final class MainRouteEffectController {
         applyPhoneTabTransitionEffect(transition, effects);
     }
 
+    static void applyExplicitFlowDestination(
+        MainRouteDecisionHelper.RouteState currentRouteState,
+        BottomTabDestination destination,
+        RouteEffects effects
+    ) {
+        if (effects == null) {
+            return;
+        }
+        effects.applyRouteState(MainRouteDecisionHelper.routeStateForExplicitFlowDestination(
+            currentRouteState,
+            destination
+        ));
+    }
+
     static void applyPhoneTabTransitionEffect(
         MainRouteDecisionHelper.Transition transition,
         Effects effects

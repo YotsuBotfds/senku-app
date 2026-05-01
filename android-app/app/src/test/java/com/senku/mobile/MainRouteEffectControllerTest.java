@@ -66,6 +66,28 @@ public final class MainRouteEffectControllerTest {
     }
 
     @Test
+    public void explicitFlowDestinationAppliesRouteWithoutTransitionEffects() {
+        RecordingBackEffects effects = new RecordingBackEffects(false, BottomTabDestination.ASK);
+
+        MainRouteEffectController.applyExplicitFlowDestination(
+            new MainRouteDecisionHelper.RouteState(
+                MainRouteDecisionHelper.Surface.ASK_RESULTS,
+                BottomTabDestination.ASK,
+                true
+            ),
+            BottomTabDestination.SEARCH,
+            effects
+        );
+
+        assertEquals(
+            Arrays.asList(
+                "applyRouteState:SEARCH_RESULTS:HOME:false"
+            ),
+            effects.calls
+        );
+    }
+
+    @Test
     public void backTransitionToPreviousTabAppliesRouteBeforeSectionEffects() {
         MainRouteDecisionHelper.Transition transition =
             new MainRouteDecisionHelper.Transition(

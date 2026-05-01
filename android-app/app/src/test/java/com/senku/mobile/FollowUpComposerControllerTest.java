@@ -387,6 +387,13 @@ public final class FollowUpComposerControllerTest {
     }
 
     @Test
+    public void dockedRetryVisibilitySuppressesLandscapePhoneChrome() {
+        assertEquals(false, FollowUpComposerController.shouldShowDockedComposerRetry(true, true));
+        assertEquals(true, FollowUpComposerController.shouldShowDockedComposerRetry(true, false));
+        assertEquals(false, FollowUpComposerController.shouldShowDockedComposerRetry(false, false));
+    }
+
+    @Test
     public void nullStateResolvesToEmptyPhoneComposerDecisions() {
         FollowUpComposerController.SubmitDecision submit =
             FollowUpComposerController.resolveSubmit(null);

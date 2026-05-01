@@ -3,10 +3,17 @@ package com.senku.mobile;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
 
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Stream;
 
 import org.junit.Test;
 
@@ -217,6 +224,24 @@ public final class ReviewDemoFixtureBoundaryTest {
         assertFalse(shapedSearchResults.isEmpty());
     }
 
+    @Test
+    public void productionDisplayFixturesStayBehindMainReviewDisplayPolicy() throws Exception {
+        Path productionSourceRoot = productionSourceRoot();
+        List<String> violations = new ArrayList<>();
+
+        try (Stream<Path> files = Files.walk(productionSourceRoot)) {
+            files
+                .filter(Files::isRegularFile)
+                .filter(ReviewDemoFixtureBoundaryTest::isProductionSourceFile)
+                .forEach(file -> collectDisplayFixturePolicyViolation(productionSourceRoot, file, violations));
+        }
+
+        assertTrue(
+            "Main display review fixtures must stay isolated behind MainReviewDisplayPolicy: " + violations,
+            violations.isEmpty()
+        );
+    }
+
     private static boolean[] disabledOrDeniedReviewModes() {
         return new boolean[] {
             false,
@@ -299,6 +324,53 @@ public final class ReviewDemoFixtureBoundaryTest {
             builder.append(result.topicTags).append('\n');
         }
         return builder.toString();
+    }
+
+    private static Path productionSourceRoot() {
+        Path gradleModuleRoot = Paths.get("src", "main", "java");
+        if (Files.isDirectory(gradleModuleRoot)) {
+            return gradleModuleRoot;
+        }
+        Path repoRoot = Paths.get("android-app", "app", "src", "main", "java");
+        if (Files.isDirectory(repoRoot)) {
+            return repoRoot;
+        }
+        throw new AssertionError("Unable to locate Android production source root");
+    }
+
+    private static boolean isProductionSourceFile(Path file) {
+        String name = file.getFileName().toString();
+        return name.endsWith(".java") || name.endsWith(".kt");
+    }
+
+    private static void collectDisplayFixturePolicyViolation(
+        Path sourceRoot,
+        Path file,
+        List<String> violations
+    ) {
+        String relativePath = sourceRoot.relativize(file).toString().replace('\\', '/');
+        if (relativePath.equals("com/senku/mobile/ReviewDemoPolicy.java")
+            || relativePath.equals("com/senku/mobile/MainReviewDisplayPolicy.java")) {
+            return;
+        }
+        try {
+            String content = new String(Files.readAllBytes(file), StandardCharsets.UTF_8);
+            if (containsDisplayFixturePolicyBypass(content)) {
+                violations.add(relativePath);
+            }
+        } catch (IOException exception) {
+            throw new AssertionError("Unable to scan " + relativePath, exception);
+        }
+    }
+
+    private static boolean containsDisplayFixturePolicyBypass(String content) {
+        return content.contains("ReviewDemoPolicy.displayHomeCategoryCount(")
+            || content.contains("ReviewDemoPolicy.shouldUseHomeCategoryFixtureCounts(")
+            || content.contains("ReviewDemoPolicy.shapeHomeSubtitle(")
+            || content.contains("ReviewDemoPolicy.shapeManualHomeStatus(")
+            || content.contains("ReviewDemoPolicy.appendSearchLatency(")
+            || content.contains("ReviewDemoPolicy.shapeTabletPreviewMeta(")
+            || content.contains("ReviewDemoPolicy.shapeTabletPreviewBody(");
     }
 
     private static boolean containsGuideId(List<SearchResult> results, String guideId) {

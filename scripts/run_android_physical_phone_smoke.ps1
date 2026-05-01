@@ -416,6 +416,9 @@ function Get-UiPostStepEvidence {
     if (-not [string]::IsNullOrWhiteSpace($StepName)) {
         $evidence.step_name = $StepName
     }
+    if ($StepName -eq "tap_saved") {
+        $evidence.selected_destination = "saved"
+    }
     return $evidence
 }
 

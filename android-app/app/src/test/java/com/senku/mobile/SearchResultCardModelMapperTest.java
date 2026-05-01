@@ -130,6 +130,15 @@ public final class SearchResultCardModelMapperTest {
     }
 
     @Test
+    public void retrievalModeLabelsUseResultHierarchyLanguage() {
+        assertEquals("Best match", SearchResultCardModelMapper.displayLabelForRetrievalModeForTest("hybrid"));
+        assertEquals("Best match", SearchResultCardModelMapper.displayLabelForRetrievalModeForTest("route-focus"));
+        assertEquals("Concept match", SearchResultCardModelMapper.displayLabelForRetrievalModeForTest("vector"));
+        assertEquals("Keyword match", SearchResultCardModelMapper.displayLabelForRetrievalModeForTest("lexical"));
+        assertEquals("Related guide", SearchResultCardModelMapper.displayLabelForRetrievalModeForTest("guide-focus"));
+    }
+
+    @Test
     public void rowAttributeLineMatchesAdapterPreviewRailContract() {
         String immediateShelter = SearchResultCardModelMapper.buildTabletAttributeLineForTest(
             "shelter",

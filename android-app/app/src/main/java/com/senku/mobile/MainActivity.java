@@ -2996,10 +2996,11 @@ public final class MainActivity extends AppCompatActivity {
         if (!shouldHandleMainSurfaceNavigationTabs(isPhoneFormFactor(), isTabletSearchLayout())) {
             return;
         }
-        applyMainRouteState(MainRouteDecisionHelper.routeStateForExplicitFlowDestination(
+        MainRouteEffectController.applyExplicitFlowDestination(
             currentMainRouteState(),
-            destination
-        ));
+            destination,
+            mainRouteEffects()
+        );
     }
 
     static boolean resolveAskLaneActiveForExplicitPhoneFlow(

@@ -1,6 +1,7 @@
 package com.senku.ui.tablet
 
 import com.senku.ui.primitives.Rev03ComposeNavRailIconSizeDp
+import com.senku.ui.primitives.Rev03ComposeNavRailIconLabelGapDp
 import com.senku.ui.primitives.Rev03ComposeNavRailLabelFontSizeSp
 import com.senku.ui.primitives.Rev03ComposeNavRailLabelLineHeightSp
 import org.junit.Assert.assertEquals
@@ -18,7 +19,7 @@ class TabletDetailAppRailPolicyTest {
         assertEquals(18, tabletGuideAppRailFirstItemTopMarginDp(isLandscape = true))
         assertEquals(18, tabletGuideAppRailItemTopMarginDp(isLandscape = false))
         assertEquals(12, tabletGuideAppRailItemTopMarginDp(isLandscape = true))
-        assertEquals(3, tabletGuideAppRailLabelTopMarginDp(isLandscape = false))
+        assertEquals(Rev03ComposeNavRailIconLabelGapDp, tabletGuideAppRailLabelTopMarginDp(isLandscape = false))
         assertEquals(4, tabletGuideAppRailLabelTopMarginDp(isLandscape = true))
         assertEquals(22, tabletGuideAppRailIconSizeDp(isLandscape = false))
         assertEquals(22, tabletGuideAppRailIconSizeDp(isLandscape = true))

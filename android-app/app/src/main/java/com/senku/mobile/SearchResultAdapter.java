@@ -38,7 +38,6 @@ import java.util.Set;
 import static com.senku.ui.search.SearchResultCardKt.bindSearchResultCard;
 import static com.senku.ui.search.SearchResultCardKt.buildWarmThreadGuideIds;
 import static com.senku.ui.search.SearchResultCardKt.continueConversationContentDescription;
-import static com.senku.ui.search.SearchResultCardKt.laneLabelForRetrievalMode;
 
 public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResultAdapter.ResultViewHolder> {
     private static final int MAX_HIGHLIGHT_TERMS = 4;
@@ -565,7 +564,7 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
         }
         int color = colorForRetrievalMode(normalized);
         accent.setBackgroundColor(color);
-        applyBadgeStyle(badge, displayLabelForRetrievalMode(normalized), color);
+        applyBadgeStyle(badge, SearchResultCardModelMapper.displayLabelForRetrievalMode(normalized), color);
     }
 
     private void bindTabletScoreMarker(TextView badge, View scoreBar, int position) {
@@ -999,14 +998,6 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
         return humanize(mode);
     }
 
-    static String displayLabelForRetrievalModeForTest(String mode) {
-        return displayLabelForRetrievalMode(mode);
-    }
-
-    private static String displayLabelForRetrievalMode(String mode) {
-        return laneLabelForRetrievalMode(safe(mode));
-    }
-
     private String humanize(String value) {
         return humanizeStatic(value);
     }
@@ -1037,7 +1028,7 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
             String normalizedGuideId = safe(result == null ? null : result.guideId).trim();
             String normalizedSection = cleanDisplayText(result == null ? null : result.sectionHeading, 48);
             String rawRetrievalMode = safe(result == null ? null : result.retrievalMode).trim().toLowerCase(Locale.US);
-            String normalizedRetrieval = displayLabelForRetrievalMode(rawRetrievalMode);
+            String normalizedRetrieval = SearchResultCardModelMapper.displayLabelForRetrievalMode(rawRetrievalMode);
             String legacyRetrieval = humanizeMode(rawRetrievalMode);
             for (String part : parts) {
                 String cleaned = cleanDisplayText(part, 30);

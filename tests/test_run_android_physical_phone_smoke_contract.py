@@ -58,6 +58,7 @@ class AndroidPhysicalPhoneSmokeContractTests(unittest.TestCase):
         self.assertIn("function Wait-UiPostStepEvidence", self.script)
         self.assertIn("function Get-SavedDestinationEvidenceFragments", self.script)
         self.assertIn("post_check", self.script)
+        self.assertIn("selected_destination", self.script)
         self.assertIn("dump_sha256", self.script)
         self.assertIn("function Invoke-SenkuSimpleInteraction", self.script)
         self.assertIn("tap_saved", self.script)
@@ -490,6 +491,7 @@ class AndroidPhysicalPhoneSmokeContractTests(unittest.TestCase):
                 ["No saved guides yet", "This tab only shows saved guides", "Saved guide "],
             )
             self.assertIn("Saved guide ", step_by_name["tap_saved"]["post_check"]["matched_text"])
+            self.assertEqual(step_by_name["tap_saved"]["post_check"]["selected_destination"], "saved")
             self.assertIn("Search", step_by_name["submit_query"]["post_check"]["matched_text"])
             self.assertNotIn("post_check", step_by_name["tap_query_field"])
             self.assertNotIn("post_check", step_by_name["enter_query"])

@@ -3958,7 +3958,10 @@ public final class DetailActivity extends AppCompatActivity {
         FollowUpComposerState composerState = buildPhoneFollowUpComposerState();
         FollowUpComposerController.RetryPresentation retryPresentation =
             FollowUpComposerController.resolveRetryPresentation(composerState, true);
-        boolean showRetry = shouldShowDockedComposerRetry(retryPresentation.visible, landscapePhone);
+        boolean showRetry = FollowUpComposerController.shouldShowDockedComposerRetry(
+            retryPresentation.visible,
+            landscapePhone
+        );
         DockedComposerModel model = new DockedComposerModel(
             composerState.draftText,
             resolveDockedComposerHint(
@@ -4021,10 +4024,6 @@ public final class DetailActivity extends AppCompatActivity {
             || (isCompactPortraitPhoneLayout() && answerMode)
             || (isTabletPortraitLayout() && answerMode && !pendingGeneration)
             || showUtilityRail();
-    }
-
-    static boolean shouldShowDockedComposerRetry(boolean retryAvailable, boolean landscapePhone) {
-        return retryAvailable && !landscapePhone;
     }
 
     static boolean shouldHideFollowUpSuggestionsOnPhoneLandscape(boolean landscapePhone) {
