@@ -73,7 +73,11 @@ public final class ModelFileStore {
             return findFallbackModel(context);
         }
         File file = new File(path);
-        return file.isFile() ? file : findFallbackModel(context);
+        if (file.isFile()) {
+            return file;
+        }
+        clearImportedModelPrefs(prefs);
+        return findFallbackModel(context);
     }
 
     public static String getModelSummary(Context context) {
@@ -151,6 +155,13 @@ public final class ModelFileStore {
 
     private static File getPreferredModelsDir(Context context) {
         return new File(context.getFilesDir(), "models");
+    }
+
+    private static void clearImportedModelPrefs(SharedPreferences prefs) {
+        prefs.edit()
+            .remove(KEY_MODEL_NAME)
+            .remove(KEY_MODEL_PATH)
+            .apply();
     }
 
     private static File findNewestModelFile(File modelsDir) {
