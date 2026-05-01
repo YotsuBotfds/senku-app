@@ -199,6 +199,52 @@ public final class ReviewDemoFixtureBoundaryTest {
         assertNoRainShelterFixtureContent(shapedRelatedGuides);
     }
 
+    @Test
+    public void explicitEnabledReviewPolicyStillShapesReviewDemoFixtures() {
+        List<SearchResult> liveSearchResults = Arrays.asList(
+            result("GD-345", "Live Rain Shelter Notes", "Use the current catalog result."),
+            result("GD-502", "Live Knot Reference", "Use the current knot result.")
+        );
+
+        List<SearchResult> shapedSearchResults = ReviewDemoPolicy.shapeSearchResults(
+            "rain shelter",
+            true,
+            liveSearchResults,
+            null
+        );
+
+        assertEquals(4, shapedSearchResults.size());
+        assertEquals("GD-023", shapedSearchResults.get(0).guideId);
+        assertEquals("Survival Basics & First 72 Hours", shapedSearchResults.get(0).title);
+        assertEquals("GD-027", shapedSearchResults.get(1).guideId);
+        assertEquals("Primitive Technology & Stone Age", shapedSearchResults.get(1).title);
+
+        ArrayList<SearchResult> relatedGuides = new ArrayList<>(Arrays.asList(
+            result("GD-294", "Cave Shelter Systems & Cold-Weather", ""),
+            result("GD-695", "Hurricane & Severe Storm Sheltering", ""),
+            result("GD-484", "Insulation Materials & Cold-Soak", ""),
+            result("GD-109", "Natural Building Materials", "")
+        ));
+
+        ArrayList<SearchResult> shapedRelatedGuides = ReviewDemoPolicy.shapeAnswerModeRelatedGuides(
+            true,
+            "GD-345",
+            relatedGuides
+        );
+
+        assertEquals("GD-027", shapedRelatedGuides.get(3).guideId);
+        assertEquals("Primitive Technology & Stone Age", shapedRelatedGuides.get(3).title);
+        assertEquals("GD-109", shapedRelatedGuides.get(4).guideId);
+        assertEquals(
+            "How do I build a simple rain shelter...",
+            ReviewDemoPolicy.placeholderRecentThreadQuestion(true, 0, "Live placeholder")
+        );
+        assertEquals(
+            "How do I build a simple rain shelter...\nGD-345 \u2022 04:21 \u2022 UNSURE",
+            ReviewDemoPolicy.shapeRecentThreadLabel(true, null, 0, "Live recent thread")
+        );
+    }
+
     private static boolean[] disabledOrDeniedReviewModes() {
         return new boolean[] {
             false,
