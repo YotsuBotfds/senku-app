@@ -53,10 +53,22 @@ public final class PackRepositoryCurrentHeadRouteParityAndroidTest {
                 ids("GD-553", "GD-270")
             ),
             new RouteSpec(
+                "how do i make soap from animal fat and ash",
+                "soapmaking",
+                ids("GD-122"),
+                ids("GD-122")
+            ),
+            new RouteSpec(
                 "how do i make glass from silica sand and soda ash",
                 "glassmaking",
                 ids("GD-123"),
                 ids("GD-123")
+            ),
+            new RouteSpec(
+                "how do i weatherproof a cabin roof",
+                "cabin_house",
+                ids("GD-106"),
+                ids("GD-106")
             ),
             new RouteSpec(
                 "someone is stealing food from the group what do we do",
