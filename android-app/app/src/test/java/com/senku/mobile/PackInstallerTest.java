@@ -157,16 +157,14 @@ public final class PackInstallerTest {
 
     @Test
     public void shouldInstallFromAssetsRefreshesWhenForcedEvenIfInstalledPackIsUsable() throws Exception {
-        InstalledPackFiles files = installedPackFiles("2026-04-27T04:21:12.533181+00:00", 271, 123, 456, 123, 456);
+        PackManifest manifest = manifestWithGeneratedAtAndAnswerCards("2026-04-27T04:21:12.533181+00:00", 271);
 
         assertEquals(
             true,
-            PackInstaller.shouldInstallFromAssetsForTest(
+            PackInstallValidationPolicy.shouldInstallFromAssets(
                 true,
-                manifestWithGeneratedAtAndAnswerCards("2026-04-27T04:21:12.533181+00:00", 271),
-                files.manifestFile,
-                files.sqliteFile,
-                files.vectorFile
+                manifest,
+                manifest
             )
         );
     }
@@ -227,16 +225,12 @@ public final class PackInstallerTest {
 
     @Test
     public void shouldInstallFromAssetsRefreshesOlderInstalledPackOnNormalInstall() throws Exception {
-        InstalledPackFiles files = installedPackFiles("2026-04-12T19:23:50Z", 6, 123, 456, 123, 456);
-
         assertEquals(
             true,
-            PackInstaller.shouldInstallFromAssetsForTest(
+            PackInstallValidationPolicy.shouldInstallFromAssets(
                 false,
                 manifestWithGeneratedAtAndAnswerCards("2026-04-27T04:21:12.533181+00:00", 271),
-                files.manifestFile,
-                files.sqliteFile,
-                files.vectorFile
+                manifestWithGeneratedAtAndAnswerCards("2026-04-12T19:23:50Z", 6)
             )
         );
     }

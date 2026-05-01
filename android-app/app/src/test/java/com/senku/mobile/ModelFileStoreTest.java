@@ -87,6 +87,25 @@ public final class ModelFileStoreTest {
         assertEquals(known, ModelFileStore.getImportedModelFile(context));
     }
 
+    @Test
+    public void policySanitizesFileNamesAndFallsBackWhenEmpty() {
+        assertEquals("my_model__1_.task", ModelFileStorePolicy.sanitizeFileName("my model (1).task"));
+        assertEquals("offline-model.litertlm", ModelFileStorePolicy.sanitizeFileName(""));
+    }
+
+    @Test
+    public void policyFindsNewestSupportedModelFile() throws Exception {
+        File modelsDir = temporaryFolder.newFolder("candidate-models");
+        File oldTask = writeModel(new File(modelsDir, "old.task"), "old");
+        File ignored = writeModel(new File(modelsDir, "newer.txt"), "ignored");
+        File newLiteRt = writeModel(new File(modelsDir, "new.litertlm"), "new");
+        oldTask.setLastModified(1_000L);
+        ignored.setLastModified(3_000L);
+        newLiteRt.setLastModified(2_000L);
+
+        assertEquals(newLiteRt, ModelFileStorePolicy.findNewestModelFile(modelsDir.listFiles()));
+    }
+
     private static SharedPreferences prefs(TestContext context) {
         return context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
     }

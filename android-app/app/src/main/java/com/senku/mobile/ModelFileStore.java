@@ -9,19 +9,11 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.text.DecimalFormat;
-import java.util.Locale;
 
 public final class ModelFileStore {
     private static final String PREFS_NAME = "senku_model_store";
     private static final String KEY_MODEL_NAME = "model_name";
     private static final String KEY_MODEL_PATH = "model_path";
-    private static final String[] KNOWN_MODEL_FILE_NAMES = {
-        "gemma-4-E4B-it.litertlm",
-        "gemma-4-E4B-it.task",
-        "gemma-4-E2B-it.litertlm",
-        "gemma-4-E2B-it.task"
-    };
 
     private ModelFileStore() {
     }
@@ -31,7 +23,7 @@ public final class ModelFileStore {
         if (displayName.isEmpty()) {
             displayName = "offline-model.litertlm";
         }
-        String sanitizedName = sanitizeFileName(displayName);
+        String sanitizedName = ModelFileStorePolicy.sanitizeFileName(displayName);
         File modelsDir = getPreferredModelsDir(context);
         if (!modelsDir.exists() && !modelsDir.mkdirs()) {
             throw new IOException("Unable to create model directory");
@@ -85,7 +77,7 @@ public final class ModelFileStore {
         if (file == null) {
             return "No imported model selected";
         }
-        return file.getName() + " (" + humanReadableSize(file.length()) + ")";
+        return file.getName() + " (" + ModelFileStorePolicy.humanReadableSize(file.length()) + ")";
     }
 
     private static String queryDisplayName(Context context, Uri uri) {
@@ -109,25 +101,6 @@ public final class ModelFileStore {
         }
         String lastSegment = uri.getLastPathSegment();
         return lastSegment == null ? "" : lastSegment;
-    }
-
-    private static String sanitizeFileName(String name) {
-        String cleaned = name.replaceAll("[^A-Za-z0-9._-]", "_");
-        return cleaned.isEmpty() ? "offline-model.litertlm" : cleaned;
-    }
-
-    private static String humanReadableSize(long bytes) {
-        if (bytes < 1024L) {
-            return bytes + " B";
-        }
-        double size = bytes;
-        String[] units = {"KB", "MB", "GB", "TB"};
-        int unitIndex = -1;
-        while (size >= 1024.0 && unitIndex < units.length - 1) {
-            size /= 1024.0;
-            unitIndex += 1;
-        }
-        return new DecimalFormat("0.0").format(size) + " " + units[Math.max(0, unitIndex)];
     }
 
     private static File findFallbackModel(Context context) {
@@ -165,34 +138,10 @@ public final class ModelFileStore {
     }
 
     private static File findNewestModelFile(File modelsDir) {
-        File[] candidates = modelsDir.listFiles();
-        if (candidates == null || candidates.length == 0) {
-            return null;
-        }
-
-        File best = null;
-        for (File candidate : candidates) {
-            if (!candidate.isFile()) {
-                continue;
-            }
-            String name = candidate.getName().toLowerCase(Locale.US);
-            if (!name.endsWith(".litertlm") && !name.endsWith(".task")) {
-                continue;
-            }
-            if (best == null || candidate.lastModified() > best.lastModified()) {
-                best = candidate;
-            }
-        }
-        return best;
+        return ModelFileStorePolicy.findNewestModelFile(modelsDir.listFiles());
     }
 
     private static File findKnownModelFile(File modelsDir) {
-        for (String fileName : KNOWN_MODEL_FILE_NAMES) {
-            File candidate = new File(modelsDir, fileName);
-            if (candidate.isFile()) {
-                return candidate;
-            }
-        }
-        return null;
+        return ModelFileStorePolicy.findKnownModelFile(modelsDir);
     }
 }

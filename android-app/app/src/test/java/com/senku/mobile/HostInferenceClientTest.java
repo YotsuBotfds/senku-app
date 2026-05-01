@@ -71,6 +71,51 @@ public final class HostInferenceClientTest {
     }
 
     @Test
+    public void parseResponseBodyFlattensMixedContentAndSkipsUnsupportedParts() throws Exception {
+        HostInferenceClient.Result result = HostInferenceClient.parseResponseBody(
+            "{\n" +
+                "  \"choices\": [\n" +
+                "    {\n" +
+                "      \"message\": {\n" +
+                "        \"content\": [\n" +
+                "          {\"type\": \"text\", \"text\": \"Alpha\"},\n" +
+                "          17,\n" +
+                "          {\"type\": \"image_url\", \"image_url\": \"ignored\"},\n" +
+                "          \"Beta\",\n" +
+                "          {\"text\": \"Gamma\"}\n" +
+                "        ]\n" +
+                "      }\n" +
+                "    }\n" +
+                "  ],\n" +
+                "  \"senku_backend\": \"mixed\"\n" +
+                "}"
+        );
+
+        assertEquals("Alpha\nBeta\nGamma", result.answer);
+        assertEquals("mixed", result.backend);
+    }
+
+    @Test
+    public void parseResponseBodyRejectsMalformedObjectContentAsEmptyAnswer() throws Exception {
+        try {
+            HostInferenceClient.parseResponseBody(
+                "{\n" +
+                    "  \"choices\": [\n" +
+                    "    {\n" +
+                    "      \"message\": {\n" +
+                    "        \"content\": {\"unexpected\": \"shape\"}\n" +
+                    "      }\n" +
+                    "    }\n" +
+                    "  ]\n" +
+                    "}"
+            );
+            fail("Expected malformed object content to be rejected");
+        } catch (IllegalStateException exception) {
+            assertEquals("Host inference returned an empty answer", exception.getMessage());
+        }
+    }
+
+    @Test
     public void generateRejectsNonLocalCleartextBeforeConnecting() throws Exception {
         HostInferenceConfig.Settings settings = new HostInferenceConfig.Settings(
             true,

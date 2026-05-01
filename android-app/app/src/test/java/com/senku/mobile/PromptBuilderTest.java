@@ -1,5 +1,6 @@
 package com.senku.mobile;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -205,6 +206,30 @@ public final class PromptBuilderTest {
         assertTrue(body.contains("Summary: Start with shared rules and reversible joint work."));
         assertTrue(body.contains("Key points:\n1. Set limited shared tasks."));
         assertTrue(body.contains("Risks or limits:\nAvoid forced full merger before trust improves."));
+    }
+
+    @Test
+    public void answerBodyNormalizesClassicSectionsAndDeduplicatesSteps() {
+        String body = PromptBuilder.buildAnswerBody(
+            "Answer: Short answer: Keep the shelter opening away from the prevailing wind. " +
+                "Steps: 1. Face the opening leeward. 2. Face the opening leeward. 3. Check smoke flow. " +
+                "Limits or safety: Avoid low spots where water can collect.",
+            List.of(),
+            0
+        );
+
+        assertTrue(body.contains("Short answer: Keep the shelter opening away from the prevailing wind."));
+        assertTrue(body.contains("Steps:\n1. Face the opening leeward.\n2. Check smoke flow."));
+        assertFalse(body.contains("3. Check smoke flow."));
+        assertTrue(body.contains("Limits or safety:\nAvoid low spots where water can collect."));
+    }
+
+    @Test
+    public void answerTextPolicyFacadePreservesCorruptionAndCoverageSignals() {
+        assertEquals("", PromptBuilder.sanitizeAnswerText("<pad> x"));
+        assertTrue(PromptBuilder.isLikelyCorruptedAnswer("ЖЖ"));
+        assertTrue(PromptBuilder.isLowCoverageAnswer("The retrieved notes do not address that material."));
+        assertFalse(PromptBuilder.isLowCoverageAnswer("Use dry kindling and build airflow from below."));
     }
 
     @Test

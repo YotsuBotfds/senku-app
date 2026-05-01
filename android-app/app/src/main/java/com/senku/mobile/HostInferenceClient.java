@@ -110,53 +110,11 @@ public final class HostInferenceClient {
     }
 
     static Result parseResponseBody(String responseBody) throws Exception {
-        JSONObject responseJson = new JSONObject(responseBody);
-        JSONArray choices = responseJson.optJSONArray("choices");
-        if (choices == null || choices.length() == 0) {
-            throw new IllegalStateException("Host inference returned no choices");
-        }
-        JSONObject firstChoice = choices.optJSONObject(0);
-        JSONObject message = firstChoice == null ? null : firstChoice.optJSONObject("message");
-        Object content = message == null ? null : message.opt("content");
-        String flattened = flattenContent(content).trim();
-        if (flattened.isEmpty()) {
-            throw new IllegalStateException("Host inference returned an empty answer");
-        }
-        String backend = responseJson.optString("senku_backend", "host").trim();
-        if (backend.isEmpty()) {
-            backend = "host";
-        }
-        double elapsedSeconds = responseJson.optDouble("senku_elapsed_seconds", 0.0d);
-        return new Result(flattened, backend, elapsedSeconds);
+        return HostInferenceResponsePolicy.parseResponseBody(responseBody);
     }
 
     static String flattenContent(Object content) {
-        if (content instanceof String) {
-            return (String) content;
-        }
-        if (content instanceof JSONArray) {
-            StringBuilder builder = new StringBuilder();
-            JSONArray parts = (JSONArray) content;
-            for (int index = 0; index < parts.length(); index++) {
-                Object part = parts.opt(index);
-                if (part instanceof JSONObject) {
-                    String text = ((JSONObject) part).optString("text", "");
-                    if (!text.isEmpty()) {
-                        if (builder.length() > 0) {
-                            builder.append('\n');
-                        }
-                        builder.append(text);
-                    }
-                } else if (part instanceof String) {
-                    if (builder.length() > 0) {
-                        builder.append('\n');
-                    }
-                    builder.append(part);
-                }
-            }
-            return builder.toString();
-        }
-        return "";
+        return HostInferenceResponsePolicy.flattenContent(content);
     }
 
     private static String readResponseBody(HttpURLConnection connection, int statusCode) throws Exception {
