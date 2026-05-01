@@ -843,11 +843,7 @@ public final class MainActivity extends AppCompatActivity {
         @Override
         public void onModelUnavailable(boolean hasAutoQuery) {
             dismissSearchKeyboard();
-            applyMainRouteState(new MainRouteDecisionHelper.RouteState(
-                MainRouteDecisionHelper.Surface.BROWSE,
-                BottomTabDestination.ASK,
-                false
-            ));
+            applyMainRouteState(MainRouteDecisionHelper.askUnavailableOrNoSourceFailure());
             setBusy(presentationFormatter().buildModelUnavailableStatus(), false);
             if (!hasAutoQuery) {
                 showBrowseChrome(true);
@@ -902,11 +898,7 @@ public final class MainActivity extends AppCompatActivity {
                     failedPrepared.sessionUsed
                 ));
             } else {
-                applyMainRouteState(new MainRouteDecisionHelper.RouteState(
-                    MainRouteDecisionHelper.Surface.BROWSE,
-                    BottomTabDestination.ASK,
-                    false
-                ));
+                applyMainRouteState(MainRouteDecisionHelper.askUnavailableOrNoSourceFailure());
                 publishResultItems(
                     MainResultPublicationPolicy.resultSurfaceWithBrowseFallback(query, !hasAutoQuery),
                     Collections.emptyList()

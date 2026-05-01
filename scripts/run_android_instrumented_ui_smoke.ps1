@@ -71,6 +71,12 @@ if (-not (Test-Path -LiteralPath $commonHarnessModule)) {
 Import-Module $commonHarnessModule -Force -DisableNameChecking
 New-Item -ItemType Directory -Force -Path $lockRoot | Out-Null
 
+function Write-RunPhase {
+    param([string]$Phase)
+
+    Write-Host ("[instrumented-ui-smoke:{0}] {1}" -f $Device, $Phase)
+}
+
 function Acquire-DeviceLock {
     param(
         [string]$DeviceName,
@@ -82,16 +88,24 @@ function Acquire-DeviceLock {
 
 $deviceLock = $null
 if (-not $SkipDeviceLock) {
+    Write-RunPhase -Phase "acquiring device lock"
     $deviceLock = Acquire-DeviceLock -DeviceName $Device
+    Write-RunPhase -Phase "device lock acquired"
+} else {
+    Write-RunPhase -Phase "device lock skipped"
 }
 
 Push-Location $androidRoot
 try {
     if (-not $SkipBuild) {
+        Write-RunPhase -Phase "building debug APKs"
         & $gradlew :app:assembleDebug :app:assembleDebugAndroidTest
         if ($LASTEXITCODE -ne 0) {
             throw "Gradle build failed"
         }
+        Write-RunPhase -Phase "build completed"
+    } else {
+        Write-RunPhase -Phase "build skipped"
     }
 } finally {
     Pop-Location
@@ -1072,12 +1086,6 @@ function Get-PlatformAnrEvidence {
     return $null
 }
 
-function Write-RunPhase {
-    param([string]$Phase)
-
-    Write-Host ("[instrumented-ui-smoke:{0}] {1}" -f $Device, $Phase)
-}
-
 function Get-InstrumentationTimeoutMs {
     if (Use-ScriptedPromptRun) {
         if ($ScriptedTimeoutMs -gt 0) {
@@ -1089,6 +1097,7 @@ function Get-InstrumentationTimeoutMs {
     switch ($SmokeProfile) {
         "basic" { return 150000 }
         "host" { return 300000 }
+        "functional" { return 300000 }
         "full" { return 420000 }
         default { return 300000 }
     }
@@ -1374,24 +1383,34 @@ if ($EnableHostInferenceSmoke -and [string]::IsNullOrWhiteSpace($EffectiveHostIn
     throw "Host inference smoke requested but no host inference URL was provided."
 }
 
+Write-RunPhase -Phase "waiting for device"
 & $adb -s $Device wait-for-device
 if ($LASTEXITCODE -ne 0) {
     throw "adb wait-for-device failed for $Device"
 }
+Write-RunPhase -Phase "device connected; waiting for readiness"
 Wait-ForDeviceReadiness
+Write-RunPhase -Phase "device ready"
 if (-not $EffectiveSkipInstall) {
+    Write-RunPhase -Phase "installing app APK"
     Invoke-ApkInstallWithPhysicalNoStreamingFallback -ApkPath $appApk -FailureMessage "App APK install failed"
+    Write-RunPhase -Phase "installing test APK"
     Invoke-ApkInstallWithPhysicalNoStreamingFallback -ApkPath $testApk -FailureMessage "Test APK install failed"
+    Write-RunPhase -Phase "APK install complete"
 } else {
+    Write-RunPhase -Phase "install skipped; verifying packages"
     if (-not (Test-PackageInstalled -PackageName "com.senku.mobile")) {
         throw "SkipInstall requested but com.senku.mobile is not installed on $Device."
     }
     if (-not (Test-PackageInstalled -PackageName "com.senku.mobile.test")) {
         throw "SkipInstall requested but com.senku.mobile.test is not installed on $Device."
     }
+    Write-RunPhase -Phase "installed packages verified"
 }
+Write-RunPhase -Phase "clearing app test artifacts"
 & $adb -s $Device shell run-as com.senku.mobile rm -rf files/test-artifacts | Out-Null
 & $adb -s $Device shell run-as com.senku.mobile mkdir -p files/test-artifacts | Out-Null
+Write-RunPhase -Phase "app test artifacts cleared"
 
 $script:OriginalFontScale = Get-DeviceFontScale
 $script:OriginalAccelerometerRotation = Get-DeviceSettingValue -Namespace system -Key accelerometer_rotation
@@ -1418,13 +1437,17 @@ $platformAnrEvidence = $null
 
 try {
     try {
+        Write-RunPhase -Phase "resolving installed binary identity"
         $installedIdentity = Resolve-InstalledBinaryIdentity -CachePath $identityStatePath
+        Write-RunPhase -Phase "installed binary identity resolved"
     } catch {
         $identityProbeError = $_.Exception.Message
         Write-Warning ("Could not resolve installed APK/model identity on {0}: {1}" -f $Device, $identityProbeError)
     }
 
+    Write-RunPhase -Phase ("setting font scale {0}" -f $FontScale)
     Set-DeviceFontScale -Scale $FontScale
+    Write-RunPhase -Phase ("setting orientation {0}" -f $Orientation)
     Set-DeviceOrientation -TargetOrientation $Orientation
     $deviceFacts = Get-ResolvedDeviceFacts -RequestedOrientation $Orientation
     $orientationSettled = ($deviceFacts.rotation_matches_requested -eq $true)
@@ -1445,7 +1468,9 @@ try {
     }
     try {
         if ($ClearLogcatBeforeRun) {
+            Write-RunPhase -Phase "clearing logcat"
             & $adb -s $Device logcat -c | Out-Null
+            Write-RunPhase -Phase "logcat cleared"
         }
 
         $instrumentationTarget = "com.senku.mobile.test/androidx.test.runner.AndroidJUnitRunner"
@@ -1597,7 +1622,7 @@ try {
 
         Stop-InstrumentationPackages
         $instrumentationTimeoutMs = Get-InstrumentationTimeoutMs
-        Write-RunPhase -Phase ("starting instrumentation {0}" -f $EffectiveTestClass)
+        Write-RunPhase -Phase ("starting instrumentation {0} with timeout {1} ms" -f $EffectiveTestClass, $instrumentationTimeoutMs)
         $instrumentationResult = Invoke-AndroidAdbCommandCapture -AdbPath $adb -Arguments $args -TimeoutMilliseconds $instrumentationTimeoutMs
         if ($instrumentationResult.timed_out) {
             Stop-InstrumentationPackages
@@ -1663,8 +1688,31 @@ try {
             $summaryStatus = "fail"
         }
     } finally {
+        if ($summaryStatus -ne "pass" -and @($artifactFiles).Count -eq 0) {
+            try {
+                Write-RunPhase -Phase "attempting best-effort artifact sync after failure"
+                $failureArtifactFiles = @(Get-RunAsArtifactFiles)
+                foreach ($artifactFile in $failureArtifactFiles) {
+                    $extension = ([string][System.IO.Path]::GetExtension($artifactFile)).ToLowerInvariant()
+                    $targetDir = if ($extension -eq ".xml") { $dumpDir } else { $screenshotDir }
+                    $targetPath = Join-Path $targetDir $artifactFile
+                    if (-not (Test-Path -LiteralPath $targetPath)) {
+                        Copy-RunAsFile -RemoteRelativePath ("files/test-artifacts/" + $artifactFile) -LocalPath $targetPath
+                    }
+                }
+                $artifactFiles = $failureArtifactFiles
+                Write-RunPhase -Phase ("best-effort artifact sync complete: {0}" -f $artifactFiles.Count)
+            } catch {
+                $failureReason = Join-FailureReasons `
+                    -ExistingMessage $failureReason `
+                    -AdditionalMessages @("Best-effort artifact sync failed: $($_.Exception.Message)")
+                Write-Warning ("Best-effort artifact sync failed on {0}: {1}" -f $Device, $_.Exception.Message)
+            }
+        }
+
         if ($CaptureLogcat -and -not $logcatCaptured) {
             try {
+                Write-RunPhase -Phase "capturing logcat after failure"
                 $logcatPath = Join-Path $artifactDir "logcat.txt"
                 Capture-LogcatSnapshot -DestinationPath $logcatPath
             } catch {

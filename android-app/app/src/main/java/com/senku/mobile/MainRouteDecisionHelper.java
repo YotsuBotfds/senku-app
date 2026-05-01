@@ -107,6 +107,10 @@ public final class MainRouteDecisionHelper {
         );
     }
 
+    static RouteState askUnavailableOrNoSourceFailure() {
+        return new RouteState(Surface.RECENT_THREADS, BottomTabDestination.ASK, false);
+    }
+
     static Transition returnHome(RouteState state) {
         normalize(state);
         return new Transition(browseHome(), Effect.SHOW_BROWSE_HOME);

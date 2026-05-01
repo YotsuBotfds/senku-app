@@ -57,9 +57,31 @@ class RunAndroidInstrumentedUiSmokeSummaryContractTests(unittest.TestCase):
         self.assertIn('"functional"', self.script)
         self.assertIn('"phone-functional" {', self.script)
         self.assertIn('$SmokeProfile = "functional"', self.script)
+        self.assertIn('"functional" { return 300000 }', self.script)
         self.assertIn('${BaseClass}#homeAndAskImeSubmitRouteToSearchResultsAndAnswerDetail', self.script)
         self.assertIn('${BaseClass}#savedNavigationBackReturnsManualHomeDestination', self.script)
         self.assertIn('${BaseClass}#answerModeProvenanceOpenBackReturnsAnswerContext', self.script)
+
+    def test_runner_logs_slow_phase_progress_and_timeout(self):
+        for phase in (
+            "acquiring device lock",
+            "building debug APKs",
+            "waiting for device",
+            "device connected; waiting for readiness",
+            "installing app APK",
+            "installing test APK",
+            "clearing app test artifacts",
+            "resolving installed binary identity",
+            "setting font scale",
+            "setting orientation",
+        ):
+            self.assertIn(phase, self.script)
+        self.assertIn("with timeout {1} ms", self.script)
+
+    def test_failure_path_attempts_best_effort_artifact_sync(self):
+        self.assertIn("attempting best-effort artifact sync after failure", self.script)
+        self.assertIn("$failureArtifactFiles = @(Get-RunAsArtifactFiles)", self.script)
+        self.assertIn("Best-effort artifact sync failed", self.script)
 
     def test_parser_gate_passes(self):
         result = subprocess.run(

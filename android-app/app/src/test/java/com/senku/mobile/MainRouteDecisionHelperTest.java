@@ -268,6 +268,35 @@ public final class MainRouteDecisionHelperTest {
     }
 
     @Test
+    public void askUnavailableOrNoSourceFailureReturnsToAskBrowseOwnerWithoutAskLane() {
+        MainRouteDecisionHelper.RouteState routeState =
+            MainRouteDecisionHelper.askUnavailableOrNoSourceFailure();
+
+        assertRoute(
+            routeState,
+            MainRouteDecisionHelper.Surface.RECENT_THREADS,
+            BottomTabDestination.ASK,
+            false
+        );
+        assertTrue(MainRouteDecisionHelper.isBrowseSurface(routeState.surface));
+    }
+
+    @Test
+    public void askUnavailableOrNoSourceFailureMatchesLegacyNormalizedRoute() {
+        MainRouteDecisionHelper.RouteState legacyRoute =
+            new MainRouteDecisionHelper.RouteState(
+                MainRouteDecisionHelper.Surface.BROWSE,
+                BottomTabDestination.ASK,
+                false
+            );
+
+        assertSameRoute(
+            legacyRoute,
+            MainRouteDecisionHelper.askUnavailableOrNoSourceFailure()
+        );
+    }
+
+    @Test
     public void returningHomeClearsAskLaneAndSearchResults() {
         MainRouteDecisionHelper.RouteState askResults =
             new MainRouteDecisionHelper.RouteState(
@@ -639,6 +668,18 @@ public final class MainRouteDecisionHelperTest {
             expected.routeState.surface,
             expected.routeState.activePhoneTab,
             expected.routeState.askLaneActive
+        );
+    }
+
+    private static void assertSameRoute(
+        MainRouteDecisionHelper.RouteState expected,
+        MainRouteDecisionHelper.RouteState actual
+    ) {
+        assertRoute(
+            actual,
+            expected.surface,
+            expected.activePhoneTab,
+            expected.askLaneActive
         );
     }
 
