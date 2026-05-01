@@ -1,0 +1,58 @@
+package com.senku.mobile;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
+
+import org.junit.Test;
+
+public final class DetailSourceOpenNavigationCoordinatorTest {
+    @Test
+    public void nullSourceFallsBackToEmptyGuideWithoutAsyncLoad() {
+        DetailSourceOpenNavigationCoordinator.Decision decision =
+            DetailSourceOpenNavigationCoordinator.decide(null);
+
+        assertEquals("", decision.guideId);
+        assertFalse(decision.shouldLoadGuideBeforeOpen);
+        assertEquals("", decision.source.guideId);
+        assertEquals("", decision.source.title);
+    }
+
+    @Test
+    public void blankGuideIdKeepsSourceAndOpensDirectly() {
+        SearchResult source = source("  ");
+
+        DetailSourceOpenNavigationCoordinator.Decision decision =
+            DetailSourceOpenNavigationCoordinator.decide(source);
+
+        assertSame(source, decision.source);
+        assertEquals("", decision.guideId);
+        assertFalse(decision.shouldLoadGuideBeforeOpen);
+    }
+
+    @Test
+    public void nonBlankGuideIdIsTrimmedAndRequestsLoadBeforeOpen() {
+        SearchResult source = source("  GD-898  ");
+
+        DetailSourceOpenNavigationCoordinator.Decision decision =
+            DetailSourceOpenNavigationCoordinator.decide(source);
+
+        assertSame(source, decision.source);
+        assertEquals("GD-898", decision.guideId);
+        assertTrue(decision.shouldLoadGuideBeforeOpen);
+    }
+
+    private static SearchResult source(String guideId) {
+        return new SearchResult(
+            "Poisoning",
+            "",
+            "Use poisoning source context.",
+            "",
+            guideId,
+            "Unknown ingestion",
+            "health",
+            "hybrid"
+        );
+    }
+}

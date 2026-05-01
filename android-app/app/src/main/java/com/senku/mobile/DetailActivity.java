@@ -11815,8 +11815,8 @@ public final class DetailActivity extends AppCompatActivity {
     }
 
     private void openSourceGuide(SearchResult source) {
-        SearchResult fallback = source == null ? new SearchResult("", "", "", "") : source;
-        String guideId = safe(fallback.guideId).trim();
+        DetailSourceOpenNavigationCoordinator.Decision navigation =
+            DetailSourceOpenNavigationCoordinator.decide(source);
         String guideModeLabel = answerMode ? "" : buildCurrentGuideHandoffLabel();
         String guideModeSummary = answerMode ? "" : buildCurrentGuideHandoffSummary();
         String guideModeAnchorLabel = answerMode
@@ -11824,10 +11824,10 @@ public final class DetailActivity extends AppCompatActivity {
             : detailGuideContextPresentationFormatter().buildActiveGuideContextPrimaryLabel(
                 buildGuideContextPresentationState()
             );
-        if (guideId.isEmpty()) {
+        if (!navigation.shouldLoadGuideBeforeOpen) {
             startActivity(newGuideIntent(
                 this,
-                fallback,
+                navigation.source,
                 conversationId,
                 guideModeLabel,
                 guideModeSummary,
@@ -11837,16 +11837,19 @@ public final class DetailActivity extends AppCompatActivity {
         }
 
         executor.execute(() -> {
-            SearchResult target = fallback;
+            SearchResult target = navigation.source;
             int harnessToken = beginHarnessTask("detail.openSourceGuide");
             try {
                 PackRepository repo = ensureRepository();
-                SearchResult loadedGuide = repo.loadGuideById(guideId);
+                SearchResult loadedGuide = repo.loadGuideById(navigation.guideId);
                 if (loadedGuide != null) {
-                    target = detailSourcePresentationFormatter().mergeGuideForSourceNavigation(fallback, loadedGuide);
+                    target = detailSourcePresentationFormatter().mergeGuideForSourceNavigation(
+                        navigation.source,
+                        loadedGuide
+                    );
                 }
             } catch (Exception exc) {
-                Log.w(TAG, "openSourceGuide.loadFailed guideId=" + guideId, exc);
+                Log.w(TAG, "openSourceGuide.loadFailed guideId=" + navigation.guideId, exc);
             }
             SearchResult finalTarget = target;
             runTrackedOnUiThread(harnessToken, () -> {
