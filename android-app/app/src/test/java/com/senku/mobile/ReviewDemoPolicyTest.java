@@ -2,8 +2,11 @@ package com.senku.mobile;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
+
+import android.content.Intent;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -13,12 +16,48 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Stream;
 
 import org.junit.Test;
 
 public final class ReviewDemoPolicyTest {
+    @Test
+    public void productReviewModeIntentRequiresDebugBuildAndAutomationAuthorization() {
+        Intent rawExtraOnly = new TestIntent();
+        rawExtraOnly.putExtra(ReviewDemoPolicy.EXTRA_PRODUCT_REVIEW_MODE, true);
+
+        assertFalse(ReviewDemoPolicy.resolveProductReviewMode(rawExtraOnly, true));
+
+        Intent authOnly = new TestIntent();
+        ReviewDemoPolicy.putProductReviewModeExtras(authOnly, true);
+        authOnly.removeExtra(ReviewDemoPolicy.EXTRA_PRODUCT_REVIEW_MODE);
+
+        assertFalse(ReviewDemoPolicy.resolveProductReviewMode(authOnly, true));
+
+        Intent authorized = new TestIntent();
+        ReviewDemoPolicy.putProductReviewModeExtras(authorized, true);
+
+        assertTrue(ReviewDemoPolicy.resolveProductReviewMode(authorized, true));
+        assertFalse(ReviewDemoPolicy.resolveProductReviewMode(authorized, false));
+    }
+
+    @Test
+    public void putProductReviewModeExtrasFalseRemovesAuthAndDisablesMode() {
+        Intent intent = new TestIntent();
+        ReviewDemoPolicy.putProductReviewModeExtras(intent, true);
+        assertTrue(ReviewDemoPolicy.resolveProductReviewMode(intent, true));
+
+        ReviewDemoPolicy.putProductReviewModeExtras(intent, false);
+
+        assertTrue(intent.hasExtra(ReviewDemoPolicy.EXTRA_PRODUCT_REVIEW_MODE));
+        assertFalse(intent.getBooleanExtra(ReviewDemoPolicy.EXTRA_PRODUCT_REVIEW_MODE, true));
+        assertNull(intent.getStringExtra(ReviewDemoPolicy.EXTRA_PRODUCT_REVIEW_AUTOMATION_AUTH));
+        assertFalse(ReviewDemoPolicy.resolveProductReviewMode(intent, true));
+    }
+
     @Test
     public void productReviewModeIgnoresRawExtraWithoutAutomationAuthorization() {
         assertFalse(ReviewDemoPolicy.resolveProductReviewModeForTest(true, true, false, true));
@@ -718,5 +757,43 @@ public final class ReviewDemoPolicyTest {
             lastActivityEpoch
         );
         return new ChatSessionStore.ConversationPreview("conversation-" + guideId, turn, 1, lastActivityEpoch);
+    }
+
+    private static final class TestIntent extends Intent {
+        private final Map<String, Object> extras = new HashMap<>();
+
+        @Override
+        public Intent putExtra(String name, boolean value) {
+            extras.put(name, value);
+            return this;
+        }
+
+        @Override
+        public Intent putExtra(String name, String value) {
+            extras.put(name, value);
+            return this;
+        }
+
+        @Override
+        public boolean hasExtra(String name) {
+            return extras.containsKey(name);
+        }
+
+        @Override
+        public boolean getBooleanExtra(String name, boolean defaultValue) {
+            Object value = extras.get(name);
+            return value instanceof Boolean ? (Boolean) value : defaultValue;
+        }
+
+        @Override
+        public String getStringExtra(String name) {
+            Object value = extras.get(name);
+            return value instanceof String ? (String) value : null;
+        }
+
+        @Override
+        public void removeExtra(String name) {
+            extras.remove(name);
+        }
     }
 }
