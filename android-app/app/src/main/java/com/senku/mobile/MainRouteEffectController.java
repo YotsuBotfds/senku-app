@@ -19,7 +19,34 @@ final class MainRouteEffectController {
         void prepareSavedGuidesDestination();
     }
 
+    interface BackEffects extends Effects {
+        void applyRouteState(MainRouteDecisionHelper.RouteState routeState);
+
+        void returnToBrowse();
+    }
+
     private MainRouteEffectController() {
+    }
+
+    static boolean applyBackTransition(
+        MainRouteDecisionHelper.Transition transition,
+        BackEffects effects
+    ) {
+        if (transition == null || effects == null) {
+            return false;
+        }
+        switch (transition.effect) {
+            case SHOW_PREVIOUS_TAB:
+                effects.applyRouteState(transition.routeState);
+                applyPhoneTabTransitionEffect(transition, effects);
+                return true;
+            case RETURN_TO_BROWSE:
+                effects.applyRouteState(transition.routeState);
+                effects.returnToBrowse();
+                return true;
+            default:
+                return false;
+        }
     }
 
     static void applyPhoneTabTransitionEffect(

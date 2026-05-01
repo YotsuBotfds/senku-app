@@ -551,20 +551,7 @@ public final class MainActivity extends AppCompatActivity {
     }
 
     private boolean applyMainRouteBackTransition(MainRouteDecisionHelper.Transition transition) {
-        if (transition == null) {
-            return false;
-        }
-        if (transition.effect == MainRouteDecisionHelper.Effect.SHOW_PREVIOUS_TAB) {
-            applyMainRouteState(transition.routeState);
-            MainRouteEffectController.applyPhoneTabTransitionEffect(transition, mainRouteEffects());
-            return true;
-        }
-        if (transition.effect == MainRouteDecisionHelper.Effect.RETURN_TO_BROWSE) {
-            applyMainRouteState(transition.routeState);
-            browseGuides();
-            return true;
-        }
-        return false;
+        return MainRouteEffectController.applyBackTransition(transition, mainRouteBackEffects());
     }
 
     private void installPack(boolean force) {
@@ -3013,7 +3000,21 @@ public final class MainActivity extends AppCompatActivity {
     }
 
     private MainRouteEffectController.Effects mainRouteEffects() {
-        return new MainRouteEffectController.Effects() {
+        return mainRouteBackEffects();
+    }
+
+    private MainRouteEffectController.BackEffects mainRouteBackEffects() {
+        return new MainRouteEffectController.BackEffects() {
+            @Override
+            public void applyRouteState(MainRouteDecisionHelper.RouteState routeState) {
+                MainActivity.this.applyMainRouteState(routeState);
+            }
+
+            @Override
+            public void returnToBrowse() {
+                MainActivity.this.browseGuides();
+            }
+
             @Override
             public boolean isBrowseModeActive() {
                 return MainActivity.this.isBrowseModeActive();
