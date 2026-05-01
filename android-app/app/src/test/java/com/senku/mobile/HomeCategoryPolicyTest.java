@@ -92,6 +92,14 @@ public final class HomeCategoryPolicyTest {
     }
 
     @Test
+    public void categoryDeckCondensesOnlyForCompactOrLandscapePhones() {
+        assertTrue(HomeCategoryPolicy.shouldCondenseDeck(true, false));
+        assertTrue(HomeCategoryPolicy.shouldCondenseDeck(false, true));
+        assertTrue(HomeCategoryPolicy.shouldCondenseDeck(true, true));
+        assertFalse(HomeCategoryPolicy.shouldCondenseDeck(false, false));
+    }
+
+    @Test
     public void shelfItemStylesStayPinnedToCategoryPolicyTokens() {
         List<CategoryShelfItemModel> items = HomeCategoryPolicy.buildShelfItems(Arrays.asList(
             new HomeCategoryPolicy.HomeCategoryModel("water", 0, 1),

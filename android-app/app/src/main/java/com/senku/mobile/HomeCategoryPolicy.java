@@ -172,6 +172,10 @@ final class HomeCategoryPolicy {
         return CategoryShelfLayoutMode.PHONE_GRID;
     }
 
+    static boolean shouldCondenseDeck(boolean compactPhoneHome, boolean landscapePhoneLayout) {
+        return compactPhoneHome || landscapePhoneLayout;
+    }
+
     static boolean interactionsEnabled(boolean hasRepository, boolean busy) {
         return hasRepository && !busy;
     }

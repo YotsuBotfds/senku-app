@@ -3924,7 +3924,7 @@ public final class MainActivity extends AppCompatActivity {
     }
 
     private boolean shouldCondenseHomeCategoryDeck() {
-        return isCompactPhoneHomeLayout() || isLandscapePhoneLayout();
+        return HomeCategoryPolicy.shouldCondenseDeck(isCompactPhoneHomeLayout(), isLandscapePhoneLayout());
     }
 
     private ArrayList<LinearLayout> resolveCategoryRows() {
