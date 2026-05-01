@@ -174,6 +174,28 @@ Purpose: prevent future agents from rerunning Ask/query backend cleanup that is 
   `:app:testDebugUnitTest :app:assembleDebug :app:assembleDebugAndroidTest`
   passed. The new restored Saved/back androidTest also passed directly on
   `emulator-5554` before integration.
+- Retrieval/session cleanup is current through `7ac8def7`:
+  `SessionRetrievalContextPolicy` owns follow-up retrieval query planning,
+  structured context terms, source-context term selection, and token matching;
+  `SessionMemory` keeps turn storage, prompt rendering, and anchor-prior state.
+- Query metadata section scoring is current through `5f1f6069`:
+  `QueryMetadataSectionScoringPolicy` owns section-match scoring while
+  `QueryMetadataProfile` keeps query classification and compatibility wrappers.
+- Route search SQL planning is current through `eb7e5e74`:
+  `PackRouteSearchSqlPolicy` builds route FTS/LIKE SQL plans, bind arguments,
+  no-BM25 order labels, and effective candidate limits while the executor keeps
+  cursor execution and collection.
+- Functional UX smoke matrix hardening is current through `db6a69f7`:
+  the matrix wrapper now writes separate run/capture summaries, always captures
+  logcat for capture summaries, enriches preset status in the matrix summary,
+  reuses installed APKs after a passing preset, and handles tablet Compose
+  source selection in the source-chip correctness smoke.
+- Latest local proof after `db6a69f7`: focused JVM extraction tests passed;
+  `git diff --check` passed; full Android
+  `:app:testDebugUnitTest :app:assembleDebug :app:assembleDebugAndroidTest`
+  passed; the full functional UX matrix passed on `emulator-5554` with all
+  three presets green at
+  `artifacts/android_functional_ux_smoke_matrix/current_head_0748/matrix_summary.json`.
 
 ## Remaining Next Slices
 
