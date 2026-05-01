@@ -11,6 +11,8 @@ param(
     [switch]$SkipBuild,
     [switch]$SkipInstall,
     [switch]$SkipDeviceLock,
+    [switch]$SkipDevicePreflight,
+    [string]$ChildRunnerOverride = "",
     [int]$PresetTimeoutSeconds = 1800,
     [int]$PresetProgressIntervalSeconds = 60,
     [switch]$FailFast,
@@ -49,6 +51,8 @@ Parameters:
   -SkipBuild              Passes -SkipBuild to each preset run.
   -SkipInstall            Passes -SkipInstall to each preset run.
   -SkipDeviceLock         Passes -SkipDeviceLock to each preset run.
+  -SkipDevicePreflight    Skips adb role preflight. Intended for wrapper contract tests.
+  -ChildRunnerOverride    Alternate child runner path. Intended for wrapper contract tests.
   -PresetTimeoutSeconds   Matrix watchdog timeout per preset. Default: 1800. Use 0 to disable.
   -PresetProgressIntervalSeconds
                           Matrix heartbeat interval while a preset child process is running. Default: 60.
@@ -81,19 +85,24 @@ if ($PresetProgressIntervalSeconds -lt 1) {
 
 $repoRoot = (Resolve-Path (Join-Path $PSScriptRoot "..")).Path
 $smokeScript = Join-Path $PSScriptRoot "run_android_instrumented_ui_smoke.ps1"
+if (-not [string]::IsNullOrWhiteSpace($ChildRunnerOverride)) {
+    $smokeScript = (Resolve-Path -LiteralPath $ChildRunnerOverride).Path
+}
 $adb = Join-Path $env:LOCALAPPDATA "Android\Sdk\platform-tools\adb.exe"
 $lockRoot = Join-Path $repoRoot "artifacts\harness_locks"
 $commonHarnessModule = Join-Path $PSScriptRoot "android_harness_common.psm1"
 if (-not (Test-Path -LiteralPath $smokeScript -PathType Leaf)) {
     throw "Missing smoke script: $smokeScript"
 }
-if (-not (Test-Path -LiteralPath $adb -PathType Leaf)) {
+if (-not $SkipDevicePreflight -and -not (Test-Path -LiteralPath $adb -PathType Leaf)) {
     throw "adb not found at $adb"
 }
-if (-not (Test-Path -LiteralPath $commonHarnessModule -PathType Leaf)) {
+if ((-not $SkipDeviceLock -or -not $SkipDevicePreflight) -and -not (Test-Path -LiteralPath $commonHarnessModule -PathType Leaf)) {
     throw "android_harness_common.psm1 not found at $commonHarnessModule"
 }
-Import-Module $commonHarnessModule -Force -DisableNameChecking
+if (-not $SkipDeviceLock -or -not $SkipDevicePreflight) {
+    Import-Module $commonHarnessModule -Force -DisableNameChecking
+}
 New-Item -ItemType Directory -Force -Path $lockRoot | Out-Null
 
 function Acquire-MatrixDeviceLock {
@@ -294,7 +303,11 @@ if (-not $SkipDeviceLock) {
     Write-Host ("[functional-ux-matrix:{0}] matrix device lock skipped; child smoke runs will also skip device locks" -f $Device)
 }
 
-Assert-FunctionalUxPhoneDevice
+if ($SkipDevicePreflight) {
+    Write-Host ("[functional-ux-matrix:{0}] device role preflight skipped" -f $Device)
+} else {
+    Assert-FunctionalUxPhoneDevice
+}
 
 for ($presetIndex = 0; $presetIndex -lt $presets.Count; $presetIndex++) {
     $preset = $presets[$presetIndex]

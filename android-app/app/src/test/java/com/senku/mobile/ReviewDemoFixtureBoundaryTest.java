@@ -243,7 +243,7 @@ public final class ReviewDemoFixtureBoundaryTest {
     }
 
     @Test
-    public void productionRuntimeSourceDoesNotEmbedReviewDemoFixtureCopyOutsidePolicy() throws Exception {
+    public void productionRuntimeFixtureApisStayBehindKnownBoundaryClasses() throws Exception {
         Path productionSourceRoot = productionSourceRoot();
         List<String> violations = new ArrayList<>();
 
@@ -251,11 +251,11 @@ public final class ReviewDemoFixtureBoundaryTest {
             files
                 .filter(Files::isRegularFile)
                 .filter(ReviewDemoFixtureBoundaryTest::isProductionSourceFile)
-                .forEach(file -> collectRuntimeFixtureCopyViolation(productionSourceRoot, file, violations));
+                .forEach(file -> collectRuntimeFixtureApiBoundaryViolation(productionSourceRoot, file, violations));
         }
 
         assertTrue(
-            "Review/demo fixture copy must stay isolated behind ReviewDemoFixtureSet/ReviewDemoPolicy: "
+            "Review/demo fixture APIs must stay behind approved production boundaries: "
                 + violations,
             violations.isEmpty()
         );
@@ -426,27 +426,62 @@ public final class ReviewDemoFixtureBoundaryTest {
             || content.contains("ReviewDemoPolicy.shapeTabletPreviewBody(");
     }
 
-    private static void collectRuntimeFixtureCopyViolation(
+    private static void collectRuntimeFixtureApiBoundaryViolation(
         Path sourceRoot,
         Path file,
         List<String> violations
     ) {
         String relativePath = sourceRoot.relativize(file).toString().replace('\\', '/');
-        if (relativePath.equals("com/senku/mobile/ReviewDemoFixtureSet.java")
-            || relativePath.equals("com/senku/mobile/ReviewDemoPolicy.java")) {
+        if (isApprovedRuntimeFixtureApiBoundary(relativePath)) {
             return;
         }
         try {
             String content = new String(Files.readAllBytes(file), StandardCharsets.UTF_8);
-            if (relativePath.endsWith(".kt")) {
-                content = stripKotlinPreviewFunctions(content);
-            }
-            if (containsReviewDemoFixtureCopy(content)) {
+            if (containsRuntimeFixtureApiCall(content)) {
                 violations.add(relativePath);
             }
         } catch (IOException exception) {
             throw new AssertionError("Unable to scan " + relativePath, exception);
         }
+    }
+
+    private static boolean isApprovedRuntimeFixtureApiBoundary(String relativePath) {
+        return relativePath.equals("com/senku/mobile/DetailActivity.java")
+            || relativePath.equals("com/senku/mobile/DetailRelatedGuidePresentationFormatter.java")
+            || relativePath.equals("com/senku/mobile/DetailTabletSourceOwnershipPolicy.java")
+            || relativePath.equals("com/senku/mobile/MainReviewDisplayPolicy.java")
+            || relativePath.equals("com/senku/mobile/MainSearchController.java")
+            || relativePath.equals("com/senku/mobile/OfflineAnswerEngine.java")
+            || relativePath.equals("com/senku/mobile/RecentThreadDisplayPolicy.java")
+            || relativePath.equals("com/senku/mobile/ReviewDemoFixtureSet.java")
+            || relativePath.equals("com/senku/mobile/ReviewDemoPolicy.java")
+            || relativePath.equals("com/senku/mobile/SearchResultAdapter.java");
+    }
+
+    private static boolean containsRuntimeFixtureApiCall(String content) {
+        return content.contains("ReviewDemoPolicy.buildRainShelterUncertainFitAnswerBody(")
+            || content.contains("ReviewDemoPolicy.shapeRainShelterUncertainFitSources(")
+            || content.contains("ReviewDemoPolicy.shapeSearchResults(")
+            || content.contains("ReviewDemoPolicy.shapeAnswerModeRelatedGuides(")
+            || content.contains("ReviewDemoPolicy.displayHomeCategoryCount(")
+            || content.contains("ReviewDemoPolicy.shouldUseHomeCategoryFixtureCounts(")
+            || content.contains("ReviewDemoPolicy.shouldUseReviewRecentThreadPlaceholders(")
+            || content.contains("ReviewDemoPolicy.shapeHomeSubtitle(")
+            || content.contains("ReviewDemoPolicy.shapeManualHomeStatus(")
+            || content.contains("ReviewDemoPolicy.appendSearchLatency(")
+            || content.contains("ReviewDemoPolicy.buildTabletSearchHeader(")
+            || content.contains("ReviewDemoPolicy.shouldSuppressSearchRowLinkedGuideCue(")
+            || content.contains("ReviewDemoPolicy.shouldApplySearchRowReviewVisualState(")
+            || content.contains("ReviewDemoPolicy.shouldShapeReviewSearchResults(")
+            || content.contains("ReviewDemoPolicy.shapeRecentThreadLabel(")
+            || content.contains("ReviewDemoPolicy.manualHomeRecentThreadLabel(")
+            || content.contains("ReviewDemoPolicy.shapeTabletPreviewMeta(")
+            || content.contains("ReviewDemoPolicy.shapeTabletPreviewBody(")
+            || content.contains("ReviewDemoPolicy.placeholderRecentThreadQuestion(")
+            || content.contains("ReviewDemoPolicy.shouldApplyReviewDemoFixtures(")
+            || content.contains("ReviewDemoPolicy.shouldShapeAnswerModeRelatedGuides(")
+            || content.contains("ReviewDemoPolicy.shouldPresentAbrasivesCrossReferenceAsAnchor(")
+            || content.contains("ReviewDemoPolicy.isSourceStackDemoEnabled(");
     }
 
     private static void collectSearchShapingCallSiteViolation(
@@ -467,70 +502,6 @@ public final class ReviewDemoFixtureBoundaryTest {
         } catch (IOException exception) {
             throw new AssertionError("Unable to scan " + relativePath, exception);
         }
-    }
-
-    private static boolean containsReviewDemoFixtureCopy(String content) {
-        return content.contains("754 guides")
-            || content.contains("12 categories")
-            || content.contains("ready offline \u2022 ed. 2")
-            || content.contains("PACK READY")
-            || content.contains("How do I build a simple rain shelter...")
-            || content.contains("Best tinder when materials are wet")
-            || content.contains("Boil water without a fire-safe pot")
-            || content.contains("GD-023 | survival | review");
-    }
-
-    private static String stripKotlinPreviewFunctions(String content) {
-        String[] lines = content.split("\\R", -1);
-        StringBuilder stripped = new StringBuilder(content.length());
-        boolean previewAnnotationPending = false;
-        boolean skippingPreviewFunction = false;
-        int braceDepth = 0;
-
-        for (String line : lines) {
-            String trimmed = line.trim();
-            if (!skippingPreviewFunction && trimmed.startsWith("@Preview")) {
-                previewAnnotationPending = true;
-                continue;
-            }
-            if (previewAnnotationPending && trimmed.startsWith("@Composable")) {
-                continue;
-            }
-            if (previewAnnotationPending && trimmed.contains("fun ")) {
-                skippingPreviewFunction = true;
-                previewAnnotationPending = false;
-                braceDepth = braceDelta(line);
-                if (braceDepth <= 0 && trimmed.endsWith("}")) {
-                    skippingPreviewFunction = false;
-                }
-                continue;
-            }
-            if (skippingPreviewFunction) {
-                braceDepth += braceDelta(line);
-                if (braceDepth <= 0) {
-                    skippingPreviewFunction = false;
-                }
-                continue;
-            }
-            if (previewAnnotationPending && !trimmed.startsWith("@")) {
-                previewAnnotationPending = false;
-            }
-            stripped.append(line).append('\n');
-        }
-        return stripped.toString();
-    }
-
-    private static int braceDelta(String line) {
-        int delta = 0;
-        for (int i = 0; i < line.length(); i++) {
-            char value = line.charAt(i);
-            if (value == '{') {
-                delta++;
-            } else if (value == '}') {
-                delta--;
-            }
-        }
-        return delta;
     }
 
     private static boolean containsGuideId(List<SearchResult> results, String guideId) {

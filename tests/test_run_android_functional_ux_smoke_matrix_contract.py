@@ -1,3 +1,5 @@
+import json
+import os
 import re
 import subprocess
 import tempfile
@@ -10,6 +12,32 @@ SCRIPT = REPO_ROOT / "scripts" / "run_android_functional_ux_smoke_matrix.ps1"
 SMOKE_SCRIPT = REPO_ROOT / "scripts" / "run_android_instrumented_ui_smoke.ps1"
 QUALITY_GATE_SCRIPT = REPO_ROOT / "scripts" / "run_powershell_quality_gate.ps1"
 
+EXPECTED_FUNCTIONAL_PRESETS = [
+    "phone-functional",
+    "phone-functional-follow-up",
+    "phone-functional-saved",
+    "phone-functional-back-provenance",
+]
+
+
+def _run_powershell(args, *, env=None, timeout=30):
+    return subprocess.run(
+        ["powershell", "-NoProfile", "-ExecutionPolicy", "Bypass", *args],
+        cwd=REPO_ROOT,
+        env=env,
+        capture_output=True,
+        text=True,
+        check=False,
+        timeout=timeout,
+    )
+
+
+def _matrix_presets(script_text):
+    match = re.search(r"\$presets\s*=\s*@\((.*?)\)", script_text, re.S)
+    if match is None:
+        raise AssertionError("Could not find matrix preset declaration.")
+    return re.findall(r'"([^"]+)"', match.group(1))
+
 
 class RunAndroidFunctionalUxSmokeMatrixContractTests(unittest.TestCase):
     @classmethod
@@ -17,231 +45,201 @@ class RunAndroidFunctionalUxSmokeMatrixContractTests(unittest.TestCase):
         cls.script = SCRIPT.read_text(encoding="utf-8-sig")
         cls.smoke_script = SMOKE_SCRIPT.read_text(encoding="utf-8-sig")
 
-    def test_functional_follow_up_preset_is_in_matrix(self):
-        self.assertIn("- phone-functional-follow-up", self.script)
-        self.assertIn('"phone-functional-follow-up"', self.script)
-
-        match = re.search(r"\$presets = @\((.*?)\)", self.script, re.S)
-        self.assertIsNotNone(match)
-        presets = re.findall(r'"([^"]+)"', match.group(1))
-        self.assertEqual(
-            presets,
-            [
-                "phone-functional",
-                "phone-functional-follow-up",
-                "phone-functional-saved",
-                "phone-functional-back-provenance",
-            ],
-        )
-
-    def test_matrix_presets_are_registered_by_child_smoke_runner(self):
-        matrix_match = re.search(r"\$presets = @\((.*?)\)", self.script, re.S)
-        self.assertIsNotNone(matrix_match)
-        matrix_presets = re.findall(r'"([^"]+)"', matrix_match.group(1))
+    def test_functional_matrix_presets_are_declared_and_registered_by_child_runner(self):
+        matrix_presets = _matrix_presets(self.script)
+        self.assertEqual(matrix_presets, EXPECTED_FUNCTIONAL_PRESETS)
 
         smoke_lines = self.smoke_script.splitlines()
         smoke_preset_line_index = next(
             index for index, line in enumerate(smoke_lines) if "[string]$SmokePreset" in line
         )
         validate_set_line = smoke_lines[smoke_preset_line_index - 1]
-        self.assertIn("[ValidateSet(", validate_set_line)
         registered_presets = {preset for preset in re.findall(r'"([^"]*)"', validate_set_line) if preset}
 
-        switch_match = re.search(r"switch \(\$SmokePreset\) \{(.*?)\n\}", self.smoke_script, re.S)
-        self.assertIsNotNone(switch_match)
-        switch_presets = set(re.findall(r'^\s*"([^"]+)"\s*\{', switch_match.group(1), re.M))
+        missing_presets = sorted(set(matrix_presets) - registered_presets)
+        self.assertEqual(missing_presets, [])
 
-        for preset in matrix_presets:
-            with self.subTest(preset=preset):
-                self.assertIn(preset, registered_presets)
-                self.assertIn(preset, switch_presets)
-
-    def test_runner_invokes_each_preset_with_capture_summary(self):
-        self.assertIn('"-SmokePreset"', self.script)
-        self.assertIn("$preset,", self.script)
-        self.assertIn('"-SummaryPath"', self.script)
-        self.assertIn('"-CaptureSummaryPath"', self.script)
-        self.assertIn('"-CaptureLogcat"', self.script)
-        self.assertIn('$canReuseInstalledApks = $true', self.script)
-
-    def test_matrix_summary_explains_skip_and_reuse_build_state(self):
-        self.assertIn("$reuseInstalledApksForPreset = [bool]$canReuseInstalledApks", self.script)
-        self.assertIn("$effectiveSkipBuild = [bool]($SkipBuild -or $reuseInstalledApksForPreset)", self.script)
-        self.assertIn("$effectiveSkipInstall = [bool]($SkipInstall -or $reuseInstalledApksForPreset)", self.script)
-        self.assertIn("skip_build_requested = [bool]$SkipBuild", self.script)
-        self.assertIn("skip_install_requested = [bool]$SkipInstall", self.script)
-        self.assertIn("reused_installed_apks = [bool]$reuseInstalledApksForPreset", self.script)
-        self.assertIn("effective_skip_build = [bool]$effectiveSkipBuild", self.script)
-        self.assertIn("effective_skip_install = [bool]$effectiveSkipInstall", self.script)
-
-    def test_matrix_holds_single_outer_device_lock_for_child_runs(self):
-        self.assertIn('$lockRoot = Join-Path $repoRoot "artifacts\\harness_locks"', self.script)
-        self.assertIn("function Acquire-MatrixDeviceLock", self.script)
-        self.assertIn('ProgressLabel ("[functional-ux-matrix:{0}]" -f $DeviceName)', self.script)
-        self.assertIn("acquiring matrix device lock", self.script)
-        self.assertIn("child smoke runs will skip nested lock acquisition", self.script)
-        self.assertIn("if ($SkipDeviceLock -or $matrixDeviceLockUsed)", self.script)
-        self.assertIn("device_lock_posture = $(if ($matrixDeviceLockUsed) { \"matrix_lock_children_skip_nested\" } else { \"skipped\" })", self.script)
-
-    def test_matrix_preflights_phone_device_role(self):
-        self.assertIn("function Assert-FunctionalUxPhoneDevice", self.script)
-        self.assertIn("Resolve-AndroidDeviceFacts -AdbPath $adb -DeviceName $Device", self.script)
-        self.assertIn("Functional UX smoke matrix runs phone-* presets", self.script)
-        self.assertIn("Assert-FunctionalUxPhoneDevice", self.script)
-
-    def test_matrix_wraps_child_preset_runs_with_watchdog_and_heartbeat(self):
-        self.assertIn("[int]$PresetTimeoutSeconds = 1800", self.script)
-        self.assertIn("[int]$PresetProgressIntervalSeconds = 60", self.script)
-        self.assertIn("function Invoke-SmokePresetProcess", self.script)
-        self.assertIn("function Stop-ProcessTreeBestEffort", self.script)
-        self.assertIn("preset {1} ({2}/{3}) exceeded matrix watchdog timeout_seconds={4}", self.script)
-        self.assertIn("running {1} ({2}/{3}); elapsed_seconds={4}{5}; child_pid={6}", self.script)
-        self.assertIn("-TimeoutSeconds $PresetTimeoutSeconds", self.script)
-        self.assertIn("-ProgressIntervalSeconds $PresetProgressIntervalSeconds", self.script)
-        self.assertIn("exit_code = $(if ($timedOut) { 124 }", self.script)
-        self.assertIn("preset_timeout_seconds = [int]$PresetTimeoutSeconds", self.script)
-        self.assertIn("preset_progress_interval_seconds = [int]$PresetProgressIntervalSeconds", self.script)
-        self.assertIn("timed_out = [bool]$presetResult.timed_out", self.script)
-        self.assertIn('$matrixPresetStatus = if ($presetResult.timed_out) {', self.script)
-        self.assertIn('"matrix_timeout"', self.script)
-        self.assertIn('"Matrix preset watchdog timed out after $PresetTimeoutSeconds seconds."', self.script)
-
-    def test_process_argument_builder_quotes_child_runner_arguments(self):
-        function_match = re.search(
-            r"function Convert-ToProcessArgumentString \{.*?\n\}",
-            self.script,
-            re.S,
-        )
-        self.assertIsNotNone(function_match)
-
+    def test_child_runner_receives_quoted_paths_and_matrix_arguments(self):
         with tempfile.TemporaryDirectory() as temp_dir:
-            harness = Path(temp_dir) / "quote_child_runner_arguments.ps1"
-            harness.write_text(
-                function_match.group(0)
-                + r'''
-$actual = Convert-ToProcessArgumentString -Arguments @(
-    "-NoProfile",
-    "-File",
-    "C:\repo path\scripts\run_android_instrumented_ui_smoke.ps1",
-    "-Device",
-    "emulator-5554",
-    "-ArtifactRoot",
-    "artifacts/android functional ux/phone-functional",
-    "-SummaryPath",
-    "C:\repo path\out\run summary.json",
-    "-LiteralQuote",
-    'value"withquote'
-)
-$expected = '-NoProfile -File "C:\repo path\scripts\run_android_instrumented_ui_smoke.ps1" -Device emulator-5554 -ArtifactRoot "artifacts/android functional ux/phone-functional" -SummaryPath "C:\repo path\out\run summary.json" -LiteralQuote "value\"withquote"'
-if ($actual -ne $expected) {
-    Write-Error ("Expected [{0}] but got [{1}]" -f $expected, $actual)
-    exit 1
+            temp_root = Path(temp_dir) / "contract path with spaces"
+            temp_root.mkdir()
+            capture_path = temp_root / "received args.jsonl"
+            child_runner = temp_root / "fake child runner.ps1"
+            artifact_root = temp_root / "artifact root with spaces"
+            output_label = "matrix label"
+            child_runner.write_text(
+                r'''
+$record = [ordered]@{
+    args = @($args)
+    smoke_preset = $args[([Array]::IndexOf($args, "-SmokePreset") + 1)]
+    artifact_root = $args[([Array]::IndexOf($args, "-ArtifactRoot") + 1)]
+    summary_path = $args[([Array]::IndexOf($args, "-SummaryPath") + 1)]
+    capture_summary_path = $args[([Array]::IndexOf($args, "-CaptureSummaryPath") + 1)]
 }
+($record | ConvertTo-Json -Compress) | Add-Content -LiteralPath $env:MATRIX_ARG_CAPTURE
+$summaryPath = $record.summary_path
+New-Item -ItemType Directory -Force -Path (Split-Path -Parent $summaryPath) | Out-Null
+[ordered]@{
+    status = "passed"
+    failure_reason = $null
+    selected_test_methods = @("fake")
+    screenshot_count = 0
+    dump_count = 0
+    artifact_expectations_met = $true
+} | ConvertTo-Json | Set-Content -LiteralPath $summaryPath -Encoding UTF8
+exit 0
 ''',
                 encoding="utf-8",
             )
 
-            result = subprocess.run(
+            env = {**os.environ, "MATRIX_ARG_CAPTURE": str(capture_path)}
+            result = _run_powershell(
                 [
-                    "powershell",
-                    "-NoProfile",
-                    "-ExecutionPolicy",
-                    "Bypass",
                     "-File",
-                    str(harness),
-                ],
-                cwd=REPO_ROOT,
-                capture_output=True,
-                text=True,
-                check=False,
-            )
-
-        self.assertEqual(result.returncode, 0, result.stderr + result.stdout)
-
-    def test_watchdog_process_start_info_contract_uses_argument_array_and_timeout_kill(self):
-        inspector_source = r'''
-param([string]$Path)
-$tokens = $null
-$errors = $null
-$ast = [System.Management.Automation.Language.Parser]::ParseFile($Path, [ref]$tokens, [ref]$errors)
-if ($errors.Count -gt 0) {
-    throw "PowerShell parser errors were found."
-}
-$watchdog = $ast.Find({
-    param($node)
-    $node -is [System.Management.Automation.Language.FunctionDefinitionAst] -and
-        $node.Name -eq "Invoke-SmokePresetProcess"
-}, $true)
-if ($null -eq $watchdog) {
-    throw "Invoke-SmokePresetProcess was not found."
-}
-$call = $ast.Find({
-    param($node)
-    $node -is [System.Management.Automation.Language.CommandAst] -and
-        $node.GetCommandName() -eq "Invoke-SmokePresetProcess"
-}, $true)
-if ($null -eq $call) {
-    throw "Invoke-SmokePresetProcess call was not found."
-}
-$watchdogText = $watchdog.Extent.Text
-$callText = $call.Extent.Text
-[pscustomobject]@{
-    start_info_created = $watchdogText -match "New-Object\s+System\.Diagnostics\.ProcessStartInfo"
-    filename_from_parameter = $watchdogText -match "\$psi\.FileName\s*=\s*\$ExecutablePath"
-    arguments_from_converter = $watchdogText -match "\$psi\.Arguments\s*=\s*Convert-ToProcessArgumentString\s+-Arguments\s+\$Arguments"
-    shell_execute_disabled = $watchdogText -match "\$psi\.UseShellExecute\s*=\s*\$false"
-    process_uses_start_info = $watchdogText -match "\$process\.StartInfo\s*=\s*\$psi"
-    waits_in_one_second_ticks = $watchdogText -match "\$process\.WaitForExit\(1000\)"
-    timeout_path_sets_flag = $watchdogText -match "\$timedOut\s*=\s*\$true"
-    timeout_path_kills_tree = $watchdogText -match "Stop-ProcessTreeBestEffort\s+-Process\s+\$process"
-    timeout_exit_code_is_124 = $watchdogText -match "if\s*\(\$timedOut\)\s*\{\s*124\s*\}"
-    call_passes_executable = $callText -match "-ExecutablePath\s+\$powerShellExe"
-    call_passes_argument_array = $callText -match "-Arguments\s+\$arguments"
-    call_passes_timeout = $callText -match "-TimeoutSeconds\s+\$PresetTimeoutSeconds"
-    call_passes_progress_interval = $callText -match "-ProgressIntervalSeconds\s+\$PresetProgressIntervalSeconds"
-} | ConvertTo-Json -Compress
-'''
-        with tempfile.TemporaryDirectory() as temp_dir:
-            inspector = Path(temp_dir) / "inspect_watchdog_contract.ps1"
-            inspector.write_text(inspector_source, encoding="utf-8")
-            result = subprocess.run(
-                [
-                    "powershell",
-                    "-NoProfile",
-                    "-ExecutionPolicy",
-                    "Bypass",
-                    "-File",
-                    str(inspector),
-                    "-Path",
                     str(SCRIPT),
+                    "-Device",
+                    "emulator-5554",
+                    "-ArtifactRoot",
+                    str(artifact_root),
+                    "-OutputLabel",
+                    output_label,
+                    "-ChildRunnerOverride",
+                    str(child_runner),
+                    "-SkipDeviceLock",
+                    "-SkipDevicePreflight",
+                    "-PresetTimeoutSeconds",
+                    "0",
                 ],
-                cwd=REPO_ROOT,
-                capture_output=True,
-                text=True,
-                check=False,
+                env=env,
             )
 
+            self.assertEqual(result.returncode, 0, result.stderr + result.stdout)
+            invocations = [
+                json.loads(line)
+                for line in capture_path.read_text(encoding="utf-8").splitlines()
+                if line.strip()
+            ]
+
+        self.assertEqual([entry["smoke_preset"] for entry in invocations], EXPECTED_FUNCTIONAL_PRESETS)
+        for entry in invocations:
+            args = entry["args"]
+            self.assertIn("-CaptureLogcat", args)
+            self.assertIn("-SummaryPath", args)
+            self.assertIn("-CaptureSummaryPath", args)
+            self.assertIn("artifact root with spaces", entry["artifact_root"])
+            self.assertIn(output_label, entry["summary_path"])
+            self.assertIn(output_label, entry["capture_summary_path"])
+
+    def test_matrix_summary_records_reuse_build_state_behaviorally(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            temp_root = Path(temp_dir)
+            child_runner = temp_root / "fake_child.ps1"
+            artifact_root = temp_root / "artifacts"
+            output_label = "reuse_contract"
+            child_runner.write_text(
+                r'''
+$summaryIndex = [Array]::IndexOf($args, "-SummaryPath")
+$summaryPath = $args[$summaryIndex + 1]
+New-Item -ItemType Directory -Force -Path (Split-Path -Parent $summaryPath) | Out-Null
+[ordered]@{
+    status = "passed"
+    failure_reason = $null
+    selected_test_methods = @("fake")
+    screenshot_count = 0
+    dump_count = 0
+    artifact_expectations_met = $true
+} | ConvertTo-Json | Set-Content -LiteralPath $summaryPath -Encoding UTF8
+exit 0
+''',
+                encoding="utf-8",
+            )
+
+            result = _run_powershell(
+                [
+                    "-File",
+                    str(SCRIPT),
+                    "-Device",
+                    "emulator-5554",
+                    "-ArtifactRoot",
+                    str(artifact_root),
+                    "-OutputLabel",
+                    output_label,
+                    "-ChildRunnerOverride",
+                    str(child_runner),
+                    "-SkipDeviceLock",
+                    "-SkipDevicePreflight",
+                    "-PresetTimeoutSeconds",
+                    "0",
+                ]
+            )
+
+            summary_path = artifact_root / output_label / "matrix_summary.json"
+            summary = json.loads(summary_path.read_text(encoding="utf-8-sig"))
+
         self.assertEqual(result.returncode, 0, result.stderr + result.stdout)
-        self.assertNotIn(":false", result.stdout, result.stdout)
+        self.assertTrue(summary["passed"])
+        self.assertEqual(summary["completed_preset_count"], len(EXPECTED_FUNCTIONAL_PRESETS))
+        self.assertEqual([preset["preset"] for preset in summary["presets"]], EXPECTED_FUNCTIONAL_PRESETS)
+        self.assertFalse(summary["presets"][0]["reused_installed_apks"])
+        for preset in summary["presets"][1:]:
+            self.assertTrue(preset["reused_installed_apks"])
+            self.assertTrue(preset["effective_skip_build"])
+            self.assertTrue(preset["effective_skip_install"])
+
+    def test_watchdog_times_out_child_process_and_writes_matrix_timeout_summary(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            temp_root = Path(temp_dir)
+            child_runner = temp_root / "slow_child.ps1"
+            artifact_root = temp_root / "artifacts"
+            output_label = "timeout_contract"
+            child_runner.write_text("Start-Sleep -Seconds 30\nexit 0\n", encoding="utf-8")
+
+            result = _run_powershell(
+                [
+                    "-File",
+                    str(SCRIPT),
+                    "-Device",
+                    "emulator-5554",
+                    "-ArtifactRoot",
+                    str(artifact_root),
+                    "-OutputLabel",
+                    output_label,
+                    "-ChildRunnerOverride",
+                    str(child_runner),
+                    "-SkipDeviceLock",
+                    "-SkipDevicePreflight",
+                    "-PresetTimeoutSeconds",
+                    "1",
+                    "-PresetProgressIntervalSeconds",
+                    "1",
+                    "-FailFast",
+                ],
+                timeout=15,
+            )
+
+            summary_path = artifact_root / output_label / "matrix_summary.json"
+            summary = json.loads(summary_path.read_text(encoding="utf-8-sig"))
+
+        self.assertNotEqual(result.returncode, 0, result.stderr + result.stdout)
+        self.assertFalse(summary["passed"])
+        self.assertTrue(summary["stopped_early"])
+        self.assertEqual(summary["completed_preset_count"], 1)
+        first_preset = summary["presets"][0]
+        self.assertEqual(first_preset["exit_code"], 124)
+        self.assertTrue(first_preset["timed_out"])
+        self.assertEqual(first_preset["status"], "matrix_timeout")
+        self.assertIn("watchdog timed out", first_preset["failure_reason"])
 
     def test_parser_gate_passes(self):
-        result = subprocess.run(
+        result = _run_powershell(
             [
-                "powershell",
-                "-NoProfile",
-                "-ExecutionPolicy",
-                "Bypass",
                 "-File",
                 str(QUALITY_GATE_SCRIPT),
                 "-Path",
                 "scripts\\run_android_functional_ux_smoke_matrix.ps1",
                 "-SkipAnalyzer",
                 "-SkipPester",
-            ],
-            cwd=REPO_ROOT,
-            capture_output=True,
-            text=True,
-            check=False,
+            ]
         )
 
         self.assertEqual(result.returncode, 0, result.stderr + result.stdout)
