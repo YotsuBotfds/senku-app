@@ -16,7 +16,8 @@ final class ModelFileStorePolicy {
     }
 
     static String sanitizeFileName(String name) {
-        String cleaned = name.replaceAll("[^A-Za-z0-9._-]", "_");
+        String trimmed = name == null ? "" : name.trim();
+        String cleaned = trimmed.replaceAll("[^A-Za-z0-9._-]", "_");
         return cleaned.isEmpty() ? "offline-model.litertlm" : cleaned;
     }
 

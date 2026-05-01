@@ -825,11 +825,17 @@ Purpose: prevent future agents from rerunning Ask/query backend cleanup that is 
   parsing and mixed-content flattening, `ModelFileStorePolicy` owns model-file
   naming/selection/size helpers, and `PackInstallValidationPolicy` owns bundled
   pack refresh decisions.
-- Android harness ergonomics are current through this batch: stop/orphan
+- Android harness ergonomics are current through `cec55a20`: stop/orphan
   helpers include the functional UX matrix wrapper, the matrix writes per-preset
   `matrix_running.json` markers with child PID/status/timeout state, local
   server `-StatusOnly` distinguishes pidfile wrapper PID from listener PIDs,
   and `HostInferenceRequestPolicy` owns host completion URI/payload shaping.
+- Android functional hardening is current through this batch: `VectorStore`
+  now fails closed on malformed/truncated vector files, model filename
+  sanitization handles null/blank display names, guide-open repository loader
+  failures no longer masquerade as missing guides and are handled at the
+  `MainActivity` boundary, and emergency-surface bridge inputs are extracted
+  from `DetailActivity` with delegation coverage.
 - Latest local proof after `54bc5893`: full Android
   `:app:testDebugUnitTest :app:assembleDebug :app:assembleDebugAndroidTest`
   passed; focused Pack rerank/repository parity and OfflineAnswer telemetry
@@ -846,30 +852,32 @@ Purpose: prevent future agents from rerunning Ask/query backend cleanup that is 
 - Latest local proof for the harness/request batch: restart/stop/matrix
   contracts passed 27 tests; focused HostInference JVM tests passed;
   `git diff --check` passed.
+- Latest local proof for the functional hardening batch: focused VectorStore,
+  PackInstaller, ModelFileStore, MainGuideOpenController, EmergencySurface, and
+  DetailTabletEmergencyChrome JVM tests passed; full warm
+  `:app:testDebugUnitTest :app:assembleDebug :app:assembleDebugAndroidTest`
+  passed; `git diff --check` passed.
 
 ## Remaining Next Slices
 
-- Continue shrinking `MainActivity` only where backend lifecycle or route
-  orchestration still owns too much; new route work should extend
-  `MainRouteCoordinator` tests rather than restoring route fields to
-  `MainActivity`.
-- Architecture scout follow-up priority: continue tablet/detail state-builder
-  extraction in narrow seams; do not start a broad `PackRepository` search
-  pipeline rewrite without route-output parity proof.
-- Review/demo leakage follow-up: continue moving remaining fixture-shaped
-  display decisions through explicit review-policy gates; the product search CTA
-  resource-name leak is closed and guarded.
-- Do not rerun the result-publication extraction unless a regression points
-  there; future `MainActivity` cleanup should target still-mixed route side
-  effects outside `MainResultPublicationPolicy`.
-- Keep repository cleanup incremental around remaining pure policy/helper
-  extraction with parity tests.
-- Architecture scout next priorities: continue pure Java detail tablet-state
-  extraction only in narrow remaining seams, continue smoke harness helper
-  splits, and keep search-card/composer helper cleanup similarly focused.
-  Avoid broad route-focused
-  retrieval rewrites and avoid `TabletDetailScreen.kt` refactors unless a
-  visual regression demands it.
+- Pause broad extraction. New helper/policy classes should be accepted only
+  when they remove real production logic from a god class, have production call
+  sites, and add focused tests; do not continue extracting helpers merely
+  because logic can be moved.
+- Highest priority functional fixes from the latest scout: shared Ask/Search
+  operation gating so stale Search cannot overwrite newer Ask (or vice versa),
+  reusable pack validation beyond byte-size checks, Saved/Home async exception
+  containment so harness busy tokens always end, and bounded physical-device
+  `adb reverse` for host inference.
+- Current integration priority: inventory recently added policy/controller/helper
+  classes for production call sites and duplicate remaining logic, then run a
+  single current-head focused backend gate before the next broad behavior change.
+- Retrieval policy work should pause until route behavior is protected with
+  golden route tests over the high-value prompts; avoid broad `PackRepository`
+  or route-focused search rewrites without route-output parity proof.
+- Tracker cleanup remains needed: keep the current-state checklist short and move
+  historical commit-by-commit detail into a dated history note when the tree is
+  otherwise quiet.
 - Physical Ask-owned phone submit proof is closed for the no-model physical
   phone path; future Ask proof should use a deterministic/review-runtime query
   only when the goal is to prove full answer-detail rendering rather than

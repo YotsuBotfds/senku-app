@@ -18,7 +18,7 @@ public final class EmergencySurfacePolicyTest {
             "GD-898"
         );
 
-        EmergencySurfacePolicy.Input input = DetailActivity.buildEmergencySurfacePolicyInput(
+        EmergencySurfacePolicy.Input input = DetailEmergencySurfaceBridgePolicy.buildInput(
             true,
             true,
             "answer_card:poisoning_unknown_ingestion",
@@ -41,10 +41,44 @@ public final class EmergencySurfacePolicyTest {
     }
 
     @Test
+    public void detailActivityEmergencyBridgeDelegatesToPurePolicy() {
+        ReviewedCardMetadata metadata = reviewedMetadata(
+            "poisoning_unknown_ingestion",
+            "GD-898",
+            "pilot_reviewed",
+            "GD-898"
+        );
+
+        EmergencySurfacePolicy.Decision activityDecision = DetailActivity.evaluateEmergencySurfacePolicy(
+            true,
+            true,
+            "answer_card:poisoning_unknown_ingestion",
+            "medical",
+            metadata,
+            false,
+            OfflineAnswerEngine.ConfidenceLabel.HIGH,
+            OfflineAnswerEngine.AnswerMode.CONFIDENT
+        );
+        EmergencySurfacePolicy.Decision bridgeDecision = DetailEmergencySurfaceBridgePolicy.evaluate(
+            true,
+            true,
+            "answer_card:poisoning_unknown_ingestion",
+            "medical",
+            metadata,
+            false,
+            OfflineAnswerEngine.ConfidenceLabel.HIGH,
+            OfflineAnswerEngine.AnswerMode.CONFIDENT
+        );
+
+        assertEquals(bridgeDecision.eligible, activityDecision.eligible);
+        assertEquals(bridgeDecision.reason, activityDecision.reason);
+    }
+
+    @Test
     public void detailBridgeDoesNotAddEmergencyCategoryWithoutReviewedMetadata() {
         assertEquals(
             "medical",
-            DetailActivity.emergencySurfacePolicyCategory(
+            DetailEmergencySurfaceBridgePolicy.policyCategory(
                 "answer_card:poisoning_unknown_ingestion",
                 "medical",
                 ReviewedCardMetadata.empty()
@@ -56,7 +90,7 @@ public final class EmergencySurfacePolicyTest {
     public void detailBridgeDoesNotAddEmergencyCategoryForMismatchedReviewedCard() {
         assertEquals(
             "medical",
-            DetailActivity.emergencySurfacePolicyCategory(
+            DetailEmergencySurfaceBridgePolicy.policyCategory(
                 "answer_card:poisoning_unknown_ingestion",
                 "medical",
                 reviewedMetadata(

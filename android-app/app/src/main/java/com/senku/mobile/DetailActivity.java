@@ -7752,7 +7752,7 @@ public final class DetailActivity extends AppCompatActivity {
         OfflineAnswerEngine.ConfidenceLabel confidenceLabel,
         OfflineAnswerEngine.AnswerMode responseMode
     ) {
-        return EmergencySurfacePolicy.evaluate(buildEmergencySurfacePolicyInput(
+        return DetailEmergencySurfaceBridgePolicy.evaluate(
             detailAnswerMode,
             deterministicRoute,
             ruleId,
@@ -7761,7 +7761,7 @@ public final class DetailActivity extends AppCompatActivity {
             lowCoverageRoute,
             confidenceLabel,
             responseMode
-        ));
+        );
     }
 
     static EmergencySurfacePolicy.Input buildEmergencySurfacePolicyInput(
@@ -7774,17 +7774,15 @@ public final class DetailActivity extends AppCompatActivity {
         OfflineAnswerEngine.ConfidenceLabel confidenceLabel,
         OfflineAnswerEngine.AnswerMode responseMode
     ) {
-        ReviewedCardMetadata metadata = ReviewedCardMetadata.normalize(reviewedCardMetadata);
-        return new EmergencySurfacePolicy.Input(
+        return DetailEmergencySurfaceBridgePolicy.buildInput(
+            detailAnswerMode,
             deterministicRoute,
             ruleId,
-            emergencySurfacePolicyCategory(ruleId, category, metadata),
-            metadata.reviewStatus,
-            metadata.provenance,
-            lowCoverageRoute ? "low" : "",
-            confidenceLabelExtraValue(confidenceLabel),
-            detailAnswerMode ? answerModeExtraValue(responseMode) : "guide_reading",
-            metadata.citedReviewedSourceGuideIds.size()
+            category,
+            reviewedCardMetadata,
+            lowCoverageRoute,
+            confidenceLabel,
+            responseMode
         );
     }
 
@@ -7793,17 +7791,7 @@ public final class DetailActivity extends AppCompatActivity {
         String category,
         ReviewedCardMetadata reviewedCardMetadata
     ) {
-        ReviewedCardMetadata metadata = ReviewedCardMetadata.normalize(reviewedCardMetadata);
-        String normalizedRuleId = safe(ruleId).trim().toLowerCase(Locale.US);
-        String normalizedCardRuleId = ReviewedCardMetadata.answerCardRuleId(
-            safe(metadata.cardId).trim().toLowerCase(Locale.US)
-        );
-        if (metadata.isPresent()
-            && !safe(metadata.cardId).trim().isEmpty()
-            && normalizedRuleId.equals(normalizedCardRuleId)) {
-            return (safe(category).trim() + " reviewed emergency answer card").trim();
-        }
-        return safe(category).trim();
+        return DetailEmergencySurfaceBridgePolicy.policyCategory(ruleId, category, reviewedCardMetadata);
     }
 
     private boolean isEmergencyHeaderSurfaceLayout() {

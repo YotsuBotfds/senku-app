@@ -20,6 +20,8 @@ import java.util.PriorityQueue;
 public final class VectorStore implements AutoCloseable {
     private static final int DTYPE_FLOAT16 = 1;
     private static final int DTYPE_INT8 = 2;
+    private static final int MIN_HEADER_BYTES = 32;
+    private static final int MAGIC_BYTES = 8;
 
     private final Object closeLock = new Object();
     private final FileInputStream inputStream;
@@ -44,10 +46,18 @@ public final class VectorStore implements AutoCloseable {
         int parsedRowBytes = 0;
         try {
             openedChannel = openedInputStream.getChannel();
-            mappedBuffer = openedChannel.map(FileChannel.MapMode.READ_ONLY, 0, openedChannel.size());
+            long fileSize = openedChannel.size();
+            if (fileSize < MIN_HEADER_BYTES) {
+                throw new IOException("Vector file is too small for header: " + fileSize + " bytes");
+            }
+            if (fileSize > Integer.MAX_VALUE) {
+                throw new IOException("Vector file is too large to map safely: " + fileSize + " bytes");
+            }
+
+            mappedBuffer = openedChannel.map(FileChannel.MapMode.READ_ONLY, 0, fileSize);
             mappedBuffer.order(ByteOrder.LITTLE_ENDIAN);
 
-            byte[] magic = new byte[8];
+            byte[] magic = new byte[MAGIC_BYTES];
             mappedBuffer.position(0);
             mappedBuffer.get(magic);
             int version = mappedBuffer.getInt();
@@ -66,8 +76,31 @@ public final class VectorStore implements AutoCloseable {
             if (parsedDtypeCode != DTYPE_FLOAT16 && parsedDtypeCode != DTYPE_INT8) {
                 throw new IOException("Unsupported vector dtype code: " + parsedDtypeCode);
             }
+            if (parsedHeaderBytes < MIN_HEADER_BYTES) {
+                throw new IOException("Invalid vector header bytes: " + parsedHeaderBytes);
+            }
+            if (parsedHeaderBytes > fileSize) {
+                throw new IOException("Vector header exceeds file size: " + parsedHeaderBytes + " > " + fileSize);
+            }
+            if (parsedRowCount < 0) {
+                throw new IOException("Invalid vector row count: " + parsedRowCount);
+            }
+            if (parsedDimension <= 0) {
+                throw new IOException("Invalid vector dimension: " + parsedDimension);
+            }
 
-            parsedRowBytes = parsedDimension * (parsedDtypeCode == DTYPE_FLOAT16 ? 2 : 1);
+            long rowBytes = (long) parsedDimension * (parsedDtypeCode == DTYPE_FLOAT16 ? 2L : 1L);
+            long requiredBytes = (long) parsedHeaderBytes + ((long) parsedRowCount * rowBytes);
+            if (rowBytes > Integer.MAX_VALUE || requiredBytes > Integer.MAX_VALUE) {
+                throw new IOException("Vector file layout is too large to address safely");
+            }
+            if (requiredBytes > fileSize) {
+                throw new IOException(
+                    "Vector file is truncated: expected at least " + requiredBytes + " bytes, found " + fileSize
+                );
+            }
+
+            parsedRowBytes = (int) rowBytes;
             success = true;
         } finally {
             if (!success) {

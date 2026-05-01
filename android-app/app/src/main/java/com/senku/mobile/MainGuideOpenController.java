@@ -12,6 +12,7 @@ final class MainGuideOpenController {
         OPEN_GUIDE,
         LOAD_FROM_REPOSITORY,
         PACK_UNAVAILABLE,
+        REPOSITORY_LOAD_FAILED,
         GUIDE_UNAVAILABLE
     }
 
@@ -38,11 +39,17 @@ final class MainGuideOpenController {
         final Action action;
         final Request request;
         final SearchResult guide;
+        final Exception repositoryLoadFailure;
 
         Decision(Action action, Request request, SearchResult guide) {
+            this(action, request, guide, null);
+        }
+
+        Decision(Action action, Request request, SearchResult guide, Exception repositoryLoadFailure) {
             this.action = action == null ? Action.IGNORE : action;
             this.request = request;
             this.guide = guide;
+            this.repositoryLoadFailure = repositoryLoadFailure;
         }
     }
 
@@ -84,12 +91,11 @@ final class MainGuideOpenController {
         if (guideLoader == null) {
             return new Decision(Action.PACK_UNAVAILABLE, request, null);
         }
-        SearchResult loadedGuide = null;
         try {
-            loadedGuide = guideLoader.loadGuideById(request.guideId);
-        } catch (Exception ignored) {
+            return resolveRepositoryResult(request, guideLoader.loadGuideById(request.guideId));
+        } catch (Exception exception) {
+            return new Decision(Action.REPOSITORY_LOAD_FAILED, request, null, exception);
         }
-        return resolveRepositoryResult(request, loadedGuide);
     }
 
     private SearchResult findGuideById(List<SearchResult> guides, String guideId) {

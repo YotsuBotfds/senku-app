@@ -108,6 +108,7 @@
     <string name="result_linked_guide_available_description">Guide connection available: %1$s</string>
     <string name="result_linked_guide_open_description">Open related guide: %1$s</string>
     <string name="result_linked_guide_unavailable">Couldn\'t open related guide: %1$s</string>
+    <string name="result_linked_guide_load_failed">Couldn\'t read related guide from pack: %1$s</string>
     <string name="detail_thread_title">Field entry</string>
     <string name="detail_thread_subtitle">Answers, sources, and follow-ups stay together here.</string>
     <string name="detail_mode_answer">Field entry</string>

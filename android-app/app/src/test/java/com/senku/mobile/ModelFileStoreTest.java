@@ -94,6 +94,17 @@ public final class ModelFileStoreTest {
     }
 
     @Test
+    public void policySanitizesNullAndWhitespaceNamesToDisplayFallback() {
+        assertEquals("offline-model.litertlm", ModelFileStorePolicy.sanitizeFileName(null));
+        assertEquals("offline-model.litertlm", ModelFileStorePolicy.sanitizeFileName(" \t\n "));
+    }
+
+    @Test
+    public void policyTrimsDisplayNameBeforeSanitizing() {
+        assertEquals("model.task", ModelFileStorePolicy.sanitizeFileName("  model.task  "));
+    }
+
+    @Test
     public void policyFindsNewestSupportedModelFile() throws Exception {
         File modelsDir = temporaryFolder.newFolder("candidate-models");
         File oldTask = writeModel(new File(modelsDir, "old.task"), "old");

@@ -1766,6 +1766,10 @@ public final class MainActivity extends AppCompatActivity {
         }
         if (decision.action == MainGuideOpenController.Action.GUIDE_UNAVAILABLE) {
             showGuideUnavailableToast(decision.request);
+            return;
+        }
+        if (decision.action == MainGuideOpenController.Action.REPOSITORY_LOAD_FAILED) {
+            showGuideLoadFailedToast(decision.request);
         }
     }
 
@@ -1779,6 +1783,16 @@ public final class MainActivity extends AppCompatActivity {
         Toast.makeText(
             this,
             message,
+            Toast.LENGTH_SHORT
+        ).show();
+    }
+
+    private void showGuideLoadFailedToast(MainGuideOpenController.Request request) {
+        String label = request == null ? "selected guide" : request.unavailableLabel;
+        String clippedLabel = presentationFormatter().clipLabel(label, 40);
+        Toast.makeText(
+            this,
+            getString(R.string.result_linked_guide_load_failed, clippedLabel),
             Toast.LENGTH_SHORT
         ).show();
     }

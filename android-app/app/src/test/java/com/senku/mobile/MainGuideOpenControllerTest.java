@@ -87,17 +87,19 @@ public final class MainGuideOpenControllerTest {
     }
 
     @Test
-    public void repositoryLoaderExceptionFallsThroughToUnavailable() {
+    public void repositoryLoaderExceptionReportsLoadFailure() {
         MainGuideOpenController.Request request =
             new MainGuideOpenController.Request("GD-404", "Fallback", 8);
+        IllegalStateException failure = new IllegalStateException("boom");
 
         MainGuideOpenController.Decision decision =
             controller.resolveRepositoryLoad(request, guideId -> {
-                throw new IllegalStateException("boom");
+                throw failure;
             });
 
-        assertEquals(MainGuideOpenController.Action.GUIDE_UNAVAILABLE, decision.action);
+        assertEquals(MainGuideOpenController.Action.REPOSITORY_LOAD_FAILED, decision.action);
         assertEquals("Fallback", decision.request.unavailableLabel);
+        assertSame(failure, decision.repositoryLoadFailure);
     }
 
     @Test
