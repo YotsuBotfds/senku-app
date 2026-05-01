@@ -228,14 +228,40 @@ function Invoke-AdbChecked {
     return $output
 }
 
+function Invoke-AdbCheckedWithTimeout {
+    param(
+        [string[]]$Arguments,
+        [string]$FailureMessage,
+        [int]$TimeoutMilliseconds
+    )
+
+    $result = Invoke-AndroidAdbCommandCapture -AdbPath $adb -Arguments $Arguments -TimeoutMilliseconds $TimeoutMilliseconds
+    $output = if ($null -eq $result.output) { "" } else { [string]$result.output }
+    if ($result.timed_out) {
+        $commandText = $Arguments -join " "
+        throw ("{0}: adb {1} timed out after {2} ms" -f $FailureMessage, $commandText, $TimeoutMilliseconds)
+    }
+    if ($result.exit_code -ne 0) {
+        $details = $output.Trim()
+        if ([string]::IsNullOrWhiteSpace($details)) {
+            throw $FailureMessage
+        }
+        throw ("{0}: {1}" -f $FailureMessage, $details)
+    }
+    return $output
+}
+
 function Invoke-ApkInstallWithPhysicalNoStreamingFallback {
     param(
         [string]$ApkPath,
-        [string]$FailureMessage
+        [string]$FailureMessage,
+        [string]$ApkLabel = "APK",
+        [int]$TimeoutMilliseconds = 180000
     )
 
     try {
-        [void](Invoke-AdbChecked -Arguments @("-s", $Device, "install", "-r", $ApkPath) -FailureMessage $FailureMessage)
+        Write-RunPhase -Phase ("installing {0} with adb install -r (timeout {1} ms)" -f $ApkLabel, $TimeoutMilliseconds)
+        [void](Invoke-AdbCheckedWithTimeout -Arguments @("-s", $Device, "install", "-r", $ApkPath) -FailureMessage $FailureMessage -TimeoutMilliseconds $TimeoutMilliseconds)
         return
     } catch {
         $streamingInstallError = $_.Exception.Message
@@ -245,9 +271,10 @@ function Invoke-ApkInstallWithPhysicalNoStreamingFallback {
     }
 
     $script:InstallNoStreamingFallbackAttempted = $true
-    Write-Warning ("{0}; retrying with adb install --no-streaming on physical device {1}" -f $streamingInstallError, $Device)
+    Write-Warning ("{0}; retrying with adb install --no-streaming on physical device {2} for {1}" -f $streamingInstallError, $ApkLabel, $Device)
     try {
-        [void](Invoke-AdbChecked -Arguments @("-s", $Device, "install", "--no-streaming", "-r", $ApkPath) -FailureMessage $FailureMessage)
+        Write-RunPhase -Phase ("installing {0} with adb install --no-streaming -r (timeout {1} ms)" -f $ApkLabel, $TimeoutMilliseconds)
+        [void](Invoke-AdbCheckedWithTimeout -Arguments @("-s", $Device, "install", "--no-streaming", "-r", $ApkPath) -FailureMessage $FailureMessage -TimeoutMilliseconds $TimeoutMilliseconds)
     } catch {
         throw ("{0}; --no-streaming retry failed: {1}" -f $streamingInstallError, $_.Exception.Message)
     }
@@ -1456,9 +1483,9 @@ Wait-ForDeviceReadiness
 Write-RunPhase -Phase "device ready"
 if (-not $EffectiveSkipInstall) {
     Write-RunPhase -Phase "installing app APK"
-    Invoke-ApkInstallWithPhysicalNoStreamingFallback -ApkPath $appApk -FailureMessage "App APK install failed"
+    Invoke-ApkInstallWithPhysicalNoStreamingFallback -ApkPath $appApk -FailureMessage "App APK install failed" -ApkLabel "app APK"
     Write-RunPhase -Phase "installing test APK"
-    Invoke-ApkInstallWithPhysicalNoStreamingFallback -ApkPath $testApk -FailureMessage "Test APK install failed"
+    Invoke-ApkInstallWithPhysicalNoStreamingFallback -ApkPath $testApk -FailureMessage "Test APK install failed" -ApkLabel "test APK"
     Write-RunPhase -Phase "APK install complete"
 } else {
     Write-RunPhase -Phase "install skipped; verifying packages"
