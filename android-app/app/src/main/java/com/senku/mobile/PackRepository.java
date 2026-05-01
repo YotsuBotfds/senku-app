@@ -25,11 +25,6 @@ public final class PackRepository implements AutoCloseable {
     private static final int LEXICAL_CANDIDATE_LIMIT = 72;
     private static final int VECTOR_NEIGHBOR_LIMIT = 28;
     private static final int VECTOR_SEED_COUNT = 6;
-    private static final String FTS5_TABLE = PackFtsRuntimeDetector.FTS5_TABLE;
-    private static final String FTS4_TABLE = PackFtsRuntimeDetector.FTS4_TABLE;
-    private static final long FTS_RUNTIME_PROBE_BUDGET_MS = 25L;
-    private static final Object FTS_RUNTIME_LOCK = new Object();
-    private static volatile PackFtsRuntimeDetector.Runtime cachedFtsRuntime;
     private final Object closeLock = new Object();
     private static final Set<String> HOUSE_SITE_SELECTION_ANCHOR_MARKERS = buildMarkerSet(
         "terrain analysis",
@@ -84,7 +79,7 @@ public final class PackRepository implements AutoCloseable {
             }
         }
         this.vectorStore = loadedStore;
-        PackFtsRuntimeDetector.Runtime ftsRuntime = detectFtsAvailability();
+        PackFtsRuntimeDetector.Runtime ftsRuntime = PackFtsRuntimeDetector.detect(database);
         this.ftsAvailable = ftsRuntime.available;
         this.ftsTableName = ftsRuntime.tableName;
         this.ftsSupportsBm25 = ftsRuntime.supportsBm25;
@@ -2145,132 +2140,6 @@ public final class PackRepository implements AutoCloseable {
         return PackRouteSignalPolicy.hasWaterDistributionDetailSignal(result);
     }
 
-    private PackFtsRuntimeDetector.Runtime detectFtsAvailability() {
-        PackFtsRuntimeDetector.Runtime cached = cachedFtsRuntime;
-        if (cached != null) {
-            return cached;
-        }
-
-        synchronized (FTS_RUNTIME_LOCK) {
-            if (cachedFtsRuntime != null) {
-                return cachedFtsRuntime;
-            }
-
-            PackFtsRuntimeDetector.Runtime detected = detectFtsAvailabilityInternal();
-            cachedFtsRuntime = detected;
-            return detected;
-        }
-    }
-
-    private PackFtsRuntimeDetector.Runtime detectFtsAvailabilityInternal() {
-        boolean supportsFts5 = hasCompileOption("ENABLE_FTS5");
-        boolean supportsFts4 = hasCompileOption("ENABLE_FTS4");
-        boolean hasFts5Table = tableExistsInSchema(FTS5_TABLE);
-        boolean hasFts4Table = tableExistsInSchema(FTS4_TABLE);
-        PackFtsRuntimeDetector.ProbeResult runtimeFts5 = hasFts5Table
-            ? supportsFtsMatchRuntime(FTS5_TABLE)
-            : PackFtsRuntimeDetector.ProbeResult.notRun();
-        PackFtsRuntimeDetector.ProbeResult runtimeFts4 = hasFts4Table
-            ? supportsFtsMatchRuntime(FTS4_TABLE)
-            : PackFtsRuntimeDetector.ProbeResult.notRun();
-        PackFtsRuntimeDetector.Runtime detected = selectFtsRuntime(
-            hasFts5Table,
-            hasFts4Table,
-            runtimeFts5.supported,
-            runtimeFts4.supported
-        );
-
-        if (detected.available) {
-            Log.d(
-                TAG,
-                "fts.available table=" + detected.tableName +
-                    " supportsBm25=" + detected.supportsBm25 +
-                    " schemaPresent=true runtimeProbe=true compile5=" + supportsFts5 +
-                    " compile4=" + supportsFts4 +
-                    " runtime5=" + runtimeFts5.supported +
-                    " runtime5Ms=" + runtimeFts5.elapsedMs +
-                    " runtime4=" + runtimeFts4.supported +
-                    " runtime4Ms=" + runtimeFts4.elapsedMs +
-                    " fallback=" + detected.tableName
-            );
-            return detected;
-        }
-
-        Log.d(
-            TAG,
-            "fts.unavailable support5=" + supportsFts5 +
-                " support4=" + supportsFts4 +
-                " runtime5=" + runtimeFts5.supported +
-                " runtime5Ms=" + runtimeFts5.elapsedMs +
-                " runtime4=" + runtimeFts4.supported +
-                " runtime4Ms=" + runtimeFts4.elapsedMs +
-                " schema5=" + hasFts5Table +
-                " schema4=" + hasFts4Table +
-                " fallback=like"
-        );
-        return PackFtsRuntimeDetector.Runtime.unavailable();
-    }
-
-    private static PackFtsRuntimeDetector.Runtime selectFtsRuntime(
-        boolean hasFts5Table,
-        boolean hasFts4Table,
-        boolean runtimeFts5,
-        boolean runtimeFts4
-    ) {
-        return PackFtsRuntimeDetector.selectRuntime(hasFts5Table, hasFts4Table, runtimeFts5, runtimeFts4);
-    }
-
-    private PackFtsRuntimeDetector.ProbeResult supportsFtsMatchRuntime(String tableName) {
-        if (emptySafe(tableName).trim().isEmpty()) {
-            return PackFtsRuntimeDetector.ProbeResult.notRun();
-        }
-
-        long startedAtNs = elapsedRealtimeNanosSafe();
-        boolean supported = false;
-        try (Cursor ignored = database.rawQuery(
-            "SELECT rowid FROM " + tableName + " WHERE " + tableName + " MATCH ? LIMIT 1",
-            new String[]{"water"}
-        )) {
-            supported = true;
-        } catch (SQLiteException ignored) {
-        }
-        long elapsedMs = elapsedRealtimeMsSince(startedAtNs);
-        Log.d(
-            TAG,
-            "fts.runtime_probe table=" + tableName +
-                " supported=" + supported +
-                " elapsedMs=" + elapsedMs
-        );
-        if (elapsedMs > FTS_RUNTIME_PROBE_BUDGET_MS) {
-            Log.w(
-                TAG,
-                "fts.runtime_probe_slow table=" + tableName +
-                    " elapsedMs=" + elapsedMs +
-                    " budgetMs=" + FTS_RUNTIME_PROBE_BUDGET_MS
-            );
-        }
-        return new PackFtsRuntimeDetector.ProbeResult(supported, elapsedMs);
-    }
-
-    private boolean hasCompileOption(String optionName) {
-        String target = emptySafe(optionName).trim().toLowerCase(QUERY_LOCALE);
-        if (target.isEmpty()) {
-            return false;
-        }
-
-        try (Cursor cursor = database.rawQuery("PRAGMA compile_options", null)) {
-            while (cursor.moveToNext()) {
-                String option = emptySafe(cursor.getString(0)).trim().toLowerCase(QUERY_LOCALE);
-                if (option.equals(target) || option.contains(target)) {
-                    return true;
-                }
-            }
-        } catch (SQLiteException ignored) {
-            return false;
-        }
-        return false;
-    }
-
     private static String buildSearchSummaryLine(
         String query,
         boolean routeFocused,
@@ -2300,25 +2169,6 @@ public final class PackRepository implements AutoCloseable {
             return;
         }
         Log.w(TAG, buildSlowQueryTripwireDebugLine(query, breakdown));
-    }
-
-    private static long elapsedRealtimeMsSince(long startedAtNs) {
-        return Math.max(0L, elapsedRealtimeNanosSafe() - startedAtNs) / 1_000_000L;
-    }
-
-    private boolean tableExistsInSchema(String tableName) {
-        if (emptySafe(tableName).trim().isEmpty()) {
-            return false;
-        }
-
-        try (Cursor cursor = database.rawQuery(
-            "SELECT 1 FROM sqlite_master WHERE type='table' AND name=? LIMIT 1",
-            new String[]{tableName}
-        )) {
-            return cursor.moveToFirst();
-        } catch (SQLiteException ignored) {
-            return false;
-        }
     }
 
     private void appendRelatedGuides(

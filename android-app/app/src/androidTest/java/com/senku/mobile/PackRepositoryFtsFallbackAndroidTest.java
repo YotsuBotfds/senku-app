@@ -86,8 +86,8 @@ public final class PackRepositoryFtsFallbackAndroidTest {
         boolean runtimeFts5,
         boolean runtimeFts4
     ) throws Exception {
-        Method method = PackRepository.class.getDeclaredMethod(
-            "selectFtsRuntime",
+        Method method = PackFtsRuntimeDetector.class.getDeclaredMethod(
+            "selectRuntime",
             boolean.class,
             boolean.class,
             boolean.class,
@@ -98,13 +98,13 @@ public final class PackRepositoryFtsFallbackAndroidTest {
     }
 
     private static Object cachedFtsRuntime() throws Exception {
-        Field field = PackRepository.class.getDeclaredField("cachedFtsRuntime");
+        Field field = PackFtsRuntimeDetector.class.getDeclaredField("cachedFtsRuntime");
         field.setAccessible(true);
         return field.get(null);
     }
 
     private static void resetCachedFtsRuntime() throws Exception {
-        Field field = PackRepository.class.getDeclaredField("cachedFtsRuntime");
+        Field field = PackFtsRuntimeDetector.class.getDeclaredField("cachedFtsRuntime");
         field.setAccessible(true);
         field.set(null, null);
     }
