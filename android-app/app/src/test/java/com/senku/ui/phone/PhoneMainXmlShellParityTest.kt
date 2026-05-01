@@ -24,4 +24,23 @@ class PhoneMainXmlShellParityTest {
             ),
         )
     }
+
+    @Test
+    fun landscapePhoneHomeChromeUsesSharedBackAndTitleTokens() {
+        assertSharedMainChrome(
+            layout = mainLayout("layout-land"),
+            spec = MainChromeSpec(
+                qualifier = "layout-land",
+                height = "48dp",
+                horizontalPadding = "12dp",
+                expectedModeFontFamily = "@font/jetbrains_mono",
+                verticalPadding = "0dp",
+                backActionSize = "48dp",
+                searchActionSize = "48dp",
+                searchPadding = "15dp",
+                searchTint = "@color/senku_rev03_ink_2",
+                expectsOverflowPlaceholder = false,
+            ),
+        )
+    }
 }

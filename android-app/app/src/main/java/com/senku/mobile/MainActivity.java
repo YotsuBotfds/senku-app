@@ -4471,6 +4471,10 @@ public final class MainActivity extends AppCompatActivity {
             homeChromeBackButton.setVisibility(available ? View.VISIBLE : View.GONE);
             homeChromeBackButton.setEnabled(available);
             homeChromeBackButton.setClickable(available);
+            homeChromeBackButton.setFocusable(available);
+            homeChromeBackButton.setImportantForAccessibility(available
+                ? View.IMPORTANT_FOR_ACCESSIBILITY_AUTO
+                : View.IMPORTANT_FOR_ACCESSIBILITY_NO_HIDE_DESCENDANTS);
         }
         if (homeChromeBackDivider != null) {
             homeChromeBackDivider.setVisibility(available ? View.VISIBLE : View.GONE);
