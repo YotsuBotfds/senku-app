@@ -166,6 +166,18 @@ public final class SearchResultAdapterTest {
     }
 
     @Test
+    public void searchRowLayoutPolicyOwnsDenseTypographyAndRhythm() {
+        SearchRowLayoutPolicy.Metrics landscape = SearchRowLayoutPolicy.metrics(true);
+        SearchRowLayoutPolicy.Metrics portraitTablet = SearchRowLayoutPolicy.metrics(false);
+
+        assertTrue(landscape.titleTextSizeSp > landscape.snippetTextSizeSp);
+        assertTrue(portraitTablet.titleTextSizeSp > portraitTablet.snippetTextSizeSp);
+        assertEquals(landscape.sectionTextSizeSp, landscape.chipTextSizeSp, 0.001f);
+        assertTrue(portraitTablet.topPaddingDp >= landscape.topPaddingDp);
+        assertTrue(portraitTablet.dividerTopMarginDp >= landscape.dividerTopMarginDp);
+    }
+
+    @Test
     public void compactRowsUseSecondPassDenseVerticalRhythm() {
         assertTrue(
             SearchResultAdapter.portraitTabletRowTopPaddingDpForTest()

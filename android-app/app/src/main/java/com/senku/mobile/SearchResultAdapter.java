@@ -42,23 +42,6 @@ import static com.senku.ui.search.SearchResultCardKt.continueConversationContent
 public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResultAdapter.ResultViewHolder> {
     private static final int MAX_HIGHLIGHT_TERMS = 4;
     private static final int DEFAULT_MAX_DISPLAYED_ITEMS = 4;
-    private static final int LANDSCAPE_ROW_TOP_PADDING_DP = 13;
-    private static final int PORTRAIT_TABLET_ROW_TOP_PADDING_DP = 15;
-    private static final int LANDSCAPE_ROW_TITLE_TOP_MARGIN_DP = 4;
-    private static final int PORTRAIT_TABLET_ROW_TITLE_TOP_MARGIN_DP = 6;
-    private static final int LANDSCAPE_ROW_SNIPPET_TOP_MARGIN_DP = 5;
-    private static final int PORTRAIT_TABLET_ROW_SNIPPET_TOP_MARGIN_DP = 6;
-    private static final int LANDSCAPE_ROW_DIVIDER_TOP_MARGIN_DP = 10;
-    private static final int PORTRAIT_TABLET_ROW_DIVIDER_TOP_MARGIN_DP = 12;
-    private static final float LANDSCAPE_ROW_TITLE_TEXT_SIZE_SP = 14.0f;
-    private static final float LANDSCAPE_ROW_SNIPPET_TEXT_SIZE_SP = 11.0f;
-    private static final float PORTRAIT_TABLET_ROW_TITLE_TEXT_SIZE_SP = 13.5f;
-    private static final float PORTRAIT_TABLET_ROW_SNIPPET_TEXT_SIZE_SP = 11.5f;
-    private static final float COMPACT_ROW_SECTION_TEXT_SIZE_SP = 8.5f;
-    private static final float COMPACT_ROW_CHIP_TEXT_SIZE_SP = 8.5f;
-    private static final float COMPACT_ROW_META_TEXT_SIZE_SP = 9.0f;
-    private static final int COMPACT_ROW_META_LINE_HEIGHT_SP = 11;
-
     public static final class LinkedGuidePreview {
         public final String guideId;
         public final String title;
@@ -237,6 +220,7 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
 
     private View buildCompactResultRow(Context context) {
         boolean landscapePhoneCard = isLandscapePhoneCard(context);
+        SearchRowLayoutPolicy.Metrics rowMetrics = SearchRowLayoutPolicy.metrics(landscapePhoneCard);
         FrameLayout root = new FrameLayout(context);
         root.setLayoutParams(new RecyclerView.LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT,
@@ -246,7 +230,7 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
         LinearLayout row = new LinearLayout(context);
         row.setId(R.id.result_legacy_mirror);
         row.setOrientation(LinearLayout.VERTICAL);
-        row.setPadding(dp(0), dp(compactRowTopPaddingDp(landscapePhoneCard)), dp(0), 0);
+        row.setPadding(dp(0), dp(rowMetrics.topPaddingDp), dp(0), 0);
         root.addView(row, new FrameLayout.LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT,
             ViewGroup.LayoutParams.WRAP_CONTENT
@@ -262,8 +246,8 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
 
         TextView meta = buildMonoTextView(
             context,
-            COMPACT_ROW_META_TEXT_SIZE_SP,
-            COMPACT_ROW_META_LINE_HEIGHT_SP,
+            rowMetrics.metaTextSizeSp,
+            rowMetrics.metaLineHeightSp,
             Typeface.BOLD
         );
         meta.setId(R.id.result_meta);
@@ -308,17 +292,17 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
         title.setIncludeFontPadding(false);
         title.setTextSize(
             TypedValue.COMPLEX_UNIT_SP,
-            compactRowTitleTextSizeSp(landscapePhoneCard)
+            rowMetrics.titleTextSizeSp
         );
         title.setLineSpacing(0, 1.08f);
         LinearLayout.LayoutParams titleParams = new LinearLayout.LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT,
             ViewGroup.LayoutParams.WRAP_CONTENT
         );
-        titleParams.topMargin = dp(compactRowTitleTopMarginDp(landscapePhoneCard));
+        titleParams.topMargin = dp(rowMetrics.titleTopMarginDp);
         row.addView(title, titleParams);
 
-        TextView section = buildMonoTextView(context, COMPACT_ROW_SECTION_TEXT_SIZE_SP, 11, Typeface.NORMAL);
+        TextView section = buildMonoTextView(context, rowMetrics.sectionTextSizeSp, 11, Typeface.NORMAL);
         section.setId(R.id.result_section);
         section.setTextColor(ContextCompat.getColor(context, R.color.senku_rev03_ink_2));
         section.setAllCaps(true);
@@ -337,14 +321,14 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
         snippet.setIncludeFontPadding(false);
         snippet.setTextSize(
             TypedValue.COMPLEX_UNIT_SP,
-            compactRowSnippetTextSizeSp(landscapePhoneCard)
+            rowMetrics.snippetTextSizeSp
         );
         snippet.setLineSpacing(0, 1.12f);
         LinearLayout.LayoutParams snippetParams = new LinearLayout.LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT,
             ViewGroup.LayoutParams.WRAP_CONTENT
         );
-        snippetParams.topMargin = dp(compactRowSnippetTopMarginDp(landscapePhoneCard));
+        snippetParams.topMargin = dp(rowMetrics.snippetTopMarginDp);
         row.addView(snippet, snippetParams);
 
         LinearLayout chips = new LinearLayout(context);
@@ -358,12 +342,12 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
         chipsParams.topMargin = dp(6);
         row.addView(chips, chipsParams);
 
-        TextView category = buildChipTextView(context);
+        TextView category = buildChipTextView(context, rowMetrics);
         category.setId(R.id.result_category_badge);
         category.setVisibility(View.GONE);
         chips.addView(category);
 
-        TextView linked = buildChipTextView(context);
+        TextView linked = buildChipTextView(context, rowMetrics);
         linked.setId(R.id.result_related_cue);
         linked.setVisibility(View.GONE);
         chips.addView(linked);
@@ -372,7 +356,7 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
         linkedPreview.setId(R.id.result_related_preview);
         linkedPreview.setTextColor(ContextCompat.getColor(context, R.color.senku_rev03_accent_moss));
         linkedPreview.setTypeface(rev03UiTypeface(context, Typeface.NORMAL));
-        linkedPreview.setTextSize(TypedValue.COMPLEX_UNIT_SP, COMPACT_ROW_CHIP_TEXT_SIZE_SP);
+        linkedPreview.setTextSize(TypedValue.COMPLEX_UNIT_SP, rowMetrics.chipTextSizeSp);
         linkedPreview.setSingleLine(true);
         linkedPreview.setEllipsize(TextUtils.TruncateAt.END);
         linkedPreview.setVisibility(View.GONE);
@@ -389,7 +373,7 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
             ViewGroup.LayoutParams.MATCH_PARENT,
             1
         );
-        dividerParams.topMargin = dp(compactRowDividerTopMarginDp(landscapePhoneCard));
+        dividerParams.topMargin = dp(rowMetrics.dividerTopMarginDp);
         row.addView(divider, dividerParams);
 
         ComposeView composeView = new ComposeView(context);
@@ -410,12 +394,12 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
         return textView;
     }
 
-    private TextView buildChipTextView(Context context) {
+    private TextView buildChipTextView(Context context, SearchRowLayoutPolicy.Metrics rowMetrics) {
         TextView chip = new TextView(context);
         chip.setBackground(buildFlatBadgeDrawable(context, defaultBadgeColor));
         chip.setPadding(dp(7), dp(2), dp(7), dp(2));
         chip.setTextColor(ContextCompat.getColor(context, R.color.senku_rev03_ink_0));
-        chip.setTextSize(TypedValue.COMPLEX_UNIT_SP, COMPACT_ROW_CHIP_TEXT_SIZE_SP);
+        chip.setTextSize(TypedValue.COMPLEX_UNIT_SP, rowMetrics.chipTextSizeSp);
         chip.setTypeface(rev03MonoTypeface(context, Typeface.BOLD));
         chip.setSingleLine(true);
         chip.setEllipsize(TextUtils.TruncateAt.END);
@@ -442,83 +426,59 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
     }
 
     static float compactRowTitleTextSizeSpForTest() {
-        return compactRowTitleTextSizeSp(true);
+        return SearchRowLayoutPolicy.metrics(true).titleTextSizeSp;
     }
 
     static float compactRowSnippetTextSizeSpForTest() {
-        return compactRowSnippetTextSizeSp(true);
+        return SearchRowLayoutPolicy.metrics(true).snippetTextSizeSp;
     }
 
     static float portraitTabletRowTitleTextSizeSpForTest() {
-        return compactRowTitleTextSizeSp(false);
+        return SearchRowLayoutPolicy.metrics(false).titleTextSizeSp;
     }
 
     static float portraitTabletRowSnippetTextSizeSpForTest() {
-        return compactRowSnippetTextSizeSp(false);
+        return SearchRowLayoutPolicy.metrics(false).snippetTextSizeSp;
     }
 
     static float compactRowSectionTextSizeSpForTest() {
-        return COMPACT_ROW_SECTION_TEXT_SIZE_SP;
+        return SearchRowLayoutPolicy.metrics(true).sectionTextSizeSp;
     }
 
     static float compactRowChipTextSizeSpForTest() {
-        return COMPACT_ROW_CHIP_TEXT_SIZE_SP;
+        return SearchRowLayoutPolicy.metrics(true).chipTextSizeSp;
     }
 
     static int compactRowTopPaddingDpForTest() {
-        return compactRowTopPaddingDp(true);
+        return SearchRowLayoutPolicy.metrics(true).topPaddingDp;
     }
 
     static int portraitTabletRowTopPaddingDpForTest() {
-        return compactRowTopPaddingDp(false);
+        return SearchRowLayoutPolicy.metrics(false).topPaddingDp;
     }
 
     static int compactRowTitleTopMarginDpForTest() {
-        return compactRowTitleTopMarginDp(true);
+        return SearchRowLayoutPolicy.metrics(true).titleTopMarginDp;
     }
 
     static int portraitTabletRowTitleTopMarginDpForTest() {
-        return compactRowTitleTopMarginDp(false);
+        return SearchRowLayoutPolicy.metrics(false).titleTopMarginDp;
     }
 
     static int compactRowSnippetTopMarginDpForTest() {
-        return compactRowSnippetTopMarginDp(true);
+        return SearchRowLayoutPolicy.metrics(true).snippetTopMarginDp;
     }
 
     static int portraitTabletRowSnippetTopMarginDpForTest() {
-        return compactRowSnippetTopMarginDp(false);
+        return SearchRowLayoutPolicy.metrics(false).snippetTopMarginDp;
     }
 
     static int compactRowDividerTopMarginDpForTest() {
-        return compactRowDividerTopMarginDp(true);
+        return SearchRowLayoutPolicy.metrics(true).dividerTopMarginDp;
     }
 
     static int portraitTabletRowDividerTopMarginDpForTest() {
-        return compactRowDividerTopMarginDp(false);
-    }
-
-    private static float compactRowTitleTextSizeSp(boolean landscapePhoneCard) {
-        return landscapePhoneCard ? LANDSCAPE_ROW_TITLE_TEXT_SIZE_SP : PORTRAIT_TABLET_ROW_TITLE_TEXT_SIZE_SP;
-    }
-
-    private static float compactRowSnippetTextSizeSp(boolean landscapePhoneCard) {
-        return landscapePhoneCard ? LANDSCAPE_ROW_SNIPPET_TEXT_SIZE_SP : PORTRAIT_TABLET_ROW_SNIPPET_TEXT_SIZE_SP;
-    }
-
-    private static int compactRowTopPaddingDp(boolean landscapePhoneCard) {
-        return landscapePhoneCard ? LANDSCAPE_ROW_TOP_PADDING_DP : PORTRAIT_TABLET_ROW_TOP_PADDING_DP;
-    }
-
-    private static int compactRowTitleTopMarginDp(boolean landscapePhoneCard) {
-        return landscapePhoneCard ? LANDSCAPE_ROW_TITLE_TOP_MARGIN_DP : PORTRAIT_TABLET_ROW_TITLE_TOP_MARGIN_DP;
-    }
-
-    private static int compactRowSnippetTopMarginDp(boolean landscapePhoneCard) {
-        return landscapePhoneCard ? LANDSCAPE_ROW_SNIPPET_TOP_MARGIN_DP : PORTRAIT_TABLET_ROW_SNIPPET_TOP_MARGIN_DP;
-    }
-
-    private static int compactRowDividerTopMarginDp(boolean landscapePhoneCard) {
-        return landscapePhoneCard ? LANDSCAPE_ROW_DIVIDER_TOP_MARGIN_DP : PORTRAIT_TABLET_ROW_DIVIDER_TOP_MARGIN_DP;
+        return SearchRowLayoutPolicy.metrics(false).dividerTopMarginDp;
     }
 
     private static Typeface rev03UiTypeface(Context context, int style) {
