@@ -121,9 +121,9 @@ public final class ChatSessionStoreTest {
         String firstConversationId = ChatSessionStore.createConversation();
         String secondConversationId = ChatSessionStore.createConversation();
         String thirdConversationId = ChatSessionStore.createConversation();
-        recordTurn(firstConversationId, "first question", "GD-001");
-        recordTurn(secondConversationId, "second question", "GD-002");
-        recordTurn(thirdConversationId, "third question", "GD-003");
+        recordTurnAt(firstConversationId, "first question", "GD-001", 1_000L);
+        recordTurnAt(secondConversationId, "second question", "GD-002", 2_000L);
+        recordTurnAt(thirdConversationId, "third question", "GD-003", 3_000L);
 
         List<ChatSessionStore.ConversationPreview> previews =
             ChatSessionStore.recentConversationPreviews(null, 2);
@@ -135,12 +135,29 @@ public final class ChatSessionStoreTest {
     }
 
     @Test
+    public void recentConversationPreviewsIgnoreReadOnlyMemoryAccessOrder() {
+        ChatSessionStore.resetForTest();
+        String firstConversationId = ChatSessionStore.createConversation();
+        String secondConversationId = ChatSessionStore.createConversation();
+        recordTurnAt(firstConversationId, "first older question", "GD-101", 1_000L);
+        recordTurnAt(secondConversationId, "second newer question", "GD-202", 2_000L);
+
+        ChatSessionStore.memoryFor(firstConversationId);
+        List<ChatSessionStore.ConversationPreview> previews =
+            ChatSessionStore.recentConversationPreviews(null, 2);
+
+        assertEquals(2, previews.size());
+        assertEquals(secondConversationId, previews.get(0).conversationId);
+        assertEquals(firstConversationId, previews.get(1).conversationId);
+    }
+
+    @Test
     public void recentConversationPreviewsSuppressNearDuplicateQuestions() {
         ChatSessionStore.resetForTest();
         String olderConversationId = ChatSessionStore.createConversation();
         String newerConversationId = ChatSessionStore.createConversation();
-        recordTurn(olderConversationId, "How do I store water?", "GD-619");
-        recordTurn(newerConversationId, "  how   do i store water?  ", "GD-035");
+        recordTurnAt(olderConversationId, "How do I store water?", "GD-619", 1_000L);
+        recordTurnAt(newerConversationId, "  how   do i store water?  ", "GD-035", 2_000L);
 
         List<ChatSessionStore.ConversationPreview> previews =
             ChatSessionStore.recentConversationPreviews(null, 10);
@@ -184,6 +201,28 @@ public final class ChatSessionStoreTest {
                     "guide-focus"
                 )
             )
+        );
+    }
+
+    private static void recordTurnAt(String conversationId, String question, String guideId, long recordedAtEpochMs) {
+        ChatSessionStore.memoryFor(conversationId).recordTranscriptFixtureTurnForTest(
+            question,
+            "Keep the thread preview stateful.",
+            "Short answer: Keep the thread preview stateful.",
+            List.of(
+                new SearchResult(
+                    "Guide " + guideId,
+                    "",
+                    "",
+                    "",
+                    guideId,
+                    "Preview",
+                    "survival",
+                    "guide-focus"
+                )
+            ),
+            "",
+            recordedAtEpochMs
         );
     }
 
