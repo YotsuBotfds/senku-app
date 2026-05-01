@@ -12,17 +12,16 @@ import org.junit.Test;
 
 public final class PackRouteFocusedSearchHelperTest {
     @Test
-    public void routeSearchStepsPreserveSpecOrderAndTerms() {
+    public void routeSearchSpecsAndStepsPreserveExecutorOrderAndTerms() {
         PackRepository.QueryTerms queryTerms = PackRepository.QueryTerms.fromQuery("how do i build a house");
         List<QueryRouteProfile.RouteSearchSpec> routeSpecs =
-            queryTerms.routeProfile.routeSearchSpecs(queryTerms.queryLower);
-        List<PackRouteFocusedSearchHelper.RouteSearchStep> routeSteps =
-            PackRouteFocusedSearchHelper.routeSearchSteps(queryTerms, 6);
+            PackRouteFocusedSearchHelper.routeSearchSpecs(queryTerms);
 
-        assertEquals(routeSpecs.size(), routeSteps.size());
+        assertEquals(queryTerms.routeProfile.routeSearchSpecs(queryTerms.queryLower).size(), routeSpecs.size());
         for (int index = 0; index < routeSpecs.size(); index++) {
             QueryRouteProfile.RouteSearchSpec routeSpec = routeSpecs.get(index);
-            PackRouteFocusedSearchHelper.RouteSearchStep routeStep = routeSteps.get(index);
+            PackRouteFocusedSearchHelper.RouteSearchStep routeStep =
+                PackRouteFocusedSearchHelper.routeSearchStep(queryTerms, routeSpec);
 
             assertEquals(routeSpec.text(), routeStep.routeSpec.text());
             assertEquals(

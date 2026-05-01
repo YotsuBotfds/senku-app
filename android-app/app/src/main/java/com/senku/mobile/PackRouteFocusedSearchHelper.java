@@ -17,17 +17,6 @@ final class PackRouteFocusedSearchHelper {
         return queryTerms.routeProfile.routeSearchSpecs(queryTerms.queryLower);
     }
 
-    static List<RouteSearchStep> routeSearchSteps(PackRepository.QueryTerms queryTerms, int maxTokens) {
-        ArrayList<RouteSearchStep> steps = new ArrayList<>();
-        for (QueryRouteProfile.RouteSearchSpec routeSpec : routeSearchSpecs(queryTerms)) {
-            RouteSearchStep step = routeSearchStep(queryTerms, routeSpec, maxTokens);
-            if (step != null) {
-                steps.add(step);
-            }
-        }
-        return steps;
-    }
-
     static RouteSearchStep routeSearchStep(
         PackRepository.QueryTerms queryTerms,
         QueryRouteProfile.RouteSearchSpec routeSpec
