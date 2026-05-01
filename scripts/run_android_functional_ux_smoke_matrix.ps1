@@ -11,6 +11,8 @@ param(
     [switch]$SkipBuild,
     [switch]$SkipInstall,
     [switch]$SkipDeviceLock,
+    [int]$PresetTimeoutSeconds = 1800,
+    [int]$PresetProgressIntervalSeconds = 60,
     [switch]$FailFast,
     [switch]$Help
 )
@@ -47,6 +49,9 @@ Parameters:
   -SkipBuild              Passes -SkipBuild to each preset run.
   -SkipInstall            Passes -SkipInstall to each preset run.
   -SkipDeviceLock         Passes -SkipDeviceLock to each preset run.
+  -PresetTimeoutSeconds   Matrix watchdog timeout per preset. Default: 1800. Use 0 to disable.
+  -PresetProgressIntervalSeconds
+                          Matrix heartbeat interval while a preset child process is running. Default: 60.
   -FailFast               Stops after the first failing preset.
   -Help                   Prints this usage text without touching adb or Gradle.
 
@@ -66,6 +71,12 @@ if ([string]::IsNullOrWhiteSpace($Device)) {
 }
 if ($PhysicalDevice -and $Device -like "emulator-*") {
     throw "-PhysicalDevice was set, but '$Device' looks like an emulator serial."
+}
+if ($PresetTimeoutSeconds -lt 0) {
+    throw "-PresetTimeoutSeconds must be 0 or greater."
+}
+if ($PresetProgressIntervalSeconds -lt 1) {
+    throw "-PresetProgressIntervalSeconds must be 1 or greater."
 }
 
 $repoRoot = (Resolve-Path (Join-Path $PSScriptRoot "..")).Path
@@ -157,6 +168,101 @@ function Get-PowerShellExecutable {
     return "powershell"
 }
 
+function Convert-ToProcessArgumentString {
+    param([string[]]$Arguments)
+
+    $quoted = foreach ($argument in $Arguments) {
+        if ($null -eq $argument) {
+            '""'
+            continue
+        }
+        $value = [string]$argument
+        if ($value -match '[\s"]') {
+            '"' + $value.Replace('"', '\"') + '"'
+        } else {
+            $value
+        }
+    }
+    return ($quoted -join " ")
+}
+
+function Stop-ProcessTreeBestEffort {
+    param([System.Diagnostics.Process]$Process)
+
+    if ($null -eq $Process -or $Process.HasExited) {
+        return
+    }
+
+    try {
+        $Process.Kill($true)
+        return
+    } catch {
+    }
+
+    try {
+        $Process.Kill()
+    } catch {
+    }
+}
+
+function Invoke-SmokePresetProcess {
+    param(
+        [string]$Preset,
+        [int]$PresetOrdinal,
+        [int]$TotalPresetCount,
+        [string]$ExecutablePath,
+        [string[]]$Arguments,
+        [int]$TimeoutSeconds,
+        [int]$ProgressIntervalSeconds
+    )
+
+    $psi = New-Object System.Diagnostics.ProcessStartInfo
+    $psi.FileName = $ExecutablePath
+    $psi.Arguments = Convert-ToProcessArgumentString -Arguments $Arguments
+    $psi.UseShellExecute = $false
+    $psi.CreateNoWindow = $false
+
+    $process = New-Object System.Diagnostics.Process
+    $process.StartInfo = $psi
+    $stopwatch = [System.Diagnostics.Stopwatch]::StartNew()
+    $nextProgressSeconds = [Math]::Max(1, $ProgressIntervalSeconds)
+    $timedOut = $false
+
+    try {
+        [void]$process.Start()
+        while (-not $process.WaitForExit(1000)) {
+            $elapsedSeconds = [Math]::Round($stopwatch.Elapsed.TotalSeconds, 1)
+            if ($TimeoutSeconds -gt 0 -and $stopwatch.Elapsed.TotalSeconds -ge $TimeoutSeconds) {
+                $timedOut = $true
+                Write-Warning ("[functional-ux-matrix:{0}] preset {1} ({2}/{3}) exceeded matrix watchdog timeout_seconds={4}; terminating child process id={5}; elapsed_seconds={6}" -f $Device, $Preset, $PresetOrdinal, $TotalPresetCount, $TimeoutSeconds, $process.Id, $elapsedSeconds)
+                Stop-ProcessTreeBestEffort -Process $process
+                [void]$process.WaitForExit(5000)
+                break
+            }
+            if ($stopwatch.Elapsed.TotalSeconds -ge $nextProgressSeconds) {
+                $remainingText = if ($TimeoutSeconds -gt 0) {
+                    "; remaining_timeout_seconds={0}" -f [Math]::Max(0, [Math]::Round($TimeoutSeconds - $stopwatch.Elapsed.TotalSeconds, 1))
+                } else {
+                    ""
+                }
+                Write-Host ("[functional-ux-matrix:{0}] running {1} ({2}/{3}); elapsed_seconds={4}{5}; child_pid={6}" -f $Device, $Preset, $PresetOrdinal, $TotalPresetCount, $elapsedSeconds, $remainingText, $process.Id)
+                $nextProgressSeconds += [Math]::Max(1, $ProgressIntervalSeconds)
+            }
+        }
+        $stopwatch.Stop()
+        return [pscustomobject]@{
+            exit_code = $(if ($timedOut) { 124 } elseif ($process.HasExited) { $process.ExitCode } else { -1 })
+            timed_out = [bool]$timedOut
+            process_id = [int]$process.Id
+            duration_seconds = [Math]::Round($stopwatch.Elapsed.TotalSeconds, 3)
+        }
+    } finally {
+        if ($process) {
+            $process.Dispose()
+        }
+    }
+}
+
 $powerShellExe = Get-PowerShellExecutable
 $results = New-Object System.Collections.Generic.List[object]
 $anyFailed = $false
@@ -234,16 +340,35 @@ for ($presetIndex = 0; $presetIndex -lt $presets.Count; $presetIndex++) {
     }
 
     Write-Host ("[functional-ux-matrix:{0}] starting {1} ({2}/{3}); matrix_elapsed_seconds={4}; artifact_root={5}" -f $Device, $preset, $presetOrdinal, $presets.Count, [Math]::Round($matrixStopwatch.Elapsed.TotalSeconds, 1), $presetRootForRunner)
-    $startedAt = Get-Date
-    & $powerShellExe @arguments
-    $exitCode = $LASTEXITCODE
-    $endedAt = Get-Date
-    $durationSeconds = [Math]::Round(($endedAt - $startedAt).TotalSeconds, 3)
+    $presetResult = Invoke-SmokePresetProcess `
+        -Preset $preset `
+        -PresetOrdinal $presetOrdinal `
+        -TotalPresetCount $presets.Count `
+        -ExecutablePath $powerShellExe `
+        -Arguments $arguments `
+        -TimeoutSeconds $PresetTimeoutSeconds `
+        -ProgressIntervalSeconds $PresetProgressIntervalSeconds
+    $exitCode = $presetResult.exit_code
+    $durationSeconds = $presetResult.duration_seconds
     $passed = ($exitCode -eq 0)
     if (-not $passed) {
         $anyFailed = $true
     }
     $runSummary = Read-JsonFileOrNull -Path $runSummaryPath
+    $matrixPresetStatus = if ($presetResult.timed_out) {
+        "matrix_timeout"
+    } elseif ($null -ne $runSummary) {
+        $runSummary.status
+    } else {
+        $null
+    }
+    $matrixPresetFailureReason = if ($presetResult.timed_out) {
+        "Matrix preset watchdog timed out after $PresetTimeoutSeconds seconds."
+    } elseif ($null -ne $runSummary) {
+        $runSummary.failure_reason
+    } else {
+        $null
+    }
 
     $results.Add([ordered]@{
         preset = $preset
@@ -258,8 +383,11 @@ for ($presetIndex = 0; $presetIndex -lt $presets.Count; $presetIndex++) {
         reused_installed_apks = [bool]$reuseInstalledApksForPreset
         effective_skip_build = [bool]$effectiveSkipBuild
         effective_skip_install = [bool]$effectiveSkipInstall
-        status = $(if ($null -ne $runSummary) { $runSummary.status } else { $null })
-        failure_reason = $(if ($null -ne $runSummary) { $runSummary.failure_reason } else { $null })
+        preset_timeout_seconds = [int]$PresetTimeoutSeconds
+        timed_out = [bool]$presetResult.timed_out
+        process_id = [int]$presetResult.process_id
+        status = $matrixPresetStatus
+        failure_reason = $matrixPresetFailureReason
         selected_test_methods = $(if ($null -ne $runSummary) { @($runSummary.selected_test_methods) } else { @() })
         screenshot_count = $(if ($null -ne $runSummary) { $runSummary.screenshot_count } else { $null })
         dump_count = $(if ($null -ne $runSummary) { $runSummary.dump_count } else { $null })
@@ -269,7 +397,7 @@ for ($presetIndex = 0; $presetIndex -lt $presets.Count; $presetIndex++) {
         artifact_expectations_met = $(if ($null -ne $runSummary) { $runSummary.artifact_expectations_met } else { $null })
     }) | Out-Null
 
-    Write-Host ("[functional-ux-matrix:{0}] finished {1} ({2}/{3}) exit_code={4} duration_seconds={5} matrix_elapsed_seconds={6}" -f $Device, $preset, $presetOrdinal, $presets.Count, $exitCode, $durationSeconds, [Math]::Round($matrixStopwatch.Elapsed.TotalSeconds, 1))
+    Write-Host ("[functional-ux-matrix:{0}] finished {1} ({2}/{3}) exit_code={4} duration_seconds={5} timed_out={6} matrix_elapsed_seconds={7}" -f $Device, $preset, $presetOrdinal, $presets.Count, $exitCode, $durationSeconds, [bool]$presetResult.timed_out, [Math]::Round($matrixStopwatch.Elapsed.TotalSeconds, 1))
     if ($passed) {
         $canReuseInstalledApks = $true
     }
@@ -293,6 +421,8 @@ $summary = [ordered]@{
     clear_logcat_before_run = [bool]$ClearLogcatBeforeRun
     device_lock_used = [bool]$matrixDeviceLockUsed
     device_lock_posture = $(if ($matrixDeviceLockUsed) { "matrix_lock_children_skip_nested" } else { "skipped" })
+    preset_timeout_seconds = [int]$PresetTimeoutSeconds
+    preset_progress_interval_seconds = [int]$PresetProgressIntervalSeconds
     fail_fast = [bool]$FailFast
     stopped_early = [bool]($FailFast -and $anyFailed -and $results.Count -lt $presets.Count)
     completed_preset_count = [int]$results.Count

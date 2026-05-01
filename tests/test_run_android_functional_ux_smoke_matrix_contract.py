@@ -88,6 +88,23 @@ class RunAndroidFunctionalUxSmokeMatrixContractTests(unittest.TestCase):
         self.assertIn("Functional UX smoke matrix runs phone-* presets", self.script)
         self.assertIn("Assert-FunctionalUxPhoneDevice", self.script)
 
+    def test_matrix_wraps_child_preset_runs_with_watchdog_and_heartbeat(self):
+        self.assertIn("[int]$PresetTimeoutSeconds = 1800", self.script)
+        self.assertIn("[int]$PresetProgressIntervalSeconds = 60", self.script)
+        self.assertIn("function Invoke-SmokePresetProcess", self.script)
+        self.assertIn("function Stop-ProcessTreeBestEffort", self.script)
+        self.assertIn("preset {1} ({2}/{3}) exceeded matrix watchdog timeout_seconds={4}", self.script)
+        self.assertIn("running {1} ({2}/{3}); elapsed_seconds={4}{5}; child_pid={6}", self.script)
+        self.assertIn("-TimeoutSeconds $PresetTimeoutSeconds", self.script)
+        self.assertIn("-ProgressIntervalSeconds $PresetProgressIntervalSeconds", self.script)
+        self.assertIn("exit_code = $(if ($timedOut) { 124 }", self.script)
+        self.assertIn("preset_timeout_seconds = [int]$PresetTimeoutSeconds", self.script)
+        self.assertIn("preset_progress_interval_seconds = [int]$PresetProgressIntervalSeconds", self.script)
+        self.assertIn("timed_out = [bool]$presetResult.timed_out", self.script)
+        self.assertIn('$matrixPresetStatus = if ($presetResult.timed_out) {', self.script)
+        self.assertIn('"matrix_timeout"', self.script)
+        self.assertIn('"Matrix preset watchdog timed out after $PresetTimeoutSeconds seconds."', self.script)
+
     def test_parser_gate_passes(self):
         result = subprocess.run(
             [
