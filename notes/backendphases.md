@@ -1,6 +1,6 @@
 # Backend Cleanup Phase Tracker
 
-Last updated after pushed cleanup through `27a8ffdf` on 2026-05-01.
+Last updated after pushed cleanup through `ebd4333f` on 2026-05-01.
 
 Purpose: prevent future agents from rerunning Ask/query backend cleanup that is already complete. Keep this note short; implementation detail belongs in commits and tests.
 
@@ -317,11 +317,12 @@ Purpose: prevent future agents from rerunning Ask/query backend cleanup that is 
   `ReviewedCardPredicatePolicy` owns answer-card selector markers and drift
   guards while `AnswerCardRuntime` keeps answer-plan assembly. Focused proof
   lives in `AnswerCardRuntimeTest` and `ReviewedCardPredicatePolicyTest`.
-- Route-search SQL hardening is current through `855fe260`:
-  `PackRouteSearchSqlPolicy` locally filters null/blank tokens and categories
-  before generating FTS or LIKE plans, preserving valid SQL/args behavior while
-  no-oping invalid inputs. Focused proof lives in
-  `PackRouteSearchSqlPolicyTest`.
+- Route-search SQL hardening is current through `e02eedc8`: route FTS plans now
+  no-op locally for blank FTS table names and non-positive candidate limits,
+  LIKE plans no-op non-positive limits, and no-BM25 FTS limit selection handles
+  missing query terms. Focused proof:
+  `PackRouteSearchSqlPolicyTest`, `PackRouteFocusedSearchHelperTest`, and
+  `PackRouteFocusedCandidateCollectorTest`.
 - Functional UX smoke lock ergonomics are current through `5e761339`: the
   matrix wrapper holds one outer device lock across all presets, child smoke
   runs skip nested lock acquisition, and shared lock waits now log elapsed time,
@@ -415,11 +416,29 @@ Purpose: prevent future agents from rerunning Ask/query backend cleanup that is 
   now includes no-result search system Back returning to Browse/Home with Ask
   ownership cleared. This commit was compile-validated with
   `assembleDebugAndroidTest`; it was not live-run on-device in the cleanup loop.
-- Tracker is refreshed through pushed head `27a8ffdf`. Final focused gate after
-  that head passed: `HomeCategoryPolicyTest`, `MainActivityHomeChromeTest`,
+- Presentation/harness cleanup is tracked through `56f26b36`: the tracker was
+  refreshed after the stale `27a8ffdf` point and the final focused gate passed:
+  `HomeCategoryPolicyTest`, `MainActivityHomeChromeTest`,
   `DetailFollowupLandscapeComposerTest`, `EmergencySurfacePolicyTest`,
   `PackRepositoryTest`, `PackTextMatchPolicyTest`,
   `PackRepositoryRouteOutputParityTest`, and `assembleDebugAndroidTest`.
+- Detail docked-composer model assembly is current through `ce1ecc14`:
+  `DetailDockedComposerPresentationPolicy` owns the assembled model while
+  `DetailActivity` keeps focus, IME, submit, and generation wiring. Focused
+  proof lives in `DetailFollowupLandscapeComposerTest`.
+- FTS runtime detection is current through `36dc61d5`: SQLite-bound FTS runtime
+  detection now lives in `PackFtsRuntimeDetector`, with fallback behavior kept
+  covered by `PackRepositoryFtsFallbackAndroidTest`.
+- Saved visible-semantics proof is current through `ecff9299`: the AndroidTest
+  PromptHarness now covers visible Saved navigation semantics so saved-tab
+  navigation remains observable in the functional harness.
+- Physical Ask-owned submit proof is current through `ebd4333f`: the physical
+  phone smoke runner now avoids treating the bottom Ask nav label as a submit
+  control, accepts the no-model `Answer model unavailable` Ask outcome as real
+  submit evidence, and waits only when the pack is visibly still installing
+  without a ready state. Physical proof passed on `RFCX607ZM8L`; artifact root:
+  `artifacts/bench/physical_ask_owned_submit_proof_after_harness_patch_20260501_1235/`.
+- Tracker is refreshed through pushed head `ebd4333f`.
 
 ## Remaining Next Slices
 
@@ -439,14 +458,17 @@ Purpose: prevent future agents from rerunning Ask/query backend cleanup that is 
 - Keep repository cleanup incremental around remaining pure policy/helper
   extraction with parity tests.
 - Architecture scout next priorities: continue pure Java detail tablet-state
-  extraction; then consider broader docked-composer model assembly,
-  `PackFtsRuntimeDetector` SQLite-bound detection extraction, and smoke harness
-  helper splits. Avoid broad route-focused retrieval rewrites and avoid
-  `TabletDetailScreen.kt` refactors unless a visual regression demands it.
-- Functional proof backlog from scout: physical Ask-owned submit proof on the
-  phone, zero-result search visible Back live proof, Ask-unavailable/no-source
-  Back, task-root detail visible Back, and Saved tab semantics assertions in
-  the Android harness.
+  extraction and smoke harness helper splits. Avoid broad route-focused
+  retrieval rewrites and avoid `TabletDetailScreen.kt` refactors unless a
+  visual regression demands it.
+- Physical Ask-owned phone submit proof is closed for the no-model physical
+  phone path; future Ask proof should use a deterministic/review-runtime query
+  only when the goal is to prove full answer-detail rendering rather than
+  Ask-owned submit routing.
+- Functional proof backlog from scout: Ask-unavailable/no-source Back and
+  task-root detail visible Back live proof. Zero-result search system Back has
+  compile-validated AndroidTest coverage; Saved tab semantics assertions are
+  covered in the Android harness.
 - UI normalization is a future explicit Android-only slice (`UI-NORM1 Shared
   Chrome Contract`): align `TopBar`, `BottomTabBar`/`NavRailMetrics`,
   `IdentityStrip`, `SenkuTypography`, XML text appearances/dimens, and Java
