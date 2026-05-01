@@ -1,6 +1,6 @@
 # Backend Cleanup Phase Tracker
 
-Last updated after pushed cleanup through `3426b121` on 2026-05-01.
+Last updated after pushed cleanup through `3b70f3a4` on 2026-05-01.
 
 Purpose: prevent future agents from rerunning Ask/query backend cleanup that is already complete. Keep this note short; implementation detail belongs in commits and tests.
 
@@ -370,23 +370,35 @@ Purpose: prevent future agents from rerunning Ask/query backend cleanup that is 
   `2fb9ecf7f3691c52c10845cd72cf5da6ef816edb9838b5c0f8d3e53de38e1120`,
   physical phone serial, installed pack identity, screenshots, dumps, logcat,
   and bundle paths.
-- Main review-display gating is current through `3e8e0c35`: tablet search
-  header formatting and adapter search-row visual state now route through
-  `MainReviewDisplayPolicy`, keeping review latency/display decisions behind
-  the same policy boundary as phone search chrome and preview copy.
-- Pack search finalization cleanup is current through `3426b121`:
+- Main review-display gating is current through `4f401c23`: tablet search
+  header formatting, adapter search-row visual state, and manual-home recent
+  thread label selection now route through `MainReviewDisplayPolicy`, keeping
+  review latency/display decisions behind the same policy boundary as phone
+  search chrome and preview copy.
+- Functional route/follow-up coverage is current through `cce350e0`: focused
+  tests cover Ask-results home-chrome Back returning through the same browse
+  effect, and busy failed-query retry blocking duplicate generation while
+  preserving the retry query.
+- Functional smoke matrix diagnostics are current through `dece1615`: the
+  wrapper now reports preset progress, elapsed time, artifact roots, FailFast
+  stop messages, and completed/total preset counts in the summary.
+- Pack search finalization cleanup is current through `3b70f3a4`:
   `PackRepository` funnels repeated combined-hit projection, prerank telemetry,
   rerank timing, and rerank telemetry through `finalizeCombinedHitsForSearch()`
   without changing route merge behavior; focused telemetry coverage now guards
-  vector-disabled, centroid-missing, and hybrid finalization shapes.
-- Detail tablet state-builder cleanup is current through `b991ad58`:
-  tablet xref row projection and turn-state projection now live in
-  `DetailTabletStateBuilder`, with focused tests for label trimming, relation
-  buckets, active-turn selection, and null/empty input.
-- Tracker is refreshed through pushed head `3426b121`. Final focused gate after
-  that head passed: `MainReviewDisplayPolicyTest`,
-  `DetailTabletStateBuilderTest`, `PackRepositoryTelemetryTest`, and
-  `PackRepositoryRerankTimingTest`.
+  vector-disabled, centroid-missing, and hybrid finalization shapes. Telemetry
+  formatting and elapsed-time conversion now live in
+  `PackSearchFinalizationPolicy`.
+- Detail tablet state-builder cleanup is current through `1fde6516`:
+  tablet xref row projection, turn-state projection, and anchor-state
+  projection now live in `DetailTabletStateBuilder`, with focused tests for
+  label trimming, relation buckets, active-turn selection, evidence anchor
+  projection, and null/empty input.
+- Tracker is refreshed through pushed head `3b70f3a4`. Final focused gate after
+  that head passed: Python `tests.test_powershell_quality_gate`,
+  `MainReviewDisplayPolicyTest`, `DetailTabletStateBuilderTest`,
+  `MainRouteCoordinatorTest`, `DetailFollowUpActionControllerTest`,
+  `PackRepositoryTelemetryTest`, and `PackRepositoryRerankTimingTest`.
 
 ## Remaining Next Slices
 
@@ -405,6 +417,12 @@ Purpose: prevent future agents from rerunning Ask/query backend cleanup that is 
   effects outside `MainResultPublicationPolicy`.
 - Keep repository cleanup incremental around remaining pure policy/helper
   extraction with parity tests.
+- Architecture scout next priorities: continue pure Java detail tablet-state
+  extraction; then consider docked-composer presentation policy, shared-input
+  submit ownership, Pack lexical scoring extraction, Pack FTS runtime boundary,
+  and smoke harness helper splits. Avoid broad route-focused retrieval rewrites
+  and avoid `TabletDetailScreen.kt` refactors unless a visual regression demands
+  it.
 - Do not collapse the new presentation, category-filter, route-ranking,
   water-distribution anchor, or route-refinement helper boundaries back into
   activity/repository/executor bodies.
