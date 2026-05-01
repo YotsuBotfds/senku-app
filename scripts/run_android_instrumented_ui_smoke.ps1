@@ -1235,6 +1235,7 @@ function Resolve-InstrumentationMethodNames {
         "functional-saved" {
             return @(
                 "savedNavigationBackReturnsManualHomeDestination",
+                "guideDetailSaveButtonSurfacesGuideInSavedDestinationAndUnsaveRemovesIt",
                 "savedTabImeSubmitRoutesToSearchResultsNotAnswerDetail",
                 "savedTabPinnedGuideButtonOpensGuideDetailAndBackReturnsSaved"
             )

@@ -279,6 +279,9 @@ Purpose: prevent future agents from rerunning Ask/query backend cleanup that is 
 - Physical smoke post-check hardening is current through `88ff4815`: standalone
   physical interactions no longer accept generic unchanged Search/Ask/query
   evidence for submit/back, and validator proof includes dump-change metadata.
+- Ask-owned physical smoke mode is done: real hardware smoke coverage now proves
+  Ask tab ownership and visible-submit behavior separately from the hardened
+  simple Saved/search/back path.
 - Latest local proof after `88ff4815`: `git diff --check` passed; full Android
   `:app:testDebugUnitTest :app:assembleDebug :app:assembleDebugAndroidTest`
   passed; physical-smoke contract and summary validator tests ran 40 tests OK.
@@ -295,9 +298,6 @@ Purpose: prevent future agents from rerunning Ask/query backend cleanup that is 
 - Review/demo leakage follow-up: continue moving remaining fixture-shaped
   display decisions through explicit review-policy gates; the product search CTA
   resource-name leak is closed and guarded.
-- Physical smoke follow-up: add an Ask-owned interaction mode so real hardware
-  proves Ask tab ownership and visible-submit behavior, separate from the
-  now-hardened simple Saved/search/back path.
 - Do not rerun the result-publication extraction unless a regression points
   there; future `MainActivity` cleanup should target still-mixed route side
   effects outside `MainResultPublicationPolicy`.

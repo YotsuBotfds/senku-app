@@ -95,8 +95,20 @@ class RunAndroidInstrumentedUiSmokeSummaryContractTests(unittest.TestCase):
         self.assertIn('"homeAndAskImeSubmitRouteToSearchResultsAndAnswerDetail"', self.script)
         self.assertIn('"searchButtonFromAskLaneUsesAskSubmitOwnership"', self.script)
         self.assertIn('"savedNavigationBackReturnsManualHomeDestination"', self.script)
+        self.assertIn('"guideDetailSaveButtonSurfacesGuideInSavedDestinationAndUnsaveRemovesIt"', self.script)
         self.assertIn('"answerModeProvenanceOpenBackReturnsAnswerContext"', self.script)
         self.assertIn('${BaseClass}#$methodName', self.script)
+
+    def test_functional_saved_profile_includes_real_save_unsave_semantics(self):
+        expected_block = '''"functional-saved" {
+            return @(
+                "savedNavigationBackReturnsManualHomeDestination",
+                "guideDetailSaveButtonSurfacesGuideInSavedDestinationAndUnsaveRemovesIt",
+                "savedTabImeSubmitRoutesToSearchResultsNotAnswerDetail",
+                "savedTabPinnedGuideButtonOpensGuideDetailAndBackReturnsSaved"
+            )
+        }'''
+        self.assertIn(expected_block, self.script)
 
     def test_final_summary_includes_selected_instrumentation_methods(self):
         self.assertIn("$EffectiveTestMethods = if (Use-ScriptedPromptRun) {", self.script)
