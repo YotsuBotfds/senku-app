@@ -81,9 +81,6 @@ public final class MainActivity extends AppCompatActivity {
     private static final int TABLET_MANUAL_HOME_CATEGORY_CARD_HEIGHT_DP = 68;
     private static final int MANUAL_HOME_CATEGORY_ROW_GAP_DP = 9;
     private static final int TABLET_MANUAL_HOME_CATEGORY_ROW_GAP_DP = 10;
-    private static final int MANUAL_HOME_RECENT_ROW_HEIGHT_DP = 70;
-    private static final int MANUAL_HOME_RECENT_ROW_GAP_DP = 8;
-    private static final int TABLET_MANUAL_HOME_RECENT_ROW_GAP_DP = 10;
     private static final float TABLET_HOME_PRIMARY_LANDSCAPE_WEIGHT = 1.42f;
     private static final float TABLET_HOME_RECENT_LANDSCAPE_WEIGHT = 1.02f;
     private static final float TABLET_HOME_PRIMARY_PORTRAIT_WEIGHT = 1.02f;
@@ -1741,11 +1738,18 @@ public final class MainActivity extends AppCompatActivity {
         button.setMinHeight(0);
         button.setMinimumHeight(0);
         boolean compactPhoneHome = isCompactPhoneHomeLayout();
+        MainRecentThreadPresentationPolicy.ButtonPresentation buttonPresentation =
+            MainRecentThreadPresentationPolicy.resolveButtonPresentation(
+                isTabletSearchLayout(),
+                manualHomeShell,
+                compactPhoneHome,
+                index
+            );
         button.setPadding(
-            dp(isTabletSearchLayout() ? 9 : (manualHomeShell ? 12 : (compactPhoneHome ? 10 : 12))),
-            dp(resolveManualHomeRecentThreadVerticalPaddingDp(isTabletSearchLayout(), manualHomeShell, compactPhoneHome)),
-            dp(isTabletSearchLayout() ? 9 : (manualHomeShell ? 12 : (compactPhoneHome ? 10 : 12))),
-            dp(resolveManualHomeRecentThreadVerticalPaddingDp(isTabletSearchLayout(), manualHomeShell, compactPhoneHome))
+            dp(buttonPresentation.horizontalPaddingDp),
+            dp(buttonPresentation.verticalPaddingDp),
+            dp(buttonPresentation.horizontalPaddingDp),
+            dp(buttonPresentation.verticalPaddingDp)
         );
         button.setTextColor(getResources().getColor(manualHomeShell
             ? R.color.senku_rev03_ink_0
@@ -1756,33 +1760,27 @@ public final class MainActivity extends AppCompatActivity {
         }
         button.setTextAlignment(View.TEXT_ALIGNMENT_VIEW_START);
         button.setGravity(android.view.Gravity.START | android.view.Gravity.CENTER_VERTICAL);
-        button.setMaxLines(manualHomeShell ? 2 : (compactPhoneHome ? 2 : 3));
+        button.setMaxLines(buttonPresentation.maxLines);
         button.setEllipsize(TextUtils.TruncateAt.END);
-        if (manualHomeShell) {
-            int minimumHeight = resolveManualHomeRecentThreadMinimumHeightDp(
-                isTabletSearchLayout(),
-                isLandscapePhoneLayout(),
-                manualHomeShell
-            );
-            button.setMinHeight(dp(minimumHeight));
-            button.setMinimumHeight(dp(minimumHeight));
+        if (buttonPresentation.minimumHeightDp > 0) {
+            button.setMinHeight(dp(buttonPresentation.minimumHeightDp));
+            button.setMinimumHeight(dp(buttonPresentation.minimumHeightDp));
         }
         button.setText(manualHomeShell
             ? buildManualHomeRecentThreadLabelSpannable(preview, index)
             : (compactPhoneHome
                 ? presentationFormatter().buildCompactRecentThreadLabel(preview)
                 : presentationFormatter().buildRecentThreadLabel(preview)));
-        button.setContentDescription(presentationFormatter().buildRecentThreadContentDescription(preview, index));
+        button.setContentDescription(MainRecentThreadPresentationPolicy.contentDescriptionWithRemoveHint(
+            presentationFormatter().buildRecentThreadContentDescription(preview, index),
+            MainRecentThreadPresentationPolicy.isLongPressRemoveHintEligible(preview)
+        ));
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
             LinearLayout.LayoutParams.MATCH_PARENT,
             LinearLayout.LayoutParams.WRAP_CONTENT
         );
         if (index > 0) {
-            params.topMargin = dp(resolveManualHomeRecentThreadGapDp(
-                isTabletSearchLayout(),
-                manualHomeShell,
-                compactPhoneHome
-            ));
+            params.topMargin = dp(buttonPresentation.topMarginDp);
         }
         button.setLayoutParams(params);
         button.setOnClickListener(v -> openRecentThread(preview));
@@ -1805,13 +1803,11 @@ public final class MainActivity extends AppCompatActivity {
         boolean landscapePhoneLayout,
         boolean manualHomeShell
     ) {
-        if (!manualHomeShell) {
-            return 0;
-        }
-        if (tabletSearchLayout) {
-            return 70;
-        }
-        return MANUAL_HOME_RECENT_ROW_HEIGHT_DP;
+        return MainRecentThreadPresentationPolicy.resolveMinimumHeightDp(
+            tabletSearchLayout,
+            landscapePhoneLayout,
+            manualHomeShell
+        );
     }
 
     static int resolveManualHomeRecentThreadGapDp(
@@ -1819,13 +1815,7 @@ public final class MainActivity extends AppCompatActivity {
         boolean manualHomeShell,
         boolean compactPhoneHome
     ) {
-        if (tabletSearchLayout) {
-            return TABLET_MANUAL_HOME_RECENT_ROW_GAP_DP;
-        }
-        if (manualHomeShell) {
-            return MANUAL_HOME_RECENT_ROW_GAP_DP;
-        }
-        return compactPhoneHome ? 6 : 8;
+        return MainRecentThreadPresentationPolicy.resolveGapDp(tabletSearchLayout, manualHomeShell, compactPhoneHome);
     }
 
     static int resolveManualHomeRecentThreadVerticalPaddingDp(
@@ -1833,13 +1823,11 @@ public final class MainActivity extends AppCompatActivity {
         boolean manualHomeShell,
         boolean compactPhoneHome
     ) {
-        if (tabletSearchLayout) {
-            return 9;
-        }
-        if (manualHomeShell) {
-            return 8;
-        }
-        return compactPhoneHome ? 8 : 10;
+        return MainRecentThreadPresentationPolicy.resolveVerticalPaddingDp(
+            tabletSearchLayout,
+            manualHomeShell,
+            compactPhoneHome
+        );
     }
 
     private String buildManualHomeRecentThreadLabel(ChatSessionStore.ConversationPreview preview) {
