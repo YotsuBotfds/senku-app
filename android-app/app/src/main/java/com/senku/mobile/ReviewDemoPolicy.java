@@ -256,6 +256,29 @@ final class ReviewDemoPolicy {
             && ReviewDemoFixtureSet.isRainShelterTopicGuide(anchorGuideId);
     }
 
+    static boolean shouldPresentAbrasivesCrossReferenceAsAnchor(
+        boolean reviewDemoFixturesEnabled,
+        String guideId,
+        String title,
+        String categoryToken
+    ) {
+        if (!reviewDemoFixturesEnabled) {
+            return false;
+        }
+        String normalizedTitle = safe(title).trim().toLowerCase(Locale.US);
+        String normalizedCategory = safe(categoryToken)
+            .trim()
+            .replace('-', ' ')
+            .replace('_', ' ')
+            .replaceAll("\\s+", " ")
+            .toLowerCase(Locale.US);
+        return "GD-220".equalsIgnoreCase(safe(guideId).trim())
+            && normalizedTitle.contains("abrasives")
+            && (normalizedCategory.contains("related")
+                || normalizedCategory.contains("cross reference")
+                || normalizedCategory.contains("crossref"));
+    }
+
     private static String reviewManualHomeRecentThreadTitle(
         ChatSessionStore.ConversationPreview preview,
         int index

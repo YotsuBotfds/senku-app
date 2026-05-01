@@ -220,6 +220,34 @@ public final class ReviewDemoPolicyTest {
     }
 
     @Test
+    public void abrasivesCrossReferenceAnchorPresentationRequiresReviewDemoFixtureGate() {
+        assertFalse(ReviewDemoPolicy.shouldPresentAbrasivesCrossReferenceAsAnchor(
+            false,
+            "GD-220",
+            "Abrasives Manufacturing",
+            "cross_reference"
+        ));
+        assertTrue(ReviewDemoPolicy.shouldPresentAbrasivesCrossReferenceAsAnchor(
+            true,
+            "GD-220",
+            "Abrasives Manufacturing",
+            "cross_reference"
+        ));
+        assertFalse(ReviewDemoPolicy.shouldPresentAbrasivesCrossReferenceAsAnchor(
+            true,
+            "GD-220",
+            "Abrasives Manufacturing",
+            "required_reading"
+        ));
+        assertFalse(ReviewDemoPolicy.shouldPresentAbrasivesCrossReferenceAsAnchor(
+            true,
+            "GD-132",
+            "Foundry & Metal Casting",
+            "cross_reference"
+        ));
+    }
+
+    @Test
     public void deniedProductReviewModeCannotShapeAnswerModeRelatedGuideFixtures() {
         boolean productReviewMode = ReviewDemoPolicy.resolveProductReviewModeForTest(true, true, false, true);
         ArrayList<SearchResult> relatedGuides = new ArrayList<>(Arrays.asList(

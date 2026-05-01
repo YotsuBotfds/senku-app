@@ -396,11 +396,12 @@ final class DetailRelatedGuidePresentationFormatter {
             return "";
         }
         String normalized = cleaned.toLowerCase(Locale.US);
-        String title = safe(guide == null ? null : guide.title).trim().toLowerCase(Locale.US);
-        if (reviewDemoCategoryShapingEnabled
-            && "GD-220".equalsIgnoreCase(guideId)
-            && title.contains("abrasives")
-            && (normalized.contains("related") || normalized.contains("cross reference") || normalized.contains("crossref"))) {
+        if (ReviewDemoPolicy.shouldPresentAbrasivesCrossReferenceAsAnchor(
+            reviewDemoCategoryShapingEnabled,
+            guideId,
+            guide == null ? null : guide.title,
+            normalized
+        )) {
             return "Anchor";
         }
         if (normalized.contains("anchor") || normalized.contains("source")) {

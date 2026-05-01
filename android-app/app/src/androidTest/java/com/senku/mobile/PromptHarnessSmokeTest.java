@@ -8057,41 +8057,11 @@ public final class PromptHarnessSmokeTest {
     }
 
     private Object readPrivateField(Object target, String fieldName) {
-        if (target == null || safe(fieldName).trim().isEmpty()) {
-            return null;
-        }
-        Class<?> cursor = target.getClass();
-        while (cursor != null) {
-            try {
-                java.lang.reflect.Field field = cursor.getDeclaredField(fieldName);
-                field.setAccessible(true);
-                return field.get(target);
-            } catch (NoSuchFieldException ignored) {
-                cursor = cursor.getSuperclass();
-            } catch (Exception ignored) {
-                return null;
-            }
-        }
-        return null;
+        return PromptHarnessReflection.readPrivateField(target, fieldName);
     }
 
     private Object invokePrivateNoArgMethod(Object target, String methodName) {
-        if (target == null || safe(methodName).trim().isEmpty()) {
-            return null;
-        }
-        Class<?> cursor = target.getClass();
-        while (cursor != null) {
-            try {
-                java.lang.reflect.Method method = cursor.getDeclaredMethod(methodName);
-                method.setAccessible(true);
-                return method.invoke(target);
-            } catch (NoSuchMethodException ignored) {
-                cursor = cursor.getSuperclass();
-            } catch (Exception ignored) {
-                return null;
-            }
-        }
-        return null;
+        return PromptHarnessReflection.invokePrivateNoArgMethod(target, methodName);
     }
 
     private Object invokePrivateMethod(
@@ -8100,80 +8070,35 @@ public final class PromptHarnessSmokeTest {
         Class<?>[] parameterTypes,
         Object... args
     ) {
-        if (target == null || safe(methodName).trim().isEmpty()) {
-            return null;
-        }
-        Class<?> cursor = target.getClass();
-        while (cursor != null) {
-            try {
-                java.lang.reflect.Method method = cursor.getDeclaredMethod(methodName, parameterTypes);
-                method.setAccessible(true);
-                return method.invoke(target, args);
-            } catch (NoSuchMethodException ignored) {
-                cursor = cursor.getSuperclass();
-            } catch (Exception ignored) {
-                return null;
-            }
-        }
-        return null;
+        return PromptHarnessReflection.invokePrivateMethod(target, methodName, parameterTypes, args);
     }
 
     private Object invokeNoArgMethod(Object target, String methodName) {
-        if (target == null || safe(methodName).trim().isEmpty()) {
-            return null;
-        }
-        try {
-            java.lang.reflect.Method method = target.getClass().getMethod(methodName);
-            method.setAccessible(true);
-            return method.invoke(target);
-        } catch (Exception ignored) {
-            return null;
-        }
+        return PromptHarnessReflection.invokeNoArgMethod(target, methodName);
     }
 
     private String readPrivateStringField(Object target, String fieldName) {
-        Object value = readPrivateField(target, fieldName);
-        return value == null ? "" : safe(String.valueOf(value));
+        return PromptHarnessReflection.readPrivateStringField(target, fieldName);
     }
 
     private boolean readPrivateBooleanField(Object target, String fieldName) {
-        Object value = readPrivateField(target, fieldName);
-        return value instanceof Boolean && (Boolean) value;
+        return PromptHarnessReflection.readPrivateBooleanField(target, fieldName);
     }
 
     private boolean setPrivateField(Object target, String fieldName, Object value) {
-        if (target == null || safe(fieldName).trim().isEmpty()) {
-            return false;
-        }
-        Class<?> cursor = target.getClass();
-        while (cursor != null) {
-            try {
-                java.lang.reflect.Field field = cursor.getDeclaredField(fieldName);
-                field.setAccessible(true);
-                field.set(target, value);
-                return true;
-            } catch (NoSuchFieldException ignored) {
-                cursor = cursor.getSuperclass();
-            } catch (Exception ignored) {
-                return false;
-            }
-        }
-        return false;
+        return PromptHarnessReflection.setPrivateField(target, fieldName, value);
     }
 
     private boolean readPrivateBooleanMethod(Object target, String methodName) {
-        Object value = invokePrivateNoArgMethod(target, methodName);
-        return value instanceof Boolean && (Boolean) value;
+        return PromptHarnessReflection.readPrivateBooleanMethod(target, methodName);
     }
 
     private boolean readBooleanMethod(Object target, String methodName) {
-        Object value = invokeNoArgMethod(target, methodName);
-        return value instanceof Boolean && (Boolean) value;
+        return PromptHarnessReflection.readBooleanMethod(target, methodName);
     }
 
     private String invokeStringMethod(Object target, String methodName) {
-        Object value = invokeNoArgMethod(target, methodName);
-        return value == null ? "" : safe(String.valueOf(value));
+        return PromptHarnessReflection.invokeStringMethod(target, methodName);
     }
 
     private int collectionSize(Object candidate) {

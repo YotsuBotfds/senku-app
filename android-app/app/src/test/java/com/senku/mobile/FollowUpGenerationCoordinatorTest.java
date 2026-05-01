@@ -1,6 +1,8 @@
 package com.senku.mobile;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
@@ -77,5 +79,65 @@ public final class FollowUpGenerationCoordinatorTest {
 
         assertEquals("", decision.draftText);
         assertEquals("", decision.lastFailedQuery);
+    }
+
+    @Test
+    public void stallStateBecomesVisibleAtThresholdBeforeFirstChunk() {
+        FollowUpGenerationCoordinator.StallStateDecision decision =
+            FollowUpGenerationCoordinator.resolveStallState(
+                false,
+                1000L,
+                13000L,
+                12000L,
+                false
+            );
+
+        assertTrue(decision.stalled);
+        assertTrue(decision.changed);
+    }
+
+    @Test
+    public void stallStateRemainsHiddenBeforeThreshold() {
+        FollowUpGenerationCoordinator.StallStateDecision decision =
+            FollowUpGenerationCoordinator.resolveStallState(
+                false,
+                1000L,
+                12999L,
+                12000L,
+                false
+            );
+
+        assertFalse(decision.stalled);
+        assertFalse(decision.changed);
+    }
+
+    @Test
+    public void stallStateClearsAfterFirstStreamingChunk() {
+        FollowUpGenerationCoordinator.StallStateDecision decision =
+            FollowUpGenerationCoordinator.resolveStallState(
+                true,
+                1000L,
+                30000L,
+                12000L,
+                true
+            );
+
+        assertFalse(decision.stalled);
+        assertTrue(decision.changed);
+    }
+
+    @Test
+    public void stallStateUsesNowAsStartWhenGenerationStartIsMissing() {
+        FollowUpGenerationCoordinator.StallStateDecision decision =
+            FollowUpGenerationCoordinator.resolveStallState(
+                false,
+                0L,
+                30000L,
+                12000L,
+                false
+            );
+
+        assertFalse(decision.stalled);
+        assertFalse(decision.changed);
     }
 }

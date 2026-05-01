@@ -411,12 +411,17 @@ public final class DetailActivity extends AppCompatActivity {
                 clearGenerationStallMonitor();
                 return;
             }
-            long startedAtMs = generationStartedAtMs > 0L ? generationStartedAtMs : System.currentTimeMillis();
-            long elapsedMs = System.currentTimeMillis() - startedAtMs;
-            boolean stalled = !firstStreamingChunkSeen && elapsedMs >= GENERATION_STALL_NOTICE_MS;
-            if (stalled != generationStallNoticeVisible) {
-                generationStallNoticeVisible = stalled;
-                updateGenerationStallUi(stalled);
+            FollowUpGenerationCoordinator.StallStateDecision stallState =
+                FollowUpGenerationCoordinator.resolveStallState(
+                    firstStreamingChunkSeen,
+                    generationStartedAtMs,
+                    System.currentTimeMillis(),
+                    GENERATION_STALL_NOTICE_MS,
+                    generationStallNoticeVisible
+                );
+            if (stallState.changed) {
+                generationStallNoticeVisible = stallState.stalled;
+                updateGenerationStallUi(stallState.stalled);
             }
             if (generationStallToken == followUpRenderToken && progressBar != null && progressBar.getVisibility() == View.VISIBLE) {
                 uiHandler.postDelayed(this, GENERATION_STALL_POLL_MS);
