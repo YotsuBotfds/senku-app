@@ -328,7 +328,7 @@ final class SearchResultCardModelMapper {
     }
 
     static boolean shouldShowLinkedGuidePreviewLine() {
-        return false;
+        return SearchLinkedGuideCuePolicy.shouldShowPreviewLine();
     }
 
     static String buildLinkedGuideChipLabelForTest() {
@@ -336,7 +336,7 @@ final class SearchResultCardModelMapper {
     }
 
     static String buildLinkedGuideChipLabel() {
-        return "Guide";
+        return SearchLinkedGuideCuePolicy.chipLabel();
     }
 
     static String buildLinkedGuidePreviewLineLabelForTest() {
@@ -344,7 +344,7 @@ final class SearchResultCardModelMapper {
     }
 
     static String buildLinkedGuidePreviewLineLabel() {
-        return "Guide";
+        return SearchLinkedGuideCuePolicy.previewLineLabel();
     }
 
     static String buildLinkedGuidePreviewLineForTest(
@@ -362,18 +362,7 @@ final class SearchResultCardModelMapper {
         String title,
         boolean richTabletCard
     ) {
-        if (safe(guideId).trim().isEmpty()) {
-            return "";
-        }
-        String cleanedTitle = cleanDisplayText(title, richTabletCard ? 54 : 42);
-        if (!cleanedTitle.isEmpty()) {
-            return buildLinkedGuidePreviewLineLabel() + ": " + cleanedTitle;
-        }
-        String label = cleanDisplayText(
-            buildLinkedGuidePreviewLabel(displayLabel, guideId, title),
-            richTabletCard ? 58 : 46
-        );
-        return label.isEmpty() ? buildLinkedGuidePreviewLineLabel() : buildLinkedGuidePreviewLineLabel() + ": " + label;
+        return SearchLinkedGuideCuePolicy.previewLine(displayLabel, guideId, title, richTabletCard);
     }
 
     static String buildLinkedGuidePreviewLabelForTest(String displayLabel, String guideId, String title) {
@@ -381,19 +370,7 @@ final class SearchResultCardModelMapper {
     }
 
     static String buildLinkedGuidePreviewLabel(String displayLabel, String guideId, String title) {
-        String cleanedDisplayLabel = safe(displayLabel).trim();
-        if (!cleanedDisplayLabel.isEmpty()) {
-            return cleanedDisplayLabel;
-        }
-        String cleanedGuideId = safe(guideId).trim();
-        String cleanedTitle = safe(title).trim();
-        if (!cleanedGuideId.isEmpty() && !cleanedTitle.isEmpty()) {
-            return cleanedGuideId + " - " + cleanedTitle;
-        }
-        if (!cleanedTitle.isEmpty()) {
-            return cleanedTitle;
-        }
-        return cleanedGuideId;
+        return SearchLinkedGuideCuePolicy.previewLabel(displayLabel, guideId, title);
     }
 
     static String buildCompactLinkedGuideCueLabelForTest(
@@ -411,21 +388,7 @@ final class SearchResultCardModelMapper {
         String title,
         boolean compactLinkedCue
     ) {
-        String cleanedGuideId = safe(guideId).trim();
-        if (!cleanedGuideId.isEmpty()) {
-            if (compactLinkedCue) {
-                return "Guide connection";
-            }
-            return cleanDisplayText(
-                "Linked guide " + cleanedGuideId,
-                20
-            );
-        }
-        String label = buildLinkedGuidePreviewLabel(displayLabel, guideId, title);
-        if (!label.isEmpty()) {
-            return "Guide connection";
-        }
-        return "Guide connection";
+        return SearchLinkedGuideCuePolicy.compactCueLabel(displayLabel, guideId, title, compactLinkedCue);
     }
 
     static String buildLinkedGuideAvailableDescriptionForTest(String actionLabel) {
@@ -433,10 +396,7 @@ final class SearchResultCardModelMapper {
     }
 
     static String buildLinkedGuideAvailableDescription(String actionLabel) {
-        String label = safe(actionLabel).trim();
-        return label.isEmpty()
-            ? "Guide connection available"
-            : "Guide connection available: " + label;
+        return SearchLinkedGuideCuePolicy.availableDescription(actionLabel);
     }
 
     static String buildLinkedGuideOpenDescriptionForTest(String actionLabel) {
@@ -444,10 +404,7 @@ final class SearchResultCardModelMapper {
     }
 
     static String buildLinkedGuideOpenDescription(String actionLabel) {
-        String label = safe(actionLabel).trim();
-        return label.isEmpty()
-            ? "Open cross-reference guide"
-            : "Open cross-reference guide: " + label;
+        return SearchLinkedGuideCuePolicy.openDescription(actionLabel);
     }
 
     static String buildCompactRowSnippet(String rawSnippet, String sectionHeading, int maxLen) {
@@ -552,7 +509,7 @@ final class SearchResultCardModelMapper {
         return cleaned;
     }
 
-    private static String safe(String text) {
+    static String safe(String text) {
         return text == null ? "" : text;
     }
 }

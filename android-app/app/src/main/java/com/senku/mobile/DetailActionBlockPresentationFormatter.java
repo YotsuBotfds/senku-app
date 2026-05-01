@@ -299,86 +299,7 @@ final class DetailActionBlockPresentationFormatter {
         String formattedAnswerText,
         ActionBlockTextSanitizer sanitizer
     ) {
-        ArrayList<EmergencyActionSpec> actions = new ArrayList<>();
-        for (String step : DetailEmergencyPresentationPolicy.extractImmediateActionLines(formattedAnswerText)) {
-            String cleaned = sanitizeActionBlockText(step, sanitizer);
-            if (cleaned.isEmpty()) {
-                continue;
-            }
-            actions.add(splitEmergencyAction(cleaned));
-        }
-        return actions;
-    }
-
-    private static EmergencyActionSpec splitEmergencyAction(String cleaned) {
-        int splitIndex = firstSentenceBoundary(cleaned);
-        if (splitIndex < 0) {
-            return new EmergencyActionSpec(normalizeEmergencyActionTitle(trimEmergencyActionTitle(cleaned)), "");
-        }
-        String title = normalizeEmergencyActionTitle(trimEmergencyActionTitle(cleaned.substring(0, splitIndex)));
-        String detail = normalizeEmergencyActionDetail(
-            cleaned.substring(splitIndex).replaceFirst("^[.!?]+\\s*", "").trim()
-        );
-        if (title.isEmpty()) {
-            return new EmergencyActionSpec(cleaned, "");
-        }
-        return new EmergencyActionSpec(title, detail);
-    }
-
-    private static String normalizeEmergencyActionTitle(String text) {
-        String title = safe(text).trim();
-        title = title.replace(
-            "Clear the floor to a minimum 5 m radius",
-            "Clear the floor to 5 m radius"
-        );
-        title = title.replace(
-            "Clear the floor to a 5 m radius",
-            "Clear the floor to 5 m radius"
-        );
-        title = title.replace(
-            "Clear the floor to minimum 5 m radius",
-            "Clear the floor to 5 m radius"
-        );
-        title = title.replace(
-            "Clear the floor to 5 m radius",
-            "Clear the floor to 5 m radius"
-        );
-        title = title.replace(
-            "Move everyone to minimum 5 m from active work zone",
-            "Move to minimum 5 m from active work zone"
-        );
-        return title;
-    }
-
-    private static String trimEmergencyActionTitle(String text) {
-        return safe(text).trim().replaceFirst("[.!?]+$", "").trim();
-    }
-
-    private static String normalizeEmergencyActionDetail(String text) {
-        String detail = safe(text).trim();
-        detail = detail.replace(
-            "Doors and roll-up openings must be unobstructed.",
-            "Door and roll-up open and unobstructed."
-        );
-        detail = detail.replace(
-            "GD-132 \u00a71 is current owner.",
-            "GD-132 lists current owner."
-        );
-        return detail;
-    }
-
-    private static int firstSentenceBoundary(String text) {
-        String value = safe(text).trim();
-        for (int i = 0; i < value.length(); i++) {
-            char c = value.charAt(i);
-            if ((c == '.' || c == '!' || c == '?') && i + 1 < value.length()) {
-                char next = value.charAt(i + 1);
-                if (Character.isWhitespace(next)) {
-                    return i;
-                }
-            }
-        }
-        return -1;
+        return DetailEmergencyActionPresentationText.extractEmergencyActionSpecs(formattedAnswerText, sanitizer);
     }
 
     static List<ActionBlockSpec> extractHighRiskActionBlockSpecs(
@@ -432,13 +353,7 @@ final class DetailActionBlockPresentationFormatter {
     }
 
     private static String sanitizeActionBlockText(String text, ActionBlockTextSanitizer sanitizer) {
-        String cleaned = safe(text).trim();
-        if (sanitizer != null) {
-            cleaned = safe(sanitizer.sanitize(cleaned)).trim();
-        }
-        cleaned = cleaned.replace(":::", "");
-        cleaned = cleaned.replaceAll("\\s{2,}", " ").trim();
-        return DetailWarningCopySanitizer.sanitizeWarningResidualCopy(cleaned);
+        return DetailEmergencyActionPresentationText.sanitizeActionBlockText(text, sanitizer);
     }
 
     static CharSequence styleEmergencyMinimumDistance(String text) {
@@ -466,7 +381,7 @@ final class DetailActionBlockPresentationFormatter {
     }
 
     static boolean shouldStyleEmergencyMinimumDistance(String text) {
-        return emergencyDistanceSpanTarget(safe(text).toLowerCase(Locale.US)).start >= 0;
+        return DetailEmergencyActionPresentationText.shouldStyleEmergencyMinimumDistance(text);
     }
 
     static int[] emergencyMinimumDistanceSpanRangeForTest(String text) {
@@ -486,58 +401,7 @@ final class DetailActionBlockPresentationFormatter {
     }
 
     private static int[] emergencyMinimumDistanceSpanRange(String text) {
-        String value = safe(text);
-        String lower = value.toLowerCase(Locale.US);
-        SpanTarget target = emergencyDistanceSpanTarget(lower);
-        int start = target.start;
-        if (start < 0) {
-            return new int[] {-1, -1};
-        }
-        int end = start + target.text.length();
-        int activeWorkZoneEnd = lower.indexOf("from active work zone", start);
-        if (activeWorkZoneEnd >= 0) {
-            end = activeWorkZoneEnd + "from active work zone".length();
-        } else {
-            activeWorkZoneEnd = lower.indexOf("from the active work zone", start);
-            if (activeWorkZoneEnd >= 0) {
-                end = activeWorkZoneEnd + "from the active work zone".length();
-            }
-        }
-        return new int[] {start, end};
-    }
-
-    private static SpanTarget emergencyDistanceSpanTarget(String lower) {
-        int start = lower.indexOf("minimum 5 m");
-        if (start >= 0) {
-            return new SpanTarget(start, "minimum 5 m");
-        }
-        start = lower.indexOf("minimum 5 meters");
-        if (start >= 0) {
-            return new SpanTarget(start, "minimum 5 meters");
-        }
-        start = lower.indexOf("minimum 5 metres");
-        if (start >= 0) {
-            return new SpanTarget(start, "minimum 5 metres");
-        }
-        start = lower.indexOf("minimum five meters");
-        if (start >= 0) {
-            return new SpanTarget(start, "minimum five meters");
-        }
-        start = lower.indexOf("minimum five metres");
-        if (start >= 0) {
-            return new SpanTarget(start, "minimum five metres");
-        }
-        return new SpanTarget(-1, "");
-    }
-
-    private static final class SpanTarget {
-        final int start;
-        final String text;
-
-        SpanTarget(int start, String text) {
-            this.start = start;
-            this.text = text;
-        }
+        return DetailEmergencyActionPresentationText.emergencyMinimumDistanceSpanRange(text);
     }
 
     private static String extractActionMarkerClause(String text, ActionBlockTextSanitizer sanitizer, String... markers) {

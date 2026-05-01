@@ -4057,26 +4057,6 @@ private fun TabletDetailState.hasGuideReaderContext(): Boolean =
         guideModeSummary.isNotBlank() ||
         guideModeAnchorLabel.isNotBlank()
 
-internal fun tabletEvidenceRailPresentation(
-    state: TabletDetailState,
-    guideMode: Boolean,
-): TabletEvidenceRailPresentation =
-    tabletEvidenceRailPresentation(
-        TabletEvidenceRailVisibilityInput(
-            detailMode = state.detailMode,
-            isLandscape = state.isLandscape,
-            guideMode = guideMode,
-            evidenceExpanded = state.evidenceExpanded,
-            answerSourceCount = state.resolvedAnswerSourceCount(),
-            threadSourceCount = state.resolvedVisibleThreadSourceCount(),
-        )
-    )
-
-internal fun tabletShouldShowEvidencePane(
-    state: TabletDetailState,
-    guideMode: Boolean,
-): Boolean = tabletEvidenceRailPresentation(state, guideMode).visible
-
 internal fun tabletSourceGraphAnchor(anchor: AnchorState): AnchorState =
     if (anchor.hasSource && anchor.id.isBlank()) {
         AnchorState("", "", "", "", "", false)
