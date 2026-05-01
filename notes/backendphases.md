@@ -40,6 +40,14 @@ Purpose: prevent future agents from rerunning Ask/query backend cleanup that is 
 - Current-head route refinements now bias glass-from-scratch, cabin
   weatherproofing, and broad house-building prompts away from generic or
   adjacent drift candidates, with focused route-output policy coverage.
+- Saved-tab semantics are current-guide scoped: the tab stores whole guides by
+  normalized `guide_id`, orders newly saved or re-saved guides first, caps the
+  saved list at 12, and loads each saved entry through `loadGuideById`. It does
+  not save sections, answer threads, or per-turn thread state. Existing proof:
+  `android-app/app/src/test/java/com/senku/mobile/PinnedGuideStoreTest.java`
+  covers normalization, dedupe, newest-first movement, and cap behavior;
+  `MainActivity.refreshPinnedGuidesAsync()` shows the saved tab resolving the
+  stored IDs as full guide records.
 
 ## Remaining Next Slices
 

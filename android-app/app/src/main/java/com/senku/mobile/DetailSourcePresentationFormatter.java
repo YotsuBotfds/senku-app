@@ -261,9 +261,10 @@ final class DetailSourcePresentationFormatter {
         SpannableStringBuilder builder = new SpannableStringBuilder(
             buildMaterialChipPlainLabel(index, material)
         );
-        int markerEnd = builder.toString().indexOf(':');
-        if (markerEnd >= 0) {
-            int spanEnd = markerEnd;
+        String chipText = builder.toString();
+        int markerEnd = chipText.indexOf(':');
+        int spanEnd = markerEnd >= 0 ? markerEnd + 1 : chipText.length();
+        if (spanEnd > 0) {
             builder.setSpan(new StyleSpan(Typeface.BOLD), 0, spanEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             builder.setSpan(new TypefaceSpan("monospace"), 0, spanEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             builder.setSpan(new RelativeSizeSpan(0.9f), 0, spanEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
@@ -296,7 +297,7 @@ final class DetailSourcePresentationFormatter {
         String label = safe(material).trim();
         String fallback = safe(fallbackMaterial).trim();
         String materialLabel = label.isEmpty() ? (fallback.isEmpty() ? "material item" : fallback) : label;
-        return buildMaterialChipPlainLabel(index, materialLabel) + ". Long press to copy.";
+        return buildMaterialChipPlainLabel(index, materialLabel) + ". Material chip. Tap to focus; long press to copy.";
     }
 
     String buildSourceSummary(List<String> sourceLabels) {

@@ -19,10 +19,22 @@ class DockedComposerTouchTargetTokenTest {
 
     @Test
     fun addActionIsExplicitlyDisabledWhenNoProductionAddActionExists() {
-        assertFalse(DockedComposerTouchTargetTokens.ADD_ACTION_ENABLED)
+        val state = DockedComposerAddActionPolicy.resolve(addActionAvailable = false)
+
+        assertFalse(state.enabled)
         assertEquals(
             "Add action unavailable",
-            DockedComposerTouchTargetTokens.ADD_ACTION_DISABLED_CONTENT_DESCRIPTION,
+            state.contentDescription,
         )
+        assertEquals(DockedComposerTouchTargetTokens.ADD_ACTION_DISABLED_ALPHA, state.contentAlpha, 0.0f)
+    }
+
+    @Test
+    fun addActionPolicyNamesEnabledStateWhenActionExists() {
+        val state = DockedComposerAddActionPolicy.resolve(addActionAvailable = true)
+
+        assertTrue(state.enabled)
+        assertEquals("Add action", state.contentDescription)
+        assertEquals(DockedComposerTouchTargetTokens.ADD_ACTION_ENABLED_ALPHA, state.contentAlpha, 0.0f)
     }
 }

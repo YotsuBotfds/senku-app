@@ -654,19 +654,19 @@ public final class DetailSourcePresentationFormatterTest {
             "Material 01",
             DetailSourcePresentationFormatter.buildMaterialChipPlainLabel(-4, " ")
         );
-        assertFalse(
-            DetailSourcePresentationFormatter.buildMaterialChipPlainLabel(0, "Bark").startsWith("[01]")
+        assertTrue(
+            DetailSourcePresentationFormatter.buildMaterialChipPlainLabel(0, "Bark").startsWith("Material 01:")
         );
     }
 
     @Test
     public void materialChipContentDescriptionIncludesActionAffordance() {
         assertEquals(
-            "Material 01: Bark. Long press to copy.",
+            "Material 01: Bark. Material chip. Tap to focus; long press to copy.",
             DetailSourcePresentationFormatter.buildMaterialChipContentDescriptionText(0, " Bark ", "materials in play")
         );
         assertEquals(
-            "Material 02: materials in play. Long press to copy.",
+            "Material 02: materials in play. Material chip. Tap to focus; long press to copy.",
             DetailSourcePresentationFormatter.buildMaterialChipContentDescriptionText(1, " ", "materials in play")
         );
     }

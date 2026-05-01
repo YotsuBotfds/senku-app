@@ -2128,6 +2128,67 @@ public final class PromptHarnessSmokeTest {
     }
 
     @Test
+    public void externalReviewRepresentativeAskUsesRealPackagedRetrievalSources() {
+        Bundle args = InstrumentationRegistry.getArguments();
+        boolean hostEnabled = parseBooleanArg(args, "hostInferenceEnabled");
+        String hostUrl = safe(args.getString("hostInferenceUrl"));
+        String hostModel = safe(args.getString("hostInferenceModel"));
+        String query = "how do i make soap from animal fat and ash";
+        String[] expectedPrimaryGuideIds = new String[] {"GD-129", "GD-572", "GD-122"};
+
+        Assume.assumeTrue("host inference smoke disabled", hostEnabled);
+        Assume.assumeTrue("host inference url missing", !hostUrl.isEmpty());
+        Assume.assumeTrue("host inference endpoint unreachable: " + hostUrl, isHostReachable(hostUrl));
+
+        Intent intent = productReviewMainActivityIntent();
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        intent.putExtra(HostInferenceConfig.EXTRA_HOST_INFERENCE_ENABLED, true);
+        intent.putExtra(HostInferenceConfig.EXTRA_HOST_INFERENCE_URL, hostUrl);
+        if (!hostModel.isEmpty()) {
+            intent.putExtra(HostInferenceConfig.EXTRA_HOST_INFERENCE_MODEL, hostModel);
+        }
+
+        ActivityScenario<MainActivity> scenario = ActivityScenario.launch(intent);
+        try {
+            awaitHarnessIdle();
+            submitSearchFromResumedActivity(query, true);
+
+            assertHostAskDetailSettledAfterHandoff(120_000L, false);
+            assertGeneratedTrustSpineSettled(scenario);
+
+            InstrumentationRegistry.getInstrumentation().runOnMainSync(() -> {
+                Activity activity = getResumedActivityOnMainThread();
+                Assert.assertNotNull("external-review representative answer detail should be resumed", activity);
+                DetailSettleSignals signals = collectDetailSettleSignals(activity);
+                Assert.assertTrue(
+                    "external-review representative query should land in answer mode; signals="
+                        + describeDetailSignals(signals),
+                    signals.answerMode
+                );
+                Assert.assertFalse(
+                    "external-review representative query should prove real retrieval/generation, not deterministic policy; signals="
+                        + describeDetailSignals(signals),
+                    signals.deterministicRoute
+                );
+                Assert.assertTrue(
+                    "external-review representative answer should expose a settled body; signals="
+                        + describeDetailSignals(signals),
+                    safe(signals.bodyText).trim().length() >= 40
+                );
+                Assert.assertTrue(
+                    "external-review representative answer should cite one of the expected packaged guide owners "
+                        + String.join(", ", expectedPrimaryGuideIds)
+                        + "; signals=" + describeDetailSignals(signals),
+                    detailSourcesContainAnyGuideId(activity, expectedPrimaryGuideIds)
+                );
+            });
+            captureUiState("external_review_real_packaged_soap_ask");
+        } finally {
+            closeScenarioLeniently(scenario);
+        }
+    }
+
+    @Test
     public void hostAskProbeWaitsForSettledDetailActivityAfterMainHandoff() {
         Bundle args = InstrumentationRegistry.getArguments();
         boolean hostEnabled = "true".equalsIgnoreCase(safe(args.getString("hostInferenceEnabled")).trim());
@@ -7239,6 +7300,29 @@ public final class PromptHarnessSmokeTest {
         );
     }
 
+    private boolean detailSourcesContainAnyGuideId(Activity activity, String... expectedGuideIds) {
+        if (activity == null || expectedGuideIds == null || expectedGuideIds.length == 0) {
+            return false;
+        }
+        ArrayList<String> expected = new ArrayList<>();
+        for (String guideId : expectedGuideIds) {
+            String normalized = safe(guideId).trim().toLowerCase(Locale.US);
+            if (!normalized.isEmpty()) {
+                expected.add(normalized);
+            }
+        }
+        if (expected.isEmpty()) {
+            return false;
+        }
+        for (Object source : asCollection(readPrivateField(activity, "currentSources"))) {
+            String guideId = readPrivateStringField(source, "guideId").trim().toLowerCase(Locale.US);
+            if (expected.contains(guideId)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     private DetailSettleSignals collectDetailSettleSignals(Activity activity) {
         DetailSettleSignals signals = new DetailSettleSignals();
         if (activity == null) {
@@ -8124,7 +8208,7 @@ public final class PromptHarnessSmokeTest {
         String chipDescription = safe(String.valueOf(firstChip.getContentDescription()));
         Assert.assertTrue(
             "material chips should expose the long-press copy affordance to accessibility",
-            chipDescription.contains("Long press to copy")
+            chipDescription.toLowerCase(Locale.US).contains("long press to copy")
         );
     }
 

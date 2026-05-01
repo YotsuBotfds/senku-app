@@ -1647,6 +1647,28 @@ public final class PackRepository implements AutoCloseable {
             );
             score += markerScore(
                 text,
+                125,
+                "fire lay", "fire lays", "fire layout", "teepee fire", "log cabin fire",
+                "platform fire", "upside-down fire", "feather stick", "featherstick",
+                "tinder bundle"
+            );
+            score += markerScore(
+                text,
+                120,
+                "wet fire", "fire in wet conditions", "wet-weather fire", "wet weather fire",
+                "dry inner wood", "wet wood", "dry tinder", "keep tinder dry",
+                "protect tinder", "waterproofing", "weatherproofing", "rainproofing",
+                "material protection", "dry storage", "shelter the flame", "windbreak"
+            );
+            score += markerScore(
+                text,
+                105,
+                "emergency shelter", "primitive shelter", "shelter construction",
+                "tarp shelter", "rain shelter", "debris hut", "lean-to", "lean to",
+                "a-frame shelter"
+            );
+            score += markerScore(
+                text,
                 95,
                 "survival basics", "first 72 hours", "temperate forest survival",
                 "winter survival", "primitive technology"
@@ -1664,14 +1686,27 @@ public final class PackRepository implements AutoCloseable {
                 "agriculture", "gardening", "animal husbandry", "veterinary",
                 "livestock", "breeding", "pasture", "zoology", "butchering"
             );
+            score -= markerScore(
+                text,
+                65,
+                "catalog", "taxonomy", "field guide", "archaeological", "ancient techniques"
+            );
             score -= markerScore(text, 70, "black powder", "blasting", "weapons", "martial arts");
         } else if (isSurvivalWorkflow(anchorText)) {
             score += markerScore(
                 text,
                 110,
-                "fire by friction", "fire-starting", "water purification", "water storage",
+                "fire by friction", "fire-starting", "wet fire", "fire in wet conditions",
+                "water purification", "water storage",
                 "primitive shelter", "shelter construction", "go-bag", "search rescue",
                 "night navigation", "quick reference", "winter survival", "fire suppression"
+            );
+            score += markerScore(
+                text,
+                85,
+                "emergency shelter", "tarp shelter", "rain shelter", "debris hut",
+                "lean-to", "lean to", "a-frame shelter", "waterproofing",
+                "weatherproofing", "dry storage", "material protection"
             );
             score += markerScore(text, 55, "first aid", "triage", "disaster", "family emergency");
             score -= markerScore(
@@ -1680,6 +1715,7 @@ public final class PackRepository implements AutoCloseable {
                 "agriculture", "gardening", "animal husbandry", "veterinary",
                 "livestock", "breeding", "pasture", "zoology"
             );
+            score -= markerScore(text, 55, "catalog", "taxonomy", "field guide", "archaeological");
             score -= markerScore(text, 45, "weapons", "martial arts", "butchering", "trapping");
         }
 
@@ -1697,12 +1733,18 @@ public final class PackRepository implements AutoCloseable {
 
     private static boolean isFireStartingWorkflow(String text) {
         return text.contains("gd-343")
+            || text.contains("gd-027")
             || text.contains("fire by friction")
             || text.contains("friction fire")
             || text.contains("fire-starting")
             || text.contains("fire starting")
+            || text.contains("wet fire")
+            || text.contains("fire in wet conditions")
+            || text.contains("wet-weather fire")
+            || text.contains("wet weather fire")
             || text.contains("bow drill")
-            || text.contains("hand drill");
+            || text.contains("hand drill")
+            || text.contains("tinder");
     }
 
     private static boolean isSurvivalWorkflow(String text) {

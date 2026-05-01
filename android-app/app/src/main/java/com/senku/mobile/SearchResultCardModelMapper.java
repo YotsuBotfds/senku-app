@@ -319,6 +319,28 @@ public final class SearchResultCardModelMapper {
         return false;
     }
 
+    static String buildLinkedGuideAvailableDescriptionForTest(String actionLabel) {
+        return buildLinkedGuideAvailableDescription(actionLabel);
+    }
+
+    static String buildLinkedGuideAvailableDescription(String actionLabel) {
+        String label = safe(actionLabel).trim();
+        return label.isEmpty()
+            ? "Guide connection available"
+            : "Guide connection available: " + label;
+    }
+
+    static String buildLinkedGuideOpenDescriptionForTest(String actionLabel) {
+        return buildLinkedGuideOpenDescription(actionLabel);
+    }
+
+    static String buildLinkedGuideOpenDescription(String actionLabel) {
+        String label = safe(actionLabel).trim();
+        return label.isEmpty()
+            ? "Open cross-reference guide"
+            : "Open cross-reference guide: " + label;
+    }
+
     static String buildCompactRowSnippet(String rawSnippet, String sectionHeading, int maxLen) {
         String cleaned = cleanDisplayText(rawSnippet, 0);
         if (cleaned.isEmpty()) {

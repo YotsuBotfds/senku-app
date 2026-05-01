@@ -4046,7 +4046,15 @@ public final class DetailActivity extends AppCompatActivity {
             return "";
         }
         String guideId = resolveDisplayGuideId();
+        boolean compactPhoneAnswerChrome = isCompactPortraitPhoneLayout() || isLandscapePhoneLayout();
         if (isCurrentEmergencySurfaceEligible()) {
+            if (shouldSuppressDockedComposerContextHintForTopChrome(
+                answerMode,
+                compactPhoneAnswerChrome,
+                true
+            )) {
+                return "";
+            }
             return buildEmergencyDockedComposerContextHint(
                 reviewedCardMetadataBridge.current(),
                 currentSources,
@@ -4059,7 +4067,7 @@ public final class DetailActivity extends AppCompatActivity {
                 currentAnswerThreadTurnCount(),
                 shouldSuppressDockedComposerContextHintForTopChrome(
                     answerMode,
-                    isCompactPortraitPhoneLayout() || isLandscapePhoneLayout(),
+                    compactPhoneAnswerChrome,
                     false
                 )
             );
@@ -4068,7 +4076,7 @@ public final class DetailActivity extends AppCompatActivity {
             guideId,
             shouldSuppressDockedComposerContextHintForTopChrome(
                 answerMode,
-                isCompactPortraitPhoneLayout() || isLandscapePhoneLayout(),
+                compactPhoneAnswerChrome,
                 false
             )
         );
@@ -4158,7 +4166,7 @@ public final class DetailActivity extends AppCompatActivity {
         boolean phoneTopChromeCarriesContext,
         boolean emergencySurface
     ) {
-        return answerMode && phoneTopChromeCarriesContext && !emergencySurface;
+        return answerMode && phoneTopChromeCarriesContext;
     }
 
     static boolean shouldRequestLandscapeDockedComposerFocus(

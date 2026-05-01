@@ -161,6 +161,26 @@ public final class SearchResultCardModelMapperTest {
         assertFalse(SearchResultCardModelMapper.shouldShowLinkedGuidePreviewLineForTest());
     }
 
+    @Test
+    public void linkedGuideHandoffDescriptionsUseConnectionLanguage() {
+        assertEquals(
+            "Guide connection available: GD-214 - Water Storage",
+            SearchResultCardModelMapper.buildLinkedGuideAvailableDescriptionForTest("GD-214 - Water Storage")
+        );
+        assertEquals(
+            "Open cross-reference guide: GD-214 - Water Storage",
+            SearchResultCardModelMapper.buildLinkedGuideOpenDescriptionForTest("GD-214 - Water Storage")
+        );
+        assertEquals(
+            "Guide connection available",
+            SearchResultCardModelMapper.buildLinkedGuideAvailableDescriptionForTest(" ")
+        );
+        assertEquals(
+            "Open cross-reference guide",
+            SearchResultCardModelMapper.buildLinkedGuideOpenDescriptionForTest(null)
+        );
+    }
+
     private static void assertNormalizedContains(String actual, String expectedToken) {
         assertTrue(
             "Expected <" + actual + "> to contain <" + expectedToken + ">",

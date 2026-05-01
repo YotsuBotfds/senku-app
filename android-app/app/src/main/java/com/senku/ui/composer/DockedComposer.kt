@@ -27,6 +27,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
@@ -52,7 +53,33 @@ object DockedComposerTouchTargetTokens {
     const val ADD_ACTION_VISUAL_SIZE_DP = 32
     const val ADD_ACTION_PADDING_DP = 8
     const val ADD_ACTION_DISABLED_CONTENT_DESCRIPTION = "Add action unavailable"
-    const val ADD_ACTION_ENABLED = false
+    const val ADD_ACTION_ENABLED_CONTENT_DESCRIPTION = "Add action"
+    const val ADD_ACTION_DISABLED_ALPHA = 0.44f
+    const val ADD_ACTION_ENABLED_ALPHA = 1.0f
+}
+
+data class DockedComposerAddActionState(
+    val enabled: Boolean,
+    val contentDescription: String,
+    val contentAlpha: Float,
+)
+
+object DockedComposerAddActionPolicy {
+    fun resolve(addActionAvailable: Boolean): DockedComposerAddActionState {
+        return if (addActionAvailable) {
+            DockedComposerAddActionState(
+                enabled = true,
+                contentDescription = DockedComposerTouchTargetTokens.ADD_ACTION_ENABLED_CONTENT_DESCRIPTION,
+                contentAlpha = DockedComposerTouchTargetTokens.ADD_ACTION_ENABLED_ALPHA,
+            )
+        } else {
+            DockedComposerAddActionState(
+                enabled = false,
+                contentDescription = DockedComposerTouchTargetTokens.ADD_ACTION_DISABLED_CONTENT_DESCRIPTION,
+                contentAlpha = DockedComposerTouchTargetTokens.ADD_ACTION_DISABLED_ALPHA,
+            )
+        }
+    }
 }
 
 data class DockedComposerModel @JvmOverloads constructor(
@@ -160,6 +187,7 @@ fun DockedComposer(
     val actionTouchTargetSize = DockedComposerTouchTargetTokens.ADD_ACTION_TOUCH_TARGET_DP.dp
     val actionVisualSize = DockedComposerTouchTargetTokens.ADD_ACTION_VISUAL_SIZE_DP.dp
     val actionPadding = DockedComposerTouchTargetTokens.ADD_ACTION_PADDING_DP.dp
+    val addActionState = DockedComposerAddActionPolicy.resolve(addActionAvailable = false)
     val sendVerticalPadding = if (landscapePhoneBudgeted) 7.dp else 6.dp
     val hasSendText = model.enabled && model.text.trim().isNotEmpty()
     val contextHint = model.contextHint.trim()
@@ -228,13 +256,14 @@ fun DockedComposer(
                 modifier = Modifier
                     .size(actionTouchTargetSize)
                     .semantics {
-                        contentDescription =
-                            DockedComposerTouchTargetTokens.ADD_ACTION_DISABLED_CONTENT_DESCRIPTION
-                        disabled()
+                        contentDescription = addActionState.contentDescription
+                        if (!addActionState.enabled) {
+                            disabled()
+                        }
                     }
                     .clip(CircleShape)
                     .clickable(
-                        enabled = DockedComposerTouchTargetTokens.ADD_ACTION_ENABLED,
+                        enabled = addActionState.enabled,
                         role = Role.Button,
                         onClick = { },
                     )
@@ -242,7 +271,9 @@ fun DockedComposer(
                 contentAlignment = Alignment.Center,
             ) {
                 Surface(
-                    modifier = Modifier.size(actionVisualSize),
+                    modifier = Modifier
+                        .size(actionVisualSize)
+                        .alpha(addActionState.contentAlpha),
                     color = colors.bg0,
                     contentColor = colors.ink2,
                     shape = CircleShape,

@@ -102,6 +102,42 @@ public final class DetailActivityPhoneGuideChromeTest {
     }
 
     @Test
+    public void phoneAnswerOverflowVisibilityAlwaysHasClickableMenuActions() {
+        assertOverflowVisibilityMatchesActions(true, true, true, "GD-132");
+        assertOverflowVisibilityMatchesActions(true, true, false, "GD-132");
+        assertOverflowVisibilityMatchesActions(true, true, true, "");
+        assertOverflowVisibilityMatchesActions(true, false, true, "GD-132");
+        assertOverflowVisibilityMatchesActions(false, true, true, "GD-132");
+    }
+
+    @Test
+    public void visiblePhoneAnswerOverflowMenuItemsHaveStableClickTargets() {
+        assertEquals(
+            DetailOverflowPolicy.SAVE_GUIDE_MENU_ID,
+            DetailOverflowPolicy.menuId(DetailOverflowPolicy.Action.SAVE_GUIDE)
+        );
+        assertEquals(
+            DetailOverflowPolicy.HOME_MENU_ID,
+            DetailOverflowPolicy.menuId(DetailOverflowPolicy.Action.HOME)
+        );
+        assertTrue(DetailOverflowPolicy.SAVE_GUIDE_MENU_ID > 0);
+        assertTrue(DetailOverflowPolicy.HOME_MENU_ID > 0);
+        assertFalse(DetailOverflowPolicy.SAVE_GUIDE_MENU_ID == DetailOverflowPolicy.HOME_MENU_ID);
+    }
+
+    @Test
+    public void answerAndEmergencyScreensDoNotExposeEmptyOverflowGlyphs() {
+        assertFalse(DetailActivity.shouldShowDetailOverflowAction(true, true, true, ""));
+        assertEquals(
+            Collections.emptyList(),
+            DetailActivity.detailOverflowActions(true, true, true, "")
+        );
+        assertFalse(DetailActivity.shouldShowTabletEmergencyHomeChromeAction());
+        assertTrue(DetailActivity.shouldShowTabletEmergencyAppRailOverlay(true, true, true));
+        assertFalse(DetailActivity.shouldShowTabletEmergencyAppRailOverlay(true, true, false));
+    }
+
+    @Test
     public void productReviewModeRequiresAuthorizedDetailIntentExtra() {
         assertFalse(DetailActivity.resolveProductReviewModeForTest(false, false));
         assertFalse(DetailActivity.resolveProductReviewModeForTest(false, true));
@@ -178,6 +214,29 @@ public final class DetailActivityPhoneGuideChromeTest {
         assertTrue(
             DetailActivity.resolvePhoneGuideBodyShellHorizontalPaddingDp(true, false) >
                 DetailActivity.resolvePhoneGuideBodyShellHorizontalPaddingDp(true, true)
+        );
+    }
+
+    private static void assertOverflowVisibilityMatchesActions(
+        boolean answerMode,
+        boolean phoneXmlDetailLayoutActive,
+        boolean compactPortraitPhone,
+        String pinnableGuideId
+    ) {
+        boolean visible = DetailActivity.shouldShowDetailOverflowAction(
+            answerMode,
+            phoneXmlDetailLayoutActive,
+            compactPortraitPhone,
+            pinnableGuideId
+        );
+        assertEquals(
+            visible,
+            !DetailActivity.detailOverflowActions(
+                answerMode,
+                phoneXmlDetailLayoutActive,
+                compactPortraitPhone,
+                pinnableGuideId
+            ).isEmpty()
         );
     }
 }

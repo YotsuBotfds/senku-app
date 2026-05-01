@@ -216,7 +216,7 @@ public final class DetailFollowupLandscapeComposerTest {
             DetailActivity.buildAnswerDockedComposerContextHint("GD-345", true)
         );
         assertTrue(DetailActivity.shouldSuppressDockedComposerContextHintForTopChrome(true, true, false));
-        assertFalse(DetailActivity.shouldSuppressDockedComposerContextHintForTopChrome(true, true, true));
+        assertTrue(DetailActivity.shouldSuppressDockedComposerContextHintForTopChrome(true, true, true));
         assertFalse(DetailActivity.shouldSuppressDockedComposerContextHintForTopChrome(true, false, false));
         assertFalse(DetailActivity.shouldSuppressDockedComposerContextHintForTopChrome(false, true, false));
     }

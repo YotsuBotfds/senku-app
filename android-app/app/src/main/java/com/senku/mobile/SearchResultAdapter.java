@@ -890,17 +890,11 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
     }
 
     static String buildLinkedGuideAvailableDescriptionForTest(String actionLabel) {
-        String label = safe(actionLabel).trim();
-        return label.isEmpty()
-            ? "Guide connection available"
-            : "Guide connection available: " + label;
+        return SearchResultCardModelMapper.buildLinkedGuideAvailableDescriptionForTest(actionLabel);
     }
 
     static String buildLinkedGuideOpenDescriptionForTest(String actionLabel) {
-        String label = safe(actionLabel).trim();
-        return label.isEmpty()
-            ? "Open cross-reference guide"
-            : "Open cross-reference guide: " + label;
+        return SearchResultCardModelMapper.buildLinkedGuideOpenDescriptionForTest(actionLabel);
     }
 
     private void bindLinkedGuideAction(View view, SearchResult result, LinkedGuidePreview preview) {
