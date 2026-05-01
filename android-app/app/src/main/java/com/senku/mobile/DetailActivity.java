@@ -3350,64 +3350,20 @@ public final class DetailActivity extends AppCompatActivity {
     }
 
     private AnchorState buildTabletAnchorState(SearchResult activeSource) {
-        String sourceKey = buildSourceSelectionKey(activeSource);
-        String guideId = safe(activeSource == null ? null : activeSource.guideId).trim();
-        String title = safe(activeSource == null ? null : activeSource.title).trim();
-        String section = safe(activeSource == null ? null : activeSource.sectionHeading).trim();
-        if (!answerMode) {
-            String handoffAnchorLabel = safe(currentGuideModeAnchorLabel).trim();
-            String handoffGuideId = extractGuideIdFromLabel(handoffAnchorLabel);
-            if (!handoffGuideId.isEmpty() && !handoffGuideId.equalsIgnoreCase(guideId)) {
-                return new AnchorState(
-                    handoffGuideId.toLowerCase(Locale.US),
-                    handoffGuideId,
-                    stripGuideIdFromLabel(handoffAnchorLabel, handoffGuideId),
-                    "",
-                    "",
-                    true
-                );
-            }
-        }
-        if (!sourceKey.isEmpty() && sourceKey.equals(tabletEvidenceSelectionKey)) {
-            if (!safe(tabletEvidenceAnchorId).trim().isEmpty()) {
-                guideId = safe(tabletEvidenceAnchorId).trim();
-            }
-            if (!safe(tabletEvidenceAnchorTitle).trim().isEmpty()) {
-                title = safe(tabletEvidenceAnchorTitle).trim();
-            }
-            if (!safe(tabletEvidenceAnchorSection).trim().isEmpty()) {
-                section = safe(tabletEvidenceAnchorSection).trim();
-            }
-        }
-        return new AnchorState(
-            sourceKey,
-            guideId,
-            title,
-            section,
-            sourceKey.equals(tabletEvidenceSelectionKey) ? safe(tabletEvidenceAnchorSnippet).trim() : "",
-            !guideId.isEmpty() || !title.isEmpty()
+        return DetailTabletStateBuilder.buildAnchorState(
+            answerMode,
+            currentGuideModeAnchorLabel,
+            activeSource,
+            tabletEvidenceSelectionKey,
+            tabletEvidenceAnchorId,
+            tabletEvidenceAnchorTitle,
+            tabletEvidenceAnchorSection,
+            tabletEvidenceAnchorSnippet
         );
     }
 
     private ArrayList<XRefState> buildTabletXRefStates() {
         return DetailTabletStateBuilder.buildXRefStates(tabletEvidenceXRefs);
-    }
-
-    private static String extractGuideIdFromLabel(String label) {
-        java.util.regex.Matcher matcher = java.util.regex.Pattern
-            .compile("(?i)\\bGD-\\d+\\b")
-            .matcher(safe(label));
-        return matcher.find() ? matcher.group().toUpperCase(Locale.US) : "";
-    }
-
-    private static String stripGuideIdFromLabel(String label, String guideId) {
-        String cleaned = safe(label).trim();
-        String id = safe(guideId).trim();
-        if (id.isEmpty()) {
-            return cleaned;
-        }
-        cleaned = cleaned.replaceFirst("(?i)^\\s*" + java.util.regex.Pattern.quote(id) + "\\s*(?:\\u00b7|-|,|:)?\\s*", "");
-        return cleaned.trim();
     }
 
     private String buildTabletGuideId(SearchResult activeSource, boolean allowFallback) {

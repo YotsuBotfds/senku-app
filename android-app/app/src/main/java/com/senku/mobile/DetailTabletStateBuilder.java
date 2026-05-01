@@ -1,5 +1,6 @@
 package com.senku.mobile;
 
+import com.senku.ui.tablet.AnchorState;
 import com.senku.ui.tablet.SourceState;
 import com.senku.ui.tablet.ThreadTurnState;
 import com.senku.ui.tablet.XRefState;
@@ -7,6 +8,7 @@ import com.senku.ui.tablet.XRefState;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 
 final class DetailTabletStateBuilder {
     private DetailTabletStateBuilder() {
@@ -93,6 +95,72 @@ final class DetailTabletStateBuilder {
             activeSource,
             sources
         );
+    }
+
+    static AnchorState buildAnchorState(
+        boolean answerMode,
+        String guideModeAnchorLabel,
+        SearchResult activeSource,
+        String evidenceSelectionKey,
+        String evidenceAnchorId,
+        String evidenceAnchorTitle,
+        String evidenceAnchorSection,
+        String evidenceAnchorSnippet
+    ) {
+        String sourceKey = buildSourceSelectionKey(activeSource);
+        String guideId = safe(activeSource == null ? null : activeSource.guideId).trim();
+        String title = safe(activeSource == null ? null : activeSource.title).trim();
+        String section = safe(activeSource == null ? null : activeSource.sectionHeading).trim();
+        if (!answerMode) {
+            String handoffAnchorLabel = safe(guideModeAnchorLabel).trim();
+            String handoffGuideId = extractGuideIdFromLabel(handoffAnchorLabel);
+            if (!handoffGuideId.isEmpty() && !handoffGuideId.equalsIgnoreCase(guideId)) {
+                return new AnchorState(
+                    handoffGuideId.toLowerCase(Locale.US),
+                    handoffGuideId,
+                    stripGuideIdFromLabel(handoffAnchorLabel, handoffGuideId),
+                    "",
+                    "",
+                    true
+                );
+            }
+        }
+        if (!sourceKey.isEmpty() && sourceKey.equals(evidenceSelectionKey)) {
+            if (!safe(evidenceAnchorId).trim().isEmpty()) {
+                guideId = safe(evidenceAnchorId).trim();
+            }
+            if (!safe(evidenceAnchorTitle).trim().isEmpty()) {
+                title = safe(evidenceAnchorTitle).trim();
+            }
+            if (!safe(evidenceAnchorSection).trim().isEmpty()) {
+                section = safe(evidenceAnchorSection).trim();
+            }
+        }
+        return new AnchorState(
+            sourceKey,
+            guideId,
+            title,
+            section,
+            sourceKey.equals(evidenceSelectionKey) ? safe(evidenceAnchorSnippet).trim() : "",
+            !guideId.isEmpty() || !title.isEmpty()
+        );
+    }
+
+    private static String extractGuideIdFromLabel(String label) {
+        java.util.regex.Matcher matcher = java.util.regex.Pattern
+            .compile("(?i)\\bGD-\\d+\\b")
+            .matcher(safe(label));
+        return matcher.find() ? matcher.group().toUpperCase(Locale.US) : "";
+    }
+
+    private static String stripGuideIdFromLabel(String label, String guideId) {
+        String cleaned = safe(label).trim();
+        String id = safe(guideId).trim();
+        if (id.isEmpty()) {
+            return cleaned;
+        }
+        cleaned = cleaned.replaceFirst("(?i)^\\s*" + java.util.regex.Pattern.quote(id) + "\\s*(?:\\u00b7|-|,|:)?\\s*", "");
+        return cleaned.trim();
     }
 
     private static String buildSourceSelectionKey(SearchResult source) {

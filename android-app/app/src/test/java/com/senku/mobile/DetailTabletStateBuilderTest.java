@@ -9,6 +9,7 @@ import static org.junit.Assert.assertTrue;
 import com.senku.ui.answer.AnswerContent;
 import com.senku.ui.answer.AnswerContentFactory;
 import com.senku.ui.answer.Evidence;
+import com.senku.ui.tablet.AnchorState;
 import com.senku.ui.tablet.SourceState;
 import com.senku.ui.tablet.Status;
 import com.senku.ui.tablet.ThreadTurnState;
@@ -291,6 +292,29 @@ public final class DetailTabletStateBuilderTest {
         );
 
         assertNull(owner);
+    }
+
+    @Test
+    public void anchorStateUsesEvidenceProjectionWhenSelectionMatches() {
+        SearchResult activeSource = source(" GD-220 ", " Abrasives Manufacturing ", " Materials ");
+
+        AnchorState state = DetailTabletStateBuilder.buildAnchorState(
+            true,
+            "",
+            activeSource,
+            "gd-220|materials|abrasives manufacturing",
+            " GD-220A ",
+            " Loaded abrasives guide ",
+            " Loaded section ",
+            " Use the finer grit last. "
+        );
+
+        assertEquals("gd-220|materials|abrasives manufacturing", state.getKey());
+        assertEquals("GD-220A", state.getId());
+        assertEquals("Loaded abrasives guide", state.getTitle());
+        assertEquals("Loaded section", state.getSection());
+        assertEquals("Use the finer grit last.", state.getSnippet());
+        assertTrue(state.getHasSource());
     }
 
     private static SearchResult source(String guideId, String title, String section) {
