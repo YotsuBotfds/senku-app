@@ -9,11 +9,11 @@ import static com.senku.ui.search.SearchResultCardKt.continueConversationContent
 import static com.senku.ui.search.SearchResultCardKt.laneLabelForRetrievalMode;
 import static com.senku.ui.search.SearchResultCardKt.metadataLineForSearchResultCard;
 
-public final class SearchResultCardModelMapper {
+final class SearchResultCardModelMapper {
     private SearchResultCardModelMapper() {
     }
 
-    public static SearchResultCardModel map(SearchResult result, int position, Options options) {
+    static SearchResultCardModel map(SearchResult result, int position, Options options) {
         Options safeOptions = options == null ? Options.defaults() : options;
         String title = cleanDisplayText(
             result == null ? null : result.title,
@@ -44,16 +44,16 @@ public final class SearchResultCardModelMapper {
         );
     }
 
-    public static final class Options {
-        public final boolean richTabletCard;
-        public final boolean landscapePhoneCard;
-        public final boolean smallPhonePortraitCard;
-        public final int laneColorArgb;
-        public final boolean showContinueThreadChip;
-        public final String linkedGuideLabel;
-        public final String linkedGuideContentDescription;
+    static final class Options {
+        final boolean richTabletCard;
+        final boolean landscapePhoneCard;
+        final boolean smallPhonePortraitCard;
+        final int laneColorArgb;
+        final boolean showContinueThreadChip;
+        final String linkedGuideLabel;
+        final String linkedGuideContentDescription;
 
-        public Options(
+        Options(
             boolean richTabletCard,
             boolean landscapePhoneCard,
             boolean smallPhonePortraitCard,
@@ -71,7 +71,7 @@ public final class SearchResultCardModelMapper {
             this.linkedGuideContentDescription = linkedGuideContentDescription;
         }
 
-        public static Options defaults() {
+        static Options defaults() {
             return new Options(false, false, false, 0, false, null, null);
         }
     }
