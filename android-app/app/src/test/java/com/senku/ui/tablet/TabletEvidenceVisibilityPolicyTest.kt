@@ -29,6 +29,153 @@ class TabletEvidenceVisibilityPolicyTest {
     }
 
     @Test
+    fun tabletEvidenceRailPresentationPinsAnswerVisibilityAndDensity() {
+        val hidden = tabletEvidenceRailPresentation(
+            TabletEvidenceRailVisibilityInput(
+                detailMode = TabletDetailMode.Answer,
+                isLandscape = true,
+                guideMode = false,
+                evidenceExpanded = false,
+                answerSourceCount = 0,
+                threadSourceCount = 0,
+            )
+        )
+        val landscape = tabletEvidenceRailPresentation(
+            TabletEvidenceRailVisibilityInput(
+                detailMode = TabletDetailMode.Answer,
+                isLandscape = true,
+                guideMode = false,
+                evidenceExpanded = false,
+                answerSourceCount = 2,
+                threadSourceCount = 0,
+            )
+        )
+        val portraitExpanded = tabletEvidenceRailPresentation(
+            TabletEvidenceRailVisibilityInput(
+                detailMode = TabletDetailMode.Answer,
+                isLandscape = false,
+                guideMode = false,
+                evidenceExpanded = true,
+                answerSourceCount = 0,
+                threadSourceCount = 0,
+            )
+        )
+
+        assertEquals(TabletEvidenceRailPresentation(false, 0, EvidenceRailDensity.Hidden), hidden)
+        assertEquals(
+            TabletEvidenceRailPresentation(
+                visible = true,
+                widthDp = tabletLandscapeReadingLayoutPolicy().evidenceRailWidthDp,
+                density = EvidenceRailDensity.Full,
+            ),
+            landscape,
+        )
+        assertEquals(
+            TabletEvidenceRailPresentation(
+                visible = true,
+                widthDp = tabletPortraitReadingLayoutPolicy().evidenceRailWidthDp,
+                density = EvidenceRailDensity.Collapsed,
+            ),
+            portraitExpanded,
+        )
+    }
+
+    @Test
+    fun tabletEvidenceRailPresentationPinsThreadSourceRailPolicy() {
+        val hidden = tabletEvidenceRailPresentation(
+            TabletEvidenceRailVisibilityInput(
+                detailMode = TabletDetailMode.Thread,
+                isLandscape = true,
+                guideMode = false,
+                evidenceExpanded = true,
+                answerSourceCount = 3,
+                threadSourceCount = 0,
+            )
+        )
+        val portrait = tabletEvidenceRailPresentation(
+            TabletEvidenceRailVisibilityInput(
+                detailMode = TabletDetailMode.Thread,
+                isLandscape = false,
+                guideMode = false,
+                evidenceExpanded = false,
+                answerSourceCount = 0,
+                threadSourceCount = 2,
+            )
+        )
+        val landscape = tabletEvidenceRailPresentation(
+            TabletEvidenceRailVisibilityInput(
+                detailMode = TabletDetailMode.Thread,
+                isLandscape = true,
+                guideMode = false,
+                evidenceExpanded = false,
+                answerSourceCount = 0,
+                threadSourceCount = 2,
+            )
+        )
+
+        assertEquals(TabletEvidenceRailPresentation(false, 0, EvidenceRailDensity.Hidden), hidden)
+        assertEquals(
+            TabletEvidenceRailPresentation(
+                visible = true,
+                widthDp = tabletThreadEvidenceRailWidthDp(isLandscape = false),
+                density = EvidenceRailDensity.Collapsed,
+            ),
+            portrait,
+        )
+        assertEquals(
+            TabletEvidenceRailPresentation(
+                visible = true,
+                widthDp = tabletThreadEvidenceRailWidthDp(isLandscape = true),
+                density = EvidenceRailDensity.Full,
+            ),
+            landscape,
+        )
+    }
+
+    @Test
+    fun tabletEvidenceRailPresentationPinsGuideReferenceRailPolicy() {
+        val portrait = tabletEvidenceRailPresentation(
+            TabletEvidenceRailVisibilityInput(
+                detailMode = TabletDetailMode.Guide,
+                isLandscape = false,
+                guideMode = true,
+                evidenceExpanded = true,
+                answerSourceCount = 2,
+                threadSourceCount = 2,
+            )
+        )
+        val landscape = tabletEvidenceRailPresentation(
+            TabletEvidenceRailVisibilityInput(
+                detailMode = TabletDetailMode.Guide,
+                isLandscape = true,
+                guideMode = true,
+                evidenceExpanded = false,
+                answerSourceCount = 0,
+                threadSourceCount = 0,
+            )
+        )
+
+        assertEquals(TabletEvidenceRailPresentation(false, 0, EvidenceRailDensity.Hidden), portrait)
+        assertEquals(
+            TabletEvidenceRailPresentation(
+                visible = true,
+                widthDp = tabletGuideReferenceRailWidthDp(isLandscape = true),
+                density = EvidenceRailDensity.Full,
+            ),
+            landscape,
+        )
+    }
+
+    @Test
+    fun tabletStateEvidenceRailPresentationFeedsLegacyVisibilityHelper() {
+        val state = stateWithSources(sourceCount = 3, isLandscape = false)
+        val presentation = tabletEvidenceRailPresentation(state, guideMode = false)
+
+        assertEquals(TabletEvidenceRailPresentation(true, 300, EvidenceRailDensity.Collapsed), presentation)
+        assertEquals(presentation.visible, tabletShouldShowEvidencePane(state, guideMode = false))
+    }
+
+    @Test
     fun tabletPortraitCollapsedEvidencePreviewUsesSnippetWhenAvailable() {
         val previewText = buildCollapsedEvidencePreviewText(
             anchor(

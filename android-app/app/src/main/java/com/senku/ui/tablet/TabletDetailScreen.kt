@@ -1508,8 +1508,7 @@ private fun DetailWorkspace(
                 .weight(1f)
                 .fillMaxWidth(),
         ) {
-            val readingPolicy = tabletReadingLayoutPolicy(state.isLandscape)
-            val showEvidencePane = tabletShouldShowEvidencePane(state, guideMode)
+            val evidenceRail = tabletEvidenceRailPresentation(state, guideMode)
             CenterPane(
                 state = state,
                 onTurnClick = onTurnClick,
@@ -1522,7 +1521,7 @@ private fun DetailWorkspace(
                     .fillMaxHeight(),
             )
 
-            if (showEvidencePane) {
+            if (evidenceRail.visible) {
                 Box(
                     modifier = Modifier
                         .width(1.dp)
@@ -1537,7 +1536,7 @@ private fun DetailWorkspace(
                         reviewDemoMode = state.reviewDemoMode,
                         onSourceClick = onSourceClick,
                         modifier = Modifier
-                            .width(tabletThreadEvidenceRailWidthDp(state.isLandscape).dp)
+                            .width(evidenceRail.widthDp.dp)
                             .fillMaxHeight()
                             .semantics {
                                 paneTitle = evidencePaneTitle
@@ -1552,7 +1551,7 @@ private fun DetailWorkspace(
                         reviewDemoMode = state.reviewDemoMode,
                         onXRefClick = onXRefClick,
                         modifier = Modifier
-                            .width(tabletGuideReferenceRailWidthDp(state.isLandscape).dp)
+                            .width(evidenceRail.widthDp.dp)
                             .fillMaxHeight()
                             .semantics {
                                 paneTitle = evidencePaneTitle
@@ -1564,7 +1563,7 @@ private fun DetailWorkspace(
                     val evidenceGraph = state.resolvedEvidencePaneGraph()
                     Box(
                         modifier = Modifier
-                            .width(readingPolicy.evidenceRailWidthDp.dp)
+                            .width(evidenceRail.widthDp.dp)
                             .fillMaxHeight()
                             .background(colors.bg1)
                             .semantics {
@@ -4058,21 +4057,25 @@ private fun TabletDetailState.hasGuideReaderContext(): Boolean =
         guideModeSummary.isNotBlank() ||
         guideModeAnchorLabel.isNotBlank()
 
+internal fun tabletEvidenceRailPresentation(
+    state: TabletDetailState,
+    guideMode: Boolean,
+): TabletEvidenceRailPresentation =
+    tabletEvidenceRailPresentation(
+        TabletEvidenceRailVisibilityInput(
+            detailMode = state.detailMode,
+            isLandscape = state.isLandscape,
+            guideMode = guideMode,
+            evidenceExpanded = state.evidenceExpanded,
+            answerSourceCount = state.resolvedAnswerSourceCount(),
+            threadSourceCount = state.resolvedVisibleThreadSourceCount(),
+        )
+    )
+
 internal fun tabletShouldShowEvidencePane(
     state: TabletDetailState,
     guideMode: Boolean,
-): Boolean =
-    when {
-        state.isThreadMode() -> tabletShouldShowThreadSourceRail(
-            isLandscape = state.isLandscape,
-            detailMode = state.detailMode,
-            sourceCount = state.resolvedVisibleThreadSourceCount(),
-        )
-        guideMode -> state.isLandscape
-        state.detailMode == TabletDetailMode.Answer ->
-            state.evidenceExpanded || state.resolvedAnswerSourceCount() > 0
-        else -> false
-    }
+): Boolean = tabletEvidenceRailPresentation(state, guideMode).visible
 
 internal fun tabletSourceGraphAnchor(anchor: AnchorState): AnchorState =
     if (anchor.hasSource && anchor.id.isBlank()) {

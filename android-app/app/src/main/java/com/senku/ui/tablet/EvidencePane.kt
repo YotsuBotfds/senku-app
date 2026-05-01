@@ -55,6 +55,21 @@ internal enum class EvidenceRailDensity {
     Hidden,
 }
 
+internal data class TabletEvidenceRailVisibilityInput(
+    val detailMode: TabletDetailMode,
+    val isLandscape: Boolean,
+    val guideMode: Boolean,
+    val evidenceExpanded: Boolean,
+    val answerSourceCount: Int,
+    val threadSourceCount: Int,
+)
+
+internal data class TabletEvidenceRailPresentation(
+    val visible: Boolean,
+    val widthDp: Int,
+    val density: EvidenceRailDensity,
+)
+
 private enum class EvidenceCardDensity {
     Featured,
     Compact,
@@ -85,6 +100,42 @@ internal fun tabletEvidenceVisibilityPolicy(): TabletEvidenceVisibilityPolicy =
         collapsedTitleMaxLines = 2,
         collapsedSnippetMaxLines = 4,
     )
+
+internal fun tabletEvidenceRailPresentation(
+    input: TabletEvidenceRailVisibilityInput,
+): TabletEvidenceRailPresentation {
+    val presentation = when {
+        input.detailMode == TabletDetailMode.Thread ->
+            TabletEvidenceRailPresentation(
+                visible = input.threadSourceCount > 0,
+                widthDp = tabletThreadEvidenceRailWidthDp(input.isLandscape),
+                density = if (input.isLandscape) EvidenceRailDensity.Full else EvidenceRailDensity.Collapsed,
+            )
+        input.guideMode ->
+            TabletEvidenceRailPresentation(
+                visible = input.isLandscape,
+                widthDp = tabletGuideReferenceRailWidthDp(input.isLandscape),
+                density = if (input.isLandscape) EvidenceRailDensity.Full else EvidenceRailDensity.Hidden,
+            )
+        input.detailMode == TabletDetailMode.Answer ->
+            TabletEvidenceRailPresentation(
+                visible = input.evidenceExpanded || input.answerSourceCount > 0,
+                widthDp = tabletReadingLayoutPolicy(input.isLandscape).evidenceRailWidthDp,
+                density = if (input.isLandscape) EvidenceRailDensity.Full else EvidenceRailDensity.Collapsed,
+            )
+        else ->
+            TabletEvidenceRailPresentation(
+                visible = false,
+                widthDp = 0,
+                density = EvidenceRailDensity.Hidden,
+            )
+    }
+    return if (presentation.visible) {
+        presentation
+    } else {
+        presentation.copy(widthDp = 0, density = EvidenceRailDensity.Hidden)
+    }
+}
 
 @Composable
 fun EvidencePane(
