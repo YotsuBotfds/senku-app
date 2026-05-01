@@ -3002,74 +3002,27 @@ public final class MainActivity extends AppCompatActivity {
     }
 
     private MainRouteEffectController.BackEffects mainRouteBackEffects() {
-        return new MainRouteEffectController.BackEffects() {
-            @Override
-            public BottomTabDestination activePhoneTab() {
-                return activePhoneTab;
-            }
+        return MainRouteEffectController.backEffects(
+            () -> activePhoneTab,
+            this::pushPhoneTab,
+            this::applyMainRouteState,
+            this::popPreviousPhoneTab,
+            this::browseGuides,
+            this::isBrowseModeActive,
+            this::updateActionLabels,
+            this::dismissSearchKeyboard,
+            this::ensureBrowseHomeVisible,
+            this::scrollBrowseToTop,
+            this::focusSearchInput,
+            () -> scrollBrowseSectionIntoView(recentThreadsSection),
+            this::prepareSavedGuidesDestination
+        );
+    }
 
-            @Override
-            public void pushPhoneTab(BottomTabDestination destination) {
-                MainActivity.this.pushPhoneTab(destination);
-            }
-
-            @Override
-            public void applyRouteState(MainRouteDecisionHelper.RouteState routeState) {
-                MainActivity.this.applyMainRouteState(routeState);
-            }
-
-            @Override
-            public BottomTabDestination popPreviousPhoneTab() {
-                return MainActivity.this.popPreviousPhoneTab();
-            }
-
-            @Override
-            public void returnToBrowse() {
-                MainActivity.this.browseGuides();
-            }
-
-            @Override
-            public boolean isBrowseModeActive() {
-                return MainActivity.this.isBrowseModeActive();
-            }
-
-            @Override
-            public void updateActionLabels() {
-                MainActivity.this.updateActionLabels();
-            }
-
-            @Override
-            public void dismissSearchKeyboard() {
-                MainActivity.this.dismissSearchKeyboard();
-            }
-
-            @Override
-            public void ensureBrowseHomeVisible() {
-                MainActivity.this.ensureBrowseHomeVisible();
-            }
-
-            @Override
-            public void scrollBrowseToTop() {
-                MainActivity.this.scrollBrowseToTop();
-            }
-
-            @Override
-            public void focusSearchInput() {
-                MainActivity.this.focusSearchInput();
-            }
-
-            @Override
-            public void scrollRecentThreadsIntoView() {
-                MainActivity.this.scrollBrowseSectionIntoView(recentThreadsSection);
-            }
-
-            @Override
-            public void prepareSavedGuidesDestination() {
-                pendingSavedGuideSectionFocus = true;
-                MainActivity.this.ensureSavedGuidesDestinationVisible();
-                MainActivity.this.focusSavedGuideSectionIfReady();
-            }
-        };
+    private void prepareSavedGuidesDestination() {
+        pendingSavedGuideSectionFocus = true;
+        ensureSavedGuidesDestinationVisible();
+        focusSavedGuideSectionIfReady();
     }
 
     private void setPhoneTabFromFlow(BottomTabDestination destination) {

@@ -287,6 +287,70 @@ public final class MainRouteEffectControllerTest {
         assertTrue(effects.calls.isEmpty());
     }
 
+    @Test
+    public void callbackBackEffectsDelegateAllActivityGlueMethods() {
+        List<String> calls = new ArrayList<>();
+        MainRouteDecisionHelper.RouteState routeState =
+            new MainRouteDecisionHelper.RouteState(
+                MainRouteDecisionHelper.Surface.SAVED_GUIDES,
+                BottomTabDestination.PINS,
+                false
+            );
+        MainRouteEffectController.BackEffects effects = MainRouteEffectController.backEffects(
+            () -> BottomTabDestination.ASK,
+            destination -> calls.add("pushPhoneTab:" + destination),
+            state -> calls.add("applyRouteState:" + state.surface + ":" + state.activePhoneTab),
+            () -> {
+                calls.add("popPreviousPhoneTab");
+                return BottomTabDestination.HOME;
+            },
+            () -> calls.add("returnToBrowse"),
+            () -> {
+                calls.add("isBrowseModeActive");
+                return true;
+            },
+            () -> calls.add("updateActionLabels"),
+            () -> calls.add("dismissSearchKeyboard"),
+            () -> calls.add("ensureBrowseHomeVisible"),
+            () -> calls.add("scrollBrowseToTop"),
+            () -> calls.add("focusSearchInput"),
+            () -> calls.add("scrollRecentThreadsIntoView"),
+            () -> calls.add("prepareSavedGuidesDestination")
+        );
+
+        assertEquals(BottomTabDestination.ASK, effects.activePhoneTab());
+        effects.pushPhoneTab(BottomTabDestination.PINS);
+        effects.applyRouteState(routeState);
+        assertEquals(BottomTabDestination.HOME, effects.popPreviousPhoneTab());
+        effects.returnToBrowse();
+        assertTrue(effects.isBrowseModeActive());
+        effects.updateActionLabels();
+        effects.dismissSearchKeyboard();
+        effects.ensureBrowseHomeVisible();
+        effects.scrollBrowseToTop();
+        effects.focusSearchInput();
+        effects.scrollRecentThreadsIntoView();
+        effects.prepareSavedGuidesDestination();
+
+        assertEquals(
+            Arrays.asList(
+                "pushPhoneTab:PINS",
+                "applyRouteState:SAVED_GUIDES:PINS",
+                "popPreviousPhoneTab",
+                "returnToBrowse",
+                "isBrowseModeActive",
+                "updateActionLabels",
+                "dismissSearchKeyboard",
+                "ensureBrowseHomeVisible",
+                "scrollBrowseToTop",
+                "focusSearchInput",
+                "scrollRecentThreadsIntoView",
+                "prepareSavedGuidesDestination"
+            ),
+            calls
+        );
+    }
+
     private static final class RecordingBackEffects implements MainRouteEffectController.BackEffects {
         final List<String> calls = new ArrayList<>();
         private final boolean browseModeActive;
