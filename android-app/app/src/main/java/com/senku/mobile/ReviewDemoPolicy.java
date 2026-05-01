@@ -243,6 +243,19 @@ final class ReviewDemoPolicy {
         return meta.isEmpty() ? title : title + "\n" + meta;
     }
 
+    static String manualHomeRecentThreadLabel(
+        boolean productReviewMode,
+        ChatSessionStore.ConversationPreview preview,
+        int index
+    ) {
+        return shapeRecentThreadLabel(
+            productReviewMode,
+            preview,
+            index,
+            ManualHomeRecentThreadFormatter.buildLabel(preview)
+        );
+    }
+
     static String shapeTabletPreviewMeta(boolean productReviewMode, SearchResult result, String defaultMeta) {
         if (!isTabletPreviewReviewResult(productReviewMode, result)) {
             return safe(defaultMeta);

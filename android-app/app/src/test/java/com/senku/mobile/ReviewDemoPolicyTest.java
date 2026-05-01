@@ -553,6 +553,23 @@ public final class ReviewDemoPolicyTest {
     }
 
     @Test
+    public void manualHomeRecentThreadLabelKeepsLiveLabelWhenReviewModeDisabled() {
+        long fourHoursTwentyOneMinutesAgo = System.currentTimeMillis() - ((4L * 60L + 21L) * 60_000L);
+        ChatSessionStore.ConversationPreview preview = preview(
+            "can I make a rain shelter with cord",
+            "GD-345",
+            "",
+            ReviewedCardMetadata.empty(),
+            fourHoursTwentyOneMinutesAgo
+        );
+
+        assertEquals(
+            ManualHomeRecentThreadFormatter.buildLabel(preview),
+            ReviewDemoPolicy.manualHomeRecentThreadLabel(false, preview, 0)
+        );
+    }
+
+    @Test
     public void tabletPreviewTargetCopyRequiresReviewModeAndReviewRow() {
         SearchResult reviewRow = guideWithSubtitle("GD-023 | survival | review");
         SearchResult normalRow = guideWithSubtitle("GD-023 | survival");

@@ -1902,20 +1902,11 @@ public final class MainActivity extends AppCompatActivity {
         );
     }
 
-    private String buildManualHomeRecentThreadLabel(ChatSessionStore.ConversationPreview preview) {
-        return ManualHomeRecentThreadFormatter.buildLabel(preview);
-    }
-
     private android.text.SpannableString buildManualHomeRecentThreadLabelSpannable(
         ChatSessionStore.ConversationPreview preview,
         int index
     ) {
-        String label = ReviewDemoPolicy.shapeRecentThreadLabel(
-            productReviewMode,
-            preview,
-            index,
-            buildManualHomeRecentThreadLabel(preview)
-        );
+        String label = ReviewDemoPolicy.manualHomeRecentThreadLabel(productReviewMode, preview, index);
         android.text.SpannableString spannable = new android.text.SpannableString(label);
         int lineBreak = label.indexOf('\n');
         if (lineBreak < 0) {
