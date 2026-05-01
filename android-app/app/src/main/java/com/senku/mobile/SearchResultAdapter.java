@@ -212,9 +212,11 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
         bindTabletScoreMarker(holder.retrievalBadge, holder.scoreBar, position);
         holder.accent.setAlpha(rankAccentAlpha(position));
         bindTabletAttributeLine(holder.section, result);
-        String snippet = buildCompactRowSnippet(
+        String snippet = SearchResultCardModelMapper.buildCompactRowSnippetForResult(
             result,
-            richTabletCard ? 124 : (landscapePhoneCard ? 142 : (smallPhonePortraitCard ? 126 : 190))
+            richTabletCard,
+            landscapePhoneCard,
+            smallPhonePortraitCard
         );
         holder.snippet.setText(cleanDisplayText(snippet, 0));
         holder.snippet.setMaxLines(richTabletCard ? 2 : ((landscapePhoneCard || stressCompactCard) ? 1 : 2));
@@ -1073,14 +1075,6 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
 
     private String humanizeMetadataValue(String raw, int maxLen) {
         return cleanDisplayText(humanize(safe(raw).trim().toLowerCase(Locale.US)), maxLen);
-    }
-
-    private String buildCompactRowSnippet(SearchResult result, int maxLen) {
-        return SearchResultCardModelMapper.buildCompactRowSnippet(
-            result == null ? null : result.snippet,
-            result == null ? null : result.sectionHeading,
-            maxLen
-        );
     }
 
     private static boolean shouldShowLinkedGuidePreviewLine() {

@@ -323,6 +323,58 @@ final class SearchResultCardModelMapper {
         return buildCompactRowSnippet(rawSnippet, sectionHeading, maxLen);
     }
 
+    static String buildCompactRowSnippetForResultForTest(
+        SearchResult result,
+        boolean richTabletCard,
+        boolean landscapePhoneCard,
+        boolean smallPhonePortraitCard
+    ) {
+        return buildCompactRowSnippetForResult(
+            result,
+            richTabletCard,
+            landscapePhoneCard,
+            smallPhonePortraitCard
+        );
+    }
+
+    static String buildCompactRowSnippetForResult(
+        SearchResult result,
+        boolean richTabletCard,
+        boolean landscapePhoneCard,
+        boolean smallPhonePortraitCard
+    ) {
+        return buildCompactRowSnippet(
+            result == null ? null : result.snippet,
+            result == null ? null : result.sectionHeading,
+            compactRowSnippetBudget(richTabletCard, landscapePhoneCard, smallPhonePortraitCard)
+        );
+    }
+
+    static int compactRowSnippetBudgetForTest(
+        boolean richTabletCard,
+        boolean landscapePhoneCard,
+        boolean smallPhonePortraitCard
+    ) {
+        return compactRowSnippetBudget(richTabletCard, landscapePhoneCard, smallPhonePortraitCard);
+    }
+
+    private static int compactRowSnippetBudget(
+        boolean richTabletCard,
+        boolean landscapePhoneCard,
+        boolean smallPhonePortraitCard
+    ) {
+        if (richTabletCard) {
+            return 124;
+        }
+        if (landscapePhoneCard) {
+            return 142;
+        }
+        if (smallPhonePortraitCard) {
+            return 126;
+        }
+        return 190;
+    }
+
     static boolean shouldShowLinkedGuidePreviewLineForTest() {
         return shouldShowLinkedGuidePreviewLine();
     }

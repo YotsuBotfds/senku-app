@@ -186,6 +186,34 @@ public final class SearchResultCardModelMapperTest {
     }
 
     @Test
+    public void rowPreviewSnippetBudgetLivesWithMapperViewportPolicy() {
+        SearchResult result = new SearchResult(
+            "Shelter setup",
+            "",
+            "Use a ridgeline, pitch one side low into the wind, keep runoff from pooling, and pin corners before loading gear. "
+                + "Move the entry away from downhill flow and leave a dry exit path.",
+            "",
+            "GD-345",
+            "Tarp & Cord Shelters",
+            "shelter",
+            "vector",
+            "role_topic",
+            "short-term",
+            "",
+            ""
+        );
+
+        assertEquals(124, SearchResultCardModelMapper.compactRowSnippetBudgetForTest(true, false, false));
+        assertEquals(142, SearchResultCardModelMapper.compactRowSnippetBudgetForTest(false, true, false));
+        assertEquals(126, SearchResultCardModelMapper.compactRowSnippetBudgetForTest(false, false, true));
+        assertEquals(190, SearchResultCardModelMapper.compactRowSnippetBudgetForTest(false, false, false));
+        assertEquals(
+            SearchResultCardModelMapper.buildCompactRowSnippetForTest(result.snippet, result.sectionHeading, 126),
+            SearchResultCardModelMapper.buildCompactRowSnippetForResultForTest(result, false, false, true)
+        );
+    }
+
+    @Test
     public void cleanDisplayTextRemovesWarningProofResidueFromSearchCards() {
         String cleaned = SearchResultCardModelMapper.cleanDisplayTextForTest(
             "Use boiled water only [Safety Warning Implied by High Heat Processes] [GD-123]. "
