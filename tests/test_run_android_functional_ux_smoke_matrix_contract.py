@@ -75,6 +75,14 @@ class RunAndroidFunctionalUxSmokeMatrixContractTests(unittest.TestCase):
         self.assertIn('"tablet-functional" {', self.script)
         self.assertIn("preset_package = $PresetPackage", self.script)
 
+    def test_matrix_device_role_preflight_uses_bounded_adb_wait(self):
+        self.assertIn("[int]$DeviceWaitTimeoutSeconds = 120", self.script)
+        self.assertIn('throw "-DeviceWaitTimeoutSeconds must be 1 or greater."', self.script)
+        self.assertIn('$waitTimeoutMilliseconds = [Math]::Max(1000, $DeviceWaitTimeoutSeconds * 1000)', self.script)
+        self.assertIn('Invoke-AndroidAdbCommandCapture -AdbPath $adb -Arguments @("-s", $Device, "wait-for-device") -TimeoutMilliseconds $waitTimeoutMilliseconds', self.script)
+        self.assertIn("adb wait-for-device timed out after $waitTimeoutMilliseconds ms for $Device during matrix device-role preflight", self.script)
+        self.assertNotIn("& $adb -s $Device wait-for-device", self.script)
+
     def test_child_runner_receives_quoted_paths_and_matrix_arguments(self):
         with tempfile.TemporaryDirectory() as temp_dir:
             temp_root = Path(temp_dir) / "contract path with spaces"

@@ -141,6 +141,7 @@ $dumpDir = Join-Path $artifactDir "dumps"
 $harnessStateDir = Join-Path $repoRoot "artifacts\\harness_state"
 $installStatePath = Join-Path $harnessStateDir ("instrumented_ui_smoke_" + $Device + ".json")
 $identityStatePath = Join-Path $harnessStateDir ("instrumented_ui_smoke_identity_" + $Device + ".json")
+$deviceWaitTimeoutMilliseconds = 120000
 $apkInstallTimeoutMilliseconds = 180000
 $script:IdentityCacheHit = $false
 New-Item -ItemType Directory -Force -Path $screenshotDir | Out-Null
@@ -295,7 +296,14 @@ function Invoke-ApkInstallWithPhysicalNoStreamingFallback {
 function Test-PackageInstalled {
     param([string]$PackageName)
 
-    $packagePath = (& $adb -s $Device shell pm path $PackageName 2>$null | Out-String).Trim()
+    $result = Invoke-AndroidAdbCommandCapture -AdbPath $adb -Arguments @("-s", $Device, "shell", "pm", "path", $PackageName) -TimeoutMilliseconds 15000
+    if ($result.timed_out) {
+        throw "Package install verification timed out after 15000 ms for $PackageName on $Device."
+    }
+    if ($result.exit_code -ne 0) {
+        return $false
+    }
+    $packagePath = ([string]$result.output).Trim()
     return -not [string]::IsNullOrWhiteSpace($packagePath)
 }
 
@@ -343,7 +351,11 @@ function Convert-ToShellSingleQuotedLiteral {
 function Get-InstalledPackageCodePath {
     param([string]$PackageName)
 
-    $packageOutput = (& $adb -s $Device shell pm path $PackageName 2>$null | Out-String)
+    $result = Invoke-AndroidAdbCommandCapture -AdbPath $adb -Arguments @("-s", $Device, "shell", "pm", "path", $PackageName) -TimeoutMilliseconds 15000
+    if ($result.timed_out -or $result.exit_code -ne 0) {
+        return $null
+    }
+    $packageOutput = if ($null -eq $result.output) { "" } else { [string]$result.output }
     $paths = @()
     foreach ($line in ($packageOutput -split "`r?`n")) {
         $trimmed = $line.Trim()
@@ -1438,7 +1450,7 @@ $script:OriginalAccelerometerRotation = $null
 $script:OriginalUserRotation = $null
 
 function Get-DeviceFontScale {
-    $raw = (& $adb -s $Device shell settings get system font_scale 2>$null | Out-String).Trim()
+    $raw = Get-AdbShellValue -ShellArguments @("settings", "get", "system", "font_scale")
     $parsed = 1.0
     if ([double]::TryParse($raw, [System.Globalization.NumberStyles]::Float, [System.Globalization.CultureInfo]::InvariantCulture, [ref]$parsed)) {
         return [Math]::Max(0.5, $parsed)
@@ -1451,6 +1463,22 @@ function Invoke-AdbBestEffort {
 
     $result = Invoke-AndroidAdbCommandCapture -AdbPath $adb -Arguments $Arguments -TimeoutMilliseconds 10000
     return $result
+}
+
+function Wait-ForAdbDevice {
+    param([int]$TimeoutMilliseconds = 120000)
+
+    $result = Invoke-AndroidAdbCommandCapture -AdbPath $adb -Arguments @("-s", $Device, "wait-for-device") -TimeoutMilliseconds $TimeoutMilliseconds
+    if ($result.timed_out) {
+        throw "adb wait-for-device timed out after $TimeoutMilliseconds ms for $Device"
+    }
+    if ($result.exit_code -ne 0) {
+        $details = if ($null -eq $result.output) { "" } else { ([string]$result.output).Trim() }
+        if ([string]::IsNullOrWhiteSpace($details)) {
+            throw "adb wait-for-device failed for $Device"
+        }
+        throw "adb wait-for-device failed for ${Device}: $details"
+    }
 }
 
 function Get-AdbShellValue {
@@ -1565,10 +1593,7 @@ if ($EnableHostInferenceSmoke -and [string]::IsNullOrWhiteSpace($EffectiveHostIn
 }
 
 Write-RunPhase -Phase "waiting for device"
-& $adb -s $Device wait-for-device
-if ($LASTEXITCODE -ne 0) {
-    throw "adb wait-for-device failed for $Device"
-}
+Wait-ForAdbDevice -TimeoutMilliseconds $deviceWaitTimeoutMilliseconds
 Write-RunPhase -Phase "device connected; waiting for readiness"
 Wait-ForDeviceReadiness
 Write-RunPhase -Phase "device ready"

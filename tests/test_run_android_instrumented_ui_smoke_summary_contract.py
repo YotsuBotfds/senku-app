@@ -168,6 +168,16 @@ class RunAndroidInstrumentedUiSmokeSummaryContractTests(unittest.TestCase):
             self.assertIn(phase, self.script)
         self.assertIn("with timeout {1} ms", self.script)
 
+    def test_runner_bounds_adb_wait_and_direct_device_probes(self):
+        self.assertIn("$deviceWaitTimeoutMilliseconds = 120000", self.script)
+        self.assertIn("function Wait-ForAdbDevice", self.script)
+        self.assertIn('Invoke-AndroidAdbCommandCapture -AdbPath $adb -Arguments @("-s", $Device, "wait-for-device") -TimeoutMilliseconds $TimeoutMilliseconds', self.script)
+        self.assertIn("adb wait-for-device timed out after $TimeoutMilliseconds ms for $Device", self.script)
+        self.assertIn("Wait-ForAdbDevice -TimeoutMilliseconds $deviceWaitTimeoutMilliseconds", self.script)
+        self.assertNotIn("& $adb -s $Device wait-for-device", self.script)
+        self.assertIn('Package install verification timed out after 15000 ms for $PackageName on $Device.', self.script)
+        self.assertIn('$raw = Get-AdbShellValue -ShellArguments @("settings", "get", "system", "font_scale")', self.script)
+
     def test_runner_passes_progress_label_to_shared_device_lock(self):
         self.assertIn('ProgressLabel ("[instrumented-ui-smoke:{0}]" -f $DeviceName)', self.script)
 

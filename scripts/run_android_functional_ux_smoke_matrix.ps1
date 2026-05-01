@@ -15,6 +15,7 @@ param(
     [ValidateSet("phone-functional", "tablet-functional")]
     [string]$PresetPackage = "phone-functional",
     [string]$ChildRunnerOverride = "",
+    [int]$DeviceWaitTimeoutSeconds = 120,
     [int]$PresetTimeoutSeconds = 1800,
     [int]$PresetProgressIntervalSeconds = 60,
     [switch]$FailFast,
@@ -63,6 +64,8 @@ Parameters:
   -SkipDevicePreflight    Skips adb role preflight. Intended for wrapper contract tests.
   -PresetPackage          Preset package to run: phone-functional (default) or tablet-functional.
   -ChildRunnerOverride    Alternate child runner path. Intended for wrapper contract tests.
+  -DeviceWaitTimeoutSeconds
+                          Matrix device-role preflight adb wait timeout. Default: 120.
   -PresetTimeoutSeconds   Matrix watchdog timeout per preset. Default: 1800. Use 0 to disable.
   -PresetProgressIntervalSeconds
                           Matrix heartbeat interval while a preset child process is running. Default: 60.
@@ -88,6 +91,9 @@ if ($PhysicalDevice -and $Device -like "emulator-*") {
 }
 if ($PresetTimeoutSeconds -lt 0) {
     throw "-PresetTimeoutSeconds must be 0 or greater."
+}
+if ($DeviceWaitTimeoutSeconds -lt 1) {
+    throw "-DeviceWaitTimeoutSeconds must be 1 or greater."
 }
 if ($PresetProgressIntervalSeconds -lt 1) {
     throw "-PresetProgressIntervalSeconds must be 1 or greater."
@@ -141,9 +147,17 @@ function Assert-FunctionalUxDeviceRole {
         return
     }
     Write-Host ("[functional-ux-matrix:{0}] preflighting {1}-preset device role" -f $Device, $ExpectedRole)
-    & $adb -s $Device wait-for-device
-    if ($LASTEXITCODE -ne 0) {
-        throw "adb wait-for-device failed for $Device"
+    $waitTimeoutMilliseconds = [Math]::Max(1000, $DeviceWaitTimeoutSeconds * 1000)
+    $waitResult = Invoke-AndroidAdbCommandCapture -AdbPath $adb -Arguments @("-s", $Device, "wait-for-device") -TimeoutMilliseconds $waitTimeoutMilliseconds
+    if ($waitResult.timed_out) {
+        throw "adb wait-for-device timed out after $waitTimeoutMilliseconds ms for $Device during matrix device-role preflight"
+    }
+    if ($waitResult.exit_code -ne 0) {
+        $details = if ($null -eq $waitResult.output) { "" } else { ([string]$waitResult.output).Trim() }
+        if ([string]::IsNullOrWhiteSpace($details)) {
+            throw "adb wait-for-device failed for $Device during matrix device-role preflight"
+        }
+        throw "adb wait-for-device failed for ${Device} during matrix device-role preflight: $details"
     }
     $facts = Resolve-AndroidDeviceFacts -AdbPath $adb -DeviceName $Device -RequestedOrientation "portrait"
     $role = if ($null -ne $facts -and -not [string]::IsNullOrWhiteSpace([string]$facts.resolved_role)) {
