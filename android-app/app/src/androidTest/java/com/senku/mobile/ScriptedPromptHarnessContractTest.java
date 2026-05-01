@@ -17,6 +17,7 @@ public final class ScriptedPromptHarnessContractTest {
     public void scalarArgsAreUrlDecodedAndTrimmed() {
         Bundle args = new Bundle();
         args.putString("scriptedExpectedAnswerSurfaceLabel", Uri.encode("  REVIEWED EVIDENCE  "));
+        args.putString("scriptedExpectedDetailRoute", Uri.encode("  ANSWER  "));
         args.putString("scriptedExpectedRuleId", Uri.encode("  answer_card:poisoning_unknown_ingestion  "));
         args.putString("scriptedExpectedSourceGuideId", Uri.encode("  GD-101  "));
         args.putString("scriptedExpectedReviewedCardId", Uri.encode("  poisoning_unknown_ingestion  "));
@@ -26,6 +27,7 @@ public final class ScriptedPromptHarnessContractTest {
         ScriptedPromptHarnessContract contract = new ScriptedPromptHarnessContract(args);
 
         Assert.assertEquals("REVIEWED EVIDENCE", contract.expectedAnswerSurfaceLabel);
+        Assert.assertEquals("answer", contract.expectedDetailRoute);
         Assert.assertEquals("answer_card:poisoning_unknown_ingestion", contract.expectedRuleId);
         Assert.assertEquals("GD-101", contract.expectedSourceGuideId);
         Assert.assertEquals("poisoning_unknown_ingestion", contract.expectedReviewedCardId);
@@ -113,6 +115,26 @@ public final class ScriptedPromptHarnessContractTest {
         Assert.assertFalse(falseContract.assertRecentThreadReviewedCardMetadata);
         Assert.assertFalse(missingContract.reviewedCardRuntimeEnabled);
         Assert.assertFalse(missingContract.assertRecentThreadReviewedCardMetadata);
+    }
+
+    @Test
+    public void expectedDetailRouteAcceptsSupportedRoutes() {
+        Assert.assertEquals("answer", contractWithExpectedDetailRoute("ANSWER").expectedDetailRoute);
+        Assert.assertEquals("guide", contractWithExpectedDetailRoute(" guide ").expectedDetailRoute);
+        Assert.assertEquals("emergency", contractWithExpectedDetailRoute("Emergency").expectedDetailRoute);
+    }
+
+    @Test
+    public void expectedDetailRouteRejectsUnsupportedRoute() {
+        try {
+            contractWithExpectedDetailRoute("search");
+            Assert.fail("Expected unsupported detail route to fail");
+        } catch (AssertionError error) {
+            Assert.assertTrue(
+                error.getMessage(),
+                error.getMessage().contains("scriptedExpectedDetailRoute must be one of answer, guide, emergency")
+            );
+        }
     }
 
     @Test
@@ -220,6 +242,12 @@ public final class ScriptedPromptHarnessContractTest {
         } catch (AssertionError error) {
             return error;
         }
+    }
+
+    private static ScriptedPromptHarnessContract contractWithExpectedDetailRoute(String route) {
+        Bundle args = new Bundle();
+        args.putString("scriptedExpectedDetailRoute", Uri.encode(route));
+        return new ScriptedPromptHarnessContract(args);
     }
 
     private static Bundle completeReviewedEvidenceArgs() {

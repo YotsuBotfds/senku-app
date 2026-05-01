@@ -4692,7 +4692,16 @@ public final class PromptHarnessSmokeTest {
         try (ActivityScenario<MainActivity> scenario = ActivityScenario.launch(intent)) {
             try {
                 if ("detail".equals(expectedSurface)) {
-                    assertDetailSettled(timeoutMs, expectedTitle, !followUpQuery.isEmpty());
+                    String expectedDetailRoute = scriptedContract.expectedDetailRoute;
+                    if (expectedDetailRoute.isEmpty() && ask) {
+                        expectedDetailRoute = "answer";
+                    }
+                    assertDetailSettled(
+                        timeoutMs,
+                        expectedTitle,
+                        !followUpQuery.isEmpty(),
+                        expectedDetailRoute
+                    );
                 } else {
                     assertResultsSettled(scenario, timeoutMs);
                 }
@@ -5858,13 +5867,25 @@ public final class PromptHarnessSmokeTest {
         });
     }
 
-    private void assertDetailSettled(long timeoutMs, String expectedTitle, boolean expectHistory) {
+    private void assertDetailSettled(
+        long timeoutMs,
+        String expectedTitle,
+        boolean expectHistory,
+        String expectedDetailRoute
+    ) {
         assertResumedDetailActivitySettled(
             timeoutMs,
             expectHistory ? 40 : 8,
             expectedTitle,
             expectHistory,
             "detail surface should settle in the active posture"
+        );
+        Assert.assertTrue(
+            "detail surface settled, but not on expected route "
+                + safe(expectedDetailRoute).trim()
+                + "; "
+                + describeResumedActivityAndHarnessSignals(),
+            waitForExpectedDetailRouteSettled(timeoutMs, expectedDetailRoute, expectedTitle)
         );
     }
 
@@ -5914,6 +5935,87 @@ public final class PromptHarnessSmokeTest {
                 waitForFollowUpHistoryReady(timeoutMs)
             );
         }
+    }
+
+    private boolean waitForExpectedDetailRouteSettled(
+        long timeoutMs,
+        String expectedDetailRoute,
+        String expectedTitle
+    ) {
+        String route = safe(expectedDetailRoute).trim().toLowerCase(Locale.US);
+        if (route.isEmpty()) {
+            return true;
+        }
+        long deadline = SystemClock.uptimeMillis() + timeoutMs;
+        while (SystemClock.uptimeMillis() < deadline) {
+            final boolean[] matched = {false};
+            InstrumentationRegistry.getInstrumentation().runOnMainSync(() -> {
+                Activity activity = getResumedActivityOnMainThread();
+                if (!(activity instanceof DetailActivity)) {
+                    return;
+                }
+                DetailSettleSignals signals = collectDetailSettleSignals(activity);
+                matched[0] = detailRouteMatches(activity, signals, route)
+                    && detailIdentityMatches(signals, expectedTitle);
+            });
+            if (matched[0]) {
+                return true;
+            }
+            InstrumentationRegistry.getInstrumentation().waitForIdleSync();
+            SystemClock.sleep(75L);
+        }
+        return false;
+    }
+
+    private boolean detailRouteMatches(Activity activity, DetailSettleSignals signals, String expectedDetailRoute) {
+        if (signals == null) {
+            return false;
+        }
+        if ("answer".equals(expectedDetailRoute)) {
+            return signals.answerMode
+                && (!signals.guideId.trim().isEmpty()
+                    || signals.sourceCount > 0
+                    || signals.turnCount > 0
+                    || signals.deterministicRoute
+                    || signals.lowCoverageRoute
+                    || signals.abstainRoute
+                    || !signals.ruleId.trim().isEmpty());
+        }
+        if ("guide".equals(expectedDetailRoute)) {
+            return !signals.answerMode
+                && (!signals.guideId.trim().isEmpty() || !signals.title.trim().isEmpty());
+        }
+        if ("emergency".equals(expectedDetailRoute)) {
+            return signals.answerMode && hasVisibleEmergencyDetailRoute(activity, signals);
+        }
+        Assert.fail("Unsupported expected detail route: " + expectedDetailRoute);
+        return false;
+    }
+
+    private boolean detailIdentityMatches(DetailSettleSignals signals, String expectedTitle) {
+        String expected = safe(expectedTitle).trim().toLowerCase(Locale.US);
+        if (expected.isEmpty()) {
+            return true;
+        }
+        String title = safe(signals == null ? null : signals.title).trim().toLowerCase(Locale.US);
+        return !title.isEmpty() && (title.contains(expected) || expected.contains(title));
+    }
+
+    private boolean hasVisibleEmergencyDetailRoute(Activity activity, DetailSettleSignals signals) {
+        if (activity == null || signals == null) {
+            return false;
+        }
+        if (signals.tabletEmergencyFullHeightPage) {
+            return true;
+        }
+        View emergencyHeader = activity.findViewById(R.id.detail_emergency_header);
+        if (isVisible(emergencyHeader)) {
+            return true;
+        }
+        String visibleSurface = buildVisibleSurfaceSnapshot(
+            activity.getWindow() == null ? null : activity.getWindow().getDecorView()
+        ).toLowerCase(Locale.US);
+        return containsAny(visibleSurface, "danger", "emergency", "urgent");
     }
 
     private void waitForMainPackReady(long timeoutMs) {

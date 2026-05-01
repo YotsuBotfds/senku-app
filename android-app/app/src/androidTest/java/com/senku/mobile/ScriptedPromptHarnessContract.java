@@ -11,6 +11,7 @@ import java.util.List;
 final class ScriptedPromptHarnessContract {
     final boolean reviewedCardRuntimeEnabled;
     final String expectedAnswerSurfaceLabel;
+    final String expectedDetailRoute;
     final List<String> forbiddenAnswerSurfaceLabels;
     final String expectedRuleId;
     final String expectedSourceGuideId;
@@ -27,6 +28,8 @@ final class ScriptedPromptHarnessContract {
         reviewedCardRuntimeEnabled = parseBooleanArg(args, "scriptedEnableReviewedCardRuntime");
         expectedAnswerSurfaceLabel =
             Uri.decode(safe(args.getString("scriptedExpectedAnswerSurfaceLabel"))).trim();
+        expectedDetailRoute =
+            normalizeExpectedDetailRoute(Uri.decode(safe(args.getString("scriptedExpectedDetailRoute"))));
         forbiddenAnswerSurfaceLabels = parseDelimitedArg(args, "scriptedForbiddenAnswerSurfaceLabels");
         String legacyForbiddenAnswerSurfaceLabel =
             Uri.decode(safe(args.getString("scriptedForbiddenAnswerSurfaceLabel"))).trim();
@@ -133,6 +136,18 @@ final class ScriptedPromptHarnessContract {
 
     private static boolean parseBooleanArg(Bundle args, String key) {
         return "true".equalsIgnoreCase(safe(args.getString(key)).trim());
+    }
+
+    private static String normalizeExpectedDetailRoute(String rawRoute) {
+        String route = safe(rawRoute).trim().toLowerCase(java.util.Locale.US);
+        if (route.isEmpty()) {
+            return "";
+        }
+        Assert.assertTrue(
+            "scriptedExpectedDetailRoute must be one of answer, guide, emergency",
+            "answer".equals(route) || "guide".equals(route) || "emergency".equals(route)
+        );
+        return route;
     }
 
     private static List<String> parseDelimitedArg(Bundle args, String key) {
