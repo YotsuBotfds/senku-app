@@ -121,8 +121,7 @@ final class ReviewDemoPolicy {
         List<SearchResult> results,
         GuideLookup guideLookup
     ) {
-        if (!shouldApplyReviewDemoFixtures(productReviewMode)
-            || !ReviewDemoFixtureSet.isReviewSearchQuery(query)) {
+        if (!shouldShapeReviewSearchResults(productReviewMode, query)) {
             return results == null ? Collections.emptyList() : results;
         }
         return ReviewDemoFixtureSet.shapeReviewSearchResults(results, guideLookup);
@@ -180,9 +179,8 @@ final class ReviewDemoPolicy {
 
     static String appendSearchLatency(String header, String query, boolean productReviewMode) {
         String cleanHeader = safe(header).trim();
-        if (!shouldApplyReviewDemoFixtures(productReviewMode)
+        if (!shouldShapeReviewSearchResults(productReviewMode, query)
             || cleanHeader.isEmpty()
-            || !ReviewDemoFixtureSet.isReviewSearchQuery(query)
             || ReviewDemoFixtureSet.headerAlreadyIncludesReviewLatency(cleanHeader)) {
             return cleanHeader;
         }
@@ -199,6 +197,10 @@ final class ReviewDemoPolicy {
     }
 
     static boolean shouldApplySearchRowReviewVisualState(boolean productReviewMode, String query) {
+        return shouldShapeReviewSearchResults(productReviewMode, query);
+    }
+
+    static boolean shouldShapeReviewSearchResults(boolean productReviewMode, String query) {
         return shouldApplyReviewDemoFixtures(productReviewMode)
             && ReviewDemoFixtureSet.isReviewSearchQuery(query);
     }

@@ -98,6 +98,45 @@ public final class ReviewDemoFixtureBoundaryTest {
     }
 
     @Test
+    public void enabledReviewModeDoesNotApplySearchFixturesToNonReviewQuery() {
+        List<SearchResult> liveResults = Arrays.asList(
+            result("GD-501", "Live Water Result", "live water snippet"),
+            result("GD-502", "Live Filter Result", "live filter snippet")
+        );
+        ReviewDemoPolicy.GuideLookup forbiddenLookup = guideId -> {
+            throw new AssertionError("Non-review query must not load review fixture guide " + guideId);
+        };
+        SearchResult reviewLookingRow = new SearchResult(
+            "Survival Basics & First 72 Hours",
+            "GD-023 | survival | review",
+            "fixture-looking snippet",
+            "fixture-looking body",
+            "GD-023",
+            "",
+            "",
+            ""
+        );
+
+        assertFalse(ReviewDemoPolicy.shouldShapeReviewSearchResults(true, "water"));
+        assertSame(
+            liveResults,
+            ReviewDemoPolicy.shapeSearchResults("water", true, liveResults, forbiddenLookup)
+        );
+        assertEquals(
+            "Search  water - 2 results",
+            ReviewDemoPolicy.appendSearchLatency("Search  water - 2 results", "water", true)
+        );
+        assertFalse(
+            ReviewDemoPolicy.shouldSuppressSearchRowLinkedGuideCue(
+                true,
+                "water",
+                reviewLookingRow
+            )
+        );
+        assertNoRainShelterFixtureContent(liveResults);
+    }
+
+    @Test
     public void relatedGuideAndRecentThreadFixturesStayInertWhenModeDisabledOrDenied() {
         for (boolean productReviewMode : disabledOrDeniedReviewModes()) {
             ArrayList<SearchResult> relatedGuides = new ArrayList<>(Arrays.asList(
