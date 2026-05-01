@@ -1,3 +1,4 @@
+import hashlib
 import json
 import shutil
 import subprocess
@@ -48,6 +49,10 @@ class AndroidPhysicalPhoneSmokeContractTests(unittest.TestCase):
         self.assertIn("function Read-UiAutomatorDump", self.script)
         self.assertIn("/sdcard/senku_physical_smoke_ui.xml", self.script)
         self.assertIn("function Get-TextCheckSummary", self.script)
+        self.assertIn("function Get-PhysicalDeviceIdentity", self.script)
+        self.assertIn("function Get-FileSha256", self.script)
+        self.assertIn("function Get-FocusedPackage", self.script)
+        self.assertIn("function Get-OrientationEvidence", self.script)
         self.assertIn("text_checks", self.script)
         self.assertIn("function Wait-UiPostStepEvidence", self.script)
         self.assertIn("post_check", self.script)
@@ -253,10 +258,12 @@ class AndroidPhysicalPhoneSmokeContractTests(unittest.TestCase):
                         ")",
                         "if \"%5\"==\"ro.kernel.qemu\" (echo 0& exit /b 0)",
                         "if \"%5\"==\"ro.boot.qemu\" (echo 0& exit /b 0)",
+                        "if \"%4\"==\"getprop\" (echo fake-%5& exit /b 0)",
                         "if \"%3\"==\"install\" (echo Success& exit /b 0)",
                         "if \"%4\"==\"am\" (echo Starting: Intent& exit /b 0)",
                         "if \"%4\"==\"dumpsys\" if \"%5\"==\"window\" (echo mCurrentFocus=Window{u0 com.senku.mobile/.MainActivity}& exit /b 0)",
                         "if \"%4\"==\"dumpsys\" if \"%5\"==\"activity\" (echo topResumedActivity=com.senku.mobile/.MainActivity& exit /b 0)",
+                        "if \"%4\"==\"dumpsys\" if \"%5\"==\"input\" (echo SurfaceOrientation: 0& exit /b 0)",
                         "if \"%3\"==\"exec-out\" (echo PNGDATA& exit /b 0)",
                         "if \"%4\"==\"uiautomator\" (echo ^<hierarchy^>^<node text=Senku /^>^<node text=Library /^>^</hierarchy^>& exit /b 0)",
                         "if \"%3\"==\"logcat\" (echo 04-30 Senku log line& exit /b 0)",
@@ -304,12 +311,23 @@ class AndroidPhysicalPhoneSmokeContractTests(unittest.TestCase):
             self.assertFalse(summary["dry_run"])
             self.assertEqual(summary["serial"], "R5CT123456A")
             self.assertEqual(summary["adb_path_source"], "override")
+            self.assertEqual(summary["apk_sha256"], hashlib.sha256(b"apk").hexdigest())
+            self.assertEqual(summary["device_identity"]["serial"], "R5CT123456A")
+            self.assertEqual(summary["device_identity"]["manufacturer"], "fake-ro.product.manufacturer")
+            self.assertEqual(summary["device_identity"]["model"], "fake-ro.product.model")
             self.assertFalse(summary["launches_emulators"])
             self.assertTrue(summary["evidence"]["focus_contains_launch_activity"])
+            self.assertEqual(summary["evidence"]["focused_package"], "com.senku.mobile")
+            self.assertEqual(summary["evidence"]["orientation"]["rotation"], 0)
+            self.assertEqual(summary["evidence"]["orientation"]["orientation"], "portrait")
             self.assertTrue((output_dir / "focus.txt").exists())
             self.assertIn("mCurrentFocus", (output_dir / "focus.txt").read_text(encoding="utf-8-sig"))
             self.assertTrue(screenshot.exists())
             self.assertIn("<hierarchy>", dump.read_text(encoding="utf-8-sig"))
+            self.assertRegex(summary["evidence"]["artifact_hashes"]["focus_sha256"], r"^[0-9a-f]{64}$")
+            self.assertRegex(summary["evidence"]["artifact_hashes"]["screenshot_sha256"], r"^[0-9a-f]{64}$")
+            self.assertRegex(summary["evidence"]["artifact_hashes"]["dump_sha256"], r"^[0-9a-f]{64}$")
+            self.assertRegex(summary["evidence"]["artifact_hashes"]["logcat_sha256"], r"^[0-9a-f]{64}$")
             self.assertEqual(summary["text_checks"]["requested"], ["Senku", "Library"])
             self.assertEqual(summary["text_checks"]["passed"], ["Senku", "Library"])
             self.assertEqual(summary["text_checks"]["missing"], [])
@@ -342,10 +360,12 @@ class AndroidPhysicalPhoneSmokeContractTests(unittest.TestCase):
                         ")",
                         "if \"%5\"==\"ro.kernel.qemu\" (echo 0& exit /b 0)",
                         "if \"%5\"==\"ro.boot.qemu\" (echo 0& exit /b 0)",
+                        "if \"%4\"==\"getprop\" (echo fake-%5& exit /b 0)",
                         "if \"%3\"==\"install\" (echo Success& exit /b 0)",
                         "if \"%4\"==\"am\" (echo Starting: Intent& exit /b 0)",
                         "if \"%4\"==\"dumpsys\" if \"%5\"==\"window\" (echo mCurrentFocus=Window{u0 com.senku.mobile/.MainActivity}& exit /b 0)",
                         "if \"%4\"==\"dumpsys\" if \"%5\"==\"activity\" (echo topResumedActivity=com.senku.mobile/.MainActivity& exit /b 0)",
+                        "if \"%4\"==\"dumpsys\" if \"%5\"==\"input\" (echo SurfaceOrientation: 0& exit /b 0)",
                         "if \"%4\"==\"uiautomator\" (echo ^<hierarchy^>^<node text=\"Saved\" content-desc=\"Saved\" bounds=\"[10,20][110,120]\" /^>^<node class=\"android.widget.EditText\" resource-id=\"com.senku.mobile:id/search\" bounds=\"[30,200][330,260]\" /^>^</hierarchy^>& exit /b 0)",
                         "if \"%4\"==\"input\" if \"%5\"==\"tap\" (echo tapped& exit /b 0)",
                         "if \"%4\"==\"input\" if \"%5\"==\"text\" (echo typed& exit /b 0)",
@@ -434,10 +454,12 @@ class AndroidPhysicalPhoneSmokeContractTests(unittest.TestCase):
                         ")",
                         "if \"%5\"==\"ro.kernel.qemu\" (echo 0& exit /b 0)",
                         "if \"%5\"==\"ro.boot.qemu\" (echo 0& exit /b 0)",
+                        "if \"%4\"==\"getprop\" (echo fake-%5& exit /b 0)",
                         "if \"%3\"==\"install\" (echo Success& exit /b 0)",
                         "if \"%4\"==\"am\" (echo Starting: Intent& exit /b 0)",
                         "if \"%4\"==\"dumpsys\" if \"%5\"==\"window\" (echo mCurrentFocus=Window{u0 com.senku.mobile/.MainActivity}& exit /b 0)",
                         "if \"%4\"==\"dumpsys\" if \"%5\"==\"activity\" (echo topResumedActivity=com.senku.mobile/.MainActivity& exit /b 0)",
+                        "if \"%4\"==\"dumpsys\" if \"%5\"==\"input\" (echo SurfaceOrientation: 0& exit /b 0)",
                         "if \"%4\"==\"uiautomator\" (echo ^<hierarchy^>^<node class=\"android.widget.EditText\" bounds=\"[30,200][330,260]\" /^>^</hierarchy^>& exit /b 0)",
                         "if \"%4\"==\"input\" (exit /b 0)",
                         "exit /b 1",
@@ -498,10 +520,12 @@ class AndroidPhysicalPhoneSmokeContractTests(unittest.TestCase):
                         ")",
                         "if \"%5\"==\"ro.kernel.qemu\" (echo 0& exit /b 0)",
                         "if \"%5\"==\"ro.boot.qemu\" (echo 0& exit /b 0)",
+                        "if \"%4\"==\"getprop\" (echo fake-%5& exit /b 0)",
                         "if \"%3\"==\"install\" (echo Success& exit /b 0)",
                         "if \"%4\"==\"am\" (echo Starting: Intent& exit /b 0)",
                         "if \"%4\"==\"dumpsys\" if \"%5\"==\"window\" (echo mCurrentFocus=Window{u0 com.senku.mobile/.MainActivity}& exit /b 0)",
                         "if \"%4\"==\"dumpsys\" if \"%5\"==\"activity\" (echo topResumedActivity=com.senku.mobile/.MainActivity& exit /b 0)",
+                        "if \"%4\"==\"dumpsys\" if \"%5\"==\"input\" (echo SurfaceOrientation: 0& exit /b 0)",
                         f"if \"%4\"==\"uiautomator\" if exist \"{entered}\" (echo ^<hierarchy^>^<node text=\"No matching result\" /^>^</hierarchy^>& exit /b 0)",
                         "if \"%4\"==\"uiautomator\" (echo ^<hierarchy^>^<node text=\"Saved\" content-desc=\"Saved\" bounds=\"[10,20][110,120]\" /^>^<node class=\"android.widget.EditText\" resource-id=\"com.senku.mobile:id/search\" bounds=\"[30,200][330,260]\" /^>^</hierarchy^>& exit /b 0)",
                         "if \"%4\"==\"input\" if \"%5\"==\"tap\" (echo tapped& exit /b 0)",
@@ -583,10 +607,12 @@ class AndroidPhysicalPhoneSmokeContractTests(unittest.TestCase):
                         ")",
                         "if \"%5\"==\"ro.kernel.qemu\" (echo 0& exit /b 0)",
                         "if \"%5\"==\"ro.boot.qemu\" (echo 0& exit /b 0)",
+                        "if \"%4\"==\"getprop\" (echo fake-%5& exit /b 0)",
                         "if \"%3\"==\"install\" (echo Success& exit /b 0)",
                         "if \"%4\"==\"am\" (echo Starting: Intent& exit /b 0)",
                         "if \"%4\"==\"dumpsys\" if \"%5\"==\"window\" (echo mCurrentFocus=Window{u0 com.senku.mobile/.MainActivity}& exit /b 0)",
                         "if \"%4\"==\"dumpsys\" if \"%5\"==\"activity\" (echo topResumedActivity=com.senku.mobile/.MainActivity& exit /b 0)",
+                        "if \"%4\"==\"dumpsys\" if \"%5\"==\"input\" (echo SurfaceOrientation: 0& exit /b 0)",
                         "if \"%4\"==\"uiautomator\" if \"%6\"==\"/dev/tty\" (echo direct dump unavailable& exit /b 1)",
                         f"if \"%4\"==\"uiautomator\" if \"%6\"==\"{device_dump_path}\" (echo UI hierarchy dumped to: {device_dump_path}& exit /b 0)",
                         f"if \"%4\"==\"cat\" if \"%5\"==\"{device_dump_path}\" (echo ^<hierarchy^>^<node text=Senku /^>^<node text=Library /^>^</hierarchy^>& exit /b 0)",
@@ -656,10 +682,12 @@ class AndroidPhysicalPhoneSmokeContractTests(unittest.TestCase):
                         ")",
                         "if \"%5\"==\"ro.kernel.qemu\" (echo 0& exit /b 0)",
                         "if \"%5\"==\"ro.boot.qemu\" (echo 0& exit /b 0)",
+                        "if \"%4\"==\"getprop\" (echo fake-%5& exit /b 0)",
                         "if \"%3\"==\"install\" (echo Success& exit /b 0)",
                         "if \"%4\"==\"am\" (echo Starting: Intent& exit /b 0)",
                         "if \"%4\"==\"dumpsys\" if \"%5\"==\"window\" (echo mCurrentFocus=Window{u0 com.senku.mobile/.MainActivity}& exit /b 0)",
                         "if \"%4\"==\"dumpsys\" if \"%5\"==\"activity\" (echo topResumedActivity=com.senku.mobile/.MainActivity& exit /b 0)",
+                        "if \"%4\"==\"dumpsys\" if \"%5\"==\"input\" (echo SurfaceOrientation: 0& exit /b 0)",
                         "if \"%4\"==\"uiautomator\" (echo ^<hierarchy^>^<node text=Senku /^>^</hierarchy^>& exit /b 0)",
                         "exit /b 1",
                     ]
@@ -719,6 +747,7 @@ class AndroidPhysicalPhoneSmokeContractTests(unittest.TestCase):
                         ")",
                         "if \"%5\"==\"ro.kernel.qemu\" (echo 1& exit /b 0)",
                         "if \"%5\"==\"ro.boot.qemu\" (echo 0& exit /b 0)",
+                        "if \"%4\"==\"getprop\" (echo fake-%5& exit /b 0)",
                         "exit /b 1",
                     ]
                 ),

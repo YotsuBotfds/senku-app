@@ -151,6 +151,102 @@ function Write-JsonFile {
     $Value | ConvertTo-Json -Depth 8 | Set-Content -Path $Path -Encoding UTF8
 }
 
+function Get-FileSha256 {
+    param([string]$Path)
+
+    if ([string]::IsNullOrWhiteSpace($Path) -or -not (Test-Path -LiteralPath $Path)) {
+        return $null
+    }
+
+    return (Get-FileHash -LiteralPath $Path -Algorithm SHA256).Hash.ToLowerInvariant()
+}
+
+function Get-FocusedPackage {
+    param([string]$Text)
+
+    if ([string]::IsNullOrWhiteSpace($Text)) {
+        return $null
+    }
+
+    foreach ($pattern in @(
+            'mCurrentFocus=.*\s(?<package>[A-Za-z0-9_]+(?:\.[A-Za-z0-9_]+)+)/',
+            'mFocusedApp=.*\s(?<package>[A-Za-z0-9_]+(?:\.[A-Za-z0-9_]+)+)/',
+            'topResumedActivity=.*(?<package>[A-Za-z0-9_]+(?:\.[A-Za-z0-9_]+)+)/',
+            'ResumedActivity:.*(?<package>[A-Za-z0-9_]+(?:\.[A-Za-z0-9_]+)+)/'
+        )) {
+        $match = [regex]::Match($Text, $pattern)
+        if ($match.Success) {
+            return $match.Groups["package"].Value
+        }
+    }
+
+    return $null
+}
+
+function Get-OrientationEvidence {
+    param([string]$Text)
+
+    if ([string]::IsNullOrWhiteSpace($Text)) {
+        return [ordered]@{
+            source = "dumpsys input"
+            raw = $null
+            rotation = $null
+            orientation = $null
+        }
+    }
+
+    $rotation = $null
+    if ($Text -match 'SurfaceOrientation:\s*(?<rotation>\d+)') {
+        $rotation = [int]$Matches["rotation"]
+    } elseif ($Text -match 'orientation=(?<rotation>\d+)') {
+        $rotation = [int]$Matches["rotation"]
+    }
+
+    $orientation = switch ($rotation) {
+        0 { "portrait" }
+        1 { "landscape" }
+        2 { "reverse_portrait" }
+        3 { "reverse_landscape" }
+        default { $null }
+    }
+
+    return [ordered]@{
+        source = "dumpsys input"
+        raw = $Text.Trim()
+        rotation = $rotation
+        orientation = $orientation
+    }
+}
+
+function Get-PhysicalDeviceIdentity {
+    param(
+        [string]$ResolvedAdbPath,
+        [string]$DeviceSerial
+    )
+
+    $props = [ordered]@{}
+    foreach ($propName in @(
+            "ro.product.manufacturer",
+            "ro.product.model",
+            "ro.product.device",
+            "ro.product.name",
+            "ro.build.fingerprint",
+            "ro.build.version.sdk"
+        )) {
+        $props[$propName] = (Invoke-AdbCapture -ResolvedAdbPath $ResolvedAdbPath -Arguments @("-s", $DeviceSerial, "shell", "getprop", $propName)).Trim()
+    }
+
+    return [ordered]@{
+        serial = $DeviceSerial
+        manufacturer = $props["ro.product.manufacturer"]
+        model = $props["ro.product.model"]
+        device = $props["ro.product.device"]
+        product = $props["ro.product.name"]
+        build_fingerprint = $props["ro.build.fingerprint"]
+        sdk = $props["ro.build.version.sdk"]
+    }
+}
+
 function Write-SummaryMarkdown {
     param(
         [string]$Path,
@@ -167,14 +263,21 @@ function Write-SummaryMarkdown {
         "- serial: $($Summary.serial)",
         "- adb_path: ``$($Summary.adb_path)``",
         "- apk_path: ``$($Summary.apk_path)``",
+        "- apk_sha256: $($Summary.apk_sha256)",
         "- package: $($Summary.package)",
         "- launch_activity: $($Summary.launch_activity)",
+        "- focused_package: $($Summary.evidence.focused_package)",
+        "- orientation: $($Summary.evidence.orientation.orientation)",
         "- install_command: ``$($Summary.commands.install)``",
         "- launch_command: ``$($Summary.commands.launch)``",
         "- focus_path: ``$($Summary.evidence.focus_path)``",
+        "- focus_sha256: $($Summary.evidence.artifact_hashes.focus_sha256)",
         "- screenshot_path: ``$($Summary.evidence.screenshot_path)``",
+        "- screenshot_sha256: $($Summary.evidence.artifact_hashes.screenshot_sha256)",
         "- dump_path: ``$($Summary.evidence.dump_path)``",
+        "- dump_sha256: $($Summary.evidence.artifact_hashes.dump_sha256)",
         "- logcat_path: ``$($Summary.evidence.logcat_path)``",
+        "- logcat_sha256: $($Summary.evidence.artifact_hashes.logcat_sha256)",
         "- summary_json: ``$($Summary.summary_json)``"
     )
     if ($null -ne $Summary.interaction) {
@@ -541,6 +644,8 @@ $launchCommandText = "adb -s $Serial shell am start -n $launchActivity"
 $startedAt = (Get-Date).ToUniversalTime()
 $status = "dry_run_only"
 $focusText = $null
+$orientationText = $null
+$deviceIdentity = $null
 $textCheckFailureMessage = $null
 $interactionFailureMessage = $null
 $interactionSteps = if ($Interact) { [System.Collections.ArrayList]::new() } else { $null }
@@ -565,12 +670,14 @@ if (-not $DryRun) {
     }
 
     Assert-SerialIsConnectedPhysicalDevice -ResolvedAdbPath $resolvedAdbPath -DeviceSerial $Serial
+    $deviceIdentity = Get-PhysicalDeviceIdentity -ResolvedAdbPath $resolvedAdbPath -DeviceSerial $Serial
     Invoke-AdbChecked -ResolvedAdbPath $resolvedAdbPath -Arguments @("-s", $Serial, "install", "--no-streaming", "-r", $resolvedApkPath)
     Invoke-AdbChecked -ResolvedAdbPath $resolvedAdbPath -Arguments @("-s", $Serial, "shell", "am", "start", "-n", $launchActivity)
     Start-Sleep -Seconds 2
 
     $windowFocus = Invoke-AdbCapture -ResolvedAdbPath $resolvedAdbPath -Arguments @("-s", $Serial, "shell", "dumpsys", "window", "windows")
     $topActivity = Invoke-AdbCapture -ResolvedAdbPath $resolvedAdbPath -Arguments @("-s", $Serial, "shell", "dumpsys", "activity", "activities")
+    $orientationText = Invoke-AdbCapture -ResolvedAdbPath $resolvedAdbPath -Arguments @("-s", $Serial, "shell", "dumpsys", "input")
     $focusText = @(
         "## dumpsys window windows",
         $windowFocus,
@@ -644,6 +751,8 @@ $summaryData = [ordered]@{
     adb_path = (Convert-ToRepoRelativePath -Path $resolvedAdbPath)
     adb_path_source = if ([string]::IsNullOrWhiteSpace($AdbPath)) { "LOCALAPPDATA_ANDROID_SDK" } else { "override" }
     apk_path = (Convert-ToRepoRelativePath -Path $resolvedApkPath)
+    apk_sha256 = Get-FileSha256 -Path $resolvedApkPath
+    device_identity = $deviceIdentity
     package = $packageName
     launch_activity = $launchActivity
     evidence = [ordered]@{
@@ -652,12 +761,21 @@ $summaryData = [ordered]@{
         dump_path = (Convert-ToRepoRelativePath -Path $resolvedDumpPath)
         logcat_path = (Convert-ToRepoRelativePath -Path $resolvedLogcatPath)
         focus_contains_launch_activity = if ($null -eq $focusText) { $null } else { Test-FocusContainsLaunchActivity -Text $focusText }
+        focused_package = Get-FocusedPackage -Text $focusText
+        orientation = Get-OrientationEvidence -Text $orientationText
+        artifact_hashes = [ordered]@{
+            focus_sha256 = Get-FileSha256 -Path $resolvedFocusPath
+            screenshot_sha256 = Get-FileSha256 -Path $resolvedScreenshotPath
+            dump_sha256 = Get-FileSha256 -Path $resolvedDumpPath
+            logcat_sha256 = Get-FileSha256 -Path $resolvedLogcatPath
+        }
     }
     commands = [ordered]@{
         devices = "adb devices"
         install = $installCommandText
         launch = $launchCommandText
         focus = "adb -s $Serial shell dumpsys window windows; adb -s $Serial shell dumpsys activity activities"
+        orientation = "adb -s $Serial shell dumpsys input"
         screenshot = if ($null -eq $resolvedScreenshotPath) { $null } else { "adb -s $Serial exec-out screencap -p > `"$resolvedScreenshotPath`"" }
         dump = if ($null -eq $resolvedDumpPath -and $requestedTextFragments.Count -eq 0) { $null } else { "adb -s $Serial shell uiautomator dump /dev/tty || dump /sdcard/senku_physical_smoke_ui.xml" }
         logcat = if ($null -eq $resolvedLogcatPath) { $null } else { "adb -s $Serial logcat -d -v time" }

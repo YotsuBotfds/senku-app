@@ -24,6 +24,18 @@ def make_summary(*, completed: bool = False) -> dict:
         "adb_path": "Android/Sdk/platform-tools/adb.exe",
         "adb_path_source": "override" if completed else "LOCALAPPDATA_ANDROID_SDK",
         "apk_path": "android-app/app/build/outputs/apk/debug/app-debug.apk",
+        "apk_sha256": "1" * 64 if completed else None,
+        "device_identity": {
+            "serial": "R5CT123456A",
+            "manufacturer": "Google",
+            "model": "Pixel 8",
+            "device": "shiba",
+            "product": "shiba",
+            "build_fingerprint": "google/shiba/shiba:15/AP3A/test:user/release-keys",
+            "sdk": "35",
+        }
+        if completed
+        else None,
         "package": "com.senku.mobile",
         "launch_activity": "com.senku.mobile/.MainActivity",
         "evidence": {
@@ -32,6 +44,19 @@ def make_summary(*, completed: bool = False) -> dict:
             "dump_path": None,
             "logcat_path": None,
             "focus_contains_launch_activity": True if completed else None,
+            "focused_package": "com.senku.mobile" if completed else None,
+            "orientation": {
+                "source": "dumpsys input",
+                "raw": "SurfaceOrientation: 0" if completed else None,
+                "rotation": 0 if completed else None,
+                "orientation": "portrait" if completed else None,
+            },
+            "artifact_hashes": {
+                "focus_sha256": "2" * 64 if completed else None,
+                "screenshot_sha256": None,
+                "dump_sha256": None,
+                "logcat_sha256": None,
+            },
         },
         "commands": {
             "devices": "adb devices",

@@ -24,6 +24,11 @@ REQUIRED_TYPES: dict[str, type | tuple[type, ...]] = {
     "launches_emulators": bool,
     "serial_required_unless_dry_run": bool,
     "serial": (str, type(None)),
+    "adb_path": str,
+    "adb_path_source": str,
+    "apk_path": str,
+    "apk_sha256": (str, type(None)),
+    "device_identity": (dict, type(None)),
     "package": str,
     "launch_activity": str,
     "evidence": dict,
@@ -38,6 +43,33 @@ REQUIRED_EVIDENCE_TYPES: dict[str, type | tuple[type, ...]] = {
     "dump_path": (str, type(None)),
     "logcat_path": (str, type(None)),
     "focus_contains_launch_activity": (bool, type(None)),
+    "focused_package": (str, type(None)),
+    "orientation": dict,
+    "artifact_hashes": dict,
+}
+
+REQUIRED_DEVICE_IDENTITY_TYPES: dict[str, type | tuple[type, ...]] = {
+    "serial": str,
+    "manufacturer": str,
+    "model": str,
+    "device": str,
+    "product": str,
+    "build_fingerprint": str,
+    "sdk": str,
+}
+
+REQUIRED_ORIENTATION_TYPES: dict[str, type | tuple[type, ...]] = {
+    "source": str,
+    "raw": (str, type(None)),
+    "rotation": (int, type(None)),
+    "orientation": (str, type(None)),
+}
+
+REQUIRED_ARTIFACT_HASH_TYPES: dict[str, type | tuple[type, ...]] = {
+    "focus_sha256": (str, type(None)),
+    "screenshot_sha256": (str, type(None)),
+    "dump_sha256": (str, type(None)),
+    "logcat_sha256": (str, type(None)),
 }
 
 REQUIRED_TEXT_CHECK_TYPES: dict[str, type | tuple[type, ...]] = {
@@ -127,6 +159,32 @@ def _validate_common_contract(data: dict[str, Any], errors: list[str]) -> None:
     if isinstance(evidence, dict):
         for key, expected_type in REQUIRED_EVIDENCE_TYPES.items():
             _expect_type(evidence, key, expected_type, errors, scope="root.evidence")
+        orientation = evidence.get("orientation")
+        if isinstance(orientation, dict):
+            for key, expected_type in REQUIRED_ORIENTATION_TYPES.items():
+                _expect_type(
+                    orientation,
+                    key,
+                    expected_type,
+                    errors,
+                    scope="root.evidence.orientation",
+                )
+        artifact_hashes = evidence.get("artifact_hashes")
+        if isinstance(artifact_hashes, dict):
+            for key, expected_type in REQUIRED_ARTIFACT_HASH_TYPES.items():
+                _expect_type(
+                    artifact_hashes,
+                    key,
+                    expected_type,
+                    errors,
+                    scope="root.evidence.artifact_hashes",
+                )
+            _validate_artifact_hashes(evidence, artifact_hashes, errors)
+
+    device_identity = data.get("device_identity")
+    if isinstance(device_identity, dict):
+        for key, expected_type in REQUIRED_DEVICE_IDENTITY_TYPES.items():
+            _expect_type(device_identity, key, expected_type, errors, scope="root.device_identity")
 
     text_checks = data.get("text_checks")
     if text_checks is not None:
@@ -176,6 +234,25 @@ def _validate_text_checks(text_checks: dict[str, Any], errors: list[str]) -> Non
     for fragment in missing:
         if fragment not in requested_set:
             errors.append(f"expected root.text_checks.missing item to be requested: {fragment!r}")
+
+
+def _validate_sha256(value: Any, errors: list[str], *, key: str) -> None:
+    if isinstance(value, str) and not re.fullmatch(r"[0-9a-f]{64}", value):
+        errors.append(f"expected {key} to be a lowercase sha256 hex digest")
+
+
+def _validate_artifact_hashes(
+    evidence: dict[str, Any], artifact_hashes: dict[str, Any], errors: list[str]
+) -> None:
+    for hash_key in (
+        "focus_sha256",
+        "screenshot_sha256",
+        "dump_sha256",
+        "logcat_sha256",
+    ):
+        hash_value = artifact_hashes.get(hash_key)
+        hash_scope = f"root.evidence.artifact_hashes.{hash_key}"
+        _validate_sha256(hash_value, errors, key=hash_scope)
 
 
 def _validate_interaction(interaction: dict[str, Any], errors: list[str]) -> None:
@@ -318,6 +395,20 @@ def _validate_completed(data: dict[str, Any], errors: list[str]) -> None:
     elif re.match(r"^emulator-\d+$", serial):
         errors.append(f"expected root.serial not to be an emulator serial, got {serial!r}")
 
+    apk_sha256 = data.get("apk_sha256")
+    if not isinstance(apk_sha256, str) or not apk_sha256.strip():
+        errors.append("expected root.apk_sha256 to be present for completed summaries")
+    else:
+        _validate_sha256(apk_sha256, errors, key="root.apk_sha256")
+
+    device_identity = data.get("device_identity")
+    if not isinstance(device_identity, dict):
+        errors.append("expected root.device_identity for completed physical-phone smoke")
+    elif isinstance(serial, str) and device_identity.get("serial") != serial:
+        errors.append(
+            "expected root.device_identity.serial to match root.serial for completed physical-phone smoke"
+        )
+
     evidence = data.get("evidence")
     if isinstance(evidence, dict):
         _expect_equal(
@@ -327,6 +418,28 @@ def _validate_completed(data: dict[str, Any], errors: list[str]) -> None:
             errors,
             scope="root.evidence",
         )
+        _expect_equal(evidence, "focused_package", EXPECTED_PACKAGE, errors, scope="root.evidence")
+        orientation = evidence.get("orientation")
+        if isinstance(orientation, dict):
+            if orientation.get("rotation") is None:
+                errors.append("expected root.evidence.orientation.rotation for completed summaries")
+            if orientation.get("orientation") is None:
+                errors.append("expected root.evidence.orientation.orientation for completed summaries")
+        artifact_hashes = evidence.get("artifact_hashes")
+        if isinstance(artifact_hashes, dict):
+            for path_key, hash_key in {
+                "focus_path": "focus_sha256",
+                "screenshot_path": "screenshot_sha256",
+                "dump_path": "dump_sha256",
+                "logcat_path": "logcat_sha256",
+            }.items():
+                if isinstance(evidence.get(path_key), str) and evidence[path_key].strip():
+                    hash_value = artifact_hashes.get(hash_key)
+                    if hash_value is None:
+                        errors.append(
+                            f"expected root.evidence.artifact_hashes.{hash_key} "
+                            f"when root.evidence.{path_key} is present"
+                        )
 
     text_checks = data.get("text_checks")
     if isinstance(text_checks, dict):
