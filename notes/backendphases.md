@@ -1,6 +1,6 @@
 # Backend Cleanup Phase Tracker
 
-Last updated after cleanup through `dc20a05a` on 2026-05-01.
+Last updated after cleanup through `0fecc0d6` on 2026-05-01.
 
 Purpose: prevent future agents from rerunning Ask/query backend cleanup that is already complete. Keep this note short; implementation detail belongs in commits and tests.
 
@@ -29,6 +29,13 @@ Purpose: prevent future agents from rerunning Ask/query backend cleanup that is 
 - Latest local proof after `dc20a05a`: `git diff --check` passed; full Android
   `:app:testDebugUnitTest :app:assembleDebug :app:assembleDebugAndroidTest`
   passed.
+- Android pack/model push scripts are bounded through `0fecc0d6`:
+  `push_litert_model_to_android.ps1` and `push_mobile_pack_to_android.ps1`
+  route adb calls through `Invoke-AndroidAdbCommandCapture`, expose positive
+  command/push timeout knobs, and use longer push timeouts for file transfers
+  while preserving dry-run/cache semantics. Proof: 50 Python contract tests
+  passed for LiteRT push, mobile-pack push, and the PowerShell quality gate;
+  `git diff --check` passed.
 - Ask/Search route helpers are consolidated, with saved-route proof and
   follow-up failure restore proof covering the key route handoffs.
 - Anchor-prior behavior is extracted behind policy, and route-output parity is
