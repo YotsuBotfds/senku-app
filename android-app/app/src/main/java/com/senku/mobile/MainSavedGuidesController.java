@@ -12,6 +12,17 @@ final class MainSavedGuidesController {
     private static final int MAX_SAVED_GUIDES = 12;
 
     private boolean pendingSectionFocus;
+    private final LatestJobGate refreshGate = new LatestJobGate();
+
+    RefreshPlan beginRefresh(boolean repositoryReady, List<String> savedGuideIds) {
+        long refreshToken = refreshGate.nextJobToken();
+        RefreshPlan refreshPlan = planRefresh(repositoryReady, savedGuideIds);
+        return refreshPlan.withRefreshToken(refreshToken);
+    }
+
+    boolean isCurrentRefresh(long refreshToken) {
+        return refreshToken > 0L && refreshGate.isCurrentJob(refreshToken);
+    }
 
     RefreshPlan planRefresh(boolean repositoryReady, List<String> savedGuideIds) {
         if (!repositoryReady || savedGuideIds == null || savedGuideIds.isEmpty()) {
@@ -81,16 +92,26 @@ final class MainSavedGuidesController {
     }
 
     static final class RefreshPlan {
+        final long refreshToken;
         final boolean renderEmpty;
         final List<String> guideIdsToLoad;
 
         private RefreshPlan(boolean renderEmpty, List<String> guideIdsToLoad) {
+            this(0L, renderEmpty, guideIdsToLoad);
+        }
+
+        private RefreshPlan(long refreshToken, boolean renderEmpty, List<String> guideIdsToLoad) {
+            this.refreshToken = refreshToken;
             this.renderEmpty = renderEmpty;
             this.guideIdsToLoad = Collections.unmodifiableList(new ArrayList<>(guideIdsToLoad));
         }
 
         static RefreshPlan empty() {
             return new RefreshPlan(true, Collections.emptyList());
+        }
+
+        private RefreshPlan withRefreshToken(long refreshToken) {
+            return new RefreshPlan(refreshToken, renderEmpty, guideIdsToLoad);
         }
     }
 

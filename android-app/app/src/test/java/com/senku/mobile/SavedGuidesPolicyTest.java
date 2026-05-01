@@ -188,6 +188,33 @@ public final class SavedGuidesPolicyTest {
     }
 
     @Test
+    public void controllerRefreshTokenSuppressesOlderSavedGuideLoads() {
+        MainSavedGuidesController controller = new MainSavedGuidesController();
+
+        MainSavedGuidesController.RefreshPlan olderRefresh =
+            controller.beginRefresh(true, List.of("GD-001"));
+        MainSavedGuidesController.RefreshPlan newerRefresh =
+            controller.beginRefresh(true, List.of("GD-002"));
+
+        assertFalse(controller.isCurrentRefresh(olderRefresh.refreshToken));
+        assertTrue(controller.isCurrentRefresh(newerRefresh.refreshToken));
+    }
+
+    @Test
+    public void controllerEmptyRefreshInvalidatesOlderSavedGuideLoad() {
+        MainSavedGuidesController controller = new MainSavedGuidesController();
+
+        MainSavedGuidesController.RefreshPlan olderRefresh =
+            controller.beginRefresh(true, List.of("GD-001"));
+        MainSavedGuidesController.RefreshPlan emptyRefresh =
+            controller.beginRefresh(false, List.of("GD-001"));
+
+        assertTrue(emptyRefresh.renderEmpty);
+        assertFalse(controller.isCurrentRefresh(olderRefresh.refreshToken));
+        assertTrue(controller.isCurrentRefresh(emptyRefresh.refreshToken));
+    }
+
+    @Test
     public void controllerConsumesPendingFocusOnlyWhenBrowseSectionIsVisible() {
         MainSavedGuidesController controller = new MainSavedGuidesController();
 

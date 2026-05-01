@@ -1489,9 +1489,13 @@ public final class MainActivity extends AppCompatActivity {
     private void refreshPinnedGuidesAsync() {
         PackRepository repo = repository;
         MainSavedGuidesController.RefreshPlan refreshPlan =
-            savedGuidesController.planRefresh(repo != null, PinnedGuideStore.listGuideIds(this));
+            savedGuidesController.beginRefresh(repo != null, PinnedGuideStore.listGuideIds(this));
         if (refreshPlan.renderEmpty) {
-            runOnUiThread(() -> renderPinnedGuides(Collections.emptyList()));
+            runOnUiThread(() -> {
+                if (savedGuidesController.isCurrentRefresh(refreshPlan.refreshToken) && repository == repo) {
+                    renderPinnedGuides(Collections.emptyList());
+                }
+            });
             return;
         }
         int harnessToken = beginHarnessTask("main.refreshPinnedGuides");
@@ -1503,7 +1507,11 @@ public final class MainActivity extends AppCompatActivity {
                     loaded.add(result);
                 }
             }
-            runTrackedOnUiThread(harnessToken, () -> renderPinnedGuides(loaded));
+            runTrackedOnUiThread(harnessToken, () -> {
+                if (savedGuidesController.isCurrentRefresh(refreshPlan.refreshToken) && repository == repo) {
+                    renderPinnedGuides(loaded);
+                }
+            });
         });
     }
 
