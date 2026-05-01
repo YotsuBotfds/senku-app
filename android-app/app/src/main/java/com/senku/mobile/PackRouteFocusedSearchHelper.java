@@ -61,6 +61,54 @@ final class PackRouteFocusedSearchHelper {
             && RetrievalRoutePolicy.requiresSpecializedRouteAnchorSignal(preferredStructureType);
     }
 
+    static int routeChunkCandidateLimit(PackRepository.QueryTerms queryTerms, int limit) {
+        return RetrievalRoutePolicy.routeChunkCandidateLimit(
+            queryTerms == null ? null : queryTerms.routeProfile,
+            queryTerms == null ? null : queryTerms.metadataProfile,
+            limit,
+            usesCompactGuideSweep(queryTerms)
+        );
+    }
+
+    static int routeChunkCandidateTarget(PackRepository.QueryTerms queryTerms, int limit) {
+        return RetrievalRoutePolicy.routeChunkCandidateTarget(
+            queryTerms == null ? null : queryTerms.routeProfile,
+            queryTerms == null ? null : queryTerms.metadataProfile,
+            limit,
+            usesCompactGuideSweep(queryTerms)
+        );
+    }
+
+    static boolean shouldBackfillLikeAfterFts(
+        PackRepository.QueryTerms queryTerms,
+        int addedWithFts,
+        int totalSections,
+        int targetTotal
+    ) {
+        return RetrievalRoutePolicy.shouldBackfillLikeAfterFts(
+            queryTerms == null ? null : queryTerms.routeProfile,
+            queryTerms == null ? null : queryTerms.metadataProfile,
+            queryTerms == null ? 0 : queryTerms.primaryKeywordTokens().size(),
+            addedWithFts,
+            totalSections,
+            targetTotal
+        );
+    }
+
+    static RouteFtsOrderSpec noBm25RouteFtsOrder(PackRepository.QueryTerms queryTerms) {
+        RetrievalRoutePolicy.RouteFtsOrderSpec orderSpec = RetrievalRoutePolicy.noBm25RouteFtsOrder(
+            queryTerms == null ? "" : queryTerms.queryLower,
+            queryTerms == null ? null : queryTerms.metadataProfile
+        );
+        return new RouteFtsOrderSpec(orderSpec.clause, orderSpec.args, orderSpec.label);
+    }
+
+    private static boolean usesCompactGuideSweep(PackRepository.QueryTerms queryTerms) {
+        return queryTerms != null
+            && queryTerms.routeProfile != null
+            && queryTerms.routeProfile.usesCompactGuideSweep(queryTerms.queryLower);
+    }
+
     private static List<String> limitTokens(List<String> tokens, int max) {
         if (tokens == null || tokens.isEmpty() || max <= 0 || tokens.size() <= max) {
             return tokens;
@@ -84,6 +132,18 @@ final class PackRouteFocusedSearchHelper {
             this.specTerms = specTerms;
             this.tokens = tokens;
             this.categories = categories;
+        }
+    }
+
+    static final class RouteFtsOrderSpec {
+        final String clause;
+        final List<String> args;
+        final String label;
+
+        RouteFtsOrderSpec(String clause, List<String> args, String label) {
+            this.clause = clause;
+            this.args = args;
+            this.label = label;
         }
     }
 }

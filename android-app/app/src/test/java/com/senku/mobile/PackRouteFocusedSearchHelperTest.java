@@ -74,11 +74,58 @@ public final class PackRouteFocusedSearchHelperTest {
         assertFalse(PackRouteFocusedSearchHelper.shouldScanFullRouteCursor(null));
     }
 
+    @Test
+    public void routeChunkCandidatePlanningPreservesBroadHouseBudget() {
+        PackRepository.QueryTerms queryTerms = PackRepository.QueryTerms.fromQuery("how do i build a house");
+
+        assertEquals(600, PackRouteFocusedSearchHelper.routeChunkCandidateLimit(queryTerms, 12));
+        assertEquals(42, PackRouteFocusedSearchHelper.routeChunkCandidateTarget(queryTerms, 12));
+    }
+
+    @Test
+    public void routeChunkCandidatePlanningPreservesCompactSiteBudget() {
+        PackRepository.QueryTerms queryTerms = PackRepository.QueryTerms.fromQuery(
+            "how do i choose a safe site and foundation for a small cabin"
+        );
+
+        assertEquals(128, PackRouteFocusedSearchHelper.routeChunkCandidateLimit(queryTerms, 12));
+        assertEquals(16, PackRouteFocusedSearchHelper.routeChunkCandidateTarget(queryTerms, 12));
+    }
+
+    @Test
+    public void routeBackfillPlanningPreservesSpecializedStarvationBehavior() {
+        PackRepository.QueryTerms queryTerms = PackRepository.QueryTerms.fromQuery(
+            "how do i make soap from animal fat and ash"
+        );
+
+        assertTrue(PackRouteFocusedSearchHelper.shouldBackfillLikeAfterFts(queryTerms, 2, 2, 18));
+        assertFalse(PackRouteFocusedSearchHelper.shouldBackfillLikeAfterFts(queryTerms, 3, 6, 18));
+    }
+
+    @Test
+    public void noBm25RouteFtsOrderPreservesSpecializedLabels() {
+        assertNoBm25OrderLabel("how do i make soap from animal fat and ash", "soapmaking_priority");
+        assertNoBm25OrderLabel(
+            "how do i design a gravity-fed water distribution system",
+            "water_distribution_priority"
+        );
+        assertNoBm25OrderLabel("how do i build a clay oven", "clay_oven_priority");
+        assertNoBm25OrderLabel("how do i build a house", "rowid");
+    }
+
     private static void assertFullRouteCursorScan(String query, boolean expected) {
         assertEquals(
             query,
             expected,
             PackRouteFocusedSearchHelper.shouldScanFullRouteCursor(PackRepository.QueryTerms.fromQuery(query))
+        );
+    }
+
+    private static void assertNoBm25OrderLabel(String query, String expected) {
+        assertEquals(
+            query,
+            expected,
+            PackRouteFocusedSearchHelper.noBm25RouteFtsOrder(PackRepository.QueryTerms.fromQuery(query)).label
         );
     }
 }

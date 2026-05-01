@@ -973,8 +973,8 @@ public final class PackRepository implements AutoCloseable {
 
         boolean compactGuideSweep = queryTerms.routeProfile.usesCompactGuideSweep(queryTerms.queryLower);
         LinkedHashMap<String, ScoredSearchResult> bestBySection = new LinkedHashMap<>();
-        int candidateLimit = routeChunkCandidateLimit(queryTerms, limit, compactGuideSweep);
-        int candidateTarget = routeChunkCandidateTarget(queryTerms, limit, compactGuideSweep);
+        int candidateLimit = PackRouteFocusedSearchHelper.routeChunkCandidateLimit(queryTerms, limit);
+        int candidateTarget = PackRouteFocusedSearchHelper.routeChunkCandidateTarget(queryTerms, limit);
         for (QueryRouteProfile.RouteSearchSpec routeSpec : routeSpecs) {
             if (bestBySection.size() >= candidateTarget) {
                 break;
@@ -993,7 +993,12 @@ public final class PackRepository implements AutoCloseable {
                 candidateTarget,
                 bestBySection
             );
-            if (!shouldBackfillLikeAfterFts(queryTerms, addedWithFts, bestBySection.size(), candidateTarget)) {
+            if (!PackRouteFocusedSearchHelper.shouldBackfillLikeAfterFts(
+                queryTerms,
+                addedWithFts,
+                bestBySection.size(),
+                candidateTarget
+            )) {
                 continue;
             }
             collectRouteFocusedChunkResultsLike(
@@ -1119,83 +1124,24 @@ public final class PackRepository implements AutoCloseable {
     }
 
     static int routeChunkCandidateLimitForTest(String query, int limit) {
-        QueryTerms queryTerms = QueryTerms.fromQuery(query);
-        return routeChunkCandidateLimit(
-            queryTerms,
-            limit,
-            queryTerms.routeProfile.usesCompactGuideSweep(queryTerms.queryLower)
-        );
+        return PackRouteFocusedSearchHelper.routeChunkCandidateLimit(QueryTerms.fromQuery(query), limit);
     }
 
     static int routeChunkCandidateTargetForTest(String query, int limit) {
-        QueryTerms queryTerms = QueryTerms.fromQuery(query);
-        return routeChunkCandidateTarget(
-            queryTerms,
-            limit,
-            queryTerms.routeProfile.usesCompactGuideSweep(queryTerms.queryLower)
-        );
-    }
-
-    private static int routeChunkCandidateLimit(QueryTerms queryTerms, int limit, boolean compactGuideSweep) {
-        return RetrievalRoutePolicy.routeChunkCandidateLimit(
-            queryTerms.routeProfile,
-            queryTerms.metadataProfile,
-            limit,
-            compactGuideSweep
-        );
-    }
-
-    private static int routeChunkCandidateTarget(QueryTerms queryTerms, int limit, boolean compactGuideSweep) {
-        return RetrievalRoutePolicy.routeChunkCandidateTarget(
-            queryTerms.routeProfile,
-            queryTerms.metadataProfile,
-            limit,
-            compactGuideSweep
-        );
+        return PackRouteFocusedSearchHelper.routeChunkCandidateTarget(QueryTerms.fromQuery(query), limit);
     }
 
     static boolean shouldBackfillLikeAfterFtsForTest(String query, int addedWithFts, int totalSections, int targetTotal) {
-        return shouldBackfillLikeAfterFts(QueryTerms.fromQuery(query), addedWithFts, totalSections, targetTotal);
-    }
-
-    private static boolean shouldBackfillLikeAfterFts(
-        QueryTerms queryTerms,
-        int addedWithFts,
-        int totalSections,
-        int targetTotal
-    ) {
-        return RetrievalRoutePolicy.shouldBackfillLikeAfterFts(
-            queryTerms == null ? null : queryTerms.routeProfile,
-            queryTerms == null ? null : queryTerms.metadataProfile,
-            queryTerms == null ? 0 : queryTerms.primaryKeywordTokens().size(),
+        return PackRouteFocusedSearchHelper.shouldBackfillLikeAfterFts(
+            QueryTerms.fromQuery(query),
             addedWithFts,
             totalSections,
             targetTotal
         );
     }
 
-    private static final class RouteFtsOrderSpec {
-        final String clause;
-        final List<String> args;
-        final String label;
-
-        RouteFtsOrderSpec(String clause, List<String> args, String label) {
-            this.clause = clause;
-            this.args = args;
-            this.label = label;
-        }
-    }
-
-    private static RouteFtsOrderSpec noBm25RouteFtsOrder(QueryTerms queryTerms) {
-        RetrievalRoutePolicy.RouteFtsOrderSpec orderSpec = RetrievalRoutePolicy.noBm25RouteFtsOrder(
-            queryTerms == null ? "" : queryTerms.queryLower,
-            queryTerms == null ? null : queryTerms.metadataProfile
-        );
-        return new RouteFtsOrderSpec(orderSpec.clause, orderSpec.args, orderSpec.label);
-    }
-
     static String noBm25RouteFtsOrderLabelForTest(String query) {
-        return noBm25RouteFtsOrder(QueryTerms.fromQuery(query)).label;
+        return PackRouteFocusedSearchHelper.noBm25RouteFtsOrder(QueryTerms.fromQuery(query)).label;
     }
 
     private int collectRouteFocusedChunkResultsFts(
@@ -1226,9 +1172,13 @@ public final class PackRepository implements AutoCloseable {
         int effectiveCandidateLimit = ftsSupportsBm25
             ? candidateLimit
             : Math.min(candidateLimit, queryTerms.routeProfile.isStarterBuildProject() ? 120 : 84);
-        RouteFtsOrderSpec orderSpec = ftsSupportsBm25
-            ? new RouteFtsOrderSpec(" ORDER BY bm25(" + ftsTableName + ") ", Collections.emptyList(), "bm25")
-            : noBm25RouteFtsOrder(queryTerms);
+        PackRouteFocusedSearchHelper.RouteFtsOrderSpec orderSpec = ftsSupportsBm25
+            ? new PackRouteFocusedSearchHelper.RouteFtsOrderSpec(
+                " ORDER BY bm25(" + ftsTableName + ") ",
+                Collections.emptyList(),
+                "bm25"
+            )
+            : PackRouteFocusedSearchHelper.noBm25RouteFtsOrder(queryTerms);
         args.addAll(orderSpec.args);
         args.add(String.valueOf(effectiveCandidateLimit));
 
@@ -1402,7 +1352,12 @@ public final class PackRepository implements AutoCloseable {
                 targetTotal,
                 bestBySection
             );
-            if (!shouldBackfillLikeAfterFts(queryTerms, addedWithFts, bestBySection.size(), targetTotal)) {
+            if (!PackRouteFocusedSearchHelper.shouldBackfillLikeAfterFts(
+                queryTerms,
+                addedWithFts,
+                bestBySection.size(),
+                targetTotal
+            )) {
                 continue;
             }
             collectRouteFocusedGuideResultsLike(
@@ -1453,9 +1408,13 @@ public final class PackRepository implements AutoCloseable {
         int effectiveCandidateLimit = ftsSupportsBm25
             ? candidateLimit
             : Math.min(candidateLimit, queryTerms.routeProfile.isStarterBuildProject() ? 48 : 24);
-        RouteFtsOrderSpec orderSpec = ftsSupportsBm25
-            ? new RouteFtsOrderSpec(" ORDER BY bm25(" + ftsTableName + ") ", Collections.emptyList(), "bm25")
-            : noBm25RouteFtsOrder(queryTerms);
+        PackRouteFocusedSearchHelper.RouteFtsOrderSpec orderSpec = ftsSupportsBm25
+            ? new PackRouteFocusedSearchHelper.RouteFtsOrderSpec(
+                " ORDER BY bm25(" + ftsTableName + ") ",
+                Collections.emptyList(),
+                "bm25"
+            )
+            : PackRouteFocusedSearchHelper.noBm25RouteFtsOrder(queryTerms);
         args.addAll(orderSpec.args);
         args.add(String.valueOf(effectiveCandidateLimit));
 
