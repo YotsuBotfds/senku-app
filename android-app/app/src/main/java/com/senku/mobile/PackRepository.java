@@ -304,14 +304,14 @@ public final class PackRepository implements AutoCloseable {
         QueryTerms queryTerms = QueryTerms.fromQuery(query);
         if (queryTerms.isEmpty()) {
             List<SearchResult> fallbackResults = searchPlainLikeResults(query, limit);
-            SearchLatencyBreakdown breakdown = new SearchLatencyBreakdown(
+            SearchLatencyBreakdown breakdown = PackSearchTelemetryPolicy.buildBreakdown(
                 0L,
                 0L,
                 0L,
                 0L,
                 0L,
                 Math.max(0L, System.currentTimeMillis() - startedAt),
-                "plainLike_no_terms"
+                PackSearchTelemetryPolicy.OUTCOME_PLAIN_LIKE_NO_TERMS
             );
             Log.d(TAG, buildSearchSummaryLine(query, false, 0, 0, 0, 0, breakdown));
             logSearchTripwireIfNeeded(query, breakdown);
@@ -358,14 +358,14 @@ public final class PackRepository implements AutoCloseable {
 
         if (lexicalHits.isEmpty()) {
             if (!routeResults.isEmpty()) {
-                SearchLatencyBreakdown breakdown = new SearchLatencyBreakdown(
+                SearchLatencyBreakdown breakdown = PackSearchTelemetryPolicy.buildBreakdown(
                     routeElapsedMs,
                     ftsElapsedMs,
                     keywordElapsedMs,
                     0L,
                     0L,
                     Math.max(0L, System.currentTimeMillis() - startedAt),
-                    "route_only"
+                    PackSearchTelemetryPolicy.OUTCOME_ROUTE_ONLY
                 );
                 Log.d(
                     TAG,
@@ -382,14 +382,14 @@ public final class PackRepository implements AutoCloseable {
                 logSearchTripwireIfNeeded(query, breakdown);
                 return new ArrayList<>(routeResults.subList(0, Math.min(limit, routeResults.size())));
             }
-            SearchLatencyBreakdown breakdown = new SearchLatencyBreakdown(
+            SearchLatencyBreakdown breakdown = PackSearchTelemetryPolicy.buildBreakdown(
                 routeElapsedMs,
                 ftsElapsedMs,
                 keywordElapsedMs,
                 0L,
                 0L,
                 Math.max(0L, System.currentTimeMillis() - startedAt),
-                "plainLike_empty_lexical"
+                PackSearchTelemetryPolicy.OUTCOME_PLAIN_LIKE_EMPTY_LEXICAL
             );
             Log.d(
                 TAG,
@@ -417,14 +417,14 @@ public final class PackRepository implements AutoCloseable {
                 limit
             );
             rerankElapsedMs = lexicalFinalization.rerankElapsedMs;
-            SearchLatencyBreakdown breakdown = new SearchLatencyBreakdown(
+            SearchLatencyBreakdown breakdown = PackSearchTelemetryPolicy.buildBreakdown(
                 routeElapsedMs,
                 ftsElapsedMs,
                 keywordElapsedMs,
                 0L,
                 rerankElapsedMs,
                 Math.max(0L, System.currentTimeMillis() - startedAt),
-                "vector_disabled"
+                PackSearchTelemetryPolicy.OUTCOME_VECTOR_DISABLED
             );
             Log.d(
                 TAG,
@@ -463,14 +463,14 @@ public final class PackRepository implements AutoCloseable {
                 limit
             );
             rerankElapsedMs = lexicalFinalization.rerankElapsedMs;
-            SearchLatencyBreakdown breakdown = new SearchLatencyBreakdown(
+            SearchLatencyBreakdown breakdown = PackSearchTelemetryPolicy.buildBreakdown(
                 routeElapsedMs,
                 ftsElapsedMs,
                 keywordElapsedMs,
                 Math.max(0L, System.currentTimeMillis() - vectorStartedAt),
                 rerankElapsedMs,
                 Math.max(0L, System.currentTimeMillis() - startedAt),
-                "centroid_missing"
+                PackSearchTelemetryPolicy.OUTCOME_CENTROID_MISSING
             );
             Log.d(
                 TAG,
@@ -505,14 +505,14 @@ public final class PackRepository implements AutoCloseable {
         List<SearchResult> reranked = hybridFinalization.rerankedResults;
         rerankElapsedMs = hybridFinalization.rerankElapsedMs;
         long vectorElapsedMs = System.currentTimeMillis() - vectorStartedAt;
-        SearchLatencyBreakdown breakdown = new SearchLatencyBreakdown(
+        SearchLatencyBreakdown breakdown = PackSearchTelemetryPolicy.buildBreakdown(
             routeElapsedMs,
             ftsElapsedMs,
             keywordElapsedMs,
             vectorElapsedMs,
             rerankElapsedMs,
             Math.max(0L, System.currentTimeMillis() - startedAt),
-            "hybrid"
+            PackSearchTelemetryPolicy.OUTCOME_HYBRID
         );
         Log.d(
             TAG,
@@ -892,7 +892,7 @@ public final class PackRepository implements AutoCloseable {
             lexicalHits,
             vectorHits,
             routeResults,
-            new SearchLatencyBreakdown(
+            PackSearchTelemetryPolicy.buildBreakdown(
                 routeMs,
                 ftsMs,
                 keywordMs,
@@ -916,7 +916,7 @@ public final class PackRepository implements AutoCloseable {
     ) {
         return buildSlowQueryTripwireDebugLine(
             query,
-            new SearchLatencyBreakdown(
+            PackSearchTelemetryPolicy.buildBreakdown(
                 routeMs,
                 ftsMs,
                 keywordMs,
@@ -2185,47 +2185,11 @@ public final class PackRepository implements AutoCloseable {
     }
 
     private static String buildLexicalCandidateTelemetryLine(String query, List<RankedChunk> hits) {
-        ArrayList<String> rows = new ArrayList<>();
-        if (hits != null) {
-            int capped = CandidateTelemetryFormatter.limitedRowCount(hits.size());
-            for (int index = 0; index < capped; index++) {
-                RankedChunk hit = hits.get(index);
-                rows.add(
-                    CandidateTelemetryFormatter.formatRow(
-                        index + 1,
-                        hit.guideId,
-                        hit.sectionHeading,
-                        hit.lexicalScore,
-                        hit.structureType,
-                        hit.category,
-                        hit.topicTags
-                    )
-                );
-            }
-        }
-        return CandidateTelemetryFormatter.buildLine("lexical", query, rows);
+        return PackSearchTelemetryPolicy.buildLexicalCandidateTelemetryLine(query, hits);
     }
 
     private static String buildVectorCandidateTelemetryLine(String query, List<RankedChunk> hits) {
-        ArrayList<String> rows = new ArrayList<>();
-        if (hits != null) {
-            int capped = CandidateTelemetryFormatter.limitedRowCount(hits.size());
-            for (int index = 0; index < capped; index++) {
-                RankedChunk hit = hits.get(index);
-                rows.add(
-                    CandidateTelemetryFormatter.formatRow(
-                        index + 1,
-                        hit.guideId,
-                        hit.sectionHeading,
-                        hit.vectorScore,
-                        hit.structureType,
-                        hit.category,
-                        hit.topicTags
-                    )
-                );
-            }
-        }
-        return CandidateTelemetryFormatter.buildLine("vector", query, rows);
+        return PackSearchTelemetryPolicy.buildVectorCandidateTelemetryLine(query, hits);
     }
 
     private static void safeLogDebug(String message) {

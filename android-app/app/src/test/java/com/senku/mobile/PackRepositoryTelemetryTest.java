@@ -415,7 +415,7 @@ public final class PackRepositoryTelemetryTest {
     @Test
     public void finalizationPreservesTelemetryAndRerankTimingForFallbackAndHybridShapes() {
         assertFinalizationTelemetryAndTiming(
-            "vector_disabled",
+            PackSearchTelemetryPolicy.OUTCOME_VECTOR_DISABLED,
             PackRetrievalFusionPolicy.mergeHybrid(
                 Arrays.asList(
                     rankedChunk("lex-shelter", "GD-345", "Tarp Shelter Setup", "emergency_shelter", 0),
@@ -431,7 +431,7 @@ public final class PackRepositoryTelemetryTest {
             0L
         );
         assertFinalizationTelemetryAndTiming(
-            "centroid_missing",
+            PackSearchTelemetryPolicy.OUTCOME_CENTROID_MISSING,
             PackRetrievalFusionPolicy.mergeHybrid(
                 Arrays.asList(
                     rankedChunk("centroid-shelter", "GD-345", "Tarp Shelter Setup", "emergency_shelter", 0),
@@ -447,7 +447,7 @@ public final class PackRepositoryTelemetryTest {
             7L
         );
         assertFinalizationTelemetryAndTiming(
-            "hybrid",
+            PackSearchTelemetryPolicy.OUTCOME_HYBRID,
             PackRetrievalFusionPolicy.mergeHybrid(
                 Arrays.asList(
                     rankedChunk("hybrid-shelter", "GD-345", "Tarp Shelter Setup", "emergency_shelter", 0),
@@ -465,6 +465,16 @@ public final class PackRepositoryTelemetryTest {
             1,
             11L
         );
+    }
+
+    @Test
+    public void telemetryPolicyOwnsSearchOutcomeFallbackStrings() {
+        assertSearchOutcome(PackSearchTelemetryPolicy.OUTCOME_PLAIN_LIKE_NO_TERMS);
+        assertSearchOutcome(PackSearchTelemetryPolicy.OUTCOME_ROUTE_ONLY);
+        assertSearchOutcome(PackSearchTelemetryPolicy.OUTCOME_PLAIN_LIKE_EMPTY_LEXICAL);
+        assertSearchOutcome(PackSearchTelemetryPolicy.OUTCOME_VECTOR_DISABLED);
+        assertSearchOutcome(PackSearchTelemetryPolicy.OUTCOME_CENTROID_MISSING);
+        assertSearchOutcome(PackSearchTelemetryPolicy.OUTCOME_HYBRID);
     }
 
     private static SearchResult searchResult(
@@ -582,6 +592,37 @@ public final class PackRepositoryTelemetryTest {
 
         assertTrue(summaryLine.contains("fallback=" + fallbackMode));
         assertTrue(summaryLine.contains("rerankMs=" + finalization.rerankElapsedMs));
+    }
+
+    private static void assertSearchOutcome(String outcome) {
+        SearchLatencyBreakdown breakdown = PackSearchTelemetryPolicy.buildBreakdown(
+            1L,
+            2L,
+            3L,
+            4L,
+            5L,
+            6L,
+            outcome
+        );
+
+        assertEquals(outcome, breakdown.fallbackMode);
+        assertTrue(
+            PackRepository.buildSearchSummaryLineForTest(
+                "telemetry outcome",
+                false,
+                0,
+                0,
+                0,
+                0,
+                breakdown.routeMs,
+                breakdown.ftsMs,
+                breakdown.keywordMs,
+                breakdown.vectorMs,
+                breakdown.rerankMs,
+                breakdown.totalMs,
+                breakdown.fallbackMode
+            ).contains("fallback=" + outcome)
+        );
     }
 
     private static PackRepository.RerankedResult rerankedResult(
