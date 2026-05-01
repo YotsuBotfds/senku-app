@@ -1301,6 +1301,7 @@ function Resolve-InstrumentationMethodNames {
         }
         "functional-saved" {
             return @(
+                "savedNavigationTapSelectsVisibleSavedSemantics",
                 "savedNavigationBackReturnsManualHomeDestination",
                 "guideDetailSaveButtonSurfacesGuideInSavedDestinationAndUnsaveRemovesIt",
                 "savedTabImeSubmitRoutesToSearchResultsNotAnswerDetail",
@@ -1313,6 +1314,7 @@ function Resolve-InstrumentationMethodNames {
                 "searchResultsVisibleBackReturnsBrowseWithoutAskOwnership",
                 "answerModeProvenanceOpenBackReturnsAnswerContext",
                 "emergencyAnswerVisibleBackButtonReturnsManualHomeDestination",
+                "noSourceAskSystemBackReturnsToStableMainRoute",
                 "answerSourceChipTapFollowsAdvertisedActionForSeededGuideSources"
             )
         }

@@ -5,6 +5,7 @@ from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 SCRIPT = REPO_ROOT / "scripts" / "run_android_instrumented_ui_smoke.ps1"
+PROMPT_HARNESS = REPO_ROOT / "android-app" / "app" / "src" / "androidTest" / "java" / "com" / "senku" / "mobile" / "PromptHarnessSmokeTest.java"
 QUALITY_GATE_SCRIPT = REPO_ROOT / "scripts" / "run_powershell_quality_gate.ps1"
 
 
@@ -12,6 +13,7 @@ class RunAndroidInstrumentedUiSmokeSummaryContractTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.script = SCRIPT.read_text(encoding="utf-8-sig")
+        cls.prompt_harness = PROMPT_HARNESS.read_text(encoding="utf-8-sig")
 
     def test_installed_pack_metadata_probe_uses_app_private_manifest(self):
         self.assertIn("function Get-InstalledPackMetadata", self.script)
@@ -104,10 +106,12 @@ class RunAndroidInstrumentedUiSmokeSummaryContractTests(unittest.TestCase):
         self.assertIn('"tablet-functional-header" { return 300000 }', self.script)
         self.assertIn('"homeAndAskImeSubmitRouteToSearchResultsAndAnswerDetail"', self.script)
         self.assertIn('"searchButtonFromAskLaneUsesAskSubmitOwnership"', self.script)
+        self.assertIn('"savedNavigationTapSelectsVisibleSavedSemantics"', self.script)
         self.assertIn('"savedNavigationBackReturnsManualHomeDestination"', self.script)
         self.assertIn('"guideDetailSaveButtonSurfacesGuideInSavedDestinationAndUnsaveRemovesIt"', self.script)
         self.assertIn('"answerModeProvenanceOpenBackReturnsAnswerContext"', self.script)
         self.assertIn('"emergencyAnswerVisibleBackButtonReturnsManualHomeDestination"', self.script)
+        self.assertIn('"noSourceAskSystemBackReturnsToStableMainRoute"', self.script)
         self.assertIn('"tabletDetailRailLibraryTapReturnsManualHome"', self.script)
         self.assertIn('"tabletDetailRailSavedTapOpensSavedDestination"', self.script)
         self.assertIn('"tabletDetailRailAskTapOpensEmptyAskLaneAndSubmitRoutesToAnswerDetail"', self.script)
@@ -128,6 +132,7 @@ class RunAndroidInstrumentedUiSmokeSummaryContractTests(unittest.TestCase):
     def test_functional_saved_profile_includes_real_save_unsave_semantics(self):
         expected_block = '''"functional-saved" {
             return @(
+                "savedNavigationTapSelectsVisibleSavedSemantics",
                 "savedNavigationBackReturnsManualHomeDestination",
                 "guideDetailSaveButtonSurfacesGuideInSavedDestinationAndUnsaveRemovesIt",
                 "savedTabImeSubmitRoutesToSearchResultsNotAnswerDetail",
@@ -155,10 +160,31 @@ class RunAndroidInstrumentedUiSmokeSummaryContractTests(unittest.TestCase):
                 "searchResultsVisibleBackReturnsBrowseWithoutAskOwnership",
                 "answerModeProvenanceOpenBackReturnsAnswerContext",
                 "emergencyAnswerVisibleBackButtonReturnsManualHomeDestination",
+                "noSourceAskSystemBackReturnsToStableMainRoute",
                 "answerSourceChipTapFollowsAdvertisedActionForSeededGuideSources"
             )
         }'''
         self.assertIn(expected_block, self.script)
+
+    def test_functional_saved_profile_includes_selected_saved_destination_proof(self):
+        self.assertIn('"savedNavigationTapSelectsVisibleSavedSemantics"', self.script)
+        method_start = self.prompt_harness.index("public void savedNavigationTapSelectsVisibleSavedSemantics()")
+        method_end = self.prompt_harness.index("@Test", method_start + 1)
+        method_body = self.prompt_harness[method_start:method_end]
+        self.assertIn("assertSavedGuidesDestination(activity, false)", method_body)
+        self.assertIn("assertSavedNavigationVisibleSemantics(activity)", method_body)
+        self.assertIn('captureUiState("saved_tab_visible_semantics")', method_body)
+
+    def test_functional_back_profile_includes_exact_route_state_back_proof(self):
+        self.assertIn('"noSourceAskSystemBackReturnsToStableMainRoute"', self.script)
+        method_start = self.prompt_harness.index("public void noSourceAskSystemBackReturnsToStableMainRoute()")
+        method_end = self.prompt_harness.index("@Test", method_start + 1)
+        method_body = self.prompt_harness[method_start:method_end]
+        self.assertIn("assertCurrentMainRouteState(", method_body)
+        self.assertIn("MainRouteDecisionHelper.Surface.RECENT_THREADS", method_body)
+        self.assertIn("MainRouteDecisionHelper.Surface.BROWSE", method_body)
+        self.assertIn("BottomTabDestination.ASK", method_body)
+        self.assertIn("BottomTabDestination.HOME", method_body)
 
     def test_final_summary_includes_selected_instrumentation_methods(self):
         self.assertIn("$EffectiveTestMethods = if (Use-ScriptedPromptRun) {", self.script)
