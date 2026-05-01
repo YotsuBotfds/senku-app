@@ -1417,10 +1417,10 @@ public final class PackRepository implements AutoCloseable {
         if (candidate == null) {
             return false;
         }
-        String normalized = normalizeMatchText(
-            emptySafe(candidate.title) + " " + emptySafe(candidate.sectionHeading)
+        return PackTextMatchPolicy.containsAnyMarker(
+            emptySafe(candidate.title) + " " + emptySafe(candidate.sectionHeading),
+            HOUSE_SITE_SELECTION_ANCHOR_MARKERS
         );
-        return containsAnyMarker(normalized, HOUSE_SITE_SELECTION_ANCHOR_MARKERS);
     }
 
     static int cabinSiteSelectionAnchorBias(QueryTerms queryTerms, SearchResult candidate) {
@@ -1430,8 +1430,8 @@ public final class PackRepository implements AutoCloseable {
         int score = 0;
         String normalizedCategory = emptySafe(candidate.category).trim().toLowerCase(QUERY_LOCALE);
         boolean siteSignal = hasCabinSiteSelectionAnchorSignal(candidate);
-        boolean foundationOnlySignal = containsAnyMarker(
-            normalizeMatchText(emptySafe(candidate.title) + " " + emptySafe(candidate.sectionHeading)),
+        boolean foundationOnlySignal = PackTextMatchPolicy.containsAnyMarker(
+            emptySafe(candidate.title) + " " + emptySafe(candidate.sectionHeading),
             HOUSE_FOUNDATION_DETAIL_MARKERS
         );
         if (siteSignal) {
@@ -2053,38 +2053,38 @@ public final class PackRepository implements AutoCloseable {
         String queryLower = queryTerms.queryLower;
 
         int score = 0;
-        if (containsTerm(titleLower, queryLower)) {
+        if (PackTextMatchPolicy.containsTerm(titleLower, queryLower)) {
             score += 18;
         }
-        if (containsTerm(sectionLower, queryLower)) {
+        if (PackTextMatchPolicy.containsTerm(sectionLower, queryLower)) {
             score += 14;
         }
-        if (containsTerm(descriptionLower, queryLower)) {
+        if (PackTextMatchPolicy.containsTerm(descriptionLower, queryLower)) {
             score += 8;
         }
 
         int strongMatches = 0;
         for (String token : queryTerms.primaryKeywordTokens()) {
-            if (containsTerm(titleLower, token)) {
+            if (PackTextMatchPolicy.containsTerm(titleLower, token)) {
                 score += 12;
                 strongMatches += 1;
             }
-            if (containsTerm(sectionLower, token)) {
+            if (PackTextMatchPolicy.containsTerm(sectionLower, token)) {
                 score += 10;
                 strongMatches += 1;
             }
-            if (containsTerm(tagsLower, token)) {
+            if (PackTextMatchPolicy.containsTerm(tagsLower, token)) {
                 score += 8;
                 strongMatches += 1;
             }
-            if (containsTerm(categoryLower, token)) {
+            if (PackTextMatchPolicy.containsTerm(categoryLower, token)) {
                 score += 5;
             }
-            if (containsTerm(descriptionLower, token)) {
+            if (PackTextMatchPolicy.containsTerm(descriptionLower, token)) {
                 score += 6;
                 strongMatches += 1;
             }
-            if (containsTerm(documentLower, token)) {
+            if (PackTextMatchPolicy.containsTerm(documentLower, token)) {
                 score += 3;
                 strongMatches += 1;
             }
@@ -2092,26 +2092,26 @@ public final class PackRepository implements AutoCloseable {
 
         int expansionMatches = 0;
         for (String token : queryTerms.expansionTokens) {
-            if (containsTerm(titleLower, token)) {
+            if (PackTextMatchPolicy.containsTerm(titleLower, token)) {
                 score += 6;
                 expansionMatches += 1;
             }
-            if (containsTerm(sectionLower, token)) {
+            if (PackTextMatchPolicy.containsTerm(sectionLower, token)) {
                 score += 5;
                 expansionMatches += 1;
             }
-            if (containsTerm(tagsLower, token)) {
+            if (PackTextMatchPolicy.containsTerm(tagsLower, token)) {
                 score += 4;
                 expansionMatches += 1;
             }
-            if (containsTerm(categoryLower, token)) {
+            if (PackTextMatchPolicy.containsTerm(categoryLower, token)) {
                 score += 3;
             }
-            if (containsTerm(descriptionLower, token)) {
+            if (PackTextMatchPolicy.containsTerm(descriptionLower, token)) {
                 score += 3;
                 expansionMatches += 1;
             }
-            if (containsTerm(documentLower, token)) {
+            if (PackTextMatchPolicy.containsTerm(documentLower, token)) {
                 score += 2;
                 expansionMatches += 1;
             }
@@ -2222,24 +2222,6 @@ public final class PackRepository implements AutoCloseable {
         return Collections.unmodifiableSet(markers);
     }
 
-    private static boolean containsAnyMarker(String text, Set<String> markers) {
-        String normalized = normalizeMatchText(text);
-        if (normalized.isEmpty() || markers == null || markers.isEmpty()) {
-            return false;
-        }
-        String boundedText = " " + normalized + " ";
-        for (String marker : markers) {
-            String normalizedMarker = normalizeMatchText(marker);
-            if (normalizedMarker.isEmpty()) {
-                continue;
-            }
-            if (boundedText.contains(" " + normalizedMarker + " ")) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     static String clip(String text, int limit) {
         String safe = emptySafe(text).replaceAll("\\s+", " ").trim();
         if (safe.length() <= limit) {
@@ -2250,26 +2232,6 @@ public final class PackRepository implements AutoCloseable {
 
     private static String normalizeSection(String section) {
         return emptySafe(section).replaceAll("\\s+", " ").trim().toLowerCase(QUERY_LOCALE);
-    }
-
-    private static boolean containsTerm(String text, String term) {
-        String normalizedText = normalizeMatchText(text);
-        String normalizedTerm = normalizeMatchText(term);
-        if (normalizedText.isEmpty() || normalizedTerm.isEmpty()) {
-            return false;
-        }
-        if (normalizedTerm.contains(" ")) {
-            return normalizedText.contains(normalizedTerm);
-        }
-        return (" " + normalizedText + " ").contains(" " + normalizedTerm + " ");
-    }
-
-    private static String normalizeMatchText(String text) {
-        return emptySafe(text)
-            .toLowerCase(QUERY_LOCALE)
-            .replaceAll("[^a-z0-9]+", " ")
-            .replaceAll("\\s+", " ")
-            .trim();
     }
 
     static String combineTags(String tags, String topicTags) {
