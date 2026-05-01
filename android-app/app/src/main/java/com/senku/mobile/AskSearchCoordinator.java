@@ -2,7 +2,7 @@ package com.senku.mobile;
 
 import com.senku.ui.primitives.BottomTabDestination;
 
-public final class AskSearchCoordinator {
+final class AskSearchCoordinator {
     enum SubmitTarget {
         SEARCH,
         ASK

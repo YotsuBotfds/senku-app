@@ -2,7 +2,7 @@ package com.senku.mobile;
 
 import com.senku.ui.primitives.BottomTabDestination;
 
-public final class MainRouteDecisionHelper {
+final class MainRouteDecisionHelper {
     static final String STATE_PHONE_TAB = "phone_tab";
     static final String STATE_MAIN_ROUTE_SURFACE = "main_route_surface";
     static final String STATE_MAIN_ROUTE_ACTIVE_TAB = "main_route_active_tab";
