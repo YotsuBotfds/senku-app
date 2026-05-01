@@ -29,6 +29,8 @@ class AndroidPhysicalPhoneSmokeContractTests(unittest.TestCase):
         self.assertIn("[string]$LogcatPath", self.script)
         self.assertIn("[string[]]$RequiredText", self.script)
         self.assertIn("[switch]$Interact", self.script)
+        self.assertIn('[ValidateSet("Simple", "Ask")]', self.script)
+        self.assertIn('[string]$InteractionMode = "Simple"', self.script)
         self.assertIn("[string]$InteractionQuery", self.script)
         self.assertIn('Join-Path $env:LOCALAPPDATA "Android\\Sdk\\platform-tools\\adb.exe"', self.script)
         self.assertIn("Serial is required unless -DryRun is set", self.script)
@@ -61,10 +63,17 @@ class AndroidPhysicalPhoneSmokeContractTests(unittest.TestCase):
         self.assertIn("baseline_dump_sha256", self.script)
         self.assertIn("dump_changed", self.script)
         self.assertIn("RequireChangedDump", self.script)
+        self.assertIn("RequireTextEvidence", self.script)
         self.assertIn("selected_destination", self.script)
         self.assertIn("dump_sha256", self.script)
         self.assertIn("function Invoke-SenkuSimpleInteraction", self.script)
+        self.assertIn("function Invoke-SenkuAskInteraction", self.script)
+        self.assertIn("Get-AskOwnedEvidenceFragments", self.script)
+        self.assertIn("Get-AskAnswerEvidenceFragments", self.script)
         self.assertIn("tap_saved", self.script)
+        self.assertIn("tap_ask", self.script)
+        self.assertIn("submit_ask_query", self.script)
+        self.assertIn("back_to_ask", self.script)
         self.assertIn("tap_query_field", self.script)
         self.assertIn("enter_query", self.script)
         self.assertIn("submit_query", self.script)
@@ -82,7 +91,7 @@ class AndroidPhysicalPhoneSmokeContractTests(unittest.TestCase):
         self.assertIn('$summaryMarkdownPath = Join-Path $resolvedOutputDir "summary.md"', self.script)
 
     def test_failed_post_check_is_recorded_without_discarding_payload(self):
-        self.assertIn("if (-not $postCheck.passed) {", self.script)
+        self.assertIn("if ((-not $postCheck.passed) -or ($RequireTextEvidence", self.script)
         self.assertIn('$message = "Post-step UI check for', self.script)
         self.assertIn('-PostCheck $postCheck))', self.script)
         self.assertIn('[void]$Steps.Add((New-InteractionStep -Name $Name -Status "failed"', self.script)
@@ -222,6 +231,7 @@ class AndroidPhysicalPhoneSmokeContractTests(unittest.TestCase):
             summary = json.loads(summary_path.read_text(encoding="utf-8-sig"))
             self.assertEqual(summary["status"], "dry_run_only")
             self.assertTrue(summary["interaction"]["enabled"])
+            self.assertEqual(summary["interaction"]["mode"], "Simple")
             self.assertEqual(summary["interaction"]["query"], "boil water")
             self.assertEqual(
                 [(step["name"], step["status"]) for step in summary["interaction"]["steps"]],
@@ -236,6 +246,59 @@ class AndroidPhysicalPhoneSmokeContractTests(unittest.TestCase):
             for step in summary["interaction"]["steps"]:
                 self.assertEqual(step["message"], "Dry run only.")
                 self.assertNotIn("post_check", step)
+
+            validation = subprocess.run(
+                ["python", str(VALIDATOR_SCRIPT), str(summary_path)],
+                cwd=REPO_ROOT,
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+
+            self.assertEqual(validation.returncode, 0, validation.stderr + validation.stdout)
+        finally:
+            shutil.rmtree(output_dir, ignore_errors=True)
+
+    def test_dry_run_ask_interact_records_mode_specific_skipped_steps_and_validates(self):
+        output_dir = Path(tempfile.mkdtemp(prefix="physical_phone_smoke_dry_ask_interact_"))
+        try:
+            result = subprocess.run(
+                [
+                    "powershell",
+                    "-NoProfile",
+                    "-ExecutionPolicy",
+                    "Bypass",
+                    "-File",
+                    str(SCRIPT),
+                    "-OutputDir",
+                    str(output_dir),
+                    "-DryRun",
+                    "-Interact",
+                    "-InteractionMode",
+                    "Ask",
+                    "-InteractionQuery",
+                    "boil water",
+                ],
+                cwd=REPO_ROOT,
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+
+            self.assertEqual(result.returncode, 0, result.stderr + result.stdout)
+            summary_path = output_dir / "summary.json"
+            summary = json.loads(summary_path.read_text(encoding="utf-8-sig"))
+            self.assertEqual(summary["interaction"]["mode"], "Ask")
+            self.assertEqual(
+                [(step["name"], step["status"]) for step in summary["interaction"]["steps"]],
+                [
+                    ("tap_ask", "skipped"),
+                    ("tap_ask_query_field", "skipped"),
+                    ("enter_query", "skipped"),
+                    ("submit_ask_query", "skipped"),
+                    ("back_to_ask", "skipped"),
+                ],
+            )
 
             validation = subprocess.run(
                 ["python", str(VALIDATOR_SCRIPT), str(summary_path)],
@@ -530,6 +593,210 @@ class AndroidPhysicalPhoneSmokeContractTests(unittest.TestCase):
             self.assertIn("-s R5CT123456A shell input text boil%swater", call_text)
             self.assertIn("-s R5CT123456A shell input keyevent ENTER", call_text)
             self.assertIn("-s R5CT123456A shell input keyevent BACK", call_text)
+        finally:
+            shutil.rmtree(root, ignore_errors=True)
+
+    def test_fake_adb_ask_interaction_success_records_mode_owned_evidence(self):
+        root = Path(tempfile.mkdtemp(prefix="physical_phone_smoke_ask_interact_"))
+        try:
+            output_dir = root / "out"
+            apk = root / "app-debug.apk"
+            adb = root / "adb.cmd"
+            calls = root / "adb_calls.txt"
+            ask = root / "ask.txt"
+            answer = root / "answer.txt"
+            backed = root / "backed.txt"
+            apk.write_text("apk", encoding="utf-8")
+            adb.write_text(
+                "\r\n".join(
+                    [
+                        "@echo off",
+                        f"echo %*>> \"{calls}\"",
+                        "if \"%1\"==\"devices\" (",
+                        "  echo List of devices attached",
+                        "  echo R5CT123456A\tdevice",
+                        "  exit /b 0",
+                        ")",
+                        "if \"%5\"==\"ro.kernel.qemu\" (echo 0& exit /b 0)",
+                        "if \"%5\"==\"ro.boot.qemu\" (echo 0& exit /b 0)",
+                        "if \"%4\"==\"getprop\" (echo fake-%5& exit /b 0)",
+                        "if \"%3\"==\"install\" (echo Success& exit /b 0)",
+                        "if \"%4\"==\"am\" (echo Starting: Intent& exit /b 0)",
+                        "if \"%4\"==\"dumpsys\" if \"%5\"==\"window\" (echo mCurrentFocus=Window{u0 com.senku.mobile/.MainActivity}& exit /b 0)",
+                        "if \"%4\"==\"dumpsys\" if \"%5\"==\"activity\" (echo topResumedActivity=com.senku.mobile/.MainActivity& exit /b 0)",
+                        "if \"%4\"==\"dumpsys\" if \"%5\"==\"input\" (echo SurfaceOrientation: 0& exit /b 0)",
+                        "if \"%3\"==\"exec-out\" (echo PNGDATA& exit /b 0)",
+                        f"if \"%4\"==\"uiautomator\" if exist \"{answer}\" if not exist \"{backed}\" (echo ^<hierarchy^>^<node text=\"Answer\" /^>^<node text=\"Sources\" /^>^<node text=\"Details\" /^>^</hierarchy^>& exit /b 0)",
+                        f"if \"%4\"==\"uiautomator\" if exist \"{ask}\" (echo ^<hierarchy^>^<node text=\"Ask Senku\" /^>^<node class=\"android.widget.EditText\" resource-id=\"com.senku.mobile:id/ask_input\" content-desc=\"Ask a question\" bounds=\"[30,200][330,260]\" /^>^<node text=\"Share\" content-desc=\"Share\" bounds=\"[350,200][430,260]\" /^>^</hierarchy^>& exit /b 0)",
+                        "if \"%4\"==\"uiautomator\" (echo ^<hierarchy^>^<node text=\"Ask\" content-desc=\"Ask\" bounds=\"[10,20][110,120]\" /^>^</hierarchy^>& exit /b 0)",
+                        f"if \"%4\"==\"input\" if \"%5\"==\"tap\" if \"%6\"==\"60\" (echo ask> \"{ask}\"& echo tapped& exit /b 0)",
+                        "if \"%4\"==\"input\" if \"%5\"==\"tap\" if \"%6\"==\"180\" (echo tapped& exit /b 0)",
+                        f"if \"%4\"==\"input\" if \"%5\"==\"tap\" if \"%6\"==\"390\" (echo answer> \"{answer}\"& echo tapped& exit /b 0)",
+                        "if \"%4\"==\"input\" if \"%5\"==\"text\" (echo typed& exit /b 0)",
+                        f"if \"%4\"==\"input\" if \"%5\"==\"keyevent\" if \"%6\"==\"BACK\" (echo backed> \"{backed}\"& echo key& exit /b 0)",
+                        "if \"%4\"==\"input\" if \"%5\"==\"keyevent\" (echo key& exit /b 0)",
+                        "exit /b 1",
+                    ]
+                ),
+                encoding="utf-8",
+            )
+
+            result = subprocess.run(
+                [
+                    "powershell",
+                    "-NoProfile",
+                    "-ExecutionPolicy",
+                    "Bypass",
+                    "-File",
+                    str(SCRIPT),
+                    "-OutputDir",
+                    str(output_dir),
+                    "-Serial",
+                    "R5CT123456A",
+                    "-ApkPath",
+                    str(apk),
+                    "-AdbPath",
+                    str(adb),
+                    "-Interact",
+                    "-InteractionMode",
+                    "Ask",
+                    "-InteractionQuery",
+                    "boil water",
+                ],
+                cwd=REPO_ROOT,
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+
+            self.assertEqual(result.returncode, 0, result.stderr + result.stdout)
+            summary_path = output_dir / "summary.json"
+            summary = json.loads(summary_path.read_text(encoding="utf-8-sig"))
+            self.assertEqual(summary["interaction"]["mode"], "Ask")
+            self.assertEqual(
+                [(step["name"], step["status"]) for step in summary["interaction"]["steps"]],
+                [
+                    ("tap_ask", "success"),
+                    ("tap_ask_query_field", "success"),
+                    ("enter_query", "success"),
+                    ("submit_ask_query", "success"),
+                    ("back_to_ask", "success"),
+                ],
+            )
+            step_by_name = {step["name"]: step for step in summary["interaction"]["steps"]}
+            self.assertEqual(step_by_name["tap_ask"]["post_check"]["selected_destination"], "ask")
+            self.assertIn("Ask Senku", step_by_name["tap_ask"]["post_check"]["matched_text"])
+            self.assertIn("Answer", step_by_name["submit_ask_query"]["post_check"]["matched_text"])
+            self.assertTrue(step_by_name["submit_ask_query"]["post_check"]["dump_changed"])
+            self.assertTrue(step_by_name["submit_ask_query"]["post_check"]["require_changed_dump"])
+            self.assertIn("Ask Senku", step_by_name["back_to_ask"]["post_check"]["matched_text"])
+
+            validation = subprocess.run(
+                ["python", str(VALIDATOR_SCRIPT), str(summary_path)],
+                cwd=REPO_ROOT,
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+
+            self.assertEqual(validation.returncode, 0, validation.stderr + validation.stdout)
+            call_text = calls.read_text(encoding="utf-8")
+            self.assertIn("-s R5CT123456A shell input tap 60 70", call_text)
+            self.assertIn("-s R5CT123456A shell input tap 180 230", call_text)
+            self.assertIn("-s R5CT123456A shell input text boil%swater", call_text)
+            self.assertIn("-s R5CT123456A shell input tap 390 230", call_text)
+            self.assertIn("-s R5CT123456A shell input keyevent BACK", call_text)
+        finally:
+            shutil.rmtree(root, ignore_errors=True)
+
+    def test_fake_adb_ask_unchanged_noop_submit_post_check_fails(self):
+        root = Path(tempfile.mkdtemp(prefix="physical_phone_smoke_ask_noop_"))
+        try:
+            output_dir = root / "out"
+            apk = root / "app-debug.apk"
+            adb = root / "adb.cmd"
+            ask = root / "ask.txt"
+            apk.write_text("apk", encoding="utf-8")
+            ask_dump = (
+                "^<hierarchy^>"
+                "^<node text=\"Ask Senku\" /^>"
+                "^<node class=\"android.widget.EditText\" text=\"boil water\" resource-id=\"com.senku.mobile:id/ask_input\" content-desc=\"Ask a question\" bounds=\"[30,200][330,260]\" /^>"
+                "^<node text=\"Share\" content-desc=\"Share\" bounds=\"[350,200][430,260]\" /^>"
+                "^</hierarchy^>"
+            )
+            adb.write_text(
+                "\r\n".join(
+                    [
+                        "@echo off",
+                        "if \"%1\"==\"devices\" (",
+                        "  echo List of devices attached",
+                        "  echo R5CT123456A\tdevice",
+                        "  exit /b 0",
+                        ")",
+                        "if \"%5\"==\"ro.kernel.qemu\" (echo 0& exit /b 0)",
+                        "if \"%5\"==\"ro.boot.qemu\" (echo 0& exit /b 0)",
+                        "if \"%4\"==\"getprop\" (echo fake-%5& exit /b 0)",
+                        "if \"%3\"==\"install\" (echo Success& exit /b 0)",
+                        "if \"%4\"==\"am\" (echo Starting: Intent& exit /b 0)",
+                        "if \"%4\"==\"dumpsys\" if \"%5\"==\"window\" (echo mCurrentFocus=Window{u0 com.senku.mobile/.MainActivity}& exit /b 0)",
+                        "if \"%4\"==\"dumpsys\" if \"%5\"==\"activity\" (echo topResumedActivity=com.senku.mobile/.MainActivity& exit /b 0)",
+                        "if \"%4\"==\"dumpsys\" if \"%5\"==\"input\" (echo SurfaceOrientation: 0& exit /b 0)",
+                        "if \"%3\"==\"exec-out\" (echo PNGDATA& exit /b 0)",
+                        f"if \"%4\"==\"uiautomator\" if exist \"{ask}\" (echo {ask_dump}& exit /b 0)",
+                        "if \"%4\"==\"uiautomator\" (echo ^<hierarchy^>^<node text=\"Ask\" content-desc=\"Ask\" bounds=\"[10,20][110,120]\" /^>^</hierarchy^>& exit /b 0)",
+                        f"if \"%4\"==\"input\" if \"%5\"==\"tap\" if \"%6\"==\"60\" (echo ask> \"{ask}\"& echo tapped& exit /b 0)",
+                        "if \"%4\"==\"input\" if \"%5\"==\"tap\" (echo tapped& exit /b 0)",
+                        "if \"%4\"==\"input\" if \"%5\"==\"text\" (echo typed& exit /b 0)",
+                        "if \"%4\"==\"input\" if \"%5\"==\"keyevent\" (echo key& exit /b 0)",
+                        "exit /b 1",
+                    ]
+                ),
+                encoding="utf-8",
+            )
+
+            result = subprocess.run(
+                [
+                    "powershell",
+                    "-NoProfile",
+                    "-ExecutionPolicy",
+                    "Bypass",
+                    "-File",
+                    str(SCRIPT),
+                    "-OutputDir",
+                    str(output_dir),
+                    "-Serial",
+                    "R5CT123456A",
+                    "-ApkPath",
+                    str(apk),
+                    "-AdbPath",
+                    str(adb),
+                    "-Interact",
+                    "-InteractionMode",
+                    "Ask",
+                    "-InteractionQuery",
+                    "boil water",
+                ],
+                cwd=REPO_ROOT,
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+
+            self.assertNotEqual(result.returncode, 0, result.stderr + result.stdout)
+            self.assertIn("interaction failed step", result.stderr + result.stdout)
+            self.assertIn("last post_check step=submit_ask_query", result.stderr + result.stdout)
+            summary = json.loads((output_dir / "summary.json").read_text(encoding="utf-8-sig"))
+            step_by_name = {step["name"]: step for step in summary["interaction"]["steps"]}
+            submit_step = step_by_name["submit_ask_query"]
+            self.assertEqual(submit_step["status"], "failed")
+            post_check = submit_step["post_check"]
+            self.assertFalse(post_check["passed"])
+            self.assertEqual(post_check["matched_text"], [])
+            self.assertIn("Ask Senku", post_check["ui_text_sample"])
+            self.assertIn("boil water", post_check["ui_text_sample"])
+            self.assertFalse(post_check["dump_changed"])
+            self.assertTrue(post_check["require_changed_dump"])
+            self.assertRegex(post_check["baseline_dump_sha256"], r"^[0-9a-f]{64}$")
         finally:
             shutil.rmtree(root, ignore_errors=True)
 

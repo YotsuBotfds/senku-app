@@ -10,6 +10,8 @@ param(
     [string]$LogcatPath,
     [string[]]$RequiredText = @(),
     [switch]$Interact,
+    [ValidateSet("Simple", "Ask")]
+    [string]$InteractionMode = "Simple",
     [string]$InteractionQuery = "water filter charcoal sand"
 )
 
@@ -283,6 +285,7 @@ function Write-SummaryMarkdown {
     if ($null -ne $Summary.interaction) {
         $lines += @(
             "- interaction_enabled: $($Summary.interaction.enabled)",
+            "- interaction_mode: $($Summary.interaction.mode)",
             "- interaction_query: $($Summary.interaction.query)"
         )
         foreach ($step in $Summary.interaction.steps) {
@@ -429,6 +432,8 @@ function Get-UiPostStepEvidence {
     }
     if ($StepName -eq "tap_saved") {
         $evidence.selected_destination = "saved"
+    } elseif ($StepName -eq "tap_ask") {
+        $evidence.selected_destination = "ask"
     }
     return $evidence
 }
@@ -438,6 +443,50 @@ function Get-SavedDestinationEvidenceFragments {
         "No saved guides yet",
         "This tab only shows saved guides",
         "Saved guide "
+    )
+}
+
+function Get-AskOwnedEvidenceFragments {
+    return @(
+        "Ask Senku",
+        "Ask a question",
+        "Ask anything",
+        "Ask a survival question",
+        "Share your situation",
+        "What do you need help with"
+    )
+}
+
+function Get-AskAnswerEvidenceFragments {
+    return @(
+        "Answer",
+        "Sources",
+        "Details",
+        "Related guides",
+        "Recommended guides",
+        "No matching result"
+    )
+}
+
+function Get-InteractionStepNames {
+    param([string]$Mode)
+
+    if ($Mode -eq "Ask") {
+        return @(
+            "tap_ask",
+            "tap_ask_query_field",
+            "enter_query",
+            "submit_ask_query",
+            "back_to_ask"
+        )
+    }
+
+    return @(
+        "tap_saved",
+        "tap_query_field",
+        "enter_query",
+        "submit_query",
+        "back"
     )
 }
 
@@ -548,6 +597,48 @@ function Find-UiNodeCenter {
     return $null
 }
 
+function Find-AskControlCenter {
+    param([string]$DumpText)
+
+    $center = Find-UiNodeCenter -DumpText $DumpText -Predicate {
+        param($attributes)
+        $className = [string]$attributes["class"]
+        $text = [string]$attributes["text"]
+        $description = [string]$attributes["content-desc"]
+        return (-not $className.Contains("EditText")) -and (($text -eq "Ask") -or ($description -eq "Ask"))
+    }
+    if ($null -ne $center) {
+        return $center
+    }
+
+    return Find-UiNodeCenter -DumpText $DumpText -Predicate {
+        param($attributes)
+        $className = [string]$attributes["class"]
+        $text = [string]$attributes["text"]
+        $description = [string]$attributes["content-desc"]
+        return (-not $className.Contains("EditText")) -and (($text -match "\bAsk\b") -or ($description -match "\bAsk\b"))
+    }
+}
+
+function Find-AskSubmitCenter {
+    param([string]$DumpText)
+
+    return Find-UiNodeCenter -DumpText $DumpText -Predicate {
+        param($attributes)
+        $className = [string]$attributes["class"]
+        $resourceId = [string]$attributes["resource-id"]
+        $text = [string]$attributes["text"]
+        $description = [string]$attributes["content-desc"]
+        $visibleLabel = "$text $description"
+        return (-not $className.Contains("EditText")) -and (
+            ($text -in @("Ask", "Submit", "Send", "Share")) `
+                -or ($description -in @("Ask", "Submit", "Send", "Share")) `
+                -or ($visibleLabel -match "\b(Ask|Submit|Send|Share)\b") `
+                -or ($resourceId -match "(ask|submit|send|share)")
+        )
+    }
+}
+
 function New-InteractionStep {
     param(
         [string]$Name,
@@ -575,7 +666,8 @@ function Invoke-InteractionStep {
         [string]$Name,
         [scriptblock]$Action,
         [string[]]$ExpectedAnyText = @(),
-        [switch]$RequireChangedDump
+        [switch]$RequireChangedDump,
+        [switch]$RequireTextEvidence
     )
 
     $postCheck = $null
@@ -588,7 +680,8 @@ function Invoke-InteractionStep {
         & $Action
         if (($ExpectedAnyText.Count -gt 0) -or $RequireChangedDump) {
             $postCheck = Wait-UiPostStepEvidence -ResolvedAdbPath $ResolvedAdbPath -DeviceSerial $DeviceSerial -ExpectedAnyText $ExpectedAnyText -StepName $Name -BaselineDumpSha256 $baselineDumpSha256 -RequireChangedDump ([bool]$RequireChangedDump)
-            if (-not $postCheck.passed) {
+            $hasTextEvidence = @($postCheck.matched_text).Count -gt 0
+            if ((-not $postCheck.passed) -or ($RequireTextEvidence -and (-not $hasTextEvidence))) {
                 $message = "Post-step UI check for '$Name' did not find expected text fragment(s) or changed UI dump: $($ExpectedAnyText -join ', ')"
                 [void]$Steps.Add((New-InteractionStep -Name $Name -Status "failed" -Message $message -PostCheck $postCheck))
                 return $false
@@ -676,6 +769,77 @@ function Invoke-SenkuSimpleInteraction {
     return @($steps)
 }
 
+function Invoke-SenkuAskInteraction {
+    param(
+        [string]$ResolvedAdbPath,
+        [string]$DeviceSerial,
+        [string]$QueryText
+    )
+
+    $steps = [System.Collections.ArrayList]::new()
+
+    [void](Invoke-InteractionStep -Steps $steps -Name "tap_ask" -ExpectedAnyText (Get-AskOwnedEvidenceFragments) -Action {
+        $dumpText = Read-UiAutomatorDump -ResolvedAdbPath $ResolvedAdbPath -DeviceSerial $DeviceSerial
+        $center = Find-AskControlCenter -DumpText $dumpText
+        if ($null -eq $center) {
+            throw "Ask control was not found in UIAutomator dump."
+        }
+        Invoke-AdbChecked -ResolvedAdbPath $ResolvedAdbPath -Arguments @("-s", $DeviceSerial, "shell", "input", "tap", "$($center.x)", "$($center.y)")
+        Start-Sleep -Milliseconds 500
+    })
+
+    [void](Invoke-InteractionStep -Steps $steps -Name "tap_ask_query_field" -Action {
+        $dumpText = Read-UiAutomatorDump -ResolvedAdbPath $ResolvedAdbPath -DeviceSerial $DeviceSerial
+        $center = Find-UiNodeCenter -DumpText $dumpText -Predicate {
+            param($attributes)
+            $className = [string]$attributes["class"]
+            $resourceId = [string]$attributes["resource-id"]
+            $text = [string]$attributes["text"]
+            $description = [string]$attributes["content-desc"]
+            return $className.Contains("EditText") `
+                -or $resourceId.Contains("query") `
+                -or $resourceId.Contains("ask") `
+                -or $resourceId.Contains("input") `
+                -or $text.Contains("Ask") `
+                -or $text.Contains("question") `
+                -or $description.Contains("Ask") `
+                -or $description.Contains("question")
+        }
+        if ($null -eq $center) {
+            throw "Ask query input control was not found in UIAutomator dump."
+        }
+        Invoke-AdbChecked -ResolvedAdbPath $ResolvedAdbPath -Arguments @("-s", $DeviceSerial, "shell", "input", "tap", "$($center.x)", "$($center.y)")
+        Start-Sleep -Milliseconds 300
+    })
+
+    [void](Invoke-InteractionStep -Steps $steps -Name "enter_query" -Action {
+        if ([string]::IsNullOrWhiteSpace($QueryText)) {
+            throw "InteractionQuery is empty."
+        }
+        $adbText = ConvertTo-AdbInputText -Text $QueryText
+        Invoke-AdbChecked -ResolvedAdbPath $ResolvedAdbPath -Arguments @("-s", $DeviceSerial, "shell", "input", "text", $adbText)
+        Start-Sleep -Milliseconds 300
+    })
+
+    [void](Invoke-InteractionStep -Steps $steps -Name "submit_ask_query" -Action {
+        $dumpText = Read-UiAutomatorDump -ResolvedAdbPath $ResolvedAdbPath -DeviceSerial $DeviceSerial
+        $center = Find-AskSubmitCenter -DumpText $dumpText
+        if ($null -ne $center) {
+            Invoke-AdbChecked -ResolvedAdbPath $ResolvedAdbPath -Arguments @("-s", $DeviceSerial, "shell", "input", "tap", "$($center.x)", "$($center.y)")
+        } else {
+            Invoke-AdbChecked -ResolvedAdbPath $ResolvedAdbPath -Arguments @("-s", $DeviceSerial, "shell", "input", "keyevent", "ENTER")
+        }
+        Start-Sleep -Milliseconds 1000
+    } -ExpectedAnyText (Get-AskAnswerEvidenceFragments) -RequireChangedDump -RequireTextEvidence)
+
+    [void](Invoke-InteractionStep -Steps $steps -Name "back_to_ask" -Action {
+        Invoke-AdbChecked -ResolvedAdbPath $ResolvedAdbPath -Arguments @("-s", $DeviceSerial, "shell", "input", "keyevent", "BACK")
+        Start-Sleep -Milliseconds 500
+    } -ExpectedAnyText (Get-AskOwnedEvidenceFragments) -RequireChangedDump)
+
+    return @($steps)
+}
+
 $resolvedOutputDir = Resolve-TargetPath -Path $OutputDir
 New-Item -ItemType Directory -Force -Path $resolvedOutputDir | Out-Null
 
@@ -746,7 +910,11 @@ if (-not $DryRun) {
     }
 
     if ($Interact) {
-        $interactionSteps = Invoke-SenkuSimpleInteraction -ResolvedAdbPath $resolvedAdbPath -DeviceSerial $Serial -QueryText $InteractionQuery
+        if ($InteractionMode -eq "Ask") {
+            $interactionSteps = Invoke-SenkuAskInteraction -ResolvedAdbPath $resolvedAdbPath -DeviceSerial $Serial -QueryText $InteractionQuery
+        } else {
+            $interactionSteps = Invoke-SenkuSimpleInteraction -ResolvedAdbPath $resolvedAdbPath -DeviceSerial $Serial -QueryText $InteractionQuery
+        }
         $failedInteractionSteps = @($interactionSteps | Where-Object { $_.status -ne "success" })
         if ($failedInteractionSteps.Count -gt 0) {
             $interactionFailureMessage = "Physical phone smoke interaction failed step(s): $((@($failedInteractionSteps | ForEach-Object { $_.name })) -join ', ')"
@@ -795,11 +963,9 @@ if (-not $DryRun) {
 
     $status = "completed"
 } elseif ($Interact) {
-    [void]$interactionSteps.Add((New-InteractionStep -Name "tap_saved" -Status "skipped" -Message "Dry run only."))
-    [void]$interactionSteps.Add((New-InteractionStep -Name "tap_query_field" -Status "skipped" -Message "Dry run only."))
-    [void]$interactionSteps.Add((New-InteractionStep -Name "enter_query" -Status "skipped" -Message "Dry run only."))
-    [void]$interactionSteps.Add((New-InteractionStep -Name "submit_query" -Status "skipped" -Message "Dry run only."))
-    [void]$interactionSteps.Add((New-InteractionStep -Name "back" -Status "skipped" -Message "Dry run only."))
+    foreach ($stepName in (Get-InteractionStepNames -Mode $InteractionMode)) {
+        [void]$interactionSteps.Add((New-InteractionStep -Name $stepName -Status "skipped" -Message "Dry run only."))
+    }
 }
 
 $finishedAt = (Get-Date).ToUniversalTime()
@@ -854,9 +1020,10 @@ if ($null -ne $textChecks) {
     $summaryData.text_checks = $textChecks
 }
 if ($Interact) {
-    $summaryData.commands.interaction = "adb -s $Serial shell input tap/text/keyevent using UIAutomator-selected controls"
+    $summaryData.commands.interaction = "adb -s $Serial shell input tap/text/keyevent using UIAutomator-selected controls; mode=$InteractionMode"
     $summaryData.interaction = [ordered]@{
         enabled = $true
+        mode = $InteractionMode
         query = $InteractionQuery
         steps = @($interactionSteps)
     }

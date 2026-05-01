@@ -84,32 +84,50 @@ def add_text_checks(summary: dict, *, missing: list[str] | None = None) -> dict:
     return summary
 
 
-def add_interaction(summary: dict, *, statuses: list[str] | None = None) -> dict:
+def add_interaction(
+    summary: dict,
+    *,
+    statuses: list[str] | None = None,
+    mode: str = "Simple",
+) -> dict:
     statuses = statuses or ["success", "success", "success", "success", "success"]
-    names = ["tap_saved", "tap_query_field", "enter_query", "submit_query", "back"]
-    post_check_steps = {"tap_saved", "submit_query", "back"}
+    if mode == "Ask":
+        names = ["tap_ask", "tap_ask_query_field", "enter_query", "submit_ask_query", "back_to_ask"]
+        post_check_steps = {"tap_ask", "submit_ask_query", "back_to_ask"}
+    else:
+        names = ["tap_saved", "tap_query_field", "enter_query", "submit_query", "back"]
+        post_check_steps = {"tap_saved", "submit_query", "back"}
     steps = []
     for name, status in zip(names, statuses):
         step = {"name": name, "status": status}
         if status == "failed":
             step["message"] = "not found"
         if summary["status"] == "completed" and status == "success" and name in post_check_steps:
-            matched_text = ["Saved"] if name != "submit_query" else ["Answer"]
+            if name in {"submit_query", "submit_ask_query"}:
+                matched_text = ["Answer"]
+                expected_text = "Answer"
+            elif mode == "Ask":
+                matched_text = ["Ask Senku"]
+                expected_text = "Ask Senku"
+            else:
+                matched_text = ["Saved"]
+                expected_text = "Saved"
             step["post_check"] = {
                 "passed": True,
-                "expected_any_text": ["Saved" if name != "submit_query" else "Answer"],
+                "expected_any_text": [expected_text],
                 "matched_text": matched_text,
                 "ui_text_sample": ["Saved", "Answer"],
                 "dump_length": 128,
                 "dump_sha256": "a" * 64,
                 "baseline_dump_sha256": "b" * 64,
                 "dump_changed": True,
-                "require_changed_dump": name in {"submit_query", "back"},
+                "require_changed_dump": name in {"submit_query", "back", "back_to_ask"},
                 "captured_at_utc": "2026-04-30T00:00:01.0000000Z",
             }
         steps.append(step)
     summary["interaction"] = {
         "enabled": True,
+        "mode": mode,
         "query": "boil water",
         "steps": steps,
     }
@@ -171,6 +189,16 @@ class ValidateAndroidPhysicalPhoneSmokeSummaryTests(unittest.TestCase):
         self.assertEqual(errors, [])
         self.assertIsNotNone(data)
         self.assertEqual(data["interaction"]["steps"][0]["status"], "success")
+
+    def test_valid_completed_ask_interaction_steps_pass(self):
+        data, errors = validate_summary(
+            self.write_summary(add_interaction(make_summary(completed=True), mode="Ask"))
+        )
+
+        self.assertEqual(errors, [])
+        self.assertIsNotNone(data)
+        self.assertEqual(data["interaction"]["mode"], "Ask")
+        self.assertEqual(data["interaction"]["steps"][0]["name"], "tap_ask")
 
     def test_valid_dry_run_interaction_steps_are_skipped(self):
         summary = add_interaction(make_summary(), statuses=["skipped"] * 5)
@@ -262,6 +290,34 @@ class ValidateAndroidPhysicalPhoneSmokeSummaryTests(unittest.TestCase):
         )
         self.assertIn(
             "expected root.interaction.steps[4].post_check to include route/state text or changed UI evidence",
+            errors,
+        )
+
+    def test_completed_ask_submit_requires_answer_detail_text(self):
+        summary = add_interaction(make_summary(completed=True), mode="Ask")
+        submit_post_check = summary["interaction"]["steps"][3]["post_check"]
+        submit_post_check["matched_text"] = []
+        submit_post_check["dump_changed"] = True
+
+        _, errors = validate_summary(self.write_summary(summary))
+
+        self.assertIn(
+            "expected root.interaction.steps[3].post_check to include answer/detail text evidence",
+            errors,
+        )
+
+    def test_ask_mode_rejects_simple_step_names(self):
+        summary = add_interaction(make_summary(completed=True), mode="Ask")
+        summary["interaction"]["steps"][0]["name"] = "tap_saved"
+
+        _, errors = validate_summary(self.write_summary(summary))
+
+        self.assertIn(
+            "expected root.interaction.steps[0].name to be a known interaction step, got 'tap_saved'",
+            errors,
+        )
+        self.assertIn(
+            "expected root.interaction.steps to include: tap_ask",
             errors,
         )
 

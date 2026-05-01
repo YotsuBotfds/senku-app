@@ -80,6 +80,7 @@ REQUIRED_TEXT_CHECK_TYPES: dict[str, type | tuple[type, ...]] = {
 
 REQUIRED_INTERACTION_TYPES: dict[str, type | tuple[type, ...]] = {
     "enabled": bool,
+    "mode": str,
     "query": str,
     "steps": list,
 }
@@ -99,14 +100,38 @@ REQUIRED_POST_CHECK_TYPES: dict[str, type | tuple[type, ...]] = {
     "captured_at_utc": str,
 }
 
-EXPECTED_INTERACTION_STEPS = [
-    "tap_saved",
-    "tap_query_field",
-    "enter_query",
-    "submit_query",
-    "back",
-]
-POST_CHECK_REQUIRED_STEPS = {"tap_saved", "submit_query", "back"}
+EXPECTED_INTERACTION_STEPS_BY_MODE = {
+    "Simple": [
+        "tap_saved",
+        "tap_query_field",
+        "enter_query",
+        "submit_query",
+        "back",
+    ],
+    "Ask": [
+        "tap_ask",
+        "tap_ask_query_field",
+        "enter_query",
+        "submit_ask_query",
+        "back_to_ask",
+    ],
+}
+EXPECTED_INTERACTION_STEPS = sorted(
+    {step for steps in EXPECTED_INTERACTION_STEPS_BY_MODE.values() for step in steps}
+)
+POST_CHECK_REQUIRED_STEPS_BY_MODE = {
+    "Simple": {"tap_saved", "submit_query", "back"},
+    "Ask": {"tap_ask", "submit_ask_query", "back_to_ask"},
+}
+STRONG_STATE_STEPS_BY_MODE = {
+    "Simple": {"submit_query", "back"},
+    "Ask": {"back_to_ask"},
+}
+ANSWER_TEXT_REQUIRED_STEPS_BY_MODE = {
+    "Simple": set(),
+    "Ask": {"submit_ask_query"},
+}
+VALID_INTERACTION_MODES = set(EXPECTED_INTERACTION_STEPS_BY_MODE)
 VALID_INTERACTION_STATUSES = {"success", "failed", "skipped"}
 
 
@@ -259,9 +284,20 @@ def _validate_interaction(interaction: dict[str, Any], errors: list[str]) -> Non
     if interaction.get("enabled") is not True:
         errors.append(f"expected root.interaction.enabled to be True, got {interaction.get('enabled')!r}")
 
+    mode = interaction.get("mode")
+    if isinstance(mode, str) and mode not in VALID_INTERACTION_MODES:
+        errors.append(f"expected root.interaction.mode to be Simple|Ask, got {mode!r}")
+    expected_steps = EXPECTED_INTERACTION_STEPS_BY_MODE.get(mode, EXPECTED_INTERACTION_STEPS_BY_MODE["Simple"])
+    expected_step_set = set(expected_steps)
+
     last_post_check = interaction.get("last_post_check")
     if last_post_check is not None:
-        _validate_post_check(last_post_check, errors, scope="root.interaction.last_post_check")
+        _validate_post_check(
+            last_post_check,
+            errors,
+            scope="root.interaction.last_post_check",
+            expected_steps=expected_step_set,
+        )
 
     steps = interaction.get("steps")
     if not isinstance(steps, list):
@@ -283,7 +319,7 @@ def _validate_interaction(interaction: dict[str, Any], errors: list[str]) -> Non
         status = step.get("status")
         if isinstance(name, str):
             seen_names.append(name)
-            if name not in EXPECTED_INTERACTION_STEPS:
+            if name not in expected_step_set:
                 errors.append(f"expected {scope}.name to be a known interaction step, got {name!r}")
         if isinstance(status, str) and status not in VALID_INTERACTION_STATUSES:
             errors.append(f"expected {scope}.status to be success|failed|skipped, got {status!r}")
@@ -292,14 +328,25 @@ def _validate_interaction(interaction: dict[str, Any], errors: list[str]) -> Non
             errors.append(f"expected {scope}.message to be non-empty str when present")
         post_check = step.get("post_check")
         if post_check is not None:
-            _validate_post_check(post_check, errors, scope=f"{scope}.post_check")
+            _validate_post_check(
+                post_check,
+                errors,
+                scope=f"{scope}.post_check",
+                expected_steps=expected_step_set,
+            )
 
-    missing_names = [name for name in EXPECTED_INTERACTION_STEPS if name not in seen_names]
+    missing_names = [name for name in expected_steps if name not in seen_names]
     if missing_names:
         errors.append(f"expected root.interaction.steps to include: {', '.join(missing_names)}")
 
 
-def _validate_post_check(post_check: Any, errors: list[str], *, scope: str) -> None:
+def _validate_post_check(
+    post_check: Any,
+    errors: list[str],
+    *,
+    scope: str,
+    expected_steps: set[str] | None = None,
+) -> None:
     if not isinstance(post_check, dict):
         errors.append(f"expected {scope} to be dict, got {type(post_check).__name__}")
         return
@@ -345,7 +392,7 @@ def _validate_post_check(post_check: Any, errors: list[str], *, scope: str) -> N
     if step_name is not None:
         if not isinstance(step_name, str) or not step_name.strip():
             errors.append(f"expected {scope}.step_name to be non-empty str when present")
-        elif step_name not in EXPECTED_INTERACTION_STEPS:
+        elif step_name not in (expected_steps or set(EXPECTED_INTERACTION_STEPS)):
             errors.append(f"expected {scope}.step_name to be a known interaction step, got {step_name!r}")
 
 
@@ -498,6 +545,19 @@ def _validate_completed(data: dict[str, Any], errors: list[str]) -> None:
     interaction = data.get("interaction")
     if isinstance(interaction, dict) and isinstance(interaction.get("steps"), list):
         interaction_query = interaction.get("query")
+        mode = interaction.get("mode")
+        post_check_required_steps = POST_CHECK_REQUIRED_STEPS_BY_MODE.get(
+            mode,
+            POST_CHECK_REQUIRED_STEPS_BY_MODE["Simple"],
+        )
+        strong_state_steps = STRONG_STATE_STEPS_BY_MODE.get(
+            mode,
+            STRONG_STATE_STEPS_BY_MODE["Simple"],
+        )
+        answer_text_required_steps = ANSWER_TEXT_REQUIRED_STEPS_BY_MODE.get(
+            mode,
+            ANSWER_TEXT_REQUIRED_STEPS_BY_MODE["Simple"],
+        )
         for index, step in enumerate(interaction["steps"]):
             if isinstance(step, dict) and step.get("status") != "success":
                 errors.append(
@@ -505,7 +565,7 @@ def _validate_completed(data: dict[str, Any], errors: list[str]) -> None:
                 )
             if (
                 isinstance(step, dict)
-                and step.get("name") in POST_CHECK_REQUIRED_STEPS
+                and step.get("name") in post_check_required_steps
                 and step.get("status") == "success"
             ):
                 post_check = step.get("post_check")
@@ -513,6 +573,7 @@ def _validate_completed(data: dict[str, Any], errors: list[str]) -> None:
                     errors.append(
                         f"expected root.interaction.steps[{index}].post_check for completed {step.get('name')!r}"
                     )
+                    continue
                 elif post_check.get("passed") is not True:
                     errors.append(
                         f"expected root.interaction.steps[{index}].post_check.passed to be True"
@@ -522,12 +583,18 @@ def _validate_completed(data: dict[str, Any], errors: list[str]) -> None:
                         errors.append(
                             f"expected root.interaction.steps[{index}].post_check.matched_text or dump_changed evidence"
                         )
-                if step.get("name") in {"submit_query", "back"}:
+                if step.get("name") in answer_text_required_steps:
+                    matched_text = post_check.get("matched_text")
+                    if not isinstance(matched_text, list) or not matched_text:
+                        errors.append(
+                            f"expected root.interaction.steps[{index}].post_check to include answer/detail text evidence"
+                        )
+                if step.get("name") in strong_state_steps:
                     matched_text = post_check.get("matched_text")
                     strong_matches = []
                     if isinstance(matched_text, list):
                         weak_matches = {"Search", "Ask"}
-                        if step.get("name") == "submit_query" and isinstance(interaction_query, str):
+                        if step.get("name") in {"submit_query", "submit_ask_query"} and isinstance(interaction_query, str):
                             weak_matches.add(interaction_query)
                         strong_matches = [
                             item
