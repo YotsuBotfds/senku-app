@@ -1451,6 +1451,14 @@ public final class QueryMetadataProfileTest {
     }
 
     @Test
+    public void explicitTopicOverlapAcceptsCommonTopicTagDelimiters() {
+        QueryMetadataProfile profile = QueryMetadataProfile.fromQuery("How do I make soap with lye safely?");
+
+        assertTrue(profile.hasExplicitTopicOverlap("food_storage; lye_safety|camp\nsoapmaking"));
+        assertFalse(profile.hasExplicitTopicOverlap("food_storage;camp"));
+    }
+
+    @Test
     public void acuteMentalHealthStructureMatchesBarelySleptMarker() {
         assertAcuteMentalHealthStructure("He has barely slept for two days and is acting strange.");
     }

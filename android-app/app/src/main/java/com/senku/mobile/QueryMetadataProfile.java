@@ -19,6 +19,7 @@ public final class QueryMetadataProfile {
     private static final Pattern RAFTER_TOPIC_PATTERN = Pattern.compile(".*\\brafters?\\b.*");
     private static final Pattern GABLE_TOPIC_PATTERN = Pattern.compile(".*\\bgable\\b.*");
     private static final Pattern TOKEN_PATTERN = Pattern.compile("[\\p{Alnum}]+");
+    private static final Pattern TOPIC_TAG_DELIMITERS = Pattern.compile("[,;|\\r\\n]+");
     static final String CONTENT_ROLE_SAFETY = "safety";
 
     static final String TIME_HORIZON_IMMEDIATE = "immediate";
@@ -1062,7 +1063,7 @@ public final class QueryMetadataProfile {
 
     static Set<String> splitCsv(String value) {
         LinkedHashSet<String> result = new LinkedHashSet<>();
-        for (String part : normalize(value).split(",")) {
+        for (String part : TOPIC_TAG_DELIMITERS.split(normalize(value))) {
             String trimmed = part.trim();
             if (!trimmed.isEmpty()) {
                 result.add(trimmed);

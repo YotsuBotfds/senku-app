@@ -38,6 +38,19 @@ public final class PackRepositoryCurrentHeadRouteParityAndroidTest {
         }
     }
 
+    @Test
+    public void bundledCurrentHeadPackPreservesRainShelterRouteOwnerLane() throws Exception {
+        Context context = ApplicationProvider.getApplicationContext();
+        PackInstaller.InstalledPack pack = CurrentHeadAnswerCardPackTestSupport.installBundledCurrentHeadPack(
+            context,
+            "current-head rain shelter route parity"
+        );
+
+        try (PackRepository repository = new PackRepository(pack.databaseFile, null)) {
+            assertRainShelterOwnerParity(repository, rainShelterRouteSpec());
+        }
+    }
+
     private static List<RouteSpec> routeSpecs() {
         return Arrays.asList(
             new RouteSpec(
@@ -71,17 +84,20 @@ public final class PackRepositoryCurrentHeadRouteParityAndroidTest {
                 ids("GD-106")
             ),
             new RouteSpec(
-                "How do I build a simple rain shelter from tarp and cord?",
-                "emergency_shelter",
-                ids("GD-345"),
-                ids("GD-345")
-            ),
-            new RouteSpec(
                 "someone is stealing food from the group what do we do",
                 "community_governance",
                 ids("GD-626"),
                 ids("GD-626", "GD-338", "GD-342")
             )
+        );
+    }
+
+    private static RouteSpec rainShelterRouteSpec() {
+        return new RouteSpec(
+            "How do I build a simple rain shelter from tarp and cord?",
+            "emergency_shelter",
+            ids("GD-345"),
+            ids("GD-345")
         );
     }
 
@@ -111,6 +127,31 @@ public final class PackRepositoryCurrentHeadRouteParityAndroidTest {
             CONTEXT_LIMIT
         );
         assertOwnerLane(spec.query, spec.expectedStructure, ownerContextResult);
+    }
+
+    private static void assertRainShelterOwnerParity(PackRepository repository, RouteSpec spec) {
+        QueryMetadataProfile metadataProfile = QueryMetadataProfile.fromQuery(spec.query);
+        assertEquals(spec.query, spec.expectedStructure, metadataProfile.preferredStructureType());
+
+        List<SearchResult> searchResults = repository.search(spec.query, SEARCH_LIMIT);
+        assertFalse("search results should not be empty for " + spec.query, searchResults.isEmpty());
+        assertAnyGuideWithinTopK(
+            "search",
+            spec.query,
+            searchResults,
+            spec.expectedSearchGuideIds,
+            OWNER_SEARCH_WINDOW
+        );
+
+        List<SearchResult> context = repository.buildGuideAnswerContext(spec.query, searchResults, CONTEXT_LIMIT);
+        assertFalse("answer context should not be empty for " + spec.query, context.isEmpty());
+        assertAnyGuideWithinTopK(
+            "answer context",
+            spec.query,
+            context,
+            spec.expectedContextGuideIds,
+            CONTEXT_LIMIT
+        );
     }
 
     private static SearchResult assertAnyGuideWithinTopK(
