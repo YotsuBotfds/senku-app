@@ -13,9 +13,9 @@ public final class MainActivityIdentityTest {
             "gemma-4-e2b-it-litert"
         );
 
-        String subtitle = MainActivity.buildIdentitySubtitleWithRuntime(
+        String subtitle = MainIdentityPresentationPolicy.buildSubtitleWithRuntime(
             "271 guides | manual ed. 7",
-            MainActivity.buildIdentityRuntimeLabel(settings, "No imported model selected")
+            MainIdentityPresentationPolicy.buildRuntimeLabel(settings, "No imported model selected")
         );
 
         assertEquals("271 guides | manual ed. 7 | E2B host", subtitle);
@@ -29,9 +29,9 @@ public final class MainActivityIdentityTest {
             "gemma-4-e2b-it-litert"
         );
 
-        String subtitle = MainActivity.buildIdentitySubtitleWithRuntime(
+        String subtitle = MainIdentityPresentationPolicy.buildSubtitleWithRuntime(
             "271 guides | manual ed. 7",
-            MainActivity.buildIdentityRuntimeLabel(settings, "gemma-4-E4B-it.litertlm (3.9 GB)")
+            MainIdentityPresentationPolicy.buildRuntimeLabel(settings, "gemma-4-E4B-it.litertlm (3.9 GB)")
         );
 
         assertEquals("271 guides | manual ed. 7 | E4B on-device", subtitle);
@@ -45,11 +45,53 @@ public final class MainActivityIdentityTest {
             "gemma-4-e2b-it-litert"
         );
 
-        String subtitle = MainActivity.buildIdentitySubtitleWithRuntime(
+        String subtitle = MainIdentityPresentationPolicy.buildSubtitleWithRuntime(
             "271 guides | manual ed. 7",
-            MainActivity.buildIdentityRuntimeLabel(settings, "No imported model selected")
+            MainIdentityPresentationPolicy.buildRuntimeLabel(settings, "No imported model selected")
         );
 
         assertEquals("271 guides | manual ed. 7", subtitle);
+    }
+
+    @Test
+    public void identityRuntimeLabelFallsBackForGenericHostModel() {
+        HostInferenceConfig.Settings settings = new HostInferenceConfig.Settings(
+            true,
+            "http://10.0.2.2:1235/v1",
+            "custom-local-model"
+        );
+
+        assertEquals(
+            "Host model",
+            MainIdentityPresentationPolicy.buildRuntimeLabel(settings, "gemma-4-E4B-it.litertlm")
+        );
+    }
+
+    @Test
+    public void identityRuntimeLabelSurfacesGenericOnDeviceTiers() {
+        HostInferenceConfig.Settings settings = new HostInferenceConfig.Settings(
+            false,
+            "http://10.0.2.2:1235/v1",
+            "unused"
+        );
+
+        assertEquals("Gemma on-device", MainIdentityPresentationPolicy.buildRuntimeLabel(settings, "Gemma local"));
+        assertEquals("LiteRT on-device", MainIdentityPresentationPolicy.buildRuntimeLabel(settings, "local.litertlm"));
+    }
+
+    @Test
+    public void identitySubtitleJoinHandlesEmptyInputs() {
+        assertEquals(
+            "E2B host",
+            MainIdentityPresentationPolicy.buildSubtitleWithRuntime("", " E2B host ")
+        );
+        assertEquals(
+            "271 guides",
+            MainIdentityPresentationPolicy.buildSubtitleWithRuntime(" 271 guides ", "")
+        );
+        assertEquals(
+            "",
+            MainIdentityPresentationPolicy.buildSubtitleWithRuntime("", "")
+        );
     }
 }
