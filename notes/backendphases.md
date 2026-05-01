@@ -1,6 +1,6 @@
 # Backend Cleanup Phase Tracker
 
-Last updated after local validation and cleanup through `18ea1b6e` on 2026-05-01.
+Last updated after local validation and cleanup through `88ff4815` on 2026-05-01.
 
 Purpose: prevent future agents from rerunning Ask/query backend cleanup that is already complete. Keep this note short; implementation detail belongs in commits and tests.
 
@@ -272,12 +272,16 @@ Purpose: prevent future agents from rerunning Ask/query backend cleanup that is 
   `DetailTabletStateBuilder` owns the source/question overlap scoring seam.
 - Pack text matching is current through `18ea1b6e`: `PackTextMatchPolicy`
   owns marker/term normalization used by `PackRepository`.
-- Latest local proof after `18ea1b6e`: `git diff --check` passed; full Android
+- Pack text-match edge coverage and a small tablet topic-haystack helper are
+  current through `5882301f` and `3d8d12a1`.
+- Manual-home recent thread label shaping is current through `c53dc9dc`:
+  `ReviewDemoPolicy` owns the live-label fallback vs review-label decision.
+- Physical smoke post-check hardening is current through `88ff4815`: standalone
+  physical interactions no longer accept generic unchanged Search/Ask/query
+  evidence for submit/back, and validator proof includes dump-change metadata.
+- Latest local proof after `88ff4815`: `git diff --check` passed; full Android
   `:app:testDebugUnitTest :app:assembleDebug :app:assembleDebugAndroidTest`
-  passed; fresh physical phone `phone-functional` PromptHarness smoke passed on
-  `RFCX607ZM8L` with APK SHA
-  `fd0bfbf6810cfe682e228799e2c1dc694f5a7a6e9ed7e398f0b30a2aed158d8d` at
-  `artifacts/physical_phone_functional_after_18ea1b6e/run_summary.json`.
+  passed; physical-smoke contract and summary validator tests ran 40 tests OK.
 
 ## Remaining Next Slices
 
@@ -291,9 +295,9 @@ Purpose: prevent future agents from rerunning Ask/query backend cleanup that is 
 - Review/demo leakage follow-up: continue moving remaining fixture-shaped
   display decisions through explicit review-policy gates; the product search CTA
   resource-name leak is closed and guarded.
-- Physical smoke follow-up: tighten post-step checks so `submit_query` and
-  `back` prove route transitions instead of matching generic labels that could
-  remain visible after a no-op.
+- Physical smoke follow-up: add an Ask-owned interaction mode so real hardware
+  proves Ask tab ownership and visible-submit behavior, separate from the
+  now-hardened simple Saved/search/back path.
 - Do not rerun the result-publication extraction unless a regression points
   there; future `MainActivity` cleanup should target still-mixed route side
   effects outside `MainResultPublicationPolicy`.

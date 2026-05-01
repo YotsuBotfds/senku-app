@@ -1,6 +1,6 @@
 # Android Functional UX Backlog - 2026-04-30
 
-Status after local validation/code-health head `18ea1b6e`.
+Status after local validation/code-health head `88ff4815`.
 
 ## Fixed This Loop
 
@@ -205,9 +205,10 @@ the exported mocks.
    - Status: partially addressed. Physical `phone-functional` preset passed on
      `RFCX607ZM8L`, covering Ask/Search, Saved back, and answer provenance
      open/back through PromptHarness assertions.
-   - New validation gap: the standalone physical-phone smoke interaction
-     post-checks are too broad. `submit_query` and `back` can match generic
-     labels that may remain visible after a no-op.
-   - Next safe slice: make post-step checks prove route transitions, add a
-     fake-adb unchanged-dump regression, and add/plan an Ask-owned interaction
-     path on physical hardware.
+   - Standalone physical-phone smoke post-checks are now harder to fool:
+     `submit_query` and `back` require route/state text or changed-dump proof,
+     and a fake-adb unchanged-dump regression covers the old false-positive
+     path.
+   - Next safe slice: add an Ask-owned interaction mode on physical hardware so
+     the runner proves Ask tab ownership and visible-submit behavior, not just
+     the current simple Saved/search/back path.
