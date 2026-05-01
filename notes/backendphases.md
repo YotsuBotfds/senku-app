@@ -1,6 +1,6 @@
 # Backend Cleanup Phase Tracker
 
-Last updated after pushed cleanup through `5e761339` on 2026-05-01.
+Last updated after pushed cleanup through `0c2f23e0` on 2026-05-01.
 
 Purpose: prevent future agents from rerunning Ask/query backend cleanup that is already complete. Keep this note short; implementation detail belongs in commits and tests.
 
@@ -326,6 +326,41 @@ Purpose: prevent future agents from rerunning Ask/query backend cleanup that is 
   matrix wrapper holds one outer device lock across all presets, child smoke
   runs skip nested lock acquisition, and shared lock waits now log elapsed time,
   remaining timeout, and lock path breadcrumbs.
+- Physical phone saved proof is current after `31e40916`: the
+  `phone-functional-saved` smoke profile passed on `RFCX607ZM8L` with real
+  guide save/unsave semantics in addition to Saved back, Saved search, and
+  pinned-guide open/back coverage. Artifact root:
+  `artifacts/physical_phone_saved_after_31e40916/`.
+- PowerShell quality-gate contracts are current through `a3bea24c`: parser and
+  dry-run tests now match the refreshed array-style finalize/skip-build
+  forwarding and absolute artifact-root resolution for instrumented smoke
+  outputs.
+- Product fixture-copy cleanup is current through `60527001`: normal
+  `activity_main` layouts no longer hard-code review/demo guide-count copy, and
+  `ProductSearchCtaResourceLeakageTest` guards product layouts against both
+  external-review labels and fixture text.
+- Follow-up retry proof is current through `864e2b28`: a visible stalled retry
+  presentation still routes through the submit dedupe gate and blocks duplicate
+  generation while preserving the resolved query.
+- Install completion publication planning is current through `5c44432e`:
+  `MainInstallCompletionPolicy` now returns a `CompletionPlan` with the browse
+  publication payload only when install completion should publish current
+  browse guides; auto-query and result routes preserve current payloads.
+- Real-pack external-review route proof is current through `8965c17d`: the
+  mobile headless parity fixture now exercises current pack routes for house,
+  roof/windows, food theft, gravity-fed water, soap, and glass prompts, checking
+  route kind, route order label, top search inclusion, and first context guide.
+- Review fixture guide-count sentinel cleanup is current through `7198fecb`:
+  `MainActivity` no longer carries the unconditional `754 guides` polish
+  sentinel, and `ReviewDemoFixtureBoundaryTest` guards against reintroducing it.
+- No-FTS real-pack external-review route proof is current through `0c2f23e0`:
+  the headless parity fixture now forces FTS off and verifies the six
+  external-review prompts still surface primary expected guides in search and
+  context.
+- Physical phone follow-up proof is current after `8965c17d`:
+  `phone-functional-follow-up` passed on `RFCX607ZM8L` for Ask routing, IME
+  follow-up submit, empty follow-up submit, and inline thread history. Artifact
+  root: `artifacts/physical_phone_followup_after_8965c17d/`.
 
 ## Remaining Next Slices
 
