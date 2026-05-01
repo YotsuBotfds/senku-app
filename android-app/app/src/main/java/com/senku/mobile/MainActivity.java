@@ -4254,7 +4254,7 @@ public final class MainActivity extends AppCompatActivity {
     }
 
     private String buildTabletSearchHeader(String query, int resultCount) {
-        return buildTabletSearchHeader(query, resultCount, productReviewMode);
+        return buildTabletSearchHeader(query, resultCount, reviewDisplayPolicy());
     }
 
     static String buildTabletSearchHeaderForTest(
@@ -4262,11 +4262,23 @@ public final class MainActivity extends AppCompatActivity {
         int resultCount,
         boolean productReviewMode
     ) {
-        return buildTabletSearchHeader(query, resultCount, productReviewMode);
+        return buildTabletSearchHeader(query, resultCount, new MainReviewDisplayPolicy(productReviewMode));
     }
 
-    private static String buildTabletSearchHeader(String query, int resultCount, boolean productReviewMode) {
-        return ReviewDemoPolicy.buildTabletSearchHeader(productReviewMode, query, resultCount);
+    private static String buildTabletSearchHeader(
+        String query,
+        int resultCount,
+        MainReviewDisplayPolicy reviewDisplayPolicy
+    ) {
+        String cleanQuery = safe(query).trim();
+        String countLabel = resultCount + (resultCount == 1 ? " result" : " results");
+        if (cleanQuery.isEmpty() || "guides".equalsIgnoreCase(cleanQuery)) {
+            return "Search - " + countLabel;
+        }
+        return reviewDisplayPolicy.searchLatency(
+            "Search " + cleanQuery + " - " + countLabel,
+            cleanQuery
+        );
     }
 
     static String buildPhoneSearchHeaderForTest(String query, int resultCount) {
