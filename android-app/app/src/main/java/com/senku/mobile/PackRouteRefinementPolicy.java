@@ -14,7 +14,7 @@ final class PackRouteRefinementPolicy {
     }
 
     static int currentHeadRouteRefinementBonus(PackRepository.QueryTerms queryTerms, SearchResult result) {
-        if (queryTerms == null || result == null || queryTerms.metadataProfile == null) {
+        if (missingRouteInputs(queryTerms, result)) {
             return 0;
         }
         String structure = queryTerms.metadataProfile.preferredStructureType();
@@ -94,12 +94,8 @@ final class PackRouteRefinementPolicy {
     }
 
     static int broadWaterRouteOrderingPriority(PackRepository.QueryTerms queryTerms, SearchResult result) {
-        if (queryTerms == null || result == null || queryTerms.metadataProfile == null) {
-            return 0;
-        }
-        QueryMetadataProfile metadataProfile = queryTerms.metadataProfile;
-        if (!"water_storage".equals(metadataProfile.preferredStructureType())
-            || metadataProfile.hasExplicitTopic("water_distribution")) {
+        QueryMetadataProfile metadataProfile = broadWaterMetadataProfile(queryTerms, result);
+        if (metadataProfile == null) {
             return 0;
         }
 
@@ -116,12 +112,8 @@ final class PackRouteRefinementPolicy {
     }
 
     static int broadWaterRouteRefinementBonus(PackRepository.QueryTerms queryTerms, SearchResult result) {
-        if (queryTerms == null || result == null || queryTerms.metadataProfile == null) {
-            return 0;
-        }
-        QueryMetadataProfile metadataProfile = queryTerms.metadataProfile;
-        if (!"water_storage".equals(metadataProfile.preferredStructureType())
-            || metadataProfile.hasExplicitTopic("water_distribution")) {
+        QueryMetadataProfile metadataProfile = broadWaterMetadataProfile(queryTerms, result);
+        if (metadataProfile == null) {
             return 0;
         }
 
@@ -186,5 +178,24 @@ final class PackRouteRefinementPolicy {
 
     private static String normalized(String text) {
         return PackRepository.emptySafe(text).trim().toLowerCase(QUERY_LOCALE);
+    }
+
+    private static boolean missingRouteInputs(PackRepository.QueryTerms queryTerms, SearchResult result) {
+        return queryTerms == null || result == null || queryTerms.metadataProfile == null;
+    }
+
+    private static QueryMetadataProfile broadWaterMetadataProfile(
+        PackRepository.QueryTerms queryTerms,
+        SearchResult result
+    ) {
+        if (missingRouteInputs(queryTerms, result)) {
+            return null;
+        }
+        QueryMetadataProfile metadataProfile = queryTerms.metadataProfile;
+        if (!"water_storage".equals(metadataProfile.preferredStructureType())
+            || metadataProfile.hasExplicitTopic("water_distribution")) {
+            return null;
+        }
+        return metadataProfile;
     }
 }

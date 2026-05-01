@@ -121,6 +121,40 @@ public final class PackRouteRefinementPolicyTest {
     }
 
     @Test
+    public void currentHeadRouteMethodsReturnZeroForMissingInputs() {
+        SearchResult result = result(
+            "Glass, Optics & Ceramics",
+            "Glassmaking from Scratch",
+            "GD-123",
+            "crafts",
+            "subsystem",
+            "mixed",
+            "glassmaking",
+            "glassmaking,annealing",
+            "Start with soda-lime glass, furnace heat, forming, and annealing."
+        );
+        PackRepository.QueryTerms queryTerms = PackRepository.QueryTerms.fromQuery(
+            "how do i make glass from silica sand and soda ash"
+        );
+        PackRepository.QueryTerms nullMetadataQueryTerms = new PackRepository.QueryTerms(
+            "",
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+        );
+
+        assertEquals(0, PackRouteRefinementPolicy.currentHeadRouteRefinementBonus(null, result));
+        assertEquals(0, PackRouteRefinementPolicy.currentHeadRouteRefinementBonus(queryTerms, null));
+        assertEquals(0, PackRouteRefinementPolicy.currentHeadRouteRefinementBonus(nullMetadataQueryTerms, result));
+        assertEquals(0, PackRouteRefinementPolicy.currentHeadRouteOrderingPriority(null, result));
+        assertEquals(0, PackRouteRefinementPolicy.currentHeadRouteOrderingPriority(queryTerms, null));
+        assertEquals(0, PackRouteRefinementPolicy.currentHeadRouteOrderingPriority(nullMetadataQueryTerms, result));
+    }
+
+    @Test
     public void broadWaterRefinementBonusPenalizesGenericInventorySection() {
         String query = "what's the safest way to store treated water long term";
         SearchResult inventory = result(
@@ -169,6 +203,41 @@ public final class PackRouteRefinementPolicyTest {
             PackRepository.broadWaterRouteRefinementBonusForTest(query, planning),
             bonus
         );
+    }
+
+    @Test
+    public void broadWaterRouteMethodsReturnZeroForMissingInputs() {
+        SearchResult result = result(
+            "Storage & Material Management",
+            "",
+            "GD-252",
+            "resource-management",
+            "planning",
+            "long_term",
+            "water_storage",
+            "water_storage,container_sanitation,water_rotation",
+            "Use food-safe containers, sanitize them, and rotate treated water on a schedule.",
+            "guide-focus"
+        );
+        PackRepository.QueryTerms queryTerms = PackRepository.QueryTerms.fromQuery(
+            "what's the safest way to store treated water long term"
+        );
+        PackRepository.QueryTerms nullMetadataQueryTerms = new PackRepository.QueryTerms(
+            "",
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+        );
+
+        assertEquals(0, PackRouteRefinementPolicy.broadWaterRouteRefinementBonus(null, result));
+        assertEquals(0, PackRouteRefinementPolicy.broadWaterRouteRefinementBonus(queryTerms, null));
+        assertEquals(0, PackRouteRefinementPolicy.broadWaterRouteRefinementBonus(nullMetadataQueryTerms, result));
+        assertEquals(0, PackRouteRefinementPolicy.broadWaterRouteOrderingPriority(null, result));
+        assertEquals(0, PackRouteRefinementPolicy.broadWaterRouteOrderingPriority(queryTerms, null));
+        assertEquals(0, PackRouteRefinementPolicy.broadWaterRouteOrderingPriority(nullMetadataQueryTerms, result));
     }
 
     @Test
