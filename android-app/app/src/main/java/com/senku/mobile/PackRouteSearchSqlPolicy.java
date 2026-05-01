@@ -17,7 +17,7 @@ final class PackRouteSearchSqlPolicy {
         boolean ftsSupportsBm25
     ) {
         String ftsQuery = PackRepository.buildFtsQuery(specTerms, ftsSupportsBm25 ? 8 : 4, ftsSupportsBm25);
-        if (ftsQuery.isEmpty()) {
+        if (ftsQuery.isEmpty() || categories.isEmpty()) {
             return RouteFtsSqlPlan.empty(ftsQuery);
         }
 
@@ -55,6 +55,10 @@ final class PackRouteSearchSqlPolicy {
         List<String> categories,
         int candidateLimit
     ) {
+        if (tokens.isEmpty() || categories.isEmpty()) {
+            return RouteLikeSqlPlan.empty();
+        }
+
         ArrayList<String> categoryPlaceholders = new ArrayList<>();
         ArrayList<String> args = new ArrayList<>();
         for (String category : categories) {
@@ -90,7 +94,7 @@ final class PackRouteSearchSqlPolicy {
         boolean ftsSupportsBm25
     ) {
         String ftsQuery = PackRepository.buildFtsQuery(specTerms, ftsSupportsBm25 ? 8 : 4, ftsSupportsBm25);
-        if (ftsQuery.isEmpty()) {
+        if (ftsQuery.isEmpty() || categories.isEmpty()) {
             return RouteFtsSqlPlan.empty(ftsQuery);
         }
 
@@ -128,6 +132,10 @@ final class PackRouteSearchSqlPolicy {
         List<String> categories,
         int candidateLimit
     ) {
+        if (tokens.isEmpty() || categories.isEmpty()) {
+            return RouteLikeSqlPlan.empty();
+        }
+
         ArrayList<String> categoryPlaceholders = new ArrayList<>();
         ArrayList<String> args = new ArrayList<>();
         for (String category : categories) {
@@ -217,6 +225,14 @@ final class PackRouteSearchSqlPolicy {
         private RouteLikeSqlPlan(String sql, List<String> args) {
             this.sql = sql;
             this.args = args;
+        }
+
+        private static RouteLikeSqlPlan empty() {
+            return new RouteLikeSqlPlan("", Collections.emptyList());
+        }
+
+        boolean isEmpty() {
+            return sql.isEmpty();
         }
 
         String[] argsArray() {

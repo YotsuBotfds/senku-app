@@ -205,6 +205,11 @@ final class PackRouteFocusedSearchExecutor {
             categories,
             candidateLimit
         );
+        if (plan.isEmpty()) {
+            Log.d(TAG, "routeChunkLike.skip query=\"" + queryTerms.queryLower + "\" reason=empty_like_plan");
+            return 0;
+        }
+
         try (Cursor cursor = database.rawQuery(plan.sql, plan.argsArray())) {
             return PackRouteFocusedCandidateCollector.collectChunkCursor(
                 cursor,
@@ -214,6 +219,9 @@ final class PackRouteFocusedSearchExecutor {
                 bestBySection,
                 candidateTarget
             );
+        } catch (SQLiteException error) {
+            Log.w(TAG, "routeChunkLike.fail query=\"" + queryTerms.queryLower + "\"", error);
+            return 0;
         }
     }
 
@@ -338,6 +346,11 @@ final class PackRouteFocusedSearchExecutor {
             categories,
             candidateLimit
         );
+        if (plan.isEmpty()) {
+            Log.d(TAG, "routeGuideLike.skip query=\"" + queryTerms.queryLower + "\" reason=empty_like_plan");
+            return 0;
+        }
+
         try (Cursor cursor = database.rawQuery(plan.sql, plan.argsArray())) {
             return PackRouteFocusedCandidateCollector.collectGuideCursor(
                 cursor,
@@ -347,6 +360,9 @@ final class PackRouteFocusedSearchExecutor {
                 bestBySection,
                 targetTotal
             );
+        } catch (SQLiteException error) {
+            Log.w(TAG, "routeGuideLike.fail query=\"" + queryTerms.queryLower + "\"", error);
+            return 0;
         }
     }
 }
