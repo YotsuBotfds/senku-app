@@ -48,16 +48,19 @@ enum class TopBarActionKind {
     Overflow,
 }
 
-private val TopBarTitleFontSize = 13.sp
-private val TopBarTitleLineHeight = 16.sp
-private val TopBarChromeLabelFontSize = 9.5.sp
-private val TopBarChromeLabelLineHeight = 11.sp
-private val TopBarActionSize = 28.dp
-private val TopBarBackActionLabeledWidth = 60.dp
-private val TopBarBackIconSize = 18.dp
-private val TopBarBackActionHorizontalPadding = 6.dp
-private val TopBarBackActionTextSpacing = 2.dp
-private val TopBarLeadingDividerHeight = 24.dp
+private object TopBarChromePolicy {
+    val titleFontSize = 13.sp
+    val titleLineHeight = 16.sp
+    val chromeLabelFontSize = 9.5.sp
+    val chromeLabelLineHeight = 11.sp
+    val actionSize = 28.dp
+    val actionIconSize = 18.dp
+    val labeledBackActionWidth = 60.dp
+    val backActionHorizontalPadding = 6.dp
+    val backActionTextSpacing = 2.dp
+    val leadingDividerHeight = 24.dp
+}
+
 private const val TopBarBackActionLabel = "Back"
 
 @Immutable
@@ -160,7 +163,7 @@ fun SenkuTopBar(
             Box(
                 modifier = Modifier
                     .width(1.dp)
-                    .height(TopBarLeadingDividerHeight)
+                    .height(TopBarChromePolicy.leadingDividerHeight)
                     .background(colors.hairlineStrong),
             )
             Spacer(modifier = Modifier.width(10.dp))
@@ -172,10 +175,7 @@ fun SenkuTopBar(
         ) {
             Text(
                 text = title,
-                style = typography.uiBody.copy(
-                    fontSize = TopBarTitleFontSize,
-                    lineHeight = TopBarTitleLineHeight,
-                ),
+                style = typography.uiBody.topBarTitleStyle(),
                 color = colors.ink0,
                 maxLines = titleMaxLines.coerceAtLeast(1),
                 overflow = TextOverflow.Ellipsis,
@@ -184,10 +184,7 @@ fun SenkuTopBar(
             if (!subtitle.isNullOrBlank()) {
                 Text(
                     text = subtitle,
-                    style = typography.monoCaps.copy(
-                        fontSize = TopBarChromeLabelFontSize,
-                        lineHeight = TopBarChromeLabelLineHeight,
-                    ),
+                    style = typography.monoCaps.topBarChromeLabelStyle(),
                     color = colors.accent,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
@@ -264,10 +261,7 @@ private fun DangerPill(
     ) {
         Text(
             text = "\u2022 ${label.uppercase()}",
-            style = SenkuTheme.typography.monoCaps.copy(
-                fontSize = TopBarChromeLabelFontSize,
-                lineHeight = TopBarChromeLabelLineHeight,
-            ),
+            style = SenkuTheme.typography.monoCaps.topBarChromeLabelStyle(),
             color = colors.danger,
             maxLines = 1,
             overflow = TextOverflow.Clip,
@@ -298,8 +292,8 @@ private fun TopBarActionButton(
 
     Box(
         modifier = modifier
-            .size(TopBarActionSize)
-            .then(if (shouldShowBackLabel) Modifier.width(TopBarBackActionLabeledWidth) else Modifier)
+            .size(TopBarChromePolicy.actionSize)
+            .then(if (shouldShowBackLabel) Modifier.width(TopBarChromePolicy.labeledBackActionWidth) else Modifier)
             .clip(shape)
             .semantics(mergeDescendants = true) {
                 contentDescription = action.contentDescription
@@ -317,22 +311,19 @@ private fun TopBarActionButton(
     ) {
         if (shouldShowBackLabel) {
             Row(
-                modifier = Modifier.padding(horizontal = TopBarBackActionHorizontalPadding),
-                horizontalArrangement = Arrangement.spacedBy(TopBarBackActionTextSpacing),
+                modifier = Modifier.padding(horizontal = TopBarChromePolicy.backActionHorizontalPadding),
+                horizontalArrangement = Arrangement.spacedBy(TopBarChromePolicy.backActionTextSpacing),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Icon(
                     imageVector = action.kind.icon(),
                     contentDescription = null,
                     tint = iconTint,
-                    modifier = Modifier.size(TopBarBackIconSize),
+                    modifier = Modifier.size(TopBarChromePolicy.actionIconSize),
                 )
                 Text(
                     text = TopBarBackActionLabel,
-                    style = SenkuTheme.typography.monoCaps.copy(
-                        fontSize = TopBarChromeLabelFontSize,
-                        lineHeight = TopBarChromeLabelLineHeight,
-                    ),
+                    style = SenkuTheme.typography.monoCaps.topBarChromeLabelStyle(),
                     color = iconTint,
                     maxLines = 1,
                     overflow = TextOverflow.Clip,
@@ -343,29 +334,39 @@ private fun TopBarActionButton(
                 imageVector = action.kind.icon(),
                 contentDescription = null,
                 tint = iconTint,
-                modifier = Modifier.size(TopBarBackIconSize),
+                modifier = Modifier.size(TopBarChromePolicy.actionIconSize),
             )
         }
     }
 }
 
+private fun androidx.compose.ui.text.TextStyle.topBarTitleStyle() = copy(
+    fontSize = TopBarChromePolicy.titleFontSize,
+    lineHeight = TopBarChromePolicy.titleLineHeight,
+)
+
+private fun androidx.compose.ui.text.TextStyle.topBarChromeLabelStyle() = copy(
+    fontSize = TopBarChromePolicy.chromeLabelFontSize,
+    lineHeight = TopBarChromePolicy.chromeLabelLineHeight,
+)
+
 internal fun topBarBackActionLabelForTest(): String = TopBarBackActionLabel
 
-internal fun topBarTitleFontSizeSpForTest(): Float = TopBarTitleFontSize.value
+internal fun topBarTitleFontSizeSpForTest(): Float = TopBarChromePolicy.titleFontSize.value
 
-internal fun topBarChromeLabelFontSizeSpForTest(): Float = TopBarChromeLabelFontSize.value
+internal fun topBarChromeLabelFontSizeSpForTest(): Float = TopBarChromePolicy.chromeLabelFontSize.value
 
-internal fun topBarBackIconSizeDpForTest(): Int = TopBarBackIconSize.value.toInt()
+internal fun topBarBackIconSizeDpForTest(): Int = TopBarChromePolicy.actionIconSize.value.toInt()
 
-internal fun topBarLeadingDividerHeightDpForTest(): Int = TopBarLeadingDividerHeight.value.toInt()
+internal fun topBarLeadingDividerHeightDpForTest(): Int = TopBarChromePolicy.leadingDividerHeight.value.toInt()
 
 internal fun topBarActionWidthDpForTest(kind: TopBarActionKind): Int =
     when (kind) {
-        TopBarActionKind.Back -> TopBarActionSize.value.toInt()
-        TopBarActionKind.Home -> TopBarActionSize.value.toInt()
-        TopBarActionKind.Pin -> TopBarActionSize.value.toInt()
-        TopBarActionKind.Share -> TopBarActionSize.value.toInt()
-        TopBarActionKind.Overflow -> TopBarActionSize.value.toInt()
+        TopBarActionKind.Back -> TopBarChromePolicy.actionSize.value.toInt()
+        TopBarActionKind.Home -> TopBarChromePolicy.actionSize.value.toInt()
+        TopBarActionKind.Pin -> TopBarChromePolicy.actionSize.value.toInt()
+        TopBarActionKind.Share -> TopBarChromePolicy.actionSize.value.toInt()
+        TopBarActionKind.Overflow -> TopBarChromePolicy.actionSize.value.toInt()
     }
 
 private fun TopBarActionKind.icon(): ImageVector = when (this) {

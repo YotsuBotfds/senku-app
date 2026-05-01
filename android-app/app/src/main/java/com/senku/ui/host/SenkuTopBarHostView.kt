@@ -23,6 +23,42 @@ internal fun normalizeTopBarHeaderText(text: String): String =
         .replace("\u00E2\u20AC\u00A2", "\u2022")
         .replace("\u00C2\u00B7", "\u00B7")
 
+private data class TopBarHostActionPolicy(
+    val showHome: Boolean,
+    val showPin: Boolean,
+    val pinActive: Boolean,
+    val showShare: Boolean,
+    val showOverflow: Boolean,
+    val backDescription: String,
+    val homeDescription: String,
+    val pinDescription: String,
+    val shareDescription: String,
+    val overflowDescription: String,
+) {
+    fun actionSpecs(): List<TopBarActionSpec> = listOf(
+        TopBarActionSpec.back(
+            contentDescription = backDescription,
+        ),
+        TopBarActionSpec.home(
+            contentDescription = homeDescription,
+            isVisible = showHome,
+        ),
+        TopBarActionSpec.pin(
+            contentDescription = pinDescription,
+            isVisible = showPin,
+            isActive = pinActive,
+        ),
+        TopBarActionSpec.share(
+            contentDescription = shareDescription,
+            isVisible = showShare,
+        ),
+        TopBarActionSpec.overflow(
+            contentDescription = overflowDescription,
+            isVisible = showOverflow,
+        ),
+    )
+}
+
 class SenkuTopBarHostView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
@@ -93,28 +129,18 @@ class SenkuTopBarHostView @JvmOverloads constructor(
     }
 
     private fun buildActions(): List<TopBarActionSpec> {
-        val actions = ArrayList<TopBarActionSpec>(4)
-        actions += TopBarActionSpec.back(
-            contentDescription = backDescription,
-        )
-        actions += TopBarActionSpec.home(
-            contentDescription = homeDescription,
-            isVisible = showHome,
-        )
-        actions += TopBarActionSpec.pin(
-            contentDescription = pinDescription,
-            isVisible = showPin,
-            isActive = pinActive,
-        )
-        actions += TopBarActionSpec.share(
-            contentDescription = shareDescription,
-            isVisible = showShare,
-        )
-        actions += TopBarActionSpec.overflow(
-            contentDescription = overflowDescription,
-            isVisible = showOverflow,
-        )
-        return actions
+        return TopBarHostActionPolicy(
+            showHome = showHome,
+            showPin = showPin,
+            pinActive = pinActive,
+            showShare = showShare,
+            showOverflow = showOverflow,
+            backDescription = backDescription,
+            homeDescription = homeDescription,
+            pinDescription = pinDescription,
+            shareDescription = shareDescription,
+            overflowDescription = overflowDescription,
+        ).actionSpecs()
     }
 
 }

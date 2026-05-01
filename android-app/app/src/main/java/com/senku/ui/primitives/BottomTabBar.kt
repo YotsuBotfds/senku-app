@@ -60,10 +60,6 @@ enum class BottomTabBarLayoutMode {
 
 private val BottomTabLabelFontSize = 10.5.sp
 private val BottomTabLabelLineHeight = 12.sp
-internal const val Rev03ComposeNavRailIconSizeDp = 22
-internal const val Rev03ComposeNavRailLabelFontSizeSp = 10
-internal const val Rev03ComposeNavRailLabelLineHeightSp = 13
-internal const val Rev03ComposeNavRailIconLabelGapDp = 3
 
 data class BottomTabModel(
     val destination: BottomTabDestination,
@@ -145,10 +141,15 @@ fun SenkuBottomTabBar(
             ) {
                 Column(
                     modifier = Modifier
-                        .width(52.dp)
+                        .width(NavRailMetrics.WidthDp.dp)
                         .fillMaxHeight()
-                        .padding(start = 4.dp, top = 7.dp, end = 4.dp, bottom = 7.dp),
-                    verticalArrangement = Arrangement.spacedBy(1.dp, Alignment.Top),
+                        .padding(
+                            start = NavRailMetrics.HorizontalPaddingDp.dp,
+                            top = NavRailMetrics.VerticalPaddingDp.dp,
+                            end = NavRailMetrics.HorizontalPaddingDp.dp,
+                            bottom = NavRailMetrics.VerticalPaddingDp.dp,
+                        ),
+                    verticalArrangement = Arrangement.spacedBy(NavRailMetrics.ItemSpacingDp.dp, Alignment.Top),
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
                     tabs.forEach { tab ->
@@ -164,7 +165,7 @@ fun SenkuBottomTabBar(
                 }
                 Box(
                     modifier = Modifier
-                        .width(1.dp)
+                        .width(NavRailMetrics.DividerWidthDp.dp)
                         .fillMaxHeight()
                         .background(colors.hairline),
                 )
@@ -222,7 +223,7 @@ private fun BottomTabItem(
     val colors = SenkuTheme.colors
     val tint = if (selected) colors.accent else colors.ink2
     val verticalRail = layoutMode == BottomTabBarLayoutMode.VERTICAL_RAIL
-    val itemHeight = if (verticalRail) 48.dp else 48.dp
+    val itemHeight = if (verticalRail) NavRailMetrics.ItemHeightDp.dp else 48.dp
 
     Column(
         modifier = modifier
@@ -232,34 +233,43 @@ private fun BottomTabItem(
                 onClick = onClick,
                 role = Role.Tab,
             )
-            .padding(horizontal = if (verticalRail) 2.dp else 4.dp, vertical = if (verticalRail) 2.dp else 4.dp),
+            .padding(
+                horizontal = if (verticalRail) NavRailMetrics.ItemHorizontalPaddingDp.dp else 4.dp,
+                vertical = if (verticalRail) NavRailMetrics.ItemVerticalPaddingDp.dp else 4.dp,
+            ),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(
-            if (verticalRail) Rev03ComposeNavRailIconLabelGapDp.dp else 2.dp,
+            if (verticalRail) NavRailMetrics.IconLabelGapDp.dp else 2.dp,
             Alignment.CenterVertically,
         ),
     ) {
         BottomTabIcon(
             destination = tab.destination,
             tint = tint,
-            modifier = Modifier.size(if (verticalRail) Rev03ComposeNavRailIconSizeDp.dp else 20.dp),
+            modifier = Modifier.size(if (verticalRail) NavRailMetrics.IconSizeDp.dp else 20.dp),
         )
         Text(
             text = tab.label,
             style = SenkuTheme.typography.tag.copy(
-                fontSize = if (verticalRail) Rev03ComposeNavRailLabelFontSizeSp.sp else BottomTabLabelFontSize,
-                lineHeight = if (verticalRail) Rev03ComposeNavRailLabelLineHeightSp.sp else BottomTabLabelLineHeight,
+                fontSize = if (verticalRail) NavRailMetrics.LabelFontSizeSp.sp else BottomTabLabelFontSize,
+                lineHeight = if (verticalRail) NavRailMetrics.LabelLineHeightSp.sp else BottomTabLabelLineHeight,
                 fontWeight = if (selected) FontWeight.Bold else FontWeight.Normal,
             ),
             color = tint,
-            maxLines = if (verticalRail) 2 else 1,
+            maxLines = if (verticalRail) NavRailMetrics.LabelMaxLines else 1,
             textAlign = TextAlign.Center,
             overflow = TextOverflow.Ellipsis,
         )
         Box(
             modifier = Modifier
-                .width(if (selected) 22.dp else 0.dp)
-                .height(if (selected) 2.dp else 1.dp)
+                .width(if (selected) NavRailMetrics.SelectedIndicatorWidthDp.dp else 0.dp)
+                .height(
+                    if (selected) {
+                        NavRailMetrics.SelectedIndicatorHeightDp.dp
+                    } else {
+                        NavRailMetrics.UnselectedIndicatorHeightDp.dp
+                    },
+                )
                 .background(if (selected) colors.accent else Color.Transparent),
         )
     }
