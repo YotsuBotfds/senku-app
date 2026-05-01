@@ -825,6 +825,11 @@ Purpose: prevent future agents from rerunning Ask/query backend cleanup that is 
   parsing and mixed-content flattening, `ModelFileStorePolicy` owns model-file
   naming/selection/size helpers, and `PackInstallValidationPolicy` owns bundled
   pack refresh decisions.
+- Android harness ergonomics are current through this batch: stop/orphan
+  helpers include the functional UX matrix wrapper, the matrix writes per-preset
+  `matrix_running.json` markers with child PID/status/timeout state, local
+  server `-StatusOnly` distinguishes pidfile wrapper PID from listener PIDs,
+  and `HostInferenceRequestPolicy` owns host completion URI/payload shaping.
 - Latest local proof after `54bc5893`: full Android
   `:app:testDebugUnitTest :app:assembleDebug :app:assembleDebugAndroidTest`
   passed; focused Pack rerank/repository parity and OfflineAnswer telemetry
@@ -838,6 +843,9 @@ Purpose: prevent future agents from rerunning Ask/query backend cleanup that is 
   OfflineAnswerEngine, HostInference, ModelFileStore, PackInstaller, and
   ChatSessionStore JVM tests passed together; `:app:assembleDebug
   :app:assembleDebugAndroidTest` passed; `git diff --check` passed.
+- Latest local proof for the harness/request batch: restart/stop/matrix
+  contracts passed 27 tests; focused HostInference JVM tests passed;
+  `git diff --check` passed.
 
 ## Remaining Next Slices
 

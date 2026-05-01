@@ -336,6 +336,10 @@ exit 0
 
             summary_path = artifact_root / output_label / "matrix_summary.json"
             summary = json.loads(summary_path.read_text(encoding="utf-8-sig"))
+            markers = [
+                json.loads(Path(preset["running_marker_path"]).read_text(encoding="utf-8-sig"))
+                for preset in summary["presets"]
+            ]
 
         self.assertEqual(result.returncode, 0, result.stderr + result.stdout)
         self.assertTrue(summary["passed"])
@@ -346,6 +350,14 @@ exit 0
             self.assertTrue(preset["reused_installed_apks"])
             self.assertTrue(preset["effective_skip_build"])
             self.assertTrue(preset["effective_skip_install"])
+        for index, (preset, marker) in enumerate(zip(summary["presets"], markers), start=1):
+            self.assertEqual(marker["source"], "run_android_functional_ux_smoke_matrix.ps1")
+            self.assertEqual(marker["preset"], preset["preset"])
+            self.assertEqual(marker["preset_ordinal"], index)
+            self.assertEqual(marker["total_preset_count"], len(EXPECTED_FUNCTIONAL_PRESETS))
+            self.assertEqual(marker["status"], "completed")
+            self.assertEqual(marker["exit_code"], 0)
+            self.assertFalse(marker["timed_out"])
 
     def test_watchdog_times_out_child_process_and_writes_matrix_timeout_summary(self):
         with tempfile.TemporaryDirectory() as temp_dir:
@@ -380,6 +392,7 @@ exit 0
 
             summary_path = artifact_root / output_label / "matrix_summary.json"
             summary = json.loads(summary_path.read_text(encoding="utf-8-sig"))
+            marker = json.loads(Path(summary["presets"][0]["running_marker_path"]).read_text(encoding="utf-8-sig"))
 
         self.assertNotEqual(result.returncode, 0, result.stderr + result.stdout)
         self.assertFalse(summary["passed"])
@@ -390,6 +403,9 @@ exit 0
         self.assertTrue(first_preset["timed_out"])
         self.assertEqual(first_preset["status"], "matrix_timeout")
         self.assertIn("watchdog timed out", first_preset["failure_reason"])
+        self.assertEqual(marker["status"], "matrix_timeout")
+        self.assertEqual(marker["exit_code"], 124)
+        self.assertTrue(marker["timed_out"])
 
     def test_parser_gate_passes(self):
         result = _run_powershell(

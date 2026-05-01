@@ -2,7 +2,6 @@ package com.senku.mobile;
 
 import android.util.Log;
 
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
@@ -16,8 +15,6 @@ public final class HostInferenceClient {
     private static final String TAG = "SenkuMobile";
     private static final int CONNECT_TIMEOUT_MS = 10_000;
     private static final int READ_TIMEOUT_MS = 15 * 60 * 1000;
-    private static final int DEFAULT_MAX_TOKENS = 2048;
-    private static final double TEMPERATURE = 0.11;
 
     private HostInferenceClient() {
     }
@@ -32,26 +29,9 @@ public final class HostInferenceClient {
 
         URI uri = completionUri(settings);
 
-        JSONObject payload = new JSONObject();
-        payload.put("model", settings.modelId);
-        payload.put("temperature", TEMPERATURE);
-        payload.put("stream", false);
-        payload.put("max_tokens", maxTokens == null ? DEFAULT_MAX_TOKENS : maxTokens);
-
-        JSONArray messages = new JSONArray();
-        if (systemPrompt != null && !systemPrompt.trim().isEmpty()) {
-            JSONObject systemMessage = new JSONObject();
-            systemMessage.put("role", "system");
-            systemMessage.put("content", systemPrompt);
-            messages.put(systemMessage);
-        }
-        JSONObject userMessage = new JSONObject();
-        userMessage.put("role", "user");
-        userMessage.put("content", prompt);
-        messages.put(userMessage);
-        payload.put("messages", messages);
-
-        byte[] bodyBytes = payload.toString().getBytes(StandardCharsets.UTF_8);
+        byte[] bodyBytes = requestPayload(settings, systemPrompt, prompt, maxTokens)
+            .toString()
+            .getBytes(StandardCharsets.UTF_8);
         Log.d(
             TAG,
             "host.request start url=" + uri +
@@ -106,7 +86,16 @@ public final class HostInferenceClient {
     }
 
     static URI completionUri(HostInferenceConfig.Settings settings) {
-        return URI.create(settings.baseUrl + "/chat/completions");
+        return HostInferenceRequestPolicy.completionUri(settings);
+    }
+
+    static JSONObject requestPayload(
+        HostInferenceConfig.Settings settings,
+        String systemPrompt,
+        String prompt,
+        Integer maxTokens
+    ) throws Exception {
+        return HostInferenceRequestPolicy.buildPayload(settings, systemPrompt, prompt, maxTokens);
     }
 
     static Result parseResponseBody(String responseBody) throws Exception {

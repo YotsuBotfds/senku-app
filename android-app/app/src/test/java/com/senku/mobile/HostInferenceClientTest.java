@@ -1,5 +1,7 @@
 package com.senku.mobile;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -147,5 +149,44 @@ public final class HostInferenceClientTest {
             "https://host.local/openai/v1/chat/completions",
             HostInferenceClient.completionUri(settings).toString()
         );
+    }
+
+    @Test
+    public void requestPayloadUsesDefaultMaxTokensAndBuildsMessages() throws Exception {
+        HostInferenceConfig.Settings settings = new HostInferenceConfig.Settings(
+            true,
+            "http://10.0.2.2:1235/v1",
+            "gemma-4-e2b-it-litert"
+        );
+
+        JSONObject payload = HostInferenceClient.requestPayload(settings, "System note", "ping", null);
+        JSONArray messages = payload.getJSONArray("messages");
+
+        assertEquals("gemma-4-e2b-it-litert", payload.getString("model"));
+        assertEquals(0.11d, payload.getDouble("temperature"), 0.0001d);
+        assertEquals(false, payload.getBoolean("stream"));
+        assertEquals(2048, payload.getInt("max_tokens"));
+        assertEquals(2, messages.length());
+        assertEquals("system", messages.getJSONObject(0).getString("role"));
+        assertEquals("System note", messages.getJSONObject(0).getString("content"));
+        assertEquals("user", messages.getJSONObject(1).getString("role"));
+        assertEquals("ping", messages.getJSONObject(1).getString("content"));
+    }
+
+    @Test
+    public void requestPayloadSkipsBlankSystemPromptAndUsesExplicitMaxTokens() throws Exception {
+        HostInferenceConfig.Settings settings = new HostInferenceConfig.Settings(
+            true,
+            "http://10.0.2.2:1235/v1",
+            "gemma-4-e2b-it-litert"
+        );
+
+        JSONObject payload = HostInferenceClient.requestPayload(settings, "  ", "ping", 64);
+        JSONArray messages = payload.getJSONArray("messages");
+
+        assertEquals(64, payload.getInt("max_tokens"));
+        assertEquals(1, messages.length());
+        assertEquals("user", messages.getJSONObject(0).getString("role"));
+        assertEquals("ping", messages.getJSONObject(0).getString("content"));
     }
 }

@@ -8,7 +8,9 @@ $repoRoot = Split-Path -Parent $PSScriptRoot
 $patterns = @(
     "run_android_prompt.ps1",
     "run_android_detail_followup.ps1",
+    "run_android_functional_ux_smoke_matrix.ps1",
     "run_android_followup_suite.ps1",
+    "run_android_instrumented_ui_smoke.ps1",
     "run_android_session_flow.ps1",
     "run_android_session_batch.ps1",
     "auto_followup_query"

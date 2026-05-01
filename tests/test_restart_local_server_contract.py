@@ -31,6 +31,13 @@ class RestartLocalServerContractTests(unittest.TestCase):
         self.assertIn("$Service + \".pid.json\"", self.script)
         self.assertNotIn("Stop-Process -Name", self.script)
 
+    def test_status_only_distinguishes_pidfile_wrapper_from_listener_owner(self):
+        self.assertIn("Get-PidFileRecord", self.script)
+        self.assertIn("pidfile_pid", self.script)
+        self.assertIn("listener_pids", self.script)
+        self.assertIn("launcher/wrapper process recorded at start", self.script)
+        self.assertIn("listener_pids own the port", self.script)
+
     def test_parser_gate_passes(self):
         result = subprocess.run(
             [

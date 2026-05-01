@@ -274,6 +274,47 @@ function Stop-ProcessTreeBestEffort {
     }
 }
 
+function Write-MatrixPresetRunningMarker {
+    param(
+        [string]$Path,
+        [string]$Preset,
+        [int]$PresetOrdinal,
+        [int]$TotalPresetCount,
+        [string]$Status,
+        [int]$ProcessId,
+        [datetime]$StartedAt,
+        [double]$ElapsedSeconds,
+        [int]$TimeoutSeconds,
+        [Nullable[int]]$ExitCode = $null,
+        [bool]$TimedOut = $false
+    )
+
+    if ([string]::IsNullOrWhiteSpace($Path)) {
+        return
+    }
+
+    $marker = [ordered]@{
+        source = "run_android_functional_ux_smoke_matrix.ps1"
+        device = $Device
+        preset = $Preset
+        preset_ordinal = [int]$PresetOrdinal
+        total_preset_count = [int]$TotalPresetCount
+        status = $Status
+        process_id = [int]$ProcessId
+        started_at = $StartedAt.ToString("o")
+        last_updated_at = (Get-Date).ToString("o")
+        elapsed_seconds = [Math]::Round($ElapsedSeconds, 3)
+        preset_timeout_seconds = [int]$TimeoutSeconds
+        bounded_by_matrix_watchdog = [bool]($TimeoutSeconds -gt 0)
+        timed_out = [bool]$TimedOut
+    }
+    if ($null -ne $ExitCode) {
+        $marker.exit_code = [int]$ExitCode
+    }
+
+    $marker | ConvertTo-Json -Depth 4 | Set-Content -LiteralPath $Path -Encoding UTF8
+}
+
 function Invoke-SmokePresetProcess {
     param(
         [string]$Preset,
@@ -282,7 +323,8 @@ function Invoke-SmokePresetProcess {
         [string]$ExecutablePath,
         [string[]]$Arguments,
         [int]$TimeoutSeconds,
-        [int]$ProgressIntervalSeconds
+        [int]$ProgressIntervalSeconds,
+        [string]$RunningMarkerPath
     )
 
     $psi = New-Object System.Diagnostics.ProcessStartInfo
@@ -299,11 +341,14 @@ function Invoke-SmokePresetProcess {
 
     try {
         [void]$process.Start()
+        $startedAt = Get-Date
+        Write-MatrixPresetRunningMarker -Path $RunningMarkerPath -Preset $Preset -PresetOrdinal $PresetOrdinal -TotalPresetCount $TotalPresetCount -Status "running" -ProcessId $process.Id -StartedAt $startedAt -ElapsedSeconds 0 -TimeoutSeconds $TimeoutSeconds
         while (-not $process.WaitForExit(1000)) {
             $elapsedSeconds = [Math]::Round($stopwatch.Elapsed.TotalSeconds, 1)
             if ($TimeoutSeconds -gt 0 -and $stopwatch.Elapsed.TotalSeconds -ge $TimeoutSeconds) {
                 $timedOut = $true
                 Write-Warning ("[functional-ux-matrix:{0}] preset {1} ({2}/{3}) exceeded matrix watchdog timeout_seconds={4}; terminating child process id={5}; elapsed_seconds={6}" -f $Device, $Preset, $PresetOrdinal, $TotalPresetCount, $TimeoutSeconds, $process.Id, $elapsedSeconds)
+                Write-MatrixPresetRunningMarker -Path $RunningMarkerPath -Preset $Preset -PresetOrdinal $PresetOrdinal -TotalPresetCount $TotalPresetCount -Status "matrix_timeout" -ProcessId $process.Id -StartedAt $startedAt -ElapsedSeconds $stopwatch.Elapsed.TotalSeconds -TimeoutSeconds $TimeoutSeconds -ExitCode 124 -TimedOut $true
                 Stop-ProcessTreeBestEffort -Process $process
                 [void]$process.WaitForExit(5000)
                 break
@@ -315,12 +360,22 @@ function Invoke-SmokePresetProcess {
                     ""
                 }
                 Write-Host ("[functional-ux-matrix:{0}] running {1} ({2}/{3}); elapsed_seconds={4}{5}; child_pid={6}" -f $Device, $Preset, $PresetOrdinal, $TotalPresetCount, $elapsedSeconds, $remainingText, $process.Id)
+                Write-MatrixPresetRunningMarker -Path $RunningMarkerPath -Preset $Preset -PresetOrdinal $PresetOrdinal -TotalPresetCount $TotalPresetCount -Status "running" -ProcessId $process.Id -StartedAt $startedAt -ElapsedSeconds $stopwatch.Elapsed.TotalSeconds -TimeoutSeconds $TimeoutSeconds
                 $nextProgressSeconds += [Math]::Max(1, $ProgressIntervalSeconds)
             }
         }
         $stopwatch.Stop()
+        $exitCode = $(if ($timedOut) { 124 } elseif ($process.HasExited) { $process.ExitCode } else { -1 })
+        $finalStatus = if ($timedOut) {
+            "matrix_timeout"
+        } elseif ($exitCode -eq 0) {
+            "completed"
+        } else {
+            "failed"
+        }
+        Write-MatrixPresetRunningMarker -Path $RunningMarkerPath -Preset $Preset -PresetOrdinal $PresetOrdinal -TotalPresetCount $TotalPresetCount -Status $finalStatus -ProcessId $process.Id -StartedAt $startedAt -ElapsedSeconds $stopwatch.Elapsed.TotalSeconds -TimeoutSeconds $TimeoutSeconds -ExitCode $exitCode -TimedOut $timedOut
         return [pscustomobject]@{
-            exit_code = $(if ($timedOut) { 124 } elseif ($process.HasExited) { $process.ExitCode } else { -1 })
+            exit_code = $exitCode
             timed_out = [bool]$timedOut
             process_id = [int]$process.Id
             duration_seconds = [Math]::Round($stopwatch.Elapsed.TotalSeconds, 3)
@@ -376,6 +431,7 @@ for ($presetIndex = 0; $presetIndex -lt $presets.Count; $presetIndex++) {
     $presetRootForRunner = Convert-ToRepoRelativePath -Path $presetRoot
     $runSummaryPath = Join-Path $presetRoot "run_summary.json"
     $captureSummaryPath = Join-Path $presetRoot "capture_summary.json"
+    $runningMarkerPath = Join-Path $presetRoot "matrix_running.json"
     $reuseInstalledApksForPreset = [bool]$canReuseInstalledApks
     $effectiveSkipBuild = [bool]($SkipBuild -or $reuseInstalledApksForPreset)
     $effectiveSkipInstall = [bool]($SkipInstall -or $reuseInstalledApksForPreset)
@@ -420,7 +476,8 @@ for ($presetIndex = 0; $presetIndex -lt $presets.Count; $presetIndex++) {
         -ExecutablePath $powerShellExe `
         -Arguments $arguments `
         -TimeoutSeconds $PresetTimeoutSeconds `
-        -ProgressIntervalSeconds $PresetProgressIntervalSeconds
+        -ProgressIntervalSeconds $PresetProgressIntervalSeconds `
+        -RunningMarkerPath $runningMarkerPath
     $exitCode = $presetResult.exit_code
     $durationSeconds = $presetResult.duration_seconds
     $passed = ($exitCode -eq 0)
@@ -455,6 +512,7 @@ for ($presetIndex = 0; $presetIndex -lt $presets.Count; $presetIndex++) {
         artifact_root = Convert-ToRepoRelativePath -Path $presetRoot
         run_summary_path = Convert-ToRepoRelativePath -Path $runSummaryPath
         capture_summary_path = Convert-ToRepoRelativePath -Path $captureSummaryPath
+        running_marker_path = Convert-ToRepoRelativePath -Path $runningMarkerPath
         skip_build_requested = [bool]$SkipBuild
         skip_install_requested = [bool]$SkipInstall
         reused_installed_apks = [bool]$reuseInstalledApksForPreset

@@ -122,6 +122,21 @@ function Test-ExpectedCommandLine {
     return $false
 }
 
+function Get-PidFileRecord {
+    param([string]$Path)
+
+    if (-not (Test-Path -LiteralPath $Path)) {
+        return $null
+    }
+
+    try {
+        return Get-Content -LiteralPath $Path -Raw | ConvertFrom-Json
+    }
+    catch {
+        return $null
+    }
+}
+
 $spec = New-ServiceSpec -Name $Service
 $pidPath = Join-Path $stateDir ($Service + ".pid.json")
 $stdoutPath = Join-Path $stateDir ($Service + ".stdout.log")
@@ -140,9 +155,20 @@ foreach ($ownerPid in $owners) {
 }
 
 if ($StatusOnly) {
+    $pidFileRecord = Get-PidFileRecord -Path $pidPath
+    $pidFilePid = $null
+    if ($pidFileRecord -and $pidFileRecord.pid) {
+        $pidFilePid = [int]$pidFileRecord.pid
+    }
+    $listenerPids = @($ownerRows | Select-Object -ExpandProperty pid)
+    $detail = "pidfile_pid is the launcher/wrapper process recorded at start; listener_pids own the port and may be a child server process."
+
     [pscustomobject]@{
         service = $Service
         port = $spec.port
+        pidfile_pid = $pidFilePid
+        listener_pids = $listenerPids
+        status_note = $detail
         owners = $ownerRows
         pidfile = $pidPath
     } | ConvertTo-Json -Depth 5
