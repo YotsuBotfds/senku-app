@@ -24,7 +24,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 final class DetailThreadHistoryRenderer {
-    private static final String FOOTER_METADATA_SEPARATOR = " • ";
+    private static final String FOOTER_METADATA_SEPARATOR = " \u2022 ";
     private static final Pattern SIMPLE_GUIDE_ID_PATTERN = Pattern.compile("GD-\\d{3}");
     private static final int QUESTION_MAX_LINES = 2;
     private static final int ANSWER_MAX_LINES = 4;

@@ -1,6 +1,7 @@
 package com.senku.mobile;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.text.SimpleDateFormat;
@@ -450,6 +451,17 @@ public final class DetailThreadHistoryRendererTest {
                 ""
             )
         );
+    }
+
+    @Test
+    public void threadContextFooterDoesNotExposeEncodedBulletCopy() {
+        String label = DetailThreadHistoryRenderer.threadContextFooterLabel(
+            List.of(turn("answer", "GD-220", 0L), turn("answer", "GD-345", 0L)),
+            "GD-220"
+        );
+
+        assertEquals("THREAD CONTEXT \u2022 2 TURNS \u2022 GD-220 ANCHOR", label);
+        assertFalse(label.contains("\u00E2\u20AC\u00A2"));
     }
 
     @Test
