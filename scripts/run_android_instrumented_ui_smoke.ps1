@@ -220,11 +220,17 @@ $hostAdbPlatformToolsVersion = Get-HostAdbPlatformToolsVersion -AdbPath $adb
 function Invoke-AdbChecked {
     param(
         [string[]]$Arguments,
-        [string]$FailureMessage
+        [string]$FailureMessage,
+        [int]$TimeoutMilliseconds = 15000
     )
 
-    $output = & $adb @Arguments 2>&1 | Out-String
-    if ($LASTEXITCODE -ne 0) {
+    $result = Invoke-AndroidAdbCommandCapture -AdbPath $adb -Arguments $Arguments -TimeoutMilliseconds $TimeoutMilliseconds
+    $output = if ($null -eq $result.output) { "" } else { [string]$result.output }
+    if ($result.timed_out) {
+        $commandText = $Arguments -join " "
+        throw ("{0}: adb {1} timed out after {2} ms" -f $FailureMessage, $commandText, $TimeoutMilliseconds)
+    }
+    if ($result.exit_code -ne 0) {
         $details = $output.Trim()
         if ([string]::IsNullOrWhiteSpace($details)) {
             throw $FailureMessage
@@ -1142,9 +1148,14 @@ function Get-InstrumentationTimeoutMs {
 }
 
 function Stop-InstrumentationPackages {
-    & $adb -s $Device shell am force-stop com.senku.mobile.test | Out-Null
-    & $adb -s $Device shell am force-stop com.senku.mobile | Out-Null
-    $psOutput = (& $adb -s $Device shell ps -A -o PID,NAME,ARGS 2>$null | Out-String)
+    [void](Invoke-AdbBestEffort -Arguments @("-s", $Device, "shell", "am", "force-stop", "com.senku.mobile.test"))
+    [void](Invoke-AdbBestEffort -Arguments @("-s", $Device, "shell", "am", "force-stop", "com.senku.mobile"))
+    $psResult = Invoke-AdbBestEffort -Arguments @("-s", $Device, "shell", "ps", "-A", "-o", "PID,NAME,ARGS")
+    if ($psResult.timed_out -or $psResult.exit_code -ne 0) {
+        Write-Warning ("Best-effort instrumentation process listing failed on {0}; continuing cleanup" -f $Device)
+        return
+    }
+    $psOutput = if ($null -eq $psResult.output) { "" } else { [string]$psResult.output }
     foreach ($line in ($psOutput -split "`r?`n")) {
         if ($line -notmatch "com\\.senku\\.mobile(?:\\.test)?") {
             continue
@@ -1155,7 +1166,7 @@ function Stop-InstrumentationPackages {
         }
         $targetPid = $columns[0]
         if ($targetPid -match '^\d+$') {
-            & $adb -s $Device shell kill -9 $targetPid 2>$null | Out-Null
+            [void](Invoke-AdbBestEffort -Arguments @("-s", $Device, "shell", "kill", "-9", $targetPid))
         }
     }
 }
@@ -1520,7 +1531,7 @@ function Set-DeviceOrientation([string]$TargetOrientation) {
 }
 
 function Get-DeviceSettingValue([string]$Namespace, [string]$Key) {
-    return (& $adb -s $Device shell settings get $Namespace $Key 2>$null | Out-String).Trim()
+    return Get-AdbShellValue -ShellArguments @("settings", "get", $Namespace, $Key)
 }
 
 function Restore-DeviceSettings {
@@ -1580,8 +1591,8 @@ if (-not $EffectiveSkipInstall) {
     Write-RunPhase -Phase "installed packages verified"
 }
 Write-RunPhase -Phase "clearing app test artifacts"
-& $adb -s $Device shell run-as com.senku.mobile rm -rf files/test-artifacts | Out-Null
-& $adb -s $Device shell run-as com.senku.mobile mkdir -p files/test-artifacts | Out-Null
+[void](Invoke-AdbCheckedWithTimeout -Arguments @("-s", $Device, "shell", "run-as", "com.senku.mobile", "rm", "-rf", "files/test-artifacts") -FailureMessage "Clearing app test artifacts failed" -TimeoutMilliseconds 15000)
+[void](Invoke-AdbCheckedWithTimeout -Arguments @("-s", $Device, "shell", "run-as", "com.senku.mobile", "mkdir", "-p", "files/test-artifacts") -FailureMessage "Creating app test artifact directory failed" -TimeoutMilliseconds 15000)
 Write-RunPhase -Phase "app test artifacts cleared"
 
 $script:OriginalFontScale = Get-DeviceFontScale

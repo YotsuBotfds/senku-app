@@ -2035,14 +2035,41 @@ public final class PromptHarnessSmokeTest {
                 "tablet-portrait guide proof requires the portrait tablet detail layout",
                 tabletPortrait[0]
             );
+            boolean headerReady = waitForTabletPortraitGuideHeaderState(result, DETAIL_WAIT_MS);
+            if (!headerReady) {
+                try {
+                    captureUiState("guide_tablet_portrait_chip_dedup_not_ready");
+                } catch (AssertionError ignored) {
+                }
+            }
             Assert.assertTrue(
-                "tablet-portrait guide detail should render before chip dedup validation",
-                device.wait(Until.hasObject(By.res(APP_PACKAGE, "detail_screen_title")), DETAIL_WAIT_MS)
+                "tablet-portrait guide detail should render before chip dedup validation; "
+                    + describeTabletPortraitGuideHeaderState(result),
+                headerReady
             );
             scenario.onActivity(activity -> {
                 TextView screenTitle = activity.findViewById(R.id.detail_screen_title);
                 TextView modeChip = activity.findViewById(R.id.detail_mode_chip);
                 TextView scopeChip = activity.findViewById(R.id.detail_scope_chip);
+                DetailSettleSignals signals = collectDetailSettleSignals(activity);
+                if (signals.tabletCompose) {
+                    Assert.assertTrue("tablet-portrait guide detail should keep the Compose tablet root visible", signals.tabletRootVisible);
+                    Assert.assertFalse("tablet-portrait guide detail should stay in guide mode", signals.answerMode);
+                    Assert.assertEquals(
+                        "tablet-portrait guide detail should carry the expected guide id",
+                        safe(result.guideId),
+                        safe(signals.guideId)
+                    );
+                    Assert.assertFalse(
+                        "tablet-portrait guide detail should hide the redundant manual-entry chip on the Compose tablet header",
+                        isVisible(modeChip)
+                    );
+                    Assert.assertFalse(
+                        "tablet-portrait guide detail should hide the redundant single-guide chip on the Compose tablet header",
+                        isVisible(scopeChip)
+                    );
+                    return;
+                }
                 Assert.assertNotNull("tablet-portrait guide title rail should exist", screenTitle);
                 Assert.assertTrue("tablet-portrait guide title rail should stay visible", isVisible(screenTitle));
                 String screenTitleText = safe(screenTitle.getText().toString());
@@ -2065,6 +2092,95 @@ public final class PromptHarnessSmokeTest {
             });
             captureUiState("guide_tablet_portrait_chip_dedup");
         }
+    }
+
+    private boolean waitForTabletPortraitGuideHeaderState(SearchResult expectedGuide, long timeoutMs) {
+        long deadline = SystemClock.uptimeMillis() + timeoutMs;
+        while (SystemClock.uptimeMillis() < deadline) {
+            final boolean[] xmlReady = {false};
+            final boolean[] composeReady = {false};
+            InstrumentationRegistry.getInstrumentation().runOnMainSync(() -> {
+                Activity activity = getResumedActivityOnMainThread();
+                if (!(activity instanceof DetailActivity)) {
+                    return;
+                }
+                if (!isTabletPortraitActivity(activity)) {
+                    return;
+                }
+                TextView screenTitle = activity.findViewById(R.id.detail_screen_title);
+                TextView modeChip = activity.findViewById(R.id.detail_mode_chip);
+                TextView scopeChip = activity.findViewById(R.id.detail_scope_chip);
+                DetailSettleSignals signals = collectDetailSettleSignals(activity);
+                if (signals.tabletCompose) {
+                    composeReady[0] = signals.tabletRootVisible
+                        && !signals.answerMode
+                        && tabletGuideIdentityMatches(signals, expectedGuide)
+                        && !isVisible(modeChip)
+                        && !isVisible(scopeChip);
+                    return;
+                }
+                String screenTitleText = visibleText(screenTitle);
+                xmlReady[0] = isEffectivelyVisible(screenTitle)
+                    && containsAny(
+                        screenTitleText,
+                        activity.getString(R.string.detail_header_guide),
+                        safe(expectedGuide == null ? null : expectedGuide.guideId)
+                    )
+                    && !isVisible(modeChip)
+                    && !isVisible(scopeChip);
+            });
+            if (xmlReady[0] || composeReady[0]) {
+                return true;
+            }
+            InstrumentationRegistry.getInstrumentation().waitForIdleSync();
+            SystemClock.sleep(75L);
+        }
+        return false;
+    }
+
+    private boolean tabletGuideIdentityMatches(DetailSettleSignals signals, SearchResult expectedGuide) {
+        if (signals == null || expectedGuide == null) {
+            return false;
+        }
+        String expectedGuideId = safe(expectedGuide.guideId).trim();
+        String expectedTitle = safe(expectedGuide.title).trim();
+        String actualGuideId = safe(signals.guideId).trim();
+        String actualTitle = safe(signals.title).trim();
+        return (!expectedGuideId.isEmpty() && actualGuideId.equals(expectedGuideId))
+            || (!expectedTitle.isEmpty() && actualTitle.equals(expectedTitle));
+    }
+
+    private boolean hasTabletComposeGuideHeaderText(SearchResult expectedGuide) {
+        return device.hasObject(By.text("GUIDE"))
+            && device.hasObject(By.text(safe(expectedGuide == null ? null : expectedGuide.guideId)))
+            && device.hasObject(By.text(safe(expectedGuide == null ? null : expectedGuide.title)));
+    }
+
+    private String describeTabletPortraitGuideHeaderState(SearchResult expectedGuide) {
+        final String[] description = {"activity=<none>"};
+        boolean composeGuideTextVisible = hasTabletComposeGuideHeaderText(expectedGuide);
+        InstrumentationRegistry.getInstrumentation().runOnMainSync(() -> {
+            Activity activity = getResumedActivityOnMainThread();
+            if (activity == null) {
+                return;
+            }
+            TextView screenTitle = activity.findViewById(R.id.detail_screen_title);
+            TextView modeChip = activity.findViewById(R.id.detail_mode_chip);
+            TextView scopeChip = activity.findViewById(R.id.detail_scope_chip);
+            DetailSettleSignals signals = collectDetailSettleSignals(activity);
+            description[0] = "activity=" + activity.getClass().getSimpleName()
+                + ", tabletPortrait=" + isTabletPortraitActivity(activity)
+                + ", expectedGuide=" + safe(expectedGuide == null ? null : expectedGuide.guideId)
+                + ", screenTitleVisible=" + isEffectivelyVisible(screenTitle)
+                + ", screenTitleText=" + visibleText(screenTitle)
+                + ", modeChipVisible=" + isVisible(modeChip)
+                + ", modeChipText=" + visibleText(modeChip)
+                + ", scopeChipVisible=" + isVisible(scopeChip)
+                + ", scopeChipText=" + visibleText(scopeChip)
+                + ", composeGuideTextVisible=" + composeGuideTextVisible
+                + ", " + describeDetailSignals(signals);
+        });
+        return description[0];
     }
 
     @Test
