@@ -2,7 +2,11 @@ package com.senku.mobile;
 
 import android.view.ViewGroup;
 
+import java.util.ArrayList;
+import java.util.Locale;
+
 final class DetailTabletEmergencyChromePolicy {
+    private static final String CHROME_META_SEPARATOR = " \u2022 ";
     private static final int APP_RAIL_WIDTH_DP = 72;
     private static final int APP_RAIL_DIVIDER_WIDTH_DP = 1;
     private static final int PORTRAIT_LEFT_MARGIN_DP = APP_RAIL_WIDTH_DP + APP_RAIL_DIVIDER_WIDTH_DP;
@@ -11,6 +15,24 @@ final class DetailTabletEmergencyChromePolicy {
     private static final int LANDSCAPE_LEFT_MARGIN_DP = 336;
     private static final int LANDSCAPE_RIGHT_MARGIN_DP = 24;
     private static final int LANDSCAPE_TOP_MARGIN_DP = 16;
+    private static final int PORTRAIT_HORIZONTAL_PADDING_DP = 16;
+    private static final int PORTRAIT_VERTICAL_PADDING_DP = 12;
+    private static final int CHROME_BOTTOM_MARGIN_DP = 12;
+    private static final int CHROME_NAV_ICON_SIZE_DP = 28;
+    private static final int CHROME_BACK_ACTION_MIN_WIDTH_DP = 28;
+    private static final int CHROME_BACK_ICON_SIZE_DP = 18;
+    private static final int CHROME_BACK_HORIZONTAL_PADDING_DP = 6;
+    private static final int CHROME_DIVIDER_GAP_DP = 10;
+    private static final int CHROME_DIVIDER_HEIGHT_DP = 24;
+    private static final int CHROME_RULE_HEIGHT_DP = 1;
+    private static final int DANGER_BAND_HORIZONTAL_BLEED_DP = PORTRAIT_HORIZONTAL_PADDING_DP;
+    private static final float CHROME_TITLE_TEXT_SIZE_SP = 13.0f;
+    private static final float CHROME_TITLE_LINE_HEIGHT_SP = 18.0f;
+    private static final float CHROME_META_TEXT_SIZE_SP = 9.5f;
+    private static final float CHROME_META_LINE_HEIGHT_SP = 11.0f;
+    private static final float CHROME_BACK_LABEL_TEXT_SIZE_SP = 10.0f;
+    private static final float CHROME_BACK_LABEL_LINE_HEIGHT_SP = 12.0f;
+    private static final float CHROME_LABEL_LETTER_SPACING = 0.09f;
     private static final float APP_RAIL_LABEL_TEXT_SIZE_SP = 10.0f;
     private static final float APP_RAIL_LABEL_LINE_HEIGHT_SP = 13.0f;
     private static final float APP_RAIL_LABEL_LETTER_SPACING = 0.0f;
@@ -72,6 +94,95 @@ final class DetailTabletEmergencyChromePolicy {
         return tabletPortrait
             ? ViewGroup.LayoutParams.MATCH_PARENT
             : ViewGroup.LayoutParams.WRAP_CONTENT;
+    }
+
+    static int portraitHorizontalPaddingDp() {
+        return PORTRAIT_HORIZONTAL_PADDING_DP;
+    }
+
+    static int portraitVerticalPaddingDp() {
+        return PORTRAIT_VERTICAL_PADDING_DP;
+    }
+
+    static int chromeBottomMarginDp() {
+        return CHROME_BOTTOM_MARGIN_DP;
+    }
+
+    static int chromeNavIconSizeDp() {
+        return CHROME_NAV_ICON_SIZE_DP;
+    }
+
+    static int chromeBackActionMinWidthDp() {
+        return CHROME_BACK_ACTION_MIN_WIDTH_DP;
+    }
+
+    static int chromeBackIconSizeDp() {
+        return CHROME_BACK_ICON_SIZE_DP;
+    }
+
+    static int chromeBackHorizontalPaddingDp() {
+        return CHROME_BACK_HORIZONTAL_PADDING_DP;
+    }
+
+    static int chromeDividerGapDp() {
+        return CHROME_DIVIDER_GAP_DP;
+    }
+
+    static int chromeDividerHeightDp() {
+        return CHROME_DIVIDER_HEIGHT_DP;
+    }
+
+    static int chromeRuleHeightDp() {
+        return CHROME_RULE_HEIGHT_DP;
+    }
+
+    static int chromeRuleHorizontalInsetDp(boolean tabletPortrait) {
+        return tabletPortrait ? -PORTRAIT_HORIZONTAL_PADDING_DP : -18;
+    }
+
+    static int dangerBandHorizontalBleedDp(boolean tabletPortrait) {
+        return tabletPortrait ? DANGER_BAND_HORIZONTAL_BLEED_DP : 0;
+    }
+
+    static float chromeTitleTextSizeSp() {
+        return CHROME_TITLE_TEXT_SIZE_SP;
+    }
+
+    static float chromeTitleLineHeightSp() {
+        return CHROME_TITLE_LINE_HEIGHT_SP;
+    }
+
+    static float chromeMetaTextSizeSp() {
+        return CHROME_META_TEXT_SIZE_SP;
+    }
+
+    static float chromeMetaLineHeightSp() {
+        return CHROME_META_LINE_HEIGHT_SP;
+    }
+
+    static float chromeBackLabelTextSizeSp() {
+        return CHROME_BACK_LABEL_TEXT_SIZE_SP;
+    }
+
+    static float chromeBackLabelLineHeightSp() {
+        return CHROME_BACK_LABEL_LINE_HEIGHT_SP;
+    }
+
+    static float chromeLabelLetterSpacing() {
+        return CHROME_LABEL_LETTER_SPACING;
+    }
+
+    static String buildChromeMeta(Iterable<String> labels) {
+        ArrayList<String> cleanedLabels = new ArrayList<>();
+        if (labels != null) {
+            for (String label : labels) {
+                String cleaned = safe(label).trim();
+                if (!cleaned.isEmpty()) {
+                    cleanedLabels.add(cleaned);
+                }
+            }
+        }
+        return String.join(CHROME_META_SEPARATOR, cleanedLabels).toUpperCase(Locale.US);
     }
 
     static boolean shouldShowAppRailOverlay(
@@ -196,5 +307,9 @@ final class DetailTabletEmergencyChromePolicy {
             this.appRailHomeContentDescriptionResource = appRailHomeContentDescriptionResource;
             this.showHomeChromeAction = showHomeChromeAction;
         }
+    }
+
+    private static String safe(String text) {
+        return text == null ? "" : text;
     }
 }

@@ -109,33 +109,13 @@ public final class DetailActivity extends AppCompatActivity {
     private static final int TABLET_APP_RAIL_FIRST_ITEM_TOP_MARGIN_DP = 24;
     private static final int TABLET_APP_RAIL_ITEM_TOP_MARGIN_DP = 18;
     private static final int TABLET_APP_RAIL_ICON_SIZE_DP = 22;
-    private static final int TABLET_EMERGENCY_PORTRAIT_HORIZONTAL_PADDING_DP = 16;
-    private static final int TABLET_EMERGENCY_PORTRAIT_VERTICAL_PADDING_DP = 12;
-    private static final int TABLET_EMERGENCY_CHROME_BOTTOM_MARGIN_DP = 12;
     private static final float DETAIL_TOP_CHROME_TITLE_TEXT_SIZE_SP = 13.0f;
     private static final float DETAIL_TOP_CHROME_LABEL_TEXT_SIZE_SP = 9.5f;
     private static final float DETAIL_TOP_CHROME_LABEL_LINE_HEIGHT_SP = 11.0f;
-    private static final float TABLET_EMERGENCY_CHROME_TITLE_TEXT_SIZE_SP = DETAIL_TOP_CHROME_TITLE_TEXT_SIZE_SP;
-    private static final float TABLET_EMERGENCY_CHROME_TITLE_LINE_HEIGHT_SP = 18.0f;
-    private static final int DETAIL_TOP_CHROME_ICON_ACTION_SIZE_DP = 28;
-    private static final int TABLET_HEADER_BACK_ACTION_WIDTH_DP = 28;
-    private static final int TABLET_HEADER_BACK_ICON_SIZE_DP = 18;
-    private static final int TABLET_HEADER_BACK_HORIZONTAL_PADDING_DP = 6;
-    private static final int TABLET_HEADER_BACK_LABEL_GAP_DP = 2;
-    private static final int TABLET_HEADER_DIVIDER_GAP_DP = 10;
-    private static final int TABLET_HEADER_DIVIDER_HEIGHT_DP = 24;
-    private static final int TABLET_HEADER_RULE_HEIGHT_DP = 1;
-    private static final float TABLET_HEADER_BACK_LABEL_TEXT_SIZE_SP = 10.0f;
-    private static final float TABLET_HEADER_BACK_LABEL_LINE_HEIGHT_SP = 12.0f;
-    private static final float TABLET_HEADER_BACK_LABEL_LETTER_SPACING = 0.09f;
-    private static final int DETAIL_TOP_CHROME_BACK_ACTION_MIN_WIDTH_DP = TABLET_HEADER_BACK_ACTION_WIDTH_DP;
-    private static final int TABLET_EMERGENCY_CHROME_NAV_ICON_SIZE_DP = DETAIL_TOP_CHROME_ICON_ACTION_SIZE_DP;
     private static final int EMERGENCY_PORTRAIT_ACTION_ROW_GAP_DP = 10;
     private static final int EMERGENCY_PORTRAIT_PROOF_CARD_HORIZONTAL_PADDING_DP = 14;
     private static final int EMERGENCY_PORTRAIT_PROOF_CARD_VERTICAL_PADDING_DP = 10;
     private static final int TABLET_EMERGENCY_ACTION_ROW_GAP_DP = 8;
-    private static final int TABLET_EMERGENCY_DANGER_BAND_HORIZONTAL_BLEED_DP =
-        TABLET_EMERGENCY_PORTRAIT_HORIZONTAL_PADDING_DP;
     private static final int TABLET_EMERGENCY_PROOF_CARD_HORIZONTAL_PADDING_DP = 18;
     private static final int TABLET_EMERGENCY_PROOF_CARD_VERTICAL_PADDING_DP = 12;
     private static final int TABLET_EMERGENCY_PROOF_CARD_ACCENT_RAIL_WIDTH_DP = 4;
@@ -1878,10 +1858,10 @@ public final class DetailActivity extends AppCompatActivity {
         divider.setBackgroundColor(getColor(R.color.senku_rev03_hairline_strong));
         LinearLayout.LayoutParams dividerParams = new LinearLayout.LayoutParams(
             dp(resolveTabletEmergencyAppRailDividerWidthDp()),
-            dp(TABLET_HEADER_DIVIDER_HEIGHT_DP)
+            dp(resolveTabletEmergencyChromeDividerHeightDp())
         );
-        dividerParams.leftMargin = dp(TABLET_HEADER_DIVIDER_GAP_DP);
-        dividerParams.rightMargin = dp(TABLET_HEADER_DIVIDER_GAP_DP);
+        dividerParams.leftMargin = dp(resolveTabletEmergencyChromeDividerGapDp());
+        dividerParams.rightMargin = dp(resolveTabletEmergencyChromeDividerGapDp());
         tabletEmergencyChromeOverlayPanel.addView(divider, dividerParams);
 
         LinearLayout chromeText = new LinearLayout(this);
@@ -1907,9 +1887,9 @@ public final class DetailActivity extends AppCompatActivity {
         tabletEmergencyChromeOverlayMeta = new TextView(this);
         tabletEmergencyChromeOverlayMeta.setTextColor(getColor(R.color.senku_rev03_ink_2));
         tabletEmergencyChromeOverlayMeta.setTypeface(rev03MonoTypeface(Typeface.NORMAL));
-        tabletEmergencyChromeOverlayMeta.setTextSize(resolveDetailTopChromeLabelTextSizeSp());
-        setTextLineHeightSp(tabletEmergencyChromeOverlayMeta, resolveDetailTopChromeLabelLineHeightSp());
-        tabletEmergencyChromeOverlayMeta.setLetterSpacing(TABLET_HEADER_BACK_LABEL_LETTER_SPACING);
+        tabletEmergencyChromeOverlayMeta.setTextSize(resolveTabletEmergencyChromeMetaTextSizeSp());
+        setTextLineHeightSp(tabletEmergencyChromeOverlayMeta, resolveTabletEmergencyChromeMetaLineHeightSp());
+        tabletEmergencyChromeOverlayMeta.setLetterSpacing(resolveTabletEmergencyChromeLabelLetterSpacing());
         tabletEmergencyChromeOverlayMeta.setMaxLines(1);
         tabletEmergencyChromeOverlayMeta.setEllipsize(TextUtils.TruncateAt.END);
         chromeText.addView(tabletEmergencyChromeOverlayMeta, new LinearLayout.LayoutParams(
@@ -1937,12 +1917,12 @@ public final class DetailActivity extends AppCompatActivity {
         tabletEmergencyChromeOverlayRule.setBackgroundColor(getColor(R.color.senku_rev03_hairline_strong));
         LinearLayout.LayoutParams chromeRuleParams = new LinearLayout.LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT,
-            dp(TABLET_HEADER_RULE_HEIGHT_DP)
+            dp(resolveTabletEmergencyChromeRuleHeightDp())
         );
         int chromeRuleInset = resolveTabletEmergencyChromeRuleHorizontalInsetDp(isTabletPortraitLayout());
         chromeRuleParams.leftMargin = dp(chromeRuleInset);
         chromeRuleParams.rightMargin = dp(chromeRuleInset);
-        chromeRuleParams.bottomMargin = dp(TABLET_EMERGENCY_CHROME_BOTTOM_MARGIN_DP);
+        chromeRuleParams.bottomMargin = dp(resolveTabletEmergencyChromeBottomMarginDp());
         overlay.addView(tabletEmergencyChromeOverlayRule, chromeRuleParams);
 
         tabletEmergencyDangerOverlayPanel = new LinearLayout(this);
@@ -2114,7 +2094,7 @@ public final class DetailActivity extends AppCompatActivity {
         station.setTextColor(getColor(R.color.senku_rev03_accent));
         station.setTypeface(rev03MonoTypeface(Typeface.BOLD));
         station.setTextSize(14f);
-        station.setLetterSpacing(TABLET_HEADER_BACK_LABEL_LETTER_SPACING);
+        station.setLetterSpacing(resolveTabletEmergencyChromeLabelLetterSpacing());
         setTextLineHeightSp(station, 18f);
         station.setBackgroundResource(R.drawable.bg_manual_home_nav_shell);
         station.setIncludeFontPadding(false);
@@ -2199,9 +2179,9 @@ public final class DetailActivity extends AppCompatActivity {
         action.setClickable(true);
         action.setFocusable(true);
         action.setPadding(
-            dp(TABLET_HEADER_BACK_HORIZONTAL_PADDING_DP),
+            dp(resolveTabletEmergencyBackHorizontalPaddingDp()),
             0,
-            dp(TABLET_HEADER_BACK_HORIZONTAL_PADDING_DP),
+            dp(resolveTabletEmergencyBackHorizontalPaddingDp()),
             0
         );
         action.setContentDescription(getString(
@@ -2213,8 +2193,8 @@ public final class DetailActivity extends AppCompatActivity {
         icon.setImageTintList(ColorStateList.valueOf(getColor(R.color.senku_rev03_ink_0)));
         icon.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
         action.addView(icon, new LinearLayout.LayoutParams(
-            dp(TABLET_HEADER_BACK_ICON_SIZE_DP),
-            dp(TABLET_HEADER_BACK_ICON_SIZE_DP)
+            dp(resolveTabletEmergencyBackIconSizeDp()),
+            dp(resolveTabletEmergencyBackIconSizeDp())
         ));
         return action;
     }
@@ -2298,7 +2278,7 @@ public final class DetailActivity extends AppCompatActivity {
         button.setGravity(Gravity.CENTER);
         button.setTextColor(getColor(R.color.senku_rev03_ink_0));
         button.setTypeface(rev03MonoTypeface(Typeface.BOLD));
-        button.setTextSize(resolveDetailTopChromeLabelTextSizeSp());
+        button.setTextSize(resolveTabletEmergencyBackLabelTextSizeSp());
         button.setBackgroundResource(R.drawable.bg_detail_topbar_chip);
         button.setMinWidth(0);
         button.setMinimumWidth(0);
@@ -2315,23 +2295,55 @@ public final class DetailActivity extends AppCompatActivity {
     }
 
     static int resolveTabletEmergencyBackButtonMinWidthDp() {
-        return DETAIL_TOP_CHROME_BACK_ACTION_MIN_WIDTH_DP;
+        return DetailTabletEmergencyChromePolicy.chromeBackActionMinWidthDp();
+    }
+
+    static int resolveTabletEmergencyBackIconSizeDp() {
+        return DetailTabletEmergencyChromePolicy.chromeBackIconSizeDp();
+    }
+
+    static int resolveTabletEmergencyBackHorizontalPaddingDp() {
+        return DetailTabletEmergencyChromePolicy.chromeBackHorizontalPaddingDp();
     }
 
     static float resolveTabletEmergencyBackLabelTextSizeSp() {
-        return TABLET_HEADER_BACK_LABEL_TEXT_SIZE_SP;
+        return DetailTabletEmergencyChromePolicy.chromeBackLabelTextSizeSp();
     }
 
     static float resolveTabletEmergencyBackLabelLineHeightSp() {
-        return TABLET_HEADER_BACK_LABEL_LINE_HEIGHT_SP;
+        return DetailTabletEmergencyChromePolicy.chromeBackLabelLineHeightSp();
     }
 
     static float resolveTabletEmergencyChromeTitleTextSizeSp() {
-        return TABLET_EMERGENCY_CHROME_TITLE_TEXT_SIZE_SP;
+        return DetailTabletEmergencyChromePolicy.chromeTitleTextSizeSp();
     }
 
     static float resolveTabletEmergencyChromeTitleLineHeightSp() {
-        return TABLET_EMERGENCY_CHROME_TITLE_LINE_HEIGHT_SP;
+        return DetailTabletEmergencyChromePolicy.chromeTitleLineHeightSp();
+    }
+
+    static float resolveTabletEmergencyChromeMetaTextSizeSp() {
+        return DetailTabletEmergencyChromePolicy.chromeMetaTextSizeSp();
+    }
+
+    static float resolveTabletEmergencyChromeMetaLineHeightSp() {
+        return DetailTabletEmergencyChromePolicy.chromeMetaLineHeightSp();
+    }
+
+    static float resolveTabletEmergencyChromeLabelLetterSpacing() {
+        return DetailTabletEmergencyChromePolicy.chromeLabelLetterSpacing();
+    }
+
+    static int resolveTabletEmergencyChromeDividerGapDp() {
+        return DetailTabletEmergencyChromePolicy.chromeDividerGapDp();
+    }
+
+    static int resolveTabletEmergencyChromeDividerHeightDp() {
+        return DetailTabletEmergencyChromePolicy.chromeDividerHeightDp();
+    }
+
+    static int resolveTabletEmergencyChromeBottomMarginDp() {
+        return DetailTabletEmergencyChromePolicy.chromeBottomMarginDp();
     }
 
     private Typeface rev03UiTypeface(int style) {
@@ -2389,16 +2401,7 @@ public final class DetailActivity extends AppCompatActivity {
     }
 
     static String buildTabletEmergencyOverlayChromeMeta(List<String> labels) {
-        ArrayList<String> cleanedLabels = new ArrayList<>();
-        if (labels != null) {
-            for (String label : labels) {
-                String cleaned = safe(label).trim();
-                if (!cleaned.isEmpty()) {
-                    cleanedLabels.add(cleaned);
-                }
-            }
-        }
-        return String.join(HEADER_BULLET, cleanedLabels).toUpperCase(Locale.US);
+        return DetailTabletEmergencyChromePolicy.buildChromeMeta(labels);
     }
 
     private void updateTabletEmergencyHeaderOverlayLayout(LinearLayout overlay) {
@@ -2408,10 +2411,10 @@ public final class DetailActivity extends AppCompatActivity {
             overlay.setBackgroundColor(getColor(R.color.senku_surface_alert));
         }
         overlay.setPadding(
-            isTabletPortraitLayout() ? dp(TABLET_EMERGENCY_PORTRAIT_HORIZONTAL_PADDING_DP) : dp(18),
-            isTabletPortraitLayout() ? dp(TABLET_EMERGENCY_PORTRAIT_VERTICAL_PADDING_DP) : dp(12),
-            isTabletPortraitLayout() ? dp(TABLET_EMERGENCY_PORTRAIT_HORIZONTAL_PADDING_DP) : dp(18),
-            isTabletPortraitLayout() ? dp(TABLET_EMERGENCY_PORTRAIT_VERTICAL_PADDING_DP) : dp(12)
+            isTabletPortraitLayout() ? dp(resolveTabletEmergencyPortraitHorizontalPaddingDp()) : dp(18),
+            isTabletPortraitLayout() ? dp(resolveTabletEmergencyPortraitVerticalPaddingDp()) : dp(12),
+            isTabletPortraitLayout() ? dp(resolveTabletEmergencyPortraitHorizontalPaddingDp()) : dp(18),
+            isTabletPortraitLayout() ? dp(resolveTabletEmergencyPortraitVerticalPaddingDp()) : dp(12)
         );
         if (tabletEmergencyChromeOverlayRule != null) {
             LinearLayout.LayoutParams ruleParams =
@@ -2514,19 +2517,27 @@ public final class DetailActivity extends AppCompatActivity {
     }
 
     static int resolveTabletEmergencyChromeNavIconSizeDp() {
-        return TABLET_EMERGENCY_CHROME_NAV_ICON_SIZE_DP;
+        return DetailTabletEmergencyChromePolicy.chromeNavIconSizeDp();
     }
 
     static int resolveTabletEmergencyChromeRuleHeightDp() {
-        return TABLET_HEADER_RULE_HEIGHT_DP;
+        return DetailTabletEmergencyChromePolicy.chromeRuleHeightDp();
     }
 
     static int resolveTabletEmergencyChromeRuleHorizontalInsetDp(boolean tabletPortrait) {
-        return tabletPortrait ? -TABLET_EMERGENCY_PORTRAIT_HORIZONTAL_PADDING_DP : -18;
+        return DetailTabletEmergencyChromePolicy.chromeRuleHorizontalInsetDp(tabletPortrait);
     }
 
     static int resolveTabletEmergencyDangerBandHorizontalBleedDp(boolean tabletPortrait) {
-        return tabletPortrait ? TABLET_EMERGENCY_DANGER_BAND_HORIZONTAL_BLEED_DP : 0;
+        return DetailTabletEmergencyChromePolicy.dangerBandHorizontalBleedDp(tabletPortrait);
+    }
+
+    static int resolveTabletEmergencyPortraitHorizontalPaddingDp() {
+        return DetailTabletEmergencyChromePolicy.portraitHorizontalPaddingDp();
+    }
+
+    static int resolveTabletEmergencyPortraitVerticalPaddingDp() {
+        return DetailTabletEmergencyChromePolicy.portraitVerticalPaddingDp();
     }
 
     static int resolveTabletEmergencyAppRailWidthDp() {
@@ -9563,8 +9574,12 @@ public final class DetailActivity extends AppCompatActivity {
         String selectedSourceKey,
         List<SearchResult> currentSources
     ) {
-        return new DetailRelatedGuidePresentationFormatter(null, productReviewMode)
-            .selectedSourceForRelatedGuideGraph(answerMode, productReviewMode, selectedSourceKey, currentSources);
+        return DetailRelatedGuidePreviewPolicy.selectedSourceForRelatedGuideGraph(
+            answerMode,
+            ReviewDemoPolicy.isSourceStackDemoEnabled(productReviewMode),
+            selectedSourceKey,
+            currentSources
+        );
     }
 
     private String buildCompactNextStepsSubtitle(int nextStepCount) {
@@ -9623,16 +9638,20 @@ public final class DetailActivity extends AppCompatActivity {
 
 
     private boolean shouldUseRelatedGuidePreviewPanel() {
-        return relatedGuidePreviewPanel != null
-            && relatedGuidePreviewMeta != null
-            && relatedGuidePreviewBody != null
-            && relatedGuidePreviewOpenButton != null;
+        return DetailRelatedGuidePreviewPolicy.shouldUsePreviewPanel(
+            relatedGuidePreviewPanel != null,
+            relatedGuidePreviewMeta != null,
+            relatedGuidePreviewBody != null,
+            relatedGuidePreviewOpenButton != null
+        );
     }
 
     private boolean shouldUseAnswerModeRelatedGuidePreviewPanel() {
-        return answerMode
-            && shouldUseRelatedGuidePreviewPanel()
-            && shouldUseActiveGuideContextPanel();
+        return DetailRelatedGuidePreviewPolicy.shouldUseAnswerModePreviewPanel(
+            answerMode,
+            shouldUseRelatedGuidePreviewPanel(),
+            shouldUseActiveGuideContextPanel()
+        );
     }
 
     private boolean shouldAutoOpenInitialRelatedGuidePreview() {
@@ -9679,7 +9698,12 @@ public final class DetailActivity extends AppCompatActivity {
     }
 
     private void renderActiveGuideContextPanel(boolean previewMode) {
-        if (!previewMode || !shouldUseActiveGuideContextPanel() || (answerMode && safe(selectedRelatedGuideKey).isEmpty())) {
+        if (!DetailRelatedGuidePreviewPolicy.shouldRenderActiveGuideContextPanel(
+            previewMode,
+            shouldUseActiveGuideContextPanel(),
+            answerMode,
+            selectedRelatedGuideKey
+        )) {
             clearActiveGuideContextPanel();
             return;
         }
@@ -9746,7 +9770,7 @@ public final class DetailActivity extends AppCompatActivity {
 
         String guideId = safe(relatedGuide.guideId).trim();
         int requestToken = ++relatedGuidePreviewToken;
-        if (guideId.isEmpty()) {
+        if (!DetailRelatedGuidePreviewPolicy.shouldLoadPreviewGuide(relatedGuide)) {
             return;
         }
         int harnessToken = beginHarnessTask("detail.relatedGuidePreview");
@@ -9763,10 +9787,14 @@ public final class DetailActivity extends AppCompatActivity {
             }
             SearchResult resolvedPreviewGuide = previewGuide;
             runTrackedOnUiThread(harnessToken, () -> {
-                if (isFinishing() || isDestroyed() || requestToken != relatedGuidePreviewToken) {
-                    return;
-                }
-                if (!safe(buildRelatedGuideSelectionKey(relatedGuide)).equals(selectedRelatedGuideKey)) {
+                if (!DetailRelatedGuidePreviewPolicy.shouldApplyLoadedPreview(
+                    isFinishing(),
+                    isDestroyed(),
+                    requestToken,
+                    relatedGuidePreviewToken,
+                    buildRelatedGuideSelectionKey(relatedGuide),
+                    selectedRelatedGuideKey
+                )) {
                     return;
                 }
                 if (relatedGuidePreviewMeta != null) {
@@ -9830,21 +9858,14 @@ public final class DetailActivity extends AppCompatActivity {
     }
 
     private String buildRelatedGuidePreviewBody(SearchResult relatedGuide, boolean loadingFallbackAllowed) {
-        String preview = buildGuideBody(relatedGuide).trim();
-        if (!preview.isEmpty()) {
-            return preview;
-        }
-        String subtitle = safe(relatedGuide == null ? null : relatedGuide.subtitle).trim();
-        if (!subtitle.isEmpty()) {
-            return subtitle;
-        }
-        String contextLabel = detailRelatedGuidePresentationFormatter().buildRelatedGuideContextLabel(relatedGuide).trim();
-        if (!contextLabel.isEmpty()) {
-            return contextLabel;
-        }
-        return loadingFallbackAllowed
-            ? buildRelatedGuidePreviewLoadingText()
-            : buildRelatedGuidePreviewEmptyText();
+        return DetailRelatedGuidePreviewPolicy.resolvePreviewBody(
+            buildGuideBody(relatedGuide),
+            relatedGuide,
+            detailRelatedGuidePresentationFormatter().buildRelatedGuideContextLabel(relatedGuide),
+            buildRelatedGuidePreviewLoadingText(),
+            buildRelatedGuidePreviewEmptyText(),
+            loadingFallbackAllowed
+        );
     }
 
     private void refreshRelatedGuidePreviewToggleVisibility() {
@@ -9973,12 +9994,7 @@ public final class DetailActivity extends AppCompatActivity {
     }
 
     private String buildRelatedGuideSelectionKey(SearchResult relatedGuide) {
-        if (relatedGuide == null) {
-            return "";
-        }
-        return (safe(relatedGuide.guideId).trim() + "|" +
-            safe(relatedGuide.title).trim() + "|" +
-            safe(relatedGuide.sectionHeading).trim()).toLowerCase(Locale.US);
+        return DetailRelatedGuidePreviewPolicy.buildSelectionKey(relatedGuide);
     }
 
     private Button findRelatedGuideButtonByKey(String relatedGuideKey) {
