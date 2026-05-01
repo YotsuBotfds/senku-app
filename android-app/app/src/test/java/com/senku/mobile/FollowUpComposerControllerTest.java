@@ -342,6 +342,13 @@ public final class FollowUpComposerControllerTest {
     }
 
     @Test
+    public void sendButtonAndImePolicyStayInLockstepForEmptyBlockedAndReadyDrafts() {
+        assertSubmitParityForSendAndIme(" \n\t ", false);
+        assertSubmitParityForSendAndIme("  inspect the ridge line  ", true);
+        assertSubmitParityForSendAndIme("  what should I do next?\r ", false);
+    }
+
+    @Test
     public void phoneSubmitRouteKeepsEmptyInputOnEmptyPath() {
         assertEquals(
             FollowUpComposerController.SubmitRoute.EMPTY_INPUT,
@@ -441,6 +448,34 @@ public final class FollowUpComposerControllerTest {
         assertEquals(true, presentation.visible);
         assertEquals(true, presentation.actionEnabled);
         assertEquals("stalled answer query", presentation.query);
+    }
+
+    @Test
+    public void retryAfterStallCanSubmitWhenComposerIsNoLongerBusy() {
+        FollowUpComposerState state = new FollowUpComposerState(
+            "",
+            false,
+            false,
+            null,
+            FollowUpComposerState.Surface.PHONE,
+            null,
+            "  stalled answer query  "
+        );
+
+        FollowUpComposerController.RetryPresentation presentation =
+            FollowUpComposerController.resolveRetryPresentation(state, true);
+        FollowUpComposerController.RetryDecision retry =
+            FollowUpComposerController.resolveRetry(state, "");
+        FollowUpComposerController.SubmitDecision submit =
+            FollowUpComposerController.resolveSubmit(state.withDraft(retry.query));
+
+        assertEquals(true, presentation.visible);
+        assertEquals(true, presentation.actionEnabled);
+        assertEquals("stalled answer query", presentation.query);
+        assertEquals(FollowUpComposerController.RetryAction.RETRY, retry.action);
+        assertEquals("stalled answer query", retry.query);
+        assertEquals(FollowUpComposerController.SubmitAction.SUBMIT, submit.action);
+        assertEquals("stalled answer query", submit.query);
     }
 
     @Test
@@ -572,5 +607,29 @@ public final class FollowUpComposerControllerTest {
         assertEquals(FollowUpComposerState.Surface.PHONE, completed.surface);
         assertEquals(true, controls.inputEnabled);
         assertEquals(false, controls.submitEnabled);
+    }
+
+    private static void assertSubmitParityForSendAndIme(String rawDraft, boolean busy) {
+        FollowUpComposerController.SubmitDecision sendDecision =
+            FollowUpComposerController.resolveSubmit(
+                new FollowUpComposerState(
+                    rawDraft,
+                    busy,
+                    busy,
+                    null,
+                    FollowUpComposerState.Surface.PHONE,
+                    null,
+                    null
+                )
+            );
+        FollowUpComposerController.SubmitDecision imeDecision =
+            FollowUpComposerController.resolveSubmit(
+                rawDraft,
+                FollowUpComposerState.Surface.PHONE,
+                busy
+            );
+
+        assertEquals(sendDecision.action, imeDecision.action);
+        assertEquals(sendDecision.query, imeDecision.query);
     }
 }

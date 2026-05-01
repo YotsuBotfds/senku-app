@@ -36,6 +36,21 @@ public final class DetailFollowUpActionControllerTest {
     }
 
     @Test
+    public void tabletSubmitDoesNotSendRestoredDraftWhenRawInputIsEmpty() {
+        FollowUpComposerState tabletState = FollowUpComposerState.idle(
+            "  stale restored draft  ",
+            FollowUpComposerState.Surface.TABLET
+        );
+
+        DetailFollowUpActionController.Decision decision =
+            DetailFollowUpActionController.resolveTabletSubmit(tabletState, " \n\t ");
+
+        assertEquals(DetailFollowUpActionController.Action.EMPTY, decision.action);
+        assertEquals(DetailFollowUpActionController.Target.TABLET_FOLLOWUP, decision.target);
+        assertEquals("", decision.query);
+    }
+
+    @Test
     public void submitReportsEmptyBeforeBlocked() {
         FollowUpComposerState blockedBlank = new FollowUpComposerState(
             " \n\t ",
@@ -67,6 +82,21 @@ public final class DetailFollowUpActionControllerTest {
 
         assertEquals(DetailFollowUpActionController.Action.BLOCKED, decision.action);
         assertEquals(DetailFollowUpActionController.Target.TABLET_FOLLOWUP, decision.target);
+        assertEquals("inspect the ridge line", decision.query);
+    }
+
+    @Test
+    public void phoneSubmitBlocksBusyDraftWithoutStartingGeneration() {
+        FollowUpComposerState busyPhoneState = FollowUpComposerState.idle(
+            "  inspect the ridge line  ",
+            FollowUpComposerState.Surface.PHONE
+        ).withBusy(true);
+
+        DetailFollowUpActionController.Decision decision =
+            DetailFollowUpActionController.resolvePhoneSubmit(busyPhoneState);
+
+        assertEquals(DetailFollowUpActionController.Action.BLOCKED, decision.action);
+        assertEquals(DetailFollowUpActionController.Target.PHONE_FOLLOWUP, decision.target);
         assertEquals("inspect the ridge line", decision.query);
     }
 
@@ -265,6 +295,53 @@ public final class DetailFollowUpActionControllerTest {
         assertEquals(DetailFollowUpActionController.Action.BLOCKED, decision.action);
         assertEquals(DetailFollowUpActionController.Target.TABLET_FOLLOWUP, decision.target);
         assertEquals("active tablet stalled query", decision.query);
+    }
+
+    @Test
+    public void retryAfterStallStartsGenerationOnceComposerIsIdle() {
+        FollowUpComposerState stalledThenIdlePhoneState = new FollowUpComposerState(
+            "",
+            false,
+            false,
+            null,
+            FollowUpComposerState.Surface.PHONE,
+            null,
+            "  active stalled query  "
+        );
+
+        DetailFollowUpActionController.Decision decision =
+            DetailFollowUpActionController.resolveRetry(
+                false,
+                stalledThenIdlePhoneState,
+                null,
+                null,
+                null
+            );
+
+        assertEquals(DetailFollowUpActionController.Action.START_GENERATION, decision.action);
+        assertEquals(DetailFollowUpActionController.Target.PHONE_FOLLOWUP, decision.target);
+        assertEquals("active stalled query", decision.query);
+    }
+
+    @Test
+    public void retryAfterFailureStartsGenerationOnceComposerIsIdle() {
+        FollowUpComposerState failedTabletState = FollowUpComposerState.idle(
+            "new visible draft",
+            FollowUpComposerState.Surface.TABLET
+        ).withFailure("offline failure", "  failed query  ");
+
+        DetailFollowUpActionController.Decision decision =
+            DetailFollowUpActionController.resolveRetry(
+                true,
+                null,
+                null,
+                failedTabletState,
+                "visible fallback"
+            );
+
+        assertEquals(DetailFollowUpActionController.Action.START_GENERATION, decision.action);
+        assertEquals(DetailFollowUpActionController.Target.TABLET_FOLLOWUP, decision.target);
+        assertEquals("failed query", decision.query);
     }
 
     @Test

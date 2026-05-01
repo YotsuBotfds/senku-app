@@ -59,6 +59,28 @@ public final class DetailFollowupLandscapeComposerTest {
     }
 
     @Test
+    public void followUpSendButtonAndImeShareBlockedSubmitPolicy() {
+        FollowUpComposerState busyState = FollowUpComposerState.idle(
+            "  inspect the ridge line  ",
+            FollowUpComposerState.Surface.PHONE
+        ).asSubmitting();
+        FollowUpActionHarness sendHarness = new FollowUpActionHarness(busyState);
+        FollowUpActionHarness imeHarness = new FollowUpActionHarness(busyState);
+
+        sendHarness.clickSend();
+        assertTrue(imeHarness.editorAction(EditorInfo.IME_ACTION_SEND, null));
+
+        assertEquals(1, sendHarness.submitCount);
+        assertEquals(1, imeHarness.submitCount);
+        assertEquals(sendHarness.lastDecision.action, imeHarness.lastDecision.action);
+        assertEquals(sendHarness.lastDecision.target, imeHarness.lastDecision.target);
+        assertEquals(sendHarness.lastDecision.query, imeHarness.lastDecision.query);
+        assertEquals(DetailFollowUpActionController.Action.BLOCKED, sendHarness.lastDecision.action);
+        assertEquals(DetailFollowUpActionController.Target.PHONE_FOLLOWUP, sendHarness.lastDecision.target);
+        assertEquals("inspect the ridge line", sendHarness.lastDecision.query);
+    }
+
+    @Test
     public void visibleBusyRetryButtonClickDoesNotStartDuplicateFollowUp() {
         FollowUpRetryButtonHarness harness = new FollowUpRetryButtonHarness(
             new FollowUpComposerState(
@@ -170,6 +192,12 @@ public final class DetailFollowupLandscapeComposerTest {
 
     @Test
     public void landscapeComposerDoesNotStealFocusFromInitialRenderLegacyFocus() {
+        assertFalse(DetailActivity.shouldRequestLandscapeDockedComposerFocus(true, true, true, false, false));
+    }
+
+    @Test
+    public void hiddenLegacyInputDoesNotTransferFocusDuringDockedComposerRender() {
+        assertFalse(DetailActivity.shouldRequestLandscapeDockedComposerFocus(true, true, false, false, false));
         assertFalse(DetailActivity.shouldRequestLandscapeDockedComposerFocus(true, true, true, false, false));
     }
 
@@ -1258,6 +1286,33 @@ public final class DetailFollowupLandscapeComposerTest {
             submitCount += 1;
             lastQuery = FollowUpComposerState.normalizeDraft(draft);
             lastRoute = FollowUpComposerController.resolvePhoneSubmitRoute(draft);
+        }
+    }
+
+    private static final class FollowUpActionHarness {
+        final FollowUpComposerState state;
+        int submitCount;
+        DetailFollowUpActionController.Decision lastDecision;
+
+        FollowUpActionHarness(FollowUpComposerState state) {
+            this.state = state;
+        }
+
+        void clickSend() {
+            dispatchSubmit();
+        }
+
+        boolean editorAction(int actionId, KeyEvent event) {
+            if (!DetailActivity.isFollowUpSubmitAction(actionId, event)) {
+                return false;
+            }
+            dispatchSubmit();
+            return true;
+        }
+
+        private void dispatchSubmit() {
+            submitCount += 1;
+            lastDecision = DetailFollowUpActionController.resolvePhoneSubmit(state);
         }
     }
 
