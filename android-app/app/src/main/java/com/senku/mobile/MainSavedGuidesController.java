@@ -4,7 +4,9 @@ import com.senku.ui.primitives.BottomTabDestination;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Locale;
 
 final class MainSavedGuidesController {
     private static final int MAX_SAVED_GUIDES = 12;
@@ -16,11 +18,18 @@ final class MainSavedGuidesController {
             return RefreshPlan.empty();
         }
         ArrayList<String> guideIds = new ArrayList<>();
+        LinkedHashSet<String> seen = new LinkedHashSet<>();
         for (String guideId : savedGuideIds) {
             if (guideIds.size() >= MAX_SAVED_GUIDES) {
                 break;
             }
-            guideIds.add(guideId);
+            String normalizedGuideId = normalizeGuideId(guideId);
+            if (!normalizedGuideId.isEmpty() && seen.add(normalizedGuideId)) {
+                guideIds.add(normalizedGuideId);
+            }
+        }
+        if (guideIds.isEmpty()) {
+            return RefreshPlan.empty();
         }
         return new RefreshPlan(false, guideIds);
     }
@@ -31,10 +40,15 @@ final class MainSavedGuidesController {
         int savedGuideCount
     ) {
         boolean hasSavedGuides = savedGuideCount > 0;
+        boolean sectionVisible = SavedGuidesPolicy.shouldShowSection(
+            browseMode,
+            activePhoneTab,
+            savedGuideCount
+        );
         return new SectionState(
-            SavedGuidesPolicy.shouldShowSection(browseMode, activePhoneTab, savedGuideCount),
-            !hasSavedGuides,
-            hasSavedGuides
+            sectionVisible,
+            sectionVisible && !hasSavedGuides,
+            sectionVisible && hasSavedGuides
         );
     }
 
@@ -60,6 +74,10 @@ final class MainSavedGuidesController {
 
     boolean hasPendingSectionFocusForTest() {
         return pendingSectionFocus;
+    }
+
+    private static String normalizeGuideId(String guideId) {
+        return guideId == null ? "" : guideId.trim().toUpperCase(Locale.US);
     }
 
     static final class RefreshPlan {

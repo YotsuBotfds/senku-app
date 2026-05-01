@@ -164,6 +164,30 @@ public final class SavedGuidesPolicyTest {
     }
 
     @Test
+    public void controllerRefreshPlanNormalizesAndDedupesSavedGuideIdsBeforeLoading() {
+        MainSavedGuidesController controller = new MainSavedGuidesController();
+
+        MainSavedGuidesController.RefreshPlan refreshPlan = controller.planRefresh(
+            true,
+            List.of(" gd-220 ", "GD-132", "gd-220", " ", "gd-345")
+        );
+
+        assertFalse(refreshPlan.renderEmpty);
+        assertEquals(List.of("GD-220", "GD-132", "GD-345"), refreshPlan.guideIdsToLoad);
+    }
+
+    @Test
+    public void controllerRefreshPlanClearsWhenOnlyInvalidSavedGuideIdsRemain() {
+        MainSavedGuidesController controller = new MainSavedGuidesController();
+
+        MainSavedGuidesController.RefreshPlan refreshPlan =
+            controller.planRefresh(true, List.of(" ", ""));
+
+        assertTrue(refreshPlan.renderEmpty);
+        assertTrue(refreshPlan.guideIdsToLoad.isEmpty());
+    }
+
+    @Test
     public void controllerConsumesPendingFocusOnlyWhenBrowseSectionIsVisible() {
         MainSavedGuidesController controller = new MainSavedGuidesController();
 
@@ -179,7 +203,7 @@ public final class SavedGuidesPolicyTest {
     }
 
     @Test
-    public void controllerSectionStateSeparatesSectionAndEmptyContentVisibility() {
+    public void controllerSectionStateLimitsEmptyContentToVisibleSavedDestination() {
         MainSavedGuidesController controller = new MainSavedGuidesController();
 
         MainSavedGuidesController.SectionState savedFlowEmpty =
@@ -194,11 +218,29 @@ public final class SavedGuidesPolicyTest {
         assertFalse(savedFlowEmpty.savedGuidesVisible);
 
         assertFalse(homeFlowEmpty.sectionVisible);
-        assertTrue(homeFlowEmpty.emptyTextVisible);
+        assertFalse(homeFlowEmpty.emptyTextVisible);
         assertFalse(homeFlowEmpty.savedGuidesVisible);
 
         assertTrue(homeFlowSaved.sectionVisible);
         assertFalse(homeFlowSaved.emptyTextVisible);
         assertTrue(homeFlowSaved.savedGuidesVisible);
+    }
+
+    @Test
+    public void controllerSectionStateHidesSavedChildrenOutsideBrowseSurface() {
+        MainSavedGuidesController controller = new MainSavedGuidesController();
+
+        MainSavedGuidesController.SectionState savedTabWhileAnswerVisible =
+            controller.sectionState(false, BottomTabDestination.PINS, 0);
+        MainSavedGuidesController.SectionState savedGuideWhileAnswerVisible =
+            controller.sectionState(false, BottomTabDestination.PINS, 1);
+
+        assertFalse(savedTabWhileAnswerVisible.sectionVisible);
+        assertFalse(savedTabWhileAnswerVisible.emptyTextVisible);
+        assertFalse(savedTabWhileAnswerVisible.savedGuidesVisible);
+
+        assertFalse(savedGuideWhileAnswerVisible.sectionVisible);
+        assertFalse(savedGuideWhileAnswerVisible.emptyTextVisible);
+        assertFalse(savedGuideWhileAnswerVisible.savedGuidesVisible);
     }
 }
