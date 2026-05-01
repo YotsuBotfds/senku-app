@@ -327,6 +327,14 @@ public final class SearchResultCardModelMapper {
         return "Guide";
     }
 
+    static String buildLinkedGuidePreviewLineLabelForTest() {
+        return buildLinkedGuidePreviewLineLabel();
+    }
+
+    static String buildLinkedGuidePreviewLineLabel() {
+        return "Guide";
+    }
+
     static String buildLinkedGuidePreviewLabelForTest(String displayLabel, String guideId, String title) {
         return buildLinkedGuidePreviewLabel(displayLabel, guideId, title);
     }

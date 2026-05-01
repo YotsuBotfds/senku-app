@@ -1324,7 +1324,7 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
     }
 
     private static String buildLinkedGuidePreviewLineLabel() {
-        return "Guide";
+        return SearchResultCardModelMapper.buildLinkedGuidePreviewLineLabel();
     }
 
     private String formatSectionAnchor(String section) {

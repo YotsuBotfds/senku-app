@@ -355,7 +355,10 @@ public final class SearchResultAdapterTest {
 
     @Test
     public void linkedGuidePreviewLineKeepsRowsCompact() {
-        assertEquals("Guide", SearchResultAdapter.buildLinkedGuidePreviewLineForTest());
+        assertEquals(
+            SearchResultCardModelMapper.buildLinkedGuidePreviewLineLabelForTest(),
+            SearchResultAdapter.buildLinkedGuidePreviewLineForTest()
+        );
     }
 
     @Test

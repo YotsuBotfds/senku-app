@@ -167,6 +167,11 @@ public final class SearchResultCardModelMapperTest {
     }
 
     @Test
+    public void linkedGuidePreviewLineLabelKeepsSearchRowPreviewLanguage() {
+        assertEquals("Guide", SearchResultCardModelMapper.buildLinkedGuidePreviewLineLabelForTest());
+    }
+
+    @Test
     public void linkedGuidePreviewLabelPrefersDisplayLabelThenGuideAndTitle() {
         assertEquals(
             "Stored water",
