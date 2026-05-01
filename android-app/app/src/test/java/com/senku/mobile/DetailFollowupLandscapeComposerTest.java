@@ -156,7 +156,7 @@ public final class DetailFollowupLandscapeComposerTest {
     public void compactDockedComposerUsesCompactHint() {
         assertEquals(
             "Ask follow-up",
-            DetailActivity.resolveDockedComposerHint(
+            DetailDockedComposerPresentationPolicy.resolveHint(
                 "Ask another question without leaving this thread",
                 "Ask follow-up",
                 true
@@ -164,7 +164,7 @@ public final class DetailFollowupLandscapeComposerTest {
         );
         assertEquals(
             "Ask follow-up",
-            DetailActivity.resolveDockedComposerHint(
+            DetailDockedComposerPresentationPolicy.resolveHint(
                 "Ask follow-up",
                 "Ask follow-up",
                 true
@@ -192,7 +192,7 @@ public final class DetailFollowupLandscapeComposerTest {
     public void dockedComposerKeepsFullHintOutsideCompactMode() {
         assertEquals(
             "Ask another question without leaving this thread",
-            DetailActivity.resolveDockedComposerHint(
+            DetailDockedComposerPresentationPolicy.resolveHint(
                 "Ask another question without leaving this thread",
                 "Ask follow-up",
                 false

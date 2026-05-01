@@ -3683,7 +3683,7 @@ public final class DetailActivity extends AppCompatActivity {
         );
         DockedComposerModel model = new DockedComposerModel(
             composerState.draftText,
-            resolveDockedComposerHint(
+            DetailDockedComposerPresentationPolicy.resolveHint(
                 fullHint,
                 compactHint,
                 compactFollowUpMode,
@@ -3761,7 +3761,7 @@ public final class DetailActivity extends AppCompatActivity {
     }
 
     static String resolveDockedComposerHint(String fullHint, String compactHint, boolean compactFollowUpMode) {
-        return resolveDockedComposerHint(fullHint, compactHint, compactFollowUpMode, false);
+        return DetailDockedComposerPresentationPolicy.resolveHint(fullHint, compactHint, compactFollowUpMode);
     }
 
     static String resolveDockedComposerHint(
@@ -3770,15 +3770,12 @@ public final class DetailActivity extends AppCompatActivity {
         boolean compactFollowUpMode,
         boolean emergencySurface
     ) {
-        if (emergencySurface) {
-            return "Ask about safe re-entry...";
-        }
-        String fallback = safe(fullHint).trim();
-        if (!compactFollowUpMode) {
-            return fallback;
-        }
-        String compact = safe(compactHint).trim();
-        return compact.isEmpty() ? fallback : compact;
+        return DetailDockedComposerPresentationPolicy.resolveHint(
+            fullHint,
+            compactHint,
+            compactFollowUpMode,
+            emergencySurface
+        );
     }
 
     static int resolveDockedComposerCompactHintResId(boolean compactFollowUpMode) {
