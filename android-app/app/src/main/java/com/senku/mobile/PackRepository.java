@@ -891,178 +891,12 @@ public final class PackRepository implements AutoCloseable {
     }
 
     private List<SearchResult> searchRouteFocusedResults(QueryTerms queryTerms, int limit) {
-        long startedAt = System.currentTimeMillis();
-        List<QueryRouteProfile.RouteSearchSpec> routeSpecs = PackRouteFocusedSearchHelper.routeSearchSpecs(queryTerms);
-        if (routeSpecs.isEmpty()) {
-            return Collections.emptyList();
-        }
-        Log.d(
-            TAG,
-            "routeSearch.start query=\"" + queryTerms.queryLower + "\" specs=" + routeSpecs.size() +
-                " limit=" + limit +
-                " structure=" + emptySafe(queryTerms.metadataProfile.preferredStructureType()) +
-                " explicitTopics=" + queryTerms.metadataProfile.preferredTopicTags()
-        );
-
-        boolean compactGuideSweep = queryTerms.routeProfile.usesCompactGuideSweep(queryTerms.queryLower);
-        LinkedHashMap<String, ScoredSearchResult> bestBySection = new LinkedHashMap<>();
-        int candidateLimit = PackRouteFocusedSearchHelper.routeChunkCandidateLimit(queryTerms, limit);
-        int candidateTarget = PackRouteFocusedSearchHelper.routeChunkCandidateTarget(queryTerms, limit);
-        boolean scanFullRouteCursor = shouldScanFullRouteCursor(queryTerms);
-        for (QueryRouteProfile.RouteSearchSpec routeSpec : routeSpecs) {
-            if (!scanFullRouteCursor && bestBySection.size() >= candidateTarget) {
-                break;
-            }
-            PackRouteFocusedSearchHelper.RouteSearchStep routeStep =
-                PackRouteFocusedSearchHelper.routeSearchStep(queryTerms, routeSpec, 6);
-            if (routeStep == null) {
-                continue;
-            }
-            int addedWithFts = collectRouteFocusedChunkResultsFts(
-                queryTerms,
-                routeStep.specTerms,
-                routeStep.routeSpec,
-                routeStep.categories,
-                candidateLimit,
-                candidateTarget,
-                bestBySection
-            );
-            if (!PackRouteFocusedSearchHelper.shouldBackfillLikeAfterFts(
-                queryTerms,
-                addedWithFts,
-                bestBySection.size(),
-                candidateTarget
-            )) {
-                continue;
-            }
-            collectRouteFocusedChunkResultsLike(
-                queryTerms,
-                routeStep.specTerms,
-                routeStep.routeSpec,
-                routeStep.tokens,
-                routeStep.categories,
-                candidateLimit,
-                candidateTarget,
-                bestBySection
-            );
-        }
-
-        int guideSearchThreshold = routeGuideSearchThreshold(
-            queryTerms.routeProfile,
-            queryTerms.metadataProfile,
-            compactGuideSweep,
-            limit
-        );
-        guideSearchThreshold = runtimeRouteGuideSearchThreshold(
-            queryTerms.metadataProfile,
-            ftsSupportsBm25,
-            guideSearchThreshold
-        );
-        Log.d(
-            TAG,
-            "routeGuideSearch.pre query=\"" + queryTerms.queryLower + "\" sections=" + bestBySection.size() +
-                " threshold=" + guideSearchThreshold +
-                " compact=" + compactGuideSweep +
-                " structure=" + emptySafe(queryTerms.metadataProfile.preferredStructureType()) +
-                " explicitTopics=" + queryTerms.metadataProfile.preferredTopicTags()
-        );
-        if (bestBySection.size() < guideSearchThreshold) {
-            collectRouteFocusedGuideResults(
-                queryTerms,
-                routeSpecs,
-                queryTerms.routeProfile.isStarterBuildProject()
-                    ? Math.max(limit * 4, 72)
-                    : compactGuideSweep ? Math.max(limit * 2, 24) : Math.max(limit * 3, 48),
-                guideSearchThreshold,
-                bestBySection
-            );
-        } else {
-            Log.d(
-                TAG,
-                "routeGuideSearch.skip query=\"" + queryTerms.queryLower + "\" sections=" + bestBySection.size() +
-                    " threshold=" + guideSearchThreshold +
-                    " structure=" + emptySafe(queryTerms.metadataProfile.preferredStructureType()) +
-                    " explicitTopics=" + queryTerms.metadataProfile.preferredTopicTags()
-            );
-        }
-
-        if (bestBySection.isEmpty()) {
-            return Collections.emptyList();
-        }
-
-        LinkedHashMap<String, Integer> guideTotals = new LinkedHashMap<>();
-        LinkedHashMap<String, Integer> guideSectionCounts = new LinkedHashMap<>();
-        for (ScoredSearchResult sectionScore : bestBySection.values()) {
-            String guideKey = PackSupportScoringPolicy.guideGroupKey(sectionScore.result);
-            guideTotals.put(guideKey, guideTotals.getOrDefault(guideKey, 0) + Math.max(1, sectionScore.score));
-            guideSectionCounts.put(guideKey, guideSectionCounts.getOrDefault(guideKey, 0) + 1);
-        }
-
-        ArrayList<ScoredSearchResult> scored = new ArrayList<>();
-        boolean conservativeWaterGuideBundling = "water_storage".equals(queryTerms.metadataProfile.preferredStructureType())
-            && !queryTerms.metadataProfile.hasExplicitTopic("water_distribution");
-        for (ScoredSearchResult sectionScore : bestBySection.values()) {
-            String guideKey = PackSupportScoringPolicy.guideGroupKey(sectionScore.result);
-            int guideBonus = Math.min(28, guideTotals.getOrDefault(guideKey, 0) / 4);
-            int diversityBonus = Math.min(10, guideSectionCounts.getOrDefault(guideKey, 0) * 2);
-            if (conservativeWaterGuideBundling) {
-                guideBonus = 0;
-                diversityBonus = 0;
-            }
-            int score = sectionScore.score + guideBonus + diversityBonus;
-            if (conservativeWaterGuideBundling) {
-                score += broadWaterRouteRefinementBonus(queryTerms, sectionScore.result);
-            }
-            score += currentHeadRouteRefinementBonus(queryTerms, sectionScore.result);
-            scored.add(new ScoredSearchResult(
-                sectionScore.result,
-                sectionScore.originalIndex,
-                score
-            ));
-        }
-
-        scored.sort((left, right) -> {
-            if (conservativeWaterGuideBundling) {
-                int priorityOrder = Integer.compare(
-                    broadWaterRouteOrderingPriority(queryTerms, right.result),
-                    broadWaterRouteOrderingPriority(queryTerms, left.result)
-                );
-                if (priorityOrder != 0) {
-                    return priorityOrder;
-                }
-            }
-            int currentHeadPriorityOrder = Integer.compare(
-                currentHeadRouteOrderingPriority(queryTerms, right.result),
-                currentHeadRouteOrderingPriority(queryTerms, left.result)
-            );
-            if (currentHeadPriorityOrder != 0) {
-                return currentHeadPriorityOrder;
-            }
-            int scoreOrder = Integer.compare(right.score, left.score);
-            if (scoreOrder != 0) {
-                return scoreOrder;
-            }
-            int modeOrder = left.result.title.compareToIgnoreCase(right.result.title);
-            if (modeOrder != 0) {
-                return modeOrder;
-            }
-            return Integer.compare(left.originalIndex, right.originalIndex);
-        });
-
-        ArrayList<SearchResult> ordered = new ArrayList<>();
-        for (ScoredSearchResult item : scored) {
-            if (ordered.size() >= limit) {
-                break;
-            }
-            ordered.add(item.result);
-        }
-        Log.d(
-            TAG,
-            "routeSearch query=\"" + queryTerms.queryLower + "\" specs=" + routeSpecs.size() +
-                " candidateSections=" + bestBySection.size() + " returned=" + ordered.size() +
-                " totalMs=" + (System.currentTimeMillis() - startedAt)
-        );
-        return ordered;
+        return new PackRouteFocusedSearchExecutor(
+            database,
+            ftsAvailable,
+            ftsTableName,
+            ftsSupportsBm25
+        ).search(queryTerms, limit);
     }
 
     static int routeChunkCandidateLimitForTest(String query, int limit) {
@@ -1084,142 +918,6 @@ public final class PackRepository implements AutoCloseable {
 
     static String noBm25RouteFtsOrderLabelForTest(String query) {
         return PackRouteFocusedSearchHelper.noBm25RouteFtsOrder(QueryTerms.fromQuery(query)).label;
-    }
-
-    private int collectRouteFocusedChunkResultsFts(
-        QueryTerms queryTerms,
-        QueryTerms specTerms,
-        QueryRouteProfile.RouteSearchSpec routeSpec,
-        List<String> categories,
-        int candidateLimit,
-        int candidateTarget,
-        LinkedHashMap<String, ScoredSearchResult> bestBySection
-    ) {
-        if (!ftsAvailable) {
-            return 0;
-        }
-        String ftsQuery = buildFtsQuery(specTerms, ftsSupportsBm25 ? 8 : 4, ftsSupportsBm25);
-        if (ftsQuery.isEmpty()) {
-            Log.d(TAG, "routeChunkFts.skip query=\"" + queryTerms.queryLower + "\" reason=empty_fts_query");
-            return 0;
-        }
-
-        ArrayList<String> categoryPlaceholders = new ArrayList<>();
-        ArrayList<String> args = new ArrayList<>();
-        args.add(ftsQuery);
-        for (String category : categories) {
-            categoryPlaceholders.add("?");
-            args.add(category);
-        }
-        int effectiveCandidateLimit = ftsSupportsBm25
-            ? candidateLimit
-            : Math.min(candidateLimit, queryTerms.routeProfile.isStarterBuildProject() ? 120 : 84);
-        PackRouteFocusedSearchHelper.RouteFtsOrderSpec orderSpec = ftsSupportsBm25
-            ? new PackRouteFocusedSearchHelper.RouteFtsOrderSpec(
-                " ORDER BY bm25(" + ftsTableName + ") ",
-                Collections.emptyList(),
-                "bm25"
-            )
-            : PackRouteFocusedSearchHelper.noBm25RouteFtsOrder(queryTerms);
-        args.addAll(orderSpec.args);
-        args.add(String.valueOf(effectiveCandidateLimit));
-
-        try (Cursor cursor = database.rawQuery(
-            "SELECT c.guide_title, c.guide_id, c.section_heading, c.category, c.document, c.tags, c.description, " +
-                "c.content_role, c.time_horizon, c.structure_type, c.topic_tags " +
-                "FROM " + ftsTableName + " f " +
-                "JOIN chunks c ON c.chunk_id = f.chunk_id " +
-                "WHERE " + ftsTableName + " MATCH ? " +
-                "AND c.category IN (" + String.join(",", categoryPlaceholders) + ") " +
-                orderSpec.clause + " LIMIT ?",
-            args.toArray(new String[0])
-        )) {
-            int added = collectRouteFocusedChunkCursor(
-                cursor,
-                queryTerms,
-                specTerms,
-                routeSpec,
-                bestBySection,
-                candidateTarget
-            );
-            Log.d(
-                TAG,
-                "routeChunkFts query=\"" + queryTerms.queryLower + "\" ftsQuery=\"" + ftsQuery +
-                    "\" added=" + added + " candidateLimit=" + effectiveCandidateLimit +
-                    " order=" + orderSpec.label
-            );
-            return added;
-        } catch (SQLiteException error) {
-            Log.w(
-                TAG,
-                "routeChunkFts.fail query=\"" + queryTerms.queryLower + "\" ftsQuery=\"" + ftsQuery + "\"",
-                error
-            );
-            return 0;
-        }
-    }
-
-    private int collectRouteFocusedChunkResultsLike(
-        QueryTerms queryTerms,
-        QueryTerms specTerms,
-        QueryRouteProfile.RouteSearchSpec routeSpec,
-        List<String> tokens,
-        List<String> categories,
-        int candidateLimit,
-        int candidateTarget,
-        LinkedHashMap<String, ScoredSearchResult> bestBySection
-    ) {
-        ArrayList<String> categoryPlaceholders = new ArrayList<>();
-        ArrayList<String> args = new ArrayList<>();
-        for (String category : categories) {
-            categoryPlaceholders.add("?");
-            args.add(category);
-        }
-
-        ArrayList<String> clauses = new ArrayList<>();
-        for (String token : tokens) {
-            String like = "%" + token + "%";
-            clauses.add("(guide_title LIKE ? OR section_heading LIKE ? OR tags LIKE ? OR description LIKE ? OR document LIKE ?)");
-            for (int index = 0; index < 5; index++) {
-                args.add(like);
-            }
-        }
-        args.add(String.valueOf(candidateLimit));
-
-        try (Cursor cursor = database.rawQuery(
-            "SELECT guide_title, guide_id, section_heading, category, document, tags, description, " +
-                "content_role, time_horizon, structure_type, topic_tags " +
-                "FROM chunks WHERE category IN (" + String.join(",", categoryPlaceholders) + ") " +
-                "AND (" + String.join(" OR ", clauses) + ") LIMIT ?",
-            args.toArray(new String[0])
-        )) {
-            return collectRouteFocusedChunkCursor(
-                cursor,
-                queryTerms,
-                specTerms,
-                routeSpec,
-                bestBySection,
-                candidateTarget
-            );
-        }
-    }
-
-    private int collectRouteFocusedChunkCursor(
-        Cursor cursor,
-        QueryTerms queryTerms,
-        QueryTerms specTerms,
-        QueryRouteProfile.RouteSearchSpec routeSpec,
-        LinkedHashMap<String, ScoredSearchResult> bestBySection,
-        int candidateTarget
-    ) {
-        return PackRouteFocusedCandidateCollector.collectChunkCursor(
-            cursor,
-            queryTerms,
-            specTerms,
-            routeSpec,
-            bestBySection,
-            candidateTarget
-        );
     }
 
     static int routeGuideSearchThreshold(
@@ -1265,199 +963,6 @@ public final class PackRepository implements AutoCloseable {
 
     private static int keywordSqlLimit(QueryTerms queryTerms, int limit) {
         return RetrievalRoutePolicy.keywordSqlLimit(queryTerms == null ? null : queryTerms.routeProfile, limit);
-    }
-
-    private void collectRouteFocusedGuideResults(
-        QueryTerms queryTerms,
-        List<QueryRouteProfile.RouteSearchSpec> routeSpecs,
-        int candidateLimit,
-        int targetTotal,
-        LinkedHashMap<String, ScoredSearchResult> bestBySection
-    ) {
-        long startedAt = System.currentTimeMillis();
-        int beforeCount = bestBySection.size();
-        for (QueryRouteProfile.RouteSearchSpec routeSpec : routeSpecs) {
-            if (bestBySection.size() >= targetTotal) {
-                break;
-            }
-            PackRouteFocusedSearchHelper.RouteSearchStep routeStep =
-                PackRouteFocusedSearchHelper.routeSearchStep(queryTerms, routeSpec, 6);
-            if (routeStep == null) {
-                continue;
-            }
-            int addedWithFts = collectRouteFocusedGuideResultsFts(
-                queryTerms,
-                routeStep.specTerms,
-                routeStep.routeSpec,
-                routeStep.categories,
-                candidateLimit,
-                targetTotal,
-                bestBySection
-            );
-            if (!PackRouteFocusedSearchHelper.shouldBackfillLikeAfterFts(
-                queryTerms,
-                addedWithFts,
-                bestBySection.size(),
-                targetTotal
-            )) {
-                continue;
-            }
-            collectRouteFocusedGuideResultsLike(
-                queryTerms,
-                routeStep.specTerms,
-                routeStep.routeSpec,
-                routeStep.tokens,
-                routeStep.categories,
-                candidateLimit,
-                targetTotal,
-                bestBySection
-            );
-        }
-        Log.d(
-            TAG,
-            "routeGuideSearch query=\"" + queryTerms.queryLower + "\" specs=" + routeSpecs.size() +
-                " added=" + Math.max(0, bestBySection.size() - beforeCount) +
-                " total=" + bestBySection.size() +
-                " totalMs=" + (System.currentTimeMillis() - startedAt)
-        );
-    }
-
-    private int collectRouteFocusedGuideResultsFts(
-        QueryTerms queryTerms,
-        QueryTerms specTerms,
-        QueryRouteProfile.RouteSearchSpec routeSpec,
-        List<String> categories,
-        int candidateLimit,
-        int targetTotal,
-        LinkedHashMap<String, ScoredSearchResult> bestBySection
-    ) {
-        if (!ftsAvailable) {
-            return 0;
-        }
-        String ftsQuery = buildFtsQuery(specTerms, ftsSupportsBm25 ? 8 : 4, ftsSupportsBm25);
-        if (ftsQuery.isEmpty()) {
-            Log.d(TAG, "routeGuideFts.skip query=\"" + queryTerms.queryLower + "\" reason=empty_fts_query");
-            return 0;
-        }
-
-        ArrayList<String> categoryPlaceholders = new ArrayList<>();
-        ArrayList<String> args = new ArrayList<>();
-        args.add(ftsQuery);
-        for (String category : categories) {
-            categoryPlaceholders.add("?");
-            args.add(category);
-        }
-        int effectiveCandidateLimit = ftsSupportsBm25
-            ? candidateLimit
-            : Math.min(candidateLimit, queryTerms.routeProfile.isStarterBuildProject() ? 48 : 24);
-        PackRouteFocusedSearchHelper.RouteFtsOrderSpec orderSpec = ftsSupportsBm25
-            ? new PackRouteFocusedSearchHelper.RouteFtsOrderSpec(
-                " ORDER BY bm25(" + ftsTableName + ") ",
-                Collections.emptyList(),
-                "bm25"
-            )
-            : PackRouteFocusedSearchHelper.noBm25RouteFtsOrder(queryTerms);
-        args.addAll(orderSpec.args);
-        args.add(String.valueOf(effectiveCandidateLimit));
-
-        try (Cursor cursor = database.rawQuery(
-            "SELECT c.guide_id, c.guide_title, c.section_heading, c.category, c.description, c.document, " +
-                "c.content_role, c.time_horizon, c.structure_type, c.topic_tags, c.tags " +
-                "FROM " + ftsTableName + " f " +
-                "JOIN chunks c ON c.chunk_id = f.chunk_id " +
-                "WHERE " + ftsTableName + " MATCH ? " +
-                "AND c.category IN (" + String.join(",", categoryPlaceholders) + ") " +
-                orderSpec.clause + " LIMIT ?",
-            args.toArray(new String[0])
-        )) {
-            int added = collectRouteFocusedGuideCursor(
-                cursor,
-                queryTerms,
-                specTerms,
-                routeSpec,
-                bestBySection,
-                targetTotal
-            );
-            Log.d(
-                TAG,
-                "routeGuideFts query=\"" + queryTerms.queryLower + "\" ftsQuery=\"" + ftsQuery +
-                    "\" added=" + added + " candidateLimit=" + effectiveCandidateLimit +
-                    " order=" + orderSpec.label
-            );
-            return added;
-        } catch (SQLiteException error) {
-            Log.w(
-                TAG,
-                "routeGuideFts.fail query=\"" + queryTerms.queryLower + "\" ftsQuery=\"" + ftsQuery + "\"",
-                error
-            );
-            return 0;
-        }
-    }
-
-    private int collectRouteFocusedGuideResultsLike(
-        QueryTerms queryTerms,
-        QueryTerms specTerms,
-        QueryRouteProfile.RouteSearchSpec routeSpec,
-        List<String> tokens,
-        List<String> categories,
-        int candidateLimit,
-        int targetTotal,
-        LinkedHashMap<String, ScoredSearchResult> bestBySection
-    ) {
-        ArrayList<String> categoryPlaceholders = new ArrayList<>();
-        ArrayList<String> args = new ArrayList<>();
-        for (String category : categories) {
-            categoryPlaceholders.add("?");
-            args.add(category);
-        }
-
-        ArrayList<String> clauses = new ArrayList<>();
-        for (String token : tokens) {
-            String like = "%" + token + "%";
-            // Guide-level route search is only a supplemental diversity pass. Keep it on
-            // lightweight guide metadata instead of scanning full guide bodies again.
-            clauses.add("(title LIKE ? OR description LIKE ? OR topic_tags LIKE ?)");
-            args.add(like);
-            args.add(like);
-            args.add(like);
-        }
-        args.add(String.valueOf(candidateLimit));
-
-        try (Cursor cursor = database.rawQuery(
-            "SELECT guide_id, title, category, description, body_markdown, " +
-                "content_role, time_horizon, structure_type, topic_tags " +
-                "FROM guides WHERE category IN (" + String.join(",", categoryPlaceholders) + ") " +
-                "AND (" + String.join(" OR ", clauses) + ") LIMIT ?",
-            args.toArray(new String[0])
-        )) {
-            return collectRouteFocusedGuideCursor(
-                cursor,
-                queryTerms,
-                specTerms,
-                routeSpec,
-                bestBySection,
-                targetTotal
-            );
-        }
-    }
-
-    private int collectRouteFocusedGuideCursor(
-        Cursor cursor,
-        QueryTerms queryTerms,
-        QueryTerms specTerms,
-        QueryRouteProfile.RouteSearchSpec routeSpec,
-        LinkedHashMap<String, ScoredSearchResult> bestBySection,
-        int targetTotal
-    ) {
-        return PackRouteFocusedCandidateCollector.collectGuideCursor(
-            cursor,
-            queryTerms,
-            specTerms,
-            routeSpec,
-            bestBySection,
-            targetTotal
-        );
     }
 
     static List<SearchResult> mergeResultsWhenCentroidMissingForTest(
@@ -2226,7 +1731,7 @@ public final class PackRepository implements AutoCloseable {
         );
     }
 
-    private static int broadWaterRouteRefinementBonus(QueryTerms queryTerms, SearchResult result) {
+    static int broadWaterRouteRefinementBonus(QueryTerms queryTerms, SearchResult result) {
         if (queryTerms == null || result == null || queryTerms.metadataProfile == null) {
             return 0;
         }
@@ -2297,12 +1802,12 @@ public final class PackRepository implements AutoCloseable {
         return currentHeadRouteOrderingPriority(QueryTerms.fromQuery(query), result);
     }
 
-    private static int currentHeadRouteOrderingPriority(QueryTerms queryTerms, SearchResult result) {
+    static int currentHeadRouteOrderingPriority(QueryTerms queryTerms, SearchResult result) {
         return currentHeadRouteRefinementBonus(queryTerms, result) * 4
             + PackSupportScoringPolicy.anchorAlignmentBonus(queryTerms, result);
     }
 
-    private static int currentHeadRouteRefinementBonus(QueryTerms queryTerms, SearchResult result) {
+    static int currentHeadRouteRefinementBonus(QueryTerms queryTerms, SearchResult result) {
         if (queryTerms == null || result == null || queryTerms.metadataProfile == null) {
             return 0;
         }
@@ -2382,7 +1887,7 @@ public final class PackRepository implements AutoCloseable {
         return score;
     }
 
-    private static int broadWaterRouteOrderingPriority(QueryTerms queryTerms, SearchResult result) {
+    static int broadWaterRouteOrderingPriority(QueryTerms queryTerms, SearchResult result) {
         if (queryTerms == null || result == null || queryTerms.metadataProfile == null) {
             return 0;
         }
@@ -3288,11 +2793,11 @@ public final class PackRepository implements AutoCloseable {
         return 1.0 / (HYBRID_RRF_K + rank + 1.0);
     }
 
-    private static String buildFtsQuery(QueryTerms queryTerms) {
+    static String buildFtsQuery(QueryTerms queryTerms) {
         return PackFtsQueryBuilder.build(queryTerms);
     }
 
-    private static String buildFtsQuery(QueryTerms queryTerms, int maxExpressions, boolean includeExpansionTokens) {
+    static String buildFtsQuery(QueryTerms queryTerms, int maxExpressions, boolean includeExpansionTokens) {
         return PackFtsQueryBuilder.build(queryTerms, maxExpressions, includeExpansionTokens);
     }
 
