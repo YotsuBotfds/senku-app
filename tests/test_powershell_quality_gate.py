@@ -190,7 +190,8 @@ class PowerShellQualityGateTests(unittest.TestCase):
         self.assertIn('Write-Host ("Plan: {0}" -f $planPath)', script)
         self.assertIn('-RunId "{2}" -RoleFilter "{3}" -SkipFinalize -SkipBuild{4}', script)
         self.assertIn("$(if ($SkipHostStates) { ' -SkipHostStates' } else { '' })", script)
-        self.assertIn("-FinalizeOnly -SkipBuild", script)
+        self.assertIn('"-FinalizeOnly",', script)
+        self.assertIn('"-SkipBuild",', script)
 
     def test_android_stop_helper_covers_fts_fallback_matrix(self):
         script = (REPO_ROOT / "scripts" / "stop_android_harness_runs.ps1").read_text(encoding="utf-8")
@@ -203,7 +204,8 @@ class PowerShellQualityGateTests(unittest.TestCase):
 
         self.assertIn('[string]$Device = "RFCX607ZM8L"', script)
         self.assertIn("Acquire-DeviceLock -DeviceName $Device", script)
-        self.assertIn('$artifactDir = Join-Path $repoRoot (Join-Path $ArtifactRoot (Join-Path $timestamp $Device))', script)
+        self.assertIn("$resolvedArtifactRoot = if ([System.IO.Path]::IsPathRooted($ArtifactRoot))", script)
+        self.assertIn("$artifactDir = Join-Path $resolvedArtifactRoot (Join-Path $timestamp $Device)", script)
         self.assertNotIn("RunAllDevices", script)
         self.assertNotIn("adb devices", script)
 
@@ -337,7 +339,8 @@ class PowerShellQualityGateTests(unittest.TestCase):
         self.assertIn('[string]$Device = "RFCX607ZM8L"', script)
         self.assertNotIn("RunAllDevices", script)
         self.assertNotIn("adb devices", script)
-        self.assertIn('$artifactDir = Join-Path $repoRoot (Join-Path $ArtifactRoot (Join-Path $timestamp $Device))', script)
+        self.assertIn("$resolvedArtifactRoot = if ([System.IO.Path]::IsPathRooted($ArtifactRoot))", script)
+        self.assertIn("$artifactDir = Join-Path $resolvedArtifactRoot (Join-Path $timestamp $Device)", script)
         self.assertIn("$defaultSummaryPath = Join-Path $artifactDir \"summary.json\"", script)
         self.assertIn("device = $Device", script)
         self.assertIn("artifact_dir = $artifactDir", script)
