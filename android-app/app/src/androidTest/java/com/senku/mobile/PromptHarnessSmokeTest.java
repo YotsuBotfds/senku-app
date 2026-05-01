@@ -2352,6 +2352,64 @@ public final class PromptHarnessSmokeTest {
     }
 
     @Test
+    public void detailFollowUpDraftSurvivesActivityRecreate() {
+        Context context = ApplicationProvider.getApplicationContext();
+        ChatSessionStore.restore(context);
+        String conversationId = ChatSessionStore.createConversation();
+        String draft = "Should I keep the tinder off the ground overnight?";
+        try (ActivityScenario<DetailActivity> scenario =
+                 ActivityScenario.launch(followUpSubmitParityIntent(context, conversationId))) {
+            awaitHarnessIdle();
+            Assert.assertTrue(
+                "follow-up draft detail should render before recreate proof",
+                waitForDetailBodyReady(DETAIL_WAIT_MS, 8)
+            );
+            Assert.assertTrue(
+                "follow-up composer should be ready before entering draft; harness signals="
+                    + HarnessTestSignals.snapshot(),
+                waitForFollowUpComposerReadyOnMainThread(DETAIL_WAIT_MS)
+            );
+            scenario.onActivity(activity -> {
+                EditText input = activity.findViewById(R.id.detail_followup_input);
+                Assert.assertNotNull("follow-up input should exist before recreate", input);
+                input.requestFocus();
+                input.setText(draft);
+                input.clearComposingText();
+                input.setSelection(draft.length());
+                activity.renderDetailState();
+                Assert.assertEquals(
+                    "rendering detail state should not clear the visible follow-up draft",
+                    draft,
+                    safe(input.getText().toString())
+                );
+            });
+
+            scenario.recreate();
+            awaitHarnessIdle();
+            Assert.assertTrue(
+                "follow-up composer should be ready after recreate; harness signals="
+                    + HarnessTestSignals.snapshot(),
+                waitForFollowUpComposerReadyOnMainThread(DETAIL_WAIT_MS)
+            );
+            scenario.onActivity(activity -> {
+                EditText input = activity.findViewById(R.id.detail_followup_input);
+                Button send = activity.findViewById(R.id.detail_followup_send);
+                Assert.assertNotNull("follow-up input should exist after recreate", input);
+                Assert.assertNotNull("follow-up send should exist after recreate", send);
+                Assert.assertEquals(
+                    "saved instance state should restore the visible follow-up draft",
+                    draft,
+                    safe(input.getText().toString())
+                );
+                Assert.assertTrue("restored draft should keep send available", send.isEnabled());
+            });
+            captureUiState("followup_draft_recreate");
+        } finally {
+            ChatSessionStore.removeConversation(context, conversationId);
+        }
+    }
+
+    @Test
     public void guideDetailShowsRelatedGuideNavigation() throws Exception {
         RelatedGuideSeed seed = findFoundryGuideWithRelations();
         Assume.assumeNotNull("GD-132 guide with related links is required for the canonical guide mock", seed);
