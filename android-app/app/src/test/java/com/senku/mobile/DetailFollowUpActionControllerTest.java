@@ -180,6 +180,37 @@ public final class DetailFollowUpActionControllerTest {
     }
 
     @Test
+    public void visibleStallRetryClickStillBlocksDuplicateGeneration() {
+        FollowUpComposerState stalledPhoneState = new FollowUpComposerState(
+            "",
+            true,
+            true,
+            null,
+            FollowUpComposerState.Surface.PHONE,
+            null,
+            "  active stalled query  "
+        );
+
+        FollowUpComposerController.RetryPresentation presentation =
+            FollowUpComposerController.resolveRetryPresentation(stalledPhoneState, true);
+        DetailFollowUpActionController.Decision decision =
+            DetailFollowUpActionController.resolveRetry(
+                false,
+                stalledPhoneState,
+                null,
+                null,
+                null
+            );
+
+        assertEquals(true, presentation.visible);
+        assertEquals(true, presentation.actionEnabled);
+        assertEquals("active stalled query", presentation.query);
+        assertEquals(DetailFollowUpActionController.Action.BLOCKED, decision.action);
+        assertEquals(DetailFollowUpActionController.Target.PHONE_FOLLOWUP, decision.target);
+        assertEquals("active stalled query", decision.query);
+    }
+
+    @Test
     public void nullInputsResolveToEmptyCurrentSurfaceRetry() {
         DetailFollowUpActionController.Decision phoneDecision =
             DetailFollowUpActionController.resolveRetry(false, null, null, null, null);
