@@ -32,14 +32,18 @@ class AndroidPhysicalPhoneSmokeContractTests(unittest.TestCase):
         self.assertIn('[ValidateSet("Simple", "Ask")]', self.script)
         self.assertIn('[string]$InteractionMode = "Simple"', self.script)
         self.assertIn("[string]$InteractionQuery", self.script)
+        self.assertIn("[int]$AdbCommandTimeoutSeconds = 30", self.script)
+        self.assertIn("[int]$AdbInstallTimeoutSeconds = 120", self.script)
         self.assertIn('Join-Path $env:LOCALAPPDATA "Android\\Sdk\\platform-tools\\adb.exe"', self.script)
         self.assertIn("Serial is required unless -DryRun is set", self.script)
         self.assertIn("Refusing emulator serial", self.script)
         self.assertIn("resolves to an emulator/qemu device", self.script)
-        self.assertIn('$ErrorActionPreference = "Continue"', self.script)
-        self.assertIn("$previousErrorActionPreference", self.script)
+        self.assertIn("function Invoke-BoundedProcess", self.script)
+        self.assertIn("function ConvertTo-ProcessArgumentString", self.script)
+        self.assertIn("adb command timed out after $TimeoutSeconds seconds", self.script)
         self.assertIn('"devices"', self.script)
         self.assertIn('"install", "--no-streaming", "-r"', self.script)
+        self.assertIn("-TimeoutSeconds $AdbInstallTimeoutSeconds", self.script)
         self.assertIn('"shell", "am", "start", "-n", $launchActivity', self.script)
         self.assertIn('"com.senku.mobile"', self.script)
         self.assertIn('"com.senku.mobile/.MainActivity"', self.script)
@@ -47,7 +51,8 @@ class AndroidPhysicalPhoneSmokeContractTests(unittest.TestCase):
         self.assertIn('"dumpsys", "activity", "activities"', self.script)
         self.assertIn("function Test-FocusContainsLaunchActivity", self.script)
         self.assertIn("focus evidence did not show", self.script)
-        self.assertIn('"exec-out" "screencap" "-p"', self.script)
+        self.assertIn('"exec-out", "screencap", "-p"', self.script)
+        self.assertIn("-StdoutPath $resolvedScreenshotPath", self.script)
         self.assertIn('"uiautomator", "dump", "/dev/tty"', self.script)
         self.assertIn("function Read-UiAutomatorDump", self.script)
         self.assertIn("/sdcard/senku_physical_smoke_ui.xml", self.script)
@@ -87,6 +92,9 @@ class AndroidPhysicalPhoneSmokeContractTests(unittest.TestCase):
         self.assertIn("physical_device = $true", self.script)
         self.assertIn("launches_emulators = $false", self.script)
         self.assertIn("serial_required_unless_dry_run = $true", self.script)
+        self.assertIn("timeouts = [ordered]@{", self.script)
+        self.assertIn("adb_command_timeout_seconds = $AdbCommandTimeoutSeconds", self.script)
+        self.assertIn("adb_install_timeout_seconds = $AdbInstallTimeoutSeconds", self.script)
         self.assertIn('$summaryJsonPath = Join-Path $resolvedOutputDir "summary.json"', self.script)
         self.assertIn('$summaryMarkdownPath = Join-Path $resolvedOutputDir "summary.md"', self.script)
 
@@ -155,6 +163,8 @@ class AndroidPhysicalPhoneSmokeContractTests(unittest.TestCase):
             self.assertTrue(summary["adb_path"].endswith("Android\\Sdk\\platform-tools\\adb.exe"))
             self.assertEqual(summary["package"], "com.senku.mobile")
             self.assertEqual(summary["launch_activity"], "com.senku.mobile/.MainActivity")
+            self.assertEqual(summary["timeouts"]["adb_command_timeout_seconds"], 30)
+            self.assertEqual(summary["timeouts"]["adb_install_timeout_seconds"], 120)
             self.assertIn("install --no-streaming -r", summary["commands"]["install"])
             self.assertIn("shell am start -n com.senku.mobile/.MainActivity", summary["commands"]["launch"])
             self.assertTrue(summary["evidence"]["focus_path"].endswith("focus.txt"))
@@ -199,6 +209,41 @@ class AndroidPhysicalPhoneSmokeContractTests(unittest.TestCase):
             self.assertEqual(summary["text_checks"]["requested"], ["Field manual", "Senku"])
             self.assertEqual(summary["text_checks"]["passed"], [])
             self.assertEqual(summary["text_checks"]["missing"], [])
+        finally:
+            shutil.rmtree(output_dir, ignore_errors=True)
+
+    def test_dry_run_records_timeout_knobs_without_phone(self):
+        output_dir = Path(tempfile.mkdtemp(prefix="physical_phone_smoke_dry_timeout_"))
+        try:
+            result = subprocess.run(
+                [
+                    "powershell",
+                    "-NoProfile",
+                    "-ExecutionPolicy",
+                    "Bypass",
+                    "-File",
+                    str(SCRIPT),
+                    "-OutputDir",
+                    str(output_dir),
+                    "-DryRun",
+                    "-AdbCommandTimeoutSeconds",
+                    "7",
+                    "-AdbInstallTimeoutSeconds",
+                    "11",
+                ],
+                cwd=REPO_ROOT,
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+
+            self.assertEqual(result.returncode, 0, result.stderr + result.stdout)
+            summary = json.loads((output_dir / "summary.json").read_text(encoding="utf-8-sig"))
+            self.assertEqual(summary["timeouts"]["adb_command_timeout_seconds"], 7)
+            self.assertEqual(summary["timeouts"]["adb_install_timeout_seconds"], 11)
+            markdown = (output_dir / "summary.md").read_text(encoding="utf-8-sig")
+            self.assertIn("- adb_command_timeout_seconds: 7", markdown)
+            self.assertIn("- adb_install_timeout_seconds: 11", markdown)
         finally:
             shutil.rmtree(output_dir, ignore_errors=True)
 
@@ -1272,6 +1317,125 @@ class AndroidPhysicalPhoneSmokeContractTests(unittest.TestCase):
             self.assertEqual(summary["text_checks"]["requested"], ["Senku", "Library"])
             self.assertEqual(summary["text_checks"]["passed"], ["Senku"])
             self.assertEqual(summary["text_checks"]["missing"], ["Library"])
+        finally:
+            shutil.rmtree(root, ignore_errors=True)
+
+    def test_fake_adb_devices_timeout_fails_explicitly_without_summary(self):
+        root = Path(tempfile.mkdtemp(prefix="physical_phone_smoke_devices_timeout_"))
+        try:
+            output_dir = root / "out"
+            apk = root / "app-debug.apk"
+            adb = root / "adb.cmd"
+            apk.write_text("apk", encoding="utf-8")
+            adb.write_text(
+                "\r\n".join(
+                    [
+                        "@echo off",
+                        "if \"%1\"==\"devices\" (",
+                        "  ping -n 6 127.0.0.1 > nul",
+                        "  echo List of devices attached",
+                        "  echo R5CT123456A\tdevice",
+                        "  exit /b 0",
+                        ")",
+                        "exit /b 1",
+                    ]
+                ),
+                encoding="utf-8",
+            )
+
+            result = subprocess.run(
+                [
+                    "powershell",
+                    "-NoProfile",
+                    "-ExecutionPolicy",
+                    "Bypass",
+                    "-File",
+                    str(SCRIPT),
+                    "-OutputDir",
+                    str(output_dir),
+                    "-Serial",
+                    "R5CT123456A",
+                    "-ApkPath",
+                    str(apk),
+                    "-AdbPath",
+                    str(adb),
+                    "-AdbCommandTimeoutSeconds",
+                    "1",
+                ],
+                cwd=REPO_ROOT,
+                capture_output=True,
+                text=True,
+                check=False,
+                timeout=20,
+            )
+
+            self.assertNotEqual(result.returncode, 0, result.stderr + result.stdout)
+            self.assertIn("adb command timed out after 1 seconds: adb devices", result.stderr + result.stdout)
+            self.assertFalse((output_dir / "summary.json").exists())
+        finally:
+            shutil.rmtree(root, ignore_errors=True)
+
+    def test_fake_adb_install_timeout_uses_install_timeout_knob(self):
+        root = Path(tempfile.mkdtemp(prefix="physical_phone_smoke_install_timeout_"))
+        try:
+            output_dir = root / "out"
+            apk = root / "app-debug.apk"
+            adb = root / "adb.cmd"
+            apk.write_text("apk", encoding="utf-8")
+            adb.write_text(
+                "\r\n".join(
+                    [
+                        "@echo off",
+                        "if \"%1\"==\"devices\" (",
+                        "  echo List of devices attached",
+                        "  echo R5CT123456A\tdevice",
+                        "  exit /b 0",
+                        ")",
+                        "if \"%5\"==\"ro.kernel.qemu\" (echo 0& exit /b 0)",
+                        "if \"%5\"==\"ro.boot.qemu\" (echo 0& exit /b 0)",
+                        "if \"%4\"==\"getprop\" (echo fake-%5& exit /b 0)",
+                        "if \"%3\"==\"install\" (",
+                        "  ping -n 6 127.0.0.1 > nul",
+                        "  echo Success",
+                        "  exit /b 0",
+                        ")",
+                        "exit /b 1",
+                    ]
+                ),
+                encoding="utf-8",
+            )
+
+            result = subprocess.run(
+                [
+                    "powershell",
+                    "-NoProfile",
+                    "-ExecutionPolicy",
+                    "Bypass",
+                    "-File",
+                    str(SCRIPT),
+                    "-OutputDir",
+                    str(output_dir),
+                    "-Serial",
+                    "R5CT123456A",
+                    "-ApkPath",
+                    str(apk),
+                    "-AdbPath",
+                    str(adb),
+                    "-AdbCommandTimeoutSeconds",
+                    "9",
+                    "-AdbInstallTimeoutSeconds",
+                    "1",
+                ],
+                cwd=REPO_ROOT,
+                capture_output=True,
+                text=True,
+                check=False,
+                timeout=20,
+            )
+
+            self.assertNotEqual(result.returncode, 0, result.stderr + result.stdout)
+            self.assertIn("adb command timed out after 1 seconds: adb -s R5CT123456A install", result.stderr + result.stdout)
+            self.assertFalse((output_dir / "summary.json").exists())
         finally:
             shutil.rmtree(root, ignore_errors=True)
 

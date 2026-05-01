@@ -12,7 +12,9 @@ param(
     [switch]$Interact,
     [ValidateSet("Simple", "Ask")]
     [string]$InteractionMode = "Simple",
-    [string]$InteractionQuery = "water filter charcoal sand"
+    [string]$InteractionQuery = "water filter charcoal sand",
+    [int]$AdbCommandTimeoutSeconds = 30,
+    [int]$AdbInstallTimeoutSeconds = 120
 )
 
 $ErrorActionPreference = "Stop"
@@ -66,23 +68,148 @@ function Assert-PhysicalSerial {
     }
 }
 
+function Assert-PositiveTimeout {
+    param(
+        [string]$Name,
+        [int]$Seconds
+    )
+
+    if ($Seconds -le 0) {
+        throw "$Name must be greater than zero seconds."
+    }
+}
+
+function ConvertTo-ProcessArgumentString {
+    param([string[]]$Arguments)
+
+    $quoted = @()
+    foreach ($argument in $Arguments) {
+        $text = [string]$argument
+        if ($text.Length -eq 0) {
+            $quoted += '""'
+            continue
+        }
+        if ($text -notmatch '[\s"]') {
+            $quoted += $text
+            continue
+        }
+        $escaped = $text -replace '(\\*)"', '$1$1\"'
+        $escaped = $escaped -replace '(\\+)$', '$1$1'
+        $quoted += '"' + $escaped + '"'
+    }
+    return ($quoted -join " ")
+}
+
+function Invoke-BoundedProcess {
+    param(
+        [string]$FilePath,
+        [string[]]$Arguments,
+        [int]$TimeoutSeconds,
+        [string]$StdoutPath = $null
+    )
+
+    Assert-PositiveTimeout -Name "TimeoutSeconds" -Seconds $TimeoutSeconds
+
+    $psi = New-Object System.Diagnostics.ProcessStartInfo
+    $psi.FileName = $FilePath
+    $psi.Arguments = ConvertTo-ProcessArgumentString -Arguments $Arguments
+    $psi.UseShellExecute = $false
+    $psi.RedirectStandardOutput = $true
+    $psi.RedirectStandardError = $true
+    $psi.CreateNoWindow = $true
+
+    $process = New-Object System.Diagnostics.Process
+    $process.StartInfo = $psi
+    $stdoutTask = $null
+    $stderrTask = $null
+    $stdoutStream = $null
+    $timedOut = $false
+    $stdoutText = ""
+    $stderrText = ""
+    try {
+        if (-not [string]::IsNullOrWhiteSpace($StdoutPath)) {
+            $parent = Split-Path -Parent $StdoutPath
+            if (-not [string]::IsNullOrWhiteSpace($parent)) {
+                New-Item -ItemType Directory -Force -Path $parent | Out-Null
+            }
+        }
+
+        [void]$process.Start()
+        if ([string]::IsNullOrWhiteSpace($StdoutPath)) {
+            $stdoutTask = $process.StandardOutput.ReadToEndAsync()
+        } else {
+            $stdoutStream = [System.IO.File]::Open($StdoutPath, [System.IO.FileMode]::Create, [System.IO.FileAccess]::Write, [System.IO.FileShare]::Read)
+            $stdoutTask = $process.StandardOutput.BaseStream.CopyToAsync($stdoutStream)
+        }
+        $stderrTask = $process.StandardError.ReadToEndAsync()
+
+        $timeoutMilliseconds = [Math]::Max(1, $TimeoutSeconds) * 1000
+        if (-not $process.WaitForExit($timeoutMilliseconds)) {
+            $timedOut = $true
+            try {
+                $process.Kill()
+            } catch {
+            }
+        }
+
+        if ($stdoutTask -and -not $stdoutTask.Wait(5000)) {
+            $timedOut = $true
+        }
+        if ($stderrTask -and -not $stderrTask.Wait(5000)) {
+            $timedOut = $true
+        }
+
+        if ([string]::IsNullOrWhiteSpace($StdoutPath) -and $stdoutTask -and $stdoutTask.IsCompleted) {
+            try {
+                $stdoutText = [string]$stdoutTask.GetAwaiter().GetResult()
+            } catch {
+                $stdoutText = ""
+            }
+        }
+        if ($stderrTask -and $stderrTask.IsCompleted) {
+            try {
+                $stderrText = [string]$stderrTask.GetAwaiter().GetResult()
+            } catch {
+                $stderrText = ""
+            }
+        }
+
+        $combinedOutput = (($stdoutText, $stderrText) | Where-Object { -not [string]::IsNullOrWhiteSpace($_) }) -join [Environment]::NewLine
+        return [pscustomobject]@{
+            exit_code = if ($timedOut -or -not $process.HasExited) { -1 } else { $process.ExitCode }
+            timed_out = $timedOut
+            output = $combinedOutput.TrimEnd()
+        }
+    } finally {
+        if ($stdoutStream) {
+            try {
+                $stdoutStream.Dispose()
+            } catch {
+            }
+        }
+        if ($process) {
+            try {
+                $process.Dispose()
+            } catch {
+            }
+        }
+    }
+}
+
 function Invoke-AdbCapture {
     param(
         [string]$ResolvedAdbPath,
-        [string[]]$Arguments
+        [string[]]$Arguments,
+        [int]$TimeoutSeconds = $AdbCommandTimeoutSeconds
     )
 
-    $previousErrorActionPreference = $ErrorActionPreference
-    $ErrorActionPreference = "Continue"
-    try {
-        $output = & $ResolvedAdbPath @Arguments 2>&1
-        $exitCode = $LASTEXITCODE
-    } finally {
-        $ErrorActionPreference = $previousErrorActionPreference
+    $result = Invoke-BoundedProcess -FilePath $ResolvedAdbPath -Arguments $Arguments -TimeoutSeconds $TimeoutSeconds
+    $text = [string]$result.output
+    if ($result.timed_out) {
+        throw "adb command timed out after $TimeoutSeconds seconds: adb $($Arguments -join ' ')`n$text"
     }
-    $text = ($output | ForEach-Object { "$_" }) -join [Environment]::NewLine
-    if ($exitCode -ne 0) {
-        throw "adb command failed ($exitCode): adb $($Arguments -join ' ')`n$text"
+    if ($result.exit_code -ne 0) {
+        throw "adb command failed ($($result.exit_code)): adb $($Arguments -join ' ')`n$text"
     }
     return $text
 }
@@ -90,10 +217,24 @@ function Invoke-AdbCapture {
 function Invoke-AdbChecked {
     param(
         [string]$ResolvedAdbPath,
-        [string[]]$Arguments
+        [string[]]$Arguments,
+        [int]$TimeoutSeconds = $AdbCommandTimeoutSeconds,
+        [string]$StdoutPath = $null
     )
 
-    Invoke-AdbCapture -ResolvedAdbPath $ResolvedAdbPath -Arguments $Arguments | Out-Null
+    if ([string]::IsNullOrWhiteSpace($StdoutPath)) {
+        Invoke-AdbCapture -ResolvedAdbPath $ResolvedAdbPath -Arguments $Arguments -TimeoutSeconds $TimeoutSeconds | Out-Null
+        return
+    }
+
+    $result = Invoke-BoundedProcess -FilePath $ResolvedAdbPath -Arguments $Arguments -TimeoutSeconds $TimeoutSeconds -StdoutPath $StdoutPath
+    $text = [string]$result.output
+    if ($result.timed_out) {
+        throw "adb command timed out after $TimeoutSeconds seconds: adb $($Arguments -join ' ')`n$text"
+    }
+    if ($result.exit_code -ne 0) {
+        throw "adb command failed ($($result.exit_code)): adb $($Arguments -join ' ')`n$text"
+    }
 }
 
 function Get-AdbDeviceMap {
@@ -272,6 +413,8 @@ function Write-SummaryMarkdown {
         "- orientation: $($Summary.evidence.orientation.orientation)",
         "- install_command: ``$($Summary.commands.install)``",
         "- launch_command: ``$($Summary.commands.launch)``",
+        "- adb_command_timeout_seconds: $($Summary.timeouts.adb_command_timeout_seconds)",
+        "- adb_install_timeout_seconds: $($Summary.timeouts.adb_install_timeout_seconds)",
         "- focus_path: ``$($Summary.evidence.focus_path)``",
         "- focus_sha256: $($Summary.evidence.artifact_hashes.focus_sha256)",
         "- screenshot_path: ``$($Summary.evidence.screenshot_path)``",
@@ -891,6 +1034,9 @@ $resolvedScreenshotPath = if ([string]::IsNullOrWhiteSpace($ScreenshotPath)) { $
 $resolvedDumpPath = if ([string]::IsNullOrWhiteSpace($DumpPath)) { $null } else { Resolve-TargetPath -Path $DumpPath }
 $resolvedLogcatPath = if ([string]::IsNullOrWhiteSpace($LogcatPath)) { $null } else { Resolve-TargetPath -Path $LogcatPath }
 
+Assert-PositiveTimeout -Name "AdbCommandTimeoutSeconds" -Seconds $AdbCommandTimeoutSeconds
+Assert-PositiveTimeout -Name "AdbInstallTimeoutSeconds" -Seconds $AdbInstallTimeoutSeconds
+
 $installCommandText = "adb -s $Serial install --no-streaming -r `"$resolvedApkPath`""
 $launchCommandText = "adb -s $Serial shell am start -n $launchActivity"
 $startedAt = (Get-Date).ToUniversalTime()
@@ -930,7 +1076,7 @@ if (-not $DryRun) {
 
     Assert-SerialIsConnectedPhysicalDevice -ResolvedAdbPath $resolvedAdbPath -DeviceSerial $Serial
     $deviceIdentity = Get-PhysicalDeviceIdentity -ResolvedAdbPath $resolvedAdbPath -DeviceSerial $Serial
-    Invoke-AdbChecked -ResolvedAdbPath $resolvedAdbPath -Arguments @("-s", $Serial, "install", "--no-streaming", "-r", $resolvedApkPath)
+    Invoke-AdbChecked -ResolvedAdbPath $resolvedAdbPath -Arguments @("-s", $Serial, "install", "--no-streaming", "-r", $resolvedApkPath) -TimeoutSeconds $AdbInstallTimeoutSeconds
     Invoke-AdbChecked -ResolvedAdbPath $resolvedAdbPath -Arguments @("-s", $Serial, "shell", "am", "start", "-n", $launchActivity)
     Start-Sleep -Seconds 2
 
@@ -979,10 +1125,7 @@ if (-not $DryRun) {
         if (-not [string]::IsNullOrWhiteSpace($screenshotParent)) {
             New-Item -ItemType Directory -Force -Path $screenshotParent | Out-Null
         }
-        & $resolvedAdbPath "-s" $Serial "exec-out" "screencap" "-p" > $resolvedScreenshotPath
-        if ($LASTEXITCODE -ne 0) {
-            throw "adb screenshot capture failed for serial '$Serial'."
-        }
+        Invoke-AdbChecked -ResolvedAdbPath $resolvedAdbPath -Arguments @("-s", $Serial, "exec-out", "screencap", "-p") -StdoutPath $resolvedScreenshotPath
     }
 
     if (($null -ne $resolvedDumpPath) -or ($requestedTextFragments.Count -gt 0)) {
@@ -1052,6 +1195,10 @@ $summaryData = [ordered]@{
         screenshot = if ($null -eq $resolvedScreenshotPath) { $null } else { "adb -s $Serial exec-out screencap -p > `"$resolvedScreenshotPath`"" }
         dump = if ($null -eq $resolvedDumpPath -and $requestedTextFragments.Count -eq 0) { $null } else { "adb -s $Serial shell uiautomator dump /dev/tty || dump /sdcard/senku_physical_smoke_ui.xml" }
         logcat = if ($null -eq $resolvedLogcatPath) { $null } else { "adb -s $Serial logcat -d -v time" }
+    }
+    timeouts = [ordered]@{
+        adb_command_timeout_seconds = $AdbCommandTimeoutSeconds
+        adb_install_timeout_seconds = $AdbInstallTimeoutSeconds
     }
     summary_json = (Convert-ToRepoRelativePath -Path $summaryJsonPath)
     summary_markdown = (Convert-ToRepoRelativePath -Path $summaryMarkdownPath)

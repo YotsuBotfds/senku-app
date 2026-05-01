@@ -67,6 +67,10 @@ def make_summary(*, completed: bool = False) -> dict:
             "install": "adb -s R5CT123456A install --no-streaming -r app-debug.apk",
             "launch": "adb -s R5CT123456A shell am start -n com.senku.mobile/.MainActivity",
         },
+        "timeouts": {
+            "adb_command_timeout_seconds": 30,
+            "adb_install_timeout_seconds": 120,
+        },
         "summary_json": "artifacts/bench/android_physical_phone_smoke/summary.json",
         "summary_markdown": "artifacts/bench/android_physical_phone_smoke/summary.md",
         "started_at_utc": "2026-04-30T00:00:00.0000000Z",
@@ -407,6 +411,21 @@ class ValidateAndroidPhysicalPhoneSmokeSummaryTests(unittest.TestCase):
         self.assertIn("expected root.text_checks.requested[1] to be non-empty", errors)
         self.assertIn("expected root.text_checks.passed item to be requested: 'Other'", errors)
         self.assertIn("expected root.text_checks.missing[0] to be str, got int", errors)
+
+    def test_timeouts_validate_shape(self):
+        summary = make_summary(completed=True)
+        summary["timeouts"] = {
+            "adb_command_timeout_seconds": 0,
+            "adb_install_timeout_seconds": "slow",
+        }
+
+        _, errors = validate_summary(self.write_summary(summary))
+
+        self.assertIn("expected root.timeouts.adb_command_timeout_seconds to be positive", errors)
+        self.assertIn(
+            "expected root.timeouts.adb_install_timeout_seconds to be int, got str",
+            errors,
+        )
 
     def test_completed_summary_requires_physical_contract_fields(self):
         summary = make_summary(completed=True)

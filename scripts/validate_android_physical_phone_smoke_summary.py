@@ -33,6 +33,7 @@ REQUIRED_TYPES: dict[str, type | tuple[type, ...]] = {
     "launch_activity": str,
     "evidence": dict,
     "commands": dict,
+    "timeouts": dict,
     "summary_json": str,
     "summary_markdown": str,
 }
@@ -76,6 +77,11 @@ REQUIRED_TEXT_CHECK_TYPES: dict[str, type | tuple[type, ...]] = {
     "requested": list,
     "passed": list,
     "missing": list,
+}
+
+REQUIRED_TIMEOUT_TYPES: dict[str, type | tuple[type, ...]] = {
+    "adb_command_timeout_seconds": int,
+    "adb_install_timeout_seconds": int,
 }
 
 REQUIRED_INTERACTION_TYPES: dict[str, type | tuple[type, ...]] = {
@@ -219,6 +225,15 @@ def _validate_common_contract(data: dict[str, Any], errors: list[str]) -> None:
             for key, expected_type in REQUIRED_TEXT_CHECK_TYPES.items():
                 _expect_type(text_checks, key, expected_type, errors, scope="root.text_checks")
             _validate_text_checks(text_checks, errors)
+
+    timeouts = data.get("timeouts")
+    if isinstance(timeouts, dict):
+        for key, expected_type in REQUIRED_TIMEOUT_TYPES.items():
+            _expect_type(timeouts, key, expected_type, errors, scope="root.timeouts")
+        for key in REQUIRED_TIMEOUT_TYPES:
+            value = timeouts.get(key)
+            if isinstance(value, int) and value <= 0:
+                errors.append(f"expected root.timeouts.{key} to be positive")
 
     interaction = data.get("interaction")
     if interaction is not None:
