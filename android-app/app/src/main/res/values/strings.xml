@@ -204,7 +204,7 @@
     <string name="detail_related_guides_context_category">%1$s</string>
     <string name="detail_materials_title">Materials in play</string>
     <string name="detail_materials_subtitle">Quick checklist extracted from the answer. Verify critical items against the guide evidence.</string>
-    <string name="detail_material_added_to_kit">Added to kit: %1$s</string>
+    <string name="detail_material_added_to_kit">Copied material: %1$s</string>
     <string name="detail_mode_summary_answer_compact">Instant route and guide anchor stay visible while you verify below.</string>
     <string name="detail_inline_sources_label">Verify against source guides</string>
     <string name="detail_provenance_title">Source entry</string>

@@ -3,5 +3,5 @@
     <string name="detail_external_review_section_anchor_prefix">[SECTION]</string>
     <string name="detail_external_review_source_anchor_prefix">[SOURCE]</string>
     <string name="detail_external_review_material_chip_label">Material %1$02d: %2$s</string>
-    <string name="detail_external_review_material_chip_content_description">Material %1$02d: %2$s. Material chip. Tap to focus; long press to copy.</string>
+    <string name="detail_external_review_material_chip_content_description">Material %1$02d: %2$s. Reference material from this answer. Long press to copy.</string>
 </resources>

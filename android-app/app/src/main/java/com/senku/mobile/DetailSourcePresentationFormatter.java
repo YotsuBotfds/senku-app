@@ -297,7 +297,8 @@ final class DetailSourcePresentationFormatter {
         String label = safe(material).trim();
         String fallback = safe(fallbackMaterial).trim();
         String materialLabel = label.isEmpty() ? (fallback.isEmpty() ? "material item" : fallback) : label;
-        return buildMaterialChipPlainLabel(index, materialLabel) + ". Material chip. Tap to focus; long press to copy.";
+        return buildMaterialChipPlainLabel(index, materialLabel)
+            + ". Reference material from this answer. Long press to copy.";
     }
 
     String buildSourceSummary(List<String> sourceLabels) {

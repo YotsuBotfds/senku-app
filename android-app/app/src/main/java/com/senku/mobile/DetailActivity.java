@@ -8457,9 +8457,10 @@ public final class DetailActivity extends AppCompatActivity {
         if (chip == null) {
             return;
         }
-        chip.setFocusable(true);
-        chip.setClickable(true);
+        chip.setFocusable(false);
+        chip.setClickable(false);
         chip.setLongClickable(true);
+        chip.setOnClickListener(null);
         chip.setOnLongClickListener(v -> {
             ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
             if (clipboard != null) {

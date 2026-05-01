@@ -1,5 +1,5 @@
 <resources>
     <string name="external_review_detail_body_shell_description">Field body lane. Structural hazards and source-backed notes stay grouped here.</string>
-    <string name="external_review_detail_material_rail_description">Material field-index rail. Referenced items appear here as solid tabs.</string>
+    <string name="external_review_detail_material_rail_description">Material reference rail. Long press a listed item to copy it.</string>
     <string name="external_review_detail_anchor_description">Bracketed section anchor marker.</string>
 </resources>

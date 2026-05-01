@@ -1847,7 +1847,7 @@ public final class PromptHarnessSmokeTest {
     }
 
     @Test
-    public void answerSourceChipsPreviewCorrectSeededGuideSources() throws Exception {
+    public void answerSourceChipTapFollowsAdvertisedActionForSeededGuideSources() throws Exception {
         SearchResult abrasiveSource = loadGuideByIdForTest("GD-220");
         SearchResult foundrySource = loadGuideByIdForTest("GD-132");
         Assume.assumeNotNull("GD-220 should be available for source-chip correctness smoke", abrasiveSource);
@@ -1882,8 +1882,8 @@ public final class PromptHarnessSmokeTest {
             captureUiState("answer_source_chip_labels");
         }
 
-        assertSeededSourceChipPreviewOrOpen(intent, abrasiveSource, "answer_source_chip_gd_220");
-        assertSeededSourceChipPreviewOrOpen(intent, foundrySource, "answer_source_chip_gd_132");
+        assertSeededSourceChipFollowsAdvertisedAction(intent, abrasiveSource, "answer_source_chip_gd_220");
+        assertSeededSourceChipFollowsAdvertisedAction(intent, foundrySource, "answer_source_chip_gd_132");
     }
 
     @Test
@@ -6792,11 +6792,12 @@ public final class PromptHarnessSmokeTest {
         return false;
     }
 
-    private void assertSeededSourceChipPreviewOrOpen(
+    private void assertSeededSourceChipFollowsAdvertisedAction(
         Intent answerIntent,
         SearchResult expectedSource,
         String captureLabel
     ) {
+        final String[] advertisedAction = {""};
         try (ActivityScenario<DetailActivity> scenario = ActivityScenario.launch(answerIntent)) {
             awaitHarnessIdle();
             Assert.assertTrue(
@@ -6804,18 +6805,68 @@ public final class PromptHarnessSmokeTest {
                 waitForDetailBodyReady(DETAIL_WAIT_MS, 8)
             );
             assertAnswerSourceChipLabelVisible(scenario, expectedSource);
-            selectAnswerSourcePreview(scenario, expectedSource);
-            Assert.assertTrue(
-                "selecting source chip should preview or open the matching guide for "
-                    + expectedSource.guideId
-                    + " / "
-                    + displayLabel(expectedSource)
-                    + "; "
-                    + describeResumedActivityAndHarnessSignals(),
-                waitForSourcePreviewOrOpenedGuide(expectedSource, DETAIL_WAIT_MS)
-            );
+            advertisedAction[0] = tapAnswerSourceChipAndReadAdvertisedAction(scenario, expectedSource);
+            if ("preview".equals(advertisedAction[0])) {
+                Assert.assertTrue(
+                    "source chip advertised preview, so tap should show only the matching source preview for "
+                        + expectedSource.guideId
+                        + " / "
+                        + displayLabel(expectedSource)
+                        + "; "
+                        + describeResumedActivityAndHarnessSignals(),
+                    waitForSourcePreviewOnly(expectedSource, DETAIL_WAIT_MS)
+                );
+            } else if ("open".equals(advertisedAction[0])) {
+                Assert.assertTrue(
+                    "source chip advertised open, so tap should directly open the matching guide for "
+                        + expectedSource.guideId
+                        + " / "
+                        + displayLabel(expectedSource)
+                        + "; "
+                        + describeResumedActivityAndHarnessSignals(),
+                    waitForSourceOpenedGuide(expectedSource, DETAIL_WAIT_MS)
+                );
+            } else {
+                Assert.fail(
+                    "source chip content description must advertise either source preview or source guide open for "
+                        + expectedSource.guideId
+                        + " / "
+                        + displayLabel(expectedSource)
+                );
+            }
             captureUiState(captureLabel);
         }
+    }
+
+    private String tapAnswerSourceChipAndReadAdvertisedAction(
+        ActivityScenario<DetailActivity> scenario,
+        SearchResult expectedSource
+    ) {
+        final String[] action = {""};
+        scenario.onActivity(activity -> {
+            Activity resumed = getResumedActivityOnMainThread();
+            Assert.assertNotNull("answer detail should be resumed before tapping a source chip", resumed);
+            Button sourceButton = findMatchingSourceButton(activity, expectedSource);
+            Assert.assertNotNull("expected a visible source chip for " + displayLabel(expectedSource), sourceButton);
+            String description = safe(String.valueOf(sourceButton.getContentDescription())).toLowerCase(Locale.US);
+            boolean advertisesPreview = description.contains("shows source preview");
+            boolean advertisesOpen = description.contains("opens source guide");
+            Assert.assertTrue(
+                "source chip content description should advertise a deterministic tap action; description="
+                    + quoteForDiagnostics(description),
+                advertisesPreview || advertisesOpen
+            );
+            Assert.assertFalse(
+                "source chip content description should not advertise both preview and open; description="
+                    + quoteForDiagnostics(description),
+                advertisesPreview && advertisesOpen
+            );
+            action[0] = advertisesPreview ? "preview" : "open";
+            sourceButton.performClick();
+        });
+        InstrumentationRegistry.getInstrumentation().waitForIdleSync();
+        awaitHarnessIdle();
+        return action[0];
     }
 
     private void assertAnswerSourceChipLabelVisible(
@@ -6884,6 +6935,66 @@ public final class PromptHarnessSmokeTest {
                 matched[0] = sourcePreviewPanelMatches(activity, expectedSource);
             });
             if (matched[0]) {
+                return true;
+            }
+            InstrumentationRegistry.getInstrumentation().waitForIdleSync();
+            SystemClock.sleep(50L);
+        }
+        return false;
+    }
+
+    private boolean waitForSourcePreviewOnly(SearchResult expectedSource, long timeoutMs) {
+        long deadline = SystemClock.uptimeMillis() + timeoutMs;
+        while (SystemClock.uptimeMillis() < deadline) {
+            final boolean[] previewMatched = {false};
+            final boolean[] openedGuide = {false};
+            InstrumentationRegistry.getInstrumentation().runOnMainSync(() -> {
+                Activity activity = getResumedActivityOnMainThread();
+                if (!(activity instanceof DetailActivity)) {
+                    return;
+                }
+                DetailSettleSignals signals = collectDetailSettleSignals(activity);
+                openedGuide[0] = sourceOpenedAsGuide(activity, expectedSource, signals);
+                previewMatched[0] = !openedGuide[0] && sourcePreviewPanelMatches(activity, expectedSource);
+            });
+            Assert.assertFalse(
+                "source chip advertised preview, but tap directly opened "
+                    + expectedSource.guideId
+                    + " / "
+                    + displayLabel(expectedSource),
+                openedGuide[0]
+            );
+            if (previewMatched[0]) {
+                return true;
+            }
+            InstrumentationRegistry.getInstrumentation().waitForIdleSync();
+            SystemClock.sleep(50L);
+        }
+        return false;
+    }
+
+    private boolean waitForSourceOpenedGuide(SearchResult expectedSource, long timeoutMs) {
+        long deadline = SystemClock.uptimeMillis() + timeoutMs;
+        while (SystemClock.uptimeMillis() < deadline) {
+            final boolean[] opened = {false};
+            final boolean[] previewMatched = {false};
+            InstrumentationRegistry.getInstrumentation().runOnMainSync(() -> {
+                Activity activity = getResumedActivityOnMainThread();
+                if (!(activity instanceof DetailActivity)) {
+                    return;
+                }
+                DetailSettleSignals signals = collectDetailSettleSignals(activity);
+                opened[0] = sourceOpenedAsGuide(activity, expectedSource, signals);
+                previewMatched[0] = !opened[0] && sourcePreviewPanelMatches(activity, expectedSource);
+            });
+            Assert.assertFalse(
+                "source chip advertised open, but tap stopped at a source preview for "
+                    + expectedSource.guideId
+                    + " / "
+                    + displayLabel(expectedSource),
+                previewMatched[0]
+            );
+            if (opened[0]) {
                 return true;
             }
             InstrumentationRegistry.getInstrumentation().waitForIdleSync();
@@ -8443,6 +8554,18 @@ public final class PromptHarnessSmokeTest {
         Assert.assertTrue(
             "material chips should expose the long-press copy affordance to accessibility",
             chipDescription.toLowerCase(Locale.US).contains("long press to copy")
+        );
+        Assert.assertFalse(
+            "material chips should not advertise a tap-only affordance when tap has no action",
+            chipDescription.toLowerCase(Locale.US).contains("tap to focus")
+        );
+        Assert.assertFalse(
+            "material chips should not become focus targets when tap has no action",
+            firstChip.isFocusable()
+        );
+        Assert.assertTrue(
+            "material chips should keep long-press copy available",
+            firstChip.isLongClickable()
         );
     }
 

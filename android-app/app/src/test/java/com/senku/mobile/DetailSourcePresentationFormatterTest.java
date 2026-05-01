@@ -664,11 +664,11 @@ public final class DetailSourcePresentationFormatterTest {
     @Test
     public void materialChipContentDescriptionIncludesActionAffordance() {
         assertEquals(
-            "Material 01: Bark. Material chip. Tap to focus; long press to copy.",
+            "Material 01: Bark. Reference material from this answer. Long press to copy.",
             DetailSourcePresentationFormatter.buildMaterialChipContentDescriptionText(0, " Bark ", "materials in play")
         );
         assertEquals(
-            "Material 02: materials in play. Material chip. Tap to focus; long press to copy.",
+            "Material 02: materials in play. Reference material from this answer. Long press to copy.",
             DetailSourcePresentationFormatter.buildMaterialChipContentDescriptionText(1, " ", "materials in play")
         );
     }
