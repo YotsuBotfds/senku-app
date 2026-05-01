@@ -334,6 +334,26 @@ public final class SearchResultAdapterTest {
     }
 
     @Test
+    public void linkedGuidePreviewLabelUsesMapperOwnedDisplayFallbacks() {
+        assertEquals(
+            "Stored water",
+            SearchResultAdapter.buildLinkedGuidePreviewLabelForTest(
+                " Stored water ",
+                "GD-214",
+                "Water Storage"
+            )
+        );
+        assertEquals(
+            "GD-214 - Water Storage",
+            SearchResultAdapter.buildLinkedGuidePreviewLabelForTest("", " GD-214 ", " Water Storage ")
+        );
+        assertEquals(
+            SearchResultCardModelMapper.buildLinkedGuidePreviewLabelForTest(null, "", " Water Storage "),
+            SearchResultAdapter.buildLinkedGuidePreviewLabelForTest(null, "", " Water Storage ")
+        );
+    }
+
+    @Test
     public void linkedGuidePreviewLineKeepsRowsCompact() {
         assertEquals("Guide", SearchResultAdapter.buildLinkedGuidePreviewLineForTest());
     }

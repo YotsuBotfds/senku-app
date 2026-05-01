@@ -167,6 +167,31 @@ public final class SearchResultCardModelMapperTest {
     }
 
     @Test
+    public void linkedGuidePreviewLabelPrefersDisplayLabelThenGuideAndTitle() {
+        assertEquals(
+            "Stored water",
+            SearchResultCardModelMapper.buildLinkedGuidePreviewLabelForTest(
+                " Stored water ",
+                "GD-214",
+                "Water Storage"
+            )
+        );
+        assertEquals(
+            "GD-214 - Water Storage",
+            SearchResultCardModelMapper.buildLinkedGuidePreviewLabelForTest("", " GD-214 ", " Water Storage ")
+        );
+        assertEquals(
+            "Water Storage",
+            SearchResultCardModelMapper.buildLinkedGuidePreviewLabelForTest(null, "", " Water Storage ")
+        );
+        assertEquals(
+            "GD-214",
+            SearchResultCardModelMapper.buildLinkedGuidePreviewLabelForTest(null, " GD-214 ", "")
+        );
+        assertEquals("", SearchResultCardModelMapper.buildLinkedGuidePreviewLabelForTest(null, null, null));
+    }
+
+    @Test
     public void linkedGuideHandoffDescriptionsUseConnectionLanguage() {
         assertEquals(
             "Guide connection available: GD-214 - Water Storage",

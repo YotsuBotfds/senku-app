@@ -830,19 +830,11 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
         if (preview == null) {
             return "";
         }
-        String displayLabel = safe(preview.displayLabel).trim();
-        if (!displayLabel.isEmpty()) {
-            return displayLabel;
-        }
-        String guideId = safe(preview.guideId).trim();
-        String title = safe(preview.title).trim();
-        if (!guideId.isEmpty() && !title.isEmpty()) {
-            return guideId + " - " + title;
-        }
-        if (!title.isEmpty()) {
-            return title;
-        }
-        return guideId;
+        return SearchResultCardModelMapper.buildLinkedGuidePreviewLabel(
+            preview.displayLabel,
+            preview.guideId,
+            preview.title
+        );
     }
 
     private String buildLinkedGuideActionLabel(LinkedGuidePreview preview) {
@@ -1069,6 +1061,10 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
 
     static String buildLinkedGuideChipLabelForTest() {
         return SearchResultCardModelMapper.buildLinkedGuideChipLabelForTest();
+    }
+
+    static String buildLinkedGuidePreviewLabelForTest(String displayLabel, String guideId, String title) {
+        return SearchResultCardModelMapper.buildLinkedGuidePreviewLabelForTest(displayLabel, guideId, title);
     }
 
     private static String buildLinkedGuideChipLabel() {
