@@ -191,6 +191,83 @@ public final class DetailThreadHistoryRendererTest {
     }
 
     @Test
+    public void visibleHistoryRowsExcludeCurrentTurnWhenAnswerScaffoldIsVisible() {
+        SessionMemory.TurnSnapshot first = turn("build a ridgeline first", "GD-220", 0L);
+        SessionMemory.TurnSnapshot current = new SessionMemory.TurnSnapshot(
+            "what should i do next",
+            "Drape the tarp evenly across the ridgeline.",
+            "Drape the tarp evenly across the ridgeline.",
+            List.of("GD-345"),
+            List.of(source("GD-345")),
+            "",
+            0L
+        );
+
+        List<SessionMemory.TurnSnapshot> visibleRows = DetailThreadHistoryRenderer.visibleHistoryTurns(
+            List.of(first),
+            current,
+            false
+        );
+        List<SessionMemory.TurnSnapshot> footerTranscript = DetailThreadHistoryRenderer.transcriptTurns(
+            List.of(first),
+            current
+        );
+
+        assertEquals(1, visibleRows.size());
+        assertEquals("question", visibleRows.get(0).question);
+        assertEquals(2, footerTranscript.size());
+        assertEquals(
+            "THREAD CONTEXT \u2022 2 TURNS \u2022 GD-220 ANCHOR",
+            DetailThreadHistoryRenderer.threadContextFooterLabel(footerTranscript, "GD-220")
+        );
+    }
+
+    @Test
+    public void visibleHistoryRowsIncludeCurrentTurnWhenAnswerScaffoldIsHidden() {
+        SessionMemory.TurnSnapshot first = turn("build a ridgeline first", "GD-220", 0L);
+        SessionMemory.TurnSnapshot current = new SessionMemory.TurnSnapshot(
+            "what should i do next",
+            "Drape the tarp evenly across the ridgeline.",
+            "Drape the tarp evenly across the ridgeline.",
+            List.of("GD-345"),
+            List.of(source("GD-345")),
+            "",
+            0L
+        );
+
+        List<SessionMemory.TurnSnapshot> visibleRows = DetailThreadHistoryRenderer.visibleHistoryTurns(
+            List.of(first),
+            current,
+            true
+        );
+
+        assertEquals(2, visibleRows.size());
+        assertEquals("question", visibleRows.get(0).question);
+        assertEquals("what should i do next", visibleRows.get(1).question);
+    }
+
+    @Test
+    public void firstVisibleTurnNumberUsesTheVisibleHistorySource() {
+        SessionMemory.TurnSnapshot first = turn("first", "GD-220", 0L);
+        SessionMemory.TurnSnapshot second = new SessionMemory.TurnSnapshot(
+            "what about runoff",
+            "Shape the low edge for runoff.",
+            "Shape the low edge for runoff.",
+            List.of("GD-132"),
+            List.of(source("GD-132")),
+            "",
+            0L
+        );
+        List<SessionMemory.TurnSnapshot> priorRows = DetailThreadHistoryRenderer.priorTranscriptTurns(
+            List.of(first, second)
+        );
+
+        assertEquals(2, priorRows.size());
+        assertEquals(1, DetailThreadHistoryRenderer.firstVisibleTurnNumber(priorRows, priorRows));
+        assertEquals(2, DetailThreadHistoryRenderer.firstVisibleTurnNumber(priorRows, List.of(second)));
+    }
+
+    @Test
     public void statusLabelsUseScreenshotTranscriptTokens() {
         assertEquals("CONFIDENT", DetailThreadHistoryRenderer.compactStatusLabel("source-backed"));
         assertEquals("CONFIDENT", DetailThreadHistoryRenderer.compactStatusLabel("reviewed"));

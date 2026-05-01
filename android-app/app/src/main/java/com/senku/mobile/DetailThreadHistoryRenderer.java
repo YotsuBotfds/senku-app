@@ -96,21 +96,27 @@ final class DetailThreadHistoryRenderer {
         List<SessionMemory.TurnSnapshot> earlierTurns,
         SessionMemory.TurnSnapshot currentTurn,
         State state,
-        UnaryOperator<String> answerFormatter
+        UnaryOperator<String> answerFormatter,
+        boolean includeCurrentTurnInHistory
     ) {
         if (container == null) {
             return;
         }
         container.removeAllViews();
         List<SessionMemory.TurnSnapshot> transcriptTurns = transcriptTurns(earlierTurns, currentTurn);
-        if (transcriptTurns.isEmpty()) {
+        List<SessionMemory.TurnSnapshot> visibleTranscriptTurns = visibleHistoryTurns(
+            earlierTurns,
+            currentTurn,
+            includeCurrentTurnInHistory
+        );
+        if (visibleTranscriptTurns.isEmpty()) {
             container.setVisibility(View.GONE);
             return;
         }
-        List<SessionMemory.TurnSnapshot> visibleTurns = trimPriorTurnsForInlineHistory(transcriptTurns, state);
+        List<SessionMemory.TurnSnapshot> visibleTurns = trimPriorTurnsForInlineHistory(visibleTranscriptTurns, state);
         container.setVisibility(View.VISIBLE);
-        String previousAnchorGuideId = anchorGuideIdBeforeVisibleTurns(transcriptTurns, visibleTurns);
-        int firstTurnNumber = Math.max(1, transcriptTurns.size() - visibleTurns.size() + 1);
+        String previousAnchorGuideId = anchorGuideIdBeforeVisibleTurns(visibleTranscriptTurns, visibleTurns);
+        int firstTurnNumber = firstVisibleTurnNumber(visibleTranscriptTurns, visibleTurns);
         List<NumberedTurn> displayTurns = numberedDisplayTurnsForInlineHistory(visibleTurns, firstTurnNumber, state);
         for (NumberedTurn displayTurn : displayTurns) {
             addTurn(container, displayTurn.turn, previousAnchorGuideId, state, answerFormatter, true, displayTurn.turnNumber);
@@ -124,25 +130,27 @@ final class DetailThreadHistoryRenderer {
         List<SessionMemory.TurnSnapshot> earlierTurns,
         SessionMemory.TurnSnapshot currentTurn,
         State state,
-        UnaryOperator<String> answerFormatter
+        UnaryOperator<String> answerFormatter,
+        boolean includeCurrentTurnInHistory
     ) {
         if (container == null) {
             return;
         }
         container.removeAllViews();
-        if (earlierTurns == null || earlierTurns.isEmpty()) {
-            container.setVisibility(View.GONE);
-            return;
-        }
         List<SessionMemory.TurnSnapshot> transcriptTurns = transcriptTurns(earlierTurns, currentTurn);
-        List<SessionMemory.TurnSnapshot> visibleTurns = trimPriorTurnsForInlineHistory(transcriptTurns, state);
+        List<SessionMemory.TurnSnapshot> visibleTranscriptTurns = visibleHistoryTurns(
+            earlierTurns,
+            currentTurn,
+            includeCurrentTurnInHistory
+        );
+        List<SessionMemory.TurnSnapshot> visibleTurns = trimPriorTurnsForInlineHistory(visibleTranscriptTurns, state);
         if (visibleTurns.isEmpty()) {
             container.setVisibility(View.GONE);
             return;
         }
         container.setVisibility(View.VISIBLE);
-        String previousAnchorGuideId = anchorGuideIdBeforeVisibleTurns(transcriptTurns, visibleTurns);
-        int firstTurnNumber = Math.max(1, transcriptTurns.size() - visibleTurns.size() + 1);
+        String previousAnchorGuideId = anchorGuideIdBeforeVisibleTurns(visibleTranscriptTurns, visibleTurns);
+        int firstTurnNumber = firstVisibleTurnNumber(visibleTranscriptTurns, visibleTurns);
         for (int index = 0; index < visibleTurns.size(); index++) {
             SessionMemory.TurnSnapshot turn = visibleTurns.get(index);
             addTurn(container, turn, previousAnchorGuideId, state, answerFormatter, false, firstTurnNumber + index);
@@ -167,6 +175,38 @@ final class DetailThreadHistoryRenderer {
             turns.add(currentTurn);
         }
         return turns;
+    }
+
+    static List<SessionMemory.TurnSnapshot> visibleHistoryTurns(
+        List<SessionMemory.TurnSnapshot> earlierTurns,
+        SessionMemory.TurnSnapshot currentTurn,
+        boolean includeCurrentTurn
+    ) {
+        return includeCurrentTurn
+            ? transcriptTurns(earlierTurns, currentTurn)
+            : priorTranscriptTurns(earlierTurns);
+    }
+
+    static List<SessionMemory.TurnSnapshot> priorTranscriptTurns(List<SessionMemory.TurnSnapshot> earlierTurns) {
+        ArrayList<SessionMemory.TurnSnapshot> turns = new ArrayList<>();
+        if (earlierTurns == null) {
+            return turns;
+        }
+        for (SessionMemory.TurnSnapshot turn : earlierTurns) {
+            if (isRenderableTurn(turn)) {
+                turns.add(turn);
+            }
+        }
+        return turns;
+    }
+
+    static int firstVisibleTurnNumber(
+        List<SessionMemory.TurnSnapshot> priorTranscriptTurns,
+        List<SessionMemory.TurnSnapshot> visibleTurns
+    ) {
+        int priorCount = priorTranscriptTurns == null ? 0 : priorTranscriptTurns.size();
+        int visibleCount = visibleTurns == null ? 0 : visibleTurns.size();
+        return Math.max(1, priorCount - visibleCount + 1);
     }
 
     private List<SessionMemory.TurnSnapshot> trimPriorTurnsForInlineHistory(

@@ -4374,7 +4374,8 @@ public final class DetailActivity extends AppCompatActivity {
                 earlierTurns,
                 currentTurn,
                 buildPhoneLandscapeThreadHistoryState(),
-                this::formatAnswerBody
+                this::formatAnswerBody,
+                shouldHideGenericAnswerScaffoldForCurrentThread()
             );
             resetPhoneLandscapeAnswerScrollToHeader();
             preservePhoneLandscapeThreadTopAfterComposerSetup();
@@ -4406,7 +4407,8 @@ public final class DetailActivity extends AppCompatActivity {
                 earlierTurns,
                 currentTurn,
                 buildDetailThreadHistoryState(),
-                this::formatAnswerBody
+                this::formatAnswerBody,
+                shouldHideGenericAnswerScaffoldForCurrentThread()
             );
             sessionPanel.setVisibility(View.VISIBLE);
             sessionPanel.setBackgroundResource(android.R.color.transparent);
@@ -4430,7 +4432,8 @@ public final class DetailActivity extends AppCompatActivity {
             earlierTurns,
             currentTurn,
             buildDetailThreadHistoryState(),
-            this::formatAnswerBody
+            this::formatAnswerBody,
+            shouldHideGenericAnswerScaffoldForCurrentThread()
         );
         sessionPanel.setVisibility(View.GONE);
         sessionText.setText("");
