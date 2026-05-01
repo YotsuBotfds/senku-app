@@ -201,14 +201,14 @@ the exported mocks.
      boundaries were extended in `74ab01c9`; continue trimming only small pure
      helpers from the adapter/presenter surfaces.
 
-10. Physical device install/smoke
+10. Local contract-first Android smoke
    - Status: partially addressed. Physical `phone-functional` preset passed on
      `RFCX607ZM8L`, covering Ask/Search, Saved back, and answer provenance
      open/back through PromptHarness assertions.
-   - Standalone physical-phone smoke post-checks are now harder to fool:
-     `submit_query` and `back` require route/state text or changed-dump proof,
-     and a fake-adb unchanged-dump regression covers the old false-positive
-     path.
-   - Next safe slice: add an Ask-owned interaction mode on physical hardware so
-     the runner proves Ask tab ownership and visible-submit behavior, not just
-     the current simple Saved/search/back path.
+   - Standalone smoke post-checks are now harder to fool: `submit_query` and
+     `back` require route/state text or changed-dump proof, and a fake-adb
+     unchanged-dump regression covers the old false-positive path.
+   - Current proof target: keep Ask-owned submit behavior in local emulator /
+     instrumentation contracts first. Use physical hardware only as a milestone
+     touch/streaming/review truth check, not as the next required Ask-owned
+     validation lane.

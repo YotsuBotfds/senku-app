@@ -439,7 +439,8 @@ Do not treat this as a full replacement yet for the broader PowerShell capture h
 
 ## Spark-Ready UI Validation Pack
 
-When Spark workers need a consistent Android UI smoke pass without ad hoc command drift, use:
+When workers need a consistent local Android UI smoke pass without ad hoc
+command drift, use:
 
 - [`scripts/run_android_ui_validation_pack.ps1`](./scripts/run_android_ui_validation_pack.ps1)
 
@@ -452,11 +453,11 @@ What it does:
   - `summary.json`
   - `summary.csv`
 
-Typical command:
+Typical local contract-first command:
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File .\scripts\run_android_ui_validation_pack.ps1 `
-  -Devices "RFCX607ZM8L","R92X51AG48D" `
+  -Devices "emulator-5556","emulator-5560","emulator-5554","emulator-5558" `
   -InferenceMode preserve `
   -InstallApk
 ```
@@ -483,11 +484,16 @@ Output:
 - `artifacts/ui_validation/<timestamp>/summary.json`
 - `artifacts/ui_validation/<timestamp>/summary.csv`
 
-Use this as the default validation lane for Spark UI slices that touch:
+Use local emulator/instrumentation contracts as the default validation lane for
+UI slices that touch:
 - `DetailActivity`
 - answer rendering/streaming behavior
 - provenance/source rail UI
 - follow-up composer visibility/layout
+
+Physical-device packs remain milestone truth checks for touch feel, streaming
+behavior, keyboard quirks, and external-review proof; do not make them the
+default lane for Ask-owned submit behavior.
 
 ## Mobile Execution Notes
 

@@ -79,8 +79,10 @@ Worker M tracking note only. No Android source or test edits in this lane.
    - Keep Search as retrieval/navigation and Ask as answer generation/composer
      handoff. Do not let shared input plumbing blur labels, submit targets, or
      restored selected-tab ownership.
-   - Future proof should include both phone and tablet, portrait and landscape,
-     with explicit dump assertions for selected mode and submit target.
+   - Future proof should stay local and contract-first: fixed emulator posture
+     lanes plus instrumentation/dump assertions for selected mode and submit
+     target. Use physical devices only for milestone touch/streaming/review
+     checks.
 
 3. Saved definition
    - Current product definition: Saved means saved guides only.
@@ -118,9 +120,9 @@ Worker M tracking note only. No Android source or test edits in this lane.
 
 ## Suggested Next Proof
 
-- Run a focused state-pack or equivalent manual proof that captures Ask,
-  Search, Emergency, Saved, and Back paths across phone/tablet portrait and
-  landscape.
+- Run a focused local state-pack or instrumentation-backed proof that captures
+  Ask, Search, Emergency, Saved, and Back paths across the fixed emulator
+  posture lanes.
 - Attach normalized screenshot/dump references for every finding before
   dispatching source changes.
 
