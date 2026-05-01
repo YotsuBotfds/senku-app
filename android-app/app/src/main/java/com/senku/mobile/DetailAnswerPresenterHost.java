@@ -91,7 +91,9 @@ final class DetailAnswerPresenterHost implements AnswerPresenter.Host {
         if (kind == AnswerPresenter.Kind.TABLET_FOLLOWUP) {
             activity.clearTabletFollowUpSelectionState();
         }
-        activity.applyFollowUpGenerationSuccess(kind);
+        activity.applyFollowUpGenerationSuccess(kind, result == null || result.answerRun == null
+            ? ""
+            : result.answerRun.query);
         activity.renderDetailState();
         if (kind != AnswerPresenter.Kind.TABLET_FOLLOWUP) {
             activity.refreshRelatedGuides();

@@ -114,6 +114,19 @@ final class FollowUpComposerController {
         return FollowUpComposerState.idle("", safeState.surface);
     }
 
+    static FollowUpComposerState resolveGenerationSuccess(
+        FollowUpComposerState state,
+        String submittedQuery
+    ) {
+        FollowUpComposerState safeState = safeState(state);
+        String currentDraft = safeState.submitQuery();
+        String completedQuery = FollowUpComposerState.normalizeDraft(submittedQuery);
+        if (currentDraft.isEmpty() || currentDraft.equals(completedQuery)) {
+            return FollowUpComposerState.idle("", safeState.surface);
+        }
+        return FollowUpComposerState.idle(currentDraft, safeState.surface);
+    }
+
     static FollowUpComposerState resolveGenerationFailure(
         FollowUpComposerState state,
         String failureMessage,
@@ -124,7 +137,11 @@ final class FollowUpComposerController {
         if (retryQuery.isEmpty()) {
             retryQuery = safeState.submitQuery();
         }
-        return FollowUpComposerState.idle(retryQuery, safeState.surface)
+        String restoredDraft = safeState.submitQuery();
+        if (restoredDraft.isEmpty() || restoredDraft.equals(retryQuery)) {
+            restoredDraft = retryQuery;
+        }
+        return FollowUpComposerState.idle(restoredDraft, safeState.surface)
             .withFailure(failureMessage, retryQuery);
     }
 

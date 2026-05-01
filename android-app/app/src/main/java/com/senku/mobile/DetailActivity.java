@@ -6848,12 +6848,15 @@ public final class DetailActivity extends AppCompatActivity {
 
     void clearPhoneFollowUpInput() { followUpInput.setText(""); }
 
-    void applyFollowUpGenerationSuccess(AnswerPresenter.Kind kind) {
+    void applyFollowUpGenerationSuccess(AnswerPresenter.Kind kind, String submittedQuery) {
         if (kind != AnswerPresenter.Kind.PHONE_FOLLOWUP && kind != AnswerPresenter.Kind.TABLET_FOLLOWUP) {
             return;
         }
         FollowUpComposerState completed =
-            FollowUpComposerController.resolveGenerationSuccess(buildFollowUpComposerStateForKind(kind));
+            FollowUpComposerController.resolveGenerationSuccess(
+                buildFollowUpComposerStateForKind(kind),
+                submittedQuery
+            );
         lastFailedQuery = completed.retryQuery();
         if (kind == AnswerPresenter.Kind.TABLET_FOLLOWUP) {
             tabletComposerText = completed.draftText;

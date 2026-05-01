@@ -101,6 +101,72 @@ public final class FollowUpComposerControllerTest {
     }
 
     @Test
+    public void successfulGenerationClearsOnlyMatchingSubmittedDraft() {
+        FollowUpComposerState sameDraft = FollowUpComposerState.idle(
+            "  inspect the lower seam  ",
+            FollowUpComposerState.Surface.PHONE
+        );
+        FollowUpComposerState emptyDraftAfterStart = FollowUpComposerState.idle(
+            "",
+            FollowUpComposerState.Surface.TABLET
+        );
+
+        FollowUpComposerState phoneCompleted =
+            FollowUpComposerController.resolveGenerationSuccess(
+                sameDraft,
+                "inspect the lower seam"
+            );
+        FollowUpComposerState tabletCompleted =
+            FollowUpComposerController.resolveGenerationSuccess(
+                emptyDraftAfterStart,
+                "inspect the lower seam"
+            );
+
+        assertEquals("", phoneCompleted.draftText);
+        assertEquals("", phoneCompleted.retryQuery());
+        assertEquals(FollowUpComposerState.Surface.PHONE, phoneCompleted.surface);
+        assertEquals("", tabletCompleted.draftText);
+        assertEquals(FollowUpComposerState.Surface.TABLET, tabletCompleted.surface);
+    }
+
+    @Test
+    public void successfulGenerationPreservesDifferentInProgressDraft() {
+        FollowUpComposerState editedWhileRunning = FollowUpComposerState.idle(
+            "  a newer follow-up draft  ",
+            FollowUpComposerState.Surface.TABLET
+        ).withFailure("old failure", "old failed query");
+
+        FollowUpComposerState completed =
+            FollowUpComposerController.resolveGenerationSuccess(
+                editedWhileRunning,
+                "submitted query"
+            );
+
+        assertEquals("a newer follow-up draft", completed.draftText);
+        assertEquals("", completed.failureMessage);
+        assertEquals("", completed.retryQuery());
+        assertEquals(FollowUpComposerState.Surface.TABLET, completed.surface);
+    }
+
+    @Test
+    public void successfulGenerationPreservesVisibleDraftWhenSubmittedQueryMissing() {
+        FollowUpComposerState editedWhileRunning = FollowUpComposerState.idle(
+            "  keep this visible draft  ",
+            FollowUpComposerState.Surface.PHONE
+        );
+
+        FollowUpComposerState completed =
+            FollowUpComposerController.resolveGenerationSuccess(
+                editedWhileRunning,
+                " \n\t "
+            );
+
+        assertEquals("keep this visible draft", completed.draftText);
+        assertEquals("", completed.retryQuery());
+        assertEquals(FollowUpComposerState.Surface.PHONE, completed.surface);
+    }
+
+    @Test
     public void generationStartClearsSubmittedDraftBeforeAnswerCompletes() {
         FollowUpComposerState submitted = FollowUpComposerState.idle(
             "  inspect the lower seam  ",
@@ -156,6 +222,32 @@ public final class FollowUpComposerControllerTest {
 
         assertEquals("retry visible wording", failed.draftText);
         assertEquals("retry visible wording", failed.retryQuery());
+    }
+
+    @Test
+    public void failedGenerationPreservesDifferentInProgressDraftButRetriesSubmittedQuery() {
+        FollowUpComposerState editedWhileRunning = FollowUpComposerState.idle(
+            "  newer draft to keep  ",
+            FollowUpComposerState.Surface.PHONE
+        );
+
+        FollowUpComposerState failed =
+            FollowUpComposerController.resolveGenerationFailure(
+                editedWhileRunning,
+                "offline answer failed",
+                "  submitted query  "
+            );
+        FollowUpComposerController.RetryDecision retry =
+            FollowUpComposerController.resolveRetry(failed, "");
+        FollowUpComposerController.SubmitDecision submit =
+            FollowUpComposerController.resolveSubmit(failed);
+
+        assertEquals("newer draft to keep", failed.draftText);
+        assertEquals("submitted query", failed.retryQuery());
+        assertEquals(FollowUpComposerController.RetryAction.RETRY, retry.action);
+        assertEquals("submitted query", retry.query);
+        assertEquals(FollowUpComposerController.SubmitAction.SUBMIT, submit.action);
+        assertEquals("newer draft to keep", submit.query);
     }
 
     @Test
