@@ -1,6 +1,6 @@
 # Backend Cleanup Phase Tracker
 
-Last updated after pushed cleanup through `48f50d67` on 2026-05-01.
+Last updated after pushed cleanup through `3426b121` on 2026-05-01.
 
 Purpose: prevent future agents from rerunning Ask/query backend cleanup that is already complete. Keep this note short; implementation detail belongs in commits and tests.
 
@@ -370,17 +370,23 @@ Purpose: prevent future agents from rerunning Ask/query backend cleanup that is 
   `2fb9ecf7f3691c52c10845cd72cf5da6ef816edb9838b5c0f8d3e53de38e1120`,
   physical phone serial, installed pack identity, screenshots, dumps, logcat,
   and bundle paths.
-- Main review-display gating is current through `9c631441`: tablet search
-  header formatting now routes through `MainReviewDisplayPolicy`, keeping
-  review latency/display decisions behind the same policy boundary as phone
-  search chrome and preview copy.
-- Pack search finalization cleanup is current through `206994b5`:
+- Main review-display gating is current through `3e8e0c35`: tablet search
+  header formatting and adapter search-row visual state now route through
+  `MainReviewDisplayPolicy`, keeping review latency/display decisions behind
+  the same policy boundary as phone search chrome and preview copy.
+- Pack search finalization cleanup is current through `3426b121`:
   `PackRepository` funnels repeated combined-hit projection, prerank telemetry,
   rerank timing, and rerank telemetry through `finalizeCombinedHitsForSearch()`
-  without changing route merge behavior.
-- Detail tablet state-builder cleanup is current through `48f50d67`:
-  tablet xref row projection now lives in `DetailTabletStateBuilder`, with
-  focused tests for label trimming, relation buckets, and null/empty input.
+  without changing route merge behavior; focused telemetry coverage now guards
+  vector-disabled, centroid-missing, and hybrid finalization shapes.
+- Detail tablet state-builder cleanup is current through `b991ad58`:
+  tablet xref row projection and turn-state projection now live in
+  `DetailTabletStateBuilder`, with focused tests for label trimming, relation
+  buckets, active-turn selection, and null/empty input.
+- Tracker is refreshed through pushed head `3426b121`. Final focused gate after
+  that head passed: `MainReviewDisplayPolicyTest`,
+  `DetailTabletStateBuilderTest`, `PackRepositoryTelemetryTest`, and
+  `PackRepositoryRerankTimingTest`.
 
 ## Remaining Next Slices
 
