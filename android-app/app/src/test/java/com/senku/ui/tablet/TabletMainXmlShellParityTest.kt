@@ -266,6 +266,40 @@ class TabletMainXmlShellParityTest {
     }
 
     @Test
+    fun portraitAndLandscapeSearchPreviewUsesRev03TypographyTokens() {
+        listOf("layout-sw600dp-port", "layout-sw600dp-land").forEach { qualifier ->
+            val layout = mainLayout(qualifier)
+            val expectedTitleSize = if (qualifier == "layout-sw600dp-port") "16sp" else "20sp"
+            val expectedBodySize = if (qualifier == "layout-sw600dp-port") "12sp" else "16sp"
+            val expectedBodyMaxLines = if (qualifier == "layout-sw600dp-port") "4" else "6"
+
+            val kicker = layout.elementByAndroidId("tablet_search_preview_kicker")
+            assertEquals("@style/TextAppearance.Senku.Rev03.MonoCaps", kicker.android("textAppearance"))
+            assertEquals("@font/jetbrains_mono", kicker.android("fontFamily"))
+            assertEquals("10sp", kicker.android("textSize"))
+            assertEquals("@color/senku_rev03_ink_2", kicker.android("textColor"))
+
+            val title = layout.elementByAndroidId("tablet_search_preview_title")
+            assertEquals("@style/TextAppearance.Senku.Rev03.SectionTitle", title.android("textAppearance"))
+            assertEquals(expectedTitleSize, title.android("textSize"))
+            assertEquals("@color/senku_rev03_ink_0", title.android("textColor"))
+
+            val meta = layout.elementByAndroidId("tablet_search_preview_meta")
+            assertEquals("@style/TextAppearance.Senku.Rev03.MonoCaps", meta.android("textAppearance"))
+            assertEquals("@font/jetbrains_mono", meta.android("fontFamily"))
+            assertEquals("10sp", meta.android("textSize"))
+            assertEquals("0.08", meta.android("letterSpacing"))
+            assertEquals("@color/senku_rev03_ink_2", meta.android("textColor"))
+
+            val body = layout.elementByAndroidId("tablet_search_preview_body")
+            assertEquals("@style/TextAppearance.Senku.Rev03.UiBody", body.android("textAppearance"))
+            assertEquals(expectedBodySize, body.android("textSize"))
+            assertEquals(expectedBodyMaxLines, body.android("maxLines"))
+            assertEquals("@color/senku_rev03_ink_1", body.android("textColor"))
+        }
+    }
+
+    @Test
     fun portraitTabletHomeSearchInputUsesLighterUnboxedDensity() {
         val layout = mainLayout("layout-sw600dp-port")
         val input = layout.elementByAndroidId("search_input")

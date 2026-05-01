@@ -58,9 +58,6 @@ enum class BottomTabBarLayoutMode {
     VERTICAL_RAIL,
 }
 
-private val BottomTabLabelFontSize = 10.5.sp
-private val BottomTabLabelLineHeight = 12.sp
-
 data class BottomTabModel(
     val destination: BottomTabDestination,
     val label: String,
@@ -188,14 +185,19 @@ fun SenkuBottomTabBar(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(1.dp)
+                    .height(PhoneBottomTabMetrics.DividerHeightDp.dp)
                     .background(colors.hairline),
             )
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(start = 8.dp, top = 5.dp, end = 8.dp, bottom = 7.dp),
-                horizontalArrangement = Arrangement.spacedBy(4.dp),
+                    .padding(
+                        start = PhoneBottomTabMetrics.HorizontalPaddingDp.dp,
+                        top = PhoneBottomTabMetrics.TopPaddingDp.dp,
+                        end = PhoneBottomTabMetrics.HorizontalPaddingDp.dp,
+                        bottom = PhoneBottomTabMetrics.BottomPaddingDp.dp,
+                    ),
+                horizontalArrangement = Arrangement.spacedBy(PhoneBottomTabMetrics.ItemSpacingDp.dp),
             ) {
                 tabs.forEach { tab ->
                     val selected = tab.destination == activeTab
@@ -223,7 +225,7 @@ private fun BottomTabItem(
     val colors = SenkuTheme.colors
     val tint = if (selected) colors.accent else colors.ink2
     val verticalRail = layoutMode == BottomTabBarLayoutMode.VERTICAL_RAIL
-    val itemHeight = if (verticalRail) NavRailMetrics.ItemHeightDp.dp else 48.dp
+    val itemHeight = if (verticalRail) NavRailMetrics.ItemHeightDp.dp else PhoneBottomTabMetrics.ItemHeightDp.dp
 
     Column(
         modifier = modifier
@@ -234,25 +236,33 @@ private fun BottomTabItem(
                 role = Role.Tab,
             )
             .padding(
-                horizontal = if (verticalRail) NavRailMetrics.ItemHorizontalPaddingDp.dp else 4.dp,
-                vertical = if (verticalRail) NavRailMetrics.ItemVerticalPaddingDp.dp else 4.dp,
+                horizontal = if (verticalRail) {
+                    NavRailMetrics.ItemHorizontalPaddingDp.dp
+                } else {
+                    PhoneBottomTabMetrics.ItemHorizontalPaddingDp.dp
+                },
+                vertical = if (verticalRail) {
+                    NavRailMetrics.ItemVerticalPaddingDp.dp
+                } else {
+                    PhoneBottomTabMetrics.ItemVerticalPaddingDp.dp
+                },
             ),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(
-            if (verticalRail) NavRailMetrics.IconLabelGapDp.dp else 2.dp,
+            if (verticalRail) NavRailMetrics.IconLabelGapDp.dp else PhoneBottomTabMetrics.IconLabelGapDp.dp,
             Alignment.CenterVertically,
         ),
     ) {
         BottomTabIcon(
             destination = tab.destination,
             tint = tint,
-            modifier = Modifier.size(if (verticalRail) NavRailMetrics.IconSizeDp.dp else 20.dp),
+            modifier = Modifier.size(if (verticalRail) NavRailMetrics.IconSizeDp.dp else PhoneBottomTabMetrics.IconSizeDp.dp),
         )
         Text(
             text = tab.label,
             style = SenkuTheme.typography.tag.copy(
-                fontSize = if (verticalRail) NavRailMetrics.LabelFontSizeSp.sp else BottomTabLabelFontSize,
-                lineHeight = if (verticalRail) NavRailMetrics.LabelLineHeightSp.sp else BottomTabLabelLineHeight,
+                fontSize = if (verticalRail) NavRailMetrics.LabelFontSizeSp.sp else PhoneBottomTabMetrics.LabelFontSizeSp.sp,
+                lineHeight = if (verticalRail) NavRailMetrics.LabelLineHeightSp.sp else PhoneBottomTabMetrics.LabelLineHeightSp.sp,
                 fontWeight = if (selected) FontWeight.Bold else FontWeight.Normal,
             ),
             color = tint,

@@ -19,7 +19,7 @@ class TypographyTokenAuditTest {
 
         assertTrue(
             "Visible Rev03 XML shell text should use Senku font/textAppearance tokens unless " +
-                "the entry is a documented legacy phone shell or hidden placeholder exception:\n" +
+                "the entry is a documented hidden placeholder or tablet-shell exception:\n" +
                 violations.joinToString(separator = "\n"),
             violations.isEmpty(),
         )
@@ -68,6 +68,20 @@ class TypographyTokenAuditTest {
             textSize = "11sp",
             lineHeight = "15.4sp",
             letterSpacing = "0.09",
+        )
+        assertTextAppearanceMirrors(
+            name = "TextAppearance.Senku.Rev03.NavLabel",
+            style = DefaultSenkuTypography.navLabel,
+            textSize = "10sp",
+            lineHeight = "13sp",
+            letterSpacing = "0",
+        )
+        assertTextAppearanceMirrors(
+            name = "TextAppearance.Senku.Rev03.ChromeMono",
+            style = DefaultSenkuTypography.chromeMono,
+            textSize = "9sp",
+            lineHeight = "12sp",
+            letterSpacing = "0",
         )
         assertTextAppearanceMirrors(
             name = "TextAppearance.Senku.Rev03.Tag",
@@ -197,13 +211,6 @@ class TypographyTokenAuditTest {
             ?.parentFile
             ?.name
             .orEmpty()
-
-        // The phone XML shell predates the Rev03 text-appearance bridge and still carries
-        // hand-sized framework appearances. Keep the exception folder-scoped so new tablet
-        // shell text cannot inherit raw monospace by accident.
-        if (layoutFolder == "layout" || layoutFolder == "layout-land") {
-            return true
-        }
 
         // A few visible tablet-shell labels still use framework appearances as inert defaults,
         // with the actual Rev03 scale or emphasis supplied explicitly on the element.

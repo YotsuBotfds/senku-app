@@ -24,8 +24,10 @@
             android:gravity="center"
             android:includeFontPadding="false"
             android:text="@string/app_badge_letter"
-            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textAppearance="@style/TextAppearance.Senku.Rev03.MonoCaps"
             android:textColor="@color/senku_rev03_accent"
+            android:textFontWeight="700"
+            android:textSize="14sp"
             android:textStyle="bold" />
 
         <FrameLayout
@@ -303,11 +305,10 @@
                     android:layout_weight="1"
                     android:accessibilityLiveRegion="polite"
                     android:ellipsize="end"
-                    android:fontFamily="monospace"
                     android:includeFontPadding="false"
                     android:maxLines="1"
                     android:text="@string/status_starting"
-                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:textAppearance="@style/TextAppearance.Senku.Rev03.ChromeMono"
                     android:textColor="@color/senku_rev03_ok"
                     android:textSize="9sp"
                     android:textStyle="bold" />
@@ -317,11 +318,10 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:ellipsize="end"
-                    android:fontFamily="monospace"
                     android:includeFontPadding="false"
                     android:maxLines="1"
                     android:text="@string/info_loading"
-                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:textAppearance="@style/TextAppearance.Senku.Rev03.ChromeMono"
                     android:textColor="@color/senku_rev03_ink_2"
                     android:textStyle="bold" />
             </LinearLayout>
@@ -404,10 +404,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="14dp"
-                android:fontFamily="monospace"
                 android:includeFontPadding="false"
                 android:text="&#8212; CATEGORIES &#8226; 12"
-                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textAppearance="@style/TextAppearance.Senku.Rev03.ChromeMono"
                 android:textColor="@color/senku_rev03_ink_2"
                 android:textSize="9sp"
                 android:textStyle="bold" />
@@ -552,12 +551,11 @@
             android:layout_height="38dp"
             android:accessibilityLiveRegion="polite"
             android:ellipsize="end"
-            android:fontFamily="monospace"
             android:gravity="center_vertical"
             android:includeFontPadding="false"
             android:maxLines="1"
             android:text="@string/results_header_loading"
-            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textAppearance="@style/TextAppearance.Senku.Rev03.ChromeMono"
             android:textColor="@color/senku_rev03_ink_2"
             android:textSize="9sp"
             android:textStyle="bold"
@@ -589,11 +587,10 @@
                 android:layout_marginStart="10dp"
                 android:layout_weight="1"
                 android:ellipsize="end"
-                android:fontFamily="monospace"
                 android:includeFontPadding="false"
                 android:maxLines="1"
                 android:text="@string/search_hint"
-                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textAppearance="@style/TextAppearance.Senku.Rev03.SmallBody"
                 android:textColor="@color/senku_rev03_ink_0"
                 android:textSize="11sp" />
 
@@ -601,10 +598,9 @@
                 android:id="@+id/phone_search_count_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:fontFamily="monospace"
                 android:includeFontPadding="false"
                 android:text="0 RESULTS"
-                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textAppearance="@style/TextAppearance.Senku.Rev03.ChromeMono"
                 android:textColor="@color/senku_rev03_accent"
                 android:textSize="10sp"
                 android:textStyle="bold" />

@@ -37,6 +37,8 @@ data class SenkuTypographyTokens(
     val smallBody: TextStyle,
     val microBody: TextStyle,
     val monoCaps: TextStyle,
+    val navLabel: TextStyle,
+    val chromeMono: TextStyle,
     val tag: TextStyle,
 )
 
@@ -88,6 +90,20 @@ internal val DefaultSenkuTypography = SenkuTypographyTokens(
         fontSize = 11.sp,
         lineHeight = 15.4.sp,
         letterSpacing = 0.09.em,
+    ),
+    navLabel = TextStyle(
+        fontFamily = InterTight,
+        fontWeight = FontWeight.Normal,
+        fontSize = 10.sp,
+        lineHeight = 13.sp,
+        letterSpacing = 0.em,
+    ),
+    chromeMono = TextStyle(
+        fontFamily = JetBrainsMono,
+        fontWeight = FontWeight.Normal,
+        fontSize = 9.sp,
+        lineHeight = 12.sp,
+        letterSpacing = 0.em,
     ),
     tag = TextStyle(
         fontFamily = InterTight,

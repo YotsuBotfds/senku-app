@@ -58,7 +58,18 @@ private object TopBarChromePolicy {
     val labeledBackActionWidth = 60.dp
     val backActionHorizontalPadding = 6.dp
     val backActionTextSpacing = 2.dp
+    val leadingStartGap = 6.dp
+    val leadingDividerWidth = 1.dp
     val leadingDividerHeight = 24.dp
+    val leadingEndGap = 10.dp
+    val titleLineSpacing = 1.dp
+    val titleUnderlineTopPadding = 2.dp
+    val titleUnderlineHeight = 1.dp
+    val trailingGap = 8.dp
+    val trailingActionSpacing = 5.dp
+    val dangerPillHorizontalPadding = 8.dp
+    val dangerPillVerticalPadding = 3.dp
+    val actionCornerRadius = 6.dp
 }
 
 private const val TopBarBackActionLabel = "Back"
@@ -159,19 +170,19 @@ fun SenkuTopBar(
             )
         }
         if (actionLayout.leading.isNotEmpty()) {
-            Spacer(modifier = Modifier.width(6.dp))
+            Spacer(modifier = Modifier.width(TopBarChromePolicy.leadingStartGap))
             Box(
                 modifier = Modifier
-                    .width(1.dp)
+                    .width(TopBarChromePolicy.leadingDividerWidth)
                     .height(TopBarChromePolicy.leadingDividerHeight)
                     .background(colors.hairlineStrong),
             )
-            Spacer(modifier = Modifier.width(10.dp))
+            Spacer(modifier = Modifier.width(TopBarChromePolicy.leadingEndGap))
         }
 
         Column(
             modifier = Modifier.weight(1f),
-            verticalArrangement = Arrangement.spacedBy(1.dp),
+            verticalArrangement = Arrangement.spacedBy(TopBarChromePolicy.titleLineSpacing),
         ) {
             Text(
                 text = title,
@@ -193,16 +204,16 @@ fun SenkuTopBar(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 2.dp)
-                    .height(1.dp)
+                    .padding(top = TopBarChromePolicy.titleUnderlineTopPadding)
+                    .height(TopBarChromePolicy.titleUnderlineHeight)
                     .background(colors.hairlineStrong),
             )
         }
 
         if (!dangerPillLabel.isNullOrBlank() || actionLayout.trailing.isNotEmpty()) {
-            Spacer(modifier = Modifier.width(8.dp))
+            Spacer(modifier = Modifier.width(TopBarChromePolicy.trailingGap))
             Row(
-                horizontalArrangement = Arrangement.spacedBy(5.dp),
+                horizontalArrangement = Arrangement.spacedBy(TopBarChromePolicy.trailingActionSpacing),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 if (!dangerPillLabel.isNullOrBlank()) {
@@ -256,7 +267,10 @@ private fun DangerPill(
         modifier = modifier
             .clip(RoundedCornerShape(999.dp))
             .background(colors.danger.copy(alpha = 0.14f))
-            .padding(horizontal = 8.dp, vertical = 3.dp),
+            .padding(
+                horizontal = TopBarChromePolicy.dangerPillHorizontalPadding,
+                vertical = TopBarChromePolicy.dangerPillVerticalPadding,
+            ),
         contentAlignment = Alignment.Center,
     ) {
         Text(
@@ -276,7 +290,7 @@ private fun TopBarActionButton(
     modifier: Modifier = Modifier,
 ) {
     val colors = SenkuTheme.colors
-    val shape = RoundedCornerShape(6.dp)
+    val shape = RoundedCornerShape(TopBarChromePolicy.actionCornerRadius)
     val shouldShowBackLabel = action.kind == TopBarActionKind.Back && action.showsBackLabel
     val containerColor = when {
         action.isActive -> colors.ok.copy(alpha = 0.10f)
@@ -359,6 +373,16 @@ internal fun topBarChromeLabelFontSizeSpForTest(): Float = TopBarChromePolicy.ch
 internal fun topBarBackIconSizeDpForTest(): Int = TopBarChromePolicy.actionIconSize.value.toInt()
 
 internal fun topBarLeadingDividerHeightDpForTest(): Int = TopBarChromePolicy.leadingDividerHeight.value.toInt()
+
+internal fun topBarLeadingStartGapDpForTest(): Int = TopBarChromePolicy.leadingStartGap.value.toInt()
+
+internal fun topBarLeadingEndGapDpForTest(): Int = TopBarChromePolicy.leadingEndGap.value.toInt()
+
+internal fun topBarTrailingGapDpForTest(): Int = TopBarChromePolicy.trailingGap.value.toInt()
+
+internal fun topBarTrailingActionSpacingDpForTest(): Int = TopBarChromePolicy.trailingActionSpacing.value.toInt()
+
+internal fun topBarTitleUnderlineHeightDpForTest(): Int = TopBarChromePolicy.titleUnderlineHeight.value.toInt()
 
 internal fun topBarActionWidthDpForTest(kind: TopBarActionKind): Int =
     when (kind) {

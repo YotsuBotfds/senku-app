@@ -78,6 +78,15 @@ class TopBarTest {
     }
 
     @Test
+    fun topChromeMetricsPreserveCurrentSpacingContract() {
+        assertEquals(6, topBarLeadingStartGapDpForTest())
+        assertEquals(10, topBarLeadingEndGapDpForTest())
+        assertEquals(8, topBarTrailingGapDpForTest())
+        assertEquals(5, topBarTrailingActionSpacingDpForTest())
+        assertEquals(1, topBarTitleUnderlineHeightDpForTest())
+    }
+
+    @Test
     fun topChromeTypographyKeepsCompactTitleAndActionLabelScale() {
         val titleFontSize = topBarTitleFontSizeSpForTest()
         val chromeLabelFontSize = topBarChromeLabelFontSizeSpForTest()

@@ -1004,7 +1004,7 @@
                         android:fontFamily="@font/jetbrains_mono"
                         android:includeFontPadding="false"
                         android:text="PREVIEW"
-                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:textAppearance="@style/TextAppearance.Senku.Rev03.MonoCaps"
                         android:textColor="@color/senku_rev03_ink_2"
                         android:textSize="10sp"
                         android:textStyle="bold" />
@@ -1014,7 +1014,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="18dp"
-                        android:textAppearance="?android:attr/textAppearanceLarge"
+                        android:textAppearance="@style/TextAppearance.Senku.Rev03.SectionTitle"
                         android:textColor="@color/senku_rev03_ink_0"
                         android:textSize="20sp"
                         android:textStyle="bold" />
@@ -1026,7 +1026,7 @@
                         android:layout_marginTop="14dp"
                         android:fontFamily="@font/jetbrains_mono"
                         android:letterSpacing="0.08"
-                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:textAppearance="@style/TextAppearance.Senku.Rev03.MonoCaps"
                         android:textColor="@color/senku_rev03_ink_2"
                         android:textSize="10sp"
                         android:textStyle="bold" />
@@ -1044,7 +1044,7 @@
                         android:layout_marginTop="16dp"
                         android:lineSpacingExtra="2dp"
                         android:maxLines="6"
-                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:textAppearance="@style/TextAppearance.Senku.Rev03.UiBody"
                         android:textColor="@color/senku_rev03_ink_1"
                         android:textSize="16sp" />
 

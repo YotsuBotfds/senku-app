@@ -40,6 +40,22 @@ class BottomTabBarTest {
     }
 
     @Test
+    fun phoneBottomTabMetricsPreserveCurrentDimensions() {
+        assertEquals(1, PhoneBottomTabMetrics.DividerHeightDp)
+        assertEquals(8, PhoneBottomTabMetrics.HorizontalPaddingDp)
+        assertEquals(5, PhoneBottomTabMetrics.TopPaddingDp)
+        assertEquals(7, PhoneBottomTabMetrics.BottomPaddingDp)
+        assertEquals(4, PhoneBottomTabMetrics.ItemSpacingDp)
+        assertEquals(48, PhoneBottomTabMetrics.ItemHeightDp)
+        assertEquals(4, PhoneBottomTabMetrics.ItemHorizontalPaddingDp)
+        assertEquals(4, PhoneBottomTabMetrics.ItemVerticalPaddingDp)
+        assertEquals(20, PhoneBottomTabMetrics.IconSizeDp)
+        assertEquals(10.5f, PhoneBottomTabMetrics.LabelFontSizeSp)
+        assertEquals(12f, PhoneBottomTabMetrics.LabelLineHeightSp)
+        assertEquals(2, PhoneBottomTabMetrics.IconLabelGapDp)
+    }
+
+    @Test
     fun legacyComposeNavRailTokenNamesPointAtCentralMetrics() {
         assertEquals(NavRailMetrics.IconSizeDp, Rev03ComposeNavRailIconSizeDp)
         assertEquals(NavRailMetrics.LabelFontSizeSp, Rev03ComposeNavRailLabelFontSizeSp)
