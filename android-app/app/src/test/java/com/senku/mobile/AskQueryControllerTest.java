@@ -418,6 +418,39 @@ public final class AskQueryControllerTest {
     }
 
     @Test
+    public void supportedReviewedRuntimePublishesTerminalPreparedModesWithoutModelOrHost() {
+        String query = "child swallowed unknown cleaner";
+
+        assertReviewedTerminalModeWithoutRuntime(
+            "reviewed confident",
+            query,
+            reviewedPrepared(query),
+            OfflineAnswerEngine.AnswerMode.CONFIDENT,
+            false,
+            true,
+            1
+        );
+        assertReviewedTerminalModeWithoutRuntime(
+            "no-source abstain",
+            query,
+            noSourcePrepared(query),
+            OfflineAnswerEngine.AnswerMode.ABSTAIN,
+            true,
+            false,
+            0
+        );
+        assertReviewedTerminalModeWithoutRuntime(
+            "uncertain fit",
+            query,
+            uncertainFitPrepared(query),
+            OfflineAnswerEngine.AnswerMode.UNCERTAIN_FIT,
+            false,
+            false,
+            1
+        );
+    }
+
+    @Test
     public void repositoryUnavailableWinsBeforeBlankOrDeterministicChecks() {
         FakeHost host = readyHost();
         host.repositoryAvailable = false;
@@ -700,6 +733,39 @@ public final class AskQueryControllerTest {
         }
     }
 
+    private static void assertReviewedTerminalModeWithoutRuntime(
+        String scenario,
+        String query,
+        OfflineAnswerEngine.PreparedAnswer prepared,
+        OfflineAnswerEngine.AnswerMode expectedMode,
+        boolean expectedAbstain,
+        boolean expectedDeterministic,
+        int expectedSources
+    ) {
+        FakeHost host = readyHost();
+        host.modelFile = null;
+        host.hostInferenceSettings = settings(false);
+        host.reviewedCardRuntimeEnabled = true;
+        FakeEngine engine = new FakeEngine();
+        engine.preparedToReturn = prepared;
+
+        new AskQueryController(host, engine, askQuery -> null).runAsk(query);
+
+        assertEquals(
+            scenario + " events",
+            List.of("prepare-started:" + query, "prepare-success"),
+            host.events
+        );
+        assertEquals(scenario + " harness", List.of(AskQueryController.HARNESS_PREPARE), host.begunHarnessTags);
+        assertEquals(scenario + " prepare calls", 1, engine.prepareCalls);
+        assertNull(scenario + " model file", engine.lastModelFile);
+        assertSame(scenario + " prepared answer", prepared, host.lastPreparedSuccess);
+        assertEquals(scenario + " mode", expectedMode, host.lastPreparedSuccess.mode);
+        assertEquals(scenario + " abstain", expectedAbstain, host.lastPreparedSuccess.abstain);
+        assertEquals(scenario + " deterministic", expectedDeterministic, host.lastPreparedSuccess.deterministic);
+        assertEquals(scenario + " source count", expectedSources, host.lastPreparedSuccess.sources.size());
+    }
+
     private static OfflineAnswerEngine.PreparedAnswer generativePrepared(String query) {
         return OfflineAnswerEngine.PreparedAnswer.restoredGenerative(
             query,
@@ -711,6 +777,49 @@ public final class AskQueryControllerTest {
             "",
             "system",
             "prompt"
+        );
+    }
+
+    private static OfflineAnswerEngine.PreparedAnswer reviewedPrepared(String query) {
+        return OfflineAnswerEngine.PreparedAnswer.restoredDeterministic(
+            query,
+            "Call poison control, EMS, or the fastest clinician now.",
+            List.of(sampleSource()),
+            false,
+            "answer_card:poisoning_unknown_ingestion",
+            System.currentTimeMillis() - 500L
+        );
+    }
+
+    private static OfflineAnswerEngine.PreparedAnswer noSourcePrepared(String query) {
+        return OfflineAnswerEngine.PreparedAnswer.abstain(
+            query,
+            OfflineAnswerEngine.buildAbstainAnswerBody(query, List.of()),
+            List.of(),
+            false,
+            System.currentTimeMillis() - 500L,
+            0L,
+            0L
+        );
+    }
+
+    private static OfflineAnswerEngine.PreparedAnswer uncertainFitPrepared(String query) {
+        return OfflineAnswerEngine.PreparedAnswer.uncertainFit(
+            query,
+            OfflineAnswerEngine.buildUncertainFitAnswerBody(
+                query,
+                List.of(sampleSource()),
+                OfflineAnswerEngine.ConfidenceLabel.MEDIUM,
+                true
+            ),
+            List.of(sampleSource()),
+            false,
+            System.currentTimeMillis() - 500L,
+            0L,
+            0L,
+            0L,
+            OfflineAnswerEngine.ConfidenceLabel.MEDIUM,
+            true
         );
     }
 
