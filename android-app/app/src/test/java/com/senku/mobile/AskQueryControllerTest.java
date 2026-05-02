@@ -239,6 +239,50 @@ public final class AskQueryControllerTest {
     }
 
     @Test
+    public void policyRejectedHostDoesNotCountAsRuntimePathWithoutModel() {
+        FakeHost host = readyHost();
+        host.modelFile = null;
+        host.hostInferenceSettings = new HostInferenceConfig.Settings(
+            true,
+            "http://example.com:1235/v1",
+            "test-model"
+        );
+        host.reviewedCardRuntimeEnabled = false;
+        FakeEngine engine = new FakeEngine();
+        AskQueryController controller = new AskQueryController(host, engine, query -> null);
+
+        controller.runAsk("how do i draft a legal contract");
+
+        assertEquals(List.of("model-unavailable:false"), host.events);
+        assertEquals(0, engine.prepareCalls);
+        assertEquals(List.of(), host.begunHarnessTags);
+    }
+
+    @Test
+    public void reviewedCardRuntimeStillPreparesWhenHostIsPolicyRejected() {
+        FakeHost host = readyHost();
+        host.modelFile = null;
+        host.hostInferenceSettings = new HostInferenceConfig.Settings(
+            true,
+            "http://example.com:1235/v1",
+            "test-model"
+        );
+        host.reviewedCardRuntimeEnabled = true;
+        FakeEngine engine = new FakeEngine();
+        engine.preparedToReturn = generativePrepared("child swallowed unknown cleaner");
+        AskQueryController controller = new AskQueryController(host, engine, query -> null);
+
+        controller.runAsk("child swallowed unknown cleaner");
+
+        assertEquals(
+            List.of("prepare-started:child swallowed unknown cleaner", "prepare-success"),
+            host.events
+        );
+        assertEquals(1, engine.prepareCalls);
+        assertNull(engine.lastModelFile);
+    }
+
+    @Test
     public void repositoryUnavailableWinsBeforeBlankOrDeterministicChecks() {
         FakeHost host = readyHost();
         host.repositoryAvailable = false;
