@@ -45,6 +45,38 @@ public final class MainActivityHomeChromeTest {
     }
 
     @Test
+    public void rawAutomationQueryPayloadRequiresAuthorizedAutomationPath() {
+        assertEquals(
+            null,
+            MainActivity.automationIntentStateForTest("water%20storage", true, null, false)
+        );
+        assertEquals(
+            null,
+            MainActivity.automationIntentStateForTest(null, false, "what%20next", false)
+        );
+
+        MainAutomationIntentPolicy.IntentState authorized =
+            MainActivity.automationIntentStateForTest("water%20storage", true, "what%20next", true);
+
+        assertEquals("water storage", authorized.decodedAutoQuery);
+        assertEquals("what next", authorized.decodedAutoFollowUpQuery);
+        assertTrue(authorized.autoAsk);
+    }
+
+    @Test
+    public void emptyAskLaneIntentRemainsAvailableWithoutQueryPayload() {
+        MainAutomationIntentPolicy.IntentState emptyAsk =
+            MainActivity.automationIntentStateForTest(null, true, null, false);
+
+        assertEquals(null, emptyAsk.decodedAutoQuery);
+        assertTrue(emptyAsk.autoAsk);
+        assertTrue(MainAutomationIntentPolicy.shouldOpenEmptyAutoAskLane(
+            emptyAsk.decodedAutoQuery,
+            emptyAsk.autoAsk
+        ));
+    }
+
+    @Test
     public void categoryShelfModelsAreSortedByCountThenContractOrder() {
         List<CategoryShelfItemModel> items = MainActivity.buildHomeChromeCategoryShelfItems(
             Arrays.asList(

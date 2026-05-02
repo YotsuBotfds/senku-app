@@ -1248,10 +1248,29 @@ public final class MainActivity extends AppCompatActivity {
         if (intent == null) {
             return null;
         }
-        return MainAutomationIntentPolicy.IntentState.fromEncoded(
+        return automationIntentStateForTest(
             intent.getStringExtra(EXTRA_AUTO_QUERY),
             intent.getBooleanExtra(EXTRA_AUTO_ASK, false),
-            intent.getStringExtra(EXTRA_AUTO_FOLLOWUP_QUERY)
+            intent.getStringExtra(EXTRA_AUTO_FOLLOWUP_QUERY),
+            ReviewDemoPolicy.isAuthorizedAutomationIntent(intent, this)
+        );
+    }
+
+    static MainAutomationIntentPolicy.IntentState automationIntentStateForTest(
+        String encodedAutoQuery,
+        boolean autoAsk,
+        String encodedAutoFollowUpQuery,
+        boolean automationAuthorized
+    ) {
+        if (!automationAuthorized
+            && (!safe(encodedAutoQuery).trim().isEmpty()
+                || !safe(encodedAutoFollowUpQuery).trim().isEmpty())) {
+            return null;
+        }
+        return MainAutomationIntentPolicy.IntentState.fromEncoded(
+            encodedAutoQuery,
+            autoAsk,
+            encodedAutoFollowUpQuery
         );
     }
 
