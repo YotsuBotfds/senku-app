@@ -105,6 +105,23 @@ public final class DetailRelatedGuidePreviewPolicyTest {
     }
 
     @Test
+    public void staleSelectedSourceKeyFallsBackToFirstRealSourceAfterSourceListRefresh() {
+        SearchResult placeholder = result("", "Placeholder");
+        SearchResult firstRealSource = result("GD-214", "Water Storage");
+        SearchResult secondRealSource = result("GD-215", "Rainwater Catchment");
+
+        assertEquals(
+            firstRealSource,
+            DetailRelatedGuidePreviewPolicy.selectedSourceForRelatedGuideGraph(
+                true,
+                false,
+                "gd-999|stale|source",
+                Arrays.asList(placeholder, firstRealSource, secondRealSource)
+            )
+        );
+    }
+
+    @Test
     public void previewStateDecisionsPreserveCurrentVisibilityRules() {
         assertTrue(DetailRelatedGuidePreviewPolicy.shouldUsePreviewPanel(true, true, true, true));
         assertFalse(DetailRelatedGuidePreviewPolicy.shouldUsePreviewPanel(true, true, false, true));
