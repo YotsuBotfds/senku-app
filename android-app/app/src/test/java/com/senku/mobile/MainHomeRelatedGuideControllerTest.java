@@ -42,6 +42,19 @@ public final class MainHomeRelatedGuideControllerTest {
     }
 
     @Test
+    public void fallsBackToFirstValidPinnedGuideWhenEarlierSavedGuideIsInvalid() {
+        MainActivity.HomeGuideAnchor anchor = controller.selectHomeGuideAnchor(
+            guides(null, guide("   ", "No Id"), guide(" gd-202 ", "Fallback Water")),
+            Collections.emptyList(),
+            formatter
+        );
+
+        assertEquals("gd-202", anchor.guideId);
+        assertEquals("gd-202 - Fallback Water", anchor.label);
+        assertFalse(anchor.fromRecentThread);
+    }
+
+    @Test
     public void pinnedGuideWithoutGuideIdDoesNotProduceAnchor() {
         MainActivity.HomeGuideAnchor anchor = controller.selectHomeGuideAnchor(
             guides(guide("   ", "No Id")),

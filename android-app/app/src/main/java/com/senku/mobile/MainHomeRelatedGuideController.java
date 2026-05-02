@@ -16,12 +16,17 @@ final class MainHomeRelatedGuideController {
         if (pinnedGuides == null || pinnedGuides.isEmpty()) {
             return null;
         }
-        SearchResult pinnedGuide = pinnedGuides.get(0);
-        String guideId = safe(pinnedGuide == null ? null : pinnedGuide.guideId).trim();
-        if (guideId.isEmpty()) {
-            return null;
+        for (SearchResult pinnedGuide : pinnedGuides) {
+            String guideId = safe(pinnedGuide == null ? null : pinnedGuide.guideId).trim();
+            if (!guideId.isEmpty()) {
+                return new MainActivity.HomeGuideAnchor(
+                    guideId,
+                    formatter.buildGuideReference(pinnedGuide, guideId),
+                    false
+                );
+            }
         }
-        return new MainActivity.HomeGuideAnchor(guideId, formatter.buildGuideReference(pinnedGuide, guideId), false);
+        return null;
     }
 
     MainActivity.HomeGuideAnchor selectLatestRecentThreadHomeGuideAnchor(
