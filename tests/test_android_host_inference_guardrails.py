@@ -9,6 +9,17 @@ HOST_CONFIG = REPO_ROOT / "android-app" / "app" / "src" / "main" / "java" / "com
 NETWORK_SECURITY_CONFIG = REPO_ROOT / "android-app" / "app" / "src" / "main" / "res" / "xml" / "network_security_config.xml"
 HARNESS_COMMON = REPO_ROOT / "scripts" / "android_harness_common.psm1"
 ANDROID_README = REPO_ROOT / "android-app" / "README.md"
+ANDROID_MAIN_JAVA = REPO_ROOT / "android-app" / "app" / "src" / "main" / "java"
+APPROVED_NETWORK_CALL_SITES = {"com/senku/mobile/HostInferenceClient.java"}
+NETWORK_PRIMITIVES = (
+    "HttpURLConnection",
+    ".openConnection(",
+    ".toURL()",
+    "OkHttpClient",
+    ".newCall(",
+    "Socket(",
+    "InetAddress",
+)
 
 
 class AndroidHostInferenceGuardrailTest(unittest.TestCase):
@@ -48,6 +59,26 @@ class AndroidHostInferenceGuardrailTest(unittest.TestCase):
 
         self.assertIn("app defaults stay emulator-friendly at `http://10.0.2.2:1235/v1`", readme)
         self.assertRegex(readme, re.compile(r"physical devices.*adb reverse.*127\.0\.0\.1", re.DOTALL))
+
+    def test_production_network_call_sites_stay_limited_to_host_inference_client(self):
+        hits = []
+        for path in ANDROID_MAIN_JAVA.rglob("*.java"):
+            relative_path = path.relative_to(ANDROID_MAIN_JAVA).as_posix()
+            source = path.read_text(encoding="utf-8")
+            for primitive in NETWORK_PRIMITIVES:
+                if primitive in source:
+                    hits.append((relative_path, primitive))
+
+        offenders = [
+            f"{relative_path}: {primitive}"
+            for relative_path, primitive in hits
+            if relative_path not in APPROVED_NETWORK_CALL_SITES
+        ]
+        self.assertEqual([], offenders)
+        self.assertTrue(
+            any(relative_path == "com/senku/mobile/HostInferenceClient.java" for relative_path, _ in hits),
+            "expected HostInferenceClient to remain the single approved network call site",
+        )
 
 
 if __name__ == "__main__":
