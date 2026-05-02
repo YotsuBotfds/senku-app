@@ -4,13 +4,14 @@ Pointer-only rollup for agents. Keep detailed logs in artifacts and test output.
 
 ## Current Proofed Head
 
-- Latest full checkpoint proof: `521ed52a` (`Sanitize persisted host endpoints on toggle`)
-- Checkpoint time: `2026-05-02T05:52:56-05:00`
-- **Proof gap**: hardening diagnostics through `cc3f5891` (`Remove dead scripted settle smoke arg`) have not been re-checkpoint-proofed yet. Unit/assemble gates and phone-basic live smoke passed at `cc3f5891` per task context, but checkpoint proof ladder has not been re-run at that head.
+- Latest full checkpoint proof: `5498c12a` (`Document Android RC1 release gate`)
+- Checkpoint time: `2026-05-02T16:59:28-05:00`
+- RC-1 proof ladder passed at `5498c12a`. All gates green; no proof gap.
 - Gates:
-  - `:app:testDebugUnitTest` passed
-  - `:app:assembleDebug :app:assembleDebugAndroidTest` passed
-  - `git diff --check` passed
+  - `:app:testDebugUnitTest` — BUILD SUCCESSFUL, 23 tasks up-to-date
+  - `:app:assembleDebug :app:assembleDebugAndroidTest` — BUILD SUCCESSFUL, 62 tasks up-to-date
+  - `git diff --check` — clean
+  - `phone-basic` live smoke on `emulator-5556` — OK (2 tests), artifact dir: `artifacts/instrumented_ui_smoke/20260502_165928_113/emulator-5556`
   - working tree clean
 
 ## Recent Live Android Proofs
