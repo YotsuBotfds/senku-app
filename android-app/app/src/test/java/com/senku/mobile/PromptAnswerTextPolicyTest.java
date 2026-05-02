@@ -127,6 +127,27 @@ public final class PromptAnswerTextPolicyTest {
     }
 
     @Test
+    public void cleanAnswerKeepsAnswerWhenModelEchoesQuestionAndFormatChrome() {
+        String cleaned = PromptAnswerTextPolicy.cleanAnswer(
+            "Question: how do i keep tinder dry in rain?\n" +
+                "Answer format: Short answer / Steps / Limits.\n" +
+                "Answer: Short answer: Keep tinder sealed until the fire lay is ready. " +
+                "Steps: 1. Store tinder under cover. 2. Open it only at lighting time. " +
+                "Limits or safety: Do not light under low brush."
+        );
+
+        assertEquals(
+            "Short answer: Keep tinder sealed until the fire lay is ready.\n\n" +
+                "Steps:\n" +
+                "1. Store tinder under cover.\n" +
+                "2. Open it only at lighting time.\n\n" +
+                "Limits or safety:\n" +
+                "Do not light under low brush.",
+            cleaned
+        );
+    }
+
+    @Test
     public void lowCoverageDetectionMatchesKnownFallbackLanguageOnly() {
         assertTrue(PromptAnswerTextPolicy.isLowCoverageAnswer(
             "The retrieved notes do not address that material."

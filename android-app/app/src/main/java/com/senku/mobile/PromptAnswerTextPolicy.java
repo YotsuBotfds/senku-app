@@ -32,6 +32,7 @@ final class PromptAnswerTextPolicy {
         if (!jsonAnswer.isEmpty()) {
             cleaned = jsonAnswer;
         }
+        cleaned = removePromptEchoLines(cleaned);
         if (cleaned.regionMatches(true, 0, "answer:", 0, "answer:".length())) {
             cleaned = cleaned.substring("answer:".length()).trim();
         } else if (cleaned.regionMatches(true, 0, "a:", 0, "a:".length())) {
@@ -134,6 +135,17 @@ final class PromptAnswerTextPolicy {
             return true;
         }
         return false;
+    }
+
+    private static String removePromptEchoLines(String text) {
+        String cleaned = safe(text).trim();
+        cleaned = cleaned.replaceFirst(
+            "(?is)^\\s*question:\\s*.*?(?=\\b(answer|short answer|summary|steps|key points|limits or safety|risks or limits):)",
+            ""
+        );
+        cleaned = cleaned.replaceAll("(?im)^\\s*question:\\s*.*$", "");
+        cleaned = cleaned.replaceAll("(?im)^\\s*answer format:\\s*.*$", "");
+        return cleaned.trim();
     }
 
     private static String extractJsonAnswerText(String text) {
