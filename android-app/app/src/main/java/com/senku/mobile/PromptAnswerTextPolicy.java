@@ -1,5 +1,7 @@
 package com.senku.mobile;
 
+import org.json.JSONObject;
+
 import java.util.LinkedHashMap;
 import java.util.Locale;
 
@@ -25,6 +27,10 @@ final class PromptAnswerTextPolicy {
         String cleaned = safe(answer).trim();
         if (cleaned.isEmpty()) {
             return EMPTY_ANSWER_TEXT;
+        }
+        String jsonAnswer = extractJsonAnswerText(cleaned);
+        if (!jsonAnswer.isEmpty()) {
+            cleaned = jsonAnswer;
         }
         if (cleaned.regionMatches(true, 0, "answer:", 0, "answer:".length())) {
             cleaned = cleaned.substring("answer:".length()).trim();
@@ -122,6 +128,29 @@ final class PromptAnswerTextPolicy {
             return true;
         }
         return false;
+    }
+
+    private static String extractJsonAnswerText(String text) {
+        String normalized = safe(text).trim();
+        if (!normalized.startsWith("{") || !normalized.endsWith("}")) {
+            return "";
+        }
+        try {
+            JSONObject object = new JSONObject(normalized);
+            String[] fields = {"answer", "short_answer", "content", "text"};
+            for (String field : fields) {
+                if (!object.has(field)) {
+                    continue;
+                }
+                String value = safe(object.optString(field, "")).trim();
+                if (!value.isEmpty()) {
+                    return value;
+                }
+            }
+        } catch (Exception ignored) {
+            return "";
+        }
+        return "";
     }
 
     private static int wordCount(String text) {

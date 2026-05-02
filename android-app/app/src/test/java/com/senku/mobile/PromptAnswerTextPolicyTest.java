@@ -70,6 +70,14 @@ public final class PromptAnswerTextPolicyTest {
     }
 
     @Test
+    public void sanitizeAnswerTextRejectsBlankModelAnswers() {
+        assertEquals("", PromptAnswerTextPolicy.sanitizeAnswerText(null));
+        assertEquals("", PromptAnswerTextPolicy.sanitizeAnswerText("   "));
+        assertEquals(PromptAnswerTextPolicy.EMPTY_ANSWER_TEXT, PromptAnswerTextPolicy.cleanAnswer(null));
+        assertEquals(PromptAnswerTextPolicy.EMPTY_ANSWER_TEXT, PromptAnswerTextPolicy.cleanAnswer("   "));
+    }
+
+    @Test
     public void sanitizeAnswerTextRejectsTokenAndScriptNoise() {
         assertEquals("", PromptAnswerTextPolicy.sanitizeAnswerText("<pad><eos>"));
         assertEquals("", PromptAnswerTextPolicy.sanitizeAnswerText("<unk>"));
@@ -103,6 +111,18 @@ public final class PromptAnswerTextPolicyTest {
                 "Limits or safety:\n" +
                 "Do not light under low brush.",
             cleaned
+        );
+    }
+
+    @Test
+    public void cleanAnswerExtractsSimpleJsonAnswerFields() {
+        assertEquals(
+            "Use dry tinder.",
+            PromptAnswerTextPolicy.cleanAnswer("{\"answer\":\"Use dry tinder.\"}")
+        );
+        assertEquals(
+            "Keep water covered.",
+            PromptAnswerTextPolicy.cleanAnswer("{\"short_answer\":\"Keep water covered.\"}")
         );
     }
 
