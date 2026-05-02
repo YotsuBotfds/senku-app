@@ -50,7 +50,8 @@ public final class PackRepository implements AutoCloseable {
         if (vectorFile != null && vectorFile.isFile()) {
             try {
                 loadedStore = new VectorStore(vectorFile);
-            } catch (IOException ignored) {
+            } catch (IOException exc) {
+                logWarning("VectorStore load failed; continuing with lexical-only search", exc);
                 loadedStore = null;
             }
         }
@@ -1956,6 +1957,13 @@ public final class PackRepository implements AutoCloseable {
             Log.d(TAG, emptySafe(message));
         } catch (RuntimeException ignored) {
             // Local JVM unit tests do not mock android.util.Log.
+        }
+    }
+
+    private static void logWarning(String message, Exception exc) {
+        try {
+            Log.w(TAG, message, exc);
+        } catch (RuntimeException ignored) {
         }
     }
 
