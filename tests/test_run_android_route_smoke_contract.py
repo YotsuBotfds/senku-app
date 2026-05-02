@@ -25,7 +25,7 @@ class AndroidRouteSmokeContractTests(unittest.TestCase):
         self.assertNotIn("$output = & $adb @AdbArgs", self.script)
         self.assertIn("[int]$InstallTimeoutMilliseconds = 180000", self.script)
         self.assertIn("[int]$InstrumentationTimeoutMilliseconds = 300000", self.script)
-        self.assertIn("$expectedTests = 1", self.script)
+        self.assertIn("$expectedTests = 2", self.script)
         self.assertIn(":app:assembleDebug :app:assembleDebugAndroidTest", self.script)
         self.assertIn("Acquire-AndroidHarnessDeviceLock", self.script)
         self.assertIn("Resolve-AndroidHarnessDeviceList -Devices $Devices", self.script)
@@ -86,7 +86,7 @@ class AndroidRouteSmokeContractTests(unittest.TestCase):
             self.assertEqual(summary["failed_devices"], [])
             self.assertEqual(summary["failed_device_results"], [])
             self.assertEqual(summary["timed_out_devices"], [])
-            self.assertEqual(summary["expected_tests"], 1)
+            self.assertEqual(summary["expected_tests"], 2)
             self.assertEqual(
                 summary["instrumentation_class"],
                 "com.senku.mobile.PackRepositoryCurrentHeadRouteSmokeAndroidTest",
@@ -104,7 +104,7 @@ class AndroidRouteSmokeContractTests(unittest.TestCase):
                 "- instrumentation_class: com.senku.mobile.PackRepositoryCurrentHeadRouteSmokeAndroidTest",
                 summary_markdown,
             )
-            self.assertIn("- expected_tests: 1", summary_markdown)
+            self.assertIn("- expected_tests: 2", summary_markdown)
             self.assertIn("- devices: emulator-5554, emulator-5556", summary_markdown)
             self.assertIn("- passed_count: 2", summary_markdown)
             self.assertIn("- failed_count: 0", summary_markdown)
@@ -284,7 +284,7 @@ class AndroidRouteSmokeContractTests(unittest.TestCase):
                     "  if ($mode -eq 'instrument_failures') { Write-Output 'FAILURES!!!'; exit 0 }",
                     "  if ($mode -eq 'instrument_timeout') { Start-Sleep -Milliseconds 600; Write-Output 'late instrumentation output'; exit 0 }",
                     "  Write-Output 'com.senku.mobile.PackRepositoryCurrentHeadRouteSmokeAndroidTest:.'",
-                    "  Write-Output 'OK (1 test)'",
+                    "  Write-Output 'OK (2 tests)'",
                     "  exit 0",
                     "}",
                     "Write-Output ('unrecognized fake adb args: ' + ($args -join ' '))",

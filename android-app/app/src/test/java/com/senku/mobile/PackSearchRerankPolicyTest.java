@@ -73,7 +73,71 @@ public final class PackSearchRerankPolicyTest {
         PackRepository.RerankedResult first = reranked.get(0);
         assertSame(shelter, first.result);
         assertTrue(first.metadataBonus > 0);
-        assertEquals(expectedSingleGuideFinalScore(first.metadataBonus), first.finalScore, 0.0);
+        assertTrue(first.finalScore > expectedSingleGuideFinalScore(first.metadataBonus));
+    }
+
+    @Test
+    public void emergencyShelterVectorOwnerStaysInsideTopRouteWindow() {
+        SearchResult winterVector = result(
+            "GD-024",
+            "Winter Survival Systems",
+            "Cold Weather Shelter",
+            "vector",
+            "survival",
+            "cold_weather",
+            "general",
+            "Build a simple rain shelter with tarp and cord ideas only as a cold weather aside."
+        );
+        SearchResult winterLexical = result(
+            "GD-024",
+            "Winter Survival Systems",
+            "Emergency Rain Aside",
+            "lexical",
+            "survival",
+            "cold_weather",
+            "general",
+            "Rain and shelter notes for winter travel."
+        );
+        SearchResult greywater = result(
+            "GD-673",
+            "Greywater Recycling & Treatment Systems",
+            "Drainage",
+            "lexical",
+            "water",
+            "greywater",
+            "general",
+            "Manage rain runoff and cordon treatment areas."
+        );
+        SearchResult earthShelter = result(
+            "GD-873",
+            "Underground Shelter & Bunker Construction",
+            "Bunker Cover",
+            "lexical",
+            "building",
+            "earth_shelter",
+            "earth_shelter",
+            "Build shelter cover with roof drainage."
+        );
+        SearchResult tarpShelter = result(
+            "GD-345",
+            "Tarp & Cord Shelters",
+            "Rain shelter setup",
+            "vector",
+            "survival",
+            "tarp_shelter,weatherproofing",
+            "emergency_shelter",
+            "Build a simple rain shelter by tying a tarp ridgeline with cord and tensioning runoff edges."
+        );
+
+        List<PackRepository.RerankedResult> reranked = PackSearchRerankPolicy.maybeRerankResultsDetailed(
+            PackRepository.QueryTerms.fromQuery("How do I build a simple rain shelter from tarp and cord?"),
+            Arrays.asList(winterVector, winterLexical, greywater, earthShelter, tarpShelter),
+            4
+        );
+
+        int ownerIndex = indexOfGuide(reranked, "GD-345");
+        assertTrue(ownerIndex >= 0);
+        assertTrue(ownerIndex < 4);
     }
 
     @Test
@@ -134,6 +198,41 @@ public final class PackSearchRerankPolicyTest {
             structureType,
             topicTags
         );
+    }
+
+    private static SearchResult result(
+        String guideId,
+        String title,
+        String sectionHeading,
+        String retrievalMode,
+        String category,
+        String topicTags,
+        String structureType,
+        String body
+    ) {
+        return new SearchResult(
+            title,
+            "",
+            body,
+            body,
+            guideId,
+            sectionHeading,
+            category,
+            retrievalMode,
+            "starter",
+            "immediate",
+            structureType,
+            topicTags
+        );
+    }
+
+    private static int indexOfGuide(List<PackRepository.RerankedResult> reranked, String guideId) {
+        for (int index = 0; index < reranked.size(); index++) {
+            if (guideId.equals(reranked.get(index).result.guideId)) {
+                return index;
+            }
+        }
+        return -1;
     }
 
     private static double expectedSingleGuideFinalScore(int score) {

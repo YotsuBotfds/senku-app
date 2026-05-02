@@ -27,7 +27,7 @@ $lockRoot = Join-Path $repoRoot "artifacts\harness_locks"
 $commonHarnessModule = Join-Path $PSScriptRoot "android_harness_common.psm1"
 $instrumentationClass = "com.senku.mobile.PackRepositoryCurrentHeadRouteSmokeAndroidTest"
 $instrumentationRunner = "com.senku.mobile.test/androidx.test.runner.AndroidJUnitRunner"
-$expectedTests = 1
+$expectedTests = 2
 
 if (-not (Test-Path -LiteralPath $commonHarnessModule)) {
     throw "android_harness_common.psm1 not found at $commonHarnessModule"
@@ -154,7 +154,8 @@ function Test-InstrumentationPassed {
         return $false
     }
 
-    return ($stdout -match "OK \(1 test\)" -or $stdout -match "DRY RUN:")
+    $expectedOkPattern = "OK \($expectedTests tests?\)"
+    return ($stdout -match $expectedOkPattern -or $stdout -match "DRY RUN:")
 }
 
 function Acquire-DeviceLock {

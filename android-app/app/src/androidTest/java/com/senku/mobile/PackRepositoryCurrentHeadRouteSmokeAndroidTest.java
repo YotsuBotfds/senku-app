@@ -42,6 +42,26 @@ public final class PackRepositoryCurrentHeadRouteSmokeAndroidTest {
         }
     }
 
+    @Test
+    public void bundledCurrentHeadVectorPackPreservesRainShelterOwnerLane() throws Exception {
+        Context context = ApplicationProvider.getApplicationContext();
+        PackInstaller.InstalledPack pack = CurrentHeadAnswerCardPackTestSupport.installBundledCurrentHeadPack(
+            context,
+            "current-head rain shelter vector route smoke"
+        );
+
+        try (PackRepository repository = new PackRepository(pack.databaseFile, pack.vectorFile)) {
+            assertTrue("current-head vector store should be enabled for route smoke", repository.hasVectorStore());
+            RouteSpec spec = new RouteSpec(
+                "How do I build a simple rain shelter from tarp and cord?",
+                "emergency_shelter",
+                ids("GD-345"),
+                ids("GD-345")
+            );
+            assertRainShelterOwnerParity(repository, spec);
+        }
+    }
+
     private static void assertRainShelterOwnerParity(PackRepository repository, RouteSpec spec) {
         QueryMetadataProfile metadataProfile = QueryMetadataProfile.fromQuery(spec.query);
         assertEquals(spec.query, spec.expectedStructure, metadataProfile.preferredStructureType());

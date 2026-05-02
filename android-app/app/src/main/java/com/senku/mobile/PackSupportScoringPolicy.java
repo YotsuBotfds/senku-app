@@ -11,6 +11,7 @@ final class PackSupportScoringPolicy {
     static SupportBreakdown supportBreakdown(PackRepository.QueryTerms queryTerms, SearchResult result) {
         String retrievalMode = PackRepository.emptySafe(result.retrievalMode).toLowerCase(QUERY_LOCALE);
         int lexicalSupport = "vector".equals(retrievalMode)
+            && !shouldScoreVectorLexicalSupport(queryTerms, result)
             ? 0
             : PackRepository.lexicalKeywordScore(
                 queryTerms,
@@ -43,6 +44,18 @@ final class PackSupportScoringPolicy {
             sectionBonus,
             structurePenalty
         );
+    }
+
+    private static boolean shouldScoreVectorLexicalSupport(PackRepository.QueryTerms queryTerms, SearchResult result) {
+        if (queryTerms == null || result == null || queryTerms.metadataProfile == null) {
+            return false;
+        }
+        String preferredStructureType = queryTerms.metadataProfile.preferredStructureType();
+        if (PackRepository.emptySafe(preferredStructureType).trim().isEmpty()) {
+            return false;
+        }
+        String resultStructureType = PackRepository.emptySafe(result.structureType).trim().toLowerCase(QUERY_LOCALE);
+        return preferredStructureType.equals(resultStructureType);
     }
 
     static int specializedExplicitTopicBonus(PackRepository.QueryTerms queryTerms, SearchResult result) {

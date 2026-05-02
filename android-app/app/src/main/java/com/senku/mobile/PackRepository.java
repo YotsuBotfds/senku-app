@@ -640,7 +640,8 @@ public final class PackRepository implements AutoCloseable {
             telemetrySink,
             PackSearchFinalizationPolicy.buildPrerankCandidateTelemetryLine(query, combinedHits, limit)
         );
-        List<SearchResult> projectedResults = PackRetrievalFusionPolicy.toSearchResults(combinedHits, limit);
+        int projectionLimit = rerankProjectionLimit(queryTerms, combinedHits.size(), limit);
+        List<SearchResult> projectedResults = PackRetrievalFusionPolicy.toSearchResults(combinedHits, projectionLimit);
         long rerankStartedAtNs = elapsedRealtimeNanosSafe();
         List<RerankedResult> rerankedDetails = maybeRerankResultsDetailed(queryTerms, projectedResults, limit);
         List<SearchResult> reranked = extractSearchResults(rerankedDetails);
@@ -653,6 +654,13 @@ public final class PackRepository implements AutoCloseable {
             PackSearchFinalizationPolicy.buildRerankedCandidateTelemetryLine(query, rerankedDetails)
         );
         return PackSearchFinalizationPolicy.toSearchFinalization(reranked, rerankElapsedMs);
+    }
+
+    private static int rerankProjectionLimit(QueryTerms queryTerms, int candidateCount, int limit) {
+        if (limit <= 0 || !shouldApplyMetadataRerank(queryTerms)) {
+            return limit;
+        }
+        return Math.max(limit, Math.min(candidateCount, Math.max(24, limit * 4)));
     }
 
     private static void emitCandidateTelemetry(CandidateTelemetrySink telemetrySink, String line) {

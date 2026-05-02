@@ -200,6 +200,48 @@ public final class PackRepositoryTelemetryTest {
     }
 
     @Test
+    public void vectorOwnerRowsRecoverLexicalSupportForStructureMatchedQueries() {
+        String query = "How do I build a simple rain shelter from tarp and cord?";
+        SearchResult ownerVector = detailedSearchResult(
+            "Tarp & Cord Shelters",
+            "Build a simple rain shelter with a tarp ridgeline, cord tension, and runoff angle.",
+            "GD-345",
+            "Rain shelter setup",
+            "survival",
+            "vector",
+            "starter",
+            "immediate",
+            "emergency_shelter",
+            "tarp_shelter,weatherproofing"
+        );
+        SearchResult offOwnerVector = detailedSearchResult(
+            "Winter Survival Systems",
+            "Build a simple rain shelter with a tarp ridgeline, cord tension, and runoff angle.",
+            "GD-024",
+            "Cold weather setup",
+            "survival",
+            "vector",
+            "starter",
+            "immediate",
+            "general",
+            "cold_weather"
+        );
+
+        PackRepository.SupportBreakdown ownerBreakdown = PackRepository.supportBreakdownForTest(query, ownerVector);
+        PackRepository.SupportBreakdown offOwnerBreakdown = PackRepository.supportBreakdownForTest(query, offOwnerVector);
+        List<PackRepository.RerankedResult> reranked = PackRepository.maybeRerankResultsDetailedForTest(
+            query,
+            Arrays.asList(offOwnerVector, ownerVector),
+            5
+        );
+        PackRepository.RerankedResult owner = rerankedResult(reranked, "GD-345");
+
+        assertTrue(ownerBreakdown.lexicalSupport > 0);
+        assertEquals(0, offOwnerBreakdown.lexicalSupport);
+        assertTrue(owner.finalScore > expectedSingleGuideFinalScore(owner.metadataBonus));
+    }
+
+    @Test
     public void vectorRowBaseScoreStillReflectsDisplayOnlyDerivation() {
         String query = "How do I build a simple rain shelter from tarp and cord?";
 
@@ -207,7 +249,7 @@ public final class PackRepositoryTelemetryTest {
             query,
             Collections.singletonList(
                 detailedSearchResult(
-                    "Shelter Build Log",
+                    "Camp Inventory Ledger",
                     "Count crates and spare fittings before transport.",
                     "GD-345",
                     "Inventory",
@@ -468,6 +510,30 @@ public final class PackRepositoryTelemetryTest {
     }
 
     @Test
+    public void finalizationReranksStructureOwnerBeyondDisplayWindow() {
+        String query = "How do I build a simple rain shelter from tarp and cord?";
+        ArrayList<String> telemetryLines = new ArrayList<>();
+        List<PackRepository.CombinedHit> combinedHits = Arrays.asList(
+            combinedHit("gd024-vector", "GD-024", "Winter Shelter Overview", "general", 0.016, Integer.MAX_VALUE, 0),
+            combinedHit("gd673-lexical", "GD-673", "Simple Filtration Systems", "general", 0.016, 1, Integer.MAX_VALUE),
+            combinedHit("gd024-vector-2", "GD-024", "Snow Shelter Construction", "general", 0.016, Integer.MAX_VALUE, 1),
+            combinedHit("gd873-lexical", "GD-873", "Excavation Methods & Shoring", "earth_shelter", 0.016, 3, Integer.MAX_VALUE),
+            combinedHit("gd024-vector-3", "GD-024", "Cold Weather Shelter", "general", 0.016, Integer.MAX_VALUE, 2),
+            combinedHit("gd934-lexical", "GD-934", "Simple Routines That Actually Help", "general", 0.016, 5, Integer.MAX_VALUE),
+            combinedHit("gd024-vector-4", "GD-024", "Frostbite Prevention", "general", 0.016, Integer.MAX_VALUE, 3),
+            combinedHit("gd695-lexical", "GD-695", "Tornado Safety", "general", 0.016, 7, Integer.MAX_VALUE),
+            combinedHit("gd345-lexical", "GD-345", "Rainproofing and Water Shedding", "emergency_shelter", 0.015, 8, Integer.MAX_VALUE)
+        );
+
+        PackRepository.SearchFinalization finalization =
+            PackRepository.finalizeCombinedHitsForSearchForTest(query, combinedHits, 4, telemetryLines::add);
+
+        assertEquals("GD-345", finalization.rerankedResults.get(0).guideId);
+        assertFalse(telemetryLines.get(0).contains("GD-345"));
+        assertTrue(telemetryLines.get(1).contains("GD-345"));
+    }
+
+    @Test
     public void telemetryPolicyOwnsSearchOutcomeFallbackStrings() {
         assertSearchOutcome(PackSearchTelemetryPolicy.OUTCOME_PLAIN_LIKE_NO_TERMS);
         assertSearchOutcome(PackSearchTelemetryPolicy.OUTCOME_ROUTE_ONLY);
@@ -552,6 +618,40 @@ public final class PackRepositoryTelemetryTest {
             Integer.MAX_VALUE,
             Float.NEGATIVE_INFINITY
         );
+    }
+
+    private static PackRepository.CombinedHit combinedHit(
+        String chunkId,
+        String guideId,
+        String sectionHeading,
+        String structureType,
+        double score,
+        int lexicalRank,
+        int vectorRank
+    ) {
+        PackRepository.RankedChunk chunk = new PackRepository.RankedChunk(
+            chunkId,
+            Math.min(lexicalRank, vectorRank),
+            "Guide " + guideId,
+            guideId,
+            sectionHeading,
+            "survival",
+            "Build a simple rain shelter with tarp, cord, ridgeline tension, and runoff control.",
+            "starter",
+            "immediate",
+            structureType,
+            "shelter,tarp_shelter,weatherproofing",
+            score,
+            lexicalRank,
+            vectorRank,
+            vectorRank == Integer.MAX_VALUE ? Float.NEGATIVE_INFINITY : 0.9f
+        );
+        PackRepository.CombinedHit hit = new PackRepository.CombinedHit(chunk);
+        hit.rrfScore = score;
+        hit.lexicalRank = lexicalRank;
+        hit.vectorRank = vectorRank;
+        hit.vectorScore = chunk.vectorScore;
+        return hit;
     }
 
     private static void assertFinalizationTelemetryAndTiming(
