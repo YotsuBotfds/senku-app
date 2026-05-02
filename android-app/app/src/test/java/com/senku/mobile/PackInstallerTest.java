@@ -165,6 +165,48 @@ public final class PackInstallerTest {
     }
 
     @Test
+    public void missingRequiredPackColumnsRejectsIncompleteFts5Schema() {
+        String missingColumns = PackInstaller.missingRequiredPackColumnsForTest(Map.of(
+            "guides",
+            Set.of(
+                "guide_id",
+                "title",
+                "category",
+                "difficulty",
+                "description",
+                "body_markdown",
+                "content_role",
+                "time_horizon",
+                "structure_type",
+                "topic_tags"
+            ),
+            "chunks",
+            Set.of(
+                "chunk_id",
+                "vector_row_id",
+                "guide_title",
+                "guide_id",
+                "section_heading",
+                "category",
+                "document",
+                "content_role",
+                "time_horizon",
+                "structure_type",
+                "topic_tags"
+            ),
+            "guide_related",
+            Set.of("guide_id", "related_guide_id"),
+            "lexical_chunks_fts",
+            Set.of("chunk_id", "search_text")
+        ));
+
+        assertEquals(
+            "lexical_chunks_fts(guide_title, guide_id, section_heading, category, content_role, time_horizon, structure_type, topic_tags)",
+            missingColumns
+        );
+    }
+
+    @Test
     public void validateVectorInfoAcceptsMatchingFloat16ManifestAndHeader() throws Exception {
         PackInstaller.validateVectorInfoForTest(
             manifestWithVector("float16", 768),
