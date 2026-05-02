@@ -45,6 +45,48 @@ public final class PackInstallValidationPolicyTest {
         ));
     }
 
+    @Test
+    public void packVersionWinsOverNewerDateOrHigherAnswerCardCount() throws Exception {
+        assertFalse(PackInstallValidationPolicy.shouldInstallFromAssets(
+            false,
+            manifest(1, "2026-05-01T04:21:12Z", 999),
+            manifest(2, "2026-04-01T04:21:12Z", 271)
+        ));
+        assertTrue(PackInstallValidationPolicy.shouldInstallFromAssets(
+            false,
+            manifest(3, "2026-04-01T04:21:12Z", 100),
+            manifest(2, "2026-05-01T04:21:12Z", 999)
+        ));
+    }
+
+    @Test
+    public void sameVersionAndDatePreservesInstalledWhenBundledHasFewerAnswerCards() throws Exception {
+        assertFalse(PackInstallValidationPolicy.shouldInstallFromAssets(
+            false,
+            manifest(2, "2026-04-27T04:21:12Z", 200),
+            manifest(2, "2026-04-27T04:21:12Z", 271)
+        ));
+    }
+
+    @Test
+    public void unparsableGeneratedAtUsesStableStringOrderingBeforeAnswerCardCount() throws Exception {
+        assertTrue(PackInstallValidationPolicy.shouldInstallFromAssets(
+            false,
+            manifest(2, "generated-b", 100),
+            manifest(2, "generated-a", 999)
+        ));
+        assertFalse(PackInstallValidationPolicy.shouldInstallFromAssets(
+            false,
+            manifest(2, "generated-a", 999),
+            manifest(2, "generated-b", 100)
+        ));
+        assertTrue(PackInstallValidationPolicy.shouldInstallFromAssets(
+            false,
+            manifest(2, "generated-a", 300),
+            manifest(2, "generated-a", 271)
+        ));
+    }
+
     private static PackManifest manifest(int packVersion, String generatedAt, int answerCardCount) throws Exception {
         return PackManifest.fromJson(
             "{\n" +
