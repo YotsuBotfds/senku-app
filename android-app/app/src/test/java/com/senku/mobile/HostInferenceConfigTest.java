@@ -105,6 +105,23 @@ public final class HostInferenceConfigTest {
     }
 
     @Test
+    public void applyIntentOverridesRejectsPrivateLanCleartextAndLeavesExistingSettings() {
+        TestContext context = new TestContext();
+        HostInferenceConfig.save(context, true, "http://localhost:1235/v1", "existing-model");
+        Intent intent = new TestIntent()
+            .putExtra(HostInferenceConfig.EXTRA_HOST_INFERENCE_ENABLED, true)
+            .putExtra(HostInferenceConfig.EXTRA_HOST_INFERENCE_URL, "http://192.168.1.50:1235/v1")
+            .putExtra(HostInferenceConfig.EXTRA_HOST_INFERENCE_MODEL, "lan-model");
+
+        assertFalse(HostInferenceConfig.applyIntentOverrides(context, intent));
+
+        HostInferenceConfig.Settings settings = HostInferenceConfig.resolve(context);
+        assertTrue(settings.enabled);
+        assertEquals("http://localhost:1235/v1", settings.baseUrl);
+        assertEquals("existing-model", settings.modelId);
+    }
+
+    @Test
     public void applyIntentOverridesAllowsHttpsEndpointByPolicy() {
         TestContext context = new TestContext();
         Intent intent = new TestIntent()

@@ -118,6 +118,18 @@ public final class HostInferencePolicyTest {
     }
 
     @Test
+    public void privateLanCleartextHostIsRejectedByDefault() {
+        HostInferencePolicy.Decision decision = HostInferencePolicy.evaluate("http://192.168.1.50:1235/v1");
+
+        assertRejected(
+            decision,
+            HostInferencePolicy.Reason.NON_LOCAL_CLEARTEXT_REJECTED,
+            "http",
+            "192.168.1.50"
+        );
+    }
+
+    @Test
     public void blankOrHostlessUrlsAreRejectedBeforeNetworkUse() {
         assertRejected(
             HostInferencePolicy.evaluate(null),
