@@ -437,7 +437,7 @@ public final class PackInstallerTest {
     }
 
     @Test
-    public void shouldInstallFromAssetsRefreshesWhenInstalledVectorHeaderDoesNotMatchManifest() throws Exception {
+    public void shouldInstallFromAssetsRefreshesWhenInstalledVectorHeaderDoesNotMatchManifestDespiteMatchingChecksum() throws Exception {
         Path tempDir = Files.createTempDirectory("pack-installer");
         File manifestFile = tempDir.resolve("senku_manifest.json").toFile();
         File sqliteFile = tempDir.resolve("senku_mobile.sqlite3").toFile();
@@ -452,7 +452,7 @@ public final class PackInstallerTest {
                 sqlite.length,
                 staleVector.length,
                 sha256Hex(sqlite),
-                ""
+                sha256Hex(staleVector)
             ).getBytes(StandardCharsets.UTF_8)
         );
         Files.write(sqliteFile.toPath(), sqlite);

@@ -132,6 +132,34 @@ public final class AnswerPresenterTest {
     }
 
     @Test
+    public void phoneFollowUpUncertainFitPathSkipsPreviewAndPublishesMode() {
+        FakeHost host = new FakeHost(14);
+        FakeEngine engine = new FakeEngine();
+        engine.preparedToReturn = uncertainFitPrepared("uncertain followup");
+        engine.answerRunToReturn = answerRunWithMode(
+            "uncertain followup",
+            OfflineAnswerEngine.AnswerMode.UNCERTAIN_FIT
+        );
+        AnswerPresenter presenter = new AnswerPresenter(host, engine, (body, token) -> body, repo -> repo);
+
+        presenter.prepareThenGenerate(14, AnswerPresenter.Kind.PHONE_FOLLOWUP, null, "uncertain followup");
+
+        assertEquals(
+            List.of(
+                AnswerPresenter.HARNESS_FOLLOWUP_PREPARE,
+                AnswerPresenter.HARNESS_FOLLOWUP_GENERATE
+            ),
+            host.begunTags
+        );
+        assertEquals(List.of("success:PHONE_FOLLOWUP"), host.events);
+        assertNull(host.lastPreparedPreview);
+        assertSame(engine.answerRunToReturn, host.lastResult.answerRun);
+        assertEquals(OfflineAnswerEngine.AnswerMode.UNCERTAIN_FIT, host.lastResult.mode);
+        assertEquals(1, engine.prepareCalls);
+        assertEquals(1, engine.generateCalls);
+    }
+
+    @Test
     public void tabletFollowUpMatchesPhonePreviewAndSuccessFlow() {
         FakeHost host = new FakeHost(15);
         FakeEngine engine = new FakeEngine();
@@ -155,6 +183,39 @@ public final class AnswerPresenterTest {
         assertSame(engine.preparedToReturn, host.lastPreparedPreview);
         assertSame(engine.answerRunToReturn, host.lastResult.answerRun);
         assertEquals(host.lastResult.answerRun.mode, host.lastResult.mode);
+    }
+
+    @Test
+    public void tabletFollowUpUncertainFitPathSkipsPreviewAndPublishesMode() {
+        FakeHost host = new FakeHost(16);
+        FakeEngine engine = new FakeEngine();
+        engine.preparedToReturn = uncertainFitPrepared("tablet uncertain followup");
+        engine.answerRunToReturn = answerRunWithMode(
+            "tablet uncertain followup",
+            OfflineAnswerEngine.AnswerMode.UNCERTAIN_FIT
+        );
+        AnswerPresenter presenter = new AnswerPresenter(host, engine, (body, token) -> body, repo -> repo);
+
+        presenter.prepareThenGenerate(
+            16,
+            AnswerPresenter.Kind.TABLET_FOLLOWUP,
+            null,
+            "tablet uncertain followup"
+        );
+
+        assertEquals(
+            List.of(
+                AnswerPresenter.HARNESS_TABLET_PREPARE,
+                AnswerPresenter.HARNESS_TABLET_GENERATE
+            ),
+            host.begunTags
+        );
+        assertEquals(List.of("success:TABLET_FOLLOWUP"), host.events);
+        assertNull(host.lastPreparedPreview);
+        assertSame(engine.answerRunToReturn, host.lastResult.answerRun);
+        assertEquals(OfflineAnswerEngine.AnswerMode.UNCERTAIN_FIT, host.lastResult.mode);
+        assertEquals(1, engine.prepareCalls);
+        assertEquals(1, engine.generateCalls);
     }
 
     @Test
@@ -337,6 +398,21 @@ public final class AnswerPresenterTest {
         );
     }
 
+    private static OfflineAnswerEngine.PreparedAnswer uncertainFitPrepared(String query) {
+        return OfflineAnswerEngine.PreparedAnswer.uncertainFit(
+            query,
+            "uncertain fit answer",
+            List.of(sampleSource()),
+            false,
+            System.currentTimeMillis() - 500L,
+            0L,
+            0L,
+            0L,
+            OfflineAnswerEngine.ConfidenceLabel.LOW,
+            false
+        );
+    }
+
     private static OfflineAnswerEngine.AnswerRun answerRun(
         String query,
         boolean deterministic,
@@ -359,6 +435,26 @@ public final class AnswerPresenterTest {
             confidenceLabel,
             false,
             false
+        );
+    }
+
+    private static OfflineAnswerEngine.AnswerRun answerRunWithMode(
+        String query,
+        OfflineAnswerEngine.AnswerMode mode
+    ) {
+        return new OfflineAnswerEngine.AnswerRun(
+            query,
+            "final answer",
+            List.of(sampleSource()),
+            250L,
+            false,
+            false,
+            mode == OfflineAnswerEngine.AnswerMode.ABSTAIN,
+            "subtitle",
+            "rule-id",
+            null,
+            OfflineAnswerEngine.ConfidenceLabel.LOW,
+            mode
         );
     }
 

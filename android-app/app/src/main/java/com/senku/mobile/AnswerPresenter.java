@@ -219,7 +219,7 @@ final class AnswerPresenter {
                         modelFile,
                         fallbackQuery
                     );
-                    if (!preparedAnswer.deterministic && !preparedAnswer.abstain) {
+                    if (shouldShowPreparePreview(preparedAnswer)) {
                         host.runTrackedOnUiThread(prepareHarnessToken, () -> {
                             if (!host.isCurrentRequestToken(requestToken)) {
                                 return;
@@ -282,6 +282,13 @@ final class AnswerPresenter {
 
     private static String prepareTagFor(Kind kind) {
         return kind == Kind.TABLET_FOLLOWUP ? HARNESS_TABLET_PREPARE : HARNESS_FOLLOWUP_PREPARE;
+    }
+
+    private static boolean shouldShowPreparePreview(OfflineAnswerEngine.PreparedAnswer preparedAnswer) {
+        return preparedAnswer != null
+            && !preparedAnswer.deterministic
+            && !preparedAnswer.abstain
+            && preparedAnswer.mode != OfflineAnswerEngine.AnswerMode.UNCERTAIN_FIT;
     }
 
     private static String generationTagFor(Kind kind, OfflineAnswerEngine.PreparedAnswer preparedAnswer) {

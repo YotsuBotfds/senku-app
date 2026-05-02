@@ -69,6 +69,15 @@ public final class PackInstallValidationPolicyTest {
     }
 
     @Test
+    public void newerGeneratedAtInstalledManifestIsPreservedEvenWithLowerAnswerCardCount() throws Exception {
+        assertFalse(PackInstallValidationPolicy.shouldInstallFromAssets(
+            false,
+            manifest(2, "2026-04-27T04:21:12Z", 271),
+            manifest(2, "2026-04-28T04:21:12Z", 200)
+        ));
+    }
+
+    @Test
     public void unparsableGeneratedAtUsesStableStringOrderingBeforeAnswerCardCount() throws Exception {
         assertTrue(PackInstallValidationPolicy.shouldInstallFromAssets(
             false,
