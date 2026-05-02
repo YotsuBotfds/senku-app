@@ -60,6 +60,16 @@ public final class HostInferenceResponsePolicyTest {
     }
 
     @Test
+    public void parseResponseBodyRejectsMalformedJson() throws Exception {
+        try {
+            HostInferenceResponsePolicy.parseResponseBody("{ bad json");
+            fail("Expected malformed response body to be rejected");
+        } catch (Exception expected) {
+            // Expected: invalid host JSON must not be treated as an empty or successful answer.
+        }
+    }
+
+    @Test
     public void parseResponseBodyRejectsEmptyChoices() throws Exception {
         assertIllegalStateMessage(
             "{\"choices\": []}",
