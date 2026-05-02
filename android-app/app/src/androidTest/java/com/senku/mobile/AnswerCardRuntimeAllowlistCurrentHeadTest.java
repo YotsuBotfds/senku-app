@@ -96,6 +96,14 @@ public final class AnswerCardRuntimeAllowlistCurrentHeadTest {
                 "bike handlebar hit his belly and now he is pale and dizzy"
             )
         );
+        assertNull(
+            "disabled runtime must not plan foundry-readiness pilot query",
+            AnswerCardRuntime.tryPlan(
+                context,
+                repository,
+                "What should we record about wet floors, cracked crucibles, unknown scrap, ventilation concerns, and owner handoff before casting?"
+            )
+        );
     }
 
     private static void assertPilotPlans(Context context, PackRepository repository) {
@@ -223,6 +231,13 @@ public final class AnswerCardRuntimeAllowlistCurrentHeadTest {
                 "non-pilot current-head card must not satisfy internal-bleeding runtime planner: " + sampledCard,
                 AnswerCardRuntime.planAbdominalInternalBleedingAnswerCardFromCardsForTest(
                     "bike handlebar hit his belly and now he is pale and dizzy",
+                    cards
+                )
+            );
+            assertNull(
+                "non-pilot current-head card must not satisfy foundry-readiness runtime planner: " + sampledCard,
+                AnswerCardRuntime.planFoundryCastingAreaReadinessAnswerCardFromCardsForTest(
+                    "What should we record about wet floors, cracked crucibles, unknown scrap, ventilation concerns, and owner handoff before casting?",
                     cards
                 )
             );
