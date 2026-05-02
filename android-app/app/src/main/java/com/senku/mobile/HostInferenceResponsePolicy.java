@@ -21,6 +21,9 @@ final class HostInferenceResponsePolicy {
         if ("length".equalsIgnoreCase(finishReason.trim())) {
             throw new IllegalStateException("Host inference returned an incomplete answer");
         }
+        if ("content_filter".equalsIgnoreCase(finishReason.trim())) {
+            throw new IllegalStateException("Host inference returned a filtered answer");
+        }
         JSONObject message = firstChoice == null ? null : firstChoice.optJSONObject("message");
         Object content = message == null ? null : message.opt("content");
         String flattened = flattenContent(content).trim();

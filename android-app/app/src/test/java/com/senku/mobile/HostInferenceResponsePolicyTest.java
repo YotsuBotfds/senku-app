@@ -176,6 +176,21 @@ public final class HostInferenceResponsePolicyTest {
         );
     }
 
+    @Test
+    public void parseResponseBodyRejectsContentFilterFinishReasonAsFilteredAnswer() throws Exception {
+        assertIllegalStateMessage(
+            "{\n" +
+                "  \"choices\": [\n" +
+                "    {\n" +
+                "      \"finish_reason\": \"content_filter\",\n" +
+                "      \"message\": {\"content\": \"Short answer: partial filtered text\"}\n" +
+                "    }\n" +
+                "  ]\n" +
+                "}",
+            "Host inference returned a filtered answer"
+        );
+    }
+
     private static void assertIllegalStateMessage(String responseBody, String expectedMessage) throws Exception {
         try {
             HostInferenceResponsePolicy.parseResponseBody(responseBody);
