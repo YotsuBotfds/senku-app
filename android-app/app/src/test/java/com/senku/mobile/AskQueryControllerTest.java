@@ -190,6 +190,36 @@ public final class AskQueryControllerTest {
     }
 
     @Test
+    public void reviewedCardRuntimeRoutePreparesWithoutModelOnlyForSupportedQueries() {
+        FakeHost supported = readyHost();
+        supported.modelFile = null;
+        supported.hostInferenceSettings = settings(false);
+        supported.reviewedCardRuntimeEnabled = true;
+        FakeEngine supportedEngine = new FakeEngine();
+        supportedEngine.preparedToReturn = generativePrepared("child swallowed unknown cleaner");
+        new AskQueryController(supported, supportedEngine, query -> null)
+            .runAsk("child swallowed unknown cleaner");
+
+        assertEquals(
+            List.of("prepare-started:child swallowed unknown cleaner", "prepare-success"),
+            supported.events
+        );
+        assertEquals(1, supportedEngine.prepareCalls);
+        assertNull(supportedEngine.lastModelFile);
+
+        FakeHost unsupported = readyHost();
+        unsupported.modelFile = null;
+        unsupported.hostInferenceSettings = settings(false);
+        unsupported.reviewedCardRuntimeEnabled = true;
+        FakeEngine unsupportedEngine = new FakeEngine();
+        new AskQueryController(unsupported, unsupportedEngine, query -> null)
+            .runAsk("generic unsupported reviewed route query");
+
+        assertEquals(List.of("model-unavailable:false"), unsupported.events);
+        assertEquals(0, unsupportedEngine.prepareCalls);
+    }
+
+    @Test
     public void hostInferenceRoutePreparesWhenReviewedRuntimeIsEnabledButQueryIsUnsupported() {
         FakeHost host = readyHost();
         host.modelFile = null;
@@ -635,6 +665,7 @@ public final class AskQueryControllerTest {
         int prepareCalls;
         String lastQuery;
         SessionMemory lastSessionMemory;
+        File lastModelFile;
 
         @Override
         public OfflineAnswerEngine.PreparedAnswer prepare(
@@ -647,6 +678,7 @@ public final class AskQueryControllerTest {
             prepareCalls += 1;
             lastQuery = query;
             lastSessionMemory = sessionMemory;
+            lastModelFile = modelFile;
             if (prepareExceptions.containsKey(query)) {
                 throw prepareExceptions.get(query);
             }
