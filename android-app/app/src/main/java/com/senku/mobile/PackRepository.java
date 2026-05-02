@@ -1635,7 +1635,8 @@ public final class PackRepository implements AutoCloseable {
                     topicTags
                 ));
             }
-        } catch (SQLiteException ignored) {
+        } catch (SQLiteException exc) {
+            logWarning("LIKE fallback search failed; continuing without LIKE results", exc);
             return Collections.emptyList();
         }
         return results;
@@ -1698,7 +1699,8 @@ public final class PackRepository implements AutoCloseable {
                     )
                 );
             }
-        } catch (SQLiteException ignored) {
+        } catch (SQLiteException exc) {
+            logWarning("Vector neighbor resolution failed; continuing without vector neighbor hits", exc);
             return Collections.emptyList();
         }
 
