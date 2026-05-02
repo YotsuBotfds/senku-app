@@ -2557,6 +2557,9 @@ public final class OfflineAnswerEngineTest {
         );
         Object[][] cases = new Object[][]{
             {"my child may have poisoning after swallowing drain cleaner", true},
+            {"someone is having anaphylaxis after a bee sting", true},
+            {"there is severe bleeding from a leg wound", true},
+            {"what should i do for a severe burn right now", true},
             {"how do i build a rain shelter from a tarp", false},
         };
 
