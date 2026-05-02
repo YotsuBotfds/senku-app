@@ -11417,9 +11417,19 @@ public final class DetailActivity extends AppCompatActivity {
     }
 
     private void closeRepository() {
-        if (repository != null) {
-            repository.close();
-            repository = null;
+        PackRepository repo = repository;
+        repository = null;
+        closeRepositoryQuietly(repo);
+    }
+
+    private static void closeRepositoryQuietly(PackRepository repo) {
+        if (repo == null) {
+            return;
+        }
+        try {
+            repo.close();
+        } catch (RuntimeException exc) {
+            Log.w(TAG, "repository.close failed", exc);
         }
     }
 

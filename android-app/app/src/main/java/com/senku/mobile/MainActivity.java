@@ -12,6 +12,7 @@ import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.text.style.StyleSpan;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.ViewGroup;
 import android.view.ViewParent;
@@ -58,6 +59,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public final class MainActivity extends AppCompatActivity {
+    private static final String TAG = "SenkuMain";
     private static final String EXTRA_AUTO_QUERY = "auto_query";
     private static final String EXTRA_AUTO_ASK = "auto_ask";
     private static final String EXTRA_AUTO_FOLLOWUP_QUERY = "auto_followup_query";
@@ -657,13 +659,16 @@ public final class MainActivity extends AppCompatActivity {
         int harnessToken = beginHarnessTask(force ? "main.installPack.force" : "main.installPack");
         try {
             executor.execute(() -> {
+                PackRepository openedRepo = null;
+                boolean publishedRepo = false;
                 try {
                     closeRepository();
                     PackInstaller.InstalledPack pack = PackInstaller.ensureInstalled(this, force);
-                    PackRepository repo = new PackRepository(pack.databaseFile, pack.vectorFile);
-                    List<SearchResult> guides = repo.browseGuides(ALL_GUIDES);
+                    openedRepo = new PackRepository(pack.databaseFile, pack.vectorFile);
+                    List<SearchResult> guides = openedRepo.browseGuides(ALL_GUIDES);
                     installedPack = pack;
-                    repository = repo;
+                    repository = openedRepo;
+                    publishedRepo = true;
                     runTrackedOnUiThread(harnessToken, () -> {
                         setBusy(presentationFormatter().buildHomeReadyStatus(guides.size()), false);
                         updateInfoText();
@@ -687,6 +692,9 @@ public final class MainActivity extends AppCompatActivity {
                         maybeHandleAutomation();
                     });
                 } catch (Exception exc) {
+                    if (!publishedRepo) {
+                        closeRepositoryQuietly(openedRepo);
+                    }
                     runTrackedOnUiThread(harnessToken, () -> {
                         setBusy("Manual install failed", false);
                         setResultHighlightQuery("");
@@ -4657,9 +4665,19 @@ public final class MainActivity extends AppCompatActivity {
     }
 
     private void closeRepository() {
-        if (repository != null) {
-            repository.close();
-            repository = null;
+        PackRepository repo = repository;
+        repository = null;
+        closeRepositoryQuietly(repo);
+    }
+
+    private static void closeRepositoryQuietly(PackRepository repo) {
+        if (repo == null) {
+            return;
+        }
+        try {
+            repo.close();
+        } catch (RuntimeException exc) {
+            Log.w(TAG, "repository.close failed", exc);
         }
     }
 
