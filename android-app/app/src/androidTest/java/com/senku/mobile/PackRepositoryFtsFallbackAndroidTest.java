@@ -13,6 +13,9 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -122,6 +125,26 @@ public final class PackRepositoryFtsFallbackAndroidTest {
         }
     }
 
+    @Test
+    public void repositoryFallsBackToLexicalSearchWhenVectorCentroidCannotBeBuilt() throws Exception {
+        Context context = ApplicationProvider.getApplicationContext();
+        PackInstaller.InstalledPack pack = CurrentHeadAnswerCardPackTestSupport.installBundledCurrentHeadPack(
+            context,
+            "empty vector centroid fallback contract"
+        );
+        File emptyVectorFile = File.createTempFile("empty-vector", ".vec", context.getCacheDir());
+        try (FileOutputStream output = new FileOutputStream(emptyVectorFile)) {
+            output.write(vectorHeader(0, pack.manifest.embeddingDimension, 1));
+        }
+
+        try (PackRepository repository = new PackRepository(pack.databaseFile, emptyVectorFile)) {
+            assertTrue("valid empty vector file should remain visible to repository", repository.hasVectorStore());
+            List<SearchResult> results = repository.search("rain shelter", 5);
+
+            assertFalse("centroid fallback should still return lexical bundled pack results", results.isEmpty());
+        }
+    }
+
     private static Object invokeSelectFtsRuntime(
         boolean hasFts5Table,
         boolean hasFts4Table,
@@ -165,5 +188,17 @@ public final class PackRepositoryFtsFallbackAndroidTest {
 
     private static File existingVectorFileOrNull(File vectorFile) {
         return vectorFile != null && vectorFile.isFile() ? vectorFile : null;
+    }
+
+    private static byte[] vectorHeader(int rowCount, int dimension, int dtypeCode) {
+        ByteBuffer header = ByteBuffer.allocate(32).order(ByteOrder.LITTLE_ENDIAN);
+        header.put("SNKUVEC1".getBytes(StandardCharsets.US_ASCII));
+        header.putInt(1);
+        header.putInt(32);
+        header.putInt(rowCount);
+        header.putInt(dimension);
+        header.putInt(dtypeCode);
+        header.putInt(0);
+        return header.array();
     }
 }
