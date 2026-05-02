@@ -627,6 +627,16 @@ public final class ReviewDemoPolicyTest {
         );
     }
 
+    @Test
+    public void rawReviewExtraBoundaryScannerFlagsQualifiedPolicyConstantAccess() {
+        assertTrue(containsRawReviewExtraAccess(
+            "intent.hasExtra(ReviewDemoPolicy.EXTRA_PRODUCT_REVIEW_MODE);"
+        ));
+        assertTrue(containsRawReviewExtraAccess(
+            "intent.getBooleanExtra(ReviewDemoPolicy.EXTRA_PRODUCT_REVIEW_MODE, false);"
+        ));
+    }
+
     private static List<SearchResult> rainShelterAdjacentGuides() {
         return Arrays.asList(
             new SearchResult(
@@ -792,7 +802,9 @@ public final class ReviewDemoPolicyTest {
 
     private static boolean containsRawReviewExtraAccess(String content) {
         return content.contains(".hasExtra(EXTRA_PRODUCT_REVIEW_MODE)")
+            || content.contains(".hasExtra(ReviewDemoPolicy.EXTRA_PRODUCT_REVIEW_MODE)")
             || content.contains(".getBooleanExtra(EXTRA_PRODUCT_REVIEW_MODE")
+            || content.contains(".getBooleanExtra(ReviewDemoPolicy.EXTRA_PRODUCT_REVIEW_MODE")
             || content.contains(".getStringExtra(EXTRA_PRODUCT_REVIEW_AUTOMATION_AUTH)")
             || content.contains(".getStringExtra(ReviewDemoPolicy.EXTRA_PRODUCT_REVIEW_AUTOMATION_AUTH)")
             || content.contains("\"product_review_mode\"")
