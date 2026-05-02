@@ -468,6 +468,64 @@ public final class DetailRelatedGuidePresentationFormatterTest {
     }
 
     @Test
+    public void selectedSourceIdentityFeedsProvenanceChipsEvidenceAndRelatedGraph() {
+        DetailSourcePresentationFormatter sourceFormatter = new DetailSourcePresentationFormatter(null);
+        DetailProvenancePresentationFormatter provenanceFormatter = new DetailProvenancePresentationFormatter(null);
+        DetailRelatedGuidePresentationFormatter relatedFormatter =
+            new DetailRelatedGuidePresentationFormatter(null, false);
+        SearchResult anchor = new SearchResult(
+            "Abrasives Manufacturing",
+            "",
+            "Anchor support",
+            "Anchor body",
+            "GD-220",
+            "Anchor Source",
+            "workshop",
+            "guide-focus"
+        );
+        SearchResult selected = new SearchResult(
+            "Tarp & Cord Shelters",
+            "",
+            "Rain shelter support",
+            "Pitch the tarp ridge along the prevailing wind.",
+            "GD-345",
+            "Ridgeline pitch",
+            "shelter",
+            "route-focus"
+        );
+        String selectedKey = DetailProvenancePresentationFormatter.buildSourceSelectionKey(selected);
+
+        assertEquals(
+            "GD-345",
+            provenanceFormatter.selectedSourceForProvenanceAction(
+                Arrays.asList(anchor, selected),
+                selectedKey
+            ).guideId
+        );
+        SearchResult graphSource = relatedFormatter.selectedSourceForRelatedGuideGraph(
+            true,
+            false,
+            selectedKey,
+            Arrays.asList(anchor, selected)
+        );
+        assertEquals("GD-345", graphSource.guideId);
+        assertEquals("Tarp & Cord Shelters", graphSource.title);
+        assertEquals(
+            "GD-345 \u00b7 Ridgeline pitch",
+            sourceFormatter.buildInlineSourceChipLabel(selected, "GD-220", false)
+        );
+        assertEquals(
+            "GD-345 \u00b7 Tarp & Cord Shelters",
+            relatedFormatter.buildAnswerModeRelatedGuidesAnchorLabel(graphSource)
+        );
+
+        DetailSourcePresentationFormatter.EvidenceCard evidenceCard =
+            sourceFormatter.buildEvidenceCard(selected, 1, "related");
+        String evidenceLabel = sourceFormatter.buildEvidenceCardRowLabel(evidenceCard);
+        assertContainsInOrder(evidenceLabel, "GD-345", "RELATED", "Tarp & Cord Shelters", "Ridgeline pitch");
+    }
+
+    @Test
     public void relatedGuideGraphAnchorRejectsSelectedPlaceholder() {
         DetailRelatedGuidePresentationFormatter formatter = new DetailRelatedGuidePresentationFormatter(null, false);
         SearchResult placeholder = new SearchResult("Placeholder", "", "", "", "", "", "", "");
