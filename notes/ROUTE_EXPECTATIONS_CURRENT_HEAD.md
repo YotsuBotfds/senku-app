@@ -7,7 +7,8 @@ collect route-output artifacts before changing policy.
 
 | Prompt | Route family | Expected search guide | Expected context guide | Test |
 | --- | --- | --- | --- | --- |
-| How do I build a simple rain shelter from tarp and cord? | emergency_shelter | `GD-345` | `GD-345` | `PackRepositoryCurrentHeadRouteSmokeAndroidTest` |
+| How do I build a simple rain shelter from tarp and cord? | emergency_shelter | `GD-345` | `GD-345` | `PackRepositoryCurrentHeadRouteSmokeAndroidTest` bundled pack |
+| How do I build a simple rain shelter from tarp and cord? | emergency_shelter | `GD-345` | `GD-345` | `PackRepositoryCurrentHeadRouteSmokeAndroidTest` vector pack |
 
 ## Broad Manual Route Parity
 
@@ -27,6 +28,9 @@ parse `SenkuRouteParity` timing breadcrumbs.
 
 - Latest timing summary:
   `artifacts/bench/route_parity_timing/20260501_233211/route_parity_timing_summary.md`
+- Latest live-safe route smoke has two owner canaries:
+  - bundled/no-vector pack preserves the `GD-345` owner lane
+  - vector-enabled pack preserves the same `GD-345` owner lane
 - Slowest known routes in that run:
   - cabin roof weatherproofing
   - soapmaking
