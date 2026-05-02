@@ -102,6 +102,26 @@ public final class PackRepositoryFtsFallbackAndroidTest {
         }
     }
 
+    @Test
+    public void repositoryTreatsMissingVectorPathAsDisabledAndFallsBackToLexicalSearch() throws Exception {
+        Context context = ApplicationProvider.getApplicationContext();
+        PackInstaller.InstalledPack pack = CurrentHeadAnswerCardPackTestSupport.installBundledCurrentHeadPack(
+            context,
+            "missing vector fallback contract"
+        );
+        File missingVectorFile = new File(context.getCacheDir(), "missing-vector-store.vec");
+        if (missingVectorFile.exists()) {
+            assertTrue("test vector fixture cleanup failed", missingVectorFile.delete());
+        }
+
+        try (PackRepository repository = new PackRepository(pack.databaseFile, missingVectorFile)) {
+            assertFalse("missing vector file should be disabled", repository.hasVectorStore());
+            List<SearchResult> results = repository.search("rain shelter", 5);
+
+            assertFalse("lexical fallback should still return bundled pack results", results.isEmpty());
+        }
+    }
+
     private static Object invokeSelectFtsRuntime(
         boolean hasFts5Table,
         boolean hasFts4Table,
