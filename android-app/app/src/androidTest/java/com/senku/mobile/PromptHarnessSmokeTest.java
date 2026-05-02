@@ -6614,7 +6614,7 @@ public final class PromptHarnessSmokeTest {
             }
         });
         InstrumentationRegistry.getInstrumentation().waitForIdleSync();
-        SystemClock.sleep(250L);
+        waitForImeGone(500L);
     }
 
     private void dismissSoftKeyboardIfVisible() {
@@ -6645,19 +6645,32 @@ public final class PromptHarnessSmokeTest {
             }
         });
         InstrumentationRegistry.getInstrumentation().waitForIdleSync();
-        boolean imeVisible = false;
-        for (String packageName : IME_PACKAGES) {
-            if (device.hasObject(By.pkg(packageName))) {
-                imeVisible = true;
-                break;
-            }
-        }
+        boolean imeVisible = isImeVisible();
         if (imeVisible || !APP_PACKAGE.equals(artifactHelper.currentFocusedWindowPackage())) {
             device.pressBack();
             device.waitForIdle();
             InstrumentationRegistry.getInstrumentation().waitForIdleSync();
         }
-        SystemClock.sleep(250L);
+        waitForImeGone(500L);
+    }
+
+    private boolean isImeVisible() {
+        for (String packageName : IME_PACKAGES) {
+            if (device.hasObject(By.pkg(packageName))) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void waitForImeGone(long timeoutMs) {
+        long deadline = SystemClock.uptimeMillis() + timeoutMs;
+        while (SystemClock.uptimeMillis() < deadline) {
+            if (!isImeVisible()) {
+                return;
+            }
+            SystemClock.sleep(50L);
+        }
     }
 
     private android.view.View firstExistingView(Activity activity, int... resIds) {
