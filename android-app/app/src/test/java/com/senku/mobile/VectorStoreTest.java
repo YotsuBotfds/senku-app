@@ -34,6 +34,27 @@ public final class VectorStoreTest {
     }
 
     @Test
+    public void opensValidFloat16VectorFile() throws Exception {
+        ByteBuffer payload = ByteBuffer.allocate(12).order(ByteOrder.LITTLE_ENDIAN);
+        payload.putShort((short) 0x3c00);
+        payload.putShort((short) 0);
+        payload.putShort((short) 0);
+        payload.putShort((short) 0);
+        payload.putShort((short) 0x3c00);
+        payload.putShort((short) 0);
+        File file = writeTempVectorFile(vectorFile(2, 3, 1, payload.array()));
+
+        try (VectorStore store = new VectorStore(file)) {
+            assertEquals(2, store.getRowCount());
+            assertEquals(3, store.getDimension());
+
+            List<VectorStore.VectorNeighbor> neighbors = store.findNearest(new float[] {1f, 0f, 0f}, 1);
+            assertEquals(1, neighbors.size());
+            assertEquals(0, neighbors.get(0).rowId);
+        }
+    }
+
+    @Test
     public void rejectsFileTooSmallForHeaderWithIOException() throws Exception {
         File file = writeTempVectorFile(new byte[] {1, 2, 3});
 
@@ -62,6 +83,13 @@ public final class VectorStoreTest {
         File file = writeTempVectorFile(vectorFile(1, 0, 2, new byte[0]));
 
         expectRejected(file, "dimension");
+    }
+
+    @Test
+    public void rejectsUnsupportedDtypeWithIOException() throws Exception {
+        File file = writeTempVectorFile(vectorFile(1, 3, 3, new byte[] {1, 2, 3}));
+
+        expectRejected(file, "dtype code");
     }
 
     @Test

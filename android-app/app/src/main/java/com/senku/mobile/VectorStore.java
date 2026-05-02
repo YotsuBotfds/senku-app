@@ -1,7 +1,5 @@
 package com.senku.mobile;
 
-import android.util.Half;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -187,7 +185,7 @@ public final class VectorStore implements AutoCloseable {
         if (dtypeCode == DTYPE_FLOAT16) {
             for (int i = 0; i < dimension; i++) {
                 short raw = mappedBuffer.getShort(base + (i * 2));
-                sum += Half.toFloat(raw) * queryVector[i];
+                sum += halfToFloat(raw) * queryVector[i];
             }
         } else {
             for (int i = 0; i < dimension; i++) {
@@ -203,7 +201,7 @@ public final class VectorStore implements AutoCloseable {
         if (dtypeCode == DTYPE_FLOAT16) {
             for (int i = 0; i < dimension; i++) {
                 short raw = mappedBuffer.getShort(base + (i * 2));
-                target[i] += Half.toFloat(raw);
+                target[i] += halfToFloat(raw);
             }
         } else {
             for (int i = 0; i < dimension; i++) {
@@ -233,6 +231,28 @@ public final class VectorStore implements AutoCloseable {
             values[i] *= inverse;
         }
         return values;
+    }
+
+    private static float halfToFloat(short rawHalf) {
+        int bits = rawHalf & 0xffff;
+        int sign = (bits & 0x8000) << 16;
+        int exponent = (bits >>> 10) & 0x1f;
+        int mantissa = bits & 0x03ff;
+        if (exponent == 0) {
+            if (mantissa == 0) {
+                return Float.intBitsToFloat(sign);
+            }
+            while ((mantissa & 0x0400) == 0) {
+                mantissa <<= 1;
+                exponent -= 1;
+            }
+            exponent += 1;
+            mantissa &= 0x03ff;
+        } else if (exponent == 0x1f) {
+            return Float.intBitsToFloat(sign | 0x7f800000 | (mantissa << 13));
+        }
+        exponent += 112;
+        return Float.intBitsToFloat(sign | (exponent << 23) | (mantissa << 13));
     }
 
     @Override
