@@ -2225,6 +2225,53 @@ public final class OfflineAnswerEngineTest {
     }
 
     @Test
+    public void generateSafetyCriticalNoSourceMatrixDowngradesGeneratedAdvice() throws Exception {
+        File tempModel = File.createTempFile("senku-safety-matrix", ".litertlm");
+        tempModel.deleteOnExit();
+        OfflineAnswerEngine.setGeneratorsForTest(
+            (settings, systemPrompt, prompt, maxTokens) -> {
+                throw new AssertionError("host generation should not run");
+            },
+            (context, modelFile, prompt, maxTokens, listener) ->
+                "Short answer: Follow this generated procedure without checking a guide."
+        );
+
+        String[] safetyCriticalPrompts = {
+            "my child may have poisoning after swallowing drain cleaner",
+            "someone is having anaphylaxis after a bee sting",
+            "someone is suicidal and talking about self-harm",
+            "there is severe bleeding from a leg wound",
+            "what should i do for a severe burn right now",
+            "we found someone confused after carbon monoxide exposure",
+            "someone is shivering and confused from hypothermia",
+            "my kid ate an unknown mushroom from the woods"
+        };
+
+        for (String query : safetyCriticalPrompts) {
+            OfflineAnswerEngine.PreparedAnswer prepared = OfflineAnswerEngine.PreparedAnswer.restoredGenerative(
+                query,
+                List.of(),
+                false,
+                System.currentTimeMillis() - 1000L,
+                false,
+                "",
+                "",
+                "system",
+                "prompt"
+            );
+
+            OfflineAnswerEngine.AnswerRun answerRun = OfflineAnswerEngine.generate(null, tempModel, prepared);
+
+            assertEquals(query, OfflineAnswerEngine.AnswerMode.ABSTAIN, answerRun.mode);
+            assertTrue(query, answerRun.abstain);
+            assertTrue(query, answerRun.sources.isEmpty());
+            assertTrue(query, answerRun.answerBody.contains("Senku doesn't have a guide"));
+            assertTrue(query, answerRun.answerBody.contains(OfflineAnswerEngine.SAFETY_CRITICAL_ESCALATION_LINE));
+            assertFalse(query, answerRun.answerBody.contains("generated procedure"));
+        }
+    }
+
+    @Test
     public void generateDeterministicNoSourceAnswerDoesNotEnterNoSourceDowngrade() throws Exception {
         OfflineAnswerEngine.setGeneratorsForTest(
             (settings, systemPrompt, prompt, maxTokens) -> {
