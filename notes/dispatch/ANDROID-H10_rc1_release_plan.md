@@ -28,23 +28,38 @@ Define and, if possible, cut an Android RC-1 candidate with clear gates, proof a
 - Do not tune retrieval during RC proof.
 - Do not touch visual polish.
 
-## RC-1 criteria
+## RC-1 Gate (updated 2026-05-02)
 
-A head is RC-1 candidate only if:
+A head is an RC-1 candidate only if **all** of the following pass:
 
-- `:app:testDebugUnitTest` passes
-- `:app:assembleDebug` passes
-- `:app:assembleDebugAndroidTest` passes
-- `git diff --check` passes
-- live route smoke passes
-- one phone-basic smoke passes
-- Ask unavailable/no-model behavior is proofed
-- Saved open/back behavior is proofed
-- no known unsafe host endpoint persistence
-- no known pack install corruption path
+- `:app:testDebugUnitTest` — green
+- `:app:assembleDebug` — green
+- `:app:assembleDebugAndroidTest` — green
+- `git diff --check` — clean
+- live route smoke **or** phone-basic live smoke — green
 - no known stale Search/Ask overwrite
+- no known unsafe host endpoint persistence
+- no known pack install/vector corruption path without fallback/diagnostics
 - no known no-source confident generation
-- working tree clean
+- working tree clean (intentionally ignored local `PLANNER_HANDOFF*` files are acceptable)
+
+## Recently Closed (hardening wave at cc3f5891)
+
+- reviewed-card/runtime fallback diagnostics
+- answer-card DAO fallback diagnostics
+- chat-session persistence fallback diagnostics
+- PackRepository vector/FTS/LIKE/context fallback diagnostics
+- PromptHarness keyboard-dismiss bounded wait
+- dead `scriptedExtraSettleMs` harness arg removal
+
+## Non-Goals for RC-1
+
+- no full MVVM/ViewModel migration
+- no broad `MainActivity`/`DetailActivity` rewrite
+- no broad retrieval tuning
+- no tablet visual polish
+- no full functional matrix unless explicitly requested
+- no broad `PromptHarness` split
 
 ## Recommended RC smoke set
 

@@ -6,6 +6,7 @@ Pointer-only rollup for agents. Keep detailed logs in artifacts and test output.
 
 - Latest full checkpoint proof: `521ed52a` (`Sanitize persisted host endpoints on toggle`)
 - Checkpoint time: `2026-05-02T05:52:56-05:00`
+- **Proof gap**: hardening diagnostics through `cc3f5891` (`Remove dead scripted settle smoke arg`) have not been re-checkpoint-proofed yet. Unit/assemble gates and phone-basic live smoke passed at `cc3f5891` per task context, but checkpoint proof ladder has not been re-run at that head.
 - Gates:
   - `:app:testDebugUnitTest` passed
   - `:app:assembleDebug :app:assembleDebugAndroidTest` passed
