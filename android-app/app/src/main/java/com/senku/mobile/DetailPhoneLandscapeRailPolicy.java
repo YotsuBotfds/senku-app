@@ -188,10 +188,19 @@ final class DetailPhoneLandscapeRailPolicy {
         if (deduped == null || source == null) {
             return;
         }
-        String key = DetailProvenancePresentationFormatter.buildSourceSelectionKey(source);
+        String key = sourceRailDedupKey(source);
         if (!key.isEmpty() && !deduped.containsKey(key)) {
             deduped.put(key, source);
         }
+    }
+
+    private static String sourceRailDedupKey(SearchResult source) {
+        if (source == null) {
+            return "";
+        }
+        return (safe(source.guideId).trim() + "|"
+            + safe(source.sectionHeading).trim() + "|"
+            + safe(source.title).trim()).toLowerCase(Locale.US);
     }
 
     private static SearchResult firstRealSource(List<SearchResult> sources) {
