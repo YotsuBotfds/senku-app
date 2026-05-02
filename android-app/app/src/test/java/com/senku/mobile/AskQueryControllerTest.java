@@ -259,6 +259,26 @@ public final class AskQueryControllerTest {
     }
 
     @Test
+    public void malformedHostUrlDoesNotCountAsRuntimePathWithoutModel() {
+        FakeHost host = readyHost();
+        host.modelFile = null;
+        host.hostInferenceSettings = new HostInferenceConfig.Settings(
+            true,
+            "http://",
+            "test-model"
+        );
+        host.reviewedCardRuntimeEnabled = false;
+        FakeEngine engine = new FakeEngine();
+        AskQueryController controller = new AskQueryController(host, engine, query -> null);
+
+        controller.runAsk("how do i draft a legal contract");
+
+        assertEquals(List.of("model-unavailable:false"), host.events);
+        assertEquals(0, engine.prepareCalls);
+        assertEquals(List.of(), host.begunHarnessTags);
+    }
+
+    @Test
     public void reviewedCardRuntimeStillPreparesWhenHostIsPolicyRejected() {
         FakeHost host = readyHost();
         host.modelFile = null;

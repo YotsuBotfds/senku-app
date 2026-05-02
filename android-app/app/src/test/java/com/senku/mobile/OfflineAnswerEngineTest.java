@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -1014,6 +1015,49 @@ public final class OfflineAnswerEngineTest {
         assertTrue(answerRun.subtitle.startsWith("Offline answer | on-device fallback |"));
         assertEquals("Host unavailable. Continuing on this device...", fallbackStatus.get());
         assertTrue(OfflineAnswerEngine.buildCompletionStatus(answerRun).contains("host fallback"));
+    }
+
+    @Test
+    public void generatePropagatesHostFailureWhenNoOnDeviceFallbackExists() throws Exception {
+        IllegalStateException hostFailure = new IllegalStateException("host unreachable");
+        OfflineAnswerEngine.setGeneratorsForTest(
+            (settings, systemPrompt, prompt, maxTokens) -> {
+                throw hostFailure;
+            },
+            (context, modelFile, prompt, maxTokens, listener) -> {
+                throw new AssertionError("on-device generation should not run without a model file");
+            }
+        );
+
+        OfflineAnswerEngine.PreparedAnswer prepared = OfflineAnswerEngine.PreparedAnswer.restoredGenerative(
+            "How do I improvise a rain shelter?",
+            List.of(
+                new SearchResult(
+                    "Emergency Shelter",
+                    "",
+                    "Rig a tarp at an angle and route water away from the sleeping area.",
+                    "Use a ridgeline, stake the tarp securely, and keep drainage away from bedding.",
+                    "GD-094",
+                    "Rain tarp setup",
+                    "shelter",
+                    "guide-focus"
+                )
+            ),
+            false,
+            System.currentTimeMillis() - 1500L,
+            true,
+            "http://127.0.0.1:9/v1",
+            "gemma-4-e2b-it-litert",
+            "system",
+            "prompt"
+        );
+
+        try {
+            OfflineAnswerEngine.generate(null, null, prepared);
+            fail("Expected host failure to propagate without an on-device fallback model");
+        } catch (IllegalStateException exception) {
+            assertSame(hostFailure, exception);
+        }
     }
 
     @Test
