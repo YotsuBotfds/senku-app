@@ -445,6 +445,48 @@ public final class SessionMemoryTest {
     }
 
     @Test
+    public void toJsonClipsLargePersistedAnswerAndSourceBodies() {
+        SessionMemory memory = new SessionMemory();
+        SearchResult largeSource = new SearchResult(
+            repeat("Long title ", 200),
+            repeat("Long subtitle ", 200),
+            repeat("Long snippet ", 200),
+            repeat("Long source body ", 400),
+            "GD-777",
+            repeat("Long section ", 200),
+            "survival",
+            "guide-focus",
+            "starter",
+            "immediate",
+            "general",
+            repeat("tag,", 200)
+        );
+        for (int index = 1; index <= 6; index++) {
+            memory.recordTranscriptFixtureTurnForTest(
+                "oversized persisted question " + index + " " + repeat("detail ", 200),
+                "Short useful summary.",
+                repeat("Very long answer body. ", 400),
+                List.of(largeSource),
+                "",
+                1714244042000L + index
+            );
+        }
+
+        String json = memory.toJson();
+        SessionMemory restored = SessionMemory.fromJson(json);
+        SessionMemory.TurnSnapshot snapshot = restored.latestTurnSnapshot();
+
+        assertTrue("json length=" + json.length(), json.length() < 25_000);
+        assertEquals(6, restored.turnCount());
+        assertTrue(snapshot.question.length() <= 360);
+        assertTrue(snapshot.answerBody.length() <= 800);
+        assertEquals("GD-777", snapshot.sourceResults.get(0).guideId);
+        assertTrue(snapshot.sourceResults.get(0).title.length() <= 300);
+        assertTrue(snapshot.sourceResults.get(0).body.length() <= 300);
+        assertTrue(restored.renderTranscript().contains("Short useful summary."));
+    }
+
+    @Test
     public void genericFollowUpFallsBackToTopicHintsWhenNoMeaningfulTermsExist() {
         SessionMemory memory = new SessionMemory();
         memory.recordTurn(
@@ -1191,5 +1233,13 @@ public final class SessionMemoryTest {
             "",
             topicTags
         );
+    }
+
+    private static String repeat(String value, int count) {
+        StringBuilder builder = new StringBuilder(value.length() * count);
+        for (int index = 0; index < count; index++) {
+            builder.append(value);
+        }
+        return builder.toString();
     }
 }

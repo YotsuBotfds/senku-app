@@ -17,6 +17,9 @@ public final class SessionMemory {
     private static final int MAX_TURNS = 6;
     private static final int MAX_VISIBLE_QUESTIONS = 2;
     private static final int MAX_VISIBLE_SOURCES = 3;
+    private static final int MAX_PERSISTED_QUESTION_CHARS = 360;
+    private static final int MAX_PERSISTED_ANSWER_BODY_CHARS = 800;
+    private static final int MAX_PERSISTED_SOURCE_FIELD_CHARS = 300;
     private static volatile boolean ENABLE_ANCHOR_PRIOR = false;
     private static final long ANCHOR_IDLE_RESET_MS = 60L * 60L * 1000L;
     private static final Set<String> SESSION_CONTEXT_HINTS = buildSet(
@@ -449,10 +452,10 @@ public final class SessionMemory {
             root.put("anchor_reset_turn_index", anchorResetTurnIndex);
             for (Turn turn : turns) {
                 JSONObject turnJson = new JSONObject();
-                turnJson.put("question", turn.question);
+                turnJson.put("question", clipForPersistence(turn.question, MAX_PERSISTED_QUESTION_CHARS));
                 turnJson.put("answer_summary", turn.answerSummary);
-                turnJson.put("answer_body", turn.answerBody);
-                turnJson.put("sources", toStringJsonArray(turn.sources));
+                turnJson.put("answer_body", clipForPersistence(turn.answerBody, MAX_PERSISTED_ANSWER_BODY_CHARS));
+                turnJson.put("sources", toStringJsonArray(turn.sources, MAX_PERSISTED_SOURCE_FIELD_CHARS));
                 turnJson.put("source_results", toSearchResultJsonArray(turn.sourceResults));
                 turnJson.put("rule_id", turn.ruleId);
                 if (turn.reviewedCardMetadata.isPresent()) {
@@ -656,13 +659,13 @@ public final class SessionMemory {
         return Collections.unmodifiableSet(set);
     }
 
-    private static JSONArray toStringJsonArray(List<String> values) throws JSONException {
+    private static JSONArray toStringJsonArray(List<String> values, int maxChars) throws JSONException {
         JSONArray array = new JSONArray();
         if (values == null) {
             return array;
         }
         for (String value : values) {
-            array.put(safe(value));
+            array.put(clipForPersistence(value, maxChars));
         }
         return array;
     }
@@ -674,18 +677,18 @@ public final class SessionMemory {
         }
         for (SearchResult result : values) {
             JSONObject resultJson = new JSONObject();
-            resultJson.put("title", safe(result == null ? null : result.title));
-            resultJson.put("subtitle", safe(result == null ? null : result.subtitle));
-            resultJson.put("snippet", safe(result == null ? null : result.snippet));
-            resultJson.put("body", safe(result == null ? null : result.body));
+            resultJson.put("title", clipForPersistence(result == null ? null : result.title, MAX_PERSISTED_SOURCE_FIELD_CHARS));
+            resultJson.put("subtitle", clipForPersistence(result == null ? null : result.subtitle, MAX_PERSISTED_SOURCE_FIELD_CHARS));
+            resultJson.put("snippet", clipForPersistence(result == null ? null : result.snippet, MAX_PERSISTED_SOURCE_FIELD_CHARS));
+            resultJson.put("body", clipForPersistence(result == null ? null : result.body, MAX_PERSISTED_SOURCE_FIELD_CHARS));
             resultJson.put("guide_id", safe(result == null ? null : result.guideId));
-            resultJson.put("section_heading", safe(result == null ? null : result.sectionHeading));
-            resultJson.put("category", safe(result == null ? null : result.category));
-            resultJson.put("retrieval_mode", safe(result == null ? null : result.retrievalMode));
-            resultJson.put("content_role", safe(result == null ? null : result.contentRole));
-            resultJson.put("time_horizon", safe(result == null ? null : result.timeHorizon));
-            resultJson.put("structure_type", safe(result == null ? null : result.structureType));
-            resultJson.put("topic_tags", safe(result == null ? null : result.topicTags));
+            resultJson.put("section_heading", clipForPersistence(result == null ? null : result.sectionHeading, MAX_PERSISTED_SOURCE_FIELD_CHARS));
+            resultJson.put("category", clipForPersistence(result == null ? null : result.category, MAX_PERSISTED_SOURCE_FIELD_CHARS));
+            resultJson.put("retrieval_mode", clipForPersistence(result == null ? null : result.retrievalMode, MAX_PERSISTED_SOURCE_FIELD_CHARS));
+            resultJson.put("content_role", clipForPersistence(result == null ? null : result.contentRole, MAX_PERSISTED_SOURCE_FIELD_CHARS));
+            resultJson.put("time_horizon", clipForPersistence(result == null ? null : result.timeHorizon, MAX_PERSISTED_SOURCE_FIELD_CHARS));
+            resultJson.put("structure_type", clipForPersistence(result == null ? null : result.structureType, MAX_PERSISTED_SOURCE_FIELD_CHARS));
+            resultJson.put("topic_tags", clipForPersistence(result == null ? null : result.topicTags, MAX_PERSISTED_SOURCE_FIELD_CHARS));
             array.put(resultJson);
         }
         return array;
@@ -772,6 +775,14 @@ public final class SessionMemory {
 
     private static String safe(String text) {
         return text == null ? "" : text;
+    }
+
+    private static String clipForPersistence(String text, int maxChars) {
+        String value = safe(text);
+        if (maxChars <= 0 || value.length() <= maxChars) {
+            return value;
+        }
+        return value.substring(0, maxChars).trim();
     }
 
     private static final class Turn {
