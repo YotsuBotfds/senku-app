@@ -335,7 +335,7 @@ public final class DetailRelatedGuidePresentationFormatterTest {
 
     @Test
     public void answerModeRelatedGuideLabelMatchesMockRowCopy() {
-        DetailRelatedGuidePresentationFormatter formatter = new DetailRelatedGuidePresentationFormatter(null);
+        DetailRelatedGuidePresentationFormatter formatter = new DetailRelatedGuidePresentationFormatter(null, true);
 
         assertEquals(
             "GD-294 \u00b7 Cave Shelter Systems & Cold-Weather",
@@ -365,7 +365,7 @@ public final class DetailRelatedGuidePresentationFormatterTest {
 
     @Test
     public void answerModeContentDescriptionUsesCompactCanonicalRowCopy() {
-        DetailRelatedGuidePresentationFormatter formatter = new DetailRelatedGuidePresentationFormatter(null);
+        DetailRelatedGuidePresentationFormatter formatter = new DetailRelatedGuidePresentationFormatter(null, true);
 
         String description = formatter.buildAnswerModeRelatedGuideButtonContentDescription(
                 new DetailRelatedGuidePresentationFormatter.State(
@@ -403,7 +403,7 @@ public final class DetailRelatedGuidePresentationFormatterTest {
 
     @Test
     public void answerModeRelatedGuideLabelsPreserveWave79VisibleOrderWithoutGd109() {
-        DetailRelatedGuidePresentationFormatter formatter = new DetailRelatedGuidePresentationFormatter(null);
+        DetailRelatedGuidePresentationFormatter formatter = new DetailRelatedGuidePresentationFormatter(null, true);
         SearchResult[] guides = new SearchResult[] {
             new SearchResult("Cave Shelter Systems and Long-Term Habitation", "", "", "", "GD-294", "", "survival", ""),
             new SearchResult("Hurricane & Severe Storm Preparedness", "", "", "", "GD-695", "", "weather", ""),
@@ -426,6 +426,24 @@ public final class DetailRelatedGuidePresentationFormatterTest {
         assertEquals(
             "GD-027 \u00b7 Primitive Technology & Stone Age",
             formatter.buildAnswerModeRelatedGuideButtonLabel(guides[3])
+        );
+    }
+
+    @Test
+    public void defaultAnswerModeRelatedGuideLabelsKeepLiveTitlesWithoutReviewCanonicalization() {
+        DetailRelatedGuidePresentationFormatter formatter = new DetailRelatedGuidePresentationFormatter(null, false);
+
+        assertEquals(
+            "GD-294 \u00b7 Cave Shelter Systems and Long-Term Habitation",
+            formatter.buildAnswerModeRelatedGuideButtonLabel(
+                new SearchResult("Cave Shelter Systems and Long-Term Habitation", "", "", "", "GD-294", "", "", "")
+            )
+        );
+        assertEquals(
+            "GD-027 \u00b7 Primitive Technology and Stone Age Skills",
+            formatter.buildAnswerModeRelatedGuideButtonLabel(
+                new SearchResult("Primitive Technology and Stone Age Skills", "", "", "", "GD-027", "", "", "")
+            )
         );
     }
 

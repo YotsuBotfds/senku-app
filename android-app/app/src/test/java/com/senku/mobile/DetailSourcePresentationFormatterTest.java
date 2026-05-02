@@ -910,7 +910,7 @@ public final class DetailSourcePresentationFormatterTest {
             formatter.buildStationSourceButtonLabel(rainShelter, 0, 3, true)
         );
         assertEquals(
-            "GD-220 \u00B7 TOPIC \u00B7 abrasives manufacturing",
+            "GD-220 \u00B7 RELATED \u00B7 abrasives manufacturing",
             formatter.buildStationSourceButtonLabel(abrasiveAnchor, 2, 3, false)
         );
     }

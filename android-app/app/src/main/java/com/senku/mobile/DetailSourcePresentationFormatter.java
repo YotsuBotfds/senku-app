@@ -201,7 +201,7 @@ final class DetailSourcePresentationFormatter {
         if (!rainShelterLabel.isEmpty()) {
             return rainShelterLabel;
         }
-        String role = sourceStackRole(source, index, primaryAnchorSource);
+        String role = sourceStackRole(source, index, primaryAnchorSource, reviewDemoSourceStackEnabled);
         String guideId = safe(source == null ? null : source.guideId).trim();
         String title = sourceStackTitle(source);
         StringBuilder builder = new StringBuilder();
@@ -491,9 +491,17 @@ final class DetailSourcePresentationFormatter {
         return "SOURCE";
     }
 
-    private static String sourceStackRole(SearchResult source, int index, boolean primaryAnchorSource) {
+    private static String sourceStackRole(
+        SearchResult source,
+        int index,
+        boolean primaryAnchorSource,
+        boolean reviewDemoSourceStackEnabled
+    ) {
         if (primaryAnchorSource || index <= 0) {
             return "ANCHOR";
+        }
+        if (!reviewDemoSourceStackEnabled) {
+            return "RELATED";
         }
         String guideId = safe(source == null ? null : source.guideId).trim();
         String combined = (

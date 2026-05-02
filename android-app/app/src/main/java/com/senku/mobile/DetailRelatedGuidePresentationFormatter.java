@@ -416,8 +416,11 @@ final class DetailRelatedGuidePresentationFormatter {
         return Character.toUpperCase(cleaned.charAt(0)) + cleaned.substring(1);
     }
 
-    private static String canonicalRainShelterRelatedGuideTitle(String guideId, String title) {
+    private String canonicalRainShelterRelatedGuideTitle(String guideId, String title) {
         String cleanedTitle = safe(title).trim();
+        if (!reviewDemoCategoryShapingEnabled) {
+            return cleanedTitle;
+        }
         String normalizedTitle = cleanedTitle.toLowerCase(Locale.US);
         if ("GD-294".equalsIgnoreCase(guideId)
             && normalizedTitle.contains("cave shelter systems")) {
