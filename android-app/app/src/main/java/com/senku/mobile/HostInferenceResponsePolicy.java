@@ -17,6 +17,10 @@ final class HostInferenceResponsePolicy {
         }
 
         JSONObject firstChoice = choices.optJSONObject(0);
+        String finishReason = firstChoice == null ? "" : firstChoice.optString("finish_reason", "");
+        if ("length".equalsIgnoreCase(finishReason.trim())) {
+            throw new IllegalStateException("Host inference returned an incomplete answer");
+        }
         JSONObject message = firstChoice == null ? null : firstChoice.optJSONObject("message");
         Object content = message == null ? null : message.opt("content");
         String flattened = flattenContent(content).trim();

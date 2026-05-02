@@ -161,6 +161,21 @@ public final class HostInferenceResponsePolicyTest {
         );
     }
 
+    @Test
+    public void parseResponseBodyRejectsLengthFinishReasonAsIncompleteAnswer() throws Exception {
+        assertIllegalStateMessage(
+            "{\n" +
+                "  \"choices\": [\n" +
+                "    {\n" +
+                "      \"finish_reason\": \"length\",\n" +
+                "      \"message\": {\"content\": \"Short answer: Start by mixing lye and\"}\n" +
+                "    }\n" +
+                "  ]\n" +
+                "}",
+            "Host inference returned an incomplete answer"
+        );
+    }
+
     private static void assertIllegalStateMessage(String responseBody, String expectedMessage) throws Exception {
         try {
             HostInferenceResponsePolicy.parseResponseBody(responseBody);
