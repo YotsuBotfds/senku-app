@@ -95,6 +95,15 @@ public final class PackInstallerTest {
     }
 
     @Test
+    public void validateVectorInfoRejectsRowCountMismatch() throws Exception {
+        expectVectorInfoRejected(
+            manifestWithVector("float16", 768),
+            vectorInfo("SNKUVEC1", 1, 32, 49840, 768, 1, 0),
+            "row count mismatch"
+        );
+    }
+
+    @Test
     public void validateVectorInfoRejectsDtypeMismatch() throws Exception {
         expectVectorInfoRejected(
             manifestWithVector("float16", 768),

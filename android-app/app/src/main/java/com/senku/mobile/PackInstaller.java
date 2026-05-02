@@ -234,6 +234,12 @@ public final class PackInstaller {
         if (vectorInfo.headerBytes != VECTOR_HEADER_BYTES) {
             throw new IOException("Unsupported vector header bytes: " + vectorInfo.headerBytes);
         }
+        if (vectorInfo.rowCount != manifest.chunkCount) {
+            throw new IOException(
+                "Vector row count mismatch. Manifest expected " + manifest.chunkCount
+                    + " but header found " + vectorInfo.rowCount
+            );
+        }
         if (vectorInfo.dimension != manifest.embeddingDimension) {
             throw new IOException(
                 "Vector dimension mismatch. Manifest expected " + manifest.embeddingDimension
