@@ -64,9 +64,17 @@ public final class MainActivityHomeChromeTest {
     }
 
     @Test
-    public void emptyAskLaneIntentRemainsAvailableWithoutQueryPayload() {
+    public void emptyAskLaneIntentRequiresAuthorizedAutomationPath() {
+        assertEquals(
+            null,
+            MainActivity.automationIntentStateForTest(null, true, null, false)
+        );
+    }
+
+    @Test
+    public void authorizedEmptyAskLaneIntentRemainsAvailableWithoutQueryPayload() {
         MainAutomationIntentPolicy.IntentState emptyAsk =
-            MainActivity.automationIntentStateForTest(null, true, null, false);
+            MainActivity.automationIntentStateForTest(null, true, null, true);
 
         assertEquals(null, emptyAsk.decodedAutoQuery);
         assertTrue(emptyAsk.autoAsk);

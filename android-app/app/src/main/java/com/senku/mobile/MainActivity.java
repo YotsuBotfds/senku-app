@@ -1277,7 +1277,8 @@ public final class MainActivity extends AppCompatActivity {
         boolean automationAuthorized
     ) {
         if (!automationAuthorized
-            && (!safe(encodedAutoQuery).trim().isEmpty()
+            && (autoAsk
+                || !safe(encodedAutoQuery).trim().isEmpty()
                 || !safe(encodedAutoFollowUpQuery).trim().isEmpty())) {
             return null;
         }
