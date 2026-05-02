@@ -158,6 +158,22 @@ public final class HostInferenceConfigTest {
     }
 
     @Test
+    public void applyIntentOverridesCanDisablePersistedUnsafeEndpointWithoutKeepingIt() {
+        TestContext context = new TestContext(true);
+        HostInferenceConfig.save(context, true, "http://example.com:1235/v1", "existing-model");
+        Intent intent = new TestIntent()
+            .putExtra(HostInferenceConfig.EXTRA_HOST_INFERENCE_ENABLED, false);
+        ReviewDemoPolicy.putProductReviewModeExtras(intent, true);
+
+        assertTrue(HostInferenceConfig.applyIntentOverrides(context, intent));
+
+        HostInferenceConfig.Settings settings = HostInferenceConfig.resolve(context);
+        assertFalse(settings.enabled);
+        assertEquals("http://10.0.2.2:1235/v1", settings.baseUrl);
+        assertEquals("existing-model", settings.modelId);
+    }
+
+    @Test
     public void applyIntentOverridesAllowsAuthorizedDebugAutomationIntent() {
         TestContext context = new TestContext(true);
         Intent intent = new TestIntent()
@@ -184,6 +200,19 @@ public final class HostInferenceConfigTest {
         HostInferenceConfig.Settings settings = HostInferenceConfig.resolve(context);
         assertTrue(settings.enabled);
         assertEquals("http://localhost:1235/v1", settings.baseUrl);
+        assertEquals("existing-model", settings.modelId);
+    }
+
+    @Test
+    public void setEnabledSanitizesPersistedRejectedEndpointBeforeEnabling() {
+        TestContext context = new TestContext();
+        HostInferenceConfig.save(context, false, "http://example.com:1235/v1", "existing-model");
+
+        HostInferenceConfig.setEnabled(context, true);
+
+        HostInferenceConfig.Settings settings = HostInferenceConfig.resolve(context);
+        assertTrue(settings.enabled);
+        assertEquals("http://10.0.2.2:1235/v1", settings.baseUrl);
         assertEquals("existing-model", settings.modelId);
     }
 

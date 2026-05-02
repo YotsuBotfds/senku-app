@@ -67,6 +67,10 @@ public final class HostInferenceConfig {
             ? normalizeModelId(intent.getStringExtra(EXTRA_HOST_INFERENCE_MODEL))
             : current.modelId;
         if (!HostInferencePolicy.evaluate(baseUrl, false).allowed) {
+            if (intent.hasExtra(EXTRA_HOST_INFERENCE_ENABLED) && !enabled) {
+                save(context, false, safePersistedBaseUrl(current.baseUrl), current.modelId);
+                return true;
+            }
             return false;
         }
         save(context, enabled, baseUrl, modelId);
@@ -75,7 +79,7 @@ public final class HostInferenceConfig {
 
     public static void setEnabled(Context context, boolean enabled) {
         Settings current = resolve(context);
-        save(context, enabled, current.baseUrl, current.modelId);
+        save(context, enabled, safePersistedBaseUrl(current.baseUrl), current.modelId);
     }
 
     public static void save(Context context, boolean enabled, String baseUrl, String modelId) {
@@ -131,6 +135,13 @@ public final class HostInferenceConfig {
     static String normalizeModelId(String modelId) {
         String trimmed = safe(modelId).trim();
         return trimmed.isEmpty() ? DEFAULT_MODEL_ID : trimmed;
+    }
+
+    private static String safePersistedBaseUrl(String baseUrl) {
+        String normalized = normalizeBaseUrl(baseUrl);
+        return HostInferencePolicy.evaluate(normalized, false).allowed
+            ? normalized
+            : DEFAULT_BASE_URL;
     }
 
     private static String safe(String text) {
