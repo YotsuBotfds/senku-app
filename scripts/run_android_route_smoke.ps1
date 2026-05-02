@@ -4,7 +4,10 @@ param(
     [switch]$DryRun,
     [switch]$SkipBuild,
     [switch]$SkipInstall,
-    [switch]$SkipDeviceLock
+    [switch]$SkipDeviceLock,
+    [string]$AdbPath = "",
+    [int]$InstallTimeoutMilliseconds = 180000,
+    [int]$InstrumentationTimeoutMilliseconds = 300000
 )
 
 $ErrorActionPreference = "Stop"
@@ -15,7 +18,11 @@ if ($null -ne (Get-Variable -Name PSNativeCommandUseErrorActionPreference -Error
 $repoRoot = (Resolve-Path (Join-Path $PSScriptRoot "..")).Path
 $androidRoot = Join-Path $repoRoot "android-app"
 $gradlew = Join-Path $androidRoot "gradlew.bat"
-$adb = Join-Path $env:LOCALAPPDATA "Android\Sdk\platform-tools\adb.exe"
+$adb = if ([string]::IsNullOrWhiteSpace($AdbPath)) {
+    Join-Path $env:LOCALAPPDATA "Android\Sdk\platform-tools\adb.exe"
+} else {
+    $AdbPath
+}
 $lockRoot = Join-Path $repoRoot "artifacts\harness_locks"
 $commonHarnessModule = Join-Path $PSScriptRoot "android_harness_common.psm1"
 $instrumentationClass = "com.senku.mobile.PackRepositoryCurrentHeadRouteSmokeAndroidTest"
@@ -79,6 +86,7 @@ function Write-MarkdownSummary {
     $failedCount = @($Summary.failed_devices).Count
     $deviceList = @($Summary.devices) -join ", "
     $failedDeviceList = if ($failedCount -gt 0) { @($Summary.failed_devices) -join ", " } else { "none" }
+    $timedOutDeviceList = if (@($Summary.timed_out_devices).Count -gt 0) { @($Summary.timed_out_devices) -join ", " } else { "none" }
     $lines = @(
         "# Android route smoke summary",
         "",
@@ -88,6 +96,7 @@ function Write-MarkdownSummary {
         "- passed_count: $($Summary.passed_count)",
         "- failed_count: $failedCount",
         "- failed_devices: $failedDeviceList",
+        "- timed_out_devices: $timedOutDeviceList",
         "- dry_run: $($Summary.dry_run.ToString().ToLowerInvariant())",
         "- build_skipped: $($Summary.build_skipped.ToString().ToLowerInvariant())",
         "- install_skipped: $($Summary.install_skipped.ToString().ToLowerInvariant())",
@@ -105,23 +114,26 @@ function Invoke-RouteSmokeAdb {
     param(
         [string]$Device,
         [string[]]$AdbArgs,
-        [switch]$DryRun
+        [switch]$DryRun,
+        [int]$TimeoutMilliseconds = 0
     )
 
     $command = "adb $($AdbArgs -join ' ')"
     if ($DryRun) {
         return [pscustomobject]@{
             exit_code = 0
+            timed_out = $false
             stdout = "DRY RUN: $command"
             stderr = ""
             command = $command
         }
     }
 
-    $output = & $adb @AdbArgs 2>&1
+    $result = Invoke-AndroidAdbCommandCapture -AdbPath $adb -Arguments $AdbArgs -TimeoutMilliseconds $TimeoutMilliseconds
     return [pscustomobject]@{
-        exit_code = [int]$LASTEXITCODE
-        stdout = ($output -join "`n")
+        exit_code = [int]$result.exit_code
+        timed_out = [bool]$result.timed_out
+        stdout = [string]$result.output
         stderr = ""
         command = $command
     }
@@ -131,6 +143,9 @@ function Test-InstrumentationPassed {
     param($Result)
 
     if ([int]$Result.exit_code -ne 0) {
+        return $false
+    }
+    if ($Result.PSObject.Properties.Name -contains "timed_out" -and [bool]$Result.timed_out) {
         return $false
     }
 
@@ -213,31 +228,46 @@ foreach ($device in @($Devices)) {
     $deviceLock = $null
     $installAppResult = $null
     $installTestResult = $null
+    $failurePhase = ""
     try {
         $deviceLock = Acquire-DeviceLock -Device $device
         if ($SkipInstall) {
-            $installAppResult = [pscustomobject]@{ exit_code = 0; stdout = "install skipped"; stderr = ""; command = "install app skipped" }
-            $installTestResult = [pscustomobject]@{ exit_code = 0; stdout = "install skipped"; stderr = ""; command = "install test skipped" }
+            $installAppResult = [pscustomobject]@{ exit_code = 0; timed_out = $false; stdout = "install skipped"; stderr = ""; command = "install app skipped" }
+            $installTestResult = [pscustomobject]@{ exit_code = 0; timed_out = $false; stdout = "install skipped"; stderr = ""; command = "install test skipped" }
         } else {
-            $installAppResult = Invoke-RouteSmokeAdb -Device $device -DryRun:$DryRun -AdbArgs @("-s", $device, "install", "-r", $appApk)
-            if ([int]$installAppResult.exit_code -ne 0) {
-                throw "App APK install failed on $device"
-            }
-            $installTestResult = Invoke-RouteSmokeAdb -Device $device -DryRun:$DryRun -AdbArgs @("-s", $device, "install", "-r", "-t", $testApk)
-            if ([int]$installTestResult.exit_code -ne 0) {
-                throw "Android test APK install failed on $device"
+            $installAppResult = Invoke-RouteSmokeAdb -Device $device -DryRun:$DryRun -TimeoutMilliseconds $InstallTimeoutMilliseconds -AdbArgs @("-s", $device, "install", "-r", $appApk)
+            if ([int]$installAppResult.exit_code -ne 0 -or [bool]$installAppResult.timed_out) {
+                $failurePhase = "install_app"
+                $runResult = $installAppResult
+            } else {
+                $installTestResult = Invoke-RouteSmokeAdb -Device $device -DryRun:$DryRun -TimeoutMilliseconds $InstallTimeoutMilliseconds -AdbArgs @("-s", $device, "install", "-r", "-t", $testApk)
+                if ([int]$installTestResult.exit_code -ne 0 -or [bool]$installTestResult.timed_out) {
+                    $failurePhase = "install_test"
+                    $runResult = $installTestResult
+                }
             }
         }
 
-        $runResult = Invoke-RouteSmokeAdb -Device $device -DryRun:$DryRun -AdbArgs @(
-            "-s", $device,
-            "shell", "am", "instrument", "-w",
-            "-e", "class", $instrumentationClass,
-            $instrumentationRunner
-        )
+        if ([string]::IsNullOrWhiteSpace($failurePhase)) {
+            $runResult = Invoke-RouteSmokeAdb -Device $device -DryRun:$DryRun -TimeoutMilliseconds $InstrumentationTimeoutMilliseconds -AdbArgs @(
+                "-s", $device,
+                "shell", "am", "instrument", "-w",
+                "-e", "class", $instrumentationClass,
+                $instrumentationRunner
+            )
+            if ([bool]$runResult.timed_out) {
+                $failurePhase = "instrumentation_timeout"
+            } elseif ([int]$runResult.exit_code -ne 0) {
+                $failurePhase = "instrumentation_exit"
+            } elseif ([string]$runResult.stdout -match "FAILURES!!!|Failure in") {
+                $failurePhase = "instrumentation_failure"
+            }
+        }
     } catch {
+        $failurePhase = "exception"
         $runResult = [pscustomobject]@{
             exit_code = 1
+            timed_out = $false
             stdout = ""
             stderr = [string]$_
             command = "route smoke failed before instrumentation"
@@ -270,6 +300,10 @@ foreach ($device in @($Devices)) {
         install_test_command = $installTestResult.command
         command = $runResult.command
         exit_code = [int]$runResult.exit_code
+        timed_out = [bool]$runResult.timed_out
+        failure_phase = $failurePhase
+        install_app_timed_out = [bool]$installAppResult.timed_out
+        install_test_timed_out = [bool]$installTestResult.timed_out
         stdout = [string]$runResult.stdout
         stderr = [string]$runResult.stderr
     }
@@ -284,13 +318,17 @@ $failedDeviceResults = @($deviceResults | Where-Object { -not $_.passed } | ForE
     [pscustomobject]@{
         device = $_.device
         exit_code = $_.exit_code
+        timed_out = $_.timed_out
+        failure_phase = $_.failure_phase
         command = $_.command
     }
 })
+$timedOutDevices = @($deviceResults | Where-Object { $_.timed_out -or $_.install_app_timed_out -or $_.install_test_timed_out } | ForEach-Object { $_.device })
 $summary = [pscustomobject]@{
     passed_count = @($deviceResults | Where-Object { $_.passed }).Count
     failed_devices = $failedDevices
     failed_device_results = $failedDeviceResults
+    timed_out_devices = $timedOutDevices
     expected_tests = $expectedTests
     instrumentation_class = $instrumentationClass
     dry_run = [bool]$DryRun
