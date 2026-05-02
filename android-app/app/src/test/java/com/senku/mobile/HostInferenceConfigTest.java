@@ -124,19 +124,20 @@ public final class HostInferenceConfigTest {
     }
 
     @Test
-    public void applyIntentOverridesAllowsHttpsEndpointByPolicy() {
+    public void applyIntentOverridesRejectsHttpsEndpointAndLeavesExistingSettings() {
         TestContext context = new TestContext();
+        HostInferenceConfig.save(context, true, "http://localhost:1235/v1", "existing-model");
         Intent intent = new TestIntent()
             .putExtra(HostInferenceConfig.EXTRA_HOST_INFERENCE_ENABLED, true)
             .putExtra(HostInferenceConfig.EXTRA_HOST_INFERENCE_URL, "https://example.com/openai/v1/chat/completions")
             .putExtra(HostInferenceConfig.EXTRA_HOST_INFERENCE_MODEL, "remote-model");
 
-        assertTrue(HostInferenceConfig.applyIntentOverridesForTest(context, intent, true));
+        assertFalse(HostInferenceConfig.applyIntentOverridesForTest(context, intent, true));
 
         HostInferenceConfig.Settings settings = HostInferenceConfig.resolve(context);
         assertTrue(settings.enabled);
-        assertEquals("https://example.com/openai/v1", settings.baseUrl);
-        assertEquals("remote-model", settings.modelId);
+        assertEquals("http://localhost:1235/v1", settings.baseUrl);
+        assertEquals("existing-model", settings.modelId);
     }
 
     @Test
