@@ -1,8 +1,13 @@
 # Stabilization Checkpoint - 2026-05-01
 
-Current checkpoint head: `41778ac7`.
+Stabilization checkpoint: `41778ac7`.
 
 This checkpoint began at `0dc5dfc7` and was completed by `41778ac7`.
+
+Current pushed head after route-smoke split: `91ee6bd0`.
+
+`91ee6bd0` adds live-safe route smoke coverage and broad route-parity timing
+breadcrumbs without changing production retrieval behavior.
 
 This cycle is stabilization, not another extraction wave.
 
