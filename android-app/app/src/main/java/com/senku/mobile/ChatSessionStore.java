@@ -2,6 +2,7 @@ package com.senku.mobile;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -15,6 +16,7 @@ import java.util.Locale;
 import java.util.UUID;
 
 public final class ChatSessionStore {
+    private static final String TAG = "ChatSessionStore";
     private static final Object LOCK = new Object();
     private static final String PREFS_NAME = "senku_chat_sessions";
     private static final String KEY_STATE = "state_v1";
@@ -100,6 +102,7 @@ public final class ChatSessionStore {
                 CONVERSATIONS.putAll(parseSavedConversations(saved));
                 restored = true;
             } catch (JSONException ignored) {
+                logWarning("restoreSavedState failed", ignored);
             }
         }
     }
@@ -149,6 +152,7 @@ public final class ChatSessionStore {
                 }
                 root.put("conversations", conversations);
             } catch (JSONException ignored) {
+                logWarning("persist failed", ignored);
                 return;
             }
         }
@@ -269,6 +273,13 @@ public final class ChatSessionStore {
             }
         }
         return builder.toString().trim();
+    }
+
+    private static void logWarning(String message, Exception exc) {
+        try {
+            Log.w(TAG, message, exc);
+        } catch (RuntimeException ignored) {
+        }
     }
 
     static void resetForTest() {
