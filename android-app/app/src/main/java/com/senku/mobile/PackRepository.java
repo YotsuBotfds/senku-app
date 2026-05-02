@@ -174,7 +174,8 @@ public final class PackRepository implements AutoCloseable {
                     directedLinks.putIfAbsent(relatedGuideId, new LinkedHashSet<>());
                 }
             }
-        } catch (SQLiteException ignored) {
+        } catch (SQLiteException exc) {
+            logWarning("Anchor related-link weights load failed; continuing without anchor weights", exc);
             return Collections.emptyMap();
         }
 
@@ -232,7 +233,8 @@ public final class PackRepository implements AutoCloseable {
                 return "";
             }
             return emptySafe(cursor.getString(1));
-        } catch (SQLiteException ignored) {
+        } catch (SQLiteException exc) {
+            logWarning("Guide chunk document load failed; continuing without guide chunk text", exc);
             return "";
         }
     }
@@ -255,7 +257,8 @@ public final class PackRepository implements AutoCloseable {
                 return "";
             }
             return emptySafe(cursor.getString(0));
-        } catch (SQLiteException ignored) {
+        } catch (SQLiteException exc) {
+            logWarning("Leading guide chunk load failed; continuing without leading chunk text", exc);
             return "";
         }
     }
