@@ -323,7 +323,8 @@ public final class PackRepository implements AutoCloseable {
         if (ftsAvailable) {
             try {
                 ftsHits = searchWithFtsHits(queryTerms, lexicalCandidateLimit);
-            } catch (SQLiteException ignored) {
+            } catch (SQLiteException exc) {
+                logWarning("FTS search failed; continuing with fallback search", exc);
                 ftsHits = Collections.emptyList();
             }
         }
