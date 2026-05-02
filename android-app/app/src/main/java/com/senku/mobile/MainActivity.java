@@ -655,48 +655,60 @@ public final class MainActivity extends AppCompatActivity {
     private void installPack(boolean force) {
         setBusy(force ? "Refreshing manual..." : "Preparing manual...", true);
         int harnessToken = beginHarnessTask(force ? "main.installPack.force" : "main.installPack");
-        executor.execute(() -> {
-            try {
-                closeRepository();
-                PackInstaller.InstalledPack pack = PackInstaller.ensureInstalled(this, force);
-                PackRepository repo = new PackRepository(pack.databaseFile, pack.vectorFile);
-                List<SearchResult> guides = repo.browseGuides(ALL_GUIDES);
-                installedPack = pack;
-                repository = repo;
-                runTrackedOnUiThread(harnessToken, () -> {
-                    setBusy(presentationFormatter().buildHomeReadyStatus(guides.size()), false);
-                    updateInfoText();
-                    allGuides.clear();
-                    allGuides.addAll(guides);
-                    updateHomeSubtitle(guides.size());
-                    updateCategoryCards(guides);
-                    updateSessionPanel();
-                    refreshHomeRelatedGuidesAsync();
-                    refreshPinnedGuidesAsync();
-                    boolean autoQueryPending = hasAutoQuery(getIntent());
-                    MainInstallCompletionPolicy.CompletionPlan installCompletionPlan =
-                        MainInstallCompletionPolicy.plan(
-                            autoQueryPending,
-                            currentMainRouteState()
-                        );
-                    if (installCompletionPlan.shouldPublishBrowseGuides()) {
-                        publishResultItems(installCompletionPlan.browsePublication(), guides);
-                        resultsHeader.setText("Guide browser (" + guides.size() + " loaded)");
-                    }
-                    maybeHandleAutomation();
-                });
-            } catch (Exception exc) {
-                runTrackedOnUiThread(harnessToken, () -> {
-                    setBusy("Manual install failed", false);
-                    setResultHighlightQuery("");
-                    replaceItems(Collections.emptyList());
-                    updateHomeSubtitle(0);
-                    renderHomeRelatedGuides(null, Collections.emptyList());
-                    setInfoTextMessage(exc.toString(), true);
-                    resultsHeader.setText(presentationFormatter().buildPackInstallFailedHeader());
-                });
-            }
-        });
+        try {
+            executor.execute(() -> {
+                try {
+                    closeRepository();
+                    PackInstaller.InstalledPack pack = PackInstaller.ensureInstalled(this, force);
+                    PackRepository repo = new PackRepository(pack.databaseFile, pack.vectorFile);
+                    List<SearchResult> guides = repo.browseGuides(ALL_GUIDES);
+                    installedPack = pack;
+                    repository = repo;
+                    runTrackedOnUiThread(harnessToken, () -> {
+                        setBusy(presentationFormatter().buildHomeReadyStatus(guides.size()), false);
+                        updateInfoText();
+                        allGuides.clear();
+                        allGuides.addAll(guides);
+                        updateHomeSubtitle(guides.size());
+                        updateCategoryCards(guides);
+                        updateSessionPanel();
+                        refreshHomeRelatedGuidesAsync();
+                        refreshPinnedGuidesAsync();
+                        boolean autoQueryPending = hasAutoQuery(getIntent());
+                        MainInstallCompletionPolicy.CompletionPlan installCompletionPlan =
+                            MainInstallCompletionPolicy.plan(
+                                autoQueryPending,
+                                currentMainRouteState()
+                            );
+                        if (installCompletionPlan.shouldPublishBrowseGuides()) {
+                            publishResultItems(installCompletionPlan.browsePublication(), guides);
+                            resultsHeader.setText("Guide browser (" + guides.size() + " loaded)");
+                        }
+                        maybeHandleAutomation();
+                    });
+                } catch (Exception exc) {
+                    runTrackedOnUiThread(harnessToken, () -> {
+                        setBusy("Manual install failed", false);
+                        setResultHighlightQuery("");
+                        replaceItems(Collections.emptyList());
+                        updateHomeSubtitle(0);
+                        renderHomeRelatedGuides(null, Collections.emptyList());
+                        setInfoTextMessage(exc.toString(), true);
+                        resultsHeader.setText(presentationFormatter().buildPackInstallFailedHeader());
+                    });
+                }
+            });
+        } catch (RuntimeException exc) {
+            runTrackedOnUiThread(harnessToken, () -> {
+                setBusy("Manual install failed", false);
+                setResultHighlightQuery("");
+                replaceItems(Collections.emptyList());
+                updateHomeSubtitle(0);
+                renderHomeRelatedGuides(null, Collections.emptyList());
+                setInfoTextMessage(exc.toString(), true);
+                resultsHeader.setText(presentationFormatter().buildPackInstallFailedHeader());
+            });
+        }
     }
 
     private void runSearch(String query) {
@@ -1048,24 +1060,33 @@ public final class MainActivity extends AppCompatActivity {
     private void importSelectedModel(Uri uri) {
         setBusy("Importing model...", true);
         int harnessToken = beginHarnessTask("main.importModel");
-        executor.execute(() -> {
-            try {
-                File importedModel = ModelFileStore.importModel(getApplicationContext(), uri);
-                LiteRtModelRunner.close();
-                runTrackedOnUiThread(harnessToken, () -> {
-                    setBusy("Model ready", false);
-                    updateInfoText();
-                    resultsHeader.setText("Model imported: " + importedModel.getName());
-                });
-            } catch (Exception exc) {
-                runTrackedOnUiThread(harnessToken, () -> {
-                    setBusy("Model import failed", false);
-                    updateInfoText();
-                    setInfoTextMessage(buildInfoWithError(exc), true);
-                    resultsHeader.setText("Model import failed");
-                });
-            }
-        });
+        try {
+            executor.execute(() -> {
+                try {
+                    File importedModel = ModelFileStore.importModel(getApplicationContext(), uri);
+                    LiteRtModelRunner.close();
+                    runTrackedOnUiThread(harnessToken, () -> {
+                        setBusy("Model ready", false);
+                        updateInfoText();
+                        resultsHeader.setText("Model imported: " + importedModel.getName());
+                    });
+                } catch (Exception exc) {
+                    runTrackedOnUiThread(harnessToken, () -> {
+                        setBusy("Model import failed", false);
+                        updateInfoText();
+                        setInfoTextMessage(buildInfoWithError(exc), true);
+                        resultsHeader.setText("Model import failed");
+                    });
+                }
+            });
+        } catch (RuntimeException exc) {
+            runTrackedOnUiThread(harnessToken, () -> {
+                setBusy("Model import failed", false);
+                updateInfoText();
+                setInfoTextMessage(buildInfoWithError(exc), true);
+                resultsHeader.setText("Model import failed");
+            });
+        }
     }
 
     private void launchModelPicker() {
@@ -1292,30 +1313,40 @@ public final class MainActivity extends AppCompatActivity {
         }
         setBusy("Opening manual...", true);
         int harnessToken = beginHarnessTask("main.browseGuides");
-        executor.execute(() -> {
-            try {
-                List<SearchResult> guides = repo.browseGuides(ALL_GUIDES);
-                runTrackedOnUiThread(harnessToken, () -> {
-                    routeCoordinator.browseGuidesRoute();
-                    setBusy(presentationFormatter().buildHomeReadyStatus(guides.size()), false);
-                    allGuides.clear();
-                    allGuides.addAll(guides);
-                    updateCategoryCards(guides);
-                    publishResultItems(MainResultPublicationPolicy.browseSurface(currentMainRouteState()), guides);
-                    resultsHeader.setText("Guide browser (" + guides.size() + " loaded)");
-                    updateSessionPanel();
-                    refreshPinnedGuidesAsync();
-                });
-            } catch (Exception exc) {
-                runTrackedOnUiThread(harnessToken, () -> {
-                    setBusy("Manual load failed", false);
-                    setResultHighlightQuery("");
-                    replaceItems(Collections.emptyList());
-                    resultsHeader.setText("Guide load failed");
-                    setInfoTextMessage(exc.toString(), true);
-                });
-            }
-        });
+        try {
+            executor.execute(() -> {
+                try {
+                    List<SearchResult> guides = repo.browseGuides(ALL_GUIDES);
+                    runTrackedOnUiThread(harnessToken, () -> {
+                        routeCoordinator.browseGuidesRoute();
+                        setBusy(presentationFormatter().buildHomeReadyStatus(guides.size()), false);
+                        allGuides.clear();
+                        allGuides.addAll(guides);
+                        updateCategoryCards(guides);
+                        publishResultItems(MainResultPublicationPolicy.browseSurface(currentMainRouteState()), guides);
+                        resultsHeader.setText("Guide browser (" + guides.size() + " loaded)");
+                        updateSessionPanel();
+                        refreshPinnedGuidesAsync();
+                    });
+                } catch (Exception exc) {
+                    runTrackedOnUiThread(harnessToken, () -> {
+                        setBusy("Manual load failed", false);
+                        setResultHighlightQuery("");
+                        replaceItems(Collections.emptyList());
+                        resultsHeader.setText("Guide load failed");
+                        setInfoTextMessage(exc.toString(), true);
+                    });
+                }
+            });
+        } catch (RuntimeException exc) {
+            runTrackedOnUiThread(harnessToken, () -> {
+                setBusy("Manual load failed", false);
+                setResultHighlightQuery("");
+                replaceItems(Collections.emptyList());
+                resultsHeader.setText("Guide load failed");
+                setInfoTextMessage(exc.toString(), true);
+            });
+        }
     }
 
     private void publishResultItems(MainResultPublicationPolicy publication, List<SearchResult> results) {
@@ -1501,26 +1532,36 @@ public final class MainActivity extends AppCompatActivity {
             return;
         }
         int harnessToken = beginHarnessTask("main.refreshPinnedGuides");
-        executor.execute(() -> {
-            ArrayList<SearchResult> loaded = new ArrayList<>();
-            for (String guideId : refreshPlan.guideIdsToLoad) {
-                try {
-                    SearchResult result = repo.loadGuideById(guideId);
-                    if (result != null) {
-                        loaded.add(result);
+        try {
+            executor.execute(() -> {
+                ArrayList<SearchResult> loaded = new ArrayList<>();
+                for (String guideId : refreshPlan.guideIdsToLoad) {
+                    try {
+                        SearchResult result = repo.loadGuideById(guideId);
+                        if (result != null) {
+                            loaded.add(result);
+                        }
+                    } catch (Exception ignored) {
+                        // A stale or corrupt saved guide should not keep the harness busy forever.
                     }
-                } catch (Exception ignored) {
-                    // A stale or corrupt saved guide should not keep the harness busy forever.
                 }
-            }
+                runTrackedOnUiThread(harnessToken, () -> {
+                    MainSavedGuidesController.RenderPlan renderPlan =
+                        savedGuidesController.planRender(refreshPlan, repository == repo, loaded);
+                    if (renderPlan.shouldRender) {
+                        renderPinnedGuides(renderPlan.guides);
+                    }
+                });
+            });
+        } catch (RuntimeException ignored) {
             runTrackedOnUiThread(harnessToken, () -> {
                 MainSavedGuidesController.RenderPlan renderPlan =
-                    savedGuidesController.planRender(refreshPlan, repository == repo, loaded);
+                    savedGuidesController.planRender(refreshPlan, repository == repo, Collections.emptyList());
                 if (renderPlan.shouldRender) {
                     renderPinnedGuides(renderPlan.guides);
                 }
             });
-        });
+        }
     }
 
     private void renderPinnedGuides(List<SearchResult> guides) {
@@ -2004,27 +2045,36 @@ public final class MainActivity extends AppCompatActivity {
             return;
         }
         int harnessToken = beginHarnessTask("main.refreshHomeRelatedGuides");
-        executor.execute(() -> {
-            String anchorLabel = anchor.label;
-            List<SearchResult> related = Collections.emptyList();
-            try {
-                if (anchorLabel.isEmpty()) {
-                    SearchResult loadedAnchor = repo.loadGuideById(anchor.guideId);
-                    anchorLabel = presentationFormatter().buildGuideReference(loadedAnchor, anchor.guideId);
+        try {
+            executor.execute(() -> {
+                String anchorLabel = anchor.label;
+                List<SearchResult> related = Collections.emptyList();
+                try {
+                    if (anchorLabel.isEmpty()) {
+                        SearchResult loadedAnchor = repo.loadGuideById(anchor.guideId);
+                        anchorLabel = presentationFormatter().buildGuideReference(loadedAnchor, anchor.guideId);
+                    }
+                    related = repo.loadRelatedGuides(anchor.guideId, getHomeRelatedGuideLimit());
+                } catch (Exception ignored) {
+                    // Keep home usable if related-guide lookup fails for a stale/corrupt pack row.
                 }
-                related = repo.loadRelatedGuides(anchor.guideId, getHomeRelatedGuideLimit());
-            } catch (Exception ignored) {
-                // Keep home usable if related-guide lookup fails for a stale/corrupt pack row.
-            }
-            HomeGuideAnchor resolvedAnchor = anchor.withLabel(anchorLabel);
-            List<SearchResult> resolvedRelated = related;
+                HomeGuideAnchor resolvedAnchor = anchor.withLabel(anchorLabel);
+                List<SearchResult> resolvedRelated = related;
+                runTrackedOnUiThread(harnessToken, () -> {
+                    if (requestVersion != homeRelatedRequestVersion) {
+                        return;
+                    }
+                    renderHomeRelatedGuides(resolvedAnchor, resolvedRelated);
+                });
+            });
+        } catch (RuntimeException ignored) {
             runTrackedOnUiThread(harnessToken, () -> {
                 if (requestVersion != homeRelatedRequestVersion) {
                     return;
                 }
-                renderHomeRelatedGuides(resolvedAnchor, resolvedRelated);
+                renderHomeRelatedGuides(anchor, Collections.emptyList());
             });
-        });
+        }
     }
 
     private void refreshResultPreviewBridgesAsync(List<SearchResult> results) {
