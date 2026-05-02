@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.ApplicationInfo;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -79,7 +80,7 @@ public final class HostInferenceConfigTest {
             .putExtra(HostInferenceConfig.EXTRA_HOST_INFERENCE_URL, " localhost:1235/ ")
             .putExtra(HostInferenceConfig.EXTRA_HOST_INFERENCE_MODEL, " local-model ");
 
-        assertTrue(HostInferenceConfig.applyIntentOverrides(context, intent));
+        assertTrue(HostInferenceConfig.applyIntentOverridesForTest(context, intent, true));
 
         HostInferenceConfig.Settings settings = HostInferenceConfig.resolve(context);
         assertTrue(settings.enabled);
@@ -96,7 +97,7 @@ public final class HostInferenceConfigTest {
             .putExtra(HostInferenceConfig.EXTRA_HOST_INFERENCE_URL, "http://example.com:1235/v1")
             .putExtra(HostInferenceConfig.EXTRA_HOST_INFERENCE_MODEL, "poisoned-model");
 
-        assertFalse(HostInferenceConfig.applyIntentOverrides(context, intent));
+        assertFalse(HostInferenceConfig.applyIntentOverridesForTest(context, intent, true));
 
         HostInferenceConfig.Settings settings = HostInferenceConfig.resolve(context);
         assertTrue(settings.enabled);
@@ -113,7 +114,7 @@ public final class HostInferenceConfigTest {
             .putExtra(HostInferenceConfig.EXTRA_HOST_INFERENCE_URL, "http://192.168.1.50:1235/v1")
             .putExtra(HostInferenceConfig.EXTRA_HOST_INFERENCE_MODEL, "lan-model");
 
-        assertFalse(HostInferenceConfig.applyIntentOverrides(context, intent));
+        assertFalse(HostInferenceConfig.applyIntentOverridesForTest(context, intent, true));
 
         HostInferenceConfig.Settings settings = HostInferenceConfig.resolve(context);
         assertTrue(settings.enabled);
@@ -129,12 +130,46 @@ public final class HostInferenceConfigTest {
             .putExtra(HostInferenceConfig.EXTRA_HOST_INFERENCE_URL, "https://example.com/openai/v1/chat/completions")
             .putExtra(HostInferenceConfig.EXTRA_HOST_INFERENCE_MODEL, "remote-model");
 
-        assertTrue(HostInferenceConfig.applyIntentOverrides(context, intent));
+        assertTrue(HostInferenceConfig.applyIntentOverridesForTest(context, intent, true));
 
         HostInferenceConfig.Settings settings = HostInferenceConfig.resolve(context);
         assertTrue(settings.enabled);
         assertEquals("https://example.com/openai/v1", settings.baseUrl);
         assertEquals("remote-model", settings.modelId);
+    }
+
+    @Test
+    public void applyIntentOverridesRejectsUnauthorizedLauncherIntentAndLeavesExistingSettings() {
+        TestContext context = new TestContext();
+        HostInferenceConfig.save(context, true, "http://localhost:1235/v1", "existing-model");
+        Intent intent = new TestIntent()
+            .putExtra(HostInferenceConfig.EXTRA_HOST_INFERENCE_ENABLED, true)
+            .putExtra(HostInferenceConfig.EXTRA_HOST_INFERENCE_URL, "https://example.com/openai/v1/chat/completions")
+            .putExtra(HostInferenceConfig.EXTRA_HOST_INFERENCE_MODEL, "remote-model");
+
+        assertFalse(HostInferenceConfig.applyIntentOverrides(context, intent));
+
+        HostInferenceConfig.Settings settings = HostInferenceConfig.resolve(context);
+        assertTrue(settings.enabled);
+        assertEquals("http://localhost:1235/v1", settings.baseUrl);
+        assertEquals("existing-model", settings.modelId);
+    }
+
+    @Test
+    public void applyIntentOverridesAllowsAuthorizedDebugAutomationIntent() {
+        TestContext context = new TestContext(true);
+        Intent intent = new TestIntent()
+            .putExtra(HostInferenceConfig.EXTRA_HOST_INFERENCE_ENABLED, true)
+            .putExtra(HostInferenceConfig.EXTRA_HOST_INFERENCE_URL, "localhost:1235")
+            .putExtra(HostInferenceConfig.EXTRA_HOST_INFERENCE_MODEL, "authorized-model");
+        ReviewDemoPolicy.putProductReviewModeExtras(intent, true);
+
+        assertTrue(HostInferenceConfig.applyIntentOverrides(context, intent));
+
+        HostInferenceConfig.Settings settings = HostInferenceConfig.resolve(context);
+        assertTrue(settings.enabled);
+        assertEquals("http://localhost:1235/v1", settings.baseUrl);
+        assertEquals("authorized-model", settings.modelId);
     }
 
     @Test
@@ -196,9 +231,22 @@ public final class HostInferenceConfigTest {
 
     private static final class TestContext extends ContextWrapper {
         private final Map<String, SharedPreferences> prefs = new HashMap<>();
+        private final ApplicationInfo applicationInfo = new ApplicationInfo();
 
         TestContext() {
+            this(false);
+        }
+
+        TestContext(boolean debugBuild) {
             super(null);
+            if (debugBuild) {
+                applicationInfo.flags |= ApplicationInfo.FLAG_DEBUGGABLE;
+            }
+        }
+
+        @Override
+        public ApplicationInfo getApplicationInfo() {
+            return applicationInfo;
         }
 
         @Override

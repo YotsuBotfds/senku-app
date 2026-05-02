@@ -31,6 +31,18 @@ public final class HostInferenceConfig {
     }
 
     public static boolean applyIntentOverrides(Context context, Intent intent) {
+        return applyIntentOverridesForTest(
+            context,
+            intent,
+            ReviewDemoPolicy.isAuthorizedAutomationIntent(intent, context)
+        );
+    }
+
+    static boolean applyIntentOverridesForTest(
+        Context context,
+        Intent intent,
+        boolean automationAuthorized
+    ) {
         if (context == null || intent == null) {
             return false;
         }
@@ -38,6 +50,9 @@ public final class HostInferenceConfig {
             || intent.hasExtra(EXTRA_HOST_INFERENCE_URL)
             || intent.hasExtra(EXTRA_HOST_INFERENCE_MODEL);
         if (!hasOverride) {
+            return false;
+        }
+        if (!automationAuthorized) {
             return false;
         }
 

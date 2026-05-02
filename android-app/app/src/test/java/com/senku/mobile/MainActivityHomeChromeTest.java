@@ -37,6 +37,14 @@ public final class MainActivityHomeChromeTest {
     }
 
     @Test
+    public void debugDetailIntentRequiresAuthorizedAutomationPath() {
+        assertFalse(MainActivity.shouldHandleDebugDetailIntentForTest(false, false, true));
+        assertFalse(MainActivity.shouldHandleDebugDetailIntentForTest(false, true, false));
+        assertFalse(MainActivity.shouldHandleDebugDetailIntentForTest(true, true, true));
+        assertTrue(MainActivity.shouldHandleDebugDetailIntentForTest(false, true, true));
+    }
+
+    @Test
     public void categoryShelfModelsAreSortedByCountThenContractOrder() {
         List<CategoryShelfItemModel> items = MainActivity.buildHomeChromeCategoryShelfItems(
             Arrays.asList(

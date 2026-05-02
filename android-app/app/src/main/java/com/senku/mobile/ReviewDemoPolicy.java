@@ -48,7 +48,9 @@ final class ReviewDemoPolicy {
         boolean automationAuthorized,
         boolean debugBuild
     ) {
-        return hasReviewModeExtra && reviewModeEnabled && automationAuthorized && debugBuild;
+        return hasReviewModeExtra
+            && reviewModeEnabled
+            && isAuthorizedAutomationIntentForTest(automationAuthorized, debugBuild);
     }
 
     static void putProductReviewModeExtras(Intent intent, boolean productReviewMode) {
@@ -69,6 +71,17 @@ final class ReviewDemoPolicy {
     private static boolean isDebuggableBuild(Context context) {
         ApplicationInfo info = context == null ? null : context.getApplicationInfo();
         return info != null && (info.flags & ApplicationInfo.FLAG_DEBUGGABLE) != 0;
+    }
+
+    static boolean isAuthorizedAutomationIntent(Intent intent, Context context) {
+        return isAuthorizedAutomationIntentForTest(
+            isProductReviewAutomationAuthorized(intent),
+            isDebuggableBuild(context)
+        );
+    }
+
+    static boolean isAuthorizedAutomationIntentForTest(boolean automationAuthorized, boolean debugBuild) {
+        return automationAuthorized && debugBuild;
     }
 
     private static boolean isProductReviewAutomationAuthorized(Intent intent) {

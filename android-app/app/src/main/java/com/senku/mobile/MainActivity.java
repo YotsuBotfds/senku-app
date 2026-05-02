@@ -1161,7 +1161,7 @@ public final class MainActivity extends AppCompatActivity {
     }
 
     private void maybeHandleDebugDetailIntent(Intent intent) {
-        if (debugDetailIntentHandled || intent == null || !intent.getBooleanExtra(EXTRA_DEBUG_OPEN_DETAIL, false)) {
+        if (!shouldHandleDebugDetailIntent(intent)) {
             return;
         }
         debugDetailIntentHandled = true;
@@ -1179,6 +1179,25 @@ public final class MainActivity extends AppCompatActivity {
             body = "Synthetic debug answer body.";
         }
         openAnswerDetail(title, subtitle, body, Collections.emptyList(), null);
+    }
+
+    private boolean shouldHandleDebugDetailIntent(Intent intent) {
+        if (intent == null) {
+            return false;
+        }
+        return shouldHandleDebugDetailIntentForTest(
+            debugDetailIntentHandled,
+            intent.getBooleanExtra(EXTRA_DEBUG_OPEN_DETAIL, false),
+            ReviewDemoPolicy.isAuthorizedAutomationIntent(intent, this)
+        );
+    }
+
+    static boolean shouldHandleDebugDetailIntentForTest(
+        boolean alreadyHandled,
+        boolean debugOpenRequested,
+        boolean automationAuthorized
+    ) {
+        return !alreadyHandled && debugOpenRequested && automationAuthorized;
     }
 
     private static String safe(String value) {
