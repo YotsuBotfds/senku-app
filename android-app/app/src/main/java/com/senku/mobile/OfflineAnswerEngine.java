@@ -16,10 +16,13 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 import java.util.function.BiConsumer;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public final class OfflineAnswerEngine {
     private static final String TAG = "SenkuMobile";
     private static final Locale QUERY_LOCALE = Locale.US;
+    private static final Pattern GUIDE_CITATION_PATTERN = Pattern.compile("(?i)\\[(GD-[0-9A-Z-]+)\\]");
     private static final int ANSWER_CANDIDATE_LIMIT = 16;
     private static final int ANSWER_CONTEXT_LIMIT = 4;
     private static final int MODEL_MAX_TOKENS = 2048;
@@ -743,8 +746,14 @@ public final class OfflineAnswerEngine {
         long elapsedMs = System.currentTimeMillis() - prepared.startedAtMs;
         long generationMs = Math.max(0L, System.currentTimeMillis() - generationStartedAtMs);
         logDebug(TAG, "ask.generate query=\"" + prepared.query + "\" totalElapsedMs=" + elapsedMs);
-        String resolvedAnswer = PromptBuilder.sanitizeAnswerText(answer);
-        String streamedAnswer = PromptBuilder.sanitizeAnswerText(bestStreamCandidate.bestRawText);
+        String resolvedAnswer = stripUnsupportedGuideCitations(
+            PromptBuilder.sanitizeAnswerText(answer),
+            prepared.sources
+        );
+        String streamedAnswer = stripUnsupportedGuideCitations(
+            PromptBuilder.sanitizeAnswerText(bestStreamCandidate.bestRawText),
+            prepared.sources
+        );
         boolean usedSourceFallback = false;
         if (resolvedAnswer.isEmpty() && !streamedAnswer.isEmpty()) {
             logWarn(TAG, "ask.generate using_streamed_fallback query=\"" + prepared.query + "\"", null);
@@ -838,9 +847,52 @@ public final class OfflineAnswerEngine {
             return;
         }
         String visibleText = PromptBuilder.sanitizeAnswerText(rawText);
+        visibleText = stripUnsupportedGuideCitations(visibleText, prepared.sources);
         if (!visibleText.isEmpty()) {
             progressListener.onAnswerBody(visibleText);
         }
+    }
+
+    private static String stripUnsupportedGuideCitations(String answer, List<SearchResult> sources) {
+        String safeAnswer = safe(answer);
+        if (safeAnswer.isEmpty()) {
+            return "";
+        }
+        Set<String> allowedGuideIds = allowedGuideIds(sources);
+        Matcher matcher = GUIDE_CITATION_PATTERN.matcher(safeAnswer);
+        StringBuffer builder = new StringBuffer();
+        boolean changed = false;
+        while (matcher.find()) {
+            String guideId = safe(matcher.group(1)).toUpperCase(Locale.US);
+            if (allowedGuideIds.contains(guideId)) {
+                matcher.appendReplacement(builder, Matcher.quoteReplacement(matcher.group(0)));
+            } else {
+                matcher.appendReplacement(builder, "");
+                changed = true;
+            }
+        }
+        matcher.appendTail(builder);
+        if (!changed) {
+            return safeAnswer;
+        }
+        return builder.toString()
+            .replaceAll("\\s+([.,;:])", "$1")
+            .replaceAll("\\s{2,}", " ")
+            .trim();
+    }
+
+    private static Set<String> allowedGuideIds(List<SearchResult> sources) {
+        LinkedHashSet<String> guideIds = new LinkedHashSet<>();
+        if (sources == null) {
+            return guideIds;
+        }
+        for (SearchResult source : sources) {
+            String guideId = safe(source == null ? null : source.guideId).trim();
+            if (!guideId.isEmpty()) {
+                guideIds.add(guideId.toUpperCase(Locale.US));
+            }
+        }
+        return guideIds;
     }
 
     private static void logFirstTokenMs(String query, String path, long firstTokenMs) {

@@ -1980,6 +1980,61 @@ public final class OfflineAnswerEngineTest {
     }
 
     @Test
+    public void generateSourceBackedAnswerHidesUnsupportedGuideCitations() throws Exception {
+        String answerWithHallucinatedCitation =
+            "Short answer: Keep treated water covered [GD-035] and ignore unrelated citation [GD-999]. " +
+                "Steps: 1. Use the covered vessel [GD-035]. 2. Do not trust the missing guide [GD-777].";
+        File tempModel = File.createTempFile("senku-source-citation", ".litertlm");
+        tempModel.deleteOnExit();
+        OfflineAnswerEngine.setGeneratorsForTest(
+            (settings, systemPrompt, prompt, maxTokens) -> {
+                throw new AssertionError("host generation should not run");
+            },
+            (context, modelFile, prompt, maxTokens, listener) -> {
+                listener.onPartialText(answerWithHallucinatedCitation);
+                return answerWithHallucinatedCitation;
+            }
+        );
+
+        OfflineAnswerEngine.PreparedAnswer prepared = OfflineAnswerEngine.PreparedAnswer.restoredGenerative(
+            "how should i store treated water",
+            List.of(
+                new SearchResult(
+                    "Water Storage",
+                    "",
+                    "Keep treated water covered and separated from dirty containers.",
+                    "Cover treated water and use clean vessels.",
+                    "GD-035",
+                    "Storage",
+                    "water",
+                    "guide-focus"
+                )
+            ),
+            false,
+            System.currentTimeMillis() - 1000L,
+            false,
+            "",
+            "",
+            "system",
+            "prompt"
+        );
+
+        ArrayList<String> partials = new ArrayList<>();
+        OfflineAnswerEngine.AnswerRun answerRun =
+            OfflineAnswerEngine.generate(null, tempModel, prepared, partials::add);
+
+        assertEquals(OfflineAnswerEngine.AnswerMode.CONFIDENT, answerRun.mode);
+        assertFalse(answerRun.abstain);
+        assertTrue(answerRun.answerBody.contains("[GD-035]"));
+        assertFalse(answerRun.answerBody.contains("[GD-999]"));
+        assertFalse(answerRun.answerBody.contains("[GD-777]"));
+        assertEquals(1, partials.size());
+        assertTrue(partials.get(0).contains("[GD-035]"));
+        assertFalse(partials.get(0).contains("[GD-999]"));
+        assertFalse(partials.get(0).contains("[GD-777]"));
+    }
+
+    @Test
     public void generateNoSourceUnsupportedAskReturnsAbstainCopyAndNoSources() throws Exception {
         OfflineAnswerEngine.setGeneratorsForTest(
             (settings, systemPrompt, prompt, maxTokens) -> {
