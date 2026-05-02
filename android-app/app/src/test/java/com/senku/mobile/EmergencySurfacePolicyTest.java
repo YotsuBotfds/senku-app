@@ -317,6 +317,44 @@ public final class EmergencySurfacePolicyTest {
     }
 
     @Test
+    public void eligibleEmergencyBridgePromotesTaskRootAnswerBackToManualHome() {
+        ReviewedCardMetadata metadata = reviewedMetadata(
+            "poisoning_unknown_ingestion",
+            "GD-898",
+            "pilot_reviewed",
+            "GD-898"
+        );
+        EmergencySurfacePolicy.Decision emergencyDecision = DetailEmergencySurfaceBridgePolicy.evaluate(
+            true,
+            true,
+            "answer_card:poisoning_unknown_ingestion",
+            "medical",
+            metadata,
+            false,
+            OfflineAnswerEngine.ConfidenceLabel.HIGH,
+            OfflineAnswerEngine.AnswerMode.CONFIDENT
+        );
+        DetailBackPolicy.SourceRoute promotedRoute = DetailActivity.detailBackPolicySourceRouteForSurface(
+            DetailBackPolicy.SourceRoute.ANSWER,
+            emergencyDecision.eligible
+        );
+        DetailBackPolicy.Inputs inputs = new DetailBackPolicy.Inputs(
+            true,
+            promotedRoute,
+            DetailBackPolicy.BackTrigger.VISIBLE_BACK_BUTTON
+        );
+
+        DetailBackPolicy.Decision backDecision = DetailBackPolicy.decide(inputs);
+        DetailBackPolicy.VisibleBackAffordance affordance = DetailBackPolicy.visibleBackAffordance(inputs);
+
+        assertTrue(emergencyDecision.eligible);
+        assertEquals(DetailBackPolicy.SourceRoute.EMERGENCY_ANSWER, promotedRoute);
+        assertEquals(DetailBackPolicy.RouteBackIntent.NAVIGATE_EMERGENCY_MANUAL_HOME, backDecision.routeIntent);
+        assertEquals(R.string.detail_emergency_app_rail_manual_label, affordance.labelResource);
+        assertEquals(R.string.detail_emergency_app_rail_manual_content_description, affordance.contentDescriptionResource);
+    }
+
+    @Test
     public void tabletPortraitEmergencyAppRailMarksAskAsActiveContext() {
         assertEquals(
             DetailActivity.TabletEmergencyAppRailDestination.ASK,

@@ -139,6 +139,47 @@ public final class DetailActivityRelatedGuideShapingTest {
     }
 
     @Test
+    public void orderedReviewSourceStackPreservesExplicitSelectedRelatedGuideAnchor() {
+        SearchResult topic = sourceWithBody(
+            "GD-345",
+            "Tarp & Cord Shelters",
+            "Ridgeline pitch",
+            "A simple tarp and cord ridgeline shelter keeps rain away from camp.",
+            "rain shelter tarp cord"
+        );
+        SearchResult related = sourceWithBody(
+            "GD-132",
+            "Foundry & Metal Casting",
+            "Pour zone",
+            "Keep foundry water and bystanders away before metal casting begins.",
+            ""
+        );
+        SearchResult anchor = sourceWithBody(
+            "GD-220",
+            "Abrasives Manufacturing",
+            "Foundry preparation",
+            "Abrasives manufacturing starts with controlled foundry safety checks.",
+            ""
+        );
+        List<SearchResult> ordered = DetailSourceStackPolicy.orderAnswerSourceStack(
+            true,
+            Arrays.asList(topic, related, anchor)
+        );
+        String selectedKey = DetailProvenancePresentationFormatter.buildSourceSelectionKey(topic);
+
+        SearchResult selected = DetailActivity.selectedSourceForRelatedGuideGraphForState(
+            true,
+            true,
+            selectedKey,
+            ordered
+        );
+
+        assertEquals("GD-220", ordered.get(0).guideId);
+        assertEquals("GD-345", selected.guideId);
+        assertEquals("Ridgeline pitch", selected.sectionHeading);
+    }
+
+    @Test
     public void emergencyHeaderFlatBandKeepsCompactPadding() {
         assertEquals(12, DetailActivity.resolveEmergencyHeaderHorizontalPaddingDp());
         assertEquals(7, DetailActivity.resolveEmergencyHeaderVerticalPaddingDp());
@@ -150,5 +191,28 @@ public final class DetailActivityRelatedGuideShapingTest {
 
     private static SearchResult resultWithTopicTags(String guideId, String title, String topicTags) {
         return new SearchResult(title, "", "", "", guideId, "", "", "", "", "", "", topicTags);
+    }
+
+    private static SearchResult sourceWithBody(
+        String guideId,
+        String title,
+        String sectionHeading,
+        String body,
+        String topicTags
+    ) {
+        return new SearchResult(
+            title,
+            "",
+            body,
+            body,
+            guideId,
+            sectionHeading,
+            "test",
+            "hybrid",
+            "",
+            "",
+            "",
+            topicTags
+        );
     }
 }
