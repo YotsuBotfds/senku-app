@@ -1,7 +1,11 @@
 package com.senku.mobile;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
+import android.content.Context;
+import android.content.ContextWrapper;
 import android.content.SharedPreferences;
 
 import java.util.ArrayList;
@@ -86,6 +90,37 @@ public final class PinnedGuideStoreTest {
     }
 
     @Test
+    public void publicStoreApiNormalizesResavesAndRemovesPinnedGuides() {
+        TestContext context = new TestContext();
+
+        assertTrue(PinnedGuideStore.add(context, " gd-220 "));
+        assertTrue(PinnedGuideStore.add(context, "gd-132"));
+        assertTrue(PinnedGuideStore.add(context, "GD-220"));
+
+        assertEquals(List.of("GD-220", "GD-132"), PinnedGuideStore.listGuideIds(context));
+        assertTrue(PinnedGuideStore.contains(context, "gd-132"));
+        assertTrue(PinnedGuideStore.remove(context, " gd-132 "));
+        assertFalse(PinnedGuideStore.contains(context, "GD-132"));
+        assertEquals(List.of("GD-220"), PinnedGuideStore.listGuideIds(context));
+    }
+
+    @Test
+    public void publicStoreApiRecoversFromWrongTypedPersistedGuideList() {
+        TestContext context = new TestContext();
+        context.getSharedPreferences("senku_pinned_guides", Context.MODE_PRIVATE)
+            .edit()
+            .putInt("guide_ids", 7)
+            .commit();
+
+        assertTrue(PinnedGuideStore.listGuideIds(context).isEmpty());
+        assertFalse(PinnedGuideStore.contains(context, "GD-220"));
+        assertFalse(PinnedGuideStore.remove(context, "GD-220"));
+
+        assertTrue(PinnedGuideStore.add(context, "gd-220"));
+        assertEquals(List.of("GD-220"), PinnedGuideStore.listGuideIds(context));
+    }
+
+    @Test
     public void clearPreferencesForTestRemovesStoredGuideIds() {
         InMemorySharedPreferences preferences = new InMemorySharedPreferences();
         preferences.edit().putString(
@@ -98,6 +133,25 @@ public final class PinnedGuideStoreTest {
         PinnedGuideStore.clearPreferencesForTest(preferences);
 
         assertEquals("", preferences.getString("ignored_test_key", ""));
+    }
+
+    private static final class TestContext extends ContextWrapper {
+        private final Map<String, SharedPreferences> prefs = new HashMap<>();
+
+        TestContext() {
+            super(null);
+        }
+
+        @Override
+        public SharedPreferences getSharedPreferences(String name, int mode) {
+            SharedPreferences existing = prefs.get(name);
+            if (existing != null) {
+                return existing;
+            }
+            SharedPreferences created = new InMemorySharedPreferences();
+            prefs.put(name, created);
+            return created;
+        }
     }
 
     private static final class InMemorySharedPreferences implements SharedPreferences {

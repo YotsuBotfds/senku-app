@@ -25,6 +25,9 @@ final class RecentThreadDisplayPolicy {
                 if (displayPreviews.size() >= maxCount) {
                     break;
                 }
+                if (preview == null) {
+                    continue;
+                }
                 displayPreviews.add(preview);
             }
         }

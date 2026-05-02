@@ -18,16 +18,23 @@ public final class SavedGuidesPolicyTest {
     }
 
     @Test
-    public void homeAndAskBrowseFlowsHideEmptySavedSection() {
+    public void nonSavedBrowseFlowsHideEmptyOrNegativeSavedSection() {
         assertFalse(SavedGuidesPolicy.shouldShowSection(true, BottomTabDestination.HOME, 0));
+        assertFalse(SavedGuidesPolicy.shouldShowSection(true, BottomTabDestination.SEARCH, 0));
         assertFalse(SavedGuidesPolicy.shouldShowSection(true, BottomTabDestination.ASK, 0));
+        assertFalse(SavedGuidesPolicy.shouldShowSection(true, BottomTabDestination.THREADS, 0));
+        assertFalse(SavedGuidesPolicy.shouldShowSection(true, null, 0));
+        assertFalse(SavedGuidesPolicy.shouldShowSection(true, BottomTabDestination.HOME, -1));
     }
 
     @Test
     public void nonEmptySavedGuidesShowAcrossBrowseFlows() {
         assertTrue(SavedGuidesPolicy.shouldShowSection(true, BottomTabDestination.HOME, 1));
+        assertTrue(SavedGuidesPolicy.shouldShowSection(true, BottomTabDestination.SEARCH, 1));
         assertTrue(SavedGuidesPolicy.shouldShowSection(true, BottomTabDestination.ASK, 2));
+        assertTrue(SavedGuidesPolicy.shouldShowSection(true, BottomTabDestination.THREADS, 2));
         assertTrue(SavedGuidesPolicy.shouldShowSection(true, BottomTabDestination.PINS, 12));
+        assertTrue(SavedGuidesPolicy.shouldShowSection(true, null, 1));
     }
 
     @Test

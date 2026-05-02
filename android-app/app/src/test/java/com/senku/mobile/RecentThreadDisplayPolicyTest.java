@@ -101,6 +101,26 @@ public final class RecentThreadDisplayPolicyTest {
         assertSame(second, displayPreviews.get(1));
     }
 
+    @Test
+    public void skipsNullLivePreviewsBeforeReviewPadding() {
+        ChatSessionStore.ConversationPreview live = livePreview("conversation-live", "two", NOW);
+
+        List<ChatSessionStore.ConversationPreview> displayPreviews =
+            RecentThreadDisplayPolicy.buildDisplayList(Arrays.asList(null, live), true, true, 2);
+
+        assertEquals(2, displayPreviews.size());
+        assertSame(live, displayPreviews.get(0));
+        assertPlaceholder(displayPreviews.get(1), 1);
+    }
+
+    @Test
+    public void maxCountZeroOrNegativeReturnsEmptyDisplayList() {
+        ChatSessionStore.ConversationPreview live = livePreview("conversation-live", "two", NOW);
+
+        assertTrue(RecentThreadDisplayPolicy.buildDisplayList(Arrays.asList(live), true, true, 0).isEmpty());
+        assertTrue(RecentThreadDisplayPolicy.buildDisplayList(Arrays.asList(live), true, true, -1).isEmpty());
+    }
+
     private static void assertPlaceholder(ChatSessionStore.ConversationPreview preview, int index) {
         assertEquals("review-home-placeholder-" + index, preview.conversationId);
         assertEquals(
