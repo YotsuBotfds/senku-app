@@ -194,7 +194,8 @@ public final class AnswerPresenterTest {
 
     @Test
     public void followUpGenerationFailureAfterPreviewKeepsSubmittedQueryForRestore() {
-        FakeHost host = new FakeHost(31);
+        int busyCountBefore = HarnessTestSignals.busyCount();
+        FakeHost host = new FakeHost(31, true);
         FakeEngine engine = new FakeEngine();
         engine.preparedToReturn = generativePrepared("draft that should come back");
         engine.generateException = new IllegalStateException("generation failed");
@@ -223,6 +224,7 @@ public final class AnswerPresenterTest {
         assertEquals("draft that should come back", host.lastFallbackQuery);
         assertEquals(1, engine.prepareCalls);
         assertEquals(1, engine.generateCalls);
+        assertEquals(busyCountBefore, HarnessTestSignals.busyCount());
     }
 
     @Test
@@ -336,9 +338,15 @@ public final class AnswerPresenterTest {
         Throwable lastFailure;
         String lastFallbackQuery;
         int nextHarnessToken = 1;
+        final boolean trackHarnessSignals;
 
         FakeHost(int currentRequestToken) {
+            this(currentRequestToken, false);
+        }
+
+        FakeHost(int currentRequestToken, boolean trackHarnessSignals) {
             this.currentRequestToken = currentRequestToken;
+            this.trackHarnessSignals = trackHarnessSignals;
         }
 
         @Override
@@ -374,13 +382,22 @@ public final class AnswerPresenterTest {
         @Override
         public int beginHarnessTask(String tag) {
             begunTags.add(tag);
+            if (trackHarnessSignals) {
+                return HarnessTestSignals.begin(tag);
+            }
             return nextHarnessToken++;
         }
 
         @Override
         public void runTrackedOnUiThread(int harnessToken, Runnable r) {
-            if (r != null) {
-                r.run();
+            try {
+                if (r != null) {
+                    r.run();
+                }
+            } finally {
+                if (trackHarnessSignals) {
+                    HarnessTestSignals.end(harnessToken);
+                }
             }
         }
 

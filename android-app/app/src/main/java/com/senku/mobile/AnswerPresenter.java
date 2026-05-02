@@ -194,6 +194,7 @@ final class AnswerPresenter {
         String fallbackQuery = safe(query).trim();
         int prepareHarnessToken = host.beginHarnessTask(prepareTagFor(kind));
         host.executor().execute(() -> {
+            int generationHarnessToken = 0;
             try {
                 PackRepository resolvedRepo = repositoryResolver.resolve(repo);
                 OfflineAnswerEngine.PreparedAnswer preparedAnswer = engine.prepare(
@@ -213,7 +214,7 @@ final class AnswerPresenter {
                 } else {
                     HarnessTestSignals.end(prepareHarnessToken);
                 }
-                int generationHarnessToken = host.beginHarnessTask(generationTagFor(kind, preparedAnswer));
+                generationHarnessToken = host.beginHarnessTask(generationTagFor(kind, preparedAnswer));
                 OfflineAnswerEngine.AnswerRun answerRun = engine.generate(
                     context,
                     modelFile,
@@ -229,6 +230,7 @@ final class AnswerPresenter {
                 });
             } catch (Exception exc) {
                 HarnessTestSignals.end(prepareHarnessToken);
+                HarnessTestSignals.end(generationHarnessToken);
                 int failureHarnessToken = host.beginHarnessTask(failureTagFor(kind));
                 host.runTrackedOnUiThread(failureHarnessToken, () -> {
                     if (!host.isCurrentRequestToken(requestToken)) {
