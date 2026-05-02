@@ -70,6 +70,15 @@ public final class PromptAnswerTextPolicyTest {
     }
 
     @Test
+    public void cleanAnswerRemovesMarkdownAndLatexLikeNoise() {
+        String cleaned = PromptAnswerTextPolicy.cleanAnswer(
+            "Answer: **Use dry tinder**. \\\\text{Keep airflow open}. ```"
+        );
+
+        assertEquals("Use dry tinder. Keep airflow open.", cleaned);
+    }
+
+    @Test
     public void lowCoverageDetectionMatchesKnownFallbackLanguageOnly() {
         assertTrue(PromptAnswerTextPolicy.isLowCoverageAnswer(
             "The retrieved notes do not address that material."
@@ -81,5 +90,13 @@ public final class PromptAnswerTextPolicyTest {
             "Use dry kindling and build airflow from below."
         ));
         assertFalse(PromptAnswerTextPolicy.isLowCoverageAnswer(""));
+    }
+
+    @Test
+    public void lowCoverageDetectionCatchesCommonModelFallbackPhrases() {
+        assertTrue(PromptAnswerTextPolicy.isLowCoverageAnswer("That is not covered in the retrieved notes."));
+        assertTrue(PromptAnswerTextPolicy.isLowCoverageAnswer("I am unable to provide that from the notes."));
+        assertTrue(PromptAnswerTextPolicy.isLowCoverageAnswer("There is no direct information about violin setup."));
+        assertTrue(PromptAnswerTextPolicy.isLowCoverageAnswer("Nothing in the notes explains tax filing."));
     }
 }
