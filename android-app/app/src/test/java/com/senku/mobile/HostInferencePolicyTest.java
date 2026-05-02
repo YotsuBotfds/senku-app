@@ -118,6 +118,38 @@ public final class HostInferencePolicyTest {
     }
 
     @Test
+    public void spoofedLocalAuthoritiesResolveToActualRemoteHostAndAreRejected() {
+        assertRejected(
+            HostInferencePolicy.evaluate("http://localhost@evil.example/v1"),
+            HostInferencePolicy.Reason.NON_LOCAL_CLEARTEXT_REJECTED,
+            "http",
+            "evil.example"
+        );
+        assertRejected(
+            HostInferencePolicy.evaluate("http://127.0.0.1.evil.example/v1"),
+            HostInferencePolicy.Reason.NON_LOCAL_CLEARTEXT_REJECTED,
+            "http",
+            "127.0.0.1.evil.example"
+        );
+    }
+
+    @Test
+    public void ambiguousCleartextLocalAddressesAreRejectedUnlessExplicitlyAllowlisted() {
+        assertRejected(
+            HostInferencePolicy.evaluate("http://0.0.0.0:1235/v1"),
+            HostInferencePolicy.Reason.NON_LOCAL_CLEARTEXT_REJECTED,
+            "http",
+            "0.0.0.0"
+        );
+        assertRejected(
+            HostInferencePolicy.evaluate("http://[::1]:1235/v1"),
+            HostInferencePolicy.Reason.NON_LOCAL_CLEARTEXT_REJECTED,
+            "http",
+            "[::1]"
+        );
+    }
+
+    @Test
     public void privateLanCleartextHostIsRejectedByDefault() {
         HostInferencePolicy.Decision decision = HostInferencePolicy.evaluate("http://192.168.1.50:1235/v1");
 

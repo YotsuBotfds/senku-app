@@ -1,6 +1,7 @@
 package com.senku.mobile;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 final class HostInferenceResponsePolicy {
@@ -10,7 +11,12 @@ final class HostInferenceResponsePolicy {
     }
 
     static HostInferenceClient.Result parseResponseBody(String responseBody) throws Exception {
-        JSONObject responseJson = new JSONObject(responseBody);
+        JSONObject responseJson;
+        try {
+            responseJson = new JSONObject(responseBody);
+        } catch (JSONException exception) {
+            throw new IllegalStateException("Host inference returned malformed JSON");
+        }
         JSONArray choices = responseJson.optJSONArray("choices");
         if (choices == null || choices.length() == 0) {
             throw new IllegalStateException("Host inference returned no choices");
