@@ -176,6 +176,56 @@ public final class ChatSessionStoreTest {
     }
 
     @Test
+    public void recentConversationPreviewsSuppressPunctuationOnlyDuplicateQuestions() {
+        ChatSessionStore.resetForTest();
+        String olderConversationId = ChatSessionStore.createConversation();
+        String newerConversationId = ChatSessionStore.createConversation();
+        recordTurnAt(olderConversationId, "How do I store water", "GD-619", 1_000L);
+        recordTurnAt(newerConversationId, "How do I store water?!", "GD-035", 2_000L);
+
+        List<ChatSessionStore.ConversationPreview> previews =
+            ChatSessionStore.recentConversationPreviews(null, 10);
+
+        assertEquals(1, previews.size());
+        assertEquals(newerConversationId, previews.get(0).conversationId);
+    }
+
+    @Test
+    public void recentConversationPreviewsKeepDuplicateQuestionsOutsideDedupeWindow() {
+        ChatSessionStore.resetForTest();
+        String olderConversationId = ChatSessionStore.createConversation();
+        String newerConversationId = ChatSessionStore.createConversation();
+        long outsideWindowEpochMs = 1_000L + (31L * 60L * 1000L);
+        recordTurnAt(olderConversationId, "How do I store water?", "GD-619", 1_000L);
+        recordTurnAt(newerConversationId, "  how   do i store water?  ", "GD-035", outsideWindowEpochMs);
+
+        List<ChatSessionStore.ConversationPreview> previews =
+            ChatSessionStore.recentConversationPreviews(null, 10);
+
+        assertEquals(2, previews.size());
+        assertEquals(newerConversationId, previews.get(0).conversationId);
+        assertEquals(olderConversationId, previews.get(1).conversationId);
+    }
+
+    @Test
+    public void restoreSavedStateCapsConversationWindowToNewestStatefulThreads() throws Exception {
+        ChatSessionStore.resetForTest();
+
+        ChatSessionStore.restoreSavedStateForTest(savedStateWithConversations(12));
+        List<ChatSessionStore.ConversationPreview> previews =
+            ChatSessionStore.recentConversationPreviews(null, 20);
+
+        assertEquals(10, ChatSessionStore.conversationCountForTest());
+        assertFalse(ChatSessionStore.containsConversationIdForTest("conversation-01"));
+        assertFalse(ChatSessionStore.containsConversationIdForTest("conversation-02"));
+        assertTrue(ChatSessionStore.containsConversationIdForTest("conversation-03"));
+        assertTrue(ChatSessionStore.containsConversationIdForTest("conversation-12"));
+        assertEquals(10, previews.size());
+        assertEquals("conversation-12", previews.get(0).conversationId);
+        assertEquals("conversation-03", previews.get(9).conversationId);
+    }
+
+    @Test
     public void removeConversationDropsRecentPreviewAndPersistsRemoval() throws Exception {
         ChatSessionStore.resetForTest();
         String keptConversationId = ChatSessionStore.createConversation();
@@ -327,6 +377,35 @@ public final class ChatSessionStoreTest {
         return new JSONObject()
             .put("conversations", new JSONArray().put(conversationJson))
             .toString();
+    }
+
+    private static String savedStateWithConversations(int count) throws Exception {
+        JSONArray conversations = new JSONArray();
+        for (int index = 1; index <= count; index++) {
+            String guideId = String.format("GD-%03d", index);
+            SessionMemory memory = new SessionMemory();
+            memory.recordTranscriptFixtureTurnForTest(
+                "restored question " + index,
+                "Restore this thread.",
+                "Short answer: Restore this thread.",
+                List.of(new SearchResult(
+                    "Guide " + guideId,
+                    "",
+                    "",
+                    "",
+                    guideId,
+                    "Restore",
+                    "survival",
+                    "guide-focus"
+                )),
+                "",
+                1_000L + index
+            );
+            conversations.put(new JSONObject()
+                .put("id", String.format("conversation-%02d", index))
+                .put("memory", memory.toJson()));
+        }
+        return new JSONObject().put("conversations", conversations).toString();
     }
 
     private static final class TestContext extends ContextWrapper {

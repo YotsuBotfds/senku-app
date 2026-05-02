@@ -6,6 +6,8 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.List;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.junit.Test;
 
 public final class SessionMemoryTest {
@@ -404,6 +406,42 @@ public final class SessionMemoryTest {
         } finally {
             SessionMemory.setAnchorPriorEnabledForTest(false);
         }
+    }
+
+    @Test
+    public void fromJsonCapsOversizedPersistedSourceState() throws Exception {
+        JSONArray sourceLabels = new JSONArray();
+        JSONArray sourceResults = new JSONArray();
+        for (int index = 1; index <= 8; index++) {
+            String guideId = String.format("GD-%03d", index);
+            sourceLabels.put("[" + guideId + "] Guide " + index);
+            sourceResults.put(new JSONObject()
+                .put("title", "Guide " + index)
+                .put("guide_id", guideId)
+                .put("section_heading", "Section " + index)
+                .put("category", "survival")
+                .put("retrieval_mode", "guide-focus"));
+        }
+        JSONObject turn = new JSONObject()
+            .put("question", "restored oversized source state")
+            .put("answer_summary", "Keep the restored preview bounded.")
+            .put("answer_body", "Short answer: Keep the restored preview bounded.")
+            .put("sources", sourceLabels)
+            .put("source_results", sourceResults)
+            .put("recorded_at_epoch_ms", 1714244042000L);
+        JSONObject root = new JSONObject()
+            .put("version", 5)
+            .put("turns", new JSONArray().put(turn));
+
+        SessionMemory memory = SessionMemory.fromJson(root.toString());
+        SessionMemory.TurnSnapshot snapshot = memory.latestTurnSnapshot();
+
+        assertEquals(1, memory.turnCount());
+        assertEquals(3, snapshot.sources.size());
+        assertEquals(3, snapshot.sourceResults.size());
+        assertEquals("GD-001", snapshot.sourceResults.get(0).guideId);
+        assertEquals("GD-003", snapshot.sourceResults.get(2).guideId);
+        assertFalse(memory.renderSummary().contains("GD-004"));
     }
 
     @Test

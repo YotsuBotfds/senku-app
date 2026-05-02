@@ -700,6 +700,9 @@ public final class SessionMemory {
             String value = safe(array.optString(index, "")).trim();
             if (!value.isEmpty()) {
                 values.add(value);
+                if (values.size() >= MAX_VISIBLE_SOURCES) {
+                    break;
+                }
             }
         }
         return values;
@@ -729,6 +732,9 @@ public final class SessionMemory {
                 resultJson.optString("structure_type", ""),
                 resultJson.optString("topic_tags", "")
             ));
+            if (values.size() >= MAX_VISIBLE_SOURCES) {
+                break;
+            }
         }
         return values;
     }

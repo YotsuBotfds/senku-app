@@ -245,14 +245,14 @@ public final class ChatSessionStore {
         boolean previousWhitespace = false;
         for (int index = 0; index < normalized.length(); index++) {
             char ch = normalized.charAt(index);
-            if (Character.isWhitespace(ch)) {
+            if (Character.isLetterOrDigit(ch)) {
+                builder.append(ch);
+                previousWhitespace = false;
+            } else {
                 if (!previousWhitespace) {
                     builder.append(' ');
                     previousWhitespace = true;
                 }
-            } else {
-                builder.append(ch);
-                previousWhitespace = false;
             }
         }
         return builder.toString().trim();
