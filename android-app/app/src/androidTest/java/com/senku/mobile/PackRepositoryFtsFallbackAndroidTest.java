@@ -111,6 +111,22 @@ public final class PackRepositoryFtsFallbackAndroidTest {
     }
 
     @Test
+    public void repositoryOpensCurrentHeadVectorStoreAndSearches() throws Exception {
+        Context context = ApplicationProvider.getApplicationContext();
+        PackInstaller.InstalledPack pack = CurrentHeadAnswerCardPackTestSupport.installBundledCurrentHeadPack(
+            context,
+            "current-head vector boundary contract"
+        );
+
+        try (PackRepository repository = new PackRepository(pack.databaseFile, pack.vectorFile)) {
+            assertTrue("current-head vector asset should be visible to repository", repository.hasVectorStore());
+            List<SearchResult> results = repository.search("rain shelter", 5);
+
+            assertFalse("current-head pack search should return results with the real vector file", results.isEmpty());
+        }
+    }
+
+    @Test
     public void repositoryTreatsMissingVectorPathAsDisabledAndFallsBackToLexicalSearch() throws Exception {
         Context context = ApplicationProvider.getApplicationContext();
         PackInstaller.InstalledPack pack = CurrentHeadAnswerCardPackTestSupport.installBundledCurrentHeadPack(
