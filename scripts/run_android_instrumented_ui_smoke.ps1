@@ -13,7 +13,6 @@ param(
     [string]$ScriptedCaptureLabel = "",
     [string]$ScriptedRequiredResId = "",
     [int]$ScriptedTimeoutMs = 0,
-    [int]$ScriptedExtraSettleMs = 0,
     [switch]$ScriptedEnableReviewedCardRuntime,
     [string]$ScriptedExpectedAnswerSurfaceLabel = "",
     [Alias("ScriptedForbiddenAnswerSurfaceLabel")]
@@ -1825,9 +1824,6 @@ try {
             }
             if ($ScriptedTimeoutMs -gt 0) {
                 $args += @("-e", "scriptedTimeoutMs", "$ScriptedTimeoutMs")
-            }
-            if ($ScriptedExtraSettleMs -gt 0) {
-                $args += @("-e", "scriptedExtraSettleMs", "$ScriptedExtraSettleMs")
             }
         }
         $args += @(

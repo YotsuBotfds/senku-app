@@ -4677,8 +4677,6 @@ public final class PromptHarnessSmokeTest {
             "scriptedTimeoutMs",
             hostEnabled ? GENERATIVE_DETAIL_WAIT_MS : (ask ? DETAIL_WAIT_MS : SEARCH_WAIT_MS)
         );
-        long extraSettleMs = parseLongArg(args, "scriptedExtraSettleMs", 0L);
-
         ReviewedCardRuntimeConfig.setEnabled(
             ApplicationProvider.getApplicationContext(),
             scriptedContract.reviewedCardRuntimeEnabled
@@ -4739,10 +4737,6 @@ public final class PromptHarnessSmokeTest {
                             scriptedLaunchEpochMs
                         );
                     }
-                }
-                if (extraSettleMs > 0L) {
-                    SystemClock.sleep(extraSettleMs);
-                    awaitHarnessIdle();
                 }
                 dismissSoftKeyboardIfVisible();
                 captureUiState(captureLabel);
