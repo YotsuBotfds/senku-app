@@ -152,6 +152,14 @@ public final class ModelFileStoreTest {
     }
 
     @Test
+    public void policySanitizesUnicodeDisplayNamesToAsciiSafeFileNames() {
+        assertEquals(
+            "gemma-__-model.task",
+            ModelFileStorePolicy.sanitizeFileName("gemma-\u6E2C\u8A66-model.task")
+        );
+    }
+
+    @Test
     public void policyFindsNewestSupportedModelFile() throws Exception {
         File modelsDir = temporaryFolder.newFolder("candidate-models");
         File oldTask = writeModel(new File(modelsDir, "old.task"), "old");
@@ -162,6 +170,20 @@ public final class ModelFileStoreTest {
         newLiteRt.setLastModified(2_000L);
 
         assertEquals(newLiteRt, ModelFileStorePolicy.findNewestModelFile(modelsDir.listFiles()));
+    }
+
+    @Test
+    public void policyAcceptsSupportedExtensionsCaseInsensitivelyAndRejectsTrailingExtensions() throws Exception {
+        File modelsDir = temporaryFolder.newFolder("extension-model-checks");
+        File uppercaseTask = writeModel(new File(modelsDir, "offline.TASK"), "model");
+        File uppercaseLiteRt = writeModel(new File(modelsDir, "offline.LITERTLM"), "model");
+        File trailingZip = writeModel(new File(modelsDir, "offline.task.zip"), "not-model");
+        File trailingBackup = writeModel(new File(modelsDir, "offline.litertlm.backup"), "not-model");
+
+        assertTrue(ModelFileStorePolicy.isSupportedModelFile(uppercaseTask));
+        assertTrue(ModelFileStorePolicy.isSupportedModelFile(uppercaseLiteRt));
+        assertFalse(ModelFileStorePolicy.isSupportedModelFile(trailingZip));
+        assertFalse(ModelFileStorePolicy.isSupportedModelFile(trailingBackup));
     }
 
     @Test
