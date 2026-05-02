@@ -89,6 +89,22 @@ public final class MainHomeRelatedGuideControllerTest {
         assertNull(controller.selectLatestRecentThreadHomeGuideAnchor(Collections.emptyList(), formatter));
     }
 
+    @Test
+    public void recentThreadAnchorSkipsNewestPreviewWithoutGuideSource() {
+        MainActivity.HomeGuideAnchor anchor = controller.selectHomeGuideAnchor(
+            guides(guide("GD-101", "Pinned Shelter")),
+            previews(
+                preview(source("", "No Source Recent")),
+                preview(source("GD-404", "Older Sourced Recent"))
+            ),
+            formatter
+        );
+
+        assertEquals("GD-404", anchor.guideId);
+        assertEquals("GD-404 - Older Sourced Recent", anchor.label);
+        assertTrue(anchor.fromRecentThread);
+    }
+
     private static List<SearchResult> guides(SearchResult... guides) {
         return Arrays.asList(guides);
     }

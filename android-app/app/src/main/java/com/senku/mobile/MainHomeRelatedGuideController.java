@@ -36,19 +36,21 @@ final class MainHomeRelatedGuideController {
         if (recentThreadPreviews == null || recentThreadPreviews.isEmpty()) {
             return null;
         }
-        ChatSessionStore.ConversationPreview preview = recentThreadPreviews.get(0);
-        String guideId = formatter.resolvePreviewPrimaryGuideId(preview);
-        if (guideId.isEmpty()) {
-            return null;
-        }
-        return new MainActivity.HomeGuideAnchor(
-            guideId,
-            formatter.buildGuideReference(
+        for (ChatSessionStore.ConversationPreview preview : recentThreadPreviews) {
+            String guideId = formatter.resolvePreviewPrimaryGuideId(preview);
+            if (guideId.isEmpty()) {
+                continue;
+            }
+            return new MainActivity.HomeGuideAnchor(
                 guideId,
-                formatter.resolvePreviewPrimaryGuideTitle(preview, guideId)
-            ),
-            true
-        );
+                formatter.buildGuideReference(
+                    guideId,
+                    formatter.resolvePreviewPrimaryGuideTitle(preview, guideId)
+                ),
+                true
+            );
+        }
+        return null;
     }
 
     private static String safe(String value) {

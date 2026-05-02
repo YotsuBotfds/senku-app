@@ -4,8 +4,8 @@ Pointer-only rollup for agents. Keep detailed logs in artifacts and test output.
 
 ## Current Proofed Head
 
-- Latest full checkpoint proof: `bc4df77a` (`Cover installed pack schema recovery`)
-- Checkpoint time: `2026-05-02T03:07:56-05:00`
+- Latest full checkpoint proof: `90848e8d` (`Scrub instruction overrides from generated answers`)
+- Checkpoint time: `2026-05-02T03:49:55-05:00`
 - Gates:
   - `:app:testDebugUnitTest` passed
   - `:app:assembleDebug :app:assembleDebugAndroidTest` passed
@@ -14,6 +14,9 @@ Pointer-only rollup for agents. Keep detailed logs in artifacts and test output.
 
 ## Recent Live Android Proofs
 
+- `PackMigrationInstallTest` on `emulator-5554`: `OK (3 tests)`, 49.369 s
+  - Purpose: clean install, hash-valid/wrong-schema SQLite recovery, and
+    hash-valid/stale-vector-header recovery
 - `PackMigrationInstallTest` on `emulator-5554`: `OK (2 tests)`, 29.169 s
   - Purpose: clean install plus hash-valid/wrong-schema installed pack recovery
 - Live-safe route smoke:
