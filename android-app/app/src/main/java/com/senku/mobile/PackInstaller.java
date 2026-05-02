@@ -210,7 +210,20 @@ public final class PackInstaller {
         File sqliteFile,
         File vectorFile
     ) throws IOException, JSONException {
+        return shouldInstallFromAssetsForTest(force, assetManifest, manifestFile, sqliteFile, vectorFile, file -> {
+        });
+    }
+
+    static boolean shouldInstallFromAssetsForTest(
+        boolean force,
+        PackManifest assetManifest,
+        File manifestFile,
+        File sqliteFile,
+        File vectorFile,
+        SqliteSchemaValidator sqliteSchemaValidator
+    ) throws IOException, JSONException {
         PackManifest installedManifest = readUsableInstalledPackManifest(manifestFile, sqliteFile, vectorFile, file -> {
+            sqliteSchemaValidator.validate(file);
         });
         return PackInstallValidationPolicy.shouldInstallFromAssets(force, assetManifest, installedManifest);
     }
@@ -531,7 +544,7 @@ public final class PackInstaller {
         return ASSET_DIR + "/" + fileName;
     }
 
-    private interface SqliteSchemaValidator {
+    interface SqliteSchemaValidator {
         void validate(File sqliteFile) throws IOException;
     }
 

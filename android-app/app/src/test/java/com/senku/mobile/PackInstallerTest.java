@@ -266,6 +266,25 @@ public final class PackInstallerTest {
     }
 
     @Test
+    public void shouldInstallFromAssetsRefreshesWhenInstalledSqliteSchemaIsInvalid() throws Exception {
+        InstalledPackFiles files = installedPackFiles("2026-04-27T04:21:12.533181+00:00", 271, 123, 456, 123, 456);
+
+        assertEquals(
+            true,
+            PackInstaller.shouldInstallFromAssetsForTest(
+                false,
+                manifestWithGeneratedAtAndAnswerCards("2026-04-27T04:21:12.533181+00:00", 271),
+                files.manifestFile,
+                files.sqliteFile,
+                files.vectorFile,
+                sqliteFile -> {
+                    throw new java.io.IOException("schema missing required table");
+                }
+            )
+        );
+    }
+
+    @Test
     public void shouldInstallFromAssetsRefreshesWhenForcedEvenIfInstalledPackIsUsable() throws Exception {
         PackManifest manifest = manifestWithGeneratedAtAndAnswerCards("2026-04-27T04:21:12.533181+00:00", 271);
 
