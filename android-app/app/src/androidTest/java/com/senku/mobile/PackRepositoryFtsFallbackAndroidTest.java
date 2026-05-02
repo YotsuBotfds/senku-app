@@ -10,8 +10,10 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -77,6 +79,26 @@ public final class PackRepositoryFtsFallbackAndroidTest {
             }
         } finally {
             resetCachedFtsRuntime();
+        }
+    }
+
+    @Test
+    public void repositoryIgnoresMalformedVectorFileAndFallsBackToLexicalSearch() throws Exception {
+        Context context = ApplicationProvider.getApplicationContext();
+        PackInstaller.InstalledPack pack = CurrentHeadAnswerCardPackTestSupport.installBundledCurrentHeadPack(
+            context,
+            "malformed vector fallback contract"
+        );
+        File badVectorFile = File.createTempFile("bad-vector", ".vec", context.getCacheDir());
+        try (FileOutputStream output = new FileOutputStream(badVectorFile)) {
+            output.write(new byte[] {1, 2, 3, 4});
+        }
+
+        try (PackRepository repository = new PackRepository(pack.databaseFile, badVectorFile)) {
+            assertFalse("malformed vector file should be disabled", repository.hasVectorStore());
+            List<SearchResult> results = repository.search("rain shelter", 5);
+
+            assertFalse("lexical fallback should still return bundled pack results", results.isEmpty());
         }
     }
 
