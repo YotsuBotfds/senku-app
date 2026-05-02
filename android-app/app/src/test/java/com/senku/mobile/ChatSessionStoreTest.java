@@ -122,6 +122,34 @@ public final class ChatSessionStoreTest {
     }
 
     @Test
+    public void contextAwareStaleConversationReusePersistsClearedAnchorPriorBias() throws Exception {
+        ChatSessionStore.resetForTest();
+        SessionMemory.setAnchorPriorEnabledForTest(true);
+        try {
+            TestContext context = new TestContext();
+            String conversationId = ChatSessionStore.createConversation();
+            recordTurnAt(conversationId, "how do i build a water filter", "GD-252", 1_000L);
+            recordTurnAt(conversationId, "what about charcoal", "GD-252", 2_000L);
+            ChatSessionStore.persist(context);
+
+            ChatSessionStore.resetForTest();
+            ChatSessionStore.restore(context);
+            ChatSessionStore.ensureConversationIdForTest(
+                context,
+                conversationId,
+                2_000L + SessionMemory.anchorIdleResetMsForTest() + 1L
+            );
+
+            SessionMemory restoredMemory = memoryFromSavedState(context.savedState(), conversationId);
+            SessionMemory.RetrievalPlan plan = restoredMemory.buildRetrievalPlan("what about sand");
+
+            assertEquals(null, plan.anchorPrior);
+        } finally {
+            SessionMemory.setAnchorPriorEnabledForTest(false);
+        }
+    }
+
+    @Test
     public void recentConversationPreviewsReturnMostRecentStatefulThreadsFirst() {
         ChatSessionStore.resetForTest();
         String firstConversationId = ChatSessionStore.createConversation();
@@ -406,6 +434,17 @@ public final class ChatSessionStoreTest {
                 .put("memory", memory.toJson()));
         }
         return new JSONObject().put("conversations", conversations).toString();
+    }
+
+    private static SessionMemory memoryFromSavedState(String saved, String conversationId) throws Exception {
+        JSONArray conversations = new JSONObject(saved).optJSONArray("conversations");
+        for (int index = 0; conversations != null && index < conversations.length(); index++) {
+            JSONObject conversation = conversations.optJSONObject(index);
+            if (conversation != null && conversationId.equals(conversation.optString("id", ""))) {
+                return SessionMemory.fromJson(conversation.optString("memory", ""));
+            }
+        }
+        return new SessionMemory();
     }
 
     private static final class TestContext extends ContextWrapper {

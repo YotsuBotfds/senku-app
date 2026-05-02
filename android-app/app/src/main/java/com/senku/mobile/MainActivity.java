@@ -601,7 +601,7 @@ public final class MainActivity extends AppCompatActivity {
         if (savedInstanceState != null) {
             conversationId = savedInstanceState.getString(STATE_CONVERSATION_ID);
         }
-        conversationId = ChatSessionStore.ensureConversationId(conversationId);
+        conversationId = ChatSessionStore.ensureConversationId(this, conversationId);
         sessionMemory = ChatSessionStore.memoryFor(conversationId);
     }
 
@@ -2248,7 +2248,7 @@ public final class MainActivity extends AppCompatActivity {
             return;
         }
         setPhoneTabFromFlow(phoneTabSelectionOwner(BottomTabDestination.THREADS));
-        conversationId = ChatSessionStore.ensureConversationId(preview.conversationId);
+        conversationId = ChatSessionStore.ensureConversationId(this, preview.conversationId);
         sessionMemory = ChatSessionStore.memoryFor(conversationId);
         updateSessionPanel();
         SessionMemory.TurnSnapshot turn = preview.latestTurn;

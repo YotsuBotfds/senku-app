@@ -1267,7 +1267,7 @@ public final class DetailActivity extends AppCompatActivity {
     private void readIntent() {
         Intent intent = getIntent();
         ChatSessionStore.restore(this);
-        conversationId = ChatSessionStore.ensureConversationId(intent.getStringExtra(EXTRA_CONVERSATION_ID));
+        conversationId = ChatSessionStore.ensureConversationId(this, intent.getStringExtra(EXTRA_CONVERSATION_ID));
         sessionMemory = ChatSessionStore.memoryFor(conversationId);
         currentTitle = safe(intent.getStringExtra(EXTRA_TITLE));
         currentSubtitle = safe(intent.getStringExtra(EXTRA_SUBTITLE));

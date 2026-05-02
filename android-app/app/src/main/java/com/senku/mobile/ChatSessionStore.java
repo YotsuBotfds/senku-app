@@ -44,18 +44,31 @@ public final class ChatSessionStore {
         return ensureConversationId(conversationId, System.currentTimeMillis());
     }
 
+    public static String ensureConversationId(Context context, String conversationId) {
+        restore(context);
+        return ensureConversationId(conversationId, System.currentTimeMillis(), context);
+    }
+
     private static String ensureConversationId(String conversationId, long nowEpochMs) {
+        return ensureConversationId(conversationId, nowEpochMs, null);
+    }
+
+    private static String ensureConversationId(String conversationId, long nowEpochMs, Context persistContext) {
         String trimmed = conversationId == null ? "" : conversationId.trim();
         if (trimmed.isEmpty()) {
             return createConversation();
         }
+        boolean shouldPersistReset = false;
         synchronized (LOCK) {
             SessionMemory memory = CONVERSATIONS.get(trimmed);
             if (memory == null) {
                 CONVERSATIONS.put(trimmed, new SessionMemory());
             } else {
-                memory.markAnchorIdleResetIfStale(nowEpochMs);
+                shouldPersistReset = memory.markAnchorIdleResetIfStale(nowEpochMs);
             }
+        }
+        if (shouldPersistReset) {
+            persist(persistContext);
         }
         return trimmed;
     }
@@ -279,6 +292,11 @@ public final class ChatSessionStore {
 
     static String ensureConversationIdForTest(String conversationId, long nowEpochMs) {
         return ensureConversationId(conversationId, nowEpochMs);
+    }
+
+    static String ensureConversationIdForTest(Context context, String conversationId, long nowEpochMs) {
+        restore(context);
+        return ensureConversationId(conversationId, nowEpochMs, context);
     }
 
     static void restoreSavedStateForTest(String saved) {
