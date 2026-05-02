@@ -11436,6 +11436,7 @@ public final class DetailActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         stopStreamingCursor();
+        clearGenerationStallMonitor();
         super.onDestroy();
         closeRepository();
         executor.shutdown();
