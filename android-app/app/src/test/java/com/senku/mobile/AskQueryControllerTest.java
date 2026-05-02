@@ -337,6 +337,87 @@ public final class AskQueryControllerTest {
     }
 
     @Test
+    public void availabilityMatrixRoutesOnlySupportedRuntimePathsToPrepare() {
+        assertAskAvailabilityCase(
+            "repo missing wins first",
+            false,
+            new File("model.task"),
+            settings(true),
+            true,
+            "child swallowed unknown cleaner",
+            List.of("pack-unavailable"),
+            0,
+            null
+        );
+        assertAskAvailabilityCase(
+            "no runtime",
+            true,
+            null,
+            settings(false),
+            false,
+            "generic generated answer",
+            List.of("model-unavailable:false"),
+            0,
+            null
+        );
+        assertAskAvailabilityCase(
+            "unsupported reviewed runtime",
+            true,
+            null,
+            settings(false),
+            true,
+            "generic generated answer",
+            List.of("model-unavailable:false"),
+            0,
+            null
+        );
+        assertAskAvailabilityCase(
+            "supported reviewed runtime",
+            true,
+            null,
+            settings(false),
+            true,
+            "child swallowed unknown cleaner",
+            List.of("prepare-started:child swallowed unknown cleaner", "prepare-success"),
+            1,
+            null
+        );
+        assertAskAvailabilityCase(
+            "local host runtime",
+            true,
+            null,
+            settings(true),
+            false,
+            "host-backed generated answer",
+            List.of("prepare-started:host-backed generated answer", "prepare-success"),
+            1,
+            null
+        );
+        assertAskAvailabilityCase(
+            "blocked host without model",
+            true,
+            null,
+            new HostInferenceConfig.Settings(true, "http://example.com:1235/v1", "test-model"),
+            false,
+            "blocked host generated answer",
+            List.of("model-unavailable:false"),
+            0,
+            null
+        );
+        assertAskAvailabilityCase(
+            "model fallback despite malformed host",
+            true,
+            new File("model.task"),
+            new HostInferenceConfig.Settings(true, "http://", "test-model"),
+            false,
+            "local model generated answer",
+            List.of("prepare-started:local model generated answer", "prepare-success"),
+            1,
+            "model.task"
+        );
+    }
+
+    @Test
     public void repositoryUnavailableWinsBeforeBlankOrDeterministicChecks() {
         FakeHost host = readyHost();
         host.repositoryAvailable = false;
@@ -580,6 +661,43 @@ public final class AskQueryControllerTest {
 
     private static HostInferenceConfig.Settings settings(boolean enabled) {
         return new HostInferenceConfig.Settings(enabled, "http://127.0.0.1:1235/v1", "test-model");
+    }
+
+    private static void assertAskAvailabilityCase(
+        String scenario,
+        boolean repositoryAvailable,
+        File modelFile,
+        HostInferenceConfig.Settings hostSettings,
+        boolean reviewedCardRuntimeEnabled,
+        String query,
+        List<String> expectedEvents,
+        int expectedPrepareCalls,
+        String expectedModelFileName
+    ) {
+        FakeHost host = readyHost();
+        host.repositoryAvailable = repositoryAvailable;
+        host.modelFile = modelFile;
+        host.hostInferenceSettings = hostSettings;
+        host.reviewedCardRuntimeEnabled = reviewedCardRuntimeEnabled;
+        FakeEngine engine = new FakeEngine();
+        engine.preparedToReturn = generativePrepared(query);
+
+        new AskQueryController(host, engine, askQuery -> null).runAsk(query);
+
+        assertEquals(scenario + " events", expectedEvents, host.events);
+        assertEquals(scenario + " prepare calls", expectedPrepareCalls, engine.prepareCalls);
+        if (expectedPrepareCalls == 0) {
+            assertEquals(scenario + " harness", List.of(), host.begunHarnessTags);
+            assertNull(scenario + " prepared answer", host.lastPreparedSuccess);
+            return;
+        }
+        assertEquals(scenario + " harness", List.of(AskQueryController.HARNESS_PREPARE), host.begunHarnessTags);
+        assertSame(scenario + " prepared answer", engine.preparedToReturn, host.lastPreparedSuccess);
+        if (expectedModelFileName == null) {
+            assertNull(scenario + " model file", engine.lastModelFile);
+        } else {
+            assertEquals(scenario + " model file", expectedModelFileName, engine.lastModelFile.getName());
+        }
     }
 
     private static OfflineAnswerEngine.PreparedAnswer generativePrepared(String query) {
