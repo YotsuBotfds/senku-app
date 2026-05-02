@@ -3,6 +3,7 @@ package com.senku.mobile;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
+import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -17,12 +18,21 @@ import java.util.Map;
 import java.util.Set;
 
 final class AnswerCardDao {
+    private static final String TAG = "AnswerCardDao";
+
     private static final String ANSWER_CARDS_TABLE = "answer_cards";
     private static final String CLAUSES_TABLE = "answer_card_clauses";
     private static final String SOURCES_TABLE = "answer_card_sources";
     private static final String REVIEW_STATUS_REVIEWED = "reviewed";
     private static final String REVIEW_STATUS_PILOT_REVIEWED = "pilot_reviewed";
     private static final String REVIEW_STATUS_APPROVED = "approved";
+
+    private static void logWarning(String message, Exception exc) {
+        try {
+            Log.w(TAG, message, exc);
+        } catch (RuntimeException ignored) {
+        }
+    }
 
     private final SQLiteDatabase database;
 
@@ -45,7 +55,8 @@ final class AnswerCardDao {
 
         try {
             return loadCards(normalizedGuideIds, limit);
-        } catch (SQLiteException ignored) {
+        } catch (SQLiteException e) {
+            logWarning("loadCardsForGuideIds: guideIdCount=" + guideIds.size(), e);
             return Collections.emptyList();
         }
     }
@@ -159,7 +170,8 @@ final class AnswerCardDao {
             new String[]{tableName}
         )) {
             return cursor.moveToFirst();
-        } catch (SQLiteException ignored) {
+        } catch (SQLiteException e) {
+            logWarning("tableExists", e);
             return false;
         }
     }
@@ -210,7 +222,8 @@ final class AnswerCardDao {
                 }
             }
             return values.isEmpty() ? Collections.emptyList() : Collections.unmodifiableList(values);
-        } catch (JSONException ignored) {
+        } catch (JSONException e) {
+            logWarning("parseStringArray", e);
             return Collections.emptyList();
         }
     }
