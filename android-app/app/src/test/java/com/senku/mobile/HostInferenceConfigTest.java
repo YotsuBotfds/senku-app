@@ -1,10 +1,21 @@
 package com.senku.mobile;
 
+import android.content.Context;
+import android.content.ContextWrapper;
+import android.content.Intent;
+import android.content.SharedPreferences;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.Test;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public final class HostInferenceConfigTest {
     @Test
@@ -61,6 +72,35 @@ public final class HostInferenceConfigTest {
     }
 
     @Test
+    public void applyIntentOverridesPersistsNormalizedSettingsForLaterResolve() {
+        TestContext context = new TestContext();
+        Intent intent = new TestIntent()
+            .putExtra(HostInferenceConfig.EXTRA_HOST_INFERENCE_ENABLED, true)
+            .putExtra(HostInferenceConfig.EXTRA_HOST_INFERENCE_URL, " localhost:1235/ ")
+            .putExtra(HostInferenceConfig.EXTRA_HOST_INFERENCE_MODEL, " local-model ");
+
+        assertTrue(HostInferenceConfig.applyIntentOverrides(context, intent));
+
+        HostInferenceConfig.Settings settings = HostInferenceConfig.resolve(context);
+        assertTrue(settings.enabled);
+        assertEquals("http://localhost:1235/v1", settings.baseUrl);
+        assertEquals("local-model", settings.modelId);
+    }
+
+    @Test
+    public void applyIntentOverridesIgnoresIntentsWithoutHostExtras() {
+        TestContext context = new TestContext();
+        HostInferenceConfig.save(context, true, "http://localhost:1235/v1", "existing-model");
+
+        assertFalse(HostInferenceConfig.applyIntentOverrides(context, new TestIntent()));
+
+        HostInferenceConfig.Settings settings = HostInferenceConfig.resolve(context);
+        assertTrue(settings.enabled);
+        assertEquals("http://localhost:1235/v1", settings.baseUrl);
+        assertEquals("existing-model", settings.modelId);
+    }
+
+    @Test
     public void serverLabelUsesJvmSafeUriParsing() {
         HostInferenceConfig.Settings settings = new HostInferenceConfig.Settings(
             true,
@@ -102,5 +142,201 @@ public final class HostInferenceConfigTest {
     public void flattenContentReturnsEmptyStringForUnsupportedContent() {
         assertEquals("", HostInferenceClient.flattenContent(null));
         assertEquals("", HostInferenceClient.flattenContent(new JSONObject()));
+    }
+
+    private static final class TestContext extends ContextWrapper {
+        private final Map<String, SharedPreferences> prefs = new HashMap<>();
+
+        TestContext() {
+            super(null);
+        }
+
+        @Override
+        public SharedPreferences getSharedPreferences(String name, int mode) {
+            SharedPreferences existing = prefs.get(name);
+            if (existing != null) {
+                return existing;
+            }
+            SharedPreferences created = new InMemorySharedPreferences();
+            prefs.put(name, created);
+            return created;
+        }
+    }
+
+    private static final class TestIntent extends Intent {
+        private final Map<String, Object> extras = new HashMap<>();
+
+        @Override
+        public Intent putExtra(String name, boolean value) {
+            extras.put(name, value);
+            return this;
+        }
+
+        @Override
+        public Intent putExtra(String name, String value) {
+            extras.put(name, value);
+            return this;
+        }
+
+        @Override
+        public boolean hasExtra(String name) {
+            return extras.containsKey(name);
+        }
+
+        @Override
+        public boolean getBooleanExtra(String name, boolean defaultValue) {
+            Object value = extras.get(name);
+            return value instanceof Boolean ? (Boolean) value : defaultValue;
+        }
+
+        @Override
+        public String getStringExtra(String name) {
+            Object value = extras.get(name);
+            return value instanceof String ? (String) value : null;
+        }
+    }
+
+    private static final class InMemorySharedPreferences implements SharedPreferences {
+        private final Map<String, Object> values = new HashMap<>();
+
+        @Override
+        public Map<String, ?> getAll() {
+            return new HashMap<>(values);
+        }
+
+        @Override
+        public String getString(String key, String defValue) {
+            Object value = values.get(key);
+            return value instanceof String ? (String) value : defValue;
+        }
+
+        @Override
+        @SuppressWarnings("unchecked")
+        public Set<String> getStringSet(String key, Set<String> defValues) {
+            Object value = values.get(key);
+            return value instanceof Set ? (Set<String>) value : defValues;
+        }
+
+        @Override
+        public int getInt(String key, int defValue) {
+            Object value = values.get(key);
+            return value instanceof Integer ? (Integer) value : defValue;
+        }
+
+        @Override
+        public long getLong(String key, long defValue) {
+            Object value = values.get(key);
+            return value instanceof Long ? (Long) value : defValue;
+        }
+
+        @Override
+        public float getFloat(String key, float defValue) {
+            Object value = values.get(key);
+            return value instanceof Float ? (Float) value : defValue;
+        }
+
+        @Override
+        public boolean getBoolean(String key, boolean defValue) {
+            Object value = values.get(key);
+            return value instanceof Boolean ? (Boolean) value : defValue;
+        }
+
+        @Override
+        public boolean contains(String key) {
+            return values.containsKey(key);
+        }
+
+        @Override
+        public Editor edit() {
+            return new InMemoryEditor();
+        }
+
+        @Override
+        public void registerOnSharedPreferenceChangeListener(OnSharedPreferenceChangeListener listener) {
+        }
+
+        @Override
+        public void unregisterOnSharedPreferenceChangeListener(OnSharedPreferenceChangeListener listener) {
+        }
+
+        private final class InMemoryEditor implements Editor {
+            private final Map<String, Object> pending = new HashMap<>();
+            private final java.util.HashSet<String> removals = new java.util.HashSet<>();
+            private boolean clear;
+
+            @Override
+            public Editor putString(String key, String value) {
+                pending.put(key, value);
+                removals.remove(key);
+                return this;
+            }
+
+            @Override
+            public Editor putStringSet(String key, Set<String> values) {
+                pending.put(key, values);
+                removals.remove(key);
+                return this;
+            }
+
+            @Override
+            public Editor putInt(String key, int value) {
+                pending.put(key, value);
+                removals.remove(key);
+                return this;
+            }
+
+            @Override
+            public Editor putLong(String key, long value) {
+                pending.put(key, value);
+                removals.remove(key);
+                return this;
+            }
+
+            @Override
+            public Editor putFloat(String key, float value) {
+                pending.put(key, value);
+                removals.remove(key);
+                return this;
+            }
+
+            @Override
+            public Editor putBoolean(String key, boolean value) {
+                pending.put(key, value);
+                removals.remove(key);
+                return this;
+            }
+
+            @Override
+            public Editor remove(String key) {
+                pending.remove(key);
+                removals.add(key);
+                return this;
+            }
+
+            @Override
+            public Editor clear() {
+                clear = true;
+                pending.clear();
+                removals.clear();
+                return this;
+            }
+
+            @Override
+            public boolean commit() {
+                apply();
+                return true;
+            }
+
+            @Override
+            public void apply() {
+                if (clear) {
+                    values.clear();
+                }
+                for (String key : removals) {
+                    values.remove(key);
+                }
+                values.putAll(pending);
+            }
+        }
     }
 }

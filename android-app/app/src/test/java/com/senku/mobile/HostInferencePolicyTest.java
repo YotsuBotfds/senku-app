@@ -118,6 +118,38 @@ public final class HostInferencePolicyTest {
     }
 
     @Test
+    public void blankOrHostlessUrlsAreRejectedBeforeNetworkUse() {
+        assertRejected(
+            HostInferencePolicy.evaluate(null),
+            HostInferencePolicy.Reason.MISSING_HOST,
+            "http",
+            ""
+        );
+        assertRejected(
+            HostInferencePolicy.evaluate("   "),
+            HostInferencePolicy.Reason.MISSING_HOST,
+            "http",
+            ""
+        );
+        assertRejected(
+            HostInferencePolicy.evaluate("http:///v1"),
+            HostInferencePolicy.Reason.MISSING_HOST,
+            "http",
+            ""
+        );
+    }
+
+    @Test
+    public void malformedUrlsAreRejectedBeforeNetworkUse() {
+        assertRejected(
+            HostInferencePolicy.evaluate("http://exa mple.com/v1"),
+            HostInferencePolicy.Reason.INVALID_URL,
+            "",
+            ""
+        );
+    }
+
+    @Test
     public void unsupportedSchemesAreRejected() {
         HostInferencePolicy.Decision decision = HostInferencePolicy.evaluate("ftp://localhost:1235/v1");
 
