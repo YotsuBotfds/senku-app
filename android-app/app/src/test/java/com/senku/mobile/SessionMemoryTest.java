@@ -1087,6 +1087,36 @@ public final class SessionMemoryTest {
     }
 
     @Test
+    public void idleAnchorResetSurvivesJsonRoundTripWithoutRestoringAnchorPrior() {
+        SessionMemory.setAnchorPriorEnabledForTest(true);
+        try {
+            SessionMemory memory = new SessionMemory();
+            memory.recordTranscriptFixtureTurnForTest(
+                "how do i build a rain shelter",
+                "Short answer: Use a ridge line.",
+                "Short answer: Use a ridge line.",
+                List.of(testSource("Tarp Shelters", "GD-444", "Ridge Line Setup", "survival", "guide-focus", "rain_shelter")),
+                "",
+                1714244000000L
+            );
+            memory.markAnchorIdleResetIfStale(
+                1714244000000L + SessionMemory.anchorIdleResetMsForTest() + 1L
+            );
+
+            assertEquals(null, memory.buildRetrievalPlan("what should i do next?").anchorPrior);
+
+            SessionMemory restored = SessionMemory.fromJson(memory.toJson());
+            SessionMemory.RetrievalPlan restoredPlan = restored.buildRetrievalPlan("what should i do next?");
+
+            assertEquals(1, restored.turnCount());
+            assertTrue(restored.renderTranscript().contains("how do i build a rain shelter"));
+            assertEquals(null, restoredPlan.anchorPrior);
+        } finally {
+            SessionMemory.setAnchorPriorEnabledForTest(false);
+        }
+    }
+
+    @Test
     public void singularizeKeepsDoubleSEndingsIntact() {
         assertEquals("glass", SessionMemory.singularizeForTest("glass"));
         assertEquals("stress", SessionMemory.singularizeForTest("stress"));

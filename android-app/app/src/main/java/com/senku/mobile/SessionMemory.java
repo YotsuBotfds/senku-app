@@ -533,7 +533,7 @@ public final class SessionMemory {
             0,
             Math.min(memory.anchorResetTurnIndex, memory.turns.size())
         );
-        if (memory.stickyAnchorGuideId.isEmpty()) {
+        if (memory.stickyAnchorGuideId.isEmpty() && memory.anchorResetTurnIndex == 0) {
             for (Turn turn : memory.turns) {
                 String guideId = primaryGuideId(turn.sourceResults);
                 if (!guideId.isEmpty()) {
