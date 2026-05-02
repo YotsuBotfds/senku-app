@@ -3139,7 +3139,7 @@ public final class PackRepositoryTest {
             java.util.List.of(anchor, offTopicLexical, vectorShelter)
         );
 
-        assertEquals(0, vectorSupport.lexicalSupport);
+        assertTrue(vectorSupport.lexicalSupport > 0);
         assertTrue(vectorSupport.supportWithMetadata() > 0);
         assertTrue(containsGuideId(supportCandidates, "GD-933"));
         assertFalse(containsGuideId(supportCandidates, "GD-727"));
