@@ -2,6 +2,7 @@ package com.senku.mobile;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
@@ -86,6 +87,53 @@ public final class AskBackendRouteTest {
     }
 
     @Test
+    public void generativeLocalModelRoutePreparesWhenHostInferenceDisabled() {
+        RouteHost host = availableHost();
+        host.hostInferenceSettings = settings(false);
+        host.reviewedCardRuntimeEnabled = false;
+        OfflineAnswerEngine.PreparedAnswer prepared =
+            generativePrepared("how do i build a tarp shelter", false);
+        RouteEngine engine = new RouteEngine(prepared);
+        AskQueryController controller = new AskQueryController(host, engine, query -> null);
+
+        controller.runAsk("how do i build a tarp shelter");
+
+        assertEquals(
+            List.of("prepare-started:how do i build a tarp shelter", "prepare-success"),
+            host.events
+        );
+        assertEquals(1, engine.prepareCalls);
+        assertNotNull(engine.lastModelFile);
+        assertSame(host.modelFile, engine.lastModelFile);
+        assertSame(prepared, host.lastPreparedSuccess);
+        assertFalse(host.lastPreparedSuccess.inferenceSettings.enabled);
+        assertFalse(host.lastPreparedSuccess.deterministic);
+        assertFalse(host.lastPreparedSuccess.abstain);
+        assertEquals(OfflineAnswerEngine.AnswerMode.CONFIDENT, host.lastPreparedSuccess.mode);
+    }
+
+    @Test
+    public void reviewedCardEnabledGenericQueryUsesLocalModelWhenAvailable() {
+        RouteHost host = availableHost();
+        host.hostInferenceSettings = settings(false);
+        host.reviewedCardRuntimeEnabled = true;
+        OfflineAnswerEngine.PreparedAnswer prepared =
+            generativePrepared("how do i build a tarp shelter", false);
+        RouteEngine engine = new RouteEngine(prepared);
+        AskQueryController controller = new AskQueryController(host, engine, query -> null);
+
+        controller.runAsk("how do i build a tarp shelter");
+
+        assertEquals(
+            List.of("prepare-started:how do i build a tarp shelter", "prepare-success"),
+            host.events
+        );
+        assertEquals(1, engine.prepareCalls);
+        assertSame(host.modelFile, engine.lastModelFile);
+        assertSame(prepared, host.lastPreparedSuccess);
+    }
+
+    @Test
     public void generativeHostRouteCanPrepareWithoutLocalModelWhenHostInferenceIsEnabled() {
         RouteHost host = availableHost();
         host.modelFile = null;
@@ -106,6 +154,33 @@ public final class AskBackendRouteTest {
         assertNull(engine.lastModelFile);
         assertSame(prepared, host.lastPreparedSuccess);
         assertTrue(host.lastPreparedSuccess.inferenceSettings.enabled);
+    }
+
+    @Test
+    public void reviewedCardRuntimeNoRuntimeAllowsTerminalPreparedAnswerModes() {
+        String query = "child swallowed unknown cleaner";
+
+        assertReviewedNoRuntimePreparedMode(
+            query,
+            reviewedCardPrepared(query),
+            OfflineAnswerEngine.AnswerMode.CONFIDENT,
+            false,
+            true
+        );
+        assertReviewedNoRuntimePreparedMode(
+            query,
+            noSourceAbstainPrepared(query),
+            OfflineAnswerEngine.AnswerMode.ABSTAIN,
+            true,
+            false
+        );
+        assertReviewedNoRuntimePreparedMode(
+            query,
+            uncertainFitPrepared(query),
+            OfflineAnswerEngine.AnswerMode.UNCERTAIN_FIT,
+            false,
+            false
+        );
     }
 
     @Test
@@ -211,6 +286,35 @@ public final class AskBackendRouteTest {
         assertNull(host.lastPreparedSuccess);
     }
 
+    private static void assertReviewedNoRuntimePreparedMode(
+        String query,
+        OfflineAnswerEngine.PreparedAnswer prepared,
+        OfflineAnswerEngine.AnswerMode expectedMode,
+        boolean expectedAbstain,
+        boolean expectedDeterministic
+    ) {
+        RouteHost host = availableHost();
+        host.modelFile = null;
+        host.hostInferenceSettings = settings(false);
+        host.reviewedCardRuntimeEnabled = true;
+        RouteEngine engine = new RouteEngine(prepared);
+        AskQueryController controller = new AskQueryController(host, engine, routeQuery -> null);
+
+        controller.runAsk(query);
+
+        assertEquals(
+            List.of("prepare-started:" + query, "prepare-success"),
+            host.events
+        );
+        assertEquals(1, engine.prepareCalls);
+        assertNull(engine.lastModelFile);
+        assertSame(prepared, host.lastPreparedSuccess);
+        assertEquals(expectedMode, host.lastPreparedSuccess.mode);
+        assertEquals(expectedAbstain, host.lastPreparedSuccess.abstain);
+        assertEquals(expectedDeterministic, host.lastPreparedSuccess.deterministic);
+        assertEquals(List.of(AskQueryController.HARNESS_PREPARE), host.begunHarnessTags);
+    }
+
     private static RouteHost availableHost() {
         RouteHost host = new RouteHost();
         host.repositoryAvailable = true;
@@ -246,6 +350,26 @@ public final class AskBackendRouteTest {
             System.currentTimeMillis() - 250L,
             0L,
             0L
+        );
+    }
+
+    private static OfflineAnswerEngine.PreparedAnswer uncertainFitPrepared(String query) {
+        return OfflineAnswerEngine.PreparedAnswer.uncertainFit(
+            query,
+            OfflineAnswerEngine.buildUncertainFitAnswerBody(
+                query,
+                List.of(source("GD-898", "Poisoning", "medical", "reviewed-card")),
+                OfflineAnswerEngine.ConfidenceLabel.MEDIUM,
+                true
+            ),
+            List.of(source("GD-898", "Poisoning", "medical", "reviewed-card")),
+            false,
+            System.currentTimeMillis() - 250L,
+            0L,
+            0L,
+            0L,
+            OfflineAnswerEngine.ConfidenceLabel.MEDIUM,
+            true
         );
     }
 
