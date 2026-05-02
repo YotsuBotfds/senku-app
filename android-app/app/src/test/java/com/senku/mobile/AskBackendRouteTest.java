@@ -70,6 +70,64 @@ public final class AskBackendRouteTest {
     }
 
     @Test
+    public void reviewedRuntimeSupportedQueryPreparesWhenHostInferenceIsAlsoAvailable() {
+        RouteHost host = availableHost();
+        host.modelFile = null;
+        host.hostInferenceSettings = settings(true);
+        host.reviewedCardRuntimeEnabled = true;
+        OfflineAnswerEngine.PreparedAnswer reviewedPrepared = reviewedCardPrepared("child swallowed unknown cleaner");
+        RouteEngine engine = new RouteEngine(reviewedPrepared);
+        AskQueryController controller = new AskQueryController(host, engine, query -> null);
+
+        controller.runAsk("child swallowed unknown cleaner");
+
+        assertEquals(
+            List.of("prepare-started:child swallowed unknown cleaner", "prepare-success"),
+            host.events
+        );
+        assertEquals(1, engine.prepareCalls);
+        assertNull(engine.lastModelFile);
+        assertSame(reviewedPrepared, host.lastPreparedSuccess);
+    }
+
+    @Test
+    public void reviewedRuntimeSupportedQueryPreparesWhenLocalModelIsAlsoAvailable() {
+        RouteHost host = availableHost();
+        host.hostInferenceSettings = settings(false);
+        host.reviewedCardRuntimeEnabled = true;
+        OfflineAnswerEngine.PreparedAnswer reviewedPrepared = reviewedCardPrepared("child swallowed unknown cleaner");
+        RouteEngine engine = new RouteEngine(reviewedPrepared);
+        AskQueryController controller = new AskQueryController(host, engine, query -> null);
+
+        controller.runAsk("child swallowed unknown cleaner");
+
+        assertEquals(
+            List.of("prepare-started:child swallowed unknown cleaner", "prepare-success"),
+            host.events
+        );
+        assertEquals(1, engine.prepareCalls);
+        assertSame(host.modelFile, engine.lastModelFile);
+        assertSame(reviewedPrepared, host.lastPreparedSuccess);
+    }
+
+    @Test
+    public void reviewedRuntimeUnsupportedQueryWithNullHostSettingsStillRequiresModelRoute() {
+        RouteHost host = availableHost();
+        host.modelFile = null;
+        host.hostInferenceSettings = null;
+        host.reviewedCardRuntimeEnabled = true;
+        host.hasAutoQuery = true;
+        RouteEngine engine = new RouteEngine(generativePrepared("unreachable", false));
+        AskQueryController controller = new AskQueryController(host, engine, query -> null);
+
+        controller.runAsk("how do i build a tarp shelter");
+
+        assertEquals(List.of("model-unavailable:true"), host.events);
+        assertEquals(0, engine.prepareCalls);
+        assertEquals(List.of(), host.begunHarnessTags);
+    }
+
+    @Test
     public void genericQueryWithReviewedCardRuntimeEnabledStillRequiresModelRoute() {
         RouteHost host = availableHost();
         host.modelFile = null;
