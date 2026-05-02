@@ -108,6 +108,7 @@ public final class MainActivity extends AppCompatActivity {
     private final MainAutomationRouteController automationRouteController =
         new MainAutomationRouteController(new MainAutomationRouteHost());
     private final MainRouteCoordinator routeCoordinator = new MainRouteCoordinator(new MainRouteHost());
+    private volatile boolean packInstallInFlight;
 
     private MainReviewDisplayPolicy reviewDisplayPolicy;
     private MainPresentationFormatter presentationFormatter;
@@ -655,6 +656,8 @@ public final class MainActivity extends AppCompatActivity {
     }
 
     private void installPack(boolean force) {
+        packInstallInFlight = true;
+        mainQueryOperationGate.nextJobToken();
         setBusy(force ? "Refreshing manual..." : "Preparing manual...", true);
         int harnessToken = beginHarnessTask(force ? "main.installPack.force" : "main.installPack");
         try {
@@ -670,6 +673,7 @@ public final class MainActivity extends AppCompatActivity {
                     repository = openedRepo;
                     publishedRepo = true;
                     runTrackedOnUiThread(harnessToken, () -> {
+                        packInstallInFlight = false;
                         setBusy(presentationFormatter().buildHomeReadyStatus(guides.size()), false);
                         updateInfoText();
                         allGuides.clear();
@@ -696,6 +700,7 @@ public final class MainActivity extends AppCompatActivity {
                         closeRepositoryQuietly(openedRepo);
                     }
                     runTrackedOnUiThread(harnessToken, () -> {
+                        packInstallInFlight = false;
                         setBusy("Manual install failed", false);
                         setResultHighlightQuery("");
                         replaceItems(Collections.emptyList());
@@ -708,6 +713,7 @@ public final class MainActivity extends AppCompatActivity {
             });
         } catch (RuntimeException exc) {
             runTrackedOnUiThread(harnessToken, () -> {
+                packInstallInFlight = false;
                 setBusy("Manual install failed", false);
                 setResultHighlightQuery("");
                 replaceItems(Collections.emptyList());
@@ -1471,6 +1477,9 @@ public final class MainActivity extends AppCompatActivity {
     }
 
     private void handleSharedQuerySubmit(String rawQuery, SubmitTarget target) {
+        if (MainSharedInputSubmitPolicy.shouldSuppressSubmitDuringInstall(packInstallInFlight)) {
+            return;
+        }
         String query = safe(rawQuery).trim();
         if (target == SubmitTarget.ASK) {
             runAsk(query);

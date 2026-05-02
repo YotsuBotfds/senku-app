@@ -52,6 +52,12 @@ public final class MainSharedInputSubmitPolicyTest {
         );
     }
 
+    @Test
+    public void installInFlightSuppressesSharedInputSubmit() {
+        assertEquals(true, MainSharedInputSubmitPolicy.shouldSuppressSubmitDuringInstall(true));
+        assertEquals(false, MainSharedInputSubmitPolicy.shouldSuppressSubmitDuringInstall(false));
+    }
+
     private static void assertSubmitOwnership(
         String scenario,
         BottomTabDestination activePhoneTab,

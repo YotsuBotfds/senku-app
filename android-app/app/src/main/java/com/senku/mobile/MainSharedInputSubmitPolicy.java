@@ -20,6 +20,10 @@ final class MainSharedInputSubmitPolicy {
         );
     }
 
+    static boolean shouldSuppressSubmitDuringInstall(boolean packInstallInFlight) {
+        return packInstallInFlight;
+    }
+
     static final class SharedSubmitAction {
         final SubmitTarget target;
         final int buttonTextResource;
