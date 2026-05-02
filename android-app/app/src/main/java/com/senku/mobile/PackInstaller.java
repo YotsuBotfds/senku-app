@@ -77,6 +77,7 @@ public final class PackInstaller {
         PackManifest installedManifest = PackManifest.fromJson(installedManifestText);
         VectorInfo vectorInfo = readVectorInfo(vectorFile);
         validateVectorInfo(installedManifest, vectorInfo);
+        validateVectorFileLayout(vectorFile, vectorInfo);
         return new InstalledPack(rootDir, manifestFile, sqliteFile, vectorFile, installedManifest, vectorInfo);
     }
 
@@ -157,7 +158,6 @@ public final class PackInstaller {
         try {
             installed = PackManifest.fromJson(readFileText(manifestFile));
             validateInstalledFiles(installed, sqliteFile, vectorFile, sqliteSchemaValidator);
-            validateVectorInfo(installed, readVectorInfo(vectorFile));
         } catch (IOException | JSONException exc) {
             return null;
         }
@@ -228,6 +228,9 @@ public final class PackInstaller {
         validateInstalledFile(sqliteFile, manifest.sqliteBytes, manifest.sqliteSha256, SQLITE_NAME);
         validateInstalledFile(vectorFile, manifest.vectorBytes, manifest.vectorSha256, vectorFile.getName());
         sqliteSchemaValidator.validate(sqliteFile);
+        VectorInfo vectorInfo = readVectorInfo(vectorFile);
+        validateVectorInfo(manifest, vectorInfo);
+        validateVectorFileLayout(vectorFile, vectorInfo);
     }
 
     private static void validateInstalledFile(File file, long expectedBytes, String expectedSha256, String label) throws IOException {
@@ -335,6 +338,34 @@ public final class PackInstaller {
             throw new IOException(
                 "Vector dtype mismatch. Manifest expected " + manifest.vectorDtype
                     + " but header found code " + vectorInfo.dtypeCode
+            );
+        }
+    }
+
+    private static void validateVectorFileLayout(File vectorFile, VectorInfo vectorInfo) throws IOException {
+        if (vectorInfo.rowCount < 0) {
+            throw new IOException("Invalid vector row count: " + vectorInfo.rowCount);
+        }
+        if (vectorInfo.dimension <= 0) {
+            throw new IOException("Invalid vector dimension: " + vectorInfo.dimension);
+        }
+        long elementBytes;
+        if (vectorInfo.dtypeCode == VECTOR_DTYPE_FLOAT16) {
+            elementBytes = 2L;
+        } else if (vectorInfo.dtypeCode == VECTOR_DTYPE_INT8) {
+            elementBytes = 1L;
+        } else {
+            throw new IOException("Unsupported vector dtype code: " + vectorInfo.dtypeCode);
+        }
+        long rowBytes = (long) vectorInfo.dimension * elementBytes;
+        long requiredBytes = (long) vectorInfo.headerBytes + ((long) vectorInfo.rowCount * rowBytes);
+        if (rowBytes > Integer.MAX_VALUE || requiredBytes > Integer.MAX_VALUE) {
+            throw new IOException("Vector file layout is too large to address safely");
+        }
+        long fileBytes = vectorFile.length();
+        if (requiredBytes > fileBytes) {
+            throw new IOException(
+                "Vector file is truncated. Expected at least " + requiredBytes + " bytes but found " + fileBytes
             );
         }
     }

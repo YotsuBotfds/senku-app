@@ -17,6 +17,10 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
 public final class PackInstallerTest {
+    private static final int TINY_VECTOR_ROW_COUNT = 212;
+    private static final int TINY_VECTOR_DIMENSION = 1;
+    private static final int TINY_VECTOR_DTYPE_CODE = 1;
+
     @Test
     public void sha256HexForTestMatchesKnownDigest() throws Exception {
         File tempFile = File.createTempFile("pack-installer", ".txt");
@@ -408,7 +412,7 @@ public final class PackInstallerTest {
         byte[] expectedSqlite = repeatedBytes(123);
         byte[] corruptSqlite = repeatedBytes(123);
         corruptSqlite[17] = (byte) (corruptSqlite[17] + 1);
-        byte[] vector = vectorBytes(456, 768, 1);
+        byte[] vector = tinyVectorBytes();
         Files.write(
             manifestFile.toPath(),
             manifestJson(
@@ -417,7 +421,10 @@ public final class PackInstallerTest {
                 expectedSqlite.length,
                 vector.length,
                 sha256Hex(expectedSqlite),
-                sha256Hex(vector)
+                sha256Hex(vector),
+                TINY_VECTOR_ROW_COUNT,
+                TINY_VECTOR_DIMENSION,
+                "float16"
             ).getBytes(StandardCharsets.UTF_8)
         );
         Files.write(sqliteFile.toPath(), corruptSqlite);
@@ -442,8 +449,8 @@ public final class PackInstallerTest {
         File sqliteFile = tempDir.resolve("senku_mobile.sqlite3").toFile();
         File vectorFile = tempDir.resolve("senku_vectors.f16").toFile();
         byte[] sqlite = repeatedBytes(123);
-        byte[] expectedVector = vectorBytes(456, 768, 1);
-        byte[] corruptVector = vectorBytes(456, 768, 1);
+        byte[] expectedVector = tinyVectorBytes();
+        byte[] corruptVector = tinyVectorBytes();
         corruptVector[40] = (byte) (corruptVector[40] + 1);
         Files.write(
             manifestFile.toPath(),
@@ -453,11 +460,52 @@ public final class PackInstallerTest {
                 sqlite.length,
                 expectedVector.length,
                 sha256Hex(sqlite),
-                sha256Hex(expectedVector)
+                sha256Hex(expectedVector),
+                TINY_VECTOR_ROW_COUNT,
+                TINY_VECTOR_DIMENSION,
+                "float16"
             ).getBytes(StandardCharsets.UTF_8)
         );
         Files.write(sqliteFile.toPath(), sqlite);
         Files.write(vectorFile.toPath(), corruptVector);
+
+        assertEquals(
+            true,
+            PackInstaller.shouldInstallFromAssetsForTest(
+                false,
+                manifestWithGeneratedAtAndAnswerCards("2026-04-27T04:21:12.533181+00:00", 271),
+                manifestFile,
+                sqliteFile,
+                vectorFile
+            )
+        );
+    }
+
+    @Test
+    public void shouldInstallFromAssetsRefreshesWhenInstalledVectorPayloadIsTruncatedDespiteMatchingChecksum() throws Exception {
+        Path tempDir = Files.createTempDirectory("pack-installer");
+        File manifestFile = tempDir.resolve("senku_manifest.json").toFile();
+        File sqliteFile = tempDir.resolve("senku_mobile.sqlite3").toFile();
+        File vectorFile = tempDir.resolve("senku_vectors.f16").toFile();
+        byte[] sqlite = repeatedBytes(123);
+        int headerRows = TINY_VECTOR_ROW_COUNT + 1;
+        byte[] truncatedVector = vectorBytes(456, headerRows, TINY_VECTOR_DIMENSION, TINY_VECTOR_DTYPE_CODE);
+        Files.write(
+            manifestFile.toPath(),
+            manifestJson(
+                "2026-04-27T04:21:12.533181+00:00",
+                271,
+                sqlite.length,
+                truncatedVector.length,
+                sha256Hex(sqlite),
+                sha256Hex(truncatedVector),
+                headerRows,
+                TINY_VECTOR_DIMENSION,
+                "float16"
+            ).getBytes(StandardCharsets.UTF_8)
+        );
+        Files.write(sqliteFile.toPath(), sqlite);
+        Files.write(vectorFile.toPath(), truncatedVector);
 
         assertEquals(
             true,
@@ -666,7 +714,8 @@ public final class PackInstallerTest {
         File sqliteFile = tempDir.resolve("senku_mobile.sqlite3").toFile();
         File vectorFile = tempDir.resolve("senku_vectors.f16").toFile();
         byte[] sqlite = repeatedBytes(actualSqliteBytes);
-        byte[] vector = vectorBytes(actualVectorBytes, 768, 1);
+        int chunkCount = vectorRowCountForLength(actualVectorBytes, TINY_VECTOR_DIMENSION, TINY_VECTOR_DTYPE_CODE);
+        byte[] vector = vectorBytes(actualVectorBytes, chunkCount, TINY_VECTOR_DIMENSION, TINY_VECTOR_DTYPE_CODE);
         Files.write(
             manifestFile.toPath(),
             manifestJson(
@@ -675,7 +724,10 @@ public final class PackInstallerTest {
                 manifestSqliteBytes,
                 manifestVectorBytes,
                 sha256Hex(sqlite),
-                sha256Hex(vector)
+                sha256Hex(vector),
+                chunkCount,
+                TINY_VECTOR_DIMENSION,
+                "float16"
             ).getBytes(StandardCharsets.UTF_8)
         );
         Files.write(sqliteFile.toPath(), sqlite);
@@ -695,21 +747,45 @@ public final class PackInstallerTest {
         String sqliteSha256,
         String vectorSha256
     ) {
+        return manifestJson(
+            generatedAt,
+            answerCardCount,
+            sqliteBytes,
+            vectorBytes,
+            sqliteSha256,
+            vectorSha256,
+            49841,
+            768,
+            "float16"
+        );
+    }
+
+    private static String manifestJson(
+        String generatedAt,
+        int answerCardCount,
+        long sqliteBytes,
+        long vectorBytes,
+        String sqliteSha256,
+        String vectorSha256,
+        int chunkCount,
+        int embeddingDimension,
+        String vectorDtype
+    ) {
         return "{\n" +
             "  \"pack_format\": \"senku-mobile-pack-v2\",\n" +
             "  \"pack_version\": 2,\n" +
             "  \"generated_at\": \"" + generatedAt + "\",\n" +
             "  \"counts\": {\n" +
             "    \"guides\": 754,\n" +
-            "    \"chunks\": 49841,\n" +
+            "    \"chunks\": " + chunkCount + ",\n" +
             "    \"deterministic_rules\": 9,\n" +
             "    \"guide_related_links\": 5750,\n" +
             "    \"answer_cards\": " + answerCardCount + "\n" +
             "  },\n" +
             "  \"embedding\": {\n" +
             "    \"model_id\": \"nomic-ai/text-embedding-nomic-embed-text-v1.5\",\n" +
-            "    \"dimension\": 768,\n" +
-            "    \"vector_dtype\": \"float16\"\n" +
+            "    \"dimension\": " + embeddingDimension + ",\n" +
+            "    \"vector_dtype\": \"" + vectorDtype + "\"\n" +
             "  },\n" +
             "  \"runtime_defaults\": {\n" +
             "    \"mobile_top_k\": 10\n" +
@@ -739,13 +815,22 @@ public final class PackInstallerTest {
         return bytes;
     }
 
-    private static byte[] vectorBytes(int length, int dimension, int dtypeCode) {
+    private static byte[] tinyVectorBytes() {
+        return vectorBytes(456, TINY_VECTOR_ROW_COUNT, TINY_VECTOR_DIMENSION, TINY_VECTOR_DTYPE_CODE);
+    }
+
+    private static int vectorRowCountForLength(int length, int dimension, int dtypeCode) {
+        int elementBytes = dtypeCode == 1 ? 2 : 1;
+        return (length - 32) / (dimension * elementBytes);
+    }
+
+    private static byte[] vectorBytes(int length, int rowCount, int dimension, int dtypeCode) {
         byte[] bytes = repeatedBytes(length);
         ByteBuffer.wrap(bytes).order(ByteOrder.LITTLE_ENDIAN)
             .put("SNKUVEC1".getBytes(StandardCharsets.US_ASCII))
             .putInt(1)
             .putInt(32)
-            .putInt(49841)
+            .putInt(rowCount)
             .putInt(dimension)
             .putInt(dtypeCode)
             .putInt(0);
