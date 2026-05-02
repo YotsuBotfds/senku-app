@@ -2526,18 +2526,13 @@ public final class OfflineAnswerEngine {
     ) {
         if (settings.enabled) {
             if (hostFallbackUsed) {
-                return "Offline answer | on-device fallback | " + modelFile.getName() +
-                    " | " + LiteRtModelRunner.getLoadedBackendLabel() +
+                return "Offline answer | on-device fallback | " + deviceRuntimeLabel() +
                     " | " + PromptBuilder.formatDuration(elapsedMs);
             }
-            String backendLabel = safe(hostBackend).trim();
-            if (backendLabel.isEmpty()) {
-                backendLabel = "host";
-            }
-            return "Host answer | " + settings.modelId + " @ " + settings.serverLabel() +
-                " | " + backendLabel + " | " + PromptBuilder.formatDuration(elapsedMs);
+            return "Host answer | " + hostRuntimeLabel(hostBackend) +
+                " | " + PromptBuilder.formatDuration(elapsedMs);
         }
-        return "Offline answer | " + modelFile.getName() + " | " + LiteRtModelRunner.getLoadedBackendLabel() +
+        return "Offline answer | " + deviceRuntimeLabel() +
             " | " + PromptBuilder.formatDuration(elapsedMs);
     }
 
@@ -2550,19 +2545,46 @@ public final class OfflineAnswerEngine {
     ) {
         if (settings.enabled) {
             if (hostFallbackUsed) {
-                return "Low coverage | on-device fallback | " + modelFile.getName() +
-                    " | " + LiteRtModelRunner.getLoadedBackendLabel() +
+                return "Low coverage | on-device fallback | " + deviceRuntimeLabel() +
                     " | " + PromptBuilder.formatDuration(elapsedMs);
             }
-            String backendLabel = safe(hostBackend).trim();
-            if (backendLabel.isEmpty()) {
-                backendLabel = "host";
-            }
-            return "Low coverage | " + settings.modelId + " @ " + settings.serverLabel() +
-                " | " + backendLabel + " | " + PromptBuilder.formatDuration(elapsedMs);
+            return "Low coverage | " + hostRuntimeLabel(hostBackend) +
+                " | " + PromptBuilder.formatDuration(elapsedMs);
         }
-        return "Low coverage | " + modelFile.getName() + " | " + LiteRtModelRunner.getLoadedBackendLabel() +
+        return "Low coverage | " + deviceRuntimeLabel() +
             " | " + PromptBuilder.formatDuration(elapsedMs);
+    }
+
+    private static String hostRuntimeLabel(String hostBackend) {
+        return safeRuntimeLabel(hostBackend, "host runtime");
+    }
+
+    private static String deviceRuntimeLabel() {
+        return safeRuntimeLabel(LiteRtModelRunner.getLoadedBackendLabel(), "on-device runtime");
+    }
+
+    private static String safeRuntimeLabel(String candidate, String fallback) {
+        String normalized = safe(candidate).trim().replaceAll("\\s+", " ");
+        if (normalized.isEmpty()) {
+            return fallback;
+        }
+        String lower = normalized.toLowerCase(QUERY_LOCALE);
+        if (
+            lower.contains("http://") ||
+            lower.contains("https://") ||
+            lower.contains("content://") ||
+            lower.contains("localhost") ||
+            lower.contains("127.0.0.1") ||
+            lower.contains("10.0.2.2") ||
+            lower.contains(".litertlm") ||
+            lower.contains(".task") ||
+            normalized.contains("/") ||
+            normalized.contains("\\") ||
+            normalized.contains(":")
+        ) {
+            return fallback;
+        }
+        return normalized;
     }
 
     public static final class AnswerRun {

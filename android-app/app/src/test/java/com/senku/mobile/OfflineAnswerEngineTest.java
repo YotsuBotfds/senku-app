@@ -1017,6 +1017,133 @@ public final class OfflineAnswerEngineTest {
     }
 
     @Test
+    public void generatedAnswerSubtitlesHideRuntimeEndpointAndModelDetails() throws Exception {
+        File tempModel = File.createTempFile("senku-private-model-", ".litertlm");
+        tempModel.deleteOnExit();
+        List<SearchResult> sources = List.of(
+            new SearchResult(
+                "Emergency Shelter",
+                "",
+                "Rig a tarp at an angle and route water away from the sleeping area.",
+                "Use a ridgeline, stake the tarp securely, and keep drainage away from bedding.",
+                "GD-094",
+                "Rain tarp setup",
+                "shelter",
+                "guide-focus"
+            )
+        );
+
+        OfflineAnswerEngine.setGeneratorsForTest(
+            (settings, systemPrompt, prompt, maxTokens) ->
+                new HostInferenceClient.Result(
+                    "Short answer: use a ridgeline and keep runoff away.",
+                    "http://127.0.0.1:1235/leaky-backend",
+                    0.42
+                ),
+            (context, modelFile, prompt, maxTokens, listener) -> {
+                throw new AssertionError("on-device generation should not run");
+            }
+        );
+        OfflineAnswerEngine.AnswerRun hostRun = OfflineAnswerEngine.generate(
+            null,
+            null,
+            OfflineAnswerEngine.PreparedAnswer.restoredGenerative(
+                "How do I improvise a rain shelter?",
+                sources,
+                false,
+                System.currentTimeMillis() - 1000L,
+                true,
+                "http://127.0.0.1:1235/v1",
+                "secret-private-model",
+                "system",
+                "prompt"
+            )
+        );
+        assertTrue(hostRun.subtitle.startsWith("Host answer |"));
+        assertRuntimeSubtitleNoLeak(hostRun.subtitle, tempModel);
+
+        OfflineAnswerEngine.setGeneratorsForTest(
+            (settings, systemPrompt, prompt, maxTokens) -> {
+                throw new AssertionError("host generation should not run");
+            },
+            (context, modelFile, prompt, maxTokens, listener) -> {
+                listener.onPartialText("Short answer: use the tarp as a sloped roof.");
+                return "Short answer: use the tarp as a sloped roof.";
+            }
+        );
+        OfflineAnswerEngine.AnswerRun deviceRun = OfflineAnswerEngine.generate(
+            null,
+            tempModel,
+            OfflineAnswerEngine.PreparedAnswer.restoredGenerative(
+                "How do I improvise a rain shelter?",
+                sources,
+                false,
+                System.currentTimeMillis() - 1000L,
+                false,
+                "",
+                "",
+                "system",
+                "prompt"
+            )
+        );
+        assertTrue(deviceRun.subtitle.startsWith("Offline answer |"));
+        assertRuntimeSubtitleNoLeak(deviceRun.subtitle, tempModel);
+
+        OfflineAnswerEngine.setGeneratorsForTest(
+            (settings, systemPrompt, prompt, maxTokens) -> {
+                throw new IllegalStateException("host unavailable");
+            },
+            (context, modelFile, prompt, maxTokens, listener) -> "Short answer: fallback path."
+        );
+        OfflineAnswerEngine.AnswerRun fallbackRun = OfflineAnswerEngine.generate(
+            null,
+            tempModel,
+            OfflineAnswerEngine.PreparedAnswer.restoredGenerative(
+                "How do I improvise a rain shelter?",
+                sources,
+                false,
+                System.currentTimeMillis() - 1000L,
+                true,
+                "http://127.0.0.1:1235/v1",
+                "secret-private-model",
+                "system",
+                "prompt"
+            )
+        );
+        assertTrue(fallbackRun.subtitle.startsWith("Offline answer | on-device fallback |"));
+        assertRuntimeSubtitleNoLeak(fallbackRun.subtitle, tempModel);
+
+        OfflineAnswerEngine.setGeneratorsForTest(
+            (settings, systemPrompt, prompt, maxTokens) ->
+                new HostInferenceClient.Result(
+                    "No specific information available.",
+                    "http://127.0.0.1:1235/leaky-backend",
+                    0.24
+                ),
+            (context, modelFile, prompt, maxTokens, listener) -> {
+                throw new AssertionError("on-device generation should not run");
+            }
+        );
+        OfflineAnswerEngine.AnswerRun lowCoverageRun = OfflineAnswerEngine.generate(
+            null,
+            null,
+            OfflineAnswerEngine.PreparedAnswer.restoredGenerative(
+                "How should I tune a violin soundpost?",
+                List.of(),
+                false,
+                System.currentTimeMillis() - 1000L,
+                true,
+                "http://127.0.0.1:1235/v1",
+                "secret-private-model",
+                "system",
+                "prompt"
+            )
+        );
+        assertTrue(lowCoverageRun.subtitle.startsWith("Low coverage |"));
+        assertRuntimeSubtitleNoLeak(lowCoverageRun.subtitle, tempModel);
+    }
+
+    @Test
     public void generateEmitsLatencyEventForOnDeviceStreaming() throws Exception {
         List<JSONObject> events = captureLatencyEvents();
         File tempModel = File.createTempFile("senku-local", ".litertlm");
@@ -4123,6 +4250,21 @@ public final class OfflineAnswerEngineTest {
             }
         });
         return finalModeLines;
+    }
+
+    private static void assertRuntimeSubtitleNoLeak(String subtitle, File modelFile) {
+        String lower = subtitle.toLowerCase();
+        assertFalse(subtitle, subtitle.contains(modelFile.getName()));
+        assertFalse(subtitle, lower.contains("secret-private-model"));
+        assertFalse(subtitle, lower.contains("127.0.0.1"));
+        assertFalse(subtitle, lower.contains("10.0.2.2"));
+        assertFalse(subtitle, lower.contains("localhost"));
+        assertFalse(subtitle, lower.contains("http://"));
+        assertFalse(subtitle, lower.contains("https://"));
+        assertFalse(subtitle, lower.contains("content://"));
+        assertFalse(subtitle, lower.contains(".litertlm"));
+        assertFalse(subtitle, lower.contains(".task"));
+        assertFalse(subtitle, lower.contains("c:\\"));
     }
 
     private static boolean containsGuideId(List<SearchResult> results, String guideId) {
