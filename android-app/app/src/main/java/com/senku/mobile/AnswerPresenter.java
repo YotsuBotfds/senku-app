@@ -153,35 +153,49 @@ final class AnswerPresenter {
         Context context = host.applicationContext();
         File modelFile = host.modelFile();
         int harnessToken = host.beginHarnessTask(HARNESS_PENDING_GENERATION);
-        host.executor().execute(() -> {
-            try {
-                OfflineAnswerEngine.AnswerRun answerRun = engine.generate(
-                    context,
-                    modelFile,
-                    preparedAnswer,
-                    host.createAnswerProgressListener(requestToken)
-                );
-                AnswerRunResult result = buildResult(answerRun, requestToken);
-                host.runTrackedOnUiThread(harnessToken, () -> {
-                    if (!host.isCurrentRequestToken(requestToken)) {
-                        return;
-                    }
-                    host.onSuccess(requestToken, Kind.INITIAL_PENDING, result);
-                });
-            } catch (Exception exc) {
-                host.runTrackedOnUiThread(harnessToken, () -> {
-                    if (!host.isCurrentRequestToken(requestToken)) {
-                        return;
-                    }
-                    host.onFailure(
-                        requestToken,
-                        Kind.INITIAL_PENDING,
-                        exc,
-                        safe(preparedAnswer == null ? null : preparedAnswer.query).trim()
+        try {
+            host.executor().execute(() -> {
+                try {
+                    OfflineAnswerEngine.AnswerRun answerRun = engine.generate(
+                        context,
+                        modelFile,
+                        preparedAnswer,
+                        host.createAnswerProgressListener(requestToken)
                     );
-                });
-            }
-        });
+                    AnswerRunResult result = buildResult(answerRun, requestToken);
+                    host.runTrackedOnUiThread(harnessToken, () -> {
+                        if (!host.isCurrentRequestToken(requestToken)) {
+                            return;
+                        }
+                        host.onSuccess(requestToken, Kind.INITIAL_PENDING, result);
+                    });
+                } catch (Exception exc) {
+                    host.runTrackedOnUiThread(harnessToken, () -> {
+                        if (!host.isCurrentRequestToken(requestToken)) {
+                            return;
+                        }
+                        host.onFailure(
+                            requestToken,
+                            Kind.INITIAL_PENDING,
+                            exc,
+                            safe(preparedAnswer == null ? null : preparedAnswer.query).trim()
+                        );
+                    });
+                }
+            });
+        } catch (RuntimeException exc) {
+            host.runTrackedOnUiThread(harnessToken, () -> {
+                if (!host.isCurrentRequestToken(requestToken)) {
+                    return;
+                }
+                host.onFailure(
+                    requestToken,
+                    Kind.INITIAL_PENDING,
+                    exc,
+                    safe(preparedAnswer == null ? null : preparedAnswer.query).trim()
+                );
+            });
+        }
     }
 
     void prepareThenGenerate(int requestToken, Kind kind, PackRepository repo, String query) {
@@ -193,53 +207,64 @@ final class AnswerPresenter {
         SessionMemory sessionMemory = host.sessionMemory();
         String fallbackQuery = safe(query).trim();
         int prepareHarnessToken = host.beginHarnessTask(prepareTagFor(kind));
-        host.executor().execute(() -> {
-            int generationHarnessToken = 0;
-            try {
-                PackRepository resolvedRepo = repositoryResolver.resolve(repo);
-                OfflineAnswerEngine.PreparedAnswer preparedAnswer = engine.prepare(
-                    context,
-                    resolvedRepo,
-                    sessionMemory,
-                    modelFile,
-                    fallbackQuery
-                );
-                if (!preparedAnswer.deterministic && !preparedAnswer.abstain) {
-                    host.runTrackedOnUiThread(prepareHarnessToken, () -> {
+        try {
+            host.executor().execute(() -> {
+                int generationHarnessToken = 0;
+                try {
+                    PackRepository resolvedRepo = repositoryResolver.resolve(repo);
+                    OfflineAnswerEngine.PreparedAnswer preparedAnswer = engine.prepare(
+                        context,
+                        resolvedRepo,
+                        sessionMemory,
+                        modelFile,
+                        fallbackQuery
+                    );
+                    if (!preparedAnswer.deterministic && !preparedAnswer.abstain) {
+                        host.runTrackedOnUiThread(prepareHarnessToken, () -> {
+                            if (!host.isCurrentRequestToken(requestToken)) {
+                                return;
+                            }
+                            host.onPreparePreview(requestToken, kind, preparedAnswer);
+                        });
+                    } else {
+                        HarnessTestSignals.end(prepareHarnessToken);
+                    }
+                    generationHarnessToken = host.beginHarnessTask(generationTagFor(kind, preparedAnswer));
+                    OfflineAnswerEngine.AnswerRun answerRun = engine.generate(
+                        context,
+                        modelFile,
+                        preparedAnswer,
+                        host.createAnswerProgressListener(requestToken)
+                    );
+                    AnswerRunResult result = buildResult(answerRun, requestToken);
+                    host.runTrackedOnUiThread(generationHarnessToken, () -> {
                         if (!host.isCurrentRequestToken(requestToken)) {
                             return;
                         }
-                        host.onPreparePreview(requestToken, kind, preparedAnswer);
+                        host.onSuccess(requestToken, kind, result);
                     });
-                } else {
+                } catch (Exception exc) {
                     HarnessTestSignals.end(prepareHarnessToken);
+                    HarnessTestSignals.end(generationHarnessToken);
+                    int failureHarnessToken = host.beginHarnessTask(failureTagFor(kind));
+                    host.runTrackedOnUiThread(failureHarnessToken, () -> {
+                        if (!host.isCurrentRequestToken(requestToken)) {
+                            return;
+                        }
+                        host.onFailure(requestToken, kind, exc, fallbackQuery);
+                    });
                 }
-                generationHarnessToken = host.beginHarnessTask(generationTagFor(kind, preparedAnswer));
-                OfflineAnswerEngine.AnswerRun answerRun = engine.generate(
-                    context,
-                    modelFile,
-                    preparedAnswer,
-                    host.createAnswerProgressListener(requestToken)
-                );
-                AnswerRunResult result = buildResult(answerRun, requestToken);
-                host.runTrackedOnUiThread(generationHarnessToken, () -> {
-                    if (!host.isCurrentRequestToken(requestToken)) {
-                        return;
-                    }
-                    host.onSuccess(requestToken, kind, result);
-                });
-            } catch (Exception exc) {
-                HarnessTestSignals.end(prepareHarnessToken);
-                HarnessTestSignals.end(generationHarnessToken);
-                int failureHarnessToken = host.beginHarnessTask(failureTagFor(kind));
-                host.runTrackedOnUiThread(failureHarnessToken, () -> {
-                    if (!host.isCurrentRequestToken(requestToken)) {
-                        return;
-                    }
-                    host.onFailure(requestToken, kind, exc, fallbackQuery);
-                });
-            }
-        });
+            });
+        } catch (RuntimeException exc) {
+            HarnessTestSignals.end(prepareHarnessToken);
+            int failureHarnessToken = host.beginHarnessTask(failureTagFor(kind));
+            host.runTrackedOnUiThread(failureHarnessToken, () -> {
+                if (!host.isCurrentRequestToken(requestToken)) {
+                    return;
+                }
+                host.onFailure(requestToken, kind, exc, fallbackQuery);
+            });
+        }
     }
 
     private AnswerRunResult buildResult(OfflineAnswerEngine.AnswerRun answerRun, int requestToken) {

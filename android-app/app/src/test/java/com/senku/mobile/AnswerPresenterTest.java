@@ -10,6 +10,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executor;
+import java.util.concurrent.RejectedExecutionException;
 
 import org.junit.Test;
 
@@ -37,6 +38,28 @@ public final class AnswerPresenterTest {
         assertEquals(host.lastResult.answerRun.confidenceLabel, host.lastResult.confidenceLabel);
         assertEquals(host.lastResult.answerRun.mode, host.lastResult.mode);
         assertNull(host.lastFailure);
+    }
+
+    @Test
+    public void initialPendingExecuteRejectionClosesHarnessTokenAndReportsFailure() {
+        int busyCountBefore = HarnessTestSignals.busyCount();
+        FakeHost host = new FakeHost(41, true);
+        host.executor = command -> {
+            throw new RejectedExecutionException("executor closed");
+        };
+        AnswerPresenter presenter = new AnswerPresenter(
+            host,
+            new FakeEngine(),
+            (body, token) -> body,
+            repo -> repo
+        );
+
+        presenter.generateRestored(41, generativePrepared("pending execute rejection"));
+
+        assertEquals(List.of(AnswerPresenter.HARNESS_PENDING_GENERATION), host.begunTags);
+        assertEquals(List.of("failure:INITIAL_PENDING"), host.events);
+        assertEquals("pending execute rejection", host.lastFallbackQuery);
+        assertEquals(busyCountBefore, HarnessTestSignals.busyCount());
     }
 
     @Test
@@ -228,6 +251,34 @@ public final class AnswerPresenterTest {
     }
 
     @Test
+    public void followUpExecuteRejectionClosesPrepareTokenAndReportsFailure() {
+        int busyCountBefore = HarnessTestSignals.busyCount();
+        FakeHost host = new FakeHost(42, true);
+        host.executor = command -> {
+            throw new RejectedExecutionException("executor closed");
+        };
+        AnswerPresenter presenter = new AnswerPresenter(host, new FakeEngine(), (body, token) -> body, repo -> repo);
+
+        presenter.prepareThenGenerate(
+            42,
+            AnswerPresenter.Kind.PHONE_FOLLOWUP,
+            null,
+            "  rejected followup  "
+        );
+
+        assertEquals(
+            List.of(
+                AnswerPresenter.HARNESS_FOLLOWUP_PREPARE,
+                AnswerPresenter.HARNESS_FOLLOWUP_FAILURE
+            ),
+            host.begunTags
+        );
+        assertEquals(List.of("failure:PHONE_FOLLOWUP"), host.events);
+        assertEquals("rejected followup", host.lastFallbackQuery);
+        assertEquals(busyCountBefore, HarnessTestSignals.busyCount());
+    }
+
+    @Test
     public void staleRequestTokenIsDroppedSilently() {
         FakeHost host = new FakeHost(99);
         FakeEngine engine = new FakeEngine();
@@ -330,7 +381,7 @@ public final class AnswerPresenterTest {
         final SessionMemory sessionMemory = new SessionMemory();
         final Context applicationContext = null;
         final File modelFile = null;
-        final Executor executor = Runnable::run;
+        Executor executor = Runnable::run;
         final int currentRequestToken;
 
         OfflineAnswerEngine.PreparedAnswer lastPreparedPreview;
