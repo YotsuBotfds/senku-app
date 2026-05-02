@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Executor;
+import java.util.concurrent.RejectedExecutionException;
 
 import org.junit.Test;
 
@@ -123,6 +124,27 @@ public final class MainSearchControllerTest {
         );
         assertSame(engine.searchException, host.lastFailure);
         assertEquals(1, engine.searchCalls);
+    }
+
+    @Test
+    public void executeRejectionPostsFailureAndSettlesHarnessToken() {
+        FakeHost host = readyHost();
+        host.executor = command -> {
+            throw new RejectedExecutionException("executor closed");
+        };
+        FakeEngine engine = new FakeEngine();
+        MainSearchController controller = new MainSearchController(host, engine, query -> null);
+
+        controller.runSearch("blocked search");
+
+        assertEquals(
+            List.of("started:blocked search:blocked search:false", "failure:blocked search"),
+            host.events
+        );
+        assertEquals(0, engine.searchCalls);
+        assertEquals(List.of(MainSearchController.HARNESS_SEARCH), host.begunHarnessTags);
+        assertEquals(List.of(1), host.uiHarnessTokens);
+        assertTrue(host.lastFailure instanceof RejectedExecutionException);
     }
 
     @Test
@@ -534,7 +556,7 @@ public final class MainSearchControllerTest {
         final ArrayList<Runnable> queuedUiActions = new ArrayList<>();
         final Map<String, SearchResult> guideLookup = new HashMap<>();
         final SessionMemory sessionMemory = new SessionMemory();
-        final Executor executor = Runnable::run;
+        Executor executor = Runnable::run;
 
         boolean repositoryAvailable;
         boolean productReviewMode;

@@ -103,33 +103,41 @@ final class MainSearchController {
         int limit = host.searchResultLimit();
         boolean productReviewMode = host.productReviewMode();
         int harnessToken = host.beginHarnessTask(HARNESS_SEARCH);
-        host.executor().execute(() -> {
-            try {
-                List<SearchResult> results = engine.search(
-                    repo,
-                    retrievalPlan.searchQuery,
-                    limit,
-                    retrievalPlan.anchorPrior
-                );
-                List<SearchResult> displayResults = ReviewDemoPolicy.shapeSearchResults(
-                    displayQuery,
-                    productReviewMode,
-                    results,
-                    host::loadGuideById
-                );
-                host.runTrackedOnUiThread(harnessToken, () -> {
-                    if (latestJobGate.isCurrentJob(jobToken)) {
-                        host.onSearchSuccess(query, displayQuery, displayResults, hasVectorStore, sessionUsed);
-                    }
-                });
-            } catch (Exception exc) {
-                host.runTrackedOnUiThread(harnessToken, () -> {
-                    if (latestJobGate.isCurrentJob(jobToken)) {
-                        host.onSearchFailure(query, exc);
-                    }
-                });
-            }
-        });
+        try {
+            host.executor().execute(() -> {
+                try {
+                    List<SearchResult> results = engine.search(
+                        repo,
+                        retrievalPlan.searchQuery,
+                        limit,
+                        retrievalPlan.anchorPrior
+                    );
+                    List<SearchResult> displayResults = ReviewDemoPolicy.shapeSearchResults(
+                        displayQuery,
+                        productReviewMode,
+                        results,
+                        host::loadGuideById
+                    );
+                    host.runTrackedOnUiThread(harnessToken, () -> {
+                        if (latestJobGate.isCurrentJob(jobToken)) {
+                            host.onSearchSuccess(query, displayQuery, displayResults, hasVectorStore, sessionUsed);
+                        }
+                    });
+                } catch (Exception exc) {
+                    host.runTrackedOnUiThread(harnessToken, () -> {
+                        if (latestJobGate.isCurrentJob(jobToken)) {
+                            host.onSearchFailure(query, exc);
+                        }
+                    });
+                }
+            });
+        } catch (RuntimeException exc) {
+            host.runTrackedOnUiThread(harnessToken, () -> {
+                if (latestJobGate.isCurrentJob(jobToken)) {
+                    host.onSearchFailure(query, exc);
+                }
+            });
+        }
     }
 
     private static String safe(String value) {
