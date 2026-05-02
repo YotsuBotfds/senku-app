@@ -6,7 +6,13 @@ import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
+import android.content.ContextWrapper;
+import android.content.SharedPreferences;
+
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -170,6 +176,75 @@ public final class ChatSessionStoreTest {
     }
 
     @Test
+    public void removeConversationDropsRecentPreviewAndPersistsRemoval() throws Exception {
+        ChatSessionStore.resetForTest();
+        String keptConversationId = ChatSessionStore.createConversation();
+        String removedConversationId = ChatSessionStore.createConversation();
+        recordTurnAt(keptConversationId, "kept question", "GD-101", 1_000L);
+        recordTurnAt(removedConversationId, "removed question", "GD-202", 2_000L);
+        TestContext context = new TestContext();
+
+        ChatSessionStore.removeConversation(context, removedConversationId);
+
+        List<ChatSessionStore.ConversationPreview> livePreviews =
+            ChatSessionStore.recentConversationPreviews(null, 10);
+        assertEquals(1, livePreviews.size());
+        assertEquals(keptConversationId, livePreviews.get(0).conversationId);
+        assertFalse(ChatSessionStore.containsConversationIdForTest(removedConversationId));
+
+        String persistedState = context.savedState();
+        ChatSessionStore.resetForTest();
+        ChatSessionStore.restoreSavedStateForTest(persistedState);
+        List<ChatSessionStore.ConversationPreview> restoredPreviews =
+            ChatSessionStore.recentConversationPreviews(null, 10);
+
+        assertEquals(1, restoredPreviews.size());
+        assertEquals(keptConversationId, restoredPreviews.get(0).conversationId);
+        assertFalse(ChatSessionStore.containsConversationIdForTest(removedConversationId));
+    }
+
+    @Test
+    public void openingRecentThreadDoesNotChangeRecencyUntilNewTurnIsRecorded() {
+        ChatSessionStore.resetForTest();
+        String olderConversationId = ChatSessionStore.createConversation();
+        String newerConversationId = ChatSessionStore.createConversation();
+        recordTurnAt(olderConversationId, "older thread", "GD-101", 1_000L);
+        recordTurnAt(newerConversationId, "newer thread", "GD-202", 2_000L);
+
+        ChatSessionStore.memoryFor(olderConversationId);
+        List<ChatSessionStore.ConversationPreview> previewsAfterOpen =
+            ChatSessionStore.recentConversationPreviews(null, 10);
+
+        assertEquals(newerConversationId, previewsAfterOpen.get(0).conversationId);
+        assertEquals(olderConversationId, previewsAfterOpen.get(1).conversationId);
+
+        ChatSessionStore.memoryFor(olderConversationId).recordTranscriptFixtureTurnForTest(
+            "older follow up",
+            "Follow-up preview.",
+            "Short answer: Follow-up preview.",
+            List.of(
+                new SearchResult(
+                    "Guide GD-101",
+                    "",
+                    "",
+                    "",
+                    "GD-101",
+                    "Preview",
+                    "survival",
+                    "guide-focus"
+                )
+            ),
+            "",
+            3_000L
+        );
+        List<ChatSessionStore.ConversationPreview> previewsAfterNewTurn =
+            ChatSessionStore.recentConversationPreviews(null, 10);
+
+        assertEquals(olderConversationId, previewsAfterNewTurn.get(0).conversationId);
+        assertEquals("older follow up", previewsAfterNewTurn.get(0).latestTurn.question);
+    }
+
+    @Test
     public void corruptSavedStateDoesNotClearLiveStateOrBlockLaterRestore() throws Exception {
         ChatSessionStore.resetForTest();
         String liveConversationId = ChatSessionStore.createConversation();
@@ -252,5 +327,166 @@ public final class ChatSessionStoreTest {
         return new JSONObject()
             .put("conversations", new JSONArray().put(conversationJson))
             .toString();
+    }
+
+    private static final class TestContext extends ContextWrapper {
+        private final InMemorySharedPreferences prefs = new InMemorySharedPreferences();
+
+        TestContext() {
+            super(null);
+        }
+
+        @Override
+        public SharedPreferences getSharedPreferences(String name, int mode) {
+            return prefs;
+        }
+
+        String savedState() {
+            return prefs.getString("state_v1", "");
+        }
+    }
+
+    private static final class InMemorySharedPreferences implements SharedPreferences {
+        private final Map<String, Object> values = new HashMap<>();
+
+        @Override
+        public Map<String, ?> getAll() {
+            return new HashMap<>(values);
+        }
+
+        @Override
+        public String getString(String key, String defValue) {
+            Object value = values.get(key);
+            return value instanceof String ? (String) value : defValue;
+        }
+
+        @Override
+        @SuppressWarnings("unchecked")
+        public Set<String> getStringSet(String key, Set<String> defValues) {
+            Object value = values.get(key);
+            return value instanceof Set ? (Set<String>) value : defValues;
+        }
+
+        @Override
+        public int getInt(String key, int defValue) {
+            Object value = values.get(key);
+            return value instanceof Integer ? (Integer) value : defValue;
+        }
+
+        @Override
+        public long getLong(String key, long defValue) {
+            Object value = values.get(key);
+            return value instanceof Long ? (Long) value : defValue;
+        }
+
+        @Override
+        public float getFloat(String key, float defValue) {
+            Object value = values.get(key);
+            return value instanceof Float ? (Float) value : defValue;
+        }
+
+        @Override
+        public boolean getBoolean(String key, boolean defValue) {
+            Object value = values.get(key);
+            return value instanceof Boolean ? (Boolean) value : defValue;
+        }
+
+        @Override
+        public boolean contains(String key) {
+            return values.containsKey(key);
+        }
+
+        @Override
+        public Editor edit() {
+            return new InMemoryEditor();
+        }
+
+        @Override
+        public void registerOnSharedPreferenceChangeListener(OnSharedPreferenceChangeListener listener) {
+        }
+
+        @Override
+        public void unregisterOnSharedPreferenceChangeListener(OnSharedPreferenceChangeListener listener) {
+        }
+
+        private final class InMemoryEditor implements Editor {
+            private final Map<String, Object> pending = new HashMap<>();
+            private final java.util.HashSet<String> removals = new java.util.HashSet<>();
+            private boolean clear;
+
+            @Override
+            public Editor putString(String key, String value) {
+                pending.put(key, value);
+                removals.remove(key);
+                return this;
+            }
+
+            @Override
+            public Editor putStringSet(String key, Set<String> values) {
+                pending.put(key, values);
+                removals.remove(key);
+                return this;
+            }
+
+            @Override
+            public Editor putInt(String key, int value) {
+                pending.put(key, value);
+                removals.remove(key);
+                return this;
+            }
+
+            @Override
+            public Editor putLong(String key, long value) {
+                pending.put(key, value);
+                removals.remove(key);
+                return this;
+            }
+
+            @Override
+            public Editor putFloat(String key, float value) {
+                pending.put(key, value);
+                removals.remove(key);
+                return this;
+            }
+
+            @Override
+            public Editor putBoolean(String key, boolean value) {
+                pending.put(key, value);
+                removals.remove(key);
+                return this;
+            }
+
+            @Override
+            public Editor remove(String key) {
+                pending.remove(key);
+                removals.add(key);
+                return this;
+            }
+
+            @Override
+            public Editor clear() {
+                clear = true;
+                pending.clear();
+                removals.clear();
+                return this;
+            }
+
+            @Override
+            public boolean commit() {
+                apply();
+                return true;
+            }
+
+            @Override
+            public void apply() {
+                if (clear) {
+                    values.clear();
+                }
+                for (String key : removals) {
+                    values.remove(key);
+                }
+                values.putAll(pending);
+            }
+        }
     }
 }
