@@ -137,6 +137,18 @@ public final class HostInferenceClientTest {
     }
 
     @Test
+    public void httpFailureMessageDoesNotExposeRemoteBodyOrRequestDetails() {
+        IllegalStateException exception = HostInferenceClient.sanitizedHttpFailure(500);
+
+        assertEquals("Host inference failed (500)", exception.getMessage());
+        assertFalse(exception.getMessage().contains("http"));
+        assertFalse(exception.getMessage().contains("model"));
+        assertFalse(exception.getMessage().contains("prompt"));
+        assertFalse(exception.getMessage().contains("remote"));
+        assertFalse(exception.getMessage().contains("body"));
+    }
+
+    @Test
     public void clientBuildsHttpsCompletionUriWhenPolicyAllowsHttps() {
         HostInferenceConfig.Settings settings = new HostInferenceConfig.Settings(
             true,

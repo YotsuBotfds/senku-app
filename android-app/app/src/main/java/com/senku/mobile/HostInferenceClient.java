@@ -34,8 +34,7 @@ public final class HostInferenceClient {
             .getBytes(StandardCharsets.UTF_8);
         Log.d(
             TAG,
-            "host.request start url=" + uri +
-                " model=" + settings.modelId +
+            "host.request start endpointPolicy=" + policyDecision.reason +
                 " systemChars=" + (systemPrompt == null ? 0 : systemPrompt.length()) +
                 " promptChars=" + prompt.length() +
                 " requestBytes=" + bodyBytes.length
@@ -67,9 +66,7 @@ public final class HostInferenceClient {
             );
 
             if (statusCode < 200 || statusCode >= 300) {
-                throw new IllegalStateException(
-                    "Host inference failed (" + statusCode + "): " + responseBody
-                );
+                throw sanitizedHttpFailure(statusCode);
             }
 
             Result result = parseResponseBody(responseBody);
@@ -100,6 +97,10 @@ public final class HostInferenceClient {
 
     static Result parseResponseBody(String responseBody) throws Exception {
         return HostInferenceResponsePolicy.parseResponseBody(responseBody);
+    }
+
+    static IllegalStateException sanitizedHttpFailure(int statusCode) {
+        return new IllegalStateException("Host inference failed (" + statusCode + ")");
     }
 
     static String flattenContent(Object content) {
