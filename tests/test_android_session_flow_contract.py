@@ -27,10 +27,15 @@ class AndroidSessionFlowContractTests(unittest.TestCase):
     def test_activity_launch_uses_encoded_and_quoted_auto_query(self):
         self.assertIn("function Quote-AndroidShellArg", self.script)
         self.assertIn("$encodedQuery = [System.Uri]::EscapeDataString($Query)", self.script)
+        self.assertIn('"--es", "com.senku.mobile.extra.PRODUCT_REVIEW_AUTOMATION_AUTH", "senku-review-demo-v1"', self.script)
         self.assertIn('"--es", "auto_query", (Quote-AndroidShellArg $encodedQuery)', self.script)
         self.assertIn('"--ez", "auto_ask", "true"', self.script)
         self.assertIn('"--activity-clear-top"', self.script)
         self.assertIn('"--activity-single-top"', self.script)
+        self.assertLess(
+            self.script.index('"--es", "com.senku.mobile.extra.PRODUCT_REVIEW_AUTOMATION_AUTH", "senku-review-demo-v1"'),
+            self.script.index('"--es", "auto_query", (Quote-AndroidShellArg $encodedQuery)'),
+        )
 
     def test_new_slug_coerces_null_text_before_lowercasing(self):
         self.assertIn("function New-Slug", self.script)

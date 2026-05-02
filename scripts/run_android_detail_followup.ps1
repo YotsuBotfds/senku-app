@@ -1088,6 +1088,7 @@ function Start-AskActivity {
         "-s", $Emulator,
         "shell", "am", "start",
         "-n", "com.senku.mobile/.MainActivity",
+        "--es", "com.senku.mobile.extra.PRODUCT_REVIEW_AUTOMATION_AUTH", "senku-review-demo-v1",
         "--es", "auto_query", (Quote-AndroidShellArg $encodedQuery),
         "--ez", "auto_ask", "true"
     )

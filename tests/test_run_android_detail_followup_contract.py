@@ -112,6 +112,13 @@ class RunAndroidDetailFollowupContractTests(unittest.TestCase):
             r"Start-Process\s+`(?s:.*?)\s-Wait\s+`(?s:.*?)pull",
         )
 
+    def test_activity_launch_uses_automation_auth_marker(self):
+        self.assertIn('"--es", "com.senku.mobile.extra.PRODUCT_REVIEW_AUTOMATION_AUTH", "senku-review-demo-v1"', self.script)
+        self.assertLess(
+            self.script.index('"--es", "com.senku.mobile.extra.PRODUCT_REVIEW_AUTOMATION_AUTH", "senku-review-demo-v1"'),
+            self.script.index('"--es", "auto_query", (Quote-AndroidShellArg $encodedQuery),'),
+        )
+
     def test_followup_submit_mode_is_attempted_and_recorded(self):
         self.assertIn(
             '[ValidateSet("auto", "in_detail_ui", "send_button", "ime_send", "ime_done", "hardware_enter")]',

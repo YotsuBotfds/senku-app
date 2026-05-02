@@ -252,6 +252,15 @@ class PowerShellQualityGateTests(unittest.TestCase):
         self.assertIn('$pushPackArgs += @("-SummaryPath", $PushPackSummaryPath)', script)
         self.assertIn("& $pushPackScript @pushPackArgs", script)
 
+    def test_android_prompt_activity_launch_uses_automation_auth_marker(self):
+        script = ANDROID_PROMPT_PATH.read_text(encoding="utf-8")
+
+        self.assertIn('"--es", "com.senku.mobile.extra.PRODUCT_REVIEW_AUTOMATION_AUTH", "senku-review-demo-v1"', script)
+        self.assertLess(
+            script.index('"--es", "com.senku.mobile.extra.PRODUCT_REVIEW_AUTOMATION_AUTH", "senku-review-demo-v1"'),
+            script.index('"--es", "auto_query", (Quote-AndroidShellArg $encodedQuery)'),
+        )
+
     def test_android_smoke_classifies_platform_anr_dialogs(self):
         script = ANDROID_SMOKE_PATH.read_text(encoding="utf-8")
 
