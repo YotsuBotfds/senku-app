@@ -88,6 +88,39 @@ public final class HostInferenceConfigTest {
     }
 
     @Test
+    public void applyIntentOverridesRejectsNonLocalCleartextAndLeavesExistingSettings() {
+        TestContext context = new TestContext();
+        HostInferenceConfig.save(context, true, "http://localhost:1235/v1", "existing-model");
+        Intent intent = new TestIntent()
+            .putExtra(HostInferenceConfig.EXTRA_HOST_INFERENCE_ENABLED, true)
+            .putExtra(HostInferenceConfig.EXTRA_HOST_INFERENCE_URL, "http://example.com:1235/v1")
+            .putExtra(HostInferenceConfig.EXTRA_HOST_INFERENCE_MODEL, "poisoned-model");
+
+        assertFalse(HostInferenceConfig.applyIntentOverrides(context, intent));
+
+        HostInferenceConfig.Settings settings = HostInferenceConfig.resolve(context);
+        assertTrue(settings.enabled);
+        assertEquals("http://localhost:1235/v1", settings.baseUrl);
+        assertEquals("existing-model", settings.modelId);
+    }
+
+    @Test
+    public void applyIntentOverridesAllowsHttpsEndpointByPolicy() {
+        TestContext context = new TestContext();
+        Intent intent = new TestIntent()
+            .putExtra(HostInferenceConfig.EXTRA_HOST_INFERENCE_ENABLED, true)
+            .putExtra(HostInferenceConfig.EXTRA_HOST_INFERENCE_URL, "https://example.com/openai/v1/chat/completions")
+            .putExtra(HostInferenceConfig.EXTRA_HOST_INFERENCE_MODEL, "remote-model");
+
+        assertTrue(HostInferenceConfig.applyIntentOverrides(context, intent));
+
+        HostInferenceConfig.Settings settings = HostInferenceConfig.resolve(context);
+        assertTrue(settings.enabled);
+        assertEquals("https://example.com/openai/v1", settings.baseUrl);
+        assertEquals("remote-model", settings.modelId);
+    }
+
+    @Test
     public void applyIntentOverridesIgnoresIntentsWithoutHostExtras() {
         TestContext context = new TestContext();
         HostInferenceConfig.save(context, true, "http://localhost:1235/v1", "existing-model");

@@ -51,6 +51,9 @@ public final class HostInferenceConfig {
         String modelId = intent.hasExtra(EXTRA_HOST_INFERENCE_MODEL)
             ? normalizeModelId(intent.getStringExtra(EXTRA_HOST_INFERENCE_MODEL))
             : current.modelId;
+        if (!HostInferencePolicy.evaluate(baseUrl).allowed) {
+            return false;
+        }
         save(context, enabled, baseUrl, modelId);
         return true;
     }
