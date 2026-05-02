@@ -188,6 +188,40 @@ public final class PackInstallerTest {
     }
 
     @Test
+    public void shouldInstallFromAssetsRefreshesWhenInstalledSqliteFileIsMissing() throws Exception {
+        InstalledPackFiles files = installedPackFiles("2026-04-27T04:21:12.533181+00:00", 271, 123, 456, 123, 456);
+        Files.delete(files.sqliteFile.toPath());
+
+        assertEquals(
+            true,
+            PackInstaller.shouldInstallFromAssetsForTest(
+                false,
+                manifestWithGeneratedAtAndAnswerCards("2026-04-27T04:21:12.533181+00:00", 271),
+                files.manifestFile,
+                files.sqliteFile,
+                files.vectorFile
+            )
+        );
+    }
+
+    @Test
+    public void shouldInstallFromAssetsRefreshesWhenInstalledVectorFileIsMissing() throws Exception {
+        InstalledPackFiles files = installedPackFiles("2026-04-27T04:21:12.533181+00:00", 271, 123, 456, 123, 456);
+        Files.delete(files.vectorFile.toPath());
+
+        assertEquals(
+            true,
+            PackInstaller.shouldInstallFromAssetsForTest(
+                false,
+                manifestWithGeneratedAtAndAnswerCards("2026-04-27T04:21:12.533181+00:00", 271),
+                files.manifestFile,
+                files.sqliteFile,
+                files.vectorFile
+            )
+        );
+    }
+
+    @Test
     public void shouldInstallFromAssetsRefreshesWhenInstalledSizesDoNotMatchManifest() throws Exception {
         InstalledPackFiles files = installedPackFiles("2026-04-27T04:21:12.533181+00:00", 271, 123, 456, 122, 456);
 
@@ -226,6 +260,42 @@ public final class PackInstallerTest {
         );
         Files.write(sqliteFile.toPath(), corruptSqlite);
         Files.write(vectorFile.toPath(), vector);
+
+        assertEquals(
+            true,
+            PackInstaller.shouldInstallFromAssetsForTest(
+                false,
+                manifestWithGeneratedAtAndAnswerCards("2026-04-27T04:21:12.533181+00:00", 271),
+                manifestFile,
+                sqliteFile,
+                vectorFile
+            )
+        );
+    }
+
+    @Test
+    public void shouldInstallFromAssetsRefreshesWhenInstalledVectorChecksumDoesNotMatchManifest() throws Exception {
+        Path tempDir = Files.createTempDirectory("pack-installer");
+        File manifestFile = tempDir.resolve("senku_manifest.json").toFile();
+        File sqliteFile = tempDir.resolve("senku_mobile.sqlite3").toFile();
+        File vectorFile = tempDir.resolve("senku_vectors.f16").toFile();
+        byte[] sqlite = repeatedBytes(123);
+        byte[] expectedVector = vectorBytes(456, 768, 1);
+        byte[] corruptVector = vectorBytes(456, 768, 1);
+        corruptVector[40] = (byte) (corruptVector[40] + 1);
+        Files.write(
+            manifestFile.toPath(),
+            manifestJson(
+                "2026-04-27T04:21:12.533181+00:00",
+                271,
+                sqlite.length,
+                expectedVector.length,
+                sha256Hex(sqlite),
+                sha256Hex(expectedVector)
+            ).getBytes(StandardCharsets.UTF_8)
+        );
+        Files.write(sqliteFile.toPath(), sqlite);
+        Files.write(vectorFile.toPath(), corruptVector);
 
         assertEquals(
             true,
