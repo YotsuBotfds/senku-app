@@ -43,15 +43,19 @@ final class MainResultPreviewBridgeController {
             return;
         }
         int harnessToken = host.beginHarnessTask(HARNESS_LABEL);
-        host.executor().execute(() -> {
-            try {
-                Map<String, SearchResultAdapter.LinkedGuidePreview> previewSignals =
-                    loadPreviewSignals(previewGuideIds, loader, host.presentationFormatter());
-                publishIfCurrent(host, harnessToken, activeRequestVersion, previewSignals);
-            } catch (Exception ignored) {
-                publishIfCurrent(host, harnessToken, activeRequestVersion, Collections.emptyMap());
-            }
-        });
+        try {
+            host.executor().execute(() -> {
+                try {
+                    Map<String, SearchResultAdapter.LinkedGuidePreview> previewSignals =
+                        loadPreviewSignals(previewGuideIds, loader, host.presentationFormatter());
+                    publishIfCurrent(host, harnessToken, activeRequestVersion, previewSignals);
+                } catch (Exception ignored) {
+                    publishIfCurrent(host, harnessToken, activeRequestVersion, Collections.emptyMap());
+                }
+            });
+        } catch (RuntimeException ignored) {
+            publishIfCurrent(host, harnessToken, activeRequestVersion, Collections.emptyMap());
+        }
     }
 
     private LinkedHashMap<String, SearchResultAdapter.LinkedGuidePreview> loadPreviewSignals(

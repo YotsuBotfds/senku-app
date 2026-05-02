@@ -10,6 +10,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Executor;
+import java.util.concurrent.RejectedExecutionException;
 
 import org.junit.Test;
 
@@ -84,6 +85,25 @@ public final class MainResultPreviewBridgeControllerTest {
     }
 
     @Test
+    public void executeRejectionPublishesEmptySignalsAndSettlesHarnessToken() {
+        MainResultPreviewBridgeController controller = new MainResultPreviewBridgeController();
+        RecordingHost host = new RecordingHost();
+        host.executor = command -> {
+            throw new RejectedExecutionException("executor closed");
+        };
+        RecordingLoader loader = new RecordingLoader();
+        loader.related.put("GD-101", guides(guide("GD-202", "Water Storage")));
+
+        controller.refreshAsyncForTest(guides(guide("GD-101", "Fire Starting")), loader, host);
+        host.flushUi();
+
+        assertTrue(host.signals.isEmpty());
+        assertEquals(1, host.publishCount);
+        assertEquals(List.of(1), host.uiHarnessTokens);
+        assertTrue(loader.calls.isEmpty());
+    }
+
+    @Test
     public void emptyResultsInvalidatePendingRequestWithoutPublishing() {
         MainResultPreviewBridgeController controller = new MainResultPreviewBridgeController();
         RecordingHost host = new RecordingHost();
@@ -149,12 +169,14 @@ public final class MainResultPreviewBridgeControllerTest {
 
     private static final class RecordingHost implements MainResultPreviewBridgeController.Host {
         final ArrayList<Runnable> uiActions = new ArrayList<>();
+        final ArrayList<Integer> uiHarnessTokens = new ArrayList<>();
+        Executor executor = Runnable::run;
         Map<String, SearchResultAdapter.LinkedGuidePreview> signals = Collections.emptyMap();
         int publishCount;
 
         @Override
         public Executor executor() {
-            return Runnable::run;
+            return executor;
         }
 
         @Override
@@ -164,6 +186,7 @@ public final class MainResultPreviewBridgeControllerTest {
 
         @Override
         public void runTrackedOnUiThread(int harnessToken, Runnable action) {
+            uiHarnessTokens.add(harnessToken);
             uiActions.add(action);
         }
 
