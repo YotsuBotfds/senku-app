@@ -4,8 +4,8 @@ Pointer-only rollup for agents. Keep detailed logs in artifacts and test output.
 
 ## Current Proofed Head
 
-- Latest full checkpoint proof: `a116ef54` (`Cover detail source state races`)
-- Checkpoint time: `2026-05-02T04:46:03-05:00`
+- Latest full checkpoint proof: `513164f5` (`Cover saved and recent edge cases`)
+- Checkpoint time: `2026-05-02T04:57:23-05:00`
 - Gates:
   - `:app:testDebugUnitTest` passed
   - `:app:assembleDebug :app:assembleDebugAndroidTest` passed
