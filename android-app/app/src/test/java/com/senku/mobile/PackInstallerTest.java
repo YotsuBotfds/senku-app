@@ -299,6 +299,41 @@ public final class PackInstallerTest {
     }
 
     @Test
+    public void stagedPackPromotionPublishesManifestLast() throws Exception {
+        Path tempDir = Files.createTempDirectory("pack-installer");
+        File manifestFile = tempDir.resolve("senku_manifest.json").toFile();
+        File sqliteFile = tempDir.resolve("senku_mobile.sqlite3").toFile();
+        File vectorFile = tempDir.resolve("senku_vectors.f16").toFile();
+        File sqliteTemp = tempDir.resolve("senku_mobile.sqlite3.tmp").toFile();
+        File vectorTemp = tempDir.resolve("senku_vectors.f16.tmp").toFile();
+        File missingManifestTemp = tempDir.resolve("senku_manifest.json.tmp").toFile();
+
+        Files.write(manifestFile.toPath(), "old-manifest".getBytes(StandardCharsets.UTF_8));
+        Files.write(sqliteFile.toPath(), "old-sqlite".getBytes(StandardCharsets.UTF_8));
+        Files.write(vectorFile.toPath(), "old-vector".getBytes(StandardCharsets.UTF_8));
+        Files.write(sqliteTemp.toPath(), "new-sqlite".getBytes(StandardCharsets.UTF_8));
+        Files.write(vectorTemp.toPath(), "new-vector".getBytes(StandardCharsets.UTF_8));
+
+        try {
+            PackInstaller.promoteStagedPackForTest(
+                sqliteTemp,
+                vectorTemp,
+                missingManifestTemp,
+                sqliteFile,
+                vectorFile,
+                manifestFile
+            );
+            fail("Expected staged manifest move to fail");
+        } catch (IOException expected) {
+            // Expected: data files may already be promoted, but the manifest stays on the old pack.
+        }
+
+        assertEquals("old-manifest", readUtf8(manifestFile));
+        assertEquals("new-sqlite", readUtf8(sqliteFile));
+        assertEquals("new-vector", readUtf8(vectorFile));
+    }
+
+    @Test
     public void shouldInstallFromAssetsRefreshesWhenInstalledFilesAreMissing() throws Exception {
         Path tempDir = Files.createTempDirectory("pack-installer");
 
@@ -690,6 +725,10 @@ public final class PackInstallerTest {
             "    }\n" +
             "  }\n" +
             "}";
+    }
+
+    private static String readUtf8(File file) throws IOException {
+        return new String(Files.readAllBytes(file.toPath()), StandardCharsets.UTF_8);
     }
 
     private static byte[] repeatedBytes(int length) {

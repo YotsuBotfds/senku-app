@@ -17,6 +17,8 @@ import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.LinkedHashMap;
@@ -68,10 +70,7 @@ public final class PackInstaller {
             PackInstaller::validateInstalledSqliteSchema
         );
         if (installedFromAssets) {
-            copyAsset(assets, assetPath(MANIFEST_NAME), manifestFile);
-            copyAsset(assets, assetPath(SQLITE_NAME), sqliteFile);
-            copyAsset(assets, assetPath(vectorName), vectorFile);
-            validateInstalledFiles(assetManifest, sqliteFile, vectorFile);
+            installStagedAssetPack(assets, assetManifest, rootDir, manifestFile, sqliteFile, vectorFile, vectorName);
         }
 
         String installedManifestText = readFileText(manifestFile);
@@ -79,6 +78,70 @@ public final class PackInstaller {
         VectorInfo vectorInfo = readVectorInfo(vectorFile);
         validateVectorInfo(installedManifest, vectorInfo);
         return new InstalledPack(rootDir, manifestFile, sqliteFile, vectorFile, installedManifest, vectorInfo);
+    }
+
+    private static void installStagedAssetPack(
+        AssetManager assets,
+        PackManifest assetManifest,
+        File rootDir,
+        File manifestFile,
+        File sqliteFile,
+        File vectorFile,
+        String vectorName
+    ) throws IOException {
+        File manifestTemp = File.createTempFile(MANIFEST_NAME + ".", ".tmp", rootDir);
+        File sqliteTemp = File.createTempFile(SQLITE_NAME + ".", ".tmp", rootDir);
+        File vectorTemp = File.createTempFile(vectorName + ".", ".tmp", rootDir);
+        try {
+            copyAsset(assets, assetPath(SQLITE_NAME), sqliteTemp);
+            copyAsset(assets, assetPath(vectorName), vectorTemp);
+            validateInstalledFiles(assetManifest, sqliteTemp, vectorTemp);
+            copyAsset(assets, assetPath(MANIFEST_NAME), manifestTemp);
+            promoteStagedPack(sqliteTemp, vectorTemp, manifestTemp, sqliteFile, vectorFile, manifestFile);
+        } finally {
+            deleteIfPresent(manifestTemp);
+            deleteIfPresent(sqliteTemp);
+            deleteIfPresent(vectorTemp);
+        }
+    }
+
+    static void promoteStagedPackForTest(
+        File sqliteTemp,
+        File vectorTemp,
+        File manifestTemp,
+        File sqliteFile,
+        File vectorFile,
+        File manifestFile
+    ) throws IOException {
+        promoteStagedPack(sqliteTemp, vectorTemp, manifestTemp, sqliteFile, vectorFile, manifestFile);
+    }
+
+    private static void promoteStagedPack(
+        File sqliteTemp,
+        File vectorTemp,
+        File manifestTemp,
+        File sqliteFile,
+        File vectorFile,
+        File manifestFile
+    ) throws IOException {
+        promoteStagedFile(sqliteTemp, sqliteFile);
+        promoteStagedFile(vectorTemp, vectorFile);
+        promoteStagedFile(manifestTemp, manifestFile);
+    }
+
+    private static void promoteStagedFile(File stagedFile, File destination) throws IOException {
+        Files.move(
+            stagedFile.toPath(),
+            destination.toPath(),
+            StandardCopyOption.ATOMIC_MOVE,
+            StandardCopyOption.REPLACE_EXISTING
+        );
+    }
+
+    private static void deleteIfPresent(File file) {
+        if (file != null && file.exists()) {
+            file.delete();
+        }
     }
 
     private static PackManifest readUsableInstalledPackManifest(
