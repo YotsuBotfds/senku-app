@@ -282,6 +282,40 @@ public final class ChatSessionStoreTest {
     }
 
     @Test
+    public void resetClearsActiveThreadPreviewAndKeepsUnrelatedRecentThread() throws Exception {
+        ChatSessionStore.resetForTest();
+        TestContext context = new TestContext();
+        String activeConversationId = ChatSessionStore.createConversation();
+        String unrelatedConversationId = ChatSessionStore.createConversation();
+        recordTurnAt(activeConversationId, "active thread before reset", "GD-101", 1_000L);
+        recordTurnAt(unrelatedConversationId, "unrelated thread", "GD-202", 2_000L);
+        ChatSessionStore.persist(context);
+
+        ChatSessionStore.memoryFor(activeConversationId).clear();
+        String replacementConversationId = ChatSessionStore.createConversation();
+        ChatSessionStore.memoryFor(replacementConversationId);
+        ChatSessionStore.persist(context);
+
+        List<ChatSessionStore.ConversationPreview> livePreviews =
+            ChatSessionStore.recentConversationPreviews(null, 10);
+        assertEquals(1, livePreviews.size());
+        assertEquals(unrelatedConversationId, livePreviews.get(0).conversationId);
+        assertFalse(containsConversationPreview(livePreviews, activeConversationId));
+        assertFalse(containsConversationPreview(livePreviews, replacementConversationId));
+
+        String persistedState = context.savedState();
+        ChatSessionStore.resetForTest();
+        ChatSessionStore.restoreSavedStateForTest(persistedState);
+        List<ChatSessionStore.ConversationPreview> restoredPreviews =
+            ChatSessionStore.recentConversationPreviews(null, 10);
+
+        assertEquals(1, restoredPreviews.size());
+        assertEquals(unrelatedConversationId, restoredPreviews.get(0).conversationId);
+        assertFalse(ChatSessionStore.containsConversationIdForTest(activeConversationId));
+        assertFalse(ChatSessionStore.containsConversationIdForTest(replacementConversationId));
+    }
+
+    @Test
     public void openingRecentThreadDoesNotChangeRecencyUntilNewTurnIsRecorded() {
         ChatSessionStore.resetForTest();
         String olderConversationId = ChatSessionStore.createConversation();
@@ -379,6 +413,18 @@ public final class ChatSessionStoreTest {
             "",
             recordedAtEpochMs
         );
+    }
+
+    private static boolean containsConversationPreview(
+        List<ChatSessionStore.ConversationPreview> previews,
+        String conversationId
+    ) {
+        for (ChatSessionStore.ConversationPreview preview : previews) {
+            if (preview != null && conversationId.equals(preview.conversationId)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private static String savedStateWithConversation(String conversationId, String guideId) throws Exception {
