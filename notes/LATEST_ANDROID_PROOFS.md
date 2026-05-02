@@ -4,8 +4,8 @@ Pointer-only rollup for agents. Keep detailed logs in artifacts and test output.
 
 ## Current Proofed Head
 
-- Latest full checkpoint proof: `90848e8d` (`Scrub instruction overrides from generated answers`)
-- Checkpoint time: `2026-05-02T03:49:55-05:00`
+- Latest full checkpoint proof: `30ba3855` (`Align vector support route test`)
+- Checkpoint time: `2026-05-02T04:32:19-05:00`
 - Gates:
   - `:app:testDebugUnitTest` passed
   - `:app:assembleDebug :app:assembleDebugAndroidTest` passed
@@ -20,10 +20,12 @@ Pointer-only rollup for agents. Keep detailed logs in artifacts and test output.
 - `PackMigrationInstallTest` on `emulator-5554`: `OK (2 tests)`, 29.169 s
   - Purpose: clean install plus hash-valid/wrong-schema installed pack recovery
 - Live-safe route smoke:
-  - Artifact: `artifacts/bench/android_route_smoke/route_smoke_20260501_bounded_runner/summary.md`
+  - Artifact: `artifacts/bench/android_route_smoke/vector_canary_live_rerank_fixed/summary.md`
   - Class: `com.senku.mobile.PackRepositoryCurrentHeadRouteSmokeAndroidTest`
   - Device: `emulator-5554`
   - Result: `passed_count=1`, `failed_count=0`, `timed_out_devices=none`
+  - Current smoke class contains bundled/no-vector and vector-pack rain-shelter
+    owner canaries.
 - Physical phone smoke:
   - Latest nearby artifact family: `artifacts/bench/android_physical_phone_smoke/`
   - Treat individual summaries as smoke evidence, not broad route parity.
