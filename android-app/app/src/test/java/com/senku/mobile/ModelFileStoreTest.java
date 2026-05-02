@@ -18,6 +18,7 @@ import java.util.Set;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 public final class ModelFileStoreTest {
     private static final String PREFS_NAME = "senku_model_store";
@@ -61,12 +62,50 @@ public final class ModelFileStoreTest {
     }
 
     @Test
+    public void getImportedModelFileClearsUnsupportedPersistedPathBeforeFallback() throws Exception {
+        TestContext context = new TestContext(temporaryFolder);
+        File unsupported = writeModel(new File(context.getFilesDir(), "notes.txt"), "not a model");
+        File fallback = writeModel(
+            new File(new File(context.getFilesDir(), "models"), "fallback.task"),
+            "fallback"
+        );
+        prefs(context)
+            .edit()
+            .putString(KEY_MODEL_NAME, unsupported.getName())
+            .putString(KEY_MODEL_PATH, unsupported.getAbsolutePath())
+            .apply();
+
+        assertEquals(fallback, ModelFileStore.getImportedModelFile(context));
+
+        SharedPreferences prefs = prefs(context);
+        assertFalse(prefs.contains(KEY_MODEL_NAME));
+        assertFalse(prefs.contains(KEY_MODEL_PATH));
+    }
+
+    @Test
     public void getImportedModelFileReturnsNullAndClearsStateWhenStalePathHasNoFallback() throws Exception {
         TestContext context = new TestContext(temporaryFolder);
         prefs(context)
             .edit()
             .putString(KEY_MODEL_NAME, "missing.task")
             .putString(KEY_MODEL_PATH, new File(context.getFilesDir(), "missing.task").getAbsolutePath())
+            .apply();
+
+        assertNull(ModelFileStore.getImportedModelFile(context));
+
+        SharedPreferences prefs = prefs(context);
+        assertFalse(prefs.contains(KEY_MODEL_NAME));
+        assertFalse(prefs.contains(KEY_MODEL_PATH));
+    }
+
+    @Test
+    public void getImportedModelFileReturnsNullAndClearsUnsupportedPersistedPathWhenNoFallback() throws Exception {
+        TestContext context = new TestContext(temporaryFolder);
+        File unsupported = writeModel(new File(context.getFilesDir(), "model.zip"), "not a model");
+        prefs(context)
+            .edit()
+            .putString(KEY_MODEL_NAME, unsupported.getName())
+            .putString(KEY_MODEL_PATH, unsupported.getAbsolutePath())
             .apply();
 
         assertNull(ModelFileStore.getImportedModelFile(context));
@@ -105,6 +144,14 @@ public final class ModelFileStoreTest {
     }
 
     @Test
+    public void policySanitizesPathSeparatorsAndControlCharacters() {
+        assertEquals(
+            "dir_nested_model_.task",
+            ModelFileStorePolicy.sanitizeFileName("dir\\nested/model\u0007.task")
+        );
+    }
+
+    @Test
     public void policyFindsNewestSupportedModelFile() throws Exception {
         File modelsDir = temporaryFolder.newFolder("candidate-models");
         File oldTask = writeModel(new File(modelsDir, "old.task"), "old");
@@ -115,6 +162,19 @@ public final class ModelFileStoreTest {
         newLiteRt.setLastModified(2_000L);
 
         assertEquals(newLiteRt, ModelFileStorePolicy.findNewestModelFile(modelsDir.listFiles()));
+    }
+
+    @Test
+    public void policyRejectsUnsupportedFilesAndSupportedExtensionDirectories() throws Exception {
+        File modelsDir = temporaryFolder.newFolder("supported-model-checks");
+        File supported = writeModel(new File(modelsDir, "offline.litertlm"), "model");
+        File unsupported = writeModel(new File(modelsDir, "offline.bin"), "not-model");
+        File supportedLookingDirectory = new File(modelsDir, "directory.task");
+        assertTrue(supportedLookingDirectory.mkdir());
+
+        assertTrue(ModelFileStorePolicy.isSupportedModelFile(supported));
+        assertFalse(ModelFileStorePolicy.isSupportedModelFile(unsupported));
+        assertFalse(ModelFileStorePolicy.isSupportedModelFile(supportedLookingDirectory));
     }
 
     private static SharedPreferences prefs(TestContext context) {

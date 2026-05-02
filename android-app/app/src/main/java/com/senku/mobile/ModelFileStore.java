@@ -65,7 +65,7 @@ public final class ModelFileStore {
             return findFallbackModel(context);
         }
         File file = new File(path);
-        if (file.isFile()) {
+        if (ModelFileStorePolicy.isSupportedModelFile(file)) {
             return file;
         }
         clearImportedModelPrefs(prefs);
