@@ -58,6 +58,38 @@ public final class DetailSourceStackPolicyTest {
     }
 
     @Test
+    public void productionSourceStackDoesNotApplyReviewDemoRainShelterOrdering() {
+        SearchResult topic = source(
+            "GD-345",
+            "Rain Shelter",
+            "Tarp rigging",
+            "A simple tarp and cord ridgeline shelter keeps rain away from camp."
+        );
+        SearchResult related = source(
+            "GD-132",
+            "Foundry & Metal Casting",
+            "Pour zone",
+            "Keep foundry water and bystanders away before metal casting begins."
+        );
+        SearchResult anchor = source(
+            "GD-220",
+            "Abrasives Manufacturing",
+            "Foundry preparation",
+            "Abrasives manufacturing starts with controlled foundry safety checks."
+        );
+
+        List<SearchResult> ordered = DetailSourceStackPolicy.orderAnswerSourceStack(
+            false,
+            List.of(topic, related, anchor, related)
+        );
+
+        assertEquals(3, ordered.size());
+        assertSame(topic, ordered.get(0));
+        assertSame(related, ordered.get(1));
+        assertSame(anchor, ordered.get(2));
+    }
+
+    @Test
     public void reviewedSourceStackEntryRequiresEnabledMatchingGuideAndText() {
         DetailSourceStackPolicy.ReviewedSourceStackEntry disabled =
             DetailSourceStackPolicy.reviewedSourceStackEntry(

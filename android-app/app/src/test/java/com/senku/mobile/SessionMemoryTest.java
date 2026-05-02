@@ -1106,6 +1106,58 @@ public final class SessionMemoryTest {
     }
 
     @Test
+    public void newTopicTurnRebindsAnchorBeforeNextVagueFollowUp() {
+        SessionMemory.setAnchorPriorEnabledForTest(true);
+        try {
+            SessionMemory memory = new SessionMemory();
+            memory.recordTurn(
+                "how do i store treated water",
+                "Short answer: Use safe containers.",
+                List.of(
+                    new SearchResult(
+                        "Water Storage",
+                        "",
+                        "",
+                        "",
+                        "GD-252",
+                        "Containers",
+                        "resource-management",
+                        "guide-focus"
+                    )
+                )
+            );
+            assertEquals(null, memory.buildRetrievalPlan("how do i build a rain shelter?").anchorPrior);
+
+            memory.recordTurn(
+                "how do i build a rain shelter?",
+                "Short answer: Keep it simple and waterproof.",
+                List.of(
+                    new SearchResult(
+                        "Tarp Shelters",
+                        "",
+                        "",
+                        "",
+                        "GD-444",
+                        "Ridge Line Setup",
+                        "survival",
+                        "guide-focus"
+                    )
+                )
+            );
+
+            SessionMemory.RetrievalPlan plan = memory.buildRetrievalPlan("what next");
+
+            assertEquals("GD-444", plan.anchorPrior.anchorGuideId);
+            assertEquals(0, plan.anchorPrior.turnsSinceAnchor);
+            assertEquals(2, plan.anchorPrior.turnCount);
+            assertFalse(plan.searchQuery.contains("storage"));
+            assertFalse(plan.searchQuery.contains("containers"));
+        } finally {
+            SessionMemory.setAnchorPriorEnabledForTest(false);
+        }
+    }
+
+    @Test
     public void anchorPriorExpiresWhenAnchorIsThreeTurnsOld() {
         SessionMemory.setAnchorPriorEnabledForTest(true);
         try {
