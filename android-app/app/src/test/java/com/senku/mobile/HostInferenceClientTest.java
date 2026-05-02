@@ -5,6 +5,7 @@ import org.json.JSONObject;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -130,6 +131,8 @@ public final class HostInferenceClientTest {
             fail("Expected non-local cleartext host to be rejected");
         } catch (IllegalStateException exception) {
             assertTrue(exception.getMessage().contains("NON_LOCAL_CLEARTEXT_REJECTED"));
+            assertFalse(exception.getMessage().contains("example.com"));
+            assertFalse(exception.getMessage().contains("http://"));
         }
     }
 

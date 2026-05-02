@@ -23,7 +23,7 @@ public final class HostInferenceClient {
         HostInferencePolicy.Decision policyDecision = HostInferencePolicy.evaluate(settings.baseUrl);
         if (!policyDecision.allowed) {
             throw new IllegalStateException(
-                "Host inference endpoint rejected by policy (" + policyDecision.reason + "): " + settings.baseUrl
+                "Host inference endpoint rejected by policy (" + policyDecision.reason + ")"
             );
         }
 
