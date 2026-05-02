@@ -24,22 +24,35 @@ public final class ModelFileStore {
             displayName = "offline-model.litertlm";
         }
         String sanitizedName = ModelFileStorePolicy.sanitizeFileName(displayName);
+        if (!ModelFileStorePolicy.isSupportedModelFileName(sanitizedName)) {
+            throw new IOException("Selected model must be a .litertlm or .task file");
+        }
         File modelsDir = getPreferredModelsDir(context);
         if (!modelsDir.exists() && !modelsDir.mkdirs()) {
             throw new IOException("Unable to create model directory");
         }
 
         File outputFile = new File(modelsDir, sanitizedName);
-        try (InputStream input = context.getContentResolver().openInputStream(uri);
+        InputStream openedInput = context.getContentResolver().openInputStream(uri);
+        if (openedInput == null) {
+            throw new IOException("Unable to open selected model file");
+        }
+        try (InputStream input = openedInput;
              FileOutputStream output = new FileOutputStream(outputFile)) {
-            if (input == null) {
-                throw new IOException("Unable to open selected model file");
+            try {
+                byte[] buffer = new byte[1024 * 1024];
+                int read;
+                while ((read = input.read(buffer)) != -1) {
+                    output.write(buffer, 0, read);
+                }
+            } catch (IOException exc) {
+                outputFile.delete();
+                throw exc;
             }
-            byte[] buffer = new byte[1024 * 1024];
-            int read;
-            while ((read = input.read(buffer)) != -1) {
-                output.write(buffer, 0, read);
-            }
+        }
+        if (outputFile.length() <= 0L) {
+            outputFile.delete();
+            throw new IOException("Selected model file is empty");
         }
 
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);

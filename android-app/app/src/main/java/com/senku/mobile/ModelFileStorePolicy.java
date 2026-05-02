@@ -36,10 +36,17 @@ final class ModelFileStorePolicy {
     }
 
     static boolean isSupportedModelFile(File file) {
-        if (!file.isFile()) {
+        if (!file.isFile() || file.length() <= 0L) {
             return false;
         }
-        String name = file.getName().toLowerCase(Locale.US);
+        return isSupportedModelFileName(file.getName());
+    }
+
+    static boolean isSupportedModelFileName(String fileName) {
+        if (fileName == null) {
+            return false;
+        }
+        String name = fileName.toLowerCase(Locale.US);
         return name.endsWith(".litertlm") || name.endsWith(".task");
     }
 

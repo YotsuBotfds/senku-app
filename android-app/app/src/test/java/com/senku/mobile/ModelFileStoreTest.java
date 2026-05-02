@@ -83,6 +83,27 @@ public final class ModelFileStoreTest {
     }
 
     @Test
+    public void getImportedModelFileClearsEmptyPersistedModelBeforeFallback() throws Exception {
+        TestContext context = new TestContext(temporaryFolder);
+        File emptyModel = writeModel(new File(context.getFilesDir(), "empty.task"), "");
+        File fallback = writeModel(
+            new File(new File(context.getFilesDir(), "models"), "fallback.task"),
+            "fallback"
+        );
+        prefs(context)
+            .edit()
+            .putString(KEY_MODEL_NAME, emptyModel.getName())
+            .putString(KEY_MODEL_PATH, emptyModel.getAbsolutePath())
+            .apply();
+
+        assertEquals(fallback, ModelFileStore.getImportedModelFile(context));
+
+        SharedPreferences prefs = prefs(context);
+        assertFalse(prefs.contains(KEY_MODEL_NAME));
+        assertFalse(prefs.contains(KEY_MODEL_PATH));
+    }
+
+    @Test
     public void getImportedModelFileReturnsNullAndClearsStateWhenStalePathHasNoFallback() throws Exception {
         TestContext context = new TestContext(temporaryFolder);
         prefs(context)
@@ -184,6 +205,8 @@ public final class ModelFileStoreTest {
         assertTrue(ModelFileStorePolicy.isSupportedModelFile(uppercaseLiteRt));
         assertFalse(ModelFileStorePolicy.isSupportedModelFile(trailingZip));
         assertFalse(ModelFileStorePolicy.isSupportedModelFile(trailingBackup));
+        assertTrue(ModelFileStorePolicy.isSupportedModelFileName("offline.task"));
+        assertFalse(ModelFileStorePolicy.isSupportedModelFileName("offline.task.zip"));
     }
 
     @Test
@@ -197,6 +220,15 @@ public final class ModelFileStoreTest {
         assertTrue(ModelFileStorePolicy.isSupportedModelFile(supported));
         assertFalse(ModelFileStorePolicy.isSupportedModelFile(unsupported));
         assertFalse(ModelFileStorePolicy.isSupportedModelFile(supportedLookingDirectory));
+    }
+
+    @Test
+    public void policyRejectsEmptySupportedExtensionFiles() throws Exception {
+        File modelsDir = temporaryFolder.newFolder("empty-model-checks");
+        File emptyTask = writeModel(new File(modelsDir, "empty.task"), "");
+
+        assertFalse(ModelFileStorePolicy.isSupportedModelFile(emptyTask));
+        assertNull(ModelFileStorePolicy.findNewestModelFile(modelsDir.listFiles()));
     }
 
     private static SharedPreferences prefs(TestContext context) {
