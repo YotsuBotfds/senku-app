@@ -64,24 +64,29 @@ public final class PackRepositoryFtsFallbackAndroidTest {
     }
 
     @Test
-    public void repositoryCachesFts4TableOnDevicesWithoutFts5Runtime() throws Exception {
-        Context context = ApplicationProvider.getApplicationContext();
-        PackInstaller.InstalledPack pack = CurrentHeadAnswerCardPackTestSupport.installBundledCurrentHeadPack(
-            context,
-            "FTS runtime cache contract"
-        );
+    public void runtimeDetectionIsScopedToCurrentDatabaseSchema() {
+        try (SQLiteDatabase emptyDatabase = SQLiteDatabase.create(null);
+             SQLiteDatabase fts4Database = SQLiteDatabase.create(null)) {
+            fts4Database.execSQL(
+                "CREATE VIRTUAL TABLE " + FTS4_TABLE + " USING fts4(" +
+                    "guide_title, guide_id, section_heading, body)"
+            );
+            fts4Database.execSQL(
+                "INSERT INTO " + FTS4_TABLE +
+                    "(guide_title, guide_id, section_heading, body) VALUES (?, ?, ?, ?)",
+                new Object[]{"Water Safety", "GD-035", "Treatment", "water"}
+            );
 
-        resetCachedFtsRuntime();
-        try (PackRepository ignored = new PackRepository(pack.databaseFile, existingVectorFileOrNull(pack.vectorFile))) {
-            Object cachedRuntime = cachedFtsRuntime();
-            assertTrue("PackRepository should cache FTS runtime detection", cachedRuntime != null);
+            PackFtsRuntimeDetector.Runtime emptyRuntime = PackFtsRuntimeDetector.detect(emptyDatabase);
+            PackFtsRuntimeDetector.Runtime fts4Runtime = PackFtsRuntimeDetector.detect(fts4Database);
 
-            if (!booleanField(cachedRuntime, "supportsBm25")) {
-                assertTrue("runtime without FTS5 should still be available through FTS4", booleanField(cachedRuntime, "available"));
-                assertEquals(FTS4_TABLE, stringField(cachedRuntime, "tableName"));
-            }
-        } finally {
-            resetCachedFtsRuntime();
+            assertFalse("database without FTS tables should not report FTS runtime", emptyRuntime.available);
+            assertTrue(
+                "later database with FTS4 table should be probed independently",
+                fts4Runtime.available
+            );
+            assertEquals(FTS4_TABLE, fts4Runtime.tableName);
+            assertFalse(fts4Runtime.supportsBm25);
         }
     }
 
@@ -162,18 +167,6 @@ public final class PackRepositoryFtsFallbackAndroidTest {
         return method.invoke(null, hasFts5Table, hasFts4Table, runtimeFts5, runtimeFts4);
     }
 
-    private static Object cachedFtsRuntime() throws Exception {
-        Field field = PackFtsRuntimeDetector.class.getDeclaredField("cachedFtsRuntime");
-        field.setAccessible(true);
-        return field.get(null);
-    }
-
-    private static void resetCachedFtsRuntime() throws Exception {
-        Field field = PackFtsRuntimeDetector.class.getDeclaredField("cachedFtsRuntime");
-        field.setAccessible(true);
-        field.set(null, null);
-    }
-
     private static boolean booleanField(Object target, String fieldName) throws Exception {
         Field field = target.getClass().getDeclaredField(fieldName);
         field.setAccessible(true);
@@ -184,10 +177,6 @@ public final class PackRepositoryFtsFallbackAndroidTest {
         Field field = target.getClass().getDeclaredField(fieldName);
         field.setAccessible(true);
         return (String) field.get(target);
-    }
-
-    private static File existingVectorFileOrNull(File vectorFile) {
-        return vectorFile != null && vectorFile.isFile() ? vectorFile : null;
     }
 
     private static byte[] vectorHeader(int rowCount, int dimension, int dtypeCode) {

@@ -20,30 +20,15 @@ final class PackFtsRuntimeDetector {
     private static final String TAG = "SenkuPackRepo";
     private static final Locale QUERY_LOCALE = Locale.US;
     private static final long FTS_RUNTIME_PROBE_BUDGET_MS = 25L;
-    private static final Object FTS_RUNTIME_LOCK = new Object();
 
     static final String FTS5_TABLE = "lexical_chunks_fts";
     static final String FTS4_TABLE = "lexical_chunks_fts4";
-    private static volatile Runtime cachedFtsRuntime;
 
     private PackFtsRuntimeDetector() {
     }
 
     static Runtime detect(SQLiteDatabase database) {
-        Runtime cached = cachedFtsRuntime;
-        if (cached != null) {
-            return cached;
-        }
-
-        synchronized (FTS_RUNTIME_LOCK) {
-            if (cachedFtsRuntime != null) {
-                return cachedFtsRuntime;
-            }
-
-            Runtime detected = detectInternal(database);
-            cachedFtsRuntime = detected;
-            return detected;
-        }
+        return detectInternal(database);
     }
 
     private static Runtime detectInternal(SQLiteDatabase database) {
