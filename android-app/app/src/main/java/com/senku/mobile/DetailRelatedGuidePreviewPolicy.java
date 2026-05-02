@@ -40,9 +40,29 @@ final class DetailRelatedGuidePreviewPolicy {
         if (relatedGuide == null) {
             return "";
         }
-        return (safe(relatedGuide.guideId).trim() + "|"
+        String base = (safe(relatedGuide.guideId).trim() + "|"
             + safe(relatedGuide.title).trim() + "|"
             + safe(relatedGuide.sectionHeading).trim()).toLowerCase(Locale.US);
+        String fingerprint = relatedGuideContentFingerprint(relatedGuide);
+        return fingerprint.isEmpty() ? base : base + "|" + fingerprint;
+    }
+
+    private static String relatedGuideContentFingerprint(SearchResult relatedGuide) {
+        String identity = (
+            safe(relatedGuide.subtitle).trim() + "\n"
+                + safe(relatedGuide.snippet).trim() + "\n"
+                + safe(relatedGuide.body).trim() + "\n"
+                + safe(relatedGuide.category).trim() + "\n"
+                + safe(relatedGuide.retrievalMode).trim() + "\n"
+                + safe(relatedGuide.contentRole).trim() + "\n"
+                + safe(relatedGuide.timeHorizon).trim() + "\n"
+                + safe(relatedGuide.structureType).trim() + "\n"
+                + safe(relatedGuide.topicTags).trim()
+        ).trim();
+        if (identity.isEmpty()) {
+            return "";
+        }
+        return "rel-" + Integer.toHexString(identity.toLowerCase(Locale.US).hashCode());
     }
 
     static String resolvePreviewBody(

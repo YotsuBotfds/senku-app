@@ -91,4 +91,54 @@ public final class DetailProvenancePresentationFormatterTest {
         assertFalse(description.toLowerCase().contains("provenance"));
         assertFalse(description.toLowerCase().contains("proof"));
     }
+
+    @Test
+    public void sourceSelectionKeySeparatesSameGuideSectionWithDifferentEvidenceText() {
+        SearchResult first = new SearchResult(
+            "Water Storage",
+            "",
+            "Use covered barrels near the collection point.",
+            "Store drinking water away from fuel.",
+            "GD-214",
+            "Storage",
+            "water",
+            "route-focus"
+        );
+        SearchResult second = new SearchResult(
+            "Water Storage",
+            "",
+            "Use sealed ceramic jars for reserve water.",
+            "Keep reserve water shaded and inspected.",
+            "GD-214",
+            "Storage",
+            "water",
+            "route-focus"
+        );
+
+        String firstKey = DetailProvenancePresentationFormatter.buildSourceSelectionKey(first);
+        String secondKey = DetailProvenancePresentationFormatter.buildSourceSelectionKey(second);
+
+        assertTrue(firstKey.startsWith("gd-214|storage|water storage|src-"));
+        assertTrue(secondKey.startsWith("gd-214|storage|water storage|src-"));
+        assertFalse(firstKey.equals(secondKey));
+    }
+
+    @Test
+    public void sourceSelectionKeyKeepsLegacyShapeWhenNoSupplementalTextExists() {
+        SearchResult source = new SearchResult(
+            "Rain Shelter",
+            "",
+            "",
+            "",
+            "GD-345",
+            "Rigging",
+            "",
+            ""
+        );
+
+        assertEquals(
+            "gd-345|rigging|rain shelter",
+            DetailProvenancePresentationFormatter.buildSourceSelectionKey(source)
+        );
+    }
 }

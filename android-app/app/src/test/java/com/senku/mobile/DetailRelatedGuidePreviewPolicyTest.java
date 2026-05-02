@@ -145,6 +145,45 @@ public final class DetailRelatedGuidePreviewPolicyTest {
         assertFalse(DetailRelatedGuidePreviewPolicy.shouldApplyLoadedPreview(true, false, 4, 4, key, key));
     }
 
+    @Test
+    public void relatedGuideSelectionKeySeparatesSameGuideSectionWithDifferentPreviewText() {
+        SearchResult first = new SearchResult(
+            "Rainwater Catchment",
+            "",
+            "Barrel catchment setup.",
+            "Route runoff into a covered barrel.",
+            "GD-215",
+            "Storage",
+            "water",
+            "route-focus"
+        );
+        SearchResult second = new SearchResult(
+            "Rainwater Catchment",
+            "",
+            "Roof-edge catchment setup.",
+            "Screen debris before water enters storage.",
+            "GD-215",
+            "Storage",
+            "water",
+            "route-focus"
+        );
+
+        String firstKey = DetailRelatedGuidePreviewPolicy.buildSelectionKey(first);
+        String secondKey = DetailRelatedGuidePreviewPolicy.buildSelectionKey(second);
+
+        assertTrue(firstKey.startsWith("gd-215|rainwater catchment|storage|rel-"));
+        assertTrue(secondKey.startsWith("gd-215|rainwater catchment|storage|rel-"));
+        assertFalse(firstKey.equals(secondKey));
+    }
+
+    @Test
+    public void relatedGuideSelectionKeyKeepsLegacyShapeWhenNoSupplementalTextExists() {
+        assertEquals(
+            "gd-215|rainwater catchment|",
+            DetailRelatedGuidePreviewPolicy.buildSelectionKey(result("GD-215", "Rainwater Catchment"))
+        );
+    }
+
     private static SearchResult result(String guideId, String title) {
         return new SearchResult(title, "", "", "", guideId, "", "", "");
     }

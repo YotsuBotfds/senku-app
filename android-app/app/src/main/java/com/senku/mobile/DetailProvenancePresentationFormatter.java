@@ -117,9 +117,29 @@ final class DetailProvenancePresentationFormatter {
         if (source == null) {
             return "";
         }
-        return (safe(source.guideId).trim() + "|" +
+        String base = (safe(source.guideId).trim() + "|" +
             safe(source.sectionHeading).trim() + "|" +
             safe(source.title).trim()).toLowerCase(Locale.US);
+        String fingerprint = sourceContentFingerprint(source);
+        return fingerprint.isEmpty() ? base : base + "|" + fingerprint;
+    }
+
+    private static String sourceContentFingerprint(SearchResult source) {
+        String identity = (
+            safe(source.subtitle).trim() + "\n" +
+            safe(source.snippet).trim() + "\n" +
+            safe(source.body).trim() + "\n" +
+            safe(source.category).trim() + "\n" +
+            safe(source.retrievalMode).trim() + "\n" +
+            safe(source.contentRole).trim() + "\n" +
+            safe(source.timeHorizon).trim() + "\n" +
+            safe(source.structureType).trim() + "\n" +
+            safe(source.topicTags).trim()
+        ).trim();
+        if (identity.isEmpty()) {
+            return "";
+        }
+        return "src-" + Integer.toHexString(identity.toLowerCase(Locale.US).hashCode());
     }
 
     private static SearchResult firstRealSource(List<SearchResult> sources) {
