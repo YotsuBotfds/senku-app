@@ -696,7 +696,7 @@ public final class OfflineAnswerEngine {
                 hostBackend = hostResult.backend;
                 hostBackendUsed = true;
                 bestStreamCandidate.consider(answer);
-                if (progressListener != null && !safe(answer).trim().isEmpty()) {
+                if (shouldEmitGeneratedProgress(prepared) && progressListener != null && !safe(answer).trim().isEmpty()) {
                     progressListener.onAnswerBody(answer);
                 }
             } catch (Exception hostFailure) {
@@ -724,7 +724,7 @@ public final class OfflineAnswerEngine {
                     partialText -> {
                         firstTokenTracker.recordPartial(partialText);
                         bestStreamCandidate.consider(partialText);
-                        if (progressListener != null) {
+                        if (shouldEmitGeneratedProgress(prepared) && progressListener != null) {
                             progressListener.onAnswerBody(partialText);
                         }
                     }
@@ -740,7 +740,7 @@ public final class OfflineAnswerEngine {
                 partialText -> {
                     firstTokenTracker.recordPartial(partialText);
                     bestStreamCandidate.consider(partialText);
-                    if (progressListener != null) {
+                    if (shouldEmitGeneratedProgress(prepared) && progressListener != null) {
                         progressListener.onAnswerBody(partialText);
                     }
                 }
@@ -829,6 +829,10 @@ public final class OfflineAnswerEngine {
         logAskFinalMode(prepared.query, AnswerMode.CONFIDENT, confidentRoute, elapsedMs);
         rememberSessionLatencyBreakdown(answerRun);
         return answerRun;
+    }
+
+    private static boolean shouldEmitGeneratedProgress(PreparedAnswer prepared) {
+        return prepared != null && prepared.sources != null && !prepared.sources.isEmpty();
     }
 
     private static void logFirstTokenMs(String query, String path, long firstTokenMs) {

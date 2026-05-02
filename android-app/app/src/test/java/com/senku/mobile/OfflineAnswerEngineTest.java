@@ -1704,7 +1704,10 @@ public final class OfflineAnswerEngineTest {
         OfflineAnswerEngine.setGeneratorsForTest(
             (settings, systemPrompt, prompt, maxTokens) ->
                 new HostInferenceClient.Result(injectedAnswer, "mock-host", 0.24),
-            (context, modelFile, prompt, maxTokens, listener) -> injectedAnswer
+            (context, modelFile, prompt, maxTokens, listener) -> {
+                listener.onPartialText(injectedAnswer);
+                return injectedAnswer;
+            }
         );
 
         OfflineAnswerEngine.PreparedAnswer hostPrepared = OfflineAnswerEngine.PreparedAnswer.restoredGenerative(
@@ -1730,13 +1733,20 @@ public final class OfflineAnswerEngineTest {
             "prompt"
         );
 
-        OfflineAnswerEngine.AnswerRun hostRun = OfflineAnswerEngine.generate(null, null, hostPrepared);
-        OfflineAnswerEngine.AnswerRun deviceRun = OfflineAnswerEngine.generate(null, tempModel, devicePrepared);
+        ArrayList<String> hostPartials = new ArrayList<>();
+        ArrayList<String> devicePartials = new ArrayList<>();
+
+        OfflineAnswerEngine.AnswerRun hostRun =
+            OfflineAnswerEngine.generate(null, null, hostPrepared, hostPartials::add);
+        OfflineAnswerEngine.AnswerRun deviceRun =
+            OfflineAnswerEngine.generate(null, tempModel, devicePrepared, devicePartials::add);
 
         assertNoSourcePromptInjectionDowngraded(hostRun);
+        assertTrue(hostPartials.isEmpty());
         assertTrue(hostRun.hostBackendUsed);
         assertFalse(hostRun.hostFallbackUsed);
         assertNoSourcePromptInjectionDowngraded(deviceRun);
+        assertTrue(devicePartials.isEmpty());
         assertFalse(deviceRun.hostBackendUsed);
         assertFalse(deviceRun.hostFallbackUsed);
     }
