@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Executor;
+import java.util.concurrent.RejectedExecutionException;
 
 import org.junit.Test;
 
@@ -143,6 +144,29 @@ public final class AskQueryControllerTest {
         assertEquals("broken ask", host.lastFailureQuery);
         assertSame(engine.prepareException, host.lastFailure);
         assertNull(host.lastFailedPrepared);
+    }
+
+    @Test
+    public void executeRejectionPostsPrepareFailureAndSettlesHarnessToken() {
+        FakeHost host = readyHost();
+        host.executor = command -> {
+            throw new RejectedExecutionException("executor closed");
+        };
+        FakeEngine engine = new FakeEngine();
+        AskQueryController controller = new AskQueryController(host, engine, query -> null);
+
+        controller.runAsk("rejected ask");
+
+        assertEquals(
+            List.of("prepare-started:rejected ask", "prepare-failure:false"),
+            host.events
+        );
+        assertEquals(List.of(AskQueryController.HARNESS_PREPARE), host.begunHarnessTags);
+        assertEquals(List.of(1), host.uiHarnessTokens);
+        assertEquals("rejected ask", host.lastFailureQuery);
+        assertTrue(host.lastFailure instanceof RejectedExecutionException);
+        assertNull(host.lastFailedPrepared);
+        assertEquals(0, engine.prepareCalls);
     }
 
     @Test
@@ -358,7 +382,7 @@ public final class AskQueryControllerTest {
         final ArrayList<Integer> uiHarnessTokens = new ArrayList<>();
         final ArrayList<Runnable> queuedUiActions = new ArrayList<>();
         final SessionMemory sessionMemory = new SessionMemory();
-        final Executor executor = Runnable::run;
+        Executor executor = Runnable::run;
 
         boolean repositoryAvailable;
         File modelFile;

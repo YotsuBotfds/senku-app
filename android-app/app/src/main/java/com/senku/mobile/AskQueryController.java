@@ -116,28 +116,39 @@ final class AskQueryController {
         SessionMemory sessionMemory = host.sessionMemory();
         boolean hasAutoQuery = host.hasAutoQuery();
         int harnessToken = host.beginHarnessTask(HARNESS_PREPARE);
-        host.executor().execute(() -> {
-            OfflineAnswerEngine.PreparedAnswer prepared = null;
-            try {
-                prepared = engine.prepare(context, repo, sessionMemory, modelFile, query);
-                OfflineAnswerEngine.PreparedAnswer preparedAnswer = prepared;
-                host.runTrackedOnUiThread(harnessToken, () -> {
-                    if (latestJobGate.isCurrentJob(jobToken)) {
-                        host.onPrepareSuccess(preparedAnswer);
-                    }
-                });
-            } catch (Exception exc) {
-                OfflineAnswerEngine.PreparedAnswer failedPrepared = prepared;
-                host.runTrackedOnUiThread(
-                    harnessToken,
-                    () -> {
+        try {
+            host.executor().execute(() -> {
+                OfflineAnswerEngine.PreparedAnswer prepared = null;
+                try {
+                    prepared = engine.prepare(context, repo, sessionMemory, modelFile, query);
+                    OfflineAnswerEngine.PreparedAnswer preparedAnswer = prepared;
+                    host.runTrackedOnUiThread(harnessToken, () -> {
                         if (latestJobGate.isCurrentJob(jobToken)) {
-                            host.onPrepareFailure(query, failedPrepared, exc, hasAutoQuery);
+                            host.onPrepareSuccess(preparedAnswer);
                         }
+                    });
+                } catch (Exception exc) {
+                    OfflineAnswerEngine.PreparedAnswer failedPrepared = prepared;
+                    host.runTrackedOnUiThread(
+                        harnessToken,
+                        () -> {
+                            if (latestJobGate.isCurrentJob(jobToken)) {
+                                host.onPrepareFailure(query, failedPrepared, exc, hasAutoQuery);
+                            }
+                        }
+                    );
+                }
+            });
+        } catch (RuntimeException exc) {
+            host.runTrackedOnUiThread(
+                harnessToken,
+                () -> {
+                    if (latestJobGate.isCurrentJob(jobToken)) {
+                        host.onPrepareFailure(query, null, exc, hasAutoQuery);
                     }
-                );
-            }
-        });
+                }
+            );
+        }
     }
 
     private static String safe(String value) {
