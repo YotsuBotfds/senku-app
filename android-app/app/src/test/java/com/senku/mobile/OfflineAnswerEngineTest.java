@@ -2618,7 +2618,11 @@ public final class OfflineAnswerEngineTest {
             {"someone is having anaphylaxis after a bee sting", true},
             {"there is severe bleeding from a leg wound", true},
             {"what should i do for a severe burn right now", true},
+            {"we found someone confused after carbon monoxide exposure", true},
+            {"someone is shivering and confused from hypothermia", true},
+            {"my kid ate an unknown mushroom from the woods", true},
             {"how do i build a rain shelter from a tarp", false},
+            {"how do i identify safe wild edibles before eating", false},
         };
 
         for (Object[] testCase : cases) {

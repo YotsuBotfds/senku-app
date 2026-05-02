@@ -112,6 +112,9 @@ public final class OfflineAnswerEngine {
         "chest pain",
         "anaphylaxis",
         "allergic reaction",
+        "carbon monoxide",
+        "co poisoning",
+        "hypothermia",
         "eye injury",
         "animal bite",
         "rabies",
@@ -122,6 +125,8 @@ public final class OfflineAnswerEngine {
         "battery acid",
         "lye",
         "ammonia",
+        "unknown mushroom",
+        "wild mushroom",
         "chemical burn",
         "chemical in eye",
         "chemical on skin"
