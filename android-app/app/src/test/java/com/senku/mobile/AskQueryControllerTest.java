@@ -125,6 +125,111 @@ public final class AskQueryControllerTest {
     }
 
     @Test
+    public void localModelRoutePreparesWhenHostInferenceIsDisabled() {
+        FakeHost host = readyHost();
+        host.hostInferenceSettings = settings(false);
+        FakeEngine engine = new FakeEngine();
+        engine.preparedToReturn = generativePrepared("local model question");
+        AskQueryController controller = new AskQueryController(host, engine, query -> null);
+
+        controller.runAsk("local model question");
+
+        assertEquals(
+            List.of("prepare-started:local model question", "prepare-success"),
+            host.events
+        );
+        assertEquals(1, engine.prepareCalls);
+        assertSame(engine.preparedToReturn, host.lastPreparedSuccess);
+    }
+
+    @Test
+    public void nullHostSettingsStillUsesLocalModelWhenPresent() {
+        FakeHost host = readyHost();
+        host.hostInferenceSettings = null;
+        FakeEngine engine = new FakeEngine();
+        engine.preparedToReturn = generativePrepared("local model with null host settings");
+        AskQueryController controller = new AskQueryController(host, engine, query -> null);
+
+        controller.runAsk("local model with null host settings");
+
+        assertEquals(
+            List.of("prepare-started:local model with null host settings", "prepare-success"),
+            host.events
+        );
+        assertEquals(1, engine.prepareCalls);
+    }
+
+    @Test
+    public void nullHostSettingsWithoutModelStopsUnlessReviewedCardRouteSupportsQuery() {
+        FakeHost unavailable = readyHost();
+        unavailable.modelFile = null;
+        unavailable.hostInferenceSettings = null;
+        unavailable.reviewedCardRuntimeEnabled = false;
+        unavailable.hasAutoQuery = true;
+        FakeEngine unavailableEngine = new FakeEngine();
+        new AskQueryController(unavailable, unavailableEngine, query -> null)
+            .runAsk("need an unsupported generated answer");
+
+        assertEquals(List.of("model-unavailable:true"), unavailable.events);
+        assertEquals(0, unavailableEngine.prepareCalls);
+
+        FakeHost reviewed = readyHost();
+        reviewed.modelFile = null;
+        reviewed.hostInferenceSettings = null;
+        reviewed.reviewedCardRuntimeEnabled = true;
+        FakeEngine reviewedEngine = new FakeEngine();
+        reviewedEngine.preparedToReturn = generativePrepared("child swallowed unknown cleaner");
+        new AskQueryController(reviewed, reviewedEngine, query -> null)
+            .runAsk("child swallowed unknown cleaner");
+
+        assertEquals(
+            List.of("prepare-started:child swallowed unknown cleaner", "prepare-success"),
+            reviewed.events
+        );
+        assertEquals(1, reviewedEngine.prepareCalls);
+    }
+
+    @Test
+    public void hostInferenceRoutePreparesWhenReviewedRuntimeIsEnabledButQueryIsUnsupported() {
+        FakeHost host = readyHost();
+        host.modelFile = null;
+        host.hostInferenceSettings = settings(true);
+        host.reviewedCardRuntimeEnabled = true;
+        FakeEngine engine = new FakeEngine();
+        engine.preparedToReturn = generativePrepared("generic unsupported reviewed route query");
+        AskQueryController controller = new AskQueryController(host, engine, query -> null);
+
+        controller.runAsk("generic unsupported reviewed route query");
+
+        assertEquals(
+            List.of("prepare-started:generic unsupported reviewed route query", "prepare-success"),
+            host.events
+        );
+        assertEquals(1, engine.prepareCalls);
+    }
+
+    @Test
+    public void repositoryUnavailableWinsBeforeBlankOrDeterministicChecks() {
+        FakeHost host = readyHost();
+        host.repositoryAvailable = false;
+        FakeEngine engine = new FakeEngine();
+        AskQueryController controller = new AskQueryController(
+            host,
+            engine,
+            query -> {
+                throw new AssertionError("deterministic matcher should not run without repository");
+            }
+        );
+
+        controller.runAsk("   ");
+        controller.runAsk("shortcut please");
+
+        assertEquals(List.of("pack-unavailable", "pack-unavailable"), host.events);
+        assertEquals(0, engine.prepareCalls);
+        assertEquals(List.of(), host.begunHarnessTags);
+    }
+
+    @Test
     public void prepareFailurePostsFailureWithAutoQueryState() {
         FakeHost host = readyHost();
         host.modelFile = new File("model.task");
