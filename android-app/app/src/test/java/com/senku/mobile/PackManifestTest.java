@@ -10,6 +10,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 public final class PackManifestTest {
     private static final Path MOBILE_PACK_DIR = Path.of("src", "main", "assets", "mobile_pack");
@@ -232,7 +233,82 @@ public final class PackManifestTest {
         );
     }
 
+    @Test
+    public void fromJsonRejectsMissingRequiredCountsIndividually() throws Exception {
+        assertMissingNestedFieldRejected("counts", "guides");
+        assertMissingNestedFieldRejected("counts", "chunks");
+        assertMissingNestedFieldRejected("counts", "deterministic_rules");
+        assertMissingNestedFieldRejected("counts", "guide_related_links");
+    }
+
+    @Test
+    public void fromJsonRejectsMissingEmbeddingRuntimeAndFileMetadata() throws Exception {
+        assertMissingNestedFieldRejected("embedding", "model_id");
+        assertMissingNestedFieldRejected("embedding", "dimension");
+        assertMissingNestedFieldRejected("embedding", "vector_dtype");
+        assertMissingNestedFieldRejected("runtime_defaults", "mobile_top_k");
+        assertMissingNestedFieldRejected("files", "sqlite");
+        assertMissingNestedFieldRejected("files", "vectors");
+        assertMissingNestedFileFieldRejected("sqlite", "bytes");
+        assertMissingNestedFileFieldRejected("sqlite", "sha256");
+        assertMissingNestedFileFieldRejected("vectors", "bytes");
+        assertMissingNestedFileFieldRejected("vectors", "sha256");
+    }
+
     private static String readManifest() throws IOException {
         return new String(Files.readAllBytes(MANIFEST_PATH), StandardCharsets.UTF_8);
+    }
+
+    private static void assertMissingNestedFieldRejected(String objectName, String fieldName) throws Exception {
+        JSONObject root = new JSONObject(minimalManifestJson());
+        root.getJSONObject(objectName).remove(fieldName);
+        assertManifestRejected(root, objectName + "." + fieldName);
+    }
+
+    private static void assertMissingNestedFileFieldRejected(String fileName, String fieldName) throws Exception {
+        JSONObject root = new JSONObject(minimalManifestJson());
+        root.getJSONObject("files").getJSONObject(fileName).remove(fieldName);
+        assertManifestRejected(root, "files." + fileName + "." + fieldName);
+    }
+
+    private static void assertManifestRejected(JSONObject root, String missingField) throws Exception {
+        try {
+            PackManifest.fromJson(root.toString());
+            fail("Expected manifest parse failure for missing " + missingField);
+        } catch (JSONException expected) {
+            // Expected: missing required manifest fields make the pack unusable.
+        }
+    }
+
+    private static String minimalManifestJson() {
+        return "{\n" +
+            "  \"pack_format\": \"senku-mobile-pack-v2\",\n" +
+            "  \"pack_version\": 2,\n" +
+            "  \"generated_at\": \"2026-04-12T19:23:50Z\",\n" +
+            "  \"counts\": {\n" +
+            "    \"guides\": 692,\n" +
+            "    \"chunks\": 31528,\n" +
+            "    \"deterministic_rules\": 96,\n" +
+            "    \"guide_related_links\": 4626\n" +
+            "  },\n" +
+            "  \"embedding\": {\n" +
+            "    \"model_id\": \"nomic-ai/text-embedding-nomic-embed-text-v1.5\",\n" +
+            "    \"dimension\": 768,\n" +
+            "    \"vector_dtype\": \"float16\"\n" +
+            "  },\n" +
+            "  \"runtime_defaults\": {\n" +
+            "    \"mobile_top_k\": 10\n" +
+            "  },\n" +
+            "  \"files\": {\n" +
+            "    \"sqlite\": {\n" +
+            "      \"bytes\": 123,\n" +
+            "      \"sha256\": \"abc\"\n" +
+            "    },\n" +
+            "    \"vectors\": {\n" +
+            "      \"bytes\": 456,\n" +
+            "      \"sha256\": \"def\"\n" +
+            "    }\n" +
+            "  }\n" +
+            "}";
     }
 }
