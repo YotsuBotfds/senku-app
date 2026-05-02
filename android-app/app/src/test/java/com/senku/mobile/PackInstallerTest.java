@@ -10,6 +10,7 @@ import java.nio.ByteOrder;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Map;
 import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
@@ -40,7 +41,9 @@ public final class PackInstallerTest {
     public void missingRequiredPackTablesAcceptsFts4AsLexicalFallback() {
         assertEquals(
             "",
-            PackInstaller.missingRequiredPackTablesForTest(Set.of("guides", "guide_related", "lexical_chunks_fts4"))
+            PackInstaller.missingRequiredPackTablesForTest(
+                Set.of("guides", "chunks", "guide_related", "lexical_chunks_fts4")
+            )
         );
     }
 
@@ -48,7 +51,9 @@ public final class PackInstallerTest {
     public void missingRequiredPackTablesDoesNotRequireOptionalAnswerCardTables() {
         assertEquals(
             "",
-            PackInstaller.missingRequiredPackTablesForTest(Set.of("guides", "guide_related", "lexical_chunks_fts"))
+            PackInstaller.missingRequiredPackTablesForTest(
+                Set.of("guides", "chunks", "guide_related", "lexical_chunks_fts")
+            )
         );
     }
 
@@ -58,6 +63,7 @@ public final class PackInstallerTest {
             "",
             PackInstaller.missingRequiredPackTablesForTest(Set.of(
                 "guides",
+                "chunks",
                 "guide_related",
                 "lexical_chunks_fts",
                 "answer_cards",
@@ -73,7 +79,88 @@ public final class PackInstallerTest {
     public void missingRequiredPackTablesRequiresAtLeastOneLexicalTable() {
         assertEquals(
             "lexical_chunks_fts or lexical_chunks_fts4",
-            PackInstaller.missingRequiredPackTablesForTest(Set.of("guides", "guide_related"))
+            PackInstaller.missingRequiredPackTablesForTest(Set.of("guides", "chunks", "guide_related"))
+        );
+    }
+
+    @Test
+    public void missingRequiredPackTablesRequiresChunksTable() {
+        assertEquals(
+            "chunks",
+            PackInstaller.missingRequiredPackTablesForTest(Set.of("guides", "guide_related", "lexical_chunks_fts4"))
+        );
+    }
+
+    @Test
+    public void missingRequiredPackColumnsAcceptsCurrentRuntimeSchemaColumns() {
+        assertEquals(
+            "",
+            PackInstaller.missingRequiredPackColumnsForTest(Map.of(
+                "guides",
+                Set.of(
+                    "guide_id",
+                    "title",
+                    "category",
+                    "difficulty",
+                    "description",
+                    "body_markdown",
+                    "content_role",
+                    "time_horizon",
+                    "structure_type",
+                    "topic_tags"
+                ),
+                "chunks",
+                Set.of(
+                    "chunk_id",
+                    "vector_row_id",
+                    "guide_title",
+                    "guide_id",
+                    "section_heading",
+                    "category",
+                    "document",
+                    "content_role",
+                    "time_horizon",
+                    "structure_type",
+                    "topic_tags"
+                ),
+                "guide_related",
+                Set.of("guide_id", "related_guide_id"),
+                "lexical_chunks_fts4",
+                Set.of(
+                    "chunk_id",
+                    "search_text",
+                    "guide_title",
+                    "guide_id",
+                    "section_heading",
+                    "category",
+                    "content_role",
+                    "time_horizon",
+                    "structure_type",
+                    "topic_tags"
+                )
+            ))
+        );
+    }
+
+    @Test
+    public void missingRequiredPackColumnsRejectsSchemaThatWouldCrashRepositoryQueries() {
+        String missingColumns = PackInstaller.missingRequiredPackColumnsForTest(Map.of(
+            "guides",
+            Set.of("guide_id", "title"),
+            "chunks",
+            Set.of("chunk_id", "guide_id", "document"),
+            "guide_related",
+            Set.of("guide_id"),
+            "lexical_chunks_fts4",
+            Set.of("chunk_id", "search_text")
+        ));
+
+        assertEquals(
+            "guides(category, difficulty, description, body_markdown, content_role, time_horizon, structure_type, topic_tags), " +
+                "chunks(vector_row_id, guide_title, section_heading, category, content_role, time_horizon, structure_type, topic_tags), " +
+                "guide_related(related_guide_id), " +
+                "lexical_chunks_fts4(guide_title, guide_id, section_heading, category, content_role, time_horizon, structure_type, topic_tags)",
+            missingColumns
         );
     }
 

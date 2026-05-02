@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteException;
 import org.json.JSONException;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -18,8 +19,10 @@ import java.nio.ByteOrder;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 public final class PackInstaller {
@@ -29,6 +32,7 @@ public final class PackInstaller {
     private static final String VECTOR_F16_NAME = "senku_vectors.f16";
     private static final String VECTOR_I8_NAME = "senku_vectors.i8";
     private static final String GUIDES_TABLE = "guides";
+    private static final String CHUNKS_TABLE = "chunks";
     private static final String GUIDE_RELATED_TABLE = "guide_related";
     private static final String FTS5_TABLE = "lexical_chunks_fts";
     private static final String FTS4_TABLE = "lexical_chunks_fts4";
@@ -191,6 +195,10 @@ public final class PackInstaller {
         return missingRequiredPackTables(tableNames);
     }
 
+    static String missingRequiredPackColumnsForTest(Map<String, Set<String>> tableColumns) {
+        return missingRequiredPackColumns(tableColumns);
+    }
+
     static void validateVectorInfoForTest(PackManifest manifest, VectorInfo vectorInfo) throws IOException {
         validateVectorInfo(manifest, vectorInfo);
     }
@@ -273,6 +281,13 @@ public final class PackInstaller {
                 "Installed SQLite schema is missing required tables: " + missingTables
             );
         }
+        Map<String, Set<String>> tableColumns = readInstalledTableColumns(sqliteFile, tableNames);
+        String missingColumns = missingRequiredPackColumns(tableColumns);
+        if (!missingColumns.isEmpty()) {
+            throw new IOException(
+                "Installed SQLite schema is missing required columns: " + missingColumns
+            );
+        }
     }
 
     private static Set<String> readInstalledTableNames(File sqliteFile) throws IOException {
@@ -305,6 +320,57 @@ public final class PackInstaller {
         }
     }
 
+    private static Map<String, Set<String>> readInstalledTableColumns(
+        File sqliteFile,
+        Set<String> tableNames
+    ) throws IOException {
+        SQLiteDatabase database = null;
+        try {
+            database = SQLiteDatabase.openDatabase(
+                sqliteFile.getAbsolutePath(),
+                null,
+                SQLiteDatabase.OPEN_READONLY | SQLiteDatabase.NO_LOCALIZED_COLLATORS
+            );
+            LinkedHashMap<String, Set<String>> tableColumns = new LinkedHashMap<>();
+            for (String tableName : tableNamesToInspect(tableNames)) {
+                tableColumns.put(tableName, readTableColumns(database, tableName));
+            }
+            return tableColumns;
+        } catch (SQLiteException exc) {
+            throw new IOException("Installed SQLite schema columns could not be opened for validation", exc);
+        } finally {
+            if (database != null) {
+                database.close();
+            }
+        }
+    }
+
+    private static List<String> tableNamesToInspect(Set<String> tableNames) {
+        ArrayList<String> tables = new ArrayList<>();
+        tables.add(GUIDES_TABLE);
+        tables.add(CHUNKS_TABLE);
+        tables.add(GUIDE_RELATED_TABLE);
+        if (tableNames != null && tableNames.contains(FTS4_TABLE)) {
+            tables.add(FTS4_TABLE);
+        } else if (tableNames != null && tableNames.contains(FTS5_TABLE)) {
+            tables.add(FTS5_TABLE);
+        }
+        return tables;
+    }
+
+    private static Set<String> readTableColumns(SQLiteDatabase database, String tableName) {
+        LinkedHashSet<String> columns = new LinkedHashSet<>();
+        try (Cursor cursor = database.rawQuery("PRAGMA table_info(" + tableName + ")", null)) {
+            while (cursor.moveToNext()) {
+                String columnName = cursor.getString(1);
+                if (columnName != null && !columnName.trim().isEmpty()) {
+                    columns.add(columnName.trim());
+                }
+            }
+        }
+        return columns;
+    }
+
     private static String missingRequiredPackTables(Set<String> tableNames) {
         LinkedHashSet<String> normalized = new LinkedHashSet<>();
         if (tableNames != null) {
@@ -319,6 +385,9 @@ public final class PackInstaller {
         if (!normalized.contains(GUIDES_TABLE)) {
             missing.add(GUIDES_TABLE);
         }
+        if (!normalized.contains(CHUNKS_TABLE)) {
+            missing.add(CHUNKS_TABLE);
+        }
         if (!normalized.contains(GUIDE_RELATED_TABLE)) {
             missing.add(GUIDE_RELATED_TABLE);
         }
@@ -326,6 +395,80 @@ public final class PackInstaller {
             missing.add(FTS5_TABLE + " or " + FTS4_TABLE);
         }
         return String.join(", ", missing);
+    }
+
+    private static String missingRequiredPackColumns(Map<String, Set<String>> tableColumns) {
+        LinkedHashMap<String, List<String>> requiredColumns = new LinkedHashMap<>();
+        requiredColumns.put(
+            GUIDES_TABLE,
+            Arrays.asList(
+                "guide_id",
+                "title",
+                "category",
+                "difficulty",
+                "description",
+                "body_markdown",
+                "content_role",
+                "time_horizon",
+                "structure_type",
+                "topic_tags"
+            )
+        );
+        requiredColumns.put(
+            CHUNKS_TABLE,
+            Arrays.asList(
+                "chunk_id",
+                "vector_row_id",
+                "guide_title",
+                "guide_id",
+                "section_heading",
+                "category",
+                "document",
+                "content_role",
+                "time_horizon",
+                "structure_type",
+                "topic_tags"
+            )
+        );
+        requiredColumns.put(
+            GUIDE_RELATED_TABLE,
+            Arrays.asList("guide_id", "related_guide_id")
+        );
+        if (tableColumns != null && tableColumns.containsKey(FTS4_TABLE)) {
+            requiredColumns.put(FTS4_TABLE, requiredFtsColumns());
+        } else {
+            requiredColumns.put(FTS5_TABLE, requiredFtsColumns());
+        }
+
+        ArrayList<String> missing = new ArrayList<>();
+        for (Map.Entry<String, List<String>> entry : requiredColumns.entrySet()) {
+            Set<String> columns = tableColumns == null ? null : tableColumns.get(entry.getKey());
+            ArrayList<String> missingForTable = new ArrayList<>();
+            for (String requiredColumn : entry.getValue()) {
+                if (columns == null || !columns.contains(requiredColumn)) {
+                    missingForTable.add(requiredColumn);
+                }
+            }
+            if (!missingForTable.isEmpty()) {
+                missing.add(entry.getKey() + "(" + String.join(", ", missingForTable) + ")");
+            }
+        }
+        return String.join(", ", missing);
+    }
+
+    private static List<String> requiredFtsColumns() {
+        return Arrays.asList(
+            "chunk_id",
+            "search_text",
+            "guide_title",
+            "guide_id",
+            "section_heading",
+            "category",
+            "content_role",
+            "time_horizon",
+            "structure_type",
+            "topic_tags"
+        );
     }
 
     private static String sha256Hex(File file) throws IOException {
