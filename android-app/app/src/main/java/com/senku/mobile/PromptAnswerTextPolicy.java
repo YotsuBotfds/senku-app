@@ -86,7 +86,13 @@ final class PromptAnswerTextPolicy {
             "no specific information",
             "no direct information",
             "nothing in the notes",
-            "notes do not address"
+            "notes do not address",
+            "not enough context",
+            "insufficient context",
+            "outside the provided context",
+            "outside the retrieved context",
+            "not enough information in the context",
+            "insufficient information in the context"
         };
         for (String signal : signals) {
             if (normalized.contains(signal)) {

@@ -150,7 +150,13 @@ public final class PromptAnswerTextPolicyTest {
             "There is no direct information about violin setup.",
             "Nothing in the notes explains tax filing.",
             "The notes do not address vehicle ECU tuning.",
-            "No relevant information appears in the retrieved notes."
+            "No relevant information appears in the retrieved notes.",
+            "There is not enough context to answer that safely.",
+            "The provided material gives insufficient context for that request.",
+            "That question is outside the provided context.",
+            "The answer is outside the retrieved context.",
+            "There is not enough information in the context to provide steps.",
+            "There is insufficient information in the context to recommend a procedure."
         };
 
         for (String fallbackPhrase : fallbackPhrases) {
