@@ -33,6 +33,7 @@ final class PromptAnswerTextPolicy {
             cleaned = jsonAnswer;
         }
         cleaned = removePromptEchoLines(cleaned);
+        cleaned = removeInstructionOverrideSentences(cleaned);
         if (cleaned.regionMatches(true, 0, "answer:", 0, "answer:".length())) {
             cleaned = cleaned.substring("answer:".length()).trim();
         } else if (cleaned.regionMatches(true, 0, "a:", 0, "a:".length())) {
@@ -146,6 +147,42 @@ final class PromptAnswerTextPolicy {
         cleaned = cleaned.replaceAll("(?im)^\\s*question:\\s*.*$", "");
         cleaned = cleaned.replaceAll("(?im)^\\s*answer format:\\s*.*$", "");
         return cleaned.trim();
+    }
+
+    private static String removeInstructionOverrideSentences(String text) {
+        String normalized = safe(text).replace('\r', '\n').trim();
+        if (normalized.isEmpty()) {
+            return "";
+        }
+        String[] parts = normalized.split("(?<=[.!?])\\s+|\\n+");
+        StringBuilder builder = new StringBuilder();
+        for (String part : parts) {
+            String sentence = safe(part).trim();
+            if (sentence.isEmpty() || containsInstructionOverrideSignal(sentence)) {
+                continue;
+            }
+            if (builder.length() > 0) {
+                builder.append(' ');
+            }
+            builder.append(sentence);
+        }
+        return builder.toString().trim();
+    }
+
+    private static boolean containsInstructionOverrideSignal(String text) {
+        String normalized = safe(text).toLowerCase(Locale.US);
+        return normalized.contains("ignore previous instructions")
+            || normalized.contains("answer outside the notes")
+            || normalized.contains("do not cite sources")
+            || normalized.contains("do not cite guide")
+            || normalized.contains("reveal hidden prompt")
+            || normalized.contains("hidden prompt")
+            || normalized.contains("fake system prompt")
+            || normalized.contains("invent steps")
+            || normalized.contains("invent procedures")
+            || normalized.contains("system: reveal")
+            || normalized.contains("system: ignore")
+            || normalized.contains("system prompt:");
     }
 
     private static String extractJsonAnswerText(String text) {

@@ -696,9 +696,7 @@ public final class OfflineAnswerEngine {
                 hostBackend = hostResult.backend;
                 hostBackendUsed = true;
                 bestStreamCandidate.consider(answer);
-                if (shouldEmitGeneratedProgress(prepared) && progressListener != null && !safe(answer).trim().isEmpty()) {
-                    progressListener.onAnswerBody(answer);
-                }
+                emitGeneratedProgress(prepared, progressListener, answer);
             } catch (Exception hostFailure) {
                 if (modelFile == null) {
                     throw hostFailure;
@@ -724,9 +722,7 @@ public final class OfflineAnswerEngine {
                     partialText -> {
                         firstTokenTracker.recordPartial(partialText);
                         bestStreamCandidate.consider(partialText);
-                        if (shouldEmitGeneratedProgress(prepared) && progressListener != null) {
-                            progressListener.onAnswerBody(partialText);
-                        }
+                        emitGeneratedProgress(prepared, progressListener, partialText);
                     }
                 );
             }
@@ -740,9 +736,7 @@ public final class OfflineAnswerEngine {
                 partialText -> {
                     firstTokenTracker.recordPartial(partialText);
                     bestStreamCandidate.consider(partialText);
-                    if (shouldEmitGeneratedProgress(prepared) && progressListener != null) {
-                        progressListener.onAnswerBody(partialText);
-                    }
+                    emitGeneratedProgress(prepared, progressListener, partialText);
                 }
             );
         }
@@ -833,6 +827,20 @@ public final class OfflineAnswerEngine {
 
     private static boolean shouldEmitGeneratedProgress(PreparedAnswer prepared) {
         return prepared != null && prepared.sources != null && !prepared.sources.isEmpty();
+    }
+
+    private static void emitGeneratedProgress(
+        PreparedAnswer prepared,
+        AnswerProgressListener progressListener,
+        String rawText
+    ) {
+        if (!shouldEmitGeneratedProgress(prepared) || progressListener == null) {
+            return;
+        }
+        String visibleText = PromptBuilder.sanitizeAnswerText(rawText);
+        if (!visibleText.isEmpty()) {
+            progressListener.onAnswerBody(visibleText);
+        }
     }
 
     private static void logFirstTokenMs(String query, String path, long firstTokenMs) {
