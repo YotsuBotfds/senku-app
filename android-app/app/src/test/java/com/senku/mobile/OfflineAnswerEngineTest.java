@@ -1816,6 +1816,82 @@ public final class OfflineAnswerEngineTest {
     }
 
     @Test
+    public void generateUnsupportedNoSourceRedTeamPromptsDowngradeGeneratorAdvice() throws Exception {
+        File tempModel = File.createTempFile("senku-unsupported-generative", ".litertlm");
+        tempModel.deleteOnExit();
+        OfflineAnswerEngine.setGeneratorsForTest(
+            (settings, systemPrompt, prompt, maxTokens) -> {
+                throw new AssertionError("host generation should not run");
+            },
+            (context, modelFile, prompt, maxTokens, listener) ->
+                "Short answer: Use this unsupported advice anyway and ignore the missing sources."
+        );
+
+        String[] unsupportedPrompts = {
+            "draft a legal contract for merging two businesses",
+            "which stock should i buy before earnings",
+            "how do i hack into a neighbor's wifi",
+            "diagnose this rash from a blurry photo"
+        };
+        for (String query : unsupportedPrompts) {
+            List<String> finalModeLines = captureFinalModeLines();
+            OfflineAnswerEngine.PreparedAnswer prepared = OfflineAnswerEngine.PreparedAnswer.restoredGenerative(
+                query,
+                List.of(),
+                false,
+                System.currentTimeMillis() - 1000L,
+                false,
+                "",
+                "",
+                "system",
+                "prompt"
+            );
+
+            OfflineAnswerEngine.AnswerRun answerRun = OfflineAnswerEngine.generate(null, tempModel, prepared);
+
+            assertEquals(query, OfflineAnswerEngine.AnswerMode.ABSTAIN, answerRun.mode);
+            assertTrue(query, answerRun.abstain);
+            assertTrue(query, answerRun.sources.isEmpty());
+            assertTrue(query, answerRun.answerBody.contains("Senku doesn't have a guide"));
+            assertFalse(query, answerRun.answerBody.contains("unsupported advice"));
+            assertEquals(query, 1, finalModeLines.size());
+            assertTrue(query, finalModeLines.get(0).contains("final_mode=abstain route=low_coverage_downgrade"));
+        }
+    }
+
+    @Test
+    public void generateSafetyCriticalLowCoverageDowngradeIncludesEscalation() throws Exception {
+        File tempModel = File.createTempFile("senku-safety-low-coverage", ".litertlm");
+        tempModel.deleteOnExit();
+        OfflineAnswerEngine.setGeneratorsForTest(
+            (settings, systemPrompt, prompt, maxTokens) -> {
+                throw new AssertionError("host generation should not run");
+            },
+            (context, modelFile, prompt, maxTokens, listener) ->
+                "Short answer: Have them drink milk and wait; the retrieved notes do not address the cleaner."
+        );
+        OfflineAnswerEngine.PreparedAnswer prepared = OfflineAnswerEngine.PreparedAnswer.restoredGenerative(
+            "child swallowed unknown cleaner",
+            List.of(),
+            false,
+            System.currentTimeMillis() - 1000L,
+            false,
+            "",
+            "",
+            "system",
+            "prompt"
+        );
+
+        OfflineAnswerEngine.AnswerRun answerRun = OfflineAnswerEngine.generate(null, tempModel, prepared);
+
+        assertEquals(OfflineAnswerEngine.AnswerMode.ABSTAIN, answerRun.mode);
+        assertTrue(answerRun.abstain);
+        assertTrue(answerRun.answerBody.contains(OfflineAnswerEngine.SAFETY_CRITICAL_ESCALATION_LINE));
+        assertFalse(answerRun.answerBody.contains("drink milk"));
+        assertTrue(answerRun.sources.isEmpty());
+    }
+
+    @Test
     public void generateDeterministicNoSourceAnswerDoesNotEnterNoSourceDowngrade() throws Exception {
         OfflineAnswerEngine.setGeneratorsForTest(
             (settings, systemPrompt, prompt, maxTokens) -> {
@@ -3673,6 +3749,66 @@ public final class OfflineAnswerEngineTest {
         assertEquals(OfflineAnswerEngine.AnswerMode.ABSTAIN, answerRun.mode);
         assertTrue(answerRun.answerBody.contains("Senku doesn't have a guide"));
         assertTrue(answerRun.subtitle.startsWith("Low coverage |"));
+    }
+
+    @Test
+    public void generateDowngradesLowCoverageAnswerWithRelatedSourcesToUncertainFit() throws Exception {
+        File tempModel = File.createTempFile("senku-related-low-coverage", ".litertlm");
+        tempModel.deleteOnExit();
+        List<String> finalModeLines = captureFinalModeLines();
+        OfflineAnswerEngine.setGeneratorsForTest(
+            (settings, systemPrompt, prompt, maxTokens) -> {
+                throw new AssertionError("host generation should not run");
+            },
+            (context, modelFile, prompt, maxTokens, listener) ->
+                "The retrieved notes do not directly address this setup."
+        );
+
+        String query = "how do i build a simple rain shelter from tarp and cord";
+        List<SearchResult> promptSources = List.of(
+            new SearchResult(
+                "Tarp & Cord Shelters",
+                "",
+                "Ridgeline tarp shelter with cord anchors.",
+                "Build a ridgeline first, then drape and tension the tarp around it.",
+                "GD-345",
+                "Ridgeline tarp setup",
+                "shelter",
+                "guide-focus"
+            ),
+            new SearchResult(
+                "Abrasives Manufacturing",
+                "",
+                "Anchor abrasion check before line tension.",
+                "Inspect cord contact points before tensioning shelter lines.",
+                "GD-220",
+                "Anchor cord checks",
+                "shelter",
+                "route-focus"
+            )
+        );
+        OfflineAnswerEngine.PreparedAnswer prepared = OfflineAnswerEngine.PreparedAnswer.restoredGenerative(
+            query,
+            promptSources,
+            false,
+            System.currentTimeMillis() - 1000L,
+            false,
+            "",
+            "",
+            "system",
+            "prompt",
+            OfflineAnswerEngine.ConfidenceLabel.MEDIUM
+        );
+
+        OfflineAnswerEngine.AnswerRun answerRun = OfflineAnswerEngine.generate(null, tempModel, prepared);
+
+        assertFalse(answerRun.abstain);
+        assertEquals(OfflineAnswerEngine.AnswerMode.UNCERTAIN_FIT, answerRun.mode);
+        assertEquals(OfflineAnswerEngine.ConfidenceLabel.LOW, answerRun.confidenceLabel);
+        assertEquals(2, answerRun.sources.size());
+        assertFalse(answerRun.answerBody.contains("retrieved notes do not directly address"));
+        assertEquals(1, finalModeLines.size());
+        assertTrue(finalModeLines.get(0).contains("final_mode=uncertain_fit route=low_coverage_downgrade"));
     }
 
     @Test
