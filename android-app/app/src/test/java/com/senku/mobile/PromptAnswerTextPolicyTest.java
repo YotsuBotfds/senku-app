@@ -122,9 +122,19 @@ public final class PromptAnswerTextPolicyTest {
 
     @Test
     public void lowCoverageDetectionCatchesCommonModelFallbackPhrases() {
-        assertTrue(PromptAnswerTextPolicy.isLowCoverageAnswer("That is not covered in the retrieved notes."));
-        assertTrue(PromptAnswerTextPolicy.isLowCoverageAnswer("I am unable to provide that from the notes."));
-        assertTrue(PromptAnswerTextPolicy.isLowCoverageAnswer("There is no direct information about violin setup."));
-        assertTrue(PromptAnswerTextPolicy.isLowCoverageAnswer("Nothing in the notes explains tax filing."));
+        String[] fallbackPhrases = {
+            "That is not covered in the retrieved notes.",
+            "No information available in the retrieved material.",
+            "I am unable to provide that from the notes.",
+            "The retrieved notes do not contain information about violin soundpost adjustment.",
+            "There is no direct information about violin setup.",
+            "Nothing in the notes explains tax filing.",
+            "The notes do not address vehicle ECU tuning.",
+            "No relevant information appears in the retrieved notes."
+        };
+
+        for (String fallbackPhrase : fallbackPhrases) {
+            assertTrue(fallbackPhrase, PromptAnswerTextPolicy.isLowCoverageAnswer(fallbackPhrase));
+        }
     }
 }
