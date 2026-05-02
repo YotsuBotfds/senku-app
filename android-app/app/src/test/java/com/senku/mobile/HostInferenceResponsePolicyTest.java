@@ -68,6 +68,44 @@ public final class HostInferenceResponsePolicyTest {
     }
 
     @Test
+    public void parseResponseBodyRejectsNonArrayChoices() throws Exception {
+        assertIllegalStateMessage(
+            "{\"choices\": {\"message\": {\"content\": \"not an array\"}}}",
+            "Host inference returned no choices"
+        );
+    }
+
+    @Test
+    public void parseResponseBodyRejectsScalarChoiceOrMissingMessageAsEmptyAnswer() throws Exception {
+        assertIllegalStateMessage(
+            "{\"choices\": [17]}",
+            "Host inference returned an empty answer"
+        );
+        assertIllegalStateMessage(
+            "{\"choices\": [{\"finish_reason\": \"stop\"}]}",
+            "Host inference returned an empty answer"
+        );
+        assertIllegalStateMessage(
+            "{\"choices\": [{\"message\": {\"content\": null}}]}",
+            "Host inference returned an empty answer"
+        );
+    }
+
+    @Test
+    public void parseResponseBodyDefaultsBlankBackendAndMissingElapsed() throws Exception {
+        HostInferenceClient.Result result = HostInferenceResponsePolicy.parseResponseBody(
+            "{\n" +
+                "  \"choices\": [{\"message\": {\"content\": \"Use only grounded notes.\"}}],\n" +
+                "  \"senku_backend\": \"   \"\n" +
+                "}"
+        );
+
+        assertEquals("Use only grounded notes.", result.answer);
+        assertEquals("host", result.backend);
+        assertEquals(0.0d, result.elapsedSeconds, 0.0001d);
+    }
+
+    @Test
     public void parseResponseBodyRejectsEmptyFlattenedContent() throws Exception {
         assertIllegalStateMessage(
             "{\n" +
