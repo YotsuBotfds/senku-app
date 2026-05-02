@@ -131,6 +131,16 @@ public final class PackManifestTest {
     }
 
     @Test
+    public void fromJsonAcceptsSupportedInt8VectorDtype() throws Exception {
+        JSONObject root = new JSONObject(minimalManifestJson());
+        root.getJSONObject("embedding").put("vector_dtype", "int8");
+
+        PackManifest manifest = PackManifest.fromJson(root.toString());
+
+        assertEquals("int8", manifest.vectorDtype);
+    }
+
+    @Test
     public void fromJsonIgnoresFutureOptionalFields() throws Exception {
         PackManifest manifest = PackManifest.fromJson(
             "{\n" +

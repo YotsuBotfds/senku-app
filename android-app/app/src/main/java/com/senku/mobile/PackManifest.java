@@ -5,7 +5,8 @@ import org.json.JSONObject;
 
 public final class PackManifest {
     private static final String SUPPORTED_PACK_FORMAT = "senku-mobile-pack-v2";
-    private static final String SUPPORTED_VECTOR_DTYPE = "float16";
+    private static final String VECTOR_DTYPE_FLOAT16 = "float16";
+    private static final String VECTOR_DTYPE_INT8 = "int8";
 
     public final String packFormat;
     public final int packVersion;
@@ -80,7 +81,7 @@ public final class PackManifest {
             requireNonNegativeInt("counts.answer_cards", counts.optInt("answer_cards", 0)),
             requireNonBlank("embedding.model_id", embedding.getString("model_id")),
             requirePositiveInt("embedding.dimension", embedding.getInt("dimension")),
-            requireSupportedValue("embedding.vector_dtype", embedding.getString("vector_dtype"), SUPPORTED_VECTOR_DTYPE),
+            requireSupportedVectorDtype("embedding.vector_dtype", embedding.getString("vector_dtype")),
             requirePositiveInt("runtime_defaults.mobile_top_k", runtimeDefaults.getInt("mobile_top_k")),
             requirePositiveLong("files.sqlite.bytes", sqlite.getLong("bytes")),
             requireNonBlank("files.sqlite.sha256", sqlite.getString("sha256")),
@@ -101,6 +102,14 @@ public final class PackManifest {
         throws JSONException {
         String checked = requireNonBlank(fieldName, value);
         if (!supportedValue.equals(checked)) {
+            throw new JSONException("Unsupported manifest field " + fieldName + ": " + checked);
+        }
+        return checked;
+    }
+
+    private static String requireSupportedVectorDtype(String fieldName, String value) throws JSONException {
+        String checked = requireNonBlank(fieldName, value);
+        if (!VECTOR_DTYPE_FLOAT16.equals(checked) && !VECTOR_DTYPE_INT8.equals(checked)) {
             throw new JSONException("Unsupported manifest field " + fieldName + ": " + checked);
         }
         return checked;
