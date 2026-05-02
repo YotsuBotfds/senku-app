@@ -6163,7 +6163,9 @@ public final class DetailActivity extends AppCompatActivity {
         followUpInput.setSelection(lastFailedQuery.length());
     }
 
-    String buildGenerationFailureStatus(Throwable exc) { return "Offline answer failed: " + (exc == null ? null : exc.getMessage()); }
+    String buildGenerationFailureStatus(Throwable exc) {
+        return UserVisibleFailureCopy.generationFailureStatus(exc);
+    }
 
     private void retryLastFailedQuery() {
         DetailFollowUpActionController.Decision decision =
@@ -6200,11 +6202,7 @@ public final class DetailActivity extends AppCompatActivity {
     }
 
     private String buildGenerationFailureBody(Throwable exc) {
-        String detail = safe(exc == null ? null : exc.getMessage()).trim();
-        if (detail.isEmpty()) {
-            return "Could not finish generation. Review the source guides and try again.";
-        }
-        return "Could not finish generation.\n\n" + detail;
+        return UserVisibleFailureCopy.generationFailureBody(exc);
     }
 
     OfflineAnswerEngine.AnswerProgressListener createAnswerProgressListener(int requestToken) {

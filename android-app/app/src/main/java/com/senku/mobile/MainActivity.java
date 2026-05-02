@@ -693,7 +693,7 @@ public final class MainActivity extends AppCompatActivity {
                         replaceItems(Collections.emptyList());
                         updateHomeSubtitle(0);
                         renderHomeRelatedGuides(null, Collections.emptyList());
-                        setInfoTextMessage(exc.toString(), true);
+                        setInfoTextMessage(UserVisibleFailureCopy.manualInstallFailureDetails(exc), true);
                         resultsHeader.setText(presentationFormatter().buildPackInstallFailedHeader());
                     });
                 }
@@ -705,7 +705,7 @@ public final class MainActivity extends AppCompatActivity {
                 replaceItems(Collections.emptyList());
                 updateHomeSubtitle(0);
                 renderHomeRelatedGuides(null, Collections.emptyList());
-                setInfoTextMessage(exc.toString(), true);
+                setInfoTextMessage(UserVisibleFailureCopy.manualInstallFailureDetails(exc), true);
                 resultsHeader.setText(presentationFormatter().buildPackInstallFailedHeader());
             });
         }
@@ -871,7 +871,7 @@ public final class MainActivity extends AppCompatActivity {
                 Collections.emptyList()
             );
             resultsHeader.setText("Search failed");
-            setInfoTextMessage(exception.toString(), true);
+            setInfoTextMessage(UserVisibleFailureCopy.searchFailureDetails(exception), true);
         }
     }
 
@@ -1334,7 +1334,7 @@ public final class MainActivity extends AppCompatActivity {
                         setResultHighlightQuery("");
                         replaceItems(Collections.emptyList());
                         resultsHeader.setText("Guide load failed");
-                        setInfoTextMessage(exc.toString(), true);
+                        setInfoTextMessage(UserVisibleFailureCopy.manualLoadFailureDetails(exc), true);
                     });
                 }
             });
@@ -1344,7 +1344,7 @@ public final class MainActivity extends AppCompatActivity {
                 setResultHighlightQuery("");
                 replaceItems(Collections.emptyList());
                 resultsHeader.setText("Guide load failed");
-                setInfoTextMessage(exc.toString(), true);
+                setInfoTextMessage(UserVisibleFailureCopy.manualLoadFailureDetails(exc), true);
             });
         }
     }
@@ -3428,7 +3428,7 @@ public final class MainActivity extends AppCompatActivity {
                 allGuides.isEmpty() ? installedPack.manifest.guideCount : allGuides.size()
             )
             : getString(R.string.info_loading);
-        return base + "\n\nLast error: " + exc;
+        return base + "\n\n" + UserVisibleFailureCopy.lastErrorSummary(exc);
     }
 
     private boolean handleSessionCommand(String query) {
