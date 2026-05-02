@@ -358,6 +358,35 @@ public final class SavedGuidesPolicyTest {
         assertEquals(List.of(guide("GD-001"), guide("GD-003")), renderPlan.guides);
     }
 
+    @Test
+    public void controllerRenderPlanShowsRecoverableEmptyStateWhenAllSavedGuidesAreMissing() {
+        MainSavedGuidesController controller = new MainSavedGuidesController();
+
+        MainSavedGuidesController.RefreshPlan refreshPlan =
+            controller.beginRefresh(true, List.of("GD-001", "GD-002"));
+        MainSavedGuidesController.RenderPlan renderPlan = controller.planRender(
+            refreshPlan,
+            true,
+            Arrays.asList(null, null)
+        );
+
+        assertTrue(renderPlan.shouldRender);
+        assertTrue(renderPlan.guides.isEmpty());
+    }
+
+    @Test
+    public void controllerRenderPlanTreatsNullLoadedListAsRecoverableEmptyState() {
+        MainSavedGuidesController controller = new MainSavedGuidesController();
+
+        MainSavedGuidesController.RefreshPlan refreshPlan =
+            controller.beginRefresh(true, List.of("GD-001"));
+        MainSavedGuidesController.RenderPlan renderPlan =
+            controller.planRender(refreshPlan, true, null);
+
+        assertTrue(renderPlan.shouldRender);
+        assertTrue(renderPlan.guides.isEmpty());
+    }
+
     @Test(expected = UnsupportedOperationException.class)
     public void controllerRenderPlanGuidesAreImmutable() {
         MainSavedGuidesController controller = new MainSavedGuidesController();
