@@ -220,6 +220,40 @@ public final class AskQueryControllerTest {
     }
 
     @Test
+    public void reviewedCardRuntimeRoutePreparesWithoutModelForEverySupportedCardFamily() {
+        String[] supportedQueries = {
+            "my child swallowed an unknown cleaner",
+            "3 day old baby has fever and fast breathing",
+            "child is choking on a grape and cannot speak",
+            "child has fever with purple rash and confusion",
+            "wound redness is spreading past the line I marked",
+            "bike handlebar hit his belly and now he is pale and dizzy",
+            "What should we record about wet floors, cracked crucibles, unknown scrap, ventilation concerns, and owner handoff before casting?"
+        };
+
+        for (String query : supportedQueries) {
+            FakeHost host = readyHost();
+            host.modelFile = null;
+            host.hostInferenceSettings = settings(false);
+            host.reviewedCardRuntimeEnabled = true;
+            FakeEngine engine = new FakeEngine();
+            engine.preparedToReturn = generativePrepared(query);
+            AskQueryController controller = new AskQueryController(host, engine, value -> null);
+
+            controller.runAsk(query);
+
+            assertEquals(
+                query,
+                List.of("prepare-started:" + query, "prepare-success"),
+                host.events
+            );
+            assertEquals(query, 1, engine.prepareCalls);
+            assertNull(query, engine.lastModelFile);
+            assertSame(query, engine.preparedToReturn, host.lastPreparedSuccess);
+        }
+    }
+
+    @Test
     public void hostInferenceRoutePreparesWhenReviewedRuntimeIsEnabledButQueryIsUnsupported() {
         FakeHost host = readyHost();
         host.modelFile = null;
