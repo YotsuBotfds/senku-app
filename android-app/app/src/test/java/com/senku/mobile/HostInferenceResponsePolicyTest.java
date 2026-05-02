@@ -106,6 +106,37 @@ public final class HostInferenceResponsePolicyTest {
     }
 
     @Test
+    public void parseResponseBodyCompactsBackendControlCharacters() throws Exception {
+        HostInferenceClient.Result result = HostInferenceResponsePolicy.parseResponseBody(
+            "{\n" +
+                "  \"choices\": [{\"message\": {\"content\": \"Use only grounded notes.\"}}],\n" +
+                "  \"senku_backend\": \" host\\n\\t gpu\\u0007worker \"\n" +
+                "}"
+        );
+
+        assertEquals("host gpu worker", result.backend);
+    }
+
+    @Test
+    public void parseResponseBodyClampsInvalidElapsedSeconds() throws Exception {
+        HostInferenceClient.Result negative = HostInferenceResponsePolicy.parseResponseBody(
+            "{\n" +
+                "  \"choices\": [{\"message\": {\"content\": \"Use only grounded notes.\"}}],\n" +
+                "  \"senku_elapsed_seconds\": -5\n" +
+                "}"
+        );
+        HostInferenceClient.Result nan = HostInferenceResponsePolicy.parseResponseBody(
+            "{\n" +
+                "  \"choices\": [{\"message\": {\"content\": \"Use only grounded notes.\"}}],\n" +
+                "  \"senku_elapsed_seconds\": \"NaN\"\n" +
+                "}"
+        );
+
+        assertEquals(0.0d, negative.elapsedSeconds, 0.0001d);
+        assertEquals(0.0d, nan.elapsedSeconds, 0.0001d);
+    }
+
+    @Test
     public void parseResponseBodyRejectsEmptyFlattenedContent() throws Exception {
         assertIllegalStateMessage(
             "{\n" +

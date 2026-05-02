@@ -24,11 +24,8 @@ final class HostInferenceResponsePolicy {
             throw new IllegalStateException("Host inference returned an empty answer");
         }
 
-        String backend = responseJson.optString("senku_backend", DEFAULT_BACKEND).trim();
-        if (backend.isEmpty()) {
-            backend = DEFAULT_BACKEND;
-        }
-        double elapsedSeconds = responseJson.optDouble("senku_elapsed_seconds", 0.0d);
+        String backend = normalizeBackend(responseJson.optString("senku_backend", DEFAULT_BACKEND));
+        double elapsedSeconds = normalizeElapsedSeconds(responseJson.optDouble("senku_elapsed_seconds", 0.0d));
         return new HostInferenceClient.Result(flattened, backend, elapsedSeconds);
     }
 
@@ -65,5 +62,35 @@ final class HostInferenceResponsePolicy {
             return (String) part;
         }
         return "";
+    }
+
+    private static String normalizeBackend(String rawBackend) {
+        String raw = rawBackend == null ? "" : rawBackend.trim();
+        if (raw.isEmpty()) {
+            return DEFAULT_BACKEND;
+        }
+        StringBuilder builder = new StringBuilder(raw.length());
+        boolean previousWhitespace = false;
+        for (int index = 0; index < raw.length(); index++) {
+            char ch = raw.charAt(index);
+            if (Character.isISOControl(ch) || Character.isWhitespace(ch)) {
+                if (!previousWhitespace) {
+                    builder.append(' ');
+                    previousWhitespace = true;
+                }
+            } else {
+                builder.append(ch);
+                previousWhitespace = false;
+            }
+        }
+        String normalized = builder.toString().trim();
+        return normalized.isEmpty() ? DEFAULT_BACKEND : normalized;
+    }
+
+    private static double normalizeElapsedSeconds(double elapsedSeconds) {
+        if (Double.isNaN(elapsedSeconds) || Double.isInfinite(elapsedSeconds) || elapsedSeconds < 0.0d) {
+            return 0.0d;
+        }
+        return elapsedSeconds;
     }
 }
