@@ -150,6 +150,22 @@ public final class DetailTabletEvidencePolicyTest {
             true,
             false
         ));
+        assertFalse(DetailTabletEvidencePolicy.shouldApplyLoadedPreview(
+            5,
+            5,
+            "gd-345|rigging|rain shelter",
+            preview,
+            false,
+            true
+        ));
+        assertFalse(DetailTabletEvidencePolicy.shouldApplyLoadedPreview(
+            5,
+            5,
+            "gd-345|rigging|rain shelter",
+            null,
+            false,
+            false
+        ));
     }
 
     @Test
