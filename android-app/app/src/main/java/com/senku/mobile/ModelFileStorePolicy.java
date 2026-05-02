@@ -70,7 +70,7 @@ final class ModelFileStorePolicy {
     static File findKnownModelFile(File modelsDir) {
         for (String fileName : KNOWN_MODEL_FILE_NAMES) {
             File candidate = new File(modelsDir, fileName);
-            if (candidate.isFile()) {
+            if (isSupportedModelFile(candidate)) {
                 return candidate;
             }
         }

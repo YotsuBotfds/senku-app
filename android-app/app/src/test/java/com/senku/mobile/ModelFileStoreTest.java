@@ -148,6 +148,27 @@ public final class ModelFileStoreTest {
     }
 
     @Test
+    public void fallbackIgnoresEmptyKnownModelBeforeSupportedGenericFallback() throws Exception {
+        TestContext context = new TestContext(temporaryFolder);
+        File modelsDir = new File(context.getFilesDir(), "models");
+        writeModel(new File(modelsDir, "gemma-4-E4B-it.task"), "");
+        File generic = writeModel(new File(modelsDir, "generic.task"), "generic");
+
+        assertEquals(generic, ModelFileStore.getImportedModelFile(context));
+    }
+
+    @Test
+    public void fallbackUsesExternalKnownModelWhenInternalModelsAreAbsent() throws Exception {
+        TestContext context = new TestContext(temporaryFolder);
+        File externalModelsDir = new File(context.getExternalFilesDir(null), "models");
+        File newerGeneric = writeModel(new File(externalModelsDir, "newer.task"), "newer");
+        File known = writeModel(new File(externalModelsDir, "gemma-4-E2B-it.task"), "known");
+        newerGeneric.setLastModified(known.lastModified() + 10_000L);
+
+        assertEquals(known, ModelFileStore.getImportedModelFile(context));
+    }
+
+    @Test
     public void policySanitizesFileNamesAndFallsBackWhenEmpty() {
         assertEquals("my_model__1_.task", ModelFileStorePolicy.sanitizeFileName("my model (1).task"));
         assertEquals("offline-model.litertlm", ModelFileStorePolicy.sanitizeFileName(""));
