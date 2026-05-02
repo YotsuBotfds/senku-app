@@ -1379,6 +1379,30 @@ public final class QueryMetadataProfileTest {
     }
 
     @Test
+    public void unknownCleanerIngestionUsesSafetyPoisoningAndMedicalRows() {
+        QueryMetadataProfile profile = QueryMetadataProfile.fromQuery("child swallowed unknown cleaner");
+
+        int toxicologyScore = profile.metadataBonus(
+            "medical",
+            "safety",
+            "immediate",
+            "general",
+            ""
+        );
+        int houseScore = profile.metadataBonus(
+            "building",
+            "planning",
+            "long_term",
+            "cabin_house",
+            "wall_construction"
+        );
+
+        assertTrue("safety_poisoning".equals(profile.preferredStructureType()));
+        assertFalse(profile.hasExplicitTopic("wall_construction"));
+        assertTrue(toxicologyScore > houseScore);
+    }
+
+    @Test
     public void poisoningQueryPrefersMedicalImmediateRowsOverHouseRows() {
         QueryMetadataProfile profile = QueryMetadataProfile.fromQuery(
             "my child may have poisoning after swallowing drain cleaner"
