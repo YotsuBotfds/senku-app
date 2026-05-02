@@ -17,6 +17,7 @@ import java.util.Set;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 public final class HostInferenceConfigTest {
     @Test
@@ -183,6 +184,25 @@ public final class HostInferenceConfigTest {
         assertTrue(settings.enabled);
         assertEquals("http://localhost:1235/v1", settings.baseUrl);
         assertEquals("existing-model", settings.modelId);
+    }
+
+    @Test
+    public void directSavedRejectedEndpointStillFailsClientPolicyBeforeConnection() throws Exception {
+        TestContext context = new TestContext();
+        HostInferenceConfig.save(context, true, "http://example.com:1235/v1", "persisted-remote-model");
+
+        HostInferenceConfig.Settings settings = HostInferenceConfig.resolve(context);
+
+        assertTrue(settings.enabled);
+        assertEquals("http://example.com:1235/v1", settings.baseUrl);
+        try {
+            HostInferenceClient.generate(settings, "", "ping", null);
+            fail("Expected persisted non-local cleartext endpoint to be rejected by client policy");
+        } catch (IllegalStateException exception) {
+            assertTrue(exception.getMessage().contains("NON_LOCAL_CLEARTEXT_REJECTED"));
+            assertFalse(exception.getMessage().contains("example.com"));
+            assertFalse(exception.getMessage().contains("http://"));
+        }
     }
 
     @Test
