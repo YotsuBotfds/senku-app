@@ -36,6 +36,11 @@ class SummarizeRouteParityTimingTests(unittest.TestCase):
         self.assertEqual(summary["install_ms"], 111)
         self.assertEqual(summary["repository_open_ms"], 22)
         self.assertEqual(
+            summary["slow_thresholds"],
+            {"search_ms": 5000, "context_ms": 5000, "total_ms": 10000},
+        )
+        self.assertEqual(summary["slow_routes"], [])
+        self.assertEqual(
             summary["routes"],
             [
                 {
@@ -94,8 +99,64 @@ class SummarizeRouteParityTimingTests(unittest.TestCase):
 
         self.assertEqual(summary["install_ms"], 10)
         self.assertEqual(summary["routes"][0]["expectedStructure"], "soapmaking")
+        self.assertEqual(summary["slow_routes"], [])
         self.assertIn(r"how do i make soap \| safely", markdown)
         self.assertIn("| soapmaking |", markdown)
+        self.assertNotIn("Slow Route Warnings", markdown)
+
+    def test_slow_route_warnings_are_non_failing_summary_fields(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            root = Path(tmpdir)
+            log = root / "route_parity.log"
+            output_json = root / "summary.json"
+            output_md = root / "summary.md"
+            log.write_text(
+                "\n".join(
+                    [
+                        'I/SenkuRouteParity: search cabin_house route: "how do i weatherproof a cabin roof" took 320014ms',
+                        'I/SenkuRouteParity: context cabin_house route: "how do i weatherproof a cabin roof" took 12146ms',
+                        'I/SenkuRouteParity: total cabin_house route: "how do i weatherproof a cabin roof" took 332284ms',
+                    ]
+                )
+                + "\n",
+                encoding="utf-8",
+            )
+
+            with patch(
+                "sys.argv",
+                [
+                    "summarize_route_parity_timing.py",
+                    "--input",
+                    str(log),
+                    "--output-json",
+                    str(output_json),
+                    "--output-md",
+                    str(output_md),
+                ],
+            ):
+                self.assertEqual(timing.main(), 0)
+
+            summary = json.loads(output_json.read_text(encoding="utf-8"))
+            markdown = output_md.read_text(encoding="utf-8")
+
+        self.assertEqual(
+            summary["slow_routes"],
+            [
+                {
+                    "expectedStructure": "cabin_house",
+                    "query": "how do i weatherproof a cabin roof",
+                    "exceeded": {
+                        "context_ms": 12146,
+                        "search_ms": 320014,
+                        "total_ms": 332284,
+                    },
+                }
+            ],
+        )
+        self.assertIn("Slow Route Warnings", markdown)
+        self.assertIn("search_ms=320014", markdown)
+        self.assertIn("context_ms=12146", markdown)
+        self.assertIn("total_ms=332284", markdown)
 
     def test_main_returns_nonzero_without_timing_breadcrumbs(self):
         with tempfile.TemporaryDirectory() as tmpdir:

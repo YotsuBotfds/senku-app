@@ -19,6 +19,9 @@ ROUTE_RE = re.compile(
     r'route: "(?P<query>.*?)" '
     r"took (?P<ms>\d+)ms"
 )
+SLOW_SEARCH_MS = 5000
+SLOW_CONTEXT_MS = 5000
+SLOW_TOTAL_MS = 10000
 
 
 def parse_args() -> argparse.Namespace:
@@ -54,6 +57,12 @@ def _empty_summary(input_path: Path) -> dict[str, Any]:
         "install_ms": None,
         "repository_open_ms": None,
         "routes": [],
+        "slow_routes": [],
+        "slow_thresholds": {
+            "search_ms": SLOW_SEARCH_MS,
+            "context_ms": SLOW_CONTEXT_MS,
+            "total_ms": SLOW_TOTAL_MS,
+        },
         "warnings": [],
     }
 
@@ -132,7 +141,32 @@ def parse_route_parity_timing(input_path: Path) -> dict[str, Any]:
 
     summary["unique_timing_breadcrumbs"] = len(seen_breadcrumbs)
     summary["routes"] = sorted(routes.values(), key=lambda row: (row["expectedStructure"], row["query"]))
+    summary["slow_routes"] = slow_route_warnings(summary["routes"])
     return summary
+
+
+def slow_route_warnings(routes: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    warnings = []
+    thresholds = {
+        "search_ms": SLOW_SEARCH_MS,
+        "context_ms": SLOW_CONTEXT_MS,
+        "total_ms": SLOW_TOTAL_MS,
+    }
+    for row in routes:
+        exceeded = {}
+        for key, threshold in thresholds.items():
+            value = row.get(key)
+            if value is not None and value > threshold:
+                exceeded[key] = value
+        if exceeded:
+            warnings.append(
+                {
+                    "expectedStructure": row["expectedStructure"],
+                    "query": row["query"],
+                    "exceeded": exceeded,
+                }
+            )
+    return warnings
 
 
 def write_json(path: Path, payload: dict[str, Any]) -> None:
@@ -167,6 +201,32 @@ def write_markdown(path: Path, payload: dict[str, Any]) -> None:
                 total_ms=row["total_ms"] if row["total_ms"] is not None else "n/a",
             )
         )
+
+    if payload["slow_routes"]:
+        lines.extend(
+            [
+                "",
+                "## Slow Route Warnings",
+                "",
+                (
+                    f"Non-failing thresholds: search_ms > {payload['slow_thresholds']['search_ms']}, "
+                    f"context_ms > {payload['slow_thresholds']['context_ms']}, "
+                    f"total_ms > {payload['slow_thresholds']['total_ms']}."
+                ),
+                "",
+                "| expectedStructure | query | exceeded |",
+                "| --- | --- | --- |",
+            ]
+        )
+        for row in payload["slow_routes"]:
+            exceeded = ", ".join(f"{key}={value}" for key, value in sorted(row["exceeded"].items()))
+            lines.append(
+                "| {expectedStructure} | {query} | {exceeded} |".format(
+                    expectedStructure=escape_markdown_cell(row["expectedStructure"]),
+                    query=escape_markdown_cell(row["query"]),
+                    exceeded=escape_markdown_cell(exceeded),
+                )
+            )
 
     if payload["warnings"]:
         lines.extend(["", "## Warnings", ""])
