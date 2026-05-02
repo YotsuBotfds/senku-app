@@ -72,6 +72,44 @@ public final class PackRepositoryAnswerContextIntegrationTest {
         }
     }
 
+    @Test
+    public void buildGuideAnswerContextFallsBackToAnchorWhenChunkTableIsUnavailable() throws Exception {
+        databaseFile = File.createTempFile(
+            "senku-answer-context-missing-chunks",
+            ".sqlite",
+            InstrumentationRegistry.getInstrumentation().getTargetContext().getCacheDir()
+        );
+        try (SQLiteDatabase ignored = SQLiteDatabase.openOrCreateDatabase(databaseFile, null)) {
+            // Intentionally leave the pack schema incomplete to simulate a stale or corrupt install.
+        }
+        SearchResult anchor = new SearchResult(
+            "Cabin Roof Waterproofing",
+            "GD-777 | building | Roof Deck | route-focus",
+            "Anchor result for cabin roof waterproofing.",
+            "Anchor result for cabin roof waterproofing.",
+            "GD-777",
+            "Roof Deck",
+            "building",
+            "route-focus",
+            "procedure",
+            "long_term",
+            "cabin_house",
+            "roofing,weatherproofing"
+        );
+
+        try (PackRepository repository = new PackRepository(databaseFile, null)) {
+            List<SearchResult> context = repository.buildGuideAnswerContext(
+                "how do i waterproof a cabin roof",
+                Collections.singletonList(anchor),
+                2
+            );
+
+            assertEquals(1, context.size());
+            assertEquals("GD-777", context.get(0).guideId);
+            assertEquals("Roof Deck", context.get(0).sectionHeading);
+        }
+    }
+
     private static void createPackDatabase(File file) {
         try (SQLiteDatabase database = SQLiteDatabase.openOrCreateDatabase(file, null)) {
             database.execSQL(

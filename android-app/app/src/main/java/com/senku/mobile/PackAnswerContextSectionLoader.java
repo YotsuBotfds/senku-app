@@ -2,6 +2,7 @@ package com.senku.mobile;
 
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteException;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -93,6 +94,8 @@ final class PackAnswerContextSectionLoader {
                 }
                 candidate.consider(score, document, isAnchorSection, contentRole, timeHorizon, structureType, topicTags);
             }
+        } catch (SQLiteException ignored) {
+            return Collections.emptyList();
         }
 
         ArrayList<SectionCandidate> ordered = new ArrayList<>(sections.values());
