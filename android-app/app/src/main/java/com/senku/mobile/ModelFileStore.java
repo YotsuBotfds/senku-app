@@ -9,6 +9,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 
 public final class ModelFileStore {
     private static final String PREFS_NAME = "senku_model_store";
@@ -33,12 +35,14 @@ public final class ModelFileStore {
         }
 
         File outputFile = new File(modelsDir, sanitizedName);
+        File tempFile = File.createTempFile(sanitizedName + ".", ".tmp", modelsDir);
         InputStream openedInput = context.getContentResolver().openInputStream(uri);
         if (openedInput == null) {
+            tempFile.delete();
             throw new IOException("Unable to open selected model file");
         }
         try (InputStream input = openedInput;
-             FileOutputStream output = new FileOutputStream(outputFile)) {
+             FileOutputStream output = new FileOutputStream(tempFile)) {
             try {
                 byte[] buffer = new byte[1024 * 1024];
                 int read;
@@ -46,13 +50,24 @@ public final class ModelFileStore {
                     output.write(buffer, 0, read);
                 }
             } catch (IOException exc) {
-                outputFile.delete();
+                tempFile.delete();
                 throw exc;
             }
         }
-        if (outputFile.length() <= 0L) {
-            outputFile.delete();
+        if (tempFile.length() <= 0L) {
+            tempFile.delete();
             throw new IOException("Selected model file is empty");
+        }
+        try {
+            Files.move(
+                tempFile.toPath(),
+                outputFile.toPath(),
+                StandardCopyOption.ATOMIC_MOVE,
+                StandardCopyOption.REPLACE_EXISTING
+            );
+        } catch (IOException exc) {
+            tempFile.delete();
+            throw exc;
         }
 
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);

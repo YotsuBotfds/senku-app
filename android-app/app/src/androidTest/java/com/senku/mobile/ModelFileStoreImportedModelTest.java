@@ -14,6 +14,7 @@ import org.junit.runner.RunWith;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.Locale;
 
 import static org.junit.Assert.assertEquals;
@@ -68,6 +69,71 @@ public final class ModelFileStoreImportedModelTest {
         assertEquals(previousPath, prefs.getString(KEY_MODEL_PATH, null));
     }
 
+    @Test
+    public void failedEmptyImportWithSameSanitizedNamePreservesExistingSelectedModel() throws Exception {
+        Context context = InstrumentationRegistry.getInstrumentation().getTargetContext();
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        String previousName = prefs.getString(KEY_MODEL_NAME, null);
+        String previousPath = prefs.getString(KEY_MODEL_PATH, null);
+        String fileName = "atomic-import-preserve-" + System.nanoTime() + ".task";
+        File target = writeFile(new File(new File(context.getFilesDir(), "models"), fileName), "known good model");
+        File source = writeFile(new File(context.getCacheDir(), fileName), "");
+
+        prefs.edit()
+            .putString(KEY_MODEL_NAME, target.getName())
+            .putString(KEY_MODEL_PATH, target.getAbsolutePath())
+            .apply();
+
+        try {
+            try {
+                ModelFileStore.importModel(context, Uri.fromFile(source));
+                fail("Expected empty model import to be rejected");
+            } catch (IOException exc) {
+                assertTrue(exc.getMessage().contains("empty"));
+            }
+
+            assertTrue("existing selected model should remain present", target.isFile());
+            assertEquals("known good model", readFile(target));
+            assertEquals(target.getName(), prefs.getString(KEY_MODEL_NAME, null));
+            assertEquals(target.getAbsolutePath(), prefs.getString(KEY_MODEL_PATH, null));
+            assertEquals(target, ModelFileStore.getImportedModelFile(context));
+        } finally {
+            restoreModelPrefs(prefs, previousName, previousPath);
+            assertTrue("empty import source should be removable", source.delete() || !source.exists());
+            assertTrue("temporary target model should be removable", target.delete() || !target.exists());
+        }
+    }
+
+    @Test
+    public void validImportWithSameSanitizedNameReplacesSelectedModelAfterValidation() throws Exception {
+        Context context = InstrumentationRegistry.getInstrumentation().getTargetContext();
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        String previousName = prefs.getString(KEY_MODEL_NAME, null);
+        String previousPath = prefs.getString(KEY_MODEL_PATH, null);
+        String fileName = "atomic-import-replace-" + System.nanoTime() + ".task";
+        File target = writeFile(new File(new File(context.getFilesDir(), "models"), fileName), "old model");
+        File source = writeFile(new File(context.getCacheDir(), fileName), "replacement model");
+
+        prefs.edit()
+            .putString(KEY_MODEL_NAME, target.getName())
+            .putString(KEY_MODEL_PATH, target.getAbsolutePath())
+            .apply();
+
+        try {
+            File imported = ModelFileStore.importModel(context, Uri.fromFile(source));
+
+            assertEquals(target, imported);
+            assertEquals("replacement model", readFile(target));
+            assertEquals(target.getName(), prefs.getString(KEY_MODEL_NAME, null));
+            assertEquals(target.getAbsolutePath(), prefs.getString(KEY_MODEL_PATH, null));
+            assertEquals(target, ModelFileStore.getImportedModelFile(context));
+        } finally {
+            restoreModelPrefs(prefs, previousName, previousPath);
+            assertTrue("valid import source should be removable", source.delete() || !source.exists());
+            assertTrue("temporary target model should be removable", target.delete() || !target.exists());
+        }
+    }
+
     private static File writeFile(File file, String contents) throws IOException {
         File parent = file.getParentFile();
         if (parent != null && !parent.exists()) {
@@ -77,6 +143,25 @@ public final class ModelFileStoreImportedModelTest {
             output.write(contents.getBytes(java.nio.charset.StandardCharsets.UTF_8));
         }
         return file;
+    }
+
+    private static String readFile(File file) throws IOException {
+        return new String(Files.readAllBytes(file.toPath()), java.nio.charset.StandardCharsets.UTF_8);
+    }
+
+    private static void restoreModelPrefs(SharedPreferences prefs, String previousName, String previousPath) {
+        SharedPreferences.Editor editor = prefs.edit();
+        if (previousName == null) {
+            editor.remove(KEY_MODEL_NAME);
+        } else {
+            editor.putString(KEY_MODEL_NAME, previousName);
+        }
+        if (previousPath == null) {
+            editor.remove(KEY_MODEL_PATH);
+        } else {
+            editor.putString(KEY_MODEL_PATH, previousPath);
+        }
+        editor.apply();
     }
 
     private static void captureHarnessArtifacts(Context context) {
