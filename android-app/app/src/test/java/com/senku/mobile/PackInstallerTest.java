@@ -95,50 +95,20 @@ public final class PackInstallerTest {
     public void missingRequiredPackColumnsAcceptsCurrentRuntimeSchemaColumns() {
         assertEquals(
             "",
-            PackInstaller.missingRequiredPackColumnsForTest(Map.of(
-                "guides",
-                Set.of(
-                    "guide_id",
-                    "title",
-                    "category",
-                    "difficulty",
-                    "description",
-                    "body_markdown",
-                    "content_role",
-                    "time_horizon",
-                    "structure_type",
-                    "topic_tags"
-                ),
-                "chunks",
-                Set.of(
-                    "chunk_id",
-                    "vector_row_id",
-                    "guide_title",
-                    "guide_id",
-                    "section_heading",
-                    "category",
-                    "document",
-                    "content_role",
-                    "time_horizon",
-                    "structure_type",
-                    "topic_tags"
-                ),
-                "guide_related",
-                Set.of("guide_id", "related_guide_id"),
-                "lexical_chunks_fts4",
-                Set.of(
-                    "chunk_id",
-                    "search_text",
-                    "guide_title",
-                    "guide_id",
-                    "section_heading",
-                    "category",
-                    "content_role",
-                    "time_horizon",
-                    "structure_type",
-                    "topic_tags"
-                )
-            ))
+            PackInstaller.missingRequiredPackColumnsForTest(currentRuntimeSchemaColumns("lexical_chunks_fts4"))
+        );
+    }
+
+    @Test
+    public void missingRequiredPackColumnsIgnoresOptionalAnswerCardSchemas() {
+        Map<String, Set<String>> columns = new java.util.HashMap<>(currentRuntimeSchemaColumns("lexical_chunks_fts4"));
+        columns.put("answer_cards", Set.of("future_answer_card_column"));
+        columns.put("answer_card_clauses", Set.of("future_clause_column"));
+        columns.put("answer_card_sources", Set.of("future_source_column"));
+
+        assertEquals(
+            "",
+            PackInstaller.missingRequiredPackColumnsForTest(columns)
         );
     }
 
@@ -541,6 +511,53 @@ public final class PackInstallerTest {
         int flags
     ) {
         return new PackInstaller.VectorInfo(magic, version, headerBytes, rowCount, dimension, dtypeCode, flags);
+    }
+
+    private static Map<String, Set<String>> currentRuntimeSchemaColumns(String ftsTable) {
+        return Map.of(
+            "guides",
+            Set.of(
+                "guide_id",
+                "title",
+                "category",
+                "difficulty",
+                "description",
+                "body_markdown",
+                "content_role",
+                "time_horizon",
+                "structure_type",
+                "topic_tags"
+            ),
+            "chunks",
+            Set.of(
+                "chunk_id",
+                "vector_row_id",
+                "guide_title",
+                "guide_id",
+                "section_heading",
+                "category",
+                "document",
+                "content_role",
+                "time_horizon",
+                "structure_type",
+                "topic_tags"
+            ),
+            "guide_related",
+            Set.of("guide_id", "related_guide_id"),
+            ftsTable,
+            Set.of(
+                "chunk_id",
+                "search_text",
+                "guide_title",
+                "guide_id",
+                "section_heading",
+                "category",
+                "content_role",
+                "time_horizon",
+                "structure_type",
+                "topic_tags"
+            )
+        );
     }
 
     private static PackManifest manifestWithVector(String vectorDtype, int dimension) throws Exception {
