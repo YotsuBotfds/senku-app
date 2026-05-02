@@ -161,7 +161,7 @@ public final class HostInferenceConfig {
             }
             String host = safe(uri == null ? null : uri.getHost());
             if (host.isEmpty()) {
-                return baseUrl;
+                return "host runtime";
             }
             int port = uri == null ? -1 : uri.getPort();
             return port > 0 ? host + ":" + port : host;

@@ -197,14 +197,14 @@ public final class HostInferenceConfigTest {
     }
 
     @Test
-    public void serverLabelFallsBackToRawBaseUrlWhenHostIsUnavailable() {
+    public void serverLabelHidesRawBaseUrlWhenHostIsUnavailable() {
         HostInferenceConfig.Settings settings = new HostInferenceConfig.Settings(
             true,
             "not a uri/v1",
             "gemma-4-e2b-it-litert"
         );
 
-        assertEquals("not a uri/v1", settings.serverLabel());
+        assertEquals("host runtime", settings.serverLabel());
     }
 
     @Test
