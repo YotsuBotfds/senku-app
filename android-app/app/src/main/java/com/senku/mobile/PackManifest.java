@@ -4,6 +4,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public final class PackManifest {
+    private static final String SUPPORTED_PACK_FORMAT = "senku-mobile-pack-v2";
+    private static final String SUPPORTED_VECTOR_DTYPE = "float16";
+
     public final String packFormat;
     public final int packVersion;
     public final String generatedAt;
@@ -66,23 +69,61 @@ public final class PackManifest {
         JSONObject sqlite = files.getJSONObject("sqlite");
         JSONObject vectors = files.getJSONObject("vectors");
 
-        return new PackManifest(
-            root.getString("pack_format"),
-            root.getInt("pack_version"),
-            root.getString("generated_at"),
-            counts.getInt("guides"),
-            counts.getInt("chunks"),
-            counts.getInt("deterministic_rules"),
-            counts.getInt("guide_related_links"),
-            counts.optInt("answer_cards", 0),
-            embedding.getString("model_id"),
-            embedding.getInt("dimension"),
-            embedding.getString("vector_dtype"),
-            runtimeDefaults.getInt("mobile_top_k"),
-            sqlite.getLong("bytes"),
-            sqlite.getString("sha256"),
-            vectors.getLong("bytes"),
-            vectors.getString("sha256")
+        PackManifest manifest = new PackManifest(
+            requireSupportedValue("pack_format", root.getString("pack_format"), SUPPORTED_PACK_FORMAT),
+            requirePositiveInt("pack_version", root.getInt("pack_version")),
+            requireNonBlank("generated_at", root.getString("generated_at")),
+            requirePositiveInt("counts.guides", counts.getInt("guides")),
+            requirePositiveInt("counts.chunks", counts.getInt("chunks")),
+            requireNonNegativeInt("counts.deterministic_rules", counts.getInt("deterministic_rules")),
+            requireNonNegativeInt("counts.guide_related_links", counts.getInt("guide_related_links")),
+            requireNonNegativeInt("counts.answer_cards", counts.optInt("answer_cards", 0)),
+            requireNonBlank("embedding.model_id", embedding.getString("model_id")),
+            requirePositiveInt("embedding.dimension", embedding.getInt("dimension")),
+            requireSupportedValue("embedding.vector_dtype", embedding.getString("vector_dtype"), SUPPORTED_VECTOR_DTYPE),
+            requirePositiveInt("runtime_defaults.mobile_top_k", runtimeDefaults.getInt("mobile_top_k")),
+            requirePositiveLong("files.sqlite.bytes", sqlite.getLong("bytes")),
+            requireNonBlank("files.sqlite.sha256", sqlite.getString("sha256")),
+            requirePositiveLong("files.vectors.bytes", vectors.getLong("bytes")),
+            requireNonBlank("files.vectors.sha256", vectors.getString("sha256"))
         );
+        return manifest;
+    }
+
+    private static String requireNonBlank(String fieldName, String value) throws JSONException {
+        if (value == null || value.trim().isEmpty()) {
+            throw new JSONException("Invalid manifest field " + fieldName);
+        }
+        return value;
+    }
+
+    private static String requireSupportedValue(String fieldName, String value, String supportedValue)
+        throws JSONException {
+        String checked = requireNonBlank(fieldName, value);
+        if (!supportedValue.equals(checked)) {
+            throw new JSONException("Unsupported manifest field " + fieldName + ": " + checked);
+        }
+        return checked;
+    }
+
+    private static int requirePositiveInt(String fieldName, int value) throws JSONException {
+        if (value <= 0) {
+            throw new JSONException("Invalid manifest field " + fieldName);
+        }
+        return value;
+    }
+
+    private static int requireNonNegativeInt(String fieldName, int value) throws JSONException {
+        if (value < 0) {
+            throw new JSONException("Invalid manifest field " + fieldName);
+        }
+        return value;
+    }
+
+    private static long requirePositiveLong(String fieldName, long value) throws JSONException {
+        if (value <= 0L) {
+            throw new JSONException("Invalid manifest field " + fieldName);
+        }
+        return value;
     }
 }

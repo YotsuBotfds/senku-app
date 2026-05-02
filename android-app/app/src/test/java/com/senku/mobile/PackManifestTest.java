@@ -255,8 +255,67 @@ public final class PackManifestTest {
         assertMissingNestedFileFieldRejected("vectors", "sha256");
     }
 
+    @Test
+    public void fromJsonRejectsInvalidSemanticBounds() throws Exception {
+        assertInvalidManifestRejected("pack_format", root -> root.put("pack_format", "senku-mobile-pack-v1"));
+        assertInvalidManifestRejected("pack_version", root -> root.put("pack_version", 0));
+        assertInvalidManifestRejected("generated_at", root -> root.put("generated_at", "  "));
+        assertInvalidManifestRejected("counts.guides", root -> root.getJSONObject("counts").put("guides", 0));
+        assertInvalidManifestRejected("counts.chunks", root -> root.getJSONObject("counts").put("chunks", -1));
+        assertInvalidManifestRejected(
+            "counts.deterministic_rules",
+            root -> root.getJSONObject("counts").put("deterministic_rules", -1)
+        );
+        assertInvalidManifestRejected(
+            "counts.guide_related_links",
+            root -> root.getJSONObject("counts").put("guide_related_links", -1)
+        );
+        assertInvalidManifestRejected(
+            "counts.answer_cards",
+            root -> root.getJSONObject("counts").put("answer_cards", -1)
+        );
+        assertInvalidManifestRejected(
+            "embedding.model_id",
+            root -> root.getJSONObject("embedding").put("model_id", "")
+        );
+        assertInvalidManifestRejected(
+            "embedding.dimension",
+            root -> root.getJSONObject("embedding").put("dimension", 0)
+        );
+        assertInvalidManifestRejected(
+            "embedding.vector_dtype",
+            root -> root.getJSONObject("embedding").put("vector_dtype", "float32")
+        );
+        assertInvalidManifestRejected(
+            "runtime_defaults.mobile_top_k",
+            root -> root.getJSONObject("runtime_defaults").put("mobile_top_k", 0)
+        );
+        assertInvalidManifestRejected(
+            "files.sqlite.bytes",
+            root -> root.getJSONObject("files").getJSONObject("sqlite").put("bytes", 0)
+        );
+        assertInvalidManifestRejected(
+            "files.sqlite.sha256",
+            root -> root.getJSONObject("files").getJSONObject("sqlite").put("sha256", "")
+        );
+        assertInvalidManifestRejected(
+            "files.vectors.bytes",
+            root -> root.getJSONObject("files").getJSONObject("vectors").put("bytes", -1)
+        );
+        assertInvalidManifestRejected(
+            "files.vectors.sha256",
+            root -> root.getJSONObject("files").getJSONObject("vectors").put("sha256", "  ")
+        );
+    }
+
     private static String readManifest() throws IOException {
         return new String(Files.readAllBytes(MANIFEST_PATH), StandardCharsets.UTF_8);
+    }
+
+    private static void assertInvalidManifestRejected(String fieldName, ManifestMutation mutation) throws Exception {
+        JSONObject root = new JSONObject(minimalManifestJson());
+        mutation.apply(root);
+        assertManifestRejected(root, fieldName);
     }
 
     private static void assertMissingNestedFieldRejected(String objectName, String fieldName) throws Exception {
@@ -278,6 +337,10 @@ public final class PackManifestTest {
         } catch (JSONException expected) {
             // Expected: missing required manifest fields make the pack unusable.
         }
+    }
+
+    private interface ManifestMutation {
+        void apply(JSONObject root) throws Exception;
     }
 
     private static String minimalManifestJson() {
