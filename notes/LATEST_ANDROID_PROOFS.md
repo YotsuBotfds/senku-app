@@ -1,0 +1,39 @@
+# Latest Android Proofs
+
+Pointer-only rollup for agents. Keep detailed logs in artifacts and test output.
+
+## Current Proofed Head
+
+- Latest full checkpoint proof: `bc4df77a` (`Cover installed pack schema recovery`)
+- Checkpoint time: `2026-05-02T03:07:56-05:00`
+- Gates:
+  - `:app:testDebugUnitTest` passed
+  - `:app:assembleDebug :app:assembleDebugAndroidTest` passed
+  - `git diff --check` passed
+  - working tree clean
+
+## Recent Live Android Proofs
+
+- `PackMigrationInstallTest` on `emulator-5554`: `OK (2 tests)`, 29.169 s
+  - Purpose: clean install plus hash-valid/wrong-schema installed pack recovery
+- Live-safe route smoke:
+  - Artifact: `artifacts/bench/android_route_smoke/route_smoke_20260501_bounded_runner/summary.md`
+  - Class: `com.senku.mobile.PackRepositoryCurrentHeadRouteSmokeAndroidTest`
+  - Device: `emulator-5554`
+  - Result: `passed_count=1`, `failed_count=0`, `timed_out_devices=none`
+- Physical phone smoke:
+  - Latest nearby artifact family: `artifacts/bench/android_physical_phone_smoke/`
+  - Treat individual summaries as smoke evidence, not broad route parity.
+
+## Route Timing Evidence
+
+- Broad route parity timing artifact:
+  - `artifacts/bench/route_parity_timing/20260501_233211/route_parity_timing_summary.md`
+- Broad route parity is manual/heavy. Do not use it as a quick proof.
+- Use `scripts/run_android_route_smoke.ps1` for live route canaries.
+
+## Validation Ladder
+
+- Use `notes/ANDROID_VALIDATION_LADDER.md`.
+- Do not run focused Gradle and full Gradle gates concurrently.
+- Full functional matrix and broad route parity require explicit intent.
