@@ -1434,35 +1434,49 @@ public final class DetailActivity extends AppCompatActivity {
         int requestToken = ++relatedGuideLoadToken;
         int harnessToken = beginHarnessTask("detail.relatedGuides");
         boolean answerModeRelatedGuides = answerMode;
-        executor.execute(() -> {
-            ArrayList<SearchResult> relatedGuides = new ArrayList<>();
-            Set<String> reciprocalLinks = Collections.emptySet();
-            try {
-                PackRepository repo = ensureRepository();
-                relatedGuides.addAll(repo.loadRelatedGuides(guideId, answerModeRelatedGuides ? 12 : 6));
-                reciprocalLinks = repo.getReciprocalLinks(guideId);
-            } catch (Exception exc) {
-                Log.w(TAG, "detail.relatedGuides.loadFailed guideId=" + guideId, exc);
-            }
-            ArrayList<SearchResult> shapedRelatedGuides = answerModeRelatedGuides
-                ? ReviewDemoPolicy.shapeAnswerModeRelatedGuides(productReviewMode, guideId, relatedGuides)
-                : new ArrayList<>(relatedGuides);
-            List<SuggestChipModel> followUpSuggestions =
-                buildContextualFollowupCandidates(guideId, reciprocalLinks, shapedRelatedGuides);
+        try {
+            executor.execute(() -> {
+                ArrayList<SearchResult> relatedGuides = new ArrayList<>();
+                Set<String> reciprocalLinks = Collections.emptySet();
+                try {
+                    PackRepository repo = ensureRepository();
+                    relatedGuides.addAll(repo.loadRelatedGuides(guideId, answerModeRelatedGuides ? 12 : 6));
+                    reciprocalLinks = repo.getReciprocalLinks(guideId);
+                } catch (Exception exc) {
+                    Log.w(TAG, "detail.relatedGuides.loadFailed guideId=" + guideId, exc);
+                }
+                ArrayList<SearchResult> shapedRelatedGuides = answerModeRelatedGuides
+                    ? ReviewDemoPolicy.shapeAnswerModeRelatedGuides(productReviewMode, guideId, relatedGuides)
+                    : new ArrayList<>(relatedGuides);
+                List<SuggestChipModel> followUpSuggestions =
+                    buildContextualFollowupCandidates(guideId, reciprocalLinks, shapedRelatedGuides);
+                runTrackedOnUiThread(harnessToken, () -> {
+                    if (isFinishing() || isDestroyed() || requestToken != relatedGuideLoadToken) {
+                        return;
+                    }
+                    Log.d(TAG, "detail.relatedGuides guideId=" + guideId + " count=" + shapedRelatedGuides.size());
+                    currentRelatedGuides.clear();
+                    currentRelatedGuides.addAll(shapedRelatedGuides);
+                    currentFollowUpSuggestions.clear();
+                    currentFollowUpSuggestions.addAll(followUpSuggestions);
+                    renderNextSteps();
+                    renderInlineNextSteps();
+                    renderFollowUpSuggestions();
+                });
+            });
+        } catch (RuntimeException exc) {
+            Log.w(TAG, "detail.relatedGuides.enqueueFailed guideId=" + guideId, exc);
             runTrackedOnUiThread(harnessToken, () -> {
                 if (isFinishing() || isDestroyed() || requestToken != relatedGuideLoadToken) {
                     return;
                 }
-                Log.d(TAG, "detail.relatedGuides guideId=" + guideId + " count=" + shapedRelatedGuides.size());
                 currentRelatedGuides.clear();
-                currentRelatedGuides.addAll(shapedRelatedGuides);
                 currentFollowUpSuggestions.clear();
-                currentFollowUpSuggestions.addAll(followUpSuggestions);
                 renderNextSteps();
                 renderInlineNextSteps();
                 renderFollowUpSuggestions();
             });
-        });
+        }
     }
 
     private void configureFollowUpInput() {
@@ -9619,18 +9633,45 @@ public final class DetailActivity extends AppCompatActivity {
             return;
         }
         int harnessToken = beginHarnessTask("detail.relatedGuidePreview");
-        executor.execute(() -> {
-            SearchResult previewGuide = relatedGuide;
-            try {
-                PackRepository repo = ensureRepository();
-                SearchResult loadedGuide = repo.loadGuideById(guideId);
-                if (loadedGuide != null) {
-                    previewGuide = detailRelatedGuidePresentationFormatter().mergeRelatedGuideForPreview(relatedGuide, loadedGuide);
+        try {
+            executor.execute(() -> {
+                SearchResult previewGuide = relatedGuide;
+                try {
+                    PackRepository repo = ensureRepository();
+                    SearchResult loadedGuide = repo.loadGuideById(guideId);
+                    if (loadedGuide != null) {
+                        previewGuide = detailRelatedGuidePresentationFormatter().mergeRelatedGuideForPreview(relatedGuide, loadedGuide);
+                    }
+                } catch (Exception exc) {
+                    Log.w(TAG, "detail.relatedGuidePreview.loadFailed guideId=" + guideId, exc);
                 }
-            } catch (Exception exc) {
-                Log.w(TAG, "detail.relatedGuidePreview.loadFailed guideId=" + guideId, exc);
-            }
-            SearchResult resolvedPreviewGuide = previewGuide;
+                SearchResult resolvedPreviewGuide = previewGuide;
+                runTrackedOnUiThread(harnessToken, () -> {
+                    if (!DetailRelatedGuidePreviewPolicy.shouldApplyLoadedPreview(
+                        isFinishing(),
+                        isDestroyed(),
+                        requestToken,
+                        relatedGuidePreviewToken,
+                        buildRelatedGuideSelectionKey(relatedGuide),
+                        selectedRelatedGuideKey
+                    )) {
+                        return;
+                    }
+                    if (relatedGuidePreviewMeta != null) {
+                        relatedGuidePreviewMeta.setText(
+                            detailRelatedGuidePresentationFormatter().buildRelatedGuidePrimaryLabel(resolvedPreviewGuide)
+                        );
+                    }
+                    if (relatedGuidePreviewBody != null) {
+                        relatedGuidePreviewBody.setText(buildRelatedGuidePreviewBody(resolvedPreviewGuide, false));
+                        applyRelatedGuidePreviewExpansionState();
+                        refreshRelatedGuidePreviewToggleVisibility();
+                        revealRelatedGuidePreviewCtaAboveComposer();
+                    }
+                });
+            });
+        } catch (RuntimeException exc) {
+            Log.w(TAG, "detail.relatedGuidePreview.enqueueFailed guideId=" + guideId, exc);
             runTrackedOnUiThread(harnessToken, () -> {
                 if (!DetailRelatedGuidePreviewPolicy.shouldApplyLoadedPreview(
                     isFinishing(),
@@ -9642,19 +9683,9 @@ public final class DetailActivity extends AppCompatActivity {
                 )) {
                     return;
                 }
-                if (relatedGuidePreviewMeta != null) {
-                    relatedGuidePreviewMeta.setText(
-                        detailRelatedGuidePresentationFormatter().buildRelatedGuidePrimaryLabel(resolvedPreviewGuide)
-                    );
-                }
-                if (relatedGuidePreviewBody != null) {
-                    relatedGuidePreviewBody.setText(buildRelatedGuidePreviewBody(resolvedPreviewGuide, false));
-                    applyRelatedGuidePreviewExpansionState();
-                    refreshRelatedGuidePreviewToggleVisibility();
-                    revealRelatedGuidePreviewCtaAboveComposer();
-                }
+                refreshRelatedGuidePreviewToggleVisibility();
             });
-        });
+        }
     }
 
     private void revealRelatedGuidePreviewCtaAboveComposer() {
@@ -11298,29 +11329,39 @@ public final class DetailActivity extends AppCompatActivity {
             return;
         }
 
-        executor.execute(() -> {
-            SearchResult target = navigation.source;
-            int harnessToken = beginHarnessTask(navigation.harnessTaskLabel);
-            try {
-                PackRepository repo = ensureRepository();
-                SearchResult loadedGuide = repo.loadGuideById(navigation.guideId);
-                if (loadedGuide != null) {
-                    target = detailSourcePresentationFormatter().mergeGuideForSourceNavigation(
-                        navigation.source,
-                        loadedGuide
-                    );
+        try {
+            executor.execute(() -> {
+                SearchResult target = navigation.source;
+                int harnessToken = beginHarnessTask(navigation.harnessTaskLabel);
+                try {
+                    PackRepository repo = ensureRepository();
+                    SearchResult loadedGuide = repo.loadGuideById(navigation.guideId);
+                    if (loadedGuide != null) {
+                        target = detailSourcePresentationFormatter().mergeGuideForSourceNavigation(
+                            navigation.source,
+                            loadedGuide
+                        );
+                    }
+                } catch (Exception exc) {
+                    Log.w(TAG, navigation.loadFailureLogLabel + " guideId=" + navigation.guideId, exc);
                 }
-            } catch (Exception exc) {
-                Log.w(TAG, navigation.loadFailureLogLabel + " guideId=" + navigation.guideId, exc);
-            }
-            SearchResult finalTarget = target;
-            runTrackedOnUiThread(harnessToken, () -> {
+                SearchResult finalTarget = target;
+                runTrackedOnUiThread(harnessToken, () -> {
+                    if (isFinishing() || isDestroyed()) {
+                        return;
+                    }
+                    openAction.open(finalTarget);
+                });
+            });
+        } catch (RuntimeException exc) {
+            Log.w(TAG, navigation.loadFailureLogLabel + ".enqueueFailed guideId=" + navigation.guideId, exc);
+            runOnUiThread(() -> {
                 if (isFinishing() || isDestroyed()) {
                     return;
                 }
-                openAction.open(finalTarget);
+                openAction.open(navigation.source);
             });
-        });
+        }
     }
 
     private interface ResolvedGuideOpenAction {
