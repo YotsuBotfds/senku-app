@@ -298,6 +298,27 @@ public final class DetailFollowUpActionControllerTest {
     }
 
     @Test
+    public void busyTabletRetryFallbackStillBlocksDuplicateGeneration() {
+        FollowUpComposerState busyTabletState = FollowUpComposerState.idle(
+            "",
+            FollowUpComposerState.Surface.TABLET
+        ).withBusy(true);
+
+        DetailFollowUpActionController.Decision decision =
+            DetailFollowUpActionController.resolveRetry(
+                true,
+                null,
+                null,
+                busyTabletState,
+                "  visible tablet fallback  "
+            );
+
+        assertEquals(DetailFollowUpActionController.Action.BLOCKED, decision.action);
+        assertEquals(DetailFollowUpActionController.Target.TABLET_FOLLOWUP, decision.target);
+        assertEquals("visible tablet fallback", decision.query);
+    }
+
+    @Test
     public void retryAfterStallStartsGenerationOnceComposerIsIdle() {
         FollowUpComposerState stalledThenIdlePhoneState = new FollowUpComposerState(
             "",

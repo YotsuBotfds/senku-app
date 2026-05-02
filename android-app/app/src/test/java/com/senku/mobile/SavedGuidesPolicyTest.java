@@ -343,7 +343,7 @@ public final class SavedGuidesPolicyTest {
     }
 
     @Test
-    public void controllerRenderPlanDropsMissingGuidesAndPreservesLoadedOrder() {
+    public void controllerRenderPlanDropsMissingGuidesAndPreservesSavedOrder() {
         MainSavedGuidesController controller = new MainSavedGuidesController();
 
         MainSavedGuidesController.RefreshPlan refreshPlan =
@@ -351,11 +351,27 @@ public final class SavedGuidesPolicyTest {
         MainSavedGuidesController.RenderPlan renderPlan = controller.planRender(
             refreshPlan,
             true,
-            Arrays.asList(guide("GD-001"), null, guide("GD-003"))
+            Arrays.asList(guide("GD-003"), null, guide("GD-001"))
         );
 
         assertTrue(renderPlan.shouldRender);
         assertEquals(List.of(guide("GD-001"), guide("GD-003")), renderPlan.guides);
+    }
+
+    @Test
+    public void controllerRenderPlanDropsLoadedGuidesOutsideSavedRefreshPlan() {
+        MainSavedGuidesController controller = new MainSavedGuidesController();
+
+        MainSavedGuidesController.RefreshPlan refreshPlan =
+            controller.beginRefresh(true, List.of("GD-001", "GD-002"));
+        MainSavedGuidesController.RenderPlan renderPlan = controller.planRender(
+            refreshPlan,
+            true,
+            Arrays.asList(guide("GD-003"), guide("GD-002"), guide("GD-001"))
+        );
+
+        assertTrue(renderPlan.shouldRender);
+        assertEquals(List.of(guide("GD-001"), guide("GD-002")), renderPlan.guides);
     }
 
     @Test

@@ -4,9 +4,11 @@ import com.senku.ui.primitives.BottomTabDestination;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 final class MainSavedGuidesController {
     private static final int MAX_SAVED_GUIDES = 12;
@@ -31,12 +33,22 @@ final class MainSavedGuidesController {
         if (refreshPlan.renderEmpty) {
             return RenderPlan.render(Collections.emptyList());
         }
-        ArrayList<SearchResult> renderGuides = new ArrayList<>();
+        Map<String, SearchResult> guidesById = new LinkedHashMap<>();
         if (loadedGuides != null) {
             for (SearchResult guide : loadedGuides) {
                 if (guide != null) {
-                    renderGuides.add(guide);
+                    String normalizedGuideId = normalizeGuideId(guide.guideId);
+                    if (!normalizedGuideId.isEmpty() && !guidesById.containsKey(normalizedGuideId)) {
+                        guidesById.put(normalizedGuideId, guide);
+                    }
                 }
+            }
+        }
+        ArrayList<SearchResult> renderGuides = new ArrayList<>();
+        for (String guideId : refreshPlan.guideIdsToLoad) {
+            SearchResult guide = guidesById.get(normalizeGuideId(guideId));
+            if (guide != null) {
+                renderGuides.add(guide);
             }
         }
         return RenderPlan.render(renderGuides);
