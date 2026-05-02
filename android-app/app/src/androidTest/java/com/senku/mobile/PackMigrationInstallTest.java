@@ -18,7 +18,10 @@ import org.junit.runner.RunWith;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 
 @RunWith(AndroidJUnit4.class)
 public final class PackMigrationInstallTest {
@@ -64,6 +67,37 @@ public final class PackMigrationInstallTest {
         }
     }
 
+    @Test
+    public void installedPackWithHashValidStaleVectorHeaderIsRehydratedFromBundledAssets() throws Exception {
+        Context context = ApplicationProvider.getApplicationContext();
+        File packRoot = new File(context.getFilesDir(), PACK_DIR);
+        deleteRecursively(packRoot);
+        PackInstaller.InstalledPack seededPack =
+            installBundledCurrentHeadPack(context, "invalid installed vector seed");
+        String badVectorSha;
+        try (FileOutputStream output = new FileOutputStream(seededPack.vectorFile, false)) {
+            output.write(vectorHeader(1, seededPack.manifest.embeddingDimension, 1));
+        }
+        badVectorSha = PackInstaller.sha256HexForTest(seededPack.vectorFile);
+        writeManifestWithCurrentVectorHash(seededPack.manifestFile, seededPack.vectorFile);
+
+        PackInstaller.InstalledPack rehydratedPack = PackInstaller.ensureInstalled(context, false);
+
+        assertEquals(CURRENT_HEAD_ANSWER_CARD_COUNT, rehydratedPack.manifest.answerCardCount);
+        assertEquals(rehydratedPack.manifest.vectorBytes, rehydratedPack.vectorFile.length());
+        assertEquals(rehydratedPack.manifest.chunkCount, rehydratedPack.vectorInfo.rowCount);
+        assertEquals(rehydratedPack.manifest.embeddingDimension, rehydratedPack.vectorInfo.dimension);
+        assertTrue(
+            "rehydrated vector should not retain the hash-valid stale header fixture",
+            !badVectorSha.equals(PackInstaller.sha256HexForTest(rehydratedPack.vectorFile))
+        );
+        try (PackRepository repository = new PackRepository(rehydratedPack.databaseFile, rehydratedPack.vectorFile)) {
+            assertTrue("rehydrated vector should be visible to repository", repository.hasVectorStore());
+            List<SearchResult> results = repository.search("rain shelter", 5);
+            assertTrue("rehydrated pack should remain searchable", !results.isEmpty());
+        }
+    }
+
     private static void writeManifestWithCurrentSqliteHash(File manifestFile, File sqliteFile) throws Exception {
         JSONObject root = new JSONObject(CurrentHeadAnswerCardPackTestSupport.readFileText(manifestFile));
         JSONObject sqlite = root.getJSONObject("files").getJSONObject("sqlite");
@@ -72,6 +106,28 @@ public final class PackMigrationInstallTest {
         try (FileOutputStream output = new FileOutputStream(manifestFile, false)) {
             output.write(root.toString(2).getBytes(StandardCharsets.UTF_8));
         }
+    }
+
+    private static void writeManifestWithCurrentVectorHash(File manifestFile, File vectorFile) throws Exception {
+        JSONObject root = new JSONObject(CurrentHeadAnswerCardPackTestSupport.readFileText(manifestFile));
+        JSONObject vectors = root.getJSONObject("files").getJSONObject("vectors");
+        vectors.put("bytes", vectorFile.length());
+        vectors.put("sha256", PackInstaller.sha256HexForTest(vectorFile));
+        try (FileOutputStream output = new FileOutputStream(manifestFile, false)) {
+            output.write(root.toString(2).getBytes(StandardCharsets.UTF_8));
+        }
+    }
+
+    private static byte[] vectorHeader(int rowCount, int dimension, int dtypeCode) {
+        ByteBuffer header = ByteBuffer.allocate(32).order(ByteOrder.LITTLE_ENDIAN);
+        header.put("SNKUVEC1".getBytes(StandardCharsets.US_ASCII));
+        header.putInt(1);
+        header.putInt(32);
+        header.putInt(rowCount);
+        header.putInt(dimension);
+        header.putInt(dtypeCode);
+        header.putInt(0);
+        return header.array();
     }
 
     private static void deleteRecursively(File file) {
