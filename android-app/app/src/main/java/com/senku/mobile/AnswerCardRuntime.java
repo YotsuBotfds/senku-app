@@ -1,6 +1,7 @@
 package com.senku.mobile;
 
 import android.content.Context;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -10,6 +11,7 @@ import java.util.Locale;
 import java.util.Set;
 
 final class AnswerCardRuntime {
+    private static final String TAG = "AnswerCardRuntime";
     private static final Locale QUERY_LOCALE = Locale.US;
     private static final String STRUCTURE_TYPE_SAFETY_POISONING = "safety_poisoning";
     private static final String STRUCTURE_TYPE_SAFETY_NEWBORN_DANGER = "safety_newborn_danger";
@@ -113,7 +115,8 @@ final class AnswerCardRuntime {
                 return planAnswerCardFromCards(query, cards, spec);
             }
             return null;
-        } catch (RuntimeException ignored) {
+        } catch (RuntimeException e) {
+            logRuntimeWarning("AnswerCardRuntime.tryPlan failed; reviewed-card runtime will fall back", e);
             return null;
         }
     }
@@ -358,6 +361,13 @@ final class AnswerCardRuntime {
 
     private static String safe(String text) {
         return text == null ? "" : text;
+    }
+
+    private static void logRuntimeWarning(String message, RuntimeException exc) {
+        try {
+            Log.w(TAG, message, exc);
+        } catch (RuntimeException ignored) {
+        }
     }
 
     private interface QueryPredicate {
