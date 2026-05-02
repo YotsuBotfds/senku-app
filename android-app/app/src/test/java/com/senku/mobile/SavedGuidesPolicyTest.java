@@ -375,6 +375,25 @@ public final class SavedGuidesPolicyTest {
     }
 
     @Test
+    public void controllerRenderPlanKeepsFirstLoadedGuideForNormalizedDuplicateIds() {
+        MainSavedGuidesController controller = new MainSavedGuidesController();
+        SearchResult firstLoaded = guide(" gd-001 ", "First loaded");
+        SearchResult duplicateLoaded = guide("GD-001", "Duplicate loaded");
+
+        MainSavedGuidesController.RefreshPlan refreshPlan =
+            controller.beginRefresh(true, List.of("GD-001"));
+        MainSavedGuidesController.RenderPlan renderPlan = controller.planRender(
+            refreshPlan,
+            true,
+            Arrays.asList(firstLoaded, duplicateLoaded)
+        );
+
+        assertTrue(renderPlan.shouldRender);
+        assertEquals(1, renderPlan.guides.size());
+        assertEquals("First loaded", renderPlan.guides.get(0).title);
+    }
+
+    @Test
     public void controllerRenderPlanShowsRecoverableEmptyStateWhenAllSavedGuidesAreMissing() {
         MainSavedGuidesController controller = new MainSavedGuidesController();
 
@@ -492,5 +511,9 @@ public final class SavedGuidesPolicyTest {
 
     private static SearchResult guide(String guideId) {
         return new SearchResult("Guide " + guideId, "", "", "", guideId, "", "", "");
+    }
+
+    private static SearchResult guide(String guideId, String title) {
+        return new SearchResult(title, "", "", "", guideId, "", "", "");
     }
 }

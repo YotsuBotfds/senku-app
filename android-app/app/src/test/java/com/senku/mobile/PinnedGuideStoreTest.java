@@ -121,6 +121,20 @@ public final class PinnedGuideStoreTest {
     }
 
     @Test
+    public void invalidPublicOperationsDoNotMutateStoredPins() {
+        TestContext context = new TestContext();
+        assertTrue(PinnedGuideStore.add(context, "gd-220"));
+        assertTrue(PinnedGuideStore.add(context, "gd-132"));
+
+        assertFalse(PinnedGuideStore.add(context, " "));
+        assertFalse(PinnedGuideStore.add(context, null));
+        assertFalse(PinnedGuideStore.remove(context, " "));
+        assertFalse(PinnedGuideStore.remove(context, null));
+
+        assertEquals(List.of("GD-132", "GD-220"), PinnedGuideStore.listGuideIds(context));
+    }
+
+    @Test
     public void clearPreferencesForTestRemovesStoredGuideIds() {
         InMemorySharedPreferences preferences = new InMemorySharedPreferences();
         preferences.edit().putString(

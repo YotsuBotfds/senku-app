@@ -88,6 +88,22 @@ public final class RecentThreadDisplayPolicyTest {
     }
 
     @Test
+    public void nullLivePreviewListUsesSameProductAndReviewPlaceholderRulesAsEmptyList() {
+        assertEquals(
+            0,
+            RecentThreadDisplayPolicy.buildDisplayList(null, false, true, MAX_COUNT).size()
+        );
+
+        List<ChatSessionStore.ConversationPreview> reviewPreviews =
+            RecentThreadDisplayPolicy.buildDisplayList(null, true, true, MAX_COUNT);
+
+        assertEquals(MAX_COUNT, reviewPreviews.size());
+        assertPlaceholder(reviewPreviews.get(0), 0);
+        assertPlaceholder(reviewPreviews.get(1), 1);
+        assertPlaceholder(reviewPreviews.get(2), 2);
+    }
+
+    @Test
     public void clipsLivePreviewsToMaxCountBeforePadding() {
         ChatSessionStore.ConversationPreview first = livePreview("conversation-1", "one", NOW);
         ChatSessionStore.ConversationPreview second = livePreview("conversation-2", "two", NOW - 1_000L);
