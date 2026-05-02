@@ -5,6 +5,8 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
+import com.senku.ui.tablet.AnchorState;
+
 import java.util.List;
 
 import org.junit.Test;
@@ -166,6 +168,68 @@ public final class DetailTabletEvidencePolicyTest {
             false,
             false
         ));
+    }
+
+    @Test
+    public void lateLoadedPreviewForPreviousSelectionCannotOverwriteCurrentEvidence() {
+        SearchResult first = source("GD-220", "Abrasives Manufacturing", "Materials");
+        SearchResult second = source("GD-345", "Rain Shelter", "Rigging");
+
+        DetailTabletEvidencePolicy.SelectionDecision firstSelection =
+            DetailTabletEvidencePolicy.decideSelection(first, "", 10);
+        DetailTabletEvidencePolicy.LoadedPreview firstPreview =
+            DetailTabletEvidencePolicy.buildLoadedPreview(
+                firstSelection,
+                "Pitch ridgeline along prevailing wind.",
+                null,
+                List.of(source("GD-132", "Foundry", "Safety"))
+            );
+        DetailTabletEvidencePolicy.SelectionDecision secondSelection =
+            DetailTabletEvidencePolicy.decideSelection(
+                second,
+                firstSelection.selectionKey,
+                firstSelection.requestToken
+            );
+        DetailTabletEvidencePolicy.LoadedPreview secondPreview =
+            DetailTabletEvidencePolicy.buildLoadedPreview(
+                secondSelection,
+                "Drape the tarp evenly.",
+                null,
+                List.of(source("GD-294", "Cold Shelter", "Related"))
+            );
+
+        assertFalse(DetailTabletEvidencePolicy.shouldApplyLoadedPreview(
+            firstSelection.requestToken,
+            secondSelection.requestToken,
+            secondSelection.selectionKey,
+            firstPreview,
+            false,
+            false
+        ));
+        assertTrue(DetailTabletEvidencePolicy.shouldApplyLoadedPreview(
+            secondSelection.requestToken,
+            secondSelection.requestToken,
+            secondSelection.selectionKey,
+            secondPreview,
+            false,
+            false
+        ));
+
+        AnchorState anchor = DetailTabletStateBuilder.buildAnchorState(
+            true,
+            "",
+            second,
+            secondPreview.selectionKey,
+            secondPreview.guideId,
+            secondPreview.title,
+            secondPreview.section,
+            secondPreview.snippet
+        );
+
+        assertEquals("gd-345|rigging|rain shelter", anchor.getKey());
+        assertEquals("GD-345", anchor.getId());
+        assertEquals("Rain Shelter", anchor.getTitle());
+        assertEquals("Drape the tarp evenly.", anchor.getSnippet());
     }
 
     @Test

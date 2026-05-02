@@ -122,6 +122,32 @@ public final class DetailRelatedGuidePreviewPolicyTest {
     }
 
     @Test
+    public void sourceGraphFallbackSkipsNullAndPlaceholderSources() {
+        SearchResult placeholder = result("", "Placeholder");
+        SearchResult noteOnly = new SearchResult(
+            "Inline note",
+            "",
+            "No guide identity yet.",
+            "",
+            "",
+            "",
+            "",
+            ""
+        );
+        SearchResult firstRealSource = result("GD-214", "Water Storage");
+
+        assertEquals(
+            firstRealSource,
+            DetailRelatedGuidePreviewPolicy.selectedSourceForRelatedGuideGraph(
+                true,
+                false,
+                "",
+                Arrays.asList(null, placeholder, noteOnly, firstRealSource)
+            )
+        );
+    }
+
+    @Test
     public void previewStateDecisionsPreserveCurrentVisibilityRules() {
         assertTrue(DetailRelatedGuidePreviewPolicy.shouldUsePreviewPanel(true, true, true, true));
         assertFalse(DetailRelatedGuidePreviewPolicy.shouldUsePreviewPanel(true, true, false, true));

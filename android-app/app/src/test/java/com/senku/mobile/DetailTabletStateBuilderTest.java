@@ -293,6 +293,30 @@ public final class DetailTabletStateBuilderTest {
     }
 
     @Test
+    public void staleSourceSelectionRefreshMarksFallbackSourceOnly() {
+        SearchResult blank = new SearchResult(" ", "", "", "", "", " ", "", "");
+        SearchResult firstReal = source("GD-345", "Rain Shelter", "Rigging");
+        SearchResult secondReal = source("GD-220", "Abrasives Manufacturing", "Materials");
+
+        DetailTabletStateBuilder.ActiveSourceSelection selection =
+            DetailTabletStateBuilder.resolveActiveSource(
+                Arrays.asList(blank, firstReal, secondReal),
+                "gd-999|stale|source"
+            );
+        List<SourceState> states = DetailTabletStateBuilder.buildSourceStates(
+            Arrays.asList(blank, firstReal, secondReal),
+            null,
+            selection.source
+        );
+
+        assertSame(firstReal, selection.source);
+        assertEquals("gd-345|rigging|rain shelter", selection.selectedSourceKey);
+        assertFalse(states.get(0).isSelected());
+        assertTrue(states.get(1).isSelected());
+        assertFalse(states.get(2).isSelected());
+    }
+
+    @Test
     public void sourceRailStatesUseVisualOwnerAsAnchorAndSelection() {
         SearchResult abrasives = source("GD-220", "Abrasives Manufacturing", "Materials");
         SearchResult shelter = source("GD-345", "Rain Shelter", "Rigging");
