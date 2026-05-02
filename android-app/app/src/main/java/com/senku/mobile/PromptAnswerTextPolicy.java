@@ -112,7 +112,10 @@ final class PromptAnswerTextPolicy {
             && !looksLikeCommonTerseAnswer(cleaned)) {
             return true;
         }
-        if (cleaned.length() <= 8 && !cleaned.contains(" ") && !cleaned.contains("[")) {
+        if (cleaned.length() <= 8
+            && !cleaned.contains(" ")
+            && !cleaned.contains("[")
+            && !looksLikeCommonTerseAnswer(cleaned)) {
             return true;
         }
         if (isLikelyNonLatinNoise(cleaned)) {

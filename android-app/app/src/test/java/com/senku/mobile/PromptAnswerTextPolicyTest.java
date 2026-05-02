@@ -70,12 +70,40 @@ public final class PromptAnswerTextPolicyTest {
     }
 
     @Test
+    public void sanitizeAnswerTextRejectsTokenAndScriptNoise() {
+        assertEquals("", PromptAnswerTextPolicy.sanitizeAnswerText("<pad><eos>"));
+        assertEquals("", PromptAnswerTextPolicy.sanitizeAnswerText("<unk>"));
+        assertEquals("", PromptAnswerTextPolicy.sanitizeAnswerText("qzxv"));
+        assertEquals("", PromptAnswerTextPolicy.sanitizeAnswerText("\u6E2C\u8A66"));
+        assertEquals("No.", PromptAnswerTextPolicy.sanitizeAnswerText("No."));
+    }
+
+    @Test
     public void cleanAnswerRemovesMarkdownAndLatexLikeNoise() {
         String cleaned = PromptAnswerTextPolicy.cleanAnswer(
             "Answer: **Use dry tinder**. \\\\text{Keep airflow open}. ```"
         );
 
         assertEquals("Use dry tinder. Keep airflow open.", cleaned);
+    }
+
+    @Test
+    public void cleanAnswerRendersSectionsFromCodeBlockOutput() {
+        String cleaned = PromptAnswerTextPolicy.cleanAnswer(
+            "Answer: ```Short answer: Keep tinder dry before lighting. " +
+                "Steps: 1. Cover the tinder. 2. Cover the tinder. 3. Lift it off wet ground. " +
+                "Limits or safety: Do not light under low brush.```"
+        );
+
+        assertEquals(
+            "Short answer: Keep tinder dry before lighting.\n\n" +
+                "Steps:\n" +
+                "1. Cover the tinder.\n" +
+                "2. Lift it off wet ground.\n\n" +
+                "Limits or safety:\n" +
+                "Do not light under low brush.",
+            cleaned
+        );
     }
 
     @Test
