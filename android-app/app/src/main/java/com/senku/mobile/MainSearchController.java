@@ -106,6 +106,11 @@ final class MainSearchController {
         try {
             host.executor().execute(() -> {
                 try {
+                    if (!latestJobGate.isCurrentJob(jobToken)) {
+                        host.runTrackedOnUiThread(harnessToken, () -> {
+                        });
+                        return;
+                    }
                     List<SearchResult> results = engine.search(
                         repo,
                         retrievalPlan.searchQuery,

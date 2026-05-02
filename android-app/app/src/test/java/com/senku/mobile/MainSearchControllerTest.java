@@ -361,6 +361,32 @@ public final class MainSearchControllerTest {
     }
 
     @Test
+    public void staleQueuedSearchSkipsEngineWorkAfterNewerAskNoModelExit() {
+        LatestJobGate sharedGate = new LatestJobGate();
+        FakeHost searchHost = readyHost();
+        searchHost.executor = searchHost::queueExecutorAction;
+        FakeEngine searchEngine = new FakeEngine();
+        searchEngine.resultsByQuery.put("old search", List.of(sampleResult("Old Search", "GD-001")));
+        MainSearchController searchController =
+            new MainSearchController(searchHost, searchEngine, query -> null, sharedGate);
+        FakeAskHost askHost = readyAskHost();
+        askHost.modelFile = null;
+        askHost.hostInferenceSettings = settings(false);
+        AskQueryController askController =
+            new AskQueryController(askHost, new FakeAskEngine(), query -> null, sharedGate);
+
+        searchController.runSearch("old search");
+        askController.runAsk("new ask");
+        searchHost.runQueuedExecutorAction(0);
+
+        assertEquals(0, searchEngine.searchCalls);
+        assertEquals(List.of("started:old search:old search:false"), searchHost.events);
+        assertEquals(List.of("model-unavailable:false"), askHost.events);
+        assertEquals(List.of(1), searchHost.uiHarnessTokens);
+        assertNull(searchHost.lastResults);
+    }
+
+    @Test
     public void staleSearchSuccessIsSuppressedAfterNewerBlankAskExit() {
         LatestJobGate sharedGate = new LatestJobGate();
         FakeHost searchHost = readyHost();
@@ -554,6 +580,7 @@ public final class MainSearchControllerTest {
         final ArrayList<String> begunHarnessTags = new ArrayList<>();
         final ArrayList<Integer> uiHarnessTokens = new ArrayList<>();
         final ArrayList<Runnable> queuedUiActions = new ArrayList<>();
+        final ArrayList<Runnable> queuedExecutorActions = new ArrayList<>();
         final Map<String, SearchResult> guideLookup = new HashMap<>();
         final SessionMemory sessionMemory = new SessionMemory();
         Executor executor = Runnable::run;
@@ -631,6 +658,17 @@ public final class MainSearchControllerTest {
 
         void runQueuedUiAction(int index) {
             Runnable action = queuedUiActions.get(index);
+            if (action != null) {
+                action.run();
+            }
+        }
+
+        void queueExecutorAction(Runnable action) {
+            queuedExecutorActions.add(action);
+        }
+
+        void runQueuedExecutorAction(int index) {
+            Runnable action = queuedExecutorActions.get(index);
             if (action != null) {
                 action.run();
             }
