@@ -4,8 +4,8 @@ Pointer-only rollup for agents. Keep detailed logs in artifacts and test output.
 
 ## Current Proofed Head
 
-- Latest full checkpoint proof: `fcd58b24` (`Suppress shared submits during pack install`)
-- Checkpoint time: `2026-05-02T05:26:16-05:00`
+- Latest full checkpoint proof: `f340d2ae` (`Require auth for empty auto ask intents`)
+- Checkpoint time: `2026-05-02T05:37:02-05:00`
 - Gates:
   - `:app:testDebugUnitTest` passed
   - `:app:assembleDebug :app:assembleDebugAndroidTest` passed
