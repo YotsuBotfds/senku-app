@@ -297,6 +297,20 @@ public final class EmergencySurfacePolicyTest {
             )
         );
         assertEquals(
+            DetailBackPolicy.SourceRoute.HOME_GUIDE,
+            DetailActivity.detailBackPolicySourceRouteForSurface(
+                DetailBackPolicy.SourceRoute.HOME_GUIDE,
+                true
+            )
+        );
+        assertEquals(
+            DetailBackPolicy.SourceRoute.CROSS_REFERENCE_GUIDE,
+            DetailActivity.detailBackPolicySourceRouteForSurface(
+                DetailBackPolicy.SourceRoute.CROSS_REFERENCE_GUIDE,
+                true
+            )
+        );
+        assertEquals(
             DetailBackPolicy.SourceRoute.UNKNOWN,
             DetailActivity.detailBackPolicySourceRouteForSurface(null, true)
         );
