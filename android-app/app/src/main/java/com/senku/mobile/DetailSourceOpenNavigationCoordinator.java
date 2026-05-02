@@ -29,6 +29,15 @@ final class DetailSourceOpenNavigationCoordinator {
         );
     }
 
+    static boolean shouldApplyResolvedOpen(
+        boolean finishing,
+        boolean destroyed,
+        int requestToken,
+        int activeToken
+    ) {
+        return !finishing && !destroyed && requestToken == activeToken;
+    }
+
     private static Decision decide(
         SearchResult source,
         String harnessTaskLabel,

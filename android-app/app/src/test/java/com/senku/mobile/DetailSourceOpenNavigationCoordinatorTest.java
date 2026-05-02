@@ -99,6 +99,34 @@ public final class DetailSourceOpenNavigationCoordinatorTest {
         assertEquals("openCrossReferenceGuide.loadFailed", decision.loadFailureLogLabel);
     }
 
+    @Test
+    public void resolvedOpenAppliesOnlyToCurrentLiveRequest() {
+        assertTrue(DetailSourceOpenNavigationCoordinator.shouldApplyResolvedOpen(
+            false,
+            false,
+            7,
+            7
+        ));
+        assertFalse(DetailSourceOpenNavigationCoordinator.shouldApplyResolvedOpen(
+            false,
+            false,
+            6,
+            7
+        ));
+        assertFalse(DetailSourceOpenNavigationCoordinator.shouldApplyResolvedOpen(
+            true,
+            false,
+            7,
+            7
+        ));
+        assertFalse(DetailSourceOpenNavigationCoordinator.shouldApplyResolvedOpen(
+            false,
+            true,
+            7,
+            7
+        ));
+    }
+
     private static SearchResult source(String guideId) {
         return new SearchResult(
             "Poisoning",

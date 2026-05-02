@@ -412,6 +412,7 @@ public final class DetailActivity extends AppCompatActivity {
     private int followUpRenderToken;
     private int relatedGuideLoadToken;
     private int relatedGuidePreviewToken;
+    private int sourceOpenLoadToken;
     private String relatedGuideAnchorKey = "";
     private String currentPackGeneratedAt = "";
     private String currentPackHashShort = "";
@@ -1307,6 +1308,7 @@ public final class DetailActivity extends AppCompatActivity {
         currentRelatedGuides.clear();
         relatedGuideLoadToken = 0;
         relatedGuidePreviewToken = 0;
+        sourceOpenLoadToken++;
         relatedGuideAnchorKey = "";
         selectedSourceButton = null;
         selectedRelatedGuideButton = null;
@@ -11322,6 +11324,7 @@ public final class DetailActivity extends AppCompatActivity {
         DetailSourceOpenNavigationCoordinator.Decision navigation,
         ResolvedGuideOpenAction openAction
     ) {
+        int requestToken = ++sourceOpenLoadToken;
         if (!navigation.shouldLoadGuideBeforeOpen) {
             openAction.open(navigation.source);
             return;
@@ -11345,7 +11348,12 @@ public final class DetailActivity extends AppCompatActivity {
                 }
                 SearchResult finalTarget = target;
                 runTrackedOnUiThread(harnessToken, () -> {
-                    if (isFinishing() || isDestroyed()) {
+                    if (!DetailSourceOpenNavigationCoordinator.shouldApplyResolvedOpen(
+                        isFinishing(),
+                        isDestroyed(),
+                        requestToken,
+                        sourceOpenLoadToken
+                    )) {
                         return;
                     }
                     openAction.open(finalTarget);
@@ -11354,7 +11362,12 @@ public final class DetailActivity extends AppCompatActivity {
         } catch (RuntimeException exc) {
             Log.w(TAG, navigation.loadFailureLogLabel + ".enqueueFailed guideId=" + navigation.guideId, exc);
             runOnUiThread(() -> {
-                if (isFinishing() || isDestroyed()) {
+                if (!DetailSourceOpenNavigationCoordinator.shouldApplyResolvedOpen(
+                    isFinishing(),
+                    isDestroyed(),
+                    requestToken,
+                    sourceOpenLoadToken
+                )) {
                     return;
                 }
                 openAction.open(navigation.source);
